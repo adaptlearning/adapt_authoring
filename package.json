@@ -1,0 +1,26 @@
+{
+    "name": "adapt-builder-core",
+    "version": "0.0.1",
+    "description": "Adapt framework authoring tool core application",
+    "keywords": [
+        "adapt", 
+        "authoring", 
+        "builder"
+    ],
+    "contributors": [
+        { 
+            "name": "Dennis Heaney", 
+            "email": "dennis@learningpool.com" 
+        },
+        { 
+            "name": "Rob Moore", 
+            "email": "rob@learningpool.com" 
+        }
+    ],
+    "dependencies": {
+    },
+    "main": "index",
+    "engines": { 
+        "node": "0.10.2" 
+    }
+}

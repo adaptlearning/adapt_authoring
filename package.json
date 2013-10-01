@@ -18,6 +18,7 @@
         }
     ],
     "dependencies": {
+        "express": "*"
     },
     "main": "index",
     "engines": { 

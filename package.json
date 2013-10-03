@@ -1,27 +1,34 @@
 {
-    "name": "adapt-builder-core",
-    "version": "0.0.1",
-    "description": "Adapt framework authoring tool core application",
-    "keywords": [
-        "adapt", 
-        "authoring", 
-        "builder"
-    ],
-    "contributors": [
-        { 
-            "name": "Dennis Heaney", 
-            "email": "dennis@learningpool.com" 
-        },
-        { 
-            "name": "Rob Moore", 
-            "email": "rob@learningpool.com" 
-        }
-    ],
-    "dependencies": {
-        "express": "*"
+  "name": "adapt-builder-core",
+  "version": "0.0.1",
+  "description": "Adapt framework authoring tool core application",
+  "keywords": [
+    "adapt",
+    "authoring",
+    "builder"
+  ],
+  "contributors": [
+    {
+      "name": "Dennis Heaney",
+      "email": "dennis@learningpool.com"
     },
-    "main": "index",
-    "engines": { 
-        "node": "0.10.2" 
+    {
+      "name": "Rob Moore",
+      "email": "rob@learningpool.com"
     }
+  ],
+  "dependencies": {
+    "express": "~3.4.0"
+  },
+  "main": "index",
+  "engines": {
+    "node": ">=0.10"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "devDependencies": {
+    "mocha": "~1.13.0",
+    "should": "~1.3.0"
+  }
 }

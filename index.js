@@ -1,5 +1,5 @@
-var core = require('./lib/core');
+var app = require('./lib/application');
 
-module.exports = core;
+module.exports = app;
 
-//core();
+//app();

@@ -19,7 +19,8 @@
   ],
   "dependencies": {
     "express": "~3.4.0",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "winston": "~0.7.2"
   },
   "main": "index",
   "engines": {

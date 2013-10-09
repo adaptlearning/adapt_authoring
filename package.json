@@ -20,6 +20,7 @@
   "dependencies": {
     "express": "~3.4.0",
     "underscore": "~1.5.2",
+    "mongoose": "~3.6.20",
     "winston": "~0.7.2"
   },
   "main": "index",

@@ -1,0 +1,7 @@
+{
+  "serverPort": 3030,
+  "dbType": "mongoose",
+  "dbHost": "localhost",
+  "dbName": "adapt-builder-core-test",
+  "dbPort": 27017 
+}

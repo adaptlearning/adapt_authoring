@@ -1,0 +1,11 @@
+{
+  "type": "String",
+  "name": "String",
+  "type_name": {
+    "type": "String",
+    "unique": true
+  },
+  "displayName": "String",
+  "version": "Number",
+  "enabled": "Boolean"
+}

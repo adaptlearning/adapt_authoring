@@ -1,12 +1,11 @@
-var builder = require('../'),
-    logger = require('../lib/logger');
+var logger = require('../lib/logger');
 
 describe('logger', function() {
   before(function() {
     var winston = require('winston');
-    logger.add(winston.transports.Memory);  
+    logger.add(winston.transports.Memory);
   });
-  
+
   it ('should allow me to log messages of valid type', function(done) {
     logger.once('logging', function (transport, level, msg, meta){
       if ('error' === level && 'test' === msg && 'bar' === meta.foo) {

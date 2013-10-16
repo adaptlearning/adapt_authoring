@@ -1,25 +1,29 @@
-var builder = require('../'),
-    mongoose = require('mongoose'),
-    database = require('../lib/database');
+var mongoose = require('mongoose'),
+    builder = require('../');
 
 describe('database', function() {
+
   before(function(){
-    var db = database.getDatabase();
+    var app = builder();
+    var db = app.db;
     db.addModel('foo', mongoose.Schema({ email: String }));
   });
 
   it ('should allow me to insert a new object', function(done) {
-    var db = database.getDatabase();
+    var app = builder();
+    var db = app.db;
     db.create('foo', { email: "foo@bar.com" }, done);
   });
-  
+
   it ('should allow me to retrieve that object', function(done) {
-    var db = database.getDatabase();
+    var app = builder();
+    var db = app.db;
     db.retrieve('foo', { email: "foo@bar.com" }, done);
   });
-  
+
   it ('should allow me to update an object', function(done) {
-    var db = database.getDatabase();
+    var app = builder();
+    var db = app.db;
     db.retrieve('foo', { email: "foo@bar.com" }, function (error, results) {
       if (error) {
         done(error);
@@ -31,9 +35,10 @@ describe('database', function() {
       }
     });
   });
-  
+
   it ('should allow me to delete an object', function(done) {
-    var db = database.getDatabase();
+    var app = builder();
+    var db = app.db;
     db.retrieve('foo', { email: "bar@foo.com" }, function (error, results) {
       if (error) {
         done(error);

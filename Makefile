@@ -5,16 +5,19 @@ TESTDIRS= $(shell find plugins -name test -type d -exec find {} -maxdepth 1 -nam
 test: test-core test-plugins
 
 test-core:
+	@echo "Running Core Tests:"
 	@NODE_ENV=test ./node_modules/.bin/mocha \
 		--reporter $(REPORTER) \
 		$(MOCHA_OPTS)
 
 test-plugins:
-	@echo "Plugins :: "
+ifneq ("$(TESTDIRS)", "")
+	@echo "Running Plugin Tests:"
 	@NODE_ENV=test ./node_modules/.bin/mocha \
 		$(TESTDIRS) \
 		--reporter $(REPORTER) \
 		$(MOCHA_OPTS)
-		
+endif
+
 
 .PHONY: test test-core test-plugins

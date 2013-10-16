@@ -1,13 +1,16 @@
 var builder = require('../'),
     path = require('path'),
-    filestorage = require('../lib/filestorage'),
-    configuration = require('../lib/configuration');
+    filestorage = require('../lib/filestorage');
 
 describe('filestorage', function() {
-  var filePath = path.join(configuration.serverRoot, 'tmp', 'tmpFile');
-  var newFilePath = path.join(configuration.serverRoot, 'tmp', 'tmpFileNew');
+  var filePath = '';
+  var newFilePath = '';
+
   before(function(){
-    // @TODO create a file instance 
+    // @TODO create a file instance
+    var app = builder();
+    filePath = path.join(app.configuration.serverRoot, 'tmp', 'tmpFile');
+    newFilePath = path.join(app.configuration.serverRoot, 'tmp', 'tmpFileNew');
   });
 
   it ('should allow me to read a file from disk', function(done) {
@@ -22,7 +25,7 @@ describe('filestorage', function() {
       }
     });
   });
-  
+
   it ('should allow me to write a file to disk', function(done) {
     done(); return; // @TODO - remove when filesystem plugin is added
     var fs = filestorage.getStorage('filesystem');
@@ -35,7 +38,7 @@ describe('filestorage', function() {
       }
     });
   });
-  
+
   it ('should allow me to move a file', function(done) {
     done(); return; // @TODO - remove when filesystem plugin is added
     var fs = filestorage.getStorage('filesystem');
@@ -47,7 +50,7 @@ describe('filestorage', function() {
       }
     });
   });
-  
+
   it ('should allow me to create a directory', function(done) {
     done(); return; // @TODO - remove when filesystem plugin is added
     var fs = filestorage.getStorage('filesystem');

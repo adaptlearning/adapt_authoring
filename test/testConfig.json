@@ -3,5 +3,6 @@
   "dbType": "mongoose",
   "dbHost": "localhost",
   "dbName": "adapt-builder-core-test",
-  "dbPort": 27017 
+  "dbPort": 27017,
+  "dataRoot": "testDataRoot"
 }

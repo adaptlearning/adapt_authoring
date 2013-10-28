@@ -3,6 +3,7 @@ var builder = require('../'),
     path = require('path'),
     configuration = require('../lib/configuration'),
     database = require('../lib/database'),
+    should = require('should'),
     pluginmanager = require('../lib/pluginmanager');
 
 /**
@@ -72,28 +73,31 @@ describe('pluginmanager', function(){
   it ('should verify if a plugin is of a particular type and validate it', function (){
     // @TODO need to do fine grained validation, for now, just verify the type is correct
     helper.addPlugin();
-    var pluginInfo = helper.pluginManager.getPlugin('output', 'fooPlugin');
-    var pluginTypes = helper.pluginManager.getPluginTypes();
-    pluginTypes.should.include(pluginInfo.type);
+    helper.pluginManager.getPlugin('output', 'fooPlugin', function (error, pluginInfo) {
+      should.not.exist(error);
+      var pluginTypes = helper.pluginManager.getPluginTypes();
+      pluginTypes.should.include(pluginInfo.type);
+    });
   });
 
   it ('should allow installation of a new plugin', function (done){
     helper.addPlugin();
-    var pluginInfo = helper.pluginManager.getPlugin('output', 'fooPlugin');
-    helper.pluginManager.installPlugin(pluginInfo, function (error) {
-      if (error) {
-        done(error);
-      } else {
-        // confirm that the plugin was installed
-        helper.pluginManager.isInstalled(pluginInfo, function (installed) {
-          if (installed) {
-            done();
-          } else {
-            done(new Error('Failed to verify that plugin was installed!'));
-          }
-        });
-      }
-
+    helper.pluginManager.getPlugin('output', 'fooPlugin', function (error, pluginInfo) {
+      should.not.exist(error);
+      helper.pluginManager.installPlugin(pluginInfo, function (error) {
+        if (error) {
+          done(error);
+        } else {
+          // confirm that the plugin was installed
+          helper.pluginManager.isInstalled(pluginInfo, function (installed) {
+            if (installed) {
+              done();
+            } else {
+              done(new Error('Failed to verify that plugin was installed!'));
+            }
+          });
+        }
+      });
     });
   });
 
@@ -103,6 +107,7 @@ describe('pluginmanager', function(){
       { name: "fooPlugin", type: "output" }
     ];
     helper.pluginManager.getInstalledPlugins(function (error, pluginList) {
+      should.not.exist(error);
       if (error) {
         done(error);
       } else {
@@ -122,33 +127,37 @@ describe('pluginmanager', function(){
   //});
 
   it ('should detect when an installed plugin has been removed from disk', function (done) {
-    var pluginInfo = helper.pluginManager.getPlugin('output', 'fooPlugin');
-    helper.removePlugin();
-    helper.pluginManager.testPluginState(pluginInfo, pluginmanager.states.MISSING_FROM_DISK, function (state) {
-      // should be missing
-      state.should.equal(pluginmanager.states.MISSING_FROM_DISK);
-      done();
+    helper.pluginManager.getPlugin('output', 'fooPlugin', function (error, pluginInfo) {
+      should.not.exist(error);
+      helper.removePlugin();
+      helper.pluginManager.testPluginState(pluginInfo, pluginmanager.states.MISSING_FROM_DISK, function (state) {
+        // should be missing
+        state.should.equal(pluginmanager.states.MISSING_FROM_DISK);
+        done();
+      });
     });
   });
 
   it ('should allow a plugin to be uninstalled', function (done) {
     // first, make sure it's installed
     helper.addPlugin();
-    var pluginInfo = helper.pluginManager.getPlugin('output', 'fooPlugin');
-    helper.pluginManager.installPlugin(pluginInfo, function (error) {
-      helper.pluginManager.uninstallPlugin(pluginInfo, function (error) {
-        if (error) {
-          done(error);
-        } else {
-          // confirm that the plugin was uninstalled
-          helper.pluginManager.isInstalled(pluginInfo, function (installed) {
-            if (installed) {
-              done(new Error('Failed to verify that plugin was uninstalled!'));
-            } else {
-              done();
-            }
-          });
-        }
+    helper.pluginManager.getPlugin('output', 'fooPlugin', function (error, pluginInfo) {
+      should.not.exist(error);
+      helper.pluginManager.installPlugin(pluginInfo, function (error) {
+        helper.pluginManager.uninstallPlugin(pluginInfo, function (error) {
+          if (error) {
+            done(error);
+          } else {
+            // confirm that the plugin was uninstalled
+            helper.pluginManager.isInstalled(pluginInfo, function (installed) {
+              if (installed) {
+                done(new Error('Failed to verify that plugin was uninstalled!'));
+              } else {
+                done();
+              }
+            });
+          }
+        });
       });
     });
   });

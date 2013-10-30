@@ -1,0 +1,32 @@
+{
+  "name": {
+    "type": "String",
+    "required": true,
+    "unique": true
+  },
+  "database": {
+    "dbName": {
+      "type": "String",
+      "required": true,
+      "unique": true
+    },
+    "dbHost": {
+      "type": "String",
+      "required": true
+    },
+    "dbUser": {
+      "type": "String"
+    },
+    "dbPass": {
+      "type": "String"
+    },
+    "dbPort": {
+      "type": "Number",
+      "default": 27017
+    }
+  },
+  "active": {
+    "type": "Boolean",
+    "default": true
+  }
+}

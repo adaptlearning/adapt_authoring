@@ -1,11 +1,24 @@
 {
-  "type": "String",
-  "name": "String",
+  "type": {
+    "type": "String",
+    "required": true
+  },
+  "name": {
+    "type": "String",
+    "required": true
+  },
   "type_name": {
     "type": "String",
+    "required": true,
     "unique": true
   },
   "displayName": "String",
-  "version": "Number",
-  "enabled": "Boolean"
+  "version": {
+    "type": "String",
+    "required": true
+  },
+  "enabled": {
+    "type": "Boolean",
+    "default": true
+  }
 }

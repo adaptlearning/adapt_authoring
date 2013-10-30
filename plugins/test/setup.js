@@ -6,7 +6,7 @@ before(function() {
   // bootstrapping!
   var app = builder();
   app.use({ configFile: path.join('test', 'testConfig.json')});
-  app.listen();
+  app.start();
 
   var testDataRoot = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'));
   fs.mkdirSync(testDataRoot);

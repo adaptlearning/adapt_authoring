@@ -1,0 +1,17 @@
+{
+  "email": {
+    "type": "String",
+    "required": true,
+    "unique": true
+  },
+  "password": {
+    "type": "String"
+  },
+  "tenant": {
+    "type": "ObjectId"
+  },
+  "active": {
+    "type": "Boolean",
+    "default": true
+  }
+}

@@ -7,8 +7,7 @@
   "database": {
     "dbName": {
       "type": "String",
-      "required": true,
-      "unique": true
+      "required": true
     },
     "dbHost": {
       "type": "String",

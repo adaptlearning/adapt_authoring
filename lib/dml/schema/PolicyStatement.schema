@@ -1,0 +1,13 @@
+{
+  "effect": {
+    "type": "String",
+    "required": true,
+    "default": "deny"
+  },
+  "principal": {
+    "type": "String"
+  },
+  "action": [ "String" ],
+  "resource": [ "String" ],
+  "condition": {}
+}

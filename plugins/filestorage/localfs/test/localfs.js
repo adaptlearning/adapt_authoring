@@ -43,7 +43,7 @@ describe('plugin:filestorage/localfs', function() {
     });
   });
 
-  it ('should implement FileStorage#putFileContents', function () {
+  it ('should implement FileStorage#putFileContents', function (done) {
     var app = builder();
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.filePath);
 
@@ -57,11 +57,12 @@ describe('plugin:filestorage/localfs', function() {
 
         // remove the file
         fs.unlinkSync(fullPath);
+        done();
       });
     });
   });
 
-  it ('should implement FileStorage#deleteFile', function () {
+  it ('should implement FileStorage#deleteFile', function (done) {
     // add a file and put contents
     var app = builder();
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.filePath);
@@ -72,11 +73,12 @@ describe('plugin:filestorage/localfs', function() {
       localfs.deleteFile(helper.filePath, function (error) {
         should.not.exist(error);
         fs.existsSync(fullPath).should.be.false;
+        done();
       });
     });
   });
 
-  it ('should implement FileStorage#moveFile', function () {
+  it ('should implement FileStorage#moveFile', function (done) {
     // add a file and put contents
     var app = builder();
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.filePath);
@@ -93,12 +95,13 @@ describe('plugin:filestorage/localfs', function() {
 
         // cleanup
         fs.unlinkSync(fullPath);
+        done();
       });
     });
 
   });
 
-  it ('should implement FileStorage#createDirectory', function () {
+  it ('should implement FileStorage#createDirectory', function (done) {
     var app = builder();
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.dirPath);
 
@@ -114,12 +117,13 @@ describe('plugin:filestorage/localfs', function() {
 
         // cleanup
         fs.rmdirSync(fullPath);
+        done();
       });
     });
 
   });
 
-  it ('should implement FileStorage#removeDirectory', function () {
+  it ('should implement FileStorage#removeDirectory', function (done) {
     var app = builder();
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.dirPath);
     fs.mkdirSync(fullPath);
@@ -129,11 +133,12 @@ describe('plugin:filestorage/localfs', function() {
       localfs.removeDirectory(helper.dirPath, function (error) {
         should.not.exist(error);
         fs.existsSync(fullPath).should.be.false;
+        done();
       });
     });
   });
 
-  it ('should implement FileStorage#getDirectoryListing', function () {
+  it ('should implement FileStorage#getDirectoryListing', function (done) {
     var app = builder();
     var fullDirPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.dirPath);
     var fullFilePath = path.join(fullDirPath, helper.filePath);
@@ -152,12 +157,13 @@ describe('plugin:filestorage/localfs', function() {
         // cleanup
         fs.unlinkSync(fullFilePath);
         fs.rmdirSync(fullDirPath);
+        done();
       });
     });
 
   });
 
-  it ('should implement FileStorage#getFileStats', function () {
+  it ('should implement FileStorage#getFileStats', function (done) {
     var app = builder();
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.filePath);
     fs.writeFileSync(fullPath);
@@ -170,6 +176,7 @@ describe('plugin:filestorage/localfs', function() {
 
         // cleanup
         fs.unlinkSync(fullPath);
+        done();
       });
     });
   });

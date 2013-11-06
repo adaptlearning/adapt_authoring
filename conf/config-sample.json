@@ -1,0 +1,9 @@
+{
+  "serverPort": 8080,
+  "dbType": "mongoose",
+  "dbHost": "localhost",
+  "dbName": "adapt-builder-core",
+  "dbPort": 27017,
+  "dataRoot": "data",
+  "tenantPrefix": "adapt-builder-tenant-"
+}

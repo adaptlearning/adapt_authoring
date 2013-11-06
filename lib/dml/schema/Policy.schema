@@ -1,0 +1,14 @@
+{
+  "version": {
+    "type": "String",
+    "default": "2013-11-01"
+  },
+  "name": {
+    "type": "String"
+  },
+  "user": {
+    "type": "ObjectId",
+    "required": true
+  },
+  "statement": [ "PolicyStatement" ]
+}

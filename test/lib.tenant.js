@@ -5,14 +5,7 @@ var path = require('path'),
 
 describe('tenant', function(){
   var tenantRec = {
-    name: "test-tenant",
-    database: {
-      dbName: configuration.getConfig('tenantPrefix') + "unittest",
-      dbHost: "127.0.0.1",
-      dbUser: "",
-      dbPass: "",
-      dbPort: "27017"
-    },
+    name: "unit-test-tenant",
     active: true
   };
 

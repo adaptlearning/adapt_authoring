@@ -4,11 +4,17 @@
     "required": true,
     "unique": true
   },
+  "auth": {
+    "type": "String",
+    "default": "none"
+  },
   "password": {
     "type": "String"
   },
   "tenant": {
-    "type": "ObjectId"
+    "type": "String",
+    "required": true,
+    "default": "0"
   },
   "active": {
     "type": "Boolean",

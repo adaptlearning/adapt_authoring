@@ -1,20 +1,20 @@
 var path = require('path'),
-    user = require('../lib/user.js'),
+    usermanager = require('../lib/usermanager.js'),
     builder = require('../');
 
-describe('user', function(){
-  var userRec = {
+describe('usermanager', function(){
+  var user = {
     email: "foo@bar.com",
     active: true
   };
 
   // ensure the user record is deleted
   after (function () {
-    user.retrieveUser({ email: userRec.email }, function (error, record) {
+    usermanager.retrieveUser({ email: user.email }, function (error, record) {
       if (error) {
         done(error)
       } else if (record) {
-        user.deleteUser(userRec, function(error) {
+        usermanager.deleteUser(user, function(error) {
           if (error) {
             throw error;
           }
@@ -24,11 +24,11 @@ describe('user', function(){
   });
 
   it ('should allow the creation of a new user', function(done) {
-    user.createUser(userRec, done);
+    usermanager.createUser(user, done);
   });
 
   it ('should allow the retrieval of a single user', function(done) {
-    user.retrieveUser({ email: userRec.email }, function (error, record) {
+    usermanager.retrieveUser({ email: user.email }, function (error, record) {
       if (error) {
         done(error);
       } else if (record) {
@@ -40,12 +40,12 @@ describe('user', function(){
   });
 
   it ('should allow updating of a user', function(done) {
-    user.updateUser({ email: userRec.email }, { active: false } , function (error, result) {
+    usermanager.updateUser({ email: user.email }, { active: false } , function (error, result) {
       if (error) {
         done(error);
       } else {
         // verify that the update occurred
-        user.retrieveUser({ email: userRec.email }, function (error, record) {
+        usermanager.retrieveUser({ email: user.email }, function (error, record) {
           if (!record.active) { // it worked
             done();
           } else {
@@ -57,12 +57,12 @@ describe('user', function(){
   });
 
   it ('should allow the deleting of users', function(done) {
-    user.deleteUser( { email: userRec.email }, function (error) {
+    usermanager.deleteUser( { email: user.email }, function (error) {
       if (error) {
         done(error);
       } else {
         // verify the user was deleted
-        user.retrieveUser({ email: userRec.email }, function (error, record) {
+        usermanager.retrieveUser({ email: user.email }, function (error, record) {
           if (!record) { // it worked
             done();
           } else {

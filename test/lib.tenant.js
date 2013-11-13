@@ -1,6 +1,6 @@
 var path = require('path'),
     configuration = require('../lib/configuration'),
-    tenant = require('../lib/tenant.js'),
+    tenantmanager = require('../lib/tenantmanager.js'),
     builder = require('../');
 
 describe('tenant', function(){
@@ -11,11 +11,11 @@ describe('tenant', function(){
 
   // ensure the tenant record is deleted
   after (function () {
-    tenant.retrieveTenant({ name: tenantRec.name }, function (error, record) {
+    tenantmanager.retrieveTenant({ name: tenantRec.name }, function (error, tenant) {
       if (error) {
         done(error)
-      } else if (record) {
-        tenant.deleteTenant(tenantRec, function(error) {
+      } else if (tenant) {
+        tenantmanager.deleteTenant(tenantRec, function(error) {
           if (error) {
             throw error;
           }
@@ -25,14 +25,14 @@ describe('tenant', function(){
   });
 
   it ('should allow the creation of a new tenant', function(done) {
-    tenant.createTenant(tenantRec, done);
+    tenantmanager.createTenant(tenantRec, done);
   });
 
   it ('should allow the retrieval of a single tenant', function(done) {
-    tenant.retrieveTenant({ name: tenantRec.name }, function (error, record) {
+    tenantmanager.retrieveTenant({ name: tenantRec.name }, function (error, tenant) {
       if (error) {
         done(error);
-      } else if (record) {
+      } else if (tenant) {
         done();
       } else {
         done(new Error('Failed to retrieve tenant record'));
@@ -41,13 +41,13 @@ describe('tenant', function(){
   });
 
   it ('should allow updating of a tenant', function(done) {
-    tenant.updateTenant({ name: tenantRec.name }, { active: false } , function (error, result) {
+    tenantmanager.updateTenant({ name: tenantRec.name }, { active: false } , function (error, tenant) {
       if (error) {
         done(error);
       } else {
         // verify that the update occurred
-        tenant.retrieveTenant({ name: tenantRec.name }, function (error, record) {
-          if (!record.active) { // it worked
+        tenantmanager.retrieveTenant({ name: tenantRec.name }, function (error, tenant) {
+          if (!tenant.active) { // it worked
             done();
           } else {
             done(new Error('Failed to update tenant'));
@@ -58,13 +58,13 @@ describe('tenant', function(){
   });
 
   it ('should allow the deleting of tenants', function(done) {
-    tenant.deleteTenant( { name: tenantRec.name }, function (error) {
+    tenantmanager.deleteTenant( { name: tenantRec.name }, function (error) {
       if (error) {
         done(error);
       } else {
         // verify the tenant was deleted
-        tenant.retrieveTenant({ name: tenantRec.name }, function (error, record) {
-          if (!record) { // it worked
+        tenantmanager.retrieveTenant({ name: tenantRec.name }, function (error, tenant) {
+          if (!tenant) { // it worked
             done();
           } else {
             done(new Error('Failed to delete tenant'));

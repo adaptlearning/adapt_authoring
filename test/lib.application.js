@@ -1,7 +1,8 @@
 var path = require('path'),
+    winston = require('winston'),
     builder = require('../'),
-    user = require('../lib/user.js')
-    tenant = require('../lib/tenant.js');
+    usermanager = require('../lib/usermanager.js'),
+    tenantmanager = require('../lib/tenantmanager.js');
 
 var helper = {
   testUser: {
@@ -21,19 +22,19 @@ before(function (done) {
 
   // add some test entities ...
   app.on('serverStarted', function (server) {
-    tenant.createTenant(helper.testTenant, function (error, res) {
+    tenantmanager.createTenant(helper.testTenant, function (error, tenant) {
       if (error) {
         done(error);
       } else {
         // update helper obj
-        helper.testTenant = res;
+        helper.testTenant = tenant;
         // assign user to test tenant
-        helper.testUser.tenant = res._id;
-        user.createUser(helper.testUser, function (error, res) {
+        helper.testUser.tenant = tenant._id;
+        usermanager.createUser(helper.testUser, function (error, user) {
           if (error) {
             done(error);
           } else {
-            helper.testUser = res;
+            helper.testUser = user;
             done();
           }
         });
@@ -48,11 +49,11 @@ before(function (done) {
 
 after(function (done) {
   // remove test entities
-  user.deleteUser(helper.testUser, function (error) {
+  usermanager.deleteUser(helper.testUser, function (error) {
     if (error) {
       done(error);
     } else {
-      tenant.deleteTenant(helper.testTenant, function (error) {
+      tenantmanager.deleteTenant(helper.testTenant, function (error) {
         if (error) {
           done(error);
         } else {

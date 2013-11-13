@@ -1,4 +1,5 @@
 var mongoose = require('mongoose'),
+    should = require('should'),
     builder = require('../');
 
 describe('database', function() {
@@ -49,6 +50,17 @@ describe('database', function() {
         done(new Error('Expected result was not retrieved'));
       }
     });
+  });
+
+  it ('should provide a connect session store', function (done) {
+    var app = builder();
+    var db = app.db;
+    try {
+      should.exist(db.getSessionStore());
+      done();
+    } catch (error) {
+      done(error);
+    }
   });
 
 });

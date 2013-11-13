@@ -1,6 +1,6 @@
 MOCHA_OPTS= --check-leaks
 REPORTER = dot
-TESTDIRS= $(shell find plugins -name test -type d -exec find {} -maxdepth 1 -name "*.js" -o -name '*.coffee' \;)
+TESTDIRS= $(shell find plugins -maxdepth 3 -name test -type d -exec find {} -maxdepth 1 -name "*.js" -o -name '*.coffee' \;)
 
 test: test-core test-plugins
 

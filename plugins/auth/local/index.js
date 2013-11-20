@@ -60,8 +60,7 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
 
     if (!user) {
       res.statusCode = 401;
-      res.setHeader('Content-Type', 'application/json');
-      res.send({ success: false });
+      res.json({ success: false });
       return res.end();
     }
 
@@ -71,8 +70,7 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
       }
 
       res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.send({ success: true });
+      res.json({ success: true });
       return res.end();
     });
   })(req, res, next);
@@ -105,8 +103,7 @@ LocalAuth.prototype.registerUser = function (req, res, next) {
 
       // successfully registered
       res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.send({ _id: user._id, email: user.email });
+      res.json({ _id: user._id, email: user.email });
       res.end();
     });
   });

@@ -7,7 +7,7 @@ describe('database', function() {
   before(function(){
     var app = builder();
     var db = app.db;
-    db.addModel('foo', mongoose.Schema({ email: String }));
+    db.addModel('foo', { email: String });
   });
 
   it ('should allow me to insert a new object', function(done) {

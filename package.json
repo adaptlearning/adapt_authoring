@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "async": "~0.2.5",
-    "bcrypt": "~0.7.7",
+    "bcrypt-nodejs": "~0.0.3",
     "connect-mongodb": "1.1.x",
     "express": "~3.4.0",
     "node-gyp": "~0.12.1",

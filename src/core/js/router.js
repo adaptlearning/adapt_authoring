@@ -1,4 +1,4 @@
-define(["backbone", "coreViews/home", "coreViews/login", "coreViews/forgotPassword"], function(Backbone, HomeView, LoginView, ForgotPasswordView) {
+define(["backbone", "coreViews/homeView", "coreViews/loginView", "coreViews/forgotPasswordView"], function(Backbone, HomeView, LoginView, ForgotPasswordView) {
   
   var Router = Backbone.Router.extend({
     

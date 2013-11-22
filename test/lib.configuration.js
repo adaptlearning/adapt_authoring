@@ -23,9 +23,9 @@ describe('configuration', function() {
   });
 
   after(function(){
-    // delete the temp config file
+    // delete the temp config file 
     if (fs.existsSync(tmpFile)) {
-      fs.unlinkSync(tmpFile);
+       fs.unlinkSync(tmpFile);
     }
 
     if (fs.existsSync(tmpDir)) {

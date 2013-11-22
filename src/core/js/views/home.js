@@ -1,8 +1,4 @@
-define(function(require) {
-  var Backbone = require('backbone'),
-      Handlebars = require('handlebars'),
-      jquery = require('jquery'),
-      Template = require('text!templates/home.tpl');
+define(["backbone", "handlebars"], function(Backbone, Handlebars){
 
   var HomeView = Backbone.View.extend({
     tagName: "div",
@@ -14,9 +10,8 @@ define(function(require) {
     
     render: function() {
     
-      var compiled = Handlebars.compile(Template);
-      var html = compiled({something: "here"});
-      this.$el.html(html);
+      var template = Handlebars.templates['home'];
+      this.$el.html(template());
       return this;
       
     },
@@ -28,4 +23,5 @@ define(function(require) {
   });
 
   return HomeView;
+
 });

@@ -1,10 +1,6 @@
-define(function(require) {
-  var Backbone = require('backbone'),
-      Handlebars = require('handlebars'),
-      jquery = require('jquery'),
-      Template = require('text!templates/login.tpl');
+define(["backbone", "handlebars"], function(Backbone, Handlebars){
 
-  var LoginView = Backbone.View.extend({
+ var LoginView = Backbone.View.extend({
     tagName: "div",
     
     className: "test",
@@ -14,12 +10,9 @@ define(function(require) {
     },
     
     render: function() {
-    
-      var compiled = Handlebars.compile(Template);
-      var html = compiled();
-      this.$el.html(html);
+      var template = Handlebars.templates['login'];
+      this.$el.html(template());
       return this;
-      
     },
 
     gotoForgotPassword: function(e) {
@@ -34,4 +27,5 @@ define(function(require) {
   });
 
   return LoginView;
+
 });

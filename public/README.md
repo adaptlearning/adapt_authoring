@@ -1,1 +1,0 @@
-Static content goes here!

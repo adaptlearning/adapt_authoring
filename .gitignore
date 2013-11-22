@@ -2,3 +2,5 @@
 /tmp
 conf/config.json
 .project
+/build
+/nbproject/

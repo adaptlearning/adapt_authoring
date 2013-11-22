@@ -56,7 +56,7 @@ describe('auth', function() {
 
   it ('should allow me to register a user with default auth strategy', function (done) {
     helper.userAgent
-      .post('/register')
+      .post('/api/register')
       .set('Accept', 'application/json')
       .send({
         'email': helper.email,
@@ -76,7 +76,7 @@ describe('auth', function() {
 
   it ('should create a user session with a correct login', function (done) {
     helper.userAgent
-      .post('/login')
+      .post('/api/login')
       .set('Accept', 'application/json')
       .send({
         'email': helper.email,
@@ -92,7 +92,7 @@ describe('auth', function() {
 
   it ('should reject a user with an incorrect login', function (done) {
     helper.userAgent
-      .post('/login')
+      .post('/api/login')
       .set('Accept', 'application/json')
       .send({
         'email': 'nobody@nowhere.com',

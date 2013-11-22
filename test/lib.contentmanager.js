@@ -6,7 +6,7 @@ var builder = require('../'),
     request = require('supertest'),
     should = require('should');
 
-describe('content', function() {
+describe('contentmanager', function() {
   var app = builder();
   var agent = {};
   var contentObj = {};
@@ -16,7 +16,7 @@ describe('content', function() {
 
     // need to authenticate
     agent
-      .post('/login')
+      .post('/api/login')
       .set('Accept', 'application/json')
       .send({
         email: 'testuser@adapt.org', // created in test/lib.application.js
@@ -51,6 +51,25 @@ describe('content', function() {
 
         contentObj = res.body;
         should.exist(contentObj._id);
+        return done();
+      });
+  });
+
+  it ('should be unsuccessful when attempting to create some unknown content type', function (done) {
+    agent
+      .put('/api/content/iwillneverbeacontenttype')
+      .set('Accept', 'application/json')
+      .send({
+        name: 'some name'
+      })
+      .expect(400)
+      .expect('Content-Type', /json/)
+      .end(function (error, res) {
+        if (error) {
+          return done(error);
+        }
+
+        res.body.success.should.be.false;
         return done();
       });
   });

@@ -22,6 +22,7 @@
     "bcrypt-nodejs": "~0.0.3",
     "connect-mongodb": "1.1.x",
     "express": "~3.4.0",
+    "jade": "*",
     "node-gyp": "~0.12.1",
     "mongoose": "~3.6.20",
     "passport": "~0.1.17",

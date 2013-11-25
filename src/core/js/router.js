@@ -4,16 +4,17 @@ define(function(require) {
       HomeView = require('coreViews/homeView'),
       LoginView = require('coreViews/loginView'),
       ForgotPasswordView = require('coreViews/forgotPasswordView'),
-      LoginModel = require('coreModels/loginModel');
+      DashboardView = require('coreViews/dashboardView');
   
   var Router = Backbone.Router.extend({
     
     routes: { 
-      ""              : "index",    //
-      "home"          : "index",    // #home
-      "login"         : "login",    // #login
+      ""              : "index",          //
+      "home"          : "index",          // #home
+      "login"         : "login",          // #login
       "login/forgot"  : "forgotpassword", // #login/forgot
-      "register"      : "register"  // #register
+      "register"      : "register",       // #register
+      "dashboard"     : "dashboard"       // #dashboard
     },
 
     initialize: function() {
@@ -32,12 +33,17 @@ define(function(require) {
 
     login: function() {
       console.log('Login');
-      var view = new LoginView({model:new LoginModel()});
+      var view = new LoginView();
       this._renderView(view);
     },
 
     forgotpassword: function() {
       var view = new ForgotPasswordView();
+      this._renderView(view);
+    },
+    
+    dashboard: function() {
+      var view = new DashboardView();
       this._renderView(view);
     }
 

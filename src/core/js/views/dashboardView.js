@@ -1,19 +1,21 @@
 define(["backbone", "handlebars"], function(Backbone, Handlebars){
 
-  var ForgotPasswordView = Backbone.View.extend({
+  var DashboardView = Backbone.View.extend({
+    
     tagName: "div",
     
-    className: "test",
+    className: "dashboard",
     
     render: function() {
     
-      var template = Handlebars.templates['forgotPassword'];
+      var template = Handlebars.templates['dashboard'];
       this.$el.html(template());
       return this;
       
     }
+    
   });
 
-  return ForgotPasswordView;
+  return DashboardView;
 
 });

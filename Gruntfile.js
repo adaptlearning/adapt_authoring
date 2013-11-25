@@ -9,13 +9,6 @@ module.exports = function(grunt) {
           files: [
             {
               expand: true, 
-              src: ['src/index.html'], 
-              dest: 'build/', 
-              filter: 'isFile', 
-              flatten: true
-            },
-            {
-              expand: true, 
               src: ['src/core/js/scriptLoader.js'], 
               dest: 'build/adaptbuilder/js/', 
               filter: 'isFile', 

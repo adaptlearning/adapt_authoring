@@ -10,5 +10,7 @@
     "type": "ObjectId",
     "required": true
   },
-  "statement": [ "PolicyStatement" ]
+  "statement": [ "PolicyStatement" ],
+  "dateCreated": "Date",
+  "dateModified": "Date"
 }

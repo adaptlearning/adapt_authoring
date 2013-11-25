@@ -1,6 +1,6 @@
 module.exports = function(grunt) {
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
-  
+
   // Project configuration.
   grunt.initConfig({
       pkg: grunt.file.readJSON('package.json'),
@@ -8,24 +8,24 @@ module.exports = function(grunt) {
         main: {
           files: [
             {
-              expand: true, 
-              src: ['frontend/src/core/js/scriptLoader.js'], 
-              dest: 'frontend/build/adaptbuilder/js/', 
-              filter: 'isFile', 
+              expand: true,
+              src: ['frontend/src/core/js/scriptLoader.js'],
+              dest: 'frontend/build/adaptbuilder/js/',
+              filter: 'isFile',
               flatten: true
             },
             {
-              expand: true, 
-              src: ['frontend/src/core/js/libraries/require.js', 'frontend/src/core/js/libraries/modernizr.js'], 
-              dest: 'frontend/build/libraries/', 
-              filter: 'isFile', 
+              expand: true,
+              src: ['frontend/src/core/js/libraries/require.js', 'frontend/src/core/js/libraries/modernizr.js'],
+              dest: 'frontend/build/libraries/',
+              filter: 'isFile',
               flatten: true
             },
             {
               expand: true,
               src: ['frontend/src/data/*'],
               dest: 'frontend/build/data/',
-              filter: 'isFile', 
+              filter: 'isFile',
               flatten: true
             },
           ]
@@ -83,10 +83,25 @@ module.exports = function(grunt) {
       watch: {
         files: ['frontend/src/**/*.hbs'],
         tasks: ['handlebars']
+      },
+      mochaTest: {
+        test: {
+          options: {
+            reporter: 'dot',
+            timeout: 3500,
+            require: ['should'],
+            ui: 'bdd',
+            globals: ['app']
+          },
+          src: [
+            'test/*.js'
+          ]
+        }
       }
     });
-    
+
     grunt.registerTask('default',['less', 'handlebars', 'watch']);
     grunt.registerTask('build',['less', 'copy', 'handlebars']);
     grunt.registerTask('dev',['less', 'copy', 'handlebars', 'requirejs:dev']);
+    grunt.registerTask('test',['mochaTest']);
 };

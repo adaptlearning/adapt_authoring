@@ -8,5 +8,8 @@
   "dataRoot": "testDataRoot",
   "tenantPrefix": "adapt-builder-test-tenant-",
   "sessionSecret": "your-secret-here",
-  "auth": "local"
+  "auth": "local",
+  "viewEngine" : "jade",
+  "viewPath" : "views",
+  "frontend" : "frontend"
 }

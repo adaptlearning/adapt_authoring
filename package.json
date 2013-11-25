@@ -22,12 +22,15 @@
     "bcrypt-nodejs": "~0.0.3",
     "connect-mongodb": "1.1.x",
     "express": "3.4.0",
+    "formidable": "~1.0.14",
+    "jade": "~0.35.0",
     "node-gyp": "~0.12.1",
+    "mkdirp": "0.3.5",
     "mongoose": "~3.6.20",
     "passport": "~0.1.17",
+    "rimraf": "~2.2.5",
     "underscore": "~1.5.2",
-    "winston": "~0.7.2",
-    "jade": "~0.35.0"
+    "winston": "~0.7.2"
   },
   "main": "index",
   "engines": {
@@ -52,6 +55,6 @@
     "grunt-bower-requirejs": "~0.7.1",
     "grunt-requirejs-bundle": "~0.0.7",
     "grunt-contrib-copy": "~0.4.1",
-    "rimraf": "~2.2.5"
+    "grunt-mocha-test": "~0.7.0"
   }
 }

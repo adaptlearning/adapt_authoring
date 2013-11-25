@@ -1,5 +1,6 @@
 /node_modules/
 /tmp
+/data
 conf/config.json
 .project
 /frontend/build

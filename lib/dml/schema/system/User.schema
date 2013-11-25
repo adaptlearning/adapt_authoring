@@ -19,5 +19,7 @@
   "active": {
     "type": "Boolean",
     "default": true
-  }
+  },
+  "dateCreated": "Date",
+  "dateModified": "Date"
 }

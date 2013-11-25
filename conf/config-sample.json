@@ -10,6 +10,6 @@
   "sessionSecret": "your-secret-here",
   "auth": "local",
   "viewEngine" : "jade",
-  "viewPath" : "views", //location of jade templates
+  "viewPath" : "frontend/views", //location of jade templates
   "frontend" : "frontend" //location of frontend source and build
 }

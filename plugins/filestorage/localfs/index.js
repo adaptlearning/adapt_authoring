@@ -4,9 +4,11 @@
 
 var FileStorage = require('../../../lib/filestorage').FileStorage,
     configuration = require('../../../lib/configuration'),
+    usermanager = require('../../../lib/usermanager'),
     util = require('util'),
     fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    mkdirp = require('mkdirp');
 
 function LocalFileStorage() {
   this.dataRoot = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'));
@@ -22,6 +24,22 @@ util.inherits(LocalFileStorage, FileStorage);
  */
 
 LocalFileStorage.prototype.resolvePath = function (relativePath) {
+  var user = usermanager.getCurrentUser();
+  if (user) {
+    // check that the path isn't already absolute
+
+    var prefix = path.join(this.dataRoot, user.tenant.name);
+    if (0 === relativePath.indexOf(prefix)) {
+      return relativePath;
+    }
+    return path.join(prefix, relativePath);
+  }
+
+  // check if path is absolute
+  if (0 === relativePath.indexOf(this.dataRoot)) {
+    return relativePath;
+  }
+
   return path.join(this.dataRoot, relativePath);
 };
 
@@ -51,6 +69,40 @@ LocalFileStorage.prototype.putFileContents = function (filePath, options, buffer
 };
 
 /**
+ * creates a write stream
+ *
+ * @param {string} filePath - the path to the file
+ * @param {string} [options] - see {@link http://nodejs.org/api/fs.html#fs_fs_createwritestream_path_options |Nodejs fs}
+ * @param {function} callback - function of the form function(stream)
+ */
+
+LocalFileStorage.prototype.createWriteStream = function (filePath, options, callback) {
+  if ('function' === typeof options) {
+    // only callback was passed
+    callback = options;
+    options = null;
+  }
+  callback(fs.createWriteStream(this.resolvePath(filePath), options));
+};
+
+/**
+ * creates a read stream
+ *
+ * @param {string} filePath - the path to the file
+ * @param {string} [options] - see {@link http://nodejs.org/api/fs.html#fs_fs_createreadstream_path_options |Nodejs fs}
+ * @param {function} callback - function of the form function(stream)
+ */
+
+LocalFileStorage.prototype.createReadStream = function (filePath, options, callback) {
+  if ('function' === typeof options) {
+    // only callback was passed
+    callback = options;
+    options = null;
+  }
+  callback(fs.createReadStream(this.resolvePath(filePath), options));
+};
+
+/**
  * Deletes a file
  *
  * @param {string} filePath - the location of the file
@@ -72,7 +124,46 @@ LocalFileStorage.prototype.deleteFile = function (filePath, callback) {
 LocalFileStorage.prototype.moveFile = function (oldPath, newPath, callback) {
   oldPath = this.resolvePath(oldPath);
   newPath = this.resolvePath(newPath);
-  fs.rename(oldPath, newPath, callback);
+  mkdirp(path.dirname(newPath), function (error) {
+    if (error) {
+      return callback(error);
+    }
+
+    fs.rename(oldPath, newPath, callback);
+  });
+};
+
+/**
+ * processes an uploaded file
+ *
+ * @param {object} file - information about the file that was uploaded
+ * @param {object} newPath - new path for the file
+ * @param {callback} cb - callback to handle the processed file
+ */
+
+LocalFileStorage.prototype.processFileUpload = function (file, newPath, cb) {
+  newPath = this.resolvePath(newPath);
+
+  mkdirp(path.dirname(newPath), function (error) {
+    if (error) {
+      return cb(error);
+    }
+
+    // possible move between partitions means fs.rename is not the best choice
+    // http://stackoverflow.com/questions/4568689/how-do-i-move-file-a-to-a-different-partition-or-device-in-node-js
+    var rs = fs.createReadStream(file.path);
+    var ws = fs.createWriteStream(newPath);
+    rs.pipe(ws);
+    rs.on('error', cb);
+    rs.on('end', function () {
+      cb(null, {
+        path: newPath,
+        name: file.name,
+        type: file.type,
+        size: ws.bytesWritten
+      });
+    });
+  });
 };
 
 /**

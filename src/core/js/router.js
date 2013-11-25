@@ -1,4 +1,10 @@
-define(["backbone", "coreViews/homeView", "coreViews/loginView", "coreViews/forgotPasswordView"], function(Backbone, HomeView, LoginView, ForgotPasswordView) {
+define(function(require) {
+  
+  var Backbone = require('backbone'),
+      HomeView = require('coreViews/homeView'),
+      LoginView = require('coreViews/loginView'),
+      ForgotPasswordView = require('coreViews/forgotPasswordView'),
+      LoginModel = require('coreModels/loginModel');
   
   var Router = Backbone.Router.extend({
     
@@ -26,7 +32,7 @@ define(["backbone", "coreViews/homeView", "coreViews/loginView", "coreViews/forg
 
     login: function() {
       console.log('Login');
-      var view = new LoginView();
+      var view = new LoginView({model:new LoginModel()});
       this._renderView(view);
     },
 

@@ -7,6 +7,7 @@ require.config({
       handlebars: 'core/js/libraries/handlebars',
       coreJS: 'core/js',
       coreViews: 'core/js/views',
+      coreModels: 'core/js/models',
       templates: 'templates/templates'
     },
     shim: {

@@ -3,7 +3,7 @@ define(["backbone", "handlebars"], function(Backbone, Handlebars){
   var ForgotPasswordView = Backbone.View.extend({
     tagName: "div",
     
-    className: "test",
+    className: "forgotpassword",
     
     render: function() {
     

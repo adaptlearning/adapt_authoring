@@ -1,9 +1,15 @@
-define(["backbone", "handlebars", "jquery"], function(Backbone, Handlebars, $){
+define(["backbone", "handlebars", "jquery", "coreJS/adaptbuilder"], function(Backbone, Handlebars, $, AdaptBuilder){
 
  var LoginView = Backbone.View.extend({
+
+    initialize: function() {
+      this.listenTo(AdaptBuilder, 'loginFailed', this.loginFailed);
+    },
+
     tagName: "div",
-    
-    className: "test",
+     
+    className: "login",
+
     events: {
       "click a#linkRegister" : "gotoRegister",
       "click a#linkForgotPassword" : "gotoForgotPassword",
@@ -25,29 +31,34 @@ define(["backbone", "handlebars", "jquery"], function(Backbone, Handlebars, $){
       e.preventDefault();
       Backbone.history.navigate('/register', {trigger: true});
     },
+
     submitLoginDetails: function(e) {
       e.preventDefault();
       // Do some crazy validation here
       var inputUsernameEmail = $("#inputUsernameEmail", this.$el).val();
       var inputPassword = $("#inputPassword", this.$el).val();
       
-      // Save the model - might want to think about a fail as well as a success
-      this.model.save({
-        email:inputUsernameEmail,
-        password:inputPassword
-      }, {
-        success: _.bind(function(response) {
-          if (this.model.get('success')) {
-            // trigger an event to load the dashboard view
-            console.log('you got in');
+      $.post(
+        '/api/login',
+        {
+          email:inputUsernameEmail,
+          password:inputPassword
+        },
+        function(authenticated) {
+          if (authenticated.success) {
+            Backbone.history.navigate('/dashboard', {trigger: true});
           } else {
-            // user needs to try again
-            console.log('you did not get in');
-          }  
-        }, this)
-      })
-
+             AdaptBuilder.trigger('loginFailed');
+          }
+      }).fail(function() {
+        AdaptBuilder.trigger('loginFailed');
+      });
+    },
+   
+    loginFailed: function() {
+      $('#loginFailed').removeClass('hide');
     }
+
   });
 
   return LoginView;

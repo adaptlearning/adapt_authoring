@@ -4,3 +4,4 @@ conf/config.json
 .project
 /build
 /nbproject/
+/src/templates/templates.js

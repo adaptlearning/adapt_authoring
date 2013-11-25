@@ -90,6 +90,21 @@ describe('auth', function() {
       });
   });
 
+  it ('should verify that an authenticated user is authenticated', function (done) {
+    helper.userAgent
+      .get('/api/authcheck')
+      .set('Accept', 'application/json')
+      .send()
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function (error, res) {
+        should.not.exist(error);
+        should.exist(res.body.authenticated);
+        res.body.authenticated.should.be.true;
+        done();
+      });
+  });
+
   it ('should reject a user with an incorrect login', function (done) {
     helper.userAgent
       .post('/api/login')

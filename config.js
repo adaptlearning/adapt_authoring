@@ -5,6 +5,7 @@ require.config({
       backbone: 'core/js/libraries/backbone',
       modernizr: 'core/js/libraries/modernizr',
       handlebars: 'core/js/libraries/handlebars',
+      bootstrap: 'core/js/libraries/bootstrap',
       coreJS: 'core/js',
       coreViews: 'core/js/views',
       coreModels: 'core/js/models',

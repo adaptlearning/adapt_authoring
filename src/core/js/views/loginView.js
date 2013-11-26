@@ -1,4 +1,8 @@
-define(["backbone", "handlebars", "jquery", "coreJS/adaptbuilder"], function(Backbone, Handlebars, $, AdaptBuilder){
+define(function(require) {
+  var Backbone = require('backbone'),
+      Handlebars = require('handlebars'),
+      $ = require('jquery'),
+      AdaptBuilder = require('coreJS/adaptbuilder');
 
  var LoginView = Backbone.View.extend({
 

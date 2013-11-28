@@ -9,6 +9,7 @@ require.config({
       coreJS: 'core/js',
       coreViews: 'core/js/views',
       coreModels: 'core/js/models',
+      coreCollections: 'core/js/collections',
       templates: 'templates/templates'
     },
     shim: {

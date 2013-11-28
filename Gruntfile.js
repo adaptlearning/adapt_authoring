@@ -20,7 +20,14 @@ module.exports = function(grunt) {
               dest: 'build/libraries/', 
               filter: 'isFile', 
               flatten: true
-            }
+            },
+            {
+              expand: true,
+              src: ['src/data/*'],
+              dest: 'build/data/',
+              filter: 'isFile', 
+              flatten: true
+            },
           ]
         }
       },

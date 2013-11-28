@@ -25,9 +25,47 @@ before(function (done) {
   var app = builder();
   app.use({ configFile: path.join('test', 'testConfig.json')});
 
+
+  function createTestTenant (tenantDetails, cb) {
+    tenantmanager.createTenant(tenantDetails, function (error, tenant) {
+      if (error) {
+        // cleanup may have failed from a previous test
+        if (error instanceof tenantmanager.errors.DuplicateTenantError) {
+          return tenantmanager.retrieveTenant({name: tenantDetails.name}, cb);
+        }
+
+        return cb(error);
+      }
+
+      return cb(null, tenant);
+    });
+  }
+
+  function createTestUser (userDetails, cb) {
+    auth.hashPassword(userDetails.plainPassword, function (error, hash) {
+      if (error) {
+        return cb(error);
+      }
+
+      userDetails.password = hash;
+      usermanager.createUser(userDetails, function (error, user) {
+        if (error) {
+          // cleanup failed
+          if (error instanceof usermanager.errors.DuplicateUserError) {
+            return usermanager.retrieveUser({email: userDetails.email}, cb);
+          }
+
+          return cb(error);
+        }
+
+        return cb(null, user);
+      });
+    });
+  }
+
   // add some test entities ...
   app.on('serverStarted', function (server) {
-    tenantmanager.createTenant(helper.testTenant, function (error, tenant) {
+    createTestTenant(helper.testTenant, function (error, tenant) {
       if (error) {
         return done(error);
       } else {
@@ -36,28 +74,20 @@ before(function (done) {
         // assign user to test tenant
         helper.testUser.tenant = tenant._id;
 
-        // create the user and add permissions!
-        auth.hashPassword(helper.testUser.plainPassword, function (error, hash) {
+        createTestUser(helper.testUser, function (error, user) {
           if (error) {
             return done(error);
           }
 
-          helper.testUser.password = hash;
-          usermanager.createUser(helper.testUser, function (error, user) {
-            if (error) {
-              return done(error);
-            }
+          helper.testUser._id = user._id;
+          permissions.createPolicy(helper.testUser._id, function (error, policy) {
+            permissions.addStatement(policy, ['create', 'read', 'update', 'delete'], permissions.buildResourceString(helper.testUser.tenant, '/*'), 'allow', function (error) {
+              if (error) {
+                return done(error);
+              }
 
-            helper.testUser._id = user._id;
-            permissions.createPolicy(helper.testUser._id, function (error, policy) {
-  	          permissions.addStatement(policy, ['create', 'read', 'update', 'delete'], permissions.buildResourceString(helper.testUser.tenant, '/*'), 'allow', function (error) {
-                if (error) {
-                  return done(error);
-                }
-
-                // all set up!
-                done();
-              });
+              // all set up!
+              done();
             });
           });
         });

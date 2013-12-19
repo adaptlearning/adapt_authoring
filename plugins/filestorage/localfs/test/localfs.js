@@ -47,17 +47,19 @@ describe('plugin:filestorage/localfs', function() {
     var app = builder();
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.filePath);
 
-    // verify the file does not yet exist
-    fs.existsSync(fullPath).should.be.false;
-
-    app.filestorage.getStorage('localfs', function (error, localfs) {
-      should.not.exist(error);
-      localfs.putFileContents(helper.filePath, { flag: 'w' }, helper.fileContent, function (error, written, buffer) {
+    fs.exists(fullPath,function(exists){
+      console.log('Checked for file :: ' + fullPath + ' ' + exists);
+      exists.should.be.false;
+      
+      app.filestorage.getStorage('localfs', function (error, localfs) {
         should.not.exist(error);
-
-        // remove the file
-        fs.unlinkSync(fullPath);
-        done();
+        localfs.putFileContents(helper.filePath, { flag: 'w' }, helper.fileContent, function (error, written, buffer) {
+          should.not.exist(error);
+  
+          // remove the file
+          fs.unlinkSync(fullPath);
+          done();
+        });
       });
     });
   });

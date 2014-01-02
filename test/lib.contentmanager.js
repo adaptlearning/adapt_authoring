@@ -33,6 +33,8 @@ describe('contentmanager', function() {
       var db = database.getDatabase();
       db.destroy('course', { _id: contentObj._id }, done);
     }
+    
+    done();
   });
 
   it ('should allow me to create some content', function (done) {

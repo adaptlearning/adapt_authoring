@@ -35,8 +35,9 @@ describe('configuration', function() {
 
   it('should allow me to load a configuration from disk', function() {
     var oldFile = configuration.configFile;
-    configuration.load(tmpFile);
-    configuration.getConfig('serverPort').should.equal('4321');
+    configuration.load(tmpFile,function libConfigTestLoad(){
+      configuration.getConfig('serverPort').should.equal('4321');
+    });
     configuration.load(oldFile);
   });
 

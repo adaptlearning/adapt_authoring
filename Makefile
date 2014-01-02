@@ -16,8 +16,8 @@ endif
 MOCHA_OPTS= --check-leaks
 REPORTER = dot
 
-#test: test-core test-plugins
-test: test-plugins
+test: test-core test-plugins
+#test: test-plugins
 
 test-core:
 	@echo "Running Core Tests:"

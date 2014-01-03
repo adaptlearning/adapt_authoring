@@ -30,11 +30,18 @@ describe('contentmanager', function() {
   after (function (done) {
     // cleanup
     if (contentObj._id) {
-      var db = database.getDatabase();
-      db.destroy('course', { _id: contentObj._id }, done);
+      database.getDatabase(function(err, db){
+        if(err){
+          done();
+          return false;
+        }
+        
+        db.destroy('course', { _id: contentObj._id }, done);
+      });
+      return false;
+    }else{
+     done(); 
     }
-    
-    done();
   });
 
   it ('should allow me to create some content', function (done) {

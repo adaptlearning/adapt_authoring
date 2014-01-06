@@ -51,6 +51,7 @@
     "grunt-open": "~0.2.2",
     "grunt-bower-requirejs": "~0.7.1",
     "grunt-requirejs-bundle": "~0.0.7",
-    "grunt-contrib-copy": "~0.4.1"
+    "grunt-contrib-copy": "~0.4.1",
+    "rimraf": "~2.2.5"
   }
 }

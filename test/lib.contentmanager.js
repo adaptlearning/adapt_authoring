@@ -32,15 +32,11 @@ describe('contentmanager', function() {
     if (contentObj._id) {
       database.getDatabase(function(err, db){
         if(err){
-          done();
-          return false;
+          return done(err);
         }
         
         db.destroy('course', { _id: contentObj._id }, done);
       });
-      return false;
-    }else{
-     done(); 
     }
   });
 

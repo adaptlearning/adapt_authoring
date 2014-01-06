@@ -1,7 +1,8 @@
 var path = require('path'),
     fs = require('fs'),
     should = require('should'),
-    builder = require('../../../../');
+    builder = require('../../../../'),
+    app = false;
 
 var helper = {
   fileContent: "0123456789",
@@ -9,9 +10,11 @@ var helper = {
   dirPath: 'tmpdir' + Math.round(new Date().getTime() / 1000)
 };
 
+
+
 after(function () {
   // cleanup - make sure to remove tmp file and dir in case of failure
-  var app = builder();
+  
   var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.filePath);
   if (fs.existsSync(fullPath)) {
     fs.unlinkSync(fullPath);
@@ -23,10 +26,15 @@ after(function () {
   }
 });
 
+before(function(done){
+  app = builder();
+  done();  
+});
+
 describe('plugin:filestorage/localfs', function() {
   it ('should implement FileStorage#getFileContents', function () {
     // add a file and put contents
-    var app = builder();
+    
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.filePath);
     fs.writeFileSync(fullPath, helper.fileContent);
 
@@ -44,29 +52,35 @@ describe('plugin:filestorage/localfs', function() {
   });
 
   it ('should implement FileStorage#putFileContents', function (done) {
-    var app = builder();
+    
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.filePath);
-
+    
     fs.exists(fullPath,function(exists){
-      console.log('Checked for file :: ' + fullPath + ' ' + exists);
-      exists.should.be.false;
-      
+      if(exists){
+        fs.unlinkSync(fullPath); 
+      }
+  
       app.filestorage.getStorage('localfs', function (error, localfs) {
         should.not.exist(error);
-        localfs.putFileContents(helper.filePath, { flag: 'w' }, helper.fileContent, function (error, written, buffer) {
+        console.log('putFileContent Test ' + fullPath);
+        localfs.putFileContents(helper.filePath, { flag: 'w' }, helper.fileContent, function (error) {
           should.not.exist(error);
-  
-          // remove the file
-          fs.unlinkSync(fullPath);
-          done();
+          
+          fs.exists(fullPath, function(exists){
+            exists.should.be.true 
+            // remove the file
+            fs.unlink(fullPath,done);
+          });
         });
       });
     });
+
+    
   });
 
   it ('should implement FileStorage#deleteFile', function (done) {
     // add a file and put contents
-    var app = builder();
+    
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.filePath);
     fs.writeFileSync(fullPath, helper.fileContent);
 
@@ -82,7 +96,7 @@ describe('plugin:filestorage/localfs', function() {
 
   it ('should implement FileStorage#moveFile', function (done) {
     // add a file and put contents
-    var app = builder();
+    
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.filePath);
     fs.writeFileSync(fullPath, helper.fileContent);
 
@@ -104,7 +118,7 @@ describe('plugin:filestorage/localfs', function() {
   });
 
   it ('should implement FileStorage#createDirectory', function (done) {
-    var app = builder();
+    
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.dirPath);
 
     app.filestorage.getStorage('localfs', function (error, localfs) {
@@ -126,7 +140,7 @@ describe('plugin:filestorage/localfs', function() {
   });
 
   it ('should implement FileStorage#removeDirectory', function (done) {
-    var app = builder();
+    
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.dirPath);
     fs.mkdirSync(fullPath);
 
@@ -141,7 +155,7 @@ describe('plugin:filestorage/localfs', function() {
   });
 
   it ('should implement FileStorage#getDirectoryListing', function (done) {
-    var app = builder();
+    
     var fullDirPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.dirPath);
     var fullFilePath = path.join(fullDirPath, helper.filePath);
 
@@ -166,7 +180,7 @@ describe('plugin:filestorage/localfs', function() {
   });
 
   it ('should implement FileStorage#getFileStats', function (done) {
-    var app = builder();
+    
     var fullPath = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'), helper.filePath);
     fs.writeFileSync(fullPath);
 

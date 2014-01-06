@@ -13,7 +13,7 @@ else
    endif
 endif
 
-MOCHA_OPTS= --check-leaks
+MOCHA_OPTS= 
 REPORTER = dot
 
 test: test-core test-plugins

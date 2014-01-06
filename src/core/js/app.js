@@ -1,9 +1,11 @@
 require([
     'coreJS/adaptbuilder',
+    'coreViews/navigationView',  
     'coreJS/router',
+    'bootstrap',
     'templates'
-], function (AdaptBuilder, Router) {
+], function (AdaptBuilder, NavigationView, Router) {
     
     AdaptBuilder.initialize();
-  
+
 });

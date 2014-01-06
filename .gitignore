@@ -5,3 +5,4 @@ conf/config.json
 /build
 /nbproject/
 /.settings
+/src/templates/templates.js

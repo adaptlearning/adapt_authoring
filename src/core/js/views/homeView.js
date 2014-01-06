@@ -1,9 +1,11 @@
 define(["backbone", "handlebars"], function(Backbone, Handlebars){
 
   var HomeView = Backbone.View.extend({
+    
     tagName: "div",
     
-    className: "test",
+    className: "home",
+    
     events: {
       'click a' : 'gotoLogin'
     },

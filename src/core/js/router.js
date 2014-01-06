@@ -4,41 +4,55 @@ define(function(require) {
       HomeView = require('coreViews/homeView'),
       LoginView = require('coreViews/loginView'),
       ForgotPasswordView = require('coreViews/forgotPasswordView'),
-      LoginModel = require('coreModels/loginModel');
+      DashboardView = require('coreViews/dashboardView'),
+      AdaptBuilder = require('coreJS/adaptBuilder'),
+      ProjectCollection = require('coreCollections/projectCollection'),
+      ProjectListView = require('coreViews/projectListView'),
+      DashboardMenuView = require('coreViews/dashboardMenuView');
   
   var Router = Backbone.Router.extend({
     
     routes: { 
-      ""              : "index",    //
-      "home"          : "index",    // #home
-      "login"         : "login",    // #login
+      ""              : "index",          //
+      "home"          : "index",          // #home
+      "login"         : "login",          // #login
       "login/forgot"  : "forgotpassword", // #login/forgot
-      "register"      : "register"  // #register
+      "register"      : "register",       // #register
+      "dashboard"     : "dashboard",      // #dashboard
+      "module"        : "module"          // #module
     },
 
-    initialize: function() {
-     console.log('In init');
-    },
+    initialize: function() {},
 
     _renderView: function(view) {
       $("#app").html(view.render().el);
     },
 
     index: function() {
-      console.log('In index');
       var view = new HomeView();
       this._renderView(view);
     },
 
     login: function() {
-      console.log('Login');
-      var view = new LoginView({model:new LoginModel()});
+      var view = new LoginView();
       this._renderView(view);
     },
 
     forgotpassword: function() {
       var view = new ForgotPasswordView();
       this._renderView(view);
+    },
+    
+    dashboard: function() {
+      var dashboardView = new DashboardView();
+      this._renderView(dashboardView);
+      
+      var dashboardMenuView = new DashboardMenuView();
+      $("#dashboardMenu").html(dashboardMenuView.render().el);
+      
+      var projects = new ProjectCollection();
+      var projectListView = new ProjectListView({collection: projects});
+      $("#projects").html(projectListView.render().el);
     }
 
   });

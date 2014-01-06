@@ -1,6 +1,6 @@
 body {
   height: 100%;
-    padding-top: 15px;
+    padding-top: 50px;
     font-size: 12px
   }
   .main {
@@ -64,3 +64,14 @@ body {
           padding-right: 20px;
         }
       }
+
+/* Project styles */
+div.project {
+  height:200px;
+}
+div.projectDetail {
+  background-color: #F5F5F5;
+  border: solid #E7E7E7 1px;
+  height:180px;
+  cursor:pointer;
+}

@@ -2,7 +2,7 @@
 /tmp
 conf/config.json
 .project
-/build
+/frontend/build
 /nbproject/
 /.settings
-/src/templates/templates.js
+/frontend/src/templates/templates.js

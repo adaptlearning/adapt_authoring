@@ -9,22 +9,22 @@ module.exports = function(grunt) {
           files: [
             {
               expand: true, 
-              src: ['src/core/js/scriptLoader.js'], 
-              dest: 'build/adaptbuilder/js/', 
+              src: ['frontend/src/core/js/scriptLoader.js'], 
+              dest: 'frontend/build/adaptbuilder/js/', 
               filter: 'isFile', 
               flatten: true
             },
             {
               expand: true, 
-              src: ['src/core/js/libraries/require.js', 'src/core/js/libraries/modernizr.js'], 
-              dest: 'build/libraries/', 
+              src: ['frontend/src/core/js/libraries/require.js', 'frontend/src/core/js/libraries/modernizr.js'], 
+              dest: 'frontend/build/libraries/', 
               filter: 'isFile', 
               flatten: true
             },
             {
               expand: true,
-              src: ['src/data/*'],
-              dest: 'build/data/',
+              src: ['frontend/src/data/*'],
+              dest: 'frontend/build/data/',
               filter: 'isFile', 
               flatten: true
             },
@@ -34,7 +34,7 @@ module.exports = function(grunt) {
       less: {
         dist: {
           files: {
-            'build/adaptbuilder/css/adapt.css': 'src/**/*.css'
+            'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/**/*.css'
           }
         },
         options: {
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
             partialsPathRegex: /\/partials\//
           },
           files: {
-            "src/templates/templates.js": "src/**/*.hbs"
+            "frontend/src/templates/templates.js": "frontend/src/**/*.hbs"
           }
         }
       },
@@ -62,9 +62,9 @@ module.exports = function(grunt) {
         dev: {
           options: {
             name: "core/js/app",
-            baseUrl: "src",
+            baseUrl: "frontend/src",
             mainConfigFile: "./config.js",
-            out: "./build/adaptbuilder/js/adaptbuilder.min.js",
+            out: "./frontend/build/adaptbuilder/js/adaptbuilder.min.js",
             generateSourceMaps: true,
             preserveLicenseComments:false,
             optimize: "none"
@@ -73,15 +73,15 @@ module.exports = function(grunt) {
         compile: {
           options: {
             name: "core/js/app",
-            baseUrl: "src",
+            baseUrl: "frontend/src",
             mainConfigFile: "./config.js",
-            out: "./build/adaptbuilder/js/adaptbuilder.min.js",
+            out: "./frontend/build/adaptbuilder/js/adaptbuilder.min.js",
             optimize:"uglify2"
           }
         }
       },
       watch: {
-        files: ['src/**/*.hbs'],
+        files: ['frontend/src/**/*.hbs'],
         tasks: ['handlebars']
       }
     });

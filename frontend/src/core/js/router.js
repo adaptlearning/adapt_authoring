@@ -5,7 +5,7 @@ define(function(require) {
       LoginView = require('coreViews/loginView'),
       ForgotPasswordView = require('coreViews/forgotPasswordView'),
       DashboardView = require('coreViews/dashboardView'),
-      AdaptBuilder = require('coreJS/adaptBuilder'),
+      AdaptBuilder = require('coreJS/adaptbuilder'),
       ProjectCollection = require('coreCollections/projectCollection'),
       ProjectListView = require('coreViews/projectListView'),
       DashboardMenuView = require('coreViews/dashboardMenuView');

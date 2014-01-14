@@ -45,7 +45,8 @@ describe('contentmanager', function() {
       .put('/api/content/course')
       .set('Accept', 'application/json')
       .send({
-        name: 'some name'
+        name: 'some name',
+        tenantId : '0'
       })
       .expect(200)
       .expect('Content-Type', /json/)

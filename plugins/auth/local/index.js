@@ -76,6 +76,13 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
   })(req, res, next);
 };
 
+LocalAuth.prototype.disavow = function (req, res, next) {
+  req.logout();
+  res.statusCode = 200;
+  res.json({ success: true });
+  return res.end();
+};
+
 LocalAuth.prototype.registerUser = function (req, res, next) {
   // presently, all we need is email and password
   var user = {

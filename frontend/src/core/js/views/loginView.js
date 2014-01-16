@@ -15,14 +15,18 @@ define(function(require) {
     className: "login",
 
     events: {
+      "click a#linkDash" : "gotoDashboard",
       "click a#linkRegister" : "gotoRegister",
       "click a#linkForgotPassword" : "gotoForgotPassword",
       "click button":"submitLoginDetails"
     },
     
     render: function() {
+      //update the model
+      this.model.fetch();
+      
       var template = Handlebars.templates['login'];
-      this.$el.html(template());
+      this.$el.html(template(this.model.toJSON()));
       return this;
     },
 
@@ -41,6 +45,7 @@ define(function(require) {
       // Do some crazy validation here
       var inputUsernameEmail = $("#inputUsernameEmail", this.$el).val();
       var inputPassword = $("#inputPassword", this.$el).val();
+      var mdl = this.model;
       
       $.post(
         '/api/login',
@@ -49,6 +54,7 @@ define(function(require) {
           password:inputPassword
         },
         function(authenticated) {
+          mdl.fetch();
           if (authenticated.success) {
             Backbone.history.navigate('/dashboard', {trigger: true});
           } else {
@@ -57,6 +63,11 @@ define(function(require) {
       }).fail(function() {
         AdaptBuilder.trigger('loginFailed');
       });
+    },
+   
+    gotoDashboard: function () {
+      e.preventDefault(); 
+      Backbone.history.navigate('/dashboard', {trigger: true});
     },
    
     loginFailed: function() {

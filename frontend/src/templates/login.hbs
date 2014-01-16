@@ -2,6 +2,9 @@
 
     <div class="main">
       
+      {{#if authenticated}}
+      <h3>You are logged in, please got the <a id="linkDash" href="/#dashboard">Dashboard</a></h3>
+      {{else}}
       <h3>Please Log In, or <a id="linkRegister" href="/register">register</a></h3>
       
       <div id="loginFailed" class="alert alert-danger hide">
@@ -40,7 +43,7 @@
           Log In
         </button>
       </form>
-    
+      {{/if}}
     </div>
     
   </div>

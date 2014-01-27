@@ -25,7 +25,7 @@ define(function(require) {
       //update the model
       this.model.fetch();
       
-      var template = Handlebars.templates['login'];
+      var template = Handlebars.templates.login;
       this.$el.html(template(this.model.toJSON()));
       return this;
     },

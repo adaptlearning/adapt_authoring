@@ -18,8 +18,8 @@ var ProfileView = Backbone.View.extend({
     },
 
     render: function() {
-      var template = Handlebars.templates['profile'],
-          profileview = this;
+    var template = Handlebars.templates.profile,
+        profileview = this;
 
       //not great but the fetch can take a while http://stackoverflow.com/questions/9250523/how-to-wait-to-render-view-in-backbone-js-until-fetch-is-complete
       this.model.fetch().complete(function(){
@@ -33,10 +33,10 @@ var ProfileView = Backbone.View.extend({
       var $el = $(ev.target);
 
       switch( $el.attr('id') ) {
-          case 'inputPassword':
+          case 'profileViewInputPassword':
             //@todo : regex that thang
           break;
-          case 'confirmPassword':
+          case 'profileViewConfirmPassword':
             var val = $.trim($el.val());
 
             if( val !== ''){
@@ -62,7 +62,7 @@ var ProfileView = Backbone.View.extend({
       ev.preventDefault();
 
       switch( $el.attr('id') ){
-        case 'submitBtn':
+        case 'profileViewSubmitBtn':
 
           //@todo : proper validation of the password
           var newval = {};
@@ -79,7 +79,7 @@ var ProfileView = Backbone.View.extend({
             }
           });
         break;
-        case 'cancelBtn':
+        case 'profileViewCancelBtn':
           Backbone.history.navigate('/dashboard', {trigger: true});
         break;
       }

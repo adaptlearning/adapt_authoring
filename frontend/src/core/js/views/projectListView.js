@@ -26,9 +26,11 @@ define(["backbone", "handlebars", "coreViews/projectView"], function(Backbone, H
     },
 
     gotoProject: function (ev) {
+      var projectid = $(ev.currentTarget).data('projectid');
+
       ev.preventDefault();
-      //@todo : Get id dynamically and add to route
-      Backbone.history.navigate('/project/9', {trigger: true});
+
+      Backbone.history.navigate('/project/' + projectid, {trigger: true});
     }
 
   });

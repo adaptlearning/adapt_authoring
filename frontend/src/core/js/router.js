@@ -13,8 +13,7 @@ define(function(require) {
       ProjectCollection = require('coreCollections/projectCollection'),
       ProjectListView = require('coreViews/projectListView'),
       ProjectDetailView = require('coreViews/projectDetailView'),
-      ProjectModel = require('coreModels/projectModel'),
-      DashboardMenuView = require('coreViews/dashboardMenuView');
+      ProjectModel = require('coreModels/projectModel');
 
   var loginModel = new LoginModel();
 
@@ -70,11 +69,8 @@ define(function(require) {
       var dashboardView = new DashboardView({el:'#app'});
       dashboardView.render();
 
-      var dashboardMenuView = new DashboardMenuView({el:'#dashboardMenu'});
-      dashboardView.render();
-
       var projects = new ProjectCollection();
-      var projectListView = new ProjectListView({collection: projects, el:'#projects'});
+      var projectListView = new ProjectListView({collection: projects, el:dashboardView.$('#projects')});
       projectListView.render();
     },
 

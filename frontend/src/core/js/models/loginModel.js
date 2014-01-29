@@ -25,10 +25,30 @@ define(function(require) {
 
     logout: function (cback) {
       var mdl = this;
-      $.post('/api/logout',function(){
-        //mdl.fetch(); @todo timing issue
-        mdl.set('authenticated', false);
-      }).always(cback);
+      $.post(
+        '/api/logout',
+        function(){
+        mdl.fetch().always(function(){
+          //mdl.set('authenticated', false);
+          cback();
+        });
+      });
+    },
+
+    login: function (username, password, cback) {
+      var mdl = this;
+      $.post(
+        '/api/login',
+        {
+          email:username,
+          password:password
+        },
+        function(authenticated) {
+          mdl.fetch();
+          cback(null, authenticated);
+      }).fail( function() {
+        cback(new Error('Request failed'));
+      });
     },
 
     url:"/api/authcheck"

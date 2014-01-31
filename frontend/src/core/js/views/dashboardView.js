@@ -17,8 +17,16 @@ define(["backbone", "handlebars"], function(Backbone, Handlebars){
     },
 
     formclick: function (ev) {
+      var type = $(ev.target).data('action');
       ev.preventDefault();
-      console.warn('Form submit not captured');
+      switch( type ) {
+          case 'new':
+            Backbone.history.navigate('/project/edit/-1', {trigger: true});
+          break;
+          case 'search':
+            //@todo implement course search
+          break;
+      }
     }
 
   });

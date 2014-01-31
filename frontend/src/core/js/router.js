@@ -13,7 +13,8 @@ define(function(require) {
       ProjectCollection = require('coreCollections/projectCollection'),
       ProjectListView = require('coreViews/projectListView'),
       ProjectDetailView = require('coreViews/projectDetailView'),
-      ProjectModel = require('coreModels/projectModel');
+      ProjectModel = require('coreModels/projectModel'),
+      ProjectOverview = require('coreViews/projectOverview');
 
   var loginModel = new LoginModel();
 
@@ -24,16 +25,17 @@ define(function(require) {
   var Router = Backbone.Router.extend({
 
     routes: {
-      ""              : "index",          //
-      "home"          : "index",          // #home
-      "login"         : "login",          // #login
-      "logout"        : "logout",         // #logout
-      "login/forgot"  : "forgotpassword", // #login/forgot
-      "profile"       : "profile",        // #profile
-      "project/:id"   : "project",        // #project/id
-      "register"      : "register",       // #register
-      "dashboard"     : "dashboard",      // #dashboard
-      "module"        : "module"          // #module
+      ""                : "index",          //
+      "home"            : "index",          // #home
+      "login"           : "login",          // #login
+      "logout"          : "logout",         // #logout
+      "login/forgot"    : "forgotpassword", // #login/forgot
+      "profile"         : "profile",        // #profile
+      "project/edit/:id": "projectEdit",    // #project/edit/id
+      "project/view/:id": "projectView",    // #project/view/id
+      "register"        : "register",       // #register
+      "dashboard"       : "dashboard",      // #dashboard
+      "module"          : "module"          // #module
     },
 
     initialize: function() {
@@ -82,13 +84,27 @@ define(function(require) {
       profileView.render();
     },
 
-    project: function (id) {
+    projectEdit: function (id) {
       console.log('Show project details for :: ' + id);
-      var projectModel = new ProjectModel({id: id});
-      projectModel.url = '/api/content/project/' + id; //@todo : could be clevererer
+
+      id = id==-1?null:{id:id};
+
+      var projectModel = new ProjectModel(id);
 
       var projectDetailView = new ProjectDetailView({el: '#app', model: projectModel});
       projectDetailView.render();
+    },
+
+    projectView: function (id) {
+      console.log('Show project content for :: ' + id);
+
+      var projectModel = new ProjectModel({id:id});
+
+      var projectOverview = new ProjectOverview({el: '#app', model: projectModel});
+      projectOverview.render();
+
+      var projectContentListView = new ProjectContentListView({el:'.project-content-view'});
+
     }
 
   });

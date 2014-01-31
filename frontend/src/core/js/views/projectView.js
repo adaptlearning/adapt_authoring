@@ -1,3 +1,4 @@
+//@TODO course|project
 define(["backbone", "handlebars"], function(Backbone, Handlebars){
 
   var ProjectView = Backbone.View.extend({

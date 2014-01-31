@@ -3,6 +3,7 @@ var builder = require('./lib/application'),
     winston = require('winston');
 
 var app = builder();
+
 app.start();
 
 // add a route to quickly set up an admin user.

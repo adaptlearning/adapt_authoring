@@ -1,17 +1,18 @@
 var mongoose = require('mongoose');
 var Schema =  mongoose.Schema;
 
-var CourseSchema = new Schema({
+var GraphicSchema = new Schema({
   "name": {
     "type": "String",
     "required": true
   },
-  "description": {
-    "type": "String"
+  "alt" : {
+    "type" : "String",
+    "required" : true
   },
-  "deleted": {
-    "type": "Boolean",
-    "default": false
+  "src" : {
+    "type" : "String",
+    "required" : true
   },
   "lastUpdated" : {
     "type" : "Date"
@@ -19,16 +20,19 @@ var CourseSchema = new Schema({
   "createdAt" : {
     "type" : "Date"
   },
+  "_courseId" : {
+    "type" : "ObjectId"
+  },
   "tenantId" : {
-    "type" : "String"/*,
-    "required" : true*/
+    "type" : "String",
+    "required" : true
   },
   "createdBy" : {
     "type" : "ObjectId"
   }
 });
 
-CourseSchema.pre('save', function (next) {
+GraphicSchema.pre('save', function (next) {
   if (!this.createdAt) {
     this.createdAt = new Date();
   }
@@ -44,4 +48,4 @@ CourseSchema.pre('save', function (next) {
   next();
 });
 
-module.exports = CourseSchema;
+module.exports = GraphicSchema;

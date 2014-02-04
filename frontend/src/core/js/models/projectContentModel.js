@@ -3,23 +3,26 @@ define(["backbone", "coreJS/adaptbuilder"], function(Backbone, AdaptBuilder) {
 
     var ProjectModel = Backbone.Model.extend({
 
-      idAttribute: '_id',
+      defaults: {
+        type:'page' //@todo best default
+      },
 
       initialize: function(options) {
           this.on('sync', this.loadedData, this);
       },
 
       url: function () {
+        var stRet = '/api/content/'+ this.type + '/';
 
         if(this.isNew()){
-          return '/api/content/course';
+          return stRet;
         } else {
-          return '/api/content/course/' + this.id; //@todo : could be clevererer
+          return stRet + this.id;
         }
       },
 
       loadedData: function() {
-          console.log('course model loaded');
+          console.log('course content model loaded');
           AdaptBuilder.trigger('loaded:data');
       }
 

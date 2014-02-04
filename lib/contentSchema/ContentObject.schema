@@ -1,17 +1,31 @@
 var mongoose = require('mongoose');
 var Schema =  mongoose.Schema;
 
-var CourseSchema = new Schema({
+var ContentObjectSchema = new Schema({
   "name": {
     "type": "String",
     "required": true
   },
-  "description": {
-    "type": "String"
+  "title" : {
+    "type" : "String",
+    "required" : true
   },
+  "body" : {
+    "type" : "String",
+    "required" : true
+  },
+  /* array of graphic objects */
+  "graphic" : [Schema.Types.ObjectId],
   "deleted": {
     "type": "Boolean",
     "default": false
+  },
+  "linkText" : {
+    "type" : "String"
+  },
+  "_type" : {
+    "type" : "String",
+    "default" : "page"
   },
   "lastUpdated" : {
     "type" : "Date"
@@ -19,16 +33,22 @@ var CourseSchema = new Schema({
   "createdAt" : {
     "type" : "Date"
   },
+  "_parentId" : {
+    "type" : "ObjectId"
+  },
+  "_courseId" : {
+    "type" : "ObjectId"
+  },
   "tenantId" : {
-    "type" : "String"/*,
-    "required" : true*/
+    "type" : "String",
+    "required" : true
   },
   "createdBy" : {
     "type" : "ObjectId"
   }
 });
 
-CourseSchema.pre('save', function (next) {
+ContentObjectSchema.pre('save', function (next) {
   if (!this.createdAt) {
     this.createdAt = new Date();
   }
@@ -44,4 +64,4 @@ CourseSchema.pre('save', function (next) {
   next();
 });
 
-module.exports = CourseSchema;
+module.exports = ContentObjectSchema;

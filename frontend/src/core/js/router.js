@@ -14,7 +14,11 @@ define(function(require) {
       ProjectListView = require('coreViews/projectListView'),
       ProjectDetailView = require('coreViews/projectDetailView'),
       ProjectModel = require('coreModels/projectModel'),
-      ProjectOverview = require('coreViews/projectOverview');
+      ProjectOverview = require('coreViews/projectOverview'),
+      ProjectContentListView = require('coreViews/projectContentListView'),
+      ProjectContentCollection = require('coreCollections/projectContentCollection'),
+      ProjectOverviewMenu = require('coreViews/projectOverviewMenu'),
+      ProjectOverviewMenuModel = require('coreModels/projectOverviewMenuModel');
 
   var loginModel = new LoginModel();
 
@@ -101,10 +105,17 @@ define(function(require) {
       var projectModel = new ProjectModel({id:id});
 
       var projectOverview = new ProjectOverview({el: '#app', model: projectModel});
+
+      projectOverview.on('rendered',function () {
+        var projectContents = new ProjectContentCollection({projectid:id});
+        var projectContentListView = new ProjectContentListView({collection: projectContents, el:projectOverview.$('.project-content-view')});
+        var projectOverviewMenuModel = new ProjectOverviewMenuModel();
+        var projectOverviewMenu = new ProjectOverviewMenu({ el:projectOverview.$('.project-content-menu'), model: projectOverviewMenuModel });
+        projectOverviewMenu.render();
+
+      });
+
       projectOverview.render();
-
-      var projectContentListView = new ProjectContentListView({el:'.project-content-view'});
-
     }
 
   });

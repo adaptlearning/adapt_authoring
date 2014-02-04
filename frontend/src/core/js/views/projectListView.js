@@ -33,15 +33,26 @@ define(["backbone", "handlebars", "coreViews/projectView"], function(Backbone, H
     },
 
     gotoProject: function (ev) {
-      var projectid = $(ev.target).parent().data('projectid');
+      var $el = $(ev.target);
+      if( ! $el.hasClass('project') ) {
+        $el = $el.closest('.project');
+      }
+      var projectid = $el.data('projectid');
+
       ev.preventDefault();
+
       Backbone.history.navigate('/project/view/' + projectid, {trigger: true});
     },
 
     editProject: function (ev) {
-      var projectid = $(ev.currentTarget).parent().parent().data('projectid'); //@todo replace with .parent('.project')
+      var $el = $(ev.target);
+      if( ! $el.hasClass('project') ) {
+        $el = $el.closest('.project');
+      }
+      var projectid = $el.data('projectid');
 
       ev.preventDefault();
+      ev.stopPropagation();
 
       Backbone.history.navigate('/project/edit/' + projectid, {trigger: true});
     }

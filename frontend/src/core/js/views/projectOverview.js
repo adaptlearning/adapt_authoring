@@ -23,8 +23,10 @@ var ProjectOverview = Backbone.View.extend({
 
       //not great but the fetch can take a while http://stackoverflow.com/questions/9250523/how-to-wait-to-render-view-in-backbone-js-until-fetch-is-complete
       projectOverview.model.fetch().complete(function(){
-        //@todo once connected up remove
-        projectOverview.$el.html(template(projectOverview.model.toJSON()));
+
+        projectOverview.$el.html(template( projectOverview.model.toJSON() ));
+        projectOverview.trigger('rendered');
+
       });
 
       return this;

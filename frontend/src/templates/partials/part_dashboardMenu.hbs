@@ -12,6 +12,10 @@
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse" id="menu-navbar-collapse-1">
     <ul class="nav navbar-nav">
+      <li>
+        <button id="" type="button" class="btn btn-success navbar-btn" data-action="new">New Project</button>
+      </li>
+      <!-- @todo allow sorting -->
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sort by... <b class="caret"></b></a>
         <ul class="dropdown-menu">
@@ -29,11 +33,12 @@
         </ul>
       </li>
     </ul>
-    <form class="navbar-form navbar-right" role="search">
+    <!-- @todo enable searching -->
+    <form class="navbar-form navbar-right" role="search" data-action="search">
       <div class="form-group">
         <input type="text" class="form-control" placeholder="Search your modules">
       </div>
-      <button type="submit" class="btn btn-default">Submit</button>
+      <button type="submit" class="btn btn-default navbar-btn">Submit</button>
     </form>
   </div><!-- /.navbar-collapse -->
 </nav>

@@ -1,7 +1,7 @@
 //@TODO course|project
 define(["backbone", "handlebars"], function(Backbone, Handlebars){
 
-  var ProjectView = Backbone.View.extend({
+  var ProjectContentView = Backbone.View.extend({
 
     tagName: "div",
 
@@ -9,19 +9,20 @@ define(["backbone", "handlebars"], function(Backbone, Handlebars){
 
     attributes: function () {
       return {
-        'data-projectid': this.model.get('_id')
+        'data-contentid': this.model.get('_id'),
+        'data-type': this.model.get('type')
       };
     },
 
     render: function() {
 
-      var template = Handlebars.templates.project;
+      var template = Handlebars.templates.projectContent;
       this.$el.html(template(this.model.toJSON()));
       return this;
     }
 
   });
 
-  return ProjectView;
+  return ProjectContentView;
 
 });

@@ -14,7 +14,11 @@ define(function(require) {
       ProjectListView = require('coreViews/projectListView'),
       ProjectDetailView = require('coreViews/projectDetailView'),
       ProjectModel = require('coreModels/projectModel'),
-      DashboardMenuView = require('coreViews/dashboardMenuView');
+      ProjectOverview = require('coreViews/projectOverview'),
+      ProjectContentListView = require('coreViews/projectContentListView'),
+      ProjectContentCollection = require('coreCollections/projectContentCollection'),
+      ProjectOverviewMenu = require('coreViews/projectOverviewMenu'),
+      ProjectOverviewMenuModel = require('coreModels/projectOverviewMenuModel');
 
   var loginModel = new LoginModel();
 
@@ -25,16 +29,17 @@ define(function(require) {
   var Router = Backbone.Router.extend({
 
     routes: {
-      ""              : "index",          //
-      "home"          : "index",          // #home
-      "login"         : "login",          // #login
-      "logout"        : "logout",         // #logout
-      "login/forgot"  : "forgotpassword", // #login/forgot
-      "profile"       : "profile",        // #profile
-      "project/:id"   : "project",        // #project/id
-      "register"      : "register",       // #register
-      "dashboard"     : "dashboard",      // #dashboard
-      "module"        : "module"          // #module
+      ""                : "index",          //
+      "home"            : "index",          // #home
+      "login"           : "login",          // #login
+      "logout"          : "logout",         // #logout
+      "login/forgot"    : "forgotpassword", // #login/forgot
+      "profile"         : "profile",        // #profile
+      "project/edit/:id": "projectEdit",    // #project/edit/id
+      "project/view/:id": "projectView",    // #project/view/id
+      "register"        : "register",       // #register
+      "dashboard"       : "dashboard",      // #dashboard
+      "module"          : "module"          // #module
     },
 
     initialize: function() {
@@ -70,11 +75,8 @@ define(function(require) {
       var dashboardView = new DashboardView({el:'#app'});
       dashboardView.render();
 
-      var dashboardMenuView = new DashboardMenuView({el:'#dashboardMenu'});
-      dashboardView.render();
-
       var projects = new ProjectCollection();
-      var projectListView = new ProjectListView({collection: projects, el:'#projects'});
+      var projectListView = new ProjectListView({collection: projects, el:dashboardView.$('#projects')});
       projectListView.render();
     },
 
@@ -86,13 +88,34 @@ define(function(require) {
       profileView.render();
     },
 
-    project: function (id) {
+    projectEdit: function (id) {
       console.log('Show project details for :: ' + id);
-      var projectModel = new ProjectModel({id: id});
-      projectModel.url = '/api/content/project/' + id; //@todo : could be clevererer
+
+      id = id==-1?null:{id:id};
+
+      var projectModel = new ProjectModel(id);
 
       var projectDetailView = new ProjectDetailView({el: '#app', model: projectModel});
       projectDetailView.render();
+    },
+
+    projectView: function (id) {
+      console.log('Show project content for :: ' + id);
+
+      var projectModel = new ProjectModel({id:id});
+
+      var projectOverview = new ProjectOverview({el: '#app', model: projectModel});
+
+      projectOverview.on('rendered',function () {
+        var projectContents = new ProjectContentCollection({projectid:id});
+        var projectContentListView = new ProjectContentListView({collection: projectContents, el:projectOverview.$('.project-content-view')});
+        var projectOverviewMenuModel = new ProjectOverviewMenuModel();
+        var projectOverviewMenu = new ProjectOverviewMenu({ el:projectOverview.$('.project-content-menu'), model: projectOverviewMenuModel });
+        projectOverviewMenu.render();
+
+      });
+
+      projectOverview.render();
     }
 
   });

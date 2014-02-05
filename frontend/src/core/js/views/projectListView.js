@@ -1,3 +1,4 @@
+//@TODO course|project
 define(["backbone", "handlebars", "coreViews/projectView"], function(Backbone, Handlebars, ProjectView){
 
   var ProjectListView = Backbone.View.extend({
@@ -7,7 +8,8 @@ define(["backbone", "handlebars", "coreViews/projectView"], function(Backbone, H
     class: 'row',
 
     events : {
-      'click .project' : 'gotoProject'
+      'click .project' : 'gotoProject',
+      'click .project .editlink' : 'editProject'
     },
 
     initialize: function(){
@@ -16,7 +18,12 @@ define(["backbone", "handlebars", "coreViews/projectView"], function(Backbone, H
     },
 
     render: function() {
-      this.collection.forEach(this.addOne, this);
+      if( this.collection.length === 0 ) {
+        this.$el.html('<p>No Courses</p>'); //@todo remove text from code
+      } else {
+        this.$el.html(''); //@todo sort this out so that No Courses isn't printed
+        this.collection.forEach(this.addOne, this);
+      }
       return this;
     },
 
@@ -26,11 +33,29 @@ define(["backbone", "handlebars", "coreViews/projectView"], function(Backbone, H
     },
 
     gotoProject: function (ev) {
-      ev.preventDefault();
-      //@todo : Get id dynamically and add to route
-      Backbone.history.navigate('/project/9', {trigger: true});
-    }
+      var $el = $(ev.target);
+      if( ! $el.hasClass('project') ) {
+        $el = $el.closest('.project');
+      }
+      var projectid = $el.data('projectid');
 
+      ev.preventDefault();
+
+      Backbone.history.navigate('/project/view/' + projectid, {trigger: true});
+    },
+
+    editProject: function (ev) {
+      var $el = $(ev.target);
+      if( ! $el.hasClass('project') ) {
+        $el = $el.closest('.project');
+      }
+      var projectid = $el.data('projectid');
+
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      Backbone.history.navigate('/project/edit/' + projectid, {trigger: true});
+    }
   });
 
   return ProjectListView;

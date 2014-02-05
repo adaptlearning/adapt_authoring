@@ -34,7 +34,7 @@ describe('contentmanager', function() {
         if(err){
           return done(err);
         }
-        
+
         db.destroy('course', { _id: contentObj._id }, done);
       });
     }
@@ -42,7 +42,7 @@ describe('contentmanager', function() {
 
   it ('should allow me to create some content', function (done) {
     agent
-      .put('/api/content/course')
+      .post('/api/content/course')
       .set('Accept', 'application/json')
       .send({
         name: 'some name',
@@ -63,7 +63,7 @@ describe('contentmanager', function() {
 
   it ('should be unsuccessful when attempting to create some unknown content type', function (done) {
     agent
-      .put('/api/content/iwillneverbeacontenttype')
+      .post('/api/content/iwillneverbeacontenttype')
       .set('Accept', 'application/json')
       .send({
         name: 'some name'
@@ -100,7 +100,7 @@ describe('contentmanager', function() {
 
   it ('should allow me to retrieve an array of content items', function (done) {
     agent
-      .get('/api/content/courses')
+      .get('/api/content/course')
       .set('Accept', 'application/json')
       .send()
       .expect(200)
@@ -117,7 +117,7 @@ describe('contentmanager', function() {
 
   it ('should allow me to update a content item', function (done) {
     agent
-      .post('/api/content/course/' + contentObj._id)
+      .put('/api/content/course/' + contentObj._id)
       .set('Accept', 'application/json')
       .send({
         name: "some different name"

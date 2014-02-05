@@ -10,21 +10,19 @@ define(function(require) {
       this.listenTo(AdaptBuilder, 'loginFailed', this.loginFailed);
     },
 
-    tagName: "div",
-     
-    className: "login",
+   tagName: "div",
 
     events: {
-      "click a#linkDash" : "gotoDashboard",
-      "click a#linkRegister" : "gotoRegister",
-      "click a#linkForgotPassword" : "gotoForgotPassword",
-      "click button":"submitLoginDetails"
+      "click .loginForm a#linkDash" : "gotoDashboard",
+      "click .loginForm a#linkRegister" : "gotoRegister",
+      "click .loginForm a#linkForgotPassword" : "gotoForgotPassword",
+      "click .loginForm button":"submitLoginDetails"
     },
-    
+
     render: function() {
       //update the model
       this.model.fetch();
-      
+
       var template = Handlebars.templates.login;
       this.$el.html(template(this.model.toJSON()));
       return this;
@@ -42,34 +40,25 @@ define(function(require) {
 
     submitLoginDetails: function(e) {
       e.preventDefault();
-      // Do some crazy validation here
+      //Do some crazy validation here
       var inputUsernameEmail = $("#inputUsernameEmail", this.$el).val();
       var inputPassword = $("#inputPassword", this.$el).val();
       var mdl = this.model;
-      
-      $.post(
-        '/api/login',
-        {
-          email:inputUsernameEmail,
-          password:inputPassword
-        },
-        function(authenticated) {
-          mdl.fetch();
-          if (authenticated.success) {
-            Backbone.history.navigate('/dashboard', {trigger: true});
-          } else {
-             AdaptBuilder.trigger('loginFailed');
-          }
-      }).fail(function() {
-        AdaptBuilder.trigger('loginFailed');
+
+      mdl.login(inputUsernameEmail, inputPassword, function(err, result){
+        if( err || !result.success) {
+          AdaptBuilder.trigger('loginFailed');
+        } else {
+          Backbone.history.navigate('/dashboard', {trigger: true});
+        }
       });
     },
-   
+
     gotoDashboard: function () {
-      e.preventDefault(); 
+      e.preventDefault();
       Backbone.history.navigate('/dashboard', {trigger: true});
     },
-   
+
     loginFailed: function() {
       $('#loginFailed').removeClass('hide');
     }

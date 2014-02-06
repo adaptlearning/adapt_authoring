@@ -36,6 +36,13 @@ Finally, you should create a config.json file in the conf/ directory. In most ca
 
 ## Run
 
+To build the codebase prior to launching the site:
+
+```
+grunt dev
+```
+
+
 To run the server:
 
 ```

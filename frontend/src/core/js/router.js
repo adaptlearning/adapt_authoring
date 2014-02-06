@@ -1,36 +1,15 @@
 define(function(require) {
 
   var Backbone = require('backbone'),
-      HomeView = require('coreViews/homeView'),
       LoginView = require('coreViews/loginView'),
-      LogoutView = require('coreViews/logoutView'),
-      LoginModel = require('coreModels/loginModel'),
-      ProfileView = require('coreViews/profileView'),
-      ProfileModel = require('coreModels/profileModel'),
-      ForgotPasswordView = require('coreViews/forgotPasswordView'),
       DashboardView = require('coreViews/dashboardView'),
-      AdaptBuilder = require('coreJS/adaptbuilder'),
-      ProjectCollection = require('coreCollections/projectCollection'),
-      ProjectListView = require('coreViews/projectListView'),
-      ProjectDetailView = require('coreViews/projectDetailView'),
-      ProjectModel = require('coreModels/projectModel'),
-      ProjectOverview = require('coreViews/projectOverview'),
-      ProjectContentListView = require('coreViews/projectContentListView'),
-      ProjectContentCollection = require('coreCollections/projectContentCollection'),
-      ProjectOverviewMenu = require('coreViews/projectOverviewMenu'),
-      ProjectOverviewMenuModel = require('coreModels/projectOverviewMenuModel');
+      AdaptBuilder = require('coreJS/adaptbuilder')
 
-  var loginModel = new LoginModel();
-
-  loginModel.fetch();
-
-  console.log('Logged in is ' + loginModel.get('authenticated'));
 
   var Router = Backbone.Router.extend({
 
     routes: {
-      ""                : "index",          //
-      "home"            : "index",          // #home
+      ""                : "index",          // 
       "login"           : "login",          // #login
       "logout"          : "logout",         // #logout
       "login/forgot"    : "forgotpassword", // #login/forgot
@@ -44,22 +23,20 @@ define(function(require) {
 
     initialize: function() {
 
-      //Listen for route event and notify
-      this.on('route', function(route){
-        AdaptBuilder.trigger('route:changed',{route:route});
-      },this);
-
     },
 
     index: function() {
-      var view = new HomeView({el:'#app'});
-      view.render();
+      console.log(AdaptBuilder.userModel);
+      if (AdaptBuilder.userModel.get('authenticated')) {
+        this.navigate('#dashboard', {trigger: true});
+      } else {
+        this.navigate('#login', {trigger: true});
+      }
     },
 
     login: function() {
-      var view = new LoginView({model:loginModel, el:'#app'});
-      view.render();
-    },
+      new LoginView({model: AdaptBuilder.userModel});
+    },/*
 
     logout: function () {
       var view = new LogoutView({model:loginModel, el:'#app'});
@@ -69,16 +46,32 @@ define(function(require) {
     forgotpassword: function() {
       var view = new ForgotPasswordView({model:loginModel, el:'#app'});
       view.render();
+    },*/
+
+    checkAuthentication: function() {
+      if (AdaptBuilder.userModel.get('authenticated')) {
+        return true;
+      }
+      return false;
+    },
+
+    createView: function(initialView, fallbackView) {
+      if (this.currentView) {
+        this.currentView.remove();
+        AdaptBuilder.trigger('remove:views');
+      }
+      if (this.checkAuthentication()) {
+        return this.currentView = new initialView();
+      } 
+      if (fallbackView) {
+        return this.currentView = new fallbackView();
+      }
+      return this.currentView = new LoginView();
     },
 
     dashboard: function() {
-      var dashboardView = new DashboardView({el:'#app'});
-      dashboardView.render();
-
-      var projects = new ProjectCollection();
-      var projectListView = new ProjectListView({collection: projects, el:dashboardView.$('#projects')});
-      projectListView.render();
-    },
+      this.createView(DashboardView, LoginView);
+    }/*,
 
     profile: function () {
       var profileModel = new ProfileModel({id:'me'});
@@ -118,10 +111,10 @@ define(function(require) {
       });
 
       projectOverview.render();
-    }
+    }*/
 
   });
 
-  return new Router;
+  return Router;
 
 });

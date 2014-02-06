@@ -5,12 +5,7 @@ define(["backbone", "coreJS/adaptbuilder", "coreModels/projectModel"], function(
 
       model: ProjectModel,
 
-      //url: '/data/projects.json',
-      url:'api/content/Course',
-
-      initialize : function(){
-          this.fetch({reset:true});
-      }
+      url:'api/content/course'
 
     });
 

@@ -1,14 +1,21 @@
 require([
     'coreJS/adaptbuilder',
-    'coreViews/navigationView',  
     'coreJS/router',
+    'coreModels/userModel',
     'bootstrap',
     'templates'
-], function (AdaptBuilder, NavigationView, Router) {
-    
-    var navView = new NavigationView({el:'#nav'});
-    navView.render(); 
+], function (AdaptBuilder, Router, UserModel) {
   
-    AdaptBuilder.initialize();
+  	AdaptBuilder.router = new Router();
+
+  	AdaptBuilder.userModel = new UserModel();
+
+  	AdaptBuilder.userModel.fetch({
+  		success: function(data) {
+  			AdaptBuilder.initialize();
+  		}
+  	});
+  	
+    
 
 });

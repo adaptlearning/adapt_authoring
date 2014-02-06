@@ -11,20 +11,11 @@ define(function(require) {
     },
 
     initialize: function() {
-      this.listenTo(this, 'change:authenticated', this.authChange);
-    },
-
-    authChange: function(context, newVal) {
-      AdaptBuilder.trigger('login:changed',{authenticated:newVal});
-      if(true === newVal){
-        AdaptBuilder.trigger('login:loggedin');
-      }else{
-        AdaptBuilder.trigger('login:loggedout',newVal);
-      }
+      /*this.listenTo(this, 'change:authenticated', this.authChange);*/
     },
 
     logout: function (cback) {
-      var mdl = this;
+      /*var mdl = this;
       $.post(
         '/api/logout',
         function(){
@@ -32,7 +23,7 @@ define(function(require) {
           //mdl.set('authenticated', false);
           cback();
         });
-      });
+      });*/
     },
 
     login: function (username, password, cback) {

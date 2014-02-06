@@ -6,8 +6,12 @@ define(function(require) {
 
  var LoginView = Backbone.View.extend({
 
+    className: 'login-view',
+
     initialize: function() {
       this.listenTo(AdaptBuilder, 'loginFailed', this.loginFailed);
+      console.log(this);
+      this.render();
     },
 
    tagName: "div",
@@ -20,11 +24,10 @@ define(function(require) {
     },
 
     render: function() {
-      //update the model
-      this.model.fetch();
-
-      var template = Handlebars.templates.login;
-      this.$el.html(template(this.model.toJSON()));
+      console.log('render');
+      var data = this.model.toJSON();
+      var template = Handlebars.templates['login'];
+      this.$el.html(template(data)).appendTo('#app');
       return this;
     },
 

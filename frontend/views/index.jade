@@ -2,9 +2,9 @@ doctype 5
 html
     head
         title Adapt Builder
-        link(rel='stylesheet', href='adaptbuilder/css/adapt.css')
+        link(rel='stylesheet', href='/adaptbuilder/css/adapt.css')
         script(src='/libraries/modernizr.js')
-        script(src='/adaptbuilder/js/scriptLoader.js')
+        script(src='/libraries/require.js' data-main='/adaptbuilder/js/adaptbuilder.min.js')
     body
         #nav
         #app.container

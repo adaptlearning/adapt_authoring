@@ -91,7 +91,9 @@ define(function(require) {
     projectEdit: function (id) {
       console.log('Show project details for :: ' + id);
 
-      id = id==-1?null:{id:id};
+      id = (id==-1)
+            ?null
+            :{id:id};
 
       var projectModel = new ProjectModel(id);
 

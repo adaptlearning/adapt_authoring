@@ -20,7 +20,7 @@ var ProjectDetailView = Backbone.View.extend({
     render: function() {
       var template = Handlebars.templates.projectDetail,
           projectview = this;
-      if(! projectview.model.id ){
+      if(! projectview.model.get('id') ){
         //@todo Is this the best point to handle new entry?
         projectview.$el.html( template( projectview.model.toJSON() ) );
       } else {
@@ -46,10 +46,11 @@ var ProjectDetailView = Backbone.View.extend({
 
       switch( $el.attr('id') ){
           case 'projectDetailSubmit':
-            //@todo do the save
+            //@todo do the save properly
               projectview.model.save({
                 name: projectview.$('#projectDetailTitle').val(),
-                description: projectview.$('#projectDetailDescription').val()
+                description: projectview.$('#projectDetailDescription').val(),
+                tenantId: 'noidyet' //@todo pull this from the user account
               },{
                 error:function(){
                   alert('An error occurred doing the save');

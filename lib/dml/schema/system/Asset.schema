@@ -1,0 +1,40 @@
+{
+  "title": {
+    "type": "String",
+    "required": "true"
+  },
+  "description": {
+    "type": "String",
+    "required": "true"
+  },
+  "path": {
+    "type": "String",
+    "required": "true"
+  },
+  "repository": {
+    "type": "String",
+    "required": "true"
+  },
+  "size": {
+    "type": "Number"
+  },
+  "directory": {
+    "type": "String"
+  },
+  "isDirectory": {
+    "type": "Boolean",
+    "default": "false"
+  },
+  "mimeType": {
+    "type": "String"
+  },
+  "author": {
+    "type": "String"
+  },
+  "createdBy": {
+    "type": "ObjectId",
+    "required": "true"
+  },
+  "dateCreated": "Date",
+  "dateModified": "Date"
+}

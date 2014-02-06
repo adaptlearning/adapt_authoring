@@ -1,0 +1,9 @@
+/node_modules/
+/tmp
+/data
+conf/config.json
+.project
+/frontend/build
+/nbproject/
+/.settings
+/frontend/src/templates/templates.js

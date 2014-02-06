@@ -1,0 +1,25 @@
+{
+  "email": {
+    "type": "String",
+    "required": true,
+    "unique": true
+  },
+  "auth": {
+    "type": "String",
+    "default": "none"
+  },
+  "password": {
+    "type": "String"
+  },
+  "tenant": {
+    "type": "String",
+    "required": true,
+    "default": "0"
+  },
+  "active": {
+    "type": "Boolean",
+    "default": true
+  },
+  "dateCreated": "Date",
+  "dateModified": "Date"
+}

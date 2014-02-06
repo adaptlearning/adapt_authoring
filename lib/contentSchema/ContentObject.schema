@@ -1,0 +1,67 @@
+var mongoose = require('mongoose');
+var Schema =  mongoose.Schema;
+
+var ContentObjectSchema = new Schema({
+  "name": {
+    "type": "String",
+    "required": true
+  },
+  "title" : {
+    "type" : "String",
+    "required" : true
+  },
+  "body" : {
+    "type" : "String",
+    "required" : true
+  },
+  /* array of graphic objects */
+  "graphic" : [Schema.Types.ObjectId],
+  "deleted": {
+    "type": "Boolean",
+    "default": false
+  },
+  "linkText" : {
+    "type" : "String"
+  },
+  "_type" : {
+    "type" : "String",
+    "default" : "page"
+  },
+  "lastUpdated" : {
+    "type" : "Date"
+  },
+  "createdAt" : {
+    "type" : "Date"
+  },
+  "_parentId" : {
+    "type" : "ObjectId"
+  },
+  "_courseId" : {
+    "type" : "ObjectId"
+  },
+  "tenantId" : {
+    "type" : "String",
+    "required" : true
+  },
+  "createdBy" : {
+    "type" : "ObjectId"
+  }
+});
+
+ContentObjectSchema.pre('save', function (next) {
+  if (!this.createdAt) {
+    this.createdAt = new Date();
+  }
+  // if lastUpdated is for the course then it
+  // should be updated whenever any sub-element is updated
+  // but for now, make it just this object...
+  if (this.isNew) {
+    this.lastUpdated = this.createdAt;
+  } else {
+    this.lastUpdated = new Date();
+  }
+  this.markModified('lastUpdated');
+  next();
+});
+
+module.exports = ContentObjectSchema;

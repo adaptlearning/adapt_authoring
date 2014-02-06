@@ -11,10 +11,10 @@ define(["backbone", "coreJS/adaptbuilder"], function(Backbone, AdaptBuilder) {
 
       url: function () {
 
-        if(this.isNew()){
+        if(!this.get('id')){
           return '/api/content/course';
         } else {
-          return '/api/content/course/' + this.id; //@todo : could be clevererer
+          return '/api/content/course/' + this.get('id'); //@todo : could be clevererer
         }
       },
 

@@ -14,10 +14,10 @@ define(["backbone", "coreJS/adaptbuilder"], function(Backbone, AdaptBuilder) {
       url: function () {
         var stRet = '/api/content/'+ this.type + '/';
 
-        if(this.isNew()){
+        if(!this.get('id')){
           return stRet;
         } else {
-          return stRet + this.id;
+          return stRet + this.get('id');
         }
       },
 

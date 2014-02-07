@@ -5,17 +5,13 @@ require([
     'bootstrap',
     'templates'
 ], function (AdaptBuilder, Router, UserModel) {
-  
-  	AdaptBuilder.router = new Router();
-
   	AdaptBuilder.userModel = new UserModel();
+
+    AdaptBuilder.router = new Router();
 
   	AdaptBuilder.userModel.fetch({
   		success: function(data) {
   			AdaptBuilder.initialize();
   		}
   	});
-  	
-    
-
 });

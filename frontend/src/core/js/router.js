@@ -29,19 +29,26 @@ define(function(require) {
     },
 
     createView: function(initialView, fallbackView) {
-      var alternativeView = fallbackView || LoginView;
-
       // Remove the existing view
       if (this.currentView) {
         this.currentView.remove();
         AdaptBuilder.trigger('remove:views');
       }
 
-      return this.isUserAuthenticated() ? new initialView() : new alternativeView();
+      if (this.isUserAuthenticated()) {
+        this.currentView = new initialView();
+      } else {
+        this.currentView = fallbackView 
+          ? new fallbackView() 
+          : new LoginView({model:AdaptBuilder.userModel});  
+      }
+      
+      return this.currentView;
     },
 
     index: function() {
-      // console.log(AdaptBuilder.userModel);
+      console.log('Router: index');
+       console.log(AdaptBuilder.userModel);
       if (AdaptBuilder.userModel.get('authenticated')) {
         this.navigate('#dashboard', {trigger: true});
       } else {
@@ -50,6 +57,8 @@ define(function(require) {
     },
 
     login: function() {
+      console.log('Router: login');
+      console.log(AdaptBuilder.userModel);
       this.createView(LoginView);
     },
 

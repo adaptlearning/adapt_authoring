@@ -1,12 +1,9 @@
 define(function(require) {
-  var Backbone = require('backbone'),
-      Handlebars = require('handlebars'),
-      $ = require('jquery'),
-      AdaptBuilder = require('coreJS/adaptbuilder');
+  var Backbone = require('backbone');
+  var AdaptBuilder = require('coreJS/adaptbuilder');
+  var BuilderView = require('coreJS/core/views/builderView');
 
-var ProjectDetailView = Backbone.View.extend({
-
-    initialize: function() { },
+  var ProjectDetailView = BuilderView.extend({
 
     tagName: "div",
 
@@ -17,22 +14,22 @@ var ProjectDetailView = Backbone.View.extend({
       'click #projectDetail button': 'buttonClick'
     },
 
-    render: function() {
-      var template = Handlebars.templates.projectDetail,
-          projectview = this;
-      if(! projectview.model.get('id') ){
-        //@todo Is this the best point to handle new entry?
-        projectview.$el.html( template( projectview.model.toJSON() ) );
-      } else {
-        //not great but the fetch can take a while http://stackoverflow.com/questions/9250523/how-to-wait-to-render-view-in-backbone-js-until-fetch-is-complete
-        this.model.fetch().complete(function(){
-          //@todo once connected up remove
-          projectview.$el.html(template(projectview.model.toJSON()));
-        });
+    // render: function() {
+    //   var template = Handlebars.templates.projectDetail,
+    //       projectview = this;
+    //   if(! projectview.model.get('id') ){
+    //     //@todo Is this the best point to handle new entry?
+    //     projectview.$el.html( template( projectview.model.toJSON() ) );
+    //   } else {
+    //     //not great but the fetch can take a while http://stackoverflow.com/questions/9250523/how-to-wait-to-render-view-in-backbone-js-until-fetch-is-complete
+    //     this.model.fetch().complete(function(){
+    //       //@todo once connected up remove
+    //       projectview.$el.html(template(projectview.model.toJSON()));
+    //     });
 
-      }
-      return this;
-    },
+    //   }
+    //   return this;
+    // },
 
     inputBlur: function (ev) {
       //@todo add the validation logic
@@ -63,6 +60,9 @@ var ProjectDetailView = Backbone.View.extend({
           break;
       }
     }
+  },
+  {
+    template: 'projectDetail'
   });
 
   return ProjectDetailView;

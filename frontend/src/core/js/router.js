@@ -4,6 +4,8 @@ define(function(require) {
   var LoginView = require('coreJS/user/views/loginView');
   var DashboardView = require('coreJS/dashboard/views/dashboardView');
   var AdaptBuilder = require('coreJS/adaptbuilder');
+  var ProjectModel = require('coreJS/dashboard/models/projectModel');
+  var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
 
   var Router = Backbone.Router.extend({
 
@@ -72,7 +74,8 @@ define(function(require) {
 
     dashboard: function() {
       this.createView(new DashboardView());
-    }/*,
+    },
+    /*,
 
     profile: function () {
       var profileModel = new ProfileModel({id:'me'});
@@ -81,7 +84,7 @@ define(function(require) {
       var profileView = new ProfileView({el: '#app', model: profileModel});
       profileView.render();
     },
-
+*/
     projectEdit: function (id) {
       console.log('Show project details for :: ' + id);
 
@@ -90,12 +93,14 @@ define(function(require) {
             :{id:id};
 
       var projectModel = new ProjectModel(id);
+      this.createView(new ProjectDetailView({model: projectModel}));
+      // var projectModel = new ProjectModel(id);
 
-      var projectDetailView = new ProjectDetailView({el: '#app', model: projectModel});
-      projectDetailView.render();
+      // var projectDetailView = new ProjectDetailView({el: '#app', model: projectModel});
+      // projectDetailView.render();
     },
 
-    projectView: function (id) {
+/*    projectView: function (id) {
       console.log('Show project content for :: ' + id);
 
       var projectModel = new ProjectModel({id:id});

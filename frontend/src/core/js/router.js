@@ -36,13 +36,15 @@ define(function(require) {
       }
 
       if (this.isUserAuthenticated()) {
-        this.currentView = new initialView();
+        this.currentView = initialView;
       } else {
-        this.currentView = fallbackView 
-          ? new fallbackView() 
-          : new LoginView({model:AdaptBuilder.userModel});  
+        this.currentView = fallbackView
+          ? fallbackView 
+          : new LoginView({model:AdaptBuilder.userModel});
       }
       
+      $('#app').append(this.currentView.$el);
+
       return this.currentView;
     },
 
@@ -57,9 +59,7 @@ define(function(require) {
     },
 
     login: function() {
-      console.log('Router: login');
-      console.log(AdaptBuilder.userModel);
-      this.createView(LoginView);
+      this.createView(new LoginView({model:AdaptBuilder.userModel}));
     },
 
     // logout: function () {
@@ -71,7 +71,7 @@ define(function(require) {
     // },
 
     dashboard: function() {
-      this.createView(DashboardView, LoginView);
+      this.createView(new DashboardView());
     }/*,
 
     profile: function () {

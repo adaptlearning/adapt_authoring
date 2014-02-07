@@ -2,13 +2,14 @@ define(function(require) {
   var Backbone = require('backbone'),
       Handlebars = require('handlebars'),
       $ = require('jquery'),
-      AdaptBuilder = require('coreJS/adaptbuilder');
+      AdaptBuilder = require('coreJS/adaptbuilder'),
+      BuilderView = require('coreViews/builderView');
 
- var LoginView = Backbone.View.extend({
+ var LoginView = BuilderView.extend({
 
     className: 'login-view',
 
-    initialize: function() {
+    preRender: function() {
       this.listenTo(AdaptBuilder, 'loginFailed', this.loginFailed);
       console.log(this);
       this.render();
@@ -21,14 +22,6 @@ define(function(require) {
       "click .loginForm a#linkRegister" : "gotoRegister",
       "click .loginForm a#linkForgotPassword" : "gotoForgotPassword",
       "click .loginForm button":"submitLoginDetails"
-    },
-
-    render: function() {
-      console.log('render');
-      var data = this.model.toJSON();
-      var template = Handlebars.templates['login'];
-      this.$el.html(template(data)).appendTo('#app');
-      return this;
     },
 
     gotoForgotPassword: function(e) {
@@ -66,6 +59,8 @@ define(function(require) {
       $('#loginFailed').removeClass('hide');
     }
 
+  }, {
+    template: 'login'
   });
 
   return LoginView;

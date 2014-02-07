@@ -4,29 +4,23 @@ define(function(require){
   var ProjectCollection = require('coreCollections/projectCollection');
   var AdaptBuilder = require('coreJS/adaptBuilder');
   var ProjectView = require('coreViews/projectView');
+  var BuilderView = require('coreViews/builderView');
 
-  var DashboardView = Backbone.View.extend({
+  var DashboardView = BuilderView.extend({
 
     tagName: "div",
 
     className: "dashboard-view",
 
-    initialize: function() {
+    preRender: function() {
       this.collection = new ProjectCollection();
       this.collection.fetch();
       this.listenTo(AdaptBuilder, 'remove:views', this.remove);
       this.listenTo(this.collection, 'sync', this.addProjectViews)
-      this.render();
     },
 
     events: {
       'click #dashboardMenu button': 'formclick'
-    },
-
-    render: function () {
-      var template = Handlebars.templates.dashboard;
-      this.$el.html(template()).appendTo('#app');
-      return this;
     },
 
     addProjectViews: function() {
@@ -48,6 +42,8 @@ define(function(require){
       }
     }
 
+  }, {
+    template: 'dashboard'
   });
 
   return DashboardView;

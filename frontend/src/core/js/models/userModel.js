@@ -1,14 +1,15 @@
 define(function(require) {
 
-  var Backbone = require('backbone'),
-      AdaptBuilder = require('coreJS/adaptbuilder');
-
+  var Backbone = require('backbone');
+  var AdaptBuilder = require('coreJS/adaptbuilder');
 
   var LoginModel = Backbone.Model.extend({
 
     defaults: {
       authenticated: false
     },
+
+    url: "/api/authcheck",
 
     initialize: function() {
       /*this.listenTo(this, 'change:authenticated', this.authChange);*/
@@ -27,7 +28,8 @@ define(function(require) {
     },
 
     login: function (username, password, cback) {
-      var mdl = this;
+      var model = this;
+
       $.post(
         '/api/login',
         {
@@ -35,15 +37,12 @@ define(function(require) {
           password:password
         },
         function(authenticated) {
-          mdl.fetch();
+          model.fetch();
           cback(null, authenticated);
       }).fail( function() {
         cback(new Error('Request failed'));
       });
     },
-
-    url:"/api/authcheck"
-
   });
 
   return LoginModel;

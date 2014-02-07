@@ -8,6 +8,8 @@ define(function(require) {
 
     className: 'login-view',
 
+    model: AdaptBuilder.userModel,
+
     initialize: function() {
       this.listenTo(AdaptBuilder, 'loginFailed', this.loginFailed);
       console.log(this);

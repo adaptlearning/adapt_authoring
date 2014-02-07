@@ -1,5 +1,6 @@
-//@TODO course|project
-define(["backbone", "coreJS/adaptbuilder"], function(Backbone, AdaptBuilder) {
+define(function(require) {
+    var Backbone = require('backbone');
+    var AdaptBuilder = require('coreJS/adaptbuilder');
 
     var ProjectModel = Backbone.Model.extend({
 
@@ -10,12 +11,9 @@ define(["backbone", "coreJS/adaptbuilder"], function(Backbone, AdaptBuilder) {
       },
 
       url: function () {
+        var url = '/api/content/course';
 
-        if(!this.get('id')){
-          return '/api/content/course';
-        } else {
-          return '/api/content/course/' + this.get('id'); //@todo : could be clevererer
-        }
+        return (!this.get('id') ? url : url + '/' + this.get('id'));
       },
 
       loadedData: function() {

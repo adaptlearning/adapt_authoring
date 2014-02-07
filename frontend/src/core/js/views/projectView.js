@@ -3,6 +3,10 @@ define(["backbone", "handlebars"], function(Backbone, Handlebars){
 
   var ProjectView = Backbone.View.extend({
 
+    events: {
+      "click a.delete-link" : "deleteProject"
+    },
+
     initialize: function() {
       this.render();
     },
@@ -16,6 +20,12 @@ define(["backbone", "handlebars"], function(Backbone, Handlebars){
         'data-projectid': this.model.get('_id')
       };
     },*/
+
+    deleteProject: function(event) {
+      event.preventDefault();
+
+      alert('Are you sure?');
+    },
 
     render: function() {
       var data = this.model.toJSON();

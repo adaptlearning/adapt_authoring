@@ -1,10 +1,9 @@
 define(function(require) {
 
-  var Backbone = require('backbone'),
-      LoginView = require('coreViews/loginView'),
-      DashboardView = require('coreViews/dashboardView'),
-      AdaptBuilder = require('coreJS/adaptbuilder')
-
+  var Backbone = require('backbone');
+  var LoginView = require('coreViews/loginView');
+  var DashboardView = require('coreViews/dashboardView');
+  var AdaptBuilder = require('coreJS/adaptbuilder');
 
   var Router = Backbone.Router.extend({
 
@@ -22,11 +21,27 @@ define(function(require) {
     },
 
     initialize: function() {
+      this.currentView = null;
+    },
 
+    isUserAuthenticated: function() {
+      return AdaptBuilder.userModel.get('authenticated') ? true : false;
+    },
+
+    createView: function(initialView, fallbackView) {
+      var alternativeView = fallbackView || LoginView;
+
+      // Remove the existing view
+      if (this.currentView) {
+        this.currentView.remove();
+        AdaptBuilder.trigger('remove:views');
+      }
+
+      return this.isUserAuthenticated() ? new initialView() : new alternativeView();
     },
 
     index: function() {
-      console.log(AdaptBuilder.userModel);
+      // console.log(AdaptBuilder.userModel);
       if (AdaptBuilder.userModel.get('authenticated')) {
         this.navigate('#dashboard', {trigger: true});
       } else {
@@ -35,39 +50,16 @@ define(function(require) {
     },
 
     login: function() {
-      new LoginView({model: AdaptBuilder.userModel});
-    },/*
-
-    logout: function () {
-      var view = new LogoutView({model:loginModel, el:'#app'});
-      view.render();
+      this.createView(LoginView);
     },
 
-    forgotpassword: function() {
-      var view = new ForgotPasswordView({model:loginModel, el:'#app'});
-      view.render();
-    },*/
+    // logout: function () {
+    //   this.createView(LogoutView);
+    // },
 
-    checkAuthentication: function() {
-      if (AdaptBuilder.userModel.get('authenticated')) {
-        return true;
-      }
-      return false;
-    },
-
-    createView: function(initialView, fallbackView) {
-      if (this.currentView) {
-        this.currentView.remove();
-        AdaptBuilder.trigger('remove:views');
-      }
-      if (this.checkAuthentication()) {
-        return this.currentView = new initialView();
-      } 
-      if (fallbackView) {
-        return this.currentView = new fallbackView();
-      }
-      return this.currentView = new LoginView();
-    },
+    // forgotpassword: function() {
+    //   this.createView(ForgotPasswordView);
+    // },
 
     dashboard: function() {
       this.createView(DashboardView, LoginView);

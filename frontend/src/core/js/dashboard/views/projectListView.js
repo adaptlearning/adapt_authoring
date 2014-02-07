@@ -1,5 +1,5 @@
 //@TODO course|project
-define(["backbone", "handlebars", "coreViews/projectView"], function(Backbone, Handlebars, ProjectView){
+define(["backbone", "handlebars", "coreJS/dashboard/views/projectView"], function(Backbone, Handlebars, ProjectView){
 
   var ProjectListView = Backbone.View.extend({
 

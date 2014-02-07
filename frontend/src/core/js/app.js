@@ -1,7 +1,7 @@
 require([
     'coreJS/adaptbuilder',
     'coreJS/router',
-    'coreModels/userModel',
+    'coreJS/user/models/userModel',
     'bootstrap',
     'templates'
 ], function (AdaptBuilder, Router, UserModel) {

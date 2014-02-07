@@ -54,7 +54,7 @@ module.exports = function(grunt) {
             partialsPathRegex: /\/partials\//
           },
           files: {
-            "frontend/src/templates/templates.js": "frontend/src/**/*.hbs"
+            "frontend/src/templates/templates.js": "frontend/src/core/js/**/*.hbs"
           }
         }
       },

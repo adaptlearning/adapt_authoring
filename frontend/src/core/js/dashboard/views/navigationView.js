@@ -1,6 +1,6 @@
-define(["backbone", "handlebars"], function(Backbone, Handlebars){
+define(function(require){
 
-  var AdaptBuilder = require('coreJS/adaptbuilder');
+  var Backbone = require('backbone');
 
   var NavigationView = Backbone.View.extend({
 

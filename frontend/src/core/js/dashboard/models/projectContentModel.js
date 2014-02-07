@@ -1,5 +1,6 @@
-//@TODO course|project
-define(["backbone", "coreJS/adaptbuilder"], function(Backbone, AdaptBuilder) {
+define(function(require) {
+    var Backbone = require('backbone');
+    var AdaptBuilder = require('coreJS/adaptbuilder');
 
     var ProjectModel = Backbone.Model.extend({
 

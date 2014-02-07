@@ -3,7 +3,7 @@ define(function(require) {
       Handlebars = require('handlebars'),
       $ = require('jquery'),
       AdaptBuilder = require('coreJS/adaptbuilder'),
-      BuilderView = require('coreViews/builderView');
+      BuilderView = require('coreJS/core/views/builderView');
 
  var LoginView = BuilderView.extend({
 

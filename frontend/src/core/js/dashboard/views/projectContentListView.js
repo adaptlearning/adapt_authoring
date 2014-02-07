@@ -1,4 +1,4 @@
-define(["backbone", "handlebars", "coreViews/projectContentView"], function(Backbone, Handlebars, ProjectContentView){
+define(["backbone", "handlebars", "coreJS/dashboard/views/projectContentView"], function(Backbone, Handlebars, ProjectContentView){
 
   var ProjectContentListView = Backbone.View.extend({
 

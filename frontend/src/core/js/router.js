@@ -1,8 +1,8 @@
 define(function(require) {
 
   var Backbone = require('backbone');
-  var LoginView = require('coreViews/loginView');
-  var DashboardView = require('coreViews/dashboardView');
+  var LoginView = require('coreJS/user/views/loginView');
+  var DashboardView = require('coreJS/dashboard/views/dashboardView');
   var AdaptBuilder = require('coreJS/adaptbuilder');
 
   var Router = Backbone.Router.extend({

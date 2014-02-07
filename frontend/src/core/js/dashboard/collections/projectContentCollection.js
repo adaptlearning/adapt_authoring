@@ -1,11 +1,11 @@
-//@TODO course|project
-define(["backbone", "coreJS/adaptbuilder", "coreModels/projectContentModel"], function(Backbone, AdaptBuilder, ProjectContentModel) {
+define(function(require){
+    var Backbone = require('backbone');
+    var ProjectContentModel = require('coreJS/dashboard/models/projectContentModel');
 
     var ProjectContentCollection = Backbone.Collection.extend({
 
       model: ProjectContentModel,
 
-      //url: '/data/projects.json',
       url: function () {
         return 'api/content/contentobject?projectid=' + this.projectid;
       },
@@ -21,5 +21,4 @@ define(["backbone", "coreJS/adaptbuilder", "coreModels/projectContentModel"], fu
     });
 
     return ProjectContentCollection;
-
 });

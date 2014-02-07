@@ -24,7 +24,7 @@ define(["backbone", "handlebars"], function(Backbone, Handlebars){
     deleteProject: function(event) {
       event.preventDefault();
 
-      alert('Are you sure?');
+      return confirm('Are you sure you want to delete this project');
     },
 
     render: function() {

@@ -1,12 +1,8 @@
 define(function(require) {
-  var Backbone = require('backbone'),
-      Handlebars = require('handlebars'),
-      $ = require('jquery'),
-      AdaptBuilder = require('coreJS/adaptbuilder');
+  var Backbone = require('backbone');
+  var BuilderView = require('coreJS/core/views/builderView');
 
- var LogoutView = Backbone.View.extend({
-
-    initialize: function() { },
+  var LogoutView = BuilderView.extend({
 
     tagName: "div",
 
@@ -15,15 +11,6 @@ define(function(require) {
     events: {
       "click .logout a#linkLogout" : "completeLogout",
       "click .logout a#linkDash" : "gotoDashboard"
-    },
-
-    render: function() {
-      //update the model
-      this.model.fetch();
-
-      var template = Handlebars.templates.logout;
-      this.$el.html(template(this.model.toJSON()));
-      return this;
     },
 
     completeLogout: function(e) {
@@ -38,6 +25,9 @@ define(function(require) {
       Backbone.history.navigate('/dashboard', {trigger: true});
     }
 
+  }, 
+  {
+    template: 'logout'
   });
 
   return LogoutView;

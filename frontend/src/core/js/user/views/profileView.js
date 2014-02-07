@@ -1,12 +1,8 @@
 define(function(require) {
-  var Backbone = require('backbone'),
-      Handlebars = require('handlebars'),
-      $ = require('jquery'),
-      AdaptBuilder = require('coreJS/adaptbuilder');
+  var Backbone = require('backbone');
+  var AdaptBuilder = require('coreJS/adaptbuilder');
 
-var ProfileView = Backbone.View.extend({
-
-    initialize: function() { },
+  var ProfileView = Backbone.View.extend({
 
     tagName: "div",
 
@@ -85,6 +81,9 @@ var ProfileView = Backbone.View.extend({
       }
     }
 
+  },
+  {
+    template: 'profile'
   });
 
   return ProfileView;

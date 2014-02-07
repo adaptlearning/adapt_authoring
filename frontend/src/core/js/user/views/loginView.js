@@ -1,21 +1,13 @@
 define(function(require) {
-  var Backbone = require('backbone'),
-      Handlebars = require('handlebars'),
-      $ = require('jquery'),
-      AdaptBuilder = require('coreJS/adaptbuilder'),
-      BuilderView = require('coreJS/core/views/builderView');
+  var Backbone = require('backbone');
+  var AdaptBuilder = require('coreJS/adaptbuilder');
+  var BuilderView = require('coreJS/core/views/builderView');
 
- var LoginView = BuilderView.extend({
+  var LoginView = BuilderView.extend({
 
     className: 'login-view',
 
-    preRender: function() {
-      this.listenTo(AdaptBuilder, 'loginFailed', this.loginFailed);
-      console.log(this);
-      this.render();
-    },
-
-   tagName: "div",
+    tagName: "div",
 
     events: {
       "click .loginForm a#linkDash" : "gotoDashboard",
@@ -24,6 +16,12 @@ define(function(require) {
       "click .loginForm button":"submitLoginDetails"
     },
 
+    preRender: function() {
+      this.listenTo(AdaptBuilder, 'loginFailed', this.loginFailed);
+      console.log(this);
+      this.render();
+    },
+    
     gotoForgotPassword: function(e) {
       e.preventDefault();
       Backbone.history.navigate('/login/forgot', {trigger: true});

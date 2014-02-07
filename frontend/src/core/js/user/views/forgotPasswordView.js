@@ -1,15 +1,15 @@
-define(["backbone", "handlebars"], function(Backbone, Handlebars){
+define(function(require) {
+  var Backbone = require('backbone');
+  var BuilderView = require('coreJS/core/views/builderView');
 
-  var ForgotPasswordView = Backbone.View.extend({
+  var ForgotPasswordView = BuilderView.extend({
+    
     tagName: "div",
 
-    className: "forgotpassword",
-
-    render: function() {
-      var template = Handlebars.templates.forgotPassword;
-      this.$el.html(template());
-      return this;
-    }
+    className: "forgotpassword"
+  },
+  {
+    template: 'forgotPassword'
   });
 
   return ForgotPasswordView;

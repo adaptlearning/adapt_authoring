@@ -1,6 +1,7 @@
 # Adapt Core
 
 An authoring library for the [Adapt](https://community.adaptlearning.org/) framework.
+ [![Build Status](https://secure.travis-ci.org/adaptlearning/adapt_authoring.png)](http://travis-ci.org/adaptlearning/adapt_authoring)
 
 ## Features
 

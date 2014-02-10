@@ -53,7 +53,7 @@ define(function(require) {
 
     index: function() {
       console.log('Router: index');
-       console.log(AdaptBuilder.userModel);
+
       if (AdaptBuilder.userModel.get('authenticated')) {
         this.navigate('#dashboard', {trigger: true});
       } else {

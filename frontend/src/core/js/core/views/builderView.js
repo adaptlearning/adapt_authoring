@@ -10,10 +10,16 @@ define(function(require){
 
   var BuilderView = Backbone.View.extend({
 
+    settings: {
+      autoRender: true
+    },
+
     initialize: function() {
       this.listenTo(Builder, 'remove', this.remove);
       this.preRender();
-      this.render();
+      if (this.settings.autoRender) {
+        this.render();
+      }
     },
 
     preRender: function() {},

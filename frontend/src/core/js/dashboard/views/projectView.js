@@ -6,12 +6,18 @@ define(function(require){
 
   var ProjectView = BuilderView.extend({
 
-    tagName: "div",
+    tagName: 'div',
 
-    className: "project col-6 col-sm-4 col-lg-2",
+    className: 'project col-6 col-sm-4 col-lg-2',
 
     events: {
-      "click a.delete-link" : "deleteProject"
+      'click div.projectDetail' : 'viewProject',
+      'click a.delete-link' : 'deleteProject'
+    },
+
+    viewProject: function(event) {
+      event.preventDefault();
+      Backbone.history.navigate('#project/view/'+this.model.get('_id'), {trigger: true});
     },
 
     deleteProject: function(event) {

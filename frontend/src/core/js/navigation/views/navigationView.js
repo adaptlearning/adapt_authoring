@@ -11,9 +11,7 @@ define(function(require){
       this.listenTo(AdaptBuilder, 'route:changed', this.routeChanged);
     },
 
-    routeChanged: function ( info ) {
-      console.log('Route changed ' + info.route);
-
+    routeChanged: function (info) {
       this.$('.active').removeClass('active');
       this.$('li[data-route="' + info.route + '"]').addClass('active');
     }

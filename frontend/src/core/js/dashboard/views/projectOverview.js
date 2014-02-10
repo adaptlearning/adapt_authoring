@@ -10,6 +10,14 @@ define(function(require){
 
     className: "project-overview",
 
+    settings: {
+      autoRender: false
+    },
+
+    preRender: function() {
+      this.listenTo(this.model, 'sync', this.render);
+    },
+
     events: {
       /*'blur #projectDetail input': 'inputBlur',
       'click #projectDetail button': 'buttonClick'*/

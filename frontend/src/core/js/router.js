@@ -7,6 +7,7 @@ define(function(require) {
   var ProjectModel = require('coreJS/dashboard/models/projectModel');
   var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
   var LogoutView = require('coreJS/user/views/logoutView');
+  var ProjectOverview = require('coreJS/dashboard/views/projectOverview');
 
   var Router = Backbone.Router.extend({
 
@@ -87,35 +88,20 @@ define(function(require) {
 */
     projectNew: function() {
       var project = new ProjectModel();
-
       this.createView(new ProjectDetailView({model: project}));
     },
 
     projectEdit: function (id) {
       var projectModel = new ProjectModel({_id: id});
       projectModel.fetch();
-
       this.createView(new ProjectDetailView({model: projectModel}));
     },
 
-/*    projectView: function (id) {
-      console.log('Show project content for :: ' + id);
-
-      var projectModel = new ProjectModel({id:id});
-
-      var projectOverview = new ProjectOverview({el: '#app', model: projectModel});
-
-      projectOverview.on('rendered',function () {
-        var projectContents = new ProjectContentCollection({projectid:id});
-        var projectContentListView = new ProjectContentListView({collection: projectContents, el:projectOverview.$('.project-content-view')});
-        var projectOverviewMenuModel = new ProjectOverviewMenuModel();
-        var projectOverviewMenu = new ProjectOverviewMenu({ el:projectOverview.$('.project-content-menu'), model: projectOverviewMenuModel });
-        projectOverviewMenu.render();
-
-      });
-
-      projectOverview.render();
-    }*/
+    projectView: function (id) {
+      var projectModel = new ProjectModel({_id: id});
+      projectModel.fetch();
+      this.createView(new ProjectOverview({model: projectModel}));
+    }
 
   });
 

@@ -5,6 +5,10 @@ define(function(require) {
 
   var ProjectDetailView = BuilderView.extend({
 
+    settings: {
+      autoRender: false
+    },
+    
     tagName: "div",
 
     className: "project",
@@ -16,9 +20,12 @@ define(function(require) {
 
     preRender: function() {
       this.listenTo(this.model, 'sync', this.render);
+      if (!this.model._id) {
+        this.render();
+      }
     },
 
-    inputBlur: function (ev) {
+    inputBlur: function (event) {
       //@todo add the validation logic
     },
 

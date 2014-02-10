@@ -2,10 +2,10 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var ProjectCollection = require('coreJS/dashboard/collections/projectCollection');
   var AdaptBuilder = require('coreJS/adaptBuilder');
-  var ProjectView = require('coreJS/dashboard/views/projectView');
   var BuilderView = require('coreJS/core/views/builderView');
+  var ProjectView = require('coreJS/dashboard/views/projectView');
+  var ProjectCollection = require('coreJS/dashboard/collections/projectCollection');
 
   var DashboardView = BuilderView.extend({
 

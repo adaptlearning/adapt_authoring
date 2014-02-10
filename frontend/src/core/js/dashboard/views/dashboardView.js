@@ -34,7 +34,7 @@ define(function(require){
       ev.preventDefault();
       switch( type ) {
           case 'new':
-            Backbone.history.navigate('/project/edit/-1', {trigger: true});
+            Backbone.history.navigate('/project/new', {trigger: true});
           break;
           case 'search':
             //@todo implement course search

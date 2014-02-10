@@ -88,7 +88,6 @@ define(function(require) {
 */
     projectNew: function() {
       var project = new ProjectModel();
-      project.isNew = true;
 
       this.createView(new ProjectDetailView({model: project}));
     },

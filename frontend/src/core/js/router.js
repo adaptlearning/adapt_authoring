@@ -6,6 +6,7 @@ define(function(require) {
   var AdaptBuilder = require('coreJS/adaptbuilder');
   var ProjectModel = require('coreJS/dashboard/models/projectModel');
   var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
+  var LogoutView = require('coreJS/user/views/logoutView');
 
   var Router = Backbone.Router.extend({
 
@@ -60,12 +61,12 @@ define(function(require) {
     },
 
     login: function() {
-      this.createView(new LoginView({model:AdaptBuilder.userModel}));
+      this.createView(new LoginView({model: AdaptBuilder.userModel}));
     },
 
-    // logout: function () {
-    //   this.createView(LogoutView);
-    // },
+    logout: function () {
+      this.createView(new LogoutView({model: AdaptBuilder.userModel}));
+    },
 
     // forgotpassword: function() {
     //   this.createView(new ForgotPasswordView());

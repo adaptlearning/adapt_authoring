@@ -20,5 +20,5 @@ define(["underscore", "backbone"], function(_, Backbone){
     console.log('loggedout detected');
   });
 
-    return AdaptBuilder;
+  return AdaptBuilder;
 });

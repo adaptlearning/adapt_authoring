@@ -16,7 +16,7 @@ define(function(require) {
     },
 
     logout: function (cback) {
-      /*var mdl = this;
+      var mdl = this;
       $.post(
         '/api/logout',
         function(){
@@ -24,7 +24,7 @@ define(function(require) {
           //mdl.set('authenticated', false);
           cback();
         });
-      });*/
+      });
     },
 
     login: function (username, password, cback) {

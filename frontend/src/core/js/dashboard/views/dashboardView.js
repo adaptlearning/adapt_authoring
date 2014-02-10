@@ -1,6 +1,7 @@
 define(function(require){
 
   var Backbone = require('backbone');
+  var Handlebars = require('handlebars');
   var ProjectCollection = require('coreJS/dashboard/collections/projectCollection');
   var AdaptBuilder = require('coreJS/adaptBuilder');
   var ProjectView = require('coreJS/dashboard/views/projectView');
@@ -27,6 +28,8 @@ define(function(require){
       this.collection.each(function(project) {
         this.$('#projects').append(new ProjectView({model:project}).$el);
       }, this);
+
+      console.log('length = ' + this.collection.length);
     },
 
     formclick: function (ev) {

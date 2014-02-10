@@ -1,4 +1,3 @@
-//@TODO course|project
 define(function(require) {
     var Backbone = require('backbone');
     var ProjectModel = require('coreJS/dashboard/models/projectModel');
@@ -7,7 +6,7 @@ define(function(require) {
 
       model: ProjectModel,
 
-      url:'api/content/course'
+      url: 'api/content/course'
 
     });
 

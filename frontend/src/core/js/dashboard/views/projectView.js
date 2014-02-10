@@ -1,6 +1,7 @@
 define(function(require){
 
   var Backbone = require('backbone');
+  var Handlebars = require('handlebars');
   var BuilderView = require('coreJS/core/views/builderView');
 
   var ProjectView = BuilderView.extend({
@@ -15,13 +16,15 @@ define(function(require){
 
     deleteProject: function(event) {
       event.preventDefault();
-
       if (confirm('Are you sure you want to delete this project')) {
         if (this.model.destroy()) {
           this.remove();       
         }
       }
     }
+    
+  }, {
+    template: 'project'
   });
 
   return ProjectView;

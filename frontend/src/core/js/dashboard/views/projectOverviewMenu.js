@@ -1,7 +1,11 @@
 //@TODO course|project
-define(["backbone", "handlebars"], function(Backbone, Handlebars){
+define(function(require){
 
-  var ProjectOverviewMenu = Backbone.View.extend({
+  var Backbone = require('backbone');
+  var Handlebars = require('handlebars');
+  var BuilderView = require('coreJS/core/views/builderView');
+
+  var ProjectOverviewMenu = BuilderView.extend({
 
     tagName: "div",
 
@@ -11,15 +15,8 @@ define(["backbone", "handlebars"], function(Backbone, Handlebars){
       'click a': 'navclick'
     },
 
-    initialize: function () {
+    preRender: function () {
       this.listenTo(this.model, 'change', this.render);
-    },
-
-    render: function () {
-
-      var template = Handlebars.partials.part_projectOverviewMenu;
-      this.$el.html(template(this.model.toJSON()));
-      return this;
     },
 
     navclick: function (ev) {
@@ -45,6 +42,8 @@ define(["backbone", "handlebars"], function(Backbone, Handlebars){
       }
     }
 
+  }, {
+    template: 'part_projectOverviewMenu'
   });
 
   return ProjectOverviewMenu;

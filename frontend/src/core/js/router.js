@@ -15,6 +15,7 @@ define(function(require) {
       "logout"          : "logout",         // #logout
       "login/forgot"    : "forgotpassword", // #login/forgot
       "profile"         : "profile",        // #profile
+      "project/new"     : "projectNew",
       "project/edit/:id": "projectEdit",    // #project/edit/id
       "project/view/:id": "projectView",    // #project/view/id
       "register"        : "register",       // #register
@@ -85,19 +86,18 @@ define(function(require) {
       profileView.render();
     },
 */
+    projectNew: function() {
+      var project = new ProjectModel();
+      project.isNew = true;
+
+      this.createView(new ProjectDetailView({model: project}));
+    },
+
     projectEdit: function (id) {
-      console.log('Show project details for :: ' + id);
+      var projectModel = new ProjectModel({_id: id});
+      projectModel.fetch();
 
-      id = (id==-1)
-            ?null
-            :{id:id};
-
-      var projectModel = new ProjectModel(id);
       this.createView(new ProjectDetailView({model: projectModel}));
-      // var projectModel = new ProjectModel(id);
-
-      // var projectDetailView = new ProjectDetailView({el: '#app', model: projectModel});
-      // projectDetailView.render();
     },
 
 /*    projectView: function (id) {

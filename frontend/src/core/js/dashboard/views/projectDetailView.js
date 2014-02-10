@@ -14,6 +14,9 @@ define(function(require) {
       'click #projectDetail button': 'buttonClick'
     },
 
+    preRender: function() {
+      this.listenTo(this.model, 'sync', this.render);
+    },
     // render: function() {
     //   var template = Handlebars.templates.projectDetail,
     //       projectview = this;

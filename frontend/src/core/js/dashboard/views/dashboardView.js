@@ -16,7 +16,7 @@ define(function(require){
       this.collection = new ProjectCollection();
       this.collection.fetch();
       this.listenTo(AdaptBuilder, 'remove:views', this.remove);
-      this.listenTo(this.collection, 'sync', this.addProjectViews)
+      this.listenTo(this.collection, 'sync', this.addProjectViews);
     },
 
     events: {

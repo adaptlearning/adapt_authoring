@@ -83,7 +83,7 @@ module.exports = function(grunt) {
       watch: {
         handlebars: {
           files: ['frontend/src/**/*.hbs'],
-          tasks: ['handlebars']
+          tasks: ['handlebars', 'compile']
         },
         js: {
           files: [

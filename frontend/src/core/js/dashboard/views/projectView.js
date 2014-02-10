@@ -1,7 +1,11 @@
 //@TODO course|project
-define(["backbone", "handlebars"], function(Backbone, Handlebars){
+define(function(require){
 
-  var ProjectView = Backbone.View.extend({
+  var Backbone = require('backbone');
+  var Handlebars = require('handlebars');
+  var BuilderView = require('coreJS/core/views/builderView');
+
+  var ProjectView = BuilderView.extend({
 
     tagName: "div",
 
@@ -16,19 +20,10 @@ define(["backbone", "handlebars"], function(Backbone, Handlebars){
       event.preventDefault();
       // TODO
       return confirm('Are you sure you want to delete this project');
-    },
-
-    initialize: function() {
-      this.render();
-    },
-    
-    render: function() {
-      var data = this.model.toJSON();
-      console.log(data);
-      var template = Handlebars.templates.project;
-      this.$el.html(template(data));
-      return this;
     }
+
+  }, {
+    template: 'project'
   });
 
   return ProjectView;

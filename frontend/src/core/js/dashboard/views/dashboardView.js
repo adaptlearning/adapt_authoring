@@ -16,8 +16,10 @@ define(function(require){
     preRender: function() {
       this.collection = new ProjectCollection();
       this.collection.fetch();
+
       this.listenTo(AdaptBuilder, 'remove:views', this.remove);
       this.listenTo(this.collection, 'sync', this.addProjectViews);
+      this.listenTo(this.collection, 'remove', this.projectRemoved);
     },
 
     events: {
@@ -29,7 +31,12 @@ define(function(require){
         this.$('#projects').append(new ProjectView({model:project}).$el);
       }, this);
 
-      console.log('length = ' + this.collection.length);
+    },
+
+    projectRemoved: function() {
+      if (this.collection.length == 0) {
+        this.$('#projects').append('No projects to display');  
+      }
     },
 
     formclick: function (ev) {

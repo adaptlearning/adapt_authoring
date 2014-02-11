@@ -2,13 +2,13 @@ define(function(require){
 
   var Backbone = require('backbone');
   var BuilderView = require('coreJS/core/views/builderView');
-  var AdaptBuilder = require('coreJS/adaptBuilder');
+  var AdaptBuilder = require('coreJS/adaptbuilder');
 
   var NavigationView = BuilderView.extend({
 
     preRender: function() {
-      this.listenTo(AdaptBuilder, 'login:changed', this.render);
-      this.listenTo(AdaptBuilder, 'route:changed', this.routeChanged);
+      this.listenTo(AdaptBuilder, 'login:changed', this.render, this);
+      this.listenTo(AdaptBuilder, 'route:changed', this.routeChanged, this);
     },
 
     routeChanged: function (info) {

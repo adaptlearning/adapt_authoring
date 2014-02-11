@@ -12,15 +12,15 @@ define(function(require) {
     url: "/api/authcheck",
 
     initialize: function() {
-      this.listenTo(this, 'change:authenticated', this.authChange);
+      this.listenTo(this, 'change:authenticated', this.authChange, this);
     },
 
     authChange: function(context, newVal) {
-      AdaptBuilder.trigger('login:changed' ,{authenticated:newVal});
-      if(newVal === true){
+      AdaptBuilder.trigger('login:changed');
+      if (newVal === true) {
         AdaptBuilder.trigger('login:loggedin');
       } else {
-        AdaptBuilder.trigger('login:loggedout', newVal);
+        AdaptBuilder.trigger('login:loggedout');
       }
     },
 

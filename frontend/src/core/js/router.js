@@ -63,7 +63,7 @@ define(function(require) {
     },
 
     login: function() {
-      this.createView(new LoginView({model: AdaptBuilder.userModel}));
+      this.createView(false, new LoginView({model: AdaptBuilder.userModel}));
     },
 
     logout: function () {
@@ -71,7 +71,7 @@ define(function(require) {
     },
 
     forgotpassword: function() {
-      this.createView(new ForgotPasswordView(), new ForgotPasswordView());
+      this.createView(false, new ForgotPasswordView());
     },
 
     dashboard: function() {

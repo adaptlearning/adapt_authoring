@@ -14,7 +14,7 @@ define(function(require) {
     },
 
     preRender: function() {
-      this.listenTo(AdaptBuilder, 'loginFailed', this.loginFailed);
+      this.listenTo(AdaptBuilder, 'loginFailed', this.loginFailed, this);
     },
     
     submitLoginDetails: function(e) {

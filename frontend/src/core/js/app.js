@@ -12,7 +12,7 @@ require([
 
   	AdaptBuilder.userModel.fetch({
   		success: function(data) {
-        $('body').append(new NavigationView({model: AdaptBuilder.userModel}).$el);
+        $('#nav').html(new NavigationView({model: AdaptBuilder.userModel}).$el);
         AdaptBuilder.initialize();
   		}
   	});

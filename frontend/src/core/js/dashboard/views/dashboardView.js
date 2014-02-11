@@ -30,7 +30,6 @@ define(function(require){
       this.collection.each(function(project) {
         this.$('#projects').append(new ProjectView({model:project}).$el);
       }, this);
-
     },
 
     projectRemoved: function() {

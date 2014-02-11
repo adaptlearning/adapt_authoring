@@ -8,6 +8,7 @@ define(function(require) {
   var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
   var LogoutView = require('coreJS/user/views/logoutView');
   var ProjectOverview = require('coreJS/dashboard/views/projectOverview');
+  var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
 
   var Router = Backbone.Router.extend({
 
@@ -69,9 +70,9 @@ define(function(require) {
       this.createView(new LogoutView({model: AdaptBuilder.userModel}));
     },
 
-    // forgotpassword: function() {
-    //   this.createView(new ForgotPasswordView());
-    // },
+    forgotpassword: function() {
+      this.createView(new ForgotPasswordView(), new ForgotPasswordView());
+    },
 
     dashboard: function() {
       this.createView(new DashboardView());

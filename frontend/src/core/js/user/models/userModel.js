@@ -12,7 +12,16 @@ define(function(require) {
     url: "/api/authcheck",
 
     initialize: function() {
-      /*this.listenTo(this, 'change:authenticated', this.authChange);*/
+      this.listenTo(this, 'change:authenticated', this.authChange);
+    },
+
+    authChange: function(context, newVal) {
+      AdaptBuilder.trigger('login:changed' ,{authenticated:newVal});
+      if(newVal === true){
+        AdaptBuilder.trigger('login:loggedin');
+      } else {
+        AdaptBuilder.trigger('login:loggedout', newVal);
+      }
     },
 
     logout: function (cback) {
@@ -37,8 +46,9 @@ define(function(require) {
           password:password
         },
         function(authenticated) {
-          model.fetch();
-          cback(null, authenticated);
+          model.fetch().done(function(){
+            cback(null, authenticated);
+          });
       }).fail( function() {
         cback(new Error('Request failed'));
       });

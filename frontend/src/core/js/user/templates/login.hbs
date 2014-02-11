@@ -2,7 +2,7 @@
   <div class="main">
 
     {{#if isAuthenticated}}
-    <h3>You are logged in, please got the <a id="linkDash" href="/#dashboard">Dashboard</a></h3>
+    <h3>You are logged in, please go to the <a id="linkDash" href="/#dashboard">Dashboard</a></h3>
     {{else}}
     <h3>Please Log In, or <a id="linkRegister" href="/register">register</a></h3>
 
@@ -12,19 +12,19 @@
     <form role="form">
       <div class="form-group">
         <label for="inputUsernameEmail">Username or email</label>
-        <input type="text" class="form-control" id="inputUsernameEmail">
+        <input type="text" class="form-control" id="inputUsernameEmail" tabindex="1">
       </div>
       <div class="form-group">
-        <a id="linkForgotPassword" class="pull-right" href="#">Forgot password?</a>
+        <a id="linkForgotPassword" class="pull-right" href="#/login/forgot">Forgot password?</a>
         <label for="inputPassword">Password</label>
-        <input type="password" class="form-control" id="inputPassword">
+        <input type="password" class="form-control" id="inputPassword" tabindex="2">
       </div>
       <div class="checkbox pull-right">
         <label>
           <input id="chkRememberMe" type="checkbox">
           Remember me </label>
       </div>
-      <button type="submit" class="btn btn btn-primary">
+      <button type="submit" class="btn btn btn-primary" tabindex="3">
         Log In
       </button>
     </form>

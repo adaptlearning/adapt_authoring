@@ -1,4 +1,7 @@
-define(["underscore", "backbone"], function(_, Backbone){
+define(function(require){
+
+  var _ = require('underscore');
+  var Backbone = require('backbone');
 
   var AdaptBuilder = {};
 
@@ -10,7 +13,7 @@ define(["underscore", "backbone"], function(_, Backbone){
   });
 
   //@todo remove these examples
-  AdaptBuilder.on('login:changed', function(e){
+  /*AdaptBuilder.on('login:changed', function(e){
     console.log('Broad login detected :: ' + e.authenticated);
   });
   AdaptBuilder.on('login:loggedin', function(e){
@@ -18,7 +21,8 @@ define(["underscore", "backbone"], function(_, Backbone){
   });
   AdaptBuilder.on('login:loggedout', function(e){
     console.log('loggedout detected');
-  });
+  });*/
 
   return AdaptBuilder;
+
 });

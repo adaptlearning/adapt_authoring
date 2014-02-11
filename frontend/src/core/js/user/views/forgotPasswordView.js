@@ -7,8 +7,8 @@ define(function(require) {
     tagName: "div",
 
     className: "forgotpassword"
-  },
-  {
+
+  }, {
     template: 'forgotPassword'
   });
 

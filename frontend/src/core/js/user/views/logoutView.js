@@ -9,20 +9,14 @@ define(function(require) {
     className: "logout",
 
     events: {
-      "click .logout a#linkLogout" : "completeLogout",
-      "click .logout a#linkDash" : "gotoDashboard"
+      'click .logout a#linkLogout' : 'completeLogout'
     },
 
     completeLogout: function(e) {
       e.preventDefault();
-
       this.model.logout(function(){
         Backbone.history.navigate('/', {trigger: true});
       });
-    },
-
-    gotoDashboard: function () {
-      Backbone.history.navigate('/dashboard', {trigger: true});
     }
 
   }, 

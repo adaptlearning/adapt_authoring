@@ -12,13 +12,13 @@
 
   <div class="collapse navbar-collapse" id="navbar-collapse-1">
     <ul id="nav-left" class="nav navbar-nav">
-      {{#if authenticated}}
+      {{#if isAuthenticated}}
         <li data-route="dashboard"><a href="/#dashboard">Dashboard</a></li>
       {{/if}}
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      {{#if authenticated}}
-        <li><a href="/#profile">Logged In</a></li>
+      {{#if isAuthenticated}}
+        <li><span>Logged in as <a href="/#profile">{{email}}</a></span></li>
         <li data-route="logout"><a href="/#logout">Logout</a></li>
       {{else}}
         <li data-route="login"><a href="/#login">Login</a></li>

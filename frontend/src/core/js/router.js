@@ -31,7 +31,7 @@ define(function(require) {
     },
 
     isUserAuthenticated: function() {
-      return AdaptBuilder.userModel.get('authenticated') ? true : false;
+      return AdaptBuilder.userModel.get('isAuthenticated') ? true : false;
     },
 
     createView: function(initialView, fallbackView) {
@@ -55,7 +55,7 @@ define(function(require) {
     },
 
     index: function() {
-      if (AdaptBuilder.userModel.get('authenticated')) {
+      if (AdaptBuilder.userModel.get('isAuthenticated')) {
         this.navigate('#dashboard', {trigger: true});
       } else {
         this.navigate('#login', {trigger: true});

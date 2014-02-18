@@ -9,14 +9,14 @@ before(function(done) {
   // bootstrapping!
   var app = builder();
   app.use({ configFile: path.join('test', 'testConfig.json')});
-  app.start();
+  app.run();
   app.once('serverStarted', function (server) {
     testDataRoot = path.join(app.configuration.serverRoot, app.configuration.getConfig('dataRoot'));
-    
+
     if(fs.existsSync(testDataRoot)){
       rimraf.sync(testDataRoot);
     }
-    
+
     fs.mkdirSync(testDataRoot);
     fs.existsSync(testDataRoot).should.be.ok;
     done();

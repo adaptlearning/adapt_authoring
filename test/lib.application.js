@@ -97,7 +97,7 @@ before(function (done) {
   });
 
   // start server
-  app.start();
+  app.run();
 });
 
 after(function (done) {

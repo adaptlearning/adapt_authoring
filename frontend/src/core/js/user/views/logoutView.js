@@ -14,9 +14,7 @@ define(function(require) {
 
     completeLogout: function(e) {
       e.preventDefault();
-      this.model.logout(function(){
-        Backbone.history.navigate('/#user/login', {trigger: true});
-      });
+      this.model.logout();
     }
 
   }, 

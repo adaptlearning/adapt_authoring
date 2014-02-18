@@ -21,13 +21,13 @@ define(function(require) {
       $.post(
         '/api/logout',
         function(){
-        model.fetch().always(function(){
           model.attributes['email'] = '';
           model.attributes['id'] = '';
+          model.attributes['isAuthenticated'] = false;
           
           AdaptBuilder.trigger('login:changed');
-          Backbone.history.navigate('/login', {trigger: true});
-        });
+
+          Backbone.history.navigate('#/user/login', {trigger: true});
       });
     },
 
@@ -46,6 +46,7 @@ define(function(require) {
             model.attributes['email'] = authenticated['email'];            
 
             AdaptBuilder.trigger('login:changed');
+            
             Backbone.history.navigate('/dashboard', {trigger: true});
           });
       }).fail( function() {

@@ -19,26 +19,18 @@
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sort by... <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="#">Name</a></li>
-          <li><a href="#">Author</a></li>
-          <li><a href="#">Last edited</a></li>
-        </ul>
-      </li>
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Categorise by... <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li><a href="#">Name</a></li>
-          <li><a href="#">Author</a></li>
-          <li><a href="#">Type</a></li>
+          <li><a id="filterProjectsByName" href="#">Name</a></li>
+          <li><a id="filterProjectsByAuthor" href="#">Author</a></li>
+          <li><a id="filterProjectsByLastEdit" href="#">Last edited</a></li>
         </ul>
       </li>
     </ul>
     <!-- @todo enable searching -->
     <form class="navbar-form navbar-right" role="search" data-action="search">
       <div class="form-group">
-        <input type="text" class="form-control" placeholder="Search your modules">
+        <input type="text" class="form-control" placeholder="Filter courses">
       </div>
-      <button type="submit" class="btn btn-default navbar-btn">Submit</button>
+      <button id="filterProjectButton" type="submit" class="btn btn-default navbar-btn">Filter</button>
     </form>
   </div><!-- /.navbar-collapse -->
 </nav>

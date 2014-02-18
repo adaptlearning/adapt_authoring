@@ -13,17 +13,17 @@ define(function(require) {
   var Router = Backbone.Router.extend({
 
     routes: {
-      ""                : "index",          // 
-      "login"           : "login",          // #login
-      "logout"          : "logout",         // #logout
-      "login/forgot"    : "forgotpassword", // #login/forgot
-      "profile"         : "profile",        // #profile
+      ""                : "index",          
+      "user/login"      : "login",          
+      "user/logout"     : "logout",         
+      "user/forgot"     : "forgotpassword", 
+      "user/register"   : "register",
+      "user/profile"    : "profile",        
       "project/new"     : "projectNew",
-      "project/edit/:id": "projectEdit",    // #project/edit/id
-      "project/view/:id": "projectView",    // #project/view/id
-      "register"        : "register",       // #register
-      "dashboard"       : "dashboard",      // #dashboard
-      "module"          : "module"          // #module
+      "project/edit/:id": "projectEdit",    
+      "project/view/:id": "projectView",    
+      "dashboard"       : "dashboard",      
+      "module"          : "module"          
     },
 
     initialize: function() {
@@ -31,7 +31,7 @@ define(function(require) {
     },
 
     isUserAuthenticated: function() {
-      return AdaptBuilder.userModel.get('isAuthenticated') ? true : false;
+      return AdaptBuilder.sessionModel.get('isAuthenticated') ? true : false;
     },
 
     createView: function(initialView, fallbackView) {
@@ -46,7 +46,7 @@ define(function(require) {
       } else {
         this.currentView = fallbackView
           ? fallbackView 
-          : new LoginView({model:AdaptBuilder.userModel});
+          : new LoginView({model:AdaptBuilder.sessionModel});
       }
       
       $('#app').append(this.currentView.$el);
@@ -55,19 +55,19 @@ define(function(require) {
     },
 
     index: function() {
-      if (AdaptBuilder.userModel.get('isAuthenticated')) {
+      if (AdaptBuilder.sessionModel.get('isAuthenticated')) {
         this.navigate('#dashboard', {trigger: true});
       } else {
-        this.navigate('#login', {trigger: true});
+        this.navigate('#user/login', {trigger: true});
       }
     },
 
     login: function() {
-      this.createView(false, new LoginView({model: AdaptBuilder.userModel}));
+      this.createView(false, new LoginView({model: AdaptBuilder.sessionModel}));
     },
 
     logout: function () {
-      this.createView(new LogoutView({model: AdaptBuilder.userModel}));
+      this.createView(new LogoutView({model: AdaptBuilder.sessionModel}));
     },
 
     forgotpassword: function() {

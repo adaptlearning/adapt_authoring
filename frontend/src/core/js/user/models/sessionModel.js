@@ -3,7 +3,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var AdaptBuilder = require('coreJS/adaptbuilder');
 
-  var UserModel = Backbone.Model.extend({
+  var SessionModel = Backbone.Model.extend({
 
     defaults: {
       isAuthenticated: false,
@@ -54,6 +54,6 @@ define(function(require) {
     },
   });
 
-  return UserModel;
+  return SessionModel;
 
 });

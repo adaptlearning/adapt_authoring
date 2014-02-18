@@ -1,4 +1,7 @@
-define(["underscore", "backbone"], function(_, Backbone){
+define(function(require){
+
+  var _ = require('underscore');
+  var Backbone = require('backbone');
 
   var AdaptBuilder = {};
 
@@ -9,18 +12,8 @@ define(["underscore", "backbone"], function(_, Backbone){
       Backbone.history.start();
   });
 
-  AdaptBuilder.componentStore = {};
-
-  AdaptBuilder.register = function(name, object) {
-
-      if (AdaptBuilder.componentStore[name]){
-        throw Error('This component already exists in your project');
-      }
-      AdaptBuilder.componentStore[name] = object;
-  }
-
   //@todo remove these examples
-  AdaptBuilder.on('login:changed', function(e){
+  /*AdaptBuilder.on('login:changed', function(e){
     console.log('Broad login detected :: ' + e.authenticated);
   });
   AdaptBuilder.on('login:loggedin', function(e){
@@ -28,7 +21,8 @@ define(["underscore", "backbone"], function(_, Backbone){
   });
   AdaptBuilder.on('login:loggedout', function(e){
     console.log('loggedout detected');
-  });
+  });*/
 
-    return AdaptBuilder;
+  return AdaptBuilder;
+
 });

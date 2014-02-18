@@ -70,7 +70,12 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
       }
 
       res.statusCode = 200;
-      res.json({ success: true });
+      res.json({ 
+        success: true,
+        id: user._id,
+        email: user.email
+      });
+
       return res.end();
     });
   })(req, res, next);

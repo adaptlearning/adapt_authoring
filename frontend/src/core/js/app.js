@@ -1,14 +1,19 @@
 require([
     'coreJS/adaptbuilder',
-    'coreViews/navigationView',  
     'coreJS/router',
+    'coreJS/user/models/sessionModel',
+    'coreJS/navigation/views/navigationView',
     'bootstrap',
     'templates'
-], function (AdaptBuilder, NavigationView, Router) {
-    
-    var navView = new NavigationView({el:'#nav'});
-    navView.render(); 
-  
-    AdaptBuilder.initialize();
+], function (AdaptBuilder, Router, SessionModel, NavigationView) {
+  	AdaptBuilder.sessionModel = new SessionModel();
 
+    AdaptBuilder.router = new Router();
+
+  	AdaptBuilder.sessionModel.fetch({
+  		success: function(data) {
+        $('#nav').html(new NavigationView({model: AdaptBuilder.sessionModel}).$el);
+        AdaptBuilder.initialize();
+  		}
+  	});
 });

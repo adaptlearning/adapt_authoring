@@ -1,84 +1,83 @@
 define(function(require) {
 
-  var Backbone = require('backbone'),
-      HomeView = require('coreViews/homeView'),
-      LoginView = require('coreViews/loginView'),
-      LogoutView = require('coreViews/logoutView'),
-      LoginModel = require('coreModels/loginModel'),
-      ProfileView = require('coreViews/profileView'),
-      ProfileModel = require('coreModels/profileModel'),
-      ForgotPasswordView = require('coreViews/forgotPasswordView'),
-      DashboardView = require('coreViews/dashboardView'),
-      AdaptBuilder = require('coreJS/adaptbuilder'),
-      ProjectCollection = require('coreCollections/projectCollection'),
-      ProjectListView = require('coreViews/projectListView'),
-      ProjectDetailView = require('coreViews/projectDetailView'),
-      ProjectModel = require('coreModels/projectModel'),
-      ProjectOverview = require('coreViews/projectOverview'),
-      ProjectContentListView = require('coreViews/projectContentListView'),
-      ProjectContentCollection = require('coreCollections/projectContentCollection'),
-      ProjectOverviewMenu = require('coreViews/projectOverviewMenu'),
-      ProjectOverviewMenuModel = require('coreModels/projectOverviewMenuModel');
-
-  var loginModel = new LoginModel();
-
-  loginModel.fetch();
-
-  console.log('Logged in is ' + loginModel.get('authenticated'));
+  var Backbone = require('backbone');
+  var LoginView = require('coreJS/user/views/loginView');
+  var DashboardView = require('coreJS/dashboard/views/dashboardView');
+  var AdaptBuilder = require('coreJS/adaptbuilder');
+  var ProjectModel = require('coreJS/dashboard/models/projectModel');
+  var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
+  var LogoutView = require('coreJS/user/views/logoutView');
+  var ProjectOverview = require('coreJS/dashboard/views/projectOverview');
+  var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
 
   var Router = Backbone.Router.extend({
 
     routes: {
-      ""                : "index",          //
-      "home"            : "index",          // #home
-      "login"           : "login",          // #login
-      "logout"          : "logout",         // #logout
-      "login/forgot"    : "forgotpassword", // #login/forgot
-      "profile"         : "profile",        // #profile
-      "project/edit/:id": "projectEdit",    // #project/edit/id
-      "project/view/:id": "projectView",    // #project/view/id
-      "register"        : "register",       // #register
-      "dashboard"       : "dashboard",      // #dashboard
-      "module"          : "module"          // #module
+      ""                : "index",          
+      "user/login"      : "login",          
+      "user/logout"     : "logout",         
+      "user/forgot"     : "forgotpassword", 
+      "user/register"   : "register",
+      "user/profile"    : "profile",        
+      "project/new"     : "projectNew",
+      "project/edit/:id": "projectEdit",    
+      "project/view/:id": "projectView",    
+      "dashboard"       : "dashboard",      
+      "module"          : "module"          
     },
 
     initialize: function() {
+      this.currentView = null;
+    },
 
-      //Listen for route event and notify
-      this.on('route', function(route){
-        AdaptBuilder.trigger('route:changed',{route:route});
-      },this);
+    isUserAuthenticated: function() {
+      return AdaptBuilder.sessionModel.get('isAuthenticated') ? true : false;
+    },
 
+    createView: function(initialView, fallbackView) {
+      // Remove the existing view
+      if (this.currentView) {
+        this.currentView.remove();
+        AdaptBuilder.trigger('remove:views');
+      }
+
+      if (this.isUserAuthenticated()) {
+        this.currentView = initialView;
+      } else {
+        this.currentView = fallbackView
+          ? fallbackView 
+          : new LoginView({model:AdaptBuilder.sessionModel});
+      }
+      
+      $('#app').append(this.currentView.$el);
+
+      return this.currentView;
     },
 
     index: function() {
-      var view = new HomeView({el:'#app'});
-      view.render();
+      if (AdaptBuilder.sessionModel.get('isAuthenticated')) {
+        this.navigate('#dashboard', {trigger: true});
+      } else {
+        this.navigate('#user/login', {trigger: true});
+      }
     },
 
     login: function() {
-      var view = new LoginView({model:loginModel, el:'#app'});
-      view.render();
+      this.createView(false, new LoginView({model: AdaptBuilder.sessionModel}));
     },
 
     logout: function () {
-      var view = new LogoutView({model:loginModel, el:'#app'});
-      view.render();
+      this.createView(new LogoutView({model: AdaptBuilder.sessionModel}));
     },
 
     forgotpassword: function() {
-      var view = new ForgotPasswordView({model:loginModel, el:'#app'});
-      view.render();
+      this.createView(false, new ForgotPasswordView());
     },
 
     dashboard: function() {
-      var dashboardView = new DashboardView({el:'#app'});
-      dashboardView.render();
-
-      var projects = new ProjectCollection();
-      var projectListView = new ProjectListView({collection: projects, el:dashboardView.$('#projects')});
-      projectListView.render();
+      this.createView(new DashboardView());
     },
+    /*,
 
     profile: function () {
       var profileModel = new ProfileModel({id:'me'});
@@ -87,41 +86,26 @@ define(function(require) {
       var profileView = new ProfileView({el: '#app', model: profileModel});
       profileView.render();
     },
+*/
+    projectNew: function() {
+      var project = new ProjectModel();
+      this.createView(new ProjectDetailView({model: project}));
+    },
 
     projectEdit: function (id) {
-      console.log('Show project details for :: ' + id);
-
-      id = (id==-1)
-            ?null
-            :{id:id};
-
-      var projectModel = new ProjectModel(id);
-
-      var projectDetailView = new ProjectDetailView({el: '#app', model: projectModel});
-      projectDetailView.render();
+      var projectModel = new ProjectModel({_id: id});
+      projectModel.fetch();
+      this.createView(new ProjectDetailView({model: projectModel}));
     },
 
     projectView: function (id) {
-      console.log('Show project content for :: ' + id);
-
-      var projectModel = new ProjectModel({id:id});
-
-      var projectOverview = new ProjectOverview({el: '#app', model: projectModel});
-
-      projectOverview.on('rendered',function () {
-        var projectContents = new ProjectContentCollection({projectid:id});
-        var projectContentListView = new ProjectContentListView({collection: projectContents, el:projectOverview.$('.project-content-view')});
-        var projectOverviewMenuModel = new ProjectOverviewMenuModel();
-        var projectOverviewMenu = new ProjectOverviewMenu({ el:projectOverview.$('.project-content-menu'), model: projectOverviewMenuModel });
-        projectOverviewMenu.render();
-
-      });
-
-      projectOverview.render();
+      var projectModel = new ProjectModel({_id: id});
+      projectModel.fetch();
+      this.createView(new ProjectOverview({model: projectModel}));
     }
 
   });
 
-  return new Router;
+  return Router;
 
 });

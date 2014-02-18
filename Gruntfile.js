@@ -54,7 +54,7 @@ module.exports = function(grunt) {
             partialsPathRegex: /\/partials\//
           },
           files: {
-            "frontend/src/templates/templates.js": "frontend/src/**/*.hbs"
+            "frontend/src/templates/templates.js": "frontend/src/core/js/**/*.hbs"
           }
         }
       },
@@ -81,8 +81,21 @@ module.exports = function(grunt) {
         }
       },
       watch: {
-        files: ['frontend/src/**/*.hbs'],
-        tasks: ['handlebars']
+        handlebars: {
+          files: ['frontend/src/**/*.hbs'],
+          tasks: ['handlebars', 'compile']
+        },
+        js: {
+          files: [
+            'frontend/src/**/*.js',
+            '!frontend/src/templates/templates.js'
+          ],
+          tasks: ['compile']
+        },
+        less: {
+          files: ['frontend/src/**/*.less'],
+          tasks: ['less']
+        }
       },
       mochaTest: {
         test: {
@@ -97,6 +110,16 @@ module.exports = function(grunt) {
             'test/*.js'
           ]
         }
+      },
+      open: {
+        server: {
+          path: 'http://localhost:<%= server.options.port %>/'
+        }
+      },
+      server: {
+        options: {
+          port: 8080
+        }
       }
     });
 
@@ -104,4 +127,9 @@ module.exports = function(grunt) {
     grunt.registerTask('build',['less', 'copy', 'handlebars']);
     grunt.registerTask('dev',['less', 'copy', 'handlebars', 'requirejs:dev']);
     grunt.registerTask('test',['mochaTest']);
+    grunt.registerTask('compile',['requirejs:dev']);
+    grunt.registerTask('server',['start', 'open:server', 'watch']);
+    grunt.registerTask('start', 'Start node server', function() {
+      var server = require('./server');
+    });
 };

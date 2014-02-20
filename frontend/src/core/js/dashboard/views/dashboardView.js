@@ -23,12 +23,21 @@ define(function(require){
     },
 
     events: {
-      'click #dashboardMenu button': 'formclick'
+      'click #dashboardMenu button'    : 'formclick',
+      'click a#sortProjectsByName'     : 'sortProjectsByName',
+      'click a#sortProjectsByAuthor'   : 'sortProjectsByAuthor',
+      'click a#sortProjectsByLastEdit' : 'sortProjectsByLastEdit'
     },
 
     addProjectViews: function() {
-      this.collection.each(function(project) {
-        this.$('#projects').append(new ProjectView({model:project}).$el);
+      this.renderProjectViews(this.collection.models);
+    },
+
+    renderProjectViews: function(projects) {
+      this.$('#projects').empty();
+
+      _.each(projects, function(project) {
+        this.$('#projects').append(new ProjectView({model: project}).$el);
       }, this);
     },
 
@@ -38,15 +47,66 @@ define(function(require){
       }
     },
 
-    formclick: function (ev) {
-      var type = $(ev.target).data('action');
-      ev.preventDefault();
-      switch( type ) {
+    sortProjectsByAuthor: function(e) {
+      e.preventDefault();
+
+      var collection = this.collection;
+      var sortedCollection = this.collection.sortBy(function(project){
+        return project.get("createdBy").toLowerCase();
+      });
+
+      this.renderProjectViews(sortedCollection);
+    },
+
+    sortProjectsByName: function(e) {
+      e.preventDefault();
+
+      var collection = this.collection;
+      var sortedCollection = this.collection.sortBy(function(project){
+        return project.get("name").toLowerCase();
+      });
+
+      this.renderProjectViews(sortedCollection);
+    },
+
+    sortProjectsByLastEdit: function(e) {
+      e.preventDefault();
+
+      var collection = this.collection;
+      // Append a JavaScript date object to the temporary model so we can sort
+      _.each(collection.models, function(project) {
+        var newDate = new Date(project.get("lastUpdated"));
+        project.set({'lastUpdatedDate': newDate});
+      });
+
+      var sortedCollection =collection.sortBy(function(project){
+        return -project.get("lastUpdatedDate");
+      });
+
+      this.renderProjectViews(sortedCollection);
+    },
+
+    filterProjects: function(filterText) {
+      var collection = this.collection;
+      var filteredCollection = _.filter(collection.models, function(model) {
+        return model.get('name').toLowerCase().indexOf(filterText.toLowerCase()) > -1;
+      });
+
+      this.renderProjectViews(filteredCollection);
+    },
+
+    formclick: function (e) {
+      e.preventDefault();
+
+      var type = $(e.target).data('action');
+
+      switch (type) {
           case 'new':
             Backbone.history.navigate('/project/new', {trigger: true});
           break;
-          case 'search':
-            //@todo implement course search
+          case 'filter':
+            var criteria = $('#filterCriteria').val();
+            this.filterProjects(criteria);
           break;
       }
     }

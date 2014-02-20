@@ -18,7 +18,7 @@
     </ul>
     <ul class="nav navbar-nav navbar-right">
       {{#if isAuthenticated}}
-        <li><span>Logged in as <a href="/#user/profile">{{capitalise email}}</a></span></li>
+        <li><span>Logged in as <a href="/#user/profile">{{email}}</a></span></li>
         <li data-route="logout"><a href="/#user/logout">Logout</a></li>
       {{else}}
         <li data-route="login"><a href="/#user/login">Login</a></li>

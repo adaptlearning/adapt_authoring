@@ -19,18 +19,18 @@
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sort by... <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a id="filterProjectsByName" href="#">Name</a></li>
-          <li><a id="filterProjectsByAuthor" href="#">Author</a></li>
-          <li><a id="filterProjectsByLastEdit" href="#">Last edited</a></li>
+          <li><a id="sortProjectsByName" href="#">Name</a></li>
+          <li><a id="sortProjectsByAuthor" href="#">Author</a></li>
+          <li><a id="sortProjectsByLastEdit" href="#">Last edited</a></li>
         </ul>
       </li>
     </ul>
     <!-- @todo enable searching -->
     <form class="navbar-form navbar-right" role="search" data-action="search">
       <div class="form-group">
-        <input type="text" class="form-control" placeholder="Filter courses">
+        <input id="filterCriteria" type="text" class="form-control" placeholder="Filter courses">
       </div>
-      <button id="filterProjectButton" type="submit" class="btn btn-default navbar-btn">Filter</button>
+      <button id="filterProjectButton" type="submit" class="btn btn-default navbar-btn" data-action="filter">Filter</button>
     </form>
   </div><!-- /.navbar-collapse -->
 </nav>

@@ -3,9 +3,10 @@ require([
     'coreJS/router',
     'coreJS/user/models/sessionModel',
     'coreJS/navigation/views/navigationView',
+    'coreJS/helpers',
     'bootstrap',
     'templates'
-], function (AdaptBuilder, Router, SessionModel, NavigationView) {
+], function (AdaptBuilder, Router, SessionModel, NavigationView, Helpers) {
   	AdaptBuilder.sessionModel = new SessionModel();
 
     AdaptBuilder.router = new Router();

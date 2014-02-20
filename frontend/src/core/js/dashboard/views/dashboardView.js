@@ -39,18 +39,23 @@ define(function(require){
       _.each(projects, function(project) {
         this.$('#projects').append(new ProjectView({model: project}).$el);
       }, this);
+
+      this.evaluateProjectCount(projects);
+    },
+
+    evaluateProjectCount: function (projects) {
+      if (projects.length == 0) {
+        this.$('#projects').append('No projects to display');  
+      }
     },
 
     projectRemoved: function() {
-      if (this.collection.length == 0) {
-        this.$('#projects').append('No projects to display');  
-      }
+      this.evaluateProjectCount(this.collection);
     },
 
     sortProjectsByAuthor: function(e) {
       e.preventDefault();
 
-      var collection = this.collection;
       var sortedCollection = this.collection.sortBy(function(project){
         return project.get("createdBy").toLowerCase();
       });
@@ -61,7 +66,6 @@ define(function(require){
     sortProjectsByName: function(e) {
       e.preventDefault();
 
-      var collection = this.collection;
       var sortedCollection = this.collection.sortBy(function(project){
         return project.get("name").toLowerCase();
       });
@@ -72,6 +76,7 @@ define(function(require){
     sortProjectsByLastEdit: function(e) {
       e.preventDefault();
 
+      // Temporary variable as we're augmenting the collection
       var collection = this.collection;
       // Append a JavaScript date object to the temporary model so we can sort
       _.each(collection.models, function(project) {
@@ -79,7 +84,7 @@ define(function(require){
         project.set({'lastUpdatedDate': newDate});
       });
 
-      var sortedCollection =collection.sortBy(function(project){
+      var sortedCollection = collection.sortBy(function(project){
         return -project.get("lastUpdatedDate");
       });
 
@@ -87,8 +92,8 @@ define(function(require){
     },
 
     filterProjects: function(filterText) {
-      var collection = this.collection;
-      var filteredCollection = _.filter(collection.models, function(model) {
+      // var collection = this.collection;
+      var filteredCollection = _.filter(this.collection.models, function(model) {
         return model.get('name').toLowerCase().indexOf(filterText.toLowerCase()) > -1;
       });
 

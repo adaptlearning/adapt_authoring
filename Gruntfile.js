@@ -61,7 +61,7 @@ module.exports = function(grunt) {
       requirejs: {
         dev: {
           options: {
-            name: "core/js/app",
+            name: "core/app/app",
             baseUrl: "frontend/src",
             mainConfigFile: "./config.js",
             out: "./frontend/build/adaptbuilder/js/adaptbuilder.min.js",

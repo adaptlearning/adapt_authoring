@@ -5,12 +5,12 @@ define(function(require) {
 
   var LoginView = BuilderView.extend({
 
-    className: 'login-view',
+    className: 'login',
 
     tagName: "div",
 
     events: {
-      'click .loginForm button':'submitLoginDetails'
+      'click .login-form button':'submitLoginDetails'
     },
 
     preRender: function() {
@@ -19,9 +19,8 @@ define(function(require) {
     
     submitLoginDetails: function(e) {
       e.preventDefault();
-      //Do some crazy validation here
-      var inputUsernameEmail = $("#inputUsernameEmail", this.$el).val();
-      var inputPassword = $("#inputPassword", this.$el).val();
+      var inputUsernameEmail = this.$("#login-input-username").val();
+      var inputPassword = this.$("#login-input-password").val();
       var mdl = this.model;
 
       mdl.login(inputUsernameEmail, inputPassword, function(err, result){

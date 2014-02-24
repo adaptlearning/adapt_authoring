@@ -6,6 +6,10 @@ define(function(require){
 
   var NavigationView = BuilderView.extend({
 
+    tagName: 'nav',
+
+    className: 'navigation',
+
     preRender: function() {
       this.listenTo(AdaptBuilder, 'login:changed', this.render, this);
       this.listenTo(AdaptBuilder, 'route:changed', this.routeChanged, this);

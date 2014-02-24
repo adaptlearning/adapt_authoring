@@ -8,11 +8,11 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'project col-6 col-sm-4 col-lg-2',
+    className: 'project',
 
     events: {
       'click div.projectDetail' : 'viewProject',
-      'click a.delete-link' : 'deleteProject'
+      'click .project-delete-link' : 'deleteProject'
     },
 
     viewProject: function(event) {

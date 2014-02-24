@@ -4,7 +4,7 @@ define(function(require) {
   var LoginView = require('coreJS/user/views/loginView');
   var DashboardView = require('coreJS/dashboard/views/dashboardView');
   var AdaptBuilder = require('coreJS/app/adaptbuilder');
-  var ProjectModel = require('coreJS/dashboard/models/projectModel');
+  var ProjectModel = require('coreJS/project/models/projectModel');
   var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
   var LogoutView = require('coreJS/user/views/logoutView');
   var ProjectOverview = require('coreJS/dashboard/views/projectOverview');

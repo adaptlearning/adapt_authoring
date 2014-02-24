@@ -9,7 +9,7 @@ define(function(require){
 
     tagName: "div",
 
-    className: "editor-view",
+    className: "editor",
 
     preRender: function() {
       //this.collection = new ProjectCollection();

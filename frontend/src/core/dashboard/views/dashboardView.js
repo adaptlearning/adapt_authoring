@@ -4,14 +4,14 @@ define(function(require){
   var Handlebars = require('handlebars');
   var AdaptBuilder = require('coreJS/app/adaptBuilder');
   var BuilderView = require('coreJS/app/views/builderView');
-  var ProjectView = require('coreJS/dashboard/views/projectView');
-  var ProjectCollection = require('coreJS/dashboard/collections/projectCollection');
+  var ProjectView = require('coreJS/project/views/projectView');
+  var ProjectCollection = require('coreJS/project/collections/projectCollection');
 
   var DashboardView = BuilderView.extend({
 
     tagName: "div",
 
-    className: "dashboard-view",
+    className: "dashboard",
 
     preRender: function() {
       this.collection = new ProjectCollection();
@@ -34,10 +34,10 @@ define(function(require){
     },
 
     renderProjectViews: function(projects) {
-      this.$('#projects').empty();
+      this.$('.dashboard-projects').empty();
 
       _.each(projects, function(project) {
-        this.$('#projects').append(new ProjectView({model: project}).$el);
+        this.$('.dashboard-projects').append(new ProjectView({model: project}).$el);
       }, this);
 
       this.evaluateProjectCount(projects);
@@ -45,7 +45,7 @@ define(function(require){
 
     evaluateProjectCount: function (projects) {
       if (projects.length == 0) {
-        this.$('#projects').append('No projects to display');  
+        this.$('.dashboard-projects').append('No projects to display');  
       }
     },
 

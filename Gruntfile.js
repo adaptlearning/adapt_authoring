@@ -34,7 +34,7 @@ module.exports = function(grunt) {
       less: {
         dist: {
           files: {
-            'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/**/*.css'
+            'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/**/*.less'
           }
         },
         options: {
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
             partialsPathRegex: /\/partials\//
           },
           files: {
-            "frontend/src/templates/templates.js": "frontend/src/core/js/**/*.hbs"
+            "frontend/src/templates/templates.js": "frontend/src/core/**/*.hbs"
           }
         }
       },

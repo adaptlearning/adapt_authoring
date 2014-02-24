@@ -9,6 +9,7 @@ define(function(require) {
   var LogoutView = require('coreJS/user/views/logoutView');
   var ProjectOverview = require('coreJS/dashboard/views/projectOverview');
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
+  var EditorView = require('coreJS/editor/views/editorView');
 
   var Router = Backbone.Router.extend({
 
@@ -23,7 +24,8 @@ define(function(require) {
       "project/edit/:id": "projectEdit",    
       "project/view/:id": "projectView",    
       "dashboard"       : "dashboard",      
-      "module"          : "module"          
+      "module"          : "module",
+      "editor"          : "editor"
     },
 
     initialize: function() {
@@ -102,7 +104,11 @@ define(function(require) {
       var projectModel = new ProjectModel({_id: id});
       projectModel.fetch();
       this.createView(new ProjectOverview({model: projectModel}));
-    }
+    },
+
+    editor: function() {
+      this.createView(new EditorView());
+    },
 
   });
 

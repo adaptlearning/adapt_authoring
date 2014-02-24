@@ -47,7 +47,7 @@ define(function(require) {
 
             AdaptBuilder.trigger('login:changed');
             
-            Backbone.history.navigate('/dashboard', {trigger: true});
+            Backbone.history.navigate('#/dashboard', {trigger: true});
           });
       }).fail( function() {
         cback(new Error('Request failed'));

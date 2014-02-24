@@ -27,7 +27,7 @@ define(function(require) {
         if( err || !result.success) {
           AdaptBuilder.trigger('loginFailed');
         } else {
-          Backbone.history.navigate('#dashboard', {trigger: true});
+          Backbone.history.navigate('#/dashboard', {trigger: true});
         }
       });
     },

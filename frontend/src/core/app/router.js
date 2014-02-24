@@ -7,7 +7,7 @@ define(function(require) {
   var ProjectModel = require('coreJS/project/models/projectModel');
   var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
   var LogoutView = require('coreJS/user/views/logoutView');
-  var ProjectOverview = require('coreJS/dashboard/views/projectOverview');
+  //var ProjectOverview = require('coreJS/dashboard/views/projectOverview');
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
   var EditorView = require('coreJS/editor/views/editorView');
 
@@ -58,9 +58,9 @@ define(function(require) {
 
     index: function() {
       if (AdaptBuilder.sessionModel.get('isAuthenticated')) {
-        this.navigate('#dashboard', {trigger: true});
+        this.navigate('#/dashboard', {trigger: true});
       } else {
-        this.navigate('#user/login', {trigger: true});
+        this.navigate('#/user/login', {trigger: true});
       }
     },
 
@@ -103,7 +103,7 @@ define(function(require) {
     projectView: function (id) {
       var projectModel = new ProjectModel({_id: id});
       projectModel.fetch();
-      this.createView(new ProjectOverview({model: projectModel}));
+      //this.createView(new ProjectOverview({model: projectModel}));
     },
 
     editor: function() {

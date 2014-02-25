@@ -108,9 +108,7 @@ define(function(require) {
 
     editorMenu: function(id) {
       var projectModel = new ProjectModel({_id: id});
-      projectModel.fetch();
-      this.createView(new EditorView({model: projectModel}));
-      AdaptBuilder.trigger('editor:menu');
+      this.createView(new EditorView({model: projectModel, currentView: 'menu'}));
     }
 
   });

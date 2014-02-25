@@ -15,7 +15,7 @@ define(function(require){
     },
 
     initialize: function() {
-      this.listenTo(Builder, 'remove', this.remove);
+      this.listenTo(Builder, 'remove:views', this.remove);
       this.preRender();
       if (this.settings.autoRender) {
         this.render();

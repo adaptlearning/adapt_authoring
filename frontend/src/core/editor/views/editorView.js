@@ -12,13 +12,22 @@ define(function(require){
 
     className: "editor",
 
-    preRender: function() {
+    initialize: function(options) {
+      this.currentView = options.currentView;
+      this.listenTo(this.model, 'sync', this.render);
       this.listenTo(AdaptBuilder, 'remove:views', this.remove);
-      console.log(this.model);
+      this.preRender();
+      this.model.fetch();
+    },
+
+    preRender: function(options) {
     },
 
     postRender: function() {
       this.renderEditorSidebar();
+      if (this.currentView === "menu") {
+        this.renderEditorMenu();
+      }
     },
 
     renderEditorSidebar: function() {
@@ -26,7 +35,11 @@ define(function(require){
     },
 
     renderEditorMenu: function() {
-      console.log('renderEditorMenu');
+      console.log('render editor menu');
+    },
+
+    renderEditorPage: function() {
+      console.log('render editor page');
     }
 
   }, {

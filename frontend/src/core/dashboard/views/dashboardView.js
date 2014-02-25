@@ -16,8 +16,7 @@ define(function(require){
     preRender: function() {
       this.collection = new ProjectCollection();
       this.collection.fetch();
-
-      this.listenTo(AdaptBuilder, 'remove:views', this.remove);
+      console.log('dashboard view')
       this.listenTo(this.collection, 'sync', this.addProjectViews);
       this.listenTo(this.collection, 'remove', this.projectRemoved);
     },

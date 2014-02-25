@@ -1,0 +1,20 @@
+[
+	{
+        "_id":"co-05",
+        "_parentId":"course",
+        "_type":"page",
+        "title":"Welcome to Adapt Learning"
+    },
+    {
+        "_id":"co-10",
+        "_parentId":"course",
+        "_type":"menu",
+        "title":"Want to know more about our components"
+    },
+    {
+        "_id":"co-12",
+        "_parentId":"course",
+        "_type":"page",
+        "title":"Adapt comes with some plugins too"
+    }
+]

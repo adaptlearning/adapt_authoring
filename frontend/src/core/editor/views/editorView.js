@@ -18,17 +18,13 @@ define(function(require){
     },
 
     preRender: function() {
-      this.collection = new PageCollection({projectid:this.model.get('_id')});
       this.listenTo(AdaptBuilder, 'remove:views', this.remove);
-      this.listenTo(this.collection, 'sync', this.renderPageViews);
+      this.listenTo(this.model, 'sync', this.renderPageView);
     },
 
-    renderPageViews: function() {
+    renderPageView: function() {
       this.$('.editor').empty();
-
-      _.each(this.collection.models, function(page) {
-        this.$('.editor').append(new PageView({model: page}).$el);
-      }, this);
+      this.$('.editor').append(new PageView({model: this.model}).$el);
     }
 
   }, {

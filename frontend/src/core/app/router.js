@@ -111,9 +111,9 @@ define(function(require) {
     },
 
     editor: function (id) {
-      var projectModel = new ProjectModel({_id: id});
-      projectModel.fetch();
-      this.createView(new EditorView({model: projectModel}));
+      var pageModel = new PageModel({_id:id});
+      pageModel.fetch();
+      this.createView(new EditorView({model: pageModel}));
     },
 
     pageNew: function () {

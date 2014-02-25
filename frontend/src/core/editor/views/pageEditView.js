@@ -47,7 +47,7 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: function() {
-            Backbone.history.navigate('/editor', {trigger: true});
+            Backbone.history.navigate('/editor/view', {trigger: true});
           }
         }
       );

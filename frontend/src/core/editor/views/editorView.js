@@ -4,6 +4,7 @@ define(function(require){
   var Handlebars = require('handlebars');
   var AdaptBuilder = require('coreJS/app/adaptBuilder');
   var BuilderView = require('coreJS/app/views/builderView');
+  var EditorSidebarView = require('coreJS/editor/views/editorSidebarView');
   
   var EditorView = BuilderView.extend({
 
@@ -12,16 +13,20 @@ define(function(require){
     className: "editor",
 
     preRender: function() {
-      //this.collection = new ProjectCollection();
-      //this.collection.fetch();
-
       this.listenTo(AdaptBuilder, 'remove:views', this.remove);
-      //this.listenTo(this.collection, 'sync', this.addProjectViews);
-      //this.listenTo(this.collection, 'remove', this.projectRemoved);
+      console.log(this.model);
     },
 
-    events: {
-      
+    postRender: function() {
+      this.renderEditorSidebar();
+    },
+
+    renderEditorSidebar: function() {
+      this.$el.append(new EditorSidebarView().$el);
+    },
+
+    renderEditorMenu: function() {
+      console.log('renderEditorMenu');
     }
 
   }, {

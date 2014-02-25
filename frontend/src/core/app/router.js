@@ -25,7 +25,7 @@ define(function(require) {
       "project/view/:id": "projectView",    
       "dashboard"       : "dashboard",      
       "module"          : "module",
-      "editor"          : "editor"
+      "editor/menu/edit/:id": "editorMenu"
     },
 
     initialize: function() {
@@ -106,9 +106,12 @@ define(function(require) {
       //this.createView(new ProjectOverview({model: projectModel}));
     },
 
-    editor: function() {
-      this.createView(new EditorView());
-    },
+    editorMenu: function(id) {
+      var projectModel = new ProjectModel({_id: id});
+      projectModel.fetch();
+      this.createView(new EditorView({model: projectModel}));
+      AdaptBuilder.trigger('editor:menu');
+    }
 
   });
 

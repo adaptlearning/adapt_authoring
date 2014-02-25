@@ -12,6 +12,8 @@ define(function(require){
       Backbone.history.start();
   });
 
+  AdaptBuilder.editor = {};
+
   return AdaptBuilder;
 
 });

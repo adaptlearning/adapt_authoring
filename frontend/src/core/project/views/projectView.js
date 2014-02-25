@@ -3,6 +3,7 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var BuilderView = require('coreJS/app/views/builderView');
+  var Builder = require('coreJS/app/adaptBuilder');
 
   var ProjectView = BuilderView.extend({
 

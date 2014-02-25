@@ -34,9 +34,7 @@ define(function(require){
       return this;
     },
 
-    postRender: function() {
-
-    },
+    postRender: function() {},
 
     remove: function() {
       this.$el.remove();

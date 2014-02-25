@@ -128,7 +128,7 @@ module.exports = function(grunt) {
     grunt.registerTask('dev',['less', 'copy', 'handlebars', 'requirejs:dev']);
     grunt.registerTask('test',['mochaTest']);
     grunt.registerTask('compile',['requirejs:dev']);
-    grunt.registerTask('server',['start', 'open:server', 'watch']);
+    grunt.registerTask('server',['less', 'handlebars', 'compile', 'start', 'open:server', 'watch']);
     grunt.registerTask('start', 'Start node server', function() {
       var server = require('./server');
     });

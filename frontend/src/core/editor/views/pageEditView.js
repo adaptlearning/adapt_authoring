@@ -15,8 +15,8 @@ define(function(require) {
     className: "project",
 
     events: {
-      'click button#saveButton' : 'savePage',
-      'click button#cancelButton' : 'cancel'
+      'click .save-button'   : 'savePage',
+      'click .cancel-button' : 'cancel'
     },
 
     preRender: function() {
@@ -39,8 +39,8 @@ define(function(require) {
     savePage: function(event) {
       event.preventDefault();
 
-      this.model.save({name: this.$('#pageTitle').val(),
-        description: this.$('#pageDescription').val(),
+      this.model.save({name: this.$('.page-title').val(),
+        description: this.$('.page-description').val(),
         tenantId: 'noidyet'},
         {
           error: function() {

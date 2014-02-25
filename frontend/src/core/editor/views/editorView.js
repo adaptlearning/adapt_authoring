@@ -24,10 +24,10 @@ define(function(require){
     },
 
     renderPageViews: function() {
-      this.$('#editor').empty();
+      this.$('.editor').empty();
 
       _.each(this.collection.models, function(page) {
-        this.$('#editorPanel').append(new PageView({model: page}).$el);
+        this.$('.editor').append(new PageView({model: page}).$el);
       }, this);
     }
 

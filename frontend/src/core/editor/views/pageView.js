@@ -8,16 +8,10 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'page col-6 col-sm-4 col-lg-2',
+    className: 'page',
 
     events: {
-      'click div.projectDetail' : 'viewPage',
       'click a.delete-link' : 'deletePage'
-    },
-
-    viewPage: function(event) {
-      event.preventDefault();
-      Backbone.history.navigate('#page/view/'+this.model.get('_id'), {trigger: true});
     },
 
     deletePage: function(event) {

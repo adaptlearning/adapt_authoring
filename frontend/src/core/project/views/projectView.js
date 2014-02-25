@@ -11,13 +11,7 @@ define(function(require){
     className: 'project',
 
     events: {
-      'click div.projectDetail' : 'viewProject',
       'click .project-delete-link' : 'deleteProject'
-    },
-
-    viewProject: function(event) {
-      event.preventDefault();
-      Backbone.history.navigate('#project/view/'+this.model.get('_id'), {trigger: true});
     },
 
     deleteProject: function(event) {

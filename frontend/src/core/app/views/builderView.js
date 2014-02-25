@@ -28,7 +28,14 @@ define(function(require){
       var data = this.model ? this.model.toJSON() : null;
       var template = Handlebars.templates[this.constructor.template];
       this.$el.html(template(data));
+      _.defer(_.bind(function() {
+        this.postRender();
+      }, this));
       return this;
+    },
+
+    postRender: function() {
+
     },
 
     remove: function() {

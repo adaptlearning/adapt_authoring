@@ -28,7 +28,7 @@ define(function(require) {
       "dashboard"       : "dashboard",
       "module"          : "module",
       "editor/view/:id" : "editor",
-      "page/new"        : "pageEdit",
+      "page/new"        : "pageNew",
       "page/edit/:id"   : "pageEdit"
     },
 

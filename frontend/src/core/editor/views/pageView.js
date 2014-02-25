@@ -3,6 +3,8 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var BuilderView = require('coreJS/app/views/builderView');
+  var PageArticleModel = require('coreJS/editor/models/PageArticleModel');
+  var PageArticleView = require('coreJS/editor/views/PageArticleView');
 
   var PageView = BuilderView.extend({
 
@@ -11,7 +13,8 @@ define(function(require){
     className: 'page',
 
     events: {
-      'click a.delete-link' : 'deletePage'
+      'click a.delete-link' : 'deletePage',
+      'click a.add-article' : 'addArticle'
     },
 
     deletePage: function(event) {
@@ -21,6 +24,30 @@ define(function(require){
           this.remove();
         }
       }
+    },
+
+    appendNewArticle: function(newPageArticleModel) {
+      this.$('.page-articles').append(new PageArticleView({model: newPageArticleModel}).$el);
+    },
+
+    addArticle: function(event) {
+      event.preventDefault();
+      
+      var thisView = this;
+      var newPageArticleModel = new PageArticleModel();
+
+      newPageArticleModel.save({name: 'New article', 
+        description: 'Edit this text',
+        tenantId: 'noidyet'},
+        {
+          error: function() {
+            alert('error adding new article');
+          },
+          success: function() {
+            thisView.appendNewArticle(newPageArticleModel);
+          }
+        }
+      );
     }
     
   }, {

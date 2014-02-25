@@ -10,22 +10,26 @@ define(function(require) {
   //var ProjectOverview = require('coreJS/dashboard/views/projectOverview');
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
   var EditorView = require('coreJS/editor/views/editorView');
+  var PageModel = require('coreJS/editor/models/pageModel');
+  var PageEditView = require('coreJS/editor/views/pageEditView');
 
   var Router = Backbone.Router.extend({
 
     routes: {
-      ""                : "index",          
-      "user/login"      : "login",          
-      "user/logout"     : "logout",         
-      "user/forgot"     : "forgotpassword", 
+      ""                : "index",
+      "user/login"      : "login",
+      "user/logout"     : "logout",
+      "user/forgot"     : "forgotpassword",
       "user/register"   : "register",
-      "user/profile"    : "profile",        
+      "user/profile"    : "profile",
       "project/new"     : "projectNew",
-      "project/edit/:id": "projectEdit",    
-      "project/view/:id": "projectView",    
-      "dashboard"       : "dashboard",      
+      "project/edit/:id": "projectEdit",
+      "project/view/:id": "projectView",
+      "dashboard"       : "dashboard",
       "module"          : "module",
-      "editor"          : "editor"
+      "editor/view/:id" : "editor",
+      "page/new"        : "pageEdit",
+      "page/edit/:id"   : "pageEdit"
     },
 
     initialize: function() {
@@ -106,9 +110,23 @@ define(function(require) {
       //this.createView(new ProjectOverview({model: projectModel}));
     },
 
-    editor: function() {
-      this.createView(new EditorView());
+    editor: function (id) {
+      var projectModel = new ProjectModel({_id: id});
+      projectModel.fetch();
+      this.createView(new EditorView({model: projectModel}));
     },
+
+    pageNew: function () {
+      var pageModel = new PageModel();
+      pageModel.fetch();
+      this.createView(new PageEditView({model: pageModel}));
+    },
+
+    pageEdit: function (id) {
+      var pageModel = new PageModel({_id:id});
+      pageModel.fetch();
+      this.createView(new PageEditView({model: pageModel}));
+    }
 
   });
 

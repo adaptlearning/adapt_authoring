@@ -20,8 +20,20 @@ server.set('view engine', 'hbs');
 // register partials from our ./partials directory
 hbs.registerPartials(path.join(__dirname, 'partials'));
 
+// prevent installer running if config file already exists
+server.all('/install*', function (req, res, next) {
+  // check if install has completed, redirect to root if so
+  fs.exists(path.join(configuration.serverRoot, 'conf', 'config.json'), function (exists) {
+    if (exists) {
+      return res.redirect('/');
+    }
+
+    return next();
+  });
+});
+
 // installer landing page
-server.get('/install', function (req, res, next) {
+server.all('/install', function (req, res, next) {
   res.render('install', {pageTitle: "Install"});
 });
 

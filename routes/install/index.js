@@ -6,6 +6,7 @@ var validator = require('validator');
 var builder = require('../../');
 var configuration = require('../../lib/configuration');
 var database = require('../../lib/database');
+var permissions = require('../../lib/permissions');
 var tenantmanager = require('../../lib/tenantmanager');
 var localAuth = require('../../plugins/auth/local');
 var server = module.exports = express();
@@ -173,9 +174,20 @@ server.all('/install/tenant', function (req, res, next) {
                 return next(error);
               }
 
-              // all ready to go!
-              return res.redirect('/install/complete');
-          });
+              // admin user requires access to all areas!
+              permissions.createPolicy(user._id, function (error, policy) {
+                // add a new policy statement
+                permissions.addStatement(policy, ['create', 'read', 'update', 'delete'], permissions.buildResourceString('*', '/*'), 'allow', function (error) {
+                  if (error) {
+                    return next(error);
+                  }
+
+                  // all ready to go!
+                  return res.redirect('/install/complete')
+                });
+              });
+            }
+          );
         });
       });
 

@@ -1,11 +1,15 @@
 var path = require('path'),
     fs = require('fs'),
-    builder = require('../../');
+    builder = require('../../'),
+    logger = require('../../lib/logger'),
     rimraf = require('rimraf');
 
 var testDataRoot = false;
 
 before(function(done) {
+  // suppress all logging!
+  logger.clear();
+
   // bootstrapping!
   var app = builder();
   app.use({ configFile: path.join('test', 'testConfig.json')});

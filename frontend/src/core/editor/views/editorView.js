@@ -14,7 +14,14 @@ define(function(require){
     className: "editor-view",
 
     events: {
-      
+      "click a.page-add-link" : "addNewPage" 
+    },
+
+    addNewPage: function(event) {
+      event.preventDefault();
+
+      console.log('Adding new page');
+       Backbone.history.navigate('/page/new/' + this.model.get('_id'), {trigger: true});
     },
 
     preRender: function() {
@@ -23,8 +30,17 @@ define(function(require){
     },
 
     renderPageView: function() {
-      this.$('.editor').empty();
-      this.$('.editor').append(new PageView({model: this.model}).$el);
+      var pageCollection = this.model.pages();
+
+      if (pageCollection.length != 0) {
+        var list = $('<ul/>').appendTo('.editor-page-list');
+
+        _.each(pageCollection.models, function(model) {
+          list.append('<li>' + model.get('name') + '</li>');
+        }, this);
+      }
+
+      console.log(pageCollection);
     }
 
   }, {

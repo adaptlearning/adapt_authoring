@@ -4,7 +4,7 @@ define(function(require) {
   var AdaptBuilder = require('coreJS/app/adaptbuilder');
   var BuilderView = require('coreJS/app/views/builderView');
 
-  var PageEditView = BuilderView.extend({
+  var PageArticleEditView = BuilderView.extend({
 
     settings: {
       autoRender: false
@@ -33,32 +33,31 @@ define(function(require) {
     cancel: function (event) {
       event.preventDefault();
       
-      Backbone.history.navigate('#editor/view/' + this.model.get('_parentId'), {trigger: true});
+      Backbone.history.navigate('/editor', {trigger: true});
     },
 
     savePage: function(event) {
       event.preventDefault();
 
-      var model = this.model;
 
-      model.save({name: this.$('.page-title').val(),
-        description: this.$('.page-description').val(),
+      this.model.save({name: this.$('.article-title').val(),
+        description: this.$('.article-description').val(),
         tenantId: 'noidyet'},
         {
           error: function() {
             alert('An error occurred doing the save');
           },
           success: function() {
-            Backbone.history.navigate('#editor/view/' + model.get('_parentId'), {trigger: true});
+            Backbone.history.navigate('/editor/view', {trigger: true});
           }
         }
       );
     }
   },
   {
-    template: 'pageEdit'
+    template: 'pageArticleEdit'
   });
 
-  return PageEditView;
+  return PageArticleEditView;
 
 });

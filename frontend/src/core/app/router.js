@@ -12,6 +12,11 @@ define(function(require) {
   var EditorView = require('coreJS/editor/views/editorView');
   var PageModel = require('coreJS/editor/models/pageModel');
   var PageEditView = require('coreJS/editor/views/pageEditView');
+  var PageArticleEditView = require('coreJS/editor/views/pageArticleEditView');
+  var PageArticleModel = require('coreJS/editor/models/pageArticleModel');
+  var EditorModel = require('coreJS/editor/models/editorModel');
+  var PageCollection = require('coreJS/editor/collections/pageCollection');
+
 
   var Router = Backbone.Router.extend({
 
@@ -28,8 +33,9 @@ define(function(require) {
       "dashboard"       : "dashboard",
       "module"          : "module",
       "editor/view/:id" : "editor",
-      "page/new"        : "pageNew",
-      "page/edit/:id"   : "pageEdit"
+      "page/new/:id"    : "pageNew",
+      "page/edit/:id"   : "pageEdit",
+      "page/article/edit/:id": "pageArticleEdit"
     },
 
     initialize: function() {
@@ -111,14 +117,22 @@ define(function(require) {
     },
 
     editor: function (id) {
-      var pageModel = new PageModel({_id:id});
-      pageModel.fetch();
-      this.createView(new EditorView({model: pageModel}));
+     //  var Editor = new Object();
+
+     //  Editor.projectId = id;
+     // Editor.pageCollection = new PageCollection({_parentId: id});
+     //  Editor.contentObjects = [];
+     //  Editor.articleCollection = [];
+      var editorModel = new EditorModel({_id: id});
+
+      editorModel.fetch();
+ 
+      this.createView(new EditorView({model: editorModel}));
     },
 
-    pageNew: function () {
-      var pageModel = new PageModel();
-      pageModel.fetch();
+    pageNew: function (parentId) {
+      var pageModel = new PageModel({_parentId: parentId});
+
       this.createView(new PageEditView({model: pageModel}));
     },
 
@@ -126,6 +140,12 @@ define(function(require) {
       var pageModel = new PageModel({_id:id});
       pageModel.fetch();
       this.createView(new PageEditView({model: pageModel}));
+    },
+
+    pageArticleEdit: function(id) {
+      var pageArticleModel = new PageArticleModel({_id: id});
+      pageArticleModel.fetch();
+      this.createView(new PageArticleEditView({model: pageArticleModel}));
     }
 
   });

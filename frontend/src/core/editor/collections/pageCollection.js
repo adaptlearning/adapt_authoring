@@ -8,10 +8,17 @@ define(function(require) {
         model: PageModel,
 
         url: function() {
-            return 'api/content/page'
+            var url = 'api/content/page';
+
+            if (this._parentId) {
+                url = url + '?_parentId=' + this._parentId;
+            }
+
+            return url;
         },
 
         initialize : function(options) {
+            this._parentId = options._parentId;
             this.fetch({reset:true});
         }
     });

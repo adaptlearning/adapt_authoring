@@ -2,6 +2,8 @@
 
   .editor-container {
     position:relative;
+    width: 100%;
+    height: 100%;
   }
 
   .editor-panel {
@@ -12,6 +14,8 @@
   .editor {
     float:left;
     width:90%;
+    height:100%;
+    background-color: lightgrey;
   }
 
   .page-article {
@@ -20,7 +24,7 @@
     position: relative;
     width: 60%;
 
-    &-delete {
+    &-edit-panel {
       position: absolute;
       right: 0;
       top: 0;
@@ -34,11 +38,11 @@
     border: 1px solid;
 
     .page-add-article {
-        border: 1px solid;
-        bottom: 0;
-        position: absolute;
-        right: 0;
-        width: 100px;
+      border: 1px solid;
+      bottom: 0;
+      position: absolute;
+      right: 0;
+      width: 100px;
     }
   }
 

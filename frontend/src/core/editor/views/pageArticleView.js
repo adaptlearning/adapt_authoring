@@ -15,6 +15,7 @@ define(function(require){
       'click a.page-article-delete' : 'deletePageArticle'
     },
 
+    
     deletePageArticle: function(event) {
       event.preventDefault();
 

@@ -30,17 +30,17 @@ define(function(require){
     },
 
     renderPageView: function() {
-      var pageCollection = this.model.pages();
+      var pageCollection = this.model.pageCollection;
 
       if (pageCollection.length != 0) {
         var list = $('<ul/>').appendTo('.editor-page-list');
 
         _.each(pageCollection.models, function(model) {
-          list.append('<li>' + model.get('name') + '</li>');
+          list.append('<li><a href="#">' + model.get('name') + '</a></li>');
         }, this);
       }
 
-      console.log(pageCollection);
+      console.log(this.model.pageCollection);
     }
 
   }, {

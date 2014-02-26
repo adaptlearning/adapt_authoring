@@ -11,10 +11,8 @@ define(function(require) {
 
       initialize : function(options) {
          this._id = options._id;
-      },
 
-      pages: function() {
-        return new PageCollection({_parentId: this._id});
+         this.pageCollection = new PageCollection({_parentId: this._id});
       }
     });
 

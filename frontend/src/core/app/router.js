@@ -117,12 +117,6 @@ define(function(require) {
     },
 
     editor: function (id) {
-     //  var Editor = new Object();
-
-     //  Editor.projectId = id;
-     // Editor.pageCollection = new PageCollection({_parentId: id});
-     //  Editor.contentObjects = [];
-     //  Editor.articleCollection = [];
       var editorModel = new EditorModel({_id: id});
 
       editorModel.fetch();

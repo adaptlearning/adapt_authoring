@@ -41,8 +41,15 @@ define(function(require) {
 
       var model = this.model;
 
-      model.save({name: this.$('.page-title').val(),
-        description: this.$('.page-description').val(),
+      model.save({
+        title: this.$('.page-title').val(),
+        body: this.$('.page-body').val(),
+        linkText: this.$('.page-linktext').val(),
+        graphic: {
+          alt: this.$('.page-graphic-alt').val(),
+          src: this.$('.page-graphic-src').val()
+        },
+        _type: 'page',
         tenantId: 'noidyet'},
         {
           error: function() {

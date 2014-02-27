@@ -6,7 +6,7 @@ define(function(require) {
 
       idAttribute: '_id',
 
-      urlRoot: '/api/content/page'
+      urlRoot: '/api/content/contentObject'
 
     });
 

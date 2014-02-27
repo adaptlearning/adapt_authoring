@@ -35,7 +35,6 @@ define(function(require){
       }
     },
 
-
     postRender: function() {
       console.log('post render');
       this.renderEditorSidebar();
@@ -93,10 +92,8 @@ define(function(require){
         var list = $('<ul/>').appendTo('.editor-page-list');
 
         _.each(pageCollection.models, function(model) {
-          list.append('<li><a class="load-page" data-page-id="' + model.get('_id') + '" href="#">' + model.get('name') + '</a></li>');
+          list.append('<li><a class="load-page" data-page-id="' + model.get('_id') + '" href="#">' + model.get('title') + '</a></li>');
         }, this);
-    
-        console.log(this.model.pageCollection);
       }
     },
 

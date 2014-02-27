@@ -2,10 +2,6 @@ var mongoose = require('mongoose');
 var Schema =  mongoose.Schema;
 
 var ContentObjectSchema = new Schema({
-  "name": {
-    "type": "String",
-    "required": true
-  },
   "title" : {
     "type" : "String",
     "required" : true
@@ -14,8 +10,16 @@ var ContentObjectSchema = new Schema({
     "type" : "String",
     "required" : true
   },
-  /* array of graphic objects */
-  "graphic" : [Schema.Types.ObjectId],
+  "graphic" : {
+    "alt" : {
+      "type": "String",
+      "default": ""
+    },
+    "src" : {
+      "type": "String",
+      "default": ""
+    }
+  },
   "deleted": {
     "type": "Boolean",
     "default": false

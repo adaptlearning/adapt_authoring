@@ -26,13 +26,22 @@ define(function(require){
       "click a.load-page"     : "loadPage",
     },
 
+    initialize: function(options) {
+      this.currentView = options.currentView;
+      this.listenTo(AdaptBuilder, 'remove:views', this.remove);
+      this.preRender();
+      if (this.settings.autoRender) {
+        this.render();
+      }
+    },
 
-    // postRender: function() {
-    //   this.renderEditorSidebar();
-    //   if (this.currentView === "menu") {
-    //     this.renderEditorMenu();
-    //   }
-    // },
+    postRender: function() {
+      console.log('post render');
+      this.renderEditorSidebar();
+      if (this.currentView === "menu") {
+        this.renderEditorMenu();
+      }
+    },
 
     renderEditorSidebar: function() {
       this.$el.append(new EditorSidebarView().$el);
@@ -65,11 +74,10 @@ define(function(require){
 
       // this.listenTo(this.model, 'sync', this.renderPageView);
 
-      //  // this.currentView = options.currentView;
       // this.listenTo(this.model, 'sync', this.render);
       // this.listenTo(AdaptBuilder, 'remove:views', this.remove);
-      // this.preRender();
-      // this.model.fetch();
+      // //this.preRender();
+      this.model.fetch();
     },
 
     dataLoaded: function() {
@@ -84,10 +92,8 @@ define(function(require){
         var list = $('<ul/>').appendTo('.editor-page-list');
 
         _.each(pageCollection.models, function(model) {
-          list.append('<li><a class="load-page" data-page-id="' + model.get('_id') + '" href="#">' + model.get('name') + '</a></li>');
+          list.append('<li><a class="load-page" data-page-id="' + model.get('_id') + '" href="#">' + model.get('title') + '</a></li>');
         }, this);
-    
-        console.log(this.model.pageCollection);
       }
     },
 

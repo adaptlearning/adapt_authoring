@@ -41,9 +41,8 @@ define(function(require) {
 
       var model = this.model;
 
-      model.save({name: this.$('.article-title').val(),
-        description: this.$('.article-description').val(),
-        tenantId: 'noidyet'},
+      model.save({title: this.$('.article-title').val(),
+        body: this.$('.article-body').val()},
         {
           error: function() {
             alert('An error occurred doing the save');

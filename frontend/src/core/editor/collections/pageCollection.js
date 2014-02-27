@@ -8,7 +8,7 @@ define(function(require) {
         model: PageModel,
 
         url: function() {
-            var url = 'api/content/page';
+            var url = 'api/content/contentObject';
 
             if (this._parentId) {
                 url = url + '?_parentId=' + this._parentId;

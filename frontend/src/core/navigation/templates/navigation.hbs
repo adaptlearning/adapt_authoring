@@ -1,21 +1,21 @@
 <div class="navigation-inner clearfix">
   <div class="navigation-left">
     {{#if isAuthenticated}}
-    <li data-route="dashboard"><a href="/#dashboard">Dashboard</a></li>
+    <li data-route="dashboard"><a href="#/dashboard">Dashboard</a></li>
     {{/if}}
   </div>
   <div class="navigation-right">
     {{#if isAuthenticated}}
     <li>
-      <span>Logged in as <a href="/#user/profile">{{email}}</a>
+      <span>Logged in as <a href="#/user/profile">{{email}}</a>
       </span>
     </li>
     <li data-route="logout">
-      <a href="/#user/logout">Logout</a>
+      <a href="#/user/logout">Logout</a>
     </li>
     {{else}}
     <li data-route="login">
-      <a href="/#user/login">Login</a>
+      <a href="#/user/login">Login</a>
     </li>
     {{/if}}
   </div>

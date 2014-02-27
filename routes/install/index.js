@@ -254,7 +254,7 @@ server.get('/install/complete', function (req, res, next) {
       // grunt build should be unnecessary in production in any case
       try {
         // this may throw
-        var grunt = require('grunt');
+        grunt = require('grunt');
 
         // load grunt configuration. could be a nicer way to do this?
         require(path.join(configuration.serverRoot, 'Gruntfile.js'))(grunt);

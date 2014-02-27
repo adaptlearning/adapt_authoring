@@ -56,10 +56,9 @@ define(function(require){
       var thisView = this;
       var newPageArticleModel = new PageArticleModel();
 
-      newPageArticleModel.save({name: '{Your new article}', 
-        description: '{Edit this text...}',
-        _parentId: thisView.model.get('_id'),
-        tenantId: 'noidyet'},
+      newPageArticleModel.save({title: '{Your new article}', 
+        body: '{Edit this text...}',
+        _parentId: thisView.model.get('_id')},
         {
           error: function() {
             alert('error adding new article');

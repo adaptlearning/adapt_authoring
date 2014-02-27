@@ -26,13 +26,23 @@ define(function(require){
       "click a.load-page"     : "loadPage",
     },
 
+    initialize: function(options) {
+      this.currentView = options.currentView;
+      this.listenTo(AdaptBuilder, 'remove:views', this.remove);
+      this.preRender();
+      if (this.settings.autoRender) {
+        this.render();
+      }
+    },
 
-    // postRender: function() {
-    //   this.renderEditorSidebar();
-    //   if (this.currentView === "menu") {
-    //     this.renderEditorMenu();
-    //   }
-    // },
+
+    postRender: function() {
+      console.log('post render');
+      this.renderEditorSidebar();
+      if (this.currentView === "menu") {
+        this.renderEditorMenu();
+      }
+    },
 
     renderEditorSidebar: function() {
       this.$el.append(new EditorSidebarView().$el);
@@ -63,13 +73,12 @@ define(function(require){
       this.listenTo(this.model, 'sync', this.dataLoaded);
       this.listenTo(AdaptBuilder, 'remove:views', this.remove);
 
-      // this.listenTo(this.model, 'sync', this.renderPageView);
+      this.listenTo(this.model, 'sync', this.renderPageView);
 
-      //  // this.currentView = options.currentView;
-      // this.listenTo(this.model, 'sync', this.render);
-      // this.listenTo(AdaptBuilder, 'remove:views', this.remove);
-      // this.preRender();
-      // this.model.fetch();
+      this.listenTo(this.model, 'sync', this.render);
+      this.listenTo(AdaptBuilder, 'remove:views', this.remove);
+      //this.preRender();
+      this.model.fetch();
     },
 
     dataLoaded: function() {

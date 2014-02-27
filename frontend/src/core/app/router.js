@@ -117,6 +117,8 @@ define(function(require) {
     },
 
     editor: function (id) {
+      AdaptBuilder.currentProjectId = id;
+      
       var editorModel = new EditorModel({_id: id});
 
       editorModel.fetch();

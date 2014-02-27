@@ -15,7 +15,7 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(this.model, 'sync', this.render);
-      this.pageArticleCollection = new PageArticleCollection({_id:this.model.get('_id')});
+      this.pageArticleCollection = new PageArticleCollection({_parentId:this.model.get('_id')});
       this.pageArticleCollection.fetch();
       this.listenTo(this.pageArticleCollection, 'sync', this.addArticleViews);
     },

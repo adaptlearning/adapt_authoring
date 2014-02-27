@@ -33,14 +33,15 @@ define(function(require) {
     cancel: function (event) {
       event.preventDefault();
       
-      Backbone.history.navigate('/editor', {trigger: true});
+      Backbone.history.navigate('/editor/view/' + AdaptBuilder.currentProjectId, {trigger: true});
     },
 
     savePage: function(event) {
       event.preventDefault();
 
+      var model = this.model;
 
-      this.model.save({name: this.$('.article-title').val(),
+      model.save({name: this.$('.article-title').val(),
         description: this.$('.article-description').val(),
         tenantId: 'noidyet'},
         {
@@ -48,7 +49,7 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: function() {
-            Backbone.history.navigate('/editor/view', {trigger: true});
+            Backbone.history.navigate('/editor/view/' + AdaptBuilder.currentProjectId, {trigger: true});
           }
         }
       );

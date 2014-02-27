@@ -1,7 +1,7 @@
 define(function(require) {
     var Backbone = require('backbone');
     var AdaptBuilder = require('coreJS/app/adaptbuilder');
-    var PageCollection = require('coreJS/editor/collections/pageCollection');
+    var EditorPageCollection = require('coreJS/editor/collections/editorPageCollection');
 
     var EditorModel = Backbone.Model.extend({
 

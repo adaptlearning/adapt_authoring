@@ -3,9 +3,9 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var BuilderView = require('coreJS/app/views/builderView');
-  var PageArticleModel = require('coreJS/editor/models/PageArticleModel');
-  var PageArticleView = require('coreJS/editor/views/PageArticleView');
-  var PageArticleCollection = require('coreJS/editor/collections/PageArticleCollection');
+  var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
+  var EditorArticleView = require('coreJS/editor/views/editorArticleView');
+  var EditorArticleCollection = require('coreJS/editor/collections/editorArticleCollection');
 
   var PageView = BuilderView.extend({
 
@@ -24,16 +24,16 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(this.model, 'sync', this.render);
-      this.pageArticleCollection = new PageArticleCollection({_parentId:this.model.get('_id')});
-      this.pageArticleCollection.fetch();
-      this.listenTo(this.pageArticleCollection, 'sync', this.addArticleViews);
+      this.EditorArticleCollection = new EditorArticleCollection({_parentId:this.model.get('_id')});
+      this.EditorArticleCollection.fetch();
+      this.listenTo(this.EditorArticleCollection, 'sync', this.addArticleViews);
     },
 
     addArticleViews: function() {
       this.$('.page-articles').empty();
 
-      _.each(this.pageArticleCollection.models, function(article) {
-        this.$('.page-articles').append(new PageArticleView({model: article}).$el);
+      _.each(this.EditorArticleCollection.models, function(article) {
+        this.$('.page-articles').append(new EditorArticleView({model: article}).$el);
       }, this);
     },
 
@@ -47,14 +47,14 @@ define(function(require){
     },
 
     appendNewArticle: function(newPageArticleModel) {
-      this.$('.page-articles').append(new PageArticleView({model: newPageArticleModel}).$el);
+      this.$('.page-articles').append(new EditorArticleView({model: newPageArticleModel}).$el);
     },
 
     addArticle: function(event) {
       event.preventDefault();
       
       var thisView = this;
-      var newPageArticleModel = new PageArticleModel();
+      var newPageArticleModel = new EditorArticleModel();
 
       newPageArticleModel.save({name: '{Your new article}', 
         description: '{Edit this text...}',

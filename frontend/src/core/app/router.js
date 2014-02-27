@@ -10,12 +10,12 @@ define(function(require) {
   //var ProjectOverview = require('coreJS/dashboard/views/projectOverview');
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
   var EditorView = require('coreJS/editor/views/editorView');
-  var PageModel = require('coreJS/editor/models/pageModel');
-  var PageEditView = require('coreJS/editor/views/pageEditView');
-  var PageArticleEditView = require('coreJS/editor/views/pageArticleEditView');
-  var PageArticleModel = require('coreJS/editor/models/pageArticleModel');
+  var EditorPageModel = require('coreJS/editor/models/editorPageModel');
+  var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
+  var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
+  var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
   var EditorModel = require('coreJS/editor/models/editorModel');
-  var PageCollection = require('coreJS/editor/collections/pageCollection');
+  var EditorPageCollection = require('coreJS/editor/collections/editorPageCollection');
 
 
   var Router = Backbone.Router.extend({
@@ -32,8 +32,8 @@ define(function(require) {
       "project/view/:id": "projectView",
       "dashboard"       : "dashboard",
       "module"          : "module",
-      "editor/menu/edit/:id": "editorMenu",
-      "editor/view/:id" : "editor",
+      "editor/menu/:id": "editorMenu",
+      "editor/page/:id" : "editorPage",
       "page/new/:id"    : "pageNew",
       "page/edit/:id"   : "pageEdit",
       "page/article/edit/:id": "pageArticleEdit"
@@ -122,15 +122,15 @@ define(function(require) {
       this.createView(new EditorView({model: projectModel, currentView: 'menu'}));
     },
 
-    editor: function (id) {
+    editorPage: function (id) {
       AdaptBuilder.currentProjectId = id;
       
       var editorModel = new EditorModel({_id: id});
 
       editorModel.fetch();
  
-      this.createView(new EditorView({model: editorModel}));
-    },
+      this.createView(new EditorView({model: editorModel, currentView: 'page'}));
+    }/*,
 
     pageNew: function (parentId) {
       var pageModel = new PageModel({_parentId: parentId});
@@ -148,7 +148,7 @@ define(function(require) {
       var pageArticleModel = new PageArticleModel({_id: id});
       pageArticleModel.fetch();
       this.createView(new PageArticleEditView({model: pageArticleModel}));
-    }
+    }*/
 
   });
 

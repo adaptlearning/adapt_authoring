@@ -248,32 +248,36 @@ server.get('/install/complete', function (req, res, next) {
     // restart server, NB: we reload the config file to be sure that it was correctly written
     configuration.load(path.join(configuration.serverRoot, 'conf', 'config.json'), function (e) {e && console.log(e);});
     configuration.once('change:config', function () {
-      // run grunt dev if available - developers will appreciate this, but grunt
+      var grunt = false;
+      // run grunt build if available - developers will appreciate this, but grunt
       // is a development dependency, so won't be available in production environments
-      // grunt dev should be unnecessary in production in any case ()
+      // grunt build should be unnecessary in production in any case
       try {
         // this may throw
         var grunt = require('grunt');
 
         // load grunt configuration. could be a nicer way to do this?
         require(path.join(configuration.serverRoot, 'Gruntfile.js'))(grunt);
+      } catch (e) {
+        // swallow the exception
+        // log warning
+        logger.log('warn', 'failed to require grunt', e);
+        grunt = false;
+      }
 
-        // run grunt dev
-        grunt.tasks(['dev'], {}, function (error) {
+      if (grunt) {
+        // run grunt build
+        grunt.tasks(['build'], {}, function (error) {
           console.log(error);
           if (error) {
-            logger.log('warn', 'grunt dev failed with error. you should manually run "grunt dev" from the root of your project', error);
+            logger.log('warn', 'grunt build failed with error. you should manually run "grunt build" from the root of your project', error);
           }
           app.restartServer();
         });
-      } catch (e) {
-        // log warning
-        logger.log('warn', 'failed to require grunt dev', e);
-
-        // swallow the exception
+      } else {
         app.restartServer();
       }
-    })
+    });
   });
 });
 

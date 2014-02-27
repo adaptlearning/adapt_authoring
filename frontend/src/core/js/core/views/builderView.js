@@ -6,7 +6,7 @@
 define(function(require){
 
   var Backbone = require('backbone');
-  var Builder = require('coreJS/adaptBuilder');
+  var Builder = require('coreJS/adaptbuilder');
 
   var BuilderView = Backbone.View.extend({
 

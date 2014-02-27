@@ -1,6 +1,6 @@
 var path = require('path'),
-    winston = require('winston'),
     builder = require('../'),
+    logger = require('../lib/logger'),
     auth = require('../lib/auth'),
     permissions = require('../lib/permissions'),
     usermanager = require('../lib/usermanager'),
@@ -21,10 +21,12 @@ var helper = {
 };
 
 before(function (done) {
+  // suppress all logging!
+  logger.clear();
+
   // bootstrapping!
   var app = builder();
   app.use({ configFile: path.join('test', 'testConfig.json')});
-
 
   function createTestTenant (tenantDetails, cb) {
     tenantmanager.createTenant(tenantDetails, function (error, tenant) {
@@ -97,7 +99,7 @@ before(function (done) {
   });
 
   // start server
-  app.start();
+  app.run();
 });
 
 after(function (done) {

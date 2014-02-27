@@ -27,12 +27,12 @@ define(function(require){
     },
 
 
-    // postRender: function() {
-    //   this.renderEditorSidebar();
-    //   if (this.currentView === "menu") {
-    //     this.renderEditorMenu();
-    //   }
-    // },
+     postRender: function() {
+       this.renderEditorSidebar();
+       if (this.currentView === "menu") {
+         this.renderEditorMenu();
+       }
+     },
 
     renderEditorSidebar: function() {
       this.$el.append(new EditorSidebarView().$el);
@@ -65,7 +65,7 @@ define(function(require){
 
       // this.listenTo(this.model, 'sync', this.renderPageView);
 
-      //  // this.currentView = options.currentView;
+        // this.currentView = options.currentView;
       // this.listenTo(this.model, 'sync', this.render);
       // this.listenTo(AdaptBuilder, 'remove:views', this.remove);
       // this.preRender();
@@ -84,10 +84,8 @@ define(function(require){
         var list = $('<ul/>').appendTo('.editor-page-list');
 
         _.each(pageCollection.models, function(model) {
-          list.append('<li><a class="load-page" data-page-id="' + model.get('_id') + '" href="#">' + model.get('name') + '</a></li>');
+          list.append('<li><a class="load-page" data-page-id="' + model.get('_id') + '" href="#">' + model.get('title') + '</a></li>');
         }, this);
-    
-        console.log(this.model.pageCollection);
       }
     },
 

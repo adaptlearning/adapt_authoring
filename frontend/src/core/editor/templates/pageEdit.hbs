@@ -3,14 +3,26 @@
     <form role="form">
       <div class="form-group">
         <label for="page-title">Page Title</label>
-        <input type="text" class="form-control page-title" placeholder="Page Title" value="{{ name }}">
+        <input type="text" class="form-control page-title" placeholder="Page Title" value="{{title}}">
       </div>
       <div class="form-group">
-        <label for="page-description">Page Description</label>
-        <textarea class="form-control page-description" placeholder="Page Description">{{ description }}</textarea>
+        <label for="page-body">Page Body</label>
+        <textarea class="form-control page-body" placeholder="Page Body">{{body}}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="page-graphic-alt">Graphic Alt</label>
+        <input type="text" class="form-control page-graphic-alt" placeholder="Graphic Alt" value="{{graphic.alt}}">
+      </div>
+      <div class="form-group">
+        <label for="page-graphic-src">Graphic Src</label>
+        <input type="text" class="form-control page-graphic-src" placeholder="Graphic Src" value="{{graphic.src}}">
+      </div>
+      <div class="form-group">
+        <label for="page-linktext">Link Text</label>
+        <textarea class="form-control page-linktext" placeholder="Link Text">{{linkText}}</textarea>
       </div>
       <div class="hidden">
-        <input type="hidden" value="{{ id }}" id="pageId">
+        <input type="hidden" value="{{id}}" id="pageId">
       </div>
       <button class="save-button" type="submit">Save</button>
       <button class="cancel-button" type="button">Cancel</button>

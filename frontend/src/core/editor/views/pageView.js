@@ -13,6 +13,15 @@ define(function(require){
       autoRender: false
     },
 
+    tagName: 'div',
+
+    className: 'page',
+
+    events: {
+      'click a.delete-link' : 'deletePage',
+      'click a.add-article' : 'addArticle'
+    },
+
     preRender: function() {
       this.listenTo(this.model, 'sync', this.render);
       this.pageArticleCollection = new PageArticleCollection({_parentId:this.model.get('_id')});
@@ -26,15 +35,6 @@ define(function(require){
       _.each(this.pageArticleCollection.models, function(article) {
         this.$('.page-articles').append(new PageArticleView({model: article}).$el);
       }, this);
-    },
-
-    tagName: 'div',
-
-    className: 'page',
-
-    events: {
-      'click a.delete-link' : 'deletePage',
-      'click a.add-article' : 'addArticle'
     },
 
     deletePage: function(event) {

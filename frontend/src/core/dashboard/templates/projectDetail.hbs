@@ -4,11 +4,11 @@
     <form role="form" class="col-md-8 col-md-offset-3">
       <div class="form-group">
         <label for="projectDetailTitle">Project Title</label>
-        <input type="text" class="form-control" id="projectDetailTitle" placeholder="Project Title" value="{{ name }}">
+        <input type="text" class="form-control" id="projectDetailTitle" placeholder="Project Title" value="{{ title }}">
       </div>
       <div class="form-group">
         <label for="projectDetailDescription">Project Description</label>
-        <textarea class="form-control" id="projectDetailDescription" placeholder="Project Description">{{ description }}</textarea>
+        <textarea class="form-control" id="projectDetailDescription" placeholder="Project Description">{{ body }}</textarea>
       </div>
       <div class="hidden">
         <input type="hidden" value="{{ id }}" id="projectDetailId">

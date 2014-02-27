@@ -2,13 +2,28 @@ var mongoose = require('mongoose');
 var Schema =  mongoose.Schema;
 
 var ContentObjectSchema = new Schema({
+  "_parentId" : {
+    "type" : "ObjectId"
+  },
+  "_type" : {
+    "type" : "String",
+    "default" : "page"
+  },
+  "_classes" : {
+    "type" : "String",
+    "default" : ""
+  },
+  "_isDeleted": {
+    "type": "Boolean",
+    "default": false
+  },
   "title" : {
     "type" : "String",
-    "required" : true
+    "required" : false
   },
   "body" : {
     "type" : "String",
-    "required" : true
+    "required" : false
   },
   "graphic" : {
     "alt" : {
@@ -20,51 +35,37 @@ var ContentObjectSchema = new Schema({
       "default": ""
     }
   },
-  "deleted": {
-    "type": "Boolean",
-    "default": false
-  },
   "linkText" : {
     "type" : "String"
-  },
-  "_type" : {
-    "type" : "String",
-    "default" : "page"
-  },
-  "lastUpdated" : {
-    "type" : "Date"
   },
   "createdAt" : {
     "type" : "Date"
   },
-  "_parentId" : {
-    "type" : "ObjectId"
-  },
-  "_courseId" : {
-    "type" : "ObjectId"
-  },
-  "tenantId" : {
-    "type" : "String",
-    "required" : true
-  },
   "createdBy" : {
     "type" : "ObjectId"
-  }
+  },
+  "updatedAt" : {
+    "type" : "Date"
+  },
+  "updatedBy" : {
+    "type" : "ObjectId"
+  },
 });
 
 ContentObjectSchema.pre('save', function (next) {
-  if (!this.createdAt) {
+ if (!this.createdAt) {
     this.createdAt = new Date();
   }
   // if lastUpdated is for the course then it
   // should be updated whenever any sub-element is updated
   // but for now, make it just this object...
   if (this.isNew) {
-    this.lastUpdated = this.createdAt;
+    this.updatedAt = this.createdAt;
+    this.updatedBy = this.createdBy;
   } else {
-    this.lastUpdated = new Date();
+    this.updatedAt = new Date();
   }
-  this.markModified('lastUpdated');
+  this.markModified('updatedAt');
   next();
 });
 

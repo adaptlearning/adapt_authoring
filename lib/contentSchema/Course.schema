@@ -2,45 +2,53 @@ var mongoose = require('mongoose');
 var Schema =  mongoose.Schema;
 
 var CourseSchema = new Schema({
-  "name": {
+  "_tenantId" : {
+    "type" : "String",
+    "required" : true
+  },
+  "_type": {
     "type": "String",
-    "required": true
+    "default": "course"
   },
-  "description": {
-    "type": "String"
-  },
-  "deleted": {
+  "_isDeleted": {
     "type": "Boolean",
     "default": false
   },
-  "lastUpdated" : {
-    "type" : "Date"
+  "title": {
+    "type": "String",
+    "required": true
+  },
+  "body": {
+    "type": "String"
   },
   "createdAt" : {
     "type" : "Date"
   },
-  "tenantId" : {
-    "type" : "String",
-    "required" : true
-  },
   "createdBy" : {
     "type" : "ObjectId"
-  }
+  },
+  "updatedAt" : {
+    "type" : "Date"
+  },
+  "updatedBy" : {
+    "type" : "ObjectId"
+  },
 });
 
 CourseSchema.pre('save', function (next) {
-  if (!this.createdAt) {
+ if (!this.createdAt) {
     this.createdAt = new Date();
   }
   // if lastUpdated is for the course then it
   // should be updated whenever any sub-element is updated
   // but for now, make it just this object...
   if (this.isNew) {
-    this.lastUpdated = this.createdAt;
+    this.updatedAt = this.createdAt;
+    this.updatedBy = this.createdBy;
   } else {
-    this.lastUpdated = new Date();
+    this.updatedAt = new Date();
   }
-  this.markModified('lastUpdated');
+  this.markModified('updatedAt');
   next();
 });
 

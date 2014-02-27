@@ -38,9 +38,9 @@ define(function(require) {
     saveProject: function(event) {
       event.preventDefault();
 
-      this.model.save({name: this.$('#projectDetailTitle').val(),
-        description: this.$('#projectDetailDescription').val(),
-        tenantId: 'noidyet'},
+      this.model.save({title: this.$('#projectDetailTitle').val(),
+        body: this.$('#projectDetailDescription').val(),
+        _tenantId: 'noidyet'},
         {
           error: function() {
             alert('An error occurred doing the save');

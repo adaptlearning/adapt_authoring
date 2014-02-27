@@ -11,8 +11,8 @@ define(function(require){
     className: 'navigation',
 
     preRender: function() {
-      this.listenTo(AdaptBuilder, 'login:changed', this.render, this);
-      this.listenTo(AdaptBuilder, 'route:changed', this.routeChanged, this);
+      this.listenTo(AdaptBuilder, 'login:changed', this.render);
+      this.listenTo(AdaptBuilder, 'route:changed', this.routeChanged);
     },
 
     routeChanged: function (info) {

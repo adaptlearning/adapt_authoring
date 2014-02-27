@@ -2,7 +2,7 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var AdaptBuilder = require('coreJS/adaptBuilder');
+  var AdaptBuilder = require('coreJS/adaptbuilder');
   var BuilderView = require('coreJS/core/views/builderView');
   var ProjectView = require('coreJS/dashboard/views/projectView');
   var ProjectCollection = require('coreJS/dashboard/collections/projectCollection');
@@ -45,7 +45,7 @@ define(function(require){
 
     evaluateProjectCount: function (projects) {
       if (projects.length == 0) {
-        this.$('#projects').append('No projects to display');  
+        this.$('#projects').append('No projects to display');
       }
     },
 

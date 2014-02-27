@@ -1,14 +1,14 @@
 define(function(require) {
 
     var Backbone = require('backbone');
-    var PageModel = require('coreJS/editor/models/pageModel');
+    var PageArticleModel = require('coreJS/editor/models/pageArticleModel');
 
-    var PageCollection = Backbone.Collection.extend({
+    var PageArticleCollection = Backbone.Collection.extend({
 
-        model: PageModel,
+        model: PageArticleModel,
 
         url: function() {
-            var url = 'api/content/page';
+            var url = 'api/content/article';
 
             if (this._parentId) {
                 url = url + '?_parentId=' + this._parentId;
@@ -30,6 +30,6 @@ define(function(require) {
         }
     });
 
-    return PageCollection;
+    return PageArticleCollection;
 
 });

@@ -5,8 +5,28 @@ define(function(require){
   var BuilderView = require('coreJS/app/views/builderView');
   var PageArticleModel = require('coreJS/editor/models/PageArticleModel');
   var PageArticleView = require('coreJS/editor/views/PageArticleView');
+  var PageArticleCollection = require('coreJS/editor/collections/PageArticleCollection');
 
   var PageView = BuilderView.extend({
+
+    settings: {
+      autoRender: false
+    },
+
+    preRender: function() {
+      this.listenTo(this.model, 'sync', this.render);
+      this.pageArticleCollection = new PageArticleCollection({_id:this.model.get('_id')});
+      this.pageArticleCollection.fetch();
+      this.listenTo(this.pageArticleCollection, 'sync', this.addArticleViews);
+    },
+
+    addArticleViews: function() {
+      this.$('.page-articles').empty();
+
+      _.each(this.pageArticleCollection.models, function(article) {
+        this.$('.page-articles').append(new PageArticleView({model: article}).$el);
+      }, this);
+    },
 
     tagName: 'div',
 

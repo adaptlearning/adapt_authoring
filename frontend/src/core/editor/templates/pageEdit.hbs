@@ -1,0 +1,19 @@
+<div class="page-edit">
+  <div class="row">
+    <form role="form">
+      <div class="form-group">
+        <label for="page-title">Page Title</label>
+        <input type="text" class="form-control page-title" placeholder="Page Title" value="{{ name }}">
+      </div>
+      <div class="form-group">
+        <label for="page-description">Page Description</label>
+        <textarea class="form-control page-description" placeholder="Page Description">{{ description }}</textarea>
+      </div>
+      <div class="hidden">
+        <input type="hidden" value="{{ id }}" id="pageId">
+      </div>
+      <button class="save-button" type="submit">Save</button>
+      <button class="cancel-button" type="button">Cancel</button>
+    </form>
+  </div>
+</div>

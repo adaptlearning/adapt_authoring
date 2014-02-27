@@ -10,22 +10,33 @@ define(function(require) {
   //var ProjectOverview = require('coreJS/dashboard/views/projectOverview');
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
   var EditorView = require('coreJS/editor/views/editorView');
+  var PageModel = require('coreJS/editor/models/pageModel');
+  var PageEditView = require('coreJS/editor/views/pageEditView');
+  var PageArticleEditView = require('coreJS/editor/views/pageArticleEditView');
+  var PageArticleModel = require('coreJS/editor/models/pageArticleModel');
+  var EditorModel = require('coreJS/editor/models/editorModel');
+  var PageCollection = require('coreJS/editor/collections/pageCollection');
+
 
   var Router = Backbone.Router.extend({
 
     routes: {
-      ""                : "index",          
-      "user/login"      : "login",          
-      "user/logout"     : "logout",         
-      "user/forgot"     : "forgotpassword", 
+      ""                : "index",
+      "user/login"      : "login",
+      "user/logout"     : "logout",
+      "user/forgot"     : "forgotpassword",
       "user/register"   : "register",
-      "user/profile"    : "profile",        
+      "user/profile"    : "profile",
       "project/new"     : "projectNew",
-      "project/edit/:id": "projectEdit",    
-      "project/view/:id": "projectView",    
-      "dashboard"       : "dashboard",      
+      "project/edit/:id": "projectEdit",
+      "project/view/:id": "projectView",
+      "dashboard"       : "dashboard",
       "module"          : "module",
-      "editor/menu/edit/:id": "editorMenu"
+      "editor/menu/edit/:id": "editorMenu",
+      "editor/view/:id" : "editor",
+      "page/new/:id"    : "pageNew",
+      "page/edit/:id"   : "pageEdit",
+      "page/article/edit/:id": "pageArticleEdit"
     },
 
     initialize: function() {
@@ -109,6 +120,34 @@ define(function(require) {
     editorMenu: function(id) {
       var projectModel = new ProjectModel({_id: id});
       this.createView(new EditorView({model: projectModel, currentView: 'menu'}));
+    },
+
+    editor: function (id) {
+      AdaptBuilder.currentProjectId = id;
+      
+      var editorModel = new EditorModel({_id: id});
+
+      editorModel.fetch();
+ 
+      this.createView(new EditorView({model: editorModel}));
+    },
+
+    pageNew: function (parentId) {
+      var pageModel = new PageModel({_parentId: parentId});
+
+      this.createView(new PageEditView({model: pageModel}));
+    },
+
+    pageEdit: function (id) {
+      var pageModel = new PageModel({_id:id});
+      pageModel.fetch();
+      this.createView(new PageEditView({model: pageModel}));
+    },
+
+    pageArticleEdit: function(id) {
+      var pageArticleModel = new PageArticleModel({_id: id});
+      pageArticleModel.fetch();
+      this.createView(new PageArticleEditView({model: pageArticleModel}));
     }
 
   });

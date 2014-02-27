@@ -39,8 +39,9 @@ server.all('/install', function (req, res, next) {
 
 // server configuration page
 server.all('/install/server', function (req, res, next) {
+  var app = builder();
   var serverName = req.body.serverName || 'localhost';
-  var serverPort = req.body.serverPort || 3000;
+  var serverPort = req.body.serverPort || app.defaults.DEFAULT_SERVER_PORT;
   var errors = {};
 
   if (req.body.submit) {

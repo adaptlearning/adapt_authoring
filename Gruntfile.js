@@ -72,7 +72,7 @@ module.exports = function(grunt) {
         },
         compile: {
           options: {
-            name: "core/js/app",
+            name: "core/app/app",
             baseUrl: "frontend/src",
             mainConfigFile: "./config.js",
             out: "./frontend/build/adaptbuilder/js/adaptbuilder.min.js",
@@ -124,7 +124,7 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('default',['less', 'handlebars', 'watch']);
-    grunt.registerTask('build',['less', 'copy', 'handlebars']);
+    grunt.registerTask('build',['less', 'copy', 'handlebars', 'requirejs:compile']);
     grunt.registerTask('dev',['less', 'copy', 'handlebars', 'requirejs:dev']);
     grunt.registerTask('test',['mochaTest']);
     grunt.registerTask('compile',['requirejs:dev']);

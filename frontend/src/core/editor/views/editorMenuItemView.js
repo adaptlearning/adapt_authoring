@@ -7,7 +7,16 @@ define(function(require){
 
     tagName: "div",
 
-    className: "editor-menu-item"
+    className: "editor-menu-item",
+
+    events: {
+      'click .editor-menu-item-edit': 'editMenuItem'
+    },
+
+    editMenuItem: function() {
+      console.log('clicked edit button')
+      AdaptBuilder.trigger('editorSidebar:addEditView');
+    }
 
   }, {
     template: 'editorMenuItem'

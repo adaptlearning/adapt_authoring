@@ -26,16 +26,10 @@ define(function(require){
       "click a.load-page"     : "loadPage",
     },
 
-    initialize: function(options) {
+    preRender: function(options) {
       this.currentView = options.currentView;
-      this.listenTo(AdaptBuilder, 'remove:views', this.remove);
       this.listenTo(this.model, 'sync', this.render);
       this.model.fetch();
-      this.preRender();
-    },
-
-    preRender: function() {
-      
     },
     
     postRender: function() {

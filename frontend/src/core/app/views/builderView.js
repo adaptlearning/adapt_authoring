@@ -14,9 +14,9 @@ define(function(require){
       autoRender: true
     },
 
-    initialize: function() {
+    initialize: function(options) {
       this.listenTo(Builder, 'remove:views', this.remove);
-      this.preRender();
+      this.preRender(options);
       if (this.settings.autoRender) {
         this.render();
       }
@@ -34,13 +34,7 @@ define(function(require){
       return this;
     },
 
-    postRender: function() {},
-
-    remove: function() {
-      this.$el.remove();
-      this.stopListening();
-      return this;
-    }
+    postRender: function() {}
 
   });
 

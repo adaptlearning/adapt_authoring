@@ -5,7 +5,15 @@ define(function(require) {
 
 	var EditorSidebarView = BuilderView.extend({
 
-		className: 'editor-sidebar'
+		className: 'editor-sidebar',
+
+		preRender: function() {
+			this.listenTo(AdaptBuilder, 'editorSidebar:addEditView', this.addEditingView);
+		},
+
+		addEditingView: function() {
+			console.log('adding editing view');
+		}
 
 	}, {
 		template:'editorSidebar'

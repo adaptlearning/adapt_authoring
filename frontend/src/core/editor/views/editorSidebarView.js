@@ -29,6 +29,7 @@ define(function(require) {
 			switch (type) {
 				case 'course':
 					editor = new EditorCourseEditView({model: model});
+					break;
 				case 'page':
 					editor = new EditorPageEditView({model: model});
 					break;

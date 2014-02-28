@@ -66,7 +66,7 @@ define(function(require){
             alert('error adding new article');
           },
           success: function() {
-            Backbone.history.navigate('/editor/page/' + thisView.model.get('_id'), {trigger: true});
+            thisView.EditorArticleCollection.fetch();
           }
         }
       );

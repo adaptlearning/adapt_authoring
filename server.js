@@ -3,13 +3,12 @@ var builder = require('./lib/application'),
     winston = require('winston');
 
 var app = builder();
-
-app.start();
+app.run();
 
 // add a route to quickly set up an admin user.
 // NOTE: this is just a holdover untill we write
 // a proper install script!!!
-app.once('serverStarted', function (server) {
+/*app.once('serverStarted', function (server) {
   require('./lib/permissions').ignoreRoute(/^\/install\/?$/);
   app.get('/install', function (req, res, next) {
     var userObj = {
@@ -49,4 +48,4 @@ app.once('serverStarted', function (server) {
       });
     });
   });
-});
+});*/

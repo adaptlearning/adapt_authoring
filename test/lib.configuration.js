@@ -23,7 +23,7 @@ describe('configuration', function() {
   });
 
   after(function(){
-    // delete the temp config file 
+    // delete the temp config file
     if (fs.existsSync(tmpFile)) {
        fs.unlinkSync(tmpFile);
     }
@@ -33,12 +33,12 @@ describe('configuration', function() {
     }
   });
 
-  it('should allow me to load a configuration from disk', function() {
+  it('should allow me to load a configuration from disk', function(done) {
     var oldFile = configuration.configFile;
     configuration.load(tmpFile,function libConfigTestLoad(){
       configuration.getConfig('serverPort').should.equal('4321');
+      configuration.load(oldFile, done);
     });
-    configuration.load(oldFile);
   });
 
   it('should allow me to set/get a global configuration variable', function(){

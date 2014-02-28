@@ -124,7 +124,7 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('default',['less', 'handlebars', 'watch']);
-    grunt.registerTask('build',['less', 'copy', 'handlebars']);
+    grunt.registerTask('build',['less', 'copy', 'handlebars', 'requirejs:compile']);
     grunt.registerTask('dev',['less', 'copy', 'handlebars', 'requirejs:dev']);
     grunt.registerTask('test',['mochaTest']);
     grunt.registerTask('compile',['requirejs:dev']);

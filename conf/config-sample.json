@@ -1,6 +1,6 @@
 {
   "serverName": "localhost",
-  "serverPort": 8080,
+  "serverPort": 3000,
   "dbType": "mongoose",
   "dbHost": "localhost",
   "dbName": "adapt-builder-core",
@@ -8,8 +8,5 @@
   "dataRoot": "data",
   "tenantPrefix": "adapt-builder-tenant-",
   "sessionSecret": "your-secret-here",
-  "auth": "local",
-  "viewEngine" : "jade",
-  "viewPath" : "frontend/views", //location of jade templates
-  "frontend" : "frontend" //location of frontend source and build
+  "auth": "local"
 }

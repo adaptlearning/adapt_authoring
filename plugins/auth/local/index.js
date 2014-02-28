@@ -70,7 +70,7 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
       }
 
       res.statusCode = 200;
-      res.json({ 
+      res.json({
         success: true,
         id: user._id,
         email: user.email
@@ -95,31 +95,41 @@ LocalAuth.prototype.registerUser = function (req, res, next) {
     password: req.body.password
   };
 
+  this.internalRegisterUser(user, function (error, user) {
+    if (error) {
+      next(error);
+    }
+
+    res.statusCode = 200;
+    return res.json({ _id:user._id, email: user.email });
+
+  });
+
+};
+
+LocalAuth.prototype.internalRegisterUser = function (user, cb) {
   if (!user.email || !user.password) {
-    return next({ statusCode: 400, message: 'email and password are required!' });
+    return cb(new auth.errors.UserRegistrationError('email and password are required!'));
   }
 
   // create user with hashed password
   auth.hashPassword(user.password, function (error, hash) {
     if (error) {
-      return next({ statusCode: 500, message: error });
+      return cb(error);
     }
 
     user.password = hash;
     user.auth = 'local';
     usermanager.createUser(user, function (error, user) {
       if (error) {
-        error.statusCode = 400;
         return next(error);
       }
 
       // successfully registered
-      res.statusCode = 200;
-      res.json({ _id: user._id, email: user.email });
-      res.end();
+      return cb(null, user);
     });
   });
-};
+}
 
 // module exports
 exports = module.exports = LocalAuth;

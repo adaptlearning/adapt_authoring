@@ -1,5 +1,5 @@
 require([
-    'coreJS/app/adaptbuilder',
+    'coreJS/app/adaptBuilder',
     'coreJS/app/router',
     'coreJS/user/models/sessionModel',
     'coreJS/navigation/views/navigationView',

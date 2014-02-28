@@ -3,7 +3,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var LoginView = require('coreJS/user/views/loginView');
   var DashboardView = require('coreJS/dashboard/views/dashboardView');
-  var AdaptBuilder = require('coreJS/app/adaptbuilder');
+  var AdaptBuilder = require('coreJS/app/adaptBuilder');
   var ProjectModel = require('coreJS/project/models/projectModel');
   var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
   var LogoutView = require('coreJS/user/views/logoutView');
@@ -41,6 +41,25 @@ define(function(require) {
 
     initialize: function() {
       this.currentView = null;
+      this.listenTo(this, 'route', this.removeViews);
+    },
+
+    route: function(route, name, callback) {
+      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+      if (_.isFunction(name)) {
+        callback = name;
+        name = '';
+      }
+      if (!callback) callback = this[name];
+      var router = this;
+      Backbone.history.route(route, function(fragment) {
+        router.trigger('route', name, args);
+        var args = router._extractParameters(route, fragment);
+        callback && callback.apply(router, args);
+        router.trigger.apply(router, ['route:' + name].concat(args));
+        Backbone.history.trigger('route', router, name, args);
+      });
+      return this;
     },
 
     isUserAuthenticated: function() {
@@ -48,13 +67,8 @@ define(function(require) {
     },
 
     createView: function(initialView, fallbackView) {
-      // Remove the existing view
-      if (this.currentView) {
-        this.currentView.remove();
-        AdaptBuilder.trigger('remove:views');
-      }
-
-      if (this.isUserAuthenticated()) {
+      _.defer(_.bind(function() {
+        if (this.isUserAuthenticated()) {
         this.currentView = initialView;
       } else {
         this.currentView = fallbackView
@@ -65,6 +79,8 @@ define(function(require) {
       $('#app').append(this.currentView.$el);
 
       return this.currentView;
+      }, this));
+      
     },
 
     index: function() {
@@ -130,6 +146,13 @@ define(function(require) {
       editorModel.fetch();
  
       this.createView(new EditorView({model: editorModel, currentView: 'page'}));
+    },
+
+    removeViews: function() {
+      if (this.currentView) {
+        this.currentView.remove();
+        AdaptBuilder.trigger('remove:views');
+      }
     }/*,
 
     pageNew: function (parentId) {

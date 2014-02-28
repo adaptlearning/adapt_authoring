@@ -15,11 +15,11 @@ define(function(require){
     },
 
     initialize: function(options) {
-      this.listenTo(Builder, 'remove:views', this.remove);
       this.preRender(options);
       if (this.settings.autoRender) {
         this.render();
       }
+      this.listenTo(Builder, 'remove:views', this.remove);
     },
 
     preRender: function() {},

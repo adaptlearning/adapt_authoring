@@ -26,7 +26,6 @@ define(function(require) {
                     this._parentId = options._parentId;
                 }
             }
-            this.fetch({reset:true});
         }
     });
 

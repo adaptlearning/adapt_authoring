@@ -11,31 +11,20 @@ define(function(require){
 
   var PageView = BuilderView.extend({
 
-    settings: {
-      autoRender: false
-    },
-
     tagName: 'div',
 
     className: 'page',
 
     events: {
-      'click a.delete-link' : 'deletePage',
-      'click a.add-article' : 'addArticle'
+      'click a.add-article' : 'addArticle',
+      'click a.edit-page'   : 'loadPageEdit',
+      'click a.delete-page' : 'deletePage'
     },
 
     preRender: function() {
-      // this.listenTo(this.model, 'sync', this.render);
-      // this.EditorArticleCollection = new EditorArticleCollection({_parentId:this.model.get('_id')});
-      // this.listenTo(this.EditorArticleCollection, 'sync', this.addArticleViews);
-      // this.EditorArticleCollection.fetch();
-
-            // this.renderPageLayerView();
-
-      var pageLayerView = new SidebarPageEditView();
-      AdaptBuilder.trigger('editorSidebar:addEditView', pageLayerView);
-
-      console.log('page preRender');      
+      this.EditorArticleCollection = new EditorArticleCollection({_parentId:this.model.get('_id')});
+      this.listenTo(this.EditorArticleCollection, 'sync', this.addArticleViews);
+      this.EditorArticleCollection.fetch();
     },
 
     addArticleViews: function() {
@@ -53,10 +42,6 @@ define(function(require){
           this.remove();
         }
       }
-    },
-
-    appendNewArticle: function(newPageArticleModel) {
-      this.$('.page-articles').append(new EditorArticleView({model: newPageArticleModel}).$el);
     },
 
     renderPageLayerView: function() {
@@ -81,10 +66,15 @@ define(function(require){
             alert('error adding new article');
           },
           success: function() {
-            thisView.appendNewArticle(newPageArticleModel);
+            Backbone.history.navigate('/editor/page/' + thisView.model.get('_id'), {trigger: true});
           }
         }
       );
+    },
+
+    loadPageEdit: function (event) {
+      event.preventDefault();
+      AdaptBuilder.trigger('editorSidebar:addEditView', this.model);
     }
     
   }, {

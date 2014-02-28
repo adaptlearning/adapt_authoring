@@ -68,11 +68,8 @@ define(function(require){
 
     renderEditorPage: function() {
 
-
-      var pageModel = new PageModel();
-
       this.$('.editor-inner').html(new EditorPageView({
-        model: pageModel 
+        model: this.model
       }).$el);
 
       console.log('rendering page editing view');

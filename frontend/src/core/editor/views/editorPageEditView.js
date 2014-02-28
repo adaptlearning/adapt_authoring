@@ -2,12 +2,12 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var AdaptBuilder = require('coreJS/app/adaptbuilder');
-  var EditorView = require('coreJS/editor/views/editorView');
+  var BuilderView = require('coreJS/app/views/builderView');
 
-  var PageEditView = EditorView.extend({
+  var PageEditView = BuilderView.extend({
 
     settings: {
-      autoRender: false
+      autoRender: true
     },
     
     tagName: "div",
@@ -32,8 +32,7 @@ define(function(require) {
 
     cancel: function (event) {
       event.preventDefault();
-      
-      Backbone.history.navigate('#editor/view/' + this.model.get('_parentId'), {trigger: true});
+      Backbone.history.navigate('#editor/page/' + this.model.get('_id'), {trigger: true});
     },
 
     savePage: function(event) {
@@ -56,7 +55,7 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: function() {
-            Backbone.history.navigate('#editor/view/' + model.get('_parentId'), {trigger: true});
+            Backbone.history.navigate('#editor/page/' + model.get('_id'), {trigger: true});
           }
         }
       );

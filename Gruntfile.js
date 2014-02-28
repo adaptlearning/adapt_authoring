@@ -72,7 +72,7 @@ module.exports = function(grunt) {
         },
         compile: {
           options: {
-            name: "core/js/app",
+            name: "core/app/app",
             baseUrl: "frontend/src",
             mainConfigFile: "./config.js",
             out: "./frontend/build/adaptbuilder/js/adaptbuilder.min.js",
@@ -118,7 +118,7 @@ module.exports = function(grunt) {
       },
       server: {
         options: {
-          port: 8080
+          port: 3000
         }
       }
     });

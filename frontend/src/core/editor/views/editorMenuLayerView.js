@@ -5,6 +5,8 @@ define(function(require) {
 
   	var EditorMenuLayerView = BuilderView.extend({
 
+      className: 'editor-menu-layer',
+
   		preRender: function() {
 
   		},

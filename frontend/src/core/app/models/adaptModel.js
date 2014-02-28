@@ -1,24 +1,10 @@
 define(function(require) {
 
     var Backbone = require('backbone');
-    var Adapt = require('coreJS/adapt');
 
     var AdaptModel = Backbone.Model.extend({
 
         initialize: function() {
-            if (this.get('_type') === 'page') {
-                this._children = 'articles';
-            }
-            if (this._siblings === 'contentObjects' && this.get('_parentId') !== 'course') {
-                this._parent = 'contentObjects';
-            }
-            if (this._children) {
-                Adapt[this._children].on({
-                    "change:_isReady": this.checkReadyStatus,
-                    "change:_isComplete": this.checkCompletionStatus
-                }, this);
-            }
-            this.init();
         },
         
         defaults: {
@@ -30,18 +16,6 @@ define(function(require) {
             _isTrackable:true,
             _isReady:false,
             _isVisible:true
-        },
-        
-        init: function() {},
-        
-        checkReadyStatus: function() {
-            if (this.getChildren().findWhere({_isReady:false})) return;
-            this.set({_isReady:true});
-        },
-        
-        checkCompletionStatus: function() {
-            if (this.getChildren().findWhere({_isComplete:false})) return;
-            this.set({_isComplete:true});
         },
         
         findAncestor: function(ancestors) {

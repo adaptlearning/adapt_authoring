@@ -12,7 +12,7 @@ define(function(require) {
       initialize : function(options) {
          this._id = options._id;
 
-         this.pageCollection = new PageCollection({_parentId: this._id});
+         this.pageCollection = new EditorPageCollection({_parentId: this._id});
       }
     });
 

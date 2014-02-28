@@ -139,13 +139,8 @@ define(function(require) {
     },
 
     editorPage: function (id) {
-      AdaptBuilder.currentProjectId = id;
-      
-      var editorModel = new EditorModel({_id: id});
-
-      editorModel.fetch();
- 
-      this.createView(new EditorView({model: editorModel, currentView: 'page'}));
+      var pageModel = new EditorPageModel({_id: id});
+      this.createView(new EditorView({model: pageModel, currentView: 'page'}));
     },
 
     removeViews: function() {

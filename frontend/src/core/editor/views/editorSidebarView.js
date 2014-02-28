@@ -1,7 +1,9 @@
 define(function(require) {
 
-	var AdaptBuilder = require('coreJS/app/adaptBuilder');
+	var AdaptBuilder = require('coreJS/app/adaptbuilder');
 	var BuilderView = require('coreJS/app/views/builderView');
+	var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
+	var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
 
 	var EditorSidebarView = BuilderView.extend({
 
@@ -13,11 +15,23 @@ define(function(require) {
 		},
 
 		addEditingView: function(model) {
+			var type = model.get('_type');
+			var editor;
+
 			this.hideLoadingStatus();
 			this.hideInstruction();
-			new Origin.editorViews[model.get('_type')];
-			this.$('.editor-sidebar-inner').append(view);
-			console.log('adding editing view');
+
+			switch (type) {
+				case 'page':
+					editor = new EditorPageEditView({model: model});
+					break;
+				case 'article':
+					editor = new EditorArticleEditView({model: model});
+					break;
+			}
+
+			this.$('.editor-sidebar-inner').empty();
+			this.$('.editor-sidebar-inner').append(editor.$el);
 		},
 
 		removeEditingView: function() {

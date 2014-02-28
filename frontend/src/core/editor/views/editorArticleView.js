@@ -2,6 +2,7 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
+  var AdaptBuilder = require('coreJS/app/adaptbuilder');
   var BuilderView = require('coreJS/app/views/builderView');
   var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
 
@@ -12,6 +13,7 @@ define(function(require){
     className: 'page-article',
 
     events: {
+      'click a.page-article-edit'   : 'loadPageEdit',
       'click a.page-article-delete' : 'deletePageArticle'
     },
 
@@ -24,7 +26,13 @@ define(function(require){
           this.remove();
         }
       }
+    },
+
+    loadPageEdit: function (event) {
+      event.preventDefault();
+      AdaptBuilder.trigger('editorSidebar:addEditView', this.model);
     }
+
   }, {
     template: 'pageArticle'
   });

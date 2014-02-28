@@ -10,7 +10,9 @@ define(function(require){
   var EditorPageView = require('coreJS/editor/views/editorPageView');
   var EditorPageCollection = require('coreJS/editor/collections/editorPageCollection');
   var EditorPageModel = require('coreJS/editor/models/editorPageModel');
-  
+  var SidebarPageEditView = require('coreJS/editor/views/sidebarPageEditView');
+  var PageModel = require('coreJS/editor/models/editorPageModel');
+
   var EditorView = BuilderView.extend({
 
     settings: {
@@ -34,11 +36,20 @@ define(function(require){
     
     postRender: function() {
       this.renderEditorSidebar();
-      if (this.currentView === "menu") {
-        this.renderEditorMenu();
-      } else if (this.currentView === "page") {
-        this.renderEditorPage();
+
+      switch (this.currentView) {
+        case 'menu':
+          this.renderEditorMenu();
+          break;
+        case 'page':
+          this.renderEditorPage();
+          break;
       }
+      // if (this.currentView === "menu") {
+      //   this.renderEditorMenu();
+      // } else if (this.currentView === "page") {
+      //   this.renderEditorPage();
+      // }
     },
 
     renderEditorSidebar: function() {
@@ -56,14 +67,7 @@ define(function(require){
     },
 
     renderEditorPage: function() {
-      /*console.log('rendering page editing view');
-      this.$('.editor-inner').html(new EditorMenuView({
-        model: this.model, 
-        collection: new EditorContentObjectsCollection({
-          url: '/data/contentObjects.json'
-        })
-      }).$el);*/
-      //EditorPageView
+
       var pageCollection = this.model.pageCollection;
 
       if (pageCollection.length != 0) {
@@ -74,21 +78,6 @@ define(function(require){
         }, this);
       }
     }
-
-    /*addNewPage: function(event) {
-      event.preventDefault();
-
-      console.log('Adding new page');
-      Backbone.history.navigate('/page/new/' + this.model.get('_id'), {trigger: true});
-    },
-
-
-    loadPage: function(event) {
-      event.preventDefault();
-      var pageModel = new PageModel({_id:$(event.currentTarget).data('page-id')});
-      pageModel.fetch();
-      this.$('.editor').html(new PageView({model: pageModel}).$el);
-    }*/
 
   }, {
     template: 'editor'

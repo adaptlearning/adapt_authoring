@@ -12,6 +12,7 @@ define(function(require){
   var EditorPageModel = require('coreJS/editor/models/editorPageModel');
   var SidebarPageEditView = require('coreJS/editor/views/sidebarPageEditView');
   var PageModel = require('coreJS/editor/models/editorPageModel');
+  var EditorCollection = require('coreJS/editor/collections/editorCollection');
 
   var EditorView = OriginView.extend({
 
@@ -31,18 +32,56 @@ define(function(require){
     preRender: function(options) {
       this.currentView = options.currentView;
       this.listenTo(this.model, 'sync', this.render);
+      this.listenTo(Origin, 'editor:syncData', this.syncEditorData);
       this.model.fetch();
       this.setupEditor();
     },
 
     setupEditor: function() {
-      Origin.editor.config = {};
-      Origin.editor.course = this.model;
-      Origin.editor.contentObjects = {};
-      Origin.editor.articles = {};
-      Origin.editor.blocks = {};
-      Origin.editor.components = {};
-      console.log(Origin);
+      Origin.on('editorCollection:dataLoaded', function() {
+        console.log(Origin);
+      });
+      var editorModels = [
+        {modelName:'config'},
+        {modelName:'course'}
+      ];
+      var editorCollections = [
+        {collectionName:'contentObjects', url:'/data/contentObjects.json'},
+        {collectionName:'articles', url:'/data/articles.json'},
+        {collectionName:'blocks', url:'/data/blocks.json'},
+        {collectionName:'components', url:'/data/components.json'}
+      ]
+      //this.setupEditorModels(editorModels);
+      this.setupEditorCollections(editorCollections);
+
+    },
+
+    setupEditorModels: function(editorModels) {
+      _.each(editorModels, function(editorModel) {
+        Origin.editor[editorModel.modelName] = new EditorModel({
+          url: '/data/' + editorModel.url + '.json'
+        });
+      });
+    },
+
+    setupEditorCollections: function(editorCollections) {
+
+      _.each(editorCollections, function(editorCollection) {
+        
+        Origin.editor[editorCollection.collectionName] = new EditorCollection(null, {
+          url: _.bind(function() {
+            return editorCollection.url;
+          }, this)
+        });
+
+      }, this);
+      
+    },
+
+    syncEditorData: function(dataToBeSynced) {
+      _.each(dataToBeSynced, function(dataObject) {
+        Origin.editor[dataObject].sync();
+      })
     },
     
     postRender: function() {

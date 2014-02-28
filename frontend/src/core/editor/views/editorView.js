@@ -56,15 +56,15 @@ define(function(require){
     },
 
     renderEditorPage: function() {
-      console.log('rendering page editing view');
-      /*this.$('.editor-inner').html(new EditorMenuView({
+      /*console.log('rendering page editing view');
+      this.$('.editor-inner').html(new EditorMenuView({
         model: this.model, 
         collection: new EditorContentObjectsCollection({
           url: '/data/contentObjects.json'
         })
       }).$el);*/
       //EditorPageView
-      /*var pageCollection = this.model.pageCollection;
+      var pageCollection = this.model.pageCollection;
 
       if (pageCollection.length != 0) {
         var list = $('<ul/>').appendTo('.editor-page-list');
@@ -72,7 +72,7 @@ define(function(require){
         _.each(pageCollection.models, function(model) {
           list.append('<li><a class="load-page" data-page-id="' + model.get('_id') + '" href="#">' + model.get('title') + '</a></li>');
         }, this);
-      }*/
+      }
     }
 
     /*addNewPage: function(event) {

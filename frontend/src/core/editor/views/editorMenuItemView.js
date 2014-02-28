@@ -14,8 +14,8 @@ define(function(require){
     },
 
     editMenuItem: function() {
-      console.log('clicked edit button')
-      AdaptBuilder.trigger('editorSidebar:addEditView');
+      console.log('clicked edit button', this.model);
+      AdaptBuilder.trigger('editorSidebar:addEditView', this.model);
     }
 
   }, {

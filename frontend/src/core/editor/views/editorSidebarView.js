@@ -12,9 +12,10 @@ define(function(require) {
 			this.listenTo(AdaptBuilder, 'editorSidebar:removeEditView', this.removeEditingView);
 		},
 
-		addEditingView: function(view) {
+		addEditingView: function(model) {
 			this.hideLoadingStatus();
 			this.hideInstruction();
+			new Origin.editorViews[model.get('_type')];
 			this.$('.editor-sidebar-inner').append(view);
 			console.log('adding editing view');
 		},

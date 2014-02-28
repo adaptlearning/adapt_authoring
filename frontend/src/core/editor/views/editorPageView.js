@@ -2,10 +2,12 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
+  var AdaptBuilder = require('coreJS/app/adaptbuilder');
   var BuilderView = require('coreJS/app/views/builderView');
   var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
   var EditorArticleView = require('coreJS/editor/views/editorArticleView');
   var EditorArticleCollection = require('coreJS/editor/collections/editorArticleCollection');
+  var SidebarPageEditView = require('coreJS/editor/views/sidebarPageEditView');
 
   var PageView = BuilderView.extend({
 
@@ -23,10 +25,17 @@ define(function(require){
     },
 
     preRender: function() {
-      this.listenTo(this.model, 'sync', this.render);
-      this.EditorArticleCollection = new EditorArticleCollection({_parentId:this.model.get('_id')});
-      this.EditorArticleCollection.fetch();
-      this.listenTo(this.EditorArticleCollection, 'sync', this.addArticleViews);
+      // this.listenTo(this.model, 'sync', this.render);
+      // this.EditorArticleCollection = new EditorArticleCollection({_parentId:this.model.get('_id')});
+      // this.listenTo(this.EditorArticleCollection, 'sync', this.addArticleViews);
+      // this.EditorArticleCollection.fetch();
+
+            // this.renderPageLayerView();
+
+      var pageLayerView = new SidebarPageEditView();
+      AdaptBuilder.trigger('editorSidebar:addEditView', pageLayerView);
+
+      console.log('page preRender');      
     },
 
     addArticleViews: function() {
@@ -48,6 +57,14 @@ define(function(require){
 
     appendNewArticle: function(newPageArticleModel) {
       this.$('.page-articles').append(new EditorArticleView({model: newPageArticleModel}).$el);
+    },
+
+    renderPageLayerView: function() {
+      var pageLayerView = new SidebarPageEditView();
+
+      this.$('.editor-sidebar-inner').append(pageLayerView.$el);
+      
+      return pageLayerView.$('.editor-page-layer-inner');
     },
 
     addArticle: function(event) {

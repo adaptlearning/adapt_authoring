@@ -11,7 +11,7 @@ define(function(require) {
             var url = 'api/content/contentObject';
 
             if (this._parentId) {
-                url = url + '?_parentId=' + this._parentId;
+                url = url + '?_parentId=' + this._parentId + '&_type=page';
             }
 
             return url;

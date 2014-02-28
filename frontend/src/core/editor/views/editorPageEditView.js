@@ -2,9 +2,9 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var AdaptBuilder = require('coreJS/app/adaptbuilder');
-  var BuilderView = require('coreJS/app/views/builderView');
+  var EditorView = require('coreJS/editor/views/editorView');
 
-  var PageEditView = BuilderView.extend({
+  var PageEditView = EditorView.extend({
 
     settings: {
       autoRender: false

@@ -10,7 +10,9 @@ define(function(require){
   var EditorPageView = require('coreJS/editor/views/editorPageView');
   var EditorPageCollection = require('coreJS/editor/collections/editorPageCollection');
   var EditorPageModel = require('coreJS/editor/models/editorPageModel');
-  
+  var SidebarPageEditView = require('coreJS/editor/views/sidebarPageEditView');
+  var PageModel = require('coreJS/editor/models/editorPageModel');
+
   var EditorView = BuilderView.extend({
 
     settings: {
@@ -34,11 +36,20 @@ define(function(require){
     
     postRender: function() {
       this.renderEditorSidebar();
-      if (this.currentView === "menu") {
-        this.renderEditorMenu();
-      } else if (this.currentView === "page") {
-        this.renderEditorPage();
+
+      switch (this.currentView) {
+        case 'menu':
+          this.renderEditorMenu();
+          break;
+        case 'page':
+          this.renderEditorPage();
+          break;
       }
+      // if (this.currentView === "menu") {
+      //   this.renderEditorMenu();
+      // } else if (this.currentView === "page") {
+      //   this.renderEditorPage();
+      // }
     },
 
     renderEditorSidebar: function() {
@@ -56,6 +67,14 @@ define(function(require){
     },
 
     renderEditorPage: function() {
+
+
+      var pageModel = new PageModel();
+
+      this.$('.editor-inner').html(new EditorPageView({
+        model: pageModel 
+      }).$el);
+
       console.log('rendering page editing view');
       /*this.$('.editor-inner').html(new EditorMenuView({
         model: this.model, 

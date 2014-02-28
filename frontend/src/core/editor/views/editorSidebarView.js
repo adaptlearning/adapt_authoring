@@ -1,6 +1,6 @@
 define(function(require) {
 
-	var AdaptBuilder = require('coreJS/app/adaptBuilder');
+	var AdaptBuilder = require('coreJS/app/adaptbuilder');
 	var BuilderView = require('coreJS/app/views/builderView');
 
 	var EditorSidebarView = BuilderView.extend({
@@ -13,6 +13,7 @@ define(function(require) {
 		},
 
 		addEditingView: function(view) {
+			console.log('adding new sidebar view');
 			this.hideLoadingStatus();
 			this.hideInstruction();
 			this.$('.editor-sidebar-inner').append(view);

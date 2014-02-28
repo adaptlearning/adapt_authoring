@@ -68,15 +68,11 @@ define(function(require){
 
     renderEditorPage: function() {
 
-      var pageCollection = this.model.pageCollection;
+      this.$('.editor-inner').html(new EditorPageView({
+        model: this.model
+      }).$el);
 
-      if (pageCollection.length != 0) {
-        var list = $('<ul/>').appendTo('.editor-page-list');
-
-        _.each(pageCollection.models, function(model) {
-          list.append('<li><a class="load-page" data-page-id="' + model.get('_id') + '" href="#">' + model.get('title') + '</a></li>');
-        }, this);
-      }
+      console.log('rendering page editing view');
     }
 
   }, {

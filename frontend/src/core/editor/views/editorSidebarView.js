@@ -1,7 +1,8 @@
 define(function(require) {
 
-	var AdaptBuilder = require('coreJS/app/adaptbuilder');
+	var AdaptBuilder = require('coreJS/app/adaptBuilder');
 	var BuilderView = require('coreJS/app/views/builderView');
+	var EditorCourseEditView = require('coreJS/editor/views/editorCourseEditView');
 	var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
 	var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
 
@@ -18,10 +19,16 @@ define(function(require) {
 			var type = model.get('_type');
 			var editor;
 
+			console.log('getting');
+
+			console.log('type', type);
+
 			this.hideLoadingStatus();
 			this.hideInstruction();
 
 			switch (type) {
+				case 'course':
+					editor = new EditorCourseEditView({model: model});
 				case 'page':
 					editor = new EditorPageEditView({model: model});
 					break;

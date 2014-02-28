@@ -1,11 +1,11 @@
 define(function(require){
 
-  var AdaptBuilder = require('coreJS/app/adaptBuilder');
-  var BuilderView = require('coreJS/app/views/builderView');
+  var Origin = require('coreJS/app/origin');
+  var OriginView = require('coreJS/app/views/originView');
   var EditorMenuItemView = require('core/editor/views/editorMenuItemView');
   var EditorMenuLayerView = require('core/editor/views/editorMenuLayerView');
   
-  var EditorMenuView = BuilderView.extend({
+  var EditorMenuView = OriginView.extend({
 
     tagName: "div",
 

@@ -1,19 +1,19 @@
 require([
-    'coreJS/app/adaptBuilder',
+    'coreJS/app/origin',
     'coreJS/app/router',
     'coreJS/user/models/sessionModel',
     'coreJS/navigation/views/navigationView',
     'coreJS/app/helpers',
     'templates'
-], function (AdaptBuilder, Router, SessionModel, NavigationView, Helpers) {
-  	AdaptBuilder.sessionModel = new SessionModel();
+], function (Origin, Router, SessionModel, NavigationView, Helpers) {
+  	Origin.sessionModel = new SessionModel();
 
-    AdaptBuilder.router = new Router();
+    Origin.router = new Router();
 
-  	AdaptBuilder.sessionModel.fetch({
+  	Origin.sessionModel.fetch({
   		success: function(data) {
-        $('#app').before(new NavigationView({model: AdaptBuilder.sessionModel}).$el);
-        AdaptBuilder.initialize();
+        $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
+        Origin.initialize();
   		}
   	});
     

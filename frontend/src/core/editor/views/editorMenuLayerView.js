@@ -1,9 +1,9 @@
 define(function(require) {
 
-	var AdaptBuilder = require('coreJS/app/adaptBuilder');
-  	var BuilderView = require('coreJS/app/views/builderView');
+	var Origin = require('coreJS/app/origin');
+  var OriginView = require('coreJS/app/views/originView');
 
-  	var EditorMenuLayerView = BuilderView.extend({
+  var EditorMenuLayerView = OriginView.extend({
 
       className: 'editor-menu-layer',
 
@@ -17,7 +17,7 @@ define(function(require) {
 
   	}, {
   		template: 'editorMenuLayer'
-  	});
+  });
 
   	return EditorMenuLayerView;
 

@@ -2,11 +2,11 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var AdaptBuilder = require('coreJS/app/adaptbuilder');
-  var BuilderView = require('coreJS/app/views/builderView');
+  var Origin = require('coreJS/app/origin');
+  var OriginView = require('coreJS/app/views/originView');
   var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
 
-  var PageArticleView = BuilderView.extend({
+  var PageArticleView = OriginView.extend({
 
     tagName: 'div',
 
@@ -30,7 +30,7 @@ define(function(require){
 
     loadPageEdit: function (event) {
       event.preventDefault();
-      AdaptBuilder.trigger('editorSidebar:addEditView', this.model);
+      Origin.trigger('editorSidebar:addEditView', this.model);
     }
 
   }, {

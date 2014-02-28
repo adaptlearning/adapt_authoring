@@ -1,18 +1,18 @@
 define(function(require) {
 
-	var AdaptBuilder = require('coreJS/app/adaptBuilder');
-	var BuilderView = require('coreJS/app/views/builderView');
+	var Origin = require('coreJS/app/origin');
+	var OriginView = require('coreJS/app/views/originView');
 	var EditorCourseEditView = require('coreJS/editor/views/editorCourseEditView');
 	var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
 	var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
 
-	var EditorSidebarView = BuilderView.extend({
+	var EditorSidebarView = OriginView.extend({
 
 		className: 'editor-sidebar',
 
 		preRender: function() {
-			this.listenTo(AdaptBuilder, 'editorSidebar:addEditView', this.addEditingView);
-			this.listenTo(AdaptBuilder, 'editorSidebar:removeEditView', this.removeEditingView);
+			this.listenTo(Origin, 'editorSidebar:addEditView', this.addEditingView);
+			this.listenTo(Origin, 'editorSidebar:removeEditView', this.removeEditingView);
 		},
 
 		addEditingView: function(model) {

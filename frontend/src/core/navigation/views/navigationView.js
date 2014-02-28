@@ -1,10 +1,10 @@
 define(function(require){
 
   var Backbone = require('backbone');
-  var BuilderView = require('coreJS/app/views/builderView');
-  var AdaptBuilder = require('coreJS/app/adaptbuilder');
+  var OriginView = require('coreJS/app/views/originView');
+  var Origin = require('coreJS/app/origin');
 
-  var NavigationView = BuilderView.extend({
+  var NavigationView = OriginView.extend({
 
     tagName: 'nav',
 
@@ -15,8 +15,8 @@ define(function(require){
     },
 
     preRender: function() {
-      this.listenTo(AdaptBuilder, 'login:changed', this.render);
-      this.listenTo(AdaptBuilder, 'route:changed', this.routeChanged);
+      this.listenTo(Origin, 'login:changed', this.render);
+      this.listenTo(Origin, 'route:changed', this.routeChanged);
     },
 
     routeChanged: function (info) {

@@ -2,11 +2,11 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var BuilderView = require('coreJS/app/views/builderView');
-  var Builder = require('coreJS/app/adaptBuilder');
+  var OriginView = require('coreJS/app/views/originView');
+  var Origin = require('coreJS/app/origin');
   var EditorPageModel = require('coreJS/editor/models/editorPageModel');
 
-  var ProjectView = BuilderView.extend({
+  var ProjectView = OriginView.extend({
 
     tagName: 'div',
 

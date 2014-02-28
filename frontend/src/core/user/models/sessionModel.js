@@ -1,7 +1,7 @@
 define(function(require) {
 
   var Backbone = require('backbone');
-  var AdaptBuilder = require('coreJS/app/adaptbuilder');
+  var Origin = require('coreJS/app/origin');
 
   var SessionModel = Backbone.Model.extend({
 
@@ -25,7 +25,7 @@ define(function(require) {
           model.attributes['id'] = '';
           model.attributes['isAuthenticated'] = false;
           
-          AdaptBuilder.trigger('login:changed');
+          Origin.trigger('login:changed');
 
           Backbone.history.navigate('#/user/login', {trigger: true});
       });
@@ -45,7 +45,7 @@ define(function(require) {
             model.attributes['id'] = authenticated['id'];
             model.attributes['email'] = authenticated['email'];            
 
-            AdaptBuilder.trigger('login:changed');
+            Origin.trigger('login:changed');
             
             Backbone.history.navigate('#/dashboard', {trigger: true});
           });

@@ -2,8 +2,8 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var AdaptBuilder = require('coreJS/app/adaptBuilder');
-  var BuilderView = require('coreJS/app/views/builderView');
+  var Origin = require('coreJS/app/origin');
+  var OriginView = require('coreJS/app/views/originView');
   var EditorSidebarView = require('coreJS/editor/views/editorSidebarView');
   var EditorMenuView = require('coreJS/editor/views/editorMenuView');
   var EditorContentObjectsCollection = require('coreJS/editor/collections/editorContentObjectsCollection');
@@ -13,7 +13,7 @@ define(function(require){
   var SidebarPageEditView = require('coreJS/editor/views/sidebarPageEditView');
   var PageModel = require('coreJS/editor/models/editorPageModel');
 
-  var EditorView = BuilderView.extend({
+  var EditorView = OriginView.extend({
 
     settings: {
       autoRender: false
@@ -32,6 +32,17 @@ define(function(require){
       this.currentView = options.currentView;
       this.listenTo(this.model, 'sync', this.render);
       this.model.fetch();
+      this.setupEditor();
+    },
+
+    setupEditor: function() {
+      Origin.editor.config = {};
+      Origin.editor.course = this.model;
+      Origin.editor.contentObjects = {};
+      Origin.editor.articles = {};
+      Origin.editor.blocks = {};
+      Origin.editor.components = {};
+      console.log(Origin);
     },
     
     postRender: function() {

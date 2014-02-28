@@ -2,12 +2,12 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var AdaptBuilder = require('coreJS/app/adaptBuilder');
-  var BuilderView = require('coreJS/app/views/builderView');
+  var Origin = require('coreJS/app/origin');
+  var OriginView = require('coreJS/app/views/originView');
   var ProjectView = require('coreJS/project/views/projectView');
   var ProjectCollection = require('coreJS/project/collections/projectCollection');
 
-  var DashboardView = BuilderView.extend({
+  var DashboardView = OriginView.extend({
 
     tagName: "div",
 
@@ -16,7 +16,6 @@ define(function(require){
     preRender: function() {
       this.collection = new ProjectCollection();
       this.collection.fetch();
-      console.log('dashboard view')
       this.listenTo(this.collection, 'sync', this.addProjectViews);
       this.listenTo(this.collection, 'remove', this.projectRemoved);
     },

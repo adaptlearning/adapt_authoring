@@ -1,8 +1,8 @@
 define(function(require) {
   var Backbone = require('backbone');
-  var BuilderView = require('coreJS/app/views/builderView');
+  var OriginView = require('coreJS/app/views/originView');
 
-  var LogoutView = BuilderView.extend({
+  var LogoutView = OriginView.extend({
 
     tagName: "div",
 

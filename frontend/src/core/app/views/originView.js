@@ -6,9 +6,9 @@
 define(function(require){
 
   var Backbone = require('backbone');
-  var Builder = require('coreJS/app/adaptBuilder');
+  var Origin = require('coreJS/app/origin');
 
-  var BuilderView = Backbone.View.extend({
+  var OriginView = Backbone.View.extend({
 
     settings: {
       autoRender: true
@@ -19,7 +19,7 @@ define(function(require){
       if (this.settings.autoRender) {
         this.render();
       }
-      this.listenTo(Builder, 'remove:views', this.remove);
+      this.listenTo(Origin, 'remove:views', this.remove);
     },
 
     preRender: function() {},
@@ -38,6 +38,6 @@ define(function(require){
 
   });
 
-  return BuilderView;
+  return OriginView;
 
 });

@@ -1,9 +1,9 @@
 define(function(require){
 
-  var AdaptBuilder = require('coreJS/app/adaptBuilder');
-  var BuilderView = require('coreJS/app/views/builderView');
+  var Origin = require('coreJS/app/origin');
+  var OriginView = require('coreJS/app/views/originView');
   
-  var EditorMenuItemView = BuilderView.extend({
+  var EditorMenuItemView = OriginView.extend({
 
     tagName: "div",
 
@@ -14,7 +14,7 @@ define(function(require){
     },
 
     editMenuItem: function() {
-      AdaptBuilder.trigger('editorSidebar:addEditView', this.model);
+      Origin.trigger('editorSidebar:addEditView', this.model);
     }
 
   }, {

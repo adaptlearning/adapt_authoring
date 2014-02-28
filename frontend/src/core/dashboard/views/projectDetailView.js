@@ -1,9 +1,9 @@
 define(function(require) {
   var Backbone = require('backbone');
-  var AdaptBuilder = require('coreJS/app/adaptbuilder');
-  var BuilderView = require('coreJS/app/views/builderView');
+  var Origin = require('coreJS/app/origin');
+  var OriginView = require('coreJS/app/views/originView');
 
-  var ProjectDetailView = BuilderView.extend({
+  var ProjectDetailView = OriginView.extend({
 
     settings: {
       autoRender: false

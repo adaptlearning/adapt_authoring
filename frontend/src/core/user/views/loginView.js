@@ -1,9 +1,9 @@
 define(function(require) {
   var Backbone = require('backbone');
-  var AdaptBuilder = require('coreJS/app/adaptbuilder');
-  var BuilderView = require('coreJS/app/views/builderView');
+  var Origin = require('coreJS/app/origin');
+  var OriginView = require('coreJS/app/views/originView');
 
-  var LoginView = BuilderView.extend({
+  var LoginView = OriginView.extend({
 
     className: 'login',
 
@@ -14,7 +14,7 @@ define(function(require) {
     },
 
     preRender: function() {
-      this.listenTo(AdaptBuilder, 'loginFailed', this.loginFailed, this);
+      this.listenTo(Origin, 'loginFailed', this.loginFailed, this);
     },
     
     submitLoginDetails: function(e) {
@@ -25,7 +25,7 @@ define(function(require) {
 
       mdl.login(inputUsernameEmail, inputPassword, function(err, result){
         if( err || !result.success) {
-          AdaptBuilder.trigger('loginFailed');
+          Origin.trigger('loginFailed');
         } else {
           Backbone.history.navigate('#/dashboard', {trigger: true});
         }

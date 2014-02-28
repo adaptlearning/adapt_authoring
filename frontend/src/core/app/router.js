@@ -3,7 +3,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var LoginView = require('coreJS/user/views/loginView');
   var DashboardView = require('coreJS/dashboard/views/dashboardView');
-  var AdaptBuilder = require('coreJS/app/adaptBuilder');
+  var Origin = require('coreJS/app/origin');
   var ProjectModel = require('coreJS/project/models/projectModel');
   var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
   var LogoutView = require('coreJS/user/views/logoutView');
@@ -63,7 +63,7 @@ define(function(require) {
     },
 
     isUserAuthenticated: function() {
-      return AdaptBuilder.sessionModel.get('isAuthenticated') ? true : false;
+      return Origin.sessionModel.get('isAuthenticated') ? true : false;
     },
 
     createView: function(initialView, fallbackView) {
@@ -73,7 +73,7 @@ define(function(require) {
       } else {
         this.currentView = fallbackView
           ? fallbackView 
-          : new LoginView({model:AdaptBuilder.sessionModel});
+          : new LoginView({model:Origin.sessionModel});
       }
       
       $('#app').append(this.currentView.$el);
@@ -84,7 +84,7 @@ define(function(require) {
     },
 
     index: function() {
-      if (AdaptBuilder.sessionModel.get('isAuthenticated')) {
+      if (Origin.sessionModel.get('isAuthenticated')) {
         this.navigate('#/dashboard', {trigger: true});
       } else {
         this.navigate('#/user/login', {trigger: true});
@@ -92,11 +92,11 @@ define(function(require) {
     },
 
     login: function() {
-      this.createView(false, new LoginView({model: AdaptBuilder.sessionModel}));
+      this.createView(false, new LoginView({model: Origin.sessionModel}));
     },
 
     logout: function () {
-      this.createView(new LogoutView({model: AdaptBuilder.sessionModel}));
+      this.createView(new LogoutView({model: Origin.sessionModel}));
     },
 
     forgotpassword: function() {
@@ -146,7 +146,7 @@ define(function(require) {
     removeViews: function() {
       if (this.currentView) {
         this.currentView.remove();
-        AdaptBuilder.trigger('remove:views');
+        Origin.trigger('remove:views');
       }
     }/*,
 

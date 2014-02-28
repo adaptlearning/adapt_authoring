@@ -1,6 +1,6 @@
 define(function(require) {
     var Backbone = require('backbone');
-    var AdaptBuilder = require('coreJS/app/adaptbuilder');
+    var Origin = require('coreJS/app/origin');
     var EditorPageCollection = require('coreJS/editor/collections/editorPageCollection');
 
     var EditorModel = Backbone.Model.extend({

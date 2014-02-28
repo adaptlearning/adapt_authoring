@@ -1,7 +1,7 @@
 define(function(require) {
 
   var Backbone = require('backbone'),
-      AdaptBuilder = require('coreJS/app/adaptbuilder');
+  var Origin = require('coreJS/app/origin');
 
 
   var ProfileModel = Backbone.Model.extend({

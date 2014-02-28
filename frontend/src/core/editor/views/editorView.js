@@ -7,9 +7,9 @@ define(function(require){
   var EditorSidebarView = require('coreJS/editor/views/editorSidebarView');
   var EditorMenuView = require('coreJS/editor/views/editorMenuView');
   var EditorContentObjectsCollection = require('coreJS/editor/collections/editorContentObjectsCollection');
-  var PageView = require('coreJS/editor/views/pageView');
-  var PageCollection = require('coreJS/editor/collections/pageCollection');
-  var PageModel = require('coreJS/editor/models/pageModel');
+  var EditorPageView = require('coreJS/editor/views/editorPageView');
+  var EditorPageCollection = require('coreJS/editor/collections/editorPageCollection');
+  var EditorPageModel = require('coreJS/editor/models/editorPageModel');
   
   var EditorView = BuilderView.extend({
 
@@ -26,23 +26,17 @@ define(function(require){
       "click a.load-page"     : "loadPage",
     },
 
-    initialize: function(options) {
+    preRender: function(options) {
       this.currentView = options.currentView;
-      this.listenTo(AdaptBuilder, 'remove:views', this.remove);
       this.listenTo(this.model, 'sync', this.render);
       this.model.fetch();
-      this.preRender();
-    },
-
-    preRender: function() {
-      
     },
     
     postRender: function() {
       this.renderEditorSidebar();
       if (this.currentView === "menu") {
         this.renderEditorMenu();
-      } else {
+      } else if (this.currentView === "page") {
         this.renderEditorPage();
       }
     },
@@ -63,6 +57,13 @@ define(function(require){
 
     renderEditorPage: function() {
       console.log('rendering page editing view');
+      /*this.$('.editor-inner').html(new EditorMenuView({
+        model: this.model, 
+        collection: new EditorContentObjectsCollection({
+          url: '/data/contentObjects.json'
+        })
+      }).$el);*/
+      //EditorPageView
       /*var pageCollection = this.model.pageCollection;
 
       if (pageCollection.length != 0) {

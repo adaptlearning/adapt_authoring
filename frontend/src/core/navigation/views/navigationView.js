@@ -10,6 +10,10 @@ define(function(require){
 
     className: 'navigation',
 
+    initialize: function() {
+      this.render();
+    },
+
     preRender: function() {
       this.listenTo(AdaptBuilder, 'login:changed', this.render);
       this.listenTo(AdaptBuilder, 'route:changed', this.routeChanged);

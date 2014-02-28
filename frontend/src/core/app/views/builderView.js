@@ -14,12 +14,12 @@ define(function(require){
       autoRender: true
     },
 
-    initialize: function() {
-      this.listenTo(Builder, 'remove:views', this.remove);
-      this.preRender();
+    initialize: function(options) {
+      this.preRender(options);
       if (this.settings.autoRender) {
         this.render();
       }
+      this.listenTo(Builder, 'remove:views', this.remove);
     },
 
     preRender: function() {},
@@ -34,13 +34,7 @@ define(function(require){
       return this;
     },
 
-    postRender: function() {},
-
-    remove: function() {
-      this.$el.remove();
-      this.stopListening();
-      return this;
-    }
+    postRender: function() {}
 
   });
 

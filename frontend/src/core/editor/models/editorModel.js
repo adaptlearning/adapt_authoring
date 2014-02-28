@@ -1,7 +1,7 @@
 define(function(require) {
     var Backbone = require('backbone');
     var AdaptBuilder = require('coreJS/app/adaptbuilder');
-    var PageCollection = require('coreJS/editor/collections/pageCollection');
+    var EditorPageCollection = require('coreJS/editor/collections/editorPageCollection');
 
     var EditorModel = Backbone.Model.extend({
 
@@ -12,7 +12,7 @@ define(function(require) {
       initialize : function(options) {
          this._id = options._id;
 
-         this.pageCollection = new PageCollection({_parentId: this._id});
+         this.pageCollection = new EditorPageCollection({_parentId: this._id});
       }
     });
 

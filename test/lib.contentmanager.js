@@ -45,8 +45,8 @@ describe('contentmanager', function() {
       .post('/api/content/course')
       .set('Accept', 'application/json')
       .send({
-        name: 'some name',
-        tenantId : '0'
+        title: 'some name',
+        _tenantId : '0'
       })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -66,7 +66,7 @@ describe('contentmanager', function() {
       .post('/api/content/iwillneverbeacontenttype')
       .set('Accept', 'application/json')
       .send({
-        name: 'some name'
+        title: 'some name'
       })
       .expect(400)
       .expect('Content-Type', /json/)
@@ -120,7 +120,7 @@ describe('contentmanager', function() {
       .put('/api/content/course/' + contentObj._id)
       .set('Accept', 'application/json')
       .send({
-        name: "some different name"
+        title: "some different name"
        })
       .expect(200)
       .expect('Content-Type', /json/)

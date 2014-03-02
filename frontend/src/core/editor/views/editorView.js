@@ -13,6 +13,7 @@ define(function(require){
   var SidebarPageEditView = require('coreJS/editor/views/sidebarPageEditView');
   var PageModel = require('coreJS/editor/models/editorPageModel');
   var EditorCollection = require('coreJS/editor/collections/editorCollection');
+  var EditorModel = require('coreJS/editor/models/editorModel');
 
   var EditorView = OriginView.extend({
 
@@ -38,9 +39,18 @@ define(function(require){
     },
 
     setupEditor: function() {
-      Origin.on('editorCollection:dataLoaded', function() {
-        console.log(Origin);
-      });
+      Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function() {
+        if (Origin.editor.contentObjects.models.length > 0
+            && Origin.editor.articles.models.length > 0
+            && Origin.editor.blocks.models.length > 0
+            && Origin.editor.components.models.length > 0
+            && Origin.editor.config.hasChanged()
+            && Origin.editor.course.hasChanged()) {
+          console.log('loaded data');
+          this.renderCurrentEditorView();
+        }
+        
+      }, this);
       var editorModels = [
         {modelName:'config'},
         {modelName:'course'}
@@ -51,7 +61,7 @@ define(function(require){
         {collectionName:'blocks', url:'/data/blocks.json'},
         {collectionName:'components', url:'/data/components.json'}
       ]
-      //this.setupEditorModels(editorModels);
+      this.setupEditorModels(editorModels);
       this.setupEditorCollections(editorCollections);
 
     },
@@ -59,7 +69,7 @@ define(function(require){
     setupEditorModels: function(editorModels) {
       _.each(editorModels, function(editorModel) {
         Origin.editor[editorModel.modelName] = new EditorModel({
-          url: '/data/' + editorModel.url + '.json'
+          url: '/data/' + editorModel.modelName + '.json'
         });
       });
     },
@@ -84,7 +94,7 @@ define(function(require){
       })
     },
     
-    postRender: function() {
+    renderCurrentEditorView: function() {
       this.renderEditorSidebar();
 
       switch (this.currentView) {
@@ -108,10 +118,7 @@ define(function(require){
 
     renderEditorMenu: function() {
       this.$('.editor-inner').html(new EditorMenuView({
-        model: this.model, 
-        collection: new EditorContentObjectsCollection({
-          url: '/data/contentObjects.json'
-        })
+        model: Origin.editor.course
       }).$el);
       // 'api/content/' + this.model.get('_id') + '/articles'
     },

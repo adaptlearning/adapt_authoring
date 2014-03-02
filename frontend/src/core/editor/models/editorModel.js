@@ -5,14 +5,16 @@ define(function(require) {
 
     var EditorModel = Backbone.Model.extend({
 
-      idAttribute: '_id',
-
-      urlRoot: '/api/content/course',
-
       initialize : function(options) {
-         this._id = options._id;
+        this.url = options.url;
+         /*this._id = options._id;
 
-         this.pageCollection = new EditorPageCollection({_parentId: this._id});
+         this.pageCollection = new EditorPageCollection({_parentId: this._id});*/
+         this.once('reset', this.loadedData, this);
+         this.fetch();
+      },
+      loadedData: function() {
+        Origin.trigger('editorModel:dataLoaded');
       }
     });
 

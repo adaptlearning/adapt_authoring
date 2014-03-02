@@ -11,21 +11,19 @@ define(function(require){
 
     className: "editor-menu",
 
-    preRender: function() {
-      this.listenTo(this.collection, 'sync', this.setupMenuViews);
-      this.collection.fetch();
+    postRender: function() {
+      this.setupMenuViews();
     },
 
     setupMenuViews: function() {
-      this.layers = [];
       this.setupCourseViews();
-      this.collection.each(function(contentObject) {
-
+      Origin.editor.contentObjects.each(function(contentObject) {
         console.log(contentObject.get('_parentId'));
       });
     },
 
     setupCourseViews: function() {
+      console.log('setting up course views', this.model);
       this.renderMenuLayerView().append(new EditorMenuItemView({model:this.model}).$el);
     },
 

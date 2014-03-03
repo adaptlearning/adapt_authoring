@@ -1,12 +1,12 @@
 require.config({
     paths: {
-      jquery: 'core/js/libraries/jquery',
-      underscore: 'core/js/libraries/underscore',
-      backbone: 'core/js/libraries/backbone',
-      modernizr: 'core/js/libraries/modernizr',
-      handlebars: 'core/js/libraries/handlebars',
-      bootstrap: 'core/js/libraries/bootstrap',
-      coreJS: 'core/js',
+      jquery: 'core/libraries/jquery',
+      underscore: 'core/libraries/underscore',
+      backbone: 'core/libraries/backbone',
+      modernizr: 'core/libraries/modernizr',
+      handlebars: 'core/libraries/handlebars',
+      bootstrap: 'core/libraries/bootstrap',
+      coreJS: 'core',
       templates: 'templates/templates'
     },
     shim: {

@@ -1,0 +1,19 @@
+<div class="course-edit">
+  <div class="row">
+    <form role="form">
+      <div class="form-group">
+        <label for="course-title">Course Title</label>
+        <input type="text" class="form-control page-title" placeholder="Page Title" value="{{title}}">
+      </div>
+      <div class="form-group">
+        <label for="Course-body">Course Body</label>
+        <textarea class="form-control page-body" placeholder="Page Body">{{body}}</textarea>
+      </div>
+      <div class="hidden">
+        <input type="hidden" value="{{id}}" id="courseId">
+      </div>
+      <button class="save-button" type="submit">Save</button>
+      <button class="cancel-button" type="button">Cancel</button>
+    </form>
+  </div>
+</div>

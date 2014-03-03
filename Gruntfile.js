@@ -34,7 +34,7 @@ module.exports = function(grunt) {
       less: {
         dist: {
           files: {
-            'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/**/*.css'
+            'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/**/*.less'
           }
         },
         options: {
@@ -54,14 +54,14 @@ module.exports = function(grunt) {
             partialsPathRegex: /\/partials\//
           },
           files: {
-            "frontend/src/templates/templates.js": "frontend/src/core/js/**/*.hbs"
+            "frontend/src/templates/templates.js": "frontend/src/core/**/*.hbs"
           }
         }
       },
       requirejs: {
         dev: {
           options: {
-            name: "core/js/app",
+            name: "core/app/app",
             baseUrl: "frontend/src",
             mainConfigFile: "./config.js",
             out: "./frontend/build/adaptbuilder/js/adaptbuilder.min.js",
@@ -72,7 +72,7 @@ module.exports = function(grunt) {
         },
         compile: {
           options: {
-            name: "core/js/app",
+            name: "core/app/app",
             baseUrl: "frontend/src",
             mainConfigFile: "./config.js",
             out: "./frontend/build/adaptbuilder/js/adaptbuilder.min.js",
@@ -118,7 +118,7 @@ module.exports = function(grunt) {
       },
       server: {
         options: {
-          port: 8080
+          port: 3000
         }
       }
     });
@@ -128,7 +128,7 @@ module.exports = function(grunt) {
     grunt.registerTask('dev',['less', 'copy', 'handlebars', 'requirejs:dev']);
     grunt.registerTask('test',['mochaTest']);
     grunt.registerTask('compile',['requirejs:dev']);
-    grunt.registerTask('server',['start', 'open:server', 'watch']);
+    grunt.registerTask('server',['less', 'handlebars', 'compile', 'start', 'open:server', 'watch']);
     grunt.registerTask('start', 'Start node server', function() {
       var server = require('./server');
     });

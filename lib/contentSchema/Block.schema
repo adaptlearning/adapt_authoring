@@ -1,13 +1,13 @@
 var mongoose = require('mongoose');
 var Schema =  mongoose.Schema;
 
-var ContentObjectSchema = new Schema({
+var BlockSchema = new Schema({
   "_parentId" : {
     "type" : "ObjectId"
   },
   "_type" : {
     "type" : "String",
-    "default" : "page"
+    "default" : "block"
   },
   "_classes" : {
     "type" : "String",
@@ -16,7 +16,7 @@ var ContentObjectSchema = new Schema({
   "_isDeleted": {
     "type": "Boolean",
     "default": false
-  },
+  },  
   "title" : {
     "type" : "String",
     "required" : false
@@ -24,19 +24,6 @@ var ContentObjectSchema = new Schema({
   "body" : {
     "type" : "String",
     "required" : false
-  },
-  "graphic" : {
-    "alt" : {
-      "type": "String",
-      "default": ""
-    },
-    "src" : {
-      "type": "String",
-      "default": ""
-    }
-  },
-  "linkText" : {
-    "type" : "String"
   },
   "createdAt" : {
     "type" : "Date"
@@ -52,8 +39,8 @@ var ContentObjectSchema = new Schema({
   },
 });
 
-ContentObjectSchema.pre('save', function (next) {
- if (!this.createdAt) {
+BlockSchema.pre('save', function (next) {
+  if (!this.createdAt) {
     this.createdAt = new Date();
   }
   // if lastUpdated is for the course then it
@@ -69,4 +56,4 @@ ContentObjectSchema.pre('save', function (next) {
   next();
 });
 
-module.exports = ContentObjectSchema;
+module.exports = BlockSchema;

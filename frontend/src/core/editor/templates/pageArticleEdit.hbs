@@ -1,0 +1,19 @@
+<div class="page-article-edit">
+  <div class="row">
+    <form role="form">
+      <div class="form-group">
+        <label for="article-title">Article Title</label>
+        <input type="text" class="form-control article-title" placeholder="Article Title" value="{{title}}">
+      </div>
+      <div class="form-group">
+        <label for="article-description">Article Description</label>
+        <textarea class="form-control article-body" placeholder="Article Description">{{body}}</textarea>
+      </div>
+      <div class="hidden">
+        <input type="hidden" value="{{ id }}" id="pageId">
+      </div>
+      <button class="save-button" type="submit">Save</button>
+      <button class="cancel-button" type="button">Cancel</button>
+    </form>
+  </div>
+</div>

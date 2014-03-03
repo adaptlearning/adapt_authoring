@@ -6,12 +6,7 @@ define(function(require){
   var OriginView = require('coreJS/app/views/originView');
   var EditorSidebarView = require('coreJS/editor/views/editorSidebarView');
   var EditorMenuView = require('coreJS/editor/views/editorMenuView');
-  var EditorContentObjectsCollection = require('coreJS/editor/collections/editorContentObjectsCollection');
   var EditorPageView = require('coreJS/editor/views/editorPageView');
-  var EditorPageCollection = require('coreJS/editor/collections/editorPageCollection');
-  var EditorPageModel = require('coreJS/editor/models/editorPageModel');
-  var SidebarPageEditView = require('coreJS/editor/views/sidebarPageEditView');
-  var PageModel = require('coreJS/editor/models/editorPageModel');
   var EditorCollection = require('coreJS/editor/collections/editorCollection');
   var EditorModel = require('coreJS/editor/models/editorModel');
 

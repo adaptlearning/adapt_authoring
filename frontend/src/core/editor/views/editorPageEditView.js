@@ -4,12 +4,8 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
 
-  var PageEditView = OriginView.extend({
+  var EditorPageEditView = OriginView.extend({
 
-    settings: {
-      autoRender: true
-    },
-    
     tagName: "div",
 
     className: "project",
@@ -19,20 +15,13 @@ define(function(require) {
       'click .cancel-button' : 'cancel'
     },
 
-    preRender: function() {
-      this.listenTo(this.model, 'sync', this.render);
-      if (!this.model._id) {
-        this.render();
-      }
-    },
-
     inputBlur: function (event) {
       //@todo add the validation logic
     },
 
     cancel: function (event) {
       event.preventDefault();
-      Backbone.history.navigate('#editor/page/' + this.model.get('_id'), {trigger: true});
+      Origin.trigger('editorSidebar:removeEditView', this.model);
     },
 
     savePage: function(event) {
@@ -55,16 +44,16 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: function() {
-            Backbone.history.navigate('#editor/page/' + model.get('_id'), {trigger: true});
+            //Backbone.history.navigate('#editor/page/' + model.get('_id'), {trigger: true});
           }
         }
       );
     }
   },
   {
-    template: 'pageEdit'
+    template: 'editorPageEdit'
   });
 
-  return PageEditView;
+  return EditorPageEditView;
 
 });

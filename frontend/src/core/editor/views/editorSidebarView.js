@@ -5,6 +5,7 @@ define(function(require) {
 	var EditorCourseEditView = require('coreJS/editor/views/editorCourseEditView');
 	var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
 	var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
+	var EditorBlockEditView = require('coreJS/editor/views/editorBlockEditView');
 
 	var EditorSidebarView = OriginView.extend({
 
@@ -19,10 +20,6 @@ define(function(require) {
 			var type = model.get('_type');
 			var editor;
 
-			console.log('getting');
-
-			console.log('type', type);
-
 			this.hideLoadingStatus();
 			this.hideInstruction();
 
@@ -36,13 +33,17 @@ define(function(require) {
 				case 'article':
 					editor = new EditorArticleEditView({model: model});
 					break;
+				case 'block':
+					editor = new EditorBlockEditView({model: model});
+					break;
 			}
 
-			this.$('.editor-sidebar-inner').empty();
-			this.$('.editor-sidebar-inner').append(editor.$el);
+			this.$('.editor-sidebar-form').empty();
+			this.$('.editor-sidebar-form').append(editor.$el);
 		},
 
-		removeEditingView: function() {
+		removeEditingView: function(model) {
+			this.$('.editor-sidebar-form').empty();
 			this.showLoadingStatus();
 			this.showInstruction();
 		},

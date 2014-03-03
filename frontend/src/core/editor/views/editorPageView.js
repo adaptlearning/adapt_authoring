@@ -7,9 +7,8 @@ define(function(require){
   var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
   var EditorArticleView = require('coreJS/editor/views/editorArticleView');
   var EditorArticleCollection = require('coreJS/editor/collections/editorArticleCollection');
-  var SidebarPageEditView = require('coreJS/editor/views/sidebarPageEditView');
 
-  var PageView = OriginView.extend({
+  var EditorPageView = OriginView.extend({
 
     tagName: 'div',
 
@@ -22,6 +21,7 @@ define(function(require){
     },
 
     preRender: function() {
+      this.listenTo(this.model, 'sync', this.render);
       this.EditorArticleCollection = new EditorArticleCollection({_parentId:this.model.get('_id')});
       this.listenTo(this.EditorArticleCollection, 'sync', this.addArticleViews);
       this.EditorArticleCollection.fetch();
@@ -44,21 +44,14 @@ define(function(require){
       }
     },
 
-    renderPageLayerView: function() {
-      var pageLayerView = new SidebarPageEditView();
-
-      this.$('.editor-sidebar-inner').append(pageLayerView.$el);
-      
-      return pageLayerView.$('.editor-page-layer-inner');
-    },
-
     addArticle: function(event) {
       event.preventDefault();
       
       var thisView = this;
       var newPageArticleModel = new EditorArticleModel();
 
-      newPageArticleModel.save({title: '{Your new article}', 
+      newPageArticleModel.save({
+        title: '{Your new article}',
         body: '{Edit this text...}',
         _parentId: thisView.model.get('_id')},
         {
@@ -78,9 +71,9 @@ define(function(require){
     }
     
   }, {
-    template: 'page'
+    template: 'editorPage'
   });
 
-  return PageView;
+  return EditorPageView;
 
 });

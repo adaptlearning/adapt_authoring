@@ -19,6 +19,6 @@ define(function(require) {
   		template: 'editorMenuLayer'
   });
 
-  	return EditorMenuLayerView;
+  return EditorMenuLayerView;
 
 });

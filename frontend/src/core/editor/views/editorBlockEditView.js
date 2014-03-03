@@ -4,14 +4,14 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
 
-  var EditorArticleEditView = OriginView.extend({
+  var EditorBlockEditView = OriginView.extend({
 
     tagName: "div",
 
     className: "project",
 
     events: {
-      'click .save-button'   : 'saveArticle',
+      'click .save-button'   : 'saveBlock',
       'click .cancel-button' : 'cancel'
     },
 
@@ -24,14 +24,14 @@ define(function(require) {
       Origin.trigger('editorSidebar:removeEditView', this.model);
     },
 
-    saveArticle: function(event) {
+    saveBlock: function(event) {
       event.preventDefault();
 
       var model = this.model;
 
       model.save({
-        title: this.$('.article-title').val(),
-        body: this.$('.article-body').val()},
+        title: this.$('.block-title').val(),
+        body: this.$('.block-body').val()},
         {
           error: function() {
             alert('An error occurred doing the save');
@@ -44,9 +44,9 @@ define(function(require) {
     }
   },
   {
-    template: 'editorArticleEdit'
+    template: 'editorBlockEdit'
   });
 
-  return EditorArticleEditView;
+  return EditorBlockEditView;
 
 });

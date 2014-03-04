@@ -105,6 +105,7 @@ define(function(require){
       // } else if (this.currentView === "page") {
       //   this.renderEditorPage();
       // }
+      Origin.trigger('editorSidebar:addOverviewView', this.model);
     },
 
     renderEditorSidebar: function() {
@@ -123,8 +124,6 @@ define(function(require){
       this.$('.editor-inner').html(new EditorPageView({
         model: this.model
       }).$el);
-
-      Origin.trigger('editorSidebar:addOverviewView', this.model);
     }
 
   }, {

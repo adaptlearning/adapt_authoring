@@ -33,6 +33,7 @@ define(function(require){
 
       newPage.save({
         _parentId: this.model.get('_id'),
+        _courseId: this.model.get('_id'),
         title: 'test',
         body: 'test',
         linkText: 'test',

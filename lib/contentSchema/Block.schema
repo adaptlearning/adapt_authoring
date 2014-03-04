@@ -2,6 +2,10 @@ var mongoose = require('mongoose');
 var Schema =  mongoose.Schema;
 
 var BlockSchema = new Schema({
+  "_courseId" : {
+    "type" : "ObjectId",
+    "required": true
+  },
   "_parentId" : {
     "type" : "ObjectId"
   },
@@ -16,7 +20,7 @@ var BlockSchema = new Schema({
   "_isDeleted": {
     "type": "Boolean",
     "default": false
-  },  
+  },
   "title" : {
     "type" : "String",
     "required" : false

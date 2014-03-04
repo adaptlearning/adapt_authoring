@@ -124,7 +124,7 @@ define(function(require){
         model: this.model
       }).$el);
 
-      console.log('rendering page editing view');
+      Origin.trigger('editorSidebar:addOverviewView', this.model);
     }
 
   }, {

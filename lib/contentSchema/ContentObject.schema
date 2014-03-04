@@ -2,6 +2,10 @@ var mongoose = require('mongoose');
 var Schema =  mongoose.Schema;
 
 var ContentObjectSchema = new Schema({
+  "_courseId" : {
+    "type" : "ObjectId",
+    "required": true
+  },
   "_parentId" : {
     "type" : "ObjectId"
   },

@@ -4,7 +4,7 @@ define(function(require){
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
-  var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
+  var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorArticleView = require('coreJS/editor/views/editorArticleView');
   var EditorArticleCollection = require('coreJS/editor/collections/editorArticleCollection');
 
@@ -48,7 +48,7 @@ define(function(require){
       event.preventDefault();
       
       var thisView = this;
-      var newPageArticleModel = new EditorArticleModel();
+      var newPageArticleModel = new EditorModel({urlRoot: '/api/content/article'});
 
       newPageArticleModel.save({
         title: '{Your new article}',

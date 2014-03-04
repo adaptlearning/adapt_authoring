@@ -1,11 +1,8 @@
 define(function(require) {
 
     var Backbone = require('backbone');
-    var EditorPageModel = require('coreJS/editor/models/editorPageModel');
 
     var PageCollection = Backbone.Collection.extend({
-
-        model: EditorPageModel,
 
         url: function() {
             var url = 'api/content/contentObject';

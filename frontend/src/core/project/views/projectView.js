@@ -4,7 +4,7 @@ define(function(require){
   var Handlebars = require('handlebars');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
-  var EditorPageModel = require('coreJS/editor/models/editorPageModel');
+  var EditorModel = require('coreJS/editor/models/editorModel');
 
   var ProjectView = OriginView.extend({
 
@@ -29,7 +29,7 @@ define(function(require){
     //TEMPORARY ADD PAGE FUNCTION
     addPage: function(event) {
       event.preventDefault();
-      var newPage = new EditorPageModel();
+      var newPage = new EditorModel({urlRoot: '/api/content/contentObject'});
 
       newPage.save({
         _parentId: this.model.get('_id'),

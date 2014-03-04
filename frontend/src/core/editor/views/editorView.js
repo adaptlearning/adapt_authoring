@@ -119,7 +119,7 @@ define(function(require){
     },
 
     renderEditorPage: function() {
-
+      console.log(this.model);
       this.$('.editor-inner').html(new EditorPageView({
         model: this.model
       }).$el);

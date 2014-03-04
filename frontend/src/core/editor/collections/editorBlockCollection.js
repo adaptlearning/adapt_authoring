@@ -1,11 +1,9 @@
 define(function(require) {
 
     var Backbone = require('backbone');
-    var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
+    //var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
 
     var ArticleBlockCollection = Backbone.Collection.extend({
-
-        model: EditorBlockModel,
 
         url: function() {
             var url = 'api/content/block';

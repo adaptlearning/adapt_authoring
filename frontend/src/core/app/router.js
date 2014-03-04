@@ -10,11 +10,9 @@ define(function(require) {
   //var ProjectOverview = require('coreJS/dashboard/views/projectOverview');
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
   var EditorView = require('coreJS/editor/views/editorView');
-  var EditorPageModel = require('coreJS/editor/models/editorPageModel');
+  var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
   var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
-  var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
-  var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorPageCollection = require('coreJS/editor/collections/editorPageCollection');
 
 
@@ -139,7 +137,10 @@ define(function(require) {
     },
 
     editorPage: function (id) {
-      var pageModel = new EditorPageModel({_id: id});
+      var pageModel = new EditorModel({
+        _id: id, 
+        urlRoot: '/api/content/contentObject'
+      });
       this.createView(new EditorView({model: pageModel, currentView: 'page'}));
     },
 

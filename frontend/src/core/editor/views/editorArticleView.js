@@ -5,7 +5,7 @@ define(function(require){
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
   var EditorBlockView = require('coreJS/editor/views/editorBlockView');
-  var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
+  var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorBlockCollection = require('coreJS/editor/collections/editorBlockCollection');
 
   var EditorArticleView = OriginView.extend({
@@ -30,7 +30,7 @@ define(function(require){
       event.preventDefault();
 
       var thisView = this;
-      var newBlockModel = new EditorBlockModel();
+      var newBlockModel = new EditorModel({urlRoot: '/api/content/block'});
 
       newBlockModel.save({
         title: '{Your new block}',
@@ -59,7 +59,17 @@ define(function(require){
       event.preventDefault();
 
       if (confirm('Are you sure you want to delete this article?')) {
+        console.log('deleting article', this.model);
+        this.model.destroy({
+          success: function(success) {
+            console.log('success', success);
+          }, 
+          error: function(error) {
+            console.log('error', error);
+          }
+        })
         if (this.model.destroy()) {
+          console.log('deleting article or should have');
           this.remove();
         }
       }

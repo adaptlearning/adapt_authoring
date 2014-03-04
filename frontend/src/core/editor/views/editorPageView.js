@@ -49,19 +49,20 @@ define(function(require){
       
       var thisView = this;
       var newPageArticleModel = new EditorModel({urlRoot: '/api/content/article'});
-
       newPageArticleModel.save({
         title: '{Your new article}',
         body: '{Edit this text...}',
-        _parentId: thisView.model.get('_id')},
-        {
-          error: function() {
-            alert('error adding new article');
-          },
-          success: function() {
-            thisView.EditorArticleCollection.fetch();
-          }
+        _parentId: thisView.model.get('_id'),
+        _courseId: Origin.editor.course.get('_id')
+      },
+      {
+        error: function() {
+          alert('error adding new article');
+        },
+        success: function() {
+          thisView.EditorArticleCollection.fetch();
         }
+      }
       );
     },
 

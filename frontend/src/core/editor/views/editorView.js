@@ -47,14 +47,14 @@ define(function(require){
         
       }, this);
       var editorModels = [
-        {modelName:'config'},
-        {modelName:'course'}
+        /*{modelName:'config', url: '/api/content/contentobject?_courseId=4598630869084596048396845'},*/
+        {modelName:'course', url: '/api/content/contentobject?_courseId=4598630869084596048396845'}
       ];
       var editorCollections = [
-        {collectionName:'contentObjects', url:'/data/contentObjects.json'},
-        {collectionName:'articles', url:'/data/articles.json'},
-        {collectionName:'blocks', url:'/data/blocks.json'},
-        {collectionName:'components', url:'/data/components.json'}
+        {collectionName:'contentObjects', url:'contentobject'},
+        {collectionName:'articles', url:'article'},
+        {collectionName:'blocks', url:'block'},
+        {collectionName:'components', url:'component'}
       ]
       this.setupEditorModels(editorModels);
       this.setupEditorCollections(editorCollections);
@@ -64,9 +64,9 @@ define(function(require){
     setupEditorModels: function(editorModels) {
       _.each(editorModels, function(editorModel) {
         Origin.editor[editorModel.modelName] = new EditorModel({
-          url: '/data/' + editorModel.modelName + '.json'
+          url: '/api/content/' + editorModel.url + '?_courseId=' + this.model.get('_id')
         });
-      });
+      }, this);
     },
 
     setupEditorCollections: function(editorCollections) {
@@ -75,7 +75,7 @@ define(function(require){
         
         Origin.editor[editorCollection.collectionName] = new EditorCollection(null, {
           url: _.bind(function() {
-            return editorCollection.url;
+            return '/api/content/' + editorCollection.url;
           }, this)
         });
 

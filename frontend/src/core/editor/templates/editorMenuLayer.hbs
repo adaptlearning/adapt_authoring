@@ -1,5 +1,8 @@
 <div class="editor-menu-layer-inner">
 	<div class="editor-menu-layer-controls">
+    {{#if_value_equals _type 'course'}}
+    {{else}}
 		<button class="editor-menu-layer-add">Add Item</button>
+    {{/if_value_equals}}
 	</div>
 </div>

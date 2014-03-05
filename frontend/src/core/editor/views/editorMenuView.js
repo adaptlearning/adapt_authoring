@@ -38,7 +38,7 @@ define(function(require){
       return menuLayerView.$('.editor-menu-layer-inner');
     },
 // This should be removed
-    addPage: function() {
+    addPage: function(event) {
       event.preventDefault();
       var newPage = new EditorContentObjectModel();
 

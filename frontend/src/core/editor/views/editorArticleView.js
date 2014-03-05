@@ -20,7 +20,6 @@ define(function(require){
     },
 
     preRender: function() {
-      console.log('article preRender')
       this.listenTo(Origin, 'editor:removeSubViews', this.remove);
       this.listenTo(Origin, 'editor:removePageSubViews', this.remove);
     },
@@ -54,7 +53,7 @@ define(function(require){
             alert('error adding new block');
           },
           success: function() {
-            Origin.trigger('editor:fetchdata');
+            Origin.trigger('editor:fetchData');
           }
         });
     },

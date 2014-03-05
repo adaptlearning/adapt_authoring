@@ -6,22 +6,35 @@ define(function(require) {
 	var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
 	var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
 	var EditorBlockEditView = require('coreJS/editor/views/editorBlockEditView');
+	var EditorPageOverviewView = require('coreJS/editor/views/editorPageOverviewView');
 
 	var EditorSidebarView = OriginView.extend({
 
 		className: 'editor-sidebar',
 
+		events: {
+			'click a.editor-sidebar-tab' : 'tabToggle'
+		},
+
 		preRender: function() {
 			this.listenTo(Origin, 'editorSidebar:addEditView', this.addEditingView);
+            this.listenTo(Origin, 'editorSidebar:addOverviewView', this.addOverviewView);
 		},
+
+        addOverviewView: function() {
+          var overview = new EditorPageOverviewView();
+          this.$('.editor-sidebar-overview').append(overview.$el);
+        },
 
 		addEditingView: function(model) {
 			var type = model.get('_type');
 			Origin.trigger('editorSidebar:removeEditView');
-			var $sidebarForm = this.$('.editor-sidebar-form');
+			var $sidebarForm = this.$('.edit-form');
 			this.hideLoadingStatus();
+
+            this.hideLoadingStatus();
 			this.hideInstruction();
-			this.$('.editor-sidebar-form').empty();
+			this.$('.editor-form').empty();
 			switch (type) {
 				case 'course':
 					$sidebarForm.append(new EditorCourseEditView({model: model}).$el);
@@ -36,6 +49,8 @@ define(function(require) {
 					$sidebarForm.append(new EditorBlockEditView({model: model}).$el);
 					break;
 			}
+
+            this.setTab('editor-sidebar-form');
 		},
 
 		removeEditingView: function(model) {
@@ -58,7 +73,26 @@ define(function(require) {
 
 		showInstruction: function() {
 			this.$('.editor-sidebar-instruction').removeClass('display-none');
-		}
+		},
+
+		tabToggle: function(event) {
+			event.preventDefault();
+			if (this.$(event.currentTarget).data('tab-content')) {
+                this.$('.tab-content').addClass('display-none');
+                this.$('.editor-sidebar-tab').removeClass('active');
+				this.$('.'+$(event.currentTarget).data('tab-content')).removeClass('display-none');
+                $(event.currentTarget).addClass('active');
+			}
+		},
+
+        setTab: function(tabname) {
+            if (this.$('a[data-tab-content="' + tabname + '"]')) {
+            this.$('.tab-content').addClass('display-none');
+            this.$('.editor-sidebar-tab').removeClass('active');
+            this.$('.' + tabname).removeClass('display-none');
+            this.$('a[data-tab-content="' + tabname + '"]').addClass('active');
+          }
+        }
 
 	}, {
 		template:'editorSidebar'

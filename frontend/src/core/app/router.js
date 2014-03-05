@@ -7,15 +7,9 @@ define(function(require) {
   var ProjectModel = require('coreJS/project/models/projectModel');
   var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
   var LogoutView = require('coreJS/user/views/logoutView');
-  //var ProjectOverview = require('coreJS/dashboard/views/projectOverview');
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
   var EditorView = require('coreJS/editor/views/editorView');
   var EditorModel = require('coreJS/editor/models/editorModel');
-  var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
-  var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
-  var EditorCourseModel = require('coreJS/editor/models/editorCourseModel');
-  var EditorContentObjectModel = require('coreJS/editor/models/editorContentObjectModel');
-
 
   var Router = Backbone.Router.extend({
 
@@ -162,25 +156,7 @@ define(function(require) {
         this.currentView.remove();
         Origin.trigger('remove:views');
       }
-    }/*,
-
-    pageNew: function (parentId) {
-      var pageModel = new PageModel({_parentId: parentId});
-
-      this.createView(new PageEditView({model: pageModel}));
-    },
-
-    pageEdit: function (id) {
-      var pageModel = new PageModel({_id:id});
-      pageModel.fetch();
-      this.createView(new PageEditView({model: pageModel}));
-    },
-
-    pageArticleEdit: function(id) {
-      var pageArticleModel = new PageArticleModel({_id: id});
-      pageArticleModel.fetch();
-      this.createView(new PageArticleEditView({model: pageArticleModel}));
-    }*/
+    }
 
   });
 

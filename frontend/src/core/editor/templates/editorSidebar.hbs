@@ -1,10 +1,16 @@
 <div class="editor-sidebar-inner">
-	<div class="editor-sidebar-loading">
-	Loading...
-	</div>
-	<div class="editor-sidebar-instruction">
-	Please select an item to edit
-	</div>
-  <div class="editor-sidebar-form">
+
+  <div class="editor-sidebar-tabs">
+    <a class="editor-sidebar-tab" data-tab-content="editor-sidebar-form">Edit</a>
+    <a class="editor-sidebar-tab active" data-tab-content="editor-sidebar-overview">Overview</a>
   </div>
+
+	<div class="tab-content editor-sidebar-form display-none">
+    <div class="editor-sidebar-loading">Loading...</div>
+    <div class="editor-sidebar-instruction">Please select an item to edit</div>
+    <div class="edit-form"></div>
+  </div>
+
+  <div class="tab-content editor-sidebar-overview"></div>
+
 </div>

@@ -101,7 +101,10 @@ define(function(require){
     },
     
     renderCurrentEditorView: function() {
+      this.renderEditorSidebar();
+
       Origin.trigger('editor:removeSubViews');
+
       switch (this.currentView) {
         case 'menu':
           this.renderEditorMenu();
@@ -110,6 +113,9 @@ define(function(require){
           this.renderEditorPage();
           break;
       }
+
+      console.log('addOverviewView');
+      Origin.trigger('editorSidebar:addOverviewView');
     },
 
     renderEditorSidebar: function() {
@@ -123,7 +129,6 @@ define(function(require){
     },
 
     renderEditorPage: function() {
-      console.log('renderEditorPage');
       this.$('.editor-inner').html(new EditorPageView({
         model: Origin.editor.contentObjects.findWhere({_id: this.currentPageId}),
       }).$el);

@@ -36,6 +36,11 @@ define(function(require){
       this.listenTo(Origin, 'editor:fetchData', this.fetchEditorData);
       this.render();
       this.setupEditor();
+      
+    },
+
+    postRender: function() {
+      this.renderEditorSidebar();
     },
 
     setupEditor: function() {
@@ -97,7 +102,7 @@ define(function(require){
     },
     
     renderCurrentEditorView: function() {
-      this.renderEditorSidebar();
+      Origin.trigger('editor:removeSubViews');
       switch (this.currentView) {
         case 'menu':
           this.renderEditorMenu();

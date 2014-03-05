@@ -14,6 +14,10 @@ define(function(require){
       'click .editor-menu-item-delete': 'deleteMenuItem'
     },
 
+    preRender: function() {
+      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+    },
+
     editMenuItem: function() {
       Origin.trigger('editorSidebar:addEditView', this.model);
     },

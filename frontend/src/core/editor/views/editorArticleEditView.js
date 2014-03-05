@@ -15,6 +15,10 @@ define(function(require) {
       'click .cancel-button' : 'cancel'
     },
 
+    preRender: function() {
+      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+    },
+
     inputBlur: function (event) {
       //@todo add the validation logic
     },

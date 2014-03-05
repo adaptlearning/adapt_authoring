@@ -43,6 +43,7 @@ define(function(require) {
 		},
 
 		removeEditingView: function(model) {
+			Origin.trigger('editor:removeSubViews');
 			this.$('.editor-sidebar-form').empty();
 			this.showLoadingStatus();
 			this.showInstruction();

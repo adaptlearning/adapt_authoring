@@ -21,7 +21,7 @@ define(function(require){
     },
 
     preRender: function() {
-      console.log(this);
+      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
     },
 
     postRender: function() {

@@ -16,6 +16,10 @@ define(function(require){
       'click .fake-add-page-button':'addPage'
     },
 
+    preRender: function() {
+      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+    },
+
     postRender: function() {
       this.setupMenuViews();
     },

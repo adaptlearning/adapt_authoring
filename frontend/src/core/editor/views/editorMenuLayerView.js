@@ -12,6 +12,7 @@ define(function(require) {
         if (options._parentId) {
           this._parentId = options._parentId;
         }
+        this.listenTo(Origin, 'editor:removeSubViews', this.remove);
   		},
 
       events: {

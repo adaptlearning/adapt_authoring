@@ -17,32 +17,28 @@ define(function(require) {
 
 		addEditingView: function(model) {
 			var type = model.get('_type');
-			var editor;
 			Origin.trigger('editorSidebar:removeEditView');
+			var $sidebarForm = this.$('.editor-sidebar-form');
 			this.hideLoadingStatus();
 			this.hideInstruction();
-
+			this.$('.editor-sidebar-form').empty();
 			switch (type) {
 				case 'course':
-					editor = new EditorCourseEditView({model: model});
+					$sidebarForm.append(new EditorCourseEditView({model: model}).$el);
 					break;
 				case 'page':
-					editor = new EditorPageEditView({model: model});
+					$sidebarForm.append(new EditorPageEditView({model: model}).$el);
 					break;
 				case 'article':
-					editor = new EditorArticleEditView({model: model});
+					$sidebarForm.append(new EditorArticleEditView({model: model}).$el);
 					break;
 				case 'block':
-					editor = new EditorBlockEditView({model: model});
+					$sidebarForm.append(new EditorBlockEditView({model: model}).$el);
 					break;
 			}
-
-			this.$('.editor-sidebar-form').empty();
-			this.$('.editor-sidebar-form').append(editor.$el);
 		},
 
 		removeEditingView: function(model) {
-			Origin.trigger('editor:removeSubViews');
 			this.$('.editor-sidebar-form').empty();
 			this.showLoadingStatus();
 			this.showInstruction();

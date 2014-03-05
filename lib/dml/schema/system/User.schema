@@ -12,8 +12,7 @@ var UserSchema = new Schema({
     "default": "none"
   },
   "password": {
-    "type": "String",
-    "select" : false
+    "type": "String"
   },
   "tenant": {
     "type": "String",

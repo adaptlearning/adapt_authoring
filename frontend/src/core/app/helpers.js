@@ -19,6 +19,13 @@ define(function(require){
                 var date = new Date(isoDate);
 
                 return date.toDateString();
+            },
+            if_value_equals: function(value, text, block) {
+                if (value === text) {
+                    return block.fn(this);
+                } else {
+                    return block.inverse();
+                }
             }
         };
 

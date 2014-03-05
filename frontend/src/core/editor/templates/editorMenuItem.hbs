@@ -3,6 +3,9 @@
 		<h4>{{{title}}}</h4>
 	</div>
 	<div class="editor-menu-item-buttons">
+		{{#if_value_equals _type 'page'}}
+		<button class="editor-menu-item-view">View</button>
+		{{/if_value_equals}}
 		<button class="editor-menu-item-edit">Edit</button>
 		<button class="editor-menu-item-delete">Delete</button>
 	</div>

@@ -21,19 +21,24 @@ define(function(require){
     },
 
     setupMenuViews: function() {
-      console.log(Origin.editor);
       this.setupCourseViews();
-      Origin.editor.contentObjects.each(function(contentObject) {
-        //console.log(contentObject.get('_parentId'));
-      });
+
+      var layerOne = this.renderMenuLayerView(this.model.get('_id'));
+      console.log(layerOne);
+      this.model.getChildren().each(function(contentObject) {
+        console.log(contentObject);
+        layerOne.append(new EditorMenuItemView({
+          model: contentObject
+        }).$el)
+      }, this);
     },
 
     setupCourseViews: function() {
       this.renderMenuLayerView().append(new EditorMenuItemView({model:this.model}).$el);
     },
 
-    renderMenuLayerView: function() {
-      var menuLayerView = new EditorMenuLayerView()
+    renderMenuLayerView: function(parentId) {
+      var menuLayerView = new EditorMenuLayerView({_parentId:parentId})
       this.$('.editor-menu-inner').append(menuLayerView.$el);
       return menuLayerView.$('.editor-menu-layer-inner');
     },
@@ -59,6 +64,7 @@ define(function(require){
             alert('An error occurred doing the save');
           },
           success: function(model) {
+            console.log(model);
             Backbone.history.navigate('#/editor/' + Origin.editor.course.get('_id')+ '/page/' + newPage.get('_id'), {trigger: true});
           }
         }

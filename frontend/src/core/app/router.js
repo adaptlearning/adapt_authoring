@@ -31,8 +31,8 @@ define(function(require) {
       "project/view/:id": "projectView",
       "dashboard"       : "dashboard",
       "module"          : "module",
-      "editor/menu/:id": "editorMenu",
-      "editor/page/:id" : "editorPage",
+      "editor/:courseId/menu": "editorMenu",
+      "editor/:courseId/page/:pageId" : "editorPage",
       "page/new/:id"    : "pageNew",
       "page/edit/:id"   : "pageEdit",
       "page/article/edit/:id": "pageArticleEdit"
@@ -131,17 +131,17 @@ define(function(require) {
       projectModel.fetch();
     },
 
-    editorMenu: function(id) {
+    editorMenu: function(courseId) {
       // EditorView takes in currentCourseId and uses this to retrieve collections and models
       // Passing in currentView enables editorView to load either a menu editing view or a page editing view
       this.createView(new EditorView({
-        currentCourseId: id, 
+        currentCourseId: courseId, 
         currentView: 'menu', 
         currentPageId: null
       }));
     },
 
-    editorPage: function (id) {
+    editorPage: function (courseId, pageId) {
       // This needs re-factoring as it doesn't need to pass in a model
       // Model is already passed in through Origin.editor.contentObjects.findWhere({_id:id});
       // This should be handled in the editorView.js
@@ -151,9 +151,9 @@ define(function(require) {
         We should just show the page as this would have a _courseId added to it
       }*/
       this.createView(new EditorView({
-        currentCourseId: Origin.editor.course.get('_id'), 
+        currentCourseId: courseId, 
         currentView: 'page', 
-        currentPageId: id
+        currentPageId: pageId
       }));
     },
 

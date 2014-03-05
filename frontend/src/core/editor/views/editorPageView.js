@@ -32,6 +32,7 @@ define(function(require){
       this.$('.page-articles').empty();
 
       this.model.getChildren().each(function(article) {
+        console.log(article);
         this.$('.page-articles').append(new EditorArticleView({model: article}).$el);
       }, this);
     },
@@ -61,7 +62,7 @@ define(function(require){
           alert('error adding new article');
         },
         success: function() {
-          thisView.EditorArticleCollection.fetch();
+          Origin.trigger('editor:fetchData');
         }
       }
       );

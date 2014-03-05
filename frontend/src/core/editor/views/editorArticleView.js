@@ -6,7 +6,7 @@ define(function(require){
   var OriginView = require('coreJS/app/views/originView');
   var EditorBlockView = require('coreJS/editor/views/editorBlockView');
   var EditorModel = require('coreJS/editor/models/editorModel');
-
+  var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
   var EditorArticleView = OriginView.extend({
 
     tagName: 'div',
@@ -20,38 +20,42 @@ define(function(require){
     },
 
     preRender: function() {
-      this.EditorBlockCollection = new EditorBlockCollection({_parentId:this.model.get('_id')});
-      this.listenTo(this.EditorBlockCollection, 'sync', this.addBlockViews);
-      this.EditorBlockCollection.fetch();
+      console.log('article-prerender');
+    },
+
+    postRender: function() {
+      this.addBlockViews();
+    },
+
+    addBlockViews: function() {
+      this.$('.page-article-blocks').empty();
+
+      this.model.getChildren().each(function(block) {
+        this.$('.page-article-blocks').append(new EditorBlockView({model: block}).$el);
+      }, this);
     },
 
     addBlock: function(event) {
       event.preventDefault();
 
       var thisView = this;
-      var newBlockModel = new EditorModel({urlRoot: '/api/content/block'});
+      var newPageBlockModel = new EditorBlockModel();
 
-      newBlockModel.save({
-        title: '{Your new block}',
+      newPageBlockModel.save({
+        title: '{Your new Block}',
         body: '{Edit this text...}',
-        _parentId: thisView.model.get('_id')},
-        {
+        _parentId: thisView.model.get('_id'),
+        _courseId: Origin.editor.course.get('_id')
+      },
+      {
           error: function() {
             alert('error adding new block');
           },
           success: function() {
-            thisView.EditorBlockCollection.fetch();
+            console.log('blockview success');
+            //Origin.trigger('editor:fetchdata');
           }
-        }
-      );
-    },
-
-    addBlockViews: function() {
-      this.$('.page-article-blocks').empty();
-
-      _.each(this.EditorBlockCollection.models, function(block) {
-        this.$('.page-article-blocks').append(new EditorBlockView({model: block}).$el);
-      }, this);
+        });
     },
     
     deletePageArticle: function(event) {

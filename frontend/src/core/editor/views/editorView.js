@@ -33,6 +33,7 @@ define(function(require){
       this.currentCourseId = options.currentCourseId;
       this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
+      this.listenTo(Origin, 'editor:fetchData', this.fetchEditorData);
       this.render();
       this.setupEditor();
     },
@@ -88,10 +89,11 @@ define(function(require){
       
     },
 
-    fetchEditorData: function(dataToBeFetched) {
-      _.each(dataToBeFetched, function(dataObject) {
-        Origin.editor[dataObject].fetch({reset:true});
-      })
+    fetchEditorData: function() {
+      this.setupEditor();
+      _.each(Origin.editor, function(dataObject) {
+        dataObject.fetch({reset:true});
+      });
     },
     
     renderCurrentEditorView: function() {

@@ -25,7 +25,7 @@ define(function(require) {
         var childrenCollection = new Backbone.Collection(children);
         // returns a collection of children
         return childrenCollection;
-      },
+      }
     });
 
     return EditorModel;

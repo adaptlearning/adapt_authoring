@@ -13,7 +13,8 @@ define(function(require) {
           this._parentId = options._parentId;
         }
         if (options._isCourseObject) {
-          this.data = options._isCourseObject;
+          this.data = {};
+          this.data._isCourseObject = options._isCourseObject;
         }
         this.listenTo(Origin, 'editor:removeSubViews', this.remove);
   		},
@@ -26,7 +27,7 @@ define(function(require) {
   		},
 
       render: function() {
-        var data = this.data ? this.data : null;
+        var data = this.data ? this.data : false;
         var template = Handlebars.templates[this.constructor.template];
         this.$el.html(template(data));
         _.defer(_.bind(function() {

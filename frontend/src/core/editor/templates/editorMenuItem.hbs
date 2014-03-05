@@ -7,6 +7,9 @@
 		<button class="editor-menu-item-view">View</button>
 		{{/if_value_equals}}
 		<button class="editor-menu-item-edit">Edit</button>
+		{{#if_value_equals _type 'course'}}
+		{{else}}
 		<button class="editor-menu-item-delete">Delete</button>
+		{{/if_value_equals}}
 	</div>
 </div>

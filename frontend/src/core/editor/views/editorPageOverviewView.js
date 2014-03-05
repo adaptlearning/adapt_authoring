@@ -4,6 +4,9 @@ define(function(require) {
   var OriginView = require('coreJS/app/views/originView');
 
   var EditorPageOverviewView = OriginView.extend({
+      settings: {
+        autoRender: false
+      },
 
       className: 'editor-page-overview',
 
@@ -12,14 +15,19 @@ define(function(require) {
       },
 
       preRender: function() {
-        this.listenTo(Origin.editor.contentObjects, 'sync', this.addPageViews);
+        console.log('preRender');
+
+        this.render();
+        this.addPageViews();
       },
 
       postRender: function() {
 
+        console.log('post rendering pages');
       },
 
       addPageViews: function() {
+
         this.$('.page-list').empty();
 
         _.each(Origin.editor.contentObjects.models, function(contentObject) {
@@ -27,6 +35,8 @@ define(function(require) {
             this.$('.page-list').append('<li><a class="load-page" data-page-id="' + contentObject.get('_id') + '" href="#">' + contentObject.get('title') + '</a></li>');
           }
         }, this);
+
+        console.log('addPageViews');
       },
 
       goToPage: function (event) {

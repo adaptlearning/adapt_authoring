@@ -20,7 +20,8 @@ define(function(require){
     },
 
     preRender: function() {
-      console.log('article-prerender');
+      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editor:removePageSubViews', this.remove);
     },
 
     postRender: function() {

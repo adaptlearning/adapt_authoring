@@ -22,8 +22,8 @@ define(function(require) {
 			this.listenTo(Origin, 'editorSidebar:removeEditView', this.removeEditingView);
 		},
 
-        addOverviewView: function(model) {
-          var overview = new EditorPageOverviewView({model: model});
+        addOverviewView: function() {
+          var overview = new EditorPageOverviewView();
           this.$('.editor-sidebar-overview').append(overview.$el);
         },
 
@@ -55,7 +55,8 @@ define(function(require) {
 		},
 
 		removeEditingView: function(model) {
-			this.$('.edit-form').empty();
+			Origin.trigger('editor:removeSubViews');
+			this.$('.editor-sidebar-form').empty();
 			this.showLoadingStatus();
 			this.showInstruction();
 		},

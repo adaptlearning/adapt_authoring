@@ -8,7 +8,11 @@ define(function(require) {
     
     tagName: "div",
 
-    className: "editor-course-edit"
+    className: "editor-course-edit",
+
+    preRender: function() {
+      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+    }
   
   },
   {

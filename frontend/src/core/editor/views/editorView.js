@@ -33,13 +33,17 @@ define(function(require){
       this.currentCourseId = options.currentCourseId;
       this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
-      this.listenTo(Origin, 'editor:fetchData', this.fetchEditorData);
+      this.listenTo(Origin, 'editor:fetchData', this.setupEditor);
       this.render();
       this.setupEditor();
+      
+    },
+
+    postRender: function() {
+      this.renderEditorSidebar();
     },
 
     setupEditor: function() {
-
       this.loadedData = {
         course:false,
         contentObjects:false,
@@ -54,13 +58,20 @@ define(function(require){
         });
 
         if (allDataIsLoaded) {
+          Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
           this.renderCurrentEditorView();
         }
 
       }, this);
 
-      this.setupEditorModels();
-      this.setupEditorCollections();
+      if (Origin.editor.course) {
+        _.each(Origin.editor, function(object) {
+          object.fetch({reset:true});
+        })
+      } else {
+        this.setupEditorModels();
+        this.setupEditorCollections();
+      }
 
     },
 
@@ -88,16 +99,11 @@ define(function(require){
       });
       
     },
-
-    fetchEditorData: function() {
-      this.setupEditor();
-      _.each(Origin.editor, function(dataObject) {
-        dataObject.fetch({reset:true});
-      });
-    },
     
     renderCurrentEditorView: function() {
       this.renderEditorSidebar();
+
+      Origin.trigger('editor:removeSubViews');
 
       switch (this.currentView) {
         case 'menu':
@@ -108,7 +114,8 @@ define(function(require){
           break;
       }
 
-      Origin.trigger('editorSidebar:addOverviewView', this.model);
+      console.log('addOverviewView');
+      Origin.trigger('editorSidebar:addOverviewView');
     },
 
     renderEditorSidebar: function() {

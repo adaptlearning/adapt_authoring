@@ -16,7 +16,7 @@ define(function(require) {
     },
 
     preRender: function() {
-      console.log('preRender');
+      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
     },
 
     inputBlur: function (event) {

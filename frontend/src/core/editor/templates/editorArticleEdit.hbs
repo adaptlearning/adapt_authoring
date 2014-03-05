@@ -9,6 +9,14 @@
         <label for="article-description">Article Description</label>
         <textarea class="form-control article-body" placeholder="Article Description">{{body}}</textarea>
       </div>
+      <div class="form-group">
+        <label for="article-position">Position</label>
+        <select class="form-control article-position">
+          {{#counterFromOne 10}}
+          <option value="{{this}}" {{selected _sortOrder}}>{{this}}</option>
+          {{/counterFromOne}}
+        </select>
+      </div>
       <div class="hidden">
         <input type="hidden" value="{{ id }}" id="pageId">
       </div>

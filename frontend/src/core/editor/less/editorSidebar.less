@@ -6,8 +6,36 @@
 	right:0px;
 	background-color:#242424;
 	color:#fff;
+
+  a {
+    color:#fff;
+
+    &.active {
+      color:#000;
+    }
+  }
 }
 
 .editor-sidebar-inner {
 	padding:90px 30px 30px;
+}
+
+.editor-sidebar-tab {
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #fff;
+  display: inline-block;
+  width: 40%;
+
+  &.active {
+    background-color: #fff;
+  }
+}
+
+.editor-sidebar-tabs {
+  width: 100%;
+}
+
+.tab-content {
+  padding-top: 10px;
 }

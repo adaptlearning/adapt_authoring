@@ -118,10 +118,19 @@ module.exports = function(grunt) {
       },
       server: {
         options: {
-          port: 3000
+          port: getHttpPort() || 3000
         }
       }
     });
+
+    function getHttpPort() {
+      if (grunt.file.exists(__dirname + "/conf/config.json")) {
+          var config = require(__dirname + "/conf/config.json");
+          return config.serverPort;
+      } else {
+        return false;
+      }
+    };
 
     grunt.registerTask('default',['less', 'handlebars', 'watch']);
     grunt.registerTask('build',['less', 'copy', 'handlebars', 'requirejs:compile']);

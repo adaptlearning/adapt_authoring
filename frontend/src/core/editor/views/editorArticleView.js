@@ -52,8 +52,7 @@ define(function(require){
             alert('error adding new block');
           },
           success: function() {
-            console.log('blockview success');
-            //Origin.trigger('editor:fetchdata');
+            Origin.trigger('editor:fetchData');
           }
         });
     },

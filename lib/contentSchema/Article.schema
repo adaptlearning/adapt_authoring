@@ -21,6 +21,9 @@ var ArticleSchema = new Schema({
     "type": "Boolean",
     "default": false
   },
+  "_sortOrder" : {
+    type: "Number"
+  },  
   "title" : {
     "type" : "String",
     "required" : false
@@ -46,7 +49,9 @@ var ArticleSchema = new Schema({
 ArticleSchema.pre('save', function (next) {
   if (!this.createdAt) {
     this.createdAt = new Date();
+    this._sortOrder = 1;    
   }
+  
   // if lastUpdated is for the course then it
   // should be updated whenever any sub-element is updated
   // but for now, make it just this object...

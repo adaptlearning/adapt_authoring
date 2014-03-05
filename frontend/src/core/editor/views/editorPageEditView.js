@@ -44,7 +44,7 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: function() {
-            //Backbone.history.navigate('#editor/page/' + model.get('_id'), {trigger: true});
+            Origin.trigger('editor:fetchData');
           }
         }
       );

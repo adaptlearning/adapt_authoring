@@ -98,6 +98,7 @@ define(function(require){
     
     renderCurrentEditorView: function() {
       this.renderEditorSidebar();
+
       switch (this.currentView) {
         case 'menu':
           this.renderEditorMenu();
@@ -106,6 +107,8 @@ define(function(require){
           this.renderEditorPage();
           break;
       }
+
+      Origin.trigger('editorSidebar:addOverviewView', this.model);
     },
 
     renderEditorSidebar: function() {

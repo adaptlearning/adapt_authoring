@@ -6,7 +6,6 @@ define(function(require){
   var OriginView = require('coreJS/app/views/originView');
   var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorArticleView = require('coreJS/editor/views/editorArticleView');
-  var EditorArticleCollection = require('coreJS/editor/collections/editorArticleCollection');
 
   var EditorPageView = OriginView.extend({
 
@@ -21,16 +20,17 @@ define(function(require){
     },
 
     preRender: function() {
-      this.listenTo(this.model, 'sync', this.render);
-      this.EditorArticleCollection = new EditorArticleCollection({_parentId:this.model.get('_id')});
-      this.listenTo(this.EditorArticleCollection, 'sync', this.addArticleViews);
-      this.EditorArticleCollection.fetch();
+      console.log(this);
+    },
+
+    postRender: function() {
+      this.addArticleViews();
     },
 
     addArticleViews: function() {
       this.$('.page-articles').empty();
 
-      _.each(this.EditorArticleCollection.models, function(article) {
+      this.model.getChildren().each(function(article) {
         this.$('.page-articles').append(new EditorArticleView({model: article}).$el);
       }, this);
     },

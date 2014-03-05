@@ -13,7 +13,8 @@ define(function(require) {
   var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
   var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
-  var EditorPageCollection = require('coreJS/editor/collections/editorPageCollection');
+  var EditorCourseModel = require('coreJS/editor/models/editorCourseModel');
+  var EditorContentObjectModel = require('coreJS/editor/models/editorContentObjectModel');
 
 
   var Router = Backbone.Router.extend({
@@ -132,14 +133,13 @@ define(function(require) {
     },
 
     editorMenu: function(id) {
-      var projectModel = new ProjectModel({_id: id});
-      this.createView(new EditorView({model: projectModel, currentView: 'menu'}));
+      //var courseModel = new EditorCourseModel({_id: id});
+      this.createView(new EditorView({currentCourseId: id, currentView: 'menu', currentPageId: null}));
     },
 
     editorPage: function (id) {
-      var pageModel = new EditorModel({
-        _id: id, 
-        urlRoot: '/api/content/contentObject'
+      var pageModel = new EditorContentObjectModel({
+        _id: id
       });
       this.createView(new EditorView({model: pageModel, currentView: 'page'}));
     },

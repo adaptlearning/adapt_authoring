@@ -5,6 +5,7 @@ define(function(require){
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
   var EditorModel = require('coreJS/editor/models/editorModel');
+  var EditorContentObjectModel = require('coreJS/editor/models/editorContentObjectModel')
 
   var ProjectView = OriginView.extend({
 
@@ -29,13 +30,13 @@ define(function(require){
     //TEMPORARY ADD PAGE FUNCTION
     addPage: function(event) {
       event.preventDefault();
-      var newPage = new EditorModel({urlRoot: '/api/content/contentObject'});
+      var newPage = new EditorContentObjectModel();
 
       newPage.save({
         _parentId: this.model.get('_id'),
         _courseId: this.model.get('_id'),
-        title: 'test',
-        body: 'test',
+        title: 'Placeholder title',
+        body: 'Placeholder body text',
         linkText: 'test',
         graphic: {
           alt: 'test',
@@ -47,9 +48,9 @@ define(function(require){
           error: function() {
             alert('An error occurred doing the save');
           },
-          success: function() {
-            console.log(newPage);
-            Backbone.history.navigate('#editor/page/' + newPage.get('_id'), {trigger: true});
+          success: function(model) {
+            console.log('model', model.get('_courseId'));
+            Backbone.history.navigate('#/editor/page/' + newPage.get('_id'), {trigger: true, currentCourseId: model.get('_courseId')});
           }
         }
       );

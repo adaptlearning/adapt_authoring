@@ -6,12 +6,13 @@ define(function(require) {
     var EditorCollection = Backbone.Collection.extend({
         initialize : function(models, options){
             this.url = options.url;
+            this._type = options._type;
             this.once('reset', this.loadedData, this);
             this.fetch({reset:true});
         },
         
         loadedData: function() {
-            Origin.trigger('editorCollection:dataLoaded');
+            Origin.trigger('editorCollection:dataLoaded', this._type);
         }
         
     });

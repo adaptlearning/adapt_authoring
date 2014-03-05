@@ -9,6 +9,10 @@ define(function(require){
   var EditorPageView = require('coreJS/editor/views/editorPageView');
   var EditorCollection = require('coreJS/editor/collections/editorCollection');
   var EditorModel = require('coreJS/editor/models/editorModel');
+  var EditorCourseModel = require('coreJS/editor/models/editorCourseModel');
+  var EditorContentObjectModel = require('coreJS/editor/models/editorContentObjectModel');
+  var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
+  var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
 
   var EditorView = OriginView.extend({
 
@@ -26,72 +30,73 @@ define(function(require){
     },
 
     preRender: function(options) {
+      this.currentCourseId = options.currentCourseId;
+      this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
-      this.listenTo(this.model, 'sync', this.render);
-      this.listenTo(Origin, 'editor:syncData', this.syncEditorData);
-      this.model.fetch();
+      this.render();
+      //this.listenTo(Origin, 'editor:syncData', this.fetchEditorData);
       this.setupEditor();
     },
 
     setupEditor: function() {
-      Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function() {
-        if (Origin.editor.contentObjects.models.length > 0
-            && Origin.editor.articles.models.length > 0
-            && Origin.editor.blocks.models.length > 0
-            && Origin.editor.components.models.length > 0
-            && Origin.editor.config.hasChanged()
-            && Origin.editor.course.hasChanged()) {
-          console.log('loaded data');
+
+      this.loadedData = {
+        course:false,
+        contentObjects:false,
+        articles:false,
+        blocks:false
+      };
+
+      Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedData) {
+        this.loadedData[loadedData] = true;
+        var allDataIsLoaded = _.every(this.loadedData, function(item) {
+          return item === true;
+        });
+
+        if (allDataIsLoaded) {
           this.renderCurrentEditorView();
         }
-        
+
       }, this);
-      var editorModels = [
-        /*{modelName:'config', url: '/api/content/contentobject?_courseId=4598630869084596048396845'},*/
-        {modelName:'course', url: '/api/content/contentobject?_courseId=4598630869084596048396845'}
-      ];
-      var editorCollections = [
-        {collectionName:'contentObjects', url:'contentobject'},
-        {collectionName:'articles', url:'article'},
-        {collectionName:'blocks', url:'block'},
-        {collectionName:'components', url:'component'}
-      ]
-      this.setupEditorModels(editorModels);
-      this.setupEditorCollections(editorCollections);
+
+      this.setupEditorModels();
+      this.setupEditorCollections();
 
     },
 
     setupEditorModels: function(editorModels) {
-      _.each(editorModels, function(editorModel) {
-        Origin.editor[editorModel.modelName] = new EditorModel({
-          url: '/api/content/' + editorModel.url + '?_courseId=' + this.model.get('_id')
-        });
-      }, this);
+      Origin.editor.course = new EditorCourseModel({_id:this.currentCourseId});
     },
 
     setupEditorCollections: function(editorCollections) {
-
-      _.each(editorCollections, function(editorCollection) {
-        
-        Origin.editor[editorCollection.collectionName] = new EditorCollection(null, {
-          url: _.bind(function() {
-            return '/api/content/' + editorCollection.url;
-          }, this)
-        });
-
-      }, this);
+      Origin.editor.contentObjects = new EditorCollection(null, {
+          model: EditorContentObjectModel,
+          url: '/api/content/contentobject?_courseId=' + this.currentCourseId,
+          _type: 'contentObjects'
+      });
+      
+      Origin.editor.articles = new EditorCollection(null, {
+          model: EditorArticleModel,
+          url: '/api/content/article?_courseId=' + this.currentCourseId,
+          _type: 'articles'
+      });
+      
+      Origin.editor.blocks = new EditorCollection(null, {
+          model: EditorBlockModel,
+          url: '/api/content/block?_courseId=' + this.currentCourseId,
+          _type: 'blocks'
+      });
       
     },
 
-    syncEditorData: function(dataToBeSynced) {
-      _.each(dataToBeSynced, function(dataObject) {
-        Origin.editor[dataObject].sync();
+    fetchEditorData: function(dataToBeFetched) {
+      _.each(dataToBeFetched, function(dataObject) {
+        Origin.editor[dataObject].fetch({reset:true});
       })
     },
     
     renderCurrentEditorView: function() {
       this.renderEditorSidebar();
-
       switch (this.currentView) {
         case 'menu':
           this.renderEditorMenu();
@@ -100,11 +105,6 @@ define(function(require){
           this.renderEditorPage();
           break;
       }
-      // if (this.currentView === "menu") {
-      //   this.renderEditorMenu();
-      // } else if (this.currentView === "page") {
-      //   this.renderEditorPage();
-      // }
     },
 
     renderEditorSidebar: function() {
@@ -115,16 +115,12 @@ define(function(require){
       this.$('.editor-inner').html(new EditorMenuView({
         model: Origin.editor.course
       }).$el);
-      // 'api/content/' + this.model.get('_id') + '/articles'
     },
 
     renderEditorPage: function() {
-      console.log(this.model);
       this.$('.editor-inner').html(new EditorPageView({
-        model: this.model
+        model: this.model,
       }).$el);
-
-      console.log('rendering page editing view');
     }
 
   }, {

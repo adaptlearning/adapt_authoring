@@ -6,7 +6,6 @@ define(function(require){
   var OriginView = require('coreJS/app/views/originView');
   var EditorBlockView = require('coreJS/editor/views/editorBlockView');
   var EditorModel = require('coreJS/editor/models/editorModel');
-  var EditorBlockCollection = require('coreJS/editor/collections/editorBlockCollection');
 
   var EditorArticleView = OriginView.extend({
 

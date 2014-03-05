@@ -1,4 +1,7 @@
-{
+var mongoose = require('mongoose');
+var Schema =  mongoose.Schema;
+
+var UserSchema = new Schema({
   "email": {
     "type": "String",
     "required": true,
@@ -9,7 +12,8 @@
     "default": "none"
   },
   "password": {
-    "type": "String"
+    "type": "String",
+    "select" : false
   },
   "tenant": {
     "type": "String",
@@ -22,4 +26,13 @@
   },
   "dateCreated": "Date",
   "dateModified": "Date"
-}
+});
+
+// user schema should not allow password to be exposed, even when 'selected'
+UserSchema.options.toJSON = {
+  transform: function (doc, user, options) {
+    delete user.password;
+  }
+};
+
+module.exports = UserSchema;

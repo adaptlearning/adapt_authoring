@@ -33,13 +33,15 @@ var BlockSchema = new Schema({
     "type" : "Date"
   },
   "createdBy" : {
-    "type" : "ObjectId"
+    "type" : "ObjectId",
+    "ref": "user"
   },
   "updatedAt" : {
     "type" : "Date"
   },
   "updatedBy" : {
-    "type" : "ObjectId"
+    "type" : "ObjectId",
+    "ref": "user"
   },
 });
 

@@ -33,7 +33,7 @@ define(function(require){
       this.currentCourseId = options.currentCourseId;
       this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
-      this.listenTo(Origin, 'editor:fetchData', this.fetchEditorData);
+      this.listenTo(Origin, 'editor:fetchData', this.setupEditor);
       this.render();
       this.setupEditor();
       
@@ -44,7 +44,6 @@ define(function(require){
     },
 
     setupEditor: function() {
-
       this.loadedData = {
         course:false,
         contentObjects:false,
@@ -59,13 +58,20 @@ define(function(require){
         });
 
         if (allDataIsLoaded) {
+          Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
           this.renderCurrentEditorView();
         }
 
       }, this);
 
-      this.setupEditorModels();
-      this.setupEditorCollections();
+      if (Origin.editor.course) {
+        _.each(Origin.editor, function(object) {
+          object.fetch({reset:true});
+        })
+      } else {
+        this.setupEditorModels();
+        this.setupEditorCollections();
+      }
 
     },
 
@@ -93,13 +99,6 @@ define(function(require){
       });
       
     },
-
-    fetchEditorData: function() {
-      this.setupEditor();
-      _.each(Origin.editor, function(dataObject) {
-        dataObject.fetch({reset:true});
-      });
-    },
     
     renderCurrentEditorView: function() {
       Origin.trigger('editor:removeSubViews');
@@ -124,6 +123,7 @@ define(function(require){
     },
 
     renderEditorPage: function() {
+      console.log('renderEditorPage');
       this.$('.editor-inner').html(new EditorPageView({
         model: Origin.editor.contentObjects.findWhere({_id: this.currentPageId}),
       }).$el);

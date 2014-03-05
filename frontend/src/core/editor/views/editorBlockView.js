@@ -16,6 +16,11 @@ define(function(require){
       'click a.block-delete' : 'deleteBlock'
     },
 
+    preRender: function() {
+      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editor:removePageSubViews', this.remove);
+    },
+
     deleteBlock: function(event) {
       event.preventDefault();
 

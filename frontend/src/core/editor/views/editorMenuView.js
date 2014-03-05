@@ -28,9 +28,7 @@ define(function(require){
       this.setupCourseViews();
 
       var layerOne = this.renderMenuLayerView(this.model.get('_id'));
-      console.log(layerOne);
       this.model.getChildren().each(function(contentObject) {
-        console.log(contentObject);
         layerOne.append(new EditorMenuItemView({
           model: contentObject
         }).$el)

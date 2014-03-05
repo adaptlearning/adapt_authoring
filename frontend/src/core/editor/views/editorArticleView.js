@@ -20,7 +20,9 @@ define(function(require){
     },
 
     preRender: function() {
+      console.log('article preRender')
       this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editor:removePageSubViews', this.remove);
     },
 
     postRender: function() {
@@ -52,8 +54,7 @@ define(function(require){
             alert('error adding new block');
           },
           success: function() {
-            console.log('blockview success');
-            //Origin.trigger('editor:fetchdata');
+            Origin.trigger('editor:fetchdata');
           }
         });
     },

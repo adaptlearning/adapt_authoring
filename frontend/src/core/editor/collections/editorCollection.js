@@ -7,8 +7,9 @@ define(function(require) {
         initialize : function(models, options){
             this.url = options.url;
             this._type = options._type;
-            this.once('reset', this.loadedData, this);
+            this.on('reset', this.loadedData, this);
             this.fetch({reset:true});
+            console.log('new collection created', this._type)
         },
         
         loadedData: function() {

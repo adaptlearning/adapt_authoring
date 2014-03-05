@@ -7,7 +7,7 @@ define(function(require) {
       idAttribute: '_id',
 
       initialize : function(options) {
-        this.once('sync', this.loadedData, this);
+        this.on('sync', this.loadedData, this);
         this.fetch();
       },
       loadedData: function() {

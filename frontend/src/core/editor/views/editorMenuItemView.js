@@ -10,12 +10,18 @@ define(function(require){
     className: "editor-menu-item",
 
     events: {
+      'click .editor-menu-item-view':'viewPageItem',
       'click .editor-menu-item-edit': 'editMenuItem',
       'click .editor-menu-item-delete': 'deleteMenuItem'
     },
 
     preRender: function() {
       this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+    },
+
+    viewPageItem: function() {
+      console.log(this.model);
+      Origin.router.navigate('#/editor/' + Origin.editor.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
     },
 
     editMenuItem: function() {

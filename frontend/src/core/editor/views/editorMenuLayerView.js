@@ -12,6 +12,9 @@ define(function(require) {
         if (options._parentId) {
           this._parentId = options._parentId;
         }
+        if (options._isCourseObject) {
+          this.data = options._isCourseObject;
+        }
         this.listenTo(Origin, 'editor:removeSubViews', this.remove);
   		},
 
@@ -20,8 +23,17 @@ define(function(require) {
       },
 
   		postRender: function() {
-
   		},
+
+      render: function() {
+        var data = this.data ? this.data : null;
+        var template = Handlebars.templates[this.constructor.template];
+        this.$el.html(template(data));
+        _.defer(_.bind(function() {
+          this.postRender();
+        }, this));
+        return this;
+      },
 
       addMenuItem: function() {
         console.log('add menu item');

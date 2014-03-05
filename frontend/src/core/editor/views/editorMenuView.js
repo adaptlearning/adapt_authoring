@@ -27,7 +27,7 @@ define(function(require){
     setupMenuViews: function() {
       this.setupCourseViews();
 
-      var layerOne = this.renderMenuLayerView(this.model.get('_id'));
+      var layerOne = this.renderMenuLayerView(this.model.get('_id'), false);
       this.model.getChildren().each(function(contentObject) {
         layerOne.append(new EditorMenuItemView({
           model: contentObject
@@ -36,11 +36,11 @@ define(function(require){
     },
 
     setupCourseViews: function() {
-      this.renderMenuLayerView().append(new EditorMenuItemView({model:this.model}).$el);
+      this.renderMenuLayerView(null, true).append(new EditorMenuItemView({model:this.model}).$el);
     },
 
-    renderMenuLayerView: function(parentId) {
-      var menuLayerView = new EditorMenuLayerView({_parentId:parentId})
+    renderMenuLayerView: function(parentId, isCourseObject) {
+      var menuLayerView = new EditorMenuLayerView({_parentId:parentId, _isCourseObject: isCourseObject})
       this.$('.editor-menu-inner').append(menuLayerView.$el);
       return menuLayerView.$('.editor-menu-layer-inner');
     },

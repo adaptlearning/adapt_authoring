@@ -15,6 +15,10 @@ define(function(require) {
       'click .cancel-button' : 'cancel'
     },
 
+    preRender: function() {
+      console.log('preRender');
+    },
+
     inputBlur: function (event) {
       //@todo add the validation logic
     },
@@ -31,7 +35,8 @@ define(function(require) {
 
       model.save({
         title: this.$('.article-title').val(),
-        body: this.$('.article-body').val()},
+        body: this.$('.article-body').val(),
+        _sortOrder: this.$(".article-position").filter(":selected").val()},
         {
           error: function() {
             alert('An error occurred doing the save');

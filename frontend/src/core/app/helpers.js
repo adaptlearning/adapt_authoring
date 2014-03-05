@@ -19,6 +19,25 @@ define(function(require){
                 var date = new Date(isoDate);
 
                 return date.toDateString();
+            },
+            selected: function(option, value){
+                if (option === value) {
+                    return ' selected';
+                } else {
+                    return ''
+                }
+            },
+            counterFromZero: function(n, block) {
+                var sum = '';
+                for (var i = 0; i <= n; ++i)
+                    sum += block.fn(i);
+                return sum;
+            },
+            counterFromOne: function(n, block) {
+                var sum = '';
+                for (var i = 1; i <= n; ++i)
+                    sum += block.fn(i);
+                return sum;
             }
         };
 

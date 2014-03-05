@@ -129,19 +129,32 @@ define(function(require) {
     projectView: function (id) {
       var projectModel = new ProjectModel({_id: id});
       projectModel.fetch();
-      //this.createView(new ProjectOverview({model: projectModel}));
     },
 
     editorMenu: function(id) {
-      //var courseModel = new EditorCourseModel({_id: id});
-      this.createView(new EditorView({currentCourseId: id, currentView: 'menu', currentPageId: null}));
+      // EditorView takes in currentCourseId and uses this to retrieve collections and models
+      // Passing in currentView enables editorView to load either a menu editing view or a page editing view
+      this.createView(new EditorView({
+        currentCourseId: id, 
+        currentView: 'menu', 
+        currentPageId: null
+      }));
     },
 
     editorPage: function (id) {
-      var pageModel = new EditorContentObjectModel({
-        _id: id
-      });
-      this.createView(new EditorView({model: pageModel, currentView: 'page'}));
+      // This needs re-factoring as it doesn't need to pass in a model
+      // Model is already passed in through Origin.editor.contentObjects.findWhere({_id:id});
+      // This should be handled in the editorView.js
+      // If this is routed when the editor view is not already created we need to work out a way to push the current page
+      // Something along the lines of
+      /*if (!Origin.editor.course) {
+        We should just show the page as this would have a _courseId added to it
+      }*/
+      this.createView(new EditorView({
+        currentCourseId: Origin.editor.course.get('_id'), 
+        currentView: 'page', 
+        currentPageId: id
+      }));
     },
 
     removeViews: function() {

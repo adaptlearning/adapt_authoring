@@ -7,12 +7,6 @@ define(function(require) {
       idAttribute: '_id',
 
       initialize : function(options) {
-        /*if (options.url) {
-          this.url = options.url;
-        }
-        if (options.urlRoot) {
-          this.urlRoot = options.urlRoot;
-        }*/
         this.once('sync', this.loadedData, this);
         this.fetch();
       },
@@ -27,7 +21,7 @@ define(function(require) {
 
       getChildren: function() {
         
-        var children = Origin.editor[this._children].where({_parentId:this.get("_id")});
+        var children = Origin.editor[this.constructor._children].where({_parentId:this.get("_id")});
         var childrenCollection = new Backbone.Collection(children);
         // returns a collection of children
         return childrenCollection;

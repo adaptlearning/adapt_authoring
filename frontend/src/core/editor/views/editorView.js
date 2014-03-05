@@ -34,7 +34,6 @@ define(function(require){
       this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
       this.render();
-      //this.listenTo(Origin, 'editor:syncData', this.fetchEditorData);
       this.setupEditor();
     },
 
@@ -119,7 +118,7 @@ define(function(require){
 
     renderEditorPage: function() {
       this.$('.editor-inner').html(new EditorPageView({
-        model: this.model,
+        model: Origin.editor.contentObjects.findWhere({_id: this.currentPageId}),
       }).$el);
     }
 

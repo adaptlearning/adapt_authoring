@@ -6,6 +6,7 @@ define(function(require){
   var OriginView = require('coreJS/app/views/originView');
   var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorArticleView = require('coreJS/editor/views/editorArticleView');
+  var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
 
   var EditorPageView = OriginView.extend({
 
@@ -48,7 +49,7 @@ define(function(require){
       event.preventDefault();
       
       var thisView = this;
-      var newPageArticleModel = new EditorModel({urlRoot: '/api/content/article'});
+      var newPageArticleModel = new EditorArticleModel();
       newPageArticleModel.save({
         title: '{Your new article}',
         body: '{Edit this text...}',

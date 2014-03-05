@@ -12,7 +12,8 @@ define(function(require){
     events: {
       'click .editor-menu-item-view':'viewPageItem',
       'click .editor-menu-item-edit': 'editMenuItem',
-      'click .editor-menu-item-delete': 'deleteMenuItem'
+      'click .editor-menu-item-delete': 'deleteMenuItem',
+      'click':'showItemChildren'
     },
 
     preRender: function() {
@@ -20,7 +21,6 @@ define(function(require){
     },
 
     viewPageItem: function() {
-      console.log(this.model);
       Origin.router.navigate('#/editor/' + Origin.editor.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
     },
 
@@ -38,6 +38,10 @@ define(function(require){
       }
       // 
       Origin.trigger('editor:fetchData');
+    },
+
+    showItemChildren: function() {
+      console.log('show children');
     }
     
 

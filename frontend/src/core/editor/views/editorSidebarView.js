@@ -13,13 +13,12 @@ define(function(require) {
 
 		preRender: function() {
 			this.listenTo(Origin, 'editorSidebar:addEditView', this.addEditingView);
-			this.listenTo(Origin, 'editorSidebar:removeEditView', this.removeEditingView);
 		},
 
 		addEditingView: function(model) {
 			var type = model.get('_type');
 			var editor;
-
+			Origin.trigger('editorSidebar:removeEditView');
 			this.hideLoadingStatus();
 			this.hideInstruction();
 

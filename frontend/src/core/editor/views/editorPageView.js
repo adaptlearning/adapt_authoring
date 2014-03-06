@@ -42,6 +42,7 @@ define(function(require){
       if (confirm('Are you sure you want to delete this page?')) {
         if (this.model.destroy()) {
           this.remove();
+          Origin.trigger('editor:refreshPageList');
         }
       }
     },

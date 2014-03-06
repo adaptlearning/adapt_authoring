@@ -15,19 +15,14 @@ define(function(require) {
       },
 
       preRender: function() {
-        console.log('preRender');
-
+        this.listenTo(Origin, 'editor:refreshPageList', this.addPageViews);
         this.render();
         this.addPageViews();
       },
 
-      postRender: function() {
-
-        console.log('post rendering pages');
-      },
+      postRender: function() {},
 
       addPageViews: function() {
-
         this.$('.page-list').empty();
 
         _.each(Origin.editor.contentObjects.models, function(contentObject) {
@@ -35,8 +30,6 @@ define(function(require) {
             this.$('.page-list').append('<li><a class="load-page" data-page-id="' + contentObject.get('_id') + '" href="#">' + contentObject.get('title') + '</a></li>');
           }
         }, this);
-
-        console.log('addPageViews');
       },
 
       goToPage: function (event) {

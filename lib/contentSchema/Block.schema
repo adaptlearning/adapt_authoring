@@ -60,4 +60,9 @@ BlockSchema.pre('save', function (next) {
   next();
 });
 
+BlockSchema.pre('remove', function (next) {
+  console.log('removing Block -- TODO remove Component models')  
+  
+  next();
+});
 module.exports = BlockSchema;

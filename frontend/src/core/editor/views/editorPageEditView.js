@@ -2,9 +2,9 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
 
-  var EditorPageEditView = OriginView.extend({
+  var EditorPageEditView = EditorOriginView.extend({
 
     tagName: "div",
 

@@ -1,9 +1,9 @@
 define(function(require) {
 
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
 
-  var EditorPageOverviewView = OriginView.extend({
+  var EditorPageOverviewView = EditorOriginView.extend({
       settings: {
         autoRender: false
       },

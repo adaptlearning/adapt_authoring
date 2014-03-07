@@ -3,7 +3,7 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
   var EditorSidebarView = require('coreJS/editor/views/editorSidebarView');
   var EditorMenuView = require('coreJS/editor/views/editorMenuView');
   var EditorPageView = require('coreJS/editor/views/editorPageView');
@@ -14,7 +14,7 @@ define(function(require){
   var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
   var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
 
-  var EditorView = OriginView.extend({
+  var EditorView = EditorOriginView.extend({
 
     settings: {
       autoRender: false
@@ -36,7 +36,6 @@ define(function(require){
       this.listenTo(Origin, 'editor:fetchData', this.setupEditor);
       this.render();
       this.setupEditor();
-      
     },
 
     postRender: function() {

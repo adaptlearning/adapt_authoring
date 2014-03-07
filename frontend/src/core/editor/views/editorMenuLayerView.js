@@ -38,8 +38,6 @@ define(function(require) {
 
       addMenuItem: function() {
         // this should be passed pass values for parentID and isCourseObject instead of null, true
-        console.log('add menu item');
-        console.log('addMenuItem parentID= ' + this._parentId);
         event.preventDefault();
 
         new EditorContentObjectModel({
@@ -59,7 +57,6 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: function(model) {
-            console.log('saved');
             Origin.trigger('editor:fetchData');
             Origin.trigger('editorSidebar:addEditView', model);
             //Backbone.history.navigate('#/editor/' + Origin.editor.course.get('_id')+ '/page/' + newPage.get('_id'), {trigger: true});

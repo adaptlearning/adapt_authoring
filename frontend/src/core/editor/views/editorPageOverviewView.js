@@ -15,7 +15,6 @@ define(function(require) {
       },
 
       preRender: function() {
-        console.log('preRender');
 
         this.render();
         this.addPageViews();
@@ -23,7 +22,6 @@ define(function(require) {
 
       postRender: function() {
 
-        console.log('post rendering pages');
       },
 
       addPageViews: function() {
@@ -36,7 +34,6 @@ define(function(require) {
           }
         }, this);
 
-        console.log('addPageViews');
       },
 
       goToPage: function (event) {

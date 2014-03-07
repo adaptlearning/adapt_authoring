@@ -42,14 +42,21 @@ define(function(require){
 
     showItemChildren: function() {
       console.log('show children');
-      var currentState = [];
+      this.currentState = [];
 
-      currentState.push(this.model.get('_id'));
+      this.currentState.push(this.model.get('_id'));
+      this.createStateArray(this.model);
 
-      
+      Origin.editor.currentMenuState = this.currentState;
+      Origin.trigger('editorMenuItem:showMenuChildren', this.model);
+    },
 
-      Origin.trigger('editor:updateMenuState', currentState);
-      //Origin.trigger('editor:showMenuChildren', this.model);
+    createStateArray: function(model) {
+      if (!model.getParent().get('_id') === 'course') {
+        this.currentState.push(model.getParent().get('_id'));
+        this.createStateArray(model.getParent()); 
+      }
+      return;
     }
     
 

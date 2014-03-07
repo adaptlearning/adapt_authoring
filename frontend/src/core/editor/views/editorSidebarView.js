@@ -26,6 +26,7 @@ define(function(require) {
           this.$('.editor-sidebar-overview').append(overview.$el);
         },
 
+// loads editing view in sidebar for differet elements
 		addEditingView: function(model) {
 			var type = model.get('_type');
 			Origin.trigger('editorSidebar:removeEditView');

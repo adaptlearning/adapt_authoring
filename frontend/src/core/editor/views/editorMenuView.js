@@ -18,35 +18,50 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(Origin, 'editor:removeSubViews', this.remove);
-      this.listenTo(Origin, 'editor:showMenuChildren', this.showMenuChildren);
+      this.listenTo(Origin, 'editorMenuItem:showMenuChildren', this.showMenuChildren);
     },
 
     postRender: function() {
       this.setupMenuViews();
-      console.log('menuView');
     },
 
     setupMenuViews: function() {
       this.setupCourseViews();
-      console.log(this.model);
       var layerOne = this.renderMenuLayerView(this.model.get('_id'), false);
       this.model.getChildren().each(function(contentObject) {
         layerOne.append(new EditorMenuItemView({
           model: contentObject
         }).$el)
       }, this);
+
+
+
+      if (Origin.editor.currentMenuState) {
+        this.showMenuChildren(this.model);
+        _.each(Origin.editor.currentMenuState, function(parentId) {
+          this.showMenuChildren(Origin.editor.contentObjects.findWhere({_parentId:parentId}));
+        }, this);
+        
+      }
     },
 
     setupCourseViews: function() {
       this.renderMenuLayerView(null, true).append(new EditorMenuItemView({model:this.model}).$el);
     },
 
+// renders the views for the current contentObject
     showMenuChildren: function(model) {
-      var layer = this.renderMenuLayerView(model.get('_id'), false);
-      model.getChildren().each(function(contentObject) {
-        layer.append(new EditorMenuItemView({
-          model: contentObject
-        }).$el)
+
+      console.log('showMenuChildren', model, Origin.editor.currentMenuState);
+
+      _.each(Origin.editor.currentMenuState, function(parentId) {
+        var layer = this.renderMenuLayerView(model.get('_id'), false);
+        _.each(Origin.editor.contentObjects.where({_parentId: parentId}), function(contentObject) {
+          layer.append(new EditorMenuItemView({
+            model: contentObject
+          }).$el);
+        });
+
       }, this);
     },
 

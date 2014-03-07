@@ -34,7 +34,6 @@ define(function(require){
       this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
       this.listenTo(Origin, 'editor:fetchData', this.setupEditor);
-      this.listenTo(Origin, 'editor:updateMenuState', this.updateMenuState);
       this.render();
       this.setupEditor();
       
@@ -44,13 +43,10 @@ define(function(require){
       this.renderEditorSidebar();
     },
 
-    updateMenuState: function(currentState) {
-      this.menuState = currentState;
-      console.log(this.menuState);
-    },
-
+// Renders editor view
+// create new instance of Origin.editor.course
+// create new instance of Origin.editor.contentObjects, Origin.editor.articles, Origin.editor.blocks
     setupEditor: function() {
-      this.menuState = [];
       this.loadedData = {
         course:false,
         contentObjects:false,
@@ -73,6 +69,9 @@ define(function(require){
 
       if (Origin.editor.course) {
         _.each(Origin.editor, function(object) {
+          if (_.isArray(object)) {
+            return;
+          }
           object.fetch({reset:true});
         })
       } else {

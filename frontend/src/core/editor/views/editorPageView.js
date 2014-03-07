@@ -30,7 +30,7 @@ define(function(require){
 
     addArticleViews: function() {
       this.$('.page-articles').empty();
-      Origin.trigger('editor:removePageSubViews');
+      Origin.trigger('editorPage:removePageSubViews');
       this.model.getChildren().each(function(article) {
         console.log(article);
         this.$('.page-articles').append(new EditorArticleView({model: article}).$el);

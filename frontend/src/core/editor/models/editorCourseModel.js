@@ -6,7 +6,6 @@ define(function(require) {
 		urlRoot: '/api/content/course'
 	}, 
 	{
-        _parent: 'course',
     	_siblings:'',
         _children: 'contentObjects'
 	});

@@ -2,7 +2,7 @@ var path = require('path'),
     rimraf = require('rimraf'),
     fs = require('fs'),
     should = require('should'),
-    builder = require('../../../../'),
+    origin = require('../../../../'),
     app = false;
 
 var helper = {
@@ -13,7 +13,7 @@ var helper = {
 };
 
 before(function (done){
-  app = builder();
+  app = origin();
   done();
 });
 
@@ -137,7 +137,7 @@ describe('plugin:filestorage/localfs', function() {
   });
 
   it ('should implement FileStorate#createWriteStream', function (done) {
-    var app = builder();
+    var app = origin();
 
     app.filestorage.getStorage('localfs', function (error, localfs) {
       should.not.exist(error);
@@ -148,7 +148,7 @@ describe('plugin:filestorage/localfs', function() {
   });
 
   it ('should implement FileStorate#createReadStream', function (done) {
-    var app = builder();
+    var app = origin();
 
     app.filestorage.getStorage('localfs', function (error, localfs) {
       should.not.exist(error);

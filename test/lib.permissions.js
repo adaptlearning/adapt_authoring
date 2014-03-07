@@ -1,4 +1,4 @@
-var builder = require('../'),
+var origin = require('../'),
     should = require('should'),
     usermanager = require('../lib/usermanager'),
     permissions = require('../lib/permissions');

@@ -1,4 +1,4 @@
-var builder = require('../'),
+var origin = require('../'),
     content = require('../lib/contentmanager'),
     database = require('../lib/database'),
     auth = require('../lib/auth'),
@@ -7,7 +7,7 @@ var builder = require('../'),
     should = require('should');
 
 describe('contentmanager', function() {
-  var app = builder();
+  var app = origin();
   var agent = {};
   var userId = false;
   var contentObj = {};

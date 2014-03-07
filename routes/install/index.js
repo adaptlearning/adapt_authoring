@@ -3,7 +3,7 @@ var fs = require('fs');
 var hbs = require('hbs');
 var path = require('path');
 var validator = require('validator');
-var builder = require('../../');
+var origin = require('../../');
 var configuration = require('../../lib/configuration');
 var logger = require('../../lib/logger');
 var database = require('../../lib/database');
@@ -40,7 +40,7 @@ server.all('/install', function (req, res, next) {
 
 // server configuration page
 server.all('/install/server', function (req, res, next) {
-  var app = builder();
+  var app = origin();
   var serverName = req.body.serverName || 'localhost';
   var serverPort = req.body.serverPort || app.defaults.DEFAULT_SERVER_PORT;
   var errors = {};
@@ -231,7 +231,7 @@ server.get('/install/complete', function (req, res, next) {
   var cfg = configuration.getConfig();
 
   // write the configuration file
-  var app = builder();
+  var app = origin();
   app.configuration = configuration;
   fs.writeFile(path.join(configuration.serverRoot, 'conf', 'config.json'), JSON.stringify(cfg), function (error) {
     if (error) {

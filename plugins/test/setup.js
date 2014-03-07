@@ -1,6 +1,6 @@
 var path = require('path'),
     fs = require('fs'),
-    builder = require('../../'),
+    origin = require('../../'),
     logger = require('../../lib/logger'),
     rimraf = require('rimraf');
 
@@ -11,7 +11,7 @@ before(function(done) {
   logger.clear();
 
   // bootstrapping!
-  var app = builder();
+  var app = origin();
   app.use({ configFile: path.join('test', 'testConfig.json')});
   app.run();
   app.once('serverStarted', function (server) {

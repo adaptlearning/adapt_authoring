@@ -13,6 +13,7 @@ define(function(require){
   var EditorContentObjectModel = require('coreJS/editor/models/editorContentObjectModel');
   var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
   var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
+  var EditorClipboardModel = require('coreJS/editor/models/editorClipboardModel');
 
   var EditorView = OriginView.extend({
 
@@ -34,6 +35,7 @@ define(function(require){
       this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
       this.listenTo(Origin, 'editor:fetchData', this.setupEditor);
+      this.listenTo(Origin, 'editor:copy', this.addToClipboard);
       this.render();
       this.setupEditor();
       
@@ -98,6 +100,26 @@ define(function(require){
           _type: 'blocks'
       });
       
+    },
+
+    /*
+      Archive off the clipboard
+    */
+    addToClipboard: function(model) {
+      
+      clipboard = new EditorClipboardModel();
+
+      clipboard.save(
+        {referencesId: model.get('_id'), referenceType: model.get('_type')},
+        {
+          error: function() {
+            alert('An error occurred doing the save');
+          },
+          success: function() {
+            alert('Clipboard data saved');
+          }
+        }
+      );
     },
     
     renderCurrentEditorView: function() {

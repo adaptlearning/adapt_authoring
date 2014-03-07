@@ -1,0 +1,33 @@
+var mongoose = require('mongoose');
+var Schema =  mongoose.Schema;
+
+var ClipboardSchema = new Schema({
+  "_courseId" : {
+    "type" : "ObjectId",
+    "required": true
+  },
+  "referencesId" : {
+    "type" : "ObjectId",
+    "required" : true
+  },
+  "referenceType" : {
+    "type" : "String",
+    "required" : true
+  },
+  "createdAt" : {
+    "type" : "Date"
+  },
+  "createdBy" : {
+    "type" : "ObjectId"
+  }
+});
+
+ClipboardSchema.pre('save', function (next) {
+  if (!this.createdAt) {
+    this.createdAt = new Date();
+  }
+  
+  next();
+});
+
+module.exports = ClipboardSchema;

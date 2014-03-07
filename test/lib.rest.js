@@ -1,12 +1,12 @@
 var rest = require('../lib/rest'),
     logger = require('../lib/logger'),
     permissions = require('../lib/permissions'),
-    builder = require('../'),
+    origin = require('../'),
     should = require('should'),
     request = require('supertest');
 
 describe('rest', function() {
-  var app = builder();
+  var app = origin();
   var agent = {};
 
   before (function (done) {

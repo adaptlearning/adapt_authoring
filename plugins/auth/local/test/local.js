@@ -1,7 +1,7 @@
 var path = require('path'),
     fs = require('fs'),
     should = require('should'),
-    builder = require('../../../../');
+    origin = require('../../../../');
 
 describe('plugin:auth/local', function() {
 });

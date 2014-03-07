@@ -1,4 +1,4 @@
-var builder = require('../'),
+var origin = require('../'),
     fs = require('fs'),
     path = require('path'),
     configuration = require('../lib/configuration'),

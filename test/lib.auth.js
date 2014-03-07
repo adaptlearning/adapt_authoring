@@ -1,11 +1,11 @@
 var should = require('should'),
-    builder = require('../'),
+    origin = require('../'),
     request = require('supertest'),
     usermanager = require('../lib/usermanager'),
     auth = require('../lib/auth');
 
 describe('auth', function() {
-  var app = builder();
+  var app = origin();
   var helper = {
     passwordPlain: 'this is my password',
     passwordCipher: '',

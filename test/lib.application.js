@@ -1,5 +1,5 @@
 var path = require('path'),
-    builder = require('../'),
+    origin = require('../'),
     logger = require('../lib/logger'),
     auth = require('../lib/auth'),
     permissions = require('../lib/permissions'),
@@ -25,7 +25,7 @@ before(function (done) {
   logger.clear();
 
   // bootstrapping!
-  var app = builder();
+  var app = origin();
   app.use({ configFile: path.join('test', 'testConfig.json')});
 
   function createTestTenant (tenantDetails, cb) {
@@ -127,7 +127,7 @@ after(function (done) {
 
 describe('application', function(){
   it ('should inherit from event emmiter', function(done) {
-    var app = builder();
+    var app = origin();
     app.on('foo', done);
     app.emit('foo');
   });

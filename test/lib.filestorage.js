@@ -1,4 +1,4 @@
-var builder = require('../'),
+var origin = require('../'),
     path = require('path'),
     filestorage = require('../lib/filestorage');
 
@@ -8,7 +8,7 @@ describe('filestorage', function() {
 
   before(function(){
     // @TODO create a file instance
-    var app = builder();
+    var app = origin();
     filePath = path.join(app.configuration.serverRoot, 'tmp', 'tmpFile');
     newFilePath = path.join(app.configuration.serverRoot, 'tmp', 'tmpFileNew');
   });

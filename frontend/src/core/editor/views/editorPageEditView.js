@@ -41,7 +41,8 @@ define(function(require) {
           alt: this.$('.page-graphic-alt').val(),
           src: this.$('.page-graphic-src').val()
         },
-        _type: 'page',
+        _type: this.$(".page-type").val(),
+        _classes: this.$(".page-classes").val(),
         tenantId: 'noidyet'},
         {
           error: function() {

@@ -31,8 +31,6 @@ define(function(require) {
 			Origin.trigger('editorSidebar:removeEditView');
 			var $sidebarForm = this.$('.edit-form');
 			this.hideLoadingStatus();
-
-            this.hideLoadingStatus();
 			this.hideInstruction();
 			this.$('.editor-form').empty();
 			switch (type) {
@@ -42,6 +40,9 @@ define(function(require) {
 				case 'page':
 					$sidebarForm.append(new EditorPageEditView({model: model}).$el);
 					break;
+                case 'menu':
+                    $sidebarForm.append(new EditorPageEditView({model: model}).$el);
+                    break;
 				case 'article':
 					$sidebarForm.append(new EditorArticleEditView({model: model}).$el);
 					break;

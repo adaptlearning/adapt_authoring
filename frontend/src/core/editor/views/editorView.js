@@ -34,6 +34,7 @@ define(function(require){
       this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
       this.listenTo(Origin, 'editor:fetchData', this.setupEditor);
+      this.listenTo(Origin, 'editor:updateMenuState', this.updateMenuState);
       this.render();
       this.setupEditor();
       
@@ -43,7 +44,13 @@ define(function(require){
       this.renderEditorSidebar();
     },
 
+    updateMenuState: function(currentState) {
+      this.menuState = currentState;
+      console.log(this.menuState);
+    },
+
     setupEditor: function() {
+      this.menuState = [];
       this.loadedData = {
         course:false,
         contentObjects:false,

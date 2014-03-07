@@ -21,6 +21,22 @@ var CourseSchema = new Schema({
   "body": {
     "type": "String"
   },
+  "submit": {
+    "type": "String",
+    "default": "Submit"
+  },
+  "reset": {
+    "type": "String",
+    "default": "Reset"
+  },
+  "showCorrectAnswer": {
+    "type": "String",
+    "default": "Model Answer"
+  },
+  "hideCorrectAnswer": {
+    "type": "String",
+    "default": "My Answer"
+  },
   "createdAt" : {
     "type" : "Date"
   },

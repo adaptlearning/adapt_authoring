@@ -37,7 +37,9 @@ define(function(require) {
       },
 
       addMenuItem: function() {
+        // this should be passed pass values for parentID and isCourseObject instead of null, true
         console.log('add menu item');
+        console.log('addMenuItem parentID= ' + this._parentId);
         event.preventDefault();
 
         new EditorContentObjectModel({

@@ -25,6 +25,25 @@ define(function(require) {
         var childrenCollection = new Backbone.Collection(children);
         // returns a collection of children
         return childrenCollection;
+      },
+
+      getParent: function() {
+        var currentType = this.model.get('_type');
+        var parent;
+        var currentParentId = this.model.get('_parentId');
+
+        if (currentType === 'contentObject') {
+          if (currentParentId === 'course') {
+            parent = Origin.editor.course;
+          } else {
+            parent = Origin.editor.contentObjects.findWhere({_id: currentParentId});
+          }
+        } else {
+          parent = Origin.editor[this.constructor._parent].findWhere({_id: currentParentId});
+        }
+
+        return parent;
+
       }
     });
 

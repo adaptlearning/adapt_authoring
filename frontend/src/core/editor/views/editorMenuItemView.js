@@ -10,10 +10,10 @@ define(function(require){
     className: "editor-menu-item",
 
     events: {
+      'click .editor-menu-item-view-children':'showItemChildren',
       'click .editor-menu-item-view':'viewPageItem',
       'click .editor-menu-item-edit': 'editMenuItem',
-      'click .editor-menu-item-delete': 'deleteMenuItem',
-      'click':'showItemChildren'
+      'click .editor-menu-item-delete': 'deleteMenuItem'
     },
 
     preRender: function() {
@@ -42,6 +42,14 @@ define(function(require){
 
     showItemChildren: function() {
       console.log('show children');
+      var currentState = [];
+
+      currentState.push(this.model.get('_id'));
+
+      
+
+      Origin.trigger('editor:updateMenuState', currentState);
+      //Origin.trigger('editor:showMenuChildren', this.model);
     }
     
 

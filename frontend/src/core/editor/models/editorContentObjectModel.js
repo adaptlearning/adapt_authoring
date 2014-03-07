@@ -7,6 +7,7 @@ define(function(require) {
 		initialize: function() {}
 	}, 
 	{
+		_parent: 'course',
     	_siblings:'contentObjects',
         _children: 'articles'
 	});

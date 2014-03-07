@@ -3,11 +3,12 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
   var EditorBlockView = require('coreJS/editor/views/editorBlockView');
   var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
-  var EditorArticleView = OriginView.extend({
+
+  var EditorArticleView = EditorOriginView.extend({
 
     tagName: 'div',
 
@@ -16,7 +17,10 @@ define(function(require){
     events: {
       'click a.add-block'           : 'addBlock',
       'click a.page-article-edit'   : 'loadPageEdit',
-      'click a.page-article-delete' : 'deletePageArticle'
+      'click a.page-article-delete' : 'deletePageArticle',
+      'click .copy-article'         : 'onCopy',
+      'click .paste-block'          : 'onPaste',
+      'click .paste-cancel'         : 'pasteCancel'
     },
 
     preRender: function() {
@@ -49,15 +53,15 @@ define(function(require){
         _courseId: Origin.editor.course.get('_id')
       },
       {
-          error: function() {
-            alert('error adding new block');
-          },
-          success: function() {
-            Origin.trigger('editor:fetchData');
-          }
-        });
+        error: function() {
+          alert('error adding new block');
+        },
+        success: function() {
+          Origin.trigger('editor:fetchData');
+        }
+      });
     },
-    
+
     deletePageArticle: function(event) {
       event.preventDefault();
 

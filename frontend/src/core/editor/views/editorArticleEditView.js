@@ -2,9 +2,9 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
 
-  var EditorArticleEditView = OriginView.extend({
+  var EditorArticleEditView = EditorOriginView.extend({
 
     tagName: "div",
 
@@ -49,6 +49,7 @@ define(function(require) {
         }
       );
     }
+
   },
   {
     template: 'editorArticleEdit'

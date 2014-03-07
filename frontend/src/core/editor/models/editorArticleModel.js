@@ -7,10 +7,10 @@ define(function(require) {
 		initialize: function() {}
 	}, 
 	{
-    	_siblings:'articles',
-        _children: 'blocks'
+  	_siblings:'articles',
+    _children: 'blocks'
 	});
 
 	return EditorArticleModel;
 
-})
+});

@@ -3,7 +3,7 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
   var EditorSidebarView = require('coreJS/editor/views/editorSidebarView');
   var EditorMenuView = require('coreJS/editor/views/editorMenuView');
   var EditorPageView = require('coreJS/editor/views/editorPageView');
@@ -15,7 +15,7 @@ define(function(require){
   var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
   var EditorClipboardModel = require('coreJS/editor/models/editorClipboardModel');
 
-  var EditorView = OriginView.extend({
+  var EditorView = EditorOriginView.extend({
 
     settings: {
       autoRender: false
@@ -39,7 +39,6 @@ define(function(require){
       this.listenTo(Origin, 'editor:paste', this.pasteFromClipboard);
       this.render();
       this.setupEditor();
-      
     },
 
     postRender: function() {
@@ -110,11 +109,22 @@ define(function(require){
       
       clipboard = new EditorClipboardModel();
 
-      clipboard.save(
-        { _courseId: this.currentCourseId, 
-          referencesId: model.get('_id'), 
-          referenceType: model.get('_type')},
-        {
+      clipboard.set('referencesId', model.get('_id')); 
+      clipboard.set('referenceType', model.get('_type'));
+
+      clipboard.set(model.get('_type'), model.serialize());
+
+      switch (model.get('_type')) {
+        case 'article':
+          var blocks = model.getChildren();
+          clipboard.set('block', model.serializeChildren());
+          break;
+
+        case 'block':
+          clipboard.set('component', model.serializeChildren());
+      }
+
+      clipboard.save({_courseId: this.currentCourseId}, {
           error: function() {
             alert('An error occurred doing the save');
           },
@@ -126,7 +136,7 @@ define(function(require){
     },
     
     pasteFromClipboard: function() {
-      alert('pasting');
+      alert('TODO - pasting');
     },
 
     renderCurrentEditorView: function() {

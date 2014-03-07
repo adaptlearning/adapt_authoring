@@ -20,12 +20,15 @@ define(function(require) {
       },
 
       getChildren: function() {
-        
-        var children = Origin.editor[this.constructor._children].where({_parentId:this.get("_id")});
-        var childrenCollection = new Backbone.Collection(children);
-        // returns a collection of children
+        if (Origin.editor[this.constructor._children]) {
+          var children = Origin.editor[this.constructor._children].where({_parentId:this.get("_id")});
+          var childrenCollection = new Backbone.Collection(children);
 
-        return childrenCollection;
+          return childrenCollection;          
+        } else {
+          return null;
+        }
+
       },
 
       getSiblings: function() {
@@ -57,7 +60,25 @@ define(function(require) {
         var ancestorsCollection = new Backbone.Collection(ancestors);
 
         return ancestorsCollection;
+      },
+
+      serialize: function() {
+        return JSON.stringify(this);
+      },
+
+      serializeChildren: function() {
+        var children = this.getChildren();
+        var serializedJson = '';
+
+        if (children) {
+          _.each(children.models, function(child) {
+            serializedJson += child.serialize();
+          });  
+        }
+
+        return serializedJson;
       }
+      
     });
 
     return EditorModel;

@@ -8,6 +8,14 @@
       <label for="block-description">Block Description</label>
       <textarea class="form-control block-body" placeholder="Block Description">{{body}}</textarea>
     </div>
+    <div class="form-group">
+        <label for="block-parent">Parent</label>
+        <select class="form-control block-parent">
+          {{#each ancestors}}
+          <option value="{{_id}}" {{selected ../_parentId _id}}>{{title}}</option>
+          {{/each}}
+        </select>
+      </div>
     <div class="hidden">
       <input type="hidden" value="{{id}}" id="pageId">
     </div>

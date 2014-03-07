@@ -17,6 +17,7 @@ define(function(require) {
 
     preRender: function() {
       this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+      this.model.set('ancestors', this.model.getPossibleAncestors().toJSON());
     },
 
     inputBlur: function (event) {
@@ -34,6 +35,7 @@ define(function(require) {
       var model = this.model;
 
       model.save({
+        _parentId: this.$('.block-parent').find(':selected').val(),
         title: this.$('.article-title').val(),
         body: this.$('.article-body').val(),
         _sortOrder: this.$(".article-position").filter(":selected").val()},

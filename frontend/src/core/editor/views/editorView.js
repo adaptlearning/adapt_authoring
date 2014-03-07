@@ -36,6 +36,7 @@ define(function(require){
       this.currentView = options.currentView;
       this.listenTo(Origin, 'editor:fetchData', this.setupEditor);
       this.listenTo(Origin, 'editor:copy', this.addToClipboard);
+      this.listenTo(Origin, 'editor:paste', this.pasteFromClipboard);
       this.render();
       this.setupEditor();
       
@@ -110,7 +111,9 @@ define(function(require){
       clipboard = new EditorClipboardModel();
 
       clipboard.save(
-        {referencesId: model.get('_id'), referenceType: model.get('_type')},
+        { _courseId: this.currentCourseId, 
+          referencesId: model.get('_id'), 
+          referenceType: model.get('_type')},
         {
           error: function() {
             alert('An error occurred doing the save');
@@ -122,6 +125,10 @@ define(function(require){
       );
     },
     
+    pasteFromClipboard: function() {
+      alert('pasting');
+    },
+
     renderCurrentEditorView: function() {
       this.renderEditorSidebar();
 

@@ -23,7 +23,7 @@ define(function(require) {
       postRender: function() {
 
       },
-
+// loop through the contentObject in the model and build the list in the overview sidebar 
       addPageViews: function() {
 
         this.$('.page-list').empty();

@@ -17,7 +17,7 @@ define(function(require){
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
     },
 
     viewPageItem: function() {
@@ -25,7 +25,7 @@ define(function(require){
     },
 
     editMenuItem: function() {
-      Origin.trigger('editorSidebar:addEditView', this.model);
+      Origin.trigger('editorSidebarView:addEditView', this.model);
     },
 
     deleteMenuItem: function() {
@@ -37,18 +37,19 @@ define(function(require){
         }
       }
       // 
-      Origin.trigger('editor:fetchData');
+      Origin.trigger('editorView:fetchData');
     },
 
+// adds the id to the currentState (currentMenuState) array
+// triggers showMenuChildren in editorMenuView which renders child contentObject views
     showItemChildren: function() {
-      console.log('show children');
       this.currentState = [];
 
       this.currentState.push(this.model.get('_id'));
       this.createStateArray(this.model);
 
       Origin.editor.currentMenuState = this.currentState;
-      Origin.trigger('editorMenuItem:showMenuChildren', this.model);
+      Origin.trigger('editorMenuView:showMenuChildren', this.model);
     },
 
     createStateArray: function(model) {

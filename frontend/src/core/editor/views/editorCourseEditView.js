@@ -42,7 +42,7 @@ define(function(require) {
           alert('An error occurred doing the save');
         },
         success: function() {
-          Origin.trigger('editor:fetchData');
+          Origin.trigger('editorView:fetchData');
         }
       });
     }

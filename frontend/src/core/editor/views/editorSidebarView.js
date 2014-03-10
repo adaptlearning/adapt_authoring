@@ -17,8 +17,8 @@ define(function(require) {
 		},
 
 		preRender: function() {
-			this.listenTo(Origin, 'editorSidebar:addEditView', this.addEditingView);
-            this.listenTo(Origin, 'editorSidebar:addOverviewView', this.addOverviewView);
+			this.listenTo(Origin, 'editorSidebarView:addEditView', this.addEditingView);
+            this.listenTo(Origin, 'editorSidebarView:addOverviewView', this.addOverviewView);
 		},
 
         addOverviewView: function() {
@@ -26,7 +26,8 @@ define(function(require) {
           this.$('.editor-sidebar-overview').append(overview.$el);
         },
 
-// loads editing view in sidebar for differet elements
+// loads  view in sidebar for edit and overview elements
+// selects edit view depending on '_type' value
 		addEditingView: function(model) {
 			var type = model.get('_type');
 			Origin.trigger('editorSidebar:removeEditView');

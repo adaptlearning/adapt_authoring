@@ -8,7 +8,11 @@ define(function(require) {
 
       className: 'editor-menu-layer',
 
-  		preRender: function(options) {
+      events: {
+        'click .editor-menu-layer-add': 'addMenuItem'
+      },
+
+      preRender: function(options) {
         if (options._parentId) {
           this._parentId = options._parentId;
         }
@@ -16,11 +20,7 @@ define(function(require) {
           this.data = {};
           this.data._isCourseObject = options._isCourseObject;
         }
-        this.listenTo(Origin, 'editor:removeSubViews', this.remove);
-  		},
-
-      events: {
-        'click .editor-menu-layer-add': 'addMenuItem'
+        this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       },
 
   		postRender: function() {
@@ -37,7 +37,6 @@ define(function(require) {
       },
 
       addMenuItem: function() {
-        // this should be passed pass values for parentID and isCourseObject instead of null, true
         event.preventDefault();
 
         new EditorContentObjectModel({
@@ -57,8 +56,8 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: function(model) {
-            Origin.trigger('editor:fetchData');
-            Origin.trigger('editorSidebar:addEditView', model);
+            Origin.trigger('editorView:fetchData');
+            Origin.trigger('editorSidebarView:addEditView', model);
             //Backbone.history.navigate('#/editor/' + Origin.editor.course.get('_id')+ '/page/' + newPage.get('_id'), {trigger: true});
           }
         });

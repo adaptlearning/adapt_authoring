@@ -21,7 +21,7 @@ define(function(require){
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
     },
 
     postRender: function() {
@@ -62,7 +62,7 @@ define(function(require){
           alert('error adding new article');
         },
         success: function() {
-          Origin.trigger('editor:fetchData');
+          Origin.trigger('editorView:fetchData');
         }
       }
       );
@@ -70,7 +70,7 @@ define(function(require){
 
     loadPageEdit: function (event) {
       event.preventDefault();
-      Origin.trigger('editorSidebar:addEditView', this.model);
+      Origin.trigger('editorSidebarView:addEditView', this.model);
     }
     
   }, {

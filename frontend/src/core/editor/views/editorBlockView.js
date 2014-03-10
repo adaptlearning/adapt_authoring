@@ -17,7 +17,7 @@ define(function(require){
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPage:removePageSubViews', this.remove);
     },
 
@@ -33,7 +33,7 @@ define(function(require){
 
     loadPageEdit: function (event) {
       event.preventDefault();
-      Origin.trigger('editorSidebar:addEditView', this.model);
+      Origin.trigger('editorSidebarView:addEditView', this.model);
     }
 
   }, {

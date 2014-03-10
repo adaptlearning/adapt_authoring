@@ -17,14 +17,15 @@ define(function(require){
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'editor:removeSubViews', this.remove);
-      this.listenTo(Origin, 'editorMenuItem:showMenuChildren', this.showMenuChildren);
+      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editorMenuView:showMenuChildren', this.showMenuChildren);
     },
 
     postRender: function() {
       this.setupMenuViews();
     },
 
+// renders menu layer view for each child of this contentObject renders menu item view
     setupMenuViews: function() {
       this.setupCourseViews();
       var layerOne = this.renderMenuLayerView(this.model.get('_id'), false);
@@ -35,7 +36,8 @@ define(function(require){
       }, this);
 
 
-
+// If there is a collection for currentMenuState 
+// render the view for the items in the collection
       if (Origin.editor.currentMenuState) {
         this.showMenuChildren(this.model);
         _.each(Origin.editor.currentMenuState, function(parentId) {
@@ -49,7 +51,10 @@ define(function(require){
       this.renderMenuLayerView(null, true).append(new EditorMenuItemView({model:this.model}).$el);
     },
 
-// renders the views for the current contentObject
+// renders the views for the children of the current contentObject menu
+// loops through currentMenuState array 
+//     loops through contentObjects where _parentId === parentId
+//        renders new editorMenuView passing contentObject model
     showMenuChildren: function(model) {
 
       console.log('showMenuChildren', model, Origin.editor.currentMenuState);

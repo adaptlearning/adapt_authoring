@@ -33,7 +33,7 @@ define(function(require){
       this.currentCourseId = options.currentCourseId;
       this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
-      this.listenTo(Origin, 'editor:fetchData', this.setupEditor);
+      this.listenTo(Origin, 'editorView:fetchData', this.setupEditor);
       this.render();
       this.setupEditor();
       
@@ -43,9 +43,9 @@ define(function(require){
       this.renderEditorSidebar();
     },
 
-// Renders editor view
-// create new instance of Origin.editor.course
-// create new instance of Origin.editor.contentObjects, Origin.editor.articles, Origin.editor.blocks
+// checks if data is loaded
+// then create new instances of:
+// Origin.editor.course, Origin.editor.contentObjects, Origin.editor.articles, Origin.editor.blocks
     setupEditor: function() {
       this.loadedData = {
         course:false,
@@ -105,11 +105,12 @@ define(function(require){
       });
       
     },
-    
+  
+  //renders the editor view
     renderCurrentEditorView: function() {
       this.renderEditorSidebar();
 
-      Origin.trigger('editor:removeSubViews');
+      Origin.trigger('editorView:removeSubViews');
 
       switch (this.currentView) {
         case 'menu':
@@ -120,8 +121,7 @@ define(function(require){
           break;
       }
 
-      console.log('addOverviewView');
-      Origin.trigger('editorSidebar:addOverviewView');
+      Origin.trigger('editorSidebarView:addOverviewView');
     },
 
     renderEditorSidebar: function() {

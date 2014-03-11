@@ -119,12 +119,10 @@ define(function(require){
       clipboard = new EditorClipboardModel();
 
       clipboard.set('referencesId', model.get('_id')); 
-      clipboard.set('referenceType', model.get('_type'));
+      clipboard.set('referenceType', model.constructor._siblings);
 
       switch (model.get('_type')) {
         case 'article':
-          clipboard.set('referenceType', 'articles');
-
           var blocks = model.getChildren();
           var components = [];
           clipboard.set('articles', [model.attributes]);
@@ -150,77 +148,59 @@ define(function(require){
             alert('An error occurred doing the save');
           },
           success: function() {
-            alert('Clipboard data saved');
             Origin.editor.clipboard.fetch({reset:true});
           }
         }
       );
     },
 
-    createBlock: function(block) {
-      var newBlockModel = new EditorBlockModel();
-
-      newBlockModel.save(block,
-      {
-        error: function() {
-          alert('error adding new block');
-        },
-        success: function() {
-          return this.get('_id');
-        }
-      });
-    },
-
-    createArticle: function(article) {
-      var newArticleModel = new EditorArticleModel();
-
-      newArticleModel.save(article,
-      {
-        error: function() {
-          alert('error adding new article');
-        },
-        success: function() {
-          var blocks = clipboard.get('block');
-          if (blocks) {
-            _.each(blocks, function(block) {
-              block._id = null;
-              block._parentId = newArticleModel.get('_id');
-              var b = thisView.createBlock(block);
-            });
-          }
-        }
-      });
-
-      return newArticleModel;
-    },
-    
     pasteFromClipboard: function(targetModel) {
-      var thisView = this;
       var clipboard = Origin.editor.clipboard.models[0];
-
-      switch (targetModel.get('_type')) {
-        case 'page':
-          var articles = clipboard.get('articles');
-          if (articles) {
-            _.each(articles, function(article) {
-              article._id = null;
-              article._parentId = targetModel.get('_id');
-              var a = thisView.createArticle(article);
-              Origin.trigger('editor:fetchData');
-            });
-          }
-          break;
-        case 'block':
-          break;
-        //@TODO: Add components, content objects
-      }
-      
+      this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_id'));
     },
 
-    clearClipboard: function() {
-      var clipboard = new EditorClipboardModel({'referencesId':'5318853f6daf89d43a000008'});
-      clipboard.fetch();
-      clipboard.destroy();
+    createRecursive: function (type, clipboard, parentId) {
+      var thisView = this;
+      var items = clipboard.get(type);
+      var Model = this.createModel(type);
+
+      if (items && items.length) {
+        _.each(items, function(item) {
+          delete item._id;
+          item._parentId = parentId;
+
+          Model.save(
+            item,
+            {
+              error: function() {
+                alert('error adding new thingy');
+              },
+              success: function(model, response, options) {
+                if (Model.constructor._children) {
+                    thisView.createRecursive(Model.constructor._children, clipboard, Model.get('_id'));
+                }
+              }
+            }
+          );
+        });
+      } else {
+        Origin.trigger('editor:fetchData');
+      }
+    },
+
+    createModel: function (type) {
+      var model = false;
+      switch (type) {
+        case 'articles':
+          model = new EditorArticleModel();
+          break;
+        case 'blocks':
+          model = new EditorBlockModel();
+          break;
+        case 'components':
+          break;
+      }
+      return model;
     },
 
     renderCurrentEditorView: function() {

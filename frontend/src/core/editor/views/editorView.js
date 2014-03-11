@@ -121,13 +121,14 @@ define(function(require){
       clipboard.set('referencesId', model.get('_id')); 
       clipboard.set('referenceType', model.get('_type'));
 
-      clipboard.set(model.get('_type'), [model.attributes]);
-
       switch (model.get('_type')) {
         case 'article':
+          clipboard.set('referenceType', 'articles');
+
           var blocks = model.getChildren();
           var components = [];
-          clipboard.set('block', blocks);
+          clipboard.set('articles', [model.attributes]);
+          clipboard.set('blocks', blocks);
 
           blocks.each(function(block){
             if(block.getChildren()) {
@@ -135,11 +136,12 @@ define(function(require){
             }
           });
 
-          clipboard.set('component', components);
+          clipboard.set('components', components);
           break;
 
         case 'block':
-          clipboard.set('component', model.getChildren());
+          clipboard.set('blocks', [model.attributes]);
+          clipboard.set('components', model.getChildren());
           break;
       }
 
@@ -149,13 +151,76 @@ define(function(require){
           },
           success: function() {
             alert('Clipboard data saved');
+            Origin.editor.clipboard.fetch({reset:true});
           }
         }
       );
     },
+
+    createBlock: function(block) {
+      var newBlockModel = new EditorBlockModel();
+
+      newBlockModel.save(block,
+      {
+        error: function() {
+          alert('error adding new block');
+        },
+        success: function() {
+          return this.get('_id');
+        }
+      });
+    },
+
+    createArticle: function(article) {
+      var newArticleModel = new EditorArticleModel();
+
+      newArticleModel.save(article,
+      {
+        error: function() {
+          alert('error adding new article');
+        },
+        success: function() {
+          var blocks = clipboard.get('block');
+          if (blocks) {
+            _.each(blocks, function(block) {
+              block._id = null;
+              block._parentId = newArticleModel.get('_id');
+              var b = thisView.createBlock(block);
+            });
+          }
+        }
+      });
+
+      return newArticleModel;
+    },
     
-    pasteFromClipboard: function() {
-      alert('TODO - pasting');
+    pasteFromClipboard: function(targetModel) {
+      var thisView = this;
+      var clipboard = Origin.editor.clipboard.models[0];
+
+      switch (targetModel.get('_type')) {
+        case 'page':
+          var articles = clipboard.get('articles');
+          if (articles) {
+            _.each(articles, function(article) {
+              article._id = null;
+              article._parentId = targetModel.get('_id');
+              var a = thisView.createArticle(article);
+              Origin.trigger('editor:fetchData');
+            });
+          }
+          break;
+        case 'block':
+          break;
+        //@TODO: Add components, content objects
+      }
+      
+    },
+
+    clearClipboard: function() {
+      var clipboard = new EditorClipboardModel({'referencesId':'5318853f6daf89d43a000008'});
+      clipboard.fetch();
+      clipboard.destroy();
     },
 
     renderCurrentEditorView: function() {

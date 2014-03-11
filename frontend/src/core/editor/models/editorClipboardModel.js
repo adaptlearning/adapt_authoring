@@ -4,7 +4,6 @@ define(function(require) {
 
     var EditorClipboardModel = EditorModel.extend({
         urlRoot: '/api/content/clipboard',
-        initialize: function() {}
     });
 
     return EditorClipboardModel;

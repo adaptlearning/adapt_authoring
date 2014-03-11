@@ -6,10 +6,6 @@ var ClipboardSchema = new Schema({
     "type" : "ObjectId",
     "required": true
   },
-  "referencesId" : {
-    "type" : "ObjectId",
-    "required" : true
-  },
   "referenceType" : {
     "type" : "String",
     "required" : true

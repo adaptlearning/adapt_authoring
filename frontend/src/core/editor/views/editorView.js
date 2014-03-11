@@ -118,31 +118,35 @@ define(function(require){
       
       clipboard = new EditorClipboardModel();
 
-      clipboard.set('referencesId', model.get('_id')); 
       clipboard.set('referenceType', model.constructor._siblings);
 
-      switch (model.get('_type')) {
-        case 'article':
-          var blocks = model.getChildren();
-          var components = [];
-          clipboard.set('articles', [model.attributes]);
-          clipboard.set('blocks', blocks);
+      clipboard.set(model.constructor._siblings, [model.attributes]);
+      
+      var hasChildren = (model.constructor._children.length == 0) ? false : true;
+      var currentModel = model;
 
-          blocks.each(function(block){
-            if(block.getChildren()) {
-              components.push(block.getChildren());
+      while (hasChildren) {
+        var children = currentModel.getChildren();
+
+        if (children) {
+          var childrenArray = [];
+
+          clipboard.set(children.models[0].constructor._siblings, children);
+
+          currentModel = children.models[0];
+
+          children.each(function(child) {
+            if (child.getChildren()) {
+              childrenArray.push(child.getChildren());
             }
           });
 
-          clipboard.set('components', components);
-          break;
-
-        case 'block':
-          clipboard.set('blocks', [model.attributes]);
-          clipboard.set('components', model.getChildren());
-          break;
+          hasChildren = (children.models[0].constructor._children.length == 0) ? false : true;
+        } else {
+          hasChildren = false;
+        }
       }
-
+  
       clipboard.save({_courseId: this.currentCourseId}, {
           error: function() {
             alert('An error occurred doing the save');

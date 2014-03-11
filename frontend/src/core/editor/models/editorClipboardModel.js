@@ -1,8 +1,8 @@
 define(function(require) {
 
-    var Backbone = require('backbone');
+    var EditorModel = require('coreJS/editor/models/editorModel');
 
-    var EditorClipboardModel = Backbone.Model.extend({
+    var EditorClipboardModel = EditorModel.extend({
         urlRoot: '/api/content/clipboard',
         initialize: function() {}
     });

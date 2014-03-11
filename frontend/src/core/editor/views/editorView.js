@@ -47,10 +47,11 @@ define(function(require){
 
     setupEditor: function() {
       this.loadedData = {
-        course:false,
-        contentObjects:false,
-        articles:false,
-        blocks:false
+        clipboard: false,
+        course: false,
+        contentObjects: false,
+        articles: false,
+        blocks: false
       };
 
       Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedData) {
@@ -99,6 +100,12 @@ define(function(require){
           url: '/api/content/block?_courseId=' + this.currentCourseId,
           _type: 'blocks'
       });
+
+      Origin.editor.clipboard = new EditorCollection(null, {
+        model: EditorClipboardModel,
+        url: '/api/content/clipboard?_courseId=' + this.currentCourseId + '&createdBy=' + Origin.sessionModel.get('id'),
+        _type: 'clipboard'
+      });
       
     },
 
@@ -106,6 +113,8 @@ define(function(require){
       Archive off the clipboard
     */
     addToClipboard: function(model) {
+    
+      _.invoke(Origin.editor.clipboard.models, 'destroy');
       
       clipboard = new EditorClipboardModel();
 

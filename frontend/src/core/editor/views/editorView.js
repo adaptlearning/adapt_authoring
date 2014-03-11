@@ -112,16 +112,26 @@ define(function(require){
       clipboard.set('referencesId', model.get('_id')); 
       clipboard.set('referenceType', model.get('_type'));
 
-      clipboard.set(model.get('_type'), model.serialize());
+      clipboard.set(model.get('_type'), [model.attributes]);
 
       switch (model.get('_type')) {
         case 'article':
           var blocks = model.getChildren();
-          clipboard.set('block', model.serializeChildren());
+          var components = [];
+          clipboard.set('block', blocks);
+
+          blocks.each(function(block){
+            if(block.getChildren()) {
+              components.push(block.getChildren());
+            }
+          });
+
+          clipboard.set('component', components);
           break;
 
         case 'block':
-          clipboard.set('component', model.serializeChildren());
+          clipboard.set('component', model.getChildren());
+          break;
       }
 
       clipboard.save({_courseId: this.currentCourseId}, {

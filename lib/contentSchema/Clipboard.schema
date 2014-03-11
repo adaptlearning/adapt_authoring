@@ -14,18 +14,10 @@ var ClipboardSchema = new Schema({
     "type" : "String",
     "required" : true
   },
-  "contentObject" : {
-    "type" : "String"
-  },
-  "article" : {
-    "type" : "String"
-  },
-  "block" : {
-    "type" : "String"
-  },
-  "component" : {
-    "type" : "String"
-  },
+  "contentObject" : [{}],
+  "article" : [{}],
+  "block" : [{}],
+  "component" : [{}],
   "createdAt" : {
     "type" : "Date"
   },

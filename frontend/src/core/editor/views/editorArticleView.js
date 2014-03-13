@@ -46,7 +46,7 @@ define(function(require){
         title: '{Your new Block}',
         body: '{Edit this text...}',
         _parentId: thisView.model.get('_id'),
-        _courseId: Origin.editor.course.get('_id')
+        _courseId: Origin.editor.data.course.get('_id')
       },
       {
           error: function() {

@@ -58,29 +58,4 @@ var ContentObjectSchema = new Schema({
   },
 });
 
-ContentObjectSchema.pre('save', function (next) {
- if (!this.createdAt) {
-    this.createdAt = new Date();
-  }
-  // if lastUpdated is for the course then it
-  // should be updated whenever any sub-element is updated
-  // but for now, make it just this object...
-  if (this.isNew) {
-    this.updatedAt = this.createdAt;
-    this.updatedBy = this.createdBy;
-  } else {
-    this.updatedAt = new Date();
-  }
-  this.markModified('updatedAt');
-  next();
-});
-
-
-ContentObjectSchema.pre('remove', function (next) {
-  if (this._type == 'page') {
-      console.log('removing ContentObject (Page) -- TODO remove Article models')  
-  }
-  next();
-});
-
 module.exports = ContentObjectSchema;

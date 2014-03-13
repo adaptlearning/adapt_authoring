@@ -1,5 +1,4 @@
 var origin = require('../'),
-    content = require('../lib/contentmanager'),
     database = require('../lib/database'),
     auth = require('../lib/auth'),
     usermanager = require('../lib/usermanager'),
@@ -12,6 +11,7 @@ describe('contentmanager', function() {
   var userId = false;
   var contentObj = {};
   var otherContentObj = {};
+  var content = app.contentmanager;
 
   before (function (done) {
     agent = request.agent(app.getServerURL());

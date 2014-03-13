@@ -2,9 +2,9 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
 
-  var EditorCourseEditView = OriginView.extend({
+  var EditorCourseEditView = EditorOriginView.extend({
     
     tagName: "div",
 
@@ -16,12 +16,12 @@ define(function(require) {
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'editorSidebar:removeEditView', this.remove);
+      this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
     },
 
     cancel: function(event) {
       event.preventDefault();
-      Origin.trigger('editorSidebar:removeEditView', this.model);
+      Origin.trigger('editorSidebarView:removeEditView', this.model);
     },
 
     saveData: function(event) {

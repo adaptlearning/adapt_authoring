@@ -3,24 +3,27 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
   var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorArticleView = require('coreJS/editor/views/editorArticleView');
   var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
 
-  var EditorPageView = OriginView.extend({
+  var EditorPageView = EditorOriginView.extend({
 
     tagName: 'div',
 
     className: 'page',
 
     events: {
-      'click a.add-article' : 'addArticle',
-      'click a.edit-page'   : 'loadPageEdit',
-      'click a.delete-page' : 'deletePage'
+      'click a.add-article'  : 'addArticle',
+      'click a.edit-page'    : 'loadPageEdit',
+      'click a.delete-page'  : 'deletePage',
+      'click .paste-article' : 'onPaste',
+      'click .paste-cancel'  : 'pasteCancel'
     },
 
     preRender: function() {
+      console.log('page view rendering');
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
     },
 
@@ -30,9 +33,8 @@ define(function(require){
 
     addArticleViews: function() {
       this.$('.page-articles').empty();
-      Origin.trigger('editorPage:removePageSubViews');
+      Origin.trigger('editorPageView:removePageSubViews');
       this.model.getChildren().each(function(article) {
-        console.log(article);
         this.$('.page-articles').append(new EditorArticleView({model: article}).$el);
       }, this);
     },
@@ -42,6 +44,7 @@ define(function(require){
       if (confirm('Are you sure you want to delete this page?')) {
         if (this.model.destroy()) {
           this.remove();
+          Origin.trigger('editorView:refreshPageList');
         }
       }
     },
@@ -64,15 +67,14 @@ define(function(require){
         success: function() {
           Origin.trigger('editorView:fetchData');
         }
-      }
-      );
+      });
     },
 
     loadPageEdit: function (event) {
       event.preventDefault();
       Origin.trigger('editorSidebarView:addEditView', this.model);
     }
-    
+
   }, {
     template: 'editorPage'
   });

@@ -73,4 +73,12 @@ ContentObjectSchema.pre('save', function (next) {
   next();
 });
 
+
+ContentObjectSchema.pre('remove', function (next) {
+  if (this._type == 'page') {
+      console.log('removing ContentObject (Page) -- TODO remove Article models')  
+  }
+  next();
+});
+
 module.exports = ContentObjectSchema;

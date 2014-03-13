@@ -1,9 +1,9 @@
 define(function(require) {
 
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
 
-  var EditorPageOverviewView = OriginView.extend({
+  var EditorPageOverviewView = EditorOriginView.extend({
       settings: {
         autoRender: false
       },
@@ -15,17 +15,14 @@ define(function(require) {
       },
 
       preRender: function() {
-
+        this.listenTo(Origin, 'editorView:refreshPageList', this.addPageViews);
         this.render();
         this.addPageViews();
       },
 
-      postRender: function() {
+      postRender: function() {},
 
-      },
-// loop through the contentObject in the model and build the list in the overview sidebar 
       addPageViews: function() {
-
         this.$('.page-list').empty();
 
         _.each(Origin.editor.data.contentObjects.models, function(contentObject) {
@@ -33,7 +30,6 @@ define(function(require) {
             this.$('.page-list').append('<li><a class="load-page" data-page-id="' + contentObject.get('_id') + '" href="#">' + contentObject.get('title') + '</a></li>');
           }
         }, this);
-
       },
 
       goToPage: function (event) {

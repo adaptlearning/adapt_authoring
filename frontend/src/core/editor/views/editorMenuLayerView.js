@@ -1,10 +1,10 @@
 define(function(require) {
 
 	var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
   var EditorContentObjectModel = require('coreJS/editor/models/editorContentObjectModel');
 
-  var EditorMenuLayerView = OriginView.extend({
+  var EditorMenuLayerView = EditorOriginView.extend({
 
       className: 'editor-menu-layer',
 

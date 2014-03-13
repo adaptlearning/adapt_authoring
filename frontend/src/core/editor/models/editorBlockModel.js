@@ -14,4 +14,4 @@ define(function(require) {
 
 	return EditorBlockModel;
 
-})
+});

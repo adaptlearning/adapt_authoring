@@ -3,22 +3,25 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
 
-  var EditorBlockView = OriginView.extend({
+  var EditorBlockView = EditorOriginView.extend({
 
     tagName: 'div',
 
     className: 'block',
 
     events: {
-      'click a.block-edit'   : 'loadPageEdit',
-      'click a.block-delete' : 'deleteBlock'
+      'click a.block-edit'     : 'loadPageEdit',
+      'click a.block-delete'   : 'deleteBlock',
+      'click .copy-block'      : 'onCopy',
+      'click .paste-component' : 'onPaste',
+      'click .paste-cancel'    : 'pasteCancel'
     },
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-      this.listenTo(Origin, 'editorPage:removePageSubViews', this.remove);
+      this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
     },
 
     deleteBlock: function(event) {

@@ -1,9 +1,9 @@
 define(function(require){
 
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
   
-  var EditorMenuItemView = OriginView.extend({
+  var EditorMenuItemView = EditorOriginView.extend({
 
     tagName: "div",
 

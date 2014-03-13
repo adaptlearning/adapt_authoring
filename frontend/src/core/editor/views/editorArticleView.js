@@ -3,11 +3,12 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
   var EditorBlockView = require('coreJS/editor/views/editorBlockView');
   var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
-  var EditorArticleView = OriginView.extend({
+
+  var EditorArticleView = EditorOriginView.extend({
 
     tagName: 'div',
 
@@ -16,12 +17,15 @@ define(function(require){
     events: {
       'click a.add-block'           : 'addBlock',
       'click a.page-article-edit'   : 'loadPageEdit',
-      'click a.page-article-delete' : 'deletePageArticle'
+      'click a.page-article-delete' : 'deletePageArticle',
+      'click .copy-article'         : 'onCopy',
+      'click .paste-block'          : 'onPaste',
+      'click .paste-cancel'         : 'pasteCancel'
     },
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-      this.listenTo(Origin, 'editorPage:removePageSubViews', this.remove);
+      this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
     },
 
     postRender: function() {
@@ -57,7 +61,7 @@ define(function(require){
           }
         });
     },
-    
+
     deletePageArticle: function(event) {
       event.preventDefault();
 

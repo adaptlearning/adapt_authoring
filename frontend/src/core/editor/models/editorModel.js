@@ -21,10 +21,14 @@ define(function(require) {
 
       getChildren: function() {
         
-        var children = Origin.editor.data[this.constructor._children].where({_parentId:this.get("_id")});
-        var childrenCollection = new Backbone.Collection(children);
-        // returns a collection of children
-        return childrenCollection;
+        if (Origin.editor.data[this.constructor._children]) {
+          var children = Origin.editor.data[this.constructor._children].where({_parentId:this.get("_id")});
+          var childrenCollection = new Backbone.Collection(children);
+
+          return childrenCollection;          
+        } else {
+          return null;
+        }
       },
 
       getParent: function() {
@@ -46,18 +50,27 @@ define(function(require) {
 
       },
 
-      getSiblings: function() {
-          if (this.get("_siblings")) return this.get("_siblings");
-          var siblings = _.reject(Origin.editor.data[this.constructor._siblings].where({
-              _parentId:this.get("_parentId")
-          }), _.bind(function(model){ 
-              return model.get('_id') == this.get('_id'); 
-          }, this));
-          var siblingsCollection = new Backbone.Collection(siblings);
-          this.set("_siblings", siblingsCollection);
-          
-          // returns a collection of siblings
-          return siblingsCollection;
+      getSiblings: function(returnMyself) {
+
+          if (returnMyself) {
+            var siblings = Origin.editor.data[this.constructor._siblings].where({_parentId:this.get("_parentId")});
+            var siblingsCollection = new Backbone.Collection(siblings);
+
+            return siblingsCollection;
+          } else {
+
+            if (this.get("_siblings")) return this.get("_siblings");
+            var siblings = _.reject(Origin.editor.data[this.constructor._siblings].where({
+                _parentId:this.get("_parentId")
+            }), _.bind(function(model){ 
+                return model.get('_id') == this.get('_id'); 
+            }, this));
+            var siblingsCollection = new Backbone.Collection(siblings);
+            this.set("_siblings", siblingsCollection);
+            
+            // returns a collection of siblings
+            return siblingsCollection;
+          }
       },
 
       setOnChildren: function(key, value, options) {
@@ -68,9 +81,55 @@ define(function(require) {
             
             this.getChildren().each(function(child){
                 child.setOnChildren.apply(child, args);
-            })
-            
+            });
+
+      },
+
+      /*getSiblings: function() {
+
+        
+      },*/
+
+      getPossibleAncestors: function() {
+        var map = {
+          'articles': {
+            'ancestor' : 'contentObjects',
+            'ancestorType': 'page' 
+          },
+          'blocks' : {
+            'ancestor' : 'articles',
+            'ancestorType' : 'article'
+          },
+          'components' : {
+            'ancestor' : 'blocks',
+            'ancestorType' : 'block'            
+          }
+        };
+
+        ancestors = Origin.editor.data[map[this.constructor._siblings].ancestor].where({_type: map[this.constructor._siblings].ancestorType});
+
+        var ancestorsCollection = new Backbone.Collection(ancestors);
+
+        return ancestorsCollection;
+      },
+
+      serialize: function() {
+        return JSON.stringify(this);
+      },
+
+      serializeChildren: function() {
+        var children = this.getChildren();
+        var serializedJson = '';
+
+        if (children) {
+          _.each(children.models, function(child) {
+            serializedJson += child.serialize();
+          });  
         }
+
+        return serializedJson;
+      }
+      
     });
 
     return EditorModel;

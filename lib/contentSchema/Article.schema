@@ -65,4 +65,9 @@ ArticleSchema.pre('save', function (next) {
   next();
 });
 
+ArticleSchema.pre('remove', function (next) {
+  console.log('removing Article -- TODO remove Block models')
+  next();
+});
+
 module.exports = ArticleSchema;

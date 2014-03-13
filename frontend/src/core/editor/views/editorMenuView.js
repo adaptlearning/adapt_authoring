@@ -1,12 +1,12 @@
 define(function(require){
 
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
   var EditorMenuItemView = require('coreJS/editor/views/editorMenuItemView');
   var EditorMenuLayerView = require('coreJS/editor/views/editorMenuLayerView');
   var EditorContentObjectModel = require('coreJS/editor/models/editorContentObjectModel');
   
-  var EditorMenuView = OriginView.extend({
+  var EditorMenuView = EditorOriginView.extend({
 
     tagName: "div",
 
@@ -66,7 +66,7 @@ define(function(require){
     },
 
     showMenuChildren: function(model) {
-      console.log('Show should this guys children', model);
+      console.log('Show should this dudes children', model);
     },
 
 // renders the views for the children of the current contentObject menu

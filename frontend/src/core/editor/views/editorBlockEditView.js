@@ -2,9 +2,9 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var EditorOriginView = require('coreJS/editor/views/editorOriginView');
 
-  var EditorBlockEditView = OriginView.extend({
+  var EditorBlockEditView = EditorOriginView.extend({
 
     tagName: "div",
 
@@ -16,7 +16,9 @@ define(function(require) {
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'editorSidebar:removeEditView', this.remove);
+      this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
+      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+      this.model.set('ancestors', this.model.getPossibleAncestors().toJSON());
     },
 
     inputBlur: function (event) {
@@ -25,7 +27,7 @@ define(function(require) {
 
     cancel: function (event) {
       event.preventDefault();
-      Origin.trigger('editorSidebar:removeEditView', this.model);
+      Origin.trigger('editorSidebarView:removeEditView', this.model);
     },
 
     saveBlock: function(event) {
@@ -34,6 +36,7 @@ define(function(require) {
       var model = this.model;
 
       model.save({
+        _parentId: this.$('.block-parent').find(':selected').val(),
         title: this.$('.block-title').val(),
         body: this.$('.block-body').val()},
         {
@@ -42,7 +45,6 @@ define(function(require) {
           },
           success: function() {
             Origin.trigger('editorView:fetchData');
-            //Backbone.history.navigate('/editor/page/' + model.get('_parentId'), {trigger: true});
           }
         }
       );

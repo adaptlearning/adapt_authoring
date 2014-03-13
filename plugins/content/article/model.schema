@@ -32,6 +32,11 @@ var ArticleSchema = new Schema({
     "type" : "String",
     "required" : false
   },
+  "_sortOrder" : {
+    "type": "Number",
+    "required": true,
+    "default": 1
+  },
   "createdAt" : {
     "type" : "Date"
   },

@@ -4,6 +4,7 @@
 
 var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
     configuration = require('../../../lib/configuration'),
+    database = require('../../../lib/database'),
     util = require('util'),
     path = require('path');
 

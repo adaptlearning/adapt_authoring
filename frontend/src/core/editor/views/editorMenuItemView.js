@@ -10,19 +10,62 @@ define(function(require){
     className: "editor-menu-item",
 
     events: {
-      'click .editor-menu-item-view-children':'showItemChildren',
-      'click .editor-menu-item-view':'viewPageItem',
-      'click .editor-menu-item-edit': 'editMenuItem',
-      'click .editor-menu-item-delete': 'deleteMenuItem'
+      'click':'onMenuItemClicked'
     },
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+      this.listenTo(this.model, 'change:_isSelected', this.toggleSelectedClass);
+      if (this.model.get('_isSelected')) {
+        this.$el.addClass('selected');
+      }
     },
 
-    viewPageItem: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
+    onMenuItemClicked: function() {
+
+      if (this.model.get('_isSelected')) {
+        return this.viewPageEditMode();
+      }
+
+      this.model.set('_isSelected', true);
+
+      Origin.trigger('editorView:storeSelectedItem', this.model.get('_id'));
+
+      this.showItemChildren();
+
+      this.setSiblingsSelectedState();
+
+      this.setChildrenSelectedState();
+
     },
+
+    toggleSelectedClass: function(model) {
+      if (model.get('_isSelected')) {
+        return this.$el.addClass('selected');
+      }
+      this.$el.removeClass('selected');
+    },
+
+    setSiblingsSelectedState: function() {
+      this.model.getSiblings().each(function(sibling) {
+        sibling.set('_isSelected', false);
+      })
+      console.log(this.model.getSiblings());
+    },
+
+    setChildrenSelectedState: function() {
+      this.model.setOnChildren('_isSelected', false);
+      this.$el.addClass('selected');
+    },
+
+    showItemChildren: function() {
+      console.log('Show item children');
+      Origin.trigger('editorMenuView:showMenuChildren', this.model);
+    },
+
+    viewPageEditMode: function() {
+      Origin.router.navigate('#/editor/' + Origin.editor.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
+    }/*,
 
     editMenuItem: function() {
       Origin.trigger('editorSidebarView:addEditView', this.model);
@@ -58,7 +101,7 @@ define(function(require){
         this.createStateArray(model.getParent()); 
       }
       return;
-    }
+    }*/
     
 
   }, {

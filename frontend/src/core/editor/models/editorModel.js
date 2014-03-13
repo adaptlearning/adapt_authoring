@@ -44,7 +44,33 @@ define(function(require) {
 
         return parent;
 
-      }
+      },
+
+      getSiblings: function() {
+          if (this.get("_siblings")) return this.get("_siblings");
+          var siblings = _.reject(Origin.editor[this.constructor._siblings].where({
+              _parentId:this.get("_parentId")
+          }), _.bind(function(model){ 
+              return model.get('_id') == this.get('_id'); 
+          }, this));
+          var siblingsCollection = new Backbone.Collection(siblings);
+          this.set("_siblings", siblingsCollection);
+          
+          // returns a collection of siblings
+          return siblingsCollection;
+      },
+
+      setOnChildren: function(key, value, options) {
+            
+            var args = arguments;
+            
+            if(!this._children) return;
+            
+            this.getChildren().each(function(child){
+                child.setOnChildren.apply(child, args);
+            })
+            
+        }
     });
 
     return EditorModel;

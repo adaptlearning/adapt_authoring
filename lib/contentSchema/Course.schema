@@ -49,6 +49,10 @@ var CourseSchema = new Schema({
   "updatedBy" : {
     "type" : "ObjectId"
   },
+  "_isSelected": {
+    "type":"Boolean",
+    "default":false
+  }
 });
 
 CourseSchema.pre('save', function (next) {

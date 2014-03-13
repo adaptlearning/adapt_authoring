@@ -106,7 +106,7 @@ define(function(require){
       
     },
   
-  //renders the editor view
+    //renders the editor view
     renderCurrentEditorView: function() {
       this.renderEditorSidebar();
 

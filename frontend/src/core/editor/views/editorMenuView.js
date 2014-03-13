@@ -18,16 +18,22 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-      this.listenTo(Origin, 'editorMenuView:showMenuChildren', this.showMenuChildren);
+      this.listenTo(Origin, 'editorView:storeSelectedItem', this.storeSelectedItem);
     },
 
     postRender: function() {
       this.setupMenuViews();
     },
 
-// renders menu layer view for each child of this contentObject renders menu item view
+    storeSelectedItem: function(id) {
+      Origin.editor.currentMenuState = id;
+      console.log(Origin);
+    },
+
+    // renders menu layer view for each child of this contentObject renders menu item view
     setupMenuViews: function() {
-      this.setupCourseViews();
+      //this.setupCourseViews();
+      console.log('setting up menu views and this is the currentMenuState', Origin.editor.currentMenuState);
       var layerOne = this.renderMenuLayerView(this.model.get('_id'), false);
       this.model.getChildren().each(function(contentObject) {
         layerOne.append(new EditorMenuItemView({
@@ -35,16 +41,16 @@ define(function(require){
         }).$el)
       }, this);
 
-
-// If there is a collection for currentMenuState 
-// render the view for the items in the collection
+/*
+      // If there is a collection for currentMenuState 
+      // render the view for the items in the collection
       if (Origin.editor.currentMenuState) {
         this.showMenuChildren(this.model);
         _.each(Origin.editor.currentMenuState, function(parentId) {
           this.showMenuChildren(Origin.editor.contentObjects.findWhere({_parentId:parentId}));
         }, this);
         
-      }
+      }*/
     },
 
     setupCourseViews: function() {
@@ -55,7 +61,7 @@ define(function(require){
 // loops through currentMenuState array 
 //     loops through contentObjects where _parentId === parentId
 //        renders new editorMenuView passing contentObject model
-    showMenuChildren: function(model) {
+/*    showMenuChildren: function(model) {
 
       console.log('showMenuChildren', model, Origin.editor.currentMenuState);
 
@@ -68,7 +74,7 @@ define(function(require){
         });
 
       }, this);
-    },
+    },*/
 
     renderMenuLayerView: function(parentId, isCourseObject) {
       var menuLayerView = new EditorMenuLayerView({_parentId:parentId, _isCourseObject: isCourseObject})

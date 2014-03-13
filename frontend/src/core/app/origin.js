@@ -14,6 +14,8 @@ define(function(require){
 
   Origin.editor = {};
 
+  Origin.editor.data = {};
+
   return Origin;
 
 });

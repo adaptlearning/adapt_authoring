@@ -28,7 +28,7 @@ define(function(require) {
 
         this.$('.page-list').empty();
 
-        _.each(Origin.editor.contentObjects.models, function(contentObject) {
+        _.each(Origin.editor.data.contentObjects.models, function(contentObject) {
           if (contentObject.get('_type') == 'page') {
             this.$('.page-list').append('<li><a class="load-page" data-page-id="' + contentObject.get('_id') + '" href="#">' + contentObject.get('title') + '</a></li>');
           }
@@ -38,7 +38,7 @@ define(function(require) {
 
       goToPage: function (event) {
         event.preventDefault();
-        Backbone.history.navigate('/editor/' + Origin.editor.course.get('_id') + '/page/' + $(event.currentTarget).data('page-id'), {trigger: true});
+        Backbone.history.navigate('/editor/' + Origin.editor.data.course.get('_id') + '/page/' + $(event.currentTarget).data('page-id'), {trigger: true});
       }
 
     }, {

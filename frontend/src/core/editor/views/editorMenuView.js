@@ -19,6 +19,7 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorView:storeSelectedItem', this.storeSelectedItem);
+      this.listenTo(Origin, 'editorMenuView:showMenuChildren', this.showMenuChildren);
     },
 
     postRender: function() {
@@ -27,13 +28,20 @@ define(function(require){
 
     storeSelectedItem: function(id) {
       Origin.editor.currentMenuState = id;
-      console.log(Origin);
     },
 
     // renders menu layer view for each child of this contentObject renders menu item view
     setupMenuViews: function() {
       //this.setupCourseViews();
       console.log('setting up menu views and this is the currentMenuState', Origin.editor.currentMenuState);
+
+      // Find selected menu item
+      var currentSelectedMenuItem = Origin.editor.data.contentObjects.findWhere({_id: Origin.editor.currentMenuState});
+
+      console.log(currentSelectedMenuItem);
+      // Recurse upwards until the hit the course setting each one as selected
+
+      // Render selected items children
       var layerOne = this.renderMenuLayerView(this.model.get('_id'), false);
       this.model.getChildren().each(function(contentObject) {
         layerOne.append(new EditorMenuItemView({
@@ -55,6 +63,10 @@ define(function(require){
 
     setupCourseViews: function() {
       this.renderMenuLayerView(null, true).append(new EditorMenuItemView({model:this.model}).$el);
+    },
+
+    showMenuChildren: function(model) {
+      console.log('Show should this guys children', model);
     },
 
 // renders the views for the children of the current contentObject menu

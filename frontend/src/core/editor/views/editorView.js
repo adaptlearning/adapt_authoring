@@ -67,11 +67,8 @@ define(function(require){
 
       }, this);
 
-      if (Origin.editor.course) {
-        _.each(Origin.editor, function(object) {
-          if (_.isArray(object)) {
-            return;
-          }
+      if (Origin.editor.data.course) {
+        _.each(Origin.editor.data, function(object) {
           object.fetch({reset:true});
         })
       } else {
@@ -82,23 +79,23 @@ define(function(require){
     },
 
     setupEditorModels: function(editorModels) {
-      Origin.editor.course = new EditorCourseModel({_id:this.currentCourseId});
+      Origin.editor.data.course = new EditorCourseModel({_id:this.currentCourseId});
     },
 
     setupEditorCollections: function(editorCollections) {
-      Origin.editor.contentObjects = new EditorCollection(null, {
+      Origin.editor.data.contentObjects = new EditorCollection(null, {
           model: EditorContentObjectModel,
           url: '/api/content/contentobject?_courseId=' + this.currentCourseId,
           _type: 'contentObjects'
       });
       
-      Origin.editor.articles = new EditorCollection(null, {
+      Origin.editor.data.articles = new EditorCollection(null, {
           model: EditorArticleModel,
           url: '/api/content/article?_courseId=' + this.currentCourseId,
           _type: 'articles'
       });
       
-      Origin.editor.blocks = new EditorCollection(null, {
+      Origin.editor.data.blocks = new EditorCollection(null, {
           model: EditorBlockModel,
           url: '/api/content/block?_courseId=' + this.currentCourseId,
           _type: 'blocks'
@@ -130,13 +127,13 @@ define(function(require){
 
     renderEditorMenu: function() {
       this.$('.editor-inner').html(new EditorMenuView({
-        model: Origin.editor.course
+        model: Origin.editor.data.course
       }).$el);
     },
 
     renderEditorPage: function() {
       this.$('.editor-inner').html(new EditorPageView({
-        model: Origin.editor.contentObjects.findWhere({_id: this.currentPageId}),
+        model: Origin.editor.data.contentObjects.findWhere({_id: this.currentPageId}),
       }).$el);
     }
 

@@ -16,9 +16,7 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(this.model, 'change:_isSelected', this.toggleSelectedClass);
-      if (this.model.get('_isSelected')) {
-        this.$el.addClass('selected');
-      }
+      this.toggleSelectedClass(this.model);
     },
 
     onMenuItemClicked: function() {
@@ -29,6 +27,8 @@ define(function(require){
 
       this.model.set('_isSelected', true);
 
+      this.showEditorSidebar();
+
       Origin.trigger('editorView:storeSelectedItem', this.model.get('_id'));
 
       this.showItemChildren();
@@ -37,6 +37,10 @@ define(function(require){
 
       this.setChildrenSelectedState();
 
+    },
+
+    showEditorSidebar: function() {
+      Origin.trigger('editorSidebarView:addEditView', this.model);
     },
 
     toggleSelectedClass: function(model) {
@@ -64,7 +68,7 @@ define(function(require){
     },
 
     viewPageEditMode: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
     }/*,
 
     editMenuItem: function() {

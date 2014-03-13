@@ -41,7 +41,7 @@ define(function(require) {
 
         new EditorContentObjectModel({
           _parentId: this._parentId,
-          _courseId: Origin.editor.course.get('_id'),
+          _courseId: Origin.editor.data.course.get('_id'),
           title: 'Placeholder title',
           body: 'Placeholder body text',
           linkText: 'test',

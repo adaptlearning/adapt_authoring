@@ -9,7 +9,6 @@ define(function(require) {
             this._type = options._type;
             this.on('reset', this.loadedData, this);
             this.fetch({reset:true});
-            console.log('new collection created', this._type)
         },
         
         loadedData: function() {

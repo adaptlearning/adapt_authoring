@@ -21,7 +21,7 @@ define(function(require) {
 
       getChildren: function() {
         
-        var children = Origin.editor[this.constructor._children].where({_parentId:this.get("_id")});
+        var children = Origin.editor.data[this.constructor._children].where({_parentId:this.get("_id")});
         var childrenCollection = new Backbone.Collection(children);
         // returns a collection of children
         return childrenCollection;
@@ -33,13 +33,13 @@ define(function(require) {
         var currentParentId = this.get('_parentId');
 
         if (currentType === 'menu' || currentType === 'page') {
-          if (currentParentId === Origin.editor.course.get('_id')) {
-            parent = Origin.editor.course;
+          if (currentParentId === Origin.editor.data.course.get('_id')) {
+            parent = Origin.editor.data.course;
           } else {
-            parent = Origin.editor.contentObjects.findWhere({_id: currentParentId});
+            parent = Origin.editor.data.contentObjects.findWhere({_id: currentParentId});
           }
         } else if (currentType != 'course'){
-          parent = Origin.editor[this.constructor._parent].findWhere({_id: currentParentId});
+          parent = Origin.editor.data[this.constructor._parent].findWhere({_id: currentParentId});
         }
 
         return parent;
@@ -48,7 +48,7 @@ define(function(require) {
 
       getSiblings: function() {
           if (this.get("_siblings")) return this.get("_siblings");
-          var siblings = _.reject(Origin.editor[this.constructor._siblings].where({
+          var siblings = _.reject(Origin.editor.data[this.constructor._siblings].where({
               _parentId:this.get("_parentId")
           }), _.bind(function(model){ 
               return model.get('_id') == this.get('_id'); 

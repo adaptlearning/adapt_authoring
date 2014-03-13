@@ -31,11 +31,9 @@ define(function(require){
     },
 
     preRender: function(options) {
-      console.log('prerender of editor view');
       this.currentCourseId = options.currentCourseId;
       this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
-      console.log(this.currentCourseId, this.currentPageId, this.currentView);
       this.listenTo(Origin, 'editorView:fetchData', this.setupEditor);
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
@@ -213,8 +211,6 @@ define(function(require){
     },
 
     renderCurrentEditorView: function() {
-      this.renderEditorSidebar();
-      console.log('rendering current view');
       Origin.trigger('editorView:removeSubViews');
 
       console.log(this.currentView);

@@ -31,7 +31,7 @@ define(function(require) {
 // selects edit view depending on '_type' value
 		addEditingView: function(model) {
 			var type = model.get('_type');
-			var $sidebarForm = this.$('.editor-form');
+			var $sidebarForm = this.$('.editor-sidebar-form');
 			Origin.trigger('editorSidebarView:removeEditView');
 			
 			this.hideLoadingStatus();
@@ -43,6 +43,7 @@ define(function(require) {
 					$sidebarForm.append(new EditorCourseEditView({model: model}).$el);
 					break;
 				case 'page':
+					console.log($sidebarForm);
 					$sidebarForm.append(new EditorPageEditView({model: model}).$el);
 					break;
                 case 'menu':

@@ -15,6 +15,7 @@ define(function(require) {
       },
 
       preRender: function() {
+        this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
         this.listenTo(Origin, 'editorView:refreshPageList', this.addPageViews);
         this.render();
         this.addPageViews();

@@ -23,6 +23,7 @@ define(function(require) {
 		},
 
 	    addOverviewView: function() {
+	    	Origin.trigger('editorSidebarView:removeEditView');
 	      var overview = new EditorPageOverviewView();
 	      this.$('.editor-sidebar-overview').append(overview.$el);
 	    },

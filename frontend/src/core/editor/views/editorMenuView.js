@@ -33,7 +33,6 @@ define(function(require){
     // renders menu layer view for each child of this contentObject renders menu item view
     setupMenuViews: function() {
       //this.setupCourseViews();
-      console.log('setting up menu views and this is the currentMenuState', Origin.editor.currentMenuState);
 
       // Find selected menu item
       var currentSelectedMenuItem = Origin.editor.data.contentObjects.findWhere({_id: Origin.editor.currentMenuState});

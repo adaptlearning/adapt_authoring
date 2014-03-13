@@ -43,7 +43,6 @@ define(function(require) {
 					$sidebarForm.append(new EditorCourseEditView({model: model}).$el);
 					break;
 				case 'page':
-					console.log($sidebarForm);
 					$sidebarForm.append(new EditorPageEditView({model: model}).$el);
 					break;
                 case 'menu':

@@ -53,8 +53,7 @@ define(function(require){
     setSiblingsSelectedState: function() {
       this.model.getSiblings().each(function(sibling) {
         sibling.set('_isSelected', false);
-      })
-      console.log(this.model.getSiblings());
+      });
     },
 
     setChildrenSelectedState: function() {
@@ -63,7 +62,6 @@ define(function(require){
     },
 
     showItemChildren: function() {
-      console.log('Show item children');
       Origin.trigger('editorMenuView:showMenuChildren', this.model);
     },
 

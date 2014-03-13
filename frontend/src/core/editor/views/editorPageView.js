@@ -23,7 +23,6 @@ define(function(require){
     },
 
     preRender: function() {
-      console.log('page view rendering');
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
     },
 

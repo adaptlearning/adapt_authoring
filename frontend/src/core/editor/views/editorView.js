@@ -35,6 +35,7 @@ define(function(require){
       this.currentCourseId = options.currentCourseId;
       this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
+      console.log(this.currentCourseId, this.currentPageId, this.currentView);
       this.listenTo(Origin, 'editorView:fetchData', this.setupEditor);
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
@@ -105,7 +106,7 @@ define(function(require){
           _type: 'blocks'
       });
 
-      Origin.editor.clipboard = new EditorCollection(null, {
+      Origin.editor.data.clipboard = new EditorCollection(null, {
         model: EditorClipboardModel,
         url: '/api/content/clipboard?_courseId=' + this.currentCourseId + '&createdBy=' + Origin.sessionModel.get('id'),
         _type: 'clipboard'
@@ -118,7 +119,7 @@ define(function(require){
     */
     addToClipboard: function(model) {
     
-      _.invoke(Origin.editor.clipboard.models, 'destroy');
+      _.invoke(Origin.editor.data.clipboard.models, 'destroy');
       
       clipboard = new EditorClipboardModel();
 
@@ -156,14 +157,14 @@ define(function(require){
             alert('An error occurred doing the save');
           },
           success: function() {
-            Origin.editor.clipboard.fetch({reset:true});
+            Origin.editor.data.clipboard.fetch({reset:true});
           }
         }
       );
     },
 
     pasteFromClipboard: function(targetModel) {
-      var clipboard = Origin.editor.clipboard.models[0];
+      var clipboard = Origin.editor.data.clipboard.models[0];
       this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_id'));
     },
 

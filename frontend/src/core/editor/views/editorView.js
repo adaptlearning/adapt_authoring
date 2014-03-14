@@ -131,7 +131,7 @@ define(function(require){
       while (hasChildren) {
         var children = currentModel.getChildren();
 
-        if (children) {
+        if (children && children.length) {
           var childrenArray = [];
 
           clipboard.set(children.models[0].constructor._siblings, children);
@@ -180,7 +180,7 @@ define(function(require){
             item,
             {
               error: function() {
-                alert('error adding new thingy');
+                alert('An error occurred during paste');
               },
               success: function(model, response, options) {
                 if (Model.constructor._children) {

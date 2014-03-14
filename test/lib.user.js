@@ -1,6 +1,6 @@
 var path = require('path'),
     usermanager = require('../lib/usermanager.js'),
-    builder = require('../');
+    origin = require('../');
 
 describe('usermanager', function(){
   var user = {

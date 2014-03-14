@@ -1,6 +1,6 @@
 var fs = require('fs'),
     path = require('path'),
-    builder = require('../'),
+    origin = require('../'),
     configuration = require('../lib/configuration');
 
 describe('configuration', function() {

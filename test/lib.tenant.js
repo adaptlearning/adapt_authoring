@@ -1,7 +1,7 @@
 var path = require('path'),
     configuration = require('../lib/configuration'),
     tenantmanager = require('../lib/tenantmanager.js'),
-    builder = require('../');
+    origin = require('../');
 
 describe('tenant', function(){
   var tenantRec = {

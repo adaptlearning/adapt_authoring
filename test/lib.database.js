@@ -1,29 +1,29 @@
 var mongoose = require('mongoose'),
     should = require('should'),
-    builder = require('../');
+    origin = require('../');
 
 describe('database', function() {
 
   before(function(){
-    var app = builder();
+    var app = origin();
     var db = app.db;
     db.addModel('foo', { email: String });
   });
 
   it ('should allow me to insert a new object', function(done) {
-    var app = builder();
+    var app = origin();
     var db = app.db;
     db.create('foo', { email: "foo@bar.com" }, done);
   });
 
   it ('should allow me to retrieve that object', function(done) {
-    var app = builder();
+    var app = origin();
     var db = app.db;
     db.retrieve('foo', { email: "foo@bar.com" }, done);
   });
 
   it ('should allow me to update an object', function(done) {
-    var app = builder();
+    var app = origin();
     var db = app.db;
     db.retrieve('foo', { email: "foo@bar.com" }, function (error, results) {
       if (error) {
@@ -38,7 +38,7 @@ describe('database', function() {
   });
 
   it ('should allow me to delete an object', function(done) {
-    var app = builder();
+    var app = origin();
     var db = app.db;
     db.retrieve('foo', { email: "bar@foo.com" }, function (error, results) {
       if (error) {
@@ -53,7 +53,7 @@ describe('database', function() {
   });
 
   it ('should provide a connect session store', function (done) {
-    var app = builder();
+    var app = origin();
     var db = app.db;
     try {
       should.exist(db.getSessionStore());

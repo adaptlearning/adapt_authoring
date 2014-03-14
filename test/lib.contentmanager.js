@@ -1,4 +1,4 @@
-var builder = require('../'),
+var origin = require('../'),
     content = require('../lib/contentmanager'),
     database = require('../lib/database'),
     auth = require('../lib/auth'),
@@ -7,9 +7,11 @@ var builder = require('../'),
     should = require('should');
 
 describe('contentmanager', function() {
-  var app = builder();
+  var app = origin();
   var agent = {};
+  var userId = false;
   var contentObj = {};
+  var otherContentObj = {};
 
   before (function (done) {
     agent = request.agent(app.getServerURL());
@@ -24,7 +26,14 @@ describe('contentmanager', function() {
       })
       .expect(200)
       .expect('Content-Type', /json/)
-      .end(done);
+      .end(function (error, res) {
+        if (error) {
+          return done(error);
+        }
+
+        userId = res.body.id;
+        done();
+      });
   });
 
   after (function (done) {
@@ -35,7 +44,9 @@ describe('contentmanager', function() {
           return done(err);
         }
 
-        db.destroy('course', { _id: contentObj._id }, done);
+        db.destroy('course', { _id: contentObj._id }, function (error) {
+          db.destroy('course', { _id: otherContentObj._id }, done);
+        });
       });
     }
   });
@@ -46,6 +57,7 @@ describe('contentmanager', function() {
       .set('Accept', 'application/json')
       .send({
         title: 'some name',
+        body: 'lorem ispum',
         _tenantId : '0'
       })
       .expect(200)
@@ -57,6 +69,28 @@ describe('contentmanager', function() {
 
         contentObj = res.body;
         should.exist(contentObj._id);
+        return done();
+      });
+  });
+
+  it ('should allow me to create some more content', function (done) {
+    agent
+      .post('/api/content/course')
+      .set('Accept', 'application/json')
+      .send({
+        title: 'a title',
+        body: 'no body here',
+        _tenantId : '0'
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function (error, res) {
+        if (error) {
+          return done(error);
+        }
+
+        otherContentObj = res.body;
+        should.exist(otherContentObj._id);
         return done();
       });
   });
@@ -111,6 +145,103 @@ describe('contentmanager', function() {
         }
 
         res.body.length.should.be.above(0);
+        return done();
+      });
+  });
+
+  it ('should allow me to retrieve an array of content items by searching with a regex query', function (done) {
+    agent
+      .get('/api/content/course/query')
+      .set('Accept', 'application/json')
+      .send({
+        search: { body: { $regex: '^lorem' } }
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function (error, res) {
+        if (error) {
+          return done(error);
+        }
+
+        res.body.length.should.equal(1);
+        return done();
+      });
+  });
+
+  it ('should allow me to retrieve an array of content items with a field less-than-or-equal to another value', function (done) {
+    agent
+      .get('/api/content/course/query')
+      .set('Accept', 'application/json')
+      .send({
+        search: { createdAt: { $lte: new Date() } }
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function (error, res) {
+        if (error) {
+          return done(error);
+        }
+
+        res.body.length.should.be.above(0);
+        return done();
+      });
+  });
+
+  it ('should allow me to populate a subdocument and select only desired attributes', function (done) {
+    agent
+      .get('/api/content/course/query')
+      .set('Accept', 'application/json')
+      .send({
+        populate: { createdBy: [ 'email', '_id' ] }
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function (error, res) {
+        if (error) {
+          return done(error);
+        }
+
+        res.body.length.should.be.above(0);
+        res.body[0].createdBy._id.should.equal(userId);
+        return done();
+      });
+  });
+
+  it ('should allow me to sort a retrieved collection on a field in descending order', function (done) {
+    agent
+      .get('/api/content/course/query')
+      .set('Accept', 'application/json')
+      .send({
+        operators: { sort: { 'createdAt': -1 } }
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function (error, res) {
+        if (error) {
+          return done(error);
+        }
+
+        res.body.length.should.equal(2);
+        res.body[0].createdAt.should.be.above(res.body[1].createdAt);
+        return done();
+      });
+  });
+
+  it ('should allow me to limit the number of items retrieved from a collection', function (done) {
+    agent
+      .get('/api/content/course/query')
+      .set('Accept', 'application/json')
+      .send({
+        operators: { limit: 1 }
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function (error, res) {
+        if (error) {
+          return done(error);
+        }
+
+        res.body.length.should.equal(1);
         return done();
       });
   });

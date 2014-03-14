@@ -1,10 +1,10 @@
-var builder = require('../'),
+var origin = require('../'),
     assetmanager = require('../lib/assetmanager'),
     request = require('supertest'),
     should = require('should');
 
 describe ('assetmanager', function () {
-  var app = builder();
+  var app = origin();
   var agent = {};
   var assetId = false;
 

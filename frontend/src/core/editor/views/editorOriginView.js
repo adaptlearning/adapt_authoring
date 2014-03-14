@@ -7,7 +7,7 @@ define(function(require){
 
     initialize: function() {
       OriginView.prototype.initialize.apply(this, arguments);
-      this.listenTo(Origin, 'editor:pasteCancel', this.hidePasteZone);
+      this.listenTo(Origin, 'editorView:pasteCancel', this.hidePasteZone);
     },
 
     onCopy: function(event) {
@@ -15,14 +15,12 @@ define(function(require){
       Origin.trigger('editorView:copy', this.model);
       $('.paste-zone').addClass('display-none');
       $('.paste-zone-'+ this.model.get('_type')).removeClass('display-none');
-      console.log('copied ' + this.model.get('_type'));
     },
 
     onPaste: function(event) {
       event.preventDefault();
       Origin.trigger('editorView:paste', this.model);
       $('.paste-zone').addClass('display-none');
-      console.log('pasting to ' + this.model.get('_type'));
     },
 
     pasteCancel: function(event) {

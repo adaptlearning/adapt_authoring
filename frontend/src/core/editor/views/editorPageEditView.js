@@ -33,17 +33,19 @@ define(function(require) {
 
       var model = this.model;
 
-      model.save({
-        title: this.$('.page-title').val(),
-        body: this.$('.page-body').val(),
-        linkText: this.$('.page-linktext').val(),
-        graphic: {
-          alt: this.$('.page-graphic-alt').val(),
-          src: this.$('.page-graphic-src').val()
+      model.save(
+        {
+          title: this.$('.page-title').val(),
+          body: this.$('.page-body').val(),
+          linkText: this.$('.page-linktext').val(),
+          graphic: {
+            alt: this.$('.page-graphic-alt').val(),
+            src: this.$('.page-graphic-src').val()
+          },
+          _type: this.$(".page-type").val(),
+          _classes: this.$(".page-classes").val(),
+          tenantId: 'noidyet'
         },
-        _type: this.$(".page-type").val(),
-        _classes: this.$(".page-classes").val(),
-        tenantId: 'noidyet'},
         {
           error: function() {
             alert('An error occurred doing the save');

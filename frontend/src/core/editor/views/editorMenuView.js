@@ -41,12 +41,13 @@ define(function(require){
       // Recurse upwards until the hit the course setting each one as selected
 
       // Render selected items children
-      var layerOne = this.renderMenuLayerView(this.model.get('_id'), false);
+      this.showMenuChildren(this.model);
+      /*var layerOne = this.renderMenuLayerView(this.model.get('_id'), false);
       this.model.getChildren().each(function(contentObject) {
         layerOne.append(new EditorMenuItemView({
           model: contentObject
         }).$el)
-      }, this);
+      }, this);*/
 
 /*
       // If there is a collection for currentMenuState 
@@ -65,7 +66,15 @@ define(function(require){
     },
 
     showMenuChildren: function(model) {
-      console.log('Show should this dudes children', model);
+      console.log('model id', model.get('_id'));
+      console.log('model parent id', model.get('_parentId'));
+      console.log(model.getChildren());
+      var menuLayer = this.renderMenuLayerView(model.get('_id'), false);
+      model.getChildren().each(function(contentObject) {
+        menuLayer.append(new EditorMenuItemView({
+          model: contentObject
+        }).$el)
+      }, this);
     },
 
 // renders the views for the children of the current contentObject menu

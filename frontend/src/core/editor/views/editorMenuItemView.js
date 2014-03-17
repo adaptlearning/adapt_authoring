@@ -25,6 +25,8 @@ define(function(require){
         return this.viewPageEditMode();
       }
 
+      console.log(this.model);
+
       this.model.set('_isSelected', true);
 
       this.showEditorSidebar();

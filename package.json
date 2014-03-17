@@ -24,6 +24,7 @@
     "express": "3.4.0",
     "formidable": "~1.0.14",
     "jade": "~0.35.0",
+    "jsonschema-mapper": "~0.0.2",
     "node-gyp": "~0.12.1",
     "mkdirp": "0.3.5",
     "mongoose": "~3.6.20",

@@ -1,0 +1,23 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/contentSchema/trackedTenantObject.json",
+  "properties":{
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "alt" : {
+      "type" : "string",
+      "required" : true
+    },
+    "src" : {
+      "type" : "string",
+      "required" : true
+    },
+    "_courseId" : {
+      "type" : "objectid"
+    }
+  }
+}

@@ -21,6 +21,7 @@ define(function(require) {
           this.data._isCourseObject = options._isCourseObject;
         }
         this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+        this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
       },
 
   		postRender: function() {

@@ -54,6 +54,9 @@ var CourseSchema = new Schema({
   "_isSelected": {
     "type":"Boolean",
     "default":false
+  },
+  "currentMenuState": {
+    "type": "String"
   }
 });
 

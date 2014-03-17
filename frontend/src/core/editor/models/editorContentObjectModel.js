@@ -16,7 +16,10 @@ define(function(require) {
 		initialize: function() {
 			this.listenTo(this, 'sync', this.setupConstructor);
 			this.setupConstructor();
-			this.listenTo(this, 'change:_type', this.setChildrenType);
+			this.listenTo(this, 'change:_type', this.setupConstructor);
+			this.listenTo(this, 'change:_isSelected', function() {
+				console.log(this.get('title'), this.get('_isSelected'));
+			})
 		},
 
 		setupConstructor: function() {
@@ -24,15 +27,8 @@ define(function(require) {
 			if (this.get('_parentId') === Origin.editor.data.course.get('_id')) {
 				this._parent === 'course';
 			}
-			this.setChildrenType();
-		},
-
-		setChildrenType: function() {
-			console.log('my type', this.get('_type'));
 			if (this.get('_type') === 'menu') {
-				console.log('setChildrenType', this);
 				this._children = 'contentObjects';
-				console.log('my contentObject _children', this._children);
 			}
 		}
 	});

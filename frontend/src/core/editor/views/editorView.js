@@ -121,11 +121,11 @@ define(function(require){
       
       clipboard = new EditorClipboardModel();
 
-      clipboard.set('referenceType', model.constructor._siblings);
+      clipboard.set('referenceType', model._siblings);
 
-      clipboard.set(model.constructor._siblings, [model.attributes]);
+      clipboard.set(model._siblings, [model.attributes]);
       
-      var hasChildren = (model.constructor._children.length == 0) ? false : true;
+      var hasChildren = (model._children.length == 0) ? false : true;
       var currentModel = model;
 
       while (hasChildren) {
@@ -134,7 +134,7 @@ define(function(require){
         if (children) {
           var childrenArray = [];
 
-          clipboard.set(children.models[0].constructor._siblings, children);
+          clipboard.set(children.models[0]._siblings, children);
 
           currentModel = children.models[0];
 
@@ -144,7 +144,7 @@ define(function(require){
             }
           });
 
-          hasChildren = (children.models[0].constructor._children.length == 0) ? false : true;
+          hasChildren = (children.models[0]._children.length == 0) ? false : true;
         } else {
           hasChildren = false;
         }
@@ -183,8 +183,8 @@ define(function(require){
                 alert('error adding new thingy');
               },
               success: function(model, response, options) {
-                if (Model.constructor._children) {
-                    thisView.createRecursive(Model.constructor._children, clipboard, Model.get('_id'));
+                if (Model._children) {
+                    thisView.createRecursive(Model._children, clipboard, Model.get('_id'));
                 }
               }
             }
@@ -213,7 +213,6 @@ define(function(require){
     renderCurrentEditorView: function() {
       Origin.trigger('editorView:removeSubViews');
 
-      console.log(this.currentView);
       switch (this.currentView) {
         case 'menu':
           this.renderEditorMenu();

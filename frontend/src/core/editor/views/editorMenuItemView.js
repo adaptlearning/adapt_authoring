@@ -63,13 +63,17 @@ define(function(require){
       Origin.trigger('editorSidebarView:addEditView', this.model);
     },
 
-    setupClasses: function(model) {
+    setupClasses: function() {
+      var classString = '';
       if (this.model.get('_isSelected')) {
-        this.$el.addClass('selected');
+        classString += 'selected ';
       }
       if (this.model.get('_isExpanded')) {
-        this.$el.addClass('expanded');
+        classString += 'expanded ';
       }
+      classString += ('content-type-'+this.model.get('_type'));
+      this.$el.addClass(classString);
+
     },
 
     setParentSelectedState: function() {

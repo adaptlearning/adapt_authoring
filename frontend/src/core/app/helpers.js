@@ -1,6 +1,6 @@
 define(function(require){
-
     var Handlebars = require('handlebars');
+
     var helpers = {
         lowerCase: function(text) {
             return text.toLowerCase();
@@ -45,6 +45,9 @@ define(function(require){
             for (var i = 1; i <= n; ++i)
                 sum += block.fn(i);
             return sum;
+        },
+        t: function(str, options) {
+            return (window.polyglot != undefined ? window.polyglot.t(str, options) : str);
         }
     };
 

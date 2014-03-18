@@ -4,8 +4,17 @@ require([
     'coreJS/user/models/sessionModel',
     'coreJS/navigation/views/navigationView',
     'coreJS/app/helpers',
+    'polyglot',
     'templates'
-], function (Origin, Router, SessionModel, NavigationView, Helpers) {
+], function (Origin, Router, SessionModel, NavigationView, Helpers, Polyglot) {
+   var locale = localStorage.getItem('lang') || 'en';
+   // Gets the language file.
+  $.getJSON('lang/' + locale, function(data) {
+    // Instantiates polyglot with phrases.
+    window.polyglot = new Polyglot({phrases: data});
+
+  });
+
   	Origin.sessionModel = new SessionModel();
 
     Origin.router = new Router();

@@ -47,6 +47,9 @@ define(function(require){
             return sum;
         },
         t: function(str, options) {
+            for (var placeholder in options.hash) {
+              options[placeholder] = options.hash[placeholder];
+            }
             return (window.polyglot != undefined ? window.polyglot.t(str, options) : str);
         }
     };

@@ -1,7 +1,8 @@
 <div class="row logout">
   <div class="main">
       <div class="alert alert-warning">
-        {{t 'app.areyousureyouwantto'}}<a id="linkLogout" href="#user/login" class="alert-link">{{t 'app.logout'}}?</a>?
+        {{ t 'app.areyousureyouwantto' action=(lowerCase (t 'app.logout')) }}
+        <a id="linkLogout" href="#user/login" class="alert-link">{{t 'app.logout'}}</a>
       </div>
   </div>
 </div>

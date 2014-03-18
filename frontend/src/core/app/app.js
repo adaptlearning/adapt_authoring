@@ -7,9 +7,8 @@ require([
     'polyglot',
     'templates'
 ], function (Origin, Router, SessionModel, NavigationView, Helpers, Polyglot) {
-  localStorage.setItem('lang', 'en');
-   var locale = localStorage.getItem('lang') || 'en';
-   // Get the language file
+  var locale = localStorage.getItem('lang') || 'en';
+  // Get the language file
   $.getJSON('lang/' + locale, function(data) {
     // Instantiate Polyglot with phrases
     window.polyglot = new Polyglot({phrases: data});

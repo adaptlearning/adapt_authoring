@@ -7,23 +7,23 @@ require([
     'polyglot',
     'templates'
 ], function (Origin, Router, SessionModel, NavigationView, Helpers, Polyglot) {
+  localStorage.setItem('lang', 'en');
    var locale = localStorage.getItem('lang') || 'en';
-   // Gets the language file.
+   // Get the language file
   $.getJSON('lang/' + locale, function(data) {
-    // Instantiates polyglot with phrases.
+    // Instantiate Polyglot with phrases
     window.polyglot = new Polyglot({phrases: data});
-
   });
 
-  	Origin.sessionModel = new SessionModel();
+	Origin.sessionModel = new SessionModel();
 
-    Origin.router = new Router();
+  Origin.router = new Router();
 
-  	Origin.sessionModel.fetch({
-  		success: function(data) {
-        $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
-        Origin.initialize();
-  		}
-  	});
+	Origin.sessionModel.fetch({
+		success: function(data) {
+      $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
+      Origin.initialize();
+		}
+	});
     
 });

@@ -4,7 +4,7 @@
     {{#if isAuthenticated}}
     <h3>You are logged in, please go to the <a id="linkDash" href="/#dashboard">{{t 'app.dashboard'}}</a></h3>
     {{else}}
-    <h3>{{t 'app.pleaseloginor'}}&nbsp;<a id="linkRegister" href="/#user/register">{{t 'app.register'}}</a></h3>
+    <h3>{{t 'app.pleaseloginor'}}&nbsp;<a id="linkRegister" href="/#user/register">{{lowerCase (t 'app.register')}}</a></h3>
     {{/if}}
   </div>
 

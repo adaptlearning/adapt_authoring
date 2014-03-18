@@ -23,5 +23,6 @@
   "app.addarticle" : "Add article",
   "app.addblock" : "Add block",
   "app.addcomponent" : "Add component",
-  "app.editthistext" : "{Edit this text}" 
+  "app.editthistext" : "{Edit this text}",
+  "app.overview" : "Overview"
 }

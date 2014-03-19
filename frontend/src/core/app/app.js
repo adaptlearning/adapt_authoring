@@ -12,17 +12,16 @@ require([
   $.getJSON('lang/' + locale, function(data) {
     // Instantiate Polyglot with phrases
     window.polyglot = new Polyglot({phrases: data});
-  });
 
-	Origin.sessionModel = new SessionModel();
+    Origin.sessionModel = new SessionModel();
 
-  Origin.router = new Router();
+    Origin.router = new Router();
 
-	Origin.sessionModel.fetch({
-		success: function(data) {
-      $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
-      Origin.initialize();
-		}
-	});
-    
+    Origin.sessionModel.fetch({
+      success: function(data) {
+        $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
+        Origin.initialize();
+      }
+    });
+  });    
 });

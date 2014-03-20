@@ -7,7 +7,8 @@ require.config({
       handlebars: 'core/libraries/handlebars',
       bootstrap: 'core/libraries/bootstrap',
       coreJS: 'core',
-      templates: 'templates/templates'
+      templates: 'templates/templates',
+      polyglot: 'core/libraries/polyglot.min'
     },
     shim: {
       jquery: [
@@ -25,6 +26,9 @@ require.config({
       },
       handlebars: {
         exports: 'Handlebars'
+      },
+      polyglot: {
+        exports: 'Polyglot'
       }
     }
 });

@@ -1,0 +1,25 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/basicContent.schema",
+  "properties":{
+    "_classes": {
+      "type":"string",
+      "default":""
+    },
+    "_parentId": {
+      "type":"objectid",
+      "required":true
+    },
+    "_courseId": {
+      "type":"objectid",
+      "required":true
+    },
+    "_sortOrder": {
+      "type": "number",
+      "required": true,
+      "default": 1
+    }
+  }
+}

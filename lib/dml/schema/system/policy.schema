@@ -1,0 +1,21 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/trackedObject.schema",
+  "properties": {
+    "version": {
+      "type": "string",
+      "required": true,
+      "default": "2013-09-01"
+    },
+    "name": {
+      "type": "string"
+    },
+    "user": {
+      "type": "ObjectId",
+      "required": true
+    },
+    "statement": [ "policyStatement" ]
+  }
+}

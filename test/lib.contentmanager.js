@@ -58,7 +58,6 @@ describe('contentmanager', function() {
       .send({
         title: 'some name',
         body: 'lorem ispum',
-        _tenantId : '0'
       })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -80,7 +79,6 @@ describe('contentmanager', function() {
       .send({
         title: 'a title',
         body: 'no body here',
-        _tenantId : '0'
       })
       .expect(200)
       .expect('Content-Type', /json/)

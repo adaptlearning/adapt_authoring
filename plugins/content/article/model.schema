@@ -1,56 +1,8 @@
-var mongoose = require('mongoose');
-var Schema =  mongoose.Schema;
-
-var ArticleSchema = new Schema({
-  "_courseId" : {
-    "type" : "ObjectId",
-    "required": true
-  },
-  "_parentId" : {
-    "type" : "ObjectId"
-  },
-  "_type" : {
-    "type" : "String",
-    "default" : "article"
-  },
-  "_classes" : {
-    "type" : "String",
-    "default" : ""
-  },
-  "_isDeleted": {
-    "type": "Boolean",
-    "default": false
-  },
-  "_sortOrder" : {
-    type: "Number"
-  },
-  "title" : {
-    "type" : "String",
-    "required" : false
-  },
-  "body" : {
-    "type" : "String",
-    "required" : false
-  },
-  "_sortOrder" : {
-    "type": "Number",
-    "required": true,
-    "default": 1
-  },
-  "createdAt" : {
-    "type" : "Date"
-  },
-  "createdBy" : {
-    "type" : "ObjectId",
-    "ref": "user"
-  },
-  "updatedAt" : {
-    "type" : "Date"
-  },
-  "updatedBy" : {
-    "type" : "ObjectId",
-    "ref": "user"
-  },
-});
-
-module.exports = ArticleSchema;
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/content.schema",
+  "properties": {
+  }
+}

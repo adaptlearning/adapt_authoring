@@ -1,60 +1,28 @@
-var mongoose = require('mongoose');
-var Schema =  mongoose.Schema;
-
-var CourseSchema = new Schema({
-  "_tenantId" : {
-    "type" : "String",
-    "required" : true
-  },
-  "_type": {
-    "type": "String",
-    "default": "course"
-  },
-  "_isDeleted": {
-    "type": "Boolean",
-    "default": false
-  },
-  "title": {
-    "type": "String",
-    "required": true
-  },
-  "body": {
-    "type": "String"
-  },
-  "submit": {
-    "type": "String",
-    "default": "Submit"
-  },
-  "reset": {
-    "type": "String",
-    "default": "Reset"
-  },
-  "showCorrectAnswer": {
-    "type": "String",
-    "default": "Model Answer"
-  },
-  "hideCorrectAnswer": {
-    "type": "String",
-    "default": "My Answer"
-  },
-  "createdAt" : {
-    "type" : "Date"
-  },
-  "createdBy" : {
-    "type" : "ObjectId",
-    "ref": "user"
-  },
-  "updatedAt" : {
-    "type" : "Date"
-  },
-  "updatedBy" : {
-    "type" : "ObjectId",
-    "ref": "user"
-  },
-  "_isSelected": {
-    "type":"Boolean",
-    "default":false
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/basicContent.schema",
+  "properties": {
+    "submit": {
+      "type": "string",
+      "default": "Submit"
+    },
+    "reset": {
+      "type": "string",
+      "default": "Reset"
+    },
+    "showCorrectAnswer": {
+      "type": "string",
+      "default": "Model Answer"
+    },
+    "hideCorrectAnswer": {
+      "type": "string",
+      "default": "My Answer"
+    },
+    "_isSelected": {
+      "type":"boolean",
+      "default":false
+    }
   }
-});
-
-module.exports = CourseSchema;
+}

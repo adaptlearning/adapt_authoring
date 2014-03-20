@@ -1,0 +1,31 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/trackedObject.schema",
+  "properties": {
+    "type": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "type_name": {
+      "type": "string",
+      "required": true
+    },
+    "displayName": {
+      "type":"string"
+    },
+    "version": {
+      "type": "string",
+      "required": true
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

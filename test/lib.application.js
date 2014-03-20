@@ -12,11 +12,10 @@ var helper = {
     password: '',
     plainPassword: 'password',
     auth: 'local',
-    enabled: true
+    _isDeleted: false
   },
   testTenant: {
     name: "testTenant",
-    active: true
   }
 };
 
@@ -74,7 +73,7 @@ before(function (done) {
         // update helper obj
         helper.testTenant = tenant;
         // assign user to test tenant
-        helper.testUser.tenant = tenant._id;
+        helper.testUser._tenantId = tenant._id;
 
         createTestUser(helper.testUser, function (error, user) {
           if (error) {
@@ -83,7 +82,7 @@ before(function (done) {
 
           helper.testUser._id = user._id;
           permissions.createPolicy(helper.testUser._id, function (error, policy) {
-            permissions.addStatement(policy, ['create', 'read', 'update', 'delete'], permissions.buildResourceString(helper.testUser.tenant, '/*'), 'allow', function (error) {
+            permissions.addStatement(policy, ['create', 'read', 'update', 'delete'], permissions.buildResourceString(helper.testUser._tenantId, '/*'), 'allow', function (error) {
               if (error) {
                 return done(error);
               }

@@ -97,7 +97,7 @@ LocalAuth.prototype.registerUser = function (req, res, next) {
 
   this.internalRegisterUser(user, function (error, user) {
     if (error) {
-      next(error);
+      return next(error);
     }
 
     res.statusCode = 200;
@@ -122,7 +122,7 @@ LocalAuth.prototype.internalRegisterUser = function (user, cb) {
     user.auth = 'local';
     usermanager.createUser(user, function (error, user) {
       if (error) {
-        return next(error);
+        return cb(error);
       }
 
       // successfully registered

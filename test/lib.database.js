@@ -7,7 +7,7 @@ describe('database', function() {
   before(function(){
     var app = origin();
     var db = app.db;
-    db.addModel('foo', { email: String });
+    db.addModel('foo', { properties: { email: {  type: 'string' } }  });
   });
 
   it ('should allow me to insert a new object', function(done) {

@@ -16,6 +16,11 @@
     },
     "linkText" : {
       "type" : "string"
+    },
+    "_sortOrder": {
+      "type": "number",
+      "required": true,
+      "default": 1
     }
   }
 }

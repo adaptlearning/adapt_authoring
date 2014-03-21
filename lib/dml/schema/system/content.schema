@@ -15,11 +15,6 @@
     "_courseId": {
       "type":"objectid",
       "required":true
-    },
-    "_sortOrder": {
-      "type": "number",
-      "required": true,
-      "default": 1
     }
   }
 }

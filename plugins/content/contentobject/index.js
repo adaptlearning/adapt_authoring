@@ -5,7 +5,8 @@
 var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
     configuration = require('../../../lib/configuration'),
     util = require('util'),
-    path = require('path');
+    path = require('path')
+    async = require('async');
 
 function ContentObject () {
 }
@@ -58,12 +59,13 @@ ContentObject.prototype.updateSiblingSortOrder = function (data, next) {
  * @param {callback} cb
  */
 ContentObject.prototype.getMaxSortOrder = function (parentId, cb) {
-  var sortOrder = 1;
+  var sortOrder = 0;
   this.iterateSiblings(
     parentId,
     { operators: { sort: { _sortOrder: -1 }, limit: 1 } },
     function (doc, cb) {
       sortOrder = doc._sortOrder || sortOrder;
+      cb();
     },
     function (err) {
       if (err) {
@@ -72,6 +74,15 @@ ContentObject.prototype.getMaxSortOrder = function (parentId, cb) {
 
       return cb(null, sortOrder);
   });
+};
+
+/**
+ * returns the child type for this object
+ *
+ * @return string
+ */
+ContentObject.prototype.getChildType = function () {
+  return 'article';
 };
 
 /**
@@ -132,21 +143,36 @@ ContentObject.prototype.update = function (search, delta, next) {
 ContentObject.prototype.destroy = function (search, next) {
   var self = this;
 
-  // need to retrieve _parentId first!
+  // for sortOrder update we need to retrieve _parentId first!
   self.retrieve(search, function (error, docs) {
     if (error) {
       return next(error);
     }
 
-    search._parentId = docs.length && docs[0]._parentId;
-    ContentPlugin.prototype.destroy.call(self, search, function (error) {
-      // must delete _id!
-      delete search._id;
-      self.updateSiblingSortOrder(search, next);
-    });
+    // contentobjects use cascading delete
+    if (docs && docs.length) {
+      async.eachSeries(
+      docs,
+      function (doc, cb) {
+        self.destroyChildren(doc._id, function (error) {
+          if (error) {
+            return cb(error);
+          }
+
+          // then destroy self an update sibling sort order
+          ContentPlugin.prototype.destroy.call(self, {_id: doc._id}, function (error) {
+            // if we're retrieving and deleting a bunch of siblings, updating the sort order each
+            // time might be redundant.
+            self.updateSiblingSortOrder({_parentId:doc._parentId, _sortOrder:doc._sortOrder}, cb);
+          });
+        });
+      },
+      next);
+    } else {
+      next(null);
+    }
   });
 };
-
 
 /**
  * Module exports

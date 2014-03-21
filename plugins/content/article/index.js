@@ -35,6 +35,15 @@ ArticleContent.prototype.getModelName = function () {
 };
 
 /**
+ * returns the child type for this object
+ *
+ * @return string
+ */
+ArticleContent.prototype.getChildType = function () {
+  return 'block';
+};
+
+/**
  * Module exports
  *
  */

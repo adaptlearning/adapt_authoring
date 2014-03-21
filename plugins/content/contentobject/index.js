@@ -22,6 +22,133 @@ ContentObject.prototype.getModelName = function () {
 };
 
 /**
+ * updates sort order on siblings on create or update
+ *
+ * @param {object} data
+ * @param {next}
+ */
+ContentObject.prototype.updateSiblingSortOrder = function (data, next) {
+  var index = 1;
+  this.iterateSiblings(data._parentId, { operators: { sort: { _sortOrder: 1 } } }, function (doc, cb) {
+    if (index === data._sortOrder) {
+      ++index;
+    }
+
+    if (data._id && data._id.toString() === doc._id.toString()) {
+      // skip self
+      return cb(null);
+    }
+
+    doc._sortOrder = index;
+    doc.save(cb);
+    ++index;
+  },
+  function (err) {
+    if (err) {
+      return next(err);
+    }
+    next(null, data);
+  });
+};
+
+/**
+ * get's the maximum sort order between siblings
+ *
+ * @param {objectid} parentId
+ * @param {callback} cb
+ */
+ContentObject.prototype.getMaxSortOrder = function (parentId, cb) {
+  var sortOrder = 1;
+  this.iterateSiblings(
+    parentId,
+    { operators: { sort: { _sortOrder: -1 }, limit: 1 } },
+    function (doc, cb) {
+      sortOrder = doc._sortOrder || sortOrder;
+    },
+    function (err) {
+      if (err) {
+        return cb(err);
+      }
+
+      return cb(null, sortOrder);
+  });
+};
+
+/**
+ * Overrides base.create
+ * @param {object} data
+ * @param {callback} next
+ */
+ContentObject.prototype.create = function (data, next) {
+  var self = this;
+
+  // _sortOrder defaults to max of sibling sort order on insert, thereby appending
+  if (!data._sortOrder) {
+    return this.getMaxSortOrder(data._parentId, function (error, max) {
+      if (error) {
+        return error;
+      }
+
+      data._sortOrder = max+1;
+      return self.create(data, next);
+    });
+    // you shall not pass
+  }
+
+  ContentPlugin.prototype.create.call(self, data, function (error, doc) {
+    self.updateSiblingSortOrder(doc, next);
+  });
+};
+
+/**
+ * Overrides base.update
+ * @param {object} data
+ * @param {callback} next
+ */
+ContentObject.prototype.update = function (search, delta, next) {
+  var self = this;
+  ContentPlugin.prototype.update.call(self, search, delta, function (error) {
+    // in the case of update, it's easier if we defer sortOrder update until after update
+    if (!delta.hasOwnProperty('_sortOrder')) {
+      // _sortOrder is not changed
+      return next();
+    }
+
+    self.retrieve(search, function (error, docs) {
+      if (error) {
+        return next(error);
+      }
+
+      docs.length && self.updateSiblingSortOrder(docs[0], next);
+    });
+  });
+};
+
+/**
+ * Overrides base.destroy
+ * @param {object} search
+ * @param {callback} next
+ */
+ContentObject.prototype.destroy = function (search, next) {
+  var self = this;
+
+  // need to retrieve _parentId first!
+  self.retrieve(search, function (error, docs) {
+    if (error) {
+      return next(error);
+    }
+
+    search._parentId = docs.length && docs[0]._parentId;
+    ContentPlugin.prototype.destroy.call(self, search, function (error) {
+      // must delete _id!
+      delete search._id;
+      self.updateSiblingSortOrder(search, next);
+    });
+  });
+};
+
+
+/**
  * Module exports
  *
  */

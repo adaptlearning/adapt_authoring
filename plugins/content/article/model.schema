@@ -2,7 +2,7 @@
   "type": "object",
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
-  "$ref": "http://localhost/system/content.schema",
+  "$ref": "http://localhost/plugins/content/contentobject/model.schema",
   "properties": {
   }
 }

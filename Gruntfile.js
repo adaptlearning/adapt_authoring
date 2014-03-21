@@ -16,7 +16,10 @@ module.exports = function(grunt) {
             },
             {
               expand: true,
-              src: ['frontend/src/core/libraries/require.js', 'frontend/src/core/libraries/modernizr.js', 'frontend/src/core/libraries/polyglot.min.js'],
+              src: ['frontend/src/core/libraries/require.js', 
+                'frontend/src/core/libraries/modernizr.js', 
+                'frontend/src/core/libraries/polyglot.min.js', 
+                'frontend/src/core/libraries/jquery.jsoneditor.min.js'],
               dest: 'frontend/build/libraries/',
               filter: 'isFile',
               flatten: true

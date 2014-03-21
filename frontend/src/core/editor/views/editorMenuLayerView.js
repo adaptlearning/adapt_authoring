@@ -36,7 +36,7 @@ define(function(require) {
         return this;
       },
 
-      addMenuItem: function() {
+      addMenuItem: function(event) {
         event.preventDefault();
 
         new EditorContentObjectModel({

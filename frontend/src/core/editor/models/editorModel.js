@@ -73,22 +73,15 @@ define(function(require) {
           }
       },
 
-      setOnChildren: function(key, value, options) {
-            
-            var args = arguments;
-            
-            if(!this._children) return;
-            
-            this.getChildren().each(function(child){
-                child.setOnChildren.apply(child, args);
-            });
-
-      },
-
-      /*getSiblings: function() {
-
+      setOnChildren: function(key, value, options) {           
+        var args = arguments;
         
-      },*/
+        if(!this._children) return;
+        
+        this.getChildren().each(function(child){
+            child.setOnChildren.apply(child, args);
+        });
+      },
 
       getPossibleAncestors: function() {
         var map = {

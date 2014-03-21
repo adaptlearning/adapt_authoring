@@ -16,7 +16,8 @@ define(function(require){
       'click a.block-delete'   : 'deleteBlock',
       'click .copy-block'      : 'onCopy',
       'click .paste-component' : 'onPaste',
-      'click .paste-cancel'    : 'pasteCancel'
+      'click .paste-cancel'    : 'pasteCancel',
+      'click a.add-component'  : 'addComponent',
     },
 
     preRender: function() {
@@ -37,7 +38,29 @@ define(function(require){
     loadPageEdit: function (event) {
       event.preventDefault();
       Origin.trigger('editorSidebarView:addEditView', this.model);
-    }
+    },
+
+    addComponent: function(event) {
+      event.preventDefault();
+      alert('TODO - Add a component');
+      // var thisView = this;
+      // var newPageBlockModel = new EditorBlockModel();
+
+      // newPageBlockModel.save({
+      //   title: '{Your new component}',
+      //   body: '{Edit this text...}',
+      //   _parentId: thisView.model.get('_id'),
+      //   _courseId: Origin.editor.data.course.get('_id')
+      // },
+      // {
+      //     error: function() {
+      //       alert('error adding new block');
+      //     },
+      //     success: function() {
+      //       Origin.trigger('editorView:fetchData');
+      //     }
+      //   });
+    },
 
   }, {
     template: 'editorBlock'

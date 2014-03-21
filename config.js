@@ -8,7 +8,8 @@ require.config({
       bootstrap: 'core/libraries/bootstrap',
       coreJS: 'core',
       templates: 'templates/templates',
-      polyglot: 'core/libraries/polyglot.min'
+      polyglot: 'core/libraries/polyglot.min',
+      jsoneditor: 'core/libraries/jquery.jsoneditor.min'
     },
     shim: {
       jquery: [
@@ -29,6 +30,9 @@ require.config({
       },
       polyglot: {
         exports: 'Polyglot'
+      },
+      jsoneditor: {
+        exports: 'JsonEditor'
       }
     }
 });

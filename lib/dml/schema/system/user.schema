@@ -14,7 +14,8 @@
       "default": "none"
     },
     "password": {
-      "type": "string"
+      "type": "string",
+      "protect": true
     }
   }
 }

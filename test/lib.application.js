@@ -20,6 +20,9 @@ var helper = {
 };
 
 before(function (done) {
+  // this initialization appears to take a little longer
+  this.timeout(70000);
+
   // suppress all logging!
   logger.clear();
 

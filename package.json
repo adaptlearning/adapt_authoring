@@ -56,7 +56,7 @@
     "node": ">=0.10"
   },
   "scripts": {
-    "test": "make test"
+    "test": "mocha -R list"
   },
   "devDependencies": {
     "mocha": "~1.13.0",

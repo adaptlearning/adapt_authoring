@@ -8,8 +8,10 @@ define(function(require) {
   var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
   var LogoutView = require('coreJS/user/views/logoutView');
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
+  var ResetPasswordView = require('coreJS/user/views/resetPasswordView');
   var EditorView = require('coreJS/editor/views/editorView');
   var EditorModel = require('coreJS/editor/models/editorModel');
+  var UserPasswordResetModel = require('coreJS/user/models/userPasswordResetModel');
 
   var Router = Backbone.Router.extend({
 
@@ -18,7 +20,7 @@ define(function(require) {
       "user/login"                    : "login",
       "user/logout"                   : "logout",
       "user/forgot"                   : "forgotpassword",
-      "user/register"                 : "register",
+      "user/reset/:token"             : "resetpassword",
       "user/profile"                  : "profile",
       "project/new"                   : "projectNew",
       "project/edit/:id"              : "projectEdit",
@@ -98,7 +100,13 @@ define(function(require) {
     },
 
     forgotpassword: function() {
-      this.createView(false, new ForgotPasswordView());
+      this.createView(false, new ForgotPasswordView({model: Origin.sessionModel}));
+    },
+
+    resetpassword: function(token) {
+      var userPasswordResetModel = new UserPasswordResetModel({token: token});
+      userPasswordResetModel.fetch();
+      this.createView(false, new ResetPasswordView({model: userPasswordResetModel}));
     },
 
     dashboard: function() {

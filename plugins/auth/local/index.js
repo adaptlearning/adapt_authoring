@@ -129,7 +129,100 @@ LocalAuth.prototype.internalRegisterUser = function (user, cb) {
       return cb(null, user);
     });
   });
-}
+};
+
+LocalAuth.prototype.resetPassword = function (req, res, next) {
+  var user = {
+    id: req.body.user,
+    password: req.body.password,
+    token: req.body.token
+  };
+
+  this.internalResetPassword(user, function (error, user) {
+    if (error) {
+      return next(error);
+    }
+
+    res.statusCode = 200;
+    return res.json({ success: true });
+
+  });
+};
+
+LocalAuth.prototype.internalResetPassword = function (user, cb) {
+  if (!user.id || !user.password) {
+    return cb(new auth.errors.UserResetPasswordError('email and password are required!'));
+  }
+
+  // Update user details with hashed password
+  auth.hashPassword(user.password, function (error, hash) {
+    if (error) {
+      return cb(error);
+    }
+
+    user.password = hash;
+
+    usermanager.resetUserPassword(user, function (error, user) {
+      if (error) {
+        return next(error);
+      }
+
+      // Remove reset request
+      usermanager.deleteUserPasswordReset({user:user.id}, function (error, user) {
+        if (error) {
+          return cb(error);
+        }
+        //Request deleted, password successfully reset
+        return cb(null, user);
+      });
+    });
+  });
+};
+
+LocalAuth.prototype.generateResetToken = function (req, res, next) {
+  var user = {
+    email: req.body.email,
+    ipAddress: req.connection.remoteAddress
+  };
+
+  this.internalGenerateResetToken(user, function (error, user) {
+    if (error) {
+      return next(error);
+    }
+
+    res.statusCode = 200;
+    return res.json({ success: true });
+
+  });
+};
+
+LocalAuth.prototype.internalGenerateResetToken = function (user, cb) {
+  if (!user.email) {
+    return cb(new auth.errors.UserGenerateTokenError('email is required!'));
+  }
+
+  auth.createToken(function (error, token) {
+    if (error) {
+      return cb(error);
+    }
+
+    var userReset = {
+      email: user.email,
+      token: token,
+      tokenCreated: new Date(),
+      ipAddress: user.ipAddress
+    };
+
+    usermanager.createUserPasswordReset(userReset, function (error, user) {
+      if (error) {
+        return cb(error);
+      }
+
+      // Success
+      return cb(null, user);
+    });
+  });
+};
 
 // module exports
 exports = module.exports = LocalAuth;

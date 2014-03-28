@@ -1,7 +1,7 @@
 {
   "app.rememberme": "Remember me",
   "app.usernameoremail" : "Username or email",
-  "app.forgotpassword" : "Forgot password?",
+  "app.forgotpassword" : "Forgot password",
   "app.password" : "Password",
   "app.login" : "Login",
   "app.logout" : "Logout",
@@ -24,5 +24,13 @@
   "app.addblock" : "Add block",
   "app.addcomponent" : "Add component",
   "app.editthistext" : "{Edit this text}",
-  "app.overview" : "Overview"
+  "app.overview" : "Overview",
+  "app.resetpassword" : "Reset password",
+  "app.submit" : "Submit",
+  "app.newpassword" : "New password",
+  "app.forgotpasswordsuccess" : "Your request is being processed. If the details you provided match our records, you will receive further instructions via email.",
+  "app.forgotpassworderror" : "We could not process your request. Please try again.",
+  "app.resetpasswordsuccess" : "Your password has been reset successfully.",
+  "app.resetpassworderror" : "Your password could not be reset.",
+  "app.returnto" : "Return to"
 }

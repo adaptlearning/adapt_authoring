@@ -8,6 +8,13 @@ describe('usermanager', function(){
     _isDeleted: false
   };
 
+  var userReset = {
+    email: user.email,
+    token: "testtokentesttokentesttokentest1",
+    tokenCreated: new Date(),
+    ipAddress: '127.0.0.1'
+  };
+
   // ensure the user record is deleted
   after (function () {
     usermanager.retrieveUser({ email: user.email }, function (error, record) {
@@ -15,6 +22,17 @@ describe('usermanager', function(){
         done(error)
       } else if (record) {
         usermanager.deleteUser(user, function(error) {
+          if (error) {
+            throw error;
+          }
+        });
+      }
+    });
+    usermanager.retrieveUserPasswordReset({ token: userReset.token }, function (error, record) {
+      if (error) {
+        done(error)
+      } else if (record) {
+        usermanager.deleteUserPasswordReset({user:record.id}, function(error) {
           if (error) {
             throw error;
           }
@@ -52,6 +70,60 @@ describe('usermanager', function(){
             done(new Error('Failed to update user'));
           }
         });
+      }
+    });
+  });
+
+  it ('should allow the creation of a user password reset', function(done) {
+    usermanager.createUserPasswordReset(userReset, function (error) {
+      if (error) {
+        done(error);
+      } else {
+        // verify the user password reset was created
+        usermanager.retrieveUserPasswordReset({ token: userReset.token }, function (error, record) {
+          if (record) {
+            done();
+          } else {
+            done(new Error('Failed to create user password reset'));
+          }
+        });
+      }
+    });
+  });
+
+  it ('should allow the retrieval of a single user password reset', function(done) {
+    usermanager.retrieveUserPasswordReset({ token: userReset.token }, function (error, record) {
+      if (error) {
+        done(error);
+      } else if (record) {
+        done();
+      } else {
+        done(new Error('Failed to retrieve user password reset record'));
+      }
+    });
+  });
+
+  it ('should allow the deletion of a user password reset', function(done) {
+    usermanager.retrieveUser({ email: user.email }, function (error, record) {
+      if (error) {
+        done(error);
+      } else if (record) {
+        // Remove reset request
+        usermanager.deleteUserPasswordReset({user:record.id}, function (error, user) {
+          if (error) {
+            return done(error);
+          }
+          // Ensure reset request was deleted
+          usermanager.retrieveUserPasswordReset({ token: userReset.token }, function (error, resetRecord) {
+            if (!resetRecord) {
+              done();
+            } else {
+              done(new Error('Failed to delete user password reset'));
+            }
+          });
+        });
+      } else {
+        done(new Error('Failed to retrieve user record'));
       }
     });
   });

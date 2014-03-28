@@ -11,7 +11,9 @@ describe('auth', function() {
     passwordCipher: '',
     email: 'auth@foo.bar',
     userId: '',
-    userAgent: {}
+    userAgent: {},
+    token: "testtokentesttokentesttokentest1",
+    newPassword: 'newpassword'
   };
 
   before (function (done) {
@@ -25,6 +27,17 @@ describe('auth', function() {
     // cleanup
     if (helper.userId) {
       usermanager.deleteUser({ _id: helper.userId }, done);
+      usermanager.retrieveUserPasswordReset({ token: helper.token }, function (error, record) {
+        if (error) {
+          done(error)
+        } else if (record) {
+          usermanager.deleteUserPasswordReset({user:record.id}, function(error) {
+            if (error) {
+              done(error);
+            }
+          });
+        }
+      });
     } else {
       done();
     }
@@ -115,6 +128,73 @@ describe('auth', function() {
         should.not.exist(error);
         done();
       });
+  });
+
+  it ('should generate a token', function (done) {
+    auth.createToken(function (error, token) {
+      should.not.exist(error);
+      token.should.have.lengthOf(64);
+      done();
+    });
+  });
+
+  it ('should accept requests to create a token', function (done) {
+    helper.userAgent
+      .post('/api/createtoken')
+      .set('Accept', 'application/json')
+      .send({
+        'email': helper.email
+      })
+      .expect(200)
+      .end(function (error, res) {
+        should.not.exist(error);
+        done();
+      });
+  });
+
+  it ('should reset a users password', function (done) {
+    // Manually pass in a reset request
+    var userReset = {
+      email: helper.email,
+      token: helper.token,
+      tokenCreated: new Date(),
+      ipAddress: '127.0.0.1'
+    };
+
+    usermanager.createUserPasswordReset(userReset, function (error) {
+      if (error) {
+        done(error);
+      } else {
+        // Reset the users password
+        helper.userAgent
+        .post('/api/resetpassword')
+        .set('Accept', 'application/json')
+        .send({
+          'user': helper.userId,
+          'password': helper.newPassword,
+          'token': userReset.token
+        })
+        .expect(200)
+        .end(function (error, res) {
+          should.not.exist(error);
+
+          // Should allow user to login with the new password
+          helper.userAgent
+          .post('/api/login')
+          .set('Accept', 'application/json')
+          .send({
+            'email': helper.email,
+            'password': helper.newPassword
+          })
+          .expect(200)
+          .expect('Content-Type', /json/)
+          .end(function (error, res) {
+            should.not.exist(error);
+            done();
+          });
+        });
+      }
+    });
   });
 
 });

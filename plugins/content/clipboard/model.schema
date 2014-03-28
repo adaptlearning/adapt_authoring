@@ -1,0 +1,20 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/basicContent.schema",
+  "properties": {
+    "_courseId": {
+      "type": "objectid",
+      "required": true
+    },
+    "referenceType" : {
+      "type" : "string",
+      "required" : true
+    },
+    "contentObjects" : [{}],
+    "articles" : [{}],
+    "blocks" : [{}],
+    "components" : [{}]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "required":false,
+  "properties":{
+      "createdAt": {
+          "type":"date",
+          "id": "http://jsonschema.net/createdAt",
+          "required":false
+      },
+      "createdBy": {
+          "type":"objectid",
+          "id": "http://jsonschema.net/createdBy",
+          "required":false,
+          "ref": "user"
+      },
+      "_isDeleted": {
+          "type":"boolean",
+          "id": "http://jsonschema.net/deleted",
+          "default":false
+      },
+      "updatedAt": {
+          "type":"date",
+          "id": "http://jsonschema.net/updatedAt",
+          "required":false
+      },
+      "updatedBy": {
+          "type":"objectid",
+          "id": "http://jsonschema.net/updatedBy",
+          "required":false,
+          "ref": "user"
+      }
+  }
+}

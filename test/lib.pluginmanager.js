@@ -143,21 +143,19 @@ describe('pluginmanager', function(){
     helper.addPlugin();
     helper.pluginManager.getPlugin('output', 'fooPlugin', function (error, pluginInfo) {
       should.not.exist(error);
-      helper.pluginManager.installPlugin(pluginInfo, function (error) {
-        helper.pluginManager.uninstallPlugin(pluginInfo, function (error) {
-          if (error) {
-            done(error);
-          } else {
-            // confirm that the plugin was uninstalled
-            helper.pluginManager.isInstalled(pluginInfo, function (installed) {
-              if (installed) {
-                done(new Error('Failed to verify that plugin was uninstalled!'));
-              } else {
-                done();
-              }
-            });
-          }
-        });
+      helper.pluginManager.uninstallPlugin(pluginInfo, function (error) {
+        if (error) {
+          done(error);
+        } else {
+          // confirm that the plugin was uninstalled
+          helper.pluginManager.isInstalled(pluginInfo, function (installed) {
+            if (installed) {
+              done(new Error('Failed to verify that plugin was uninstalled!'));
+            } else {
+              done();
+            }
+          });
+        }
       });
     });
   });

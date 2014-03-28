@@ -1,0 +1,28 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/basicContent.schema",
+  "properties": {
+    "submit": {
+      "type": "string",
+      "default": "Submit"
+    },
+    "reset": {
+      "type": "string",
+      "default": "Reset"
+    },
+    "showCorrectAnswer": {
+      "type": "string",
+      "default": "Model Answer"
+    },
+    "hideCorrectAnswer": {
+      "type": "string",
+      "default": "My Answer"
+    },
+    "_isSelected": {
+      "type":"boolean",
+      "default":false
+    }
+  }
+}

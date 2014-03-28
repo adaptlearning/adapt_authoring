@@ -1,10 +1,10 @@
 var origin = require('../'),
-    content = require('../lib/contentmanager'),
     database = require('../lib/database'),
     auth = require('../lib/auth'),
     usermanager = require('../lib/usermanager'),
     request = require('supertest'),
-    should = require('should');
+    should = require('should'),
+    async = require('async');
 
 describe('contentmanager', function() {
   var app = origin();
@@ -12,6 +12,7 @@ describe('contentmanager', function() {
   var userId = false;
   var contentObj = {};
   var otherContentObj = {};
+  var content = app.contentmanager;
 
   before (function (done) {
     agent = request.agent(app.getServerURL());
@@ -58,7 +59,6 @@ describe('contentmanager', function() {
       .send({
         title: 'some name',
         body: 'lorem ispum',
-        _tenantId : '0'
       })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -80,7 +80,6 @@ describe('contentmanager', function() {
       .send({
         title: 'a title',
         body: 'no body here',
-        _tenantId : '0'
       })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -263,6 +262,53 @@ describe('contentmanager', function() {
         res.body.success.should.be.true;
         return done();
       });
+  });
+
+  it ('should allow cascading deletes for content that supports it (course/contentobject/article)', function (done) {
+    var pageContent = false; // will retain our contentobject _id for assertion
+    async.series([
+      function (next) {
+        agent
+          .post('/api/content/contentobject')
+          .set('Accept', 'application/json')
+          .send({
+            _parentId: contentObj._id,
+            _courseId: contentObj._id,
+            title: "A Page",
+            body: "A Page Body"
+          })
+          .expect(200)
+          .expect('Content-Type', /json/)
+          .end(function (error, res) {
+            // retain id
+            should.exist(res.body._id);
+            pageContent = res.body;
+            return next(null);
+          });
+      },
+      function (next) {
+        // delete the course
+        agent
+          .del('/api/content/course/' + contentObj._id)
+          .set('Accept', 'application/json')
+          .send()
+          .expect(200)
+          .end(function (res) {
+            return next(null);
+          });
+      },
+      function (next) {
+        // check that the pageContent was also deleted
+        agent
+          .get('/api/content/contentobject/' + pageContent._id)
+          .send()
+          .expect(404)
+          .end(function (res) {
+            return next(null);
+          });
+      }
+    ],
+    done);
   });
 
 });

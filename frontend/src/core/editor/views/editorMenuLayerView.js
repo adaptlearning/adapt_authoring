@@ -49,8 +49,7 @@ define(function(require) {
             alt: 'test',
             src: 'test'
           },
-          _type: 'page',
-          tenantId: 'noidyet'
+          _type: 'page'
         }).save(null, {
           error: function() {
             alert('An error occurred doing the save');
@@ -75,8 +74,8 @@ define(function(require) {
             alt: 'test',
             src: 'test'
           },
-          _type: 'page',
-          tenantId: 'noidyet'},
+          _type: 'page'
+          },
           {
             error: function() {
               alert('An error occurred doing the save');

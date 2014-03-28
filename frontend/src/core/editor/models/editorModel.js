@@ -11,8 +11,8 @@ define(function(require) {
         this.fetch();
       },
       loadedData: function() {
-        if (this.constructor._siblings) {
-          this._type = this.constructor._siblings;
+        if (this._siblings) {
+          this._type = this._siblings;
         } else {
           this._type = 'course';
         }
@@ -20,9 +20,8 @@ define(function(require) {
       },
 
       getChildren: function() {
-        
-        if (Origin.editor.data[this.constructor._children]) {
-          var children = Origin.editor.data[this.constructor._children].where({_parentId:this.get("_id")});
+        if (Origin.editor.data[this._children]) {
+          var children = Origin.editor.data[this._children].where({_parentId:this.get("_id")});
           var childrenCollection = new Backbone.Collection(children);
 
           return childrenCollection;          
@@ -43,7 +42,7 @@ define(function(require) {
             parent = Origin.editor.data.contentObjects.findWhere({_id: currentParentId});
           }
         } else if (currentType != 'course'){
-          parent = Origin.editor.data[this.constructor._parent].findWhere({_id: currentParentId});
+          parent = Origin.editor.data[this._parent].findWhere({_id: currentParentId});
         }
 
         return parent;
@@ -53,14 +52,14 @@ define(function(require) {
       getSiblings: function(returnMyself) {
 
           if (returnMyself) {
-            var siblings = Origin.editor.data[this.constructor._siblings].where({_parentId:this.get("_parentId")});
+            var siblings = Origin.editor.data[this._siblings].where({_parentId:this.get("_parentId")});
             var siblingsCollection = new Backbone.Collection(siblings);
 
             return siblingsCollection;
           } else {
 
             if (this.get("_siblings")) return this.get("_siblings");
-            var siblings = _.reject(Origin.editor.data[this.constructor._siblings].where({
+            var siblings = _.reject(Origin.editor.data[this._siblings].where({
                 _parentId:this.get("_parentId")
             }), _.bind(function(model){ 
                 return model.get('_id') == this.get('_id'); 
@@ -106,7 +105,7 @@ define(function(require) {
           }
         };
 
-        ancestors = Origin.editor.data[map[this.constructor._siblings].ancestor].where({_type: map[this.constructor._siblings].ancestorType});
+        ancestors = Origin.editor.data[map[this._siblings].ancestor].where({_type: map[this._siblings].ancestorType});
 
         var ancestorsCollection = new Backbone.Collection(ancestors);
 

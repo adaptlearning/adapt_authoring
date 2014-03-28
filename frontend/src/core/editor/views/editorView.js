@@ -13,6 +13,7 @@ define(function(require){
   var EditorContentObjectModel = require('coreJS/editor/models/editorContentObjectModel');
   var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
   var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
+  var EditorComponentModel = require('coreJS/editor/models/editorComponentModel');
   var EditorClipboardModel = require('coreJS/editor/models/editorClipboardModel');
 
   var EditorView = EditorOriginView.extend({
@@ -102,6 +103,12 @@ define(function(require){
           model: EditorBlockModel,
           url: '/api/content/block?_courseId=' + this.currentCourseId,
           _type: 'blocks'
+      });
+
+      Origin.editor.data.components = new EditorCollection(null, {
+          model: EditorComponentModel,
+          url: '/api/content/component?_courseId=' + this.currentCourseId,
+          _type: 'components'
       });
 
       Origin.editor.data.clipboard = new EditorCollection(null, {

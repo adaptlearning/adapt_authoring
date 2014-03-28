@@ -32,6 +32,7 @@ require.config({
         exports: 'Polyglot'
       },
       jsoneditor: {
+        deps: ['jquery'],
         exports: 'JsonEditor'
       }
     }

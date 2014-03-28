@@ -38,7 +38,9 @@ define(function(require) {
       model.save({
         _parentId: this.$('.block-parent').find(':selected').val(),
         title: this.$('.block-title').val(),
-        body: this.$('.block-body').val()},
+        body: this.$('.block-body').val()
+        
+        },
         {
           error: function() {
             alert('An error occurred doing the save');

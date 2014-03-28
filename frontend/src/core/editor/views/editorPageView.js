@@ -40,6 +40,7 @@ define(function(require){
 
     deletePage: function(event) {
       event.preventDefault();
+      
       if (confirm('Are you sure you want to delete this page?')) {
         if (this.model.destroy()) {
           this.remove();

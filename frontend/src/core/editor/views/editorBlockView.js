@@ -25,6 +25,10 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
+
+      // Add a componentTypes property to the model and call toJSON() on the
+      // collection so that the templates work
+      this.model.set('componentTypes', Origin.editor.componentTypes.toJSON());
     },
 
     postRender: function() {
@@ -57,6 +61,11 @@ define(function(require){
     addComponent: function(event) {
       event.preventDefault();
 
+      var selectedComponentType = $('.add-component-form-componentType').val();
+      var componentType = _.find(Origin.editor.componentTypes.models, function(type){
+        return type.get('name') == selectedComponentType; 
+      });
+
       var thisView = this;
       var newComponentModel = new EditorComponentModel();
 
@@ -65,39 +74,10 @@ define(function(require){
         body: '{Edit this text...}',
         _parentId: thisView.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
-        componentType: 'adapt-contrib-graphic',
-        version: 1.0
-        // properties: {
-        //   "title": "adapt-contrib-graphic",
-        //   "type": "object",
-        //   "id": "adapt-contrib-graphic",
-        //   "required" : true,
-        //   "properties": {
-        //     "graphic" : {
-        //       "title" : "graphic",
-        //       "type" : "object",
-        //       "id"  : "graphic",
-        //       "properties" : {
-        //         "alt" : {
-        //           "type" : "string"
-        //         },
-        //         "title" : {
-        //           "type" : "string"
-        //         },
-        //         "large" : {
-        //           "type" : "string"
-        //         },
-        //         "medium" : {
-        //           "type" : "string"
-        //         },
-        //         "small" : {
-        //           "type" : "string"
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
-
+        _type: 'component',
+        _componentType: componentType.get('_id'),
+        _component: 'slidingPuzzle',
+        version: componentType.get('version')
       },
       {
         error: function() {

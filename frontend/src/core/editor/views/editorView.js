@@ -15,6 +15,7 @@ define(function(require){
   var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
   var EditorComponentModel = require('coreJS/editor/models/editorComponentModel');
   var EditorClipboardModel = require('coreJS/editor/models/editorClipboardModel');
+  var EditorComponentTypeModel = require('coreJS/editor/models/editorComponentTypeModel');
 
   var EditorView = EditorOriginView.extend({
 
@@ -55,7 +56,8 @@ define(function(require){
         course: false,
         contentObjects: false,
         articles: false,
-        blocks: false
+        blocks: false,
+        components: false
       };
 
       Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedData) {
@@ -115,6 +117,12 @@ define(function(require){
         model: EditorClipboardModel,
         url: '/api/content/clipboard?_courseId=' + this.currentCourseId + '&createdBy=' + Origin.sessionModel.get('id'),
         _type: 'clipboard'
+      });
+
+      // Store the component types
+      Origin.editor.componentTypes = new EditorCollection(null, {
+        model : EditorComponentTypeModel,
+        url: '/api/componenttype'
       });
       
     },

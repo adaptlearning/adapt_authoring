@@ -14,7 +14,15 @@
   <div class="add-control">
     <a href="#" class="add-component">{{t 'app.addcomponent'}}</a>
   </div>
-
+  <div class="add-component-form">
+     <select class="add-component-form-componentType">
+      {{#each componentTypes}}
+      <option value="{{name}}">{{name}}</option>
+      {{else}}
+      <option value="">--</option>
+      {{/each}}
+    </select>
+  </div>
   <div class="paste-zone paste-zone-component component display-none">
     <a href="#" class="paste-component">{{t 'app.paste'}}</a>
     <a href="#" class="paste-cancel">{{t 'app.cancel'}}</a>

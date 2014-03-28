@@ -119,7 +119,7 @@ function initialize () {
             return next(err);
           }
 
-          return res.json(components);
+          return res.json(_.values(components));
         });
       });
     });
@@ -131,7 +131,7 @@ function initialize () {
           return next(err);
         }
 
-        db.retrieve('componenttype', { _id: req.param.id }, function (err, results) {
+        db.retrieve('componenttype', { _id: req.params.id }, function (err, results) {
           if (err) {
             return next(err);
           }
@@ -146,6 +146,7 @@ function initialize () {
         });
       });
     });
+
   });
 }
 

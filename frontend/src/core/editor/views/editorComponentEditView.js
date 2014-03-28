@@ -23,75 +23,22 @@ define(function(require) {
     },
 
     postRender: function() {
-      // $('#component-properties').jsoneditor( {no_additional_properties: true, 
-      //     startval: this.model.get('properties'),
-      //     no_additional_properties: true,
-      //     schema: {
-      //       "title": "adapt-contrib-graphic",
-      //       "type": "object",
-      //       "id": "adapt-contrib-graphic",
-      //       "required" : true,
-      //       "properties": {
-      //         "graphic" : {
-      //           "title" : "graphic",
-      //           "type" : "object",
-      //           "id"  : "graphic",
-      //           "properties" : {
-      //             "alt" : {
-      //               "type" : "string"
-      //             },
-      //             "title" : {
-      //               "type" : "string"
-      //             },
-      //             "large" : {
-      //               "type" : "string"
-      //             },
-      //             "medium" : {
-      //               "type" : "string"
-      //             },
-      //             "small" : {
-      //               "type" : "string"
-      //             }
-      //           }
-      //         }
-      //       }
-      //     }
-      //   });
+      // Get the schema
+      var thisComponentType = this.model.get('_componentType'); 
+      var componentType = _.find(Origin.editor.componentTypes.models, function(type){
+        return type.get('_id') == thisComponentType; 
+      });
+
+      var schema =  {
+        "type": "object",
+        "properties": componentType.get('properties')
+      };
 
       editor = new JSONEditor(document.getElementById('component-properties'), 
         {no_additional_properties: true, 
-          startval: this.model.get('properties'),
           no_additional_properties: true,
-          schema: {
-            "title": "adapt-contrib-graphic",
-            "type": "object",
-            "id": "adapt-contrib-graphic",
-            "required" : true,
-            "properties": {
-              "graphic" : {
-                "title" : "graphic",
-                "type" : "object",
-                "id"  : "graphic",
-                "properties" : {
-                  "alt" : {
-                    "type" : "string"
-                  },
-                  "title" : {
-                    "type" : "string"
-                  },
-                  "large" : {
-                    "type" : "string"
-                  },
-                  "medium" : {
-                    "type" : "string"
-                  },
-                  "small" : {
-                    "type" : "string"
-                  }
-                }
-              }
-            }
-          }
+          schema: schema,
+          startval: this.model.get('properties')       
         });
     },
 

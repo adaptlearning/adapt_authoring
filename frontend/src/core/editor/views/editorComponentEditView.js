@@ -3,8 +3,8 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('coreJS/editor/views/editorOriginView');
+  var JsonEditor = require('core/libraries/jquery.jsoneditor.min');
 
-  var editor;
   var EditorComponentEditView = EditorOriginView.extend({
 
     tagName: "div",
@@ -23,76 +23,40 @@ define(function(require) {
     },
 
     postRender: function() {
-      // $('#component-properties').jsoneditor( {no_additional_properties: true, 
-      //     startval: this.model.get('properties'),
-      //     no_additional_properties: true,
-      //     schema: {
-      //       "title": "adapt-contrib-graphic",
-      //       "type": "object",
-      //       "id": "adapt-contrib-graphic",
-      //       "required" : true,
-      //       "properties": {
-      //         "graphic" : {
-      //           "title" : "graphic",
-      //           "type" : "object",
-      //           "id"  : "graphic",
-      //           "properties" : {
-      //             "alt" : {
-      //               "type" : "string"
-      //             },
-      //             "title" : {
-      //               "type" : "string"
-      //             },
-      //             "large" : {
-      //               "type" : "string"
-      //             },
-      //             "medium" : {
-      //               "type" : "string"
-      //             },
-      //             "small" : {
-      //               "type" : "string"
-      //             }
-      //           }
-      //         }
-      //       }
-      //     }
-      //   });
-
-      editor = new JSONEditor(document.getElementById('component-properties'), 
-        {no_additional_properties: true, 
-          startval: this.model.get('properties'),
-          no_additional_properties: true,
-          schema: {
-            "title": "adapt-contrib-graphic",
-            "type": "object",
-            "id": "adapt-contrib-graphic",
-            "required" : true,
-            "properties": {
-              "graphic" : {
-                "title" : "graphic",
-                "type" : "object",
-                "id"  : "graphic",
-                "properties" : {
-                  "alt" : {
-                    "type" : "string"
-                  },
-                  "title" : {
-                    "type" : "string"
-                  },
-                  "large" : {
-                    "type" : "string"
-                  },
-                  "medium" : {
-                    "type" : "string"
-                  },
-                  "small" : {
-                    "type" : "string"
-                  }
+      this.$('.component-properties').jsoneditor({
+        startval: this.model.get('properties'),
+        no_additional_properties: true,
+        schema: {
+          "title": "adapt-contrib-graphic",
+          "type": "object",
+          "id": "adapt-contrib-graphic",
+          "required": true,
+          "properties": {
+            "graphic": {
+              "title": "graphic",
+              "type": "object",
+              "id": "graphic",
+              "properties": {
+                "alt": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "large": {
+                  "type": "string"
+                },
+                "medium": {
+                  "type": "string"
+                },
+                "small": {
+                  "type": "string"
                 }
               }
             }
           }
-        });
+        }
+      });
     },
 
     cancel: function (event) {
@@ -103,7 +67,7 @@ define(function(require) {
     saveComponent: function(event) {
       event.preventDefault();
 
-      var propertiesJson = editor.getValue();
+      var propertiesJson = this.$('.component-properties').jsoneditor('value');
 
       var model = this.model;
 

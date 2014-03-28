@@ -1,6 +1,6 @@
 {
   "registry": "http://adapt-bower-repository.herokuapp.com",
   "directory": "plugins/content/component/componentcache",
-  "_adaptSchemaFile":"component.schema",
+  "_adaptSchemaFile":"properties.schema",
   "_forceRefresh": false
 }

@@ -65,6 +65,30 @@ Component.prototype.onDatabaseCreated = function (db) {
 };
 
 /**
+ * compares semantic version numbers a vs b:
+ *
+ * @param {semver} a
+ * @param {semver} b
+ * @return 1 if a > b, -1 if a < b, 0 if equal
+ */
+function versionCompare (a, b) {
+  a = a && a.split('.');
+  b = b && b.split('.');
+
+  for (var i = 0; i < a.length, i < b.length; ++i) {
+    var aVal = parseInt(a[i], 10);
+    var bVal = parseInt(b[i], 10);
+    if (aVal > bVal) {
+      return 1;
+    } else if (bVal > aVal) {
+      return -1;
+    }
+  }
+
+  return 0;
+}
+
+/**
  * essential setup
  *
  * @api private
@@ -78,7 +102,25 @@ function initialize () {
         if (err) {
           return next(err);
         }
-        return res.json(results);
+
+        // only send the latest version of the components
+        var components = {};
+        async.eachSeries(results, function (item, cb) {
+          if ('object' !== typeof components[item.name]) {
+            components[item.name] = item;
+          } else if (versionCompare(components[item.name].version, item.version) < 0) {
+            components[item.name] = item;
+          }
+
+          cb(null);
+        },
+        function (err) {
+          if (err) {
+            return next(err);
+          }
+
+          return res.json(components);
+        });
       });
     });
 

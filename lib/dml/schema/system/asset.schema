@@ -1,0 +1,40 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/trackedObject.schema",
+  "properties": {
+    "title": {
+      "type": "string",
+      "required": "true"
+    },
+    "description": {
+      "type": "string",
+      "required": "true"
+    },
+    "path": {
+      "type": "string",
+      "required": "true"
+    },
+    "repository": {
+      "type": "string",
+      "required": "true"
+    },
+    "size": {
+      "type": "number"
+    },
+    "directory": {
+      "type": "string"
+    },
+    "isDirectory": {
+      "type": "boolean",
+      "default": "false"
+    },
+    "mimeType": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    }
+  }
+}

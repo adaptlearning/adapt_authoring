@@ -42,8 +42,8 @@ define(function(require) {
           src: this.$('.page-graphic-src').val()
         },
         _type: this.$(".page-type").val(),
-        _classes: this.$(".page-classes").val(),
-        tenantId: 'noidyet'},
+        _classes: this.$(".page-classes").val()
+        },
         {
           error: function() {
             alert('An error occurred doing the save');

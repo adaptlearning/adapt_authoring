@@ -8,7 +8,7 @@ define(function(require) {
     settings: {
       autoRender: false
     },
-    
+
     tagName: "div",
 
     className: "project",
@@ -31,7 +31,7 @@ define(function(require) {
 
     cancel: function (event) {
       event.preventDefault();
-      
+
       Backbone.history.navigate('/dashboard', {trigger: true});
     },
 
@@ -39,8 +39,8 @@ define(function(require) {
       event.preventDefault();
 
       this.model.save({title: this.$('#projectDetailTitle').val(),
-        body: this.$('#projectDetailDescription').val(),
-        _tenantId: 'noidyet'},
+        body: this.$('#projectDetailDescription').val()
+        },
         {
           error: function() {
             alert('An error occurred doing the save');

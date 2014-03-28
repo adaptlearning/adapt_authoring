@@ -7,3 +7,4 @@ conf/config.json
 /nbproject/
 /.settings
 /frontend/src/templates/templates.js
+/plugins/content/component/componentcache/

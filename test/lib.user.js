@@ -5,7 +5,7 @@ var path = require('path'),
 describe('usermanager', function(){
   var user = {
     email: "foo@bar.com",
-    active: true
+    _isDeleted: false
   };
 
   var userReset = {
@@ -58,13 +58,13 @@ describe('usermanager', function(){
   });
 
   it ('should allow updating of a user', function(done) {
-    usermanager.updateUser({ email: user.email }, { active: false } , function (error, result) {
+    usermanager.updateUser({ email: user.email }, { _isDeleted: true } , function (error, result) {
       if (error) {
         done(error);
       } else {
         // verify that the update occurred
         usermanager.retrieveUser({ email: user.email }, function (error, record) {
-          if (!record.active) { // it worked
+          if (record._isDeleted) { // it worked
             done();
           } else {
             done(new Error('Failed to update user'));

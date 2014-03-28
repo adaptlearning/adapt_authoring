@@ -140,7 +140,7 @@ LocalAuth.prototype.resetPassword = function (req, res, next) {
 
   this.internalResetPassword(user, function (error, user) {
     if (error) {
-      next(error);
+      return next(error);
     }
 
     res.statusCode = 200;
@@ -187,7 +187,7 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
 
   this.internalGenerateResetToken(user, function (error, user) {
     if (error) {
-      next(error);
+      return next(error);
     }
 
     res.statusCode = 200;

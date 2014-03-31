@@ -131,75 +131,91 @@ define(function(require){
       Archive off the clipboard
     */
     addToClipboard: function(model) {
-    
       _.invoke(Origin.editor.data.clipboard.models, 'destroy');
       
-      clipboard = new EditorClipboardModel();
+      var clipboard = new EditorClipboardModel();
 
       clipboard.set('referenceType', model.constructor._siblings);
 
-      clipboard.set(model.constructor._siblings, [model.attributes]);
-      
-      var hasChildren = (model.constructor._children.length == 0) ? false : true;
+      var hasChildren = (model.constructor._children && model.constructor._children.length == 0) ? false : true;
       var currentModel = model;
+      var items = [currentModel];
 
-      while (hasChildren) {
-        var children = currentModel.getChildren();
-
-        if (children) {
-          var childrenArray = [];
-
-          clipboard.set(children.models[0].constructor._siblings, children);
-
-          currentModel = children.models[0];
-
-          children.each(function(child) {
-            if (child.getChildren()) {
-              childrenArray.push(child.getChildren());
-            }
-          });
-
-          hasChildren = (children.models[0].constructor._children.length == 0) ? false : true;
-        } else {
-          hasChildren = false;
-        }
+      if (hasChildren) {
+        // Recusively push all children into an array
+        this.getAllChildren(currentModel, items);
       }
-  
-      clipboard.save({_courseId: this.currentCourseId}, {
-          error: function() {
-            alert('An error occurred doing the save');
-          },
-          success: function() {
-            Origin.editor.data.clipboard.fetch({reset:true});
-          }
+
+      // Sort items into their respective types
+      _.each(items, function(item) {
+        var matches = clipboard.get(item.constructor._siblings);
+        if (matches) {
+          matches.push(item);
+          clipboard.set(item.constructor._siblings, matches);
+        } else {
+          clipboard.set(item.constructor._siblings, [item]);
         }
-      );
+      });
+
+      clipboard.save({_courseId: this.currentCourseId}, {
+        error: function() {
+          alert('An error occurred doing the save');
+        },
+        success: function() {
+          Origin.editor.data.clipboard.fetch({reset:true});
+        }
+      });
+    },
+
+    getAllChildren: function (model, list) {
+      var that = this;
+      var children = model.getChildren();
+      if (children && children.models.length) {
+        children.each(function(child) {
+          list.push(child);
+          that.getAllChildren(child, list);
+        });
+      }
     },
 
     pasteFromClipboard: function(targetModel) {
       var clipboard = Origin.editor.data.clipboard.models[0];
-      this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_id'));
+      this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_id'), false);
     },
 
-    createRecursive: function (type, clipboard, parentId) {
+    createRecursive: function (type, clipboard, parentId, oldParentId) {
       var thisView = this;
-      var items = clipboard.get(type);
-      var Model = this.createModel(type);
+      var allitems = clipboard.get(type);
+      var items = [];
+
+      if (oldParentId) {
+        items = _.filter(allitems, function(item) {
+          return item._parentId == oldParentId;
+        });
+      } else {
+        items = allitems;
+      }
 
       if (items && items.length) {
-        _.each(items, function(item) {
-          delete item._id;
-          item._parentId = parentId;
+        _.each(items, function(childitem) {
+          var newModel = thisView.createModel(type);
+          var oldPid = childitem._id;
+          delete childitem._id;
 
-          Model.save(
-            item,
+          childitem._parentId = parentId;
+
+          newModel.save(
+            childitem,
             {
               error: function() {
-                alert('error adding new thingy');
+                alert('error during paste');
               },
               success: function(model, response, options) {
-                if (Model.constructor._children) {
-                    thisView.createRecursive(Model.constructor._children, clipboard, Model.get('_id'));
+                if (newModel.constructor._children) {
+                  thisView.createRecursive(newModel.constructor._children, clipboard, model.get('_id'), oldPid);
+                } else {
+                  // We're done pasting, no more children to process
+                  Origin.trigger('editorView:fetchData');
                 }
               }
             }
@@ -220,6 +236,7 @@ define(function(require){
           model = new EditorBlockModel();
           break;
         case 'components':
+          model = new EditorComponentModel();
           break;
       }
       return model;

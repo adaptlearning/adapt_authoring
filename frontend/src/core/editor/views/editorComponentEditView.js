@@ -3,8 +3,8 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('coreJS/editor/views/editorOriginView');
+  var JsonEditor = require('core/libraries/jquery.jsoneditor.min');
 
-  var editor;
   var EditorComponentEditView = EditorOriginView.extend({
 
     tagName: "div",
@@ -34,12 +34,19 @@ define(function(require) {
         "properties": componentType.get('properties')
       };
 
-      editor = new JSONEditor(document.getElementById('component-properties'), 
-        {no_additional_properties: true, 
-          no_additional_properties: true,
-          schema: schema,
-          startval: this.model.get('properties')       
-        });
+      // editor = new JSONEditor(document.getElementById('component-properties'), 
+      //   {no_additional_properties: true, 
+      //     no_additional_properties: true,
+      //     schema: schema,
+      //     startval: this.model.get('properties')       
+      //   });
+      this.$('.component-properties').jsoneditor({
+        no_additional_properties: true, 
+        no_additional_properties: true,
+        schema: schema,
+        startval: this.model.get('properties') 
+      });
+
     },
 
     cancel: function (event) {
@@ -50,7 +57,7 @@ define(function(require) {
     saveComponent: function(event) {
       event.preventDefault();
 
-      var propertiesJson = editor.getValue();
+      var propertiesJson = this.$('.component-properties').jsoneditor('value');
 
       var model = this.model;
 

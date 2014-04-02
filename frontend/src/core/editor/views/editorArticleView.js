@@ -65,7 +65,7 @@ define(function(require){
     deletePageArticle: function(event) {
       event.preventDefault();
 
-      if (confirm('Are you sure you want to delete this article?')) {
+      if (confirm(window.polyglot.t('app.confirmdeletearticle'))) {
         console.log('deleting article', this.model);
         this.model.destroy({
           success: function(success) {

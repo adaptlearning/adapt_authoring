@@ -46,7 +46,7 @@ define(function(require){
     deleteBlock: function(event) {
       event.preventDefault();
 
-      if (confirm('Are you sure you want to delete this block?')) {
+      if (confirm(window.polyglot.t('app.confirmdeleteblock'))) {
         if (this.model.destroy()) {
           this.remove();
         }

@@ -28,7 +28,7 @@ define(function(require){
     deleteComponent: function(event) {
       event.preventDefault();
 
-      if (confirm('Are you sure you want to delete this component?')) {
+      if (confirm(window.polyglot.t('app.confirmdeletecomponent'))) {
         if (this.model.destroy()) {
           this.remove();
         }

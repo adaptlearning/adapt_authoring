@@ -27,10 +27,12 @@ define(function(require){
 
     deleteComponent: function(event) {
       event.preventDefault();
+      var parentId = this.model.get('_parentId');
 
       if (confirm(window.polyglot.t('app.confirmdeletecomponent'))) {
         if (this.model.destroy()) {
           this.remove();
+          Origin.trigger('editorView:removeComponent:' + parentId);
         }
       }
     },

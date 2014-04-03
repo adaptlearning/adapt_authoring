@@ -51,6 +51,9 @@ define(function(require){
               options[placeholder] = options.hash[placeholder];
             }
             return (window.polyglot != undefined ? window.polyglot.t(str, options) : str);
+        },
+        stripHtml: function(html) {
+            return new Handlebars.SafeString(html);
         }
     };
 

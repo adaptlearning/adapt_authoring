@@ -35,5 +35,8 @@
   "app.returnto" : "Return to",
   "app.confirmdeletearticle" : "Are you sure you want to delete this article?",
   "app.confirmdeleteblock" : "Are you sure you want to delete this block?",
-  "app.confirmdeletecomponent" : "Are you sure you want to delete this component?"
+  "app.confirmdeletecomponent" : "Are you sure you want to delete this component?",
+  "app.layoutleft" : "Left",
+  "app.layoutright" : "Right",
+  "app.layoutfull" : "Full-width"
 }

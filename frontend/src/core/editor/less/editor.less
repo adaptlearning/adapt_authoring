@@ -89,11 +89,30 @@
     margin: 20px;
     position: relative;
 
+    &-left {
+      width: 48%;
+      float: left;
+      border: 1px solid peru;
+    }
+
+    &-right {
+      width: 48%;
+      float: right;
+      border: 1px solid peru;
+    }
+
+    &-full {
+      width: 100%;
+      border: 1px solid cadetblue;
+    }
+
+/*
     &-edit-panel {
       position: absolute;
       right: 0;
       top: 0;
     }
+    */
   }
 
   .paste-zone {
@@ -102,4 +121,9 @@
     background-color: #CECECE;
   }
 
+  .page-article-components:after {
+    clear: both;
+    content: "";
+    display: block;
+  }
 }

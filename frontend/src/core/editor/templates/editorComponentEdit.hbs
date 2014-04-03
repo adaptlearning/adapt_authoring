@@ -12,7 +12,7 @@
       <label for="component-parent">Parent</label>
       <select class="form-control component-parent">
         {{#each ancestors}}
-        <option value="{{_id}}" {{selected ../_parentId _id}}>{{title}}</option>
+        <option value="{{_id}}" {{selected ../_parentId _id}}>{{stripHtml title}}</option>
         {{/each}}
       </select>
     </div>

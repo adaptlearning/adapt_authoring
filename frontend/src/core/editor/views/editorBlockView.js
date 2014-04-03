@@ -25,14 +25,44 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
+      this.listenTo(Origin, 'editorView:removeComponent:' + this.model.get('_id'), this.handleRemovedComponent);
 
       // Add a componentTypes property to the model and call toJSON() on the
       // collection so that the templates work
       this.model.set('componentTypes', Origin.editor.componentTypes.toJSON());
+
+      this.evaluateComponents();
     },
 
     postRender: function() {
       this.addComponentViews();
+    },
+
+    evaluateComponents: function() {
+      var hasFullWidth = false;
+      var componentCount = 0; 
+
+      this.model.getChildren().each(function(component) {
+        this.$('.page-article-components').append(new EditorComponentView({model: component}).$el);
+
+        componentCount++;
+
+        if (component.get('_layout') == 'full') {
+          hasFullWidth = true;
+        }
+      }, this);
+
+      if (componentCount < 2 && hasFullWidth == false) {
+        this.model.set('allowAddComponent', true);
+      } else {
+        this.model.set('allowAddComponent', false);
+      }
+    },
+
+    handleRemovedComponent: function() {
+      this.evaluateComponents();
+
+      this.render();
     },
 
     addComponentViews: function() {
@@ -61,7 +91,10 @@ define(function(require){
     addComponent: function(event) {
       event.preventDefault();
 
-      var selectedComponentType = $('.add-component-form-componentType').val();
+      // Retrieve from UI
+      var layout = this.$('.add-component-form-layout').val();
+      var selectedComponentType = this.$('.add-component-form-componentType').val();
+      
       var componentType = _.find(Origin.editor.componentTypes.models, function(type){
         return type.get('name') == selectedComponentType; 
       });
@@ -77,6 +110,7 @@ define(function(require){
         _type: 'component',
         _componentType: componentType.get('_id'),
         _component: 'slidingPuzzle',
+        _layout: layout,
         version: componentType.get('version')
       },
       {

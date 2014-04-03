@@ -7,7 +7,7 @@ define(function(require){
 
     initialize: function() {
       OriginView.prototype.initialize.apply(this, arguments);
-      this.listenTo(Origin, 'editor:pasteCancel', this.hidePasteZone);
+      this.listenTo(Origin, 'editorView:pasteCancel', this.hidePasteZone);
     },
 
     onCopy: function(event) {
@@ -31,7 +31,8 @@ define(function(require){
     },
 
     hidePasteZone: function() {
-      this.$('.paste-zone').addClass('display-none');
+      // Purposeful global selector here
+      $('.paste-zone').addClass('display-none');
     }
 
   });

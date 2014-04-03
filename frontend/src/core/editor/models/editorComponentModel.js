@@ -8,7 +8,8 @@ define(function(require) {
     }, 
     {
         _parent: 'blocks',
-        _siblings:'components'
+        _siblings:'components',
+        _children: null
     });
 
     return EditorComponentModel;

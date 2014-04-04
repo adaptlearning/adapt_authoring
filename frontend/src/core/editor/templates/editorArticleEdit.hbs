@@ -21,7 +21,7 @@
         <label for="article-position">Position</label>
         <select class="form-control article-position">
           {{#counterFromOne 10}}
-          <option value="{{this}}" {{selected _sortOrder}}>{{this}}</option>
+          <option value="{{this}}" {{selected this ../_sortOrder}}>{{this}}</option>
           {{/counterFromOne}}
         </select>
       </div>

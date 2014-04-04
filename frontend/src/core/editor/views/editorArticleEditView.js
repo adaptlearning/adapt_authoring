@@ -39,16 +39,16 @@ define(function(require) {
         _parentId: this.$('.block-parent').find(':selected').val(),
         title: this.$('.article-title').val(),
         body: this.$('.article-body').val(),
-        _sortOrder: this.$(".article-position").filter(":selected").val()},
-        {
-          error: function() {
-            alert('An error occurred doing the save');
-          },
-          success: function() {
-            Origin.trigger('editorView:fetchData');
-          }
+        _sortOrder: this.$('.article-position').val()
+      },
+      {
+        error: function() {
+          alert('An error occurred doing the save');
+        },
+        success: function() {
+          Origin.trigger('editorView:fetchData');
         }
-      );
+      });
     }
 
   },

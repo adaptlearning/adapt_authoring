@@ -47,6 +47,27 @@ Component.prototype.getChildType = function () {
 };
 
 /**
+ * Overrides base.retrieve
+ *
+ * @param {object} search
+ * @param {object} options
+ * @param {callback} next
+ */
+Component.prototype.retrieve = function (search, options, next) {
+  // shuffle params
+  if ('function' === typeof options) {
+    next = options;
+    options = {};
+  }
+
+  if (!options.populate) {
+    options.populate = { '_componentType': ['displayName'] };
+  }
+
+  ContentPlugin.prototype.retrieve.call(this, search, options, next);
+};
+
+/**
  * add content schema to the database via this function
  *
  * @param {object} db

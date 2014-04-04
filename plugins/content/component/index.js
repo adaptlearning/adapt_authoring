@@ -241,6 +241,8 @@ function addComponentType(componentInfo, cb) {
         // add component type
         var componentType = {
           name: pkgMeta.name,
+          displayName: pkgMeta.displayName,
+          component: pkgMeta.component,
           version: pkgMeta.version,
           properties: schema.properties
         };
@@ -257,7 +259,15 @@ function addComponentType(componentInfo, cb) {
             return cb(null);
           }
 
-          db.create('componenttype', componentType, cb);
+          db.create('componenttype', componentType, function (err, results) {
+            if (err) {
+              // don't error out if we didn't add the component, just notify
+              logger.log('error', 'Failed to add component: ' + pkgMeta.name, err);
+              return cb(null);
+            }
+
+            return cb(null, results);
+          });
         });
       });
     });

@@ -87,7 +87,6 @@ define(function(require) {
         this.navigate('#/dashboard', {trigger: true});
       } else {
         this.redirectToLogin();
-        // this.navigate('#/user/login', {trigger: true});
       }
     },
 
@@ -110,6 +109,9 @@ define(function(require) {
     },
 
     dashboard: function() {
+      Origin.editor = {};
+      Origin.editor.data = {};
+      
       if (!this.isUserAuthenticated()) {
         this.navigate('#/user/login', {trigger: true});
       } else {

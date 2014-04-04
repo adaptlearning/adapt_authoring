@@ -116,8 +116,6 @@ define(function(require){
       var thisView = this;
       var newComponentModel = new EditorComponentModel();
 
-      // TODO componentType.get('_component')
-
       newComponentModel.save({
         title: window.polyglot.t('app.placeholdernewcomponent'),
         body: window.polyglot.t('app.placeholdereditthistext'),
@@ -125,7 +123,7 @@ define(function(require){
         _courseId: Origin.editor.data.course.get('_id'),
         _type: 'component',
         _componentType: componentType.get('_id'),
-        _component: 'slidingPuzzle',
+        _component: componentType.get('component'),
         _layout: layout,
         version: componentType.get('version')
       },

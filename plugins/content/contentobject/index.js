@@ -4,8 +4,10 @@
 
 var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
     configuration = require('../../../lib/configuration'),
+    database = require('../../../lib/database'),
+    logger = require('../../../lib/logger'),
     util = require('util'),
-    path = require('path')
+    path = require('path'),
     async = require('async');
 
 function ContentObject () {
@@ -108,6 +110,39 @@ ContentObject.prototype.create = function (data, next) {
 
   ContentPlugin.prototype.create.call(self, data, function (error, doc) {
     self.updateSiblingSortOrder(doc, next);
+  });
+};
+
+/**
+ * Overrides base.retrieve
+ *
+ * @param {object} search
+ * @param {object} options
+ * @param {callback} next
+ */
+ContentObject.prototype.retrieve = function (search, options, next) {
+  var self = this;
+
+  // must have a model name
+  if (!this.getModelName()) {
+    return next(new ContentTypeError('this.getModelName() must be set!'));
+  }
+
+  // Default sort by sortOrder asc
+  if (!options.operators) {
+    options.operators = {};
+  }
+
+  if (!options.operators.sort) {
+    options.operators.sort = { '_sortOrder': 1 };
+  }
+
+  database.getDatabase(function (error, db) {
+    if (error) {
+      return next(error);
+    }
+
+    return db.retrieve(self.getModelName(), search, options, next);
   });
 };
 

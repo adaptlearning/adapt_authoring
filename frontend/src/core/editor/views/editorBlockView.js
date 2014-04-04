@@ -39,24 +39,38 @@ define(function(require){
     },
 
     evaluateComponents: function() {
-      var hasFullWidth = false;
-      var componentCount = 0; 
+      var layoutOptions = [{
+        type: 'full',
+        name: 'app.layoutfull'
+      },
+      {
+        type: 'left',
+        name: 'app.layoutleft'
+      },
+      {
+        type: 'right',
+        name: 'app.layoutright'
+      }];
 
       this.model.getChildren().each(function(component) {
         this.$('.page-article-components').append(new EditorComponentView({model: component}).$el);
 
-        componentCount++;
-
-        if (component.get('_layout') == 'full') {
-          hasFullWidth = true;
+        switch (component.get('_layout')) {
+          case 'full':
+            layoutOptions = null;
+            break;
+          case 'left':
+            layoutOptions.splice(_.indexOf(layoutOptions, _.findWhere(layoutOptions, { type : "full"})), 1);
+            layoutOptions.splice(_.indexOf(layoutOptions, _.findWhere(layoutOptions, { type : "left"})), 1);
+            break;
+          case 'right':
+            layoutOptions.splice(_.indexOf(layoutOptions, _.findWhere(layoutOptions, { type : "full"})), 1);
+            layoutOptions.splice(_.indexOf(layoutOptions, _.findWhere(layoutOptions, { type : "right"})), 1);
+            break;
         }
       }, this);
 
-      if (componentCount < 2 && hasFullWidth == false) {
-        this.model.set('allowAddComponent', true);
-      } else {
-        this.model.set('allowAddComponent', false);
-      }
+      this.model.set('layoutOptions', layoutOptions);
     },
 
     handleRemovedComponent: function() {
@@ -102,9 +116,11 @@ define(function(require){
       var thisView = this;
       var newComponentModel = new EditorComponentModel();
 
+      // TODO componentType.get('_component')
+
       newComponentModel.save({
-        title: '{Your new component}',
-        body: '{Edit this text...}',
+        title: window.polyglot.t('app.placeholdernewcomponent'),
+        body: window.polyglot.t('app.placeholdereditthistext'),
         _parentId: thisView.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
         _type: 'component',

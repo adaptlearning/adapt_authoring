@@ -41,7 +41,7 @@ define(function(require){
     deletePage: function(event) {
       event.preventDefault();
       
-      if (confirm('Are you sure you want to delete this page?')) {
+      if (confirm(window.polyglot.t('app.confirmdeletepage'))) {
         if (this.model.destroy()) {
           this.remove();
           Origin.trigger('editorView:refreshPageList');
@@ -55,8 +55,8 @@ define(function(require){
       var thisView = this;
       var newPageArticleModel = new EditorArticleModel();
       newPageArticleModel.save({
-        title: '{Your new article}',
-        body: '{Edit this text...}',
+        title: window.polyglot.t('app.placeholdernewarticle'),
+        body: window.polyglot.t('app.placeholdereditthistext'),
         _parentId: thisView.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id')
       },

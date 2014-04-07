@@ -58,7 +58,7 @@ define(function(require){
 
         switch (component.get('_layout')) {
           case 'full':
-            layoutOptions = {};
+            layoutOptions = null;
             break;
           case 'left':
             layoutOptions.splice(_.indexOf(layoutOptions, _.findWhere(layoutOptions, { type : "full"})), 1);

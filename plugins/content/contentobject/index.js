@@ -4,8 +4,6 @@
 
 var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
     configuration = require('../../../lib/configuration'),
-    database = require('../../../lib/database'),
-    logger = require('../../../lib/logger'),
     util = require('util'),
     path = require('path'),
     async = require('async');
@@ -121,7 +119,11 @@ ContentObject.prototype.create = function (data, next) {
  * @param {callback} next
  */
 ContentObject.prototype.retrieve = function (search, options, next) {
-  var self = this;
+  // shuffle params
+  if ('function' === typeof options) {
+    next = options;
+    options = {};
+  }
 
   // must have a model name
   if (!this.getModelName()) {
@@ -137,13 +139,7 @@ ContentObject.prototype.retrieve = function (search, options, next) {
     options.operators.sort = { '_sortOrder': 1 };
   }
 
-  database.getDatabase(function (error, db) {
-    if (error) {
-      return next(error);
-    }
-
-    return db.retrieve(self.getModelName(), search, options, next);
-  });
+  ContentPlugin.prototype.retrieve.call(this, search, options, next);
 };
 
 /**

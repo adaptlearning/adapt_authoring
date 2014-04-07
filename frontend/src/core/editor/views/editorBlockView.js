@@ -32,6 +32,7 @@ define(function(require){
       this.model.set('componentTypes', Origin.editor.componentTypes.toJSON());
 
       this.evaluateComponents();
+      this.setupPasteZone();
     },
 
     postRender: function() {
@@ -75,12 +76,12 @@ define(function(require){
 
     handleRemovedComponent: function() {
       this.evaluateComponents();
-
+      this.setupPasteZone();
       this.render();
     },
 
     addComponentViews: function() {
-      this.$('.page-article-components').empty();
+      this.$('.page-article-components').find('.component').remove();
 
       this.model.getChildren().each(function(component) {
         this.$('.page-article-components').append(new EditorComponentView({model: component}).$el);
@@ -93,6 +94,7 @@ define(function(require){
       if (confirm(window.polyglot.t('app.confirmdeleteblock'))) {
         if (this.model.destroy()) {
           this.remove();
+          Origin.trigger('editorView:fetchData');
         }
       }
     },
@@ -136,6 +138,29 @@ define(function(require){
         }
       });
     },
+
+    setupPasteZone: function() {
+      if (this.model.getChildren().length == 1) {
+        var component = this.model.getChildren().at(0);
+        var hasPasteZone = component.get('_layout') == 'full' ? false : true;
+        this.model.set('_hasPasteZone', hasPasteZone);
+        this.model.set('_pasteZoneLayout', this.swapLayout(component.get('_layout')));
+      } else if (this.model.getChildren().length == 0) {
+        this.model.set('_hasPasteZone', true);
+        this.model.set('_pasteZoneLayout', 'full');
+        this.model.set('_pasteZoneShowAll', true);
+      } else {
+        this.model.set('_hasPasteZone', false);
+      }
+    },
+
+    swapLayout: function (layout) {
+      var newLayout = 'full';
+      if (layout != 'full') {
+        newLayout = (layout == 'left') ? 'right' : 'left';
+      }
+      return newLayout;
+    }
 
   }, {
     template: 'editorBlock'

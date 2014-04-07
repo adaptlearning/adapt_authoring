@@ -47,9 +47,9 @@ define(function(require){
       this.renderEditorSidebar();
     },
 
-// checks if data is loaded
-// then create new instances of:
-// Origin.editor.course, Origin.editor.contentObjects, Origin.editor.articles, Origin.editor.blocks
+    // checks if data is loaded
+    // then create new instances of:
+    // Origin.editor.course, Origin.editor.contentObjects, Origin.editor.articles, Origin.editor.blocks
     setupEditor: function() {
       this.loadedData = {
         clipboard: false,
@@ -131,8 +131,10 @@ define(function(require){
       Archive off the clipboard
     */
     addToClipboard: function(model) {
-      _.invoke(Origin.editor.data.clipboard.models, 'destroy');
-      
+      _.defer(_.bind(function() {
+        _.invoke(Origin.editor.data.clipboard.models, 'destroy')
+      }, this));
+
       var clipboard = new EditorClipboardModel();
 
       clipboard.set('referenceType', model.constructor._siblings);
@@ -150,12 +152,14 @@ define(function(require){
       _.each(items, function(item) {
         var matches = clipboard.get(item.constructor._siblings);
         if (matches) {
+          this.mapValues(item);
           matches.push(item);
           clipboard.set(item.constructor._siblings, matches);
         } else {
+          this.mapValues(item);
           clipboard.set(item.constructor._siblings, [item]);
         }
-      });
+      }, this);
 
       clipboard.save({_courseId: this.currentCourseId}, {
         error: function() {
@@ -165,6 +169,12 @@ define(function(require){
           Origin.editor.data.clipboard.fetch({reset:true});
         }
       });
+    },
+
+    mapValues: function(item) {
+      if (item.get('_componentType') && typeof item.get('_componentType') === 'object') {
+        item.set('_componentType', item.get('_componentType')._id);
+      }
     },
 
     getAllChildren: function (model, list) {
@@ -178,8 +188,15 @@ define(function(require){
       }
     },
 
-    pasteFromClipboard: function(targetModel) {
+    pasteFromClipboard: function(targetModel, sortOrder, layout) {
       var clipboard = Origin.editor.data.clipboard.models[0];
+      var topitem = clipboard.get(clipboard.get('referenceType'))[0];
+      if (topitem._layout) {
+        topitem._layout = layout;
+      }
+      if (topitem._sortOrder) {
+        topitem._sortOrder = sortOrder;
+      }
       this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_id'), false);
     },
 

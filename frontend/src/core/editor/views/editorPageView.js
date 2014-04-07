@@ -7,6 +7,7 @@ define(function(require){
   var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorArticleView = require('coreJS/editor/views/editorArticleView');
   var EditorArticleModel = require('coreJS/editor/models/editorArticleModel');
+  var EditorPasteZoneView = require('coreJS/editor/views/editorPasteZoneView');
 
   var EditorPageView = EditorOriginView.extend({
 
@@ -33,8 +34,24 @@ define(function(require){
     addArticleViews: function() {
       this.$('.page-articles').empty();
       Origin.trigger('editorPageView:removePageSubViews');
+
+      // Pre-article paste zone
+      var firstArticle = this.model.getChildren().at(0);
+      if (firstArticle) {
+        var dummyArticle = firstArticle.clone();
+        dummyArticle.set('_pasteZoneSortOrder', 1);
+        this.$('.page-articles').append(new EditorPasteZoneView({model: dummyArticle}).$el);
+      }
+
       this.model.getChildren().each(function(article) {
         this.$('.page-articles').append(new EditorArticleView({model: article}).$el);
+
+        var sortOrder = article.get('_sortOrder');
+        sortOrder++;
+        article.set('_pasteZoneSortOrder', sortOrder);
+
+        // Post-article paste zone - sort order of placeholder will be one greater
+        this.$('.page-articles').append(new EditorPasteZoneView({model: article}).$el);
       }, this);
     },
 

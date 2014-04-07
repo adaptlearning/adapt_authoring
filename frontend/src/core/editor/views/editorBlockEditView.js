@@ -38,7 +38,9 @@ define(function(require) {
       model.save({
         _parentId: this.$('.block-parent').find(':selected').val(),
         title: this.$('.block-title').val(),
-        body: this.$('.block-body').val()},
+        body: this.$('.block-body').val(),
+        _sortOrder: this.$('.block-position').val()
+      },
         {
           error: function() {
             alert('An error occurred doing the save');
@@ -46,8 +48,7 @@ define(function(require) {
           success: function() {
             Origin.trigger('editorView:fetchData');
           }
-        }
-      );
+      });
     }
   },
   {

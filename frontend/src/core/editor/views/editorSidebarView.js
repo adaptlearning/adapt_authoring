@@ -3,10 +3,11 @@ define(function(require) {
 	var Origin = require('coreJS/app/origin');
 	var EditorOriginView = require('coreJS/editor/views/editorOriginView');
 	var EditorCourseEditView = require('coreJS/editor/views/editorCourseEditView');
+	var EditorPageOverviewView = require('coreJS/editor/views/editorPageOverviewView');
 	var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
 	var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
 	var EditorBlockEditView = require('coreJS/editor/views/editorBlockEditView');
-	var EditorPageOverviewView = require('coreJS/editor/views/editorPageOverviewView');
+	var EditorComponentEditView = require('coreJS/editor/views/EditorComponentEditView');
 
 	var EditorSidebarView = EditorOriginView.extend({
 
@@ -23,9 +24,9 @@ define(function(require) {
 		},
 
 	    addOverviewView: function() {
-	    	Origin.trigger('editorSidebarView:removeEditView');
-	      var overview = new EditorPageOverviewView();
-	      this.$('.editor-sidebar-overview').append(overview.$el);
+	   		Origin.trigger('editorSidebarView:removeEditView');
+	      	var overview = new EditorPageOverviewView();
+	      	this.$('.editor-sidebar-overview').append(overview.$el);
 	    },
 
 // loads  view in sidebar for edit and overview elements
@@ -39,6 +40,7 @@ define(function(require) {
 			this.hideInstruction();
 
 			$sidebarForm.empty();
+
 			switch (type) {
 				case 'course':
 					$sidebarForm.append(new EditorCourseEditView({model: model}).$el);
@@ -54,6 +56,9 @@ define(function(require) {
 					break;
 				case 'block':
 					$sidebarForm.append(new EditorBlockEditView({model: model}).$el);
+					break;
+				case 'component':
+					$sidebarForm.append(new EditorComponentEditView({model: model}).$el);
 					break;
 			}
 
@@ -84,6 +89,7 @@ define(function(require) {
 
 		tabToggle: function(event) {
 			event.preventDefault();
+			
 			if (this.$(event.currentTarget).data('tab-content')) {
         		this.$('.tab-content').addClass('display-none');
         		this.$('.editor-sidebar-tab').removeClass('active');
@@ -93,12 +99,12 @@ define(function(require) {
 		},
 
 	    setTab: function(tabname) {
-	        if (this.$('a[data-tab-content="' + tabname + '"]')) {
-	        this.$('.tab-content').addClass('display-none');
-	        this.$('.editor-sidebar-tab').removeClass('active');
-	        this.$('.' + tabname).removeClass('display-none');
-	        this.$('a[data-tab-content="' + tabname + '"]').addClass('active');
-	      }
+	    	if (this.$('a[data-tab-content="' + tabname + '"]')) {
+	        	this.$('.tab-content').addClass('display-none');
+	        	this.$('.editor-sidebar-tab').removeClass('active');
+	        	this.$('.' + tabname).removeClass('display-none');
+	        	this.$('a[data-tab-content="' + tabname + '"]').addClass('active');
+	      	}
 	    }
 
 	}, {

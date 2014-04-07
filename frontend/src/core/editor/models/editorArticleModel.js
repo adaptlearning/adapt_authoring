@@ -7,9 +7,9 @@ define(function(require) {
 		initialize: function() {}
 	}, 
 	{
-    _parent:'contentObjects',
-    _siblings:'articles',
-    _children: 'blocks'
+        _parent:'contentObjects',
+        _siblings:'articles',
+        _children: 'blocks'
 	});
 
 	return EditorArticleModel;

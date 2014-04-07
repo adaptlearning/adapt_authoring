@@ -47,38 +47,37 @@ define(function(require){
       var newPageBlockModel = new EditorBlockModel();
 
       newPageBlockModel.save({
-        title: '{Your new Block}',
-        body: '{Edit this text...}',
+        title: window.polyglot.t('app.placeholdernewblock'),
+        body: window.polyglot.t('app.placeholdereditthistext'),
         _parentId: thisView.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id')
       },
       {
-          error: function() {
-            alert('error adding new block');
-          },
-          success: function() {
-            Origin.trigger('editorView:fetchData');
-          }
-        });
+        error: function() {
+          alert('error adding new block');
+        },
+        success: function() {
+          Origin.trigger('editorView:fetchData');
+        }
+      });
     },
 
     deletePageArticle: function(event) {
       event.preventDefault();
 
-      if (confirm('Are you sure you want to delete this article?')) {
+      var thisView = this;
+
+      if (confirm(window.polyglot.t('app.confirmdeletearticle'))) {
         console.log('deleting article', this.model);
         this.model.destroy({
           success: function(success) {
-            console.log('success', success);
+            thisView.remove();
+            // console.log('success', success);
           }, 
           error: function(error) {
             console.log('error', error);
           }
-        })
-        if (this.model.destroy()) {
-          console.log('deleting article or should have');
-          this.remove();
-        }
+        });
       }
     },
 

@@ -47,6 +47,27 @@ Component.prototype.getChildType = function () {
 };
 
 /**
+ * Overrides base.retrieve
+ *
+ * @param {object} search
+ * @param {object} options
+ * @param {callback} next
+ */
+Component.prototype.retrieve = function (search, options, next) {
+  // shuffle params
+  if ('function' === typeof options) {
+    next = options;
+    options = {};
+  }
+
+  if (!options.populate) {
+    options.populate = { '_componentType': ['displayName'] };
+  }
+
+  ContentPlugin.prototype.retrieve.call(this, search, options, next);
+};
+
+/**
  * add content schema to the database via this function
  *
  * @param {object} db
@@ -119,7 +140,7 @@ function initialize () {
             return next(err);
           }
 
-          return res.json(components);
+          return res.json(_.values(components));
         });
       });
     });
@@ -131,7 +152,7 @@ function initialize () {
           return next(err);
         }
 
-        db.retrieve('componenttype', { _id: req.param.id }, function (err, results) {
+        db.retrieve('componenttype', { _id: req.params.id }, function (err, results) {
           if (err) {
             return next(err);
           }
@@ -146,6 +167,7 @@ function initialize () {
         });
       });
     });
+
   });
 }
 
@@ -240,6 +262,8 @@ function addComponentType(componentInfo, cb) {
         // add component type
         var componentType = {
           name: pkgMeta.name,
+          displayName: pkgMeta.displayName,
+          component: pkgMeta.component,
           version: pkgMeta.version,
           properties: schema.properties
         };
@@ -256,7 +280,15 @@ function addComponentType(componentInfo, cb) {
             return cb(null);
           }
 
-          db.create('componenttype', componentType, cb);
+          db.create('componenttype', componentType, function (err, results) {
+            if (err) {
+              // don't error out if we didn't add the component, just notify
+              logger.log('error', 'Failed to add component: ' + pkgMeta.name, err);
+              return cb(null);
+            }
+
+            return cb(null, results);
+          });
         });
       });
     });

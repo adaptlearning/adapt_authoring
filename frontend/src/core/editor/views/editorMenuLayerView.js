@@ -86,7 +86,6 @@ define(function(require) {
           }
         );*/
       }
-
   	}, {
   		template: 'editorMenuLayer'
   });

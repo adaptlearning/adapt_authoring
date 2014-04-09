@@ -30,8 +30,9 @@ AdaptOutput.prototype.preview = function (courseId, req, res, next) {
       }
 
       if (results && results.length) {
-        // @brian-learningpool - see the options passed to the #toJSON method - both are required
-        return res.json(results[0].toJSON({ transform: true, forExport: true }));
+        db.exportResults(results, function (transformed) {
+          return res.json(transformed);
+        });
       }
 
       res.statusCode = 404;

@@ -6,7 +6,8 @@
   "properties":{
     "_type": {
       "type":"string",
-      "id": "http://jsonschema.net/_type"
+      "id": "http://jsonschema.net/_type",
+      "editorOnly": true
      },
      "title": {
        "type":"string",

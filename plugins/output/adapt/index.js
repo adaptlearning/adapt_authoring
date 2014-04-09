@@ -4,6 +4,7 @@
 
 var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     configuration = require('../../../lib/configuration'),
+    database = require('../../../lib/database'),
     util = require('util'),
     path = require('path'),
     async = require('async');
@@ -18,8 +19,25 @@ util.inherits(AdaptOutput, OutputPlugin);
  *
  */
 AdaptOutput.prototype.preview = function (courseId, req, res, next) {
-  res.send('@TODO render a course preview!');
-  return next();
+  database.getDatabase(function (err, db) {
+    if (err) {
+      return next(err);
+    }
+
+    db.retrieve('course', { _id: courseId }, function (err, results) {
+      if (err) {
+        return next(err);
+      }
+
+      if (results && results.length) {
+        // @brian-learningpool - see the options passed to the #toJSON method - both are required
+        return res.json(results[0].toJSON({ transform: true, forExport: true }));
+      }
+
+      res.statusCode = 404;
+      return res.end();
+    });
+  });
 };
 
 /**

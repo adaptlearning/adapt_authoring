@@ -170,7 +170,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       function(callback) {
         console.log('5. Zip it all up');
 
-        var output = fs.createWriteStream(path.join(TEMP_DIR, courseId,'download.zip');
+        var output = fs.createWriteStream(path.join(TEMP_DIR, courseId,'download.zip'));
         var archive = archiver('zip');
 
         output.on('close', function() {

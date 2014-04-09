@@ -14,7 +14,14 @@ define(function(require) {
 		className: 'editor-sidebar',
 
 		events: {
-			'click a.editor-sidebar-tab' : 'tabToggle'
+			'click a.editor-sidebar-tab' : 'tabToggle',
+			'click button.publish-button' : 'publishProject'
+		},
+
+		publishProject: function() {
+			if (confirm(window.polyglot.t('app.confirmpublish'))) {
+				Origin.trigger('editorSidebarView:publish');
+			} 
 		},
 
 		preRender: function() {

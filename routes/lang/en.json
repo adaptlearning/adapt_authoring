@@ -44,5 +44,6 @@
   "app.placeholdernewarticle" : "{Your new article}",
   "app.placeholdernewblock" : "{Your new block}",
   "app.placeholdernewcomponent" : "{Your new component}",
-  "app.placeholdereditthistext" : "{Edit this text...}"
+  "app.placeholdereditthistext" : "{Edit this text...}",
+  "app.confirmpublish" : "Are you sure you want to publish?"
 }

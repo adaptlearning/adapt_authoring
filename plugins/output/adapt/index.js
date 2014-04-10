@@ -17,9 +17,24 @@ function AdaptOutput () {
 
 util.inherits(AdaptOutput, OutputPlugin);
 
+/**
+ * Constants
+ */
 var TEMP_DIR = 'temp',
     BUILD_DIR = 'build';
 
+/**
+ * Used to convert a string 's' to a valid filename
+ */
+function slugify(s) {
+  var _slugify_strip_re = /[^\w\s-]/g;
+  var _slugify_hyphenate_re = /[-\s]+/g;
+
+  s = s.replace(_slugify_strip_re, '').trim().toLowerCase();
+  s = s.replace(_slugify_hyphenate_re, '-');
+
+  return s;
+}
 
 /**
  * implements OutputPlugin#preview
@@ -41,7 +56,7 @@ AdaptOutput.prototype.preview = function (courseId, req, res, next) {
         db.exportResults(results, function (transformed) {
           return res.json(transformed);
         });
-      }
+      } 
 
       res.statusCode = 404;
       return res.end();
@@ -74,6 +89,9 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
 
                 doneCallback(null);
               });
+            } else {
+              outputJson[collectionType] = [];
+              doneCallback(null);
             }
           }
         );     
@@ -161,9 +179,28 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
           }
         }); 
       },
+      // Sanatize course data
+      function(callback) {
+        console.log('4. Sanitizing course JSON');
+        var courseJson = outputJson['course'];
+ 
+        // Don't leave it as an array
+        var str = JSON.stringify(outputJson['course']);
+        str = str.substring(1);
+        str = str.slice(0, -1);
+        courseJson = JSON.parse(str);
+
+        // Replace the ID and type
+        courseJson._id = 'course';
+        courseJson._type = 'course';
+
+        outputJson['course'] = courseJson;
+
+        callback(null, 'course.json sanatized');
+      },
       // Save the files here
       function(callback) {
-        console.log('4. Saving JSON files');
+        console.log('5. Saving JSON files');
         // TODO -- extract config
         async.each(['course', 'contentobject', 'article', 'block', 'component'], writeJson, function (err) {
           if (!err) {
@@ -172,7 +209,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         });
       },
       function(callback) {
-        console.log('5. Zip it all up');
+        console.log('6. Zip it all up');
 
         var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, 'download.zip'));
         var archive = archiver('zip');
@@ -193,15 +230,15 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
       // Other steps...
       function(callback) {
-        console.log('All done');
-        // Trigger download
+        // Trigger the file download
+        var filename = slugify(outputJson['course'].title);
         var filePath = path.join(TEMP_DIR, courseId, 'download.zip');
         var stat = fs.statSync(filePath);
 
         res.writeHead(200, {
             'Content-Type': 'application/zip',
             'Content-Length': stat.size,
-            'Content-disposition' : 'attachment; filename=download.zip',
+            'Content-disposition' : 'attachment; filename=' + filename + '.zip',
             'Pragma' : 'no-cache',
             'Expires' : '0'
         });

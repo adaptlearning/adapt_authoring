@@ -73,20 +73,24 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
                 outputJson[collectionType] = transformed;
 
                 doneCallback(null);
-              //  return res.json(transformed);
               });
-              
-              
             }
           }
         );     
     }, configuration.getConfig('dbName'));
   };
 
-  var writeJson = function(key, doneCallback) {
-    var data = JSON.stringify(outputJson[key]);
+  var writeJson = function(key, doneCallback) {  
+    var filenames = {};
+    filenames['course'] = 'course.json';
+    filenames['contentobject'] = 'contentObjects.json';
+    filenames['article'] = 'articles.json';
+    filenames['block'] = 'blocks.json';
+    filenames['component'] = 'components.json';
 
-    fs.writeFile(TEMP_DIR + '/' + courseId + '/' + BUILD_DIR + '/' + key + 's.json', data, function (error) {
+    var data = JSON.stringify(outputJson[key], undefined, 2);
+
+    fs.writeFile(path.join(TEMP_DIR, courseId, BUILD_DIR, filenames[key]), data, function (error) {
       if (error) {
         doneCallback(error);
       } else {
@@ -124,12 +128,12 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       // Create a temporary folder for ths .json files
       function(callback) {
         console.log('2. Creating/verifying course specific temp folder');
-        fs.exists(TEMP_DIR + "/" + courseId, function(exists) {
+        fs.exists(path.join(TEMP_DIR, courseId), function(exists) {
           if (exists) {
             // Remove files?
             callback(null,  courseId + ' folder OK');
           } else {
-            fs.mkdir(TEMP_DIR + "/" + courseId, '0777', function(err) {
+            fs.mkdir(path.join(TEMP_DIR, courseId), '0777', function(err) {
               if (err) {
                 callback(err, 'Error creating ' + TEMP_DIR);
               } else {
@@ -142,12 +146,12 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       function(callback) {
         console.log('3. Verifying ' + BUILD_DIR + ' folder');
 
-        fs.exists(TEMP_DIR + "/" + courseId + '/' + BUILD_DIR, function(exists) {
+        fs.exists(path.join(TEMP_DIR, courseId, BUILD_DIR), function(exists) {
           if (exists) {
             // Remove files?
             callback(null, BUILD_DIR + ' folder OK');
           } else {
-            fs.mkdir(TEMP_DIR + "/" + courseId + '/' + BUILD_DIR, '0777', function(err) {
+            fs.mkdir(path.join(TEMP_DIR, courseId, BUILD_DIR), '0777', function(err) {
               if (err) {
                 callback(err, 'Error creating '  + BUILD_DIR);
               } else {
@@ -170,7 +174,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       function(callback) {
         console.log('5. Zip it all up');
 
-        var output = fs.createWriteStream(path.join(TEMP_DIR, courseId,'download.zip'));
+        var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, 'download.zip'));
         var archive = archiver('zip');
 
         output.on('close', function() {
@@ -213,13 +217,6 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
     });
   });
 
-
-  // res.setHeader('Content-disposition', 'attachment; filename=theDocument.txt');
-  // res.setHeader('Content-type', 'text/plain');
-  // res.charset = 'UTF-8';
-  // res.write("Hello, world");
-  // res.send('@TODO publish a course!');
-//  return next();
 };
 
 /**

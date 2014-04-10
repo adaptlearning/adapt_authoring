@@ -24,7 +24,7 @@ define(function(require) {
 
     postRender: function() {
       // Get the schema
-      var thisComponentType = this.model.get('_componentType'); 
+      var thisComponentType = this.model.get('_componentType')._id; 
       var componentType = _.find(Origin.editor.componentTypes.models, function(type){
         return type.get('_id') == thisComponentType; 
       });
@@ -34,12 +34,6 @@ define(function(require) {
         "properties": componentType.get('properties')
       };
 
-      // editor = new JSONEditor(document.getElementById('component-properties'), 
-      //   {no_additional_properties: true, 
-      //     no_additional_properties: true,
-      //     schema: schema,
-      //     startval: this.model.get('properties')       
-      //   });
       this.$('.component-properties').jsoneditor({
         no_additional_properties: true, 
         no_additional_properties: true,
@@ -63,6 +57,7 @@ define(function(require) {
 
       model.save({
         _parentId: this.$('.component-parent').find(':selected').val(),
+        _componentType: model.attributes._componentType._id, // TODO -- Not sure about the schema here
         title: this.$('.component-title').val(),
         body: this.$('.component-body').val(),
         properties: propertiesJson},

@@ -4,7 +4,7 @@ define(function(require){
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('coreJS/editor/views/editorOriginView');
-  var EditorComponentModel = require('coreJS/editor/models/EditorComponentModel');
+  var EditorComponentModel = require('coreJS/editor/models/editorComponentModel');
 
   var EditorComponentView = EditorOriginView.extend({
 

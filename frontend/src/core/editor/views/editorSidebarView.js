@@ -7,7 +7,7 @@ define(function(require) {
 	var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
 	var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
 	var EditorBlockEditView = require('coreJS/editor/views/editorBlockEditView');
-	var EditorComponentEditView = require('coreJS/editor/views/EditorComponentEditView');
+	var EditorComponentEditView = require('coreJS/editor/views/editorComponentEditView');
 
 	var EditorSidebarView = EditorOriginView.extend({
 
@@ -21,7 +21,7 @@ define(function(require) {
 		publishProject: function() {
 			if (confirm(window.polyglot.t('app.confirmpublish'))) {
 				Origin.trigger('editorSidebarView:publish');
-			} 
+			}
 		},
 
 		preRender: function() {
@@ -42,7 +42,7 @@ define(function(require) {
 			var type = model.get('_type');
 			var $sidebarForm = this.$('.editor-sidebar-form');
 			Origin.trigger('editorSidebarView:removeEditView');
-			
+
 			this.hideLoadingStatus();
 			this.hideInstruction();
 
@@ -96,7 +96,7 @@ define(function(require) {
 
 		tabToggle: function(event) {
 			event.preventDefault();
-			
+
 			if (this.$(event.currentTarget).data('tab-content')) {
         		this.$('.tab-content').addClass('display-none');
         		this.$('.editor-sidebar-tab').removeClass('active');

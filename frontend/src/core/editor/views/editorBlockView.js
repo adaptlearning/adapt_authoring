@@ -4,8 +4,8 @@ define(function(require){
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('coreJS/editor/views/editorOriginView');
-  var EditorComponentModel = require('coreJS/editor/models/EditorComponentModel');
-  var EditorComponentView = require('coreJS/editor/views/EditorComponentView');
+  var EditorComponentModel = require('coreJS/editor/models/editorComponentModel');
+  var EditorComponentView = require('coreJS/editor/views/editorComponentView');
 
   var EditorBlockView = EditorOriginView.extend({
 
@@ -110,9 +110,9 @@ define(function(require){
       // Retrieve from UI
       var layout = this.$('.add-component-form-layout').val();
       var selectedComponentType = this.$('.add-component-form-componentType').val();
-      
+
       var componentType = _.find(Origin.editor.componentTypes.models, function(type){
-        return type.get('name') == selectedComponentType; 
+        return type.get('name') == selectedComponentType;
       });
 
       var thisView = this;

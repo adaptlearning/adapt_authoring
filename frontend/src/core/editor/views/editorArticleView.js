@@ -7,7 +7,7 @@ define(function(require){
   var EditorBlockView = require('coreJS/editor/views/editorBlockView');
   var EditorModel = require('coreJS/editor/models/editorModel');
   var EditorBlockModel = require('coreJS/editor/models/editorBlockModel');
-  var EditorPasteZoneView = require('coreJS/editor/views/EditorPasteZoneView');
+  var EditorPasteZoneView = require('coreJS/editor/views/editorPasteZoneView');
 
   var EditorArticleView = EditorOriginView.extend({
 
@@ -91,7 +91,7 @@ define(function(require){
             thisView.remove();
             Origin.trigger('editorView:fetchData');
             // console.log('success', success);
-          }, 
+          },
           error: function(error) {
             console.log('error', error);
           }

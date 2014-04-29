@@ -198,9 +198,34 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
 
         callback(null, 'course.json sanatized');
       },
+      // Sanatize component data
+      function(callback) {
+        console.log('5. Sanitizing component JSON');
+        var components = outputJson['component'];
+
+        // The 'properties' property of a component should not be included as an 
+        // attribute in the output, but all its children should
+        for (var i = 0; i < components.length; i++) {
+          if (components[i].hasOwnProperty('properties')) {
+            for(var key in components[i].properties){
+              console.log(key);
+              if (components[i].properties.hasOwnProperty(key)){
+                 components[i][key] = components[i].properties[key]; 
+              }
+            }
+
+            // Remove the 'properties' property
+            delete components[i].properties;
+          }
+        }
+
+        outputJson['component'] = components;
+
+        callback(null, 'component.json sanatized');
+      },
       // Save the files here
       function(callback) {
-        console.log('5. Saving JSON files');
+        console.log('6. Saving JSON files');
         // TODO -- extract config
         async.each(['course', 'contentobject', 'article', 'block', 'component'], writeJson, function (err) {
           if (!err) {
@@ -209,7 +234,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         });
       },
       function(callback) {
-        console.log('6. Zipping it all up');
+        console.log('7. Zipping it all up');
 
         var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, 'download.zip'));
         var archive = archiver('zip');

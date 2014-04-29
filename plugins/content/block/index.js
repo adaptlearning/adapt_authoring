@@ -40,7 +40,7 @@ BlockContent.prototype.getModelName = function () {
  * @return string
  */
 BlockContent.prototype.getChildType = function () {
-  return false; // no children yet!
+  return 'component'; 
 };
 
 /**

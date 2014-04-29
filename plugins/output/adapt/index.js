@@ -209,7 +209,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         });
       },
       function(callback) {
-        console.log('6. Zip it all up');
+        console.log('6. Zipping it all up');
 
         var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, 'download.zip'));
         var archive = archiver('zip');

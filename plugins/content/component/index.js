@@ -19,6 +19,8 @@ var origin = require('../../../'),
     rimraf = require('rimraf'),
     async = require('async'),
     fs = require('fs'),
+    ncp = require('ncp').ncp,
+    mkdirp = require('mkdirp'),
     _ = require('underscore'),
     util = require('util'),
     path = require('path');
@@ -252,6 +254,25 @@ function addComponentType(componentInfo, cb) {
         logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, data);
         return cb(e);
       }
+
+      // Copy this version of the component to a holding area (used for publishing).
+      // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
+      var destination = defaultOptions.componentVersionsFolder + '/' + pkgMeta.name + '/' + pkgMeta.version + '/' + pkgMeta.name;
+      fs.exists(destination, function(exists) {
+        if (!exists) {
+          mkdirp(destination, function (err) {
+            if (err) {
+              cb(err);
+            } else {
+              ncp(componentInfo.canonicalDir, destination, function (err) {
+                if (err) {
+                  cb(err);
+                }
+              });
+            }
+          });
+        }
+      });
 
       // add the component to the componenttypes collection
       database.getDatabase(function (err, db) {

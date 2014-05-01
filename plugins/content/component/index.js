@@ -230,6 +230,17 @@ function fetchInstalledComponents (options, cb) {
 function addComponentType(componentInfo, cb) {
   // verify componentInfo meets requirements
   var pkgMeta = componentInfo.pkgMeta;
+  if (pkgMeta.keywords) { // only allow components (no extensions, themes, etc;)
+    var keywords = _.isArray(pkgMeta.keywords) ? pkgMeta.keywords : [pkgMeta.keywords];
+    if (!_.contains(keywords, "adapt-component")) {
+      logger.log('info', 'ignoring non-component: ' + pkgMeta.name);
+      return cb(null);
+    }
+  } else {
+    logger.log('warn', 'ignoring component without keywords defined: ' + pkgMeta.name);
+    return cb(null);
+  }
+
   if (!pkgMeta.version) { // don't allow components that don't define versions
     logger.log('warn', 'ignoring unversioned component: ' + pkgMeta.name);
     return cb(null);

@@ -21,6 +21,7 @@ define(function(require) {
           this.data._isCourseObject = options._isCourseObject;
         }
         this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+        this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
       },
 
   		postRender: function() {
@@ -55,6 +56,7 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: function(model) {
+            console.log('saving new menu item success');
             Origin.trigger('editorView:fetchData');
             Origin.trigger('editorSidebarView:addEditView', model);
             //Backbone.history.navigate('#/editor/' + Origin.editor.course.get('_id')+ '/page/' + newPage.get('_id'), {trigger: true});

@@ -14,60 +14,84 @@ define(function(require){
     },
 
     preRender: function() {
+      this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-      this.listenTo(this.model, 'change:_isSelected', this.toggleSelectedClass);
-      this.toggleSelectedClass(this.model);
+      this.setupClasses();
     },
 
     onMenuItemClicked: function() {
 
+      // Check if this model is already selected
+      // If selected viewPageEditmMode()
+
       if (this.model.get('_isSelected')) {
         return this.viewPageEditMode();
       }
+      // else check whether I am expanded if so hide children
 
-      this.model.set('_isSelected', true);
+      /*if (this.model.get('_isExpanded')) {
+        return this.expandedItemSelected();
+      }*/
+      // else check against siblings being selected
 
+      this.setItemAsSelected();
+
+    },
+
+    viewPageEditMode: function() {
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
+    },
+
+    expandedItemSelected: function() {
+      console.log('expandedItemSelected');
+    },
+
+    setItemAsSelected: function() {
+      if (this.model.get('_type') === 'menu') {
+        this.model.set({'_isSelected': true, '_isExpanded': true});
+      } else {
+        this.model.set({'_isSelected': true, '_isExpanded': false});
+      }
       this.showEditorSidebar();
-
-      Origin.trigger('editorView:storeSelectedItem', this.model.get('_id'));
-
-      this.showItemChildren();
-
+      this.setParentSelectedState();
       this.setSiblingsSelectedState();
-
       this.setChildrenSelectedState();
-
+      Origin.trigger('editorView:storeSelectedItem', this.model.get('_id'));
     },
 
     showEditorSidebar: function() {
       Origin.trigger('editorSidebarView:addEditView', this.model);
     },
 
-    toggleSelectedClass: function(model) {
-      if (model.get('_isSelected')) {
-        return this.$el.addClass('selected');
+    setupClasses: function() {
+      var classString = '';
+      if (this.model.get('_isSelected')) {
+        classString += 'selected ';
       }
-      this.$el.removeClass('selected');
+      if (this.model.get('_isExpanded')) {
+        classString += 'expanded ';
+      }
+      classString += ('content-type-'+this.model.get('_type'));
+      this.$el.addClass(classString);
+
+    },
+
+    setParentSelectedState: function() {
+      this.model.getParent().set('_isSelected', false);
     },
 
     setSiblingsSelectedState: function() {
       this.model.getSiblings().each(function(sibling) {
-        sibling.set('_isSelected', false);
+        sibling.set({'_isSelected': false, '_isExpanded':false});
       });
     },
 
     setChildrenSelectedState: function() {
-      this.model.setOnChildren('_isSelected', false);
-      this.$el.addClass('selected');
+      this.model.getChildren().each(function(child) {
+        child.set({'_isSelected': false, '_isExpanded':false});
+      })
+      //this.model.setOnChildren({'_isSelected': false, '_isExpanded':false});
     },
-
-    showItemChildren: function() {
-      Origin.trigger('editorMenuView:showMenuChildren', this.model);
-    },
-
-    viewPageEditMode: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
-    }/*,
 
     editMenuItem: function() {
       Origin.trigger('editorSidebarView:addEditView', this.model);
@@ -83,27 +107,7 @@ define(function(require){
       }
       // 
       Origin.trigger('editorView:fetchData');
-    },
-
-// adds the id to the currentState (currentMenuState) array
-// triggers showMenuChildren in editorMenuView which renders child contentObject views
-    showItemChildren: function() {
-      this.currentState = [];
-
-      this.currentState.push(this.model.get('_id'));
-      this.createStateArray(this.model);
-
-      Origin.editor.currentMenuState = this.currentState;
-      Origin.trigger('editorMenuView:showMenuChildren', this.model);
-    },
-
-    createStateArray: function(model) {
-      if (!model.getParent().get('_id') === 'course') {
-        this.currentState.push(model.getParent().get('_id'));
-        this.createStateArray(model.getParent()); 
-      }
-      return;
-    }*/
+    }
     
 
   }, {

@@ -10,7 +10,8 @@ var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     database = require('../../../lib/database'),
     fs = require('fs'),
     async = require('async'),
-    archiver = require('archiver');
+    archiver = require('archiver'),
+    _ = require('underscore');
 
 function AdaptOutput () {
 }
@@ -117,6 +118,32 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
     });      
   };
 
+  // Queries the database to return each component used
+  var getCourseComponents = function (doneCallback) {
+    database.getDatabase(function(err, db) {
+      var criteria = {_courseId: courseId};
+      var options = {
+        populate: [ '_componentType' ]
+      };
+
+      db.retrieve('component', criteria, options, function (error, results) {
+        if (error) {
+          return doneCallback(error);
+        }
+
+        // Group our components by component type for efficiency
+        var publishComponents = _.map(_.groupBy(results, function(item) {
+          return item._componentType;
+        }), function(grouped){
+          return grouped[0];
+        });
+
+        doneCallback(null, publishComponents);
+
+      });
+    });
+  };
+
   // Get the JSON asynchronously
   async.each(['course', 'contentobject', 'article', 'block', 'component'], getJson, function (err) {
     // console.log('TODO: Sanitizing JSON...');
@@ -220,7 +247,6 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         }
 
         outputJson['component'] = components;
-
         callback(null, 'component.json sanatized');
       },
       // Save the files here
@@ -234,7 +260,22 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         });
       },
       function(callback) {
-        console.log('7. Zipping it all up');
+        console.log('7. Preparing Build files');
+        getCourseComponents(function(err, publishComponents) {
+          if (err) {
+            return callback(err);
+          }
+
+          // @TODO: Create symlinks to components for build here?
+          //publishComponents.forEach(function (component) {
+            // Add symlink for this component...
+          //});
+
+          callback(null, 'Build files prepared');
+        });
+      },
+      function(callback) {
+        console.log('8. Zipping it all up');
 
         var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, 'download.zip'));
         var archive = archiver('zip');

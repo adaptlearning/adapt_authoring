@@ -10,6 +10,7 @@ define(function(require) {
         this.on('sync', this.loadedData, this);
         this.fetch();
       },
+
       loadedData: function() {
         if (this.constructor._siblings) {
           this._type = this.constructor._siblings;

@@ -2,6 +2,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
+  var EditorConfigModel = require('coreJS/editor/models/editorConfigModel');
 
   var ProjectDetailView = OriginView.extend({
 
@@ -45,7 +46,10 @@ define(function(require) {
           error: function() {
             alert('An error occurred doing the save');
           },
-          success: function() {
+          success: function(result) {
+            // Add config
+            var config = new EditorConfigModel();
+            config.save({'_courseId': result.get('_id')});
             Backbone.history.navigate('/dashboard', {trigger: true});
           }
         }

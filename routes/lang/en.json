@@ -44,5 +44,8 @@
   "app.placeholdernewarticle" : "{Your new article}",
   "app.placeholdernewblock" : "{Your new block}",
   "app.placeholdernewcomponent" : "{Your new component}",
-  "app.placeholdereditthistext" : "{Edit this text...}"
+  "app.placeholdereditthistext" : "{Edit this text...}",
+  "app.defaultlanguage" : "Default language",
+  "app.questionweight" : "Question weight",
+  "app.editcoursesettings" : "Edit Course Settings"
 }

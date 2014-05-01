@@ -49,8 +49,6 @@ define(function(require) {
             
             Backbone.history.navigate('#/dashboard', {trigger: true});
           });
-      }).fail( function() {
-        cback(new Error('Request failed'));
       });
     },
   });

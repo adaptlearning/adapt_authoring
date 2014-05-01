@@ -2,32 +2,30 @@
 
   <div class="login-title">
     {{#if isAuthenticated}}
-    <h3>You are logged in, please go to the <a id="linkDash" href="/#dashboard">Dashboard</a></h3>
+    <h3>You are logged in, please go to the <a id="linkDash" href="/#dashboard">{{t 'app.dashboard'}}</a></h3>
     {{else}}
-    <h3>Please Log In, or <a id="linkRegister" href="/#user/register">register</a></h3>
+    <h3>{{t 'app.pleaseloginor'}}&nbsp;<a id="linkRegister" href="/#user/register">{{lowerCase (t 'app.register')}}</a></h3>
     {{/if}}
   </div>
 
   <form class="login-form">
 
     <div class="login-form-item form-item">
-      <label for="login-input-username">Username or email</label>
+      <label for="login-input-username">{{t 'app.usernameoremail'}}</label>
       <input type="text" id="login-input-username" tabindex="1">
     </div>
 
     <div class="login-form-item form-item">
-      <a class="login-forgot-password" href="#user/forgot">Forgot password?</a>
-      <label for="login-input-password">Password</label>
+      <a class="login-forgot-password" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
+      <label for="login-input-password">{{t 'app.password'}}</label>
       <input type="password" class="form-control" id="login-input-password" tabindex="2">
     </div>
 
     <div class="login-form-item form-item">
-      <label><input id="remember-me" type="checkbox"/>Remember me </label>
+      <label><input id="remember-me" type="checkbox"/>{{t 'app.rememberme'}}</label>
     </div>
     
-    <button type="submit" class="button button-primary" tabindex="3">
-      Log In
-    </button>
+    <button type="submit" class="button button-primary" tabindex="3">{{t 'app.login'}}</button>
 
   </form>
 

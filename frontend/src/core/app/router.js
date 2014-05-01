@@ -14,22 +14,22 @@ define(function(require) {
   var Router = Backbone.Router.extend({
 
     routes: {
-      ""                : "index",
-      "user/login"      : "login",
-      "user/logout"     : "logout",
-      "user/forgot"     : "forgotpassword",
-      "user/register"   : "register",
-      "user/profile"    : "profile",
-      "project/new"     : "projectNew",
-      "project/edit/:id": "projectEdit",
-      "project/view/:id": "projectView",
-      "dashboard"       : "dashboard",
-      "module"          : "module",
-      "editor/:courseId/menu": "editorMenu",
+      ""                              : "index",
+      "user/login"                    : "login",
+      "user/logout"                   : "logout",
+      "user/forgot"                   : "forgotpassword",
+      "user/register"                 : "register",
+      "user/profile"                  : "profile",
+      "project/new"                   : "projectNew",
+      "project/edit/:id"              : "projectEdit",
+      "project/view/:id"              : "projectView",
+      "dashboard"                     : "dashboard",
+      "module"                        : "module",
+      "editor/:courseId/menu"         : "editorMenu",
       "editor/:courseId/page/:pageId" : "editorPage",
-      "page/new/:id"    : "pageNew",
-      "page/edit/:id"   : "pageEdit",
-      "page/article/edit/:id": "pageArticleEdit"
+      "page/new/:id"                  : "pageNew",
+      "page/edit/:id"                 : "pageEdit",
+      "page/article/edit/:id"         : "pageArticleEdit"
     },
 
     initialize: function() {
@@ -59,28 +59,33 @@ define(function(require) {
       return Origin.sessionModel.get('isAuthenticated') ? true : false;
     },
 
+    redirectToLogin: function() {
+       this.navigate('#/user/login', {trigger: true});
+    },
+
     createView: function(initialView, fallbackView) {
       _.defer(_.bind(function() {
         if (this.isUserAuthenticated()) {
-        this.currentView = initialView;
-      } else {
-        this.currentView = fallbackView
-          ? fallbackView 
-          : new LoginView({model:Origin.sessionModel});
-      }
-      
-      $('#app').append(this.currentView.$el);
+          this.currentView = initialView;
+        } else {
+          this.currentView = fallbackView
+            ? fallbackView 
+            : new LoginView({model:Origin.sessionModel});
+        }
 
-      return this.currentView;
+        $('#app').append(this.currentView.$el);
+
+        return this.currentView;
       }, this));
       
     },
 
     index: function() {
-      if (Origin.sessionModel.get('isAuthenticated')) {
+      if (this.isUserAuthenticated()) {
         this.navigate('#/dashboard', {trigger: true});
       } else {
-        this.navigate('#/user/login', {trigger: true});
+        this.redirectToLogin();
+        // this.navigate('#/user/login', {trigger: true});
       }
     },
 
@@ -97,7 +102,11 @@ define(function(require) {
     },
 
     dashboard: function() {
-      this.createView(new DashboardView());
+      if (!this.isUserAuthenticated()) {
+        this.navigate('#/user/login', {trigger: true});
+      } else {
+        this.createView(new DashboardView());
+      }
     },
     /*,
 

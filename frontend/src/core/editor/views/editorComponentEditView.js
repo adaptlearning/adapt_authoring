@@ -24,9 +24,9 @@ define(function(require) {
 
     postRender: function() {
       // Get the schema
-      var thisComponentType = this.model.get('_componentType'); 
+      var thisComponentTypeId = this.model.get('_componentType')._id; 
       var componentType = _.find(Origin.editor.componentTypes.models, function(type){
-        return type.get('_id') == thisComponentType; 
+        return type.get('_id') == thisComponentTypeId; 
       });
 
       var schema =  {

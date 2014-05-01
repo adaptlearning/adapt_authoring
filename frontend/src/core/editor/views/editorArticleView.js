@@ -35,7 +35,7 @@ define(function(require){
 
     addBlockViews: function() {
       this.$('.page-article-blocks').empty();
-
+      //console.log(this.model.getChildren());
       // Pre-block paste zone
       var firstBlock = this.model.getChildren().at(0);
       if (firstBlock) {

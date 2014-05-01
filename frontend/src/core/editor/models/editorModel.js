@@ -84,21 +84,17 @@ define(function(require) {
 
       getPossibleAncestors: function() {
         var map = {
-          'articles': {
-            'ancestor' : 'contentObjects',
+          'contentObjects': {
             'ancestorType': 'page' 
           },
-          'blocks' : {
-            'ancestor' : 'articles',
+          'articles' : {
             'ancestorType' : 'article'
           },
-          'components' : {
-            'ancestor' : 'blocks',
+          'blocks' : {
             'ancestorType' : 'block'            
           }
         };
-
-        ancestors = Origin.editor.data[map[this._siblings].ancestor].where({_type: map[this._siblings].ancestorType});
+        ancestors = Origin.editor.data[this._parent].where({_type: map[this._parent].ancestorType});
 
         var ancestorsCollection = new Backbone.Collection(ancestors);
 

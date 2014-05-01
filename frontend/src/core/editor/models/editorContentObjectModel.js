@@ -15,7 +15,7 @@ define(function(require) {
 
 		initialize: function() {
 			this.listenTo(this, 'sync', this.setupConstructor);
-			this.setupConstructor();
+			//this.setupConstructor();
 			this.listenTo(this, 'change:_type', this.setupConstructor);
 			this.listenTo(this, 'change:_isSelected', function() {
 				console.log(this.get('title'), this.get('_isSelected'));
@@ -23,7 +23,6 @@ define(function(require) {
 		},
 
 		setupConstructor: function() {
-			//console.log('setting up constructor');
 			if (this.get('_parentId') === Origin.editor.data.course.get('_id')) {
 				this._parent === 'course';
 			}

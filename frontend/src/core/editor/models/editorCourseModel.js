@@ -1,6 +1,6 @@
 define(function(require) {
 
-	var EditorModel = require('coreJS/editor/models/editorModel');
+  var EditorModel = require('coreJS/editor/models/editorModel');
 
 	var EditorCourseModel = EditorModel.extend({
 
@@ -8,10 +8,10 @@ define(function(require) {
 
 		_siblings:'',
 
-        _children: 'contentObjects'
+    _children: 'contentObjects'
         
 	});
 
-	return EditorCourseModel;
+  return EditorCourseModel;
 
 });

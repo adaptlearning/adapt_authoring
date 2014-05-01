@@ -16,6 +16,7 @@ define(function(require){
   var EditorComponentModel = require('coreJS/editor/models/editorComponentModel');
   var EditorClipboardModel = require('coreJS/editor/models/editorClipboardModel');
   var EditorComponentTypeModel = require('coreJS/editor/models/editorComponentTypeModel');
+  var EditorConfigModel = require('coreJS/editor/models/editorConfigModel');
 
   var EditorView = EditorOriginView.extend({
 
@@ -49,11 +50,13 @@ define(function(require){
 
     // checks if data is loaded
     // then create new instances of:
-    // Origin.editor.course, Origin.editor.contentObjects, Origin.editor.articles, Origin.editor.blocks
+    // Origin.editor.course, Origin.editor.config, Origin.editor.contentObjects,
+    // Origin.editor.articles, Origin.editor.blocks
     setupEditor: function() {
       this.loadedData = {
         clipboard: false,
         course: false,
+        config: false,
         contentObjects: false,
         articles: false,
         blocks: false,
@@ -68,6 +71,8 @@ define(function(require){
 
         if (allDataIsLoaded) {
           Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
+          // Set our config (we only have one config at the moment)
+          Origin.editor.data.config = Origin.editor.data.courseConfigs.models[0];
           this.renderCurrentEditorView();
         }
 
@@ -90,21 +95,21 @@ define(function(require){
 
     setupEditorCollections: function(editorCollections) {
       Origin.editor.data.contentObjects = new EditorCollection(null, {
-          model: EditorContentObjectModel,
-          url: '/api/content/contentobject?_courseId=' + this.currentCourseId,
-          _type: 'contentObjects'
+        model: EditorContentObjectModel,
+        url: '/api/content/contentobject?_courseId=' + this.currentCourseId,
+        _type: 'contentObjects'
       });
       
       Origin.editor.data.articles = new EditorCollection(null, {
-          model: EditorArticleModel,
-          url: '/api/content/article?_courseId=' + this.currentCourseId,
-          _type: 'articles'
+        model: EditorArticleModel,
+        url: '/api/content/article?_courseId=' + this.currentCourseId,
+        _type: 'articles'
       });
       
       Origin.editor.data.blocks = new EditorCollection(null, {
-          model: EditorBlockModel,
-          url: '/api/content/block?_courseId=' + this.currentCourseId,
-          _type: 'blocks'
+        model: EditorBlockModel,
+        url: '/api/content/block?_courseId=' + this.currentCourseId,
+        _type: 'blocks'
       });
 
       Origin.editor.data.components = new EditorCollection(null, {
@@ -125,6 +130,11 @@ define(function(require){
         url: '/api/componenttype'
       });
       
+      Origin.editor.data.courseConfigs = new EditorCollection(null, {
+        model: EditorConfigModel,
+        url: '/api/content/config?_courseId=' + this.currentCourseId,
+        _type: 'config'
+      });
     },
 
     /*

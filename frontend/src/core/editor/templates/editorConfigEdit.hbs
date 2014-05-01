@@ -1,0 +1,19 @@
+<div class="course-edit">
+  <div class="row">
+    <form role="form">
+      <div class="form-group">
+        <label for="config-defaultLanguage">{{t 'app.defaultlanguage'}}</label>
+        <input type="text" class="form-control config-defaultLanguage" placeholder="{{t 'app.defaultlanguage'}}" value="{{_defaultLanguage}}">
+      </div>
+      <div class="form-group">
+        <label for="config-questionWeight">{{t 'app.questionweight'}}</label>
+        <input type="text" class="form-control config-questionWeight" placeholder="{{t 'app.questionweight'}}" value="{{_questionWeight}}">
+      </div>
+      <div class="hidden">
+        <input type="hidden" value="{{id}}" id="configId">
+      </div>
+      <button class="save-button" type="submit">{{t 'app.save'}}</button>
+      <button class="cancel-button" type="button">{{t 'app.cancel'}}</button>
+    </form>
+  </div>
+</div>

@@ -13,7 +13,8 @@ define(function(require){
     className: "editor-menu",
 
     events: {
-      'click .fake-add-page-button':'addPage'
+      'click .fake-add-page-button':'addPage',
+      'click .editor-config-edit': 'loadConfigEdit'
     },
 
     preRender: function() {
@@ -107,6 +108,11 @@ define(function(require){
       var menuLayerView = new EditorMenuLayerView({_parentId:parentId, _isCourseObject: isCourseObject})
       this.$('.editor-menu-inner').append(menuLayerView.$el);
       return menuLayerView.$('.editor-menu-layer-inner');
+    },
+
+    loadConfigEdit: function (event) {
+      event.preventDefault();
+      Origin.trigger('editorSidebarView:addEditView', Origin.editor.data.config);
     }
 
   }, {

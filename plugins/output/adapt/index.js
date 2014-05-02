@@ -150,8 +150,8 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
 
   // Copies a specific version of the component to the source folder
   var copyComponentFiles = function(component, doneCallback) {
-    var sourceFolder = path.join(process.cwd(), '/plugins/content/component/versions/', component._componentType.name, component._componentType.version, component._componentType.name);
-    var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, SOURCE_DIR, COMPONENTS_DIR, component._componentType.name);
+    var sourceFolder = path.join(process.cwd(), '/plugins/content/component/versions/', component.name, component.version, component.name);
+    var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, SOURCE_DIR, COMPONENTS_DIR, component.name);
 
     ncp(sourceFolder, destinationFolder, function (err) {
       if (err) {

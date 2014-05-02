@@ -11,7 +11,8 @@ var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     fs = require('fs'),
     async = require('async'),
     archiver = require('archiver'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    ncp = require('ncp').ncp;
 
 function AdaptOutput () {
 }
@@ -22,7 +23,17 @@ util.inherits(AdaptOutput, OutputPlugin);
  * Constants
  */
 var TEMP_DIR = 'temp',
+    SOURCE_DIR = 'src',
     BUILD_DIR = 'build';
+    BESPOKE_DIR = 'bespoke',
+    COURSE_DIR = 'course',   
+    COMPONENTS_DIR = 'components',
+    CORE_DIR = 'core',
+    EXTENSIONS_DIR = 'extensions',
+    LESS_DIR = 'less',
+    MENU_DIR = 'menu',
+    TEMPLATES_DIR = 'templates',
+    THEME_DIR = 'theme';
 
 /**
  * Used to convert a string 's' to a valid filename
@@ -99,6 +110,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
     }, configuration.getConfig('dbName'));
   };
 
+  // Writes Adapt Framework JSON files to the /course folder
   var writeJson = function(key, doneCallback) {  
     var filenames = {};
     filenames['course'] = 'course.json';
@@ -109,13 +121,45 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
 
     var data = JSON.stringify(outputJson[key], undefined, 2);
 
-    fs.writeFile(path.join(TEMP_DIR, courseId, BUILD_DIR, filenames[key]), data, function (error) {
+    fs.writeFile(path.join(TEMP_DIR, courseId, SOURCE_DIR, COURSE_DIR, filenames[key]), data, function (error) {
       if (error) {
         doneCallback(error);
       } else {
         doneCallback(null);
       } 
     });      
+  };
+
+  // Verifies that a given folder exists and creates it if it does not
+  var verifyFolder = function(folder, doneCallback) {
+    fs.exists(folder, function(exists) {
+      if (exists) {
+        // Remove files?
+        doneCallback(null, folder + ' folder OK');
+      } else {
+        fs.mkdir(folder, '0777', function(err) {
+          if (err) {
+            doneCallback(err, 'Error creating '  + folder);
+          } else {
+            doneCallback(null, folder + ' folder OK');
+          }
+        });
+      }
+    }); 
+  };
+
+  // Copies a specific version of the component to the source folder
+  var copyComponentFiles = function(component, doneCallback) {
+    var sourceFolder = path.join(process.cwd(), '/plugins/content/component/versions/', component._componentType.name, component._componentType.version, component._componentType.name);
+    var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, SOURCE_DIR, COMPONENTS_DIR, component._componentType.name);
+
+    ncp(sourceFolder, destinationFolder, function (err) {
+      if (err) {
+        doneCallback(err, 'Error copying ' + sourceFolder);
+      } else {
+        doneCallback(null);
+      }
+    });
   };
 
   // Queries the database to return each component used
@@ -146,10 +190,8 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
 
   // Get the JSON asynchronously
   async.each(['course', 'contentobject', 'article', 'block', 'component'], getJson, function (err) {
-    // console.log('TODO: Sanitizing JSON...');
-    // console.log("Finished!");
-    // console.log(outputJson);
 
+    // Call the steps to publish
     async.series([
       // Verify that the temporary folder exists
       function(callback) {
@@ -187,24 +229,32 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
             });
           }
         });        
-      },
+      },     
+      // Create the 'src' working folders
       function(callback) {
-        console.log('3. Verifying ' + BUILD_DIR + ' folder');
+        console.log('3. Verifying working folders');
 
-        fs.exists(path.join(TEMP_DIR, courseId, BUILD_DIR), function(exists) {
-          if (exists) {
-            // Remove files?
-            callback(null, BUILD_DIR + ' folder OK');
+        var workingFolders = [];
+        var workingRoot = path.join(TEMP_DIR, courseId, SOURCE_DIR);
+
+        workingFolders.push(workingRoot);
+        workingFolders.push(path.join(workingRoot, COMPONENTS_DIR));
+        workingFolders.push(path.join(workingRoot, BESPOKE_DIR));
+        workingFolders.push(path.join(workingRoot, CORE_DIR));
+        workingFolders.push(path.join(workingRoot, COURSE_DIR));
+        workingFolders.push(path.join(workingRoot, EXTENSIONS_DIR));
+        workingFolders.push(path.join(workingRoot, LESS_DIR));
+        workingFolders.push(path.join(workingRoot, MENU_DIR));
+        workingFolders.push(path.join(workingRoot, TEMPLATES_DIR));
+        workingFolders.push(path.join(workingRoot, THEME_DIR));
+
+        async.each(workingFolders, verifyFolder, function(err) {
+          if (!err) {
+            callback(null, 'Working folders verified');
           } else {
-            fs.mkdir(path.join(TEMP_DIR, courseId, BUILD_DIR), '0777', function(err) {
-              if (err) {
-                callback(err, 'Error creating '  + BUILD_DIR);
-              } else {
-                callback(null, BUILD_DIR + ' folder OK');
-              }
-            });
+            callback(err, 'Problem occurred');
           }
-        }); 
+        });
       },
       // Sanatize course data
       function(callback) {
@@ -266,12 +316,13 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
             return callback(err);
           }
 
-          // @TODO: Create symlinks to components for build here?
-          //publishComponents.forEach(function (component) {
-            // Add symlink for this component...
-          //});
-
-          callback(null, 'Build files prepared');
+          async.each(publishComponents, copyComponentFiles, function(err) {
+            if (!err) {
+              return callback(null, 'Component files copied');
+            } else {
+              callback(err);
+            }
+          });
         });
       },
       function(callback) {
@@ -291,7 +342,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         archive.pipe(output);
 
         archive.bulk([
-          { expand: true, cwd: path.join(TEMP_DIR, courseId, BUILD_DIR), src: ['**/*'] }
+          { expand: true, cwd: path.join(TEMP_DIR, courseId, SOURCE_DIR), src: ['**/*'] }
         ]).finalize();
       },
       // Other steps...

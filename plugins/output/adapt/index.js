@@ -179,7 +179,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         var publishComponents = _.map(_.groupBy(results, function(item) {
           return item._componentType;
         }), function(grouped){
-          return grouped[0];
+          return grouped[0]._componentType;
         });
 
         doneCallback(null, publishComponents);

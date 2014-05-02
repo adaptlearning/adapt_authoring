@@ -46,5 +46,8 @@
   "app.placeholdernewcomponent" : "{Your new component}",
   "app.placeholdereditthistext" : "{Edit this text...}",
   "app.confirmpublish" : "Are you sure you want to publish?",
-  "app.publish" : "Publish"
+  "app.publish" : "Publish",
+  "app.defaultlanguage" : "Default language",
+  "app.questionweight" : "Question weight",
+  "app.editcoursesettings" : "Edit Course Settings"
 }

@@ -4,9 +4,7 @@ define(function(require) {
 
     var EditorComponentModel = EditorModel.extend({
         urlRoot: '/api/content/component',
-        initialize: function() {}
-    }, 
-    {
+        initialize: function() {},
         _parent: 'blocks',
         _siblings:'components',
         _children: null

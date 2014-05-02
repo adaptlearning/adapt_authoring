@@ -16,6 +16,7 @@ define(function(require){
   var EditorComponentModel = require('coreJS/editor/models/editorComponentModel');
   var EditorClipboardModel = require('coreJS/editor/models/editorClipboardModel');
   var EditorComponentTypeModel = require('coreJS/editor/models/editorComponentTypeModel');
+  var EditorConfigModel = require('coreJS/editor/models/editorConfigModel');
 
   var EditorView = EditorOriginView.extend({
 
@@ -50,11 +51,13 @@ define(function(require){
 
     // checks if data is loaded
     // then create new instances of:
-    // Origin.editor.course, Origin.editor.contentObjects, Origin.editor.articles, Origin.editor.blocks
+    // Origin.editor.course, Origin.editor.config, Origin.editor.contentObjects,
+    // Origin.editor.articles, Origin.editor.blocks
     setupEditor: function() {
       this.loadedData = {
         clipboard: false,
         course: false,
+        config: false,
         contentObjects: false,
         articles: false,
         blocks: false,
@@ -69,6 +72,8 @@ define(function(require){
 
         if (allDataIsLoaded) {
           Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
+          // Set our config (we only have one config at the moment)
+          Origin.editor.data.config = Origin.editor.data.courseConfigs.models[0];
           this.renderCurrentEditorView();
         }
 
@@ -95,21 +100,21 @@ define(function(require){
 
     setupEditorCollections: function(editorCollections) {
       Origin.editor.data.contentObjects = new EditorCollection(null, {
-          model: EditorContentObjectModel,
-          url: '/api/content/contentobject?_courseId=' + this.currentCourseId,
-          _type: 'contentObjects'
+        model: EditorContentObjectModel,
+        url: '/api/content/contentobject?_courseId=' + this.currentCourseId,
+        _type: 'contentObjects'
       });
       
       Origin.editor.data.articles = new EditorCollection(null, {
-          model: EditorArticleModel,
-          url: '/api/content/article?_courseId=' + this.currentCourseId,
-          _type: 'articles'
+        model: EditorArticleModel,
+        url: '/api/content/article?_courseId=' + this.currentCourseId,
+        _type: 'articles'
       });
       
       Origin.editor.data.blocks = new EditorCollection(null, {
-          model: EditorBlockModel,
-          url: '/api/content/block?_courseId=' + this.currentCourseId,
-          _type: 'blocks'
+        model: EditorBlockModel,
+        url: '/api/content/block?_courseId=' + this.currentCourseId,
+        _type: 'blocks'
       });
 
       Origin.editor.data.components = new EditorCollection(null, {
@@ -130,6 +135,11 @@ define(function(require){
         url: '/api/componenttype'
       });
       
+      Origin.editor.data.courseConfigs = new EditorCollection(null, {
+        model: EditorConfigModel,
+        url: '/api/content/config?_courseId=' + this.currentCourseId,
+        _type: 'config'
+      });
     },
 
     /*
@@ -142,9 +152,9 @@ define(function(require){
 
       var clipboard = new EditorClipboardModel();
 
-      clipboard.set('referenceType', model.constructor._siblings);
+      clipboard.set('referenceType', model._siblings);
 
-      var hasChildren = (model.constructor._children && model.constructor._children.length == 0) ? false : true;
+      var hasChildren = (model._children && model._children.length == 0) ? false : true;
       var currentModel = model;
       var items = [currentModel];
 
@@ -155,14 +165,14 @@ define(function(require){
 
       // Sort items into their respective types
       _.each(items, function(item) {
-        var matches = clipboard.get(item.constructor._siblings);
+        var matches = clipboard.get(item._siblings);
         if (matches) {
           this.mapValues(item);
           matches.push(item);
-          clipboard.set(item.constructor._siblings, matches);
+          clipboard.set(item._siblings, matches);
         } else {
           this.mapValues(item);
-          clipboard.set(item.constructor._siblings, [item]);
+          clipboard.set(item._siblings, [item]);
         }
       }, this);
 
@@ -233,8 +243,8 @@ define(function(require){
                 alert('error during paste');
               },
               success: function(model, response, options) {
-                if (newModel.constructor._children) {
-                  thisView.createRecursive(newModel.constructor._children, clipboard, model.get('_id'), oldPid);
+                if (newModel._children) {
+                  thisView.createRecursive(newModel._children, clipboard, model.get('_id'), oldPid);
                 } else {
                   // We're done pasting, no more children to process
                   Origin.trigger('editorView:fetchData');
@@ -267,7 +277,6 @@ define(function(require){
     renderCurrentEditorView: function() {
       Origin.trigger('editorView:removeSubViews');
 
-      console.log(this.currentView);
       switch (this.currentView) {
         case 'menu':
           this.renderEditorMenu();

@@ -7,7 +7,7 @@ define(function(require) {
   var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
   var EditorArticleEditView = require('coreJS/editor/views/editorArticleEditView');
   var EditorBlockEditView = require('coreJS/editor/views/editorBlockEditView');
-  var EditorComponentEditView = require('coreJS/editor/views/EditorComponentEditView');
+  var EditorComponentEditView = require('coreJS/editor/views/editorComponentEditView');
   var EditorConfigEditView = require('coreJS/editor/views/editorConfigEditView');
 
   var EditorSidebarView = EditorOriginView.extend({
@@ -15,7 +15,14 @@ define(function(require) {
     className: 'editor-sidebar',
 
     events: {
-      'click a.editor-sidebar-tab' : 'tabToggle'
+      'click a.editor-sidebar-tab' : 'tabToggle',
+      'click button.publish-button' : 'publishProject'
+    },
+
+    publishProject: function() {
+      if (confirm(window.polyglot.t('app.confirmpublish'))) {
+        Origin.trigger('editorSidebarView:publish');
+      }
     },
 
     preRender: function() {

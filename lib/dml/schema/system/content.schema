@@ -14,7 +14,8 @@
     },
     "_courseId": {
       "type":"objectid",
-      "required":true
+      "required":true,
+      "editorOnly": true
     }
   }
 }

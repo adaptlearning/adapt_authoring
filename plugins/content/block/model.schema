@@ -4,5 +4,9 @@
   "id": "http://jsonschema.net",
   "$ref": "http://localhost/plugins/content/contentobject/model.schema",
   "properties": {
+    "_trackingId" : {
+        "type" : "number",
+        "default" : 0
+    }
   }
 }

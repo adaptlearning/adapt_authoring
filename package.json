@@ -51,7 +51,8 @@
     "rimraf": "~2.2.5",
     "underscore": "~1.5.2",
     "validator": "3.3.0",
-    "winston": "~0.7.2"
+    "winston": "~0.7.2",
+    "ncp": "~0.5.1"
   },
   "main": "index",
   "engines": {
@@ -76,6 +77,7 @@
     "grunt-bower-requirejs": "~0.7.1",
     "grunt-requirejs-bundle": "~0.0.7",
     "grunt-contrib-copy": "~0.4.1",
-    "grunt-mocha-test": "~0.7.0"
+    "grunt-mocha-test": "~0.7.0",
+    "archiver": "~0.8.1"
   }
 }

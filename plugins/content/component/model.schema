@@ -7,7 +7,8 @@
     "_componentType": {
       "type": "objectid",
       "required": true,
-      "ref": "componenttype"
+      "ref": "componenttype",
+      "editorOnly": true
     },
     "_component": {
       "type": "string",

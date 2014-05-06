@@ -7,29 +7,34 @@
       "createdAt": {
           "type":"date",
           "id": "http://jsonschema.net/createdAt",
-          "required":false
+          "required":false,
+          "editorOnly": true
       },
       "createdBy": {
           "type":"objectid",
           "id": "http://jsonschema.net/createdBy",
           "required":false,
-          "ref": "user"
+          "ref": "user",
+          "editorOnly": true
       },
       "_isDeleted": {
           "type":"boolean",
           "id": "http://jsonschema.net/deleted",
-          "default":false
+          "default":false,
+          "editorOnly": true
       },
       "updatedAt": {
           "type":"date",
           "id": "http://jsonschema.net/updatedAt",
-          "required":false
+          "required":false,
+          "editorOnly": true
       },
       "updatedBy": {
           "type":"objectid",
           "id": "http://jsonschema.net/updatedBy",
           "required":false,
-          "ref": "user"
+          "ref": "user",
+          "editorOnly": true
       }
   }
 }

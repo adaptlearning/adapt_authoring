@@ -40,6 +40,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:fetchData', this.setupEditor);
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
+      this.listenTo(Origin, 'editorSidebarView:publish', this.publishProject);
       this.render();
       this.setupEditor();
     },
@@ -87,6 +88,10 @@ define(function(require){
         this.setupEditorCollections();
       }
 
+    },
+
+    publishProject: function() {
+      window.open('/api/output/adapt/publish/' + this.currentCourseId);
     },
 
     setupEditorModels: function(editorModels) {

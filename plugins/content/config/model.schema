@@ -15,6 +15,50 @@
     "_questionWeight": {
       "type": "string",
       "default": "1"
+    },
+    "_spoor" : {
+      "_tracking" : {
+        "_requireCourseCompleted": {
+          "type": "boolean",
+          "default" : "true"
+        },
+        "_requireAssessmentPassed" : {
+          "type": "boolean",
+          "default" : "true"
+        },
+        "_shouldSubmitScore" : {
+          "type": "boolean",
+          "default" : "false"
+        },
+        "_reporting" : {
+          "_comment": {
+            "type" : "string",
+            "default" : ""
+          },
+          "_onTrackingCriteriaMet" : {
+            "type" : "string",
+            "default" : "completed"
+          },
+          "_onQuizFailure" : {
+            "type" : "string",
+            "default" : "incomplete"
+          }      
+        }
+      }
+    },
+    "screenSize": {
+      "small" : {
+        "type" : "number",
+        "default" : 519
+      },
+      "medium" : {
+        "type" : "number",
+        "default" : 759
+      },
+      "large" : {
+        "type" : "number",
+        "default" : 1024
+      }
     }
   }
 }

@@ -239,7 +239,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
           }
         });        
       },     
-      // // Create the 'src' working folders
+      //  Create the working folders
       function(callback) {
         console.log('3. Verifying working folders');
 
@@ -261,18 +261,35 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       // Sanatize course data
       function(callback) {
         console.log('4. Sanitizing course JSON');
-        var courseJson = outputJson['course'];
- 
-        // Don't leave it as an array
-        var str = JSON.stringify(outputJson['course']);
-        str = str.substring(1);
-        str = str.slice(0, -1);
-        courseJson = JSON.parse(str);
+        // var courseJson = outputJson['course'];
+        // var contentObjectsJson = outputJson['contentobject'];
+        var originalCourseId;
 
-        // Replace the type
-        courseJson._type = 'course';
+        // Don't leave the course JSON as an array
+        var courseString = JSON.stringify(outputJson['course']);
+        courseString = courseString.substring(1);
+        courseString = courseString.slice(0, -1);
+        courseJson = JSON.parse(courseString);
+        originalCourseId = courseJson._id;
+
+        // The Adapt Framework expects the 'type' and '_id'
+        // attributes of the to be set to 'course'
+        courseJson._type = 'course';      
+        courseJson._id = 'course';
+
+        // Replace any reference to the original course _id value in contentObjects JSON
+        var contentObjectsJson = outputJson['contentobject'];
+        for (var i = 0; i < contentObjectsJson.length; i++) {
+          if (contentObjectsJson[i]._parentId.toString() == originalCourseId) {
+            contentObjectsJson[i]._parentId = 'course';
+          }
+        }
+
+        // var contentObjectsString = JSON.stringify(outputJson['contentobject']);
+        
 
         outputJson['course'] = courseJson;
+        outputJson['contentobject'] = contentObjectsJson;
 
         callback(null, 'course.json sanatized');
       },

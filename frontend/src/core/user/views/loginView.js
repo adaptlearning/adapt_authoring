@@ -10,6 +10,7 @@ define(function(require) {
     tagName: "div",
 
     events: {
+      'keydown #login-input-username' : 'clearErrorStyling',
       'click .login-form button':'submitLoginDetails'
     },
 
@@ -17,13 +18,27 @@ define(function(require) {
       this.listenTo(Origin, 'loginFailed', this.loginFailed, this);
     },
     
+    clearErrorStyling: function(e) {
+      $('#login-input-username').removeClass('input-error');
+      $('#loginErrorMessage').text('');
+    },
+
     submitLoginDetails: function(e) {
       e.preventDefault();
+
       var inputUsernameEmail = this.$("#login-input-username").val();
       var inputPassword = this.$("#login-input-password").val();
-      var mdl = this.model;
 
-      mdl.login(inputUsernameEmail, inputPassword, function(err, result){
+      // Validation
+      if (inputUsernameEmail === '' || inputPassword === '') {
+        this.loginFailed();
+      } else {
+        $('#login-input-username').removeClass('input-error');
+      }
+
+      var userModel = this.model;
+
+      userModel.login(inputUsernameEmail, inputPassword, function(err, result){
         if( err || !result.success) {
           Origin.trigger('loginFailed');
         } else {
@@ -33,7 +48,10 @@ define(function(require) {
     },
 
     loginFailed: function() {
-      $('#loginFailed').removeClass('hide');
+      $('#login-input-username').addClass('input-error');
+      $('#loginErrorMessage').text(window.polyglot.t('app.invalidusernameoremail'));
+
+      return false;
     }
 
   }, {

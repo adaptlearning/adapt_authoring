@@ -23,22 +23,18 @@ module.exports = function(grunt) {
               dest: 'frontend/build/libraries/',
               filter: 'isFile',
               flatten: true
-            },
-            {
-              expand: true,
-              src: ['frontend/src/data/*'],
-              dest: 'frontend/build/data/',
-              filter: 'isFile',
-              flatten: true
-            },
+            }
           ]
         }
       },
       less: {
         dist: {
-          files: {
-            'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/**/*.less'
-          }
+          files: [{
+            'frontend/build/adaptbuilder/css/kube.min.css': 'frontend/src/less/kube.less'
+          },
+          {
+            'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/core/*.less'
+          }]
         },
         options: {
           compress: true

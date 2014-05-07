@@ -8,24 +8,19 @@
     {{/if}}
   </div>
 
-  <form class="login-form">
+  <form class="login-form forms">
 
-    <div class="login-form-item form-item">
-      <label for="login-input-username">{{t 'app.usernameoremail'}}</label>
-      <input type="text" id="login-input-username" tabindex="1">
-    </div>
+      <label for="login-input-username">{{t 'app.usernameoremail'}} <span class="req">*</span> <span id="loginErrorMessage" class="error"></span>
+        <input type="text" id="login-input-username" class="width-20" tabindex="1">
+      </label>
 
-    <div class="login-form-item form-item">
-      <a class="login-forgot-password" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
-      <label for="login-input-password">{{t 'app.password'}}</label>
-      <input type="password" class="form-control" id="login-input-password" tabindex="2">
-    </div>
+      <label for="login-input-password">{{t 'app.password'}} <span class="req">*</span> <span class="forms-desc"><a class="login-forgot-password" href="#user/forgot">{{t 'app.forgotpassword'}}</a></span>
+        <input type="password" id="login-input-password" class="width-20" tabindex="2">
+      </label>
 
-    <div class="login-form-item form-item">
-      <label><input id="remember-me" type="checkbox"/>{{t 'app.rememberme'}}</label>
-    </div>
+      <label><input id="remember-me" type="checkbox"/> {{t 'app.rememberme'}}</label>
     
-    <button type="submit" class="button button-primary" tabindex="3">{{t 'app.login'}}</button>
+    <button type="submit" class="btn btn-green" tabindex="3">{{t 'app.login'}}</button>
 
   </form>
 

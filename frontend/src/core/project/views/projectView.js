@@ -7,22 +7,15 @@ define(function(require){
 
   var ProjectView = OriginView.extend({
 
-    tagName: 'div',
+    tagName: 'li',
 
     className: 'project',
 
     events: {
-      'click .project-delete-link' : 'deleteProject',
-      'click .project-add-page'    : 'addPage'
     },
 
-    deleteProject: function(event) {
-      event.preventDefault();
-      if (confirm('Are you sure you want to delete this project?')) {
-        if (this.model.destroy()) {
-          this.remove();       
-        }
-      }
+    preRender: function() {
+      this.listenTo(this, 'remove', this.remove);
     }
     
   }, {

@@ -8,4 +8,12 @@
 		<a href="#/project/new">{{t 'app.addproject'}}</a>
 	</div>
 </div>
-<div class="dashboard-projects"></div>
+<ul class="dashboard-projects blocks-4"></ul>
+<nav id="contextMenu" class="contextMenu nav nav-stacked display-none" role="menu" data-id="">
+    <ul>
+        <li><a id="linkEditProject" tabindex="-1" href="#">{{t 'app.edit'}}</a></li>
+        <li><a id="linkEditProperties" tabindex="-1" href="#">{{t 'app.editproperties'}}</a></li>
+        <li><a id="linkCopyProject" tabindex="-1" href="#">{{t 'app.copy'}}</a></li>
+        <li><a id="linkDeleteProject" tabindex="-1" href="#">{{t 'app.delete'}}</a></li>
+    </ul>
+</nav>

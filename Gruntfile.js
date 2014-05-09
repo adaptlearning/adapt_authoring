@@ -33,7 +33,7 @@ module.exports = function(grunt) {
             'frontend/build/adaptbuilder/css/kube.min.css': 'frontend/src/less/kube.less'
           },
           {
-            'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/core/*.less'
+            'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/core/**/*.less'
           }]
         },
         options: {

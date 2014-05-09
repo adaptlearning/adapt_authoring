@@ -1,22 +1,22 @@
 <div class="navigation-inner clearfix">
   <div class="navigation-left">
     {{#if isAuthenticated}}
-    <li data-route="dashboard"><a href="#/dashboard">{{t 'app.dashboard'}}</a></li>
+    <a href="#" class="navigation-item navigation-global-menu" data-event="globalMenu:toggle">Menu</a>
+    <div href="#" class="navigation-item navigation-product-name">Origin</div>
     {{/if}}
   </div>
   <div class="navigation-right">
     {{#if isAuthenticated}}
-    <li>
-      <span>{{t 'app.loggedinas'}}&nbsp;<a href="#/user/profile">{{email}}</a>
-      </span>
-    </li>
-    <li data-route="logout">
-      <a href="#/user/logout">{{t 'app.logout'}}</a>
-    </li>
+    <a href="#" class="navigation-item navigation-profile" data-event="profile:toggle">
+      <span>{{email}}</span>
+    </a>
+    <a href="#" class="navigation-item navigation-user-logout" data-event="user:logout">
+      <span>{{t 'app.logout'}}</span>
+    </a>
     {{else}}
-    <li data-route="login">
+    {{!-- <li data-route="login">
       <a href="#/user/login">{{t 'app.login'}}</a>
-    </li>
+    </li> --}}
     {{/if}}
   </div>
 </div>

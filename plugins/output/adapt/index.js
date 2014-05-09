@@ -15,7 +15,8 @@ var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     ncp = require('ncp').ncp,
     rimraf = require('rimraf'),
     mkdirp = require('mkdirp'),
-    usermanager = require('../../../lib/usermanager');
+    usermanager = require('../../../lib/usermanager'),
+    logger = require('../../../lib/logger');
 
 function AdaptOutput () {
 }
@@ -112,7 +113,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
             }
           }
         );     
-    }, configuration.getConfig('dbName'));
+    });
   };
 
   // Writes Adapt Framework JSON files to the /course folder
@@ -208,7 +209,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
     async.series([
       // Verify that the temporary folder exists
       function(callback) {
-        console.log('1. Verifying temporary folder exists');
+        logger.log('info', '1. Verifying temporary folder exists');
 
         fs.exists(TEMP_DIR, function(exists) {
             if (exists) {
@@ -227,7 +228,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
       // Create the 'src' working folder
       function(callback) {
-        console.log('2. Verifying working folder');
+        logger.log('info', '2. Verifying working folder');
 
         var workingRoot = path.join(TEMP_DIR, courseId, user._id, BUILD_DIR);
         var workingFolder = path.join(workingRoot, COURSE_DIR, outputJson['config'][0]._defaultLanguage);
@@ -262,7 +263,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
       // Sanatize course data
       function(callback) {
-        console.log('3. Sanitizing course JSON');
+        logger.log('info', '3. Sanitizing course JSON');
         var courseJson = outputJson['course'];
  
         // Don't leave it as an array
@@ -280,7 +281,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
       // Sanatize component data
       function(callback) {
-        console.log('4. Sanitizing component JSON');
+        logger.log('info', '4. Sanitizing component JSON');
         var components = outputJson['component'];
 
         // The 'properties' property of a component should not be included as an
@@ -303,7 +304,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
 
       function(callback) {
-        console.log('5. Copying build folder to temp directory');
+        logger.log('info', '5. Copying build folder to temp directory');
         var sourceFolder = path.join(process.cwd(), '/framework/build/');
         var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, user._id, BUILD_DIR);
 
@@ -318,7 +319,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
       // Save the files here
       function(callback) {
-        console.log('6. Saving JSON files');
+        logger.log('info', '6. Saving JSON files');
 
         async.each(['course', 'contentobject', 'config', 'article', 'block', 'component'], writeJson, function (err) {
           if (!err) {
@@ -384,12 +385,12 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       //   }
       // },
       function(callback) {       
-        console.log('7. Zipping it all up');
+        logger.log('info', '7. Zipping it all up');
         var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, user._id, 'download.zip'));
         var archive = archiver('zip');
 
         output.on('close', function() {
-          console.log('done')
+          logger.log('info', 'done')
           callback(null, 'Zip file created');
         });
         archive.on('error', function(err) {
@@ -399,7 +400,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         archive.pipe(output);
 
         archive.bulk([
-          { expand: true, cwd: path.join(TEMP_DIR, courseId, BUILD_DIR), src: ['**/*'] }
+          { expand: true, cwd: path.join(TEMP_DIR, courseId, user._id, BUILD_DIR), src: ['**/*'] }
         ]).finalize();
       },
       // Other steps...
@@ -424,7 +425,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
     ],
     // optional callback
     function(err, results){
-      console.log(results);
+      logger.log('info', results);
     });
   });
 

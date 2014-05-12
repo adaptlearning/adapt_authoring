@@ -1,3 +1,5 @@
+{{>part_editorItemSidebar}}
+
 <div class="block-detail">
   <h4 class="block-title">{{{title}}}</h4>
   <div class="block-body">{{{body}}}</div>
@@ -39,7 +41,8 @@
 
   {{#if layoutOptions}}
     <div class="add-control">
-      <a href="#" class="add-component">{{t 'app.addcomponent'}}</a>
+      <a href="#" class="btn btn-green add-component">{{t 'app.addcomponent'}}</a>
+      <a href="#" class="btn btn-red block-delete">{{t 'app.delete'}}</a>
     </div>
 
     <div class="add-component-form">

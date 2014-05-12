@@ -17,6 +17,10 @@ require([
 
     Origin.router = new Router();
 
+    /*Origin.on(function(){
+      Origin.contextMenu.add;
+    });*/
+
     Origin.sessionModel.fetch({
       success: function(data) {
         $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);

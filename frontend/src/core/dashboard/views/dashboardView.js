@@ -101,7 +101,7 @@ define(function(require){
     },
 
     projectRemoved: function() {
-      alert('you removed a projec');
+      alert('You removed a project');
       this.evaluateProjectCount(this.collection);
     },
 

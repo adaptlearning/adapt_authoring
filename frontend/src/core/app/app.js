@@ -1,12 +1,13 @@
 require([
     'coreJS/app/origin',
     'coreJS/app/router',
+    'coreJS/user/user',
     'coreJS/user/models/sessionModel',
     'coreJS/navigation/views/navigationView',
     'coreJS/app/helpers',
     'polyglot',
     'templates'
-], function (Origin, Router, SessionModel, NavigationView, Helpers, Polyglot) {
+], function (Origin, Router, User, SessionModel, NavigationView, Helpers, Polyglot) {
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file
   $.getJSON('lang/' + locale, function(data) {

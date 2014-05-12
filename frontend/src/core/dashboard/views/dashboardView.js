@@ -24,7 +24,60 @@ define(function(require){
       'click #dashboardMenu button'    : 'formclick',
       'click a#sortProjectsByName'     : 'sortProjectsByName',
       'click a#sortProjectsByAuthor'   : 'sortProjectsByAuthor',
-      'click a#sortProjectsByLastEdit' : 'sortProjectsByLastEdit'
+      'click a#sortProjectsByLastEdit' : 'sortProjectsByLastEdit',
+      'click .contextMenu'              : 'handleContextMenuClick',
+      'click .menu-container'           : 'toggleContextMenu'
+    },
+
+    toggleContextMenu: function(e) {
+      var menu = $('#contextMenu');
+      var previousId = menu.attr('data-id');
+
+      if (previousId !== '' && (previousId == e.currentTarget.dataset.id)) {
+        if (menu.hasClass('display-none')) {
+          menu.removeClass('display-none');
+        } else {
+          menu.addClass('display-none');
+        }
+        return false;
+      }
+
+      menu.attr('data-id', e.currentTarget.dataset.id);
+      
+      menu
+        .css({position: 'absolute',
+          left: e.clientX - menu.width(),
+          top: e.clientY + 10})
+        .removeClass('display-none');
+    },
+
+    handleContextMenuClick: function(e) {
+      e.preventDefault();
+      $('#contextMenu').addClass('display-none');
+
+      var projectId = e.currentTarget.dataset.id;
+
+      switch(e.target.id) {
+        case 'linkEditProject':
+          Backbone.history.navigate('/editor/' + projectId + '/menu', {trigger: true});
+          break;
+
+        case 'linkEditProperties':
+          Backbone.history.navigate('/project/edit/' + projectId, {trigger: true});
+          break;
+
+        case 'linkCopyProject':
+          alert('TODO: Copy project');
+          break;
+
+        case 'linkDeleteProject':
+          if (confirm(window.polyglot.t('app.confirmdeleteproject'))) {
+            var projectToDelete = this.collection.get(projectId);
+
+            projectToDelete.destroy();
+          }
+          break;
+      }
     },
 
     addProjectViews: function() {
@@ -48,6 +101,7 @@ define(function(require){
     },
 
     projectRemoved: function() {
+      alert('You removed a project');
       this.evaluateProjectCount(this.collection);
     },
 

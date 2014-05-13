@@ -5,6 +5,10 @@ define(function(require){
 
   var EditorOriginView = OriginView.extend({
 
+    events: {
+      'click .paste-cancel'   : 'pasteCancel',
+    },
+
     initialize: function() {
       OriginView.prototype.initialize.apply(this, arguments);
       this.listenTo(Origin, 'editorView:pasteCancel', this.hidePasteZone);
@@ -41,6 +45,7 @@ define(function(require){
     },
 
     openContextMenu: function (e) {
+      e.stopPropagation();
       e.preventDefault();
 
       Origin.trigger('contextMenu:open', this, e);

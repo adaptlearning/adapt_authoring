@@ -15,17 +15,17 @@ define(function(require){
 
     className: 'page-article editable',
 
-    events: {
+    events: _.extend(EditorOriginView.prototype.events, {
       'click a.add-block'           : 'addBlock',
       'click a.page-article-delete' : 'deletePageArticle',
-      'click .paste-block'          : 'onPaste',
-      'click .paste-cancel'         : 'pasteCancel',
+      'click a.paste-article'         : 'onPaste',
       'click a.open-context-article' : 'openContextMenu'
-    },
+    }),
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
+
       this.on('contextMenu:article:edit', this.loadPageEdit);
       this.on('contextMenu:article:copy', this.onCopy);
       this.on('contextMenu:article:delete', this.deletePageArticle);
@@ -39,7 +39,12 @@ define(function(require){
       this.$('.page-article-blocks').empty();
 
       // Insert the 'pre' paste zone for blocks
-      var prePasteBlock = new EditorBlockModel({_parentId: this.model.get('_id'), _type: 'block', _pasteZoneSortOrder: 1});
+      var prePasteBlock = new EditorBlockModel();
+      prePasteBlock.set('_parentId', this.model.get('_id'));
+      prePasteBlock.set('_type', 'block');
+      prePasteBlock.set('_pasteZoneSortOrder', 1);
+
+      // {_parentId: this.model.get('_id'), _type: 'block', _pasteZoneSortOrder: 1});
       this.$('.page-article-blocks').append(new EditorPasteZoneView({model: prePasteBlock}).$el);
 
       this.model.getChildren().each(function(block) {

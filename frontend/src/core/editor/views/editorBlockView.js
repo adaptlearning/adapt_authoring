@@ -13,13 +13,12 @@ define(function(require){
 
     className: 'block editable',
 
-    events: {
-      'click a.block-delete'   : 'deleteBlock',
-      'click .paste-component' : 'onPaste',
-      'click .paste-cancel'    : 'pasteCancel',
+    events: _.extend(EditorOriginView.prototype.events, {
+      'click a.block-delete'   : 'deleteBlock',     
       'click a.add-component'  : 'addComponent',
+      'click a.paste-block'         : 'onPaste',
       'click a.open-context-block' : 'openContextMenu'
-    },
+    }),
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);

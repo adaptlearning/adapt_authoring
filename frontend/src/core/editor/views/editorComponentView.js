@@ -12,12 +12,11 @@ define(function(require){
 
     className: 'component',
 
-    events: {
-      'click a.component-delete'  : 'deleteComponent',
-      'click .paste-component'    : 'onPaste',
-      'click .paste-cancel'       : 'pasteCancel',
-      'click a.open-context-component' : 'openContextMenu'
-    },
+    events: _.extend(EditorOriginView.prototype.events, {
+      'click a.component-delete'        : 'deleteComponent',
+      'click a.paste-component'         : 'onPaste',
+      'click a.open-context-component'  : 'openContextMenu'
+    }),
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);

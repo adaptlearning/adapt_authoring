@@ -5,13 +5,16 @@ require([
     'coreJS/navigation/views/navigationView',
     'coreJS/app/helpers',
     'polyglot',
-    'templates'
+    'templates',
+    'coreJS/app/contextMenu'
 ], function (Origin, Router, SessionModel, NavigationView, Helpers, Polyglot) {
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file
   $.getJSON('lang/' + locale, function(data) {
     // Instantiate Polyglot with phrases
     window.polyglot = new Polyglot({phrases: data});
+
+    Origin.trigger('app:initContextMenu');
 
     Origin.sessionModel = new SessionModel();
 

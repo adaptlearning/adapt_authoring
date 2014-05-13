@@ -17,16 +17,18 @@ define(function(require){
 
     events: {
       'click a.add-block'           : 'addBlock',
-      'click a.page-article-edit'   : 'loadPageEdit',
       'click a.page-article-delete' : 'deletePageArticle',
-      'click .copy-article'         : 'onCopy',
       'click .paste-block'          : 'onPaste',
-      'click .paste-cancel'         : 'pasteCancel'
+      'click .paste-cancel'         : 'pasteCancel',
+      'click div.open-context-article' : 'openContextMenu'
     },
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
+      this.on('contextMenu:article:edit', this.loadPageEdit);
+      this.on('contextMenu:article:copy', this.onCopy);
+      this.on('contextMenu:article:delete', this.deletePageArticle);
     },
 
     postRender: function() {
@@ -79,12 +81,13 @@ define(function(require){
     },
 
     deletePageArticle: function(event) {
-      event.preventDefault();
+      if (event) {
+        event.preventDefault();
+      }
 
       var thisView = this;
 
       if (confirm(window.polyglot.t('app.confirmdeletearticle'))) {
-        console.log('deleting article', this.model);
         this.model.destroy({
           success: function(success) {
             thisView.remove();
@@ -99,7 +102,9 @@ define(function(require){
     },
 
     loadPageEdit: function (event) {
-      event.preventDefault();
+      if (event) {
+        event.preventDefault();
+      }
       Origin.trigger('editorSidebarView:addEditView', this.model);
     }
 

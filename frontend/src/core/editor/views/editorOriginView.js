@@ -11,7 +11,9 @@ define(function(require){
     },
 
     onCopy: function(event) {
-      event.preventDefault();
+      if (event) {
+        event.preventDefault();
+      }
       Origin.trigger('editorView:copy', this.model);
       $('.paste-zone').addClass('display-none');
       $('.paste-zone-'+ this.model.get('_type')).removeClass('display-none');
@@ -31,6 +33,10 @@ define(function(require){
     hidePasteZone: function() {
       // Purposeful global selector here
       $('.paste-zone').addClass('display-none');
+    },
+
+    openContextMenu: function (e) {
+      Origin.trigger('contextMenu:open', this, e);
     }
 
   });

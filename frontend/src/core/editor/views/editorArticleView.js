@@ -37,13 +37,10 @@ define(function(require){
 
     addBlockViews: function() {
       this.$('.page-article-blocks').empty();
-      // Pre-block paste zone
-      var firstBlock = this.model.getChildren().at(0);
-      if (firstBlock) {
-        var dummyBlock = firstBlock.clone();
-        dummyBlock.set('_pasteZoneSortOrder', 1);
-        this.$('.page-article-blocks').append(new EditorPasteZoneView({model: dummyBlock}).$el);
-      }
+
+      // Insert the 'pre' paste zone for blocks
+      var prePasteBlock = new EditorBlockModel({_parentId: this.model.get('_id'), _type: 'block', _pasteZoneSortOrder: 1});
+      this.$('.page-article-blocks').append(new EditorPasteZoneView({model: prePasteBlock}).$el);
 
       this.model.getChildren().each(function(block) {
         this.$('.page-article-blocks').append(new EditorBlockView({model: block}).$el);

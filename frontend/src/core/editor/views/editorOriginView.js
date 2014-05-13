@@ -14,19 +14,24 @@ define(function(require){
       if (event) {
         event.preventDefault();
       }
-      Origin.trigger('editorView:copy', this.model);
+
       $('.paste-zone').addClass('display-none');
       $('.paste-zone-'+ this.model.get('_type')).removeClass('display-none');
+
+      Origin.trigger('editorView:copy', this.model);
     },
 
     onPaste: function(event) {
       event.preventDefault();
-      Origin.trigger('editorView:paste', this.model, $(event.target).data('sort-order'), $(event.target).data('paste-layout'));
+
       $('.paste-zone').addClass('display-none');
+
+      Origin.trigger('editorView:paste', this.model, $(event.target).data('sort-order'), $(event.target).data('paste-layout'));
     },
 
     pasteCancel: function(event) {
       event.preventDefault();
+
       Origin.trigger('editorView:pasteCancel', this.model);
     },
 
@@ -37,6 +42,7 @@ define(function(require){
 
     openContextMenu: function (e) {
       e.preventDefault();
+
       Origin.trigger('contextMenu:open', this, e);
     }
 

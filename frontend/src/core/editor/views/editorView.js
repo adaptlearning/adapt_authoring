@@ -31,6 +31,8 @@ define(function(require){
     events: {
       "click a.page-add-link" : "addNewPage",
       "click a.load-page"     : "loadPage",
+      "mouseover div.editable" : "onEditableHoverOver",
+      "mouseout div.editable" : "onEditableHoverOut"
     },
 
     preRender: function(options) {
@@ -47,6 +49,15 @@ define(function(require){
 
     postRender: function() {
       this.renderEditorSidebar();
+    },
+
+    onEditableHoverOver: function(e) {
+      e.stopPropagation();
+      $(e.currentTarget).addClass('hovering');
+    },
+
+    onEditableHoverOut: function(e) {
+      $(e.currentTarget).removeClass('hovering');
     },
 
     // checks if data is loaded
@@ -212,6 +223,8 @@ define(function(require){
       if (topitem._sortOrder) {
         topitem._sortOrder = sortOrder;
       }
+
+
       this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_id'), false);
     },
 

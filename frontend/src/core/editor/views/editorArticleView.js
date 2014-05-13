@@ -13,7 +13,7 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'page-article',
+    className: 'page-article editable',
 
     events: {
       'click a.add-block'           : 'addBlock',

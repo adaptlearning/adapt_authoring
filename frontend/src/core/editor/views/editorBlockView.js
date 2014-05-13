@@ -11,7 +11,7 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'block',
+    className: 'block editable',
 
     events: {
       'click a.block-delete'   : 'deleteBlock',

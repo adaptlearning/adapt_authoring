@@ -20,7 +20,7 @@ define(function(require){
       'click a.page-article-delete' : 'deletePageArticle',
       'click .paste-block'          : 'onPaste',
       'click .paste-cancel'         : 'pasteCancel',
-      'click div.open-context-article' : 'openContextMenu'
+      'click a.open-context-article' : 'openContextMenu'
     },
 
     preRender: function() {

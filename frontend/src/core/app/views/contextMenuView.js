@@ -82,10 +82,9 @@ define(function(require) {
         Origin.trigger('contextMenu:openedCustomView');
       }
       _.defer(_.bind(function() {
-
         this.$el.css({position: 'absolute',
-          left: e.clientX - this.$el.width(),
-          top: e.clientY + 10})
+          left: $(e.currentTarget).offset().left + $(e.currentTarget).width() + 10,
+          top: $(e.currentTarget).offset().top})
         .removeClass('display-none');
       
         this.addBodyEvent();

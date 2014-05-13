@@ -16,7 +16,7 @@ define(function(require){
       'click a.component-delete'  : 'deleteComponent',
       'click .paste-component'    : 'onPaste',
       'click .paste-cancel'       : 'pasteCancel',
-      'click div.open-context-component' : 'openContextMenu'
+      'click a.open-context-component' : 'openContextMenu'
     },
 
     preRender: function() {

@@ -18,7 +18,7 @@ define(function(require){
       'click .paste-component' : 'onPaste',
       'click .paste-cancel'    : 'pasteCancel',
       'click a.add-component'  : 'addComponent',
-      'click div.open-context-block' : 'openContextMenu'
+      'click a.open-context-block' : 'openContextMenu'
     },
 
     preRender: function() {

@@ -28,7 +28,7 @@ define(function(require) {
     // Setup context menu items
     var contextItems = [
       {
-        title: 'Edit',
+        title: 'Edit content',
         className: 'context-menu-item',
         callbackEvent: "edit"
       },

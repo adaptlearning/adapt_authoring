@@ -36,6 +36,7 @@ define(function(require){
     },
 
     openContextMenu: function (e) {
+      e.preventDefault();
       Origin.trigger('contextMenu:open', this, e);
     }
 

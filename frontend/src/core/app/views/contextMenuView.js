@@ -149,8 +149,11 @@ define(function(require) {
 
     onContextMenuItemClicked: function(event) {
       event.preventDefault();
+      
       var callbackEvent = this.model.get('callbackEvent');
       this.model.get('contextView').trigger('contextMenu:' + this.model.get('type') + ':' + callbackEvent);
+
+      Origin.trigger('contextMenu:closeContextMenu');
     }
 
   });

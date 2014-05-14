@@ -12,7 +12,11 @@ var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     async = require('async'),
     archiver = require('archiver'),
     _ = require('underscore'),
-    ncp = require('ncp').ncp;
+    ncp = require('ncp').ncp,
+    rimraf = require('rimraf'),
+    mkdirp = require('mkdirp'),
+    usermanager = require('../../../lib/usermanager'),
+    logger = require('../../../lib/logger');
 
 function AdaptOutput () {
 }
@@ -84,6 +88,7 @@ AdaptOutput.prototype.preview = function (courseId, req, res, next) {
  */
 AdaptOutput.prototype.publish = function (courseId, req, res, next) {
   var outputJson = {};
+  var user = usermanager.getCurrentUser();
 
   // Queries the database to return each collectionType for the given courseId
   var getJson = function (collectionType, doneCallback) {
@@ -107,8 +112,8 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
               doneCallback(null);
             }
           }
-        );     
-    }, configuration.getConfig('dbName'));
+        );
+    });
   };
 
   // Writes Adapt Framework JSON files to the /course folder
@@ -122,12 +127,13 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
     filenames['component'] = 'components.json';
 
     var data = JSON.stringify(outputJson[key], undefined, 2);
+    var filepath = path.join(TEMP_DIR, courseId, user._id, BUILD_DIR, COURSE_DIR);
     var filename;
 
     if (key == 'config') {
-      filename = path.join(TEMP_DIR, courseId, BUILD_DIR, COURSE_DIR, filenames[key]);
+      filename = path.join(filepath, filenames[key]);
     } else {
-      filename = path.join(TEMP_DIR, courseId, BUILD_DIR, COURSE_DIR, outputJson['config'][0]._defaultLanguage, filenames[key]);
+      filename = path.join(filepath, outputJson['config'][0]._defaultLanguage, filenames[key]);
     }
 
     fs.writeFile(filename, data, function (error) {
@@ -135,15 +141,14 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         doneCallback(error);
       } else {
         doneCallback(null);
-      } 
-    });      
+      }
+    });
   };
 
   // Verifies that a given folder exists and creates it if it does not
   var verifyFolder = function(folder, doneCallback) {
     fs.exists(folder, function(exists) {
       if (exists) {
-        // Remove files?
         doneCallback(null, folder + ' folder OK');
       } else {
         fs.mkdir(folder, '0777', function(err) {
@@ -160,7 +165,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
   // Copies a specific version of the component to the source folder
   var copyComponentFiles = function(component, doneCallback) {
     var sourceFolder = path.join(process.cwd(), '/plugins/content/component/versions/', component.name, component.version, component.name);
-    var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, SOURCE_DIR, COMPONENTS_DIR, component.name);
+    var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, user._id, SOURCE_DIR, COMPONENTS_DIR, component.name);
 
     ncp(sourceFolder, destinationFolder, function (err) {
       if (err) {
@@ -204,7 +209,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
     async.series([
       // Verify that the temporary folder exists
       function(callback) {
-        console.log('1. Verifying temporary folder exists');
+        logger.log('info', '1. Verifying temporary folder exists');
 
         fs.exists(TEMP_DIR, function(exists) {
             if (exists) {
@@ -221,48 +226,45 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
             }
         });
       },
-      // Create a temporary folder for ths .json files
+      // Create the 'src' working folder
       function(callback) {
-        console.log('2. Creating/verifying course specific temp folder');
-        fs.exists(path.join(TEMP_DIR, courseId), function(exists) {
-          if (exists) {
-            // Remove files?
-            callback(null,  courseId + ' folder OK');
-          } else {
-            fs.mkdir(path.join(TEMP_DIR, courseId), '0777', function(err) {
+        logger.log('info', '2. Verifying working folder');
+
+        var workingRoot = path.join(TEMP_DIR, courseId, user._id, BUILD_DIR);
+        var workingFolder = path.join(workingRoot, COURSE_DIR, outputJson['config'][0]._defaultLanguage);
+
+        fs.exists(workingFolder, function(exists) {
+          if (!exists) {
+            // Create the folder from scratch
+            mkdirp(workingFolder, function (err) {
               if (err) {
-                callback(err, 'Error creating ' + TEMP_DIR);
+                callback(err, 'Problem occurred verifying working folders');
               } else {
-                callback(null, 'Course temp folder OK');
+                callback(null, 'Working folders verified');
               }
             });
-          }
-        });        
-      },     
-      //  Create the working folders
-      function(callback) {
-        console.log('3. Verifying working folders');
-
-        var workingFolders = [];
-        var workingRoot = path.join(TEMP_DIR, courseId, BUILD_DIR);
-
-        workingFolders.push(workingRoot);
-        workingFolders.push(path.join(workingRoot, COURSE_DIR));
-        workingFolders.push(path.join(workingRoot, COURSE_DIR, outputJson['config'][0]._defaultLanguage));
-        
-        async.each(workingFolders, verifyFolder, function(err) {
-          if (!err) {
-            callback(null, 'Working folders verified');
           } else {
-            callback(err, 'Problem occurred');
+            // Remove old published files, then recreate the folder
+            rimraf(workingFolder, function (err) {
+              if (err) {
+                callback(err, 'Problem occurred removing working folder');
+              } else {
+                mkdirp(workingFolder, function (err) {
+                  if (err) {
+                    callback(err, 'Problem occurred verifying working folder after removal');
+                  } else {
+                    callback(null, 'Working folder verified');
+                  }
+                });
+              }
+            });
           }
         });
       },
       // Sanatize course data
       function(callback) {
-        console.log('4. Sanitizing course JSON');
-        // var courseJson = outputJson['course'];
-        // var contentObjectsJson = outputJson['contentobject'];
+        logger.log('info', '3. Sanitizing course JSON');
+        
         var originalCourseId;
 
         // Don't leave the course JSON as an array
@@ -285,26 +287,23 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
           }
         }
 
-        // var contentObjectsString = JSON.stringify(outputJson['contentobject']);
-        
-
         outputJson['course'] = courseJson;
         outputJson['contentobject'] = contentObjectsJson;
 
-        callback(null, 'course.json sanatized');
+        callback(null, 'course.json sanitized');
       },
       // Sanatize component data
       function(callback) {
-        console.log('5. Sanitizing component JSON');
+        logger.log('info', '4. Sanitizing component JSON');
         var components = outputJson['component'];
 
-        // The 'properties' property of a component should not be included as an 
+        // The 'properties' property of a component should not be included as an
         // attribute in the output, but all its children should
         for (var i = 0; i < components.length; i++) {
           if (components[i].hasOwnProperty('properties')) {
             for(var key in components[i].properties){
               if (components[i].properties.hasOwnProperty(key)){
-                 components[i][key] = components[i].properties[key]; 
+                 components[i][key] = components[i].properties[key];
               }
             }
 
@@ -314,13 +313,13 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         }
 
         outputJson['component'] = components;
-        callback(null, 'component.json sanatized');
+        callback(null, 'component.json sanitized');
       },
 
       function(callback) {
-        console.log('6. Copying build folder to temp directory');
+        logger.log('info', '5. Copying build folder to temp directory');
         var sourceFolder = path.join(process.cwd(), '/framework/build/');
-        var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, BUILD_DIR);
+        var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, user._id, BUILD_DIR);
 
         ncp(sourceFolder, destinationFolder, function (err) {
           if (err) {
@@ -333,7 +332,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
       // Save the files here
       function(callback) {
-        console.log('7. Saving JSON files');
+        logger.log('info', '6. Saving JSON files');
 
         async.each(['course', 'contentobject', 'config', 'article', 'block', 'component'], writeJson, function (err) {
           if (!err) {
@@ -399,30 +398,29 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       //   }
       // },
       function(callback) {       
-        console.log('8. Zipping it all up');
-
-        var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, 'download.zip'));
+        logger.log('info', '7. Zipping it all up');
+        var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, user._id, 'download.zip'));
         var archive = archiver('zip');
 
         output.on('close', function() {
-          console.log('done')
-          callback(null, 'Zip file created'); 
+          logger.log('info', 'done')
+          callback(null, 'Zip file created');
         });
-        archive.on('error', function(err) { 
-          callback(err, 'Error during zip'); 
+        archive.on('error', function(err) {
+          callback(err, 'Error during zip');
         });
 
         archive.pipe(output);
 
         archive.bulk([
-          { expand: true, cwd: path.join(TEMP_DIR, courseId, BUILD_DIR), src: ['**/*'] }
+          { expand: true, cwd: path.join(TEMP_DIR, courseId, user._id, BUILD_DIR), src: ['**/*'] }
         ]).finalize();
       },
       // Other steps...
       function(callback) {
         // Trigger the file download
         var filename = slugify(outputJson['course'].title);
-        var filePath = path.join(TEMP_DIR, courseId, 'download.zip');
+        var filePath = path.join(TEMP_DIR, courseId, user._id, 'download.zip');
         var stat = fs.statSync(filePath);
 
         res.writeHead(200, {
@@ -440,7 +438,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
     ],
     // optional callback
     function(err, results){
-      console.log(results);
+      logger.log('info', results);
     });
   });
 

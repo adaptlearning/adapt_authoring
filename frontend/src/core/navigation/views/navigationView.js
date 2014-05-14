@@ -11,9 +11,11 @@ define(function(require){
 
     initialize: function() {
       this.listenTo(Origin, 'login:changed', this.loginChanged);
-      this.listenTo(Origin, 'route:changed', this.routeChanged);
-
       this.render();
+    },
+
+    events: {
+      'click a':'onNavigationItemClicked'
     },
 
     render: function() {
@@ -28,9 +30,9 @@ define(function(require){
       this.render();
     },
 
-    routeChanged: function (info) {
-      this.$('.active').removeClass('active');
-      this.$('li[data-route="' + info.route + '"]').addClass('active');
+    onNavigationItemClicked: function(event) {
+      event.preventDefault();
+      Origin.trigger('navigation:' + $(event.currentTarget).attr('data-event'));
     }
 
   }, {

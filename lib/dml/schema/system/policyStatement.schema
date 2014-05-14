@@ -1,0 +1,19 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/trackedObject.schema",
+  "properties": {
+    "effect": {
+      "type": "string",
+      "required": true,
+      "default": "deny"
+    },
+    "principal": {
+      "type": "string"
+    },
+    "action": [ "string" ],
+    "resource": [ "string" ],
+    "condition": {}
+  }
+}

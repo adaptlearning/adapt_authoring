@@ -1,0 +1,15 @@
+{
+  "serverName": "localhost",
+  "serverPort": 3030,
+  "dbType": "mongoose",
+  "dbHost": "localhost",
+  "dbName": "adapt-builder-core-test",
+  "dbPort": 27017,
+  "dataRoot": "testDataRoot",
+  "tenantPrefix": "adapt-builder-test-tenant-",
+  "sessionSecret": "your-secret-here",
+  "auth": "local",
+  "viewEngine" : "jade",
+  "viewPath" : "views",
+  "frontend" : "frontend"
+}

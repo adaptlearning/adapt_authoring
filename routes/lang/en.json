@@ -25,6 +25,8 @@
   "app.addarticle" : "Add article",
   "app.addblock" : "Add block",
   "app.addcomponent" : "Add component",
+  "app.addpage" : "Add page",
+  "app.addsection" : "Add section",
   "app.editthistext" : "{Edit this text}",
   "app.overview" : "Overview",
   "app.resetpassword" : "Reset password",

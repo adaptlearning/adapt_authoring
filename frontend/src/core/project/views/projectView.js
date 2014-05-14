@@ -16,6 +16,7 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(this, 'remove', this.remove);
+      this.listenTo(this.model, 'destroy', this.remove);
     }
     
   }, {

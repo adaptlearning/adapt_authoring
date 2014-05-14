@@ -6,11 +6,12 @@ define(function(require){
   var EditorOriginView = OriginView.extend({
 
     events: {
-      'click .paste-cancel'   : 'pasteCancel',
+      'click .paste-cancel'   : 'pasteCancel'
     },
 
     initialize: function() {
       OriginView.prototype.initialize.apply(this, arguments);
+      
       this.listenTo(Origin, 'editorView:pasteCancel', this.hidePasteZone);
     },
 

@@ -25,24 +25,26 @@ define(function(require) {
 
   var init = function() {
     new ContextMenuView({collection: ContextMenuCollection});
+    
     // Setup context menu items
     var contextItems = [
       {
-        title: 'Edit content',
+        title: window.polyglot.t('app.edit'),
         className: 'context-menu-item',
         callbackEvent: "edit"
       },
       {
-        title: 'Copy',
+        title: window.polyglot.t('app.copy'),
         className: 'context-menu-item',
         callbackEvent: "copy"
       },
       {
-        title: 'Delete',
+        title: window.polyglot.t('app.delete'),
         className: 'context-menu-item',
         callbackEvent: "delete"
       }
     ];
+
     ContextMenu.addItem('article', contextItems);
     ContextMenu.addItem('block', contextItems);
     ContextMenu.addItem('component', contextItems);

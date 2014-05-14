@@ -63,13 +63,13 @@ define(function(require){
     addBlock: function(event) {
       event.preventDefault();
 
-      var thisView = this;
+      var _this = this;
       var newPageBlockModel = new EditorBlockModel();
 
       newPageBlockModel.save({
         title: window.polyglot.t('app.placeholdernewblock'),
         body: window.polyglot.t('app.placeholdereditthistext'),
-        _parentId: thisView.model.get('_id'),
+        _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id')
       },
       {
@@ -87,12 +87,12 @@ define(function(require){
         event.preventDefault();
       }
 
-      var thisView = this;
+      var _this = this;
 
       if (confirm(window.polyglot.t('app.confirmdeletearticle'))) {
         this.model.destroy({
           success: function(success) {
-            thisView.remove();
+            _this.remove();
             Origin.trigger('editorView:fetchData');
             // console.log('success', success);
           },

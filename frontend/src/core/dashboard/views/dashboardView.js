@@ -30,23 +30,23 @@ define(function(require){
     },
 
     toggleContextMenu: function(e) {
-      var menu = $('#contextMenu');
-      var previousId = menu.attr('data-id');
+      var $menu = $('#contextMenu');
+      var previousId = $menu.attr('data-id');
 
       if (previousId !== '' && (previousId == e.currentTarget.dataset.id)) {
-        if (menu.hasClass('display-none')) {
-          menu.removeClass('display-none');
+        if ($menu.hasClass('display-none')) {
+          $menu.removeClass('display-none');
         } else {
-          menu.addClass('display-none');
+          $menu.addClass('display-none');
         }
         return false;
       }
 
-      menu.attr('data-id', e.currentTarget.dataset.id);
+      $menu.attr('data-id', e.currentTarget.dataset.id);
       
-      menu
+      $menu
         .css({position: 'absolute',
-          left: e.clientX - menu.width(),
+          left: e.clientX - $menu.width(),
           top: e.clientY + 10})
         .removeClass('display-none');
     },
@@ -74,7 +74,9 @@ define(function(require){
           if (confirm(window.polyglot.t('app.confirmdeleteproject'))) {
             var projectToDelete = this.collection.get(projectId);
 
+            projectToDelete.trigger('remove');
             projectToDelete.destroy();
+            this.projectRemoved();
           }
           break;
       }
@@ -101,7 +103,6 @@ define(function(require){
     },
 
     projectRemoved: function() {
-      alert('you removed a projec');
       this.evaluateProjectCount(this.collection);
     },
 

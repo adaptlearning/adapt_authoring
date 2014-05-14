@@ -44,15 +44,22 @@ define(function(require) {
 
 	// Listen to navigation event to toggle
 	Origin.on('navigation:globalMenu:toggle', function() {
+		// Remove all events off #app
+		$('#app').off('click');
 		// Toggle between displaying and removing the menu
 		if (_isActive === true) {
 			_isActive = false;
 			// Trigger event to remove the globalMenuView
 			Origin.trigger('globalMenu:globalMenuView:remove');
+			// Remove body click event
 		} else {
 			_isActive = true;
 			// Add new view to the .navigation element passing in the GlobalMenuStore as the collection
 			$('.navigation').append(new GlobalMenuView({collection: GlobalMenuStore}).$el);
+			// Setup listeners to #app to remove menu when main pag is clicked
+			$('#app').one('click', _.bind(function(event) {
+				Origin.trigger('navigation:globalMenu:toggle');
+			}, this));
 		}
 	});
 

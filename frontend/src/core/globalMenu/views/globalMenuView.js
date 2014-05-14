@@ -8,7 +8,7 @@ define(function(require) {
 		className: 'global-menu',
 
 		initialize: function() {
-			this.listenTo(Origin, 'globalMenu:globalMenuView:remove', this.remove);
+			this.listenTo(Origin, 'globalMenu:globalMenuView:remove', this.removeMenu);
 			this.render();
 		},
 
@@ -37,9 +37,20 @@ define(function(require) {
 						}).$el);
 					}
 				}
-				
+
 			}, this);
 
+			// Wait until menu items are rendered before showing
+			_.defer(_.bind(function() {
+				this.$el.fadeIn(300);
+			}, this));
+
+		},
+
+		removeMenu: function() {
+			this.$el.fadeOut(300, _.bind(function() {
+				this.remove();
+			}, this));
 		}
 
 	}, {

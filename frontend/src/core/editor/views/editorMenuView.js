@@ -12,9 +12,7 @@ define(function(require){
 
     className: "editor-menu",
 
-    events: {
-      'click .fake-add-page-button':'addPage'
-    },
+    events: {},
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
@@ -26,47 +24,41 @@ define(function(require){
       this.setupMenuViews();
     },
 
-    storeSelectedItem: function(id) {
-      console.log('storing menu current state', id);
-      this.model.set('currentMenuState', id).save();
+    storeSelectedItem: function(contentObjectId) {
+      // Store the ID of the currently selected contentObject
+      Origin.editor.currentContentObjectId = contentObjectId;
+
+      // Reset the address bar to allow persistance of the 'Back' button
+      Backbone.history.navigate('#editor/' + Origin.editor.data.course.id + '/menu/' + contentObjectId);
+
       this.setupMenuViews();
     },
 
     // renders menu layer view for each child of this contentObject renders menu item view
     setupMenuViews: function() {
-      console.log('finsihed there');
       Origin.trigger('editorMenuView:removeMenuViews');
-      //this.model.set('currentMenuState', '').save();
-      // Find current selected item
-      if (this.model.get('currentMenuState')) {
-        //return console.log('there is a current menu state');
-        var currentSelectedMenuItem = Origin.editor.data.contentObjects.findWhere({_id: this.model.get('currentMenuState')});
+
+      if (Origin.editor.currentContentObjectId) {
+        var currentSelectedMenuItem = Origin.editor.data.contentObjects.findWhere({_id: Origin.editor.currentContentObjectId});
+
         if (!currentSelectedMenuItem) {
           this.showMenuChildren(this.model);
+
           return this.showExpandedMenuChildren(this.model);
         }
+
         if (currentSelectedMenuItem.get('_type') === 'menu') {
           currentSelectedMenuItem.set({'_isExpanded': true, '_isSelected': true});
         } else {
           currentSelectedMenuItem.set({'_isExpanded': false, '_isSelected': true});
         }
+
         this.setParentElementToSelected(currentSelectedMenuItem);
+
         return this.showExpandedMenuChildren(this.model);
       }
 
-
-      
-
       this.showMenuChildren(this.model);
-
-      /*// Find selected menu item
-      var currentSelectedMenuItem = Origin.editor.data.contentObjects.findWhere({_id: Origin.editor.currentMenuState});
-
-      // Recurse upwards until the hit the course setting each one as selected
-
-      this.setupParentSelectedItems(currentSelectedMenuItem);
-      // Render selected items children
-      this.showMenuChildren(this.model);*/
     },
 
     setParentElementToSelected: function(currentSelectedMenuItem) {

@@ -53,7 +53,7 @@ define(function(require) {
         new EditorContentObjectModel({
           _parentId: this._parentId,
           _courseId: Origin.editor.data.course.get('_id'),
-          title: window.polyglot.t('app.placeholdernewpage'),
+          title: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
           body: window.polyglot.t('app.placeholdereditthistext'),
           linkText: '',
           graphic: {

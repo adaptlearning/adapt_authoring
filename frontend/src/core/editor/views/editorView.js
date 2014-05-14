@@ -29,20 +29,24 @@ define(function(require){
     className: "editor-view",
 
     events: {
-      "click a.page-add-link" : "addNewPage",
-      "click a.load-page"     : "loadPage",
-      "mouseover div.editable" : "onEditableHoverOver",
-      "mouseout div.editable" : "onEditableHoverOut"
+      "click a.page-add-link"   : "addNewPage",
+      "click a.load-page"       : "loadPage",
+      "mouseover div.editable"  : "onEditableHoverOver",
+      "mouseout div.editable"   : "onEditableHoverOut"
     },
 
     preRender: function(options) {
       this.currentCourseId = options.currentCourseId;
       this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
+
+      Origin.editor.currentContentObjectId = options.currentPageId;
+
       this.listenTo(Origin, 'editorView:fetchData', this.setupEditor);
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
       this.listenTo(Origin, 'editorSidebarView:publish', this.publishProject);
+      
       this.render();
       this.setupEditor();
     },

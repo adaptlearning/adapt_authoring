@@ -4,7 +4,7 @@ require([
     'coreJS/user/user',
     'coreJS/user/models/sessionModel',
     'coreJS/navigation/views/navigationView',
-    'coreJS/app/globalMenu',
+    'coreJS/globalMenu/globalMenu',
     'coreJS/app/helpers',
     'polyglot',
     'templates'
@@ -22,6 +22,7 @@ require([
     Origin.sessionModel.fetch({
       success: function(data) {
         $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
+        Origin.trigger('app:dataReady');
         Origin.initialize();
       }
     });

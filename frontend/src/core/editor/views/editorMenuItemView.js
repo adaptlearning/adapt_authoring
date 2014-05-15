@@ -10,14 +10,30 @@ define(function(require){
     className: "editor-menu-item",
 
     events: {
-      'click':'onMenuItemClicked'
+      'click':'onMenuItemClicked',
+      'click a.open-context-contentObject' : 'openContextMenu'
     },
 
     preRender: function() {
       this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+
+      // Handle the context menu clicks
+      this.on('contextMenu:menu:edit', this.editMenuItem);
+      this.on('contextMenu:menu:copy', this.copyMenuItem);
+      this.on('contextMenu:menu:delete', this.deleteMenuItem);
+
+      this.on('contextMenu:page:edit', this.editMenuItem);
+      this.on('contextMenu:page:copy', this.copyMenuItem);
+      this.on('contextMenu:page:delete', this.deleteMenuItem);
+
       this.setupClasses();
     },
+
+    copyMenuItem: function() {
+      console.log('copyMenuItem clicked');
+    },
+
 
     onMenuItemClicked: function() {
 
@@ -98,18 +114,13 @@ define(function(require){
     },
 
     deleteMenuItem: function() {
-      console.log('deleting');
-      event.preventDefault();
-      if (confirm('Are you sure you want to delete this page?')) {
+      if (confirm(window.polyglot.t('app.confirmdelete' + this.model.get('_type')))) {
         if (this.model.destroy()) {
           this.remove();
         }
       }
-      // 
-      Origin.trigger('editorView:fetchData');
     }
     
-
   }, {
     template: 'editorMenuItem'
   });

@@ -50,7 +50,7 @@ define(function(require) {
     ContextMenu.addItem('component', contextItems);
   }
 
-  Origin.once('app:initContextMenu', function() {
+  Origin.once('app:dataReady', function() {
     init();
   });
 

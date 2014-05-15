@@ -4,19 +4,18 @@ require([
     'coreJS/user/user',
     'coreJS/user/models/sessionModel',
     'coreJS/navigation/views/navigationView',
+    'coreJS/globalMenu/globalMenu',
     'coreJS/app/helpers',
     'polyglot',
     'templates',
     'coreJS/app/contextMenu'
-], function (Origin, Router, User, SessionModel, NavigationView, Helpers, Polyglot) {
+], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Helpers, Polyglot, ContextMenu) {
 
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file
   $.getJSON('lang/' + locale, function(data) {
     // Instantiate Polyglot with phrases
     window.polyglot = new Polyglot({phrases: data});
-
-    Origin.trigger('app:initContextMenu');
 
     Origin.sessionModel = new SessionModel();
 
@@ -25,6 +24,7 @@ require([
     Origin.sessionModel.fetch({
       success: function(data) {
         $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
+        Origin.trigger('app:dataReady');
         Origin.initialize();
       }
     });

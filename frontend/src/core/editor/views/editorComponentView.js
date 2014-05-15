@@ -12,21 +12,25 @@ define(function(require){
 
     className: 'component',
 
-    events: {
-      'click a.component-edit'    : 'loadPageEdit',
-      'click a.component-delete'  : 'deleteComponent',
-      'click .copy-component'     : 'onCopy',
-      'click .paste-component'    : 'onPaste',
-      'click .paste-cancel'       : 'pasteCancel'
-    },
+    events: _.extend(EditorOriginView.prototype.events, {
+      'click a.component-delete'        : 'deleteComponent',
+      'click a.paste-component'         : 'onPaste',
+      'click a.open-context-component'  : 'openContextMenu'
+    }),
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
+      
+      this.on('contextMenu:component:edit', this.loadPageEdit);
+      this.on('contextMenu:component:copy', this.onCopy);
+      this.on('contextMenu:component:delete', this.deleteComponent);
     },
 
     deleteComponent: function(event) {
-      event.preventDefault();
+      if (event) {
+        event.preventDefault();
+      }
       var parentId = this.model.get('_parentId');
 
       if (confirm(window.polyglot.t('app.confirmdeletecomponent'))) {
@@ -38,7 +42,9 @@ define(function(require){
     },
 
     loadPageEdit: function (event) {
-      event.preventDefault();
+      if (event) {
+        event.preventDefault();
+      }
       Origin.trigger('editorSidebarView:addEditView', this.model);
     }
 

@@ -7,8 +7,10 @@ require([
     'coreJS/globalMenu/globalMenu',
     'coreJS/app/helpers',
     'polyglot',
-    'templates'
-], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Helpers, Polyglot) {
+    'templates',
+    'coreJS/app/contextMenu'
+], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Helpers, Polyglot, ContextMenu) {
+
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file
   $.getJSON('lang/' + locale, function(data) {

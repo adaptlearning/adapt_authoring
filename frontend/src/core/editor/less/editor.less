@@ -3,7 +3,12 @@
 }
 
 .add-control {
-  text-align: right;  
+  text-align: right;
+}
+
+.hovering {
+  border-style: dotted !important;
+  border-color: blue !important;
 }
 
 .editor-view {
@@ -27,23 +32,19 @@
   }
 
   .page-detail {
+    margin: 10px;
     position: relative;
-    width: 100%;
     height: 100%;
-    border: 1px solid;
 
     .page-add-article {
-      border: 1px solid;
-      bottom: 0;
       position: absolute;
+      bottom: 0;
       right: 0;
       width: 100px;
     }
   }
 
   .page {
-    border: 1px solid;
-
     .page-name {
       font-size: 24px;
     }
@@ -59,8 +60,10 @@
     }
   }
 
+
   .page-article {
-    border: 0.5px dashed #ADD8E6;
+    border: 1px solid #C9C9C9;
+    background: #F0F0F0;
     margin: 20px;
     position: relative;
     width: 95%;
@@ -70,10 +73,17 @@
       right: 0;
       top: 0;
     }
+
+    &-detail {
+      margin: 10px;
+      padding-left: 30px;
+    }
+
   }
 
   .block {
-    border: 0.5px dashed #ADD8E6;
+    border: 1px solid #C9C9C9;
+    background: #DEDEDE;
     margin: 20px;
     position: relative;
     width: 95%;
@@ -83,6 +93,12 @@
       right: 0;
       top: 0;
     }
+
+    &-detail {
+      margin: 10px;
+      padding-left: 30px;
+    }
+
   }
 
   .component {
@@ -90,29 +106,31 @@
     position: relative;
 
     &-left {
+      position:  relative;
       width: 48%;
       float: left;
-      border: 1px solid peru;
+      border: 1px solid #C9C9C9;
+      background: #D1D1D1;
     }
 
     &-right {
+      position:  relative;
       width: 48%;
       float: right;
-      border: 1px solid peru;
+      border: 1px solid #C9C9C9;
+      background: #D1D1D1;
     }
 
     &-full {
       width: 100%;
-      border: 1px solid cadetblue;
+      border: 1px solid #C9C9C9;
+      background: #D1D1D1;
     }
 
-/*
-    &-edit-panel {
-      position: absolute;
-      right: 0;
-      top: 0;
+    &-detail {
+      margin: 10px;
+      padding-left: 30px;
     }
-    */
   }
 
   .paste-zone {
@@ -157,5 +175,19 @@
     clear: both;
     content: "";
     display: block;
+  }
+
+  .editor-item-sidebar {
+    text-align: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 30px;
+    height: 100%;
+    background: #454545;
+  }
+
+  .open-context-icon {
+    color: #fff;
   }
 }

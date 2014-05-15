@@ -9,7 +9,8 @@ define(function(require) {
       className: 'editor-menu-layer',
 
       events: {
-        'click .editor-menu-layer-add': 'addMenuItem'
+        'click button.editor-menu-layer-add-page' : 'addPage',
+        'click button.editor-menu-layer-add-menu' : 'addMenu'
       },
 
       preRender: function(options) {
@@ -20,6 +21,7 @@ define(function(require) {
           this.data = {};
           this.data._isCourseObject = options._isCourseObject;
         }
+        
         this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
         this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
       },
@@ -37,20 +39,28 @@ define(function(require) {
         return this;
       },
 
-      addMenuItem: function(event) {
+      addMenu: function(event) {
+        this.addMenuItem(event, 'menu');
+      },
+
+      addPage: function(event) {
+        this.addMenuItem(event, 'page');
+      },
+
+      addMenuItem: function(event, type) {
         event.preventDefault();
 
         new EditorContentObjectModel({
           _parentId: this._parentId,
           _courseId: Origin.editor.data.course.get('_id'),
-          title: window.polyglot.t('app.placeholdernewpage'),
+          title: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
           body: window.polyglot.t('app.placeholdereditthistext'),
           linkText: '',
           graphic: {
             alt: '',
             src: ''
           },
-          _type: 'page'
+          _type: type
         }).save(null, {
           error: function() {
             alert('An error occurred doing the save');

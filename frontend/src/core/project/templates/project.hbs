@@ -8,32 +8,26 @@
     <div class="project-description-inner">{{{body}}}</div>
   </div>
 
-<div class="units-row">
-  <div class="unit-centered unit-80">
-    <table class="table-simple width-80 small">
-        <tr>
-            <td>{{t 'app.status'}}</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>{{t 'app.lastupdated'}}</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>{{t 'app.category'}}</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>{{t 'app.owner'}}</td>
-            <td>-</td>
-        </tr>
-    </table>
+  <div class="units-row">
+    <div class="unit-centered unit-80">
+      <table class="table-simple width-80 small">
+          <tr>
+              <td>{{t 'app.status'}}</td>
+              <td>-</td>
+          </tr>
+          <tr>
+              <td>{{t 'app.lastupdated'}}</td>
+              <td>{{formatDate updatedAt}}</td>
+          </tr>
+          <tr>
+              <td>{{t 'app.category'}}</td>
+              <td>-</td>
+          </tr>
+          <tr>
+              <td>{{t 'app.owner'}}</td>
+              <td>-</td>
+          </tr>
+      </table>
+    </div>
   </div>
-</div>
-  
-{{!--   <div class="project-buttons">
-      <a class="project-edit-link btn" href="#/editor/{{_id}}/menu">{{t 'app.edit'}}</a>
-      <a class="project-delete-link btn" href="#project/delete/{{_id}}">{{t 'app.delete'}}</a>
-  </div> --}}
-
 </div>

@@ -95,10 +95,6 @@ define(function(require) {
 	    "callbackEvent": "theme:settings:open"
 	};
 
-	Origin.on('globalMenu:editor:open', function() {
-		console.log('Whoo global menu passing out events');
-	});
-
 	Origin.on('app:dataReady', function() {
 		GlobalMenu.addItem(itemObject);
 

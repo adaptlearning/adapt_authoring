@@ -6,10 +6,10 @@ require([
     'coreJS/navigation/views/navigationView',
     'coreJS/globalMenu/globalMenu',
     'coreJS/app/helpers',
+    'coreJS/app/contextMenu'
     'polyglot',
     'templates',
-    'coreJS/app/contextMenu'
-], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Helpers, Polyglot, ContextMenu) {
+], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Helpers, ContextMenu, Polyglot) {
 
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file

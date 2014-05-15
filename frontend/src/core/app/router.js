@@ -28,6 +28,7 @@ define(function(require) {
       "dashboard"                     : "dashboard",
       "module"                        : "module",
       "editor/:courseId/menu"         : "editorMenu",
+      "editor/:courseId/menu/:pageId" : "editorMenu",
       "editor/:courseId/page/:pageId" : "editorPage",
       "page/new/:id"                  : "pageNew",
       "page/edit/:id"                 : "pageEdit",
@@ -144,13 +145,13 @@ define(function(require) {
       projectModel.fetch();
     },
 
-    editorMenu: function(courseId) {
+    editorMenu: function(courseId, pageId) {
       // EditorView takes in currentCourseId and uses this to retrieve collections and models
       // Passing in currentView enables editorView to load either a menu editing view or a page editing view
       this.createView(new EditorView({
         currentCourseId: courseId, 
         currentView: 'menu', 
-        currentPageId: null
+        currentPageId: pageId || null
       }));
     },
 

@@ -11,21 +11,22 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'block',
+    className: 'block editable',
 
-    events: {
-      'click a.block-edit'     : 'loadPageEdit',
-      'click a.block-delete'   : 'deleteBlock',
-      'click .copy-block'      : 'onCopy',
-      'click .paste-component' : 'onPaste',
-      'click .paste-cancel'    : 'pasteCancel',
+    events: _.extend(EditorOriginView.prototype.events, {
+      'click a.block-delete'   : 'deleteBlock',     
       'click a.add-component'  : 'addComponent',
-    },
+      'click a.paste-block'         : 'onPaste',
+      'click a.open-context-block' : 'openContextMenu'
+    }),
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
       this.listenTo(Origin, 'editorView:removeComponent:' + this.model.get('_id'), this.handleRemovedComponent);
+      this.on('contextMenu:block:edit', this.loadPageEdit);
+      this.on('contextMenu:block:copy', this.onCopy);
+      this.on('contextMenu:block:delete', this.deleteBlock);
 
       // Add a componentTypes property to the model and call toJSON() on the
       // collection so that the templates work
@@ -89,7 +90,9 @@ define(function(require){
     },
 
     deleteBlock: function(event) {
-      event.preventDefault();
+      if (event) {
+        event.preventDefault();
+      }
 
       if (confirm(window.polyglot.t('app.confirmdeleteblock'))) {
         if (this.model.destroy()) {
@@ -100,7 +103,9 @@ define(function(require){
     },
 
     loadPageEdit: function (event) {
-      event.preventDefault();
+      if (event) {
+        event.preventDefault();
+      }
       Origin.trigger('editorSidebarView:addEditView', this.model);
     },
 

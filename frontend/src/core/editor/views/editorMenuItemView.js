@@ -24,7 +24,7 @@ define(function(require){
       // Check if this model is already selected
       // If selected viewPageEditmMode()
 
-      if (this.model.get('_isSelected')) {
+      if (this.model.get('_isSelected') && this.model.get('_type') == 'page') {
         return this.viewPageEditMode();
       }
       // else check whether I am expanded if so hide children

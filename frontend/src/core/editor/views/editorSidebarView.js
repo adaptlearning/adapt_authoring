@@ -16,7 +16,8 @@ define(function(require) {
 
     events: {
       'click a.editor-sidebar-tab' : 'tabToggle',
-      'click button.publish-button' : 'publishProject'
+      'click button.publish-button' : 'publishProject',
+      'click button.settings-button' : 'editSettings'
     },
 
     publishProject: function() {
@@ -25,6 +26,12 @@ define(function(require) {
       }
     },
 
+    editSettings: function (event) {
+      event.preventDefault();
+      
+      Origin.trigger('editorSidebarView:addEditView', Origin.editor.data.config);
+    },
+    
     preRender: function() {
       this.listenTo(Origin, 'editorSidebarView:addEditView', this.addEditingView);
       this.listenTo(Origin, 'editorSidebarView:addOverviewView', this.addOverviewView);

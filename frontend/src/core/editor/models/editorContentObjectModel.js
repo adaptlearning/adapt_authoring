@@ -17,9 +17,6 @@ define(function(require) {
 			this.listenTo(this, 'sync', this.setupConstructor);
 			this.setupConstructor();
 			this.listenTo(this, 'change:_type', this.setupConstructor);
-			this.listenTo(this, 'change:_isSelected', function() {
-				console.log(this.get('title'), this.get('_isSelected'));
-			})
 		},
 
 		setupConstructor: function() {

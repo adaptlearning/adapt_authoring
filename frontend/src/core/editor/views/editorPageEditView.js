@@ -30,7 +30,7 @@ define(function(require) {
 
     savePage: function(event) {
       event.preventDefault();
-
+      
       var model = this.model;
 
       model.save(

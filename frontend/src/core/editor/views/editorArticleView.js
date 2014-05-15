@@ -13,20 +13,22 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'page-article',
+    className: 'page-article editable',
 
-    events: {
+    events: _.extend(EditorOriginView.prototype.events, {
       'click a.add-block'           : 'addBlock',
-      'click a.page-article-edit'   : 'loadPageEdit',
       'click a.page-article-delete' : 'deletePageArticle',
-      'click .copy-article'         : 'onCopy',
-      'click .paste-block'          : 'onPaste',
-      'click .paste-cancel'         : 'pasteCancel'
-    },
+      'click a.paste-article'         : 'onPaste',
+      'click a.open-context-article' : 'openContextMenu'
+    }),
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
+
+      this.on('contextMenu:article:edit', this.loadPageEdit);
+      this.on('contextMenu:article:copy', this.onCopy);
+      this.on('contextMenu:article:delete', this.deletePageArticle);
     },
 
     postRender: function() {
@@ -35,13 +37,15 @@ define(function(require){
 
     addBlockViews: function() {
       this.$('.page-article-blocks').empty();
-      // Pre-block paste zone
-      var firstBlock = this.model.getChildren().at(0);
-      if (firstBlock) {
-        var dummyBlock = firstBlock.clone();
-        dummyBlock.set('_pasteZoneSortOrder', 1);
-        this.$('.page-article-blocks').append(new EditorPasteZoneView({model: dummyBlock}).$el);
-      }
+
+      // Insert the 'pre' paste zone for blocks
+      var prePasteBlock = new EditorBlockModel();
+      prePasteBlock.set('_parentId', this.model.get('_id'));
+      prePasteBlock.set('_type', 'block');
+      prePasteBlock.set('_pasteZoneSortOrder', 1);
+
+      // {_parentId: this.model.get('_id'), _type: 'block', _pasteZoneSortOrder: 1});
+      this.$('.page-article-blocks').append(new EditorPasteZoneView({model: prePasteBlock}).$el);
 
       this.model.getChildren().each(function(block) {
         this.$('.page-article-blocks').append(new EditorBlockView({model: block}).$el);
@@ -59,13 +63,13 @@ define(function(require){
     addBlock: function(event) {
       event.preventDefault();
 
-      var thisView = this;
+      var _this = this;
       var newPageBlockModel = new EditorBlockModel();
 
       newPageBlockModel.save({
         title: window.polyglot.t('app.placeholdernewblock'),
         body: window.polyglot.t('app.placeholdereditthistext'),
-        _parentId: thisView.model.get('_id'),
+        _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id')
       },
       {
@@ -79,15 +83,16 @@ define(function(require){
     },
 
     deletePageArticle: function(event) {
-      event.preventDefault();
+      if (event) {
+        event.preventDefault();
+      }
 
-      var thisView = this;
+      var _this = this;
 
       if (confirm(window.polyglot.t('app.confirmdeletearticle'))) {
-        console.log('deleting article', this.model);
         this.model.destroy({
           success: function(success) {
-            thisView.remove();
+            _this.remove();
             Origin.trigger('editorView:fetchData');
             // console.log('success', success);
           },
@@ -99,7 +104,9 @@ define(function(require){
     },
 
     loadPageEdit: function (event) {
-      event.preventDefault();
+      if (event) {
+        event.preventDefault();
+      }
       Origin.trigger('editorSidebarView:addEditView', this.model);
     }
 

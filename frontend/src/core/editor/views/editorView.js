@@ -41,6 +41,7 @@ define(function(require){
       this.currentView = options.currentView;
 
       Origin.editor.currentContentObjectId = options.currentPageId;
+      Origin.editor.currentCourseId = options.currentCourseId;
 
       this.listenTo(Origin, 'editorView:fetchData', this.setupEditor);
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);

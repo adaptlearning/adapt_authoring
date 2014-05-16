@@ -5,11 +5,12 @@ require([
     'coreJS/user/models/sessionModel',
     'coreJS/navigation/views/navigationView',
     'coreJS/globalMenu/globalMenu',
+    'coreJS/sidebar/sidebar',
     'coreJS/app/helpers',
-    'coreJS/app/contextMenu'
+    'coreJS/app/contextMenu',
     'polyglot',
-    'templates',
-], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Helpers, ContextMenu, Polyglot) {
+    'templates'
+], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Sidebar, Helpers, ContextMenu, Polyglot) {
 
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file

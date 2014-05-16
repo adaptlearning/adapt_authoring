@@ -16,25 +16,105 @@ define(function(require) {
 
       preRender: function() {
         this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
-        this.listenTo(Origin, 'editorView:refreshPageList', this.addPageViews);
+        this.listenTo(Origin, 'editorView:refreshPageList', this.refreshProjectStructure);
+        
         this.render();
-        this.addPageViews();
+        this.refreshProjectStructure();
       },
 
       postRender: function() {},
 
-      addPageViews: function() {
-        this.$('.page-list').empty();
+      /**
+       * Converts an array of Backbone Models to a JavaScript tree structure
+       * @param {Array} data
+       * @return A JavaScript treeview-like object structure
+       */
+      convertModelsToTree: function(data){
+        var map = {},
+          flat = {},
+          root = [];
 
-        _.each(Origin.editor.data.contentObjects.models, function(contentObject) {
-          if (contentObject.get('_type') == 'page') {
-            this.$('.page-list').append('<li><a class="load-page" data-page-id="' + contentObject.get('_id') + '" href="#">' + contentObject.get('title') + '</a></li>');
+        // Flatten the data
+        for (var i = 0; i < data.length; i++) {
+          var key = data[i].get('_id');
+
+          flat[key] = {
+            _id: data[i].get('_id'), 
+            _type: data[i].get('_type'), 
+            _parentId: data[i].get('_parentId'),
+            title: data[i].get('title')
+          };
+        }
+
+        // Add a 'children' container to each node
+        for (var i in flat) {
+          flat[i].children = []; 
+        }
+
+        // Populate any 'children' container arrays
+        for (var i in flat) {
+          var parentkey = flat[i]._parentId;
+
+          if (flat[parentkey]) {
+            flat[parentkey].children.push(flat[i]);
           }
-        }, this);
+        }
+
+        // Find the root nodes (no parent found) and create the hierarchy tree from them
+        for (var i in flat) {
+          var parentkey = flat[i]._parentId;
+
+          if (!flat[parentkey]) {
+              root.push(flat[i]);
+          }
+        }
+
+        return root;
+      },
+
+      /**
+       * Creates a HTML string from a given items treeview structure
+       * NOTE: string contatenation is faster here than DOM manipulation
+       * @param {String} html
+       * @param {Array} items
+       * @return A HTML unordered list snippet
+       */
+      createOverviewTreeviewHtml: function(html, items) {
+        html += '<ul>'
+
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].children.length != 0) {
+            html += '<li>' + items[i].title;
+            html = this.createOverviewTreeviewHtml(html, items[i].children);
+            html += '</li>';
+          } else {
+            html += '<li><a class="load-page" data-page-id="' + items[i]._id + '" href="#">' + items[i].title + '</a></li>';
+          }
+        }
+
+        html += '</ul>';
+
+        return html;
+      },
+
+      /**
+       * Clears and reloads the project tree structure
+       */
+      refreshProjectStructure: function() {
+        var $projectOverview = this.$('.page-list'),
+          listItems = this.convertModelsToTree(Origin.editor.data.contentObjects.models),
+          html = '';
+
+        $projectOverview.empty();
+
+        html = this.createOverviewTreeviewHtml(html, listItems);
+
+        $projectOverview.html(html);
       },
 
       goToPage: function (event) {
         event.preventDefault();
+
         Backbone.history.navigate('/editor/' + Origin.editor.data.course.get('_id') + '/page/' + $(event.currentTarget).data('page-id'), {trigger: true});
       }
 

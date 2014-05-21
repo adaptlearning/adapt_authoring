@@ -29,6 +29,9 @@ ContentObject.prototype.getModelName = function () {
  * @param {next}
  */
 ContentObject.prototype.updateSiblingSortOrder = function (data, next) {
+  if (!data) {
+    return next(null);
+  }
   var index = 1;
   this.iterateSiblings(data._parentId, { operators: { sort: { _sortOrder: 1 } } }, function (doc, cb) {
     if (index === data._sortOrder) {
@@ -82,7 +85,7 @@ ContentObject.prototype.getMaxSortOrder = function (parentId, cb) {
  * @return string
  */
 ContentObject.prototype.getChildType = function () {
-  return 'article';
+  return ['article', 'contentobject'];
 };
 
 /**

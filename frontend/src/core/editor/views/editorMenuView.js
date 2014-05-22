@@ -32,6 +32,17 @@ define(function(require){
       Backbone.history.navigate('#editor/' + Origin.editor.data.course.id + '/menu/' + contentObjectId);
 
       this.setupMenuViews();
+
+      this.setupDragDrop();
+    },
+
+    setupDragDrop: function() {
+      $(".editor-menu-layer-inner").sortable({
+        connectWith: ".editor-menu-layer-inner",
+        beforeStop: function( event, ui ) {
+          console.log('about to drop');
+        }
+      }).disableSelection();
     },
 
     // renders menu layer view for each child of this contentObject renders menu item view

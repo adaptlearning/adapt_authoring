@@ -10,8 +10,9 @@ define(function(require){
     className: "editor-menu-item",
 
     events: {
-      'click':'onMenuItemClicked',
-      'click a.open-context-contentObject' : 'openContextMenu'
+      'click .editor-menu-item-title'       : 'onMenuItemClicked',
+      'click .editor-menu-item-icon'        : 'onMenuItemClicked',
+      'click a.open-context-contentObject'  : 'openContextMenu'
     },
 
     preRender: function() {
@@ -28,7 +29,34 @@ define(function(require){
       this.on('contextMenu:page:delete', this.deleteMenuItem);
 
       this.setupClasses();
+
+      // this.setupDragDrop();
     },
+
+    // setupDragDrop: function() {
+    //   $( ".draggable" ).draggable({ handle: ".editor-item-sidebar", revert: true, snap: true });
+    //       // $( "#droppable" ).droppable({
+    //       //   hoverClass: "ui-state-hover",
+    //       //   drop: function( event, ui ) {
+    //       //     $( this )
+    //       //       .addClass( "ui-state-highlight" )
+    //       //       .find( "p" )
+    //       //         .html( "Dropped!" );
+    //       //   }
+    //       // });
+ 
+    //   // $( "#draggable2" ).draggable();
+    //   // $( "#droppable2" ).droppable({
+    //   //   accept: "#draggable2",
+    //   //   activeClass: "ui-state-default",
+    //   //   drop: function( event, ui ) {
+    //   //     $( this )
+    //   //       .addClass( "ui-state-highlight" )
+    //   //       .find( "p" )
+    //   //         .html( "Dropped!" );
+    //   //   }
+    //   // });
+    // },
 
     copyMenuItem: function() {
       console.log('copyMenuItem clicked');
@@ -88,6 +116,8 @@ define(function(require){
         classString += 'expanded ';
       }
       classString += ('content-type-'+this.model.get('_type'));
+      
+      classString += ' draggable';
       this.$el.addClass(classString);
 
     },

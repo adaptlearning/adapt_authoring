@@ -8,7 +8,8 @@ require.config({
       coreJS: 'core',
       templates: 'templates/templates',
       polyglot: 'core/libraries/polyglot.min',
-      jsoneditor: 'core/libraries/jquery.jsoneditor.min'
+      jsoneditor: 'core/libraries/jquery.jsoneditor.min',
+      'jquery-ui': 'core/libraries/jquery-ui.min'
     },
     shim: {
       jquery: [
@@ -33,6 +34,10 @@ require.config({
       jsoneditor: {
         deps: ['jquery'],
         exports: 'JsonEditor'
+      },
+      'jquery-ui': {
+        deps: ['jquery'],
+        exports: "$"
       }
     }
 });

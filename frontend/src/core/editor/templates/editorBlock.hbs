@@ -4,33 +4,7 @@
   <h4 class="block-title">{{{title}}}</h4>
   <div class="block-body">{{{body}}}</div>
 
-  <div class="page-article-components">
-    {{#if _hasPasteZone}}
-      {{#if _pasteZoneShowAll}}
-      <div class="paste-zone paste-zone-wrapper paste-zone-component display-none">
-      {{/if}}
-
-        <div class="paste-zone paste-zone-component paste-zone-component-{{_pasteZoneLayout}} display-none">
-          <a href="#" class="paste-component" data-paste-layout="{{_pasteZoneLayout}}">{{t 'app.paste'}}</a>
-          <a href="#" class="paste-cancel">{{t 'app.cancel'}}</a>
-        </div>
-
-        {{#if _pasteZoneShowAll}}
-          <div class="paste-zone paste-zone-component paste-zone-component-left display-none">
-            <a href="#" class="paste-component" data-paste-layout="left">{{t 'app.paste'}}</a>
-            <a href="#" class="paste-cancel">{{t 'app.cancel'}}</a>
-          </div>
-          <div class="paste-zone paste-zone-component paste-zone-component-right display-none">
-            <a href="#" class="paste-component" data-paste-layout="right">{{t 'app.paste'}}</a>
-            <a href="#" class="paste-cancel">{{t 'app.cancel'}}</a>
-          </div>
-        {{/if}}
-
-      {{#if _pasteZoneShowAll}}
-      </div>
-      {{/if}}
-    {{/if}}
-  </div>
+  <div class="page-article-components"></div>
 
   {{#if layoutOptions}}
     <div class="add-control">

@@ -35,13 +35,14 @@ define(function(require){
       this.$('.page-articles').empty();
       Origin.trigger('editorPageView:removePageSubViews');
 
-      // Pre-article paste zone
-      var firstArticle = this.model.getChildren().at(0);
-      if (firstArticle) {
-        var dummyArticle = firstArticle.clone();
-        dummyArticle.set('_pasteZoneSortOrder', 1);
-        this.$('.page-articles').append(new EditorPasteZoneView({model: dummyArticle}).$el);
-      }
+
+      // Insert the 'pre' paste zone for articles
+      var prePasteArticle = new EditorArticleModel();
+      prePasteArticle.set('_parentId', this.model.get('_id'));
+      prePasteArticle.set('_type', 'article');
+      prePasteArticle.set('_pasteZoneSortOrder', 1);
+
+      this.$('.page-articles').append(new EditorPasteZoneView({model: prePasteArticle}).$el);
 
       this.model.getChildren().each(function(article) {
         this.$('.page-articles').append(new EditorArticleView({model: article}).$el);

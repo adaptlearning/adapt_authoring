@@ -16,9 +16,9 @@ define(function(require){
     className: 'page-article editable',
 
     events: _.extend(EditorOriginView.prototype.events, {
-      'click a.add-block'           : 'addBlock',
-      'click a.page-article-delete' : 'deletePageArticle',
-      'click a.paste-article'         : 'onPaste',
+      'click a.add-block'            : 'addBlock',
+      'click a.page-article-delete'  : 'deletePageArticle',
+      'click a.paste-article'        : 'onPaste',
       'click a.open-context-article' : 'openContextMenu'
     }),
 
@@ -44,7 +44,6 @@ define(function(require){
       prePasteBlock.set('_type', 'block');
       prePasteBlock.set('_pasteZoneSortOrder', 1);
 
-      // {_parentId: this.model.get('_id'), _type: 'block', _pasteZoneSortOrder: 1});
       this.$('.page-article-blocks').append(new EditorPasteZoneView({model: prePasteBlock}).$el);
 
       this.model.getChildren().each(function(block) {

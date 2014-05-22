@@ -230,7 +230,7 @@ define(function(require){
       }
 
 
-      this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_id'), false);
+      this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_parentId'), false);
     },
 
     createRecursive: function (type, clipboard, parentId, oldParentId) {

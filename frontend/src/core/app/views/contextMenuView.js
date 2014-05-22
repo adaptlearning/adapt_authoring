@@ -21,14 +21,12 @@ define(function(require) {
         var type = view.model.get('_type');
         this.toggleContextMenu(type, e);
       });
-      this.listenTo(Origin, 'contextMenu:triggerCustomView', this.openCustomView);
       this.listenTo(Origin, 'contextMenu:closeContextMenu', this.onCloseContextMenu);
       this.listenTo(Origin, 'remove', this.onCloseContextMenu);
       this.render();
     },
 
     events: {
-      'click .context-menu-back': 'onBackButtonClicked',
       'click .context-menu-close':'onCloseContextMenu'
     },
 
@@ -36,20 +34,6 @@ define(function(require) {
       var template = Handlebars.templates['contextMenu'];
       $(this.el).html(template).appendTo('body');
       return this;
-    },
-
-    openCustomView: function(view, hasBackButton) {
-      // Set whether back button should display
-      this._hasBackButton = hasBackButton;
-      this._isCustomViewVisible = true;
-      Origin.trigger('contextMenu:empty');
-      this.showContextMenu();
-      this.$('.context-menu-holder').html(view);
-    },
-
-    onBackButtonClicked: function(event) {
-      event.preventDefault();
-      this.showContextMenu(true, event);
     },
 
     onCloseContextMenu: function(event) {
@@ -62,7 +46,7 @@ define(function(require) {
 
     toggleContextMenu: function(type, e) {
       this.type = type;
-      if (this._isVisible && this._isCustomViewVisible === false) {
+      if (this._isVisible) {
         this._isVisible = false;
         this.hideContextMenu();
       } else {
@@ -74,12 +58,9 @@ define(function(require) {
     showContextMenu: function(emptyContextMenu, e) {
       var contextMenuWidth = this.$el.width();
       if (emptyContextMenu) {
-        this._isCustomViewVisible = false;
         this.emptyContextMenu();
         this.renderItems();
         Origin.trigger('contextMenu:openedItemView');
-      } else {
-        Origin.trigger('contextMenu:openedCustomView');
       }
       _.defer(_.bind(function() {
         this.$el.css({position: 'absolute',
@@ -108,21 +89,19 @@ define(function(require) {
     },
 
     hideContextMenu: function() {
-      Origin.trigger('popup:closed');
       this.$el.addClass('display-none');
-      this._isCustomViewVisible = false;
       this.removeBodyEvent();
       Origin.trigger('contextMenu:closed');
     },
 
     addBodyEvent: function() {
-      $('.page, .menu').one('click', _.bind(function() {
+      $('html').one('click', _.bind(function() {
         this.onCloseContextMenu();
       }, this));
     },
 
     removeBodyEvent: function() {
-      $('.page, .menu').off('click');
+      $('html').off('click');
     }
 
   });

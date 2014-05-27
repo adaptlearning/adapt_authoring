@@ -12,7 +12,7 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'block editable',
+    className: 'block editable block-draggable',
 
     events: _.extend(EditorOriginView.prototype.events, {
       'click a.block-delete'        : 'deleteBlock',
@@ -25,6 +25,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
       this.listenTo(Origin, 'editorView:removeComponent:' + this.model.get('_id'), this.handleRemovedComponent);
+      this.listenTo(Origin, 'editorView:moveComponent:' + this.model.get('_id'), this.handleMovedComponent);
 
       this.on('contextMenu:block:edit', this.loadPageEdit);
       this.on('contextMenu:block:copy', this.onCopy);
@@ -40,6 +41,7 @@ define(function(require){
     postRender: function() {
       this.addComponentViews();
       this.setupPasteZones();
+      this.setupDragDrop();
     },
 
     evaluateComponents: function() {
@@ -81,6 +83,33 @@ define(function(require){
       this.evaluateComponents();
       this.setupPasteZones();
       this.render();
+    },
+
+    handleMovedComponent: function() {
+      this.evaluateComponents();
+      this.setupPasteZones();
+      this.render();
+    },
+
+    setupDragDrop: function() {
+      var view = this;
+      this.$el.draggable({
+        opacity: 0.8,
+        handle: '.handle',
+        revert: 'invalid',
+        zIndex: 10000,
+        cursorAt: {
+          top: 10,
+          left: 10
+        },
+        helper: function (e) {
+          return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
+        },
+        start: function () {
+          $(this).attr('data-' + view.model.get('_type') + '-id', view.model.get('_id'));
+          $(this).attr('data-' + view.model.get('_parent') + '-id', view.model.get('_parentId'));
+        }
+      }).disableSelection();
     },
 
     addComponentViews: function() {
@@ -147,20 +176,22 @@ define(function(require){
     },
 
     setupPasteZones: function() {
-      var pasteComponent = new EditorComponentModel();
-      pasteComponent.set('_parentId', this.model.get('_id'));
-      pasteComponent.set('_type', 'component');
-
       if (this.model.getChildren().length === 1) {
         var component = this.model.getChildren().at(0);
         // Add left or right paste zones if there isn't a 'full' component already here
         if (component.get('_layout') != 'full') {
+          var pasteComponent = new EditorComponentModel();
+          pasteComponent.set('_parentId', this.model.get('_id'));
+          pasteComponent.set('_type', 'component');
           pasteComponent.set('_pasteZoneLayout', this.swapLayout(component.get('_layout')));
           this.$('.page-article-components').append(new EditorComponentPasteZoneView({model: pasteComponent}).$el);
         }
       } else if (this.model.getChildren().length === 0) {
         // Add all paste zones
         _.each(this.model.get('layoutOptions'), function(layout) {
+          var pasteComponent = new EditorComponentModel();
+          pasteComponent.set('_parentId', this.model.get('_id'));
+          pasteComponent.set('_type', 'component');
           pasteComponent.set('_pasteZoneLayout', layout.type);
           this.$('.page-article-components').append(new EditorComponentPasteZoneView({model: pasteComponent}).$el);
         }, this);

@@ -1,13 +1,9 @@
-<div class="component-{{_layout}} editable">
+{{>part_editorItemSidebar}}
 
-  {{>part_editorItemSidebar}}
-
-  <div class="component-detail">
-    <h4 class="component-title">{{{title}}}</h4>
-    <div class="component-body">{{{body}}}</div>
-    {{#if _componentType}}
-    <div class="component-type"> {{_componentType.displayName}}</div>
-    {{/if}}
-  </div>
-
+<div class="component-detail">
+  <h4 class="component-title">{{{title}}}</h4>
+  <div class="component-body">{{{body}}}</div>
+  {{#if _componentType}}
+  <div class="component-type"> {{_componentType.displayName}}</div>
+  {{/if}}
 </div>

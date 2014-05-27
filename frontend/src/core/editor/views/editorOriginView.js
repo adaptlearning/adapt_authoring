@@ -12,7 +12,7 @@ define(function(require){
     initialize: function() {
       OriginView.prototype.initialize.apply(this, arguments);
       
-      this.listenTo(Origin, 'editorView:pasteCancel', this.hidePasteZone);
+      this.listenTo(Origin, 'editorView:pasteCancel', this.hidePasteZones);
     },
 
     onCopy: function(event) {
@@ -20,8 +20,7 @@ define(function(require){
         event.preventDefault();
       }
 
-      $('.paste-zone').addClass('display-none');
-      $('.paste-zone-'+ this.model.get('_type')).removeClass('display-none');
+      this.showPasteZones();
 
       Origin.trigger('editorView:copy', this.model);
     },
@@ -29,7 +28,7 @@ define(function(require){
     onPaste: function(event) {
       event.preventDefault();
 
-      $('.paste-zone').addClass('display-none');
+      this.hidePasteZones();
 
       Origin.trigger('editorView:paste', this.model, $(event.target).data('sort-order'), $(event.target).data('paste-layout'));
     },
@@ -40,9 +39,9 @@ define(function(require){
       Origin.trigger('editorView:pasteCancel', this.model);
     },
 
-    hidePasteZone: function() {
+    hidePasteZones: function() {
       // Purposeful global selector here
-      $('.paste-zone').addClass('display-none');
+      $('.paste-zone').addClass('visibility-hidden');
     },
 
     openContextMenu: function (e) {
@@ -50,6 +49,11 @@ define(function(require){
       e.preventDefault();
 
       Origin.trigger('contextMenu:open', this, e);
+    },
+
+    showPasteZones: function () {
+      $('.paste-zone').addClass('visibility-hidden');
+      $('.paste-zone-'+ this.model.get('_type')).removeClass('visibility-hidden');
     }
 
   });

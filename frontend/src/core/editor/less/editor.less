@@ -102,7 +102,7 @@
   }
 
   .component {
-    margin: 20px;
+    margin: 10px;
     position: relative;
 
     &-left {
@@ -122,9 +122,9 @@
     }
 
     &-full {
-      width: 100%;
       border: 1px solid #C9C9C9;
       background: #D1D1D1;
+      height: 90px;
     }
 
     &-detail {
@@ -135,7 +135,7 @@
 
   .paste-zone {
     margin: 20px;
-    height:50px;
+    height: 45px;
     border: 2px dashed #B0B0B0;
     background-color: #CECECE;
 
@@ -152,16 +152,22 @@
     }
   }
 
+  .paste-zone-droppable {
+    visibility: visible;
+  }
+
   .paste-zone-component-left {
-    width: 48%;
+    width: 47%;
     float: left;
-    margin: 10px;
+    margin-top: 10px;
+    height: 90px;
   }
 
   .paste-zone-component-right {
-    width: 48%;
+    width: 47%;
     float: right;
-    margin: 10px;
+    margin-top: 10px;
+    height: 90px;
   }
 
   .page-article-components:after {
@@ -178,9 +184,23 @@
     width: 30px;
     height: 100%;
     background: #454545;
+
+    &.handle {
+      cursor: move;
+    }
   }
 
   .open-context-icon {
     color: #fff;
+  }
+
+  .drag-helper {
+    color: #DEDEDE;
+    border: 1px solid #C9C9C9;
+    background: #7A7A7A;
+    padding: 10px;
+    margin: 10px;
+    cursor: move;
+    min-width: 100px;
   }
 }

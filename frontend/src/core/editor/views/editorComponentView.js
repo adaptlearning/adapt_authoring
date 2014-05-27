@@ -10,7 +10,7 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'component',
+    className: 'component editable component-draggable',
 
     events: _.extend(EditorOriginView.prototype.events, {
       'click a.component-delete'        : 'deleteComponent',
@@ -25,6 +25,11 @@ define(function(require){
       this.on('contextMenu:component:edit', this.loadPageEdit);
       this.on('contextMenu:component:copy', this.onCopy);
       this.on('contextMenu:component:delete', this.deleteComponent);
+    },
+
+    postRender: function () {
+      this.$el.addClass('component-' + this.model.get('_layout'));
+      this.setupDragDrop();
     },
 
     deleteComponent: function(event) {
@@ -46,6 +51,27 @@ define(function(require){
         event.preventDefault();
       }
       Origin.trigger('editorSidebarView:addEditView', this.model);
+    },
+
+    setupDragDrop: function() {
+      var view = this;
+      this.$el.draggable({
+        opacity: 0.8,
+        handle: '.handle',
+        revert: 'invalid',
+        zIndex: 10000,
+        cursorAt: {
+          top: 15,
+          left: 10
+        },
+        helper: function (e) {
+          return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
+        },
+        start: function () {
+          $(this).attr('data-component-id', view.model.get('_id'));
+          $(this).attr('data-block-id', view.model.get('_parentId'));
+        }
+      }).disableSelection();
     }
 
   }, {

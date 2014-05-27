@@ -10,8 +10,9 @@ define(function(require){
     className: "editor-menu-item",
 
     events: {
-      'click':'onMenuItemClicked',
-      'click a.open-context-contentObject' : 'openContextMenu'
+      'click .editor-menu-item-title'       : 'onMenuItemClicked',
+      'click .editor-menu-item-icon'        : 'onMenuItemClicked',
+      'click a.open-context-contentObject'  : 'openContextMenu'
     },
 
     preRender: function() {
@@ -34,44 +35,32 @@ define(function(require){
       console.log('copyMenuItem clicked');
     },
 
-
     onMenuItemClicked: function() {
-
-      // Check if this model is already selected
-      // If selected viewPageEditmMode()
-
+      // If a page has already been selected launch the editor
       if (this.model.get('_isSelected') && this.model.get('_type') == 'page') {
-        return this.viewPageEditMode();
+        return this.gotoPageEditor();
       }
-      // else check whether I am expanded if so hide children
-
-      /*if (this.model.get('_isExpanded')) {
-        return this.expandedItemSelected();
-      }*/
-      // else check against siblings being selected
 
       this.setItemAsSelected();
-
     },
 
-    viewPageEditMode: function() {
+    gotoPageEditor: function() {
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
     },
 
-    expandedItemSelected: function() {
-      console.log('expandedItemSelected');
-    },
+    // expandedItemSelected: function() {
+    //   console.log('expandedItemSelected');
+    // },
 
     setItemAsSelected: function() {
-      if (this.model.get('_type') === 'menu') {
-        this.model.set({'_isSelected': true, '_isExpanded': true});
-      } else {
-        this.model.set({'_isSelected': true, '_isExpanded': false});
-      }
+      this.model.set({'_isSelected': true});
+      this.model.set({'_isExpanded' : (this.model.get('_type') === 'menu' ? true : false)})
+
       this.showEditorSidebar();
       this.setParentSelectedState();
       this.setSiblingsSelectedState();
       this.setChildrenSelectedState();
+
       Origin.trigger('editorView:storeSelectedItem', this.model.get('_id'));
     },
 
@@ -88,8 +77,8 @@ define(function(require){
         classString += 'expanded ';
       }
       classString += ('content-type-'+this.model.get('_type'));
+      
       this.$el.addClass(classString);
-
     },
 
     setParentSelectedState: function() {
@@ -98,15 +87,14 @@ define(function(require){
 
     setSiblingsSelectedState: function() {
       this.model.getSiblings().each(function(sibling) {
-        sibling.set({'_isSelected': false, '_isExpanded':false});
+        sibling.set({'_isSelected': false, '_isExpanded': false});
       });
     },
 
     setChildrenSelectedState: function() {
       this.model.getChildren().each(function(child) {
-        child.set({'_isSelected': false, '_isExpanded':false});
+        child.set({'_isSelected': false, '_isExpanded': false});
       })
-      //this.model.setOnChildren({'_isSelected': false, '_isExpanded':false});
     },
 
     editMenuItem: function() {

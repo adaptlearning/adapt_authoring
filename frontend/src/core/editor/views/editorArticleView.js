@@ -13,7 +13,7 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'page-article editable',
+    className: 'page-article editable article-draggable',
 
     events: _.extend(EditorOriginView.prototype.events, {
       'click a.add-block'            : 'addBlock',
@@ -25,6 +25,7 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
+      this.listenTo(Origin, 'editorView:moveBlock:' + this.model.get('_id'), this.handleMovedBlock);
 
       this.on('contextMenu:article:edit', this.loadPageEdit);
       this.on('contextMenu:article:copy', this.onCopy);
@@ -33,6 +34,7 @@ define(function(require){
 
     postRender: function() {
       this.addBlockViews();
+      this.setupDragDrop();
     },
 
     addBlockViews: function() {
@@ -107,6 +109,31 @@ define(function(require){
         event.preventDefault();
       }
       Origin.trigger('editorSidebarView:addEditView', this.model);
+    },
+
+    handleMovedBlock: function() {
+      this.render();
+    },
+
+    setupDragDrop: function() {
+      var view = this;
+      this.$el.draggable({
+        opacity: 0.8,
+        handle: '.handle',
+        revert: 'invalid',
+        zIndex: 10000,
+        cursorAt: {
+          top: 10,
+          left: 10
+        },
+        helper: function (e) {
+          return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
+        },
+        start: function () {
+          $(this).attr('data-' + view.model.get('_type') + '-id', view.model.get('_id'));
+          $(this).attr('data-'+ view.model.get('_parent') + '-id', view.model.get('_parentId'));
+        }
+      }).disableSelection();
     }
 
   }, {

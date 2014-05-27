@@ -25,6 +25,7 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editorView:moveArticle:' + this.model.get('_id'), this.handleMovedArticle);
     },
 
     postRender: function() {
@@ -91,6 +92,10 @@ define(function(require){
     loadPageEdit: function (event) {
       event.preventDefault();
       Origin.trigger('editorSidebarView:addEditView', this.model);
+    },
+
+    handleMovedArticle: function() {
+      this.render();
     }
 
   }, {

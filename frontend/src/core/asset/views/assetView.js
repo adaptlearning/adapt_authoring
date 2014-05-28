@@ -16,23 +16,31 @@ define(function(require){
     className: 'asset',
 
     events: {
-      'submit #assetForm' : 'onSave'
+      'submit #assetForm' : 'uploadFile'
     },
 
-    onSave: function(event) {
-      event.preventDefault();
+    postRender: function() {
 
-      $.ajax('/api/asset/', {
-        method: 'POST'
-        data: {title: 'Test', description: 'Test description', repository: 'localfs'}
-        files: $(":file", this),
-        iframe: true,
-        processData: false
-      }).complete(function(data) {
-          console.log(data);
+    },
+
+
+    uploadFile: function(event) {
+      event.preventDefault();
+      console.log('uploading the file ...');
+   
+      $('#assetForm').ajaxSubmit({                                                                                                             
+        error: function(xhr, status, error) {
+          console.log('Error: ' + xhr.status);
+        },
+    
+        success: function(data, status, xhr) {
+          console.log('success!');
+        }
       });
 
-    }
+      // Return false to prevent the page submitting
+      return false;
+    },
 
     // preRender: function() {
     //   this.listenTo(this, 'remove', this.remove);

@@ -60,5 +60,8 @@
   "app.status" : "Status",
   "app.lastupdated" : "Last updated",
   "app.category" : "Category",
-  "app.owner" : "Owner"
+  "app.owner" : "Owner",
+  "app.assettitle" : "Asset title",
+  "app.assetdescription" : "Asset description",
+  "app.assetfile" : "File" 
 }

@@ -27,8 +27,8 @@ LocalFileStorage.prototype.resolvePath = function (relativePath) {
   var user = usermanager.getCurrentUser();
   if (user) {
     // check that the path isn't already absolute
-
-    var prefix = path.join(this.dataRoot, user.tenant.name);
+    var tenantName = user.tenant ? user.tenant.name : 'master';
+    var prefix = path.join(this.dataRoot, tenantName);
     if (0 === relativePath.indexOf(prefix)) {
       return relativePath;
     }
@@ -160,7 +160,7 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, cb) {
         path: newPath,
         name: file.name,
         type: file.type,
-        size: ws.bytesWritten
+        size: file.size
       });
     });
   });

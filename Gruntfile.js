@@ -13,7 +13,9 @@ module.exports = function(grunt) {
                 'frontend/src/core/libraries/modernizr.js', 
                 'frontend/src/core/libraries/polyglot.min.js', 
                 'frontend/src/core/libraries/jquery.jsoneditor.min.js',
-                'frontend/src/core/libraries/jquery-ui.min.js'],
+                'frontend/src/core/libraries/jquery-ui.min.js',
+                'frontend/src/core/libraries/jquery.form.js',
+                'frontend/src/core/libraries/jquery.iframe-transport.js'],
               dest: 'frontend/build/libraries/',
               filter: 'isFile',
               flatten: true

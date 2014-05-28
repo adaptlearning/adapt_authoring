@@ -1,0 +1,13 @@
+<form id="assetForm" class="forms" enctype="multipart/form-data">
+  <label for="title">{{t 'app.projecttitle'}} <span class="req">*</span>
+    <input type="text" class="width-30" id="title" name="title" placeholder="{{t 'app.projecttitle'}}" value="{{ title }}" autocomplete="off">
+  </label>
+  <label for="description">{{t 'app.projectdescription'}}
+    <textarea class="width-30" id="description" name="description" placeholder="{{t 'app.projectdescription'}}">{{ description }}</textarea>
+  </label>
+  <label for="file">{{t 'app.projectdescription'}}
+    <input type="file" class="width-30" id="file" name="file">
+  </label>
+  <button id="saveButton" type="submit" class="btn btn-green">{{t 'app.save'}}</button>
+  <button id="cancelButton" type="button" class="btn">{{t 'app.cancel'}}</button>
+</form>

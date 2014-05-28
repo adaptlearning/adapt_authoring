@@ -26,7 +26,7 @@ describe ('assetmanager', function () {
 
   it ('should allow storing of a multimedia resource', function (done) {
     agent
-      .put('/api/asset')
+      .post('/api/asset')
       .field('title', 'Temporary Asset')
       .field('description', 'A temporary asset')
       .field('repository', 'localfs')
@@ -58,7 +58,7 @@ describe ('assetmanager', function () {
 
   it ('should allow updating of a multimedia resource', function (done) {
     agent
-      .post('/api/asset/' + assetId)
+      .put('/api/asset/' + assetId)
       .field('title', 'Updated Temporary Asset')
       .attach('file', __filename)
       .expect(200)

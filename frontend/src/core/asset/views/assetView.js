@@ -16,16 +16,33 @@ define(function(require){
     className: 'asset',
 
     events: {
-      'submit #assetForm' : 'uploadFile'
+      'submit #assetForm'   : 'onSubmit',
+      'click #cancelButton' : 'onCancel'
     },
 
     postRender: function() {
 
     },
 
-
-    uploadFile: function(event) {
+    onCancel: function(event) {
       event.preventDefault();
+
+      alert('cancel clicked');
+    },
+
+    onSubmit: function(event) {
+      event.preventDefault();
+
+      this.uploadFile();
+
+      console.log('goto route');
+
+      // Return false to prevent the page submitting
+      return false;
+    },
+
+    uploadFile: function() {
+      // event.preventDefault();
       console.log('uploading the file ...');
    
       $('#assetForm').ajaxSubmit({                                                                                                             

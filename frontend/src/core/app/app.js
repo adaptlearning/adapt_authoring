@@ -10,9 +10,8 @@ require([
     'templates',
     'coreJS/app/contextMenu',
     'jquery-ui',
-    'jquery-form',
-    'jquery-iframe-transport'
-], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Helpers, Polyglot, Templates, ContextMenu, JQueryUI, JQueryForm, JQueryIframeTransport) {
+    'jquery-form'
+], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Helpers, Polyglot, Templates, ContextMenu, JQueryUI, JQueryForm) {
 
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file

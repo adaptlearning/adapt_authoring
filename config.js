@@ -10,8 +10,7 @@ require.config({
       polyglot: 'core/libraries/polyglot.min',
       jsoneditor: 'core/libraries/jquery.jsoneditor.min',
       'jquery-ui': 'core/libraries/jquery-ui.min',
-      'jquery-form' : 'core/libraries/jquery.form',
-      'jquery-iframe-transport' : 'core/libraries/jquery.iframe-transport'
+      'jquery-form' : 'core/libraries/jquery.form'
     },
     shim: {
       jquery: [
@@ -42,10 +41,6 @@ require.config({
         exports: "$"
       },
       'jquery-form': {
-        deps: ['jquery'],
-        exports: "$"
-      },
-      'jquery-iframe-transport' : {
         deps: ['jquery'],
         exports: "$"
       }

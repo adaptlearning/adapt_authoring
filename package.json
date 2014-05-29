@@ -44,6 +44,7 @@
     "handlebars-form-helpers": "0.1.3",
     "hbs": "2.4.0",
     "json-schema-mapper": "0.0.2",
+    "mime": "1.2.x",
     "mkdirp": "0.3.5",
     "mongoose": "3.8.x",
     "node-gyp": "~0.12.1",

@@ -24,6 +24,7 @@ define(function(require){
       
       this.on('contextMenu:component:edit', this.loadPageEdit);
       this.on('contextMenu:component:copy', this.onCopy);
+      this.on('contextMenu:component:cut', this.onCut);
       this.on('contextMenu:component:delete', this.deleteComponent);
     },
 
@@ -68,8 +69,12 @@ define(function(require){
           return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
         },
         start: function () {
+          view.showDropZones();
           $(this).attr('data-component-id', view.model.get('_id'));
           $(this).attr('data-block-id', view.model.get('_parentId'));
+        },
+        stop: function () {
+          view.hideDropZones();
         }
       }).disableSelection();
     }

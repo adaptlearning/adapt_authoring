@@ -35,19 +35,18 @@ define(function(require){
     },
 
     postRender: function() {
+      this.addBlockViews();
+      this.setupDragDrop();
       _.defer(_.bind(function(){
         this.trigger('articleView:postRender');
       }, this));
-
-      this.addBlockViews();
-      this.setupDragDrop();
     },
 
     onCutBlock: function(view) {
-      this.render();
       this.once('articleView:postRender', function() {
         view.showPasteZones();
       });
+      this.render();
     },
 
     addBlockViews: function() {

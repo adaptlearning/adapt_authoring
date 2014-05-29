@@ -25,16 +25,28 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
-      this.listenTo(Origin, 'editorView:moveBlock:' + this.model.get('_id'), this.handleMovedBlock);
+      this.listenTo(Origin, 'editorView:moveBlock:' + this.model.get('_id'), this.render);
+      this.listenTo(Origin, 'editorView:cutBlock:' + this.model.get('_id'), this.onCutBlock);
 
       this.on('contextMenu:article:edit', this.loadPageEdit);
       this.on('contextMenu:article:copy', this.onCopy);
+      this.on('contextMenu:article:cut', this.onCut);
       this.on('contextMenu:article:delete', this.deletePageArticle);
     },
 
     postRender: function() {
       this.addBlockViews();
       this.setupDragDrop();
+      _.defer(_.bind(function(){
+        this.trigger('articleView:postRender');
+      }, this));
+    },
+
+    onCutBlock: function(view) {
+      this.once('articleView:postRender', function() {
+        view.showPasteZones();
+      });
+      this.render();
     },
 
     addBlockViews: function() {
@@ -111,10 +123,6 @@ define(function(require){
       Origin.trigger('editorSidebarView:addEditView', this.model);
     },
 
-    handleMovedBlock: function() {
-      this.render();
-    },
-
     setupDragDrop: function() {
       var view = this;
       this.$el.draggable({
@@ -130,8 +138,12 @@ define(function(require){
           return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
         },
         start: function () {
+          view.showDropZones();
           $(this).attr('data-' + view.model.get('_type') + '-id', view.model.get('_id'));
           $(this).attr('data-'+ view.model.get('_parent') + '-id', view.model.get('_parentId'));
+        },
+        stop: function () {
+          view.hideDropZones();
         }
       }).disableSelection();
     }

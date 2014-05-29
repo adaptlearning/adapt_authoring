@@ -16,6 +16,7 @@
   "app.delete" : "Delete",
   "app.copy" : "Copy",
   "app.paste" : "Paste",
+  "app.cut" : "Cut",
   "app.save" : "Save",
   "app.cancel" : "Cancel",
   "app.myprojects" : "My Projects",

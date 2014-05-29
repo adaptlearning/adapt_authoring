@@ -25,6 +25,18 @@ define(function(require){
       Origin.trigger('editorView:copy', this.model);
     },
 
+    onCut: function(event) {
+      if (event) {
+        event.preventDefault();
+      }
+
+      Origin.trigger('editorView:cut', this);
+    },
+
+    capitalise: function(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    },
+
     onPaste: function(event) {
       event.preventDefault();
 
@@ -54,7 +66,22 @@ define(function(require){
     showPasteZones: function () {
       $('.paste-zone').addClass('visibility-hidden');
       $('.paste-zone-'+ this.model.get('_type')).removeClass('visibility-hidden');
-    }
+    },
+
+    showDropZones: function () {
+      // Purposeful global selector here
+      $('.paste-zone').addClass('visibility-hidden');
+      // Hide the links within the dropzone
+      $('.paste-zone-'+ this.model.get('_type') + ' a').addClass('visibility-hidden');
+      $('.paste-zone-'+ this.model.get('_type')).addClass('paste-zone-available').removeClass('visibility-hidden');
+    },
+
+    hideDropZones: function() {
+      // Purposeful global selectors here
+      $('.paste-zone').addClass('visibility-hidden').removeClass('paste-zone-available');
+      // Show the links within the dropzone again, incase copy is initiated
+      $('.paste-zone a').removeClass('visibility-hidden');
+    },
 
   });
 

@@ -25,10 +25,12 @@ define(function(require){
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
       this.listenTo(Origin, 'editorView:removeComponent:' + this.model.get('_id'), this.handleRemovedComponent);
-      this.listenTo(Origin, 'editorView:moveComponent:' + this.model.get('_id'), this.handleMovedComponent);
+      this.listenTo(Origin, 'editorView:moveComponent:' + this.model.get('_id'), this.reRender);
+      this.listenTo(Origin, 'editorView:cutComponent:' + this.model.get('_id'), this.onCutComponent);
 
       this.on('contextMenu:block:edit', this.loadPageEdit);
       this.on('contextMenu:block:copy', this.onCopy);
+      this.on('contextMenu:block:cut', this.onCut);
       this.on('contextMenu:block:delete', this.deleteBlock);
 
       // Add a componentTypes property to the model and call toJSON() on the
@@ -42,6 +44,9 @@ define(function(require){
       this.addComponentViews();
       this.setupPasteZones();
       this.setupDragDrop();
+      _.defer(_.bind(function(){
+        this.trigger('blockView:postRender');
+      }, this));
     },
 
     evaluateComponents: function() {
@@ -85,7 +90,17 @@ define(function(require){
       this.render();
     },
 
-    handleMovedComponent: function() {
+    reRender: function() {
+      this.evaluateComponents();
+      this.setupPasteZones();
+      this.render();
+    },
+
+    onCutComponent: function(view) {
+      this.once('blockView:postRender', function() {
+        view.showPasteZones();
+      });
+
       this.evaluateComponents();
       this.setupPasteZones();
       this.render();
@@ -106,8 +121,12 @@ define(function(require){
           return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
         },
         start: function () {
+          view.showDropZones();
           $(this).attr('data-' + view.model.get('_type') + '-id', view.model.get('_id'));
           $(this).attr('data-' + view.model.get('_parent') + '-id', view.model.get('_parentId'));
+        },
+        stop: function () {
+          view.hideDropZones();
         }
       }).disableSelection();
     },

@@ -39,6 +39,11 @@ define(function(require) {
         callbackEvent: "copy"
       },
       {
+        title: window.polyglot.t('app.cut'),
+        className: 'context-menu-item',
+        callbackEvent: "cut"
+      },
+      {
         title: window.polyglot.t('app.delete'),
         className: 'context-menu-item',
         callbackEvent: "delete"

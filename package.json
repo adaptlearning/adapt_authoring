@@ -78,6 +78,7 @@
     "grunt-requirejs-bundle": "~0.0.7",
     "grunt-contrib-copy": "~0.4.1",
     "grunt-mocha-test": "~0.7.0",
-    "archiver": "~0.8.1"
+    "archiver": "~0.8.1",
+    "node-ffprobe": "~1.2.2"
   }
 }

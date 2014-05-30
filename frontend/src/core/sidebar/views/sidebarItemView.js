@@ -9,6 +9,7 @@ define(function(require) {
 
 		initialize: function() {
 			this.render();
+			this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
 			_.defer(_.bind(function() {
 				this.setupView();
 			}, this));
@@ -16,17 +17,16 @@ define(function(require) {
 
 		setupView: function() {
 			this.listenTo(Origin, 'sidebar:views:remove', this.removeView);
-			this.$el.velocity({'left': '0%', 'opacity': 1}, 800, "easeOutQuad");
+		},
+
+		animateViewIn: function() {
+			this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
 		},
 
 		removeView: function() {
-			this.$el.velocity({'left': '-100%', 'opacity': 0}, _.bind(function() {
-				this.remove();
-			}, this));
+			this.remove();
 		}
 
-	}, {
-		template: 'sidebarTestView'
 	});
 
 	return SidebarItemView;

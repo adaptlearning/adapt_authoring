@@ -1,7 +1,7 @@
 define(function(require) {
 
     var Origin = require('coreJS/app/origin');
-    var SiderbarContainerView = require('coreJS/sidebar/views/sidebarView');
+    var SidebarContainerView = require('coreJS/sidebar/views/sidebarView');
 
     var Sidebar = {};
 
@@ -14,32 +14,17 @@ define(function(require) {
             return console.log("Sidebar - Cannot add this object to the sidebard view. Please make sure it's the views $el");
         }
 
+        // Trigger update of views
         Origin.trigger('sidebar:sidebarContainer:update', $el, options);
 
     }
 
+    // Append sidebar to body
     Origin.once('app:dataReady', function() {
-        $('body').append(new SiderbarContainerView().$el);
-    })
+        $('body').append(new SidebarContainerView().$el);
+    });
 
-    // Added for testing purposes
-    var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
-    Origin.once('origin:initialize', function() {
-        Sidebar.addView(new SidebarItemView().$el, {
-            'backButtonText': 'Back to courses',
-            'backButtonRoute': '/#/dashboard'
-        });
-
-        _.delay(function() {
-            Sidebar.addView(new SidebarItemView().$el, {
-                'backButtonText': 'Back to courses',
-                'backButtonRoute': '/#/dashboard'
-            });
-        }, 3000)
-    })
-
+    // Push sidebar to Origin object
     Origin.sidebar = Sidebar;
-
-    console.log(Origin);
 
 })

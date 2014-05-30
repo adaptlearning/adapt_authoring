@@ -20,6 +20,8 @@ define(function(require) {
 			// If backButton option setup backButton
 			if (options.backButtonText && options.backButtonRoute) {
 				this.setupBackButtonRoute(options);
+			} else {
+				this.removeBackButtonRoute();
 			}
 
 			// Append new view into sidebar
@@ -29,11 +31,26 @@ define(function(require) {
 		},
 
 		setupBackButtonRoute: function(options) {
-			console.log('Setting up back button route');
+			// If breadcrumb, render template and animate in
+			var template = Handlebars.templates['sidebarBreadcrumb'];
+			this.$('.sidebar-breadcrumb').html(template(options));
+			_.defer(function() {
+				this.$('.sidebar-breadcrumb').velocity({'top': '0px', 'opacity': 1}, function() {
+					Origin.trigger('sidebar:views:animateIn');
+				});
+			});
+		},
+
+		removeBackButtonRoute: function() {
+			// If breadcrumb needs removing, animate out and trigger animateIn for the new view
+			this.$('.sidebar-breadcrumb').velocity({'top': '-40px', 'opacity': 0}, function() {
+				this.empty();
+				Origin.trigger('sidebar:views:animateIn');
+			});
 		}
 
 	}, {
-		template: 'sidebarView'
+		template: 'sidebar'
 	});
 
 	return Sidebar;

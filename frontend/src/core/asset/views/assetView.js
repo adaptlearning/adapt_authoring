@@ -27,7 +27,7 @@ define(function(require){
     onCancel: function(event) {
       event.preventDefault();
 
-      alert('cancel clicked');
+      this.goToList();
     },
 
     onSubmit: function(event) {
@@ -35,16 +35,12 @@ define(function(require){
 
       this.uploadFile();
 
-      console.log('goto route');
-
+      this.goToList();
       // Return false to prevent the page submitting
       return false;
     },
 
-    uploadFile: function() {
-      // event.preventDefault();
-      console.log('uploading the file ...');
-   
+    uploadFile: function() {  
       $('#assetForm').ajaxSubmit({                                                                                                             
         error: function(xhr, status, error) {
           console.log('Error: ' + xhr.status);
@@ -59,6 +55,9 @@ define(function(require){
       return false;
     },
 
+    goToList: function() {
+      Backbone.history.navigate('/asset', {trigger: true});
+    }
     // preRender: function() {
     //   this.listenTo(this, 'remove', this.remove);
     //   this.listenTo(this.model, 'destroy', this.remove);

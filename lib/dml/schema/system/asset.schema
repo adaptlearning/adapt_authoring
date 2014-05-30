@@ -8,6 +8,10 @@
       "type": "string",
       "required": "true"
     },
+    "assetType": {
+      "type": "string",
+      "required": "true"
+    },
     "description": {
       "type": "string",
       "required": "true"

@@ -7,21 +7,25 @@ define(function(require){
 
   var AssetView = OriginView.extend({
 
-    // settings: {
-    //   autoRender: false
-    // },
-
     tagName: 'div',
 
     className: 'asset',
 
     events: {
       'submit #assetForm'   : 'onSubmit',
-      'click #cancelButton' : 'onCancel'
+      'click #cancelButton' : 'onCancel',
+      'change #file'        : 'onChangeFile'
     },
 
-    postRender: function() {
+    preRender: function() {
+      this.listenTo(Origin, 'asset:clearForm', this.clearForm);
+    },
 
+    onChangeFile: function(event) {
+      var $title = $('#title');
+
+      // Default 'title'
+      $title.val($('#file')[0].value);
     },
 
     onCancel: function(event) {
@@ -35,19 +39,25 @@ define(function(require){
 
       this.uploadFile();
 
-      this.goToList();
       // Return false to prevent the page submitting
       return false;
     },
 
-    uploadFile: function() {  
+    clearForm: function() {
+      $('#assetForm').trigger("reset");
+    },
+
+    uploadFile: function() {
+      var view = this;
+
       $('#assetForm').ajaxSubmit({                                                                                                             
         error: function(xhr, status, error) {
           console.log('Error: ' + xhr.status);
         },
     
         success: function(data, status, xhr) {
-          console.log('success!');
+          Origin.trigger('asset:clearForm');
+          Origin.trigger('assets:update');
         }
       });
 
@@ -58,10 +68,6 @@ define(function(require){
     goToList: function() {
       Backbone.history.navigate('/asset', {trigger: true});
     }
-    // preRender: function() {
-    //   this.listenTo(this, 'remove', this.remove);
-    //   this.listenTo(this.model, 'destroy', this.remove);
-    // }
     
   }, {
     template: 'asset'

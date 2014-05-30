@@ -7,9 +7,9 @@ define(function(require){
 
   var AssetItemView = OriginView.extend({
 
-    tagName: 'li',
+    tagName: 'div',
 
-    className: 'asset',
+    className: 'asset-list-item',
 
     events: {
     },

@@ -1,13 +1,12 @@
 <form id="assetForm" class="forms" action="/api/asset" method="post">
-  <label for="title">{{t 'app.assettitle'}} <span class="req">*</span>
-    <input type="text" class="width-30" id="title" name="title" placeholder="{{t 'app.assettitle'}}" value="{{ title }}" autocomplete="off">
-  </label>
-  <label for="description">{{t 'app.assetdescription'}}
-    <textarea class="width-30" id="description" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>
-  </label>
-<!--  <input type="text" id="repository" name="repository" value="localfs"> -->
   <label for="file">{{t 'app.assetfile'}} <span class="req">*</span>
-    <input type="file" class="width-30" id="file" name="file">
+    <input type="file" class="width-80" id="file" name="file">
+  </label>
+  <label for="title">{{t 'app.assettitle'}} <span class="req">*</span>
+    <input type="text" class="width-80" id="title" name="title" placeholder="{{t 'app.assettitle'}}" value="{{ title }}" autocomplete="off">
+  </label>
+  <label for="description">{{t 'app.assetdescription'}} <span class="req">*</span>
+    <textarea class="width-80" id="description" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>
   </label>
   <button id="saveButton" type="submit" class="btn btn-green">{{t 'app.save'}}</button>
   <button id="cancelButton" type="button" class="btn">{{t 'app.cancel'}}</button>

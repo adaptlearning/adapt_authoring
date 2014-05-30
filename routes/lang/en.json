@@ -64,5 +64,6 @@
   "app.owner" : "Owner",
   "app.assettitle" : "Asset title",
   "app.assetdescription" : "Asset description",
-  "app.assetfile" : "File" 
+  "app.assetfile" : "File",
+  "app.noassetsfound" : "No assets found" 
 }

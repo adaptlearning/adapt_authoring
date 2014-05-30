@@ -14,6 +14,7 @@ define(function(require) {
   var UserPasswordResetModel = require('coreJS/user/models/userPasswordResetModel');
   var AssetModel = require('coreJS/asset/models/assetModel');
   var AssetView = require('coreJS/asset/views/assetView');
+  var AssetCollectionView = require('coreJS/asset/views/assetCollectionView');
 
   var Router = Backbone.Router.extend({
 
@@ -35,7 +36,8 @@ define(function(require) {
       "page/new/:id"                  : "pageNew",
       "page/edit/:id"                 : "pageEdit",
       "page/article/edit/:id"         : "pageArticleEdit",
-      "asset/new"                 : "assetNew"
+      "asset"                         : "assetList",
+      "asset/new"                     : "assetNew"
     },
 
     initialize: function() {
@@ -140,6 +142,10 @@ define(function(require) {
     assetNew: function() {
       var asset = new AssetModel();
       this.createView(new AssetView({model: asset}));
+    },
+
+    assetList: function() {
+      this.createView(new AssetCollectionView());
     },
 
     projectEdit: function (id) {

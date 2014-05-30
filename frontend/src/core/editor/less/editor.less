@@ -134,46 +134,50 @@
   }
 
   .paste-zone {
-    margin: 20px;
     height: 45px;
     border: 2px dashed #B0B0B0;
     background-color: #CECECE;
 
     &-component-left {
+      height: 95px;
       width: 48%;
       float: left;
-      margin:0;
+      margin-top: 10px;
+      margin-left: 10px;
     }
 
     &-component-right {
+      height: 95px;
       width: 48%;
       float: right;
-      margin:0;
+      margin-top: 10px;
+      margin-right: 10px;
+    }
+
+    &-component-full {
+      margin-left: 10px;
+      margin-right: 10px;
     }
   }
 
   .paste-zone-available {
-    opacity: 0.5;
+    background-color: #BABABA;
+    border: 2px dashed #8C8C8C;
+    opacity: 0.4;
   }
 
   .paste-zone-droppable {
     visibility: visible;
-    background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,0.2), rgba(0,0,0,0.2) 1px, transparent 1px, transparent 6px);
     opacity: 1;
   }
 
-  .paste-zone-component-left {
-    width: 47%;
-    float: left;
-    margin-top: 10px;
-    height: 90px;
+  .drop-only {
+    visibility: hidden;
   }
 
-  .paste-zone-component-right {
-    width: 47%;
-    float: right;
-    margin-top: 10px;
-    height: 90px;
+  .component-full {
+    float: left;
+    width: 98%;
   }
 
   .page-article-components:after {
@@ -209,4 +213,5 @@
     cursor: move;
     min-width: 100px;
   }
+
 }

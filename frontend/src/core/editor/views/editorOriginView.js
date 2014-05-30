@@ -74,6 +74,7 @@ define(function(require){
       // Hide the links within the dropzone
       $('.paste-zone-'+ this.model.get('_type') + ' a').addClass('visibility-hidden');
       $('.paste-zone-'+ this.model.get('_type')).addClass('paste-zone-available').removeClass('visibility-hidden');
+      this.$el.parent().children('.drop-only').css({visibility : 'visible'});
     },
 
     hideDropZones: function() {
@@ -81,6 +82,7 @@ define(function(require){
       $('.paste-zone').addClass('visibility-hidden').removeClass('paste-zone-available');
       // Show the links within the dropzone again, incase copy is initiated
       $('.paste-zone a').removeClass('visibility-hidden');
+      this.$el.parent().children('.drop-only').css({visibility : 'hidden'});
     },
 
   });

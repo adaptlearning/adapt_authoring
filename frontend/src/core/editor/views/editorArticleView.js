@@ -13,26 +13,40 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'page-article editable',
+    className: 'page-article editable article-draggable',
 
     events: _.extend(EditorOriginView.prototype.events, {
-      'click a.add-block'           : 'addBlock',
-      'click a.page-article-delete' : 'deletePageArticle',
-      'click a.paste-article'         : 'onPaste',
+      'click a.add-block'            : 'addBlock',
+      'click a.page-article-delete'  : 'deletePageArticle',
+      'click a.paste-article'        : 'onPaste',
       'click a.open-context-article' : 'openContextMenu'
     }),
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
+      this.listenTo(Origin, 'editorView:moveBlock:' + this.model.get('_id'), this.render);
+      this.listenTo(Origin, 'editorView:cutBlock:' + this.model.get('_id'), this.onCutBlock);
 
       this.on('contextMenu:article:edit', this.loadPageEdit);
       this.on('contextMenu:article:copy', this.onCopy);
+      this.on('contextMenu:article:cut', this.onCut);
       this.on('contextMenu:article:delete', this.deletePageArticle);
     },
 
     postRender: function() {
       this.addBlockViews();
+      this.setupDragDrop();
+      _.defer(_.bind(function(){
+        this.trigger('articleView:postRender');
+      }, this));
+    },
+
+    onCutBlock: function(view) {
+      this.once('articleView:postRender', function() {
+        view.showPasteZones();
+      });
+      this.render();
     },
 
     addBlockViews: function() {
@@ -44,7 +58,6 @@ define(function(require){
       prePasteBlock.set('_type', 'block');
       prePasteBlock.set('_pasteZoneSortOrder', 1);
 
-      // {_parentId: this.model.get('_id'), _type: 'block', _pasteZoneSortOrder: 1});
       this.$('.page-article-blocks').append(new EditorPasteZoneView({model: prePasteBlock}).$el);
 
       this.model.getChildren().each(function(block) {
@@ -108,6 +121,31 @@ define(function(require){
         event.preventDefault();
       }
       Origin.trigger('editorSidebarView:addEditView', this.model);
+    },
+
+    setupDragDrop: function() {
+      var view = this;
+      this.$el.draggable({
+        opacity: 0.8,
+        handle: '.handle',
+        revert: 'invalid',
+        zIndex: 10000,
+        cursorAt: {
+          top: 10,
+          left: 10
+        },
+        helper: function (e) {
+          return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
+        },
+        start: function () {
+          view.showDropZones();
+          $(this).attr('data-' + view.model.get('_type') + '-id', view.model.get('_id'));
+          $(this).attr('data-'+ view.model.get('_parent') + '-id', view.model.get('_parentId'));
+        },
+        stop: function () {
+          view.hideDropZones();
+        }
+      }).disableSelection();
     }
 
   }, {

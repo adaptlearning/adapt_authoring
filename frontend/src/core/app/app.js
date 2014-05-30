@@ -9,9 +9,10 @@ require([
     'coreJS/app/helpers',
     'coreJS/app/contextMenu',
     'polyglot',
+    'jquery-ui'
     'templates',
     'velocity'
-], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Sidebar, Helpers, ContextMenu, Polyglot) {
+], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Sidebar, Helpers, ContextMenu, Polyglot, JQueryUI) {
 
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file

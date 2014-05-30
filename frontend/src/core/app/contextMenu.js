@@ -39,6 +39,11 @@ define(function(require) {
         callbackEvent: "copy"
       },
       {
+        title: window.polyglot.t('app.cut'),
+        className: 'context-menu-item',
+        callbackEvent: "cut"
+      },
+      {
         title: window.polyglot.t('app.delete'),
         className: 'context-menu-item',
         callbackEvent: "delete"
@@ -48,6 +53,8 @@ define(function(require) {
     ContextMenu.addItem('article', contextItems);
     ContextMenu.addItem('block', contextItems);
     ContextMenu.addItem('component', contextItems);
+    ContextMenu.addItem('menu', contextItems);
+    ContextMenu.addItem('page', contextItems);
   }
 
   Origin.once('app:dataReady', function() {

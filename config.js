@@ -9,7 +9,8 @@ require.config({
       templates: 'templates/templates',
       polyglot: 'core/libraries/polyglot.min',
       jsoneditor: 'core/libraries/jquery.jsoneditor.min',
-      velocity: 'core/libraries/velocity'
+      velocity: 'core/libraries/velocity',
+      'jquery-ui': 'core/libraries/jquery-ui.min'
     },
     shim: {
       jquery: [
@@ -38,6 +39,10 @@ require.config({
       velocity: {
         deps: ['jquery'],
         exports: 'velocity'
+      },
+      'jquery-ui': {
+        deps: ['jquery'],
+        exports: "$"
       }
     }
 });

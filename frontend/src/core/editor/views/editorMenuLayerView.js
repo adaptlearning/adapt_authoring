@@ -16,17 +16,22 @@ define(function(require) {
       preRender: function(options) {
         if (options._parentId) {
           this._parentId = options._parentId;
-        }
+        } 
+
         if (options._isCourseObject) {
           this.data = {};
           this.data._isCourseObject = options._isCourseObject;
         }
-        
+
         this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
         this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
       },
 
   		postRender: function() {
+        if (this._parentId) {
+          // Append the parentId value to the container to allow us to move pages, etc.
+          this.$el.attr('data-parentId', this._parentId);
+        }
   		},
 
       render: function() {
@@ -36,6 +41,7 @@ define(function(require) {
         _.defer(_.bind(function() {
           this.postRender();
         }, this));
+
         return this;
       },
 
@@ -47,6 +53,10 @@ define(function(require) {
         this.addMenuItem(event, 'page');
       },
 
+      /**
+       * Adds a new contentObject of a given type
+       * @param {String} type Given contentObject type, i.e. 'menu' or 'page'
+       */
       addMenuItem: function(event, type) {
         event.preventDefault();
 

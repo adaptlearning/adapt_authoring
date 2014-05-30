@@ -182,7 +182,7 @@ server.all('/install/tenant', function (req, res, next) {
           new localAuth().internalRegisterUser({
               email: adminEmail,
               password: adminPass,
-              tenant: tenant._id
+              _tenantId: tenant._id
             }, function (error, user) {
               if (error) {
                 return next(error);
@@ -227,6 +227,7 @@ server.all('/install/tenant', function (req, res, next) {
 server.get('/install/complete', function (req, res, next) {
   // by default, auth is local
   configuration.setConfig('auth', 'local');
+  configuration.setConfig('dataRoot', 'data');
 
   var cfg = configuration.getConfig();
 
@@ -246,6 +247,7 @@ server.get('/install/complete', function (req, res, next) {
     });
 
     // restart server, NB: we reload the config file to be sure that it was correctly written
+    // (we use console.log here instead of logger, since logger may not be correctly configured)
     configuration.load(path.join(configuration.serverRoot, 'conf', 'config.json'), function (e) {e && console.log(e);});
     configuration.once('change:config', function () {
       var grunt = false;
@@ -268,7 +270,6 @@ server.get('/install/complete', function (req, res, next) {
       if (grunt) {
         // run grunt build
         grunt.tasks(['build'], {}, function (error) {
-          console.log(error);
           if (error) {
             logger.log('warn', 'grunt build failed with error. you should manually run "grunt build" from the root of your project', error);
           }

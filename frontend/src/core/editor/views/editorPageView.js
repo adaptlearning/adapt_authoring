@@ -25,23 +25,28 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editorView:moveArticle:' + this.model.get('_id'), this.render);
+      this.listenTo(Origin, 'editorView:cutArticle:' + this.model.get('_id'), this.onCutArticle);
     },
 
     postRender: function() {
       this.addArticleViews();
+      _.defer(_.bind(function(){
+        this.trigger('pageView:postRender');
+      }, this));
     },
 
     addArticleViews: function() {
       this.$('.page-articles').empty();
       Origin.trigger('editorPageView:removePageSubViews');
 
-      // Pre-article paste zone
-      var firstArticle = this.model.getChildren().at(0);
-      if (firstArticle) {
-        var dummyArticle = firstArticle.clone();
-        dummyArticle.set('_pasteZoneSortOrder', 1);
-        this.$('.page-articles').append(new EditorPasteZoneView({model: dummyArticle}).$el);
-      }
+      // Insert the 'pre' paste zone for articles
+      var prePasteArticle = new EditorArticleModel();
+      prePasteArticle.set('_parentId', this.model.get('_id'));
+      prePasteArticle.set('_type', 'article');
+      prePasteArticle.set('_pasteZoneSortOrder', 1);
+
+      this.$('.page-articles').append(new EditorPasteZoneView({model: prePasteArticle}).$el);
 
       this.model.getChildren().each(function(article) {
         this.$('.page-articles').append(new EditorArticleView({model: article}).$el);
@@ -90,7 +95,15 @@ define(function(require){
     loadPageEdit: function (event) {
       event.preventDefault();
       Origin.trigger('editorSidebarView:addEditView', this.model);
-    }
+    },
+
+    onCutArticle: function(view) {
+      this.once('pageView:postRender', function() {
+        view.showPasteZones();
+      });
+
+      this.render();
+    },
 
   }, {
     template: 'editorPage'

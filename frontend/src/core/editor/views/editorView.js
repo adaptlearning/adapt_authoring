@@ -41,12 +41,15 @@ define(function(require){
       this.currentView = options.currentView;
 
       Origin.editor.currentContentObjectId = options.currentPageId;
+      Origin.editor.currentCourseId = options.currentCourseId;
+      Origin.editor.pasteParentModel = false;
 
       this.listenTo(Origin, 'editorView:fetchData', this.setupEditor);
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
+      this.listenTo(Origin, 'editorView:cut', this.cutContent);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
       this.listenTo(Origin, 'editorSidebarView:publish', this.publishProject);
-      
+
       this.render();
       this.setupEditor();
     },
@@ -165,6 +168,8 @@ define(function(require){
         _.invoke(Origin.editor.data.clipboard.models, 'destroy')
       }, this));
 
+      Origin.editor.pasteParentModel = model.getParent();
+
       var clipboard = new EditorClipboardModel();
 
       clipboard.set('referenceType', model._siblings);
@@ -228,8 +233,7 @@ define(function(require){
         topitem._sortOrder = sortOrder;
       }
 
-
-      this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_id'), false);
+      this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_parentId'), false);
     },
 
     createRecursive: function (type, clipboard, parentId, oldParentId) {
@@ -320,6 +324,21 @@ define(function(require){
       this.$('.editor-inner').html(new EditorPageView({
         model: Origin.editor.data.contentObjects.findWhere({_id: this.currentPageId}),
       }).$el);
+    },
+
+    cutContent: function(view) {
+      var type = this.capitalise(view.model.get('_type'));
+      var collectionType = view.model._siblings;
+
+      this.addToClipboard(view.model);
+
+      // Remove model from collection (to save fetching) and destroy it
+      Origin.editor.data[collectionType].remove(view.model);
+      view.model.destroy();
+
+      _.defer(function(){
+        Origin.trigger('editorView:cut' + type + ':' + view.model.get('_parentId'), view);
+      });
     }
 
   }, {

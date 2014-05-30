@@ -1,3 +1,7 @@
+.editor-menu-inner {
+
+}
+
 .editor-menu-item {
     border: 1px dashed;
 
@@ -7,6 +11,29 @@
     height: 70px;
     position: relative;
     padding-left: 30px;
+    background-color: #FFF;
+    cursor: pointer;
+
+    &-title {
+        height: 60px;
+        margin: 5px 5px 5px 70px;
+        overflow: hidden;
+    }
+
+    &-icon {
+        float: left;
+        margin-left: 4px;
+        width: 65px;
+        height: 60px;
+
+        &.page {
+            background-color: lightblue;
+        }
+
+        &.menu {
+            background-color: black;
+        }
+    }
 
 	&.expanded {
 		border: 1px solid #242424;
@@ -46,4 +73,13 @@
         }
 	}
 
+    .settings {
+        height: 20px;
+    }
+
+    .handle {
+        height: 50px;
+        cursor: move;
+
+    }
 }

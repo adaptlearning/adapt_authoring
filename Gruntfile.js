@@ -9,17 +9,11 @@ module.exports = function(grunt) {
           files: [
             {
               expand: true,
-              src: ['frontend/src/core/js/scriptLoader.js'],
-              dest: 'frontend/build/adaptbuilder/js/',
-              filter: 'isFile',
-              flatten: true
-            },
-            {
-              expand: true,
               src: ['frontend/src/core/libraries/require.js', 
                 'frontend/src/core/libraries/modernizr.js', 
                 'frontend/src/core/libraries/polyglot.min.js', 
-                'frontend/src/core/libraries/jquery.jsoneditor.min.js'],
+                'frontend/src/core/libraries/jquery.jsoneditor.min.js',
+                'frontend/src/core/libraries/jquery-ui.min.js'],
               dest: 'frontend/build/libraries/',
               filter: 'isFile',
               flatten: true
@@ -29,12 +23,14 @@ module.exports = function(grunt) {
       },
       less: {
         dist: {
-          files: [{
-            'frontend/build/adaptbuilder/css/kube.min.css': 'frontend/src/less/kube.less'
-          },
-          {
-            'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/core/**/*.less'
-          }]
+          files: [
+            {
+              'frontend/build/adaptbuilder/css/kube.min.css': 'frontend/src/less/kube.less'
+            },
+            {
+              'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/core/**/*.less'
+            }
+          ]
         },
         options: {
           compress: true

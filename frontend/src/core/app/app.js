@@ -9,7 +9,7 @@ require([
     'coreJS/app/helpers',
     'coreJS/app/contextMenu',
     'polyglot',
-    'jquery-ui'
+    'jquery-ui',
     'templates',
     'velocity'
 ], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Sidebar, Helpers, ContextMenu, Polyglot, JQueryUI) {

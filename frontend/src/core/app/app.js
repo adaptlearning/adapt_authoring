@@ -9,7 +9,8 @@ require([
     'coreJS/app/helpers',
     'coreJS/app/contextMenu',
     'polyglot',
-    'templates'
+    'templates',
+    'velocity'
 ], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Sidebar, Helpers, ContextMenu, Polyglot) {
 
   var locale = localStorage.getItem('lang') || 'en';

@@ -14,8 +14,6 @@ define(function(require) {
             return console.log("Sidebar - Cannot add this object to the sidebard view. Please make sure it's the views $el");
         }
 
-        
-
         Origin.trigger('sidebar:sidebarContainer:update', $el, options);
 
     }
@@ -31,7 +29,16 @@ define(function(require) {
             'backButtonText': 'Back to courses',
             'backButtonRoute': '/#/dashboard'
         });
+
+        _.delay(function() {
+            Sidebar.addView(new SidebarItemView().$el, {
+                'backButtonText': 'Back to courses',
+                'backButtonRoute': '/#/dashboard'
+            });
+        }, 3000)
     })
+
+    Origin.sidebar = Sidebar;
 
     console.log(Origin);
 

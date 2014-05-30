@@ -13,16 +13,22 @@ define(function(require) {
 		},
 
 		updateViews: function($element, options) {
-			console.log('Update views');
+
+			// Check if options exists
 			var options = (options || {});
-			console.log($element, options);
+
+			// If backButton option setup backButton
 			if (options.backButtonText && options.backButtonRoute) {
-				this.setupBackButtonRoute();
+				this.setupBackButtonRoute(options);
 			}
+
+			// Append new view into sidebar
+			// Append is better here so we can animate the current view out
 			this.$('.sidebar-item-container').append($element);
+
 		},
 
-		setupBackButtonRoute: function() {
+		setupBackButtonRoute: function(options) {
 			console.log('Setting up back button route');
 		}
 

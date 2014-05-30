@@ -16,6 +16,8 @@ define(function(require) {
 			}, this));
 		}
 
+	}, {
+		template: 'sidebarTestView'
 	});
 
 	return SidebarItemView;

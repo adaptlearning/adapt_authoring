@@ -105,4 +105,6 @@ define(function(require) {
 		GlobalMenu.addSubItem(subItemObject);
 	});
 
+	Origin.globalMenu = GlobalMenu;
+
 });

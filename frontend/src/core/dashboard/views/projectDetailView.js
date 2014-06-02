@@ -33,7 +33,7 @@ define(function(require) {
     cancel: function (event) {
       event.preventDefault();
 
-      Backbone.history.navigate('/dashboard', {trigger: true});
+      Backbone.history.navigate('#/dashboard', {trigger: true});
     },
 
     saveProject: function(event) {
@@ -50,7 +50,7 @@ define(function(require) {
             // Add config
             var config = new EditorConfigModel();
             config.save({'_courseId': result.get('_id')});
-            Backbone.history.navigate('/dashboard', {trigger: true});
+            Backbone.history.navigate('#/dashboard', {trigger: true});
           }
         }
       );

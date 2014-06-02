@@ -16,8 +16,9 @@ define(function(require) {
   var Router = Backbone.Router.extend({
 
     routes: {
-      ""                              : "index",
-      "user/login"                    : "login",
+      ""                              : "handleIndex",
+      ":module(/*location)(/*subLocation)(/*action)": "handleRoute"
+      /*"user/login"                    : "login",
       "user/logout"                   : "logout",
       "user/forgot"                   : "forgotpassword",
       "user/reset/:token"             : "resetpassword",
@@ -32,30 +33,35 @@ define(function(require) {
       "editor/:courseId/page/:pageId" : "editorPage",
       "page/new/:id"                  : "pageNew",
       "page/edit/:id"                 : "pageEdit",
-      "page/article/edit/:id"         : "pageArticleEdit"
+      "page/article/edit/:id"         : "pageArticleEdit"*/
     },
 
     initialize: function() {
       this.currentView = null;
-      this.listenTo(this, 'route', this.removeViews);
+      this.locationKeys = ['module', 'location', 'subLocation', 'action'];
     },
 
-    route: function(route, name, callback) {
-      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
-      if (_.isFunction(name)) {
-        callback = name;
-        name = '';
+    handleRoute: function(module, location, subLocation, action) {
+      // Remove views
+      this.removeViews();
+
+      var routeArguments = arguments;
+      // Check user is authenticated
+      if (this.isUserAuthenticated()) {
+        console.log('user is authenticated');
+      } else {
+        console.log('user is not authenticated');
       }
-      if (!callback) callback = this[name];
-      var router = this;
-      Backbone.history.route(route, function(fragment) {
-        router.trigger('route', name, args);
-        var args = router._extractParameters(route, fragment);
-        callback && callback.apply(router, args);
-        router.trigger.apply(router, ['route:' + name].concat(args));
-        Backbone.history.trigger('route', router, name, args);
+
+
+      // Set location object
+      Origin.location = {};
+      _.each(this.locationKeys, function(locationKey, index) {
+        Origin.location[locationKey] = routeArguments[index];
       });
-      return this;
+
+      // Trigger router event
+      Origin.trigger('router:' + module, location, subLocation, action);
     },
 
     isUserAuthenticated: function() {
@@ -67,23 +73,22 @@ define(function(require) {
     },
 
     createView: function(initialView, fallbackView) {
-      _.defer(_.bind(function() {
-        if (this.isUserAuthenticated()) {
-          this.currentView = initialView;
-        } else {
-          this.currentView = fallbackView
-            ? fallbackView 
-            : new LoginView({model:Origin.sessionModel});
-        }
+      
+      if (this.isUserAuthenticated()) {
+        this.currentView = initialView;
+      } else {
+        this.currentView = fallbackView
+          ? fallbackView 
+          : new LoginView({model:Origin.sessionModel});
+      }
 
-        $('#app').append(this.currentView.$el);
+      $('#app').append(this.currentView.$el);
 
-        return this.currentView;
-      }, this));
+      return this.currentView;
       
     },
 
-    index: function() {
+    handleIndex: function() {
       if (this.isUserAuthenticated()) {
         this.navigate('#/dashboard', {trigger: true});
       } else {
@@ -172,10 +177,11 @@ define(function(require) {
     },
 
     removeViews: function() {
-      if (this.currentView) {
+      Origin.trigger('remove:views');
+/*      if (this.currentView) {
         this.currentView.remove();
         Origin.trigger('remove:views');
-      }
+      }*/
     }
 
   });

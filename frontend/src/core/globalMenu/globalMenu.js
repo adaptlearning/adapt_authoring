@@ -48,20 +48,32 @@ define(function(require) {
 		$('#app').off('click');
 		// Toggle between displaying and removing the menu
 		if (_isActive === true) {
-			_isActive = false;
-			// Trigger event to remove the globalMenuView
-			Origin.trigger('globalMenu:globalMenuView:remove');
-			// Remove body click event
+			closeGlobalMenu();
 		} else {
-			_isActive = true;
-			// Add new view to the .navigation element passing in the GlobalMenuStore as the collection
-			$('.navigation').append(new GlobalMenuView({collection: GlobalMenuStore}).$el);
-			// Setup listeners to #app to remove menu when main pag is clicked
-			$('#app').one('click', _.bind(function(event) {
-				Origin.trigger('navigation:globalMenu:toggle');
-			}, this));
+			openGlobalMenu();
 		}
 	});
+
+	Origin.on('remove:views', function() {
+		closeGlobalMenu();
+	});
+
+	function openGlobalMenu() {
+		_isActive = true;
+		// Add new view to the .navigation element passing in the GlobalMenuStore as the collection
+		$('.navigation').append(new GlobalMenuView({collection: GlobalMenuStore}).$el);
+		// Setup listeners to #app to remove menu when main pag is clicked
+		$('#app').one('click', _.bind(function(event) {
+			Origin.trigger('navigation:globalMenu:toggle');
+		}, this));
+	}
+
+	function closeGlobalMenu() {
+		_isActive = false;
+		// Trigger event to remove the globalMenuView
+		Origin.trigger('globalMenu:globalMenuView:remove');
+		// Remove body click event
+	}
 
 	// Added for testing purposes
 	Origin.currentLocation = 'dashboard';

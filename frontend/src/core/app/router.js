@@ -37,7 +37,6 @@ define(function(require) {
     },
 
     initialize: function() {
-      this.currentView = null;
       this.locationKeys = ['module', 'location', 'subLocation', 'action'];
     },
 
@@ -46,13 +45,6 @@ define(function(require) {
       this.removeViews();
 
       var routeArguments = arguments;
-      // Check user is authenticated
-      if (this.isUserAuthenticated()) {
-        console.log('user is authenticated');
-      } else {
-        console.log('user is not authenticated');
-      }
-
 
       // Set location object
       Origin.location = {};
@@ -60,8 +52,11 @@ define(function(require) {
         Origin.location[locationKey] = routeArguments[index];
       });
 
+      // Trigger location change
+      Origin.trigger('location:change', Origin.location);
       // Trigger router event
       Origin.trigger('router:' + module, location, subLocation, action);
+
     },
 
     isUserAuthenticated: function() {
@@ -72,19 +67,22 @@ define(function(require) {
        this.navigate('#/user/login', {trigger: true});
     },
 
-    createView: function(initialView, fallbackView) {
-      
-      if (this.isUserAuthenticated()) {
-        this.currentView = initialView;
+    createView: function(view, options) {
+
+      var options = (options || {});
+      var currentView;
+
+      if (options.authenticate === false) {
+        currentView = view;
       } else {
-        this.currentView = fallbackView
-          ? fallbackView 
-          : new LoginView({model:Origin.sessionModel});
+        if (this.isUserAuthenticated()) {
+          currentView = view;
+        } else {
+          currentView = new LoginView({model:Origin.sessionModel});
+        }
       }
 
-      $('#app').append(this.currentView.$el);
-
-      return this.currentView;
+      $('#app').append(currentView.$el);
       
     },
 
@@ -178,10 +176,6 @@ define(function(require) {
 
     removeViews: function() {
       Origin.trigger('remove:views');
-/*      if (this.currentView) {
-        this.currentView.remove();
-        Origin.trigger('remove:views');
-      }*/
     }
 
   });

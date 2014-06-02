@@ -2,7 +2,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var ProjectModel = require('coreJS/project/models/projectModel');
-  var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
+  var ProjectDetailView = require('coreJS/project/views/projectDetailView');
 
   Origin.on('navigation:user:logout', function() {
     Origin.router.navigate('#/user/logout');
@@ -17,14 +17,14 @@ define(function(require) {
     switch (location) {
       case 'new':
         var project = new ProjectModel();
-        Origin.router.createView(new ProjectDetailView({model: project}));
+        Origin.router.createView(ProjectDetailView, {model: project});
         console.log('new loaded');
         break;
       case 'edit':
         var projectModel = new ProjectModel({_id: id});
         projectModel.fetch({
           success: function() {
-            this.createView(new ProjectDetailView({model: projectModel}));
+            this.createView(ProjectDetailView, {model: projectModel});
           }
         });
         break;

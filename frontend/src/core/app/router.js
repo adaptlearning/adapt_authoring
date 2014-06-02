@@ -4,11 +4,6 @@ define(function(require) {
   var LoginView = require('coreJS/user/views/loginView');
   var DashboardView = require('coreJS/dashboard/views/dashboardView');
   var Origin = require('coreJS/app/origin');
-  var ProjectModel = require('coreJS/project/models/projectModel');
-  var ProjectDetailView = require('coreJS/dashboard/views/projectDetailView');
-  var LogoutView = require('coreJS/user/views/logoutView');
-  var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
-  var ResetPasswordView = require('coreJS/user/views/resetPasswordView');
   var EditorView = require('coreJS/editor/views/editorView');
   var EditorModel = require('coreJS/editor/models/editorModel');
   var UserPasswordResetModel = require('coreJS/user/models/userPasswordResetModel');
@@ -67,18 +62,19 @@ define(function(require) {
        this.navigate('#/user/login', {trigger: true});
     },
 
-    createView: function(view, options) {
+    createView: function(View, viewOptions, settings) {
 
-      var options = (options || {});
+      var viewOptions = (viewOptions || {});
+      var settings = (settings || {});
       var currentView;
 
-      if (options.authenticate === false) {
-        currentView = view;
+      if (this.isUserAuthenticated()) {
+        currentView = new View(viewOptions);
       } else {
-        if (this.isUserAuthenticated()) {
-          currentView = view;
+        if (settings.authenticate === false) {
+          currentView = new View(viewOptions);
         } else {
-          currentView = new LoginView({model:Origin.sessionModel});
+          return this.redirectToLogin();
         }
       }
 

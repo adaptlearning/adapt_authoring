@@ -18,8 +18,8 @@ define(function(require) {
   Origin.on('router:user', function(location, subLocation, action) {
 
     var currentView;
-    var options = {};
-    options.authenticate = false;
+    var settings = {};
+    settings.authenticate = false;
 
     switch (location) {
       case 'login':
@@ -35,12 +35,12 @@ define(function(require) {
         currentView = ResetView;
         break;
       case 'profile':
-        options.authenticate = true;
+        settings.authenticate = true;
         currentView = profileView;
         break;
     }
 
-    Origin.router.createView(new currentView({model: Origin.sessionModel}), options);
+    Origin.router.createView(currentView, {model: Origin.sessionModel}, settings);
 
   });
 

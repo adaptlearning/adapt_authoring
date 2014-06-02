@@ -1,5 +1,5 @@
 define(function(require) {
-  var Backbone = require('backbone');
+  
   var Origin = require('coreJS/app/origin');
   var ProjectModel = require('coreJS/project/models/projectModel');
   var ProjectDetailView = require('coreJS/project/views/projectDetailView');

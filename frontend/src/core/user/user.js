@@ -1,5 +1,5 @@
 define(function(require) {
-  var Backbone = require('backbone');
+
   var Origin = require('coreJS/app/origin');
   var LoginView = require('coreJS/user/views/loginView');
   var LogoutView = require('coreJS/user/views/logoutView');
@@ -40,7 +40,10 @@ define(function(require) {
         break;
     }
 
-    Origin.router.createView(currentView, {model: Origin.sessionModel}, settings);
+    if (currentView) {
+      Origin.router.createView(currentView, {model: Origin.sessionModel}, settings);
+    }
+    
 
   });
 

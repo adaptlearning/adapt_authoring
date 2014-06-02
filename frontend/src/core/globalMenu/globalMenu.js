@@ -54,7 +54,7 @@ define(function(require) {
 		}
 	});
 
-	Origin.on('remove:views', function() {
+	Origin.on('remove:views globalMenu:close', function() {
 		closeGlobalMenu();
 	});
 
@@ -74,48 +74,6 @@ define(function(require) {
 		Origin.trigger('globalMenu:globalMenuView:remove');
 		// Remove body click event
 	}
-
-	// Added for testing purposes
-	Origin.currentLocation = 'dashboard';
-	
-	var itemObject = {
-	    "location": "global",
-	    "text": "Editor",
-	    "icon": "editor",
-	    "callbackEvent": "editor:open"
-	};
-
-	var itemObjectTwo = {
-	    "location": "dashboard",
-	    "text": "Projects",
-	    "icon": "editor",
-	    "callbackEvent": "editor:open"
-	};
-
-	var itemObjectThree = {
-	    "location": "global",
-	    "text": "Dashboard",
-	    "icon": "editor",
-	    "callbackEvent": "dashboard:open"
-	};
-
-	var subItemObject = {
-	    "parent": "Editor",
-	    "location": "global",
-	    "text": "Theme settings",
-	    "icon": "theme",
-	    "callbackEvent": "theme:settings:open"
-	};
-
-	Origin.on('app:dataReady', function() {
-		GlobalMenu.addItem(itemObject);
-
-		GlobalMenu.addItem(itemObjectTwo);
-
-		GlobalMenu.addItem(itemObjectThree);
-
-		GlobalMenu.addSubItem(subItemObject);
-	});
 
 	Origin.globalMenu = GlobalMenu;
 

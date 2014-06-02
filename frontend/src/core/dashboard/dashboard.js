@@ -13,4 +13,21 @@ define(function(require) {
 
   });
 
+  Origin.on('globalMenu:dashboard:open', function() {
+
+    Origin.router.navigate('#/dashboard', {trigger: true});
+
+  });
+
+  var globalMenuObject = {
+    "location": "global",
+    "text": "Dashboard",
+    "icon": "dashboard",
+    "callbackEvent": "dashboard:open"
+  };
+
+  Origin.once('app:dataReady', function() {
+    Origin.globalMenu.addItem(globalMenuObject);
+  });
+
 });

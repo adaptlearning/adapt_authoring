@@ -14,25 +14,6 @@ define(function(require) {
       this.locationKeys = ['module', 'location', 'subLocation', 'action'];
     },
 
-    handleRoute: function(module, location, subLocation, action) {
-      // Remove views
-      this.removeViews();
-
-      var routeArguments = arguments;
-
-      // Set location object
-      Origin.location = {};
-      _.each(this.locationKeys, function(locationKey, index) {
-        Origin.location[locationKey] = routeArguments[index];
-      });
-
-      // Trigger location change
-      Origin.trigger('location:change', Origin.location);
-      // Trigger router event
-      Origin.trigger('router:' + module, location, subLocation, action);
-
-    },
-
     isUserAuthenticated: function() {
       return Origin.sessionModel.get('isAuthenticated') ? true : false;
     },
@@ -63,6 +44,25 @@ define(function(require) {
 
     handleIndex: function() {
       this.navigate('#/dashboard', {trigger: true});
+    },
+
+    handleRoute: function(module, location, subLocation, action) {
+      // Remove views
+      this.removeViews();
+
+      var routeArguments = arguments;
+
+      // Set location object
+      Origin.location = {};
+      _.each(this.locationKeys, function(locationKey, index) {
+        Origin.location[locationKey] = routeArguments[index];
+      });
+
+      // Trigger location change
+      Origin.trigger('location:change', Origin.location);
+      // Trigger router event
+      Origin.trigger('router:' + module, location, subLocation, action);
+
     },
 
     removeViews: function() {

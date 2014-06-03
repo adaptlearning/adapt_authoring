@@ -11,18 +11,18 @@
   </button>
 </div>
 
-<form id="assetForm" class="forms asset-form display-none unit-centered unit-90 break" action="/api/asset" method="post">
+<form class="asset-form forms asset-form display-none unit-centered unit-90 break" action="/api/asset" method="post">
   <label for="file">{{t 'app.assetfile'}} <span class="req">*</span>
-    <input type="file" class="width-80" id="file" name="file">
+    <input type="file" class="width-80 asset-file" name="file">
   </label>
   <label for="title">{{t 'app.assettitle'}} <span class="req">*</span>
-    <input type="text" class="width-80" id="title" name="title" placeholder="{{t 'app.assettitle'}}" value="{{ title }}" autocomplete="off">
+    <input type="text" class="width-80 asset-title" name="title" placeholder="{{t 'app.assettitle'}}" value="{{ title }}" autocomplete="off">
   </label>
   <label for="description">{{t 'app.assetdescription'}} <span class="req">*</span>
-    <textarea class="width-80" id="description" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>
+    <textarea class="width-80 asset-description" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>
   </label>
-  <button id="saveButton" type="submit" class="btn btn-green">{{t 'app.save'}}</button>
-  <button id="cancelButton" type="button" class="btn add-asset-cancel">{{t 'app.cancel'}}</button>
+  <button type="submit" class="save-button btn btn-green">{{t 'app.save'}}</button>
+  <button type="button" class="cancel-button btn">{{t 'app.cancel'}}</button>
 </form>
 
 <div class="tabs unit-centered unit-90">

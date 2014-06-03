@@ -20,6 +20,21 @@ define(function(require){
 
             return date.toDateString();
         },
+        formatDuration: function(duration) {
+          var zero = '0', hh, mm, ss;
+          var time = new Date(0, 0, 0, 0, 0, Math.floor(duration), 0);
+
+          hh = time.getHours();
+          mm = time.getMinutes();
+          ss = time.getSeconds();
+
+          // Pad zero values to 00
+          hh = (zero+hh).slice(-2);
+          mm = (zero+mm).slice(-2);
+          ss = (zero+ss).slice(-2);
+
+          return hh + ':' + mm + ':' + ss;
+        },
         if_value_equals: function(value, text, block) {
             if (value === text) {
                 return block.fn(this);

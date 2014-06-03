@@ -25,10 +25,12 @@ define(function(require){
       this.listenTo(this.collection, 'sync', this.addAssetViews);
       this.listenTo(Origin, 'assets:update', this.refreshCollection);
       this.listenTo(Origin, 'assetItemView:preview', this.loadPreview);
+      $(window).on('resize', this.setCollectionHeight);
     },
 
     postRender: function() {
       this.addNewAssetContainer();
+      this.setCollectionHeight();
     },
 
     refreshCollection: function(event) {
@@ -61,6 +63,16 @@ define(function(require){
 
     loadPreview: function (previewModel) {
       this.$('.asset-preview').empty().append(new AssetPreview({model: previewModel}).$el);
+    },
+
+    setCollectionHeight: function () {
+      var offset = this.$('.assets-container').offset();
+      this.$('.assets-container').height($(window).height() - ($('.navigation').outerHeight() + offset.top));
+    },
+
+    remove: function() {
+      $(window).off('resize', this.setCollectionHeight);
+      Backbone.View.prototype.remove.apply(this, arguments);
     }
 
   }, {

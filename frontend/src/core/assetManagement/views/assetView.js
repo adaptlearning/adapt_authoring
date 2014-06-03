@@ -23,10 +23,6 @@ define(function(require){
       this.listenTo(Origin, 'asset:clearForm', this.clearForm);
     },
 
-    postRender: function() {
-      this.$('.assets-container').css({height: $('#app').height()});
-    },
-
     onChangeFile: function(event) {
       var $title = this.$('.asset-title');
 

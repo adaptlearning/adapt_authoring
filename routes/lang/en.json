@@ -68,5 +68,8 @@
   "app.noassetsfound" : "No assets found",
   "app.addasset" : "Add New Asset",
   "app.assetfilters" : "Filters",
-  "app.assetcollections" : "Collections"
+  "app.assetcollections" : "Collections",
+  "app.assetsize" : "Size",
+  "app.assetduration" : "Duration",
+  "app.assetdimensions" : "Dimensions"
 }

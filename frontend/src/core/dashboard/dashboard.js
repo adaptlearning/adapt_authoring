@@ -2,6 +2,7 @@ define(function(require) {
 
   var Origin = require('coreJS/app/origin');
   var DashboardView = require('coreJS/dashboard/views/dashboardView');
+  var DashboardSidebarView = require('coreJS/dashboard/views/dashboardSidebarView');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
 
@@ -10,6 +11,8 @@ define(function(require) {
     if (!location) {
       Origin.router.createView(DashboardView);
     }
+
+    Origin.sidebar.addView(new DashboardSidebarView().$el);
 
   });
 

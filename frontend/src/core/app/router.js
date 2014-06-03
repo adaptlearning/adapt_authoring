@@ -38,7 +38,7 @@ define(function(require) {
         }
       }
 
-      $('#app').append(currentView.$el);
+      $('.app-inner').append(currentView.$el);
       
     },
 

@@ -12,19 +12,18 @@ define(function(require) {
 			this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
 			_.defer(_.bind(function() {
 				this.setupView();
+				this.postRender();
 			}, this));
 		},
 
+		postRender: function() {},
+
 		setupView: function() {
-			this.listenTo(Origin, 'sidebar:views:remove', this.removeView);
+			this.listenTo(Origin, 'sidebar:views:remove', this.remove);
 		},
 
 		animateViewIn: function() {
 			this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
-		},
-
-		removeView: function() {
-			this.remove();
 		}
 
 	});

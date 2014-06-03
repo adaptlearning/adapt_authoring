@@ -1,4 +1,17 @@
-<form id="assetForm" class="forms" action="/api/asset" method="post">
+<form action="" class="unit-centered unit-40 break">
+  <input type="text" class="input-search width-100" placeholder="Search" />
+</form>
+
+<div class="unit-centered unit-40 break">
+  <button type="button" class="btn toggle-asset-form width-100 unit-centered btn-green">
+    {{t 'app.addasset'}}
+  </button>
+  <button type="button" class="btn toggle-asset-form width-100 unit-centered display-none">
+    {{t 'app.cancel'}}
+  </button>
+</div>
+
+<form id="assetForm" class="forms asset-form display-none unit-centered unit-90 break" action="/api/asset" method="post">
   <label for="file">{{t 'app.assetfile'}} <span class="req">*</span>
     <input type="file" class="width-80" id="file" name="file">
   </label>
@@ -9,5 +22,18 @@
     <textarea class="width-80" id="description" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>
   </label>
   <button id="saveButton" type="submit" class="btn btn-green">{{t 'app.save'}}</button>
-  <button id="cancelButton" type="button" class="btn">{{t 'app.cancel'}}</button>
+  <button id="cancelButton" type="button" class="btn add-asset-cancel">{{t 'app.cancel'}}</button>
 </form>
+
+<div class="tabs unit-centered unit-90">
+  <nav class="nav-tabs">
+    <ul>
+      <li><a href="#" class="active">{{t 'app.assetfilters'}}</a></li>
+      <li><a href="#">{{t 'app.assetcollections'}}</a></li>
+    </ul>
+  </nav>
+  <div class="tab-contents">
+    <div class="tab-content active">Filters to follow</div>
+    <div class="tab-content">Collections to follow</div>
+  </div>
+</div>

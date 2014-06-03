@@ -10,8 +10,9 @@ require([
     'templates',
     'coreJS/app/contextMenu',
     'jquery-ui',
-    'jquery-form'
-], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Helpers, Polyglot, Templates, ContextMenu, JQueryUI, JQueryForm) {
+    'jquery-form',
+    'mediaelement-and-player'
+], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Helpers, Polyglot, Templates, ContextMenu, JQueryUI, JQueryForm, MediaElement) {
 
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file

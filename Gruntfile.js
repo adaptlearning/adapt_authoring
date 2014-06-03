@@ -18,6 +18,13 @@ module.exports = function(grunt) {
               dest: 'frontend/build/libraries/',
               filter: 'isFile',
               flatten: true
+            },
+            {
+              expand: true,
+              flatten: true,
+              src: ['frontend/src/**/assets/**'],
+              dest: 'frontend/build/adaptbuilder/css/assets/',
+              filter: 'isFile'
             }
           ]
         }

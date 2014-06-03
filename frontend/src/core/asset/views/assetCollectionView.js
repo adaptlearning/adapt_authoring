@@ -8,6 +8,7 @@ define(function(require){
   var AssetCollection = require('coreJS/asset/collections/assetCollection');
   var AssetView = require('coreJS/asset/views/assetView');
   var AssetModel = require('coreJS/asset/models/assetModel');
+  var AssetPreview = require('coreJS/asset/views/assetPreviewView');
 
   var AssetCollectionView = OriginView.extend({
 
@@ -15,8 +16,7 @@ define(function(require){
 
     className: "asset-list",
 
-    events: {
-    },
+    events: {},
 
     preRender: function() {
       this.collection = new AssetCollection();
@@ -24,6 +24,7 @@ define(function(require){
       
       this.listenTo(this.collection, 'sync', this.addAssetViews);
       this.listenTo(Origin, 'assets:update', this.refreshCollection);
+      this.listenTo(Origin, 'assetItemView:preview', this.loadPreview);
     },
 
     postRender: function() {
@@ -56,6 +57,10 @@ define(function(require){
       if (assets.length == 0) {
         this.$('.assets-container').append(window.polyglot.t('app.noassetsfound'));
       }
+    },
+
+    loadPreview: function (previewModel) {
+      this.$('.asset-preview').empty().append(new AssetPreview({model: previewModel}).$el);
     }
 
   }, {

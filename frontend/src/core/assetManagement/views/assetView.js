@@ -12,29 +12,26 @@ define(function(require){
     className: 'asset units-row',
 
     events: {
-      'submit #assetForm'        : 'onSubmit',
-      'click #cancelButton'      : 'onCancel',
-      'change #file'             : 'onChangeFile',
-      'click .toggle-asset-form' : 'toggleAssetForm',
-      'click .add-asset-cancel'  : 'toggleAssetForm',
-      'click .nav-tabs ul li'    : 'switchTab'
+      'submit .asset-form'          : 'onSubmit',
+      'change .asset-file'          : 'onChangeFile',
+      'click .toggle-asset-form'    : 'toggleAssetForm',
+      'click .cancel-button'        : 'toggleAssetForm',
+      'click .asset-nav-tabs ul li' : 'switchTab'
     },
 
     preRender: function() {
       this.listenTo(Origin, 'asset:clearForm', this.clearForm);
     },
 
-    onChangeFile: function(event) {
-      var $title = $('#title');
-
-      // Default 'title' -- remove C:\fakepath if it is added
-      $title.val($('#file')[0].value.replace("C:\\fakepath\\", ""));
+    postRender: function() {
+      this.$('.assets-container').css({height: $('#app').height()});
     },
 
-    onCancel: function(event) {
-      event.preventDefault();
+    onChangeFile: function(event) {
+      var $title = this.$('.asset-title');
 
-      this.goToList();
+      // Default 'title' -- remove C:\fakepath if it is added
+      $title.val(this.$('.asset-file')[0].value.replace("C:\\fakepath\\", ""));
     },
 
     onSubmit: function(event) {
@@ -47,13 +44,13 @@ define(function(require){
     },
 
     clearForm: function() {
-      $('#assetForm').trigger("reset");
+      this.$('.asset-form').trigger("reset");
     },
 
     uploadFile: function() {
       var view = this;
 
-      $('#assetForm').ajaxSubmit({                                                                                                             
+      this.$('.asset-form').ajaxSubmit({
         error: function(xhr, status, error) {
           console.log('Error: ' + xhr.status);
         },
@@ -61,6 +58,7 @@ define(function(require){
         success: function(data, status, xhr) {
           Origin.trigger('asset:clearForm');
           Origin.trigger('assets:update');
+          view.toggleAssetForm();
         }
       });
 
@@ -68,25 +66,24 @@ define(function(require){
       return false;
     },
 
-    goToList: function() {
-      Backbone.history.navigate('/asset', {trigger: true});
-    },
-
-    toggleAssetForm: function() {
+    toggleAssetForm: function(event) {
+      if (event) {
+        event.preventDefault();
+      }
       this.$('.toggle-asset-form').toggleClass('display-none');
       this.$('.asset-form').slideToggle();
     },
 
     switchTab: function(e) {
       e.preventDefault();
-      this.$('.nav-tabs ul li a').removeClass('active');
+      this.$('.asset-nav-tabs ul li a').removeClass('active');
       this.$(e.currentTarget).find('a').addClass('active');
       this.showTab(this.$(e.currentTarget).index());
     },
 
     showTab: function (tab) {
-      this.$('.tab-content').removeClass('active');
-      this.$('.tab-content').eq(tab).addClass('active');
+      this.$('.asset-tab-content').removeClass('active');
+      this.$('.asset-tab-content').eq(tab).addClass('active');
     }
     
   }, {

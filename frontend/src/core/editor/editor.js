@@ -4,6 +4,7 @@ define(function(require) {
 	var EditorView = require('coreJS/editor/views/editorView');
   	var EditorModel = require('coreJS/editor/models/editorModel');
   	var EditorMenuSidebarView = require('coreJS/editor/views/editorMenuSidebarView');
+  	var EditorPageSidebarView = require('coreJS/editor/views/editorPageSidebarView');
 
   	Origin.on('router:editor', function(location, subLocation, action) {
 
@@ -29,7 +30,7 @@ define(function(require) {
 					currentPageId: (action || null)
 				});
   				// update sidebar view
-				Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
+				Origin.sidebar.addView(new EditorPageSidebarView().$el, {
 			    	"backButtonText": "Back to course structure",
 			    	"backButtonRoute": "/#/editor/" + location + "/menu"
 			    });

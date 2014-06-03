@@ -1,15 +1,18 @@
-<div class="asset-inner unit-100">
-  <div class="asset-title">
-    <h4 class="asset-title-inner">{{{title}}}</h4>
-  </div>
+<div class="asset-inner units-row">
+  <div class="asset-icon unit-30">{{assetType}}</div>
+  <div class="asset-description unit-70">
+    <div class="asset-title">
+      <h4 class="asset-title-inner">{{{title}}}</h4>
+    </div>
 
-  <div class="asset-description">
-    <div class="asset-description-inner">{{{description}}}</div>
+    <div class="asset-description">
+      <div class="asset-description-inner">{{{description}}}</div>
+    </div>
+    <div class="asset-size">
+      <div class="asset-size-inner">{{{bytesToSize size}}}</div>
+    </div>
   </div>
-  <div class="asset-size">
-    <div class="asset-size-inner">{{{bytesToSize size}}}</div>
-  </div>
-  <div class="units-row">
+{{!--   <div class="units-row">
     <div class="unit-centered unit-80">
       <table class="table-simple width-80 small">
           <tr>
@@ -18,5 +21,5 @@
           </tr>
       </table>
     </div>
-  </div>
+  </div> --}}
 </div>

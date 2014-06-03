@@ -14,7 +14,7 @@
     <audio src="/assets/{{_id}}" type="{{mimeType}}" controls="controls" style="width:100%;"></audio>
   {{/if_value_equals}}
 
-  <h1>{{title}}</h1>
+  <h1 class="asset-preview-title">{{title}}</h1>
   <div class="asset-size">{{t 'app.assetsize'}} : {{{bytesToSize size}}}</div>
 
   {{#if metadata.duration}}

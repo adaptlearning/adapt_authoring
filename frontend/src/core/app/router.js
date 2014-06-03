@@ -60,6 +60,11 @@ define(function(require) {
 
       // Trigger location change
       Origin.trigger('location:change', Origin.location);
+      var locationClass = 'module-' + Origin.location.module;
+      if (Origin.location.location) {
+        locationClass += ' location-' + Origin.location.location
+      }
+      $('body').removeClass().addClass(locationClass);
       // Trigger router event
       Origin.trigger('router:' + module, location, subLocation, action);
 

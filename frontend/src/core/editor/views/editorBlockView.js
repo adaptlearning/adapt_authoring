@@ -42,8 +42,8 @@ define(function(require){
 
     postRender: function() {
       this.addComponentViews();
-      this.setupPasteZones();
       this.setupDragDrop();
+
       _.defer(_.bind(function(){
         this.trigger('blockView:postRender');
       }, this));
@@ -81,18 +81,34 @@ define(function(require){
         }
       }, this);
 
+      var dragLayoutOptions = [];
+      var components = this.model.getChildren();
+      if (components.length === 1) {
+        switch (components.at(0).get('_layout')) {
+          case 'full':
+            dragLayoutOptions.push({type: 'left', name: 'app.layoutleft'});
+            dragLayoutOptions.push({type: 'right', name: 'app.layoutright'});
+            break;
+          case 'left':
+            dragLayoutOptions.push({type: 'full', name: 'app.layoutfull'});
+            break;
+          case 'right':
+            dragLayoutOptions.push({type: 'full', name: 'app.layoutfull'});
+            break;
+        }
+      }
+
       this.model.set('layoutOptions', layoutOptions);
+      this.model.set('dragLayoutOptions', dragLayoutOptions);
     },
 
     handleRemovedComponent: function() {
       this.evaluateComponents();
-      this.setupPasteZones();
       this.render();
     },
 
     reRender: function() {
       this.evaluateComponents();
-      this.setupPasteZones();
       this.render();
     },
 
@@ -102,7 +118,6 @@ define(function(require){
       });
 
       this.evaluateComponents();
-      this.setupPasteZones();
       this.render();
     },
 
@@ -133,10 +148,21 @@ define(function(require){
 
     addComponentViews: function() {
       this.$('.page-article-components').empty();
+      var components = this.model.getChildren();
+      var addPasteZonesFirst = components.length && components.at(0).get('_layout') != 'full';
 
+      if (addPasteZonesFirst) {
+        this.setupPasteZones();
+      }
+
+      // Add component elements
       this.model.getChildren().each(function(component) {
         this.$('.page-article-components').append(new EditorComponentView({model: component}).$el);
       }, this);
+
+      if (!addPasteZonesFirst) {
+        this.setupPasteZones();
+      }
     },
 
     deleteBlock: function(event) {
@@ -195,26 +221,24 @@ define(function(require){
     },
 
     setupPasteZones: function() {
-      if (this.model.getChildren().length === 1) {
-        var component = this.model.getChildren().at(0);
-        // Add left or right paste zones if there isn't a 'full' component already here
-        if (component.get('_layout') != 'full') {
-          var pasteComponent = new EditorComponentModel();
-          pasteComponent.set('_parentId', this.model.get('_id'));
-          pasteComponent.set('_type', 'component');
-          pasteComponent.set('_pasteZoneLayout', this.swapLayout(component.get('_layout')));
-          this.$('.page-article-components').append(new EditorComponentPasteZoneView({model: pasteComponent}).$el);
-        }
-      } else if (this.model.getChildren().length === 0) {
-        // Add all paste zones
-        _.each(this.model.get('layoutOptions'), function(layout) {
-          var pasteComponent = new EditorComponentModel();
-          pasteComponent.set('_parentId', this.model.get('_id'));
-          pasteComponent.set('_type', 'component');
-          pasteComponent.set('_pasteZoneLayout', layout.type);
-          this.$('.page-article-components').append(new EditorComponentPasteZoneView({model: pasteComponent}).$el);
-        }, this);
-      }
+      // Add available paste zones
+      _.each(this.model.get('dragLayoutOptions'), function(layout) {
+        var pasteComponent = new EditorComponentModel();
+        pasteComponent.set('_parentId', this.model.get('_id'));
+        pasteComponent.set('_type', 'component');
+        pasteComponent.set('_pasteZoneLayout', layout.type);
+        var $pasteEl = new EditorComponentPasteZoneView({model: pasteComponent}).$el;
+        $pasteEl.addClass('drop-only');
+        this.$('.page-article-components').append($pasteEl);
+      }, this);
+
+      _.each(this.model.get('layoutOptions'), function(layout) {
+        var pasteComponent = new EditorComponentModel();
+        pasteComponent.set('_parentId', this.model.get('_id'));
+        pasteComponent.set('_type', 'component');
+        pasteComponent.set('_pasteZoneLayout', layout.type);
+        this.$('.page-article-components').append(new EditorComponentPasteZoneView({model: pasteComponent}).$el);
+      }, this);
     },
 
     swapLayout: function (layout) {

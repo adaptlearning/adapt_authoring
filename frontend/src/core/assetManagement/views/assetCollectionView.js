@@ -4,10 +4,10 @@ define(function(require){
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
-  var AssetItemView = require('coreJS/asset/views/assetItemView');
-  var AssetCollection = require('coreJS/asset/collections/assetCollection');
-  var AssetView = require('coreJS/asset/views/assetView');
-  var AssetModel = require('coreJS/asset/models/assetModel');
+  var AssetItemView = require('coreJS/assetManagement/views/assetItemView');
+  var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
+  var AssetView = require('coreJS/assetManagement/views/assetView');
+  var AssetModel = require('coreJS/assetManagement/models/assetModel');
 
   var AssetCollectionView = OriginView.extend({
 

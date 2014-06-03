@@ -89,7 +89,7 @@ define(function(require) {
 			// Trigger callback event
 			Origin.trigger('globalMenu:' + this.model.get('callbackEvent'));
 			// Trigger navigation toggle to close
-			Origin.trigger('navigation:globalMenu:toggle');
+			Origin.trigger('globalMenu:close');
 		}
 
 	}, {

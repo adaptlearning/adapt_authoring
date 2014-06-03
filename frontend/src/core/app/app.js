@@ -2,16 +2,22 @@ require([
     'coreJS/app/origin',
     'coreJS/app/router',
     'coreJS/user/user',
+    'coreJS/project/project',
+    'coreJS/dashboard/dashboard',
+    'coreJS/editor/editor',
+    'coreJS/assetManagement/assetManagement',
     'coreJS/user/models/sessionModel',
     'coreJS/navigation/views/navigationView',
     'coreJS/globalMenu/globalMenu',
+    'coreJS/sidebar/sidebar',
     'coreJS/app/helpers',
-    'polyglot',
-    'templates',
     'coreJS/app/contextMenu',
+    'polyglot',
     'jquery-ui',
-    'jquery-form'
-], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Helpers, Polyglot, Templates, ContextMenu, JQueryUI, JQueryForm) {
+    'jquery-form',
+    'velocity',
+    'templates'
+], function (Origin, Router, User, Project, Dashboard, Editor, AssetManagement, SessionModel, NavigationView, GlobalMenu, Sidebar, Helpers, ContextMenu, Polyglot, JQueryUI, JQueryForm) {
 
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file

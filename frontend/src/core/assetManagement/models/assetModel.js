@@ -3,7 +3,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
 
-  var AssettModel = Backbone.Model.extend({
+  var AssetModel = Backbone.Model.extend({
 
     idAttribute: '_id',
 
@@ -11,6 +11,6 @@ define(function(require) {
 
   });
 
-  return AssettModel;
+  return AssetModel;
 
 });

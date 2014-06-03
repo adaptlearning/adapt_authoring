@@ -10,7 +10,8 @@ require.config({
       polyglot: 'core/libraries/polyglot.min',
       jsoneditor: 'core/libraries/jquery.jsoneditor.min',
       'jquery-ui': 'core/libraries/jquery-ui.min',
-      'jquery-form' : 'core/libraries/jquery.form'
+      'jquery-form' : 'core/libraries/jquery.form',
+      velocity: 'core/libraries/velocity'
     },
     shim: {
       jquery: [
@@ -35,6 +36,10 @@ require.config({
       jsoneditor: {
         deps: ['jquery'],
         exports: 'JsonEditor'
+      },
+      velocity: {
+        deps: ['jquery'],
+        exports: 'velocity'
       },
       'jquery-ui': {
         deps: ['jquery'],

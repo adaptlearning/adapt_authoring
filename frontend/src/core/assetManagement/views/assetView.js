@@ -27,8 +27,8 @@ define(function(require){
     onChangeFile: function(event) {
       var $title = $('#title');
 
-      // Default 'title'
-      $title.val($('#file')[0].value);
+      // Default 'title' -- remove C:\fakepath if it is added
+      $title.val($('#file')[0].value.replace("C:\\fakepath\\", ""));
     },
 
     onCancel: function(event) {

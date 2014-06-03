@@ -65,5 +65,8 @@
   "app.assettitle" : "Asset title",
   "app.assetdescription" : "Asset description",
   "app.assetfile" : "File",
-  "app.noassetsfound" : "No assets found" 
+  "app.noassetsfound" : "No assets found",
+  "app.addasset" : "Add New Asset",
+  "app.assetfilters" : "Filters",
+  "app.assetcollections" : "Collections"
 }

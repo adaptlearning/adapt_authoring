@@ -12,11 +12,16 @@ define(function(require){
     className: 'asset-list-item',
 
     events: {
+      'click .asset-inner' : 'triggerPreview'
     },
 
     preRender: function() {
       this.listenTo(this, 'remove', this.remove);
       this.listenTo(this.model, 'destroy', this.remove);
+    },
+
+    triggerPreview: function () {
+      Origin.trigger('assetItemView:preview', this.model);
     }
     
   }, {

@@ -9,12 +9,15 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'asset',
+    className: 'asset units-row',
 
     events: {
-      'submit #assetForm'   : 'onSubmit',
-      'click #cancelButton' : 'onCancel',
-      'change #file'        : 'onChangeFile'
+      'submit #assetForm'        : 'onSubmit',
+      'click #cancelButton'      : 'onCancel',
+      'change #file'             : 'onChangeFile',
+      'click .toggle-asset-form' : 'toggleAssetForm',
+      'click .add-asset-cancel'  : 'toggleAssetForm',
+      'click .nav-tabs ul li'    : 'switchTab'
     },
 
     preRender: function() {
@@ -67,6 +70,23 @@ define(function(require){
 
     goToList: function() {
       Backbone.history.navigate('/asset', {trigger: true});
+    },
+
+    toggleAssetForm: function() {
+      this.$('.toggle-asset-form').toggleClass('display-none');
+      this.$('.asset-form').slideToggle();
+    },
+
+    switchTab: function(e) {
+      e.preventDefault();
+      this.$('.nav-tabs ul li a').removeClass('active');
+      this.$(e.currentTarget).find('a').addClass('active');
+      this.showTab(this.$(e.currentTarget).index());
+    },
+
+    showTab: function (tab) {
+      this.$('.tab-content').removeClass('active');
+      this.$('.tab-content').eq(tab).addClass('active');
     }
     
   }, {

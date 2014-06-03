@@ -11,7 +11,8 @@ require.config({
       jsoneditor: 'core/libraries/jquery.jsoneditor.min',
       'jquery-ui': 'core/libraries/jquery-ui.min',
       'jquery-form' : 'core/libraries/jquery.form',
-      velocity: 'core/libraries/velocity'
+      velocity: 'core/libraries/velocity',
+      'mediaelement-and-player' : 'core/libraries/mediaelement-and-player'
     },
     shim: {
       jquery: [

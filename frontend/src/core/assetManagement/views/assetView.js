@@ -17,7 +17,7 @@ define(function(require){
       'change #file'             : 'onChangeFile',
       'click .toggle-asset-form' : 'toggleAssetForm',
       'click .add-asset-cancel'  : 'toggleAssetForm',
-      'click .nav-tabs ul li'    : 'switchTab'
+      'click .asset-nav-tabs ul li' : 'switchTab'
     },
 
     preRender: function() {
@@ -47,7 +47,7 @@ define(function(require){
     },
 
     clearForm: function() {
-      $('#assetForm').trigger("reset");
+      this.$('#assetForm').trigger("reset");
     },
 
     uploadFile: function() {
@@ -79,14 +79,14 @@ define(function(require){
 
     switchTab: function(e) {
       e.preventDefault();
-      this.$('.nav-tabs ul li a').removeClass('active');
+      this.$('.asset-nav-tabs ul li a').removeClass('active');
       this.$(e.currentTarget).find('a').addClass('active');
       this.showTab(this.$(e.currentTarget).index());
     },
 
     showTab: function (tab) {
-      this.$('.tab-content').removeClass('active');
-      this.$('.tab-content').eq(tab).addClass('active');
+      this.$('.asset-tab-content').removeClass('active');
+      this.$('.asset-tab-content').eq(tab).addClass('active');
     }
     
   }, {

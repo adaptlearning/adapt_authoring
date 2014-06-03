@@ -2,6 +2,9 @@ require([
     'coreJS/app/origin',
     'coreJS/app/router',
     'coreJS/user/user',
+    'coreJS/project/project',
+    'coreJS/dashboard/dashboard',
+    'coreJS/editor/editor',
     'coreJS/user/models/sessionModel',
     'coreJS/navigation/views/navigationView',
     'coreJS/globalMenu/globalMenu',
@@ -12,7 +15,7 @@ require([
     'jquery-ui',
     'templates',
     'velocity'
-], function (Origin, Router, User, SessionModel, NavigationView, GlobalMenu, Sidebar, Helpers, ContextMenu, Polyglot, JQueryUI) {
+], function (Origin, Router, User, Project, Dashboard, Editor, SessionModel, NavigationView, GlobalMenu, Sidebar, Helpers, ContextMenu, Polyglot, JQueryUI) {
 
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file

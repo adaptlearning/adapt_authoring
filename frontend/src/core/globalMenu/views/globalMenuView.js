@@ -28,7 +28,7 @@ define(function(require) {
 				var location = menuItem.get('location');
 				var _isSubItem = menuItem.get('_isSubMenuItem');
 				// Check location and only render if location is either global or current location
-				if (location === 'global' || location === Origin.currentLocation) {
+				if (location === 'global' || location === Origin.location.module) {
 					// Only load view if it's not a subItem
 					if (_isSubItem === false) {
 						this.$('.global-menu-inner').append(new GlobalMenuItemView({

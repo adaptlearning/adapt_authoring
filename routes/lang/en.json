@@ -66,7 +66,14 @@
   "app.assetdescription" : "Asset description",
   "app.assetfile" : "File",
   "app.noassetsfound" : "No assets found",
-  "app.addasset" : "Add New Asset",
+  "app.uploadnewasset" : "Upload new asset",
+  "app.upload" : "Upload",
   "app.assetfilters" : "Filters",
-  "app.assetcollections" : "Collections"
+  "app.assetcollections" : "Collections",
+  "app.search" : "Search",
+  "app.filetype" : "File type",
+  "app.filetypeother" : "Other",
+  "app.filetypeimage" : "Image",
+  "app.filetypeaudio" : "Audio",
+  "app.filetypevideo" : "Video"
 }

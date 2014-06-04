@@ -4,6 +4,9 @@ define(function(require) {
   var AssetManagementView = require('coreJS/assetManagement/views/assetCollectionView');
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
+    Origin.assetManagement = {};
+    Origin.assetManagement.filterData = {};
+
     if (!location) {
       Origin.router.createView(AssetManagementView);
     }

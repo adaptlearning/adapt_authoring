@@ -22,9 +22,17 @@ define(function(require){
       this.collection = new AssetCollection();
       this.collection.fetch();
       
-      this.listenTo(this.collection, 'sync', this.addAssetViews);
+      this.listenTo(this.collection, 'sync', this.setupFilteredCollection);
       this.listenTo(Origin, 'assets:update', this.refreshCollection);
       this.listenTo(Origin, 'assetItemView:preview', this.loadPreview);
+
+      this.listenTo(Origin, 'assetManagement:filter', this.filterCollection);
+    },
+
+    setupFilteredCollection: function() {
+      this.filteredCollection = new Backbone.Collection(this.collection.models);
+
+      this.addAssetViews();
     },
 
     postRender: function() {
@@ -35,12 +43,38 @@ define(function(require){
       this.collection.fetch();
     },
 
+    filterCollection: function(event) {
+      if (Origin.assetManagement.filterData && !$.isEmptyObject(Origin.assetManagement.filterData)) {
+        var partialString = Origin.assetManagement.filterData.searchString;
+        var assetTypes = Origin.assetManagement.filterData.assetType;
+
+        this.filteredCollection = new Backbone.Collection(this.collection.filter(function (model) {
+
+          if (partialString !== '') {
+            if (assetTypes.length > 0) {
+              return _.contains(assetTypes, model.get('assetType')) && model.get('title').toLowerCase().indexOf(partialString) >= 0;
+            } else {
+              return model.get('title').toLowerCase().indexOf(partialString) >= 0;
+            }
+          } else {
+            return _.contains(assetTypes, model.get('assetType'));
+          }
+
+        }));
+      } else {
+        // There is no filter applied
+        this.filteredCollection = this.collection;
+      }
+
+      this.addAssetViews();
+    },
+
     addNewAssetContainer: function() {
       this.$('.new-asset-container').append(new AssetView({model: new AssetModel()}).$el);
     },
 
     addAssetViews: function() {
-      this.renderAssetViews(this.collection.models);
+      this.renderAssetViews(this.filteredCollection.models);
     },
 
     renderAssetViews: function(assets) {

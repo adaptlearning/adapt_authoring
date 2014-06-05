@@ -9,8 +9,10 @@ require.config({
       templates: 'templates/templates',
       polyglot: 'core/libraries/polyglot.min',
       jsoneditor: 'core/libraries/jquery.jsoneditor.min',
+      'jquery-ui': 'core/libraries/jquery-ui.min',
+      'jquery-form' : 'core/libraries/jquery.form',
       velocity: 'core/libraries/velocity',
-      'jquery-ui': 'core/libraries/jquery-ui.min'
+      'mediaelement-and-player' : 'core/libraries/mediaelement-and-player'
     },
     shim: {
       jquery: [
@@ -41,6 +43,10 @@ require.config({
         exports: 'velocity'
       },
       'jquery-ui': {
+        deps: ['jquery'],
+        exports: "$"
+      },
+      'jquery-form': {
         deps: ['jquery'],
         exports: "$"
       }

@@ -61,5 +61,22 @@
   "app.status" : "Status",
   "app.lastupdated" : "Last updated",
   "app.category" : "Category",
-  "app.owner" : "Owner"
+  "app.owner" : "Owner",
+  "app.assettitle" : "Asset title",
+  "app.assetdescription" : "Asset description",
+  "app.assetfile" : "File",
+  "app.noassetsfound" : "No assets found",
+  "app.uploadnewasset" : "Upload new asset",
+  "app.upload" : "Upload",
+  "app.assetfilters" : "Filters",
+  "app.assetcollections" : "Collections",
+  "app.search" : "Search",
+  "app.filetype" : "File type",
+  "app.filetypeother" : "Other",
+  "app.filetypeimage" : "Image",
+  "app.filetypeaudio" : "Audio",
+  "app.filetypevideo" : "Video",
+  "app.assetsize" : "Size",
+  "app.assetduration" : "Duration",
+  "app.assetdimensions" : "Dimensions"
 }

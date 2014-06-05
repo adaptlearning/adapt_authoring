@@ -25,7 +25,8 @@ define(function(require){
       this.listenTo(this.collection, 'sync', this.setupFilteredCollection);
       this.listenTo(Origin, 'assets:update', this.refreshCollection);
       this.listenTo(Origin, 'assetItemView:preview', this.loadPreview);
-
+      this.listenTo(Origin, 'assetItemView:previewUpload', this.showUploadPreview);
+      
       this.listenTo(Origin, 'assetManagement:filter', this.filterCollection);
     },
 
@@ -91,6 +92,14 @@ define(function(require){
       if (assets.length == 0) {
         this.$('.assets-container').append(window.polyglot.t('app.noassetsfound'));
       }
+    },
+
+    showUploadPreview: function(id) {
+      console.log(id);
+      var asset = this.collection.get(id);
+
+      this.loadPreview(asset);
+
     },
 
     loadPreview: function (previewModel) {

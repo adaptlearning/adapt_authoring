@@ -4,6 +4,7 @@ define(function(require){
   var Handlebars = require('handlebars');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
+  var AssetModel = require('coreJS/assetManagement/models/assetModel');
 
   var AssetView = OriginView.extend({
 
@@ -71,13 +72,16 @@ define(function(require){
         },
     
         success: function(data, status, xhr) {
+          Origin.trigger('assets:update');
+            
+          asset = new AssetModel({_id: data._id});
+          asset.fetch().done(function (data) {
+            Origin.trigger('assetItemView:preview', asset);
+          });
+
           view.resetUploadForm();
 
-          // Origin.trigger('asset:clearForm');
-          Origin.trigger('assets:update');
-
           alert('file uploaded');
-          // view.toggleAssetForm();
         }
       });
 

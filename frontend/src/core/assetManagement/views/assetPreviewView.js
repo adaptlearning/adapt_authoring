@@ -9,7 +9,7 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'asset-list-item',
+    className: 'asset-item-preview',
 
     events: {
     },

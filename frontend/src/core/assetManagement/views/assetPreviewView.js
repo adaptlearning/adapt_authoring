@@ -9,7 +9,7 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'asset-item-preview',
+    className: 'asset-preview-panel',
 
     events: {
     },

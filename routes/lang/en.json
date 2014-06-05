@@ -75,5 +75,8 @@
   "app.filetypeother" : "Other",
   "app.filetypeimage" : "Image",
   "app.filetypeaudio" : "Audio",
-  "app.filetypevideo" : "Video"
+  "app.filetypevideo" : "Video",
+  "app.assetsize" : "Size",
+  "app.assetduration" : "Duration",
+  "app.assetdimensions" : "Dimensions"
 }

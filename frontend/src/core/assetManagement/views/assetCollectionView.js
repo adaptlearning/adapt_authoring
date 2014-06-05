@@ -25,8 +25,6 @@ define(function(require){
       this.listenTo(this.collection, 'sync', this.setupFilteredCollection);
       this.listenTo(Origin, 'assets:update', this.refreshCollection);
       this.listenTo(Origin, 'assetItemView:preview', this.loadPreview);
-      this.listenTo(Origin, 'assetItemView:previewUpload', this.showUploadPreview);
-      
       this.listenTo(Origin, 'assetManagement:filter', this.filterCollection);
     },
 
@@ -34,10 +32,13 @@ define(function(require){
       this.filteredCollection = new Backbone.Collection(this.collection.models);
 
       this.addAssetViews();
+
+      $(window).on('resize', this.setCollectionHeight);
     },
 
     postRender: function() {
       this.addNewAssetContainer();
+      this.setCollectionHeight();
     },
 
     refreshCollection: function(event) {
@@ -94,16 +95,18 @@ define(function(require){
       }
     },
 
-    showUploadPreview: function(id) {
-      console.log(id);
-      var asset = this.collection.get(id);
-
-      this.loadPreview(asset);
-
-    },
-
     loadPreview: function (previewModel) {
       this.$('.asset-preview').empty().append(new AssetPreview({model: previewModel}).$el);
+    },
+
+    setCollectionHeight: function () {
+      var offset = this.$('.assets-container').offset();
+      this.$('.assets-container').height($(window).height() - ($('.navigation').outerHeight() + offset.top));
+    },
+
+    remove: function() {
+      $(window).off('resize', this.setCollectionHeight);
+      Backbone.View.prototype.remove.apply(this, arguments);
     }
 
   }, {

@@ -1,17 +1,28 @@
-{{title}}
+<div class="asset-preview-details text-centered">
 
-{{#if_value_equals assetType "image"}}
-  <img src="/assets/{{_id}}"/>
-{{/if_value_equals}}
+  {{#if_value_equals assetType "image"}}
+    <img src="/assets/{{_id}}"/>
+  {{/if_value_equals}}
 
-{{#if_value_equals assetType "video"}}
-  <video preload="none" width="640px" height="360px" poster="" style="width:100%; height:100%;">
-    <source src="/assets/{{_id}}" type="{{mimeType}}"/>
-  </video>
-{{/if_value_equals}}
+  {{#if_value_equals assetType "video"}}
+    <video preload="none" width="640px" height="360px" poster="" style="width:100%; height:100%;">
+      <source src="/assets/{{_id}}" type="{{mimeType}}"/>
+    </video>
+  {{/if_value_equals}}
 
-{{#if_value_equals assetType "audio"}}
-  <audio id="player2" src="/assets/{{_id}}" type="{{mimeType}}" controls="controls"></audio>
-{{/if_value_equals}}
+  {{#if_value_equals assetType "audio"}}
+    <audio src="/assets/{{_id}}" type="{{mimeType}}" controls="controls" style="width:100%;"></audio>
+  {{/if_value_equals}}
 
-File size: {{bytesToSize size}}
+  <h1 class="asset-preview-title">{{title}}</h1>
+  <div class="asset-size">{{t 'app.assetsize'}} : {{{bytesToSize size}}}</div>
+
+  {{#if metadata.duration}}
+    <div class="asset-duration break">{{t 'app.assetduration'}} : {{{formatDuration metadata.duration}}}</div>
+  {{/if}}
+
+  {{#if metadata.height}}
+    <div class="asset-height">{{t 'app.assetdimensions'}} : {{{metadata.width}}} X {{{metadata.height}}}</div>
+  {{/if}}
+
+</div>

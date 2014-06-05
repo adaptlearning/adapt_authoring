@@ -1,6 +1,7 @@
 .asset-list {
 
   padding-top: 15px;
+  padding-right: 15px;
 
   .asset-list-item {
       border: 1px solid;
@@ -98,10 +99,19 @@
   }
 
   .assets-container {
+    overflow-y: scroll;
+  }
+
+  .asset-preview-panel {
+    border: 1px solid;
+    cursor: pointer;
     height: 100%;
-    position: fixed;
-    top: 50px;
-    overflow: scroll;
+    margin-bottom: 10px;
+    padding: 5px;
+
+    .asset-preview-title {
+      padding-top: 20px;
+    }
   }
 
 }

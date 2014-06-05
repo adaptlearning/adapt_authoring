@@ -1,5 +1,18 @@
 <div class="asset-inner units-row">
-  <div class="asset-icon unit-30">{{assetType}}</div>
+  <div class="asset-icon unit-30">
+    {{#if_value_equals assetType "image"}}
+      <i class="fa fa-file-image-o fa-3x"></i>
+    {{/if_value_equals}}
+    {{#if_value_equals assetType "audio"}}
+      <i class="fa fa-file-audio-o fa-3x"></i>
+    {{/if_value_equals}}
+    {{#if_value_equals assetType "video"}}
+      <i class="fa fa-file-video-o fa-3x"></i>
+    {{/if_value_equals}}
+    {{#if_value_equals assetType "unknown"}}
+      <i class="fa fa-file-o fa-3x"></i>
+    {{/if_value_equals}}
+  </div>
   <div class="asset-description unit-70">
     <div class="asset-title">
       <h4 class="asset-title-inner">{{{title}}}</h4>
@@ -12,14 +25,4 @@
       <div class="asset-size-inner">{{{bytesToSize size}}}</div>
     </div>
   </div>
-{{!--   <div class="units-row">
-    <div class="unit-centered unit-80">
-      <table class="table-simple width-80 small">
-          <tr>
-            <td>{{t 'app.lastupdated'}}</td>
-            <td>{{formatDate updatedAt}}</td>
-          </tr>
-      </table>
-    </div>
-  </div> --}}
 </div>

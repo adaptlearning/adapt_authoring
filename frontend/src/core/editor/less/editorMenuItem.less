@@ -27,16 +27,15 @@
         height: 60px;
 
         &.page {
-            // background-color: lightblue;
         }
 
         &.menu {
-            // background-color: black;
         }
     }
 
 	&.expanded {
-		border: 1px solid #242424;
+        border: 0px;
+        background-color: lightblue;
 
         &.content-type-menu:after { 
             left: 100%; 
@@ -48,7 +47,7 @@
             position: absolute; 
             pointer-events: none; 
             border-color: rgba(136, 183, 213, 0); 
-            border-left-color: #242424; 
+            border-left-color: lightblue;  
             border-width: 12px; 
             margin-top: -12px; 
         }

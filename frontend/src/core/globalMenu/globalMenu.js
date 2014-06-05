@@ -55,6 +55,7 @@ define(function(require) {
 	});
 
 	Origin.on('remove:views globalMenu:close', function() {
+		$('#app').off('click');
 		closeGlobalMenu();
 	});
 

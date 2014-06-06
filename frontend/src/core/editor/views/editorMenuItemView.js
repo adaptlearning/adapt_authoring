@@ -32,7 +32,8 @@ define(function(require){
     },
 
     copyMenuItem: function() {
-      console.log('copyMenuItem clicked');
+      $('.paste-zone').removeClass('visibility-hidden');
+      Origin.trigger('editorView:copy', this.model);
     },
 
     onMenuItemClicked: function() {

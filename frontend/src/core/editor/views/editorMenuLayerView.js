@@ -10,7 +10,9 @@ define(function(require) {
 
       events: {
         'click button.editor-menu-layer-add-page' : 'addPage',
-        'click button.editor-menu-layer-add-menu' : 'addMenu'
+        'click button.editor-menu-layer-add-menu' : 'addMenu',
+        'click .editor-menu-layer-paste'          : 'pasteMenuItem',
+        'click .editor-menu-layer-paste-cancel'   : 'cancelPasteMenuItem'
       },
 
       preRender: function(options) {
@@ -80,6 +82,29 @@ define(function(require) {
             Origin.trigger('editorSidebarView:addEditView', model);
           }
         });
+      },
+
+      pasteMenuItem: function(event) {
+        event.preventDefault();
+        var clipboard = Origin.editor.data.clipboard.models[0];
+        var topitem = clipboard.get(clipboard.get('referenceType'))[0];
+        var parentId = this._parentId;
+        var target = new EditorContentObjectModel({
+          _parentId: parentId,
+          _courseId: Origin.editor.data.course.get('_id'),
+          _type: topitem._type
+        });
+        Origin.trigger('editorView:paste', target, this.$('.editor-menu-item').length + 1);
+      },
+
+      cancelPasteMenuItem: function(event) {
+        event.preventDefault();
+        var parentId = this._parentId;
+        var target = new EditorContentObjectModel({
+          _parentId: parentId,
+          _courseId: Origin.editor.data.course.get('_id')
+        });
+        Origin.trigger('editorView:pasteCancel', target);
       }
   	}, {
   		template: 'editorMenuLayer'

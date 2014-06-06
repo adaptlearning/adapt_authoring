@@ -1,0 +1,64 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/basicContent.schema",
+  "properties": {
+    "_courseId": {
+      "type": "objectid",
+      "required": true
+    },
+    "_defaultLanguage": {
+      "type": "string",
+      "default": "en"
+    },
+    "_questionWeight": {
+      "type": "string",
+      "default": "1"
+    },
+    "_spoor" : {
+      "_tracking" : {
+        "_requireCourseCompleted": {
+          "type": "boolean",
+          "default" : "true"
+        },
+        "_requireAssessmentPassed" : {
+          "type": "boolean",
+          "default" : "true"
+        },
+        "_shouldSubmitScore" : {
+          "type": "boolean",
+          "default" : "false"
+        },
+        "_reporting" : {
+          "_comment": {
+            "type" : "string",
+            "default" : ""
+          },
+          "_onTrackingCriteriaMet" : {
+            "type" : "string",
+            "default" : "completed"
+          },
+          "_onQuizFailure" : {
+            "type" : "string",
+            "default" : "incomplete"
+          }      
+        }
+      }
+    },
+    "screenSize": {
+      "small" : {
+        "type" : "number",
+        "default" : 519
+      },
+      "medium" : {
+        "type" : "number",
+        "default" : 759
+      },
+      "large" : {
+        "type" : "number",
+        "default" : 1024
+      }
+    }
+  }
+}

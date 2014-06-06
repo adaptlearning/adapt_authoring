@@ -1,0 +1,27 @@
+<div class="login-inner">
+
+  <div class="login-title">
+    {{#if isAuthenticated}}
+    <h3>You are logged in, please go to the <a id="linkDash" href="/#dashboard">{{t 'app.dashboard'}}</a></h3>
+    {{else}}
+    <h3>{{t 'app.pleaseloginor'}}&nbsp;<a id="linkRegister" href="/#user/register">{{lowerCase (t 'app.register')}}</a></h3>
+    {{/if}}
+  </div>
+
+  <form class="login-form forms">
+
+      <label for="login-input-username">{{t 'app.usernameoremail'}} <span class="req">*</span> <span id="loginErrorMessage" class="error"></span>
+        <input type="text" id="login-input-username" class="width-20" tabindex="1">
+      </label>
+
+      <label for="login-input-password">{{t 'app.password'}} <span class="req">*</span> <span class="forms-desc"><a class="login-forgot-password" href="#user/forgot">{{t 'app.forgotpassword'}}</a></span>
+        <input type="password" id="login-input-password" class="width-20" tabindex="2">
+      </label>
+
+      <label><input id="remember-me" type="checkbox"/> {{t 'app.rememberme'}}</label>
+    
+    <button type="submit" class="btn btn-green" tabindex="3">{{t 'app.login'}}</button>
+
+  </form>
+
+</div>

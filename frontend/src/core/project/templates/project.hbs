@@ -1,0 +1,33 @@
+<div class="project-inner">
+  <div class="menu-container" data-id="{{_id}}"><i class="fa fa-cog fa-fw"></i></div>
+  <div class="project-title">
+    <h4 class="project-title-inner">{{{title}}}</h4>
+  </div>
+
+  <div class="project-description">
+    <div class="project-description-inner">{{{body}}}</div>
+  </div>
+
+  <div class="units-row">
+    <div class="unit-centered unit-80">
+      <table class="table-simple width-80 small">
+          <tr>
+              <td>{{t 'app.status'}}</td>
+              <td>-</td>
+          </tr>
+          <tr>
+              <td>{{t 'app.lastupdated'}}</td>
+              <td>{{formatDate updatedAt}}</td>
+          </tr>
+          <tr>
+              <td>{{t 'app.category'}}</td>
+              <td>-</td>
+          </tr>
+          <tr>
+              <td>{{t 'app.owner'}}</td>
+              <td>-</td>
+          </tr>
+      </table>
+    </div>
+  </div>
+</div>

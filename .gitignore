@@ -1,0 +1,13 @@
+/node_modules/
+/tmp
+/data
+/temp
+conf/config.json
+.project
+/frontend/build
+/nbproject/
+/.settings
+/frontend/src/templates/templates.js
+/plugins/content/component/componentcache/
+/plugins/content/component/versions/
+/master/

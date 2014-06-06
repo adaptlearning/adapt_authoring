@@ -6,7 +6,7 @@ define(function(require) {
   var Router = Backbone.Router.extend({
 
     routes: {
-      "": "handleIndex",
+      ""                                            : "handleIndex",
       ":module(/*location)(/*subLocation)(/*action)": "handleRoute"
     },
 
@@ -60,14 +60,15 @@ define(function(require) {
 
       // Trigger location change
       Origin.trigger('location:change', Origin.location);
+
       var locationClass = 'module-' + Origin.location.module;
       if (Origin.location.location) {
         locationClass += ' location-' + Origin.location.location
       }
       $('body').removeClass().addClass(locationClass);
+
       // Trigger router event
       Origin.trigger('router:' + module, location, subLocation, action);
-
     },
 
     removeViews: function() {

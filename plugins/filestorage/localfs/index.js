@@ -160,7 +160,7 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, cb) {
         path: newPath,
         name: file.name,
         type: file.type,
-        size: ws.bytesWritten
+        size: file.size
       });
     });
   });

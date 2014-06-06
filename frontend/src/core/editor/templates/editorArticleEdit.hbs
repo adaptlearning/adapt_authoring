@@ -9,22 +9,22 @@
         <label for="article-description">Article Description</label>
         <textarea class="form-control article-body" placeholder="Article Description">{{body}}</textarea>
       </div>
-      <div class="form-group">
+{{!--       <div class="form-group">
         <label for="article-parent">Parent</label>
         <select class="form-control article-parent">
           {{#each ancestors}}
           <option value="{{_id}}" {{selected ../_parentId _id}}>{{title}}</option>
           {{/each}}
         </select>
-      </div>
-      <div class="form-group">
+      </div> --}}
+{{!--       <div class="form-group">
         <label for="article-position">Position</label>
         <select class="form-control article-position">
           {{#counterFromOne 10}}
           <option value="{{this}}" {{selected this ../_sortOrder}}>{{this}}</option>
           {{/counterFromOne}}
         </select>
-      </div>
+      </div> --}}
       <div class="hidden">
         <input type="hidden" value="{{ id }}" id="pageId">
       </div>

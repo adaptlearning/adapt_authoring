@@ -48,10 +48,6 @@ define(function(require){
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
     },
 
-    // expandedItemSelected: function() {
-    //   console.log('expandedItemSelected');
-    // },
-
     setItemAsSelected: function() {
       this.model.set({'_isSelected': true});
       this.model.set({'_isExpanded' : (this.model.get('_type') === 'menu' ? true : false)})

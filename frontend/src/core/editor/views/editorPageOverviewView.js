@@ -92,8 +92,6 @@ define(function(require) {
           }
         }
 
-// 
-// 
         html += '</ul>';
 
         return html;

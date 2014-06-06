@@ -32,7 +32,8 @@ define(function(require){
     },
 
     copyMenuItem: function() {
-      console.log('copyMenuItem clicked');
+      $('.paste-zone').removeClass('visibility-hidden');
+      Origin.trigger('editorView:copy', this.model);
     },
 
     onMenuItemClicked: function() {
@@ -47,10 +48,6 @@ define(function(require){
     gotoPageEditor: function() {
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
     },
-
-    // expandedItemSelected: function() {
-    //   console.log('expandedItemSelected');
-    // },
 
     setItemAsSelected: function() {
       this.model.set({'_isSelected': true});

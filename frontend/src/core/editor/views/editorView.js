@@ -232,7 +232,6 @@ define(function(require){
       if (topitem._sortOrder) {
         topitem._sortOrder = sortOrder;
       }
-
       this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_parentId'), false);
     },
 
@@ -282,6 +281,9 @@ define(function(require){
     createModel: function (type) {
       var model = false;
       switch (type) {
+        case 'contentObjects':
+          model = new EditorContentObjectModel();
+          break;
         case 'articles':
           model = new EditorArticleModel();
           break;

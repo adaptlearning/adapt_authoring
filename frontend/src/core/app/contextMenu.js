@@ -53,8 +53,11 @@ define(function(require) {
     ContextMenu.addItem('article', contextItems);
     ContextMenu.addItem('block', contextItems);
     ContextMenu.addItem('component', contextItems);
-    ContextMenu.addItem('menu', contextItems);
     ContextMenu.addItem('page', contextItems);
+
+    var menuContextItems = contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "copy"})), 1);
+    menuContextItems = contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "cut"})), 1);
+    ContextMenu.addItem('menu', contextItems);
   }
 
   Origin.once('app:dataReady', function() {

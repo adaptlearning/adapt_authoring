@@ -80,15 +80,15 @@ define(function(require) {
        * @return A HTML unordered list snippet
        */
       createOverviewTreeviewHtml: function(html, items) {
-        html += '<ul>'
+        html += '<ul class="fa-ul">'
 
         for (var i = 0; i < items.length; i++) {
           if (items[i].children.length != 0) {
-            html += '<li>' + items[i].title;
+            html += '<li><i class="fa-li fa fa-folder-open-o"></i>' + items[i].title;
             html = this.createOverviewTreeviewHtml(html, items[i].children);
             html += '</li>';
           } else {
-            html += '<li><a class="load-page" data-page-id="' + items[i]._id + '" href="#">' + items[i].title + '</a></li>';
+            html += '<li><i class="fa-li fa fa-file-o"></i><a class="load-page" data-page-id="' + items[i]._id + '" href="#">' + items[i].title + '</a></li>';
           }
         }
 

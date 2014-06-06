@@ -12,9 +12,9 @@ define(function(require) {
     console.log('Should show profile');
   });
 
-  Origin.on('router:project', function(location, subLocation, action) {
+  Origin.on('router:project', function(action, id) {
 
-    switch (location) {
+    switch (action) {
       case 'new':
         var project = new ProjectModel();
         Origin.router.createView(ProjectDetailView, {model: project});
@@ -24,7 +24,7 @@ define(function(require) {
         var projectModel = new ProjectModel({_id: id});
         projectModel.fetch({
           success: function() {
-            this.createView(ProjectDetailView, {model: projectModel});
+            Origin.router.createView(ProjectDetailView, {model: projectModel});
           }
         });
         break;

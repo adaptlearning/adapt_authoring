@@ -63,6 +63,7 @@ define(function(require){
           break;
 
         case 'linkEditProperties':
+          // Origin.trigger('router:project', 'edit',  projectId);
           Backbone.history.navigate('/project/edit/' + projectId, {trigger: true});
           break;
 

@@ -6,12 +6,12 @@ define(function(require) {
   var Router = Backbone.Router.extend({
 
     routes: {
-      ""                                            : "handleIndex",
-      ":module(/*location)(/*subLocation)(/*action)": "handleRoute"
+      ""                                      : "handleIndex",
+      ":module(/*route1)(/*route2)(/*route3)" : "handleRoute"
     },
 
     initialize: function() {
-      this.locationKeys = ['module', 'location', 'subLocation', 'action'];
+      this.locationKeys = ['module', 'route1', 'route2', 'route3'];
     },
 
     isUserAuthenticated: function() {
@@ -46,7 +46,7 @@ define(function(require) {
       this.navigate('#/dashboard', {trigger: true});
     },
 
-    handleRoute: function(module, location, subLocation, action) {
+    handleRoute: function(module, route1, route2, route3) {
       // Remove views
       this.removeViews();
 
@@ -62,13 +62,13 @@ define(function(require) {
       Origin.trigger('location:change', Origin.location);
 
       var locationClass = 'module-' + Origin.location.module;
-      if (Origin.location.location) {
-        locationClass += ' location-' + Origin.location.location
+      if (Origin.location.route1) {
+        locationClass += ' location-' + Origin.location.route1
       }
       $('body').removeClass().addClass(locationClass);
 
       // Trigger router event
-      Origin.trigger('router:' + module, location, subLocation, action);
+      Origin.trigger('router:' + module, route1, route2, route3);
     },
 
     removeViews: function() {

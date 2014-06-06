@@ -1,9 +1,20 @@
 <div data-id="{{_id}}" data-parentId="{{_parentId}}" class="editor-menu-item-inner">
 	<div class="editor-item-sidebar">
-        <div class="settings"><a href="#" class="open-context-contentObject">[X]</a></div>
+        <div class="settings"><a href="#" class="open-context-contentObject"><i class="fa fa-cog fa-fw"></i></a></div>
         <div class="handle"></div>
     </div>
-	<div class="editor-menu-item-icon {{_type}}"></div>
+	<div class="editor-menu-item-icon {{_type}}">
+        {{#if_value_equals _type "menu"}}
+            {{#if _isSelected}}
+            <i class="fa fa-folder-open-o fa-3x"></i> 
+            {{else}}
+            <i class="fa fa-folder-o fa-3x"></i> 
+            {{/if}}
+        {{/if_value_equals}}
+        {{#if_value_equals _type "page"}}
+            <i class="fa fa-file-o fa-3x"></i> 
+        {{/if_value_equals}}
+    </div>
 	<div class="editor-menu-item-title">
 		<span class="editor-menu-item-title-text">{{{title}}}</span>
 	</div>

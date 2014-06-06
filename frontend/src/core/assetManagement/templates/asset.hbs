@@ -1,26 +1,3 @@
-{{!-- <div class="unit-centered unit-40 break">
-  <button type="button" class="btn toggle-asset-form width-100 unit-centered btn-green">
-    {{t 'app.addasset'}}
-  </button>
-  <button type="button" class="btn toggle-asset-form width-100 unit-centered display-none">
-    {{t 'app.cancel'}}
-  </button>
-</div> --}}
-
-{{!-- <form class="asset-form forms asset-form display-none unit-centered unit-90 break" action="/api/asset" method="post">
-  <label for="file">{{t 'app.assetfile'}} <span class="req">*</span>
-    <input type="file" class="width-80 asset-file" name="file">
-  </label>
-  <label for="title">{{t 'app.assettitle'}} <span class="req">*</span>
-    <input type="text" class="width-80 asset-title" name="title" placeholder="{{t 'app.assettitle'}}" value="{{ title }}" autocomplete="off">
-  </label>
-  <label for="description">{{t 'app.assetdescription'}} <span class="req">*</span>
-    <textarea class="width-80 asset-description" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>
-  </label>
-  <button type="submit" class="save-button btn btn-green">{{t 'app.save'}}</button>
-  <button type="button" class="cancel-button btn">{{t 'app.cancel'}}</button>
-</form> --}}
-
 <div class="tabs unit-centered unit-90">
   <nav class="asset-nav-tabs">
     <ul>
@@ -48,9 +25,9 @@
             <input type="checkbox" name="checkbox-asset-video" id="checkbox-asset-video" value="video">
             <label for="checkbox-asset-video">{{t 'app.filetypevideo' }}</label>
           </li>
-          <li class="asset-filter-option" data-filter="unknown">
-            <input type="checkbox" name="checkbox-asset-unknown" id="checkbox-asset-unknown" value="unknown">
-            <label for="checkbox-asset-unknown">{{t 'app.filetypeother' }}</label>
+          <li class="asset-filter-option" data-filter="other">
+            <input type="checkbox" name="checkbox-asset-other" id="checkbox-asset-other" value="other">
+            <label for="checkbox-asset-other">{{t 'app.filetypeother' }}</label>
           </li>
         </ul>
           <button type="submit" class="btn btn-green filterButton">Filter</button>

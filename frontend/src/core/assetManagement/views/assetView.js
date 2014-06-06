@@ -119,7 +119,7 @@ define(function(require){
       var assetFilter = [];
       
       Origin.assetManagement.filterData = {};
-      Origin.assetManagement.filterData.searchString = $.trim(stringValue);
+      Origin.assetManagement.filterData.searchString = stringValue;
 
       if (assetTypes.length != 0) {
         _.each(assetTypes, function(asset) {
@@ -128,6 +128,11 @@ define(function(require){
       } 
 
       Origin.assetManagement.filterData.assetType = assetFilter;
+
+      if (Origin.assetManagement.filterData.assetType.length == 0 && Origin.assetManagement.filterData.searchString == '') {
+        // Reset the filter
+        Origin.assetManagement.filterData = {};
+      }
 
       this.triggerFilter();
     },

@@ -40,35 +40,5 @@ define(function(require) {
 			model: new NotifyModel(notifyObject)
 		});
 	};
-
-	Origin.on('app:dataReady', function() {
-		/*var popupObject = {
-		    title: "Popup title",
-		    body: "This is a popup to add additional information - please close me by pressing the 'x'"
-		};
-
-		Origin.trigger('notify:popup', popupObject);*/
-
-		var alertObject = {
-		    title: "Alert",
-		    body: "Oops - looks like you've not passed this assessment. Please try again.",
-		    confirmText: "Ok",
-		    _callbackEvent: "assessment:notPassedAlert",
-		    _showIcon: true
-		};
-
-		Origin.trigger('notify:alert', alertObject);
-
-
-
-		var pushObject = {
-		    title: "Great work!",
-		    body: "You've just completed a page",
-		    _timeout:5000,
-		    _callbackEvent: "pageCompletion:complete"
-		};
-
-		Origin.trigger('notify:push', pushObject);
-	})
-
+	
 });

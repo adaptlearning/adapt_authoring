@@ -17,6 +17,7 @@ define(function(require) {
     switch (action) {
       case 'new':
         var project = new ProjectModel();
+        Origin.trigger('location:title:update', {title: 'Add new course'});
         Origin.router.createView(ProjectDetailView, {model: project});
         console.log('new loaded');
         break;
@@ -24,6 +25,7 @@ define(function(require) {
         var projectModel = new ProjectModel({_id: id});
         projectModel.fetch({
           success: function() {
+            Origin.trigger('location:title:update', {title: 'Edit course'});
             Origin.router.createView(ProjectDetailView, {model: projectModel});
           }
         });

@@ -10,6 +10,8 @@ define(function(require) {
 
   		switch (subLocation) {
   			case 'menu':
+  				// Update page title
+  				Origin.trigger('location:title:update', {title: 'Menu editor'});
   				// Create Editor menu view
 				Origin.router.createView(EditorView, {
 			        currentCourseId: location, 
@@ -23,6 +25,8 @@ define(function(require) {
 			    });
   				break;
   			case 'page':
+  				// Update page title
+  				Origin.trigger('location:title:update', {title: 'Page editor'});
   				// Create Editor page view
   				Origin.router.createView(EditorView, {
 					currentCourseId: location, 

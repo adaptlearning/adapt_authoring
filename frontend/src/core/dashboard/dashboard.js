@@ -9,6 +9,7 @@ define(function(require) {
     Origin.editor = {};
     Origin.editor.data = {};
     if (!location) {
+      Origin.trigger('location:title:update', {title: 'Dashboard - viewing all courses'});
       Origin.router.createView(DashboardView);
     }
 

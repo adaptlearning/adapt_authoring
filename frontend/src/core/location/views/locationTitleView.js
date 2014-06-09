@@ -1,0 +1,39 @@
+define(function(require) {
+
+	var Origin = require('coreJS/app/origin');
+	var Backbone = require('backbone');
+
+	var LocationTitleView = Backbone.View.extend({
+
+		el: '.location-title',
+
+		initialize: function() {
+			this.listenTo(Origin, 'location:title:update', this.render);
+			this.listenTo(Origin, 'location:title:hide', this.onHideTitle);
+			this.render();
+		},
+
+		render: function(data) {
+		    var template = Handlebars.templates[this.constructor.template];
+		    this.$el.html(template(data));
+		    _.defer(_.bind(function() {
+		    	this.postRender();
+		    }, this));
+		    return this;
+		},
+
+		postRender: function() {
+			Origin.trigger('location:title:postRender', this);
+		},
+
+		onHideTitle: function() {
+			this.$el.addClass('display-none');
+		}
+
+	}, {
+		template: 'locationTitle'
+	});
+
+	return LocationTitleView;
+
+});

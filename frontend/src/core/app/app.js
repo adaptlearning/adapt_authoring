@@ -12,13 +12,14 @@ require([
     'coreJS/sidebar/sidebar',
     'coreJS/app/helpers',
     'coreJS/app/contextMenu',
+    'coreJS/notify/notify',
     'polyglot',
     'jquery-ui',
     'jquery-form',
     'mediaelement-and-player',
     'velocity',
     'templates'
-], function (Origin, Router, User, Project, Dashboard, Editor, AssetManagement, SessionModel, NavigationView, GlobalMenu, Sidebar, Helpers, ContextMenu, Polyglot, JQueryUI, JQueryForm, MediaElement) {
+], function (Origin, Router, User, Project, Dashboard, Editor, AssetManagement, SessionModel, NavigationView, GlobalMenu, Sidebar, Helpers, ContextMenu, Notify, Polyglot, JQueryUI, JQueryForm, MediaElement) {
 
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file

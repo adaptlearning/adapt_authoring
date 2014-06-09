@@ -23,6 +23,7 @@ define(function(require) {
 		},
 
 		postRender: function() {
+			this.$el.removeClass('display-none');
 			Origin.trigger('location:title:postRender', this);
 		},
 

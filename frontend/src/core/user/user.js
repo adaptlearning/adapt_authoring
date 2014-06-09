@@ -23,6 +23,7 @@ define(function(require) {
 
     switch (location) {
       case 'login':
+        Origin.trigger('location:title:hide');
         currentView = LoginView;
         break;
       case 'logout':

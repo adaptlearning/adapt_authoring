@@ -256,14 +256,16 @@ function addComponentType(componentInfo, cb) {
     fs.readFile(schemaPath, function (err, data) {
       var schema = false;
       if (err) {
+        // don't error out, just notify
         logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, err);
-        return cb(err);
+        return cb(null);
       }
       try {
         schema = JSON.parse(data);
       } catch (e) {
+        // don't error out, just notify
         logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, e);
-        return cb(e);
+        return cb(null);
       }
 
       // Copy this version of the component to a holding area (used for publishing).
@@ -368,7 +370,7 @@ function updateComponentTypes (options, cb) {
             .on('error', cb)
             .on('end', function (componentInfo) {
               // add details for each to the db
-              async.each(Object.keys(componentInfo), function (key, next) {
+              async.eachSeries(Object.keys(componentInfo), function (key, next) {
                 addComponentType(componentInfo[key], next);
               },
               cb);

@@ -2,7 +2,6 @@ define(function(require){
 
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('coreJS/editor/views/editorOriginView');
-  var EditorPageEditView = require('coreJS/editor/views/editorPageEditView');
   
   var EditorMenuItemView = EditorOriginView.extend({
 
@@ -96,8 +95,7 @@ define(function(require){
     },
 
     editMenuItem: function() {
-      Origin.editingOverlay.addView(new EditorPageEditView({model: this.model}).$el);
-      //Origin.trigger('editorSidebarView:addEditView', this.model);
+      Origin.trigger('editorSidebarView:addEditView', this.model);
     },
 
     deleteMenuItem: function() {

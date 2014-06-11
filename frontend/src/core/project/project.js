@@ -19,6 +19,7 @@ define(function(require) {
         var project = new ProjectModel();
         Origin.trigger('location:title:update', {title: 'Add new course'});
         Origin.router.createView(ProjectDetailView, {model: project});
+        console.log('new loaded');
         break;
       case 'edit':
         var projectModel = new ProjectModel({_id: id});

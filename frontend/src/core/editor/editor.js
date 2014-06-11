@@ -1,10 +1,10 @@
 define(function(require) {
 
 	var Origin = require('coreJS/app/origin');
-	var EditorView = require('coreJS/editor/views/editorView');
-  	var EditorModel = require('coreJS/editor/models/editorModel');
-  	var EditorMenuSidebarView = require('coreJS/editor/views/editorMenuSidebarView');
-  	var EditorPageSidebarView = require('coreJS/editor/views/editorPageSidebarView');
+	var EditorView = require('editorGlobal/views/editorView');
+  	var EditorModel = require('editorGlobal/models/editorModel');
+  	var EditorMenuSidebarView = require('editorMenu/views/editorMenuSidebarView');
+  	var EditorPageSidebarView = require('editorPage/views/editorPageSidebarView');
 
   	Origin.on('router:editor', function(location, subLocation, action) {
 

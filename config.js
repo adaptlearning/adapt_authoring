@@ -12,7 +12,12 @@ require.config({
       'jquery-ui': 'core/libraries/jquery-ui.min',
       'jquery-form' : 'core/libraries/jquery.form',
       velocity: 'core/libraries/velocity',
-      'mediaelement-and-player' : 'core/libraries/mediaelement-and-player'
+      'mediaelement-and-player' : 'core/libraries/mediaelement-and-player',
+      editorPage: 'core/editor/page',
+      editorMenu: 'core/editor/menu',
+      editorCourse: 'core/editor/course',
+      editorConfig: 'core/editor/config',
+      editorGlobal: 'core/editor/global'
     },
     shim: {
       jquery: [

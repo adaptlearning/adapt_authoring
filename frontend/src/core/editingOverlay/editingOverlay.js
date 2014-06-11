@@ -20,6 +20,4 @@ define(function(require) {
 
 	$('.app-inner').append(new EditingOverlayView().$el);
 
-	Origin.editingOverlay.addView('boomElement');
-
 });

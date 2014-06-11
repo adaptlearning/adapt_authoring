@@ -256,14 +256,16 @@ function addComponentType(componentInfo, cb) {
     fs.readFile(schemaPath, function (err, data) {
       var schema = false;
       if (err) {
-        logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, data);
-        return cb(err);
+        // don't error out, just notify
+        logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, err);
+        return cb(null);
       }
       try {
         schema = JSON.parse(data);
       } catch (e) {
-        logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, data);
-        return cb(e);
+        // don't error out, just notify
+        logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, e);
+        return cb(null);
       }
 
       // Copy this version of the component to a holding area (used for publishing).
@@ -284,6 +286,8 @@ function addComponentType(componentInfo, cb) {
           });
         }
       });
+
+      logger.log('info', 'Try ' + pkgMeta.name);
 
       // add the component to the componenttypes collection
       database.getDatabase(function (err, db) {
@@ -318,7 +322,7 @@ function addComponentType(componentInfo, cb) {
               logger.log('error', 'Failed to add component: ' + pkgMeta.name, err);
               return cb(null);
             }
-
+            logger.log('info', 'Added component: ' + pkgMeta.name);
             return cb(null, results);
           });
         });

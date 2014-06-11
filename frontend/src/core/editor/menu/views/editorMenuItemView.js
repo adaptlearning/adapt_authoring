@@ -95,7 +95,7 @@ define(function(require){
     },
 
     editMenuItem: function() {
-      Origin.trigger('editorSidebarView:addEditView', this.model);
+      Origin.router.navigate('#/editor/' + this.model.get('_id') + '/edit', {trigger: true});
     },
 
     deleteMenuItem: function() {

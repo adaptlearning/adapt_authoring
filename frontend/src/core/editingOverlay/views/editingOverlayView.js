@@ -8,6 +8,7 @@ define(function(require) {
 
 		initialize: function() {
 			this.listenTo(Origin, 'editingOverlay:views:show', this.showOverlay);
+			this.listenTo(Origin, 'editingOverlay:views:hide', this.hideOverlay)
 			$(window).on("resize", _.bind(this.resizeOverlay, this));
 			this.resizeOverlay();
 			this.render();
@@ -23,14 +24,18 @@ define(function(require) {
 		},
 
 		postRender: function() {
-			console.log('post render');
+			
 		},
 
 		showOverlay: function(element) {
 			this.$('.editing-overlay-inner').html(element);
 			_.defer(_.bind(function() {
-				this.$el.velocity({left: 0});
+				this.$el.velocity({left: 0, opacity: 1});
 			}, this));
+		},
+
+		hideOverlay: function() {
+			this.$el.velocity({left: '50%', opacity: 0});
 		},
 
 		resizeOverlay: function() {

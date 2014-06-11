@@ -10,51 +10,39 @@ define(function(require) {
 
     className: "project",
 
-    events: {
-      'click .save-button'   : 'savePage',
-      'click .cancel-button' : 'cancel'
+    initialize: function() {
+      //this.listenTo(Origin, 'editingOverlay:views:remove', this.remove);
+      this.listenTo(Origin, 'editorPageEditSidebar:views:save', this.saveEditing);
+      this.render();
     },
 
-    preRender: function() {
-      this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
-    },
-
-    inputBlur: function (event) {
-      //@todo add the validation logic
-    },
-
-    cancel: function (event) {
-      event.preventDefault();
-      Origin.trigger('editorSidebarView:removeEditView', this.model);
-    },
-
-    savePage: function(event) {
-      event.preventDefault();
-      
+    saveEditing: function() {
+      console.log('saving');
       var model = this.model;
 
-      model.save(
-        {
-          title: this.$('.page-title').val(),
-          body: this.$('.page-body').val(),
-          linkText: this.$('.page-linktext').val(),
-          graphic: {
-            alt: this.$('.page-graphic-alt').val(),
-            src: this.$('.page-graphic-src').val()
-          },
-          _type: this.$(".page-type").val(),
-          _classes: this.$(".page-classes").val()
+      model.save({
+        title: this.$('.page-title').val(),
+        body: this.$('.page-body').val(),
+        linkText: this.$('.page-linktext').val(),
+        graphic: {
+          alt: this.$('.page-graphic-alt').val(),
+          src: this.$('.page-graphic-src').val()
         },
-        {
-          error: function() {
-            alert('An error occurred doing the save');
-          },
-          success: function() {
-            Origin.trigger('editorView:fetchData');
-          }
-        }
-      );
+        _type: this.$(".page-type").val(),
+        _classes: this.$(".page-classes").val()
+      }, {
+        error: function() {
+          alert('An error occurred doing the save');
+        },
+        success: _.bind(function() {
+          Origin.trigger('editingOverlay:views:hide');
+          Origin.trigger('editorView:fetchData');
+          Backbone.history.history.back();
+          this.remove();
+        }, this)
+      });
     }
+
   },
   {
     template: 'editorPageEdit'

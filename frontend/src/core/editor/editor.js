@@ -5,6 +5,9 @@ define(function(require) {
   	var EditorModel = require('editorGlobal/models/editorModel');
   	var EditorMenuSidebarView = require('editorMenu/views/editorMenuSidebarView');
   	var EditorPageSidebarView = require('editorPage/views/editorPageSidebarView');
+  	var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
+  	var EditorPageEditView = require('editorPage/views/editorPageEditView');
+  	var EditorPageEditSidebarView = require('editorPage/views/editorPageEditSidebarView');
 
   	Origin.on('router:editor', function(location, subLocation, action) {
 
@@ -39,6 +42,16 @@ define(function(require) {
 			    	"backButtonRoute": "/#/editor/" + location + "/menu"
 			    });
   				break;
+  			case 'edit':
+  				var contentObjectModel = new EditorContentObjectModel({_id: location});
+  				contentObjectModel.fetch({
+  					success: function() {
+  						Origin.trigger('location:title:update', {title: 'Editing page - ' + contentObjectModel.get('title')});
+						  Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel}).$el);
+						  Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel}).$el);
+  					}
+  				})
+				break;
   		}
 
   	});

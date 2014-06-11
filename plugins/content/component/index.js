@@ -256,13 +256,13 @@ function addComponentType(componentInfo, cb) {
     fs.readFile(schemaPath, function (err, data) {
       var schema = false;
       if (err) {
-        logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, data);
+        logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, err);
         return cb(err);
       }
       try {
         schema = JSON.parse(data);
       } catch (e) {
-        logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, data);
+        logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, e);
         return cb(e);
       }
 
@@ -284,6 +284,8 @@ function addComponentType(componentInfo, cb) {
           });
         }
       });
+
+      logger.log('info', 'Try' + pkgMeta.name);
 
       // add the component to the componenttypes collection
       database.getDatabase(function (err, db) {
@@ -318,7 +320,7 @@ function addComponentType(componentInfo, cb) {
               logger.log('error', 'Failed to add component: ' + pkgMeta.name, err);
               return cb(null);
             }
-
+            logger.log('info', 'Added component: ' + pkgMeta.name);
             return cb(null, results);
           });
         });
@@ -366,7 +368,7 @@ function updateComponentTypes (options, cb) {
             .on('error', cb)
             .on('end', function (componentInfo) {
               // add details for each to the db
-              async.eachSeries(Object.keys(componentInfo), function (key, next) {
+              async.each(Object.keys(componentInfo), function (key, next) {
                 addComponentType(componentInfo[key], next);
               },
               cb);

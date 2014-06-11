@@ -16,17 +16,68 @@ define(function(require){
     preRender: function() {
       this.collection = new ProjectCollection();
       this.collection.fetch();
+
       this.listenTo(this.collection, 'sync', this.addProjectViews);
       this.listenTo(this.collection, 'remove', this.projectRemoved);
+
+      // External events
+      this.listenTo(Origin, 'dashboard:layout:grid', this.switchLayoutToGrid);
+      this.listenTo(Origin, 'dashboard:layout:list', this.switchLayoutToList);
+      this.listenTo(Origin, 'dashboard:sort:asc', this.sortAscending);
+      this.listenTo(Origin, 'dashboard:sort:desc', this.sortDescending);
     },
 
     events: {
-      'click #dashboardMenu button'    : 'formclick',
-      'click a#sortProjectsByName'     : 'sortProjectsByName',
-      'click a#sortProjectsByAuthor'   : 'sortProjectsByAuthor',
-      'click a#sortProjectsByLastEdit' : 'sortProjectsByLastEdit',
+      'click #dashboardMenu button'     : 'formclick',
+      'click a#sortProjectsByName'      : 'sortProjectsByName',
+      'click a#sortProjectsByAuthor'    : 'sortProjectsByAuthor',
+      'click a#sortProjectsByLastEdit'  : 'sortProjectsByLastEdit',
       'click .contextMenu'              : 'handleContextMenuClick',
-      'click .menu-container'           : 'toggleContextMenu'
+      'click .menu-container'           : 'toggleContextMenu',
+      'click .project-detail'           : 'editProject'
+    },
+
+    switchLayoutToList: function() {
+      var $container = $('.dashboard-projects'),
+        $items = $('.project-list-item');
+
+      $container.removeClass('blocks-4').addClass('blocks-1');
+
+      $items.addClass('listing');
+    },
+
+    switchLayoutToGrid: function() {
+      var $container = $('.dashboard-projects'),
+        $items = $('.project-list-item');
+
+      $container.removeClass('blocks-1').addClass('blocks-4');
+
+      $items.removeClass('listing');
+    },
+
+    sortAscending: function() {
+      var sortedCollection = this.collection.sortBy(function(project){
+        return project.get("title").toLowerCase();
+      });
+
+      this.renderProjectViews(sortedCollection);
+    },
+
+    sortDescending: function() {
+      var sortedCollection = this.collection.sortBy(function(project){
+        return project.get("title").toLowerCase();
+      });
+
+      sortedCollection = sortedCollection.reverse();
+
+      this.renderProjectViews(sortedCollection);
+    },
+
+    editProject: function(event) {
+      event.preventDefault();
+      var projectId = event.currentTarget.dataset.id;
+
+      Backbone.history.navigate('/editor/' + projectId + '/menu', {trigger: true});
     },
 
     toggleContextMenu: function(e) {
@@ -63,7 +114,6 @@ define(function(require){
           break;
 
         case 'linkEditProperties':
-          // Origin.trigger('router:project', 'edit',  projectId);
           Backbone.history.navigate('/project/edit/' + projectId, {trigger: true});
           break;
 

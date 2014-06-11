@@ -3,12 +3,13 @@
 		{{t 'app.myprojects'}}
 	</h2>
 </div>
+
 <div class="dashboard-menu">
 	<div class="dashboard-menu-item">
 		<a href="#/project/new">{{t 'app.addproject'}}</a>
 	</div>
 </div>
-<ul class="dashboard-projects blocks-4"></ul>
+<ul id="project-container" class="dashboard-projects blocks-4"></ul>
 <nav id="contextMenu" class="contextMenu nav nav-stacked display-none" role="menu" data-id="">
     <ul>
         <li><a id="linkEditProject" tabindex="-1" href="#">{{t 'app.edit'}}</a></li>

@@ -9,7 +9,7 @@ define(function(require){
 
     tagName: 'li',
 
-    className: 'project',
+    className: 'project-list-item',
 
     events: {
     },

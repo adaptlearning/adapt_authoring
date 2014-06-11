@@ -285,7 +285,7 @@ function addComponentType(componentInfo, cb) {
         }
       });
 
-      logger.log('info', 'Try' + pkgMeta.name);
+      logger.log('info', 'Try ' + pkgMeta.name);
 
       // add the component to the componenttypes collection
       database.getDatabase(function (err, db) {

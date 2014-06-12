@@ -4,7 +4,6 @@ define(function(require){
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
-  var EditorSidebarView = require('editorGlobal/views/editorSidebarView');
   var EditorMenuView = require('editorMenu/views/editorMenuView');
   var EditorPageView = require('editorPage/views/editorPageView');
   var EditorCollection = require('editorGlobal/collections/editorCollection');
@@ -55,7 +54,6 @@ define(function(require){
     },
 
     postRender: function() {
-      this.renderEditorSidebar();
     },
 
     onEditableHoverOver: function(e) {
@@ -310,10 +308,6 @@ define(function(require){
       }
 
       Origin.trigger('editorSidebarView:addOverviewView');
-    },
-
-    renderEditorSidebar: function() {
-      this.$el.append(new EditorSidebarView().$el);
     },
 
     renderEditorMenu: function() {

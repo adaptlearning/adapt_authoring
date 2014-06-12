@@ -6,11 +6,11 @@ define(function(require) {
 	var DashboardSidebarView = SidebarItemView.extend({
 
 		events: {
-			'click .dashboard-sidebar-add-course': 'addCourse',
-			'click a.project-layout-grid' : 'layoutGrid',
-			'click a.project-layout-list' : 'layoutList',
-			'click a.project-sort-asc' : 'sortAscending',
-			'click a.project-sort-desc' : 'sortDescending'
+			'click .dashboard-sidebar-add-course'	: 'addCourse',
+			'click a.project-layout-grid' 			: 'layoutGrid',
+			'click a.project-layout-list' 			: 'layoutList',
+			'click a.project-sort-asc' 				: 'sortAscending',
+			'click a.project-sort-desc' 			: 'sortDescending'
 		},
 
 		addCourse: function() {
@@ -40,6 +40,7 @@ define(function(require) {
 
 			Origin.trigger('dashboard:sort:desc');
 		}
+		
 	}, {
 		template: 'dashboardSidebar'
 	});

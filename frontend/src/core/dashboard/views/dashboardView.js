@@ -6,7 +6,6 @@ define(function(require){
   var OriginView = require('coreJS/app/views/originView');
   var ProjectView = require('coreJS/project/views/projectView');
   var ProjectCollection = require('coreJS/project/collections/projectCollection');
-  var ContextMenu = require('coreJS/app/contextMenu');
 
   var DashboardView = OriginView.extend({
 

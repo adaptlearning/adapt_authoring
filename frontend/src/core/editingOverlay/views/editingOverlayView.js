@@ -35,7 +35,7 @@ define(function(require) {
 		},
 
 		hideOverlay: function() {
-			this.$el.velocity({left: '50%', opacity: 0});
+			this.$el.velocity({left: '100%', opacity: 0});
 		},
 
 		resizeOverlay: function() {

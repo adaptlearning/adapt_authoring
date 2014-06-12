@@ -13,6 +13,7 @@
   "app.loggedinas" : "Logged in as",
   "app.edit" : "Edit",
   "app.editproperties" : "Edit properties",
+  "app.duplicate" : "Duplicate",
   "app.delete" : "Delete",
   "app.copy" : "Copy",
   "app.paste" : "Paste",

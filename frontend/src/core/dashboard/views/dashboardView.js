@@ -16,71 +16,68 @@ define(function(require){
     preRender: function() {
       this.collection = new ProjectCollection();
       this.collection.fetch();
+
       this.listenTo(this.collection, 'sync', this.addProjectViews);
       this.listenTo(this.collection, 'remove', this.projectRemoved);
+
+      // External events
+      this.listenTo(Origin, 'dashboard:layout:grid', this.switchLayoutToGrid);
+      this.listenTo(Origin, 'dashboard:layout:list', this.switchLayoutToList);
+      this.listenTo(Origin, 'dashboard:sort:asc', this.sortAscending);
+      this.listenTo(Origin, 'dashboard:sort:desc', this.sortDescending);
     },
 
     events: {
-      'click #dashboardMenu button'    : 'formclick',
-      'click a#sortProjectsByName'     : 'sortProjectsByName',
-      'click a#sortProjectsByAuthor'   : 'sortProjectsByAuthor',
-      'click a#sortProjectsByLastEdit' : 'sortProjectsByLastEdit',
-      'click .contextMenu'              : 'handleContextMenuClick',
-      'click .menu-container'           : 'toggleContextMenu'
+      'click #dashboardMenu button'     : 'formclick',
+      'click a#sortProjectsByName'      : 'sortProjectsByName',
+      'click a#sortProjectsByAuthor'    : 'sortProjectsByAuthor',
+      'click a#sortProjectsByLastEdit'  : 'sortProjectsByLastEdit',
+      // 'click .contextMenu'              : 'handleContextMenuClick',
+      // 'click .menu-container'           : 'toggleContextMenu',
+      'click .project-detail'           : 'editProject'
     },
 
-    toggleContextMenu: function(e) {
-      var $menu = $('#contextMenu');
-      var previousId = $menu.attr('data-id');
+    switchLayoutToList: function() {
+      var $container = $('.dashboard-projects'),
+        $items = $('.project-list-item');
 
-      if (previousId !== '' && (previousId == e.currentTarget.dataset.id)) {
-        if ($menu.hasClass('display-none')) {
-          $menu.removeClass('display-none');
-        } else {
-          $menu.addClass('display-none');
-        }
-        return false;
-      }
+      $container.removeClass('blocks-4').addClass('blocks-1');
 
-      $menu.attr('data-id', e.currentTarget.dataset.id);
-      
-      $menu
-        .css({position: 'absolute',
-          left: e.clientX - $menu.width(),
-          top: e.clientY + 10})
-        .removeClass('display-none');
+      $items.addClass('listing');
     },
 
-    handleContextMenuClick: function(e) {
-      e.preventDefault();
-      $('#contextMenu').addClass('display-none');
+    switchLayoutToGrid: function() {
+      var $container = $('.dashboard-projects'),
+        $items = $('.project-list-item');
 
-      var projectId = e.currentTarget.dataset.id;
+      $container.removeClass('blocks-1').addClass('blocks-4');
 
-      switch(e.target.id) {
-        case 'linkEditProject':
-          Backbone.history.navigate('/editor/' + projectId + '/menu', {trigger: true});
-          break;
+      $items.removeClass('listing');
+    },
 
-        case 'linkEditProperties':
-          // Origin.trigger('router:project', 'edit',  projectId);
-          Backbone.history.navigate('/project/edit/' + projectId, {trigger: true});
-          break;
+    sortAscending: function() {
+      var sortedCollection = this.collection.sortBy(function(project){
+        return project.get("title").toLowerCase();
+      });
 
-        case 'linkCopyProject':
-          alert('TODO: Copy project');
-          break;
+      this.renderProjectViews(sortedCollection);
+    },
 
-        case 'linkDeleteProject':
-          if (confirm(window.polyglot.t('app.confirmdeleteproject'))) {
-            var projectToDelete = this.collection.get(projectId);
+    sortDescending: function() {
+      var sortedCollection = this.collection.sortBy(function(project){
+        return project.get("title").toLowerCase();
+      });
 
-            projectToDelete.trigger('remove');
-            projectToDelete.destroy();
-            this.projectRemoved();
-          }
-          break;
-      }
+      sortedCollection = sortedCollection.reverse();
+
+      this.renderProjectViews(sortedCollection);
+    },
+
+    editProject: function(event) {
+      event.preventDefault();
+      var projectId = event.currentTarget.dataset.id;
+
+      Backbone.history.navigate('/editor/' + projectId + '/menu', {trigger: true});
     },
 
     addProjectViews: function() {

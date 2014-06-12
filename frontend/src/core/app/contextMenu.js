@@ -55,6 +55,31 @@ define(function(require) {
     ContextMenu.addItem('component', contextItems);
     ContextMenu.addItem('page', contextItems);
 
+    var courseContextItems = [
+      {
+        title: window.polyglot.t('app.edit'),
+        className: 'context-menu-item',
+        callbackEvent: 'edit'
+      },
+      {
+        title: window.polyglot.t('app.editproperties'),
+        className: 'context-menu-item',
+        callbackEvent: 'editproperties'
+      },
+      {
+        title: window.polyglot.t('app.duplicate'),
+        className: 'context-menu-item',
+        callbackEvent: 'duplicate'
+      },
+      {
+        title: window.polyglot.t('app.delete'),
+        className: 'context-menu-item',
+        callbackEvent: 'delete'
+      }
+    ];
+
+    ContextMenu.addItem('course', courseContextItems);
+
     var menuContextItems = contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "copy"})), 1);
     menuContextItems = contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "cut"})), 1);
     ContextMenu.addItem('menu', contextItems);

@@ -16,6 +16,11 @@ define(function(require) {
   var EditorArticleEditView = require('editorPage/views/editorArticleEditView');
   var EditorArticleEditSidebarView = require('editorPage/views/editorArticleEditSidebarView');
 
+  var EditorBlockModel = require('editorPage/models/editorBlockModel');
+
+  var EditorBlockEditView = require('editorPage/views/editorBlockEditView');
+  var EditorBlockEditSidebarView = require('editorPage/views/editorBlockEditSidebarView');
+
 	Origin.on('router:editor', function(location, subLocation, action) {
 
     if (location === 'article') {
@@ -27,7 +32,21 @@ define(function(require) {
           Origin.sidebar.addView(new EditorArticleEditSidebarView({model: articleModel}).$el);
           Origin.editingOverlay.addView(new EditorArticleEditView({model: articleModel}).$el);
         }
-      })
+      });
+      return;
+    }
+
+    if (location === 'block') {
+      console.log('booming');
+      var blockModel = new EditorBlockModel({_id: subLocation});
+      blockModel.fetch({
+        success: function() {
+          Origin.trigger('location:title:update', {title: 'Editing block - ' + blockModel.get('title')});
+          Origin.sidebar.addView(new EditorBlockEditSidebarView({model: blockModel}).$el);
+          Origin.editingOverlay.addView(new EditorBlockEditView({model: blockModel}).$el);
+        }
+      });
+      return;
     }
 
 		switch (subLocation) {

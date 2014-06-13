@@ -41,18 +41,15 @@ define(function(require){
       var $container = $('.dashboard-projects'),
         $items = $('.project-list-item');
 
-      $container.removeClass('blocks-4').addClass('blocks-1');
-
-      $items.addClass('listing');
+      $container.removeClass('grid-layout').addClass('list-layout');
+      
     },
 
     switchLayoutToGrid: function() {
       var $container = $('.dashboard-projects'),
         $items = $('.project-list-item');
 
-      $container.removeClass('blocks-1').addClass('blocks-4');
-
-      $items.removeClass('listing');
+      $container.removeClass('list-layout').addClass('grid-layout');
     },
 
     sortAscending: function() {

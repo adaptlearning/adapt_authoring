@@ -1,5 +1,51 @@
 .menu-container {
-    position: relative;
-    float: right;
+    width: 100%;
+    text-align: center;
     cursor: pointer;
+}
+
+.project-list-item {
+    border: 1px solid;
+
+    &.listing {
+        width: 700px;
+    }
+}
+
+.project-inner {
+    height: 300px;
+}
+
+.project-sidebar {
+    float: left;
+    width: 30px;
+    height: 100%;
+    background-color: red;
+}
+
+.project-settings {
+    height: 30px;
+    text-align: center;    
+}
+
+.project-handle {
+    height: 270px;
+    background-color: black;
+}
+
+.project-detail {
+    // float: right;
+    padding-left: 56px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: lightblue;
+    }
+}
+
+.project-title {
+    width: 100%;
+    height: 46px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

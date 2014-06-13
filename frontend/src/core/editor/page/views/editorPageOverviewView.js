@@ -83,7 +83,7 @@ define(function(require) {
         html += '<ul class="fa-ul">'
 
         for (var i = 0; i < items.length; i++) {
-          if (items[i].children.length != 0) {
+          if (items[i].children.length != 0 || items[i]._type == 'menu') {
             html += '<li><i class="fa-li fa fa-folder-open-o"></i>' + items[i].title;
             html = this.createOverviewTreeviewHtml(html, items[i].children);
             html += '</li>';

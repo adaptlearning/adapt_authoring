@@ -8,7 +8,7 @@ define(function(require) {
 
 		initialize: function() {
 			this.listenTo(Origin, 'editingOverlay:views:show', this.showOverlay);
-			this.listenTo(Origin, 'editingOverlay:views:hide', this.hideOverlay)
+			this.listenTo(Origin, 'editingOverlay:views:hide', this.hideOverlay);
 			$(window).on("resize", _.bind(this.resizeOverlay, this));
 			this.resizeOverlay();
 			this.render();
@@ -32,11 +32,12 @@ define(function(require) {
 			_.defer(_.bind(function() {
 				this.$el.removeClass('display-none');
 				this.$el.velocity({left: 0, opacity: 1});
+				this.listenToOnce(Origin, 'remove:views', this.hideOverlay);
 			}, this));
 		},
 
 		hideOverlay: function() {
-			this.$el.velocity({left: '10%', opacity: 0}, _.bind(function() {
+			this.$el.velocity({left: '10%', opacity: 0}, 300, _.bind(function() {
 				this.$el.addClass('display-none');
 			}, this));
 		},

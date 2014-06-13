@@ -52,7 +52,7 @@ define(function(require){
           var element = $(ui.item[0]);
 
           var id = element[0].firstChild.dataset.id,
-              sortOrder = ui.item.index(),
+              sortOrder = ui.item.index() - 1,
               parentId = ui.item.parent()[0].parentElement.dataset.parentid;
 
           element.children()[0].children[0].childNodes[3].style.cursor = 'move';

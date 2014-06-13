@@ -30,12 +30,15 @@ define(function(require) {
 		showOverlay: function(element) {
 			this.$('.editing-overlay-inner').html(element);
 			_.defer(_.bind(function() {
+				this.$el.removeClass('display-none');
 				this.$el.velocity({left: 0, opacity: 1});
 			}, this));
 		},
 
 		hideOverlay: function() {
-			this.$el.velocity({left: '100%', opacity: 0});
+			this.$el.velocity({left: '10%', opacity: 0}, _.bind(function() {
+				this.$el.addClass('display-none');
+			}, this));
 		},
 
 		resizeOverlay: function() {

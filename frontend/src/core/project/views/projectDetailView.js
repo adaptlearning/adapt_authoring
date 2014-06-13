@@ -26,10 +26,6 @@ define(function(require) {
       }
     },
 
-    // inputBlur: function (event) {
-    //   //@todo add the validation logic
-    // },
-
     cancel: function (event) {
       event.preventDefault();
 

@@ -47,7 +47,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
       this.listenTo(Origin, 'editorView:cut', this.cutContent);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
-      this.listenTo(Origin, 'editorSidebarView:publish', this.publishProject);
+      this.listenTo(Origin, 'editorPageSidebarView:publish', this.publishProject);
 
       this.render();
       this.setupEditor();

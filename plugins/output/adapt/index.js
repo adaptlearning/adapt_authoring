@@ -133,7 +133,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
     if (key == 'config') {
       filename = path.join(filepath, filenames[key]);
     } else {
-      filename = path.join(filepath, outputJson['config'][0]._defaultLanguage, filenames[key]);
+      filename = path.join(filepath, outputJson['config']._defaultLanguage, filenames[key]);
     }
 
     fs.writeFile(filename, data, function (error) {
@@ -292,9 +292,20 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
 
         callback(null, 'course.json sanitized');
       },
+      // Sanitize config file
+      function(callback) {
+        logger.log('info', '4. Sanitizing config.json');
+
+        // config.json should contain an object, not an array
+        var configJson = outputJson['config'][0];
+
+        outputJson['config'] = configJson;
+
+        callback(null, 'config.json sanitized');
+      },
       // Sanatize component data
       function(callback) {
-        logger.log('info', '4. Sanitizing component JSON');
+        logger.log('info', '5. Sanitizing component JSON');
         var components = outputJson['component'];
 
         // The 'properties' property of a component should not be included as an
@@ -317,7 +328,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
 
       function(callback) {
-        logger.log('info', '5. Copying build folder to temp directory');
+        logger.log('info', '6. Copying build folder to temp directory');
         var sourceFolder = path.join(process.cwd(), '/framework/build/');
         var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, user._id, BUILD_DIR);
 
@@ -332,7 +343,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
       // Save the files here
       function(callback) {
-        logger.log('info', '6. Saving JSON files');
+        logger.log('info', '7. Saving JSON files');
 
         async.each(['course', 'contentobject', 'config', 'article', 'block', 'component'], writeJson, function (err) {
           if (!err) {
@@ -398,7 +409,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       //   }
       // },
       function(callback) {       
-        logger.log('info', '7. Zipping it all up');
+        logger.log('info', '8. Zipping it all up');
         var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, user._id, 'download.zip'));
         var archive = archiver('zip');
 

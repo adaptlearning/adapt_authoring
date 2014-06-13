@@ -26,8 +26,8 @@ define(function(require) {
     submitLoginDetails: function(e) {
       e.preventDefault();
 
-      var inputUsernameEmail = this.$("#login-input-username").val();
-      var inputPassword = this.$("#login-input-password").val();
+      var inputUsernameEmail = $.trim(this.$("#login-input-username").val());
+      var inputPassword = $.trim(this.$("#login-input-password").val());
 
       // Validation
       if (inputUsernameEmail === '' || inputPassword === '') {

@@ -22,6 +22,7 @@
   "app.cancel" : "Cancel",
   "app.myprojects" : "My Projects",
   "app.addproject" : "Add project",
+  "app.pleaseentervalue" : "Please enter a value here",
   "app.projecttitle" : "Project title",
   "app.projectdescription" : "Project description",
   "app.addarticle" : "Add article",

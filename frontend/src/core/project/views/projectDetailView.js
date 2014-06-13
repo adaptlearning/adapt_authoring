@@ -15,7 +15,7 @@ define(function(require) {
     className: "project",
 
     events: {
-      'click button#saveButton' : 'saveProject',
+      'click button#saveButton'   : 'saveProject',
       'click button#cancelButton' : 'cancel'
     },
 
@@ -26,9 +26,9 @@ define(function(require) {
       }
     },
 
-    inputBlur: function (event) {
-      //@todo add the validation logic
-    },
+    // inputBlur: function (event) {
+    //   //@todo add the validation logic
+    // },
 
     cancel: function (event) {
       event.preventDefault();
@@ -36,10 +36,28 @@ define(function(require) {
       Backbone.history.navigate('#/dashboard', {trigger: true});
     },
 
+    validateInput: function() {
+      if (!$.trim(this.$('#projectDetailTitle').val())) {
+        $('#projectDetailTitle').addClass('input-error');
+        $('#titleErrorMessage').text(window.polyglot.t('app.pleaseentervalue'));
+
+        return false;
+      } else {
+        $('#projectDetailTitle').removeClass('input-error');
+        $('#titleErrorMessage').text('');
+
+        return true;
+      }
+    },
+
     saveProject: function(event) {
       event.preventDefault();
 
-      this.model.save({title: this.$('#projectDetailTitle').val(),
+      if (!this.validateInput()) {
+        return;
+      }
+      
+      this.model.save({title: $.trim(this.$('#projectDetailTitle').val()),
         body: this.$('#projectDetailDescription').val()
         },
         {

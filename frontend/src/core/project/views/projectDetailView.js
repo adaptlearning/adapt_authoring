@@ -2,7 +2,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
-  var EditorConfigModel = require('coreJS/editor/models/editorConfigModel');
+  var EditorConfigModel = require('editorConfig/models/editorConfigModel');
 
   var ProjectDetailView = OriginView.extend({
 

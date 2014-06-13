@@ -16,7 +16,7 @@ define(function(require) {
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'editorArticleEditSidebar:views:save', this.saveArticle);
+      this.listenTo(Origin, 'editorComponentEditSidebar:views:save', this.saveComponent);
       this.model.set('ancestors', this.model.getPossibleAncestors().toJSON());
     },
 
@@ -56,8 +56,7 @@ define(function(require) {
       Origin.trigger('editorSidebarView:removeEditView', this.model);
     },
 
-    saveComponent: function(event) {
-      event.preventDefault();
+    saveComponent: function() {
 
       var propertiesJson = this.$('.component-properties').jsoneditor('value');
 
@@ -73,12 +72,12 @@ define(function(require) {
           error: function() {
             alert('An error occurred doing the save');
           },
-          success: function() {
+          success: _.bind(function() {
             Origin.trigger('editingOverlay:views:hide');
             Origin.trigger('editorView:fetchData');
             Backbone.history.history.back();
             this.remove();
-          }
+          }, this)
         }
       );
     }

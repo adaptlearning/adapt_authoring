@@ -43,12 +43,12 @@ define(function(require) {
         error: function() {
           alert('An error occurred doing the save');
         },
-        success: function() {
+        success: _.bind(function() {
           Origin.trigger('editingOverlay:views:hide');
           Origin.trigger('editorView:fetchData');
           Backbone.history.history.back();
           this.remove();
-        }
+        }, this)
       });
     }
 

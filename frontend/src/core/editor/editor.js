@@ -21,10 +21,14 @@ define(function(require) {
   var EditorBlockEditView = require('editorPage/views/editorBlockEditView');
   var EditorBlockEditSidebarView = require('editorPage/views/editorBlockEditSidebarView');
 
+  var EditorComponentModel = require('editorPage/models/editorComponentModel');
+
+  var EditorComponentEditView = require('editorPage/views/editorComponentEditView');
+  var EditorComponentEditSidebarView = require('editorPage/views/editorComponentEditSidebarView');
+
 	Origin.on('router:editor', function(location, subLocation, action) {
 
     if (location === 'article') {
-      console.log('booming');
       var articleModel = new EditorArticleModel({_id: subLocation});
       articleModel.fetch({
         success: function() {
@@ -37,13 +41,24 @@ define(function(require) {
     }
 
     if (location === 'block') {
-      console.log('booming');
       var blockModel = new EditorBlockModel({_id: subLocation});
       blockModel.fetch({
         success: function() {
           Origin.trigger('location:title:update', {title: 'Editing block - ' + blockModel.get('title')});
           Origin.sidebar.addView(new EditorBlockEditSidebarView({model: blockModel}).$el);
           Origin.editingOverlay.addView(new EditorBlockEditView({model: blockModel}).$el);
+        }
+      });
+      return;
+    }
+
+    if (location === 'component') {
+      var componentModel = new EditorComponentModel({_id: subLocation});
+      componentModel.fetch({
+        success: function() {
+          Origin.trigger('location:title:update', {title: 'Editing component - ' + componentModel.get('title')});
+          Origin.sidebar.addView(new EditorComponentEditSidebarView({model: componentModel}).$el);
+          Origin.editingOverlay.addView(new EditorComponentEditView({model: componentModel}).$el);
         }
       });
       return;

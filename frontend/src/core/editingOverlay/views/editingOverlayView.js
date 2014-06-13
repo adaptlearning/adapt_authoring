@@ -43,10 +43,10 @@ define(function(require) {
 		},
 
 		resizeOverlay: function() {
-			var windowHeight = $(window).height();
+			/*var windowHeight = $(window).height();
 			var navigationHeight = $('.navigation').outerHeight();
 			var locationTitleHeight = $('.location-title').outerHeight();
-			this.$el.height(windowHeight - (navigationHeight + locationTitleHeight));
+			this.$el.height(windowHeight - (navigationHeight + locationTitleHeight));*/
 		}
 
 	}, {

@@ -4,7 +4,7 @@ define(function(require) {
 
 	var EditingOverlayView = Backbone.View.extend({
 
-		className: 'editing-overlay',
+		className: 'editing-overlay display-none',
 
 		initialize: function() {
 			this.listenTo(Origin, 'editingOverlay:views:show', this.showOverlay);

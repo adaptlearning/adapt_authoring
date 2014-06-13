@@ -4,16 +4,16 @@ define(function(require) {
     var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
     var Backbone = require('backbone');
 
-    var EditorPageEditSidebarView = SidebarItemView.extend({
+    var EditorArticleEditSidebarView = SidebarItemView.extend({
 
         events: {
-            'click .editor-page-edit-sidebar-save': 'saveEditing',
-            'click .editor-page-edit-sidebar-cancel': 'cancelEditing'
+            'click .editor-article-edit-sidebar-save': 'saveEditing',
+            'click .editor-article-edit-sidebar-cancel': 'cancelEditing'
         },
 
         saveEditing: function(event) {
             event.preventDefault();
-            Origin.trigger('editorPageEditSidebar:views:save');
+            Origin.trigger('editorArticleEditSidebar:views:save');
         },
 
         cancelEditing: function(event) {
@@ -23,9 +23,9 @@ define(function(require) {
         }
 
     }, {
-        template: 'editorPageEditSidebar'
+        template: 'editorArticleEditSidebar'
     });
 
-    return EditorPageEditSidebarView;
+    return EditorArticleEditSidebarView;
 
 });

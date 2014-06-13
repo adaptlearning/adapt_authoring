@@ -1,35 +1,43 @@
-<div class="page-article-edit">
-  <div class="row">
-    <form role="form">
-      <div class="form-group">
-        <label for="article-title">Article Title</label>
-        <input type="text" class="form-control article-title" placeholder="Article Title" value="{{title}}">
-      </div>
-      <div class="form-group">
-        <label for="article-description">Article Description</label>
-        <textarea class="form-control article-body" placeholder="Article Description">{{body}}</textarea>
-      </div>
-{{!--       <div class="form-group">
-        <label for="article-parent">Parent</label>
-        <select class="form-control article-parent">
-          {{#each ancestors}}
-          <option value="{{_id}}" {{selected ../_parentId _id}}>{{title}}</option>
-          {{/each}}
-        </select>
-      </div> --}}
-{{!--       <div class="form-group">
-        <label for="article-position">Position</label>
-        <select class="form-control article-position">
-          {{#counterFromOne 10}}
-          <option value="{{this}}" {{selected this ../_sortOrder}}>{{this}}</option>
-          {{/counterFromOne}}
-        </select>
-      </div> --}}
-      <div class="hidden">
-        <input type="hidden" value="{{ id }}" id="pageId">
-      </div>
-      <button class="save-button" type="submit">Save</button>
-      <button class="cancel-button" type="button">Cancel</button>
-    </form>
-  </div>
+<div class="article-edit">
+    <div class="editing-overlay-panel">
+        <a href="#" class="editing-overlay-panel-title active">
+            <div class="editing-overlay-panel-title-inner">
+                <h2>Content</h2>
+            </div>
+        </a>
+        <div class="editing-overlay-panel-content">
+            <div class="editing-overlay-panel-content-inner">
+                <form role="form">
+                  <div class="form-group">
+                    <label for="article-title">Article Title</label>
+                    <input type="text" class="form-control article-title" placeholder="Article Title" value="{{title}}">
+                  </div>
+                  <div class="form-group">
+                    <label for="article-description">Article Description</label>
+                    <textarea class="form-control article-body" placeholder="Article Description">{{body}}</textarea>
+                  </div>
+                  <div class="hidden">
+                    <input type="hidden" value="{{ id }}" id="pageId">
+                  </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="editing-overlay-panel">
+        <a href="#" class="editing-overlay-panel-title">
+            <div class="editing-overlay-panel-title-inner">
+                <h2>Extensions</h2>
+            </div>
+        </a>
+        <div class="editing-overlay-panel-content editing-overlay-panel-collapsed">
+            <div class="editing-overlay-panel-content-inner">
+                <form>
+                    <div class="form-group">
+                        <label for="page-title">Page Title</label>
+                        <input type="text" class="form-control page-title" placeholder="Page Title" value="{{title}}">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

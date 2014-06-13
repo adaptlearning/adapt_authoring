@@ -2,7 +2,6 @@
   "type":"object",
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
-  "$ref": "http://localhost/system/basicContent.schema",
   "properties": {
     "_courseId": {
       "type": "objectid",
@@ -15,6 +14,20 @@
     "_questionWeight": {
       "type": "string",
       "default": "1"
+    },
+    "_drawer": {
+      "_showEasing": {
+        "type" : "string",
+        "default" : "easeOutQuart"
+      },
+      "_hideEasing": {
+        "type" : "string",
+        "default" : "easeInQuart"
+      },
+      "_duration": {
+        "type" : "number",
+        "default" : 400
+      }
     },
     "_spoor" : {
       "_tracking" : {

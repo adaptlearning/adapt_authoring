@@ -263,30 +263,26 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
       // Sanatize course data
       function(callback) {
-        logger.log('info', '3. Sanitizing course JSON');
+        logger.log('info', '3. Sanitizing course.json and contentobject.json');
         
-        var originalCourseId;
-
-        // Don't leave the course JSON as an array
-        var courseString = JSON.stringify(outputJson['course']);
-        courseString = courseString.substring(1);
-        courseString = courseString.slice(0, -1);
-        courseJson = JSON.parse(courseString);
-        originalCourseId = courseJson._id;
+        // The course JSON should be an object not an array
+        var courseJson = outputJson['course'][0],
+          contentObjectsJson = outputJson['contentobject'],
+          courseId = courseJson._id;
 
         // The Adapt Framework expects the 'type' and '_id'
-        // attributes of the to be set to 'course'
+        // attributes of the course to be set to 'course'
         courseJson._type = 'course';      
         courseJson._id = 'course';
 
         // Replace any reference to the original course _id value in contentObjects JSON
-        var contentObjectsJson = outputJson['contentobject'];
         for (var i = 0; i < contentObjectsJson.length; i++) {
-          if (contentObjectsJson[i]._parentId.toString() == originalCourseId) {
+          if (contentObjectsJson[i]._parentId.toString() == courseId) {
             contentObjectsJson[i]._parentId = 'course';
           }
         }
 
+        // Store the sanitized JSON
         outputJson['course'] = courseJson;
         outputJson['contentobject'] = contentObjectsJson;
 

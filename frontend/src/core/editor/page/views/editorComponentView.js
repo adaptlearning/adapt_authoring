@@ -76,7 +76,7 @@ define(function(require){
         stop: function () {
           view.hideDropZones();
         }
-      }).disableSelection();
+      });
     }
 
   }, {

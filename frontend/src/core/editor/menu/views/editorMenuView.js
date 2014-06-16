@@ -83,7 +83,7 @@ define(function(require){
             ui.sender.sortable("cancel");
           }
         }
-      }).disableSelection();
+      });
     },
 
     /**

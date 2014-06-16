@@ -65,7 +65,7 @@ define(function(require) {
           var parentkey = flat[i]._parentId;
 
           if (!flat[parentkey]) {
-              root.push(flat[i]);
+            root.push(flat[i]);
           }
         }
 

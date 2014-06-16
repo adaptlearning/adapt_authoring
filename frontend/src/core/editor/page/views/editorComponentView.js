@@ -47,11 +47,8 @@ define(function(require){
       }
     },
 
-    loadPageEdit: function (event) {
-      if (event) {
-        event.preventDefault();
-      }
-      Origin.trigger('editorSidebarView:addEditView', this.model);
+    loadPageEdit: function () {
+      Origin.router.navigate('#/editor/' + this.model.get('_type') + '/' + this.model.get('_id') + '/edit', {trigger: true});
     },
 
     setupDragDrop: function() {

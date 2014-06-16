@@ -10,10 +10,17 @@
      },
      "title": {
        "type":"string",
-       "required":false
+       "required":false,
+       "default": ""
+      },
+      "displayTitle" : {
+        "type":"string",
+        "required":false,
+        "default": ""
       },
       "body":{
-        "type":"string"
+        "type":"string",
+        "default" : ""
       }
   }
 }

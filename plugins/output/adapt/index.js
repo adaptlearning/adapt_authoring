@@ -133,7 +133,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
     if (key == 'config') {
       filename = path.join(filepath, filenames[key]);
     } else {
-      filename = path.join(filepath, outputJson['config'][0]._defaultLanguage, filenames[key]);
+      filename = path.join(filepath, outputJson['config']._defaultLanguage, filenames[key]);
     }
 
     fs.writeFile(filename, data, function (error) {
@@ -263,38 +263,45 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
       // Sanatize course data
       function(callback) {
-        logger.log('info', '3. Sanitizing course JSON');
+        logger.log('info', '3. Sanitizing course.json and contentobject.json');
         
-        var originalCourseId;
-
-        // Don't leave the course JSON as an array
-        var courseString = JSON.stringify(outputJson['course']);
-        courseString = courseString.substring(1);
-        courseString = courseString.slice(0, -1);
-        courseJson = JSON.parse(courseString);
-        originalCourseId = courseJson._id;
+        // The course JSON should be an object not an array
+        var courseJson = outputJson['course'][0],
+          contentObjectsJson = outputJson['contentobject'],
+          courseId = courseJson._id;
 
         // The Adapt Framework expects the 'type' and '_id'
-        // attributes of the to be set to 'course'
+        // attributes of the course to be set to 'course'
         courseJson._type = 'course';      
         courseJson._id = 'course';
 
         // Replace any reference to the original course _id value in contentObjects JSON
-        var contentObjectsJson = outputJson['contentobject'];
         for (var i = 0; i < contentObjectsJson.length; i++) {
-          if (contentObjectsJson[i]._parentId.toString() == originalCourseId) {
+          if (contentObjectsJson[i]._parentId.toString() == courseId) {
             contentObjectsJson[i]._parentId = 'course';
           }
         }
 
+        // Store the sanitized JSON
         outputJson['course'] = courseJson;
         outputJson['contentobject'] = contentObjectsJson;
 
         callback(null, 'course.json sanitized');
       },
+      // Sanitize config file
+      function(callback) {
+        logger.log('info', '4. Sanitizing config.json');
+
+        // config.json should contain an object, not an array
+        var configJson = outputJson['config'][0];
+
+        outputJson['config'] = configJson;
+
+        callback(null, 'config.json sanitized');
+      },
       // Sanatize component data
       function(callback) {
-        logger.log('info', '4. Sanitizing component JSON');
+        logger.log('info', '5. Sanitizing component JSON');
         var components = outputJson['component'];
 
         // The 'properties' property of a component should not be included as an
@@ -317,7 +324,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
 
       function(callback) {
-        logger.log('info', '5. Copying build folder to temp directory');
+        logger.log('info', '6. Copying build folder to temp directory');
         var sourceFolder = path.join(process.cwd(), '/framework/build/');
         var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, user._id, BUILD_DIR);
 
@@ -332,7 +339,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
       // Save the files here
       function(callback) {
-        logger.log('info', '6. Saving JSON files');
+        logger.log('info', '7. Saving JSON files');
 
         async.each(['course', 'contentobject', 'config', 'article', 'block', 'component'], writeJson, function (err) {
           if (!err) {
@@ -398,7 +405,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       //   }
       // },
       function(callback) {       
-        logger.log('info', '7. Zipping it all up');
+        logger.log('info', '8. Zipping it all up');
         var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, user._id, 'download.zip'));
         var archive = archiver('zip');
 

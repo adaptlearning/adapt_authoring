@@ -11,27 +11,25 @@ define(function(require) {
     className: "project",
 
     events: {
-      'click .save-button'   : 'saveArticle',
-      'click .cancel-button' : 'cancel'
+      'click .editing-overlay-panel-title': 'toggleContentPanel'
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
-      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editorArticleEditSidebar:views:save', this.saveArticle);
       this.model.set('ancestors', this.model.getPossibleAncestors().toJSON());
     },
 
-    inputBlur: function (event) {
-      //@todo add the validation logic
+    toggleContentPanel: function(event) {
+      event.preventDefault();
+      if (!$(event.currentTarget).hasClass('active')) { 
+        this.$('.editing-overlay-panel-title').removeClass('active');
+        $(event.currentTarget).addClass('active')
+        this.$('.editing-overlay-panel-content').slideUp();
+        $(event.currentTarget).siblings('.editing-overlay-panel-content').slideDown();
+      }
     },
 
-    cancel: function (event) {
-      event.preventDefault();
-      Origin.trigger('editorSidebarView:removeEditView', this.model);
-    },
-
-    saveArticle: function(event) {
-      event.preventDefault();
+    saveArticle: function() {
 
       var model = this.model;
 
@@ -45,9 +43,12 @@ define(function(require) {
         error: function() {
           alert('An error occurred doing the save');
         },
-        success: function() {
+        success: _.bind(function() {
+          Origin.trigger('editingOverlay:views:hide');
           Origin.trigger('editorView:fetchData');
-        }
+          Backbone.history.history.back();
+          this.remove();
+        }, this)
       });
     }
 

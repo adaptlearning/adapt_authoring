@@ -10,4 +10,6 @@ conf/config.json
 /frontend/src/templates/templates.js
 /plugins/content/component/componentcache/
 /plugins/content/component/versions/
+/plugins/content/extension/extensioncache/
+/plugins/content/extension/versions/
 /master/

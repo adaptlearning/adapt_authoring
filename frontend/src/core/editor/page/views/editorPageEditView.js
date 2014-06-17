@@ -38,7 +38,7 @@ define(function(require) {
         title: this.$('.page-title').val(),
         body: this.$('.page-body').val(),
         linkText: this.$('.page-linktext').val(),
-        graphic: {
+        _graphic: {
           alt: this.$('.page-graphic-alt').val(),
           src: this.$('.page-graphic-src').val()
         },

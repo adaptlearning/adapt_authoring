@@ -4,7 +4,7 @@
   "id": "http://jsonschema.net",
   "$ref": "http://localhost/system/content.schema",
   "properties": {
-    "graphic" : {
+    "_graphic" : {
       "alt" : {
         "type": "string",
         "default": ""

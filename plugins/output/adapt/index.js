@@ -88,7 +88,9 @@ AdaptOutput.prototype.preview = function (courseId, req, res, next) {
  */
 AdaptOutput.prototype.publish = function (courseId, req, res, next) {
   var outputJson = {};
-  var user = usermanager.getCurrentUser();
+  var user = usermanager.getCurrentUser(),
+    outputJson = {},
+    friendlyIdentifiers = {};
 
   // Queries the database to return each collectionType for the given courseId
   var getJson = function (collectionType, doneCallback) {
@@ -114,6 +116,35 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
           }
         );
     });
+  };
+
+  // Replace the database _id value with something more user-friendly 
+  var setupFriendlyIdentifiers = function(key, doneCallback) {
+    var tags = { 'contentobject' : 'co', 'article' : 'a', 'block' : 'b', 'component' : 'c'},
+      items = [];
+
+    friendlyIdentifiers[key] = [];
+
+    // Iterate over the given JSON and set the friendly name for the '_id'
+    for (var i = 0; i < outputJson[key].length; i++) {
+      // Increment the index 
+      var index = i + 1;
+      var newId = '';
+
+      // This just sets some padding
+      if (index.toString().length < 2) {
+        newId = tags[key] + '-' + ('00' + index).slice(-2);
+      } else {
+        newId = tags[key] + '-' + index;
+      }
+      
+      items.push({_id: outputJson[key][i]._id.toString(), identifier: newId});
+    }
+
+    // Write back the friendlyIdentifiers
+    friendlyIdentifiers[key] = items;
+
+    doneCallback(null);
   };
 
   // Writes Adapt Framework JSON files to the /course folder
@@ -207,6 +238,18 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
 
     // Call the steps to publish
     async.series([
+      // Replace the daabase _id properties on the objects with something more user-friendly
+      function(callback) {
+        logger.log('info', '0. Setting up the user-friendly _id value array');
+
+        async.each(['contentobject', 'article', 'block', 'component'], setupFriendlyIdentifiers, function (err) {
+          if (!err) {
+            callback(null, 'Friendly identifiers created');
+          } else {
+            callback(err, 'Error setting friendly identifiers');
+          }
+        });
+      },
       // Verify that the temporary folder exists
       function(callback) {
         logger.log('info', '1. Verifying temporary folder exists');
@@ -322,9 +365,56 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         outputJson['component'] = components;
         callback(null, 'component.json sanitized');
       },
+      
+      // Sanitize the IDs
+      function(callback) {
+        logger.log('info', '6. Sanitizing the ID values');
+        var types = ['contentobject', 'article', 'block', 'component'];
+
+        // contentobject
+        for (var i = 0; i < outputJson['contentobject'].length; i++) {
+          var friendlyId = _.findWhere(friendlyIdentifiers['contentobject'], {_id: outputJson['contentobject'][i]._id.toString()});
+          outputJson['contentobject'][i]._id = friendlyId.identifier;
+          
+          if (outputJson['contentobject'][i]._parentId.toString() !== 'course') {
+            var friendlyParentId = _.findWhere(friendlyIdentifiers['contentobject'], {_id: outputJson['contentobject'][i]._parentId.toString()});
+            outputJson['contentobject'][i]._parentId = friendlyParentId.identifier;            
+          }
+        }
+
+        // article
+        for (var i = 0; i < outputJson['article'].length; i++) {
+          var friendlyId = _.findWhere(friendlyIdentifiers['article'], {_id: outputJson['article'][i]._id.toString()});
+          var friendlyParentId = _.findWhere(friendlyIdentifiers['contentobject'], {_id: outputJson['article'][i]._parentId.toString()});
+          
+          outputJson['article'][i]._id = friendlyId.identifier;
+          outputJson['article'][i]._parentId = friendlyParentId.identifier;          
+        }
+
+        // block
+        for (var i = 0; i < outputJson['block'].length; i++) {
+          var friendlyId = _.findWhere(friendlyIdentifiers['block'], {_id: outputJson['block'][i]._id.toString()});
+          var friendlyParentId = _.findWhere(friendlyIdentifiers['article'], {_id: outputJson['block'][i]._parentId.toString()});
+          
+          outputJson['block'][i]._id = friendlyId.identifier;
+          outputJson['block'][i]._parentId = friendlyParentId.identifier;
+
+        }
+
+        // component
+        for (var i = 0; i < outputJson['component'].length; i++) {
+          var friendlyId = _.findWhere(friendlyIdentifiers['component'], {_id: outputJson['component'][i]._id.toString()});
+          var friendlyParentId = _.findWhere(friendlyIdentifiers['block'], {_id: outputJson['component'][i]._parentId.toString()});
+          
+          outputJson['component'][i]._id = friendlyId.identifier;
+          outputJson['component'][i]._parentId = friendlyParentId.identifier;
+        }
+
+        callback(null, 'IDs changed');
+      },
 
       function(callback) {
-        logger.log('info', '6. Copying build folder to temp directory');
+        logger.log('info', '7. Copying build folder to temp directory');
         var sourceFolder = path.join(process.cwd(), '/framework/build/');
         var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, user._id, BUILD_DIR);
 
@@ -337,9 +427,12 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         });
 
       },
+
       // Save the files here
       function(callback) {
-        logger.log('info', '7. Saving JSON files');
+        logger.log('info', '8. Saving JSON files');
+
+        logger.log(friendlyIdentifiers);
 
         async.each(['course', 'contentobject', 'config', 'article', 'block', 'component'], writeJson, function (err) {
           if (!err) {
@@ -349,63 +442,9 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
           }
         });
       },
-      // function(callback) {
-      //   console.log('7.1. Preparing Build files');
-      //   getCourseComponents(function(err, publishComponents) {
-      //     if (err) {
-      //       return callback(err);
-      //     }
 
-      //     async.each(publishComponents, copyComponentFiles, function(err) {
-      //       if (!err) {
-      //         return callback(null, 'Component files copied');
-      //       } else {
-      //         callback(err);
-      //       }
-      //     });
-      //   });
-      // },
-      // function (callback) {
-      //   console.log('8. Running Grunt');
-
-      //    // var grunt = false;
-      //   // run grunt build if available - developers will appreciate this, but grunt
-      //   // is a development dependency, so won't be available in production environments
-      //   // grunt build should be unnecessary in production in any case
-      //   try {
-      //     // this may throw
-          
-
-      //     // load grunt configuration. could be a nicer way to do this?
-      //     require(path.join(process.cwd(), TEMP_DIR, courseId, 'Gruntfile.js'))(grunt);
-      //   } catch (e) {
-      //     // swallow the exception
-      //     // log warning
-      //     console.log('failed to require grunt');
-      //     grunt = false;
-      //   }
-
-      //   if (grunt) {
-      //     // run grunt build
-      //     grunt.tasks(['publish'], {}, function (error) {
-      //       console.log(error);
-      //       if (error) {
-      //         console.log('grunt build failed with error. you should manually run "grunt build" from the root of your project');
-      //         callback(error);
-      //       }
-      //       else {
-      //         console.log('Grunt worked!');
-      //         callback(null, 'Build created');
-      //       }
-      //     });
-      //   } else {
-      //     console.log('Grunt not found!');
-      //     callback(null, 'Error occurred!');
-      //     // app.restartServer();
-      //   }
-      // },
       function(callback) {       
-        logger.log('info', '8. Zipping it all up');
+        logger.log('info', '9. Zipping it all up');
         var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, user._id, 'download.zip'));
         var archive = archiver('zip');
 
@@ -428,19 +467,24 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         // Trigger the file download
         var filename = slugify(outputJson['course'].title);
         var filePath = path.join(TEMP_DIR, courseId, user._id, 'download.zip');
-        var stat = fs.statSync(filePath);
 
-        res.writeHead(200, {
-            'Content-Type': 'application/zip',
-            'Content-Length': stat.size,
-            'Content-disposition' : 'attachment; filename=' + filename + '.zip',
-            'Pragma' : 'no-cache',
-            'Expires' : '0'
+        fs.stat(filePath, function(err, stat) {
+          if (err) {
+            callback(err, 'Error calling fs.stat');
+          } else {
+            res.writeHead(200, {
+                'Content-Type': 'application/zip',
+                'Content-Length': stat.size,
+                'Content-disposition' : 'attachment; filename=' + filename + '.zip',
+                'Pragma' : 'no-cache',
+                'Expires' : '0'
+            });
+
+            var readStream = fs.createReadStream(filePath);
+
+            readStream.pipe(res);
+          }
         });
-
-        var readStream = fs.createReadStream(filePath);
-
-        readStream.pipe(res);
       }
     ],
     // optional callback

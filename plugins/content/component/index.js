@@ -242,8 +242,12 @@ function addComponentType(componentInfo, cb) {
   }
 
   if (!pkgMeta.version) { // don't allow components that don't define versions
+    /*
+    * @TODO: Re-implement this once component properties.schema files make it to master!
     logger.log('warn', 'ignoring unversioned component: ' + pkgMeta.name);
     return cb(null);
+    */
+    pkgMeta.version = "0.2.0"; // Remove me later - see above ^
   }
 
   var schemaPath = path.join(componentInfo.canonicalDir, defaultOptions._adaptSchemaFile);
@@ -363,19 +367,40 @@ function updateComponentTypes (options, cb) {
       .search('', options) // search all components or only contrib?
       .on('end', function (results) {
         // lets bower install each
-        async.map(results, function (item, next) { next(null, item.name); }, function (err, nameList) {
-        logger.log('info', 'fetched components from bower repository');
-          bower.commands
-            .install(nameList, { save: true }, options)
-            .on('error', cb)
-            .on('end', function (componentInfo) {
+        async.map(results,
+          function (item, next) {
+            next(null, item.name);
+          },
+          function (err, nameList) {
+            /*
+            * @TODO: Remove array below once component properties.schema files make it to master!
+            */
+            var nameList = [
+              "adapt-contrib-text#develop",
+              "adapt-contrib-narrative#develop",
+              "adapt-contrib-media#develop",
+              "adapt-contrib-hotgraphic#develop",
+              "adapt-contrib-blank#develop",
+              "adapt-contrib-accordion#develop",
+              "adapt-contrib-graphic#develop",
+              "adapt-contrib-matching#develop",
+              "adapt-contrib-textInput#develop",
+              "adapt-contrib-mcq#develop",
+              "adapt-contrib-gmcq#develop",
+              "adapt-contrib-slider#develop"
+            ];
+            logger.log('info', 'fetched components from bower repository');
+              bower.commands
+              .install(nameList, { save: true }, options)
+              .on('error', cb)
+              .on('end', function (componentInfo) {
               // add details for each to the db
               async.eachSeries(Object.keys(componentInfo), function (key, next) {
-                addComponentType(componentInfo[key], next);
+              addComponentType(componentInfo[key], next);
               },
               cb);
             });
-        });
+          });
       });
   });
 }

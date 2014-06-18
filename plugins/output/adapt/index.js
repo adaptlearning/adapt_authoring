@@ -371,7 +371,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         logger.log('info', '6. Sanitizing the ID values');
         var types = ['contentobject', 'article', 'block', 'component'];
 
-        // componentobject
+        // contentobject
         for (var i = 0; i < outputJson['contentobject'].length; i++) {
           var friendlyId = _.findWhere(friendlyIdentifiers['contentobject'], {_id: outputJson['contentobject'][i]._id.toString()});
           outputJson['contentobject'][i]._id = friendlyId.identifier;
@@ -428,7 +428,6 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
 
       },
 
-
       // Save the files here
       function(callback) {
         logger.log('info', '8. Saving JSON files');
@@ -443,61 +442,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
           }
         });
       },
-      // function(callback) {
-      //   console.log('7.1. Preparing Build files');
-      //   getCourseComponents(function(err, publishComponents) {
-      //     if (err) {
-      //       return callback(err);
-      //     }
 
-      //     async.each(publishComponents, copyComponentFiles, function(err) {
-      //       if (!err) {
-      //         return callback(null, 'Component files copied');
-      //       } else {
-      //         callback(err);
-      //       }
-      //     });
-      //   });
-      // },
-      // function (callback) {
-      //   console.log('8. Running Grunt');
-
-      //    // var grunt = false;
-      //   // run grunt build if available - developers will appreciate this, but grunt
-      //   // is a development dependency, so won't be available in production environments
-      //   // grunt build should be unnecessary in production in any case
-      //   try {
-      //     // this may throw
-          
-
-      //     // load grunt configuration. could be a nicer way to do this?
-      //     require(path.join(process.cwd(), TEMP_DIR, courseId, 'Gruntfile.js'))(grunt);
-      //   } catch (e) {
-      //     // swallow the exception
-      //     // log warning
-      //     console.log('failed to require grunt');
-      //     grunt = false;
-      //   }
-
-      //   if (grunt) {
-      //     // run grunt build
-      //     grunt.tasks(['publish'], {}, function (error) {
-      //       console.log(error);
-      //       if (error) {
-      //         console.log('grunt build failed with error. you should manually run "grunt build" from the root of your project');
-      //         callback(error);
-      //       }
-      //       else {
-      //         console.log('Grunt worked!');
-      //         callback(null, 'Build created');
-      //       }
-      //     });
-      //   } else {
-      //     console.log('Grunt not found!');
-      //     callback(null, 'Error occurred!');
-      //     // app.restartServer();
-      //   }
-      // },
       function(callback) {       
         logger.log('info', '9. Zipping it all up');
         var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, user._id, 'download.zip'));
@@ -522,19 +467,24 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         // Trigger the file download
         var filename = slugify(outputJson['course'].title);
         var filePath = path.join(TEMP_DIR, courseId, user._id, 'download.zip');
-        var stat = fs.statSync(filePath);
 
-        res.writeHead(200, {
-            'Content-Type': 'application/zip',
-            'Content-Length': stat.size,
-            'Content-disposition' : 'attachment; filename=' + filename + '.zip',
-            'Pragma' : 'no-cache',
-            'Expires' : '0'
+        fs.stat(filePath, function(err, stat) {
+          if (err) {
+            callback(err, 'Error calling fs.stat');
+          } else {
+            res.writeHead(200, {
+                'Content-Type': 'application/zip',
+                'Content-Length': stat.size,
+                'Content-disposition' : 'attachment; filename=' + filename + '.zip',
+                'Pragma' : 'no-cache',
+                'Expires' : '0'
+            });
+
+            var readStream = fs.createReadStream(filePath);
+
+            readStream.pipe(res);
+          }
         });
-
-        var readStream = fs.createReadStream(filePath);
-
-        readStream.pipe(res);
       }
     ],
     // optional callback

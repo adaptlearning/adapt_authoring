@@ -2,26 +2,10 @@
     <div class="editing-overlay-panel">
         <a href="#" class="editing-overlay-panel-title active">
             <div class="editing-overlay-panel-title-inner">
-                <h2>Content</h2>
+                <h2>{{t 'app.settingsgeneral'}}</h2>
             </div>
         </a>
-        <div class="editing-overlay-panel-content">
-            <div class="editing-overlay-panel-content-inner">
-                <form role="form">
-                  <div class="form-group">
-                    <label for="block-title">Block Title</label>
-                    <input type="text" class="form-control block-title" placeholder="Block Title" value="{{title}}">
-                  </div>
-                  <div class="form-group">
-                    <label for="block-description">Block Description</label>
-                    <textarea class="form-control block-body" placeholder="Block Description">{{body}}</textarea>
-                  </div>
-                  <div class="hidden">
-                    <input type="hidden" value="{{id}}" id="pageId">
-                  </div>
-                </form>
-            </div>
-        </div>
+        {{> part_settingsGeneral}}
     </div>
     <div class="editing-overlay-panel">
         <a href="#" class="editing-overlay-panel-title">

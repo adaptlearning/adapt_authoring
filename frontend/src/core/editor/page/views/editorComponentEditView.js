@@ -65,8 +65,9 @@ define(function(require) {
       model.save({
         _parentId: this.$('.component-parent').find(':selected').val(),
         _componentType: model.attributes._componentType._id, // TODO -- Not sure about the schema here
-        title: this.$('.component-title').val(),
-        body: this.$('.component-body').val(),
+        title: this.$('.setting-title').val(),
+        displayTitle: this.$('.setting-displaytitle').val(),
+        body: this.$('.setting-body').val(),
         properties: propertiesJson},
         {
           error: function() {

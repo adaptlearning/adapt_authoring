@@ -98,6 +98,10 @@ module.exports = function(grunt) {
         less: {
           files: ['frontend/src/**/*.less'],
           tasks: ['less']
+        },
+        routes: {
+          files: ['routes/**/*.*'],
+          tasks: ['compile']
         }
       },
       mochaTest: {

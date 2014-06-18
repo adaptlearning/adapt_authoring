@@ -2,37 +2,19 @@
     <div class="editing-overlay-panel">
         <a href="#" class="editing-overlay-panel-title active">
             <div class="editing-overlay-panel-title-inner">
-                <h2>Content</h2>
+                <h2>{{t 'app.settingsgeneral'}}</h2>
             </div>
         </a>
-        <div class="editing-overlay-panel-content">
-            <div class="editing-overlay-panel-content-inner">
-                <form role="form">
-                  <div class="form-group">
-                    <label for="component-title">Component Title</label>
-                    <input type="text" class="form-control component-title" placeholder="Component Title" value="{{title}}">
-                  </div>
-                  <div class="form-group">
-                    <label for="component-description">Component Description</label>
-                    <textarea class="form-control component-body" placeholder="Component Description">{{body}}</textarea>
-                  </div>
-              {{!--     <div class="form-group">
-                    <label for="component-parent">Parent</label>
-                    <select class="form-control component-parent">
-                      {{#each ancestors}}
-                      <option value="{{_id}}" {{selected ../_parentId _id}}>{{stripHtml title}}</option>
-                      {{/each}}
-                    </select>
-                  </div> --}}
-                  <div class="component-properties">
-                  </div>
-                  <div class="hidden">
-                    <input type="hidden" value="{{id}}" id="pageId">
-                  </div>
-                  <button class="save-button" type="submit">Save</button>
-                  <button class="cancel-button" type="button">Cancel</button>
-                </form>
+        {{> part_settingsGeneral}}
+    </div>
+    <div class="editing-overlay-panel">
+        <a href="#" class="editing-overlay-panel-title">
+            <div class="editing-overlay-panel-title-inner">
+                <h2>Component properties</h2>
             </div>
+        </a>
+        <div class="editing-overlay-panel-content editing-overlay-panel-collapsed">
+          <div class="component-properties"></div>
         </div>
     </div>
     <div class="editing-overlay-panel">

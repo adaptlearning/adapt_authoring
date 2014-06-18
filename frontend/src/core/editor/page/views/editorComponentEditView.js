@@ -44,7 +44,11 @@ define(function(require) {
 
       this.$('.component-properties').jsoneditor({
         no_additional_properties: true, 
-        no_additional_properties: true,
+        disable_array_reorder: true,
+        disable_collapse: true,
+        disable_edit_json: true,
+        disable_properties: true,
+        form_name_root: 'briantest',
         schema: schema,
         startval: this.model.get('properties') 
       });

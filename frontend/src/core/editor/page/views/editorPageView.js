@@ -20,9 +20,7 @@ define(function(require){
       'click a.edit-page'    : 'loadPageEdit',
       'click a.delete-page'  : 'deletePage',
       'click .paste-article' : 'onPaste',
-      'click .paste-cancel'  : 'pasteCancel',
-      'click a.btn'          : 'storeScrollPosition',
-      'click a.open-context-icon' : 'storeScrollPosition'
+      'click .paste-cancel'  : 'pasteCancel'
     },
 
     childrenCount: 0,
@@ -36,6 +34,16 @@ define(function(require){
       this.listenTo(Origin, 'editorView:cutArticle:' + this.model.get('_id'), this.onCutArticle);
 
       this.listenTo(Origin, 'pageView:itemRendered', this.evaluateChildStatus);
+
+      var captureScroll = function() {
+        $(window).scroll(function() {
+          if (window.scrollY != 0) {
+              Origin.editor.scrollTo = window.scrollY;
+          }
+        });
+      };
+
+      _.delay(captureScroll, 2000);
     },
 
     setupChildCount: function() {
@@ -66,7 +74,9 @@ define(function(require){
 
       if (this.childrenCount == this.childrenRenderedCount) {
         // All child controls of the page have been rendered so persist the scroll position
-        this.scrollIntoPosition();
+        if (Origin.editor.scrollTo) {
+          window.scrollTo(0, Origin.editor.scrollTo);  
+        }
       }
     },
 

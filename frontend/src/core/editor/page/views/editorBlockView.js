@@ -213,7 +213,6 @@ define(function(require){
           alert('error adding new component');
         },
         success: function() {
-          _this.storeScrollPosition(window.scrollY);
           Origin.trigger('editorView:fetchData');
         }
       });

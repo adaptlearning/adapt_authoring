@@ -16,20 +16,6 @@ define(function(require){
     },
 
     postRender: function() {
-      console.log('+1');
-    },
-
-    scrollIntoPosition: function() {
-      if (Origin.editor.scrollTo) {
-        window.scrollTo(0, Origin.editor.scrollTo);
-      }
-    },
-
-    storeScrollPosition: function(event) {     
-      if (event && event.pageY) {
-        console.log(event.pageY);
-        Origin.editor.scrollTo = event.pageY;  
-      }
     },
 
     onCopy: function(event) {

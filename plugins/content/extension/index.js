@@ -231,8 +231,12 @@ function addExtensionType(extensionInfo, cb) {
   }
 
   if (!pkgMeta.version) { // don't allow extensions that don't define versions
+    /*
+    * @TODO: Re-implement this once component properties.schema files make it to master!
     logger.log('warn', 'ignoring unversioned extension: ' + pkgMeta.name);
     return cb(null);
+    */
+    pkgMeta.version = "0.2.0"; // Remove me later - see above ^
   } 
 
   var schemaPath = path.join(extensionInfo.canonicalDir, defaultOptions._adaptSchemaFile);

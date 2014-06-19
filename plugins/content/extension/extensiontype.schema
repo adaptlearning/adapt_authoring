@@ -12,6 +12,10 @@
       "type": "string",
       "required": true
     },
+    "extension": {
+      "type": "string",
+      "required": true
+    },
     "version":{
       "type": "string",
       "required": true

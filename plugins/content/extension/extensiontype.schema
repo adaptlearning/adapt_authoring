@@ -8,6 +8,10 @@
       "type": "string",
       "required": true
     },
+    "displayName": {
+      "type": "string",
+      "required": true
+    },
     "version":{
       "type": "string",
       "required": true

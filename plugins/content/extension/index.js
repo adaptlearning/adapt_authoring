@@ -233,7 +233,7 @@ function addExtensionType(extensionInfo, cb) {
   if (!pkgMeta.version) { // don't allow extensions that don't define versions
     logger.log('warn', 'ignoring unversioned extension: ' + pkgMeta.name);
     return cb(null);
-  }
+  } 
 
   var schemaPath = path.join(extensionInfo.canonicalDir, defaultOptions._adaptSchemaFile);
   fs.exists(schemaPath, function (exists) {
@@ -346,25 +346,39 @@ function updateExtensionTypes (options, cb) {
     if (err) {
       return cb(err);
     }
-
-    // now do search and install
     bower.commands
-      .search('', options) // search all extension or only contrib?
+      .search('', options) // search all extensions or only contrib?
       .on('end', function (results) {
         // lets bower install each
-        async.map(results, function (item, next) { next(null, item.name); }, function (err, nameList) {
-        logger.log('info', 'fetched extensions from bower repository');
-          bower.commands
-            .install(nameList, { save: true }, options)
-            .on('error', cb)
-            .on('end', function (extensionInfo) {
+        async.map(results,
+          function (item, next) {
+            next(null, item.name);
+          },
+          function (err, nameList) {
+            /*
+            * @TODO: Remove array below once extension properties.schema files make it to master!
+            */
+            var nameList = [
+            "adapt-contrib-assessment#develop",
+            "adapt-contrib-pageLevelProgress#develop",
+            "adapt-contrib-resources#develop",
+            "adapt-contrib-spoor#develop",
+            "adapt-contrib-trickle#develop",
+            "adapt-contrib-tutor#develop"
+          ];
+
+            logger.log('info', 'fetched extensions from bower repository');
+              bower.commands
+              .install(nameList, { save: true }, options)
+              .on('error', cb)
+              .on('end', function (extensionInfo) {
               // add details for each to the db
               async.eachSeries(Object.keys(extensionInfo), function (key, next) {
-                addExtensionType(extensionInfo[key], next);
+              addExtensionType(extensionInfo[key], next);
               },
               cb);
             });
-        });
+          });
       });
   });
 }

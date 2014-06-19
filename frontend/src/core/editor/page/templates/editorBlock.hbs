@@ -3,13 +3,12 @@
 <div class="block-detail">
   <h4 class="block-title">{{{title}}}</h4>
   <div class="block-body">{{{body}}}</div>
-
+  <div class="block-delete-icon"><a href="#" class="block-delete"><i class="fa fa-trash-o"></i></a></div>
   <div class="page-article-components"></div>
 
   {{#if layoutOptions}}
     <div class="add-control">
-      <a href="#" class="btn btn-green add-component">{{t 'app.addcomponent'}}</a>
-      <a href="#" class="btn btn-red block-delete">{{t 'app.delete'}}</a>
+      <a href="#" class="btn add-component">{{t 'app.addcomponent'}}</a>
     </div>
 
     <div class="add-component-form">

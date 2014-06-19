@@ -46,6 +46,7 @@ define(function(require){
 
       _.defer(_.bind(function(){
         this.trigger('blockView:postRender');
+        Origin.trigger('pageView:itemRendered');
       }, this));
     },
 
@@ -193,13 +194,13 @@ define(function(require){
         return type.get('name') == selectedComponentType;
       });
 
-      var thisView = this;
+      var _this = this;
       var newComponentModel = new EditorComponentModel();
 
       newComponentModel.save({
         title: window.polyglot.t('app.placeholdernewcomponent'),
         body: window.polyglot.t('app.placeholdereditthistext'),
-        _parentId: thisView.model.get('_id'),
+        _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
         _type: 'component',
         _componentType: componentType.get('_id'),
@@ -212,6 +213,7 @@ define(function(require){
           alert('error adding new component');
         },
         success: function() {
+          _this.storeScrollPosition(window.scrollY);
           Origin.trigger('editorView:fetchData');
         }
       });

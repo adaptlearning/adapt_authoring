@@ -69,7 +69,13 @@ define(function(require){
     // then create new instances of:
     // Origin.editor.course, Origin.editor.config, Origin.editor.contentObjects,
     // Origin.editor.articles, Origin.editor.blocks
-    setupEditor: function() {
+    setupEditor: function(event) {
+
+      if (event) {
+        console.log(event);
+      }
+      console.log('refreshing data...');
+
       this.loadedData = {
         clipboard: false,
         course: false,
@@ -98,12 +104,11 @@ define(function(require){
       if (Origin.editor.data.course) {
         _.each(Origin.editor.data, function(object) {
           object.fetch({reset:true});
-        })
+        });
       } else {
         this.setupEditorModels();
         this.setupEditorCollections();
       }
-
     },
 
     publishProject: function() {

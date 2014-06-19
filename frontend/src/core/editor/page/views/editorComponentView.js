@@ -31,6 +31,11 @@ define(function(require){
     postRender: function () {
       this.$el.addClass('component-' + this.model.get('_layout'));
       this.setupDragDrop();
+
+      _.defer(_.bind(function(){
+        this.trigger('componentView:postRender');
+        Origin.trigger('pageView:itemRendered');
+      }, this));
     },
 
     deleteComponent: function(event) {

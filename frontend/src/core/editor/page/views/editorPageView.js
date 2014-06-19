@@ -20,17 +20,59 @@ define(function(require){
       'click a.edit-page'    : 'loadPageEdit',
       'click a.delete-page'  : 'deletePage',
       'click .paste-article' : 'onPaste',
-      'click .paste-cancel'  : 'pasteCancel'
+      'click .paste-cancel'  : 'pasteCancel',
+      'click a.btn'          : 'storeScrollPosition',
+      'click a.open-context-icon' : 'storeScrollPosition'
     },
 
+    childrenCount: 0,
+    childrenRenderedCount: 0,
+
     preRender: function() {
+      this.setupChildCount();
+
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorView:moveArticle:' + this.model.get('_id'), this.render);
       this.listenTo(Origin, 'editorView:cutArticle:' + this.model.get('_id'), this.onCutArticle);
+
+      this.listenTo(Origin, 'pageView:itemRendered', this.evaluateChildStatus);
+    },
+
+    setupChildCount: function() {
+      var articles = Origin.editor.data.articles.where({_parentId: this.model.get('_id')});
+      var articleList = [], blockList = [];
+
+      _.each(articles, function(article) {
+        articleList.push(article.get('_id'));
+      });
+
+      var blocks = _.filter(Origin.editor.data.blocks.models, function (block) {
+        return _.contains(articleList, block.get('_parentId'));
+      });
+
+      _.each(blocks, function(block) {
+        blockList.push(block.get('_id'));
+      });
+
+      var components = _.filter(Origin.editor.data.components.models, function(component) {
+        return _.contains(blockList, component.get('_parentId'));
+      });
+
+      this.childrenCount = articles.length + blocks.length + components.length;
+    },
+
+    evaluateChildStatus: function() {
+      this.childrenRenderedCount++;
+
+      if (this.childrenCount == this.childrenRenderedCount) {
+        // All child controls of the page have been rendered so persist the scroll position
+        this.scrollIntoPosition();
+      }
     },
 
     postRender: function() {
       this.addArticleViews();
+
       _.defer(_.bind(function(){
         this.trigger('pageView:postRender');
       }, this));
@@ -74,12 +116,12 @@ define(function(require){
     addArticle: function(event) {
       event.preventDefault();
       
-      var thisView = this;
+      var _this = this;
       var newPageArticleModel = new EditorArticleModel();
       newPageArticleModel.save({
         title: window.polyglot.t('app.placeholdernewarticle'),
         body: window.polyglot.t('app.placeholdereditthistext'),
-        _parentId: thisView.model.get('_id'),
+        _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id')
       },
       {

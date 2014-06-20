@@ -25,6 +25,13 @@ module.exports = function(grunt) {
               src: ['frontend/src/**/assets/**'],
               dest: 'frontend/build/adaptbuilder/css/assets/',
               filter: 'isFile'
+            },
+            {
+              expand: true,
+              flatten: false,
+              src: ['*/**'],
+              dest: 'frontend/build/libraries/tinymce/',
+              cwd: 'frontend/src/core/libraries/tinymce/'
             }
           ]
         }

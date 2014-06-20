@@ -30,11 +30,14 @@ define(function(require){
       this.$el.html(template(data));
       _.defer(_.bind(function() {
         this.postRender();
+        this.onReady();
       }, this));
       return this;
     },
 
-    postRender: function() {}
+    postRender: function() {},
+
+    onReady: function() {}
 
   });
 

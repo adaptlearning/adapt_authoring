@@ -52,7 +52,6 @@ define(function(require) {
         schema: schema,
         startval: this.model.get('properties') 
       });
-
     },
 
     cancel: function (event) {

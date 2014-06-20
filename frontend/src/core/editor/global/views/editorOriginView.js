@@ -2,6 +2,7 @@ define(function(require){
 
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
+  var tinymce = require('tinymce');
 
   var EditorOriginView = OriginView.extend({
 
@@ -87,6 +88,19 @@ define(function(require){
       $('.paste-zone a').removeClass('visibility-hidden');
       this.$el.parent().children('.drop-only').css({visibility : 'hidden'});
     },
+
+    setupTinyMCE: function(selector) {
+      tinyMCE.baseURL = "/libraries/tinymce/";
+      tinyMCE.init({
+        selector: selector
+      });
+    },
+
+    onReady: function() {
+      if (this.$('.text-editor')) {
+        this.setupTinyMCE('.text-editor');
+      }
+    }
 
   });
 

@@ -14,10 +14,8 @@ define(function(require) {
       'click .editing-overlay-panel-title': 'toggleContentPanel'
     },
 
-    initialize: function() {
-      //this.listenTo(Origin, 'editingOverlay:views:remove', this.remove);
+    preRender: function() {
       this.listenTo(Origin, 'editorPageEditSidebar:views:save', this.saveEditing);
-      this.render();
     },
 
     toggleContentPanel: function(event) {
@@ -31,12 +29,9 @@ define(function(require) {
     },
 
     saveEditing: function() {
-      console.log('saving');
-      var model = this.model;
-
-      model.save({
+      this.model.save({
         title: this.$('.page-title').val(),
-        body: this.$('.page-body').val(),
+        body: tinyMCE.get('page-body').getContent(),
         linkText: this.$('.page-linktext').val(),
         _graphic: {
           alt: this.$('.page-graphic-alt').val(),

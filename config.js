@@ -17,7 +17,8 @@ require.config({
       editorMenu: 'core/editor/menu',
       editorCourse: 'core/editor/course',
       editorConfig: 'core/editor/config',
-      editorGlobal: 'core/editor/global'
+      editorGlobal: 'core/editor/global',
+      tinymce: 'core/libraries/tinymce/tinymce.min'
     },
     shim: {
       jquery: [
@@ -54,6 +55,13 @@ require.config({
       'jquery-form': {
         deps: ['jquery'],
         exports: "$"
+      },
+      tinyMCE: {
+        exports: 'tinyMCE',
+        init: function () {
+          this.tinyMCE.DOM.events.domLoaded = true;
+          return this.tinyMCE;
+        }
       }
     }
 });

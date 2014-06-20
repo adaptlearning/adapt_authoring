@@ -2,6 +2,7 @@ define(function(require){
 
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
+  var tinymce = require('tinymce');
 
   var EditorOriginView = OriginView.extend({
 
@@ -87,6 +88,36 @@ define(function(require){
       $('.paste-zone a').removeClass('visibility-hidden');
       this.$el.parent().children('.drop-only').css({visibility : 'hidden'});
     },
+
+    setupTinyMCE: function(selector) {
+      var elementSelector = selector;
+      if (tinyMCE.editors.length > 0 ) {
+        tinyMCE.editors = [];
+      }
+      tinyMCE.execCommand('mceFocus', false, elementSelector);
+      tinyMCE.execCommand('mceRemoveControl', false, elementSelector);
+      tinyMCE.baseURL = "/libraries/tinymce/";
+      tinyMCE.init({
+        mode : "exact",
+        elements: elementSelector,
+        plugins: [
+          "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+          "searchreplace wordcount visualblocks visualchars code fullscreen",
+          "insertdatetime media nonbreaking save table contextmenu directionality",
+          "emoticons template paste textcolor colorpicker textpattern"
+        ]
+      });
+    },
+
+    onReady: function() {
+      var that = this;
+      if (this.$('.text-editor').length > 0) {
+        this.$('.text-editor').each(function() {
+          var id = $(this).attr('id');
+          that.setupTinyMCE(id);
+        });
+      }
+    }
 
   });
 

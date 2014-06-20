@@ -69,12 +69,7 @@ define(function(require){
     // then create new instances of:
     // Origin.editor.course, Origin.editor.config, Origin.editor.contentObjects,
     // Origin.editor.articles, Origin.editor.blocks
-    setupEditor: function(event) {
-
-      if (event) {
-        console.log(event);
-      }
-      console.log('refreshing data...');
+    setupEditor: function() {
 
       this.loadedData = {
         clipboard: false,

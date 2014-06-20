@@ -90,15 +90,26 @@ define(function(require){
     },
 
     setupTinyMCE: function(selector) {
+      var elementSelector = selector;
+      if (tinyMCE.editors.length > 0 ) {
+        tinyMCE.editors = [];
+      }
+      tinyMCE.execCommand('mceFocus', false, elementSelector);
+      tinyMCE.execCommand('mceRemoveControl', false, elementSelector);
       tinyMCE.baseURL = "/libraries/tinymce/";
       tinyMCE.init({
-        selector: selector
+        mode : "exact",
+        elements: elementSelector
       });
     },
 
     onReady: function() {
-      if (this.$('.text-editor')) {
-        this.setupTinyMCE('.text-editor');
+      var that = this;
+      if (this.$('.text-editor').length > 0) {
+        this.$('.text-editor').each(function() {
+          var id = $(this).attr('id');
+          that.setupTinyMCE(id);
+        });
       }
     }
 

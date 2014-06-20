@@ -70,7 +70,7 @@ define(function(require) {
         _componentType: model.attributes._componentType._id, // TODO -- Not sure about the schema here
         title: this.$('.setting-title').val(),
         displayTitle: this.$('.setting-displaytitle').val(),
-        body: this.$('.setting-body').val(),
+        body: tinyMCE.get('setting-body').getContent(),
         properties: propertiesJson},
         {
           error: function() {

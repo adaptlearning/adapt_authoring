@@ -70,6 +70,7 @@ define(function(require){
     // Origin.editor.course, Origin.editor.config, Origin.editor.contentObjects,
     // Origin.editor.articles, Origin.editor.blocks
     setupEditor: function() {
+
       this.loadedData = {
         clipboard: false,
         course: false,
@@ -98,12 +99,11 @@ define(function(require){
       if (Origin.editor.data.course) {
         _.each(Origin.editor.data, function(object) {
           object.fetch({reset:true});
-        })
+        });
       } else {
         this.setupEditorModels();
         this.setupEditorCollections();
       }
-
     },
 
     publishProject: function() {

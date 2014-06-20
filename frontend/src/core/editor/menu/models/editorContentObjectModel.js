@@ -20,7 +20,6 @@ define(function(require) {
 		},
 
 		setupConstructor: function() {
-			console.log(this);
 			if (this.get('_parentId') === Origin.editor.data.course.get('_id')) {
 				this._parent === 'course';
 			}

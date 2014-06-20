@@ -44,7 +44,11 @@ define(function(require) {
 
       this.$('.component-properties').jsoneditor({
         no_additional_properties: true, 
-        no_additional_properties: true,
+        disable_array_reorder: true,
+        disable_collapse: true,
+        disable_edit_json: true,
+        disable_properties: true,
+        form_name_root: 'briantest',
         schema: schema,
         startval: this.model.get('properties') 
       });
@@ -65,8 +69,9 @@ define(function(require) {
       model.save({
         _parentId: this.$('.component-parent').find(':selected').val(),
         _componentType: model.attributes._componentType._id, // TODO -- Not sure about the schema here
-        title: this.$('.component-title').val(),
-        body: this.$('.component-body').val(),
+        title: this.$('.setting-title').val(),
+        displayTitle: this.$('.setting-displaytitle').val(),
+        body: this.$('.setting-body').val(),
         properties: propertiesJson},
         {
           error: function() {

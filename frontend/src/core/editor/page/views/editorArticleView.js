@@ -39,6 +39,7 @@ define(function(require){
       this.setupDragDrop();
       _.defer(_.bind(function(){
         this.trigger('articleView:postRender');
+        Origin.trigger('pageView:itemRendered');
       }, this));
     },
 
@@ -107,7 +108,6 @@ define(function(require){
           success: function(success) {
             _this.remove();
             Origin.trigger('editorView:fetchData');
-            // console.log('success', success);
           },
           error: function(error) {
             console.log('error', error);

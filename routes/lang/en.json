@@ -80,5 +80,11 @@
   "app.filetypevideo" : "Video",
   "app.assetsize" : "Size",
   "app.assetduration" : "Duration",
-  "app.assetdimensions" : "Dimensions"
+  "app.assetdimensions" : "Dimensions",
+  "app.title" : "Title",
+  "app.displaytitle" : "Display title",
+  "app.description" : "Description",
+  "app.bodytext" : "Body text",
+  "app.settingsgeneral" : "General",
+  "app.settingsextensions" : "Extensions"
 }

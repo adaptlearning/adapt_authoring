@@ -34,10 +34,9 @@ define(function(require) {
       var model = this.model;
 
       model.save({
-        _parentId: this.$('.block-parent').find(':selected').val(),
-        title: this.$('.article-title').val(),
-        body: this.$('.article-body').val(),
-        _sortOrder: this.$('.article-position').val()
+        title: this.$('.setting-title').val(),
+        displayTitle: this.$('.setting-displaytitle').val(),
+        body: this.$('.setting-body').val()
       },
       {
         error: function() {

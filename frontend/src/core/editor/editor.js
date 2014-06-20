@@ -83,7 +83,9 @@ define(function(require) {
 			case 'page':
 				// Update page title
 				Origin.trigger('location:title:update', {title: 'Page editor'});
+
 				// Create Editor page view
+                Origin.editor.scrollTo = 0;
 				Origin.router.createView(EditorView, {
 				currentCourseId: location, 
 				currentView: 'page', 

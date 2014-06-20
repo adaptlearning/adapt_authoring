@@ -15,6 +15,9 @@ define(function(require){
       this.listenTo(Origin, 'editorView:pasteCancel', this.hidePasteZones);
     },
 
+    postRender: function() {
+    },
+
     onCopy: function(event) {
       if (event) {
         event.preventDefault();

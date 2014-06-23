@@ -10,21 +10,6 @@
     <div class="add-control">
       <a href="#" class="btn add-component">{{t 'app.addcomponent'}}</a>
     </div>
-
-    <div class="add-component-form">
-       <select class="add-component-form-componentType">
-        {{#each componentTypes}}
-          <option value="{{name}}">{{name}}</option>
-          {{else}}
-          <option value="">--</option>
-        {{/each}}
-      </select>
-      <select class="add-component-form-layout">
-        {{#each layoutOptions}}
-          <option value="{{type}}">{{t name}}</option>
-        {{/each}}
-      </select>
-    </div>
   {{/if}}
 
 </div>

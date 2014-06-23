@@ -15,7 +15,9 @@ define(function(require) {
 		events: {
 			'click .notify-popup-alert-button':'onAlertButtonClicked',
 			'click .notify-popup-prompt-button': 'onPromptButtonClicked',
-			'click .notify-popup-done': 'onCloseButtonClicked'
+			'click .notify-popup-done': 'onCloseButtonClicked',
+			'click .notify-popup-component-option' : 'onSelectComponent',
+			'click .notify-popup-layout-option' : 'onSelectLayout'
 		},
 
 		render: function() {
@@ -34,7 +36,16 @@ define(function(require) {
 
 		onPromptButtonClicked: function(event) {
 			event.preventDefault();
-			Origin.trigger($(event.currentTarget).attr('data-event'));
+			var eventToTrigger = $(event.currentTarget).attr('data-event');
+
+			if (eventToTrigger) {
+				if (this.model.get('componentTypes')) {
+					Origin.trigger(eventToTrigger, {componentType: this.model.get('component'), layout: this.model.get('layout')});
+				} else {
+					Origin.trigger(eventToTrigger);					
+				}
+			}
+
 			this.closeNotify();
 		},
 
@@ -42,6 +53,24 @@ define(function(require) {
 			event.preventDefault();
 			Origin.trigger('notify:closed');
 			this.closeNotify();
+		},
+
+		onSelectComponent: function(event) {
+			event.preventDefault();
+
+			$('.notify-popup-component-option').removeClass('selected');
+			$(event.currentTarget).addClass('selected');
+
+			this.model.set('component', $(event.currentTarget).attr('data-component'));
+		},
+
+		onSelectLayout: function(event) {
+			event.preventDefault();
+
+			$('.notify-popup-layout-option').removeClass('selected');
+			$(event.currentTarget).addClass('selected');
+
+			this.model.set('layout', $(event.currentTarget).attr('data-layout'));
 		},
 
 		resetNotifySize: function() {

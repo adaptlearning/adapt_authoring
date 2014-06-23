@@ -40,6 +40,45 @@
         }
     }
 
+    .notify-popup-component-select {
+        height: 400px;
+        overflow-y: scroll;
+    }
+
+    .notify-popup-component-option {
+      border: 1px solid;
+      cursor: pointer;
+      &:hover {
+        background-color: gray; 
+      }
+      &.selected {
+        background-color: navy;
+      }
+    }
+
+    .notify-popup-component-option-icon {
+      border: 1px solid;
+      float: left;
+      height: 50px;
+      width: 50px;
+      margin-right: 20px;
+    }
+
+    .notify-popup-layout-option {
+      border: 1px solid;
+      float: left;
+      height: 50px;
+      width: 100px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: gray;
+      }
+      &.selected{
+        background-color: navy;
+      }
+    }
+
     .notify-popup-icon {
         .icon {
             font-size:60px;

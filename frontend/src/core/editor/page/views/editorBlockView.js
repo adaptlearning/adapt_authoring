@@ -16,7 +16,7 @@ define(function(require){
 
     events: _.extend(EditorOriginView.prototype.events, {
       'click a.block-delete'        : 'deleteBlock',
-      'click a.add-component'       : 'addComponent',
+      'click a.add-component'       : 'showComponentList',
       'click a.paste-block'         : 'onPaste',
       'click a.open-context-block'  : 'openContextMenu'
     }),
@@ -27,6 +27,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:removeComponent:' + this.model.get('_id'), this.handleRemovedComponent);
       this.listenTo(Origin, 'editorView:moveComponent:' + this.model.get('_id'), this.reRender);
       this.listenTo(Origin, 'editorView:cutComponent:' + this.model.get('_id'), this.onCutComponent);
+      this.listenTo(Origin, 'editorView:addComponent:' + this.model.get('_id'), this.addComponent);
 
       this.on('contextMenu:block:edit', this.loadPageEdit);
       this.on('contextMenu:block:copy', this.onCopy);
@@ -51,13 +52,14 @@ define(function(require){
     },
 
     evaluateComponents: function() {
-      var layoutOptions = [{
-        type: 'full',
-        name: 'app.layoutfull'
-      },
+      var layoutOptions = [
       {
         type: 'left',
         name: 'app.layoutleft'
+      },
+      {
+        type: 'full',
+        name: 'app.layoutfull'
       },
       {
         type: 'right',
@@ -183,15 +185,33 @@ define(function(require){
       Origin.router.navigate('#/editor/' + this.model.get('_type') + '/' + this.model.get('_id') + '/edit', {trigger: true});
     },
 
-    addComponent: function(event) {
+    showComponentList: function(event) {
       event.preventDefault();
 
-      // Retrieve from UI
-      var layout = this.$('.add-component-form-layout').val();
-      var selectedComponentType = this.$('.add-component-form-componentType').val();
+      var props = {
+        _type: 'popup',
+        _showIcon: true,
+        title: window.polyglot.t('app.addcomponent'),
+        body: 'Please select a component to add',
+        componentTypes: Origin.editor.componentTypes.toJSON(),
+        layoutOptions: this.model.get('layoutOptions'),
+        _prompts: [
+          {_callbackEvent: 'editorView:addComponent:' + this.model.get('_id'), promptText: window.polyglot.t('app.ok')},
+          {_callbackEvent:'', promptText: window.polyglot.t('app.cancel')}
+        ]
+      };
+
+      Origin.trigger('notify:prompt', props);
+    },
+
+    addComponent: function(data) {
+
+      if (!data.componentType || !data.layout) {
+        return;
+      }
 
       var componentType = _.find(Origin.editor.componentTypes.models, function(type){
-        return type.get('name') == selectedComponentType;
+        return type.get('name') == data.componentType;
       });
 
       var _this = this;
@@ -205,7 +225,7 @@ define(function(require){
         _type: 'component',
         _componentType: componentType.get('_id'),
         _component: componentType.get('component'),
-        _layout: layout,
+        _layout: data.layout,
         version: componentType.get('version')
       },
       {

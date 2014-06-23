@@ -30,6 +30,7 @@
   "app.addarticle" : "Add article",
   "app.addblock" : "Add block",
   "app.addcomponent" : "Add component",
+  "app.pleaseselectcomponent" : "Please select a component",
   "app.addpage" : "Add page",
   "app.addsection" : "Add section",
   "app.editthistext" : "{Edit this text}",

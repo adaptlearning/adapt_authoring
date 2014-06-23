@@ -192,7 +192,7 @@ define(function(require){
         _type: 'popup',
         _showIcon: true,
         title: window.polyglot.t('app.addcomponent'),
-        body: 'Please select a component to add',
+        body: window.polyglot.t('app.pleaseselectcomponent'),
         componentTypes: Origin.editor.componentTypes.toJSON(),
         layoutOptions: this.model.get('layoutOptions'),
         _prompts: [

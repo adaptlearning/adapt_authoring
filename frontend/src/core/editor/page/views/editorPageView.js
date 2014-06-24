@@ -129,8 +129,9 @@ define(function(require){
       var _this = this;
       var newPageArticleModel = new EditorArticleModel();
       newPageArticleModel.save({
-        title: window.polyglot.t('app.placeholdernewarticle'),
-        body: window.polyglot.t('app.placeholdereditthistext'),
+        title: '',
+        displayTitle: '',
+        body: '',
         _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id')
       },

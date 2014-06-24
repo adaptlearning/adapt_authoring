@@ -6,11 +6,16 @@ define(function(require) {
   var EditorPageSidebarView = SidebarItemView.extend({
     
     events: {
-        'click button.editor-page-sidebar-publish' : 'publishProject'
+      'click button.editor-page-sidebar-publish' : 'publishProject',
+      'click button.editor-page-sidebar-preview' : 'previewProject'
     },
 
     publishProject: function() {
-        Origin.trigger('editorPageSidebarView:publish');
+      Origin.trigger('editorPageSidebarView:publish');
+    },
+
+    previewProject: function() {
+      Origin.trigger('editorPageSidebarView:preview');
     }
   }, {
     template: 'editorPageSidebar'

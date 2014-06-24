@@ -58,7 +58,6 @@ function slugify(s) {
  *
  */
 AdaptOutput.prototype.preview = function (courseId, req, res, next) {
-
   database.getDatabase(function (err, db) {
     if (err) {
       return next(err);
@@ -73,7 +72,7 @@ AdaptOutput.prototype.preview = function (courseId, req, res, next) {
         db.exportResults(results, function (transformed) {
           return res.json(transformed);
         });
-      } 
+      }
 
       res.statusCode = 404;
       return res.end();
@@ -86,7 +85,7 @@ AdaptOutput.prototype.preview = function (courseId, req, res, next) {
  * implements OutputPlugin#publish
  *
  */
-AdaptOutput.prototype.publish = function (courseId, req, res, next) {
+AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
   var outputJson = {};
   var user = usermanager.getCurrentUser(),
     outputJson = {},
@@ -443,7 +442,11 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
         });
       },
 
-      function(callback) {       
+      function(callback) {
+        if (preview) {
+          return callback(null, 'Preview, so no zip');
+        }
+
         logger.log('info', '9. Zipping it all up');
         var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, user._id, 'download.zip'));
         var archive = archiver('zip');
@@ -464,6 +467,10 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
       },
       // Other steps...
       function(callback) {
+        if (preview) {
+          return callback(null, 'Preview, so no download');
+        }
+
         // Trigger the file download
         var filename = slugify(outputJson['course'].title);
         var filePath = path.join(TEMP_DIR, courseId, user._id, 'download.zip');
@@ -490,6 +497,7 @@ AdaptOutput.prototype.publish = function (courseId, req, res, next) {
     // optional callback
     function(err, results){
       logger.log('info', results);
+      return next();
     });
   });
 

@@ -48,6 +48,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:cut', this.cutContent);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
       this.listenTo(Origin, 'editorPageSidebarView:publish', this.publishProject);
+      this.listenTo(Origin, 'editorPageSidebarView:preview', this.previewProject);
 
       this.render();
       this.setupEditor();
@@ -108,6 +109,10 @@ define(function(require){
 
     publishProject: function() {
       window.open('/api/output/adapt/publish/' + this.currentCourseId);
+    },
+
+    previewProject: function() {
+      window.open('/api/output/adapt/preview/' + this.currentCourseId + '/' + Origin.sessionModel.get('id'));
     },
 
     setupEditorModels: function(editorModels) {

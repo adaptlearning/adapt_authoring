@@ -18,19 +18,7 @@ server.get('/preview/:course/:user/*', function (req, res, next) {
       loggedInUser = usermanager.getCurrentUser();
 
   if (user == loggedInUser._id) {
-    if (file == index) {
-      // Publish before preview
-      AdaptOutputPlugin.prototype.publish(course, true, req, res, function (error, result) {
-        if (error) {
-          res.json({ success: false, message: error.message });
-          return res.end();
-        }
-        res.sendfile(requestedFile);
-      });
-    } else {
-      // Just serve the file
-      res.sendfile(requestedFile);
-    }
+    res.sendfile(requestedFile);
   } else {
     // User doesn't have access to this course
     res.statusCode = 500;

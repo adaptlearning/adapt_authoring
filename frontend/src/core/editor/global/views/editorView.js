@@ -112,7 +112,7 @@ define(function(require){
     },
 
     previewProject: function() {
-      window.open('/preview/' + this.currentCourseId + '/' + Origin.sessionModel.get('id') + '/main.html');
+      window.open('/api/output/adapt/preview/' + this.currentCourseId + '/' + Origin.sessionModel.get('id'));
     },
 
     setupEditorModels: function(editorModels) {

@@ -17,6 +17,7 @@ define(function(require) {
     previewProject: function() {
       Origin.trigger('editorPageSidebarView:preview');
     }
+
   }, {
     template: 'editorPageSidebar'
   });

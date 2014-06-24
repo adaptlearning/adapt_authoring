@@ -49,6 +49,8 @@ define(function(require){
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
       this.listenTo(Origin, 'editorPageSidebarView:publish', this.publishProject);
       this.listenTo(Origin, 'editorPageSidebarView:preview', this.previewProject);
+      this.listenTo(Origin, 'editorMenuSidebarView:publish', this.publishProject);
+      this.listenTo(Origin, 'editorMenuSidebarView:preview', this.previewProject);
 
       this.render();
       this.setupEditor();

@@ -33,7 +33,6 @@ define(function(require){
       this.listenTo(Origin, 'editorView:moveArticle:' + this.model.get('_id'), this.render);
       this.listenTo(Origin, 'editorView:cutArticle:' + this.model.get('_id'), this.onCutArticle);
       this.listenTo(Origin, 'editingOverlay:views:hide', this.persistScrollPosition);
-
       this.listenTo(Origin, 'pageView:itemRendered', this.evaluateChildStatus);
 
       var captureScroll = function() {

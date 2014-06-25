@@ -16,6 +16,10 @@
       "type": "string",
       "required": true
     },
+    "description": {
+      "type": "string",
+      "required": false
+    },
     "version":{
       "type": "string",
       "required": true

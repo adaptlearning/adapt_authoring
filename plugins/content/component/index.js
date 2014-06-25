@@ -300,6 +300,7 @@ function addComponentType(componentInfo, cb) {
           name: pkgMeta.name,
           displayName: pkgMeta.displayName,
           component: pkgMeta.component,
+          description: pkgMeta.description,
           version: pkgMeta.version,
           properties: schema.properties
         };

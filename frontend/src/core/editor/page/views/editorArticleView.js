@@ -81,8 +81,9 @@ define(function(require){
       var newPageBlockModel = new EditorBlockModel();
 
       newPageBlockModel.save({
-        title: window.polyglot.t('app.placeholdernewblock'),
-        body: window.polyglot.t('app.placeholdereditthistext'),
+        title: '',
+        displayTitle: '',
+        body: '',
         _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id')
       },

@@ -218,8 +218,9 @@ define(function(require){
       var newComponentModel = new EditorComponentModel();
 
       newComponentModel.save({
-        title: window.polyglot.t('app.placeholdernewcomponent'),
-        body: window.polyglot.t('app.placeholdereditthistext'),
+        title: '',
+        displayTitle: '',
+        body: '',
         _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
         _type: 'component',

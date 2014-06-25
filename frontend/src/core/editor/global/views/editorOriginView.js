@@ -100,6 +100,11 @@ define(function(require){
       tinyMCE.init({
         mode : "exact",
         elements: elementSelector,
+        menubar: false,
+        contextmenu: "code | link inserttable | cell row column deletetable",
+        toolbar: [
+          "undo redo | styleselect | bold italic | alignleft aligncenter alignright | bullist numlist | link table | code"
+        ],
         plugins: [
           "advlist autolink lists link image charmap print preview hr anchor pagebreak",
           "searchreplace wordcount visualblocks visualchars code fullscreen",

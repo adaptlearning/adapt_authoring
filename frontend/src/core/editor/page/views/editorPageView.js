@@ -32,6 +32,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorView:moveArticle:' + this.model.get('_id'), this.render);
       this.listenTo(Origin, 'editorView:cutArticle:' + this.model.get('_id'), this.onCutArticle);
+      this.listenTo(Origin, 'editingOverlay:views:hide', this.persistScrollPosition);
       this.listenTo(Origin, 'pageView:itemRendered', this.evaluateChildStatus);
 
       var captureScroll = function() {
@@ -43,6 +44,12 @@ define(function(require){
       };
 
       _.delay(captureScroll, 2000);
+    },
+
+    persistScrollPosition: function() {
+      if (Origin.editor.scrollTo) {
+          window.scrollTo(0, Origin.editor.scrollTo);  
+      }
     },
 
     setupChildCount: function() {
@@ -73,9 +80,7 @@ define(function(require){
 
       if (this.childrenCount == this.childrenRenderedCount) {
         // All child controls of the page have been rendered so persist the scroll position
-        if (Origin.editor.scrollTo) {
-          window.scrollTo(0, Origin.editor.scrollTo);  
-        }
+        this.persistScrollPosition();
       }
     },
 
@@ -128,8 +133,9 @@ define(function(require){
       var _this = this;
       var newPageArticleModel = new EditorArticleModel();
       newPageArticleModel.save({
-        title: window.polyglot.t('app.placeholdernewarticle'),
-        body: window.polyglot.t('app.placeholdereditthistext'),
+        title: '',
+        displayTitle: '',
+        body: '',
         _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id')
       },

@@ -12,7 +12,7 @@
       "type": "string",
       "required": true
     },
-    "component": {
+    "extension": {
       "type": "string",
       "required": true
     },

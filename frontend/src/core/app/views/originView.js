@@ -20,6 +20,8 @@ define(function(require){
         this.render();
       }
       this.listenTo(Origin, 'remove:views', this.remove);
+      this.listenTo(Origin, 'origin:showLoading', this.showLoading);
+      this.listenTo(Origin, 'origin:hideLoading', this.hideLoading);
     },
 
     preRender: function() {},
@@ -37,7 +39,15 @@ define(function(require){
 
     postRender: function() {},
 
-    onReady: function() {}
+    onReady: function() {},
+
+    showLoading: function () {
+      $('.loading').show();
+    },
+
+    hideLoading: function () {
+      $('.loading').hide();
+    }
 
   });
 

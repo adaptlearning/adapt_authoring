@@ -10,6 +10,7 @@ define(function(require){
   Origin.initialize = _.once(function() {
       Origin.trigger('origin:initialize');
       Backbone.history.start();
+      Origin.trigger('origin:hideLoading');
   });
 
   Origin.editor = {};

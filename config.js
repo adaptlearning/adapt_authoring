@@ -18,6 +18,7 @@ require.config({
       editorCourse: 'core/editor/course',
       editorConfig: 'core/editor/config',
       editorGlobal: 'core/editor/global',
+      editorExtensions: 'core/editor/extensions',
       tinymce: 'core/libraries/tinymce/tinymce.min'
     },
     shim: {

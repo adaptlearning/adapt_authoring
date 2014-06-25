@@ -5,12 +5,18 @@ define(function(require) {
 
 	var SidebarItemView = OriginView.extend({
 
-		className: 'sidebar-item',
+  	className: 'sidebar-item',
 
-		events: {
-      'click button.editor-common-sidebar-publish': 'publishProject',
-      'click button.editor-common-sidebar-preview': 'previewProject',
-      'click button.editor-common-sidebar-close'	: 'closeProject', 
+  	events: {
+      'click button.editor-common-sidebar-extensions' : 'manageExtensions',
+      'click button.editor-common-sidebar-publish'    : 'publishProject',
+      'click button.editor-common-sidebar-preview'    : 'previewProject',
+      'click button.editor-common-sidebar-close'	    : 'closeProject', 
+    },
+
+    manageExtensions: function() {
+      Origin.router.navigate('#/editor/extensions/'+ '1234', {trigger: true});
+      // Origin.router.navigate('#/editor/' + this.model.get('_id') + '/edit', {trigger: true});
     },
 
   	publishProject: function() {

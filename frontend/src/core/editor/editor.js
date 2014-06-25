@@ -26,6 +26,8 @@ define(function(require) {
   var EditorComponentEditView = require('editorPage/views/editorComponentEditView');
   var EditorComponentEditSidebarView = require('editorPage/views/editorComponentEditSidebarView');
 
+  var EditorExtensionsEditView = require('editorExtensions/views/editorExtensionsEditView');
+
 	Origin.on('router:editor', function(location, subLocation, action) {
 
     if (location === 'article') {
@@ -64,6 +66,18 @@ define(function(require) {
       return;
     }
 
+    if (location === 'extensions') {
+      // alert('edit extensions');
+      //var extensionModel = new ExtensionModel({_id: subLocation});
+
+      Origin.trigger('location:title:update', {title: 'Manage extensions'});
+      
+      // Origin.sidebar.addView();
+      // Origin.sidebar.addView(new editorExtensionsEditSidebarView().$el);
+      Origin.editingOverlay.addView(new EditorExtensionsEditView().$el);
+      return;
+    }
+
 		switch (subLocation) {
 			case 'menu':
 				// Update page title
@@ -85,7 +99,7 @@ define(function(require) {
 				Origin.trigger('location:title:update', {title: 'Page editor'});
 
 				// Create Editor page view
-                Origin.editor.scrollTo = 0;
+        Origin.editor.scrollTo = 0;
 				Origin.router.createView(EditorView, {
     				currentCourseId: location, 
     				currentView: 'page', 

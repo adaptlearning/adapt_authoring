@@ -73,8 +73,6 @@ Extension.prototype.onDatabaseCreated = function (db) {
     logger.log('error', 'failed to parse schema file at ' + schemaPath, error);
   }
 
-  // don't need a seperate mmodel for extensions ??
-  //ContentPlugin.prototype.onDatabaseCreated.call(this, db);
 };
 
 /**

@@ -7,6 +7,24 @@ define(function(require) {
 
 		className: 'sidebar-item',
 
+		events: {
+      'click button.editor-common-sidebar-publish': 'publishProject',
+      'click button.editor-common-sidebar-preview': 'previewProject',
+      'click button.editor-common-sidebar-close'	: 'closeProject', 
+    },
+
+  	publishProject: function() {
+    	Origin.trigger('editorCommon:publish');
+    },
+
+    previewProject: function() {
+    	Origin.trigger('editorCommon:preview');
+    },
+
+    closeProject: function() {
+    	Backbone.history.navigate('#/dashboard');
+    },
+		
 		initialize: function() {
 			this.render();
 			this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);

@@ -62,6 +62,8 @@
   "app.placeholdereditthistext" : "{Edit this text...}",
   "app.confirmpublish" : "Are you sure you want to publish?",
   "app.publish" : "Publish",
+  "app.preview" : "Preview",
+  "app.manageextensions" : "Manage extensions",
   "app.defaultlanguage" : "Default language",
   "app.questionweight" : "Question weight",
   "app.editcoursesettings" : "Edit Course Settings",

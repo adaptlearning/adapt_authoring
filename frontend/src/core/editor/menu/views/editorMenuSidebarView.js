@@ -5,19 +5,8 @@ define(function(require) {
 
     var EditorMenuSidebarView = SidebarItemView.extend({
 
-      events: {
-        'click button.editor-menu-sidebar-publish' : 'publishProject',
-        'click button.editor-menu-sidebar-preview' : 'previewProject'
-      },
-
-      publishProject: function() {
-        Origin.trigger('editorMenuSidebarView:publish');
-      },
-
-      previewProject: function() {
-        Origin.trigger('editorMenuSidebarView:preview');
-      }
-
+      // If adding 'events', extend from the base view
+      
     }, {
         template: 'editorMenuSidebar'
     });

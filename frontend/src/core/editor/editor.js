@@ -69,16 +69,16 @@ define(function(require) {
 				// Update page title
 				Origin.trigger('location:title:update', {title: 'Menu editor'});
 				// Create Editor menu view
-			Origin.router.createView(EditorView, {
-		        currentCourseId: location, 
-		        currentView: 'menu', 
-		        currentPageId: (action || null)
-		    });
-		    // update sidebar view
-		    Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
-		    	"backButtonText": "Back to courses",
-		    	"backButtonRoute": "/#/dashboard"
-		    });
+    			Origin.router.createView(EditorView, {
+    		        currentCourseId: location, 
+    		        currentView: 'menu', 
+    		        currentPageId: (action || null)
+    		    });
+    		    // update sidebar view
+    		    Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
+    		    	"backButtonText": "Back to courses",
+    		    	"backButtonRoute": "/#/dashboard"
+    		    });
 				break;
 			case 'page':
 				// Update page title
@@ -87,15 +87,15 @@ define(function(require) {
 				// Create Editor page view
                 Origin.editor.scrollTo = 0;
 				Origin.router.createView(EditorView, {
-				currentCourseId: location, 
-				currentView: 'page', 
-				currentPageId: (action || null)
-			});
+    				currentCourseId: location, 
+    				currentView: 'page', 
+    				currentPageId: (action || null)
+    			});
 				// update sidebar view
-			Origin.sidebar.addView(new EditorPageSidebarView().$el, {
-		    	"backButtonText": "Back to course structure",
-		    	"backButtonRoute": "/#/editor/" + location + "/menu"
-		    });
+    			Origin.sidebar.addView(new EditorPageSidebarView().$el, {
+    		    	"backButtonText": "Back to course structure",
+    		    	"backButtonRoute": "/#/editor/" + location + "/menu"
+    		    });
 				break;
 			case 'edit':
 				var contentObjectModel = new EditorContentObjectModel({_id: location});

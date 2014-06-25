@@ -1,9 +1,6 @@
 /**
- * Component content plugin
+ * Extension content plugin
  *
- * The component plugin is a bit more complex than other content plugins,
- * since it needs to manage any kind of adapt component that has been
- * published to our bower repository.
  */
 
 var origin = require('../../../'),
@@ -25,28 +22,20 @@ var origin = require('../../../'),
     util = require('util'),
     path = require('path');
 
-function Component () {
+function Extension () {
 }
 
-util.inherits(Component, ContentPlugin);
+util.inherits(Extension, ContentPlugin);
 
 /**
  * implements ContentObject#getModelName
  *
  * @return {string}
  */
-Component.prototype.getModelName = function () {
-  return 'component';
+Extension.prototype.getModelName = function () {
+  return 'extension';
 };
 
-/**
- * returns the child type for this object
- *
- * @return string
- */
-Component.prototype.getChildType = function () {
-  return false; // no children evAr!
-};
 
 /**
  * Overrides base.retrieve
@@ -55,7 +44,7 @@ Component.prototype.getChildType = function () {
  * @param {object} options
  * @param {callback} next
  */
-Component.prototype.retrieve = function (search, options, next) {
+Extension.prototype.retrieve = function (search, options, next) {
   // shuffle params
   if ('function' === typeof options) {
     next = options;
@@ -63,7 +52,7 @@ Component.prototype.retrieve = function (search, options, next) {
   }
 
   if (!options.populate) {
-    options.populate = { '_componentType': ['displayName'] };
+    options.populate = { '_extensionType': ['displayName'] };
   }
 
   ContentPlugin.prototype.retrieve.call(this, search, options, next);
@@ -74,17 +63,16 @@ Component.prototype.retrieve = function (search, options, next) {
  *
  * @param {object} db
  */
-Component.prototype.onDatabaseCreated = function (db) {
-  var schemaPath = path.join(__dirname, 'componenttype.schema');
+Extension.prototype.onDatabaseCreated = function (db) {
+  var schemaPath = path.join(__dirname, 'extensiontype.schema');
   try {
     var schema = fs.readFileSync(schemaPath);
     schema = JSON.parse(schema);
-    db.addModel('componenttype', schema);
+    db.addModel('extensiontype', schema);
   } catch (error) {
     logger.log('error', 'failed to parse schema file at ' + schemaPath, error);
   }
 
-  ContentPlugin.prototype.onDatabaseCreated.call(this, db);
 };
 
 /**
@@ -119,20 +107,20 @@ function versionCompare (a, b) {
 function initialize () {
   var app = origin();
   app.once('serverStarted', function (server) {
-    // add componenttype list route
-    rest.get('/componenttype', function (req, res, next) {
-      fetchInstalledComponents(function (err, results) {
+    // add extensiontype list route
+    rest.get('/extensiontype', function (req, res, next) {
+      fetchInstalledExtensions(function (err, results) {
         if (err) {
           return next(err);
         }
 
-        // only send the latest version of the components
-        var components = {};
+        // only send the latest version of the extensions
+        var extensions = {};
         async.eachSeries(results, function (item, cb) {
-          if ('object' !== typeof components[item.name]) {
-            components[item.name] = item;
-          } else if (versionCompare(components[item.name].version, item.version) < 0) {
-            components[item.name] = item;
+          if ('object' !== typeof extensions[item.name]) {
+            extensions[item.name] = item;
+          } else if (versionCompare(extensions[item.name].version, item.version) < 0) {
+            extensions[item.name] = item;
           }
 
           cb(null);
@@ -142,19 +130,19 @@ function initialize () {
             return next(err);
           }
 
-          return res.json(_.values(components));
+          return res.json(_.values(extensions));
         });
       });
     });
 
-    // get a single componenttype definition by id
-    rest.get('/componenttype/:id', function (req, res, next) {
+    // get a single extensiontype definition by id
+    rest.get('/extension/:id', function (req, res, next) {
       database.getDatabase(function (err, db) {
         if (err) {
           return next(err);
         }
 
-        db.retrieve('componenttype', { _id: req.params.id }, function (err, results) {
+        db.retrieve('extensiontype', { _id: req.params.id }, function (err, results) {
           if (err) {
             return next(err);
           }
@@ -165,7 +153,7 @@ function initialize () {
           }
 
           res.statusCode = 404;
-          return res.json({ success: false, message: 'could not find component type' });
+          return res.json({ success: false, message: 'could not find extension type' });
         });
       });
     });
@@ -174,14 +162,14 @@ function initialize () {
 }
 
 /**
- * this will retrieve a list of components that have been installed on the system
- * if there are no components, it will make a single attempt to install components
+ * this will retrieve a list of extensions that have been installed on the system
+ * if there are no extensions, it will make a single attempt to install extensions
  * and then send the list via the callback
  *
  * @param {object} [options]
  * @param {callback} cb
  */
-function fetchInstalledComponents (options, cb) {
+function fetchInstalledExtensions (options, cb) {
   // shuffle params
   if ('function' === typeof options) {
     cb = options;
@@ -197,21 +185,21 @@ function fetchInstalledComponents (options, cb) {
       return cb(err);
     }
 
-    db.retrieve('componenttype', {}, function (err, results) {
+    db.retrieve('extensiontype', {}, function (err, results) {
       if (err) {
         return cb(err);
       }
 
-      // there should be at least one installed component
+      // there should be at least one installed extension
       if ((!results || 0 === results.length) && options.retry) {
-        // update components, retry, return
-        return updateComponentTypes(function (err) {
+        // update extensions, retry, return
+        return updateExtensionTypes(function (err) {
           if (err) {
             return cb(err);
           }
 
           // try again, but only once
-          fetchInstalledComponents({ retry: false }, cb);
+          fetchInstalledExtensions({ retry: false }, cb);
         });
       }
 
@@ -221,39 +209,38 @@ function fetchInstalledComponents (options, cb) {
 }
 
 /**
- * adds a new componenttype to the system - fired after bower
- * has installed the component code to the component cache
+ * adds a new extensiontype to the system - fired after bower
+ * has installed the extension code to the extension cache
  *
- * @param {object} componentInfo - the bower package info retrieved during install
+ * @param {object} extensionInfo - the bower package info retrieved during install
  * @param {callback} cb
  */
-function addComponentType(componentInfo, cb) {
-  // verify componentInfo meets requirements
-  var pkgMeta = componentInfo.pkgMeta;
-  if (pkgMeta.keywords) { // only allow components (no extensions, themes, etc;)
+function addExtensionType(extensionInfo, cb) {
+  var pkgMeta = extensionInfo.pkgMeta;
+  if (pkgMeta.keywords) { // only allow extensions (no components, themes, etc;)
     var keywords = _.isArray(pkgMeta.keywords) ? pkgMeta.keywords : [pkgMeta.keywords];
-    if (!_.contains(keywords, "adapt-component")) {
-      logger.log('info', 'ignoring non-component: ' + pkgMeta.name);
+    if (!_.contains(keywords, "adapt-extension")) {
+      logger.log('info', 'ignoring non-extension: ' + pkgMeta.name);
       return cb(null);
     }
   } else {
-    logger.log('warn', 'ignoring component without keywords defined: ' + pkgMeta.name);
+    logger.log('warn', 'ignoring extension without keywords defined: ' + pkgMeta.name);
     return cb(null);
   }
 
-  if (!pkgMeta.version) { // don't allow components that don't define versions
+  if (!pkgMeta.version) { // don't allow extensions that don't define versions
     /*
     * @TODO: Re-implement this once component properties.schema files make it to master!
-    logger.log('warn', 'ignoring unversioned component: ' + pkgMeta.name);
+    logger.log('warn', 'ignoring unversioned extension: ' + pkgMeta.name);
     return cb(null);
     */
     pkgMeta.version = "0.2.0"; // Remove me later - see above ^
-  }
+  } 
 
-  var schemaPath = path.join(componentInfo.canonicalDir, defaultOptions._adaptSchemaFile);
+  var schemaPath = path.join(extensionInfo.canonicalDir, defaultOptions._adaptSchemaFile);
   fs.exists(schemaPath, function (exists) {
     if (!exists) {
-      logger.log('warn', 'ignoring component with no schema: ' + pkgMeta.name);
+      logger.log('warn', 'ignoring extension with no schema: ' + pkgMeta.name);
       return cb(null);
     }
 
@@ -261,27 +248,27 @@ function addComponentType(componentInfo, cb) {
       var schema = false;
       if (err) {
         // don't error out, just notify
-        logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, err);
+        logger.log('error', 'failed to parse extension schema for ' + pkgMeta.name, err);
         return cb(null);
       }
       try {
         schema = JSON.parse(data);
       } catch (e) {
         // don't error out, just notify
-        logger.log('error', 'failed to parse component schema for ' + pkgMeta.name, e);
+        logger.log('error', 'failed to parse extension schema for ' + pkgMeta.name, e);
         return cb(null);
       }
 
-      // Copy this version of the component to a holding area (used for publishing).
+      // Copy this version of the extension to a holding area (used for publishing).
       // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
-      var destination = defaultOptions.componentVersionsFolder + '/' + pkgMeta.name + '/' + pkgMeta.version + '/' + pkgMeta.name;
+      var destination = defaultOptions.extensionVersionsFolder + '/' + pkgMeta.name + '/' + pkgMeta.version + '/' + pkgMeta.name;
       fs.exists(destination, function(exists) {
         if (!exists) {
           mkdirp(destination, function (err) {
             if (err) {
               cb(err);
             } else {
-              ncp(componentInfo.canonicalDir, destination, function (err) {
+              ncp(extensionInfo.canonicalDir, destination, function (err) {
                 if (err) {
                   cb(err);
                 }
@@ -293,41 +280,41 @@ function addComponentType(componentInfo, cb) {
 
       logger.log('info', 'Try ' + pkgMeta.name);
 
-      // add the component to the componenttypes collection
+      // add the extension to the extensiontypes collection
       database.getDatabase(function (err, db) {
         if (err) {
           return cb(err);
         }
 
-        // add component type
-        var componentType = {
+        // add extension type
+        var extensionType = {
           name: pkgMeta.name,
           displayName: pkgMeta.displayName,
-          component: pkgMeta.component,
+          extension: pkgMeta.extension,
           description: pkgMeta.description,
           version: pkgMeta.version,
           properties: schema.properties
         };
 
-        // don't duplicate component.name, component.version
-        db.retrieve('componenttype', { name:componentType.name, version:componentType.version }, function (err, results) {
+        // don't duplicate extension.name, extension.version
+        db.retrieve('extensiontype', { name:extensionType.name, version:extensionType.version }, function (err, results) {
           if (err) {
             return cb(err);
           }
 
           if (results && 0 !== results.length) {
             // don't add duplicate
-            logger.log('silly', 'ignoring duplicate component version', componentType);
+            logger.log('silly', 'ignoring duplicate extension version', extensionType);
             return cb(null);
           }
 
-          db.create('componenttype', componentType, function (err, results) {
+          db.create('extensiontype', extensionType, function (err, results) {
             if (err) {
-              // don't error out if we didn't add the component, just notify
-              logger.log('error', 'Failed to add component: ' + pkgMeta.name, err);
+              // don't error out if we didn't add the extension, just notify
+              logger.log('error', 'Failed to add extension: ' + pkgMeta.name, err);
               return cb(null);
             }
-            logger.log('info', 'Added component: ' + pkgMeta.name);
+            logger.log('info', 'Added extension: ' + pkgMeta.name);
             return cb(null, results);
           });
         });
@@ -338,12 +325,12 @@ function addComponentType(componentInfo, cb) {
 
 /**
  * this function uses bower to search and install new adapt framework
- * components to the authoring tool
+ * extensions to the authoring tool
  *
  * @param {object} options - bower configuration and local config options
  * @param {callback} cb
  */
-function updateComponentTypes (options, cb) {
+function updateExtensionTypes (options, cb) {
   // shuffle params
   if ('function' === typeof options) {
     cb = options;
@@ -351,7 +338,7 @@ function updateComponentTypes (options, cb) {
   }
 
   // log the update with any passed options
-  logger.log('info', 'updating component types', options);
+  logger.log('info', 'updating extension types', options);
 
   options = _.extend(defaultOptions, options);
   // update directory relative to server location
@@ -362,10 +349,8 @@ function updateComponentTypes (options, cb) {
     if (err) {
       return cb(err);
     }
-
-    // now do search and install
     bower.commands
-      .search('', options) // search all components or only contrib?
+      .search('', options) // search all extensions or only contrib?
       .on('end', function (results) {
         // lets bower install each
         async.map(results,
@@ -374,30 +359,25 @@ function updateComponentTypes (options, cb) {
           },
           function (err, nameList) {
             /*
-            * @TODO: Remove array below once component properties.schema files make it to master!
+            * @TODO: Remove array below once extension properties.schema files make it to master!
             */
             var nameList = [
-              "adapt-contrib-text#develop",
-              "adapt-contrib-narrative#develop",
-              "adapt-contrib-media#develop",
-              "adapt-contrib-hotgraphic#develop",
-              "adapt-contrib-blank#develop",
-              "adapt-contrib-accordion#develop",
-              "adapt-contrib-graphic#develop",
-              "adapt-contrib-matching#develop",
-              "adapt-contrib-textInput#develop",
-              "adapt-contrib-mcq#develop",
-              "adapt-contrib-gmcq#develop",
-              "adapt-contrib-slider#develop"
-            ];
-            logger.log('info', 'fetched components from bower repository');
+            "adapt-contrib-assessment#develop",
+            "adapt-contrib-pageLevelProgress#develop",
+            "adapt-contrib-resources#develop",
+            "adapt-contrib-spoor#develop",
+            "adapt-contrib-trickle#develop",
+            "adapt-contrib-tutor#develop"
+          ];
+
+            logger.log('info', 'fetched extensions from bower repository');
               bower.commands
               .install(nameList, { save: true }, options)
               .on('error', cb)
-              .on('end', function (componentInfo) {
+              .on('end', function (extensionInfo) {
               // add details for each to the db
-              async.eachSeries(Object.keys(componentInfo), function (key, next) {
-              addComponentType(componentInfo[key], next);
+              async.eachSeries(Object.keys(extensionInfo), function (key, next) {
+              addExtensionType(extensionInfo[key], next);
               },
               cb);
             });
@@ -406,7 +386,7 @@ function updateComponentTypes (options, cb) {
   });
 }
 
-// setup components
+// setup extensions
 initialize();
 
 /**
@@ -414,4 +394,4 @@ initialize();
  *
  */
 
-exports = module.exports = Component;
+exports = module.exports = Extension;

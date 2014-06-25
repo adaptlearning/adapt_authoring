@@ -17,3 +17,30 @@
 .app-inner {
 	position:relative;
 }
+
+// Loading overlay styling
+// =======================
+
+.loading {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5000;
+  text-align: center;
+  background-color: rgba(255,255,255,0.8);
+  .no-opacity & {
+    background-image:url('assets/transparency-light.png');
+  }
+  .loading-image {
+    width: 100%;
+    height: 100px;
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    background-image: url(assets/ajax-loader.gif);
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}

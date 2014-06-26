@@ -10,46 +10,100 @@ An authoring library for the [Adapt](https://community.adaptlearning.org/) frame
 
 ## Install
 
-The tool currently requires that [MongoDB](http://www.mongodb.org/downloads) be installed and running.
+The tool currently requires that [MongoDB](http://www.mongodb.org) be installed and running. It can be installed by following this guide: 
 
-Node version 0.10.2 or above is required. We recommend using [nvm](https://github.com/creationix/nvm) to install and manage node versions:
+http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
 
-```
-curl https://raw.github.com/creationix/nvm/master/install.sh | sh
-```
 
-Use `nvm` to install and alias v.0.10.2:
+If it is not installed already, you must install git (https://github.com/).
+Run these commands in the terminal to install git:
 
 ```
-nvm install nvm 0.10.2
-nvm alias default 0.10.2
+sudo apt-get update
+sudo apt-get install git
 ```
 
-You may need to close and reopen your terminal to start using node commands.
-
-Once node has been installed you can use the bundled node package manager to install dependencies automatically:
+Now you must configure git:
 
 ```
-cd path/to/project/
+git config --global user.name "Your Name"
+git config --global user.email "youremail@domain.com"
+```
+
+
+[NPM] (https://www.npmjs.org/) and [Node.js] (http://nodejs.org/) are required. Installing Node.js from its website will also install NPM. If you choose to do this you should update NPM:
+
+```
+sudo npm install npm -g
+```
+
+You can also use one of the methods in the link below to install them.
+
+https://gist.github.com/isaacs/579814
+
+
+You must install [NVM] (https://github.com/creationix/nvm). Enter this command into the terminal to install it.
+
+```
+curl https://raw.githubusercontent.com/creationix/nvm/v0.8.0/install.sh | sh
+```
+
+You also require [Grunt] (http://gruntjs.com/). First, install Grunt's command line interface with this command. We will install Grunt locally to the Adapt folder later.
+
+```
+npm install grunt-cli -g
+```
+
+[FFmpeg] (https://www.ffmpeg.org/index.html) is optional. It is used to identify different file formats in the Asset Manager. 
+
+
+With almost everything installed, you can clone the project from github:
+
+```
+git clone https://github.com/adaptlearning/adapt_authoring.git
+```
+
+Navigate to the folder you cloned the project to:
+
+```
+cd /the/project/directory
+```
+
+Checkout the development version:
+
+```
+git checkout develop
+```
+
+Next, you must install dependencies and Grunt locally.
+
+```
 npm install
+npm install grunt
 ```
 
-Finally, you should create a config.json file in the conf/ directory. In most cases, simply copying the config-sample.json file will be sufficient.
+IF YOU INSTALLED FFmpeg:
+Navigate to the conf folder in your project directory and open config.json. Add the following line to it:
+
+```
+"useffmpeg" : true
+```
+
 
 ## Run
 
-To build the codebase prior to launching the site:
+Ensure MongoDB is running. With the adapt_authoring folder opened in the terminal, run the following to build and run the code. Build can take some time to complete.
 
 ```
+grunt build
 grunt dev
-```
-
-
-To run the server:
-
-```
 node server
 ```
+
+
+
+Terminal will tell you which port Adapt is running on, navigate to "localhost:xxx" where xxx is the port.
+
 
 To run unit tests:
 

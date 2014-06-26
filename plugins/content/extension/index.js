@@ -158,8 +158,80 @@ function initialize () {
       });
     });
 
+ // remove extensions from content collections
+ // expects an array of extension id's
+    rest.post('/extension/enable/:courseid', function (req, res, next) {
+      var extensions = req.body;
+
+      logger.log('info', extensions);
+
+      // check if there is an object
+      if (!extensions || 'object' !== typeof extensions) {
+        res.statusCode = 404;
+        return res.json({ success: false, message: 'could not find extensions selected' });
+      }
+
+      removeContentExtensions(extensions, function(error, result) {
+
+        if (error) {
+          res.statusCode = error instanceof ContentTypeError ? 400 : 500;
+          res.json({ success: false, message: error.message });
+          return res.end();
+        }
+
+        res.statusCode = 200;
+        res.json(result);
+        return res.end();
+
+      });
+
+    });
   });
 }
+
+/**
+ * async loop through extesnion ID's, remove extension JSON from content 
+ * 
+ * @params extensions {object} [extension ID's]
+ * @param {callback} cb
+*/
+
+function removeContentExtensions (extensions, cb) {
+
+    if (!extensions || 'object' !== typeof extensions) {
+      return cb(error);
+    }
+    logger.log('info', 'remove extensions attempted');
+
+    async.each(extensions, function (item, cb) {
+        var extensionLocations = fetchExtensionLocations(item);
+
+
+    });
+}
+
+/**
+ * find the collections that this extension is used in. Returns array of collection names
+ * 
+ * @param {ObjectID|string}  extension - the _id of the extension to update
+*/
+
+function fetchExtensionLocations (extension) {
+  if (!extension || 0 === extension.length) {
+    return null
+  }
+  database.getDatabase(function (err, db) {
+    if (err) {
+      return err;
+    }
+
+    var extensionLocations;
+
+
+    return extensionLocations;
+  });
+}
+
 
 /**
  * this will retrieve a list of extensions that have been installed on the system

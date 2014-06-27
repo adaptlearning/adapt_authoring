@@ -12,6 +12,7 @@ var tenantmanager = require('../../lib/tenantmanager');
 var localAuth = require('../../plugins/auth/local');
 var server = module.exports = express();
 
+
 // set up handlebars form helpers
 require('handlebars-form-helpers').register(hbs.handlebars);
 
@@ -27,7 +28,7 @@ server.all('/install*', function (req, res, next) {
   fs.exists(path.join(configuration.serverRoot, 'conf', 'config.json'), function (exists) {
     if (exists) {
       return res.redirect('/');
-    }
+    }next
 
     return next();
   });
@@ -36,6 +37,18 @@ server.all('/install*', function (req, res, next) {
 // installer landing page
 server.all('/install', function (req, res, next) {
   res.render('install', {pageTitle: "Install"});
+
+});
+
+// ffmpeg check/info page
+server.all('/install/ffmpeg', function (req, res, next) {
+  if (req.body.submit) {
+    var ffInstall = false;
+    ffInstall = (req.body.ffmpeg === "true") || false;
+    configuration.setConfig('useffmpeg', ffInstall);
+    res.redirect('/install/server');
+  }
+  res.render('ffmpeg', {pageTitle: "FFmpeg"});
 });
 
 // server configuration page
@@ -166,6 +179,7 @@ server.all('/install/tenant', function (req, res, next) {
       configuration.setConfig('tenantPrefix', tenantPrefix);
       configuration.setConfig('dbName', tenantPrefix + tenantName);
 
+
       // ensure database connection is up
       database.getDatabase(function (error, db) {
         if (error) {
@@ -228,6 +242,8 @@ server.get('/install/complete', function (req, res, next) {
   // by default, auth is local
   configuration.setConfig('auth', 'local');
   configuration.setConfig('dataRoot', 'data');
+  
+  
 
   var cfg = configuration.getConfig();
 

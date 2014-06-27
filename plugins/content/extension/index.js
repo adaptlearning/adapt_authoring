@@ -160,7 +160,7 @@ function initialize () {
 
  // remove extensions from content collections
  // expects an array of extension id's
-    rest.post('/extension/enable/:courseid', function (req, res, next) {
+    rest.post('/extension/disable/:courseid', function (req, res, next) {
       var extensions = req.body;
 
       logger.log('info', extensions);

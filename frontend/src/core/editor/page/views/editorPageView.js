@@ -19,7 +19,6 @@ define(function(require){
       'click a.add-article'  : 'addArticle',
       'click a.edit-page'    : 'loadPageEdit',
       'click a.delete-page'  : 'deletePage',
-      'click .paste-article' : 'onPaste',
       'click .paste-cancel'  : 'pasteCancel'
     },
 

@@ -47,6 +47,16 @@ define(function(require){
 
     hideLoading: function () {
       $('.loading').hide();
+    },
+
+    sortArrayByKey: function (arr, key) {
+      return arr.sort(function(a, b){
+        var keyA = a[key],
+        keyB = b[key];
+        if(keyA < keyB) return -1;
+        if(keyA > keyB) return 1;
+        return 0;
+      });
     }
 
   });

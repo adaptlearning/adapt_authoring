@@ -228,7 +228,7 @@ define(function(require){
       }
     },
 
-    pasteFromClipboard: function(targetModel, sortOrder, layout) {
+    pasteFromClipboard: function(parentId, sortOrder, layout) {
       var clipboard = Origin.editor.data.clipboard.models[0];
       var topitem = clipboard.get(clipboard.get('referenceType'))[0];
       if (topitem._layout) {
@@ -237,7 +237,7 @@ define(function(require){
       if (topitem._sortOrder) {
         topitem._sortOrder = sortOrder;
       }
-      this.createRecursive(clipboard.get('referenceType'), clipboard, targetModel.get('_parentId'), false);
+      this.createRecursive(clipboard.get('referenceType'), clipboard, parentId, false);
     },
 
     createRecursive: function (type, clipboard, parentId, oldParentId) {

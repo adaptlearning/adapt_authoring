@@ -43,10 +43,11 @@ define(function(require){
 
     onPaste: function(event) {
       event.preventDefault();
+      event.stopPropagation();
 
       this.hidePasteZones();
 
-      Origin.trigger('editorView:paste', this.model, $(event.target).data('sort-order'), $(event.target).data('paste-layout'));
+      Origin.trigger('editorView:paste', this.model.get('_parentId'), $(event.target).data('sort-order'), $(event.target).data('paste-layout'));
     },
 
     pasteCancel: function(event) {

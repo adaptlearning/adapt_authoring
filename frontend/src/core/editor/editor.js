@@ -27,6 +27,7 @@ define(function(require) {
   var EditorComponentEditSidebarView = require('editorPage/views/editorComponentEditSidebarView');
 
   var EditorExtensionsEditView = require('editorExtensions/views/editorExtensionsEditView');
+  var EditorExtensionsEditSidebarView = require('editorExtensions/views/EditorExtensionsEditSidebarView');
 
 	Origin.on('router:editor', function(location, subLocation, action) {
 
@@ -73,8 +74,8 @@ define(function(require) {
       Origin.trigger('location:title:update', {title: 'Manage extensions'});
       
       // Origin.sidebar.addView();
-      // Origin.sidebar.addView(new editorExtensionsEditSidebarView().$el);
-      Origin.editingOverlay.addView(new EditorExtensionsEditView().$el);
+      Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el);
+      Origin.editingOverlay.addView(new EditorExtensionsEditView({model: {}}).$el);
       return;
     }
 

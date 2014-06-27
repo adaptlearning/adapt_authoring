@@ -51,6 +51,8 @@
   "app.confirmdeletearticle" : "Are you sure you want to delete this article?",
   "app.confirmdeleteblock" : "Are you sure you want to delete this block?",
   "app.confirmdeletecomponent" : "Are you sure you want to delete this component?",
+  "app.confirmapplyextensions" : "Are you sure you want to apply the following extension(s)?",
+  "app.confirmdeleteextension" : "Are you sure you want to remove this extension?",
   "app.layoutleft" : "Left",
   "app.layoutright" : "Right",
   "app.layoutfull" : "Full-width",
@@ -93,5 +95,14 @@
   "app.description" : "Description",
   "app.bodytext" : "Body text",
   "app.settingsgeneral" : "General",
-  "app.settingsextensions" : "Extensions"
+  "app.settingsextensions" : "Extensions",
+  "app.extension" : "Extension",
+  "app.description" : "Description",
+  "app.options" : "Options",
+  "app.select" : "Select",
+  "app.remove" : "Remove",
+  "app.enabledextensions" : "Enabled extensions",
+  "app.availableextensions" : "Available extensions",
+  "app.noextensionsenabled" : "There are currently no extensions enabled.",
+  "app.noextensionsavailable" : "No extensions can be enabled at this time."
 }

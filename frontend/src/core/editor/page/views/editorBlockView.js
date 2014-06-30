@@ -55,15 +55,18 @@ define(function(require){
       var layoutOptions = [
       {
         type: 'left',
-        name: 'app.layoutleft'
+        name: 'app.layoutleft',
+        pasteZoneRenderOrder: 2
       },
       {
         type: 'full',
-        name: 'app.layoutfull'
+        name: 'app.layoutfull',
+        pasteZoneRenderOrder: 1
       },
       {
         type: 'right',
-        name: 'app.layoutright'
+        name: 'app.layoutright',
+        pasteZoneRenderOrder: 3
       }];
 
       this.model.getChildren().each(function(component) {
@@ -241,7 +244,17 @@ define(function(require){
 
     setupPasteZones: function() {
       // Add available paste zones
-      _.each(this.model.get('dragLayoutOptions'), function(layout) {
+      var layouts = [];
+      var dragLayouts = [];
+
+      _.each(this.model.get('dragLayoutOptions'), function (dragLayout) {
+        dragLayouts.push(dragLayout);
+      });
+      _.each(this.model.get('layoutOptions'), function (layout) {
+        layouts.push(layout);
+      });
+
+      _.each(this.sortArrayByKey(dragLayouts, 'pasteZoneRenderOrder'), function(layout) {
         var pasteComponent = new EditorComponentModel();
         pasteComponent.set('_parentId', this.model.get('_id'));
         pasteComponent.set('_type', 'component');
@@ -251,7 +264,7 @@ define(function(require){
         this.$('.page-article-components').append($pasteEl);
       }, this);
 
-      _.each(this.model.get('layoutOptions'), function(layout) {
+      _.each(this.sortArrayByKey(layouts, 'pasteZoneRenderOrder'), function(layout) {
         var pasteComponent = new EditorComponentModel();
         pasteComponent.set('_parentId', this.model.get('_id'));
         pasteComponent.set('_type', 'component');

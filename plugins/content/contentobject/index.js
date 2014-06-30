@@ -152,20 +152,33 @@ ContentObject.prototype.retrieve = function (search, options, next) {
  */
 ContentObject.prototype.update = function (search, delta, next) {
   var self = this;
-  ContentPlugin.prototype.update.call(self, search, delta, function (error) {
-    // in the case of update, it's easier if we defer sortOrder update until after update
-    if (!delta.hasOwnProperty('_sortOrder')) {
-      // _sortOrder is not changed
-      return next();
+
+  self.retrieve(search, function (error, docs) {
+    if (error) {
+      return next(error);
     }
 
-    self.retrieve(search, function (error, docs) {
-      if (error) {
-        return next(error);
-      }
+    if (docs.length) {
+      var oldParentId = docs[0]._parentId;
+      ContentPlugin.prototype.update.call(self, search, delta, function (error) {
+        // in the case of update, it's easier if we defer sortOrder update until after update
+        if (error) {
+          return next(error);
+        }
 
-      docs.length && self.updateSiblingSortOrder(docs[0], next);
-    });
+        self.retrieve({ _id: docs[0]._id }, function (error, docs) {
+            if (delta._parentId && (oldParentId != delta._parentId)) {
+              self.updateSiblingSortOrder({ _parentId: oldParentId }, function (error) {
+                self.updateSiblingSortOrder(docs[0], next);
+              });
+            } else {
+              self.updateSiblingSortOrder(docs[0], next);
+            }
+        });
+      });
+    } else {
+      next(null);
+    }
   });
 };
 

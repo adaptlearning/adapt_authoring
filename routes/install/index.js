@@ -28,7 +28,7 @@ server.all('/install*', function (req, res, next) {
   fs.exists(path.join(configuration.serverRoot, 'conf', 'config.json'), function (exists) {
     if (exists) {
       return res.redirect('/');
-    }next
+    }
 
     return next();
   });

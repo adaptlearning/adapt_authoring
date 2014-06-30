@@ -76,6 +76,16 @@ Extension.prototype.onDatabaseCreated = function (db) {
 };
 
 /**
+ * Overrides base.destroy
+ * @param {object} search
+ * @param {callback} next
+ */
+Extension.prototype.destroy = function (search, next) {
+  var self = this;
+
+};
+
+/**
  * compares semantic version numbers a vs b:
  *
  * @param {semver} a
@@ -159,11 +169,9 @@ function initialize () {
     });
 
  // remove extensions from content collections
- // expects an array of extension id's
+ // expects course ID and an array of extension id's
     rest.post('/extension/disable/:courseid', function (req, res, next) {
       var extensions = req.body;
-
-      logger.log('info', extensions);
 
       // check if there is an object
       if (!extensions || 'object' !== typeof extensions) {
@@ -171,7 +179,7 @@ function initialize () {
         return res.json({ success: false, message: 'could not find extensions selected' });
       }
 
-      removeContentExtensions(extensions, function(error, result) {
+      disableExtensions(extensions, function(error, result) {
 
         if (error) {
           res.statusCode = error instanceof ContentTypeError ? 400 : 500;
@@ -180,7 +188,7 @@ function initialize () {
         }
 
         res.statusCode = 200;
-        res.json(result);
+        res.json({success: true});
         return res.end();
 
       });
@@ -196,42 +204,53 @@ function initialize () {
  * @param {callback} cb
 */
 
-function removeContentExtensions (extensions, cb) {
+function disableExtensions (extensions, cb) {
+  if (!extensions || 'object' !== typeof extensions) {
+    return cb(error);
+  }
 
-    if (!extensions || 'object' !== typeof extensions) {
-      return cb(error);
-    }
-    logger.log('info', 'remove extensions attempted');
+  async.eachSeries(extensions._id, function (item, nextExtension) {
+    logger.log('info', 'attempt: ' + item)
+    // call the destroy function for each extension ID
+    removeExtensionContent(item, function(result, next) {
+      // now want to loop through extensionLocations and remove 
+      logger.log('info', 'extension locations: ' + result);
 
-    async.each(extensions, function (item, cb) {
-        var extensionLocations = fetchExtensionLocations(item);
-
+      return nextExtension();
 
     });
+  }, cb);
 }
 
 /**
- * find the collections that this extension is used in. Returns array of collection names
+ * destroy all extensions data in collections that this extension is used in
  * 
- * @param {ObjectID|string}  extension - the _id of the extension to update
+ * @param {ObjectID|string}  extension - the _id of the extension to destroy
+ * @param {callback} cb
+ *
 */
 
-function fetchExtensionLocations (extension) {
+function removeExtensionContent (extension, cb) {
   if (!extension || 0 === extension.length) {
     return null
   }
-  database.getDatabase(function (err, db) {
-    if (err) {
-      return err;
-    }
 
-    var extensionLocations;
+  database.getDatabase(function (error, db) {
+    // loop through all collections that could contain this extension
+    async.eachSeries(['config', 'course', 'contentobject', 'article', 'block', 'component'],
+    function (contenttype, nextContentType) {
+      db.retrieve(contenttype, {_extensionId: extension}, function (error, results) {
+        if (error) {
+          return cb(error);
+        }
+        logger.log('info', 'destroyRetrieve: ' + contenttype);
 
+        return nextContentType();
 
-    return extensionLocations;
+      });
+    }, cb);
   });
 }
-
 
 /**
  * this will retrieve a list of extensions that have been installed on the system

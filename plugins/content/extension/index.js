@@ -179,7 +179,7 @@ function initialize () {
         return res.json({ success: false, message: 'could not find extensions selected' });
       }
 
-      disableExtensions(extensions, function(error, result) {
+      toggleExtensions('disable', extensions, function(error, result) {
 
         if (error) {
           res.statusCode = error instanceof ContentTypeError ? 400 : 500;
@@ -194,46 +194,80 @@ function initialize () {
       });
 
     });
+
+ // add extensions to content collections
+ // expects course ID and an array of extension id's
+    rest.post('/extension/enable/:courseid', function (req, res, next) {
+      var extensions = req.body;
+
+      // check if there is an object
+      if (!extensions || 'object' !== typeof extensions) {
+        res.statusCode = 404;
+        return res.json({ success: false, message: 'could not find extensions selected' });
+      }
+
+      toggleExtensions('enable', extensions, function(error, result) {
+
+        if (error) {
+          logger.log('info', 'error = ' + error);
+          res.statusCode = error instanceof ContentTypeError ? 400 : 500;
+          res.json({ success: false, message: error.message });
+          return res.end();
+        }
+
+        res.statusCode = 200;
+        res.json({success: true});
+        return res.end();
+
+      });
+
+    });
+
   });
 }
 
 /**
  * async loop through extesnion ID's, remove extension JSON from content 
  * 
+ * @params action {string}
  * @params extensions {object} [extension ID's]
  * @param {callback} cb
 */
 
-function disableExtensions (extensions, cb) {
+function toggleExtensions (action, extensions, cb) {
   if (!extensions || 'object' !== typeof extensions) {
     return cb(error);
   }
 
-  async.eachSeries(extensions._id, function (item, nextExtension) {
-    logger.log('info', 'attempt: ' + item)
-    // call the destroy function for each extension ID
-    removeExtensionContent(item, function(result, next) {
-      // now want to loop through extensionLocations and remove 
-      logger.log('info', 'extension locations: ' + result);
-
-      return nextExtension();
-
-    });
-  }, cb);
+  try {
+    async.eachSeries(extensions._id, function (item, nextExtension) {
+      logger.log('info', 'attempt: ' + item)
+      // call the destroy function for each extension ID
+      findExtensionContent(action, item, function(result, next) {
+        // now want to loop through extensionLocations and remove 
+        return nextExtension();
+      });
+    }, cb);
+  } catch(e) {
+    return cb(e);
+  }
 }
 
 /**
- * destroy all extensions data in collections that this extension is used in
+ * enable/disable all extensions data in collections that this extension is used in
  * 
+ * @params action {string}
  * @param {ObjectID|string}  extension - the _id of the extension to destroy
  * @param {callback} cb
  *
 */
 
-function removeExtensionContent (extension, cb) {
+function findExtensionContent (action, extension, cb) {
   if (!extension || 0 === extension.length) {
     return null
   }
+
+  // will need to add _extensions values to config for each extension in array
 
   database.getDatabase(function (error, db) {
     // loop through all collections that could contain this extension
@@ -243,7 +277,11 @@ function removeExtensionContent (extension, cb) {
         if (error) {
           return cb(error);
         }
-        logger.log('info', 'destroyRetrieve: ' + contenttype);
+        if (action === 'enable') {
+          logger.log('info', 'Enable: ' + contenttype);
+        } else {
+          logger.log('info', 'Disable: ' + contenttype);
+        }
 
         return nextContentType();
 

@@ -47,7 +47,9 @@ define(function(require) {
       var extensionId = event.currentTarget.value,
         extensions = [];
 
-      this.model.set('extensionsToRemove', extensions.push(extensionId));
+      extensions.push(extensionId);
+
+      this.model.set('extensionsToRemove', extensions);
 
       var props = {
           _type: 'prompt',

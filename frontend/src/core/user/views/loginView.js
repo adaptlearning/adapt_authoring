@@ -15,7 +15,7 @@ define(function(require) {
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'loginFailed', this.loginFailed, this);
+      this.listenTo(Origin, 'login:failed', this.loginFailed, this);
     },
     
     clearErrorStyling: function(e) {
@@ -40,7 +40,7 @@ define(function(require) {
 
       userModel.login(inputUsernameEmail, inputPassword, function(err, result){
         if( err || !result.success) {
-          Origin.trigger('loginFailed');
+          this.loginFailed();
         } else {
           Backbone.history.navigate('#/dashboard', {trigger: true});
         }

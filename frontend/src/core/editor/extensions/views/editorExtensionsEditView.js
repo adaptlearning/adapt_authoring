@@ -7,7 +7,7 @@ define(function(require) {
   var ExtensionModel = require('editorExtensions/models/extensionModel');
 
   var EditorExtensionsEditView = EditorOriginView.extend({
-//
+
     tagName: "div",
 
     className: "project",
@@ -21,7 +21,6 @@ define(function(require) {
     },
 
     preRender: function() {
-      this.model = new Backbone.Model();
       this.allExtensionsCollection = new ExtensionCollection();
       this.allExtensionsCollection.fetch();
 
@@ -41,8 +40,14 @@ define(function(require) {
       this.render();
     },
 
+    /**
+     * Trigger a prompt for the user to confirm deletion of an extension 
+     */
     confirmDeleteExtension: function(event) {
-      var extensionId = event.currentTarget.value;
+      var extensionId = event.currentTarget.value,
+        extensions = [];
+
+      this.model.set('extensionsToRemove', extensions.push(extensionId));
 
       var props = {
           _type: 'prompt',
@@ -50,18 +55,43 @@ define(function(require) {
           title: window.polyglot.t('app.manageextensions'),
           body: window.polyglot.t('app.confirmdeleteextension'),
           _prompts: [
-            {_callbackEvent: 'editorExtensionsEditSidebar:views:removeConfirm:' + extensionId, promptText: window.polyglot.t('app.ok')},
-            {_callbackEvent:'', promptText: window.polyglot.t('app.cancel')}
+            {_callbackEvent: 'editorExtensionsEditSidebar:views:delete', promptText: window.polyglot.t('app.ok')},
+            {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
           ]
         };
 
         Origin.trigger('notify:prompt', props);  
     },
 
+    /**
+     * Remove the extension from the course
+     **/
     deleteExtension: function(event) {
+      if (event) {
+        event.preventDefault();
+      }
 
+      console.log('in deleteExtension');
+
+      $.post('/api/extension/disable/' + this.model.get('_id'), 
+        {
+          extensions: this.model.get('extensionsToRemove') 
+        },
+        function(result) {
+          if (result.success) {
+            this.model.set('extensionsToRemove', null);
+            Backbone.history.history.back();
+            // Origin.trigger('editingOverlay:views:hide');  
+          } else {
+            alert('An error occured');
+          }          
+        }
+      );
     },
 
+    /**
+     * Trigger a prompt (if appropriate) for the user to confirm they want to save any extensions
+     */
     confirmSave: function() {
 
       var checkedItems = $('input[type="checkbox"]:checked'),
@@ -94,43 +124,29 @@ define(function(require) {
 
         Origin.trigger('notify:prompt', props);  
       }
+      else {
+        Backbone.history.history.back();
+        Origin.trigger('editingOverlay:views:hide');
+      }
     },
 
+    /**
+     * Make the API call to save extensions
+     */
     saveExtensions: function() {
-      alert("TODO - Apply extensions")
-    },
-
-    toggleContentPanel: function(event) {
-      
-    },
-
-    postRender: function() {
-      // Get the schema
-      // var thisComponentTypeId = this.model.get('_componentType')._id; 
-      // var componentType = _.find(Origin.editor.componentTypes.models, function(type){
-      //   return type.get('_id') == thisComponentTypeId; 
-      // });
-
-      // var schema =  {
-      //   "type": "object",
-      //   "properties": componentType.get('properties')
-      // };
-
-      // this.$('.component-properties').jsoneditor({
-      //   no_additional_properties: true, 
-      //   disable_array_reorder: true,
-      //   disable_collapse: true,
-      //   disable_edit_json: true,
-      //   disable_properties: true,
-      //   form_name_root: 'briantest',
-      //   schema: schema,
-      //   startval: this.model.get('properties') 
-      // });
-    },
-
-    cancel: function (event) {
-      // event.preventDefault();
-      // Origin.trigger('editorSidebarView:removeEditView', this.model);
+      $.post('/api/extension/enable/' + this.model.get('_id'), 
+        {
+          extensions: this.model.get('selectedExtensions') 
+        },
+        function(result) {
+          if (result.success) {
+            Backbone.history.history.back();
+            Origin.trigger('editingOverlay:views:hide');  
+          } else {
+            alert('An error occured');
+          }          
+        }
+      );
     }
 
   },

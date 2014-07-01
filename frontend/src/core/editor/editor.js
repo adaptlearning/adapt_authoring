@@ -67,19 +67,15 @@ define(function(require) {
       return;
     }
 
-    if (location === 'extensions') {
-      // alert('edit extensions');
-      //var extensionModel = new ExtensionModel({_id: subLocation});
-
-      Origin.trigger('location:title:update', {title: 'Manage extensions'});
-      
-      // Origin.sidebar.addView();
-      Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el);
-      Origin.editingOverlay.addView(new EditorExtensionsEditView({model: {}}).$el);
-      return;
-    }
-
 		switch (subLocation) {
+      case 'extensions':
+        Origin.trigger('location:title:update', {title: 'Manage extensions'});
+        
+        var extensionsModel = new Backbone.Model({_id: location});
+        Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el);
+        Origin.editingOverlay.addView(new EditorExtensionsEditView({model: extensionsModel}).$el);
+        break;
+
 			case 'menu':
 				// Update page title
 				Origin.trigger('location:title:update', {title: 'Menu editor'});

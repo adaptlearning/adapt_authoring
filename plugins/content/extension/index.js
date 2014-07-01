@@ -171,7 +171,7 @@ function initialize () {
  // remove extensions from content collections
  // expects course ID and an array of extension id's
     rest.post('/extension/disable/:courseid', function (req, res, next) {
-      var extensions = req.body;
+      var extensions = req.body.extensions;
 
       // check if there is an object
       if (!extensions || 'object' !== typeof extensions) {
@@ -198,8 +198,10 @@ function initialize () {
  // add extensions to content collections
  // expects course ID and an array of extension id's
     rest.post('/extension/enable/:courseid', function (req, res, next) {
-      var extensions = req.body;
+      //var extensions = req.body;
+      var extensions = req.body.extensions;
 
+      console.log(extensions);
       // check if there is an object
       if (!extensions || 'object' !== typeof extensions) {
         res.statusCode = 404;
@@ -240,7 +242,7 @@ function toggleExtensions (action, extensions, cb) {
   }
 
   try {
-    async.eachSeries(extensions._id, function (item, nextExtension) {
+    async.eachSeries(extensions, function (item, nextExtension) {
       logger.log('info', 'attempt: ' + item)
       // call the destroy function for each extension ID
       findExtensionContent(action, item, function(result, next) {

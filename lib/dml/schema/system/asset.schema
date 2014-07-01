@@ -20,6 +20,10 @@
       "type": "string",
       "required": "true"
     },
+    "thumbnailPath": {
+      "type": "string",
+      "required": "true"
+    },
     "repository": {
       "type": "string",
       "required": "true"

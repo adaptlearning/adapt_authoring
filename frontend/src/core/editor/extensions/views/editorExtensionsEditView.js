@@ -24,20 +24,51 @@ define(function(require) {
       this.allExtensionsCollection = new ExtensionCollection();
       this.allExtensionsCollection.fetch();
 
-      this.listenTo(this.allExtensionsCollection, 'reset add change remove', this.setupExtensions, this);
+      this.listenTo(this.allExtensionsCollection, 'sync', this.setupExtensions, this);
 
       this.listenTo(Origin, 'editorExtensionsEditSidebar:views:save', this.saveExtensions);
       this.listenTo(Origin, 'editorExtensionsEditSidebar:views:confirmSave', this.confirmSave);
       this.listenTo(Origin, 'editorExtensionsEditSidebar:views:delete', this.deleteExtension);
     },
 
+    /**
+     * Read the enabled extensions from the config and setup the 'enabled' and 'available' lists
+     */
     setupExtensions: function() {
-      // console.log('in setupExtensions');
-      // this.model.set('enabledExtensions', this.allExtensionsCollection.toJSON());
-      this.model.set('enabledExtensions', this.allExtensionsCollection.toJSON());
-      this.model.set('availableExtensions', this.allExtensionsCollection.toJSON());
+      var _this = this;
 
-      this.render();
+      // Read the enabled extensions from the config
+      $.ajax({
+          url: '/api/content/config?_courseId=' + _this.model.get('_id')
+        }).done(function(data) {
+          
+          var extensionsData = data[0]._extensions,
+            extensions = [];
+
+          extensions = _.pluck(extensionsData, '_id');
+
+          _this.model.set('extensionsToRemove', null);
+
+          // Remove the enabled extensions from the list of available extensions
+          var enabledExtensionsModels = _this.allExtensionsCollection.filter(function(extension) {
+            return _.indexOf(extensions, extension.get('_id')) > -1;
+          });
+
+          var enabledExtensionsCollection = new Backbone.Collection(enabledExtensionsModels);
+          _this.model.set('enabledExtensions', enabledExtensionsCollection);
+
+          var availableExtensionsModels = _this.allExtensionsCollection.filter(function(extension) {
+            return _.indexOf(extensions, extension.get('_id')) == -1;
+          });
+
+          var availableExtensionsCollection = new Backbone.Collection(availableExtensionsModels);
+
+          _this.model.set('availableExtensions', availableExtensionsCollection);
+          _this.model.set('enabledExtensions', _this.model.get('enabledExtensions').toJSON());
+          _this.model.set('availableExtensions', _this.model.get('availableExtensions').toJSON());
+
+          _this.render();
+        });
     },
 
     /**
@@ -73,17 +104,16 @@ define(function(require) {
         event.preventDefault();
       }
 
-      console.log('in deleteExtension');
+      _this = this;
 
-      $.post('/api/extension/disable/' + this.model.get('_id'), 
+      $.post('/api/extension/disable/' + _this.model.get('_id'), 
         {
-          extensions: this.model.get('extensionsToRemove') 
+          extensions: _this.model.get('extensionsToRemove') 
         },
         function(result) {
           if (result.success) {
-            this.model.set('extensionsToRemove', null);
-            Backbone.history.history.back();
-            // Origin.trigger('editingOverlay:views:hide');  
+            // Re-render the extensions in the appropriate list
+            _this.setupExtensions();      
           } else {
             alert('An error occured');
           }          

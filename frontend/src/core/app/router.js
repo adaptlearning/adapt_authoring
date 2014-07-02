@@ -43,6 +43,7 @@ define(function(require) {
     },
 
     handleIndex: function() {
+      // console.log('in handleIndex');
       this.navigate('#/dashboard', {trigger: true});
     },
 

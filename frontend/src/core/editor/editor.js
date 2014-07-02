@@ -27,7 +27,7 @@ define(function(require) {
   var EditorComponentEditSidebarView = require('editorPage/views/editorComponentEditSidebarView');
 
   var EditorExtensionsEditView = require('editorExtensions/views/editorExtensionsEditView');
-  var EditorExtensionsEditSidebarView = require('editorExtensions/views/EditorExtensionsEditSidebarView');
+  var EditorExtensionsEditSidebarView = require('editorExtensions/views/editorExtensionsEditSidebarView');
 
 	Origin.on('router:editor', function(location, subLocation, action) {
 
@@ -70,7 +70,7 @@ define(function(require) {
 		switch (subLocation) {
       case 'extensions':
         Origin.trigger('location:title:update', {title: 'Manage extensions'});
-        
+
         var extensionsModel = new Backbone.Model({_id: location});
         Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el);
         Origin.editingOverlay.addView(new EditorExtensionsEditView({model: extensionsModel}).$el);
@@ -81,8 +81,8 @@ define(function(require) {
 				Origin.trigger('location:title:update', {title: 'Menu editor'});
 				// Create Editor menu view
     			Origin.router.createView(EditorView, {
-    		        currentCourseId: location, 
-    		        currentView: 'menu', 
+    		        currentCourseId: location,
+    		        currentView: 'menu',
     		        currentPageId: (action || null)
     		    });
     		    // update sidebar view
@@ -98,8 +98,8 @@ define(function(require) {
 				// Create Editor page view
         Origin.editor.scrollTo = 0;
 				Origin.router.createView(EditorView, {
-    				currentCourseId: location, 
-    				currentView: 'page', 
+    				currentCourseId: location,
+    				currentView: 'page',
     				currentPageId: (action || null)
     			});
 				// update sidebar view

@@ -1,7 +1,7 @@
 define(function(require) {
 
   var Backbone = require('backbone');
-  var ExtensionModel = require('editorExtensions/models/ExtensionModel');
+  var ExtensionModel = require('editorExtensions/models/extensionModel');
 
   var ExtensionCollection = Backbone.Collection.extend({
 

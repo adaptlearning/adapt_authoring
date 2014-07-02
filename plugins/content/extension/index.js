@@ -172,14 +172,15 @@ function initialize () {
  // expects course ID and an array of extension id's
     rest.post('/extension/disable/:courseid', function (req, res, next) {
       var extensions = req.body.extensions;
+      var courseId = req.params.courseid;
 
       // check if there is an object
       if (!extensions || 'object' !== typeof extensions) {
         res.statusCode = 404;
-        return res.json({ success: false, message: 'could not find extensions selected' });
+        return res.json({ success: false, message: 'extensions should be an array of ids' });
       }
 
-      toggleExtensions('disable', extensions, function(error, result) {
+      toggleExtensions(courseId, 'disable', extensions, function(error, result) {
 
         if (error) {
           res.statusCode = error instanceof ContentTypeError ? 400 : 500;
@@ -198,18 +199,16 @@ function initialize () {
  // add extensions to content collections
  // expects course ID and an array of extension id's
     rest.post('/extension/enable/:courseid', function (req, res, next) {
-      //var extensions = req.body;
       var extensions = req.body.extensions;
+      var courseId = req.params.courseid;
 
-      console.log(extensions);
       // check if there is an object
       if (!extensions || 'object' !== typeof extensions) {
         res.statusCode = 404;
-        return res.json({ success: false, message: 'could not find extensions selected' });
+        return res.json({ success: false, message: 'extensions should be an array of ids' });
       }
 
-      toggleExtensions('enable', extensions, function(error, result) {
-
+      toggleExtensions(courseId, 'enable', extensions, function(error, result) {
         if (error) {
           logger.log('info', 'error = ' + error);
           res.statusCode = error instanceof ContentTypeError ? 400 : 500;
@@ -229,66 +228,96 @@ function initialize () {
 }
 
 /**
- * async loop through extesnion ID's, remove extension JSON from content 
- * 
+ * async loop through extensions, add/remove extension JSON from content
+ *
+ * @params courseId {string}
  * @params action {string}
- * @params extensions {object} [extension ID's]
+ * @params extensions {object} [extension IDs]
  * @param {callback} cb
 */
 
-function toggleExtensions (action, extensions, cb) {
+function toggleExtensions (courseId, action, extensions, cb) {
   if (!extensions || 'object' !== typeof extensions) {
     return cb(error);
   }
 
-  try {
-    async.eachSeries(extensions, function (item, nextExtension) {
-      logger.log('info', 'attempt: ' + item)
-      // call the destroy function for each extension ID
-      findExtensionContent(action, item, function(result, next) {
-        // now want to loop through extensionLocations and remove 
-        return nextExtension();
-      });
-    }, cb);
-  } catch(e) {
-    return cb(e);
-  }
-}
+  database.getDatabase(function (err, db) {
+    if (err) {
+      return cb(err);
+    }
 
-/**
- * enable/disable all extensions data in collections that this extension is used in
- * 
- * @params action {string}
- * @param {ObjectID|string}  extension - the _id of the extension to destroy
- * @param {callback} cb
- *
-*/
+    // function generates an object from json schema - could not find a lib to do this for me :-\
+    // if anyone knows of a node lib to generate an object from a json schema, please fix this!
+    // based on http://stackoverflow.com/questions/13028400/json-schema-to-javascript-typed-object#answer-16457667
+    var generateExtensionProps = function (schema) {
+      var walkObject = function (props) {
+        var child = {};
+        Object.keys(props).forEach(function (key) {
+          switch (props[key].type) {
+            case "boolean":
+            case "integer":
+            case "number":
+            case "string":
+              child[key] = props[key].default || undefined;
+              break;
+            case "array":
+              child[key] = [].push(walkObject(props[key].properties));
+              break;
+            case "object":
+              child[key] = walkObject(props[key].properties);
+              break;
+            default:
+              break;
+          }
+        });
 
-function findExtensionContent (action, extension, cb) {
-  if (!extension || 0 === extension.length) {
-    return null
-  }
+        return child;
+      };
 
-  // will need to add _extensions values to config for each extension in array
+      return (schema && walkObject(schema));
+    };
 
-  database.getDatabase(function (error, db) {
-    // loop through all collections that could contain this extension
-    async.eachSeries(['config', 'course', 'contentobject', 'article', 'block', 'component'],
-    function (contenttype, nextContentType) {
-      db.retrieve(contenttype, {_extensionId: extension}, function (error, results) {
-        if (error) {
-          return cb(error);
+    // retrieves specified components for the course and either adds or deletes
+    // extension properties of the passed extensionItem
+    var updateComponentItems = function (componentType, schema, extensionItem, nextComponent) {
+      var criteria = 'course' == componentType ? { _id : courseId } : { _courseId : courseId };
+      db.retrieve(componentType, criteria, { fields: '_id _extensions' }, function (err, results) {
+        if (err) {
+          return cb(err);
         }
-        if (action === 'enable') {
-          logger.log('info', 'Enable: ' + contenttype);
-        } else {
-          logger.log('info', 'Disable: ' + contenttype);
-        }
 
-        return nextContentType();
+        var generatedObject = generateExtensionProps(schema);
+        // iterate components and update _extensions attribute
+        async.each(results, function (component, next) {
+          var updatedExtensions = component._extensions || {};
+          if ('enable' == action) {
+            'config' == componentType
+              ? updatedExtensions[extensionItem.extension] = { _id: extensionItem._id, version: extensionItem.version }
+              : updatedExtensions = _.extend(updatedExtensions, generatedObject);
+          } else {
+            'config' == componentType
+            ? delete updatedExtensions[extensionItem.extension]
+            : generatedObject && (delete updatedExtensions[Object.keys(generatedObject)[0]]); // yuck
+          }
 
+          // update using delta
+          db.update(componentType, { _id: component._id }, { _extensions : updatedExtensions }, next);
+        }, nextComponent);
       });
-    }, cb);
+    };
+
+    db.retrieve('extensiontype', { _id: { $in: extensions } }, function (err, results) {
+      if (err) {
+        return cb(err);
+      }
+
+      async.eachSeries(results, function (extensionItem, nextItem) {
+        var locations = extensionItem.properties.pluginLocations.properties;
+        async.eachSeries(Object.keys(locations), function (key, nextLocation) {
+          updateComponentItems(key, locations[key].properties, extensionItem, nextLocation);
+        }, nextItem);
+      }, cb);
+    });
   });
 }
 
@@ -366,7 +395,7 @@ function addExtensionType(extensionInfo, cb) {
     return cb(null);
     */
     pkgMeta.version = "0.2.0"; // Remove me later - see above ^
-  } 
+  }
 
   var schemaPath = path.join(extensionInfo.canonicalDir, defaultOptions._adaptSchemaFile);
   fs.exists(schemaPath, function (exists) {

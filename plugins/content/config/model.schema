@@ -3,6 +3,9 @@
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
   "properties": {
+    "_extensions": {
+      "type":"object"
+    },
     "_courseId": {
       "type": "objectid",
       "required": true
@@ -55,7 +58,7 @@
           "_onQuizFailure" : {
             "type" : "string",
             "default" : "incomplete"
-          }      
+          }
         }
       }
     },

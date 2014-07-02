@@ -261,7 +261,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
               child[key] = props[key].default || undefined;
               break;
             case "array":
-              child[key] = [].push(walkObject(props[key].properties));
+              child[key] = [];
               break;
             case "object":
               child[key] = walkObject(props[key].properties);

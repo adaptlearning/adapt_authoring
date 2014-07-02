@@ -27,7 +27,7 @@ define(function(require) {
   var EditorComponentEditSidebarView = require('editorPage/views/editorComponentEditSidebarView');
 
   var EditorExtensionsEditView = require('editorExtensions/views/editorExtensionsEditView');
-  var EditorExtensionsEditSidebarView = require('editorExtensions/views/EditorExtensionsEditSidebarView');
+  var EditorExtensionsEditSidebarView = require('editorExtensions/views/editorExtensionsEditSidebarView');
 
 	Origin.on('router:editor', function(location, subLocation, action) {
 

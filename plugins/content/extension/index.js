@@ -287,13 +287,13 @@ function toggleExtensions (courseId, action, extensions, cb) {
         }
 
         var generatedObject = generateExtensionProps(schema);
-        var propName = generatedObject ? Object.keys(generatedObject)[0] : null; // still yuck
+        var propName = extensionItem.propName;
         // iterate components and update _extensions attribute
         async.each(results, function (component, next) {
           var updatedExtensions = component._extensions || {};
           if ('enable' == action) {
             'config' == componentType
-              ? updatedExtensions[extensionItem.extension] = { _id: extensionItem._id, version: extensionItem.version }
+              ? updatedExtensions[extensionItem.extension] = { _id: extensionItem._id, version: extensionItem.version, propName: propName }
               : updatedExtensions = _.extend(updatedExtensions, generatedObject);
           } else {
             'config' == componentType

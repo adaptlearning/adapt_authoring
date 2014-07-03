@@ -20,6 +20,11 @@
       "type": "string",
       "required": false
     },
+    "propName": {
+      "type": "string",
+      "required": true,
+      "default" : "undefined"
+    },
     "version":{
       "type": "string",
       "required": true

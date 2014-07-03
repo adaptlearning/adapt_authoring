@@ -58,17 +58,17 @@ define(function(require) {
 
       if (componentExtensions) {
         // Check the _extensions array
-        var courseExtensions = Origin.editor.data.config.get('_extensions');
-
+        var courseExtensions = Origin.editor.data.config.get('_enabledExtensions'),
+          i = 1;
+          
         _.each(courseExtensions, function(extension) {
-
           var enabledExtension = Origin.editor.extensionTypes.findWhere({_id: extension._id});
 
           // Check if the property extension properties at the component level
           if (enabledExtension && enabledExtension.get('properties').pluginLocations.properties.component.properties) {
-
+            this.$('.component-extensions').append("<div class='component-extension-item-" + i + "'></div>");
             // Add a JSON editor for every enabled extension at the component level
-            this.$('.component-extensions').jsoneditor({
+            this.$('.component-extension-item-' + i).jsoneditor({
               no_additional_properties: true, 
               disable_array_reorder: true,
               disable_collapse: true,

@@ -42,7 +42,7 @@ define(function(require) {
           url: '/api/content/config?_courseId=' + _this.model.get('_id')
         }).done(function(data) {
           
-          var extensionsData = data[0]._extensions,
+          var extensionsData = data[0]._enabledExtensions,
             extensions = [];
 
           extensions = _.pluck(extensionsData, '_id');

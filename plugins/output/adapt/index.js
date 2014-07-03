@@ -108,23 +108,22 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
                 transformed && transformed.forEach(function (item) {
                   // move the _extensions into place
                   if (item._extensions) {
-                    var isConfig = ('config' == collectionType);
                     Object.keys(item._extensions).forEach(function (key) {
-                      if (!isConfig) {
-                        if(!item[key]) { // don't allow extensions to overwrite core attributes
-                          item[key] = item._extensions[key];
-                        }
-                      } else {
-                        // remove superflous ids from config items
-                        delete item._extensions[key]._id;
+                      if(!item[key]) { // don't allow extensions to overwrite core attributes
+                        item[key] = item._extensions[key];
                       }
                     });
-
-                    // remove the _extensions property from the json
-                    if (!isConfig) {
-                      delete item._extensions;
-                    }
                   }
+
+                  // remove superflous ids from config items
+                  if (item._enabledExtensions) {
+                    Object.keys(item._enabledExtensions).forEach(function (key){
+                        delete item._enabledExtensions[key]._id;
+                    });
+                  }
+
+                  // remove the _extensions property from the json
+                  delete item._extensions;
 
                   // push the results onto our output collection
                   output.push(item);

@@ -6,6 +6,9 @@
     "_extensions": {
       "type":"object"
     },
+    "_enabledExtensions": {
+      "type":"object"
+    },
     "_courseId": {
       "type": "objectid",
       "required": true
@@ -17,50 +20,6 @@
     "_questionWeight": {
       "type": "string",
       "default": "1"
-    },
-    "_drawer": {
-      "_showEasing": {
-        "type" : "string",
-        "default" : "easeOutQuart"
-      },
-      "_hideEasing": {
-        "type" : "string",
-        "default" : "easeInQuart"
-      },
-      "_duration": {
-        "type" : "number",
-        "default" : 400
-      }
-    },
-    "_spoor" : {
-      "_tracking" : {
-        "_requireCourseCompleted": {
-          "type": "boolean",
-          "default" : "true"
-        },
-        "_requireAssessmentPassed" : {
-          "type": "boolean",
-          "default" : "true"
-        },
-        "_shouldSubmitScore" : {
-          "type": "boolean",
-          "default" : "false"
-        },
-        "_reporting" : {
-          "_comment": {
-            "type" : "string",
-            "default" : ""
-          },
-          "_onTrackingCriteriaMet" : {
-            "type" : "string",
-            "default" : "completed"
-          },
-          "_onQuizFailure" : {
-            "type" : "string",
-            "default" : "incomplete"
-          }
-        }
-      }
     },
     "screenSize": {
       "small" : {

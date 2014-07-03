@@ -16,6 +16,7 @@ define(function(require){
   var EditorClipboardModel = require('editorGlobal/models/editorClipboardModel');
   var EditorComponentTypeModel = require('editorPage/models/editorComponentTypeModel');
   var EditorConfigModel = require('editorConfig/models/editorConfigModel');
+  var ExtensionModel = require('editorExtensions/models/extensionModel');
 
   var EditorView = EditorOriginView.extend({
 
@@ -76,6 +77,8 @@ define(function(require){
         clipboard: false,
         course: false,
         config: false,
+        componentTypes: false,
+        extensionTypes: false,
         contentObjects: false,
         articles: false,
         blocks: false,
@@ -153,7 +156,15 @@ define(function(require){
       // Store the component types
       Origin.editor.componentTypes = new EditorCollection(null, {
         model : EditorComponentTypeModel,
-        url: '/api/componenttype'
+        url: '/api/componenttype',
+        _type: 'componentTypes'
+      });
+      
+      // Store the extensions types
+      Origin.editor.extensionTypes = new EditorCollection(null, {
+        model : ExtensionModel,
+        url: '/api/extensiontype',
+        _type: 'extensionTypes'
       });
       
       Origin.editor.data.courseConfigs = new EditorCollection(null, {

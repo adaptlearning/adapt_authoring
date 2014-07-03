@@ -48,10 +48,37 @@ define(function(require) {
         disable_collapse: true,
         disable_edit_json: true,
         disable_properties: true,
-        form_name_root: 'briantest',
         schema: schema,
         startval: this.model.get('properties') 
       });
+
+      // Global extensions
+      // console.log(Origin.editor.extensionTypes);
+      var componentExtensions = this.model.get('_extensions');
+
+      if (componentExtensions) {
+        // Check the _extensions array
+        var courseExtensions = Origin.editor.data.config.get('_extensions');
+
+        _.each(courseExtensions, function(extension) {
+
+          var enabledExtension = Origin.editor.extensionTypes.findWhere({_id: extension._id});
+
+          // Check if the property extension properties at the component level
+          if (enabledExtension && enabledExtension.get('properties').pluginLocations.properties.component.properties) {
+
+            // Add a JSON editor for every enabled extension at the component level
+            this.$('.component-extensions').jsoneditor({
+              no_additional_properties: true, 
+              disable_array_reorder: true,
+              disable_collapse: true,
+              disable_edit_json: true,
+              disable_properties: true,
+              schema: enabledExtension.get('properties').pluginLocations.properties.component
+            });
+          }
+        });
+      }
     },
 
     cancel: function (event) {

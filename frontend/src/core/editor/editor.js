@@ -59,7 +59,7 @@ define(function(require) {
       var componentModel = new EditorComponentModel({_id: subLocation});
       componentModel.fetch({
         success: function() {
-          Origin.trigger('location:title:update', {title: 'Editing component - ' + componentModel.get('title')});
+          Origin.trigger('location:title:update', {title: 'Editing ' + componentModel.get('_componentType').displayName.toLowerCase() + ' component - ' + componentModel.get('title')});
           Origin.sidebar.addView(new EditorComponentEditSidebarView({model: componentModel}).$el);
           Origin.editingOverlay.addView(new EditorComponentEditView({model: componentModel}).$el);
         }

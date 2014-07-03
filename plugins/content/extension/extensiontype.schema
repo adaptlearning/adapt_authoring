@@ -20,7 +20,7 @@
       "type": "string",
       "required": false
     },
-    "propName": {
+    "targetAttribute": {
       "type": "string",
       "required": true,
       "default" : "undefined"

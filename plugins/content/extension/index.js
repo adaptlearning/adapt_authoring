@@ -287,18 +287,18 @@ function toggleExtensions (courseId, action, extensions, cb) {
         }
 
         var generatedObject = generateExtensionProps(schema);
-        var propName = extensionItem.propName;
+        var targetAttribute = extensionItem.targetAttribute;
         // iterate components and update _extensions attribute
         async.each(results, function (component, next) {
           var updatedExtensions = component._extensions || {};
           if ('enable' == action) {
             'config' == componentType
-              ? updatedExtensions[extensionItem.extension] = { _id: extensionItem._id, version: extensionItem.version, propName: propName }
+              ? updatedExtensions[extensionItem.extension] = { _id: extensionItem._id, version: extensionItem.version, targetAttribute: targetAttribute }
               : updatedExtensions = _.extend(updatedExtensions, generatedObject);
           } else {
             'config' == componentType
             ? delete updatedExtensions[extensionItem.extension]
-            : propName && (delete updatedExtensions[propName]);
+            : generatedObject && (delete updatedExtensions[targetAttribute]);
           }
 
           // update using delta

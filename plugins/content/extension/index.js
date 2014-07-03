@@ -287,7 +287,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
         }
 
         var generatedObject = generateExtensionProps(schema);
-        var propName = generatedObject ? Object.keys(generatedObject)[0]; // still yuck
+        var propName = generatedObject ? Object.keys(generatedObject)[0] : null; // still yuck
         // iterate components and update _extensions attribute
         async.each(results, function (component, next) {
           var updatedExtensions = component._extensions || {};

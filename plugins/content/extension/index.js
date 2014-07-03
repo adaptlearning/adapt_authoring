@@ -293,12 +293,12 @@ function toggleExtensions (courseId, action, extensions, cb) {
           var updatedExtensions = component._extensions || {};
           if ('enable' == action) {
             'config' == componentType
-              ? updatedExtensions[extensionItem.extension] = { _id: extensionItem._id, version: extensionItem.version, propName: propName }
+              ? updatedExtensions[extensionItem.extension] = { _id: extensionItem._id, version: extensionItem.version }
               : updatedExtensions = _.extend(updatedExtensions, generatedObject);
           } else {
             'config' == componentType
             ? delete updatedExtensions[extensionItem.extension]
-            : generatedObject && (delete updatedExtensions[propName]);
+            : propName && (delete updatedExtensions[propName]);
           }
 
           // update using delta

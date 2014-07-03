@@ -104,19 +104,33 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
             }
             else if (results && results.length) {
               db.exportResults(results, function (transformed) {
-                // move the _extensions into place
-                if ('config' == collectionType) {
-                  Object.keys(transformed._extensions).forEach(function (key) {
-                    if (!transformed[key]) { // don't allow extensions to overwrite core attributes
-                      transformed[key] = transformed._extensions[key];
+                var output = [];
+                transformed && transformed.forEach(function (item) {
+                  // move the _extensions into place
+                  if (item._extensions) {
+                    var isConfig = ('config' == collectionType);
+                    Object.keys(item._extensions).forEach(function (key) {
+                      if (!isConfig) {
+                        if(!item[key]) { // don't allow extensions to overwrite core attributes
+                          item[key] = item._extensions[key];
+                        }
+                      } else {
+                        // remove superflous ids from config items
+                        delete item._extensions[key]._id;
+                      }
+                    });
+
+                    // remove the _extensions property from the json
+                    if (!isConfig) {
+                      delete item._extensions;
                     }
-                  });
+                  }
 
-                  // remove the _extensions property from the json
-                  delete transformed._extensions;
-                }
+                  // push the results onto our output collection
+                  output.push(item);
+                });
 
-                outputJson[collectionType] = transformed;
+                outputJson[collectionType] = output;
 
                 doneCallback(null);
               });

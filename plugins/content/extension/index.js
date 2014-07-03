@@ -290,19 +290,34 @@ function toggleExtensions (courseId, action, extensions, cb) {
         var targetAttribute = extensionItem.targetAttribute;
         // iterate components and update _extensions attribute
         async.each(results, function (component, next) {
+          var isConfig = ('config' == componentType);
           var updatedExtensions = component._extensions || {};
+          var enabledExtensions = component._enabledExtensions || {};
           if ('enable' == action) {
-            'config' == componentType
-              ? updatedExtensions[extensionItem.extension] = { _id: extensionItem._id, version: extensionItem.version, targetAttribute: targetAttribute }
-              : updatedExtensions = _.extend(updatedExtensions, generatedObject);
+            // we need to store extra in the config object
+            if (isConfig) {
+              enabledExtensions[extensionItem.extension] = {
+                _id: extensionItem._id,
+                version: extensionItem.version,
+                targetAttribute: targetAttribute
+              };
+            }
+            updatedExtensions = _.extend(updatedExtensions, generatedObject);
           } else {
-            'config' == componentType
-            ? delete updatedExtensions[extensionItem.extension]
-            : generatedObject && (delete updatedExtensions[targetAttribute]);
+            // remove from list of enabled extensions in config object
+            if (isConfig) {
+              delete enabledExtensions[extensionItem.extension];
+            }
+
+            generatedObject && (delete updatedExtensions[targetAttribute]);
           }
 
           // update using delta
-          db.update(componentType, { _id: component._id }, { _extensions : updatedExtensions }, next);
+          var delta = { _extensions : updatedExtensions };
+          if (isConfig) {
+            delta._enabledExtensions = enabledExtensions;
+          }
+          db.update(componentType, { _id: component._id }, delta, next);
         }, nextComponent);
       });
     };

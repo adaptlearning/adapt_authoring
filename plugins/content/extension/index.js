@@ -281,7 +281,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
     // extension properties of the passed extensionItem
     var updateComponentItems = function (componentType, schema, extensionItem, nextComponent) {
       var criteria = 'course' == componentType ? { _id : courseId } : { _courseId : courseId };
-      db.retrieve(componentType, criteria, { fields: '_id _extensions' }, function (err, results) {
+      db.retrieve(componentType, criteria, { fields: '_id _extensions _enabledExtensions' }, function (err, results) {
         if (err) {
           return cb(err);
         }

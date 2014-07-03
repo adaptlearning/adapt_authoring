@@ -452,6 +452,7 @@ function addExtensionType(extensionInfo, cb) {
           name: pkgMeta.name,
           displayName: pkgMeta.displayName,
           extension: pkgMeta.extension,
+          targetAttribute: pkgMeta.targetAttribute,
           description: pkgMeta.description,
           version: pkgMeta.version,
           properties: schema.properties

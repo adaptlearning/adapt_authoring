@@ -261,7 +261,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
               child[key] = props[key].default || undefined;
               break;
             case "array":
-              child[key] = [].push(walkObject(props[key].properties));
+              child[key] = [];
               break;
             case "object":
               child[key] = walkObject(props[key].properties);
@@ -287,17 +287,18 @@ function toggleExtensions (courseId, action, extensions, cb) {
         }
 
         var generatedObject = generateExtensionProps(schema);
+        var propName = generatedObject ? Object.keys(generatedObject)[0] : null; // still yuck
         // iterate components and update _extensions attribute
         async.each(results, function (component, next) {
           var updatedExtensions = component._extensions || {};
           if ('enable' == action) {
             'config' == componentType
-              ? updatedExtensions[extensionItem.extension] = { _id: extensionItem._id, version: extensionItem.version }
+              ? updatedExtensions[extensionItem.extension] = { _id: extensionItem._id, version: extensionItem.version, propName: propName }
               : updatedExtensions = _.extend(updatedExtensions, generatedObject);
           } else {
             'config' == componentType
             ? delete updatedExtensions[extensionItem.extension]
-            : generatedObject && (delete updatedExtensions[Object.keys(generatedObject)[0]]); // yuck
+            : generatedObject && (delete updatedExtensions[propName]);
           }
 
           // update using delta

@@ -31,53 +31,62 @@ define(function(require) {
     },
 
     postRender: function() {
-      // Get the schema
+      // Default properties for any JSON editors on this page
+      var jsonEditorDefaults = {
+        no_additional_properties: true, 
+        disable_array_reorder: true,
+        disable_collapse: true,
+        disable_edit_json: true,
+        disable_properties: true
+      };
+
+      // Get the component schema
       var thisComponentTypeId = this.model.get('_componentType')._id; 
       var componentType = _.find(Origin.editor.componentTypes.models, function(type){
         return type.get('_id') == thisComponentTypeId; 
       });
 
-      var schema =  {
+      var componentSchema =  {
         "type": "object",
         "properties": componentType.get('properties')
       };
 
-      this.$('.component-properties').jsoneditor({
-        no_additional_properties: true, 
-        disable_array_reorder: true,
-        disable_collapse: true,
-        disable_edit_json: true,
-        disable_properties: true,
-        schema: schema,
-        startval: this.model.get('properties') 
-      });
+      // Instantiate the JSON editor, appending any properties
+      this.$('.component-properties').jsoneditor(_.extend({schema: componentSchema, startval: this.model.get('properties')}, jsonEditorDefaults));
 
-      // Global extensions
-      // console.log(Origin.editor.extensionTypes);
+      // Now check any course extensions with properties at the component level
       var componentExtensions = this.model.get('_extensions');
 
       if (componentExtensions) {
-        // Check the _extensions array
+        // Check which extensions are enabled on this course
         var courseExtensions = Origin.editor.data.config.get('_enabledExtensions'),
+          extensionKeys = _.keys(componentExtensions),
+          enabledExtensions = _.keys(courseExtensions),
           i = 1;
-          
-        _.each(courseExtensions, function(extension) {
-          var enabledExtension = Origin.editor.extensionTypes.findWhere({_id: extension._id});
+
+        _.each(enabledExtensions, function(extension) {
+          var enabledExtension = Origin.editor.extensionTypes.findWhere({extension: extension});
 
           // Check if the property extension properties at the component level
           if (enabledExtension && enabledExtension.get('properties').pluginLocations.properties.component.properties) {
+            jsonEditorDefaults.schema = enabledExtension.get('properties').pluginLocations.properties.component;
+
+            // Re-construct the 'startval' value with targetAttribute as the root property
+            if (_.indexOf(extensionKeys, enabledExtension.get('targetAttribute')) > -1) {
+              var value = {};
+
+              value[enabledExtension.get('targetAttribute')] = this.model.get('_extensions')[enabledExtension.get('targetAttribute')]
+              
+              jsonEditorDefaults.startval = value; 
+            }
+
+            // Dynamically create a container <div>
             this.$('.component-extensions').append("<div class='component-extension-item-" + i + "'></div>");
+            
             // Add a JSON editor for every enabled extension at the component level
-            this.$('.component-extension-item-' + i).jsoneditor({
-              no_additional_properties: true, 
-              disable_array_reorder: true,
-              disable_collapse: true,
-              disable_edit_json: true,
-              disable_properties: true,
-              schema: enabledExtension.get('properties').pluginLocations.properties.component
-            });
+            this.$('.component-extension-item-' + i).jsoneditor(jsonEditorDefaults);
           }
-        });
+        }, this);
       }
     },
 
@@ -87,8 +96,15 @@ define(function(require) {
     },
 
     saveComponent: function() {
-
       var propertiesJson = this.$('.component-properties').jsoneditor('value');
+      var extensionContainers = this.$('div.component-extensions > div');
+      var extensionJson = {};
+
+      // Iterate over any extensions
+      for (var i = 0; i < extensionContainers.length; i++) {
+        // For some reason the jsoneditor object is very fussy with how it's referenced
+        extensionJson = _.extend(this.$('.' + extensionContainers[i].className).jsoneditor('value'), extensionJson);
+      }
 
       var model = this.model;
 
@@ -98,7 +114,8 @@ define(function(require) {
         title: this.$('.setting-title').val(),
         displayTitle: this.$('.setting-displaytitle').val(),
         body: tinyMCE.get('setting-body').getContent(),
-        properties: propertiesJson},
+        properties: propertiesJson,
+        _extensions: extensionJson},
         {
           error: function() {
             alert('An error occurred doing the save');

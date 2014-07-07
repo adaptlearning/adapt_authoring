@@ -225,6 +225,131 @@ function initialize () {
     });
 
   });
+
+  // add content creation hooks for each viable content type
+  ['contentobject', 'article', 'block', 'component'].forEach(function (contentType) {
+    app.contentmanager.addContentHook('create', contentType, contentCreationHook.bind(null, contentType));
+  });
+}
+
+/**
+ * retrieves an array of extensiontype items that have been enabled on a particular course
+ *
+ * @param {string} courseId
+ * @param {callback} cb
+ */
+function getEnabledExtensions(courseId, cb) {
+  database.getDatabase(function (error, db) {
+    if (error) {
+      return cb(error);
+    }
+
+    // should we delegate this feature to the config plugin?
+    db.retrieve('config', { _courseId: courseId }, function (error, results) {
+      if (error) {
+        return cb(error);
+      }
+
+      if (!results || 0 === results.length) {
+        logger.log('info', 'could not retrieve config for course ' + courseId);
+        return cb(null, []);
+      }
+
+      // get the extensions based on the _enabledExtensions attribute
+      var extIds = [];
+      var enabledExtensions = results[0]._enabledExtensions;
+      enabledExtensions && Object.keys(enabledExtensions).forEach(function (key) {
+        extIds.push(enabledExtensions[key]._id);
+      });
+      db.retrieve('extensiontype', { _id: { $in: extIds } }, cb);
+    });
+  });
+}
+
+/**
+ * hook to modify a newly created content item based on enabled extensions for a course
+ *
+ * @param {string} contentType
+ * @param {array} data
+ * @param {callback} cb
+ */
+function contentCreationHook (contentType, data, cb) {
+  // in creation, data[0] is the content
+  var contentData = data[0];
+  if (!contentData._courseId) {
+    // cannot do anything for unknown courses
+    return cb(null, data);
+  }
+
+  getEnabledExtensions(contentData._courseId, function (error, extensions) {
+    if (error) {
+      // permit content creation to continue, but log error
+      logger.log('error', 'could not load extensions: ' + error.message);
+      return cb(null, data);
+    }
+
+    // _extensions is undefined at this point
+    contentData._extensions = {};
+    extensions.forEach(function (extensionItem) {
+      var schema = extensionItem.properties.pluginLocations.properties[contentType].properties; // yeesh
+      var generatedObject = generateExtensionProps(schema, extensionItem.name, extensionItem.version, contentType);
+      contentData._extensions = _.extend(contentData._extensions, generatedObject);
+    });
+
+    // assign back to passed args
+    data[0] = contentData;
+    return cb(null, data);
+  });
+}
+
+/**
+ * function generates an object from json schema - could not find a lib to do this for me :-\
+ * if anyone knows of a node lib to generate an object from a json schema, please fix this!
+ * based on http://stackoverflow.com/questions/13028400/json-schema-to-javascript-typed-object#answer-16457667
+ *
+ */
+function generateExtensionProps (schema, id, version, location) {
+  if (!this.memo) {
+    this.memo = Object.create(null);
+  }
+
+  // check if we have already built this object
+  var identifier = id + '#' + version + '/' + location;
+  if (this.memo[identifier]) {
+    return this.memo[identifier];
+  }
+
+  var walkObject = function (props) {
+    var child = {};
+    Object.keys(props).forEach(function (key) {
+      switch (props[key].type) {
+        case "boolean":
+        case "integer":
+        case "number":
+        case "string":
+          child[key] = props[key].default || null;
+          break;
+        case "array":
+          child[key] = [];
+          break;
+        case "object":
+          child[key] = walkObject(props[key].properties);
+          break;
+        default:
+          break;
+      }
+    });
+
+    return child;
+  };
+
+  // memoize the result
+  if (schema) {
+    this.memo[identifier] = walkObject(schema);
+    return this.memo[identifier];
+  }
+
+  return false;
 }
 
 /**
@@ -246,36 +371,6 @@ function toggleExtensions (courseId, action, extensions, cb) {
       return cb(err);
     }
 
-    // function generates an object from json schema - could not find a lib to do this for me :-\
-    // if anyone knows of a node lib to generate an object from a json schema, please fix this!
-    // based on http://stackoverflow.com/questions/13028400/json-schema-to-javascript-typed-object#answer-16457667
-    var generateExtensionProps = function (schema) {
-      var walkObject = function (props) {
-        var child = {};
-        Object.keys(props).forEach(function (key) {
-          switch (props[key].type) {
-            case "boolean":
-            case "integer":
-            case "number":
-            case "string":
-              child[key] = props[key].default || undefined;
-              break;
-            case "array":
-              child[key] = [];
-              break;
-            case "object":
-              child[key] = walkObject(props[key].properties);
-              break;
-            default:
-              break;
-          }
-        });
-
-        return child;
-      };
-
-      return (schema && walkObject(schema));
-    };
 
     // retrieves specified components for the course and either adds or deletes
     // extension properties of the passed extensionItem
@@ -286,7 +381,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
           return cb(err);
         }
 
-        var generatedObject = generateExtensionProps(schema);
+        var generatedObject = generateExtensionProps(schema, extensionItem.name, extensionItem.version, componentType);
         var targetAttribute = extensionItem.targetAttribute;
         // iterate components and update _extensions attribute
         async.each(results, function (component, next) {

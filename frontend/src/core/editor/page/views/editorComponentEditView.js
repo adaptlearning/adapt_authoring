@@ -54,40 +54,7 @@ define(function(require) {
       // Instantiate the JSON editor, appending any properties
       this.$('.component-properties').jsoneditor(_.extend({schema: componentSchema, startval: this.model.get('properties')}, jsonEditorDefaults));
 
-      // Now check any course extensions with properties at the component level
-      var componentExtensions = this.model.get('_extensions');
-
-      if (componentExtensions) {
-        // Check which extensions are enabled on this course
-        var courseExtensions = Origin.editor.data.config.get('_enabledExtensions'),
-          extensionKeys = _.keys(componentExtensions),
-          enabledExtensions = _.keys(courseExtensions),
-          i = 1;
-
-        _.each(enabledExtensions, function(extension) {
-          var enabledExtension = Origin.editor.extensionTypes.findWhere({extension: extension});
-
-          // Check if the property extension properties at the component level
-          if (enabledExtension && enabledExtension.get('properties').pluginLocations.properties.component.properties) {
-            jsonEditorDefaults.schema = enabledExtension.get('properties').pluginLocations.properties.component;
-
-            // Re-construct the 'startval' value with targetAttribute as the root property
-            if (_.indexOf(extensionKeys, enabledExtension.get('targetAttribute')) > -1) {
-              var value = {};
-
-              value[enabledExtension.get('targetAttribute')] = this.model.get('_extensions')[enabledExtension.get('targetAttribute')]
-              
-              jsonEditorDefaults.startval = value; 
-            }
-
-            // Dynamically create a container <div>
-            this.$('.component-extensions').append("<div class='component-extension-item-" + i + "'></div>");
-            
-            // Add a JSON editor for every enabled extension at the component level
-            this.$('.component-extension-item-' + i).jsoneditor(jsonEditorDefaults);
-          }
-        }, this);
-      }
+      this.renderExtensionEditor('component');
     },
 
     cancel: function (event) {
@@ -97,14 +64,9 @@ define(function(require) {
 
     saveComponent: function() {
       var propertiesJson = this.$('.component-properties').jsoneditor('value');
-      var extensionContainers = this.$('div.component-extensions > div');
       var extensionJson = {};
 
-      // Iterate over any extensions
-      for (var i = 0; i < extensionContainers.length; i++) {
-        // For some reason the jsoneditor object is very fussy with how it's referenced
-        extensionJson = _.extend(this.$('.' + extensionContainers[i].className).jsoneditor('value'), extensionJson);
-      }
+      extensionJson = this.getExtensionJson('component');
 
       var model = this.model;
 

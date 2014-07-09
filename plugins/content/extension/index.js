@@ -146,7 +146,7 @@ function initialize () {
     });
 
     // get a single extensiontype definition by id
-    rest.get('/extension/:id', function (req, res, next) {
+    rest.get('/extensiontype/:id', function (req, res, next) {
       database.getDatabase(function (err, db) {
         if (err) {
           return next(err);

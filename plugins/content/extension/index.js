@@ -119,7 +119,7 @@ function initialize () {
   app.once('serverStarted', function (server) {
     // add extensiontype list route
     rest.get('/extensiontype', function (req, res, next) {
-      fetchInstalledExtensions(function (err, results) {
+      fetchInstalledExtensions(req.query, function (err, results) {
         if (err) {
           return next(err);
         }
@@ -437,7 +437,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
  * if there are no extensions, it will make a single attempt to install extensions
  * and then send the list via the callback
  *
- * @param {object} [options]
+ * @param {object} [options] { refresh: int, retry: boolean }
  * @param {callback} cb
  */
 function fetchInstalledExtensions (options, cb) {
@@ -462,7 +462,7 @@ function fetchInstalledExtensions (options, cb) {
       }
 
       // there should be at least one installed extension
-      if ((!results || 0 === results.length) && options.retry) {
+      if (options.refresh || ((!results || 0 === results.length) && options.retry)) {
         // update extensions, retry, return
         return updateExtensionTypes(function (err) {
           if (err) {

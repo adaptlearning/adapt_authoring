@@ -17,16 +17,14 @@
               </label>
               <label for="config-accessibilityenabled">
                   {{t 'app.accessibilityenabled'}}
-                  <select id="config-accessibilityenabled" name="config-accessibilityenabled">
-                    <option value="true">Yes</option>
-                    <option>No</option>
+                  <select id="config-accessibilityenabled" name="config-accessibilityenabled" class="config-accessibilityenabled">
+                    {{renderBooleanOptions _isAccessibilityEnabled}}
                   </select>
               </label>
               <label for="config-accessibilitylegacy">
                   {{t 'app.accessibilitylegacy'}}
-                  <select id="config-accessibilitylegacy" name="config-accessibilitylegacy">
-                    <option>Yes</option>
-                    <option>No</option>
+                  <select id="config-accessibilitylegacy" name="config-accessibilitylegacy" class="config-accessibilitylegacy">
+                    {{renderBooleanOptions _shouldSupportLegacy}}
                   </select>
               </label>
               <label for="config-drawershoweasing">

@@ -61,15 +61,14 @@ define(function(require) {
         {type: 'easeInOutBounce'}
       ];
 
-      var showEasing = this.model.get('_drawer')._showEasing,
-        hideEasing = this.model.get('_drawer')._hideEasing,
-        duration = this.model.get('_drawer')._duration;
-
-      // The following properties are only defined for the UI
+      // The following properties are only added to the model
+      // for the purposes of rendering the UI
       this.model.set('_easings', easings);
-      this.model.set('_showEasing', showEasing);
-      this.model.set('_hideEasing', hideEasing);
-      this.model.set('_duration', duration);
+      this.model.set('_showEasing', this.model.get('_drawer')._showEasing);
+      this.model.set('_hideEasing', this.model.get('_drawer')._hideEasing);
+      this.model.set('_duration', this.model.get('_drawer')._duration);
+      this.model.set('_isAccessibilityEnabled', this.model.get('_accessibility')._isEnabled);
+      this.model.set('_shouldSupportLegacy', this.model.get('_accessibility')._shouldSupportLegacyBrowsers);
     },
 
     postRender: function() {     
@@ -86,12 +85,12 @@ define(function(require) {
         event.preventDefault();  
       }
       
-      var model = this.model;
+      var _this = this;
       var extensionJson = {};
 
       extensionJson = this.getExtensionJson('config');
 
-      model.save({
+      _this.model.save({
         _defaultLanguage: this.$('.config-defaultLanguage').val(),
         _questionWeight: this.$('.config-questionWeight').val(),
         _drawer: {
@@ -100,8 +99,8 @@ define(function(require) {
           _duration: this.$('.config-drawerduration').val()
         },
         _accessibility: {
-          _isEnabled: true,
-          _shouldSupportLegacyBrowsers: true
+          _isEnabled: this.$('.config-accessibilityenabled').val(),
+          _shouldSupportLegacyBrowsers: this.$('.config-accessibilitylegacy').val()
         },
         _extensions: extensionJson
       },
@@ -113,11 +112,10 @@ define(function(require) {
           Origin.trigger('editingOverlay:views:hide');
           Origin.trigger('editorView:fetchData');
           Backbone.history.history.back();
-          this.remove();
+          _this.remove();
         }
       });
     }
-  
   },
   {
     template: 'editorConfigEdit'

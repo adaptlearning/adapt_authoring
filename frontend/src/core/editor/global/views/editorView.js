@@ -108,7 +108,6 @@ define(function(require){
           });
         });
       } else {
-        // this.setupEditorModels();
         this.setupEditorData();
       }
     },

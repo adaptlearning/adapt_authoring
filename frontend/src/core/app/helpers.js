@@ -78,6 +78,17 @@ define(function(require){
              i = Math.floor(Math.log(bytes) / Math.log(k));
 
             return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+        },
+        renderBooleanOptions: function(selectedValue) {
+            var options = ["true", "false"];
+            var html = '';
+
+            for (var i = 0; i < options.length; i++) {
+                var selected = selectedValue == options[i] ? ' selected' : '';
+                html += '<option value="' + options[i] + '"' + selected + '>' + options[i] + '</option>';
+            }
+
+            return new Handlebars.SafeString(html);
         }
     };
 

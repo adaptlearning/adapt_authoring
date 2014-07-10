@@ -8,8 +8,8 @@ define(function(require) {
     _children: '',
     _parent: 'course',
     _type: 'config'
-
   });
 
   return EditorConfigModel;
 });
+0

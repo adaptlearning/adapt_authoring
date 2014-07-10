@@ -93,6 +93,7 @@ define(function(require) {
         Origin.trigger('location:title:update', {title: 'Manage extensions'});
 
         var extensionsModel = new Backbone.Model({_id: location});
+
         Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el);
         Origin.editingOverlay.addView(new EditorExtensionsEditView({model: extensionsModel}).$el);
         break;

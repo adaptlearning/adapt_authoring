@@ -39,10 +39,10 @@ define(function(require) {
 
       // Read the enabled extensions from the config
       $.ajax({
-          url: '/api/content/config?_courseId=' + _this.model.get('_id')
+          url: '/api/content/config/' + _this.model.get('_id')
         }).done(function(data) {
           
-          var extensionsData = data[0]._enabledExtensions,
+          var extensionsData = data._enabledExtensions,
             extensions = [];
 
           extensions = _.pluck(extensionsData, '_id');
@@ -86,7 +86,7 @@ define(function(require) {
           _type: 'prompt',
           _showIcon: true,
           title: window.polyglot.t('app.manageextensions'),
-          body: window.polyglot.t('app.confirmdeleteextension'),
+          body: window.polyglot.t('app.confirmdeleteextension') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteextensionwarning'),
           _prompts: [
             {_callbackEvent: 'editorExtensionsEditSidebar:views:delete', promptText: window.polyglot.t('app.ok')},
             {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
@@ -157,8 +157,9 @@ define(function(require) {
         Origin.trigger('notify:prompt', props);  
       }
       else {
-        Backbone.history.history.back();
         Origin.trigger('editingOverlay:views:hide');
+        Backbone.history.history.back();
+        this.remove();
       }
     },
 
@@ -172,8 +173,10 @@ define(function(require) {
         },
         function(result) {
           if (result.success) {
-            Backbone.history.history.back();
-            Origin.trigger('editingOverlay:views:hide');  
+              Origin.trigger('editingOverlay:views:hide');
+              Origin.trigger('editorView:fetchData');
+              Backbone.history.history.back();
+              this.remove();
           } else {
             alert('An error occured');
           }          

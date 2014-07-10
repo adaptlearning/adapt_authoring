@@ -6,7 +6,7 @@ define(function(require) {
         urlRoot: '/api/content/component',
         initialize: function() {},
         _parent: 'blocks',
-        _siblings:'components',
+        _siblings:'component',
         _children: null
     });
 

@@ -42,7 +42,7 @@ define(function(require) {
 
       // Get the component schema
       var thisComponentTypeId = this.model.get('_componentType')._id; 
-      var componentType = _.find(Origin.editor.componentTypes.models, function(type){
+      var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
         return type.get('_id') == thisComponentTypeId; 
       });
 

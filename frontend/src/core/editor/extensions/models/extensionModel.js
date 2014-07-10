@@ -1,13 +1,16 @@
 define(function(require) {
   
-  var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
+  var EditorModel = require('editorGlobal/models/editorModel');
 
-  var ExtensionModel = Backbone.Model.extend({
+  var ExtensionModel = EditorModel.extend({
 
     idAttribute: '_id',
 
-    urlRoot: '/api/extensiontype'
+    urlRoot: '/api/extensiontype',
+    _parent: null,
+    _siblings: null,
+    _children: null,
+    _type: 'extension'
 
   });
 

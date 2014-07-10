@@ -1,19 +1,15 @@
 define(function(require) {
-
-  var Origin = require('coreJS/app/origin');
   var EditorModel = require('editorGlobal/models/editorModel');
-
   var EditorConfigModel = EditorModel.extend({
+
     urlRoot: '/api/content/config',
-    
-    initialize : function() {}
-  },
-  {
+
+    _siblings: '',
+    _children: '',
     _parent: 'course',
-    _siblings:'',
-    _children: ''
+    _type: 'config'
+
   });
 
   return EditorConfigModel;
-
 });

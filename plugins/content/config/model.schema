@@ -21,6 +21,34 @@
       "type": "string",
       "default": "1"
     },
+    "_drawer" : {
+      "type" : "object",
+      "required" : true,
+      "_showEasing" : {
+        "type" : "string",
+        "default" : ""        
+      },
+      "_hideEasing" : {
+        "type": "string",
+        "default": ""
+      },
+      "_duration" : {
+        "type" : "number",
+        "default" : 400
+      }
+    },
+    "_accessibility" : {
+      "type" : "object",
+      "required" : true,
+      "_isEnabled" : {
+        "type" : "boolean",
+        "default" : true
+      },
+      "_shouldSupportLegacyBrowsers" : {
+        "type": "boolean",
+        "default" : true
+      }
+    },
     "screenSize": {
       "small" : {
         "type" : "number",

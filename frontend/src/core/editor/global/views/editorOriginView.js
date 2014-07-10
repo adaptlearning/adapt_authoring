@@ -135,7 +135,7 @@ define(function(require){
           i = 1;
 
         _.each(enabledExtensions, function(extension) {
-          var enabledExtension = Origin.editor.extensionTypes.findWhere({extension: extension});
+          var enabledExtension = Origin.editor.data.extensionTypes.findWhere({extension: extension});
           var extensionProperites = enabledExtension.get('properties').pluginLocations.properties[level];
           // Check if the property extension properties at the specified level
           if (enabledExtension && extensionProperites && extensionProperites.properties) {

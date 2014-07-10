@@ -1,19 +1,65 @@
-<div class="course-edit">
-  <div class="row">
-    <form role="form">
-      <div class="form-group">
-        <label for="config-defaultLanguage">{{t 'app.defaultlanguage'}}</label>
-        <input type="text" class="form-control config-defaultLanguage" placeholder="{{t 'app.defaultlanguage'}}" value="{{_defaultLanguage}}">
-      </div>
-      <div class="form-group">
-        <label for="config-questionWeight">{{t 'app.questionweight'}}</label>
-        <input type="text" class="form-control config-questionWeight" placeholder="{{t 'app.questionweight'}}" value="{{_questionWeight}}">
-      </div>
-      <div class="hidden">
-        <input type="hidden" value="{{id}}" id="configId">
-      </div>
-      <button class="save-button" type="submit">{{t 'app.save'}}</button>
-      <button class="cancel-button" type="button">{{t 'app.cancel'}}</button>
-    </form>
-  </div>
+<div class="config-edit">
+    <div class="editing-overlay-panel">
+        <a href="#" class="editing-overlay-panel-title active">
+            <div class="editing-overlay-panel-title-inner">
+                <h2>{{t 'app.settingsgeneral'}}</h2>
+            </div>
+        </a>
+        <div class="editing-overlay-panel-content">
+          <form method="post" action="" class="forms">
+              <label for="config-defaultLanguage">
+                  {{t 'app.defaultlanguage'}}
+                  <input id="config-defaultLanguage" type="text" name="config-defaultLanguage" class="config-defaultLanguage width-10" value="{{_defaultLanguage}}"/>
+              </label>
+              <label for="config-questionWeight">
+                  {{t 'app.questionweight'}}
+                  <input id="config-questionWeight" type="text" name="config-questionWeight" class="config-questionWeight width-10" value="{{_questionWeight}}"/>
+              </label>
+              <label for="config-accessibilityenabled">
+                  {{t 'app.accessibilityenabled'}}
+                  <select id="config-accessibilityenabled" name="config-accessibilityenabled">
+                    <option value="true">Yes</option>
+                    <option>No</option>
+                  </select>
+              </label>
+              <label for="config-accessibilitylegacy">
+                  {{t 'app.accessibilitylegacy'}}
+                  <select id="config-accessibilitylegacy" name="config-accessibilitylegacy">
+                    <option>Yes</option>
+                    <option>No</option>
+                  </select>
+              </label>
+              <label for="config-drawershoweasing">
+                  {{t 'app.drawershoweasing'}}
+                  <select id="config-drawershoweasing" name="config-drawershoweasing" class="config-drawershoweasing">
+                    {{#each _easings}}
+                    <option value="{{type}}" {{selected type ../_showEasing}}>{{type}}</option>
+                    {{/each}}
+                  </select>
+              </label>
+              <label for="config-drawerhideeasing">
+                  {{t 'app.drawerhideeasing'}}
+                  <select id="config-drawerhideeasing" name="config-drawerhideeasing" class="config-drawerhideeasing">
+                    {{#each _easings}}
+                    <option value="{{type}}" {{selected type ../_hideEasing}}>{{type}}</option>
+                    {{/each}}
+                  </select>
+              </label>
+              <label for="config-drawerduration">
+                  {{t 'app.drawerduration'}}
+                  <input id="config-drawerduration" type="text" name="config-drawerduration" class="config-drawerduration width-10" value="{{_duration}}"/>
+              </label>  
+          </form>
+        </div>
+    </div>
+    <div class="editing-overlay-panel">
+        <a href="#" class="editing-overlay-panel-title">
+            <div class="editing-overlay-panel-title-inner">
+                <h2>Extensions</h2>
+            </div>
+        </a>
+        <div class="editing-overlay-panel-content editing-overlay-panel-collapsed">
+            <div class="config-extensions"></div>
+        </div>
+    </div>
 </div>

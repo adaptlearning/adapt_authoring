@@ -29,6 +29,11 @@ define(function(require) {
   var EditorExtensionsEditView = require('editorExtensions/views/editorExtensionsEditView');
   var EditorExtensionsEditSidebarView = require('editorExtensions/views/editorExtensionsEditSidebarView');
 
+  var EditorConfigEditView = require('editorConfig/views/editorConfigEditView');
+  var EditorConfigEditSidebarView = require('editorConfig/views/editorConfigEditSidebarView');
+  var EditorConfigModel = require('editorConfig/models/editorConfigModel');
+  var EditorConfigCollection = require('editorConfig/collections/EditorConfigCollection');
+
 	Origin.on('router:editor', function(location, subLocation, action) {
 
     if (location === 'article') {
@@ -68,6 +73,22 @@ define(function(require) {
     }
 
 		switch (subLocation) {
+      case 'config':
+        // subLocation is the courseid
+        // var collection = new EditorConfigCollection();
+        // collection.findWhere({_courseId: location});
+
+        var configModel = new EditorConfigModel({_id: location});
+
+        configModel.fetch({
+          success: function() {
+            Origin.trigger('location:title:update', {title: 'Edit configuration'});
+            Origin.sidebar.addView(new EditorConfigEditSidebarView().$el);
+            Origin.editingOverlay.addView(new EditorConfigEditView({model: configModel}).$el);
+          }
+        });
+        break;
+
       case 'extensions':
         Origin.trigger('location:title:update', {title: 'Manage extensions'});
 
@@ -80,16 +101,17 @@ define(function(require) {
 				// Update page title
 				Origin.trigger('location:title:update', {title: 'Menu editor'});
 				// Create Editor menu view
-    			Origin.router.createView(EditorView, {
-    		        currentCourseId: location,
-    		        currentView: 'menu',
-    		        currentPageId: (action || null)
-    		    });
-    		    // update sidebar view
-    		    Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
-    		    	"backButtonText": "Back to courses",
-    		    	"backButtonRoute": "/#/dashboard"
-    		    });
+  			Origin.router.createView(EditorView, {
+	        currentCourseId: location,
+	        currentView: 'menu',
+	        currentPageId: (action || null)
+  	    });
+
+		    // update sidebar view
+		    Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
+		    	"backButtonText": "Back to courses",
+		    	"backButtonRoute": "/#/dashboard"
+		    });
 				break;
 			case 'page':
 				// Update page title
@@ -98,15 +120,15 @@ define(function(require) {
 				// Create Editor page view
         Origin.editor.scrollTo = 0;
 				Origin.router.createView(EditorView, {
-    				currentCourseId: location,
-    				currentView: 'page',
-    				currentPageId: (action || null)
-    			});
+  				currentCourseId: location,
+  				currentView: 'page',
+  				currentPageId: (action || null)
+	 		  });
 				// update sidebar view
-    			Origin.sidebar.addView(new EditorPageSidebarView().$el, {
-    		    	"backButtonText": "Back to course structure",
-    		    	"backButtonRoute": "/#/editor/" + location + "/menu"
-    		    });
+  			Origin.sidebar.addView(new EditorPageSidebarView().$el, {
+		    	"backButtonText": "Back to course structure",
+		    	"backButtonRoute": "/#/editor/" + location + "/menu"
+		    });
 				break;
 			case 'edit':
 				var contentObjectModel = new EditorContentObjectModel({_id: location});
@@ -116,7 +138,7 @@ define(function(require) {
 					  Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel}).$el);
 					  Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel}).$el);
 					}
-				})
+				});
 			break;
 		}
 

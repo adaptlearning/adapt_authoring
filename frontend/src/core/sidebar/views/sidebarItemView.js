@@ -8,10 +8,15 @@ define(function(require) {
       	className: 'sidebar-item',
 
       	events: {
-          'click button.editor-common-sidebar-extensions' : 'manageExtensions',
-          'click button.editor-common-sidebar-publish'    : 'publishProject',
-          'click button.editor-common-sidebar-preview'    : 'previewProject',
-          'click button.editor-common-sidebar-close'	    : 'closeProject', 
+          'click button.editor-common-sidebar-config'       : 'editConfiguration',
+          'click button.editor-common-sidebar-extensions'   : 'manageExtensions',
+          'click button.editor-common-sidebar-publish'      : 'publishProject',
+          'click button.editor-common-sidebar-preview'      : 'previewProject',
+          'click button.editor-common-sidebar-close'        : 'closeProject', 
+        },
+
+        editConfiguration: function() {
+            Origin.router.navigate('#/editor/' + Origin.editor.currentCourseId + '/config', {trigger: true});
         },
 
         manageExtensions: function() {

@@ -75,17 +75,9 @@ define(function(require) {
                 "_hideEasing": "easeInQuart",
                 "_duration": 400
               },
-              "_spoor" : {
-                "_tracking" : {
-                  "_requireCourseCompleted":  true,
-                  "_requireAssessmentPassed" : true,
-                  "_shouldSubmitScore" : false,
-                  "_reporting" : {
-                    "_comment":  "",
-                    "_onTrackingCriteriaMet" : "completed",
-                    "_onQuizFailure" : "incomplete"
-                  }      
-                }
+              "_accessibility": {
+                "_isEnabled" : true,
+                "_shouldSupportLegacyBrowsers" : true
               },
               "screenSize": {
                 "small" : 519,
@@ -93,8 +85,6 @@ define(function(require) {
                 "large" : 1024
               }
             };
-
-            // config.save({'_courseId': result.get('_id')});
            
             config.save(configData);
             

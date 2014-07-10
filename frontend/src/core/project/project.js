@@ -3,6 +3,7 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var ProjectModel = require('coreJS/project/models/projectModel');
   var ProjectDetailView = require('coreJS/project/views/projectDetailView');
+  var ProjectDetailEditSidebarView = require('coreJS/project/views/projectDetailEditSidebarView');
 
   Origin.on('navigation:user:logout', function() {
     Origin.router.navigate('#/user/logout');
@@ -18,15 +19,17 @@ define(function(require) {
       case 'new':
         var project = new ProjectModel();
         Origin.trigger('location:title:update', {title: 'Add new course'});
-        Origin.router.createView(ProjectDetailView, {model: project});
-        console.log('new loaded');
+        Origin.editingOverlay.addView(new ProjectDetailView({model: project}).$el);
+        Origin.sidebar.addView(new ProjectDetailEditSidebarView().$el);
         break;
       case 'edit':
-        var projectModel = new ProjectModel({_id: id});
-        projectModel.fetch({
+        var project = new ProjectModel({_id: id});
+
+        project.fetch({
           success: function() {
             Origin.trigger('location:title:update', {title: 'Edit course'});
-            Origin.router.createView(ProjectDetailView, {model: projectModel});
+            Origin.editingOverlay.addView(new ProjectDetailView({model: project}).$el);
+            Origin.sidebar.addView(new ProjectDetailEditSidebarView().$el);
           }
         });
         break;

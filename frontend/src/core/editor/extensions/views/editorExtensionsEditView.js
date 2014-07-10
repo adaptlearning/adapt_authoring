@@ -167,7 +167,9 @@ define(function(require) {
      * Make the API call to save extensions
      */
     saveExtensions: function() {
-      $.post('/api/extension/enable/' + this.model.get('_id'), 
+      var _this = this;
+
+      $.post('/api/extension/enable/' + _this.model.get('_id'), 
         {
           extensions: this.model.get('selectedExtensions') 
         },
@@ -176,7 +178,7 @@ define(function(require) {
               Origin.trigger('editingOverlay:views:hide');
               Origin.trigger('editorView:fetchData');
               Backbone.history.history.back();
-              this.remove();
+              _this.remove();
           } else {
             alert('An error occured');
           }          

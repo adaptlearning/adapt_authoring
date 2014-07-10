@@ -1,10 +1,8 @@
 <form class="forms">
   <label for="projectDetailTitle">{{t 'app.projecttitle'}} <span class="req">*</span> <span id="titleErrorMessage" class="error"></span>
-    <input type="text" class="width-30" id="projectDetailTitle" placeholder="{{t 'app.projecttitle'}}" value="{{ title }}" autocomplete="off">
+    <input type="text" class="width-30" id="projectDetailTitle" value="{{ title }}" autocomplete="off">
   </label>
   <label for="projectDetailDescription">{{t 'app.projectdescription'}}
-    <textarea class="width-30" id="projectDetailDescription" placeholder="{{t 'app.projectdescription'}}">{{ body }}</textarea>
+    <textarea class="width-30" id="projectDetailDescription">{{ body }}</textarea>
   </label>
-  <button id="saveButton" type="submit" class="btn btn-green">{{t 'app.save'}}</button>
-  <button id="cancelButton" type="button" class="btn">{{t 'app.cancel'}}</button>
 </form>

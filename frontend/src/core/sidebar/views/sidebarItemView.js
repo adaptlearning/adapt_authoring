@@ -5,35 +5,40 @@ define(function(require) {
 
 	var SidebarItemView = OriginView.extend({
 
-      	className: 'sidebar-item',
+  	className: 'sidebar-item',
 
-      	events: {
-          'click button.editor-common-sidebar-config'       : 'editConfiguration',
-          'click button.editor-common-sidebar-extensions'   : 'manageExtensions',
-          'click button.editor-common-sidebar-publish'      : 'publishProject',
-          'click button.editor-common-sidebar-preview'      : 'previewProject',
-          'click button.editor-common-sidebar-close'        : 'closeProject', 
-        },
+  	events: {
+      'click button.editor-common-sidebar-project'      : 'editProject',
+      'click button.editor-common-sidebar-config'       : 'editConfiguration',
+      'click button.editor-common-sidebar-extensions'   : 'manageExtensions',
+      'click button.editor-common-sidebar-publish'      : 'publishProject',
+      'click button.editor-common-sidebar-preview'      : 'previewProject',
+      'click button.editor-common-sidebar-close'        : 'closeProject', 
+    },
 
-        editConfiguration: function() {
-            Origin.router.navigate('#/editor/' + Origin.editor.currentCourseId + '/config', {trigger: true});
-        },
+    editProject: function() {
+      Origin.router.navigate('#/project/edit/' + Origin.editor.currentCourseId, {trigger: true});
+    },
 
-        manageExtensions: function() {
-          Origin.router.navigate('#/editor/' + Origin.editor.currentCourseId + '/extensions', {trigger: true});
-        },
+    editConfiguration: function() {
+        Origin.router.navigate('#/editor/' + Origin.editor.currentCourseId + '/config', {trigger: true});
+    },
 
-      	publishProject: function() {
-        	Origin.trigger('editorCommon:publish');
-        },
+    manageExtensions: function() {
+      Origin.router.navigate('#/editor/' + Origin.editor.currentCourseId + '/extensions', {trigger: true});
+    },
 
-        previewProject: function() {
-        	Origin.trigger('editorCommon:preview');
-        },
+  	publishProject: function() {
+    	Origin.trigger('editorCommon:publish');
+    },
 
-        closeProject: function() {
-        	Backbone.history.navigate('#/dashboard');
-        },
+    previewProject: function() {
+    	Origin.trigger('editorCommon:preview');
+    },
+
+    closeProject: function() {
+    	Backbone.history.navigate('#/dashboard');
+    },
 		
 		initialize: function() {
 			this.render();

@@ -6,24 +6,16 @@ define(function(require) {
 
   var ProjectDetailView = OriginView.extend({
 
-    settings: {
-      autoRender: false
-    },
-
     tagName: "div",
 
     className: "project",
 
     events: {
-      'click button#saveButton'   : 'saveProject',
-      'click button#cancelButton' : 'cancel'
+
     },
 
     preRender: function() {
-      this.listenTo(this.model, 'sync', this.render);
-      if (!this.model._id) {
-        this.render();
-      }
+      this.listenTo(Origin, 'projectEditSidebar:views:save', this.saveProject);
     },
 
     cancel: function (event) {
@@ -47,7 +39,7 @@ define(function(require) {
     },
 
     saveProject: function(event) {
-      event.preventDefault();
+      event && event.preventDefault();
 
       if (!this.validateInput()) {
         return;

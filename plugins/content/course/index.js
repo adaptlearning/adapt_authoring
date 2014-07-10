@@ -56,7 +56,7 @@ CourseContent.prototype.getModelName = function () {
  * @return {string}
  */
 CourseContent.prototype.getChildType = function () {
-  return 'contentobject';
+  return ['contentobject', 'config'];
 };
 
 /**
@@ -78,7 +78,7 @@ CourseContent.prototype.destroy = function (search, next) {
       async.eachSeries(
         docs,
         function (doc, cb) {
-          self.destroyChildren(doc._id, function (error) {
+          self.destroyChildren(doc._id, '_courseId', function (error) {
             if (error) {
               return cb(error);
             }

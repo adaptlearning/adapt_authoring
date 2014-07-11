@@ -1,0 +1,20 @@
+{{> header}}
+  {{#form formAction}}
+    <div>
+      <h1>FFmpeg</h1>
+      <p>FFmpeg is an optional tool that will allow you to more easily identify files and file formats that you upload to the Asset Manager. Having it installed will make it easier to use Adapt.</p>
+      <p>If you would like to install FFmpeg, you can follow the instructions <a href="http://ffmpeg.org/">here.</a></p>
+      
+    </div>
+
+    <div>
+    <p>If you have FFmpeg installed, please tick the box below. Otherwise, leave it blank.</p>
+      {{checkbox "ffmpeg" "true" false}} I have FFmpeg installed.
+      <br>    
+    </div>
+
+    <div>
+        {{submit 'submit' 'Continue' value="submit"}}
+    </div>
+  {{/form}}
+{{>footer}}

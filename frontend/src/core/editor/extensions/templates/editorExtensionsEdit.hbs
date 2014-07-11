@@ -1,0 +1,48 @@
+<h2>{{ t 'app.enabledextensions'}}</h2>
+{{#if enabledExtensions}}
+<table class="table-bordered width-100">
+    <thead>
+        <tr>
+            <th>{{t 'app.extension'}}</th>
+            <th>{{t 'app.description'}}</th>
+            <th>{{t 'app.options'}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each enabledExtensions}}
+        <tr>
+            <td>{{displayName}}</td>
+            <td>{{description}}</td>
+            <td><button class="btn btn-red remove-extension" value="{{_id}}">{{t 'app.remove'}}</button></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+{{else}}
+<div>{{t 'app.noextensionsenabled'}}</div>
+{{/if}}
+
+<h2>{{ t 'app.availableextensions'}}</h2>
+{{#if availableExtensions}}
+<table class="table-bordered width-100">
+    <thead>
+        <tr>
+            <th>{{t 'app.extension'}}</th>
+            <th>{{t 'app.description'}}</th>
+            <th>{{t 'app.select'}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each availableExtensions}}
+        <tr>
+            <td>{{displayName}}</td>
+            <td>{{description}}</td>
+            <td class="extension-checkbox-column"><input type="checkbox" name="checkbox-1" id="checkbox-1" value="{{_id}}" data-name="{{displayName}}"></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+{{else}}
+<div>{{t 'app.noextensionsavailable'}}</div>
+{{/if}}
+

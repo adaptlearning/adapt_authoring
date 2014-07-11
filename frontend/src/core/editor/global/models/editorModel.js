@@ -14,9 +14,8 @@ define(function(require) {
       loadedData: function() {
         if (this._siblings) {
           this._type = this._siblings;
-        } else {
-          this._type = 'course';
-        }
+        } 
+ 
         Origin.trigger('editorModel:dataLoaded', this._type);
       },
 

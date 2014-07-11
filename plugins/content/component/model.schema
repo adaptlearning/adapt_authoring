@@ -18,6 +18,9 @@
     "_layout": {
       "type": "string"
     },
+    "_extensions": {
+      "type":"object"
+    },
     "properties" : {
       "type": "object"
     }

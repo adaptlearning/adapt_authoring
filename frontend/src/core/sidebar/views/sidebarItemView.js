@@ -5,8 +5,41 @@ define(function(require) {
 
 	var SidebarItemView = OriginView.extend({
 
-		className: 'sidebar-item',
+  	className: 'sidebar-item',
 
+  	events: {
+      'click button.editor-common-sidebar-project'      : 'editProject',
+      'click button.editor-common-sidebar-config'       : 'editConfiguration',
+      'click button.editor-common-sidebar-extensions'   : 'manageExtensions',
+      'click button.editor-common-sidebar-publish'      : 'publishProject',
+      'click button.editor-common-sidebar-preview'      : 'previewProject',
+      'click button.editor-common-sidebar-close'        : 'closeProject', 
+    },
+
+    editProject: function() {
+      Origin.router.navigate('#/project/edit/' + Origin.editor.currentCourseId, {trigger: true});
+    },
+
+    editConfiguration: function() {
+        Origin.router.navigate('#/editor/' + Origin.editor.currentCourseId + '/config', {trigger: true});
+    },
+
+    manageExtensions: function() {
+      Origin.router.navigate('#/editor/' + Origin.editor.currentCourseId + '/extensions', {trigger: true});
+    },
+
+  	publishProject: function() {
+    	Origin.trigger('editorCommon:publish');
+    },
+
+    previewProject: function() {
+    	Origin.trigger('editorCommon:preview');
+    },
+
+    closeProject: function() {
+    	Backbone.history.navigate('#/dashboard');
+    },
+		
 		initialize: function() {
 			this.render();
 			this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);

@@ -4,6 +4,9 @@
   "id": "http://jsonschema.net",
   "$ref": "http://localhost/system/content.schema",
   "properties": {
+    "_extensions": {
+      "type": "object"
+    },
     "_graphic" : {
       "alt" : {
         "type": "string",

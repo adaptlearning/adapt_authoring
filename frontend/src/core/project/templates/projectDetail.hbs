@@ -1,10 +1,44 @@
-<form class="forms">
-  <label for="projectDetailTitle">{{t 'app.projecttitle'}} <span class="req">*</span> <span id="titleErrorMessage" class="error"></span>
-    <input type="text" class="width-30" id="projectDetailTitle" placeholder="{{t 'app.projecttitle'}}" value="{{ title }}" autocomplete="off">
-  </label>
-  <label for="projectDetailDescription">{{t 'app.projectdescription'}}
-    <textarea class="width-30" id="projectDetailDescription" placeholder="{{t 'app.projectdescription'}}">{{ body }}</textarea>
-  </label>
-  <button id="saveButton" type="submit" class="btn btn-green">{{t 'app.save'}}</button>
-  <button id="cancelButton" type="button" class="btn">{{t 'app.cancel'}}</button>
-</form>
+<div class="course-edit">
+  <div class="editing-overlay-panel">
+    <a href="#" class="editing-overlay-panel-title active">
+      <div class="editing-overlay-panel-title-inner">
+        <h2>{{t 'app.settingsgeneral'}}</h2>
+      </div>
+    </a>
+    <div class="editing-overlay-panel-content">
+      <form class="forms">
+        <label for="projectDetailTitle">{{t 'app.projecttitle'}} <span class="req">*</span> <span id="titleErrorMessage" class="error"></span>
+          <input type="text" class="width-30" id="projectDetailTitle" value="{{ title }}" autocomplete="off">
+        </label>
+        <label for="projectDetailDescription">{{t 'app.projectdescription'}}
+          <textarea class="width-30" id="projectDetailDescription">{{ body }}</textarea>
+        </label>
+        <ul class="forms-list">
+          <li>
+            <input type="radio" name="visibility" id="visibility-1" value="1">
+            <label for="visibility-1">Only visible to me</label>
+          </li>
+          <li>
+            <input type="radio" name="visibility" id="visibility-2" value="2">
+            <label for="visibility-2">Allow my colleagues to view and edit this</label>
+          </li>
+          <li>
+            <input type="radio" name="visibility" id="visibility-3" value="3">
+            <label for="visibility-2">Allow anyone to view this</label>
+          </li>
+        </ul>
+      </form>
+    </div>
+    {{#if _id}}
+    <div class="editing-overlay-panel">
+        <a href="#" class="editing-overlay-panel-title">
+            <div class="editing-overlay-panel-title-inner">
+                <h2>Extensions</h2>
+            </div>
+        </a>
+        <div class="editing-overlay-panel-content editing-overlay-panel-collapsed">
+            <div class="course-extensions"></div>
+        </div>
+    </div>
+    {{/if}}
+</div>

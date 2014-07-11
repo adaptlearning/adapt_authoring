@@ -36,7 +36,7 @@ define(function(require){
 
       // Add a componentTypes property to the model and call toJSON() on the
       // collection so that the templates work
-      this.model.set('componentTypes', Origin.editor.componentTypes.toJSON());
+      this.model.set('componentTypes', Origin.editor.data.componentTypes.toJSON());
 
       this.evaluateComponents();
     },
@@ -196,7 +196,7 @@ define(function(require){
         _showIcon: true,
         title: window.polyglot.t('app.addcomponent'),
         body: window.polyglot.t('app.pleaseselectcomponent'),
-        componentTypes: Origin.editor.componentTypes.toJSON(),
+        componentTypes: Origin.editor.data.componentTypes.toJSON(),
         layoutOptions: this.model.get('layoutOptions'),
         _prompts: [
           {_callbackEvent: 'editorView:addComponent:' + this.model.get('_id'), promptText: window.polyglot.t('app.ok')},
@@ -213,7 +213,7 @@ define(function(require){
         return;
       }
 
-      var componentType = _.find(Origin.editor.componentTypes.models, function(type){
+      var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
         return type.get('name') == data.componentType;
       });
 

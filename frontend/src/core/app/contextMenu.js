@@ -62,11 +62,6 @@ define(function(require) {
         callbackEvent: 'edit'
       },
       {
-        title: window.polyglot.t('app.editproperties'),
-        className: 'context-menu-item',
-        callbackEvent: 'editproperties'
-      },
-      {
         title: window.polyglot.t('app.duplicate'),
         className: 'context-menu-item',
         callbackEvent: 'duplicate'

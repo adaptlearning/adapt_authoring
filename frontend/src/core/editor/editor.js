@@ -32,7 +32,7 @@ define(function(require) {
   var EditorConfigEditView = require('editorConfig/views/editorConfigEditView');
   var EditorConfigEditSidebarView = require('editorConfig/views/editorConfigEditSidebarView');
   var EditorConfigModel = require('editorConfig/models/editorConfigModel');
-  var EditorConfigCollection = require('editorConfig/collections/EditorConfigCollection');
+  var EditorConfigCollection = require('editorConfig/collections/editorConfigCollection');
 
 	Origin.on('router:editor', function(location, subLocation, action) {
 

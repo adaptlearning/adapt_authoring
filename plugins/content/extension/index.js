@@ -135,6 +135,31 @@ function initialize () {
       });
     });
 
+    // add extensiontype list route
+    rest.get('/extensiontype/checkversion/:id', function (req, res, next) {
+      database.getDatabase(function (err, db) {
+        if (err) {
+          return next(err);
+        }
+
+        db.retrieve('extensiontype', { _id: req.params.id }, function (err, results) {
+          if (err) {
+            return next(err);
+          }
+
+          if (!results || 1 !== results.length) {
+            res.statusCode = 404;
+            return res.json({ success: false, message: 'could not find extension type' });
+          }
+
+          checkIfHigherVersionExists(results[0], function (err, exists) {
+            return res.json({ success:true, isUpdateable: exists });
+          });
+        });
+
+      });
+    });
+
     // get a single extensiontype definition by id
     rest.get('/extensiontype/:id', function (req, res, next) {
       database.getDatabase(function (err, db) {
@@ -154,6 +179,24 @@ function initialize () {
 
           res.statusCode = 404;
           return res.json({ success: false, message: 'could not find extension type' });
+        });
+      });
+    });
+
+    // update a single extensiontype definition by id
+    rest.put('/extensiontype/:id', function (req, res, next) {
+      var delta = _.pick(req.body, '_isAvailableInEditor'); // only allow update of certain attributes
+      database.getDatabase(function (err, db) {
+        if (err) {
+          return next(err);
+        }
+
+        db.update('extensiontype', { _id: req.params.id }, delta, function (err) {
+          if (err) {
+            return next(err);
+          }
+
+          return res.json({ success: true });
         });
       });
     });
@@ -586,6 +629,30 @@ function addExtensionType(extensionInfo, cb) {
 }
 
 /**
+ * checks if a higher version of an installed extension is available
+ *
+ */
+function checkIfHigherVersionExists (extension, options, cb) {
+  // shuffle params
+  if ('function' === typeof options) {
+    cb = options;
+    options = {};
+  }
+
+  options = _.extend(defaultOptions, options);
+  bower
+    .commands
+    .install([extension.name+'#develop'], null, options) // @TODO - remove develop tag!
+    .on('end', function (info) {
+      // if info is empty, it means there is no higher version of the plugin available
+      if (!info.pkgMeta) {
+        return cb(null, false);
+      }
+      return cb(null, true);
+    });
+}
+
+/**
  * this function uses bower to search and install new adapt framework
  * extensions to the authoring tool
  *
@@ -611,6 +678,7 @@ function updateExtensionTypes (options, cb) {
     if (err) {
       return cb(err);
     }
+
     bower.commands
       .search('', options) // search all extensions or only contrib?
       .on('end', function (results) {
@@ -624,28 +692,28 @@ function updateExtensionTypes (options, cb) {
             * @TODO: Remove array below once extension properties.schema files make it to master!
             */
             var nameList = [
-            "adapt-contrib-assessment#develop",
-            "adapt-contrib-pageLevelProgress#develop",
-            "adapt-contrib-resources#develop",
-            "adapt-contrib-spoor#develop",
-            "adapt-contrib-trickle#develop",
-            "adapt-contrib-tutor#develop"
-          ];
+              "adapt-contrib-assessment#develop",
+              "adapt-contrib-pageLevelProgress#develop",
+              "adapt-contrib-resources#develop",
+              "adapt-contrib-spoor#develop",
+              "adapt-contrib-trickle#develop",
+              "adapt-contrib-tutor#develop"
+            ];
 
             logger.log('info', 'fetched extensions from bower repository');
-              bower.commands
+            bower.commands
               .install(nameList, { save: true }, options)
               .on('error', cb)
               .on('end', function (extensionInfo) {
-              // add details for each to the db
-              async.eachSeries(Object.keys(extensionInfo), function (key, next) {
-              addExtensionType(extensionInfo[key], next);
-              },
+                // add details for each to the db
+                async.eachSeries(Object.keys(extensionInfo), function (key, next) {
+                  addExtensionType(extensionInfo[key], next);
+                },
               cb);
+              });
             });
-          });
       });
-  });
+    });
 }
 
 // setup extensions

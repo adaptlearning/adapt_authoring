@@ -131,5 +131,8 @@
   "app.enabledextensions" : "Enabled extensions",
   "app.availableextensions" : "Available extensions",
   "app.noextensionsenabled" : "There are currently no extensions enabled.",
-  "app.noextensionsavailable" : "No extensions can be enabled at this time."
+  "app.noextensionsavailable" : "No extensions can be enabled at this time.",
+  "app.extensionmanagement" : "Manage Available Extensions",
+  "app.thememanagement" : "Manage Available Themes",
+  "app.componentmanagement" : "Manage Available Components"
 }

@@ -24,6 +24,12 @@
       "type": "string",
       "required": true
     },
+    "_isAvailableInEditor": {
+      "type":"boolean",
+      "default": true,
+      "required":true,
+      "editorOnly": true
+    },
     "properties":{
       "type": "object"
     }

@@ -76,16 +76,6 @@ Extension.prototype.onDatabaseCreated = function (db) {
 };
 
 /**
- * Overrides base.destroy
- * @param {object} search
- * @param {callback} next
- */
-Extension.prototype.destroy = function (search, next) {
-  var self = this;
-
-};
-
-/**
  * compares semantic version numbers a vs b:
  *
  * @param {semver} a

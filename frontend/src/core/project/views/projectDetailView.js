@@ -16,7 +16,7 @@ define(function(require) {
 
     toggleContentPanel: function(event) {
       event.preventDefault();
-      if (!$(event.currentTarget).hasClass('active')) { 
+      if (!$(event.currentTarget).hasClass('active')) {
         this.$('.editing-overlay-panel-title').removeClass('active');
         $(event.currentTarget).addClass('active')
         this.$('.editing-overlay-panel-content').slideUp();
@@ -61,16 +61,12 @@ define(function(require) {
         return;
       }
 
-      var isConfigRequired = false;
-
       if (!this.model.isNew()) {
         var extensionJson = {};
         extensionJson = this.getExtensionJson('course');
         this.model.set({_extensions: extensionJson});
-      } else {
-        isConfigRequired = true;
       }
-            
+
       this.model.save({title: $.trim(this.$('#projectDetailTitle').val()),
         body: this.$('#projectDetailDescription').val()
         },
@@ -79,35 +75,6 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: function(result) {
-            // Add config
-            // TODO Change this when Mongoose schema is corrected
-            // This needs to be a single API
-            if (isConfigRequired) {
-              var config = new EditorConfigModel();
-
-              var configData = {
-                '_courseId': result.get('_id'),
-                "_questionWeight": "1",
-                "_defaultLanguage": "en",
-                "_drawer": {
-                  "_showEasing":"easeOutQuart",
-                  "_hideEasing": "easeInQuart",
-                  "_duration": 400
-                },
-                "_accessibility": {
-                  "_isEnabled" : true,
-                  "_shouldSupportLegacyBrowsers" : true
-                },
-                "screenSize": {
-                  "small" : 519,
-                  "medium" : 759,
-                  "large" : 1024
-                }
-              };
-             
-              config.save(configData);  
-            }
-            
             Backbone.history.navigate('#/dashboard', {trigger: true});
           }
         }

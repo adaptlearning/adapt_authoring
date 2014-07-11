@@ -3,6 +3,12 @@
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
   "properties": {
+    "_extensions": {
+      "type":"object"
+    },
+    "_enabledExtensions": {
+      "type":"object"
+    },
     "_courseId": {
       "type": "objectid",
       "required": true
@@ -15,48 +21,32 @@
       "type": "string",
       "default": "1"
     },
-    "_drawer": {
-      "_showEasing": {
+    "_drawer" : {
+      "type" : "object",
+      "required" : true,
+      "_showEasing" : {
         "type" : "string",
-        "default" : "easeOutQuart"
+        "default" : ""        
       },
-      "_hideEasing": {
-        "type" : "string",
-        "default" : "easeInQuart"
+      "_hideEasing" : {
+        "type": "string",
+        "default": ""
       },
-      "_duration": {
+      "_duration" : {
         "type" : "number",
         "default" : 400
       }
     },
-    "_spoor" : {
-      "_tracking" : {
-        "_requireCourseCompleted": {
-          "type": "boolean",
-          "default" : "true"
-        },
-        "_requireAssessmentPassed" : {
-          "type": "boolean",
-          "default" : "true"
-        },
-        "_shouldSubmitScore" : {
-          "type": "boolean",
-          "default" : "false"
-        },
-        "_reporting" : {
-          "_comment": {
-            "type" : "string",
-            "default" : ""
-          },
-          "_onTrackingCriteriaMet" : {
-            "type" : "string",
-            "default" : "completed"
-          },
-          "_onQuizFailure" : {
-            "type" : "string",
-            "default" : "incomplete"
-          }      
-        }
+    "_accessibility" : {
+      "type" : "object",
+      "required" : true,
+      "_isEnabled" : {
+        "type" : "boolean",
+        "default" : true
+      },
+      "_shouldSupportLegacyBrowsers" : {
+        "type": "boolean",
+        "default" : true
       }
     },
     "screenSize": {

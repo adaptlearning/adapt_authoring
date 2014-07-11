@@ -19,6 +19,10 @@ define(function(require) {
       this.model.set('ancestors', this.model.getPossibleAncestors().toJSON());
     },
 
+    postRender: function() {
+      this.renderExtensionEditor('article');
+    },
+
     toggleContentPanel: function(event) {
       event.preventDefault();
       if (!$(event.currentTarget).hasClass('active')) { 
@@ -30,13 +34,17 @@ define(function(require) {
     },
 
     saveArticle: function() {
+      var extensionJson = {};
+
+      extensionJson = this.getExtensionJson('article');
 
       var model = this.model;
 
       model.save({
         title: this.$('.setting-title').val(),
         displayTitle: this.$('.setting-displaytitle').val(),
-        body: tinyMCE.get('setting-body').getContent()
+        body: tinyMCE.get('setting-body').getContent(),
+        _extensions: extensionJson
       },
       {
         error: function() {

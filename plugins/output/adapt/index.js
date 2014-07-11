@@ -30,7 +30,7 @@ var TEMP_DIR = 'temp',
     SOURCE_DIR = 'src',
     BUILD_DIR = 'build';
     BESPOKE_DIR = 'bespoke',
-    COURSE_DIR = 'course',   
+    COURSE_DIR = 'course',
     COMPONENTS_DIR = 'components',
     CORE_DIR = 'core',
     EXTENSIONS_DIR = 'extensions',
@@ -97,14 +97,39 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
     database.getDatabase(function(err, db) {
         var criteria = collectionType == 'course' ? {_id: courseId} : {_courseId: courseId};
 
-        db.retrieve(collectionType, criteria, 
+        db.retrieve(collectionType, criteria,
           function (error, results) {
             if (error) {
               doneCallback(error);
-            } 
+            }
             else if (results && results.length) {
               db.exportResults(results, function (transformed) {
-                outputJson[collectionType] = transformed;
+                var output = [];
+                transformed && transformed.forEach(function (item) {
+                  // move the _extensions into place
+                  if (item._extensions) {
+                    Object.keys(item._extensions).forEach(function (key) {
+                      if(!item[key]) { // don't allow extensions to overwrite core attributes
+                        item[key] = item._extensions[key];
+                      }
+                    });
+                  }
+
+                  // remove superflous ids from config items
+                  if (item._enabledExtensions) {
+                    Object.keys(item._enabledExtensions).forEach(function (key){
+                        delete item._enabledExtensions[key]._id;
+                    });
+                  }
+
+                  // remove the _extensions property from the json
+                  delete item._extensions;
+
+                  // push the results onto our output collection
+                  output.push(item);
+                });
+
+                outputJson[collectionType] = output;
 
                 doneCallback(null);
               });
@@ -117,7 +142,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
     });
   };
 
-  // Replace the database _id value with something more user-friendly 
+  // Replace the database _id value with something more user-friendly
   var setupFriendlyIdentifiers = function(key, doneCallback) {
     var tags = { 'contentobject' : 'co', 'article' : 'a', 'block' : 'b', 'component' : 'c'},
       items = [];
@@ -126,7 +151,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
 
     // Iterate over the given JSON and set the friendly name for the '_id'
     for (var i = 0; i < outputJson[key].length; i++) {
-      // Increment the index 
+      // Increment the index
       var index = i + 1;
       var newId = '';
 
@@ -136,7 +161,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
       } else {
         newId = tags[key] + '-' + index;
       }
-      
+
       items.push({_id: outputJson[key][i]._id.toString(), identifier: newId});
     }
 
@@ -147,7 +172,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
   };
 
   // Writes Adapt Framework JSON files to the /course folder
-  var writeJson = function(key, doneCallback) {  
+  var writeJson = function(key, doneCallback) {
     var filenames = {};
     filenames['course'] = 'course.json';
     filenames['config'] = 'config.json';
@@ -189,7 +214,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
           }
         });
       }
-    }); 
+    });
   };
 
   // Copies a specific version of the component to the source folder
@@ -306,7 +331,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
       // Sanatize course data
       function(callback) {
         logger.log('info', '3. Sanitizing course.json and contentobject.json');
-        
+
         // The course JSON should be an object not an array
         var courseJson = outputJson['course'][0],
           contentObjectsJson = outputJson['contentobject'],
@@ -314,7 +339,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
 
         // The Adapt Framework expects the 'type' and '_id'
         // attributes of the course to be set to 'course'
-        courseJson._type = 'course';      
+        courseJson._type = 'course';
         courseJson._id = 'course';
 
         // Replace any reference to the original course _id value in contentObjects JSON
@@ -364,7 +389,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
         outputJson['component'] = components;
         callback(null, 'component.json sanitized');
       },
-      
+
       // Sanitize the IDs
       function(callback) {
         logger.log('info', '6. Sanitizing the ID values');
@@ -374,10 +399,10 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
         for (var i = 0; i < outputJson['contentobject'].length; i++) {
           var friendlyId = _.findWhere(friendlyIdentifiers['contentobject'], {_id: outputJson['contentobject'][i]._id.toString()});
           outputJson['contentobject'][i]._id = friendlyId.identifier;
-          
+
           if (outputJson['contentobject'][i]._parentId.toString() !== 'course') {
             var friendlyParentId = _.findWhere(friendlyIdentifiers['contentobject'], {_id: outputJson['contentobject'][i]._parentId.toString()});
-            outputJson['contentobject'][i]._parentId = friendlyParentId.identifier;            
+            outputJson['contentobject'][i]._parentId = friendlyParentId.identifier;
           }
         }
 
@@ -385,16 +410,16 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
         for (var i = 0; i < outputJson['article'].length; i++) {
           var friendlyId = _.findWhere(friendlyIdentifiers['article'], {_id: outputJson['article'][i]._id.toString()});
           var friendlyParentId = _.findWhere(friendlyIdentifiers['contentobject'], {_id: outputJson['article'][i]._parentId.toString()});
-          
+
           outputJson['article'][i]._id = friendlyId.identifier;
-          outputJson['article'][i]._parentId = friendlyParentId.identifier;          
+          outputJson['article'][i]._parentId = friendlyParentId.identifier;
         }
 
         // block
         for (var i = 0; i < outputJson['block'].length; i++) {
           var friendlyId = _.findWhere(friendlyIdentifiers['block'], {_id: outputJson['block'][i]._id.toString()});
           var friendlyParentId = _.findWhere(friendlyIdentifiers['article'], {_id: outputJson['block'][i]._parentId.toString()});
-          
+
           outputJson['block'][i]._id = friendlyId.identifier;
           outputJson['block'][i]._parentId = friendlyParentId.identifier;
 
@@ -404,7 +429,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
         for (var i = 0; i < outputJson['component'].length; i++) {
           var friendlyId = _.findWhere(friendlyIdentifiers['component'], {_id: outputJson['component'][i]._id.toString()});
           var friendlyParentId = _.findWhere(friendlyIdentifiers['block'], {_id: outputJson['component'][i]._parentId.toString()});
-          
+
           outputJson['component'][i]._id = friendlyId.identifier;
           outputJson['component'][i]._parentId = friendlyParentId.identifier;
         }

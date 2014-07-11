@@ -121,7 +121,7 @@ function initialize () {
   app.once('serverStarted', function (server) {
     // add componenttype list route
     rest.get('/componenttype', function (req, res, next) {
-      fetchInstalledComponents(function (err, results) {
+      fetchInstalledComponents(req.query, function (err, results) {
         if (err) {
           return next(err);
         }
@@ -178,7 +178,7 @@ function initialize () {
  * if there are no components, it will make a single attempt to install components
  * and then send the list via the callback
  *
- * @param {object} [options]
+ * @param {object} [options] {refresh: int, retry: boolean}
  * @param {callback} cb
  */
 function fetchInstalledComponents (options, cb) {
@@ -203,7 +203,7 @@ function fetchInstalledComponents (options, cb) {
       }
 
       // there should be at least one installed component
-      if ((!results || 0 === results.length) && options.retry) {
+      if (options.refresh || ((!results || 0 === results.length) && options.retry)) {
         // update components, retry, return
         return updateComponentTypes(function (err) {
           if (err) {
@@ -395,9 +395,9 @@ function updateComponentTypes (options, cb) {
               .install(nameList, { save: true }, options)
               .on('error', cb)
               .on('end', function (componentInfo) {
-              // add details for each to the db
-              async.eachSeries(Object.keys(componentInfo), function (key, next) {
-              addComponentType(componentInfo[key], next);
+                // add details for each to the db
+                async.eachSeries(Object.keys(componentInfo), function (key, next) {
+                addComponentType(componentInfo[key], next);
               },
               cb);
             });

@@ -1,29 +1,25 @@
-# Adapt Core
-
-An authoring library for the [Adapt](https://community.adaptlearning.org/) framework.
-
- [![Build Status](https://secure.travis-ci.org/adaptlearning/adapt_authoring.png)](http://travis-ci.org/adaptlearning/adapt_authoring)
+# Adapt Builder [![Build Status](https://secure.travis-ci.org/adaptlearning/adapt_authoring.png)](http://travis-ci.org/adaptlearning/adapt_authoring)
+ 
+A web-based authoring tool for the [Adapt Framework](https://community.adaptlearning.org/).
 
 ## Features
 
-* A complete back end for an Adapt authoring GUI
+* Web application built on NodeJS and BackboneJS for creating, editing and publishing Adapt content
+* Supports all core extensions and components
+* Allows uploading and linking of course assets
 
-## Install
+## Installation
 
-The tool currently requires that [MongoDB](http://www.mongodb.org) be installed and running. It can be installed by following this guide: 
+The tool currently requires that [MongoDB](http://www.mongodb.org) be installed and running. It can be installed by following the instructions for your operating system at the link below: 
 
-http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
+* http://docs.mongodb.org/manual/
 
 
 If it is not installed already, you must install git (https://github.com/).
-Run these commands in the terminal to install git:
 
-```
-sudo apt-get update
-sudo apt-get install git
-```
+* http://git-scm.com/downloads
 
-Now you must configure git:
+* If you just installed git you must configure it:
 
 ```
 git config --global user.name "Your Name"
@@ -31,33 +27,24 @@ git config --global user.email "youremail@domain.com"
 ```
 
 
-[NPM] (https://www.npmjs.org/) and [Node.js] (http://nodejs.org/) are required. Installing Node.js from its website will also install NPM. If you choose to do this you should update NPM:
-
-```
-sudo npm install npm -g
-```
-
-You can also use one of the methods in the link below to install them.
-
-https://gist.github.com/isaacs/579814
+[NPM] (https://www.npmjs.org/) and [Node.js] (http://nodejs.org/) are required. Installing Node.js from its website will also install NPM. After installation, ensure that NPM is updated. 
 
 
-You must install [NVM] (https://github.com/creationix/nvm). Enter this command into the terminal to install it.
 
-```
-curl https://raw.githubusercontent.com/creationix/nvm/v0.8.0/install.sh | sh
-```
+You must install [NVM] (https://github.com/creationix/nvm). 
 
-You also require [Grunt] (http://gruntjs.com/). First, install Grunt's command line interface with this command. We will install Grunt locally to the Adapt folder later.
 
-```
-npm install grunt-cli -g
-```
+
+Adapt also requires [Grunt] (http://gruntjs.com/). First, install Grunt's command line interface. Grunt must also be installed locally to each project which will be done later. Grunt is installed using NPM.
+
+* http://gruntjs.com/getting-started
+
+
 
 [FFmpeg] (https://www.ffmpeg.org/index.html) is optional. It is used to identify different file formats in the Asset Manager. 
 
 
-With almost everything installed, you can clone the project from github:
+Next the project must be cloned from Github before installing Grunt and any other dependencies:
 
 ```
 git clone https://github.com/adaptlearning/adapt_authoring.git
@@ -75,38 +62,37 @@ Checkout the development version:
 git checkout develop
 ```
 
-Next, you must install dependencies and Grunt locally.
+Now you must install dependencies and Grunt locally.
 
 ```
 npm install
 npm install grunt
 ```
 
-IF YOU INSTALLED FFmpeg:
-Navigate to the conf folder in your project directory and open config.json. Add the following line to it:
+**If you installed FFmpeg:**
 
+Navigate to the /conf/config.json and ensure the following property is set:
 ```
 "useffmpeg" : true
 ```
 
-
 ## Run
 
-Ensure MongoDB is running. With the adapt_authoring folder opened in the terminal, run the following to build and run the code. Build can take some time to complete.
+Firstly ensure that the MongoDB service is started is running correctly. In the root of the project, run the following commands.
 
+To compile the latest code (note this may take some time due to the size of the codebase):
 ```
 grunt build
-grunt dev
-node server
 ```
 
+To run the code using the built-in webserver:
+```
+grunt server
+```
 
+Inspect the output from this task to work out which port the application is running on, and navigate to that address in your browser.
 
-Terminal will tell you which port Adapt is running on, navigate to "localhost:xxx" where xxx is the port.
-
-
-To run unit tests:
-
+## To run unit tests:
 ```
 make test
 ```

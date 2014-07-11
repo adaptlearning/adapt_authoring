@@ -1,16 +1,15 @@
 define(function(require) {
 
-  var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
+ var EditorModel = require('editorGlobal/models/editorModel');
 
-  var EditorComponentTypeModel = Backbone.Model.extend({
+  var EditorComponentTypeModel = EditorModel.extend({
 
+    initialize: function() {},
     idAttribute: '_id',
     urlRoot: '/api/componenttype',
     _parent: 'blocks',
-    _siblings:'components',
+    _siblings:'componenttypes',
     _children: null
-    
   });
 
   return EditorComponentTypeModel;

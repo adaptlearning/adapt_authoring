@@ -26,6 +26,14 @@ define(function(require) {
   var EditorComponentEditView = require('editorPage/views/editorComponentEditView');
   var EditorComponentEditSidebarView = require('editorPage/views/editorComponentEditSidebarView');
 
+  var EditorExtensionsEditView = require('editorExtensions/views/editorExtensionsEditView');
+  var EditorExtensionsEditSidebarView = require('editorExtensions/views/editorExtensionsEditSidebarView');
+
+  var EditorConfigEditView = require('editorConfig/views/editorConfigEditView');
+  var EditorConfigEditSidebarView = require('editorConfig/views/editorConfigEditSidebarView');
+  var EditorConfigModel = require('editorConfig/models/editorConfigModel');
+  var EditorConfigCollection = require('editorConfig/collections/editorConfigCollection');
+
 	Origin.on('router:editor', function(location, subLocation, action) {
 
     if (location === 'article') {
@@ -56,7 +64,7 @@ define(function(require) {
       var componentModel = new EditorComponentModel({_id: subLocation});
       componentModel.fetch({
         success: function() {
-          Origin.trigger('location:title:update', {title: 'Editing component - ' + componentModel.get('title')});
+          Origin.trigger('location:title:update', {title: 'Editing ' + componentModel.get('_componentType').displayName.toLowerCase() + ' component - ' + componentModel.get('title')});
           Origin.sidebar.addView(new EditorComponentEditSidebarView({model: componentModel}).$el);
           Origin.editingOverlay.addView(new EditorComponentEditView({model: componentModel}).$el);
         }
@@ -65,15 +73,41 @@ define(function(require) {
     }
 
 		switch (subLocation) {
+      case 'config':
+        // subLocation is the courseid
+        // var collection = new EditorConfigCollection();
+        // collection.findWhere({_courseId: location});
+
+        var configModel = new EditorConfigModel({_id: location});
+
+        configModel.fetch({
+          success: function() {
+            Origin.trigger('location:title:update', {title: 'Edit configuration'});
+            Origin.sidebar.addView(new EditorConfigEditSidebarView().$el);
+            Origin.editingOverlay.addView(new EditorConfigEditView({model: configModel}).$el);
+          }
+        });
+        break;
+
+      case 'extensions':
+        Origin.trigger('location:title:update', {title: 'Manage extensions'});
+
+        var extensionsModel = new Backbone.Model({_id: location});
+
+        Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el);
+        Origin.editingOverlay.addView(new EditorExtensionsEditView({model: extensionsModel}).$el);
+        break;
+
 			case 'menu':
 				// Update page title
 				Origin.trigger('location:title:update', {title: 'Menu editor'});
 				// Create Editor menu view
-			Origin.router.createView(EditorView, {
-		        currentCourseId: location, 
-		        currentView: 'menu', 
-		        currentPageId: (action || null)
-		    });
+  			Origin.router.createView(EditorView, {
+	        currentCourseId: location,
+	        currentView: 'menu',
+	        currentPageId: (action || null)
+  	    });
+
 		    // update sidebar view
 		    Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
 		    	"backButtonText": "Back to courses",
@@ -85,14 +119,14 @@ define(function(require) {
 				Origin.trigger('location:title:update', {title: 'Page editor'});
 
 				// Create Editor page view
-                Origin.editor.scrollTo = 0;
+        Origin.editor.scrollTo = 0;
 				Origin.router.createView(EditorView, {
-				currentCourseId: location, 
-				currentView: 'page', 
-				currentPageId: (action || null)
-			});
+  				currentCourseId: location,
+  				currentView: 'page',
+  				currentPageId: (action || null)
+	 		  });
 				// update sidebar view
-			Origin.sidebar.addView(new EditorPageSidebarView().$el, {
+  			Origin.sidebar.addView(new EditorPageSidebarView().$el, {
 		    	"backButtonText": "Back to course structure",
 		    	"backButtonRoute": "/#/editor/" + location + "/menu"
 		    });
@@ -105,7 +139,7 @@ define(function(require) {
 					  Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel}).$el);
 					  Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel}).$el);
 					}
-				})
+				});
 			break;
 		}
 

@@ -31,27 +31,30 @@ define(function(require) {
     },
 
     postRender: function() {
-      // Get the schema
-      var thisComponentTypeId = this.model.get('_componentType')._id; 
-      var componentType = _.find(Origin.editor.componentTypes.models, function(type){
-        return type.get('_id') == thisComponentTypeId; 
-      });
-
-      var schema =  {
-        "type": "object",
-        "properties": componentType.get('properties')
-      };
-
-      this.$('.component-properties').jsoneditor({
+      // Default properties for any JSON editors on this page
+      var jsonEditorDefaults = {
         no_additional_properties: true, 
         disable_array_reorder: true,
         disable_collapse: true,
         disable_edit_json: true,
-        disable_properties: true,
-        form_name_root: 'briantest',
-        schema: schema,
-        startval: this.model.get('properties') 
+        disable_properties: true
+      };
+
+      // Get the component schema
+      var thisComponentTypeId = this.model.get('_componentType')._id; 
+      var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
+        return type.get('_id') == thisComponentTypeId; 
       });
+
+      var componentSchema =  {
+        "type": "object",
+        "properties": componentType.get('properties')
+      };
+
+      // Instantiate the JSON editor, appending any properties
+      this.$('.component-properties').jsoneditor(_.extend({schema: componentSchema, startval: this.model.get('properties')}, jsonEditorDefaults));
+
+      this.renderExtensionEditor('component');
     },
 
     cancel: function (event) {
@@ -60,8 +63,10 @@ define(function(require) {
     },
 
     saveComponent: function() {
-
       var propertiesJson = this.$('.component-properties').jsoneditor('value');
+      var extensionJson = {};
+
+      extensionJson = this.getExtensionJson('component');
 
       var model = this.model;
 
@@ -71,7 +76,8 @@ define(function(require) {
         title: this.$('.setting-title').val(),
         displayTitle: this.$('.setting-displaytitle').val(),
         body: tinyMCE.get('setting-body').getContent(),
-        properties: propertiesJson},
+        properties: propertiesJson,
+        _extensions: extensionJson},
         {
           error: function() {
             alert('An error occurred doing the save');

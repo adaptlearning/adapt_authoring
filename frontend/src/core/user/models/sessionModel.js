@@ -34,12 +34,7 @@ define(function(require) {
     login: function (username, password, cback) {
       var model = this;
 
-      $.post(
-        '/api/login',
-        {
-          email: username,
-          password: password
-        },
+      $.post('/api/login', {email: username, password: password},
         function(authenticated) {
           model.fetch().done(function(){
             model.attributes['id'] = authenticated['id'];
@@ -49,6 +44,9 @@ define(function(require) {
             
             Backbone.history.navigate('#/dashboard', {trigger: true});
           });
+      })
+      .fail(function() {
+        Origin.trigger('login:failed');
       });
     },
 

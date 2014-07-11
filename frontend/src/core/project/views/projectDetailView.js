@@ -1,28 +1,36 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
   var EditorConfigModel = require('editorConfig/models/editorConfigModel');
+  var EditorOriginView = require('editorGlobal/views/editorOriginView');
 
-  var ProjectDetailView = OriginView.extend({
-
-    settings: {
-      autoRender: false
-    },
+  var ProjectDetailView = EditorOriginView.extend({
 
     tagName: "div",
 
     className: "project",
 
     events: {
-      'click button#saveButton'   : 'saveProject',
-      'click button#cancelButton' : 'cancel'
+      'click .editing-overlay-panel-title': 'toggleContentPanel'
+    },
+
+    toggleContentPanel: function(event) {
+      event.preventDefault();
+      if (!$(event.currentTarget).hasClass('active')) {
+        this.$('.editing-overlay-panel-title').removeClass('active');
+        $(event.currentTarget).addClass('active')
+        this.$('.editing-overlay-panel-content').slideUp();
+        $(event.currentTarget).siblings('.editing-overlay-panel-content').slideDown();
+      }
     },
 
     preRender: function() {
-      this.listenTo(this.model, 'sync', this.render);
-      if (!this.model._id) {
-        this.render();
+      this.listenTo(Origin, 'projectEditSidebar:views:save', this.saveProject);
+    },
+
+    postRender: function() {
+      if (!this.model.isNew()) {
+        this.renderExtensionEditor('course');
       }
     },
 
@@ -47,58 +55,30 @@ define(function(require) {
     },
 
     saveProject: function(event) {
-      event.preventDefault();
+      event && event.preventDefault();
 
-      if (!this.validateInput()) {
+      var _this = this;
+      
+      if (!_this.validateInput()) {
         return;
       }
-      
-      this.model.save({title: $.trim(this.$('#projectDetailTitle').val()),
-        body: this.$('#projectDetailDescription').val()
+
+      if (!_this.model.isNew()) {
+        var extensionJson = {};
+        extensionJson = _this.getExtensionJson('course');
+        _this.model.set({_extensions: extensionJson});
+      }
+
+      _this.model.save({title: $.trim(_this.$('#projectDetailTitle').val()),
+        body: _this.$('#projectDetailDescription').val()
         },
         {
           error: function() {
             alert('An error occurred doing the save');
           },
           success: function(result) {
-            // Add config
-            // TODO Change this when Mongoose schema is corrected
-            // This needs to be a single API
-            var config = new EditorConfigModel();
-
-            var configData = {
-              '_courseId': result.get('_id'),
-              "_questionWeight": "1",
-              "_defaultLanguage": "en",
-              "_drawer": {
-                "_showEasing":"easeOutQuart",
-                "_hideEasing": "easeInQuart",
-                "_duration": 400
-              },
-              "_spoor" : {
-                "_tracking" : {
-                  "_requireCourseCompleted":  true,
-                  "_requireAssessmentPassed" : true,
-                  "_shouldSubmitScore" : false,
-                  "_reporting" : {
-                    "_comment":  "",
-                    "_onTrackingCriteriaMet" : "completed",
-                    "_onQuizFailure" : "incomplete"
-                  }      
-                }
-              },
-              "screenSize": {
-                "small" : 519,
-                "medium" : 759,
-                "large" : 1024
-              }
-            };
-
-            // config.save({'_courseId': result.get('_id')});
-           
-            config.save(configData);
-            
-            Backbone.history.navigate('#/dashboard', {trigger: true});
+            Backbone.history.history.back();
+            _this.remove();
           }
         }
       );

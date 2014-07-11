@@ -57,25 +57,28 @@ define(function(require) {
     saveProject: function(event) {
       event && event.preventDefault();
 
-      if (!this.validateInput()) {
+      var _this = this;
+      
+      if (!_this.validateInput()) {
         return;
       }
 
-      if (!this.model.isNew()) {
+      if (!_this.model.isNew()) {
         var extensionJson = {};
-        extensionJson = this.getExtensionJson('course');
-        this.model.set({_extensions: extensionJson});
+        extensionJson = _this.getExtensionJson('course');
+        _this.model.set({_extensions: extensionJson});
       }
 
-      this.model.save({title: $.trim(this.$('#projectDetailTitle').val()),
-        body: this.$('#projectDetailDescription').val()
+      _this.model.save({title: $.trim(_this.$('#projectDetailTitle').val()),
+        body: _this.$('#projectDetailDescription').val()
         },
         {
           error: function() {
             alert('An error occurred doing the save');
           },
           success: function(result) {
-            Backbone.history.navigate('#/dashboard', {trigger: true});
+            Backbone.history.history.back();
+            _this.remove();
           }
         }
       );

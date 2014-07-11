@@ -1,14 +1,14 @@
-# Adapt Core
-
-An authoring library for the [Adapt](https://community.adaptlearning.org/) framework.
-
- [![Build Status](https://secure.travis-ci.org/adaptlearning/adapt_authoring.png)](http://travis-ci.org/adaptlearning/adapt_authoring)
+# Adapt Builder [![Build Status](https://secure.travis-ci.org/adaptlearning/adapt_authoring.png)](http://travis-ci.org/adaptlearning/adapt_authoring)
+ 
+A web-based authoring tool for the [Adapt Framework](https://community.adaptlearning.org/).
 
 ## Features
 
-* A complete back end for an Adapt authoring GUI
+* Web application built on NodeJS and BackboneJS for creating, editing and publishing Adapt content
+* Supports all core extensions and components
+* Allows uploading and linking of course assets
 
-## Install
+## Installation
 
 The tool currently requires that [MongoDB](http://www.mongodb.org) be installed and running. It can be installed by following the instructions for your operating system at the link below: 
 
@@ -69,32 +69,30 @@ npm install
 npm install grunt
 ```
 
-**IF YOU INSTALLED FFmpeg:**
+**If you installed FFmpeg:**
 
-Navigate to the conf folder in your project directory and open config.json. Add the following line to it:
-
+Navigate to the /conf/config.json and ensure the following property is set:
 ```
 "useffmpeg" : true
 ```
 
-
 ## Run
 
-Ensure MongoDB is running. With the adapt_authoring folder opened in the terminal, run the following to build and run the code. Build can take some time to complete, and is not required every time unless the code is changed.
+Firstly ensure that the MongoDB service is started is running correctly. In the root of the project, run the following commands.
 
+To compile the latest code (note this may take some time due to the size of the codebase):
 ```
 grunt build
-grunt dev
-node server
 ```
 
+To run the code using the built-in webserver:
+```
+grunt server
+```
 
+Inspect the output from this task to work out which port the application is running on, and navigate to that address in your browser.
 
-Terminal will tell you which port Adapt is running on, navigate to "localhost:xxx" in your browser where xxx is the port.
-
-
-To run unit tests:
-
+## To run unit tests:
 ```
 make test
 ```

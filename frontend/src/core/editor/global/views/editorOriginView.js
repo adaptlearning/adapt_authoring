@@ -157,6 +157,9 @@ define(function(require){
             
             // Add a JSON editor for every enabled extension at the specified level
             this.$('.' + level + '-extension-item-' + i).jsoneditor(jsonEditorDefaults);
+
+            // Increment the ID of the next <div>
+            i++;
           }
         }, this);
       }

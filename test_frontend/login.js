@@ -11,7 +11,7 @@ exports.login = function() {
     }).viewport(1366,768);
 
 	casper.then(function() {    		
-        this.capture("./test_frontend/img/login/loginImg.png");
+        this.capture("./test_frontend/img/login/01-login page.png");
     });
     
     //fills in fields and clicks button
@@ -23,7 +23,7 @@ exports.login = function() {
     });
     casper.then(function() {
     	this.wait(1000, function(){
-    		this.capture("./test_frontend/img/login/loginImg2.png");
+    		this.capture("./test_frontend/img/login/02-correct information entered.png");
     	});
     });
     casper.then(function() {
@@ -35,7 +35,7 @@ exports.login = function() {
 
     casper.then(function() {
     	this.wait(1000, function(){
-			this.capture("./test_frontend/img/login/loginImg3.png");
+			this.capture("./test_frontend/img/login/03-proceeded to main page.png");
     	});
 		this.test.assertExists("div[class=location-title-inner]", "Logged in");
     });

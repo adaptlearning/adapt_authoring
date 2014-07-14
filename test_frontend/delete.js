@@ -18,7 +18,7 @@ casper.test.begin('Testing deleting a course', 4, function suite(test) {
     });
 
     casper.then(function() {
-    	this.capture("./test_frontend/img/delete/delete1.png");
+    	this.capture("./test_frontend/img/delete/01-on home page.png");
     });
 
 	casper.then(function() {
@@ -30,16 +30,18 @@ casper.test.begin('Testing deleting a course', 4, function suite(test) {
     });
 
     casper.then(function() {
-    	this.capture("./test_frontend/img/delete/delete2.png");
-    	test.assertExists("div.context-menu-item:nth-child(4) > a:nth-child(1) > div:nth-child(1) > h5:nth-child(1)", "Submenu is open");
+    	this.capture("./test_frontend/img/delete/02-submenu open.png");
+        this.wait(1000, function() {
+    	   test.assertExists("div.context-menu-item:nth-child(3) > a:nth-child(1) > div:nth-child(1) > h5:nth-child(1)", "Submenu is open");
+        });
     });
     //clicks the delete option
     casper.then(function() {
-        this.click("div.context-menu-item:nth-child(4) > a:nth-child(1) > div:nth-child(1) > h5:nth-child(1)");
+        this.click("div.context-menu-item:nth-child(3) > a:nth-child(1) > div:nth-child(1) > h5:nth-child(1)");
     });
 
     casper.then(function() {
-    	this.capture("./test_frontend/img/delete/delete3.png");
+    	this.capture("./test_frontend/img/delete/03-project was deleted.png");
     });
     //confirms the delete because it uses a confirm box
     casper.setFilter("page.confirm", function(msg) {

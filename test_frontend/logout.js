@@ -21,7 +21,7 @@ casper.test.begin('Logging Out', 4, function suite(test) {
     });
 
     casper.then(function() {
-        this.capture("./test_frontend/img/logout/logout1.png");
+        this.capture("./test_frontend/img/logout/01-logout confirmation.png");
     });
 
     //click the logout button, then confirm you want to log out
@@ -33,7 +33,7 @@ casper.test.begin('Logging Out', 4, function suite(test) {
             "Clicked the confirm link, back at the login screen");
     });
     casper.then(function() {
-        this.capture("./test_frontend/img/logout/logout2.png");
+        this.capture("./test_frontend/img/logout/02-back to login page.png");
     });
 
     casper.run(function() {

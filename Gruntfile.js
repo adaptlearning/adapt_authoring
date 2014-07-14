@@ -115,9 +115,17 @@ module.exports = function(grunt) {
         options: {
           casperjsOptions: ["--foo=bar"]
         },
-        files: ['./test_frontend/asset.js', './test_frontend/buttons.js', './test_frontend/copy.js', 
-        './test_frontend/createProject.js', './test_frontend/delete.js', './test_frontend/editCourse.js', 
-        './test_frontend/editDetails.js', './test_frontend/failedLogin.js', './test_frontend/logout.js']
+        files: ['./test_frontend/asset.js', 
+	'./test_frontend/buttons.js', 
+	'./test_frontend/copy.js', 
+        './test_frontend/createProject.js', 
+	'./test_frontend/delete.js', 
+	'./test_frontend/editConfig.js', 
+	'./test_frontend/editCourse.js', 
+	'./test_frontend/editDetails.js', 
+        './test_frontend/editExtensions.js', 
+	'./test_frontend/failedLogin.js', 
+	'./test_frontend/logout.js']
       },
       mochaTest: {
         test: {

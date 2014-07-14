@@ -15,7 +15,7 @@ casper.test.begin('Testing copying a course', 5, function suite(test) {
     });
 
     casper.then(function() {
-    	casper.capture("./test_frontend/img/copy/copy1.png");
+    	casper.capture("./test_frontend/img/copy/01-on home page.png");
     });
 
     //checks if menu exists and opens it
@@ -27,7 +27,7 @@ casper.test.begin('Testing copying a course', 5, function suite(test) {
     });
 
     casper.then(function() {
-    	casper.capture("./test_frontend/img/copy/copy2.png");
+    	casper.capture("./test_frontend/img/copy/02-submenu open.png");
     	test.assertExists("div.context-menu-item:nth-child(2) > a:nth-child(1) > div:nth-child(1) > h5:nth-child(1)", "Submenu is open ");
     });
 
@@ -35,22 +35,25 @@ casper.test.begin('Testing copying a course', 5, function suite(test) {
     casper.then(function() {
         var x = require('casper').selectXPath;
 		this.click(x('//h5[text()="Duplicate"]'));
-        this.wait(1000);
     });
 
     casper.then(function() {
-        this.capture("./test_frontend/img/copy/copy3.png");
-        test.assertExists("button[type=submit]", "Copy rename/description page open ");
+        this.wait(1000, function() {
+            this.capture("./test_frontend/img/copy/03-copy menu.png");
+            test.assertExists("#projectDetailTitle", "Copy rename/description page open ");
+        });
     });
 
     //submits the duplicate project without making any changes- name defaults to "Copy of X"
     casper.then(function() {
-		this.click("button[type=submit]");
+        this.wait(1000, function() {
+		this.click(".editor-project-edit-sidebar-save");
+        });
     });
 
     casper.then(function() {
     	this.wait(1000, function() {
-    		casper.capture("./test_frontend/img/copy/copy4.png");
+    		casper.capture("./test_frontend/img/copy/04-copy results.png");
     	});	
     });
 

@@ -19,7 +19,7 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
     });
     casper.then(function() {
     	this.wait(1000, function() {
-    		this.capture("./test_frontend/img/asset/asset1.png");
+    		this.capture("./test_frontend/img/asset/01-submenu open.png");
     	});
     });
 
@@ -30,14 +30,14 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
 
     casper.then(function() {
     	this.wait(1000, function() {
-    		this.capture("./test_frontend/img/asset/asset2.png");
+    		this.capture("./test_frontend/img/asset/02-opened asset page.png");
     	});
     });
 
     casper.then(function() {
         casper.test.comment("Filter with no results");
     });
-    //enters a value into the seatcch box that doesn't match any of the files
+    //enters a value into the search box that doesn't match any of the files
     casper.then(function() {
         casper.evaluate(function() {
             document.querySelector('input[name="search"]').setAttribute("value","no results");
@@ -49,7 +49,7 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
     });
     casper.then(function() {
         this.wait(1000, function() {
-            this.capture("./test_frontend/img/asset/asset3.png");
+            this.capture("./test_frontend/img/asset/03-no results in filter.png");
         });
     });
 
@@ -86,7 +86,7 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
 	});
 
 	casper.then(function() {
-    	this.capture("./test_frontend/img/asset/asset4.png");
+    	this.capture("./test_frontend/img/asset/04-uploading an image.png");
 	});
 
     //submits the image
@@ -100,7 +100,7 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
     });
 
     casper.then(function() {
-        this.capture("./test_frontend/img/asset/asset5.png");
+        this.capture("./test_frontend/img/asset/05-back to filter tab.png");
     });
 
     casper.then(function() {
@@ -121,7 +121,7 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
 
     casper.then(function() {
         this.wait(1000, function() {
-        this.capture("./test_frontend/img/asset/asset6.png");
+        this.capture("./test_frontend/img/asset/06-filter showing result.png");
         });
     });
 

@@ -5,7 +5,7 @@ casper.test.begin('Failing login test (no values)', 2, function suite(test) {
           document.querySelector('body').style.backgroundColor = "white";
         });
         this.wait(1000, function(){});
-        this.test.assertTitle("Adapt Origin", "Adapt homepage title is the one expected");
+        this.test.assertTitle("Adapt Origin", "Adapt login page title is the one expected");
     }).viewport(1366,768);
 
     //screenshot of the homepage before anything is entered
@@ -30,7 +30,7 @@ casper.test.begin('Failing login test (no values)', 2, function suite(test) {
         //this.test.assertSelectorDoesntHaveText("#loginErrorMessage", "");    
         this.test.assertEval(function() {
             return __utils__.findOne('#loginErrorMessage').textContent !== '';
-        });
+        }, "Error message appeared properly - no information provided");
     });
 
     casper.run(function() {
@@ -44,7 +44,7 @@ casper.test.begin('Failing login test (wrong values)', 2, function suite(test) {
           document.querySelector('body').style.backgroundColor = "white";
         });
         this.wait(1000, function(){});
-        this.test.assertTitle("Adapt Origin", "Adapt homepage title is the one expected");
+        this.test.assertTitle("Adapt Origin", "Adapt login page title is the one expected");
     }).viewport(1366,768);
 
     //screenshot of the homepage before anything is entered
@@ -70,9 +70,11 @@ casper.test.begin('Failing login test (wrong values)', 2, function suite(test) {
     //commented out because of bug
     casper.then(function() {
         //this.test.assertExists("loginErrorMessage", "Error message appeared properly - wrong information");
-        this.test.assertEval(function() {
-            return __utils__.findOne('#loginErrorMessage').textContent !== '';
-        });   
+        this.wait(1000, function() {
+            this.test.assertEval(function() {
+                return __utils__.findOne('#loginErrorMessage').textContent !== '';
+            }, "Error message appeared properly - wrong information");   
+        });
     });
 
     casper.then(function() {
@@ -80,9 +82,6 @@ casper.test.begin('Failing login test (wrong values)', 2, function suite(test) {
             this.capture("./test_frontend/img/failLogin/failWrongInfo2.png");
         });
     });
-
-    
-
 
     casper.run(function() {
         test.done();

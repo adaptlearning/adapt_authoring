@@ -112,20 +112,7 @@ module.exports = function(grunt) {
         }
       },
       casperjs: {
-        options: {
-          casperjsOptions: ["--foo=bar"]
-        },
-        files: ['./test_frontend/asset.js', 
-	'./test_frontend/buttons.js', 
-	'./test_frontend/copy.js', 
-        './test_frontend/createProject.js', 
-	'./test_frontend/delete.js', 
-	'./test_frontend/editConfig.js', 
-	'./test_frontend/editCourse.js', 
-	'./test_frontend/editDetails.js', 
-        './test_frontend/editExtensions.js', 
-	'./test_frontend/failedLogin.js', 
-	'./test_frontend/logout.js']
+        files: ['./test_frontend/*.js', '!./test_frontend/login.js']
       },
       mochaTest: {
         test: {
@@ -166,7 +153,7 @@ module.exports = function(grunt) {
     grunt.registerTask('build',['less', 'copy', 'handlebars', 'requirejs:compile']);
     grunt.registerTask('dev',['less', 'copy', 'handlebars', 'requirejs:dev']);
     grunt.registerTask('test',['mochaTest']);
-    grunt.registerTask('test', ['casperjs']);
+    grunt.registerTask('test-ui', ['casperjs']);
     grunt.registerTask('compile',['requirejs:dev']);
     grunt.registerTask('server',['less', 'handlebars', 'compile', 'start', 'open:server', 'watch']);
     grunt.registerTask('start', 'Start node server', function() {

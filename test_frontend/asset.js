@@ -79,11 +79,16 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
     //fill in the form
 	casper.then(function() {
     	this.fill("form.asset-form", {
-    	'file' : './test_frontend/Data/twitter.png',
-    	'title' : 'testing',
-    	'description' : 'image'
-		}, true);
+    	'file' : './test_frontend/Data/adaptlearning.jpeg'
+		});
 	});
+
+    casper.then(function() {
+        this.fill("form.asset-form", {
+        'title' : 'testing',
+        'description' : 'image'
+        }, true);
+    });
 
 	casper.then(function() {
     	this.capture("./test_frontend/img/asset/04-uploading an image.png");

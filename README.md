@@ -96,3 +96,18 @@ Inspect the output from this task to work out which port the application is runn
 ```
 make test
 ```
+
+## To run CasperJS tests:
+To run all the tests at once:
+
+```
+grunt test-ui
+```
+
+To run individual tests:
+
+```
+casperjs test test_frontend/testname.js
+```
+
+Screenshots of the steps in each test are stored in test_frontend/img.

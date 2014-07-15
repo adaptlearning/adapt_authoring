@@ -8,5 +8,6 @@
   "dataRoot": "data",
   "tenantPrefix": "adapt-builder-tenant-",
   "sessionSecret": "your-secret-here",
-  "auth": "local"
+  "auth": "local",
+  "useffmpeg" : false
 }

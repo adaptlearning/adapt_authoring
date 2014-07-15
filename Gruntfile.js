@@ -111,6 +111,9 @@ module.exports = function(grunt) {
           tasks: ['compile']
         }
       },
+      casperjs: {
+        files: ['./test_frontend/*.js', '!./test_frontend/login.js']
+      },
       mochaTest: {
         test: {
           options: {
@@ -150,6 +153,7 @@ module.exports = function(grunt) {
     grunt.registerTask('build',['less', 'copy', 'handlebars', 'requirejs:compile']);
     grunt.registerTask('dev',['less', 'copy', 'handlebars', 'requirejs:dev']);
     grunt.registerTask('test',['mochaTest']);
+    grunt.registerTask('test-ui', ['casperjs']);
     grunt.registerTask('compile',['requirejs:dev']);
     grunt.registerTask('server',['less', 'handlebars', 'compile', 'start', 'open:server', 'watch']);
     grunt.registerTask('start', 'Start node server', function() {

@@ -5,6 +5,7 @@
 conf/config.json
 .project
 /frontend/build
+/test_frontend/img
 /nbproject/
 /.settings
 /frontend/src/templates/templates.js
@@ -13,3 +14,4 @@ conf/config.json
 /plugins/content/extension/extensioncache/
 /plugins/content/extension/versions/
 /master/
+

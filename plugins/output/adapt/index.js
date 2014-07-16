@@ -96,8 +96,13 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
 
     database.getDatabase(function(err, db) {
         var criteria = collectionType == 'course' ? {_id: courseId} : {_courseId: courseId};
+        var options = {
+          operators : {
+            sort : { _sortOrder : 1}
+          }
+        };
 
-        db.retrieve(collectionType, criteria,
+        db.retrieve(collectionType, criteria, options,
           function (error, results) {
             if (error) {
               doneCallback(error);
@@ -236,7 +241,10 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
     database.getDatabase(function(err, db) {
       var criteria = {_courseId: courseId};
       var options = {
-        populate: [ '_componentType' ]
+        populate: [ '_componentType' ],
+        operators : {
+          sort : { _sortOrder : 1}
+        }
       };
 
       db.retrieve('component', criteria, options, function (error, results) {

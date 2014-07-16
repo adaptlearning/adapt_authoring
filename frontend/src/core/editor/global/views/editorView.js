@@ -117,7 +117,7 @@ define(function(require){
     },
 
     previewProject: function() {
-      window.open('/api/output/adapt/preview/' + this.currentCourseId + '/' + Origin.sessionModel.get('id'));
+      window.open('/api/output/adapt/preview/' + this.currentCourseId + '/' + Origin.sessionModel.get('id'), 'adapt_preview');
     },
 
     setupEditorData: function() {

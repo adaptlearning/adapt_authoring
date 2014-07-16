@@ -19,6 +19,9 @@ define(function(require){
 
   Origin.location = {};
 
+  // Push sockets onto Origin object
+  Origin.socket = io.connect();
+
   return Origin;
 
 });

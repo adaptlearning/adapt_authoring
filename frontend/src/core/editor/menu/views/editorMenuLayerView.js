@@ -94,7 +94,7 @@ define(function(require) {
           _courseId: Origin.editor.data.course.get('_id'),
           _type: topitem._type
         });
-        Origin.trigger('editorView:paste', target, this.$('.editor-menu-item').length + 1);
+        Origin.trigger('editorView:paste', parentId, this.$('.editor-menu-item').length + 1);
       },
 
       cancelPasteMenuItem: function(event) {

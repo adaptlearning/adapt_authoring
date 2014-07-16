@@ -6,8 +6,8 @@ define(function(require) {
         urlRoot: '/api/content/component',
         initialize: function() {},
         _parent: 'blocks',
-        _siblings:'component',
-        _children: null
+        _siblings:'components',
+        _children: false
     });
 
     return EditorComponentModel;

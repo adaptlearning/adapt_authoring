@@ -7,6 +7,7 @@ define(function(require){
   var EditorComponentModel = require('editorPage/models/editorComponentModel');
   var EditorComponentView = require('editorPage/views/editorComponentView');
   var EditorComponentPasteZoneView = require('editorPage/views/editorComponentPasteZoneView');
+  var EditorComponentListView = require('editorPage/views/editorComponentListView');
 
   var EditorBlockView = EditorOriginView.extend({
 
@@ -191,7 +192,9 @@ define(function(require){
     showComponentList: function(event) {
       event.preventDefault();
 
-      var props = {
+      console.log('show component overlay');
+      Origin.editingOverlay.addView(new EditorComponentListView().$el);
+      /*var props = {
         _type: 'popup',
         _showIcon: true,
         title: window.polyglot.t('app.addcomponent'),
@@ -204,7 +207,7 @@ define(function(require){
         ]
       };
 
-      Origin.trigger('notify:prompt', props);
+      Origin.trigger('notify:prompt', props);*/
     },
 
     addComponent: function(data) {

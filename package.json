@@ -52,6 +52,7 @@
     "node-gyp": "~0.12.1",
     "passport": "~0.1.17",
     "rimraf": "~2.2.5",
+    "socket.io": "^1.0.6",
     "underscore": "~1.5.2",
     "validator": "3.3.0",
     "winston": "~0.7.2"

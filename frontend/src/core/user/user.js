@@ -27,6 +27,7 @@ define(function(require) {
         currentView = LoginView;
         break;
       case 'logout':
+        Origin.trigger('location:title:hide');
         currentView = LogoutView;
         break;
       case 'forgot':

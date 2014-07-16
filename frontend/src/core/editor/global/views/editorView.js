@@ -183,7 +183,7 @@ define(function(require){
 
       clipboard.set('referenceType', model._siblings);
 
-      var hasChildren = (model._children && model._children.length == 0) ? false : true;
+      var hasChildren = (model._children && Origin.editor.data[model._children].where({_parentId: model.get('_id')}).length == 0) ? false : true;
       var currentModel = model;
       var items = [currentModel];
 

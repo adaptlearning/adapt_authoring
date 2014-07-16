@@ -44,7 +44,11 @@ define(function(require) {
 
     handleIndex: function() {
       // console.log('in handleIndex');
-      this.navigate('#/dashboard', {trigger: true});
+      if (this.isUserAuthenticated()) {
+        this.navigate('#/dashboard', {trigger: true});
+      } else {
+        return this.redirectToLogin();
+      }
     },
 
     handleRoute: function(module, route1, route2, route3) {

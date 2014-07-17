@@ -15,9 +15,7 @@ define(function(require) {
 		events: {
 			'click .notify-popup-alert-button':'onAlertButtonClicked',
 			'click .notify-popup-prompt-button': 'onPromptButtonClicked',
-			'click .notify-popup-done': 'onCloseButtonClicked',
-			'click .notify-popup-component-option' : 'onSelectComponent',
-			'click .notify-popup-layout-option' : 'onSelectLayout'
+			'click .notify-popup-done': 'onCloseButtonClicked'
 		},
 
 		render: function() {

@@ -1,0 +1,59 @@
+.editing-overlay-component-select-body {
+    border-bottom: 1px solid #ccc;
+}
+
+.editing-overlay-component-select-body-inner {
+    padding:30px;
+}
+
+.editing-overlay-component-item {
+    position:relative;
+    overflow:hidden;
+    border-bottom: 1px solid #ccc;
+}
+
+.editing-overlay-component-option {
+    position:relative;
+    z-index:10;
+    border:none;
+    display:block;
+    width:100%;
+    padding:0px;
+    text-align:left;
+    background-color:#e2e2e2;
+    transition:background-color 0.2s;
+    &:hover {
+        background-color:#aaa;
+    }
+    &.selected {
+        background-color:#999;
+    }
+}
+
+.editing-overlay-component-option-inner {
+    padding:10px 30px;
+}
+
+.editing-overlay-component-layout {
+    position:absolute;
+    z-index:5;
+    left:0px;
+    top:0px;
+    height:100%;
+}
+
+.editing-overlay-component-layout-option {
+    border:none;
+    border-right:1px solid #ccc;
+    padding:0px 10px;
+    float:left;
+    background-color:#777;
+    color:#fff;
+    transition:background-color 0.2s;
+    &:hover {
+        background-color:#444;
+    }
+    &.selected {
+        background-color:#111;
+    }
+}

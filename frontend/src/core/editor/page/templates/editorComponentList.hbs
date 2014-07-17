@@ -1,22 +1,34 @@
-<div class="block-edit">
+<div class="editor-component-list-inner">
     <div class="editing-overlay-panel">
-        <a href="#" class="editing-overlay-panel-title active">
+        <div class="editing-overlay-panel-title active">
             <div class="editing-overlay-panel-title-inner">
-                <h2>{{t 'app.settingsgeneral'}}</h2>
-            </div>
-        </a>
-        {{> part_settingsGeneral}}
-    </div>
-    <div class="editing-overlay-panel">
-        <a href="#" class="editing-overlay-panel-title">
-            <div class="editing-overlay-panel-title-inner">
-                <h2>Extensions</h2>
-            </div>
-        </a>
-        <div class="editing-overlay-panel-content editing-overlay-panel-collapsed">
-            <div class="editing-overlay-panel-content-inner">
-                <div class="block-extensions"></div>
+                <h2>{{t 'app.addcomponent'}}</h2>
             </div>
         </div>
+        <div class="editing-overlay-component-select">
+            <div class="editing-overlay-component-select-inner">
+                <div class="editing-overlay-component-select-body">
+                    <div class="editing-overlay-component-select-body-inner">
+                        {{t 'app.pleaseselectcomponent'}}
+                    </div>
+                </div>
+                {{#each componentTypes}}
+                <div class="editing-overlay-component-item">
+                    <button class="editing-overlay-component-option" data-component="{{name}}">
+                        <div class="editing-overlay-component-option-inner">
+                            <h3 class="editing-overlay-component-option-name small">{{displayName}}</h3>
+                            <div class="editing-overlay-component-option-details small">Name: {{name}}, Version: {{version}}</div>
+                        </div>
+                    </button>
+                    <div class="editing-overlay-component-layout clearfix">
+                        {{#each ../layoutOptions}}
+                        <button class="editing-overlay-component-layout-option layout-option-{{type}}" data-layout="{{type}}">{{t name}}</button>
+                        {{/each}}
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        
     </div>
 </div>

@@ -34,6 +34,9 @@ define(function(require) {
   var EditorConfigModel = require('editorConfig/models/editorConfigModel');
   var EditorConfigCollection = require('editorConfig/collections/editorConfigCollection');
 
+  var EditorComponentListView = require('editorPage/views/editorComponentListView');
+  var EditorComponentListSidebarView = require('editorPage/views/editorComponentListSidebarView');
+
 	Origin.on('router:editor', function(location, subLocation, action) {
 
     if (location === 'article') {
@@ -61,6 +64,7 @@ define(function(require) {
     }
 
     if (location === 'component') {
+      // Display editing a component
       var componentModel = new EditorComponentModel({_id: subLocation});
       componentModel.fetch({
         success: function() {
@@ -140,7 +144,42 @@ define(function(require) {
 					  Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel}).$el);
 					}
 				});
-			break;
+        break;
+      case 'component':
+        // If adding a new component
+        var layoutOptions = [
+          {
+            type: 'left',
+            name: 'app.layoutleft',
+            pasteZoneRenderOrder: 2
+          },
+          {
+            type: 'full',
+            name: 'app.layoutfull',
+            pasteZoneRenderOrder: 1
+          },
+          {
+            type: 'right',
+            name: 'app.layoutright',
+            pasteZoneRenderOrder: 3
+          }
+        ];
+
+        var componentSelectModel = new Backbone.Model({
+          title: window.polyglot.t('app.addcomponent'),
+          body: window.polyglot.t('app.pleaseselectcomponent'),
+          _parentId: location,
+          componentTypes: Origin.editor.data.componentTypes.toJSON(),
+          layoutOptions: layoutOptions
+        })
+        Origin.sidebar.addView(new EditorComponentListSidebarView({
+          model: componentSelectModel
+        }).$el);
+        Origin.editingOverlay.addView(new EditorComponentListView({
+          model: componentSelectModel
+        }).$el);
+
+        break;
 		}
 
 	});

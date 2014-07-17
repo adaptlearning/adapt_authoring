@@ -15,7 +15,7 @@ define(function(require){
     className: 'block editable block-draggable',
 
     events: _.extend(EditorOriginView.prototype.events, {
-      'click a.block-delete'        : 'deleteBlock',
+      'click a.block-delete'        : 'deleteBlockPrompt',
       'click a.add-component'       : 'showComponentList',
       'click a.paste-block'         : 'onPaste',
       'click a.open-context-block'  : 'openContextMenu'
@@ -28,11 +28,12 @@ define(function(require){
       this.listenTo(Origin, 'editorView:moveComponent:' + this.model.get('_id'), this.reRender);
       this.listenTo(Origin, 'editorView:cutComponent:' + this.model.get('_id'), this.onCutComponent);
       this.listenTo(Origin, 'editorView:addComponent:' + this.model.get('_id'), this.addComponent);
+      this.listenTo(Origin, 'editorView:deleteBlock:' + this.model.get('_id'), this.deleteBlock);
 
       this.on('contextMenu:block:edit', this.loadPageEdit);
       this.on('contextMenu:block:copy', this.onCopy);
       this.on('contextMenu:block:cut', this.onCut);
-      this.on('contextMenu:block:delete', this.deleteBlock);
+      this.on('contextMenu:block:delete', this.deleteBlockPrompt);
 
       // Add a componentTypes property to the model and call toJSON() on the
       // collection so that the templates work
@@ -108,6 +109,34 @@ define(function(require){
       this.model.set('dragLayoutOptions', dragLayoutOptions);
     },
 
+    deleteBlockPrompt: function(event) {
+      if (event) {
+        event.preventDefault();
+      }
+      var id = this.model.get('_id');
+      var deleteBlock = {
+          _type: 'prompt',
+          _showIcon: true,
+          title: window.polyglot.t('app.deleteblock'),
+          body: window.polyglot.t('app.confirmdeleteblock') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteblockwarning'),
+          _prompts: [
+            {_callbackEvent: 'editorView:deleteBlock:' + id, promptText: window.polyglot.t('app.ok')},
+            {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
+          ]
+        };
+
+      Origin.trigger('notify:prompt', deleteBlock);
+    },
+
+    
+
+    deleteBlock: function(event) {
+        if (this.model.destroy()) {
+          this.remove();
+          Origin.trigger('editorView:fetchData');
+        }
+    },
+
     handleRemovedComponent: function() {
       this.evaluateComponents();
       this.render();
@@ -168,19 +197,6 @@ define(function(require){
 
       if (!addPasteZonesFirst) {
         this.setupPasteZones();
-      }
-    },
-
-    deleteBlock: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
-
-      if (confirm(window.polyglot.t('app.confirmdeleteblock'))) {
-        if (this.model.destroy()) {
-          this.remove();
-          Origin.trigger('editorView:fetchData');
-        }
       }
     },
 

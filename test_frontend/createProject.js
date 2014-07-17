@@ -45,8 +45,8 @@ casper.test.begin('Create Course', 5, function suite(test) {
     //fills in the form with valid information and submits it
     casper.then(function() {
         this.fillSelectors("form.forms", {
-	    'input[id=projectDetailTitle]' : 'New Name',
-	    'textarea[id=projectDetailDescription]' : 'New Description'
+	    'input[id=projectDetailTitle]' : config.createCourseName,
+	    'textarea[id=projectDetailDescription]' : config.createCourseDescription
 		});
     });
     casper.then(function() {

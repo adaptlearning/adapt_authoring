@@ -13,7 +13,7 @@ define(function(require){
     className: 'component editable component-draggable',
 
     events: _.extend(EditorOriginView.prototype.events, {
-      'click a.component-delete'        : 'deleteComponent',
+      'click a.component-delete'        : 'deleteComponentPrompt',
       'click a.paste-component'         : 'onPaste',
       'click a.open-context-component'  : 'openContextMenu'
     }),
@@ -21,11 +21,13 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
+      this.listenTo(Origin, 'editorPageView:deleteComponent:' + this.model.get('_id'), this.deleteComponent);
       
       this.on('contextMenu:component:edit', this.loadPageEdit);
       this.on('contextMenu:component:copy', this.onCopy);
       this.on('contextMenu:component:cut', this.onCut);
-      this.on('contextMenu:component:delete', this.deleteComponent);
+      this.on('contextMenu:component:delete', this.deleteComponentPrompt);
+
     },
 
     postRender: function () {
@@ -38,18 +40,32 @@ define(function(require){
       }, this));
     },
 
-    deleteComponent: function(event) {
+    deleteComponentPrompt: function(event) {
       if (event) {
         event.preventDefault();
       }
+      var id = this.model.get('_id');
+      var deletePrompt = {
+          _type: 'prompt',
+          _showIcon: true,
+          title: window.polyglot.t('app.deletecomponent'),
+          body: window.polyglot.t('app.confirmdeletecomponent') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletecomponentwarning'),
+          _prompts: [
+            {_callbackEvent: 'editorPageView:deleteComponent:' + id, promptText: window.polyglot.t('app.ok')},
+            {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
+          ]
+        };
+
+      Origin.trigger('notify:prompt', deletePrompt);
+    },
+
+    deleteComponent: function() {
       var parentId = this.model.get('_parentId');
 
-      if (confirm(window.polyglot.t('app.confirmdeletecomponent'))) {
-        if (this.model.destroy()) {
+      if (this.model.destroy()) {
           this.remove();
-          Origin.trigger('editorView:removeComponent:' + parentId);
+          Origin.trigger('editorView:removeComponent:' + parentId);   
         }
-      }
     },
 
     loadPageEdit: function () {

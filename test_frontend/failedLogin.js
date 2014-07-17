@@ -55,7 +55,7 @@ casper.test.begin('Failing login test (wrong values)', 2, function suite(test) {
     //fill in the form with incorrect information
     casper.then(function() {
         this.fillSelectors("form.forms", {
-        'input[id=login-input-username]' : 'email@e',
+        'input[id=login-input-username]' : 'this is incorrect information',
         'input[id=login-input-password]' : 'pass'
         });
     });

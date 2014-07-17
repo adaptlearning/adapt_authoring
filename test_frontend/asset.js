@@ -55,7 +55,9 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
 
     //checks for an error message being displayed on the page
     casper.then(function() {
-        test.assertSelectorHasText('.unit-40', 'No assets found');
+        this.wait(1000, function() {
+            test.assertSelectorHasText('.unit-40', 'No assets found');
+        });
     });
 
     casper.then(function() {
@@ -79,14 +81,14 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
     //fill in the form
 	casper.then(function() {
     	this.fill("form.asset-form", {
-    	'file' : './test_frontend/Data/adaptlearning.jpeg'
+    	'file' : config.assetPath
 		});
 	});
 
     casper.then(function() {
         this.fill("form.asset-form", {
         'title' : 'testing',
-        'description' : 'image'
+        'description' : 'description'
         }, true);
     });
 
@@ -115,13 +117,15 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
     //inputs a name that should match one of the files
     casper.then(function() {
         casper.evaluate(function() {
-            document.querySelector('input[name="search"]').setAttribute("value","testing");
+            document.querySelector('input[name="search"]').setAttribute("value", "testing");
         });
         
     });
 
     casper.then(function() {
-        this.click("button[type=submit]");
+        this.wait(1000, function() {
+            this.click("button[type=submit]");
+        });
     });
 
     casper.then(function() {

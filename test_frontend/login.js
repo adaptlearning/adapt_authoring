@@ -1,7 +1,12 @@
 // login.js
+
 //opens page
 exports.login = function() { 
-    casper.start("http://localhost:3000", function() {
+    var fs = require('fs');
+    configFile = fs.read('./test_frontend/config.json');
+    config = JSON.parse(configFile);
+   
+    casper.start("http://localhost:"+config.serverPort, function() {
     	this.evaluate(function() {
 	      document.querySelector('body').style.backgroundColor = "white";
 	    });
@@ -17,8 +22,8 @@ exports.login = function() {
     //fills in fields and clicks button
     casper.then(function() {
 		this.fillSelectors("form.forms", {
-    	'input[id=login-input-username]' : 'email@email.com',
-    	'input[id=login-input-password]' : 'password'
+    	'input[id=login-input-username]' : config.username,
+    	'input[id=login-input-password]' : config.password
 		});
     });
     casper.then(function() {

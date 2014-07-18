@@ -28,18 +28,33 @@ define(function(require) {
         },
 
         showOverlay: function(element) {
+
+            if (this._isVisible) {
+                return;
+            }
+
             this.$('.editing-overlay-inner').html(element);
             _.defer(_.bind(function() {
                 this.$el.removeClass('display-none');
-                this.$el.velocity({left: 0, opacity: 1});
+                this.$el.velocity({left: 0, opacity: 1}, 300, function() {
+                    this._isVisible = true;
+                });
                 this.listenToOnce(Origin, 'remove:views', this.hideOverlay);
             }, this));
+
         },
 
         hideOverlay: function() {
+
+            if (!this._isVisible) {
+                return;
+            }
+            
             this.$el.velocity({left: '10%', opacity: 0}, 300, _.bind(function() {
                 this.$el.addClass('display-none');
+                this._isVisible = false;
             }, this));
+            
         },
 
         resizeOverlay: function() {

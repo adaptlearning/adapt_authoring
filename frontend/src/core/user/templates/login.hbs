@@ -5,7 +5,7 @@
     </div>
 
     {{#if isAuthenticated}}
-    <h3>You are logged in, please go to the <a id="linkDash" href="/#dashboard">{{t 'app.dashboard'}}</a></h3>
+    <h3>{{t 'app.alreadyloggedin'}}<a id="linkDash" href="/#dashboard">{{t 'app.dashboard'}}</a></h3>
     {{else}}
     <form class="login-form">
 
@@ -13,14 +13,14 @@
             <div class="login-new-user-inner">
 
                 <h2 class="login-title login-form-row">
-                    New User
+                    {{t 'app.newuser'}}
                 </h2>
 
                 <div class="login-body login-form-row">
-                    Create a new account - it's free and the button doesn't work
+                    {{t 'app.createnewaccount'}}
                 </div>
 
-                <a class="btn">Create an account</a>
+                <a class="btn">{{t 'app.createnewaccountbutton'}}</a>
 
             </div>
         </div>
@@ -29,7 +29,7 @@
             <div class="login-returning-user-inner">
 
                 <h2 class="login-title login-form-row">
-                    Returning User
+                    {{t 'app.returninguser'}}
                 </h2>
 
                 <div class="login-body login-form-row">

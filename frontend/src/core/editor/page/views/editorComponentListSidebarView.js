@@ -91,8 +91,11 @@ define(function(require) {
 
         cancelEditing: function(event) {
             event.preventDefault();
-            
+            var currentPageId = Origin.editor.currentContentObjectId;
+            var currentCourseId = Origin.editor.currentCourseId;
+            Backbone.history.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
             Origin.trigger('editingOverlay:views:hide');
+
         }
 
     }, {

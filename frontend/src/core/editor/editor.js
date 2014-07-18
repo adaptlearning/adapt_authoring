@@ -147,23 +147,11 @@ define(function(require) {
         break;
       case 'component':
         // If adding a new component
-        var layoutOptions = [
-          {
-            type: 'left',
-            name: 'app.layoutleft',
-            pasteZoneRenderOrder: 2
-          },
-          {
-            type: 'full',
-            name: 'app.layoutfull',
-            pasteZoneRenderOrder: 1
-          },
-          {
-            type: 'right',
-            name: 'app.layoutright',
-            pasteZoneRenderOrder: 3
-          }
-        ];
+
+        // Find block so we can get layout options
+        var containingBlock = Origin.editor.data.blocks.findWhere({_id: location});
+
+        var layoutOptions = containingBlock.get('layoutOptions');
 
         var componentSelectModel = new Backbone.Model({
           title: window.polyglot.t('app.addcomponent'),

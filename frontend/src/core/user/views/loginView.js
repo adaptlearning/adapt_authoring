@@ -11,7 +11,7 @@ define(function(require) {
 
     events: {
       'keydown #login-input-username' : 'clearErrorStyling',
-      'click .login-form button':'submitLoginDetails'
+      'click .login-form-submit':'submitLoginDetails'
     },
 
     preRender: function() {

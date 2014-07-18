@@ -1,5 +1,6 @@
 .module-user {
 	&.location-login{
+        background-color:#4e4e4e;
 		.sidebar {
 			display:none;
 		}
@@ -7,4 +8,40 @@
 			margin-left:0px;
 		}
 	}
+}
+
+.login-logo {
+    width:200px;
+    margin:80px auto 40px;
+}
+
+.login {
+    color:#fff;
+    font-size:14px;
+    & h2 {
+        color:#fff;
+    }
+    max-width:600px;
+    margin:0 auto;
+    .col-1-2 {
+        float:left;
+        width:50%;
+        text-align:right;
+        border-right:1px solid #fff;
+        .login-new-user-inner {
+            padding-right:30px;
+        }
+    }
+
+    .col-2-2 {
+        float:right;
+        width:50%;
+        text-align:left;
+        .login-returning-user-inner {
+            padding-left:30px;
+        }
+    }
+    .login-form-row {
+        margin-bottom:20px;
+    }
 }

@@ -155,7 +155,7 @@ module.exports = function(grunt) {
     grunt.registerTask('test',['mochaTest']);
     grunt.registerTask('test-ui', ['casperjs']);
     grunt.registerTask('compile',['requirejs:dev']);
-    grunt.registerTask('server',['less', 'handlebars', 'compile', 'start', 'open:server', 'watch']);
+    grunt.registerTask('server',['copy', 'less', 'handlebars', 'compile', 'start', 'open:server', 'watch']);
     grunt.registerTask('start', 'Start node server', function() {
       var server = require('./server');
     });

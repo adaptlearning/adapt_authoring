@@ -28,6 +28,7 @@
   "app.paste" : "Paste",
   "app.cut" : "Cut",
   "app.save" : "Save",
+  "app.saveandedit": "Save and edit",
   "app.cancel" : "Cancel",
   "app.myprojects" : "My Projects",
   "app.addproject" : "Add project",

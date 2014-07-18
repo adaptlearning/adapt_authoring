@@ -28,25 +28,6 @@
 
                 </div>
                 {{/if}}
-
-                {{#if componentTypes}}
-                <div class="notify-popup-component-select">
-                    {{#each componentTypes}}
-                    <div class="notify-popup-component-option" data-component="{{name}}">
-                        <div class="notify-popup-component-option-icon {{component}}"></div>
-                        <div class="notify-popup-component-option-name">{{displayName}}</div>
-                        <div class="notify-popup-component-option-details small">Name: {{name}}, Version: {{version}}</div>
-                    </div>
-                    {{/each}}
-                </div>
-                {{/if}}
-                {{#if layoutOptions}}
-                <div class="notify-popup-component-layout">
-                    {{#each layoutOptions}}
-                    <div class="notify-popup-layout-option layout-option-{{type}}" data-layout="{{type}}">{{t name}}</div>
-                    {{/each}}
-                </div>
-                {{/if}}
                 {{#if body}}
                 <div class="notify-popup-buttons">
 

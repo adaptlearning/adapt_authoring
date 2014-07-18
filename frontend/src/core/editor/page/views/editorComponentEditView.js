@@ -85,7 +85,9 @@ define(function(require) {
           success: _.bind(function() {
             Origin.trigger('editingOverlay:views:hide');
             Origin.trigger('editorView:fetchData');
-            Backbone.history.history.back();
+            var currentPageId = Origin.editor.currentContentObjectId;
+            var currentCourseId = Origin.editor.currentCourseId;
+            Backbone.history.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
             this.remove();
           }, this)
         }

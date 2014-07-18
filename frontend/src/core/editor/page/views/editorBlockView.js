@@ -206,26 +206,14 @@ define(function(require){
 
     showComponentList: function(event) {
       event.preventDefault();
+      
+      Origin.router.navigate('#/editor/'+ this.model.get('_id') +'/component/add', {trigger: true});
 
-      var props = {
-        _type: 'popup',
-        _showIcon: true,
-        title: window.polyglot.t('app.addcomponent'),
-        body: window.polyglot.t('app.pleaseselectcomponent'),
-        componentTypes: Origin.editor.data.componentTypes.toJSON(),
-        layoutOptions: this.model.get('layoutOptions'),
-        _prompts: [
-          {_callbackEvent: 'editorView:addComponent:' + this.model.get('_id'), promptText: window.polyglot.t('app.ok')},
-          {_callbackEvent:'', promptText: window.polyglot.t('app.cancel')}
-        ]
-      };
-
-      Origin.trigger('notify:prompt', props);
     },
 
     addComponent: function(data) {
 
-      if (!data.componentType || !data.layout) {
+      /*if (!data.componentType || !data.layout) {
         return;
       }
 
@@ -255,7 +243,7 @@ define(function(require){
         success: function() {
           Origin.trigger('editorView:fetchData');
         }
-      });
+      });*/
     },
 
     setupPasteZones: function() {

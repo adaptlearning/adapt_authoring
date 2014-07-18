@@ -17,7 +17,7 @@ define(function(require){
 
     events: _.extend(EditorOriginView.prototype.events, {
       'click a.add-block'            : 'addBlock',
-      'click a.page-article-delete'  : 'deletePageArticle',
+      'click a.page-article-delete'  : 'deleteArticlePrompt',
       'click a.paste-article'        : 'onPaste',
       'click a.open-context-article' : 'openContextMenu'
     }),
@@ -27,11 +27,12 @@ define(function(require){
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
       this.listenTo(Origin, 'editorView:moveBlock:' + this.model.get('_id'), this.render);
       this.listenTo(Origin, 'editorView:cutBlock:' + this.model.get('_id'), this.onCutBlock);
+      this.listenTo(Origin, 'editorView:deleteArticle:' + this.model.get('_id'), this.deletePageArticle);
 
       this.on('contextMenu:article:edit', this.loadPageEdit);
       this.on('contextMenu:article:copy', this.onCopy);
       this.on('contextMenu:article:cut', this.onCut);
-      this.on('contextMenu:article:delete', this.deletePageArticle);
+      this.on('contextMenu:article:delete', this.deleteArticlePrompt);
     },
 
     postRender: function() {
@@ -97,6 +98,27 @@ define(function(require){
       });
     },
 
+
+    deleteArticlePrompt: function(event) {
+      if (event) {
+        event.preventDefault();
+      }
+      var id = this.model.get('_id');
+      var deleteArticle = {
+          _type: 'prompt',
+          _showIcon: true,
+          title: window.polyglot.t('app.deletearticle'),
+          body: window.polyglot.t('app.confirmdeletearticle') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletearticlewarning'),
+          _prompts: [
+            {_callbackEvent: 'editorView:deleteArticle:' + id, promptText: window.polyglot.t('app.ok')},
+            {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
+          ]
+        };
+
+      Origin.trigger('notify:prompt', deleteArticle);
+    },
+
+
     deletePageArticle: function(event) {
       if (event) {
         event.preventDefault();
@@ -104,7 +126,7 @@ define(function(require){
 
       var _this = this;
 
-      if (confirm(window.polyglot.t('app.confirmdeletearticle'))) {
+
         this.model.destroy({
           success: function(success) {
             _this.remove();
@@ -114,7 +136,6 @@ define(function(require){
             console.log('error', error);
           }
         });
-      }
     },
 
     loadPageEdit: function (event) {

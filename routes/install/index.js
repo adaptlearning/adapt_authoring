@@ -46,7 +46,7 @@ server.all('/install/ffmpeg', function (req, res, next) {
     var ffInstall = false;
     ffInstall = (req.body.ffmpeg === "true") || false;
     configuration.setConfig('useffmpeg', ffInstall);
-    res.redirect('/install/server');
+    return res.redirect('/install/server');
   }
   res.render('ffmpeg', {pageTitle: "FFmpeg"});
 });
@@ -72,7 +72,7 @@ server.all('/install/server', function (req, res, next) {
     if (0 === Object.keys(errors).length) {
       configuration.setConfig('serverName', serverName);
       configuration.setConfig('serverPort', serverPort);
-      res.redirect('/install/database');
+      return res.redirect('/install/database');
     }
   }
 
@@ -128,7 +128,7 @@ server.all('/install/database', function (req, res, next) {
         configuration.setConfig('dbUser', dbUser);
         configuration.setConfig('dbPass', dbPass);
         configuration.setConfig('sessionSecret', sessionSecret);
-        res.redirect('/install/tenant');
+        return res.redirect('/install/tenant');
       }
     }
 
@@ -176,12 +176,14 @@ server.all('/install/tenant', function (req, res, next) {
       // ensure database connection is up
       database.getDatabase(function (error, db) {
         if (error) {
+					console.log(error);
           return next(error);
         }
 
         // add tenant!
         tenantmanager.createTenant({name: tenantName}, function (error, tenant) {
           if (error) {
+						console.log(error);
             return next(error);
           }
 
@@ -192,6 +194,7 @@ server.all('/install/tenant', function (req, res, next) {
               _tenantId: tenant._id
             }, function (error, user) {
               if (error) {
+								console.log(error);
                 return next(error);
               }
 
@@ -241,6 +244,7 @@ server.get('/install/complete', function (req, res, next) {
   app.configuration = configuration;
   fs.writeFile(path.join(configuration.serverRoot, 'conf', 'config.json'), JSON.stringify(cfg), function (error) {
     if (error) {
+			console.log(error);
       return next(error);
     }
 

@@ -6,7 +6,6 @@
   "dbName": "adapt-builder-core",
   "dbPort": 27017,
   "dataRoot": "data",
-  "tenantPrefix": "adapt-builder-tenant-",
   "sessionSecret": "your-secret-here",
   "auth": "local",
   "useffmpeg" : false

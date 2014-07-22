@@ -1,7 +1,4 @@
 {
-  "registry": "http://adapt-bower-repository.herokuapp.com",
   "directory": "plugins/content/extension/extensioncache",
-  "extensionVersionsFolder": "plugins/content/extension/versions",
-  "_adaptSchemaFile":"properties.schema",
-  "_forceRefresh": false
+  "extensionVersionsFolder": "plugins/content/extension/versions"
 }

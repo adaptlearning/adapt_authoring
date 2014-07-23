@@ -43,6 +43,7 @@ define(function(require) {
       model.save({
         title: this.$('.setting-title').val(),
         displayTitle: this.$('.setting-displaytitle').val(),
+        _classes: this.$('.setting-class').val(),
         body: tinyMCE.get('setting-body').getContent(),
         _extensions: extensionJson
       },

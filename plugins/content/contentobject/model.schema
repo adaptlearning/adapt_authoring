@@ -1,0 +1,30 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/content.schema",
+  "properties": {
+    "_extensions": {
+      "type": "object"
+    },
+    "_graphic" : {
+      "alt" : {
+        "type": "string",
+        "default": ""
+      },
+      "src" : {
+        "type": "string",
+        "default": ""
+      }
+    },
+    "linkText" : {
+      "type" : "string"
+    },
+    "_sortOrder": {
+      "type": "number",
+      "required": true,
+      "default": 1,
+      "editorOnly": true
+    }
+  }
+}

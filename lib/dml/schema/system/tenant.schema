@@ -1,0 +1,32 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/trackedObject.schema",
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "database": {
+      "dbName": {
+        "type": "string",
+        "required": true
+      },
+      "dbHost": {
+        "type": "string",
+        "required": true
+      },
+      "dbUser": {
+        "type": "string"
+      },
+      "dbPass": {
+        "type": "string"
+      },
+      "dbPort": {
+        "type": "number",
+        "default": 27017
+      }
+    }
+  }
+}

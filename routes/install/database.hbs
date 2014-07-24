@@ -1,0 +1,85 @@
+{{> header}}
+
+    <div>
+      <h1>Configure Database</h1>
+      <p>The settings below should be fine for most users. Otherwise, you should configure your database connection here.</p>
+      <p>Note: The only database driver that is currently supported is 'mongoose' (mongodb)</p>
+    </div>
+
+    <div>
+      {{#form formAction}}
+
+        <fieldset>
+          <legend>Database Details</legend>
+
+          <div>
+            {{label_validation 'dbType' 'Database driver' errors}}
+            {{input_validation 'dbType' dbType errors}}
+            {{#field_errors 'dbType' errors}}
+              <span class="error">{{this}}</span>
+            {{/field_errors}}
+          </div>
+
+          <div>
+            {{label_validation 'dbHost' 'Database host' errors}}
+            {{input_validation 'dbHost' dbHost errors}}
+            {{#field_errors 'dbHost' errors}}
+              <span class="error">{{this}}</span>
+            {{/field_errors}}
+          </div>
+
+          <div>
+            {{label_validation 'dbPort' 'Database port' errors}}
+            {{input_validation 'dbPort' dbPort errors}}
+            {{#field_errors 'dbPort' errors}}
+              <span class="error">{{this}}</span>
+            {{/field_errors}}
+          </div>
+
+        </fieldset>
+
+        <fieldset>
+          <legend>Database authentication</legend>
+          <p>Note: by default, mongodb does not require an authenticated user, so in most cases the following fields may be left blank.</p>
+
+          <div>
+            {{label_validation 'dbUser' 'Database username' errors}}
+            {{input_validation 'dbUser' dbUser errors}}
+            {{#field_errors 'dbUser' errors}}
+              <span class="error">{{this}}</span>
+            {{/field_errors}}
+          </div>
+
+          <div>
+            {{label_validation 'dbPass' 'Database password' errors}}
+            {{input_validation 'dbPass' dbPass errors}}
+            {{#field_errors 'dbPass' errors}}
+              <span class="error">{{this}}</span>
+            {{/field_errors}}
+          </div>
+
+        </fieldset>
+
+        <fieldset>
+          <legend>Database Sessions</legend>
+          <p>Note: user sessions are stored in the database, and as an extra layer of security a random secret key is used. For local developer installations, the default value here should be ok.</p>
+
+          <div>
+            {{label_validation 'sessionSecret' 'Session secret' errors}}
+            {{input_validation 'sessionSecret' sessionSecret errors}}
+            {{#field_errors 'sessionSecret' errors}}
+              <span class="error">{{this}}</span>
+            {{/field_errors}}
+          </div>
+
+        </fieldset>
+
+        <fieldset>
+          <legend>Actions</legend>
+          {{submit 'submit' 'Continue' value="submit"}}
+        </fieldset>
+
+      {{/form}}
+    </div>
+
+{{> footer}}

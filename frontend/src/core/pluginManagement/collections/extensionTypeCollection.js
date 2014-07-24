@@ -7,7 +7,14 @@ define(function(require) {
 
     model: ExtensionTypeModel,
 
-    url: 'api/extensiontype',
+    url: function (options) {
+      var base = 'api/extensiontype';
+      if (options && options.base) {
+        return base;
+      }
+
+      return base + '?showall=1';
+    },
 
     comparator: function(model) {
       return model.get('displayName');

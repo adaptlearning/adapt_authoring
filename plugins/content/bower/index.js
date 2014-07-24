@@ -93,7 +93,7 @@ BowerPlugin.prototype.getPackageType = function () {
  * extracts the necessary attributes to store a package in the DB
  *
  */
-function extractPackageInfo (plugin, pkgInfo, schema) {
+function extractPackageInfo (plugin, pkgMeta, schema) {
   // build package info
   var info = {
     name: pkgMeta.name,
@@ -104,7 +104,7 @@ function extractPackageInfo (plugin, pkgInfo, schema) {
   };
 
   // set the type and package id for the package
-  info[plugin.packageType] = pkgInfo[plugin.packageType];
+  info[plugin.packageType] = pkgMeta[plugin.packageType];
 
   return info;
 }
@@ -118,7 +118,8 @@ BowerPlugin.prototype.initialize = function (plugin) {
   app.once('serverStarted', function (server) {
     // add componenttype list route
     rest.get('/' + plugin.type, function (req, res, next) {
-      fetchInstalledPackages(plugin, plugin.options,function (err, results) {
+      var options = _.extend(plugin.options, _.pick(req.query, 'refreshplugins', 'showall'));
+      fetchInstalledPackages(plugin, options,function (err, results) {
         if (err) {
           return next(err);
         }
@@ -126,6 +127,10 @@ BowerPlugin.prototype.initialize = function (plugin) {
         // only send the latest version of the packages
         var packages = {};
         async.eachSeries(results, function (item, cb) {
+          if (!req.query.showall && !item._isAvailableInEditor) {
+            return cb(null);
+          }
+
           if ('object' !== typeof packages[item.name]) {
             packages[item.name] = item;
           } else if (semver.lt(packages[item.name].version, item.version)) {
@@ -206,10 +211,60 @@ BowerPlugin.prototype.initialize = function (plugin) {
             return res.json({ success:true, isUpdateable: exists });
           });
         });
-
       });
     });
 
+    // upgrade a plugin/plugins
+    rest.post('/' + plugin.type + '/update', function (req, res, next) {
+      var upgradeTargets = req.body.targets;
+      if (!util.isArray(upgradeTargets)) {
+        res.statusCode = 400;
+        return res.json({ success: false, message: 'targets parameter should be an array' });
+      }
+
+      database.getDatabase(function (err, db) {
+        if (err) {
+          return next(err);
+        }
+
+        db.retrieve(plugin.type, { _id: { $in: upgradeTargets} }, function (err, results) {
+          if (err) {
+            return next(err);
+          }
+
+          if (!results || 0 === results.length) {
+            res.statusCode = 404;
+            return res.json({ success: false, message: 'could not find plugin(s)' });
+          }
+
+          async.map(
+            results,
+            function (item, cb) {
+              return cb(null, item.name);
+            },
+            function (err, pluginNames) {
+              if (err) {
+                return next(err);
+              }
+
+              // bower throws a fit if passing an array of size 1 :\
+              if (pluginNames.length === 1) {
+                pluginNames = pluginNames[0];
+              }
+
+              var options = _.extend(
+                plugin.options,
+                { _searchItems: pluginNames }
+              );
+
+              return updatePackages(plugin, options, function () {
+                // @TODO figure out how to determine if the update failed?
+                return res.json({ success: true, upgraded: upgradeTargets });
+              });
+            });
+        });
+      });
+    });
   });
 }
 
@@ -243,7 +298,7 @@ function fetchInstalledPackages (plugin, options, cb) {
       }
 
       // there should be at least one installed
-      if (options.refresh || ((!results || 0 === results.length) && options.retry)) {
+      if (options.refreshplugins || ((!results || 0 === results.length) && options.retry)) {
         // update plugins retry, return
         return updatePackages(plugin, options, function (err) {
           if (err) {
@@ -252,11 +307,10 @@ function fetchInstalledPackages (plugin, options, cb) {
 
           // try again, but only once
           options.retry = false;
+          options.refreshplugins = false;
           fetchInstalledPackages(plugin, options, cb);
         });
       }
-
-      // @TODO don't show packages that shouldn't be available in editor
 
       return cb(null, results);
     });
@@ -318,7 +372,7 @@ function addPackage (plugin, packageInfo, cb) {
 
       // Copy this version of the component to a holding area (used for publishing).
       // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
-      var destination = path.join(defaultOptions.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
+      var destination = path.join(plugin.options.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
       fs.exists(destination, function(exists) {
         if (!exists) {
           mkdirp(destination, function (err) {
@@ -407,6 +461,7 @@ function updatePackages (plugin, options, cb) {
     // now do search and install
     bower.commands
       .search(options._searchItems, options)
+      .on('error', cb)
       .on('end', function (results) {
         // lets bower install each
         async.map(results,

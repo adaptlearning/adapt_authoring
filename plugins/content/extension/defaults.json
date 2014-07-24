@@ -1,4 +1,3 @@
 {
-  "directory": "plugins/content/extension/extensioncache",
-  "extensionVersionsFolder": "plugins/content/extension/versions"
+  "versionsFolder": "plugins/content/extension/versions"
 }

@@ -7,7 +7,14 @@ define(function(require) {
 
     model: ComponentTypeModel,
 
-    url: 'api/componenttype',
+    url: function (options) {
+      var base = 'api/componenttype';
+      if (options && options.base) {
+        return base;
+      }
+
+      return base + '?showall=true';
+    },
 
     comparator: function(model) {
       return model.get('displayName');

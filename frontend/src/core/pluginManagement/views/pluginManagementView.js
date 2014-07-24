@@ -36,35 +36,14 @@ define(function(require){
       this.listenTo(this.collection, 'sync', this.addPluginTypeViews);
 
       // External events
-      this.listenTo(Origin, 'pluginManagement:layout:grid', this.switchLayoutToGrid);
-      this.listenTo(Origin, 'pluginManagement:layout:list', this.switchLayoutToList);
+      // @TODO - add controls for these
       this.listenTo(Origin, 'pluginManagement:sort:asc', this.sortAscending);
       this.listenTo(Origin, 'pluginManagement:sort:desc', this.sortDescending);
     },
 
     events: {
-      'click #pluginManagementMenu button'     : 'formclick',
-      'click a#sortPluginsByName'      : 'sortPluginsByName',
-      'click a#sortPluginsByAuthor'    : 'sortPluginsByAuthor',
-      'click a#sortPluginsByLastEdit'  : 'sortPluginsByLastEdit',
-      // 'click .contextMenu'              : 'handleContextMenuClick',
-      // 'click .menu-container'           : 'toggleContextMenu',
-      'click .plugin-detail'           : 'editPlugin'
-    },
-
-    switchLayoutToList: function() {
-      var $container = $('.pluginManagement-plugins'),
-        $items = $('.pluginType-list-item');
-
-      $container.removeClass('grid-layout').addClass('list-layout');
-
-    },
-
-    switchLayoutToGrid: function() {
-      var $container = $('.pluginManagement-plugins'),
-        $items = $('.pluginType-list-item');
-
-      $container.removeClass('list-layout').addClass('grid-layout');
+      'click #pluginManagementMenu button'     : 'formclick', // @TODO - add support for this
+      'click .refresh-all-plugins'             : 'refreshPluginList'
     },
 
     sortAscending: function() {
@@ -105,28 +84,7 @@ define(function(require){
       }
     },
 
-    sortPluginTypessByAuthor: function(e) {
-      e.preventDefault();
-
-      var sortedCollection = this.collection.sortBy(function(pluginType){
-        return pluginType.get("createdBy").toLowerCase();
-      });
-
-      this.renderPluginTypeViews(sortedCollection);
-    },
-
-    sortPluginTypesByName: function(e) {
-      e.preventDefault();
-
-      var sortedCollection = this.collection.sortBy(function(pluginType){
-        return pluginType.get("displayName").toLowerCase();
-      });
-
-      this.renderPluginTypeViews(sortedCollection);
-    },
-
     filterPluginTypes: function(filterText) {
-      // var collection = this.collection;
       var filteredCollection = _.filter(this.collection.models, function(model) {
         return model.get('displayName').toLowerCase().indexOf(filterText.toLowerCase()) > -1;
       });
@@ -142,9 +100,31 @@ define(function(require){
       switch (type) {
           case 'filter':
             var criteria = $('#filterCriteria').val();
-            this.filterProjects(criteria);
+            this.filterPluginTypes(criteria);
           break;
       }
+    },
+
+    refreshPluginList: function (e) {
+      e.preventDefault();
+
+      var pluginType = this.pluginType;
+      var btn = this.$('.refresh-all-plugins');
+      if (btn.hasClass('disabled')) {
+        // do nothing!
+        return false;
+      }
+
+      btn.addClass('disabled').html(window.polyglot.t('app.updating'));
+      $.ajax({
+        'method': 'GET',
+        'url': this.collection.url() + '&refreshplugins=1'
+      }).done(function (data) {
+        // regardless of the result, refresh the view
+        Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger: true});
+      });
+
+      return false;
     }
 
   }, {

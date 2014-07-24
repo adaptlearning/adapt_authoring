@@ -5,7 +5,6 @@ define(function(require) {
   var PluginManagementSidebarView = require('coreJS/pluginManagement/views/pluginManagementSidebarView');
 
   Origin.on('router:pluginManagement', function(location, subLocation, action) {
-    console.log(location, ':', subLocation, ':', action);
     if (!location) {
       location = 'extension';
     }

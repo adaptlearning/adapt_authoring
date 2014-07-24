@@ -1,4 +1,3 @@
 {
-  "directory": "plugins/content/component/componentcache",
-  "componentVersionsFolder": "plugins/content/component/versions"
+  "versionsFolder": "plugins/content/component/versions"
 }

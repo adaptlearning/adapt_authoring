@@ -13,7 +13,8 @@ define(function(require){
 
     events: {
       'change .plugin-toggle-enabled': 'toggleEnabled',
-      'click  .plugin-update-check': 'checkForUpdates'
+      'click  .plugin-update-check': 'checkForUpdates',
+      'click  .plugin-update-confirm': 'updatePlugin'
     },
 
     preRender: function () {
@@ -29,13 +30,54 @@ define(function(require){
 
     checkForUpdates: function (event) {
       event.preventDefault();
+      var btn = this.$('.plugin-update-check');
+      if (btn.hasClass('disabled')) {
+        return false;
+      }
+
+      btn.html(window.polyglot.t('app.checking'));
       $.ajax({
         'method': 'GET',
-        'url': '/api/extensiontype/checkversion/' + this.model.get('_id')
+        'url': this.model.urlRoot + '/checkversion/' + this.model.get('_id')
       }).done(function (data) {
-        console.log(data);
+        if (data.isUpdateable) {
+          btn.removeClass('plugin-update-check').addClass('plugin-update-confirm').html(window.polyglot.t('app.updateplugin'));
+        } else {
+          btn.addClass('disabled');
+          btn.html(window.polyglot.t('app.uptodate'));
+        }
       });
+
+      return false;
     },
+
+    updatePlugin: function (event) {
+      event.preventDefault();
+      var btn = this.$('.plugin-update-confirm');
+      if (btn.hasClass('disabled')) {
+        return false;
+      }
+
+      btn.html(window.polyglot.t('app.updating'));
+      btn.addClass('disabled');
+
+      // hit the update endpoint
+      $.ajax({
+        'method': 'GET',
+        'url': this.model.urlRoot + '/update',
+        'data': {
+          'targets': [this.model.get('_id')]
+        }
+      }).done(function (data) {
+        if (_.contains(data.targets), this.model.get('_id')) {
+          btn.html(window.polyglot.t('app.uptodate'));
+        } else {
+          btn.html(window.polyglot.t('app.updatefailed'));
+        }
+      });
+
+      return false;
+    }
 
   }, {
     template: 'pluginType'

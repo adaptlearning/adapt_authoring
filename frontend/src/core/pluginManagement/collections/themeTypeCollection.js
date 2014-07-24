@@ -7,7 +7,14 @@ define(function(require) {
 
     model: ThemeTypeModel,
 
-    url: 'api/themetype',
+    url: function (options) {
+      var base = 'api/themetype';
+      if (options && options.base) {
+        return base;
+      }
+
+      return base + '?showall=1';
+    },
 
     comparator: function(model) {
       return model.get('displayName');

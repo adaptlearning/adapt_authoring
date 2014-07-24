@@ -6,28 +6,30 @@
       </div>
     </a>
     <div class="editing-overlay-panel-content">
-      <form class="forms">
-        <label for="projectDetailTitle">{{t 'app.projecttitle'}} <span class="req">*</span> <span id="titleErrorMessage" class="error"></span>
-          <input type="text" class="width-30" id="projectDetailTitle" value="{{ title }}" autocomplete="off">
-        </label>
-        <label for="projectDetailDescription">{{t 'app.projectdescription'}}
-          <textarea class="width-30" id="projectDetailDescription">{{ body }}</textarea>
-        </label>
-        <ul class="forms-list">
-          <li>
-            <input type="radio" name="visibility" id="visibility-1" value="1">
-            <label for="visibility-1">Only visible to me</label>
-          </li>
-          <li>
-            <input type="radio" name="visibility" id="visibility-2" value="2">
-            <label for="visibility-2">Allow my colleagues to view and edit this</label>
-          </li>
-          <li>
-            <input type="radio" name="visibility" id="visibility-3" value="3">
-            <label for="visibility-2">Allow anyone to view this</label>
-          </li>
-        </ul>
-      </form>
+      <div class="editing-overlay-panel-content-inner">
+        <form class="forms">
+          <label for="projectDetailTitle">{{t 'app.projecttitle'}} <span class="req">*</span> <span id="titleErrorMessage" class="error"></span>
+            <input type="text" class="width-30" id="projectDetailTitle" value="{{ title }}" autocomplete="off">
+          </label>
+          <label for="projectDetailDescription">{{t 'app.projectdescription'}}
+            <textarea class="width-30" id="projectDetailDescription">{{ body }}</textarea>
+          </label>
+          <ul class="forms-list">
+            <li>
+              <input type="radio" name="visibility" id="visibility-1" value="1">
+              <label for="visibility-1">Only visible to me</label>
+            </li>
+            <li>
+              <input type="radio" name="visibility" id="visibility-2" value="2">
+              <label for="visibility-2">Allow my colleagues to view and edit this</label>
+            </li>
+            <li>
+              <input type="radio" name="visibility" id="visibility-3" value="3">
+              <label for="visibility-2">Allow anyone to view this</label>
+            </li>
+          </ul>
+        </form>
+      </div>
     </div>
     {{#if _id}}
     <div class="editing-overlay-panel">

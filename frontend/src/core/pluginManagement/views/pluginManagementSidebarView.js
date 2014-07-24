@@ -1,16 +1,15 @@
 define(function(require) {
 
-	var Origin = require('coreJS/app/origin');
-	var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
+  var Origin = require('coreJS/app/origin');
+  var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
 
-	var PluginManagementSidebarView = SidebarItemView.extend({
-
-		events: {
-			'click .pluginManagement-sidebar-extensions'	: 'manageExtensions',
-			'click .pluginManagement-sidebar-themes'	: 'manageThemes',
-			'click .pluginManagement-sidebar-components'	: 'manageComponents',
-			'click .pluginManagement-sidebar-dashboard'	: 'returnToDashboard'
-		},
+  var PluginManagementSidebarView = SidebarItemView.extend({
+    events: {
+      'click .pluginManagement-sidebar-extensions'	: 'manageExtensions',
+      'click .pluginManagement-sidebar-themes'	: 'manageThemes',
+      'click .pluginManagement-sidebar-components'	: 'manageComponents',
+      'click .pluginManagement-sidebar-dashboard'	: 'returnToDashboard'
+    },
 
     manageExtensions: function () {
       this.managePluginType('extension');
@@ -28,14 +27,14 @@ define(function(require) {
       Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger: true});
     },
 
-		returnToDashboard: function() {
-			Origin.router.navigate('#/dashboard', {trigger:true});
-		},
+    returnToDashboard: function() {
+      Origin.router.navigate('#/dashboard', {trigger:true});
+    },
 
-	}, {
-		template: 'pluginManagementSidebar'
-	});
+  }, {
+    template: 'pluginManagementSidebar'
+  });
 
-	return PluginManagementSidebarView;
+  return PluginManagementSidebarView;
 
 });

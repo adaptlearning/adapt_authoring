@@ -16,6 +16,7 @@ var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     rimraf = require('rimraf'),
     mkdirp = require('mkdirp'),
     usermanager = require('../../../lib/usermanager'),
+    exec = require('child_process').exec,
     logger = require('../../../lib/logger');
 
 function AdaptOutput () {
@@ -331,6 +332,40 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           }
         });
       },
+      function(callback) {
+        // var file = path.join(process.cwd(), TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, 'index.html');
+        // logger.log('info', 'path = ' + file);
+
+        fs.exists(path.join(process.cwd(), TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR, 'index.html'), function (exists) {
+          if (!exists) {
+            logger.log('info', '3.1. Ensuring framework build exists');
+
+            var args = [];
+            args.push('--outputdir=' + courseId);
+            args.push('--theme=' + 'adapt-contrib-vanilla'); // Hard-coded theme for now
+     
+            child = exec('grunt server-build ' + args.toString().replace(',', ' '), {cwd: path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR)},
+              function (error, stdout, stderr) {
+                if (stdout.length != 0) {
+                  logger.log('info', 'stdout: ' + stdout);
+                  callback(null, 'Framework built OK');
+                }
+
+                if (stderr.length != 0) {
+                  logger.log('error', 'stderr: ' + stderr);
+                  callback(stderr, 'Error (stderr) building framework!');
+                }
+
+                if (error !== null) {
+                  console.log('exec error: ' + error);
+                  callback(error, 'Error building framework');
+                }
+            });
+          } else {
+            callback(null, 'Framework already built, nothing to do')
+          }
+        });        
+      },
       // Sanatize course data
       function(callback) {
         logger.log('info', '4. Sanitizing course.json and contentobject.json');
@@ -371,7 +406,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
       },
       // Sanatize component data
       function(callback) {
-        logger.log('info', '5. Sanitizing component JSON');
+        logger.log('info', '6. Sanitizing component JSON');
         var components = outputJson['component'];
 
         // The 'properties' property of a component should not be included as an
@@ -395,7 +430,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
 
       // Sanitize the IDs
       function(callback) {
-        logger.log('info', '6. Sanitizing the ID values');
+        logger.log('info', '7. Sanitizing the ID values');
         var types = ['contentobject', 'article', 'block', 'component'];
 
         // contentobject
@@ -442,7 +477,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
 
       // Save the files here
       function(callback) {
-        logger.log('info', '7. Saving JSON files');
+        logger.log('info', '8. Saving JSON files');
 
         logger.log(friendlyIdentifiers);
 
@@ -460,7 +495,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           return callback(null, 'Preview, so no zip');
         }
 
-        logger.log('info', '8. Zipping it all up');
+        logger.log('info', '9. Zipping it all up');
         var output = fs.createWriteStream(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, 'download.zip')),
           archive = archiver('zip');
 

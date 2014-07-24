@@ -193,7 +193,6 @@ define(function(require){
         // Set height
         this.$el.height(windowHeight - menuOffsetTop);
 
-
     },
 
     scrollToSelectedElement: function() {

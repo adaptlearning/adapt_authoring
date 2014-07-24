@@ -31,8 +31,10 @@ define(function(require) {
     saveEditing: function() {
       this.model.save({
         title: this.$('.page-title').val(),
+        displayTitle: this.$('.page-displayTitle').val(),
         body: tinyMCE.get('page-body').getContent(),
         linkText: this.$('.page-linktext').val(),
+        duration: this.$('.page-duration').val(),
         _graphic: {
           alt: this.$('.page-graphic-alt').val(),
           src: this.$('.page-graphic-src').val()

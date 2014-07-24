@@ -18,6 +18,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorView:storeSelectedItem', this.storeSelectedItem);
       this.listenTo(Origin, 'editorMenuView:showMenuChildren', this.showMenuChildren);
+      this.listenTo(Origin, 'window:resize', this.setupHorizontalScroll);
     },
 
     postRender: function() {
@@ -158,6 +159,11 @@ define(function(require){
       }, this);
 
       this.setupDragDrop();
+      _.defer(_.bind(function() {
+        var $window = $(window);
+        this.setupHorizontalScroll($window.width(), $window.height());
+        this.scrollToSelectedElement();
+      }, this));
     },
 
     /**
@@ -171,6 +177,26 @@ define(function(require){
       this.$('.editor-menu-inner').append(menuLayerView.$el);
       
       return menuLayerView.$('.editor-menu-layer-inner');
+    },
+
+    setupHorizontalScroll: function(windowWidth, windowHeight) {
+        var $menuLayers = this.$('.editor-menu-layer');
+        var $menuView = this.$el;
+        // Get item width
+        var itemWidth = $menuLayers.first().outerWidth(true);
+        // Set menu holder to width by items length
+        $('.editor-menu-inner').width(itemWidth * $menuLayers.length);
+
+        // Set editor menu container to height of available space
+        // Get offset to work out space menu is set inside
+        var menuOffsetTop = this.$el.offset().top;
+        // Set height
+        this.$el.height(windowHeight - menuOffsetTop);
+
+    },
+
+    scrollToSelectedElement: function() {
+        $('.editor-menu').stop().scrollTo('.editor-menu-item.selected', 100);
     }
 
   }, {

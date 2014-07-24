@@ -6,7 +6,7 @@ define(function(require) {
 
   var EditorMenuLayerView = EditorOriginView.extend({
 
-      className: 'editor-menu-layer unit-25',
+      className: 'editor-menu-layer',
 
       events: {
         'click button.editor-menu-layer-add-page' : 'addPage',

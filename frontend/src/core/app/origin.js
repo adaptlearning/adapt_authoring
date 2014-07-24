@@ -22,6 +22,16 @@ define(function(require){
   // Push sockets onto Origin object
   Origin.socket = io.connect();
 
+  // Setup window events
+  // This is abstracted so we can listenTo and remove event callbacks
+  // when the view is removed without any extra code
+  $(window).on('resize', function(event) {
+    var $window = $(this);
+    var windowWidth = $window.width();
+    var windowHeight = $window.height();
+    Origin.trigger('window:resize', windowWidth, windowHeight);
+  })
+
   return Origin;
 
 });

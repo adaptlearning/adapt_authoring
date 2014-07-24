@@ -20,6 +20,7 @@ require([
     'jquery-form',
     'mediaelement-and-player',
     'velocity',
+    'scrollTo',
     'templates'
 ], function (
     Origin, 

@@ -13,6 +13,10 @@
                         <input type="text" class="form-control page-title" placeholder="Page Title" value="{{title}}">
                     </div>
                     <div class="form-group">
+                        <label for="page-displayTitle">Display Title</label>
+                        <input type="text" class="form-control page-displayTitle" placeholder="Display Title" value="{{displayTitle}}">
+                    </div>
+                    <div class="form-group">
                         <label for="page-body">Page Body</label>
                         <textarea class="text-editor form-control page-body" id="page-body" placeholder="Page Body">{{body}}</textarea>
                     </div>
@@ -31,6 +35,10 @@
                     <div class="form-group">
                         <label for="page-classes">Classes</label>
                         <input type="text" class="form-control page-classes" placeholder="Page Classes" value="{{_classes}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="page-duration">Duration</label>
+                        <input type="text" class="form-control page-duration" placeholder="Duration" value="{{duration}}">
                     </div>
                     <div class="hidden">
                         <input type="hidden" value="{{id}}" id="pageId">

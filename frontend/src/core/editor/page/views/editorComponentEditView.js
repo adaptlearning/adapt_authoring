@@ -75,6 +75,7 @@ define(function(require) {
         _componentType: model.attributes._componentType._id, // TODO -- Not sure about the schema here
         title: this.$('.setting-title').val(),
         displayTitle: this.$('.setting-displaytitle').val(),
+        _classes: this.$('.setting-class').val(),
         body: tinyMCE.get('setting-body').getContent(),
         properties: propertiesJson,
         _extensions: extensionJson},

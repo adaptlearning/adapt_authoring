@@ -7,29 +7,28 @@ a.open-context-contentObject {
 }
 
 .editor-menu-item {
-    border: 1px dashed;
-
-	display:inline-block;
-	margin: 20px 0px;
-    width: 100%;
-    height: 70px;
+    display: block;
     position: relative;
+    width: 200px;
     padding-left: 30px;
-    background-color: #FFF;
+    margin: 20px auto;
+
+    background-color: #f2f2f2;
+    border: 1px solid #999;
     cursor: pointer;
 
     &-title {
-        height: 60px;
-        margin: 5px 5px 5px 70px;
-        overflow: hidden;
+        float:right;
+        width:124px;
+        padding:5px;
     }
 
     &-icon {
         float: left;
-        margin-left: 4px;
-        width: 65px;
-        height: 60px;
-
+        margin-left: 10px;
+        margin:10px;
+        font-size:24px;
+        width:24px;
         &.page {
         }
 
@@ -38,7 +37,7 @@ a.open-context-contentObject {
     }
 
 	&.expanded {
-        border: 0px;
+        border:1px solid lightblue;
         background-color: lightblue;
 
         &.content-type-menu:after { 
@@ -59,6 +58,7 @@ a.open-context-contentObject {
 
 	&.selected {
 		border:1px solid lightblue;
+        background-color: lightblue;
 
         &.content-type-menu:after { 
             left: 100%; 

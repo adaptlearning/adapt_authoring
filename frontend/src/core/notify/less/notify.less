@@ -4,16 +4,16 @@
 // Notify
 // ======
 
-@notify-color:#3eb4e4;
+@notify-color:#454545;
 @notify-text-color:#fff;
 
 @notify-icon-color:#fff;
 @notify-icon-hover-color:darken(@notify-color, 30%);
 
 @notify-button-color:#fff;
-@notify-button-hover-color:darken(@notify-color, 30%);
-@notify-button-text-color:#3eb4e4;
-@notify-button-text-hover-color:#fff;
+@notify-button-hover-color:darken(@notify-button-color, 30%);
+@notify-button-text-color:#454545;
+@notify-button-text-hover-color:#454545;
 
 @notify-popup-padding-top:30px;
 @notify-popup-padding-right:30px;
@@ -31,6 +31,11 @@
         a {
           outline: none;
           text-decoration: none;
+        }
+
+        h5 {
+            font-size:24px;
+            color:@notify-icon-color;
         }
     }
 

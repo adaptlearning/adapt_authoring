@@ -58,8 +58,6 @@ define(function(require){
       this.setSiblingsSelectedState();
       this.setChildrenSelectedState();
 
-      this.scrollToElement();
-
       Origin.trigger('editorView:storeSelectedItem', this.model.get('_id'));
     },
 
@@ -94,10 +92,6 @@ define(function(require){
       this.model.getChildren().each(function(child) {
         child.set({'_isSelected': false, '_isExpanded': false});
       })
-    },
-
-    scrollToElement: function() {
-        $.scrollTo(this.$el);
     },
 
     editMenuItem: function() {

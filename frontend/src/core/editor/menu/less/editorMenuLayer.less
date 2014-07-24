@@ -1,12 +1,37 @@
 .editor-menu-layer {
   height: 100%;
+  width:240px;
+  float:left;
+  padding-bottom:30px;
+  &:first-child {
+    .editor-menu-layer-inner {
+      border-right: 2px solid #454545; 
+    }
+  }
 }
 
 .editor-menu-layer-inner {
   position: relative;
-  border-left: 1px dashed; 
-	padding: 30px;
+  border-right: 2px solid #454545; 
   height: 100%;
+  overflow-y: scroll;
+  overflow-x:hidden;
+}
+
+.editor-menu-layer-button {
+  float:left;
+  width:50%;
+  padding:2px;
+  font-size:13px;
+  border-radius:0px;
+  border-bottom:1px solid #454545;
+  border-right:2px solid #454545;
+  &:first-child {
+    border-right:1px solid #454545;
+  }
+  & i {
+    margin-right:8px;
+  }
 }
 
 .editor-menu-layer-actions {

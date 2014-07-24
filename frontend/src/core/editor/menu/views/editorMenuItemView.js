@@ -10,8 +10,7 @@ define(function(require){
     className: "editor-menu-item",
 
     events: {
-      'click .editor-menu-item-title'       : 'onMenuItemClicked',
-      'click .editor-menu-item-icon'        : 'onMenuItemClicked',
+      'click .editor-menu-item-inner'       : 'onMenuItemClicked',
       'click a.open-context-contentObject'  : 'openContextMenu'
     },
 

@@ -187,9 +187,9 @@ define(function(require){
         $('.editor-menu-inner').width(itemWidth * $menuLayers.length);
 
         // Set editor menu container to height of available space
+        // Get offset to work out space menu is set inside
         var menuOffsetTop = this.$el.offset().top;
-        console.log(windowHeight,menuOffsetTop);
-
+        // Set height
         this.$el.height(windowHeight - menuOffsetTop);
 
 

@@ -2,13 +2,20 @@
   height: 100%;
   width:240px;
   float:left;
+  padding-bottom:30px;
+  &:first-child {
+    .editor-menu-layer-inner {
+      border-right: 2px solid #454545; 
+    }
+  }
 }
 
 .editor-menu-layer-inner {
   position: relative;
   border-right: 2px solid #454545; 
   height: 100%;
-
+  overflow-y: scroll;
+  overflow-x:hidden;
 }
 
 .editor-menu-layer-button {
@@ -18,6 +25,7 @@
   font-size:13px;
   border-radius:0px;
   border-bottom:1px solid #454545;
+  border-right:2px solid #454545;
   &:first-child {
     border-right:1px solid #454545;
   }

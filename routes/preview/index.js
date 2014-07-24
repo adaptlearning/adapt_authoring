@@ -7,15 +7,13 @@ server.set('views', __dirname);
 server.set('view engine', 'hbs');
 
 server.get('/preview/:course/:user/*', function (req, res, next) {
-  var index = 'main.html',
-      course = req.params.course,
+  var course = req.params.course,
       user = req.params.user,
-      file = req.params[0] || index,
-      serverRoot = path.normalize(path.join(__dirname, '../../')),
-      requestedFile = path.join(serverRoot, 'temp', course, user, 'build', file),
-      loggedInUser = usermanager.getCurrentUser();
-
-  if (user == loggedInUser._id) {
+      currentUser = usermanager.getCurrentUser(),
+      file = req.params[0] || 'main.html',
+      requestedFile = path.join(process.cwd(), 'temp', currentUser.tenant._id, 'adapt_framework', course, 'build', file);
+      
+  if (user == currentUser._id) {
     res.sendfile(requestedFile);
   } else {
     // User doesn't have access to this course
@@ -23,5 +21,4 @@ server.get('/preview/:course/:user/*', function (req, res, next) {
     res.json({success: false});
     return res.end();
   }
-
 });

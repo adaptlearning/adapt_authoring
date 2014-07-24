@@ -118,6 +118,7 @@
   "app.assetdimensions" : "Dimensions",
   "app.title" : "Title",
   "app.displaytitle" : "Display title",
+  "app.class" : "Classes",
   "app.description" : "Description",
   "app.bodytext" : "Body text",
   "app.settingsgeneral" : "General",

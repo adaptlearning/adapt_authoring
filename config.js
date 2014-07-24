@@ -12,6 +12,7 @@ require.config({
       'jquery-ui': 'core/libraries/jquery-ui.min',
       'jquery-form' : 'core/libraries/jquery.form',
       velocity: 'core/libraries/velocity',
+      scrollTo: 'core/libraries/scrollTo',
       'mediaelement-and-player' : 'core/libraries/mediaelement-and-player',
       editorPage: 'core/editor/page',
       editorMenu: 'core/editor/menu',
@@ -48,6 +49,10 @@ require.config({
       velocity: {
         deps: ['jquery'],
         exports: 'velocity'
+      },
+      scrollTo: {
+        deps: ['jquery'],
+        exports: 'scrollTo'
       },
       'jquery-ui': {
         deps: ['jquery'],

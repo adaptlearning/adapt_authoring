@@ -16,6 +16,10 @@
       "type":"objectid",
       "required":true,
       "editorOnly": true
+    },
+    "duration": {
+      "type":"string",
+      "required":false
     }
   }
 }

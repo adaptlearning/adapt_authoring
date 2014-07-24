@@ -70,7 +70,7 @@ define(function(require) {
       }
 
       _this.model.save({title: $.trim(_this.$('#projectDetailTitle').val()),
-        body: _this.$('#projectDetailDescription').val()
+        body: tinyMCE.get('projectDetailDescription').getContent()
         },
         {
           error: function() {

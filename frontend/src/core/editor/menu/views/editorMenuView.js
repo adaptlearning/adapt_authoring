@@ -162,6 +162,7 @@ define(function(require){
       _.defer(_.bind(function() {
         var $window = $(window);
         this.setupHorizontalScroll($window.width(), $window.height());
+        this.scrollToSelectedElement();
       }, this));
     },
 
@@ -192,7 +193,10 @@ define(function(require){
         // Set height
         this.$el.height(windowHeight - menuOffsetTop);
 
+    },
 
+    scrollToSelectedElement: function() {
+        $('.editor-menu').stop().scrollTo('.editor-menu-item.selected', 100);
     }
 
   }, {

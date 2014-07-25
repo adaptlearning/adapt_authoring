@@ -15,24 +15,38 @@ define(function(require){
 
     className: 'page-article editable article-draggable',
 
-    events: _.extend(EditorOriginView.prototype.events, {
+    events: _.extend({
       'click a.add-block'            : 'addBlock',
       'click a.page-article-delete'  : 'deleteArticlePrompt',
-      'click a.paste-article'        : 'onPaste',
-      'click a.open-context-article' : 'openContextMenu'
-    }),
+      'click a.open-context-article' : 'openContextMenu',
+      'dblclick':'loadArticleEdit'
+    }, EditorOriginView.prototype.events),
 
     preRender: function() {
-      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-      this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
+      this.listenTo(Origin, {
+        'editorView:removeSubViews': this.remove,
+        'editorPageView:removePageSubViews': this.remove
+      });
+
       this.listenTo(Origin, 'editorView:moveBlock:' + this.model.get('_id'), this.render);
       this.listenTo(Origin, 'editorView:cutBlock:' + this.model.get('_id'), this.onCutBlock);
       this.listenTo(Origin, 'editorView:deleteArticle:' + this.model.get('_id'), this.deletePageArticle);
 
-      this.on('contextMenu:article:edit', this.loadPageEdit);
+      this.listenTo(this, {
+        'contextMenu:article:edit': this.loadArticleEdit,
+        'contextMenu:article:copy': this.onCopy,
+        'contextMenu:article:cut': this.onCut,
+        'contextMenu:article:delete': this.deleteArticlePrompt
+      });
+
+      /*this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
+      
+
+      this.on('contextMenu:article:edit', this.loadArticleEdit);
       this.on('contextMenu:article:copy', this.onCopy);
       this.on('contextMenu:article:cut', this.onCut);
-      this.on('contextMenu:article:delete', this.deleteArticlePrompt);
+      this.on('contextMenu:article:delete', this.deleteArticlePrompt);*/
     },
 
     postRender: function() {
@@ -138,7 +152,7 @@ define(function(require){
         });
     },
 
-    loadPageEdit: function (event) {
+    loadArticleEdit: function (event) {
       Origin.router.navigate('#/editor/' + this.model.get('_type') + '/' + this.model.get('_id') + '/edit', {trigger: true});
     },
 

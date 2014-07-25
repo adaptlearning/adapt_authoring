@@ -13,5 +13,6 @@ conf/config.json
 /plugins/content/component/versions/
 /plugins/content/extension/extensioncache/
 /plugins/content/extension/versions/
+/plugins/content/bower/bowercache
 /master/
 

@@ -14,12 +14,12 @@ define(function(require){
 
     className: 'block editable block-draggable',
 
-    events: _.extend(EditorOriginView.prototype.events, {
+    events: _.extend({
       'click a.block-delete'        : 'deleteBlockPrompt',
       'click a.add-component'       : 'showComponentList',
-      'click a.paste-block'         : 'onPaste',
-      'click a.open-context-block'  : 'openContextMenu'
-    }),
+      'click a.open-context-block'  : 'openContextMenu',
+      'dblclick':'loadBlockEdit'
+    }, EditorOriginView.prototype.events),
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
@@ -30,10 +30,16 @@ define(function(require){
       this.listenTo(Origin, 'editorView:addComponent:' + this.model.get('_id'), this.addComponent);
       this.listenTo(Origin, 'editorView:deleteBlock:' + this.model.get('_id'), this.deleteBlock);
 
-      this.on('contextMenu:block:edit', this.loadPageEdit);
-      this.on('contextMenu:block:copy', this.onCopy);
+      this.listenTo(this, {
+        'contextMenu:block:edit': this.loadBlockEdit,
+        'contextMenu:block:copy': this.onCopy,
+        'contextMenu:block:cut': this.onCut,
+        'contextMenu:block:delete': this.deleteBlockPrompt
+      });
+      /*this.listenTo(this, );
+      this.listenTo(this, );
       this.on('contextMenu:block:cut', this.onCut);
-      this.on('contextMenu:block:delete', this.deleteBlockPrompt);
+      this.on('contextMenu:block:delete', this.deleteBlockPrompt);*/
 
       // Add a componentTypes property to the model and call toJSON() on the
       // collection so that the templates work
@@ -200,7 +206,7 @@ define(function(require){
       }
     },
 
-    loadPageEdit: function (event) {
+    loadBlockEdit: function (event) {
       Origin.router.navigate('#/editor/' + this.model.get('_type') + '/' + this.model.get('_id') + '/edit', {trigger: true});
     },
 
@@ -212,38 +218,6 @@ define(function(require){
     },
 
     addComponent: function(data) {
-
-      /*if (!data.componentType || !data.layout) {
-        return;
-      }
-
-      var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
-        return type.get('name') == data.componentType;
-      });
-
-      var _this = this;
-      var newComponentModel = new EditorComponentModel();
-
-      newComponentModel.save({
-        title: '',
-        displayTitle: '',
-        body: '',
-        _parentId: _this.model.get('_id'),
-        _courseId: Origin.editor.data.course.get('_id'),
-        _type: 'component',
-        _componentType: componentType.get('_id'),
-        _component: componentType.get('component'),
-        _layout: data.layout,
-        version: componentType.get('version')
-      },
-      {
-        error: function() {
-          alert('error adding new component');
-        },
-        success: function() {
-          Origin.trigger('editorView:fetchData');
-        }
-      });*/
     },
 
     setupPasteZones: function() {

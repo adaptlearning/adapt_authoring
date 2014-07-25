@@ -8,6 +8,17 @@ define(function(require){
   var EditorPasteZone = EditorOriginView.extend({
     className: 'visibility-hidden paste-zone',
 
+    events: {
+        'click .editor-paste-zone-paste': 'onPasteElementClicked'
+    },
+
+    onPasteElementClicked: function(event) {
+        event.preventDefault();
+        var parentId = this.model.get('_parentId');
+        var sortOrder = this.model.get('_pasteZoneSortOrder');
+        Origin.trigger('editorView:paste', parentId, sortOrder);
+    },
+
     preRender: function() {
       this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);

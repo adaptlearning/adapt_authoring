@@ -12,18 +12,18 @@ define(function(require){
 
     className: 'component editable component-draggable',
 
-    events: _.extend(EditorOriginView.prototype.events, {
+    events: _.extend({
       'click a.component-delete'        : 'deleteComponentPrompt',
-      'click a.paste-component'         : 'onPaste',
-      'click a.open-context-component'  : 'openContextMenu'
-    }),
+      'click a.open-context-component'  : 'openContextMenu',
+      'dblclick':'loadComponentEdit'
+    }, EditorOriginView.prototype.events),
 
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:deleteComponent:' + this.model.get('_id'), this.deleteComponent);
       
-      this.on('contextMenu:component:edit', this.loadPageEdit);
+      this.on('contextMenu:component:edit', this.loadComponentEdit);
       this.on('contextMenu:component:copy', this.onCopy);
       this.on('contextMenu:component:cut', this.onCut);
       this.on('contextMenu:component:delete', this.deleteComponentPrompt);
@@ -68,7 +68,7 @@ define(function(require){
         }
     },
 
-    loadPageEdit: function () {
+    loadComponentEdit: function () {
       Origin.router.navigate('#/editor/' + this.model.get('_type') + '/' + this.model.get('_id') + '/edit', {trigger: true});
     },
 

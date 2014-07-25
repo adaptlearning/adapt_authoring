@@ -10,6 +10,7 @@ var database = require('../../lib/database');
 var permissions = require('../../lib/permissions');
 var tenantmanager = require('../../lib/tenantmanager');
 var localAuth = require('../../plugins/auth/local');
+var crypto = require('crypto');
 var server = module.exports = express();
 
 
@@ -21,6 +22,14 @@ server.set('view engine', 'hbs');
 
 // register partials from our ./partials directory
 hbs.registerPartials(path.join(__dirname, 'partials'));
+
+function randomValueBase64 (len) {
+    return crypto.randomBytes(Math.ceil(len * 3 / 4))
+        .toString('base64')   // convert to base64 format
+        .slice(0, len)        // return required number of characters
+        .replace(/\+/g, '0')  // replace '+' with '0'
+        .replace(/\//g, '0'); // replace '/' with '0'
+}
 
 // prevent installer running if config file already exists
 server.all('/install*', function (req, res, next) {
@@ -97,7 +106,7 @@ server.all('/install/database', function (req, res, next) {
     var dbPort = req.body.dbPort || 27017;
     var dbUser = req.body.dbUser || '';
     var dbPass = req.body.dbPass || '';
-    var sessionSecret = req.body.sessionSecret || 'your-session-secret';
+    var sessionSecret = req.body.sessionSecret || randomValueBase64(32);
     var errors = {};
 
     if (req.body.submit) {

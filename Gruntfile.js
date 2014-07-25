@@ -9,29 +9,10 @@ module.exports = function(grunt) {
           files: [
             {
               expand: true,
-              src: ['frontend/src/core/libraries/require.js', 
-                'frontend/src/core/libraries/modernizr.js', 
-                'frontend/src/core/libraries/polyglot.min.js', 
-                'frontend/src/core/libraries/jquery.jsoneditor.min.js',
-                'frontend/src/core/libraries/jquery-ui.min.js',
-                'frontend/src/core/libraries/jquery.form.js'],
-              dest: 'frontend/build/libraries/',
-              filter: 'isFile',
-              flatten: true
-            },
-            {
-              expand: true,
               flatten: true,
-              src: ['frontend/src/**/assets/**'],
-              dest: 'frontend/build/adaptbuilder/css/assets/',
+              src: ['frontend/src/core/**/assets/**'],
+              dest: 'frontend/src/adaptbuilder/css/assets/',
               filter: 'isFile'
-            },
-            {
-              expand: true,
-              flatten: false,
-              src: ['*/**'],
-              dest: 'frontend/build/libraries/tinymce/',
-              cwd: 'frontend/src/core/libraries/tinymce/'
             }
           ]
         }
@@ -40,10 +21,10 @@ module.exports = function(grunt) {
         dist: {
           files: [
             {
-              'frontend/build/adaptbuilder/css/kube.min.css': 'frontend/src/less/kube.less'
+              'frontend/src/adaptbuilder/css/kube.min.css': 'frontend/src/less/kube.less'
             },
             {
-              'frontend/build/adaptbuilder/css/adapt.css': 'frontend/src/core/**/*.less'
+              'frontend/src/adaptbuilder/css/adapt.css': 'frontend/src/core/**/*.less'
             }
           ]
         },
@@ -68,39 +49,10 @@ module.exports = function(grunt) {
           }
         }
       },
-      requirejs: {
-        dev: {
-          options: {
-            name: "core/app/app",
-            baseUrl: "frontend/src",
-            mainConfigFile: "./config.js",
-            out: "./frontend/build/adaptbuilder/js/adaptbuilder.min.js",
-            generateSourceMaps: true,
-            preserveLicenseComments:false,
-            optimize: "none"
-          }
-        },
-        compile: {
-          options: {
-            name: "core/app/app",
-            baseUrl: "frontend/src",
-            mainConfigFile: "./config.js",
-            out: "./frontend/build/adaptbuilder/js/adaptbuilder.min.js",
-            optimize:"uglify2"
-          }
-        }
-      },
       watch: {
         handlebars: {
           files: ['frontend/src/**/*.hbs'],
-          tasks: ['handlebars', 'compile']
-        },
-        js: {
-          files: [
-            'frontend/src/**/*.js',
-            '!frontend/src/templates/templates.js'
-          ],
-          tasks: ['compile']
+          tasks: ['handlebars']
         },
         less: {
           files: ['frontend/src/**/*.less'],
@@ -108,7 +60,7 @@ module.exports = function(grunt) {
         },
         routes: {
           files: ['routes/**/*.*'],
-          tasks: ['compile']
+          tasks: ['handlebars']
         }
       },
       casperjs: {
@@ -155,7 +107,7 @@ module.exports = function(grunt) {
     grunt.registerTask('test',['mochaTest']);
     grunt.registerTask('test-ui', ['casperjs']);
     grunt.registerTask('compile',['requirejs:dev']);
-    grunt.registerTask('server',['copy', 'less', 'handlebars', 'compile', 'start', 'open:server', 'watch']);
+    grunt.registerTask('server',['copy', 'less', 'handlebars', 'start', 'open:server', 'watch']);
     grunt.registerTask('start', 'Start node server', function() {
       var server = require('./server');
     });

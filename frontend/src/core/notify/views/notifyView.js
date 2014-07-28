@@ -23,6 +23,7 @@ define(function(require) {
             var template = Handlebars.templates['notify'];
             this.$el.html(template(data)).appendTo('body');
             this.showNotify();
+            this.bringFocusToButton();
             return this;
 		},
 
@@ -111,7 +112,11 @@ define(function(require) {
 				this.remove();
 			}, this));
 			Origin.trigger('popup:closed');
-		}
+		},
+
+        bringFocusToButton: function() {
+            this.$('.notify-popup-button').first().focus();
+        }
 
 	});
 

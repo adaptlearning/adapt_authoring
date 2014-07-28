@@ -1,0 +1,17 @@
+{{> header}}
+  {{#form formAction}}
+    <div>
+      <h1>Installing Adapt Framework</h1>
+      <p>>The Adapt framework must be installed</p>
+      
+    </div>
+    {{button "install" "Install Adapt Framework" class="btn install"}}
+    <div><textarea class="adapt-output" rows="20" cols="80"></textarea>
+    
+    </div>
+
+    <div>
+        {{submit 'submit' 'Continue' value="submit"}}
+    </div>
+  {{/form}}
+{{>footer}}

@@ -11,14 +11,49 @@ var permissions = require('../../lib/permissions');
 var tenantmanager = require('../../lib/tenantmanager');
 var localAuth = require('../../plugins/auth/local');
 var crypto = require('crypto');
-var server = module.exports = express();
+var fs = require('fs');
+var exec = require('child_process').exec;
+var installer = module.exports = express();
+// var server = installer.listen(3001);
+// var io = require('socket.io').listen(server);
 
+var GIT_FRAMEWORK_CLONE_URL = 'https://github.com/adaptlearning/adapt_framework.git';
 
+// server.sockets = io.sockets;
+
+// // On connection between the browser and server emit connection event
+// server.sockets.on('connection', function(socket) {
+//   // app.emit('socketsConnectionStarted', socket);
+//   logger.log('info', 'Socket connected at ' + socket.handshake.time);
+
+//   // socket.on('project:build', function (data) {
+//   //   // Verify extensions
+
+//   //   // Verify components
+
+//   //   child = exec('grunt server-build', {cwd: path.join(COURSE_WORKING_DIR, data.id)},
+//   //     function (error, stdout, stderr) {
+//   //       if (stdout.length != 0) {
+//   //         logger.log('info', 'stdout: ' + stdout);
+//   //       }
+
+//   //       if (stderr.length != 0) {
+//   //         logger.log('error', 'stderr: ' + stderr);
+//   //       }
+
+//   //       if (error !== null) {
+//   //         console.log('exec error: ' + error);
+//   //       }
+//   //   });
+
+//   //   console.log(data);
+//   // });
+// });
 // set up handlebars form helpers
 require('handlebars-form-helpers').register(hbs.handlebars);
 
-server.set('views', __dirname);
-server.set('view engine', 'hbs');
+installer.set('views', __dirname);
+installer.set('view engine', 'hbs');
 
 // register partials from our ./partials directory
 hbs.registerPartials(path.join(__dirname, 'partials'));
@@ -32,7 +67,7 @@ function randomValueBase64 (len) {
 }
 
 // prevent installer running if config file already exists
-server.all('/install*', function (req, res, next) {
+installer.all('/install*', function (req, res, next) {
   // check if install has completed, redirect to root if so
   fs.exists(path.join(configuration.serverRoot, 'conf', 'config.json'), function (exists) {
     if (exists) {
@@ -44,24 +79,24 @@ server.all('/install*', function (req, res, next) {
 });
 
 // installer landing page
-server.all('/install', function (req, res, next) {
+installer.all('/install', function (req, res, next) {
   res.render('install', {pageTitle: "Install"});
 
 });
 
 // ffmpeg check/info page
-server.all('/install/ffmpeg', function (req, res, next) {
+installer.all('/install/ffmpeg', function (req, res, next) {
   if (req.body.submit) {
     var ffInstall = false;
     ffInstall = (req.body.ffmpeg === "true") || false;
     configuration.setConfig('useffmpeg', ffInstall);
-    res.redirect('/install/server');
+    res.redirect('/install/framework');
   }
   res.render('ffmpeg', {pageTitle: "FFmpeg"});
 });
 
 // server configuration page
-server.all('/install/server', function (req, res, next) {
+installer.all('/install/server', function (req, res, next) {
   var app = origin();
   var serverName = req.body.serverName || 'localhost';
   var serverPort = req.body.serverPort || app.defaults.DEFAULT_SERVER_PORT;
@@ -94,7 +129,7 @@ server.all('/install/server', function (req, res, next) {
 });
 
 // database configuration page
-server.all('/install/database', function (req, res, next) {
+installer.all('/install/database', function (req, res, next) {
   // need to know what drivers are available on the system
   database.getAvailableDrivers(function (error, drivers) {
     if (error) {
@@ -155,8 +190,47 @@ server.all('/install/database', function (req, res, next) {
   });
 });
 
+// Framework clone page
+installer.all('/install/framework', function(req, res, next) {
+  var app = origin();
+
+  if (req.body.submit) {
+    child = exec('git clone ' + GIT_FRAMEWORK_CLONE_URL, {cwd: process.cwd()},
+      function (error, stdout, stderr) {
+        if (stdout.length != 0) { 
+          logger.log('info', 'stdout: ' + stdout);
+
+          app.sockets.emit('output', {type: 'info', value: stdout});
+
+          if (stdout.indexOf('done') > -1) {
+            logger.log('info', 'Framwork cloned!');
+            // res.redirect('/install/server');
+          }        
+        }
+
+        if (stderr.length != 0) {
+          app.sockets.emit('output', {type: 'error', value: stderr});
+
+          logger.log('error', 'stderr: ' + stderr);
+        }
+
+        if (error !== null) {
+          app.sockets.emit('output', {type: 'error', value: error.toString()});
+
+          logger.log('exec error: ' + error);
+        }
+    });
+    return;
+  }
+
+  res.render('framework', {
+    'pageTitle': "Installing Adapt framework",
+    'formAction': '/install/framework'
+  });
+});
+
 // master tenant creation page
-server.all('/install/tenant', function (req, res, next) {
+installer.all('/install/tenant', function (req, res, next) {
   var tenantPrefix = req.body.tenantPrefix || 'adapt-tenant-';
   var tenantName = req.body.tenantName || 'master';
   var adminEmail = req.body.adminEmail || '';
@@ -247,7 +321,7 @@ server.all('/install/tenant', function (req, res, next) {
 });
 
 // installation complete
-server.get('/install/complete', function (req, res, next) {
+installer.get('/install/complete', function (req, res, next) {
   // by default, auth is local
   configuration.setConfig('auth', 'local');
   configuration.setConfig('dataRoot', 'data');

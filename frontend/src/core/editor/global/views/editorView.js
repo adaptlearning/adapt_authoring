@@ -113,11 +113,23 @@ define(function(require){
     },
 
     publishProject: function() {
-      window.open('/api/output/adapt/publish/' + this.currentCourseId);
+
+      var canPublish = this.validateCourseContent();
+
+      if (canPublish) {
+        window.open('/api/output/adapt/publish/' + this.currentCourseId);
+      }
+
     },
 
     previewProject: function() {
-      window.open('/api/output/adapt/preview/' + this.currentCourseId + '/' + Origin.sessionModel.get('id'), 'adapt_preview');
+      
+      var canPreview = this.validateCourseContent();
+
+      if (canPreview) {
+        window.open('/api/output/adapt/preview/' + this.currentCourseId + '/' + Origin.sessionModel.get('id'), 'adapt_preview');
+      }
+
     },
 
     setupEditorData: function() {
@@ -346,6 +358,44 @@ define(function(require){
       _.defer(function(){
         Origin.trigger('editorView:cut' + type + ':' + view.model.get('_parentId'), view);
       });
+    },
+
+    validateCourseContent: function() {
+
+      // Store current course
+      var currentCourse = Origin.editor.data.course;
+
+      // Let's do a standard check for at least one child object
+      var containsAtLeastOneChild = true;
+
+      function interateOverChildren(model) {
+
+        // Return the function if no children - on components
+        if(!model._children) return;
+
+        var currentChildren = model.getChildren();
+
+        // Do validate across each item
+        if (!currentChildren.length > 0) {
+
+          containsAtLeastOneChild = false;
+          return;
+
+        } else {
+
+          // Go over each child and call validation again
+          currentChildren.each(function(childModel) {
+            interateOverChildren(childModel);
+          });
+          
+        }
+
+      }
+
+      interateOverChildren(currentCourse);
+
+      return containsAtLeastOneChild;
+      
     }
 
   }, {

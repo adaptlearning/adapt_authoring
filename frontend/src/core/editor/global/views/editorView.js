@@ -379,6 +379,22 @@ define(function(require){
         if (!currentChildren.length > 0) {
 
           containsAtLeastOneChild = false;
+
+          validationError = "There seems to be a " 
+            + model.get('_type') 
+            + " with the title - '" 
+            + model.get('title') 
+            + "' with no " 
+            + model._children;
+          var alertObject = {
+            title: "Validation failed",
+            body: validationError,
+            confirmText: "Ok",
+            _callbackEvent: "editor:courseValidation",
+            _showIcon: true
+          };
+
+          Origin.trigger('notify:alert', alertObject);
           return;
 
         } else {
@@ -395,7 +411,7 @@ define(function(require){
       interateOverChildren(currentCourse);
 
       return containsAtLeastOneChild;
-      
+
     }
 
   }, {

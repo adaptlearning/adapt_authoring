@@ -273,7 +273,7 @@ a.navigation-item{color:white}
 .notify .notify-popup-layout-option.selected{background-color:navy}
 .notify .notify-popup-icon .icon{font-size:60px;width:60px;height:60px;color:#fff}
 .notify .notify-popup-buttons{text-align:center;margin-top:10px}
-.notify .notify-popup-button{background-color:#fff;color:#454545;padding:6px;display:inline-block}.no-touch .notify .notify-popup-button:hover{background-color:#999;color:#454545}
+.notify .notify-popup-button{background-color:#fff;color:#454545;padding:6px;display:inline-block}.no-touch .notify .notify-popup-button:hover,.notify .notify-popup-button:focus{background-color:#999;color:#454545}
 .notify .notify-popup-content-inner{padding-left:80px}@media all and (max-width:800px){.notify .notify-popup-content-inner{padding-left:0px}}
 .notify .notify-popup-inner{padding:30px 30px 30px 30px}
 .notify .notify-popup-toolbar{text-align:right}

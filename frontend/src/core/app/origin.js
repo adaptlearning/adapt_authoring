@@ -30,7 +30,14 @@ define(function(require){
     var windowWidth = $window.width();
     var windowHeight = $window.height();
     Origin.trigger('window:resize', windowWidth, windowHeight);
-  })
+  });
+
+  $(document).on('keydown', function(event) {
+    if ($(event.target).is('input, textarea')) {
+      return;
+    }
+    Origin.trigger('key:down', event);
+  });
 
   return Origin;
 

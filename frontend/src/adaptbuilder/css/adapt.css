@@ -287,7 +287,6 @@ a.navigation-item{color:white}
 .notify-push-inner{padding:30px 0px 30px 30px;margin-right:78px;cursor:pointer}
 .notify-push-close{display:inline-block;text-decoration:none;position:absolute;right:30px;top:50%;margin-top:-12px}.notify-push-close .icon{color:#fff}.no-touch .notify-push-close .icon:hover{color:#000}
 
-.menu-container{width:100%;text-align:center;cursor:pointer}
 .project-list-item{border:1px solid;transition:background-color .3s}.project-list-item:hover{cursor:pointer;background-color:#e2e2e2}
 .project-list-item.selected{background-color:lightblue}
 .project-list-item.listing{width:700px}

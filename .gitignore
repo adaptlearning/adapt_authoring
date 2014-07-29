@@ -4,7 +4,6 @@
 /temp
 conf/config.json
 .project
-/frontend/build
 /test_frontend/img
 /nbproject/
 /.settings

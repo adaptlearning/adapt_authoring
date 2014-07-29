@@ -52,7 +52,7 @@
 
           <div>
             {{label_validation 'dbPass' 'Database password' errors}}
-            {{input_validation 'dbPass' dbPass errors}}
+            {{password_validation 'dbPass' dbPass errors}}
             {{#field_errors 'dbPass' errors}}
               <span class="error">{{this}}</span>
             {{/field_errors}}

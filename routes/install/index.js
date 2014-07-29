@@ -46,7 +46,7 @@ server.all('/install/ffmpeg', function (req, res, next) {
     var ffInstall = false;
     ffInstall = (req.body.ffmpeg === "true") || false;
     configuration.setConfig('useffmpeg', ffInstall);
-    res.redirect('/install/server');
+    return res.redirect('/install/server');
   }
   res.render('ffmpeg', {pageTitle: "FFmpeg"});
 });
@@ -55,7 +55,7 @@ server.all('/install/ffmpeg', function (req, res, next) {
 server.all('/install/server', function (req, res, next) {
   var app = origin();
   var serverName = req.body.serverName || 'localhost';
-  var serverPort = req.body.serverPort || app.defaults.DEFAULT_SERVER_PORT;
+  var serverPort = req.body.serverPort || process.env.PORT || app.defaults.DEFAULT_SERVER_PORT;
   var errors = {};
 
   if (req.body.submit) {
@@ -72,7 +72,7 @@ server.all('/install/server', function (req, res, next) {
     if (0 === Object.keys(errors).length) {
       configuration.setConfig('serverName', serverName);
       configuration.setConfig('serverPort', serverPort);
-      res.redirect('/install/database');
+      return res.redirect('/install/database');
     }
   }
 
@@ -128,7 +128,7 @@ server.all('/install/database', function (req, res, next) {
         configuration.setConfig('dbUser', dbUser);
         configuration.setConfig('dbPass', dbPass);
         configuration.setConfig('sessionSecret', sessionSecret);
-        res.redirect('/install/tenant');
+        return res.redirect('/install/tenant');
       }
     }
 
@@ -148,18 +148,12 @@ server.all('/install/database', function (req, res, next) {
 
 // master tenant creation page
 server.all('/install/tenant', function (req, res, next) {
-  var tenantPrefix = req.body.tenantPrefix || 'adapt-tenant-';
   var tenantName = req.body.tenantName || 'master';
   var adminEmail = req.body.adminEmail || '';
   var adminPass = req.body.adminPass || '';
   var errors = {};
 
   if (req.body.submit) {
-    if (validator.isNull(validator.trim(tenantPrefix))) {
-      errors.tenantPrefix = errors.tenantPrefix || [];
-      errors.tenantPrefix.push('tenant prefix must not be empty!');
-    }
-
     if (validator.isNull(validator.trim(tenantName))) {
       errors.tenantName = errors.tenantName || [];
       errors.tenantName.push('tenant name must not be empty!');
@@ -176,19 +170,20 @@ server.all('/install/tenant', function (req, res, next) {
     }
 
     if (0 === Object.keys(errors).length) {
-      configuration.setConfig('tenantPrefix', tenantPrefix);
-      configuration.setConfig('dbName', tenantPrefix + tenantName);
+      configuration.setConfig('dbName',  tenantName);
 
 
       // ensure database connection is up
       database.getDatabase(function (error, db) {
         if (error) {
-          return res.json(error);
+					console.log(error);
+          return next(error);
         }
 
         // add tenant!
         tenantmanager.createTenant({name: tenantName}, function (error, tenant) {
           if (error) {
+						console.log(error);
             return next(error);
           }
 
@@ -199,6 +194,7 @@ server.all('/install/tenant', function (req, res, next) {
               _tenantId: tenant._id
             }, function (error, user) {
               if (error) {
+								console.log(error);
                 return next(error);
               }
 
@@ -228,7 +224,6 @@ server.all('/install/tenant', function (req, res, next) {
   res.render('tenant', {
     'pageTitle': "Configure Default Tenant",
     'formAction': '/install/tenant',
-    'tenantPrefix': tenantPrefix,
     'tenantName': tenantName,
     'adminEmail': adminEmail,
     'adminPass': adminPass,
@@ -242,16 +237,14 @@ server.get('/install/complete', function (req, res, next) {
   // by default, auth is local
   configuration.setConfig('auth', 'local');
   configuration.setConfig('dataRoot', 'data');
-  
-  
 
+  // write the configuration file  
   var cfg = configuration.getConfig();
-
-  // write the configuration file
   var app = origin();
   app.configuration = configuration;
   fs.writeFile(path.join(configuration.serverRoot, 'conf', 'config.json'), JSON.stringify(cfg), function (error) {
     if (error) {
+			console.log(error);
       return next(error);
     }
 
@@ -266,34 +259,7 @@ server.get('/install/complete', function (req, res, next) {
     // (we use console.log here instead of logger, since logger may not be correctly configured)
     configuration.load(path.join(configuration.serverRoot, 'conf', 'config.json'), function (e) {e && console.log(e);});
     configuration.once('change:config', function () {
-      var grunt = false;
-      // run grunt build if available - developers will appreciate this, but grunt
-      // is a development dependency, so won't be available in production environments
-      // grunt build should be unnecessary in production in any case
-      try {
-        // this may throw
-        grunt = require('grunt');
-
-        // load grunt configuration. could be a nicer way to do this?
-        require(path.join(configuration.serverRoot, 'Gruntfile.js'))(grunt);
-      } catch (e) {
-        // swallow the exception
-        // log warning
-        logger.log('warn', 'failed to require grunt', e);
-        grunt = false;
-      }
-
-      if (grunt) {
-        // run grunt build
-        grunt.tasks(['build'], {}, function (error) {
-          if (error) {
-            logger.log('warn', 'grunt build failed with error. you should manually run "grunt build" from the root of your project', error);
-          }
-          app.restartServer();
-        });
-      } else {
-        app.restartServer();
-      }
+      app.restartServer();
     });
   });
 });

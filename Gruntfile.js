@@ -87,7 +87,7 @@ module.exports = function(grunt) {
       },
       server: {
         options: {
-          port: getHttpPort() || 3000
+          port: getHttpPort() || process.env.PORT
         }
       }
     });

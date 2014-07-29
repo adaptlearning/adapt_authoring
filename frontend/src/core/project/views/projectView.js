@@ -12,6 +12,8 @@ define(function(require){
     className: 'project-list-item',
 
     events: {
+      'dblclick': 'editProject',
+      'click':'toggleSelectProject',
       'click a.open-context-course' : 'openContextMenu'
     },
 
@@ -19,6 +21,8 @@ define(function(require){
       this.listenTo(this, 'remove', this.remove);
       this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(Origin, 'editorView:deleteProject:' + this.model.get('_id'), this.deleteProject);
+      this.listenTo(Origin, 'dashboard:projectView:itemSelected', this.deselectItem);
+      this.listenTo(Origin, 'dashboard:dashboardView:deselectItem', this.deselectItem);
 
       this.on('contextMenu:course:edit', this.editProject);
       this.on('contextMenu:course:delete', this.deleteProjectPrompt);
@@ -38,6 +42,26 @@ define(function(require){
       }
       
       Backbone.history.navigate('/editor/' + this.model.get('_id') + '/menu', {trigger: true});
+    },
+
+    toggleSelectProject: function() {
+        event.stopPropagation();
+      if (this.model.get('_isSelected')) {
+        this.deselectItem();
+      } else {
+        this.selectItem();
+      } 
+    },
+
+    selectItem: function() {
+      Origin.trigger('dashboard:projectView:itemSelected');
+      this.$el.addClass('selected');
+      this.model.set({_isSelected:true});
+    },
+
+    deselectItem: function() {
+      this.$el.removeClass('selected');
+      this.model.set({_isSelected:false});
     },
 
     deleteProjectPrompt: function(event) {

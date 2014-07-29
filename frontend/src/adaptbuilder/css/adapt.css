@@ -1,5 +1,6 @@
 .display-none{display:none}
 .visibility-hidden{visibility:hidden}
+.unselectable{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 #app{margin-top:40px;margin-left:260px}
 .app-inner{position:relative}
 .loading{width:100%;height:100%;position:absolute;top:0;left:0;z-index:5000;text-align:center;background-color:rgba(255,255,255,0.8)}.no-opacity .loading{background-image:url('assets/transparency-light.png')}
@@ -166,6 +167,7 @@ button{width:auto;overflow:visible}
 .dashboard-inner{padding:30px 30px 0px 0px}
 .grid-layout .project-list-item{margin-left:30px;min-width:240px;width:22%;max-width:300px;float:left}
 .list-layout{margin-left:30px}.list-layout .project-list-item{margin-left:0px;width:100%}
+.dashboard-sidebar-filter-clear{padding:6px}
 
 .editing-overlay{position:absolute;z-index:10;top:0px;left:10%;width:100%;opacity:0;background-color:#f2f2f2}
 .editing-overlay-panel-content input,.editing-overlay-panel-content textarea{min-width:50%}
@@ -213,8 +215,9 @@ button{width:auto;overflow:visible}
 
 .editor-menu-inner{}
 a.open-context-contentObject{color:white}
-.editor-menu-item{display:block;position:relative;width:200px;padding-left:30px;margin:20px auto;background-color:#f2f2f2;border:1px solid #999;cursor:pointer}.editor-menu-item-title{float:right;width:124px;padding:5px}
+.editor-menu-item{display:block;position:relative;width:200px;padding-left:30px;margin:20px auto;background-color:#f2f2f2;border:1px solid #999;cursor:pointer;transition:background-color .3s}.editor-menu-item-title{float:right;width:124px;padding:5px}
 .editor-menu-item-icon{float:left;margin-left:10px;margin:10px;font-size:24px;width:24px}
+.editor-menu-item:hover{background-color:#e2e2e2}
 .editor-menu-item.expanded{border:1px solid lightblue;background-color:lightblue}.editor-menu-item.expanded.content-type-menu:after{left:100%;top:50%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;border-color:rgba(136,183,213,0);border-left-color:lightblue;border-width:12px;margin-top:-12px}
 .editor-menu-item.selected{border:1px solid lightblue;background-color:lightblue}.editor-menu-item.selected.content-type-menu:after{left:100%;top:50%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;border-color:rgba(136,183,213,0);border-left-color:lightblue;border-width:12px;margin-top:-12px}
 .editor-menu-item .settings{height:20px}
@@ -285,15 +288,21 @@ a.navigation-item{color:white}
 .notify-push-close{display:inline-block;text-decoration:none;position:absolute;right:30px;top:50%;margin-top:-12px}.notify-push-close .icon{color:#fff}.no-touch .notify-push-close .icon:hover{color:#000}
 
 .menu-container{width:100%;text-align:center;cursor:pointer}
-.project-list-item{border:1px solid}.project-list-item.listing{width:700px}
+.project-list-item{border:1px solid;transition:background-color .3s}.project-list-item:hover{cursor:pointer;background-color:#e2e2e2}
+.project-list-item.selected{background-color:lightblue}
+.project-list-item.listing{width:700px}
 .project-inner{height:300px}
-.project-sidebar{float:left;width:30px;height:100%;background-color:red}
-.project-settings{height:30px;text-align:center}
-.project-handle{height:270px;background-color:black}
-.project-detail{padding-left:56px}.project-detail:hover{cursor:pointer;background-color:lightblue}
+.project-sidebar{float:left;width:30px;height:100%;background-color:#454545}
+.project-settings{padding:2px;height:30px;text-align:center}
+.project-handle{height:270px}
+.project-detail{padding-left:30px;height:300px}.project-detail-inner{padding:14px}
+.project-detail-title{padding-bottom:14px;border-bottom:1px solid #454545}
+.project-details-row{padding:4px 0px;border-bottom:1px solid #454545}.project-details-row div{line-height:15px}
+.projects-details-label{font-size:13px;font-weight:bold}
+.projects-details-value{font-size:13px}
 .project-title{width:100%;height:46px;overflow:hidden;text-overflow:ellipsis}
 
-.sidebar{position:fixed;top:0px;left:0px;width:260px;height:100%;background-color:#454545;overflow-y:auto;overflow-x:hidden;color:#fff}
+.sidebar{position:fixed;top:0px;left:0px;width:260px;height:100%;background-color:#454545;overflow-y:auto;overflow-x:hidden;color:#fff}.sidebar a{color:#fff}.sidebar a:hover,.sidebar a:focus{color:#e2e2e2}
 .sidebar-inner{padding:70px 30px;height:100%}
 .sidebar-breadcrumb{position:relative;top:-40px}
 .sidebar-breadcrumb-inner{margin-bottom:30px}

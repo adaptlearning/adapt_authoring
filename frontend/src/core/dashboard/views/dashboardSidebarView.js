@@ -10,7 +10,9 @@ define(function(require) {
 			'click a.project-layout-grid' 			: 'layoutGrid',
 			'click a.project-layout-list' 			: 'layoutList',
 			'click a.project-sort-asc' 				: 'sortAscending',
-			'click a.project-sort-desc' 			: 'sortDescending'
+			'click a.project-sort-desc' 			: 'sortDescending',
+            'keyup .dashboard-sidebar-filter-input':'filterProjectsByTitle',
+            'click .dashboard-sidebar-filter-clear': 'clearFilterInput'
 		},
 
 		addCourse: function() {
@@ -39,7 +41,17 @@ define(function(require) {
 			event.preventDefault();
 
 			Origin.trigger('dashboard:sort:desc');
-		}
+		},
+
+        filterProjectsByTitle: function(event) {
+            var filterText = $(event.currentTarget).val();
+            Origin.trigger('dashboard:dashboardSidebarView:filter', filterText);
+        },
+
+        clearFilterInput: function(event) {
+            event.preventDefault();
+            this.$('.dashboard-sidebar-filter-input').val('').trigger('keyup');
+        }
 		
 	}, {
 		template: 'dashboardSidebar'

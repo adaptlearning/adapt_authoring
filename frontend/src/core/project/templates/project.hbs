@@ -1,36 +1,52 @@
-<div class="project-inner">
+<div class="project-inner unselectable">
+
   <div class="project-sidebar">
+
     <div class="project-settings">
       <a href="#" class="open-context-icon open-context-course"><i class="fa fa-cog fa-fw"></i></a>
     </div>
+
     <div class="project-handle"></div>
+
   </div>
+
   <div class="project-detail"  data-id="{{_id}}">
-    <img src="http://placehold.it/350x150">
-    <div class="project-title">
-      <h4 class="project-title-inner">{{{title}}}</h4>
-    </div>
-    <div class="units-row">
-      <div class="unit-centered unit-80">
-        <table class="table-simple width-80 small">
-            <tr>
-                <td>{{t 'app.status'}}</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>{{t 'app.lastupdated'}}</td>
-                <td>{{formatDate updatedAt}}</td>
-            </tr>
-            <tr>
-                <td>{{t 'app.category'}}</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>{{t 'app.owner'}}</td>
-                <td>-</td>
-            </tr>
-        </table>
+    {{#if posterImage}}
+    <img src="{{posterImage}}"/>
+    {{/if}}
+    <div class="project-detail-inner">
+
+      <div class="project-detail-title">
+        <h4 class="project-detail-title-inner">{{{title}}}</h4>
       </div>
+
+      <div class="project-details">
+        <div class="project-details-inner">
+
+          {{!-- <div class="project-details-status project-details-row">
+            <div class="projects-details-label">{{t 'app.status'}}</div>
+            <div class="projects-details-value">-</div>
+          </div> --}}
+
+          <div class="project-details-last-updated project-details-row">
+            <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
+            <div class="projects-details-value">{{formatDate updatedAt}}</div>
+          </div>
+
+          {{!-- <div class="project-details-category project-details-row">
+            <div class="projects-details-label">{{t 'app.category'}}</div>
+            <div class="projects-details-value">-</div>
+          </div> --}}
+
+          {{!-- <div class="project-details-owner project-details-row">
+            <div class="projects-details-label">{{t 'app.owner'}}</div>
+            <div class="projects-details-value">-</div>
+          </div> --}}
+
+        </div>
+      </div>
+
     </div>
   </div>
+
 </div>

@@ -19,6 +19,12 @@ define(function(require){
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
 
+      // Listen to _isSelected change to see if we should setup keyboard events
+      this.listenTo(this.model, 'change:_isSelected', this.handleKeyEventsSetup);
+
+      // Trigger initial setup of keyboard events as change is fired on init
+      this.handleKeyEventsSetup(this.model, this.model.get('_isSelected'));
+
       // Handle the context menu clicks
       this.on('contextMenu:menu:edit', this.editMenuItem);
       this.on('contextMenu:menu:copy', this.copyMenuItem);
@@ -119,9 +125,35 @@ define(function(require){
 
 
     deleteItem: function(event) {
+      // When deleting an item - the parent needs to be selected
+      this.model.getParent().set({_isSelected:true});
       if (this.model.destroy()) {
-          this.remove();
-        }
+        this.remove();
+      }
+    },
+
+    handleKeyEventsSetup: function(model, isSelected) {
+      // This is used to toggle between _isSelected on the model and 
+      // setting up the events for the keyboard
+      if (!isSelected) {
+        this.stopListening(Origin, 'key:down', this.handleKeyEvents);
+      } else {
+        this.listenTo(Origin, 'key:down', this.handleKeyEvents);
+      }
+    },
+
+    handleKeyEvents: function(event) {
+      // Check if it's the backspace button
+      if (event.which === 8) {
+        event.preventDefault();
+        this.deleteItemPrompt();
+      }
+
+      // Check it it's the enter key
+      if (event.which === 13) {
+        this.onMenuItemClicked();
+      }
+      
     }
     
   }, {

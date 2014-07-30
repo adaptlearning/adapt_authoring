@@ -17,6 +17,8 @@ a.open-context-contentObject {
     border: 1px solid #999;
     cursor: pointer;
 
+    transition:background-color 0.3s;
+
     &-title {
         float:right;
         width:124px;
@@ -34,6 +36,10 @@ a.open-context-contentObject {
 
         &.menu {
         }
+    }
+
+    &:hover {
+        background-color:#e2e2e2;
     }
 
 	&.expanded {
@@ -58,6 +64,7 @@ a.open-context-contentObject {
 
 	&.selected {
 		border:1px solid lightblue;
+        background-color: lightblue;
 
         &.content-type-menu:after { 
             left: 100%; 

@@ -1,4 +1,4 @@
-<div data-id="{{_id}}" data-parentId="{{_parentId}}" class="editor-menu-item-inner clearfix">
+<div data-id="{{_id}}" data-parentId="{{_parentId}}" class="editor-menu-item-inner clearfix unselectable">
 	<div class="editor-item-sidebar">
         <div class="settings">
             <a href="#" class="open-context-contentObject"><i class="fa fa-cog fa-fw"></i></a>
@@ -10,7 +10,11 @@
             {{#if _isSelected}}
             <i class="fa fa-folder-open-o"></i> 
             {{else}}
+                {{#if _isExpanded}}
+                <i class="fa fa-folder-open-o"></i> 
+                {{else}}
             <i class="fa fa-folder-o"></i> 
+            {{/if}}
             {{/if}}
         {{/if_value_equals}}
         {{#if_value_equals _type "page"}}

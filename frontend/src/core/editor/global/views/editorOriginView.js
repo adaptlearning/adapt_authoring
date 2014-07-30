@@ -97,7 +97,7 @@ define(function(require){
       }
       tinyMCE.execCommand('mceFocus', false, elementSelector);
       tinyMCE.execCommand('mceRemoveControl', false, elementSelector);
-      tinyMCE.baseURL = "/libraries/tinymce/";
+      tinyMCE.baseURL = "../../core/libraries/tinymce";
       tinyMCE.init({
         mode : "exact",
         elements: elementSelector,

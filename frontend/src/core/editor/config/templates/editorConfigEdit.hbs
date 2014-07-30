@@ -6,58 +6,62 @@
             </div>
         </a>
         <div class="editing-overlay-panel-content">
-          <form method="post" action="" class="forms">
-              <label for="config-defaultLanguage">
-                  {{t 'app.defaultlanguage'}}
-                  <input id="config-defaultLanguage" type="text" name="config-defaultLanguage" class="config-defaultLanguage width-10" value="{{_defaultLanguage}}"/>
-              </label>
-              <label for="config-questionWeight">
-                  {{t 'app.questionweight'}}
-                  <input id="config-questionWeight" type="text" name="config-questionWeight" class="config-questionWeight width-10" value="{{_questionWeight}}"/>
-              </label>
-              <label for="config-accessibilityenabled">
-                  {{t 'app.accessibilityenabled'}}
-                  <select id="config-accessibilityenabled" name="config-accessibilityenabled" class="config-accessibilityenabled">
-                    {{renderBooleanOptions _isAccessibilityEnabled}}
-                  </select>
-              </label>
-              <label for="config-accessibilitylegacy">
-                  {{t 'app.accessibilitylegacy'}}
-                  <select id="config-accessibilitylegacy" name="config-accessibilitylegacy" class="config-accessibilitylegacy">
-                    {{renderBooleanOptions _shouldSupportLegacy}}
-                  </select>
-              </label>
-              <label for="config-drawershoweasing">
-                  {{t 'app.drawershoweasing'}}
-                  <select id="config-drawershoweasing" name="config-drawershoweasing" class="config-drawershoweasing">
-                    {{#each _easings}}
-                    <option value="{{type}}" {{selected type ../_showEasing}}>{{type}}</option>
-                    {{/each}}
-                  </select>
-              </label>
-              <label for="config-drawerhideeasing">
-                  {{t 'app.drawerhideeasing'}}
-                  <select id="config-drawerhideeasing" name="config-drawerhideeasing" class="config-drawerhideeasing">
-                    {{#each _easings}}
-                    <option value="{{type}}" {{selected type ../_hideEasing}}>{{type}}</option>
-                    {{/each}}
-                  </select>
-              </label>
-              <label for="config-drawerduration">
-                  {{t 'app.drawerduration'}}
-                  <input id="config-drawerduration" type="text" name="config-drawerduration" class="config-drawerduration width-10" value="{{_duration}}"/>
-              </label>  
-          </form>
+          <div class="editing-overlay-panel-content-inner">
+            <form method="post" action="" class="forms">
+                <label for="config-defaultLanguage">
+                    {{t 'app.defaultlanguage'}}
+                    <input id="config-defaultLanguage" type="text" name="config-defaultLanguage" class="config-defaultLanguage width-10" value="{{_defaultLanguage}}"/>
+                </label>
+                <label for="config-questionWeight">
+                    {{t 'app.questionweight'}}
+                    <input id="config-questionWeight" type="text" name="config-questionWeight" class="config-questionWeight width-10" value="{{_questionWeight}}"/>
+                </label>
+                <label for="config-accessibilityenabled">
+                    {{t 'app.accessibilityenabled'}}
+                    <select id="config-accessibilityenabled" name="config-accessibilityenabled" class="config-accessibilityenabled">
+                      {{renderBooleanOptions _isAccessibilityEnabled}}
+                    </select>
+                </label>
+                <label for="config-accessibilitylegacy">
+                    {{t 'app.accessibilitylegacy'}}
+                    <select id="config-accessibilitylegacy" name="config-accessibilitylegacy" class="config-accessibilitylegacy">
+                      {{renderBooleanOptions _shouldSupportLegacy}}
+                    </select>
+                </label>
+                <label for="config-drawershoweasing">
+                    {{t 'app.drawershoweasing'}}
+                    <select id="config-drawershoweasing" name="config-drawershoweasing" class="config-drawershoweasing">
+                      {{#each _easings}}
+                      <option value="{{type}}" {{selected type ../_showEasing}}>{{type}}</option>
+                      {{/each}}
+                    </select>
+                </label>
+                <label for="config-drawerhideeasing">
+                    {{t 'app.drawerhideeasing'}}
+                    <select id="config-drawerhideeasing" name="config-drawerhideeasing" class="config-drawerhideeasing">
+                      {{#each _easings}}
+                      <option value="{{type}}" {{selected type ../_hideEasing}}>{{type}}</option>
+                      {{/each}}
+                    </select>
+                </label>
+                <label for="config-drawerduration">
+                    {{t 'app.drawerduration'}}
+                    <input id="config-drawerduration" type="text" name="config-drawerduration" class="config-drawerduration width-10" value="{{_duration}}"/>
+                </label>  
+            </form>
+          </div>
         </div>
     </div>
     <div class="editing-overlay-panel">
-        <a href="#" class="editing-overlay-panel-title">
-            <div class="editing-overlay-panel-title-inner">
-                <h2>Extensions</h2>
-            </div>
-        </a>
-        <div class="editing-overlay-panel-content editing-overlay-panel-collapsed">
-            <div class="config-extensions"></div>
-        </div>
+      <a href="#" class="editing-overlay-panel-title">
+          <div class="editing-overlay-panel-title-inner">
+              <h2>Extensions</h2>
+          </div>
+      </a>
+      <div class="editing-overlay-panel-content editing-overlay-panel-collapsed">
+        <div class="editing-overlay-panel-content-inner">
+          <div class="config-extensions"></div>
+              </div>
+      </div>
     </div>
 </div>

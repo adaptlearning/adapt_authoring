@@ -1,52 +1,40 @@
-<div class="project-inner unselectable">
+<div class="project-inner unselectable" data-id="{{_id}}">
+    
+    <div class="project-header">
+      <div class="project-header-inner">
 
-  <div class="project-sidebar">
-
-    <div class="project-settings">
-      <a href="#" class="open-context-icon open-context-course"><i class="fa fa-cog fa-fw"></i></a>
-    </div>
-
-    <div class="project-handle"></div>
-
-  </div>
-
-  <div class="project-detail"  data-id="{{_id}}">
-    {{#if posterImage}}
-    <img src="{{posterImage}}"/>
-    {{/if}}
-    <div class="project-detail-inner">
-
-      <div class="project-detail-title">
-        <h4 class="project-detail-title-inner">{{{title}}}</h4>
-      </div>
-
-      <div class="project-details">
-        <div class="project-details-inner">
-
-          {{!-- <div class="project-details-status project-details-row">
-            <div class="projects-details-label">{{t 'app.status'}}</div>
-            <div class="projects-details-value">-</div>
-          </div> --}}
-
-          <div class="project-details-last-updated project-details-row">
-            <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
-            <div class="projects-details-value">{{formatDate updatedAt}}</div>
+        <div class="project-settings">
+          <div class="project-settings-inner">
+            <a href="#" class="open-context-icon open-context-course"><i class="fa fa-cog fa-fw"></i></a>
           </div>
-
-          {{!-- <div class="project-details-category project-details-row">
-            <div class="projects-details-label">{{t 'app.category'}}</div>
-            <div class="projects-details-value">-</div>
-          </div> --}}
-
-          {{!-- <div class="project-details-owner project-details-row">
-            <div class="projects-details-label">{{t 'app.owner'}}</div>
-            <div class="projects-details-value">-</div>
-          </div> --}}
-
         </div>
-      </div>
 
+        {{!-- {{#if posterImage}}
+        <img src="{{posterImage}}"/>
+        {{/if}} --}}
+        {{!-- Should probably use the one above --}}
+        <img src="images/origami-project.jpg"/> 
+
+      </div>
     </div>
-  </div>
+    
+
+      
+
+    <div class="project-details">
+      <div class="project-details-inner">
+
+        <div class="project-detail-title">
+          <h4 class="project-detail-title-inner">{{{title}}}</h4>
+        </div>
+
+        <div class="project-details-last-updated project-details-row">
+          <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
+          <div class="projects-details-value">{{formatDate updatedAt}}</div>
+        </div>
+
+      </div>
+    </div>
+
 
 </div>

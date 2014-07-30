@@ -12,7 +12,7 @@ a.open-context-icon{color:#fff}
 
 form label{display:block;font-weight:bold;font-size:13px}
 .form-group{margin-bottom:20px}
-input[type="text"],input[type="password"],input[type="email"],input[type="url"],input[type="phone"],input[type="tel"],input[type="number"],input[type="datetime"],input[type="date"],input[type="search"],input[type="datetime-local"],textarea,select[multiple="multiple"]{padding:18px 10px;border-radius:2px;border:solid 1px #ccc;font-size:13px}input[type="text"]:focus,input[type="password"]:focus,input[type="email"]:focus,input[type="url"]:focus,input[type="phone"]:focus,input[type="tel"]:focus,input[type="number"]:focus,input[type="datetime"]:focus,input[type="date"]:focus,input[type="search"]:focus,input[type="datetime-local"]:focus,textarea:focus,select[multiple="multiple"]:focus{outline:none;border-color:#666;box-shadow:none}
+input[type="text"],input[type="password"],input[type="email"],input[type="url"],input[type="phone"],input[type="tel"],input[type="number"],input[type="datetime"],input[type="date"],input[type="search"],input[type="datetime-local"],textarea,select[multiple="multiple"]{padding:10px 10px;border-radius:2px;border:solid 1px #ccc;font-size:13px}input[type="text"]:focus,input[type="password"]:focus,input[type="email"]:focus,input[type="url"]:focus,input[type="phone"]:focus,input[type="tel"]:focus,input[type="number"]:focus,input[type="datetime"]:focus,input[type="date"]:focus,input[type="search"]:focus,input[type="datetime-local"]:focus,textarea:focus,select[multiple="multiple"]:focus{outline:none;border-color:#666;box-shadow:none}
 
 .display-none{display:none}
 .visibility-hidden{visibility:hidden}
@@ -290,21 +290,19 @@ a.open-context-contentObject{color:white}
 .notify-push-inner{padding:30px 0px 30px 30px;margin-right:78px;cursor:pointer}
 .notify-push-close{display:inline-block;text-decoration:none;position:absolute;right:30px;top:50%;margin-top:-12px}.notify-push-close .icon{color:#fff}.no-touch .notify-push-close .icon:hover{color:#000}
 
-.project-list-item{border:1px solid;transition:background-color .3s}.project-list-item:hover{cursor:pointer;background-color:#e2e2e2}
-.project-list-item.selected{background-color:lightblue}
+.project-list-item{overflow:hidden;background-color:#fff;transition:background-color .3s}.project-list-item:hover{cursor:pointer}.project-list-item:hover .project-settings{top:0%;opacity:1}
+.project-list-item.selected{color:#fff;background-color:#333c4e}.project-list-item.selected .project-settings{top:0%;opacity:1}
 .project-list-item.listing{width:700px}
-.project-inner{height:300px}
-.project-sidebar{float:left;width:30px;height:100%;background-color:#454545}
-.project-settings{padding:2px;height:30px;text-align:center}
-.project-handle{height:270px}
-.project-detail{padding-left:30px;height:300px}.project-detail-inner{padding:14px}
-.project-detail-title{padding-bottom:14px;border-bottom:1px solid #454545}
-.project-details-row{padding:4px 0px;border-bottom:1px solid #454545}.project-details-row div{line-height:15px}
-.projects-details-label{font-size:13px;font-weight:bold}
-.projects-details-value{font-size:13px}
-.project-title{width:100%;height:46px;overflow:hidden;text-overflow:ellipsis}
+.project-header-inner{position:relative}
+.project-detail-title{margin-bottom:10px}
+.project-settings{position:absolute;top:-50%;left:0px;font-size:16px;width:100%;opacity:0;background-color:rgba(41,49,65,0.8);transition:all 0.3s}.project-settings a{color:#fff}
+.project-settings-inner{padding:8px}
+.project-details-inner{padding:20px}
+.project-details-row{font-size:11px}
+.projects-details-label{font-weight:600}
 
 .sidebar{position:fixed;top:0px;left:0px;width:260px;height:100%;overflow-y:auto;overflow-x:hidden}.sidebar a{text-decoration:none}
+.sidebar .dashboard-sidebar-filter-clear{display:inline}
 .sidebar-inner{padding-top:41px}
 .sidebar-breadcrumb{position:relative;top:-40px}
 .sidebar-breadcrumb-inner{padding:18px 20px}
@@ -318,19 +316,18 @@ a.open-context-contentObject{color:white}
 .module-user.location-login{background-color:#4e4e4e}.module-user.location-login .sidebar{display:none}
 .module-user.location-login #app{margin-left:0px}
 .login-logo{width:200px;margin:80px auto 40px}
-.login{max-width:600px;margin:0 auto;color:#fff;font-size:14px}.login h2{color:#fff}
-.login .col-1-2{float:left;width:50%;text-align:right;border-right:1px solid #fff}.login .col-1-2 .login-new-user-inner{padding-right:30px}
-.login .col-2-2{float:right;width:50%;text-align:left}.login .col-2-2 .login-returning-user-inner{padding-left:30px}
+.login{max-width:600px;margin:0 auto;font-size:14px}.login .col-1-2{float:left;width:50%;text-align:right;border-right:1px solid #454545}.login .col-1-2 .login-new-user-inner{padding-right:30px}
+.login .col-2-2{float:right;width:49%;text-align:left}.login .col-2-2 .login-returning-user-inner{padding-left:30px}
 .login .login-form-row{margin-bottom:20px}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 button:hover,button:focus{outline:none}
 .btn{padding:10px 12px;background:none;border:1px solid #7787a1;border-radius:3px;background-color:#fff;color:#7787a1;font-size:13px;font-weight:300;text-decoration:none;transition:all 0.3s}.btn:hover,.btn:focus{outline:none;color:#293141;border:1px solid #293141}
 .btn-block{display:inline-block;width:100%;max-width:300px;margin:0 auto;text-align:center}
-.btn-primary{background-color:#15a4fa;color:#fff;border:1px solid #15a4fa}.btn-primary:hover{background-color:#0588d7;color:#fff;border:1px solid #0588d7}
-.btn-info{background-color:#2eb398;color:#fff;border:1px solid #2eb398}.btn-info:hover{background-color:#248a76;color:#fff;border:1px solid #248a76}
-.btn-warning{background-color:#ffa08d;color:#fff;border:1px solid #ffa08d}.btn-warning:hover{background-color:#ff765a;color:#fff;border:1px solid #ff765a}
-.btn-alert{background-color:#de6262;color:#fff;border:1px solid #de6262}.btn-alert:hover{background-color:#d53838;color:#fff;border:1px solid #d53838}
+.btn-primary{background-color:#15a4fa;color:#fff;border:1px solid #15a4fa}.btn-primary:hover,.btn-primary:focus{background-color:#0588d7;color:#fff;border:1px solid #0588d7}
+.btn-info{background-color:#2eb398;color:#fff;border:1px solid #2eb398}.btn-info:hover,.btn-info:focus{background-color:#248a76;color:#fff;border:1px solid #248a76}
+.btn-warning{background-color:#ffa08d;color:#fff;border:1px solid #ffa08d}.btn-warning:hover,.btn-warning:focus{background-color:#ff765a;color:#fff;border:1px solid #ff765a}
+.btn-alert{background-color:#de6262;color:#fff;border:1px solid #de6262}.btn-alert:hover,.btn-alert:focus{background-color:#d53838;color:#fff;border:1px solid #d53838}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 body{font-family:'Titillium Web',sans-serif;font-size:13px;font-weight:200}
@@ -358,6 +355,9 @@ body{background-color:#e9f0fa}
 .sidebar{background-color:#333c4e;color:#9cabc4}.sidebar a{transition:all 0.3s;color:#fff}.sidebar a:hover,.sidebar a:focus{color:#e6e6e6}
 .sidebar-breadcrumb{background-color:#15a4fa}
 .sidebar-item-title{background-color:#3e4960;color:#fff}
-.sidebar-row button,.sidebar-row a{border-bottom:1px solid #3e4a5f;color:#9cabc4;transition:all 0.3s}.sidebar-row button:hover,.sidebar-row a:hover{background-color:#293141}
+.sidebar-row button,.sidebar-row a{border-bottom:1px solid #3e4a5f;color:#9cabc4;transition:all 0.3s}.sidebar-row button:hover,.sidebar-row a:hover{color:#fff;background-color:#293141}
+
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
+.module-user.location-login{background-color:#e9f0fa}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);

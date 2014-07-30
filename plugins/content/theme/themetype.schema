@@ -10,11 +10,13 @@
     },
     "displayName": {
       "type": "string",
-      "required": true
+      "required": true,
+      "default": "Vanilla"
     },
-    "component": {
+    "theme": {
       "type": "string",
-      "required": true
+      "required": true,
+      "default": "vanilla"
     },
     "description": {
       "type": "string",

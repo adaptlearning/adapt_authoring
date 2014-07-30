@@ -12,7 +12,6 @@ var tenantmanager = require('../../lib/tenantmanager');
 var localAuth = require('../../plugins/auth/local');
 var crypto = require('crypto');
 var fs = require('fs');
-var exec = require('child_process').exec;
 var installer = module.exports = express();
 
 var GIT_FRAMEWORK_CLONE_URL = 'https://github.com/adaptlearning/adapt_framework.git';
@@ -160,13 +159,13 @@ installer.all('/install/database', function (req, res, next) {
 
 // Framework clone page
 installer.all('/install/framework', function(req, res, next) {
-  var app = origin();
 
   if (req.body.submit) {
     return res.redirect('/install/server');
-    return;
   }
 
+  // return;
+  
   res.render('framework', {
     'pageTitle': "Installing Adapt framework",
     'formAction': '/install/framework'

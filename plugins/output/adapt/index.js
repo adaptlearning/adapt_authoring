@@ -219,8 +219,8 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
 
   // Copies a specific version of the component to the source folder
   var copyComponentFiles = function(component, doneCallback) {
-    var sourceFolder = path.join(process.cwd(), '/plugins/content/component/versions/', component.name, component.version, component.name),
-      destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, user._id, SOURCE_DIR, COMPONENTS_DIR, component.name);
+    var sourceFolder = path.join(configuration.serverRoot, '/plugins/content/component/versions/', component.name, component.version, component.name),
+      destinationFolder = path.join(configuration.serverRoot, TEMP_DIR, courseId, user._id, SOURCE_DIR, COMPONENTS_DIR, component.name);
 
     ncp(sourceFolder, destinationFolder, function (err) {
       if (err) {
@@ -333,10 +333,8 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
         });
       },
       function(callback) {
-        // var file = path.join(process.cwd(), TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, 'index.html');
-        // logger.log('info', 'path = ' + file);
 
-        fs.exists(path.join(process.cwd(), TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR, 'index.html'), function (exists) {
+        fs.exists(path.join(configuration.serverRoot, TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR, 'index.html'), function (exists) {
           if (!exists) {
             logger.log('info', '3.1. Ensuring framework build exists');
 
@@ -346,20 +344,22 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
      
             child = exec('grunt server-build ' + args.toString().replace(',', ' '), {cwd: path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR)},
               function (error, stdout, stderr) {
+                if (error !== null) {
+                  logger.log('error', 'exec error: ' + error);
+                  return callback(error, 'Error building framework');
+                }
+
                 if (stdout.length != 0) {
                   logger.log('info', 'stdout: ' + stdout);
-                  callback(null, 'Framework built OK');
+                  return callback(null, 'Framework built OK');
                 }
 
                 if (stderr.length != 0) {
                   logger.log('error', 'stderr: ' + stderr);
-                  callback(stderr, 'Error (stderr) building framework!');
+                  return callback(stderr, 'Error (stderr) building framework!');
                 }
 
-                if (error !== null) {
-                  console.log('exec error: ' + error);
-                  callback(error, 'Error building framework');
-                }
+                return;
             });
           } else {
             callback(null, 'Framework already built, nothing to do')

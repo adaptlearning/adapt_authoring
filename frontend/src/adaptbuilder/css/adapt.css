@@ -218,7 +218,6 @@ button{width:auto;overflow:visible}
 
 .editor-menu{overflow-y:hidden;overflow-x:scroll}.editor-menu-inner{height:100%}
 
-.editor-menu-inner{}
 a.open-context-contentObject{color:white}
 .editor-menu-item{display:block;position:relative;width:200px;padding-left:30px;margin:20px auto;background-color:#f2f2f2;border:1px solid #999;cursor:pointer;transition:background-color .3s}.editor-menu-item-title{float:right;width:124px;padding:5px}
 .editor-menu-item-icon{float:left;margin-left:10px;margin:10px;font-size:24px;width:24px}
@@ -299,7 +298,7 @@ a.open-context-contentObject{color:white}
 .project-settings-inner{padding:8px}
 .project-details-inner{padding:20px}
 .project-details-row{font-size:11px}
-.projects-details-label{font-weight:600}
+.projects-details-label{color:#15a4fa;font-weight:600}
 
 .sidebar{position:fixed;top:0px;left:0px;width:260px;height:100%;overflow-y:auto;overflow-x:hidden}.sidebar a{text-decoration:none}
 .sidebar .dashboard-sidebar-filter-clear{display:inline}

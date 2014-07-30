@@ -47,7 +47,7 @@ define(function(require){
     toggleSelectProject: function() {
         event.stopPropagation();
       if (this.model.get('_isSelected')) {
-        this.deselectItem();
+        //this.deselectItem();
       } else {
         this.selectItem();
       } 

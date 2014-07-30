@@ -192,11 +192,8 @@ define(function(require){
         var menuOffsetTop = this.$el.offset().top;
         // Set height
         this.$el.height(windowHeight - menuOffsetTop);
+        this.$('.editor-menu-layer').height(windowHeight - menuOffsetTop);
 
-    },
-
-    scrollToSelectedElement: function() {
-        $('.editor-menu').stop().scrollTo('.editor-menu-item.selected', 100);
     }
 
   }, {

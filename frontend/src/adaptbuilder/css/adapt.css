@@ -12,6 +12,10 @@
 .context-menu .context-menu-item h5{color:#fff;font-size:16px;font-weight:normal}
 a.open-context-icon{color:#fff}
 
+form label{display:block;font-weight:bold;font-size:13px}
+.form-group{margin-bottom:20px}
+input[type="text"],input[type="password"],input[type="email"],input[type="url"],input[type="phone"],input[type="tel"],input[type="number"],input[type="datetime"],input[type="date"],input[type="search"],input[type="datetime-local"],textarea,select[multiple="multiple"]{padding:18px 10px;border-radius:2px;border:solid 1px #ccc;font-size:13px}input[type="text"]:focus,input[type="password"]:focus,input[type="email"]:focus,input[type="url"]:focus,input[type="phone"]:focus,input[type="tel"]:focus,input[type="number"]:focus,input[type="datetime"]:focus,input[type="date"]:focus,input[type="search"]:focus,input[type="datetime-local"]:focus,textarea:focus,select[multiple="multiple"]:focus{outline:none;border-color:#666;box-shadow:none}
+
 html,body,body div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,figure,footer,header,hgroup,menu,nav,section,time,mark,audio,video{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}
 article,aside,figure,footer,header,hgroup,nav,section{display:block}
 img,object,embed{max-width:100%}

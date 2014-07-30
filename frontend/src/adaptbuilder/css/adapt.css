@@ -306,13 +306,16 @@ a.navigation-item{color:white}
 .projects-details-value{font-size:13px}
 .project-title{width:100%;height:46px;overflow:hidden;text-overflow:ellipsis}
 
-.sidebar{position:fixed;top:0px;left:0px;width:260px;height:100%;overflow-y:auto;overflow-x:hidden}
-.sidebar-inner{height:100%}
+.sidebar{position:fixed;top:0px;left:0px;width:260px;height:100%;overflow-y:auto;overflow-x:hidden}.sidebar a{text-decoration:none}
+.sidebar-inner{padding-top:41px}
 .sidebar-breadcrumb{position:relative;top:-40px}
-.sidebar-breadcrumb-inner{margin-bottom:30px}
+.sidebar-breadcrumb-inner{padding:18px 20px}
 .sidebar-item-container{position:relative;height:100%}
-.sidebar-item{position:absolute;left:10%;opacity:0;width:200px}.sidebar-item label{display:block;margin-bottom:4px}
-.sidebar-row,select.sidebar-row{display:block;margin-bottom:20px}
+.sidebar-item{left:10%;opacity:0}.sidebar-item label{display:block;margin-bottom:4px}
+.sidebar-row,select.sidebar-row{display:block}.sidebar-row a,select.sidebar-row a{width:100%;padding:18px 20px;display:inline-block}
+.sidebar-row button,select.sidebar-row button{border:none;width:100%;padding:18px 20px}
+.sidebar-item-title{text-align:center}
+.sidebar-item-title-inner{padding:30px 20px;font-size:15px;font-weight:200}
 
 .module-user.location-login{background-color:#4e4e4e}.module-user.location-login .sidebar{display:none}
 .module-user.location-login #app{margin-left:0px}
@@ -323,11 +326,12 @@ a.navigation-item{color:white}
 .login .login-form-row{margin-bottom:20px}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
-.btn{background:none;border:1px solid #454545;background-color:#fff;color:#454545;font-size:13px}.btn-centered{text-align:center}
-.btn-primary{background-color:#15a4fa;color:#fff}.btn-primary:hover{background-color:#024974;color:#fff}
-.btn-info{background-color:#2eb398;color:#fff}.btn-info:hover{background-color:#0f3931;color:#fff}
-.btn-warning{background-color:#ffa08d;color:#fff}.btn-warning:hover{background-color:#f32800;color:#fff}
-.btn-alert{background-color:#de6262;color:#fff}.btn-alert:hover{background-color:#f32800;color:#fff}
+.btn{padding:10px 12px;background:none;border:1px solid #7787a1;border-radius:3px;background-color:#fff;color:#7787a1;font-size:13px;font-weight:300;text-decoration:none;transition:all 0.3s}.btn:hover{color:#293141;border:1px solid #293141}
+.btn-block{display:inline-block;width:100%;max-width:300px;margin:0 auto;text-align:center}
+.btn-primary{background-color:#15a4fa;color:#fff;border:1px solid #15a4fa}.btn-primary:hover{background-color:#0588d7;color:#fff;border:1px solid #0588d7}
+.btn-info{background-color:#2eb398;color:#fff;border:1px solid #2eb398}.btn-info:hover{background-color:#248a76;color:#fff;border:1px solid #248a76}
+.btn-warning{background-color:#ffa08d;color:#fff;border:1px solid #ffa08d}.btn-warning:hover{background-color:#ff765a;color:#fff;border:1px solid #ff765a}
+.btn-alert{background-color:#de6262;color:#fff;border:1px solid #de6262}.btn-alert:hover{background-color:#d53838;color:#fff;border:1px solid #d53838}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 body{font-family:'Titillium Web',sans-serif;font-size:13px;font-weight:200}
@@ -346,6 +350,7 @@ h6{font-size:15px;font-weight:300}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .sidebar{background-color:#333c4e;color:#9cabc4}.sidebar a{color:#fff}.sidebar a:hover,.sidebar a:focus{color:#e2e2e2}
+.sidebar-breadcrumb{background-color:#15a4fa}
 .sidebar-item-title{background-color:#3e4960;color:#fff}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);

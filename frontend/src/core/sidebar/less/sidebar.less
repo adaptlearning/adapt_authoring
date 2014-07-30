@@ -6,10 +6,13 @@
 	height:100%;
 	overflow-y:auto;
 	overflow-x:hidden;
+    a {
+        text-decoration: none;
+    }
 }
 
 .sidebar-inner {
-	height:100%;
+    padding-top:41px;
 }
 
 .sidebar-breadcrumb {
@@ -18,7 +21,7 @@
 }
 
 .sidebar-breadcrumb-inner {
-	margin-bottom:30px;
+    padding:18px 20px;
 }
 
 .sidebar-item-container {
@@ -27,10 +30,8 @@
 }
 
 .sidebar-item {
-	position:absolute;
 	left:10%;
 	opacity:0;
-	width:200px;
 	label {
 		display:block;
 		margin-bottom:4px;
@@ -39,5 +40,24 @@
 
 .sidebar-row, select.sidebar-row {
 	display:block;
-	margin-bottom:20px;
+    a {
+        width:100%;
+        padding:18px 20px;
+        display:inline-block;
+    }
+    button {
+        border:none;
+        width:100%;
+        padding:18px 20px;
+    }
+}
+
+.sidebar-item-title {
+    text-align:center;
+}
+
+.sidebar-item-title-inner {
+    padding:30px 20px;
+    font-size: 15px;
+    font-weight: 200;
 }

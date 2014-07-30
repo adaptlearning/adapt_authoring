@@ -219,17 +219,16 @@ button{width:auto;overflow:visible}
 .editor-menu{overflow-y:hidden;overflow-x:scroll}.editor-menu-inner{height:100%}
 
 a.open-context-contentObject{color:white}
-.editor-menu-item{display:block;position:relative;width:200px;padding-left:30px;margin:20px auto;background-color:#f2f2f2;border:1px solid #999;cursor:pointer;transition:background-color .3s}.editor-menu-item-title{float:right;width:124px;padding:5px}
-.editor-menu-item-icon{float:left;margin-left:10px;margin:10px;font-size:24px;width:24px}
-.editor-menu-item:hover{background-color:#e2e2e2}
-.editor-menu-item.expanded{border:1px solid lightblue;background-color:lightblue}.editor-menu-item.expanded.content-type-menu:after{left:100%;top:50%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;border-color:rgba(136,183,213,0);border-left-color:lightblue;border-width:12px;margin-top:-12px}
-.editor-menu-item.selected{border:1px solid lightblue;background-color:lightblue}.editor-menu-item.selected.content-type-menu:after{left:100%;top:50%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;border-color:rgba(136,183,213,0);border-left-color:lightblue;border-width:12px;margin-top:-12px}
-.editor-menu-item .settings{height:20px}
-.editor-menu-item .handle{height:50px;cursor:move}
+.editor-menu-item{overflow:hidden;display:block;position:relative;width:180px;padding:20px;margin:20px auto;background-color:#fff;cursor:pointer;transition:background-color .3s}.editor-menu-item-title{text-align:center}
+.editor-menu-item-icon{text-align:center;font-size:24px;margin-bottom:10px}
+.editor-menu-item:hover .editor-menu-item-settings{top:0;opacity:1}
+.editor-menu-item.expanded{background-color:lightblue}.editor-menu-item.expanded.content-type-menu:after{left:100%;top:50%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;border-color:rgba(136,183,213,0);border-left-color:lightblue;border-width:12px;margin-top:-12px}
+.editor-menu-item.selected{background-color:lightblue}.editor-menu-item.selected.content-type-menu:after{left:100%;top:50%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;border-color:rgba(136,183,213,0);border-left-color:lightblue;border-width:12px;margin-top:-12px}
+.editor-menu-item .handle{cursor:move}
 
 .editor-menu-layer{height:100%;width:240px;float:left;padding-bottom:30px}.editor-menu-layer:first-child .editor-menu-layer-inner{border-right:2px solid #454545}
 .editor-menu-layer-inner{position:relative;border-right:2px solid #454545;height:100%;overflow-y:scroll;overflow-x:hidden}
-.editor-menu-layer-button{float:left;width:50%;padding:2px;font-size:13px;border-radius:0px;border-bottom:1px solid #454545;border-right:2px solid #454545}.editor-menu-layer-button:first-child{border-right:1px solid #454545}
+.editor-menu-layer-button{float:left;width:50%;padding:8px;font-size:13px;border-radius:0px;border-bottom:1px solid #454545;border-right:2px solid #454545}.editor-menu-layer-button:first-child{border-right:1px solid #454545}
 .editor-menu-layer-button i{margin-right:8px}
 .editor-menu-layer-actions{width:100%;position:absolute;bottom:0px;z-index:99;border:none !important;background:none !important;padding-top:30px;padding-right:30px;margin-left:-15px}
 
@@ -320,7 +319,7 @@ a.open-context-contentObject{color:white}
 .login .login-form-row{margin-bottom:20px}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
-button:hover,button:focus{outline:none}
+button{border:none;background:none;padding:10px 12px}button:hover,button:focus{outline:none}
 .btn{padding:10px 12px;background:none;border:1px solid #7787a1;border-radius:3px;background-color:#fff;color:#7787a1;font-size:13px;font-weight:300;text-decoration:none;transition:all 0.3s}.btn:hover,.btn:focus{outline:none;color:#293141;border:1px solid #293141}
 .btn-block{display:inline-block;width:100%;max-width:300px;margin:0 auto;text-align:center}
 .btn-primary{background-color:#15a4fa;color:#fff;border:1px solid #15a4fa}.btn-primary:hover,.btn-primary:focus{background-color:#0588d7;color:#fff;border:1px solid #0588d7}
@@ -343,6 +342,10 @@ body{background-color:#e9f0fa}
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .location-title{background-color:#e0e8f7;color:#3e4960}
 .location-title-inner{padding:30px}
+
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
+.editor-menu-layer-button{color:#9cabc4;background-color:#333c4e;transition:all 0.3s}.editor-menu-layer-button:hover{color:#fff;background-color:#293141}
+.editor-menu-item-settings{position:absolute;top:-50%;left:0px;font-size:16px;width:100%;opacity:0;background-color:rgba(41,49,65,0.8);transition:all 0.3s}.editor-menu-item-settings a{color:#fff}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .navigation{background-color:#293141;border-bottom:1px solid #3e4a5f}.navigation a{transition:all 0.3s}.navigation a:hover{color:#fff}

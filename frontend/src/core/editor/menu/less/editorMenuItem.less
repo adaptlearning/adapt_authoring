@@ -3,30 +3,26 @@ a.open-context-contentObject {
 }
 
 .editor-menu-item {
+    overflow:hidden;
     display: block;
     position: relative;
-    width: 200px;
-    padding-left: 30px;
+    width: 180px;
+    padding: 20px;
     margin: 20px auto;
 
-    background-color: #f2f2f2;
-    border: 1px solid #999;
+    background-color: #fff;
     cursor: pointer;
 
     transition:background-color 0.3s;
 
     &-title {
-        float:right;
-        width:124px;
-        padding:5px;
+        text-align:center;
     }
 
     &-icon {
-        float: left;
-        margin-left: 10px;
-        margin:10px;
+        text-align:center;
         font-size:24px;
-        width:24px;
+        margin-bottom:10px;
         &.page {
         }
 
@@ -35,11 +31,13 @@ a.open-context-contentObject {
     }
 
     &:hover {
-        background-color:#e2e2e2;
+        .editor-menu-item-settings {
+            top:0;
+            opacity:1;
+        }
     }
 
 	&.expanded {
-        border:1px solid lightblue;
         background-color: lightblue;
 
         &.content-type-menu:after { 
@@ -59,7 +57,6 @@ a.open-context-contentObject {
 	}
 
 	&.selected {
-		border:1px solid lightblue;
         background-color: lightblue;
 
         &.content-type-menu:after { 
@@ -78,13 +75,7 @@ a.open-context-contentObject {
         }
 	}
 
-    .settings {
-        height: 20px;
-    }
-
     .handle {
-        height: 50px;
         cursor: move;
-
     }
 }

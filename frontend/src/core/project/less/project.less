@@ -1,12 +1,13 @@
-.menu-container {
-    width: 100%;
-    text-align: center;
-    cursor: pointer;
-}
-
 .project-list-item {
     border: 1px solid;
-
+    transition:background-color 0.3s;
+    &:hover {
+        cursor: pointer;
+        background-color: #e2e2e2;
+    }
+    &.selected {
+        background-color:lightblue;
+    }
     &.listing {
         width: 700px;
     }
@@ -20,27 +21,48 @@
     float: left;
     width: 30px;
     height: 100%;
-    background-color: red;
+    background-color: #454545;
 }
 
 .project-settings {
+    padding:2px;
     height: 30px;
     text-align: center;    
 }
 
 .project-handle {
     height: 270px;
-    background-color: black;
 }
 
 .project-detail {
-    // float: right;
-    padding-left: 56px;
+    padding-left: 30px;
+    height:300px;
 
-    &:hover {
-        cursor: pointer;
-        background-color: lightblue;
+    &-inner {
+        padding:14px;
     }
+
+    &-title {
+        padding-bottom:14px;
+        border-bottom:1px solid #454545;
+    }
+}
+
+.project-details-row {
+    padding:4px 0px;
+    border-bottom:1px solid #454545; 
+    div {
+        line-height:15px;
+    }
+}
+
+.projects-details-label {
+    font-size:13px;
+    font-weight:bold;
+}
+
+.projects-details-value {
+    font-size:13px;
 }
 
 .project-title {

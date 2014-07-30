@@ -25,6 +25,7 @@ define(function(require){
       this.listenTo(Origin, 'dashboard:layout:list', this.switchLayoutToList);
       this.listenTo(Origin, 'dashboard:sort:asc', this.sortAscending);
       this.listenTo(Origin, 'dashboard:sort:desc', this.sortDescending);
+      this.listenTo(Origin, 'dashboard:dashboardSidebarView:filter', this.filterProjects);
     },
 
     events: {
@@ -32,9 +33,8 @@ define(function(require){
       'click a#sortProjectsByName'      : 'sortProjectsByName',
       'click a#sortProjectsByAuthor'    : 'sortProjectsByAuthor',
       'click a#sortProjectsByLastEdit'  : 'sortProjectsByLastEdit',
-      // 'click .contextMenu'              : 'handleContextMenuClick',
-      // 'click .menu-container'           : 'toggleContextMenu',
-      'click .project-detail'           : 'editProject'
+      'keyup .dashboard-sidebar-filter-input': 'filterProjectsByTitle',
+      'click': 'removeSelectedItems'
     },
 
     switchLayoutToList: function() {
@@ -140,28 +140,20 @@ define(function(require){
     },
 
     filterProjects: function(filterText) {
-      // var collection = this.collection;
       var filteredCollection = _.filter(this.collection.models, function(model) {
-        return model.get('name').toLowerCase().indexOf(filterText.toLowerCase()) > -1;
+        return model.get('title').toLowerCase().indexOf(filterText.toLowerCase()) > -1;
       });
 
       this.renderProjectViews(filteredCollection);
     },
 
-    formclick: function (e) {
-      e.preventDefault();
+    filterProjectsByTitle: function (event) {
+      var criteria = $(event.currentTarget).val();
+      this.filterProjects(criteria);
+    },
 
-      var type = $(e.target).data('action');
-
-      switch (type) {
-          case 'new':
-            Backbone.history.navigate('/project/new', {trigger: true});
-          break;
-          case 'filter':
-            var criteria = $('#filterCriteria').val();
-            this.filterProjects(criteria);
-          break;
-      }
+    removeSelectedItems: function(event) {
+        Origin.trigger('dashboard:dashboardView:deselectItem');
     }
 
   }, {

@@ -14,41 +14,9 @@ var crypto = require('crypto');
 var fs = require('fs');
 var exec = require('child_process').exec;
 var installer = module.exports = express();
-// var server = installer.listen(3001);
-// var io = require('socket.io').listen(server);
 
 var GIT_FRAMEWORK_CLONE_URL = 'https://github.com/adaptlearning/adapt_framework.git';
 
-// server.sockets = io.sockets;
-
-// // On connection between the browser and server emit connection event
-// server.sockets.on('connection', function(socket) {
-//   // app.emit('socketsConnectionStarted', socket);
-//   logger.log('info', 'Socket connected at ' + socket.handshake.time);
-
-//   // socket.on('project:build', function (data) {
-//   //   // Verify extensions
-
-//   //   // Verify components
-
-//   //   child = exec('grunt server-build', {cwd: path.join(COURSE_WORKING_DIR, data.id)},
-//   //     function (error, stdout, stderr) {
-//   //       if (stdout.length != 0) {
-//   //         logger.log('info', 'stdout: ' + stdout);
-//   //       }
-
-//   //       if (stderr.length != 0) {
-//   //         logger.log('error', 'stderr: ' + stderr);
-//   //       }
-
-//   //       if (error !== null) {
-//   //         console.log('exec error: ' + error);
-//   //       }
-//   //   });
-
-//   //   console.log(data);
-//   // });
-// });
 // set up handlebars form helpers
 require('handlebars-form-helpers').register(hbs.handlebars);
 
@@ -195,31 +163,7 @@ installer.all('/install/framework', function(req, res, next) {
   var app = origin();
 
   if (req.body.submit) {
-    child = exec('git clone ' + GIT_FRAMEWORK_CLONE_URL, {cwd: process.cwd()},
-      function (error, stdout, stderr) {
-        if (stdout.length != 0) { 
-          logger.log('info', 'stdout: ' + stdout);
-
-          app.sockets.emit('output', {type: 'info', value: stdout});
-
-          if (stdout.indexOf('done') > -1) {
-            logger.log('info', 'Framwork cloned!');
-            // res.redirect('/install/server');
-          }        
-        }
-
-        if (stderr.length != 0) {
-          app.sockets.emit('output', {type: 'error', value: stderr});
-
-          logger.log('error', 'stderr: ' + stderr);
-        }
-
-        if (error !== null) {
-          app.sockets.emit('output', {type: 'error', value: error.toString()});
-
-          logger.log('exec error: ' + error);
-        }
-    });
+    return res.redirect('/install/server');
     return;
   }
 

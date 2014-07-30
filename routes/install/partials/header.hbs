@@ -7,24 +7,37 @@
     <script src="../socket.io/socket.io.js"></script>
     <script type="text/javascript">
         
-
         $(function() {
-            var $install = $('.btn.install');
-            var $output = $('.adapt-output');
+            var $installButton = $('.btn.install');
 
-            if ($install) {
-                var socket = io.connect();
+            if ($installButton && $installButton.length != 0) {
+                var socket = io.connect(),
+                    $output = $('.adapt-output'),
+                    $submitButton = $('button[type="submit"]');
+
+                $submitButton.attr('disabled', 'disabled');
         
                 socket.on('output', function (data) {
                     $output.val($output.val() + data.value + "\n");
-                    console.log(data);
+
+                    $output.scrollTop(
+                        $output[0].scrollHeight - $output.height()
+                    );
                 });
 
-                $install.on('click', function(event) {
+                $installButton.on('click', function(event) {
                     event.preventDefault();
 
                     socket.emit('install:framework', null);
-                    // alert('installing framework');
+
+                    $installButton.text('Installing ...');
+                    $installButton.attr('disabled', 'disabled');
+                });
+
+                socket.on('installed:framework', function() {
+                    $installButton.hide();
+
+                    $submitButton.removeAttr('disabled');
                 });
             }
         });

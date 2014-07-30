@@ -18,6 +18,7 @@ define(function(require){
       this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
+      this.listenTo(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
 
       // Listen to _isSelected change to see if we should setup keyboard events
       this.listenTo(this.model, 'change:_isSelected', this.handleKeyEventsSetup);
@@ -116,7 +117,7 @@ define(function(require){
           body: window.polyglot.t('app.confirmdelete' + this.model.get('_type')) + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletewarning'+ this.model.get('_type')),
           _prompts: [
             {_callbackEvent: 'editorView:removeItem:' + id, promptText: window.polyglot.t('app.ok')},
-            {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
+            {_callbackEvent: 'editorView:cancelRemoveItem:' + id, promptText: window.polyglot.t('app.cancel')}
           ]
         };
 
@@ -130,6 +131,10 @@ define(function(require){
       if (this.model.destroy()) {
         this.remove();
       }
+    },
+
+    cancelDeleteItem: function() {
+        this.model.set({_isSelected: true});
     },
 
     handleKeyEventsSetup: function(model, isSelected) {
@@ -146,6 +151,7 @@ define(function(require){
       // Check if it's the backspace button
       if (event.which === 8) {
         event.preventDefault();
+        this.model.set({_isSelected: false});
         this.deleteItemPrompt();
       }
 

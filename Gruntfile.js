@@ -21,10 +21,10 @@ module.exports = function(grunt) {
         dist: {
           files: [
             {
-              'frontend/src/adaptbuilder/css/kube.min.css': 'frontend/src/less/kube.less'
-            },
-            {
-              'frontend/src/adaptbuilder/css/adapt.css': 'frontend/src/core/**/*.less'
+              'frontend/src/adaptbuilder/css/adapt.css': [
+                'frontend/src/core/**/*.less', 
+                'frontend/src/less/**/*.less'
+              ]
             }
           ]
         },

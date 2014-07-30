@@ -1,59 +1,79 @@
-// Font
-@baseFontFamily: "Helvetica Neue", Helvetica, Arial, sans-serif;
-@headingsFontFamily: @baseFontFamily;
-@controlsFontFamily: @baseFontFamily;
-@codeFontFamily: Menlo, Monaco, Consolas, "Courier New", monospace;
+// Use this file to change the feel of the interface
 
-// Base color
-@backgroundBody: #fff;
-@colorBody: #333;
-@colorHeadings: #222;
-
-// Grid
-@gridWidth: 1000;
-@gridGutterWidth: 30;
-
-// Type
-@baseFontSize: 14;
-@baseLineHeight: 1.6;
-@baseLine: @baseFontSize * @baseLineHeight;
-@baseLineInEms: @baseLine / @em;
-
-// Heading
-@h1FontSize: @baseFontSize + 22px; // 36px
-@h2FontSize: @baseFontSize + 16px; // 30px
-@h3FontSize: @baseFontSize + 10px; // 24px
-@h4FontSize: @baseFontSize + 4px; // 18px
-@h5FontSize: @baseFontSize + 0px; // 14px
-@h6FontSize: @baseFontSize - 2px; // 12px
-
-@h1SubheadingFontSize: @baseFontSize + 16px; // 30px
-@h2SubheadingFontSize: @baseFontSize + 10px; // 24px
-@h3SubheadingFontSize: @baseFontSize + 4px; // 18px
-@h4SubheadingFontSize: @baseFontSize + 0px; // 14px
-@h5SubheadingFontSize: @baseFontSize - 2px; // 12px
-
-// Font size
-@superSmallFontSize: @baseFontSize - 4px; // 10px
-@smallFontSize: @baseFontSize - 2px; // 12px
-@leadFontSize: @baseFontSize + 4px; // 18px
-@bigFontSize: @baseFontSize + 4px; // 18px
-@quoteFontSize: @baseFontSize + 2px; // 16px
-@buttonsSmallFontSize: @baseFontSize - 3px; // 11px
-
+/*///////////
 // Colors
-@colorBlack: #0f0f0f;
-@colorBlue: #3d58a8;
-@colorRed: #d70a16;
-@colorGreen: #159776;
-@colorYellow: #fddc43;
+/////////*/
 
-// LinkColor
-@colorLink: #3570c3;
-@colorLinkHover: @colorRed;
+@primary-color:#15a4fa;
+@ui-color:#333c4e;
 
-// Forms
-@fieldsBottom: 1.6em;
+@ui-content-header-color:#e0e8f7;
+@ui-content-color:#e9f0fa;
 
-// Util
-@em: @baseFontSize * 1em; // outputting ems, e.g. 14 / @em
+@info-color:#2eb398;
+@warning-color:#ffa08d;
+@alert-color:#de6262;
+@disabled-color:#454545;
+
+/*///////////
+// Layout colors
+/////////*/
+
+@navigation-color:#293141;
+@navigation-text-color:#9cabc4;
+
+@sidebar-title-color:#3e4960;
+@sidebar-title-text-color:#fff;
+@sidebar-color:@ui-color;
+@sidebar-text-color:#9cabc4;
+
+
+/*//////////
+// Fonts
+////////*/
+
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
+@font-family:'Titillium Web', sans-serif;
+@font-size:13px;
+@font-weight:200;
+
+/*///////////
+// Buttons
+/////////*/
+
+// Default button
+@button-color:#fff;
+@button-text-color:#454545;
+@button-border:1px solid #454545;
+
+// Primary button
+@button-primary-color:@primary-color;
+@button-primary-hover-color:darken(@primary-color, 30%);
+
+@button-primary-text-color:#fff;
+@button-primary-hover-text-color:#fff;
+
+// Warning button
+@button-info-color:@info-color;
+@button-info-hover-color:darken(@info-color, 30%);
+
+@button-info-text-color:#fff;
+@button-info-hover-text-color:#fff;
+
+// Warning button
+@button-warning-color:@warning-color;
+@button-warning-hover-color:darken(@warning-color, 30%);
+
+@button-warning-text-color:#fff;
+@button-warning-hover-text-color:#fff;
+
+// Alert button
+@button-alert-color:@alert-color;
+@button-alert-hover-color:darken(@warning-color, 30%);
+
+@button-alert-text-color:#fff;
+@button-alert-hover-text-color:#fff;
+
+// Disabled button
+@button-disabled-color:@disabled-color;
+@button-disabled-text-color:#fff;

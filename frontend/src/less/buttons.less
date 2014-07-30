@@ -1,5 +1,11 @@
 @import 'variables';
 
+button {
+    &:hover, &:focus {
+        outline:none;
+    }
+}
+
 .btn {
     padding:10px 12px;
     background:none;
@@ -12,7 +18,8 @@
     text-decoration: none;
     transition:all 0.3s;
 
-    &:hover {
+    &:hover, &:focus {
+        outline:none;
         color:@button-hover-text-color;
         border:@button-hover-border;
     }

@@ -255,13 +255,11 @@ a.open-context-contentObject{color:white}
 .global-menu-submenu{display:none;top:-1px;left:100%;width:260px;position:absolute;background-color:#454545;border-top:1px solid #666;border-left:1px solid #666}
 
 
-.location-title-inner{padding:30px;border-bottom:1px solid #454545}
 
-.navigation{position:fixed;top:0px;left:0px;width:100%;height:40px;z-index:500;background-color:#454545;border-bottom:1px solid #666}
-.navigation-item{color:#fff;display:inline-block;height:40px;line-height:40px;text-decoration:none;margin:0px;padding:0px 20px}.navigation-left .navigation-item{float:left}
-a.navigation-item{color:white}
-.navigation-left{width:50%;float:left}.navigation-left a{border-right:1px solid #666}
-.navigation-right{width:50%;float:right;text-align:right}.navigation-right a{border-left:1px solid #666}
+.navigation{position:fixed;top:0px;left:0px;width:100%;height:40px;z-index:500}
+.navigation-item{display:inline-block;height:40px;line-height:40px;text-decoration:none;margin:0px;padding:0px 20px}.navigation-left .navigation-item{float:left}
+.navigation-left{width:50%;float:left}
+.navigation-right{width:50%;float:right;text-align:right}
 
 .notify .notify-popup{position:fixed;top:50%;width:100%;z-index:550}
 .notify .notify-popup-icon{position:absolute;left:0px;top:0px}@media all and (max-width:800px){.notify .notify-popup-icon .icon{float:none;margin:0 auto}}
@@ -313,7 +311,7 @@ a.navigation-item{color:white}
 .sidebar-item-container{position:relative;height:100%}
 .sidebar-item{left:10%;opacity:0}.sidebar-item label{display:block;margin-bottom:4px}
 .sidebar-row,select.sidebar-row{display:block}.sidebar-row a,select.sidebar-row a{width:100%;padding:18px 20px;display:inline-block}
-.sidebar-row button,select.sidebar-row button{border:none;width:100%;padding:18px 20px}
+.sidebar-row button,select.sidebar-row button{background:none;border:none;width:100%;padding:18px 20px}
 .sidebar-item-title{text-align:center}
 .sidebar-item-title-inner{padding:30px 20px;font-size:15px;font-weight:200}
 
@@ -326,7 +324,8 @@ a.navigation-item{color:white}
 .login .login-form-row{margin-bottom:20px}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
-.btn{padding:10px 12px;background:none;border:1px solid #7787a1;border-radius:3px;background-color:#fff;color:#7787a1;font-size:13px;font-weight:300;text-decoration:none;transition:all 0.3s}.btn:hover{color:#293141;border:1px solid #293141}
+button:hover,button:focus{outline:none}
+.btn{padding:10px 12px;background:none;border:1px solid #7787a1;border-radius:3px;background-color:#fff;color:#7787a1;font-size:13px;font-weight:300;text-decoration:none;transition:all 0.3s}.btn:hover,.btn:focus{outline:none;color:#293141;border:1px solid #293141}
 .btn-block{display:inline-block;width:100%;max-width:300px;margin:0 auto;text-align:center}
 .btn-primary{background-color:#15a4fa;color:#fff;border:1px solid #15a4fa}.btn-primary:hover{background-color:#0588d7;color:#fff;border:1px solid #0588d7}
 .btn-info{background-color:#2eb398;color:#fff;border:1px solid #2eb398}.btn-info:hover{background-color:#248a76;color:#fff;border:1px solid #248a76}
@@ -335,22 +334,30 @@ a.navigation-item{color:white}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 body{font-family:'Titillium Web',sans-serif;font-size:13px;font-weight:200}
-h1{font-size:21px;font-weight:600}
-h2{font-size:19px;font-weight:600}
-h3{font-size:17px;font-weight:400}
-h4{font-size:17px;font-weight:400}
-h5{font-size:15px;font-weight:400}
-h6{font-size:15px;font-weight:300}
+h1{font-size:15px;font-weight:200}
+h2{font-size:15px;font-weight:200}
+h3{font-size:15px;font-weight:200}
+h4{font-size:15px;font-weight:200}
+h5{font-size:15px;font-weight:200}
+h6{font-size:15px;font-weight:200}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
-.navigation{background-color:#293141;border-bottom:1px solid #9cabc4}
-.navigation-item{color:#9cabc4;display:inline-block;height:40px;line-height:40px;text-decoration:none;margin:0px;padding:0px 20px}.navigation-left .navigation-item{float:left}
-.navigation-left{width:50%;float:left}.navigation-left a{border-right:1px solid #666}
-.navigation-right{width:50%;float:right;text-align:right}.navigation-right a{border-left:1px solid #666}
+body{background-color:#e9f0fa}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
-.sidebar{background-color:#333c4e;color:#9cabc4}.sidebar a{color:#fff}.sidebar a:hover,.sidebar a:focus{color:#e2e2e2}
+.location-title{background-color:#e0e8f7;color:#3e4960}
+.location-title-inner{padding:30px}
+
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
+.navigation{background-color:#293141;border-bottom:1px solid #3e4a5f}.navigation a{transition:all 0.3s}.navigation a:hover{color:#fff}
+.navigation-item{color:#9cabc4}
+.navigation-left a{border-right:1px solid #3e4a5f}
+.navigation-right a{border-left:1px solid #3e4a5f}
+
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
+.sidebar{background-color:#333c4e;color:#9cabc4}.sidebar a{transition:all 0.3s;color:#fff}.sidebar a:hover,.sidebar a:focus{color:#e6e6e6}
 .sidebar-breadcrumb{background-color:#15a4fa}
 .sidebar-item-title{background-color:#3e4960;color:#fff}
+.sidebar-row button,.sidebar-row a{border-bottom:1px solid #3e4a5f;color:#9cabc4;transition:all 0.3s}.sidebar-row button:hover,.sidebar-row a:hover{background-color:#293141}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);

@@ -2,35 +2,27 @@
 
 .navigation {
     background-color:@navigation-color;
-    border-bottom:1px solid @navigation-text-color;
+    border-bottom:1px solid #3e4a5f;
+    a {
+        transition:all 0.3s;
+        &:hover {
+            color:@navigation-hover-text-color;
+        }
+    }
 }
 
 .navigation-item {
   color:@navigation-text-color;
-  display:inline-block;
-  height:40px;
-  line-height:40px;
-  text-decoration:none;
-  margin:0px;
-  padding:0px 20px;
-  .navigation-left & {
-    float:left;
-  }
 }
 
 .navigation-left {
-    width:50%;
-    float:left;
     a {
-        border-right:1px solid #666;
+        border-right:1px solid #3e4a5f;
     }
 }
 
 .navigation-right {
-    width:50%;
-    float:right;
-    text-align:right;
-  a {
-    border-left:1px solid #666;
-  }
+    a {
+        border-left:1px solid #3e4a5f;
+    }
 }

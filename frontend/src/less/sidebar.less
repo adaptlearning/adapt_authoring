@@ -4,9 +4,10 @@
     background-color:@sidebar-color;
     color:@sidebar-text-color;
     a {
+        transition:all 0.3s;
         color:#fff;
         &:hover, &:focus {
-            color:#e2e2e2;
+            color:darken(#fff, 10%);
         }
     }
 }
@@ -18,4 +19,16 @@
 .sidebar-item-title {
     background-color:@sidebar-title-color;
     color:@sidebar-title-text-color;
+}
+
+.sidebar-row {
+    button, a {
+        border-bottom:1px solid #3e4a5f;
+        color:@sidebar-text-color;
+        transition:all 0.3s;
+        &:hover {
+            background-color:#293141;
+        }
+        
+    }
 }

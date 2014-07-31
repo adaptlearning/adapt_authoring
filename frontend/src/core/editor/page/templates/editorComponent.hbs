@@ -1,11 +1,14 @@
 {{>part_editorItemSidebar}}
 
-<div class="component-detail unselectable">
-    {{#if _componentType}}
-    <div class="component-type">[{{_componentType.displayName}}]</div>
-    {{/if}}
-    <h4 class="component-title">{{#if displayTitle}}{{{displayTitle}}}{{else}}{{t 'app.placeholdernewcomponent'}}{{/if}}</h4>
-    <div class="component-body">{{{body}}}</div>
-    
-    <div class="component-delete-icon"><a href="#" class="component-delete" title="{{ t 'app.clicktodelete'}}"><i class="fa fa-trash-o"></i></a></div>
+<div class="component-inner">
+
+    <div class="component-detail unselectable">
+        {{#if _componentType}}
+        <div class="component-type">[{{_componentType.displayName}}]</div>
+        {{/if}}
+        <h4 class="component-title">{{#if displayTitle}}{{{displayTitle}}}{{else}}{{t 'app.placeholdernewcomponent'}}{{/if}}</h4>
+        <div class="component-body">{{{body}}}</div>
+        
+    </div>
+
 </div>

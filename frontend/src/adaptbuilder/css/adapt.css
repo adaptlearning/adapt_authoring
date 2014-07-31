@@ -219,18 +219,21 @@ button{width:auto;overflow:visible}
 .editor-menu{overflow-y:hidden;overflow-x:scroll}.editor-menu-inner{height:100%}
 
 a.open-context-contentObject{color:white}
-.editor-menu-item{overflow:hidden;display:block;position:relative;width:180px;padding:20px;margin:20px auto;background-color:#fff;cursor:pointer;transition:background-color .3s}.editor-menu-item-title{text-align:center}
+.editor-menu-item{position:relative;display:block;margin:20px}.editor-menu-item-inner{overflow:hidden;border-radius:3px;position:relative;background-color:#fff;cursor:pointer;padding:40px 20px 20px;transition:background-color .3s}.editor-menu-item-inner:hover .editor-menu-item-settings{top:0;opacity:1}
+.editor-menu-item-title{text-align:center}
 .editor-menu-item-icon{text-align:center;font-size:24px;margin-bottom:10px}
-.editor-menu-item:hover .editor-menu-item-settings{top:0;opacity:1}
-.editor-menu-item.expanded{background-color:lightblue}.editor-menu-item.expanded.content-type-menu:after{left:100%;top:50%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;border-color:rgba(136,183,213,0);border-left-color:lightblue;border-width:12px;margin-top:-12px}
-.editor-menu-item.selected{background-color:lightblue}.editor-menu-item.selected.content-type-menu:after{left:100%;top:50%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;border-color:rgba(136,183,213,0);border-left-color:lightblue;border-width:12px;margin-top:-12px}
+.editor-menu-item.expanded{transition:background-color 0}.editor-menu-item.expanded.content-type-menu .editor-menu-item-pin{display:block}
+.editor-menu-item.selected{transition:background-color 0}.editor-menu-item.selected .editor-menu-item-settings{top:0;opacity:1}
+.editor-menu-item.selected.content-type-menu .editor-menu-item-pin{display:block}
 .editor-menu-item .handle{cursor:move}
+.editor-menu-item-settings{position:absolute;top:-50%;left:0px;font-size:16px;width:100%;opacity:0;transition:all 0.3s}.editor-menu-item-settings-inner{padding:6px}
+.editor-menu-item-pin{display:none;position:absolute;right:-10px;top:50%;margin-top:-5px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent}
 
 .editor-menu-layer{height:100%;width:240px;float:left;padding-bottom:30px}.editor-menu-layer:first-child .editor-menu-layer-inner{border-right:2px solid #454545}
 .editor-menu-layer-inner{position:relative;border-right:2px solid #454545;height:100%;overflow-y:scroll;overflow-x:hidden}
 .editor-menu-layer-button{float:left;width:50%;padding:8px;font-size:13px;border-radius:0px;border-bottom:1px solid #454545;border-right:2px solid #454545}.editor-menu-layer-button:first-child{border-right:1px solid #454545}
 .editor-menu-layer-button i{margin-right:8px}
-.editor-menu-layer-actions{width:100%;position:absolute;bottom:0px;z-index:99;border:none !important;background:none !important;padding-top:30px;padding-right:30px;margin-left:-15px}
+.editor-menu-layer-actions{width:100%;position:absolute;bottom:0px;z-index:99;padding-top:30px;padding-right:30px;margin-left:-15px}
 
 .editing-overlay-component-select-body{border-bottom:1px solid #ccc}
 .editing-overlay-component-select-body-inner{padding:30px}
@@ -288,13 +291,13 @@ a.open-context-contentObject{color:white}
 .notify-push-inner{padding:30px 0px 30px 30px;margin-right:78px;cursor:pointer}
 .notify-push-close{display:inline-block;text-decoration:none;position:absolute;right:30px;top:50%;margin-top:-12px}.notify-push-close .icon{color:#fff}.no-touch .notify-push-close .icon:hover{color:#000}
 
-.project-list-item{overflow:hidden;background-color:#fff;transition:background-color .3s}.project-list-item:hover{cursor:pointer}.project-list-item:hover .project-settings{top:0%;opacity:1}
+.project-list-item{overflow:hidden;border-radius:3px;background-color:#fff;transition:background-color .3s}.project-list-item:hover{cursor:pointer}.project-list-item:hover .project-settings{top:0%;opacity:1}
 .project-list-item.selected{color:#fff;background-color:#333c4e}.project-list-item.selected .project-settings{top:0%;opacity:1}
 .project-list-item.listing{width:700px}
 .project-header-inner{position:relative}
 .project-detail-title{margin-bottom:10px}
 .project-settings{position:absolute;top:-50%;left:0px;font-size:16px;width:100%;opacity:0;background-color:rgba(41,49,65,0.8);transition:all 0.3s}.project-settings a{color:#fff}
-.project-settings-inner{padding:8px}
+.project-settings-inner{padding:6px}
 .project-details-inner{padding:20px}
 .project-details-row{font-size:11px}
 .projects-details-label{color:#15a4fa;font-weight:600}
@@ -303,7 +306,7 @@ a.open-context-contentObject{color:white}
 .sidebar .dashboard-sidebar-filter-clear{display:inline}
 .sidebar-inner{padding-top:41px}
 .sidebar-breadcrumb{position:relative;top:-40px}
-.sidebar-breadcrumb-inner{padding:18px 20px}
+.sidebar-breadcrumb-inner{display:block;padding:18px 20px}.sidebar-breadcrumb-inner i{margin-right:10px}
 .sidebar-item-container{position:relative;height:100%}
 .sidebar-item{left:10%;opacity:0}.sidebar-item label{display:block;margin-bottom:4px}
 .sidebar-row,select.sidebar-row{display:block}.sidebar-row a,select.sidebar-row a{width:100%;padding:18px 20px;display:inline-block}
@@ -319,7 +322,7 @@ a.open-context-contentObject{color:white}
 .login .login-form-row{margin-bottom:20px}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
-button{border:none;background:none;padding:10px 12px}button:hover,button:focus{outline:none}
+button{border:none;background:none;padding:10px 12px;font-size:13px}button:hover,button:focus{outline:none}
 .btn{padding:10px 12px;background:none;border:1px solid #7787a1;border-radius:3px;background-color:#fff;color:#7787a1;font-size:13px;font-weight:300;text-decoration:none;transition:all 0.3s}.btn:hover,.btn:focus{outline:none;color:#293141;border:1px solid #293141}
 .btn-block{display:inline-block;width:100%;max-width:300px;margin:0 auto;text-align:center}
 .btn-primary{background-color:#15a4fa;color:#fff;border:1px solid #15a4fa}.btn-primary:hover,.btn-primary:focus{background-color:#0588d7;color:#fff;border:1px solid #0588d7}
@@ -345,7 +348,11 @@ body{background-color:#e9f0fa}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .editor-menu-layer-button{color:#9cabc4;background-color:#333c4e;transition:all 0.3s}.editor-menu-layer-button:hover{color:#fff;background-color:#293141}
-.editor-menu-item-settings{position:absolute;top:-50%;left:0px;font-size:16px;width:100%;opacity:0;background-color:rgba(41,49,65,0.8);transition:all 0.3s}.editor-menu-item-settings a{color:#fff}
+.editor-menu-item-settings{background-color:rgba(41,49,65,0.8)}.editor-menu-item-settings a{color:#fff}
+.editor-menu-item{background-color:#fff}.editor-menu-item.expanded .editor-menu-item-inner{color:#fff;background-color:#15a4fa;transition:background-color 0}
+.editor-menu-item.expanded.content-type-menu .editor-menu-item-pin{border-left:10px solid #15a4fa}
+.editor-menu-item.selected .editor-menu-item-inner{color:#fff;background-color:#15a4fa}
+.editor-menu-item.selected.content-type-menu .editor-menu-item-pin{border-left:10px solid #15a4fa}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .navigation{background-color:#293141;border-bottom:1px solid #3e4a5f}.navigation a{transition:all 0.3s}.navigation a:hover{color:#fff}
@@ -354,8 +361,11 @@ body{background-color:#e9f0fa}
 .navigation-right a{border-left:1px solid #3e4a5f}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
+.project-list-item{background-color:#fff}.project-list-item.selected{color:#fff;background-color:#15a4fa}.project-list-item.selected .projects-details-label{color:#fff}
+
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .sidebar{background-color:#333c4e;color:#9cabc4}.sidebar a{transition:all 0.3s;color:#fff}.sidebar a:hover,.sidebar a:focus{color:#e6e6e6}
-.sidebar-breadcrumb{background-color:#15a4fa}
+.sidebar-breadcrumb{background-color:#15a4fa}.sidebar-breadcrumb a:hover{background-color:#0588d7}
 .sidebar-item-title{background-color:#3e4960;color:#fff}
 .sidebar-row button,.sidebar-row a{border-bottom:1px solid #3e4a5f;color:#9cabc4;transition:all 0.3s}.sidebar-row button:hover,.sidebar-row a:hover{color:#fff;background-color:#293141}
 

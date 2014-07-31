@@ -1,5 +1,7 @@
 @import 'variables';
 
+@selected-color: @primary-color;
+
 .editor-menu-layer-button {
     color:@sidebar-text-color;
     background-color:@sidebar-color;
@@ -11,15 +13,37 @@
 } 
 
 .editor-menu-item-settings {
-    position: absolute;
-    top: -50%;
-    left: 0px;
-    font-size: 16px;
-    width:100%;
-    opacity:0;
     background-color:rgba(41,49,65,0.8);
-    transition:all 0.3s;
     a {
         color:#fff;
     } 
+}
+
+.editor-menu-item {
+    background-color: #fff;
+
+    &.expanded {
+        
+        .editor-menu-item-inner {
+            color:#fff;
+            background-color: @selected-color;
+            transition:background-color 0s;
+        }
+        
+        &.content-type-menu .editor-menu-item-pin {
+            border-left: 10px solid @selected-color;
+        }
+    }
+
+    &.selected {
+
+        .editor-menu-item-inner {
+            color:#fff;
+            background-color: @selected-color;
+        }
+        
+        &.content-type-menu .editor-menu-item-pin {
+            border-left: 10px solid @selected-color;
+        }
+    }
 }

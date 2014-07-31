@@ -1,7 +1,11 @@
-<div class="editor-menu-item-settings handle">
-    <a href="#" class="open-context-contentObject"><i class="fa fa-cog fa-fw"></i></a>
-</div>
 <div data-id="{{_id}}" data-parentId="{{_parentId}}" class="editor-menu-item-inner clearfix unselectable">
+
+    <div class="editor-menu-item-settings handle">
+        <div class="editor-menu-item-settings-inner">
+            <a href="#" class="open-context-contentObject"><i class="fa fa-cog fa-fw"></i></a>
+        </div>
+    </div>
+
 	<div class="editor-menu-item-icon {{_type}}">
         {{#if_value_equals _type "menu"}}
             {{#if _isSelected}}
@@ -21,4 +25,7 @@
 	<div class="editor-menu-item-title">
 		<span class="editor-menu-item-title-text">{{{title}}}</span>
 	</div>
+</div>
+
+<div class="editor-menu-item-pin">
 </div>

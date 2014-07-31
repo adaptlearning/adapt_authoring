@@ -226,12 +226,12 @@ a.open-context-contentObject{color:white}
 .article .add-control{text-align:right;padding-right:10px}
 .article-detail-inner{padding:0px 30px}
 
-.block{border-top:1px solid #b7caed;border-bottom:1px solid #b7caed;overflow:hidden;background-color:#E0E8F7;position:relative;margin-bottom:20px}.block-inner{padding:30px 30px 10px}
+.block{border-top:1px solid #b7caed;border-bottom:1px solid #b7caed;overflow:hidden;background-color:#f3f3f3;position:relative;margin-bottom:-1px}.block-inner{padding:30px 30px 10px}
 .block-edit-panel{position:absolute;right:0;top:0}
 .block-delete{padding-right:10px;position:absolute;right:0;top:0}
 .block .add-control{text-align:right;padding-right:10px;padding-bottom:10px}
 
-.component{overflow:hidden;position:relative;min-height:90px;background-color:#ccd9f2;border-radius:3px;border:1px solid #b7caed}.component-inner{padding:30px}
+.component{overflow:hidden;position:relative;min-height:90px;background-color:#e8e8e8;border-radius:3px;border:1px solid #b7caed}.component-inner{padding:30px}
 .component-left{position:relative;width:45%;float:left}
 .component-right{position:relative;width:45%;float:right}
 .component-delete{padding-right:10px;position:absolute;right:0;top:0}
@@ -341,7 +341,8 @@ button{border:none;background:none;padding:10px 12px;font-size:13px}button:hover
 .btn-alert{background-color:#de6262;color:#fff;border:1px solid #de6262}.btn-alert:hover,.btn-alert:focus{background-color:#d53838;color:#fff;border:1px solid #d53838}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
-.editor-item-settings a{text-decoration:none;color:#000}.editor-item-settings a:hover{color:#15a4fa}
+.editor-item-settings a.open-context-icon{text-decoration:none;color:#3e4960;transition:all 0.3s}
+.editor-item-settings a:hover{color:#15a4fa}
 .editor-item-settings .editor-delete-page-element{color:#de6262}.editor-item-settings .editor-delete-page-element:hover{color:#d53838}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);

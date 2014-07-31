@@ -1,8 +1,12 @@
 @import 'variables';
 .editor-item-settings {
     a {
-        text-decoration: none;
-        color:#000;
+        &.open-context-icon{
+            text-decoration: none;
+            color:#3e4960;
+            transition:all 0.3s;
+        }
+        
         &:hover {
             color:@primary-color;
         }

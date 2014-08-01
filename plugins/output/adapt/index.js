@@ -16,6 +16,7 @@ var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     rimraf = require('rimraf'),
     mkdirp = require('mkdirp'),
     usermanager = require('../../../lib/usermanager'),
+    exec = require('child_process').exec,
     logger = require('../../../lib/logger');
 
 function AdaptOutput () {
@@ -29,16 +30,9 @@ util.inherits(AdaptOutput, OutputPlugin);
 var TEMP_DIR = 'temp',
     SOURCE_DIR = 'src',
     BUILD_DIR = 'build';
-    BESPOKE_DIR = 'bespoke',
     COURSE_DIR = 'course',
     COMPONENTS_DIR = 'components',
-    CORE_DIR = 'core',
-    EXTENSIONS_DIR = 'extensions',
-    LESS_DIR = 'less',
-    MENU_DIR = 'menu',
-    TEMPLATES_DIR = 'templates',
-    THEME_DIR = 'theme',
-    FRAMEWORK_SOURCE_DIR = '/framework/build/';
+    ADAPT_FRAMEWORK_DIR = 'adapt_framework';
 
 /**
  * Used to convert a string 's' to a valid filename
@@ -85,11 +79,12 @@ AdaptOutput.prototype.preview = function (courseId, req, res, next) {
  * implements OutputPlugin#publish
  *
  */
-AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
-  var outputJson = {};
+AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
   var user = usermanager.getCurrentUser(),
+    tenantId = user.tenant._id,
     outputJson = {},
     friendlyIdentifiers = {};
+
 
   // Queries the database to return each collectionType for the given courseId
   var getJson = function (collectionType, doneCallback) {
@@ -157,8 +152,8 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
     // Iterate over the given JSON and set the friendly name for the '_id'
     for (var i = 0; i < outputJson[key].length; i++) {
       // Increment the index
-      var index = i + 1;
-      var newId = '';
+      var index = i + 1,
+        newId = '';
 
       // This just sets some padding
       if (index.toString().length < 2) {
@@ -178,17 +173,17 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
 
   // Writes Adapt Framework JSON files to the /course folder
   var writeJson = function(key, doneCallback) {
-    var filenames = {};
+    var data = JSON.stringify(outputJson[key], undefined, 2),
+      filepath = path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR, COURSE_DIR),
+      filenames = {},
+      filename = '';
+
     filenames['course'] = 'course.json';
     filenames['config'] = 'config.json';
     filenames['contentobject'] = 'contentObjects.json';
     filenames['article'] = 'articles.json';
     filenames['block'] = 'blocks.json';
     filenames['component'] = 'components.json';
-
-    var data = JSON.stringify(outputJson[key], undefined, 2);
-    var filepath = path.join(TEMP_DIR, courseId, user._id, BUILD_DIR, COURSE_DIR);
-    var filename;
 
     if (key == 'config') {
       filename = path.join(filepath, filenames[key]);
@@ -224,8 +219,8 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
 
   // Copies a specific version of the component to the source folder
   var copyComponentFiles = function(component, doneCallback) {
-    var sourceFolder = path.join(process.cwd(), '/plugins/content/component/versions/', component.name, component.version, component.name);
-    var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, user._id, SOURCE_DIR, COMPONENTS_DIR, component.name);
+    var sourceFolder = path.join(configuration.serverRoot, '/plugins/content/component/versions/', component.name, component.version, component.name),
+      destinationFolder = path.join(configuration.serverRoot, TEMP_DIR, courseId, user._id, SOURCE_DIR, COMPONENTS_DIR, component.name);
 
     ncp(sourceFolder, destinationFolder, function (err) {
       if (err) {
@@ -272,7 +267,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
     async.series([
       // Replace the daabase _id properties on the objects with something more user-friendly
       function(callback) {
-        logger.log('info', '0. Setting up the user-friendly _id value array');
+        logger.log('info', '1. Setting up the user-friendly _id value array');
 
         async.each(['contentobject', 'article', 'block', 'component'], setupFriendlyIdentifiers, function (err) {
           if (!err) {
@@ -284,29 +279,30 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
       },
       // Verify that the temporary folder exists
       function(callback) {
-        logger.log('info', '1. Verifying temporary folder exists');
+        logger.log('info', '2. Verifying temporary folder exists');
 
-        fs.exists(TEMP_DIR, function(exists) {
+        fs.exists(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR), function(exists) {
             if (exists) {
                 // Do something
                 callback(null, 'Temporary folder OK');
             } else {
-              fs.mkdir(TEMP_DIR, '0777', function(err) {
-                if (err) {
-                  callback(err, 'Unable to make temporary folder');
-                } else {
-                  callback(null, 'Temporary folder OK');
-                }
-              });
+              callback('Error');
+              // fs.mkdir(TEMP_DIR, '0777', function(err) {
+              //   if (err) {
+              //     callback(err, 'Unable to make temporary folder');
+              //   } else {
+              //     callback(null, 'Temporary folder OK');
+              //   }
+              // });
             }
         });
       },
       // Create the 'src' working folder
       function(callback) {
-        logger.log('info', '2. Verifying working folder');
+        logger.log('info', '3. Creating/verifying working folder');
 
-        var workingRoot = path.join(TEMP_DIR, courseId, user._id, BUILD_DIR);
-        var workingFolder = path.join(workingRoot, COURSE_DIR, outputJson['config'][0]._defaultLanguage);
+        var workingRoot = path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR),
+          workingFolder = path.join(workingRoot, COURSE_DIR, outputJson['config'][0]._defaultLanguage);
 
         fs.exists(workingFolder, function(exists) {
           if (!exists) {
@@ -336,9 +332,43 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
           }
         });
       },
+      function(callback) {
+
+        fs.exists(path.join(configuration.serverRoot, TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR, 'index.html'), function (exists) {
+          if (!exists) {
+            logger.log('info', '3.1. Ensuring framework build exists');
+
+            var args = [];
+            args.push('--outputdir=' + courseId);
+            args.push('--theme=' + 'adapt-contrib-vanilla'); // Hard-coded theme for now
+     
+            child = exec('grunt server-build ' + args.toString().replace(',', ' '), {cwd: path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR)},
+              function (error, stdout, stderr) {
+                if (error !== null) {
+                  logger.log('error', 'exec error: ' + error);
+                  return callback(error, 'Error building framework');
+                }
+
+                if (stdout.length != 0) {
+                  logger.log('info', 'stdout: ' + stdout);
+                  return callback(null, 'Framework built OK');
+                }
+
+                if (stderr.length != 0) {
+                  logger.log('error', 'stderr: ' + stderr);
+                  return callback(stderr, 'Error (stderr) building framework!');
+                }
+
+                return;
+            });
+          } else {
+            callback(null, 'Framework already built, nothing to do')
+          }
+        });        
+      },
       // Sanatize course data
       function(callback) {
-        logger.log('info', '3. Sanitizing course.json and contentobject.json');
+        logger.log('info', '4. Sanitizing course.json and contentobject.json');
 
         // The course JSON should be an object not an array
         var courseJson = outputJson['course'][0],
@@ -365,7 +395,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
       },
       // Sanitize config file
       function(callback) {
-        logger.log('info', '4. Sanitizing config.json');
+        logger.log('info', '5. Sanitizing config.json');
 
         // config.json should contain an object, not an array
         var configJson = outputJson['config'][0];
@@ -376,7 +406,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
       },
       // Sanatize component data
       function(callback) {
-        logger.log('info', '5. Sanitizing component JSON');
+        logger.log('info', '6. Sanitizing component JSON');
         var components = outputJson['component'];
 
         // The 'properties' property of a component should not be included as an
@@ -400,7 +430,7 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
 
       // Sanitize the IDs
       function(callback) {
-        logger.log('info', '6. Sanitizing the ID values');
+        logger.log('info', '7. Sanitizing the ID values');
         var types = ['contentobject', 'article', 'block', 'component'];
 
         // contentobject
@@ -445,21 +475,6 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
         callback(null, 'IDs changed');
       },
 
-      function(callback) {
-        logger.log('info', '7. Copying build folder to temp directory');
-        var sourceFolder = path.join(process.cwd(), '/framework/build/');
-        var destinationFolder = path.join(process.cwd(), TEMP_DIR, courseId, user._id, BUILD_DIR);
-
-        ncp(sourceFolder, destinationFolder, function (err) {
-          if (err) {
-            callback(err, 'Error copying Framework from ' + sourceFolder);
-          } else {
-            callback(null);
-          }
-        });
-
-      },
-
       // Save the files here
       function(callback) {
         logger.log('info', '8. Saving JSON files');
@@ -476,13 +491,13 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
       },
 
       function(callback) {
-        if (preview) {
+        if (isPreview) {
           return callback(null, 'Preview, so no zip');
         }
 
         logger.log('info', '9. Zipping it all up');
-        var output = fs.createWriteStream(path.join(TEMP_DIR, courseId, user._id, 'download.zip'));
-        var archive = archiver('zip');
+        var output = fs.createWriteStream(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, 'download.zip')),
+          archive = archiver('zip');
 
         output.on('close', function() {
           logger.log('info', 'done')
@@ -495,18 +510,18 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
         archive.pipe(output);
 
         archive.bulk([
-          { expand: true, cwd: path.join(TEMP_DIR, courseId, user._id, BUILD_DIR), src: ['**/*'] }
+          { expand: true, cwd: path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR), src: ['**/*'] }
         ]).finalize();
       },
       // Other steps...
       function(callback) {
-        if (preview) {
+        if (isPreview) {
           return callback(null, 'Preview, so no download');
         }
 
         // Trigger the file download
-        var filename = slugify(outputJson['course'].title);
-        var filePath = path.join(TEMP_DIR, courseId, user._id, 'download.zip');
+        var filename = slugify(outputJson['course'].title),
+          filePath = path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, 'download.zip');
 
         fs.stat(filePath, function(err, stat) {
           if (err) {
@@ -529,7 +544,10 @@ AdaptOutput.prototype.publish = function (courseId, preview, req, res, next) {
     ],
     // optional callback
     function(err, results){
-      logger.log('info', results);
+      if (results) {
+        logger.log('info', results);
+      }
+
       return next();
     });
   });

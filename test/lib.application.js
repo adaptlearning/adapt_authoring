@@ -21,10 +21,10 @@ var helper = {
 
 before(function (done) {
   // this initialization appears to take a little longer
-  this.timeout(70000);
+  this.timeout(600000);
 
   // suppress all logging!
-  logger.clear();
+//  logger.clear();
 
   // bootstrapping!
   var app = origin();
@@ -116,7 +116,7 @@ after(function (done) {
         return done(error);
       }
 
-      tenantmanager.deleteTenant(helper.testTenant, function (error) {
+      tenantmanager.deleteTenant({ _id: helper.testTenant._id}, function (error) {
         if (error) {
           return done(error);
         }

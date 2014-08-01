@@ -10,20 +10,31 @@ var database = require('../../lib/database');
 var permissions = require('../../lib/permissions');
 var tenantmanager = require('../../lib/tenantmanager');
 var localAuth = require('../../plugins/auth/local');
-var server = module.exports = express();
+var crypto = require('crypto');
+var fs = require('fs');
+var installer = module.exports = express();
 
+var GIT_FRAMEWORK_CLONE_URL = 'https://github.com/adaptlearning/adapt_framework.git';
 
 // set up handlebars form helpers
 require('handlebars-form-helpers').register(hbs.handlebars);
 
-server.set('views', __dirname);
-server.set('view engine', 'hbs');
+installer.set('views', __dirname);
+installer.set('view engine', 'hbs');
 
 // register partials from our ./partials directory
 hbs.registerPartials(path.join(__dirname, 'partials'));
 
+function randomValueBase64 (len) {
+    return crypto.randomBytes(Math.ceil(len * 3 / 4))
+        .toString('base64')   // convert to base64 format
+        .slice(0, len)        // return required number of characters
+        .replace(/\+/g, '0')  // replace '+' with '0'
+        .replace(/\//g, '0'); // replace '/' with '0'
+}
+
 // prevent installer running if config file already exists
-server.all('/install*', function (req, res, next) {
+installer.all('/install*', function (req, res, next) {
   // check if install has completed, redirect to root if so
   fs.exists(path.join(configuration.serverRoot, 'conf', 'config.json'), function (exists) {
     if (exists) {
@@ -35,24 +46,24 @@ server.all('/install*', function (req, res, next) {
 });
 
 // installer landing page
-server.all('/install', function (req, res, next) {
+installer.all('/install', function (req, res, next) {
   res.render('install', {pageTitle: "Install"});
 
 });
 
 // ffmpeg check/info page
-server.all('/install/ffmpeg', function (req, res, next) {
+installer.all('/install/ffmpeg', function (req, res, next) {
   if (req.body.submit) {
     var ffInstall = false;
     ffInstall = (req.body.ffmpeg === "true") || false;
     configuration.setConfig('useffmpeg', ffInstall);
-    res.redirect('/install/server');
+    res.redirect('/install/framework');
   }
   res.render('ffmpeg', {pageTitle: "FFmpeg"});
 });
 
 // server configuration page
-server.all('/install/server', function (req, res, next) {
+installer.all('/install/server', function (req, res, next) {
   var app = origin();
   var serverName = req.body.serverName || 'localhost';
   var serverPort = req.body.serverPort || app.defaults.DEFAULT_SERVER_PORT;
@@ -85,7 +96,7 @@ server.all('/install/server', function (req, res, next) {
 });
 
 // database configuration page
-server.all('/install/database', function (req, res, next) {
+installer.all('/install/database', function (req, res, next) {
   // need to know what drivers are available on the system
   database.getAvailableDrivers(function (error, drivers) {
     if (error) {
@@ -97,7 +108,7 @@ server.all('/install/database', function (req, res, next) {
     var dbPort = req.body.dbPort || 27017;
     var dbUser = req.body.dbUser || '';
     var dbPass = req.body.dbPass || '';
-    var sessionSecret = req.body.sessionSecret || 'your-session-secret';
+    var sessionSecret = req.body.sessionSecret || randomValueBase64(32);
     var errors = {};
 
     if (req.body.submit) {
@@ -146,8 +157,23 @@ server.all('/install/database', function (req, res, next) {
   });
 });
 
+// Framework clone page
+installer.all('/install/framework', function(req, res, next) {
+
+  if (req.body.submit) {
+    return res.redirect('/install/server');
+  }
+
+  // return;
+  
+  res.render('framework', {
+    'pageTitle': "Installing Adapt framework",
+    'formAction': '/install/framework'
+  });
+});
+
 // master tenant creation page
-server.all('/install/tenant', function (req, res, next) {
+installer.all('/install/tenant', function (req, res, next) {
   var tenantPrefix = req.body.tenantPrefix || 'adapt-tenant-';
   var tenantName = req.body.tenantName || 'master';
   var adminEmail = req.body.adminEmail || '';
@@ -238,7 +264,7 @@ server.all('/install/tenant', function (req, res, next) {
 });
 
 // installation complete
-server.get('/install/complete', function (req, res, next) {
+installer.get('/install/complete', function (req, res, next) {
   // by default, auth is local
   configuration.setConfig('auth', 'local');
   configuration.setConfig('dataRoot', 'data');

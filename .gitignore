@@ -2,6 +2,7 @@
 /tmp
 /data
 /temp
+/adapt_framework
 conf/config.json
 .project
 /frontend/build

@@ -25,6 +25,7 @@ describe('tenant', function(){
   });
 
   it ('should allow the creation of a new tenant', function(done) {
+    this.timeout(600000);
     tenantmanager.createTenant(tenantRec, done);
   });
 

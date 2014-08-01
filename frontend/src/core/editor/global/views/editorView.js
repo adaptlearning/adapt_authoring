@@ -133,7 +133,7 @@ define(function(require){
       var canPreview = this.validateCourseContent();
 
       if (canPreview) {
-        window.open('/api/output/adapt/preview/' + this.currentCourseId + '/' + Origin.sessionModel.get('id'), 'adapt_preview');
+        window.open('/api/output/adapt/preview/' + this.currentCourseId, 'adapt_preview');
       }
 
     },

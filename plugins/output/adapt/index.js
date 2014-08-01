@@ -51,28 +51,28 @@ function slugify(s) {
  * implements OutputPlugin#preview
  *
  */
-AdaptOutput.prototype.preview = function (courseId, req, res, next) {
-  database.getDatabase(function (err, db) {
-    if (err) {
-      return next(err);
-    }
+// AdaptOutput.prototype.preview = function (courseId, req, res, next) {
+//   database.getDatabase(function (err, db) {
+//     if (err) {
+//       return next(err);
+//     }
 
-    db.retrieve('course', { _id: courseId }, function (err, results) {
-      if (err) {
-        return next(err);
-      }
+//     db.retrieve('course', { _id: courseId }, function (err, results) {
+//       if (err) {
+//         return next(err);
+//       }
 
-      if (results && results.length) {
-        db.exportResults(results, function (transformed) {
-          return res.json(transformed);
-        });
-      }
+//       if (results && results.length) {
+//         db.exportResults(results, function (transformed) {
+//           return res.json(transformed);
+//         });
+//       }
 
-      res.statusCode = 404;
-      return res.end();
-    });
-  });
-};
+//       res.statusCode = 404;
+//       return res.end();
+//     });
+//   });
+// };
 
 
 /**
@@ -489,7 +489,25 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           }
         });
       },
+      function(callback) {
+        var Pageres = require('pageres');
+        // var url = configuration.baseUrl + '/preview/' +  tenantId + '/' + courseId + '/main.html';
+        var url = configuration.baseUrl + '/preview/' + tenantId + '/' + courseId + '/main.html';
 
+        var pageres = new Pageres({delay: 2})
+          .src(url, ['350x150', '520x780', '760x570', '1024x768'])
+          .dest(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId));
+        
+        pageres.run(function (err) {
+            if (err) {
+                throw err;
+            }
+            console.log('done');
+
+            callback(null, 'Previews created');
+        });
+      
+      },
       function(callback) {
         if (isPreview) {
           return callback(null, 'Preview, so no zip');
@@ -512,6 +530,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
         archive.bulk([
           { expand: true, cwd: path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR), src: ['**/*'] }
         ]).finalize();
+
       },
       // Other steps...
       function(callback) {
@@ -539,7 +558,8 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
 
             readStream.pipe(res);
           }
-        });
+        }
+        );
       }
     ],
     // optional callback

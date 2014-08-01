@@ -10,23 +10,36 @@ describe('tenant', function(){
   };
 
   // ensure the tenant record is deleted
-  after (function () {
-    tenantmanager.retrieveTenant({ name: tenantRec.name }, function (error, tenant) {
+  after (function (done) {
+    this.timeout(10000);
+    tenantmanager.retrieveTenant({ _id: tenantRec._id }, function (error, tenant) {
       if (error) {
         done(error)
       } else if (tenant) {
         tenantmanager.deleteTenant(tenantRec, function(error) {
           if (error) {
-            throw error;
+            done(error);
           }
+
+          return done();
         });
       }
+
+      // happily, the tenant doesn't exist
+      return done(null);
     });
   });
 
   it ('should allow the creation of a new tenant', function(done) {
     this.timeout(600000);
-    tenantmanager.createTenant(tenantRec, done);
+    tenantmanager.createTenant(tenantRec, function (error, tenant) {
+      if (error) {
+        return done(error);
+      }
+
+      tenantRec = tenant;
+      return done(null);
+    });
   });
 
   it ('should allow the retrieval of a single tenant', function(done) {

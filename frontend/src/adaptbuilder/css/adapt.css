@@ -210,7 +210,7 @@ a.open-context-contentObject{color:white}
 .editor-menu-item.selected{transition:background-color 0}.editor-menu-item.selected .editor-menu-item-settings{top:0;opacity:1}
 .editor-menu-item.selected.content-type-menu .editor-menu-item-pin{display:block}
 .editor-menu-item .handle{cursor:move}
-.editor-menu-item-settings{position:absolute;top:-50%;left:0px;font-size:16px;width:100%;opacity:0;transition:all 0.3s}.editor-menu-item-settings-inner{padding:6px}
+.editor-menu-item-settings{position:absolute;top:0%;left:0px;font-size:16px;width:100%;opacity:1;transition:all 0.3s}.editor-menu-item-settings-inner{padding:6px}
 .editor-menu-item-pin{display:none;position:absolute;right:-10px;top:50%;margin-top:-5px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent}
 
 .editor-menu-layer{height:100%;width:240px;float:left;padding-bottom:30px}.editor-menu-layer:first-child .editor-menu-layer-inner{border-right:2px solid #454545}
@@ -306,7 +306,7 @@ a.open-context-contentObject{color:white}
 .project-list-item.listing{width:700px}
 .project-header-inner{position:relative}
 .project-detail-title{margin-bottom:10px}
-.project-settings{position:absolute;top:-50%;left:0px;font-size:16px;width:100%;opacity:0;background-color:rgba(41,49,65,0.8);transition:all 0.3s}.project-settings a{color:#fff}
+.project-settings{position:absolute;top:0%;left:0px;font-size:16px;width:100%;opacity:1;background-color:#fff;transition:all 0.3s}.project-settings a{color:#3e4960}
 .project-settings-inner{padding:6px}
 .project-details-inner{padding:20px}
 .project-details-row{font-size:11px}
@@ -363,7 +363,7 @@ body{background-color:#e9f0fa}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .editor-menu-layer-button{color:#9cabc4;background-color:#333c4e;transition:all 0.3s}.editor-menu-layer-button:hover{color:#fff;background-color:#293141}
-.editor-menu-item-settings{background-color:rgba(41,49,65,0.8)}.editor-menu-item-settings a{color:#fff}
+.editor-menu-item-settings a{color:#3e4960}
 .editor-menu-item{background-color:#fff}.editor-menu-item.expanded .editor-menu-item-inner{color:#fff;background-color:#15a4fa;transition:background-color 0}
 .editor-menu-item.expanded.content-type-menu .editor-menu-item-pin{border-left:10px solid #15a4fa}
 .editor-menu-item.selected .editor-menu-item-inner{color:#fff;background-color:#15a4fa}

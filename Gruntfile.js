@@ -102,11 +102,11 @@ module.exports = function(grunt) {
     };
 
     grunt.registerTask('default',['less', 'handlebars', 'watch']);
-    grunt.registerTask('build',['less', 'copy', 'handlebars', 'requirejs:compile']);
-    grunt.registerTask('dev',['less', 'copy', 'handlebars', 'requirejs:dev']);
+    grunt.registerTask('build',['less', 'copy', 'handlebars']);
+    grunt.registerTask('dev',['less', 'copy', 'handlebars']);
     grunt.registerTask('test',['mochaTest']);
     grunt.registerTask('test-ui', ['casperjs']);
-    grunt.registerTask('compile',['requirejs:dev']);
+    // grunt.registerTask('compile',['requirejs:dev']);
     grunt.registerTask('server',['copy', 'less', 'handlebars', 'start', 'open:server', 'watch']);
     grunt.registerTask('start', 'Start node server', function() {
       var server = require('./server');

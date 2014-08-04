@@ -489,25 +489,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           }
         });
       },
-      function(callback) {
-        var Pageres = require('pageres');
-        // var url = configuration.baseUrl + '/preview/' +  tenantId + '/' + courseId + '/main.html';
-        var url = configuration.baseUrl + '/preview/' + tenantId + '/' + courseId + '/main.html';
-
-        var pageres = new Pageres({delay: 2})
-          .src(url, ['350x150', '520x780', '760x570', '1024x768'])
-          .dest(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId));
-        
-        pageres.run(function (err) {
-            if (err) {
-                throw err;
-            }
-            console.log('done');
-
-            callback(null, 'Previews created');
-        });
       
-      },
       function(callback) {
         if (isPreview) {
           return callback(null, 'Preview, so no zip');
@@ -532,6 +514,8 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
         ]).finalize();
 
       },
+
+
       // Other steps...
       function(callback) {
         if (isPreview) {
@@ -560,7 +544,32 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           }
         }
         );
-      }
+      },
+
+      //should create a cookie to allow access to main.html, but the cookie isn't read until after the 
+      //screenshots are taken.
+      function(callback){
+        res.cookie("screenshots", "value", {expires: new Date(Date.now() + (20*1000))});
+        var Pageres = require('pageres');
+        // var url = configuration.baseUrl + '/preview/' +  tenantId + '/' + courseId + '/main.html';
+        var url = configuration.baseUrl + '/preview/' + tenantId + '/' + courseId + '/main.html';
+        var pageres = new Pageres({
+          cookies: ['screenshottest=yes; Path=/; Domain=localhost'], 
+          delay: 2,
+          crop: true})
+          .src(url, ['350x150', '520x780', '760x570', '1024x768'])
+          .dest(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId));
+          //image-size
+        pageres.run(function (err) {
+            if (err) {
+                throw err;
+            }
+            console.log('done');
+            callback(null, 'Previews created');
+        });
+      
+      },
+      
     ],
     // optional callback
     function(err, results){

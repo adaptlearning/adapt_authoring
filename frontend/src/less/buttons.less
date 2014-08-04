@@ -8,6 +8,52 @@ button {
     &:hover, &:focus {
         outline:none;
     }
+
+    &.primary-color {
+        background:@button-primary-color!important;
+        color:@button-primary-text-color!important;
+        &:hover {
+            background:@button-primary-hover-color!important;
+            color:@button-primary-hover-text-color!important; 
+        }
+    }
+
+    &.info-color {
+        background:@button-info-color!important;
+        color:@button-info-text-color!important;
+        &:hover {
+            background:@button-info-hover-color!important;
+            color:@button-info-hover-text-color!important; 
+        }
+    }
+
+    &.warning-color {
+        background:@button-warning-color!important;
+        color:@button-warning-text-color!important;
+        &:hover {
+            background:@button-warning-hover-color!important;
+            color:@button-warning-hover-text-color!important; 
+        }
+    }
+
+    &.alert-color {
+        background:@button-alert-color!important;
+        color:@button-alert-text-color!important;
+        &:hover {
+            background:@button-alert-hover-color!important;
+            color:@button-alert-hover-text-color!important; 
+        }
+    }
+
+    &.disabled-color {
+        background:@button-disabled-color!important;
+        color:@button-disabled-text-color!important;
+        &:hover {
+            background:@button-disabled-color!important;
+            color:@button-disabled-text-color!important; 
+        }
+    }
+
 }
 
 .btn {

@@ -332,6 +332,11 @@ a.open-context-contentObject{color:white}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 button{border:none;background:none;padding:10px 12px;font-size:13px}button:hover,button:focus{outline:none}
+button.primary-color{background:#15a4fa !important;color:#fff !important}button.primary-color:hover{background:#0588d7 !important;color:#fff !important}
+button.info-color{background:#2eb398 !important;color:#fff !important}button.info-color:hover{background:#248a76 !important;color:#fff !important}
+button.warning-color{background:#ffa08d !important;color:#fff !important}button.warning-color:hover{background:#ff765a !important;color:#fff !important}
+button.alert-color{background:#de6262 !important;color:#fff !important}button.alert-color:hover{background:#d53838 !important;color:#fff !important}
+button.disabled-color{background:#454545 !important;color:#fff !important}button.disabled-color:hover{background:#454545 !important;color:#fff !important}
 .btn{display:inline-block;padding:10px 12px;background:none;border:1px solid #7787a1;border-radius:3px;background-color:#fff;color:#7787a1;font-size:13px;font-weight:300;text-decoration:none;transition:all 0.3s}.btn:hover,.btn:focus{outline:none;color:#293141;border:1px solid #293141}
 .btn-block{display:inline-block;width:100%;max-width:300px;margin:0 auto;text-align:center}
 .btn-primary{background-color:#15a4fa;color:#fff;border:1px solid #15a4fa}.btn-primary:hover,.btn-primary:focus{background-color:#0588d7;color:#fff;border:1px solid #0588d7}
@@ -366,10 +371,11 @@ body{background-color:#e9f0fa}
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .editor-menu-layer-button{color:#9cabc4;background-color:#333c4e;transition:all 0.3s}.editor-menu-layer-button:hover{color:#fff;background-color:#293141}
 .editor-menu-item-settings a{color:#3e4960;transition:all 0.3s}.editor-menu-item-settings a:hover{color:#52617f}
-.editor-menu-item{background-color:#fff}.editor-menu-item.expanded .editor-menu-item-inner{color:#fff;background-color:#15a4fa;transition:background-color 0}
+.editor-menu-item{background-color:#fff}.editor-menu-item .editor-menu-item-inner{border:1px solid #b7caed}
+.editor-menu-item.expanded .editor-menu-item-inner{color:#fff;background-color:#15a4fa;transition:background-color 0;border:1px solid #15a4fa}
 .editor-menu-item.expanded.content-type-menu .editor-menu-item-pin{border-left:10px solid #15a4fa}
 .editor-menu-item.expanded .editor-menu-item-settings a{color:#fff;transition:all 0.3s}.editor-menu-item.expanded .editor-menu-item-settings a:hover{color:#e6e6e6}
-.editor-menu-item.selected .editor-menu-item-inner{color:#fff;background-color:#15a4fa}
+.editor-menu-item.selected .editor-menu-item-inner{color:#fff;background-color:#15a4fa;border:1px solid #15a4fa}
 .editor-menu-item.selected.content-type-menu .editor-menu-item-pin{border-left:10px solid #15a4fa}
 .editor-menu-item.selected .editor-menu-item-settings a{color:#fff;transition:all 0.3s}.editor-menu-item.selected .editor-menu-item-settings a:hover{color:#e6e6e6}
 
@@ -387,7 +393,7 @@ body{background-color:#e9f0fa}
 .editing-overlay-component-layout-option.selected{color:#fff;background-color:#15a4fa}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
-.project-list-item{background-color:#fff}.project-list-item.selected{color:#fff;background-color:#15a4fa}.project-list-item.selected .projects-details-label{color:#fff}
+.project-list-item{border:1px solid #b7caed;background-color:#fff}.project-list-item.selected{color:#fff;background-color:#15a4fa;border:1px solid #15a4fa}.project-list-item.selected .projects-details-label{color:#fff}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .sidebar{background-color:#333c4e;color:#9cabc4}.sidebar a{transition:all 0.3s;color:#fff}.sidebar a:hover,.sidebar a:focus{color:#e6e6e6}

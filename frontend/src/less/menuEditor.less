@@ -24,6 +24,10 @@
 
 .editor-menu-item {
     background-color: #fff;
+    
+    .editor-menu-item-inner {
+       border:1px solid #b7caed; 
+    }
 
     &.expanded {
         
@@ -31,6 +35,7 @@
             color:#fff;
             background-color: @selected-color;
             transition:background-color 0s;
+            border:1px solid @selected-color;
         }
         
         &.content-type-menu .editor-menu-item-pin {
@@ -53,6 +58,7 @@
         .editor-menu-item-inner {
             color:#fff;
             background-color: @selected-color;
+            border:1px solid @selected-color;
         }
         
         &.content-type-menu .editor-menu-item-pin {

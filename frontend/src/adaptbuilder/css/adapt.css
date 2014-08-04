@@ -260,8 +260,9 @@ a.open-context-contentObject{color:white}
 .page-edit-panel{position:absolute;right:0;top:0}
 .page-articles{margin:20px 0px}
 
-.global-menu{display:none;top:100%;position:absolute;background-color:#454545;width:260px;border-top:1px solid #666;color:#fff}.global-menu a{display:block;text-decoration:none;color:#fff}
+.global-menu{display:none;top:100%;position:absolute;width:260px}.global-menu a{display:block;text-decoration:none}
 .global-menu-submenu{display:none;top:-1px;left:100%;width:260px;position:absolute;background-color:#454545;border-top:1px solid #666;border-left:1px solid #666}
+.global-menu-item-inner{padding:14px 18px}
 
 
 
@@ -354,6 +355,9 @@ h6{font-size:15px;font-weight:200}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 body{background-color:#e9f0fa}
+
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
+.global-menu{background-color:#293141;border-top:1px solid #3e4960}.global-menu a{color:#9cabc4;border-bottom:1px solid #3e4960}.global-menu a:hover{background-color:#151922;color:#fff}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .location-title{background-color:#e0e8f7;color:#3e4960}

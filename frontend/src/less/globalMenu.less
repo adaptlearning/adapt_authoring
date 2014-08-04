@@ -1,0 +1,14 @@
+@import 'variables';
+
+.global-menu {
+    background-color:@navigation-color;
+    border-top:1px solid @sidebar-title-color;
+    a {
+        color:@navigation-text-color;
+        border-bottom:1px solid @sidebar-title-color;
+        &:hover {
+            background-color:darken(@navigation-color, 10%);
+            color:@navigation-hover-text-color;
+        }
+    }
+}

@@ -221,20 +221,17 @@ a.open-context-contentObject{color:white}
 
 .article{position:relative;border-radius:3px;overflow:hidden;background-color:#fff;border:1px solid #b7caed;margin-bottom:20px;cursor:pointer}.article-inner{padding:30px 0px 10px}
 .article-edit-panel{position:absolute;right:0;top:0}
-.article-delete{padding-right:10px;position:absolute;right:0;top:0}
 .article-blocks{margin:20px 0px}
 .article .add-control{text-align:right;padding-right:10px}
 .article-detail-inner{padding:0px 30px}
 
 .block{border-top:1px solid #b7caed;border-bottom:1px solid #b7caed;overflow:hidden;background-color:#f3f3f3;position:relative;margin-bottom:-1px}.block-inner{padding:30px 30px 10px}
 .block-edit-panel{position:absolute;right:0;top:0}
-.block-delete{padding-right:10px;position:absolute;right:0;top:0}
 .block .add-control{text-align:right;padding-right:10px;padding-bottom:10px}
 
 .component{overflow:hidden;position:relative;min-height:90px;background-color:#e8e8e8;border-radius:3px;border:1px solid #b7caed}.component-inner{padding:30px}
 .component-left{position:relative;width:45%;float:left}
 .component-right{position:relative;width:45%;float:right}
-.component-delete{padding-right:10px;position:absolute;right:0;top:0}
 .page-components{margin:20px 0px}
 
 .editing-overlay-component-select-body{border-bottom:1px solid #ccc}

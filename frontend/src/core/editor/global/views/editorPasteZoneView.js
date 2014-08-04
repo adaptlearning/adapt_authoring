@@ -16,7 +16,8 @@ define(function(require){
         event.preventDefault();
         var parentId = this.model.get('_parentId');
         var sortOrder = this.model.get('_pasteZoneSortOrder');
-        Origin.trigger('editorView:paste', parentId, sortOrder);
+        var layout = this.model.get('_pasteZoneLayout')
+        Origin.trigger('editorView:paste', parentId, sortOrder, layout);
     },
 
     preRender: function() {

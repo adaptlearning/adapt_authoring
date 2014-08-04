@@ -247,6 +247,7 @@ define(function(require){
     pasteFromClipboard: function(parentId, sortOrder, layout) {
       var clipboard = Origin.editor.data.clipboard.models[0];
       var topitem = clipboard.get(clipboard.get('referenceType'))[0];
+      console.log(topitem, arguments);
       if (topitem._layout) {
         topitem._layout = layout;
       }

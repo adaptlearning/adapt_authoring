@@ -232,8 +232,8 @@ a.open-context-contentObject{color:white}
 .block .add-control{text-align:right;padding-right:10px;padding-bottom:10px}
 
 .component{overflow:hidden;position:relative;min-height:90px;background-color:#e8e8e8;border-radius:3px;border:1px solid #b7caed}.component-inner{padding:30px}
-.component-left{position:relative;width:45%;float:left}
-.component-right{position:relative;width:45%;float:right}
+.component-left{position:relative;width:48%;float:left}
+.component-right{position:relative;width:48%;float:right}
 .page-components{margin:20px 0px}
 
 .editing-overlay-component-select-body{border-bottom:1px solid #ccc}

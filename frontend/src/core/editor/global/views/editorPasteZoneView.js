@@ -6,7 +6,7 @@ define(function(require){
   var Origin = require('coreJS/app/origin');
 
   var EditorPasteZone = EditorOriginView.extend({
-    className: 'visibility-hidden paste-zone',
+    className: 'display-none paste-zone',
 
     events: {
         'click .editor-paste-zone-paste': 'onPasteElementClicked'

@@ -184,12 +184,14 @@ button{width:auto;overflow:visible}
 .editor-view .editor-container{position:relative;width:100%;height:100%}
 .editor-view .editor-panel{float:right;width:10%}
 .editor-view .editor{float:left;width:90%;height:100%;background-color:lightgrey}
-.editor-view .paste-zone{height:45px;border:2px dashed #B0B0B0;background-color:#CECECE}.editor-view .paste-zone-component-left{height:95px;width:48%;float:left;margin-top:10px;margin-left:10px}
-.editor-view .paste-zone-component-right{height:95px;width:48%;float:right;margin-top:10px;margin-right:10px}
-.editor-view .paste-zone-component-full{margin-left:10px;margin-right:10px}
+.editor-view .paste-zone{margin:30px;border-radius:2px;background-color:#b7caed;border-top:1px solid #668ed8;border-bottom:1px solid #668ed8}.editor-view .paste-zone-inner{padding:20px 30px}
+.editor-view .paste-zone-component-left{width:48%;float:left}
+.editor-view .paste-zone-component-right{width:48%;float:right}
+.editor-view .paste-zone-component{margin:0px}
+.editor-view .paste-zone-component-full{margin-bottom:20px}
 .editor-view .paste-zone-available{background-color:#BABABA;border:2px dashed #8C8C8C;opacity:0.4}
 .editor-view .paste-zone-droppable{visibility:visible;opacity:1}
-.editor-view .drop-only{visibility:hidden}
+.editor-view .drop-only{display:none}
 .editor-view .component-full{float:left;width:98%}
 .editor-view .page-article-components:after{clear:both;content:"";display:block}
 .editor-view .editor-item-sidebar{text-align:center;position:absolute;left:0;top:0;width:30px;height:100%;background:#454545}.editor-view .editor-item-sidebar.handle{cursor:move}
@@ -252,7 +254,6 @@ a.open-context-contentObject{color:white}
 .editing-overlay-panel-content-inner{padding:30px}
 
 .page-inner{padding:30px}
-.paste-zone{display:none}
 .page-detail{position:relative;height:100%}.page-detail .page-add-article{position:absolute;bottom:0;right:0;width:100px}
 .page .page-name{font-size:24px}
 .page .page-description{font-size:16px}
@@ -371,6 +372,9 @@ body{background-color:#e9f0fa}
 .navigation-item{color:#9cabc4}
 .navigation-left a{border-right:1px solid #3e4a5f}
 .navigation-right a{border-left:1px solid #3e4a5f}
+
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
+.editor-view .paste-zone{background-color:#ffa08d;border:1px solid #ff765a;border:1px solid #ff765a}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .project-list-item{background-color:#fff}.project-list-item.selected{color:#fff;background-color:#15a4fa}.project-list-item.selected .projects-details-label{color:#fff}

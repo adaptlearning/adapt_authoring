@@ -26,30 +26,35 @@
   }
 
   .paste-zone {
-    height: 45px;
-    border: 2px dashed #B0B0B0;
-    background-color: #CECECE;
+    margin:30px;
+    
+    border-radius:2px;
+    background-color:darken(#e0e8f7, 10%);
+    border-top:1px solid darken(#e0e8f7, 30%);
+    border-bottom:1px solid darken(#e0e8f7, 30%);
+
+    &-inner {
+        padding:20px 30px;
+    }
 
     &-component-left {
-      height: 95px;
       width: 48%;
       float: left;
-      margin-top: 10px;
-      margin-left: 10px;
     }
 
     &-component-right {
-      height: 95px;
       width: 48%;
       float: right;
-      margin-top: 10px;
-      margin-right: 10px;
+    }
+
+    &-component {
+        margin:0px;
     }
 
     &-component-full {
-      margin-left: 10px;
-      margin-right: 10px;
+        margin-bottom:20px;
     }
+
   }
 
   .paste-zone-available {
@@ -64,7 +69,7 @@
   }
 
   .drop-only {
-    visibility: hidden;
+    display: none;
   }
 
   .component-full {

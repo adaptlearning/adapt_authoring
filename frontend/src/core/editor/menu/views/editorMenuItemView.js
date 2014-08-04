@@ -10,8 +10,8 @@ define(function(require){
     className: "editor-menu-item",
 
     events: {
-      'click .editor-menu-item-inner'       : 'onMenuItemClicked',
-      'click a.open-context-contentObject'  : 'openContextMenu'
+        'click .editor-menu-item-inner'       : 'onMenuItemClicked',
+        'click a.open-context-contentObject'  : 'openContextMenu'
     },
 
     preRender: function() {
@@ -43,13 +43,14 @@ define(function(require){
       Origin.trigger('editorView:copy', this.model);
     },
 
-    onMenuItemClicked: function() {
-      // If a page has already been selected launch the editor
-      if (this.model.get('_isSelected') && this.model.get('_type') == 'page') {
-        return this.gotoPageEditor();
-      }
+    onMenuItemClicked: function(event) {
+        // If a page has already been selected launch the editor
+        if (this.model.get('_isSelected') && this.model.get('_type') == 'page') {
+            return this.gotoPageEditor();
+        }
 
-      this.setItemAsSelected();
+        this.setItemAsSelected();
+        
     },
 
     gotoPageEditor: function() {

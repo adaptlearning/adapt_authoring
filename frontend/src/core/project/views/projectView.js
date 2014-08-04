@@ -13,7 +13,7 @@ define(function(require){
 
     events: {
       'dblclick': 'editProject',
-      'click':'toggleSelectProject',
+      'click':'selectProject',
       'click a.open-context-course' : 'openContextMenu'
     },
 
@@ -44,13 +44,9 @@ define(function(require){
       Backbone.history.navigate('/editor/' + this.model.get('_id') + '/menu', {trigger: true});
     },
 
-    toggleSelectProject: function() {
+    selectProject: function(event) {
         event.stopPropagation();
-      if (this.model.get('_isSelected')) {
-        //this.deselectItem();
-      } else {
         this.selectItem();
-      } 
     },
 
     selectItem: function() {

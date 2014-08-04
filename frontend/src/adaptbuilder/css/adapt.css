@@ -192,7 +192,7 @@ button{width:auto;overflow:visible}
 .editor-view .paste-zone-available{background-color:#BABABA;border:2px dashed #8C8C8C;opacity:0.4}
 .editor-view .paste-zone-droppable{visibility:visible;opacity:1}
 .editor-view .drop-only{display:none}
-.editor-view .component-full{float:left;width:98%}
+.editor-view .component-full{float:left;width:100%}
 .editor-view .page-article-components:after{clear:both;content:"";display:block}
 .editor-view .editor-item-sidebar{text-align:center;position:absolute;left:0;top:0;width:30px;height:100%;background:#454545}.editor-view .editor-item-sidebar.handle{cursor:move}
 .editor-view .open-context-icon{color:#fff}
@@ -361,11 +361,13 @@ body{background-color:#e9f0fa}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .editor-menu-layer-button{color:#9cabc4;background-color:#333c4e;transition:all 0.3s}.editor-menu-layer-button:hover{color:#fff;background-color:#293141}
-.editor-menu-item-settings a{color:#3e4960}
+.editor-menu-item-settings a{color:#3e4960;transition:all 0.3s}.editor-menu-item-settings a:hover{color:#52617f}
 .editor-menu-item{background-color:#fff}.editor-menu-item.expanded .editor-menu-item-inner{color:#fff;background-color:#15a4fa;transition:background-color 0}
 .editor-menu-item.expanded.content-type-menu .editor-menu-item-pin{border-left:10px solid #15a4fa}
+.editor-menu-item.expanded .editor-menu-item-settings a{color:#fff;transition:all 0.3s}.editor-menu-item.expanded .editor-menu-item-settings a:hover{color:#e6e6e6}
 .editor-menu-item.selected .editor-menu-item-inner{color:#fff;background-color:#15a4fa}
 .editor-menu-item.selected.content-type-menu .editor-menu-item-pin{border-left:10px solid #15a4fa}
+.editor-menu-item.selected .editor-menu-item-settings a{color:#fff;transition:all 0.3s}.editor-menu-item.selected .editor-menu-item-settings a:hover{color:#e6e6e6}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .navigation{background-color:#293141;border-bottom:1px solid #3e4a5f}.navigation a{transition:all 0.3s}.navigation a:hover{color:#fff}

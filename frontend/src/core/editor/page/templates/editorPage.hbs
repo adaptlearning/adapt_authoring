@@ -1,7 +1,13 @@
 <div class="page-inner">
     <div class="page-detail">
 
-        <h4 class="page-name">{{title}}</h4>
+        <h4 class="page-name">
+            {{#if displayTitle}}
+                {{{displayTitle}}}
+            {{else}}
+                {{title}}
+            {{/if}}
+        </h4>
 
         <div class="page-body">{{{body}}}</div>
 

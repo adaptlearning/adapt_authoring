@@ -10,11 +10,15 @@
         color:#fff;
         background-color:#293141;
     } 
-} 
+}
 
 .editor-menu-item-settings {
     a {
         color:#3e4960;
+        transition:all 0.3s;
+        &:hover {
+            color:lighten(#3e4960, 10%);
+        }
     } 
 }
 
@@ -32,6 +36,16 @@
         &.content-type-menu .editor-menu-item-pin {
             border-left: 10px solid @selected-color;
         }
+
+        .editor-menu-item-settings {
+            a {
+                color:#fff;
+                transition:all 0.3s;
+                &:hover {
+                    color:darken(#fff, 10%);
+                }
+            } 
+        }
     }
 
     &.selected {
@@ -43,6 +57,16 @@
         
         &.content-type-menu .editor-menu-item-pin {
             border-left: 10px solid @selected-color;
+        }
+
+        .editor-menu-item-settings {
+            a {
+                color:#fff;
+                transition:all 0.3s;
+                &:hover {
+                    color:darken(#fff, 10%);
+                }
+            } 
         }
     }
 }

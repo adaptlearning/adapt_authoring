@@ -6,7 +6,13 @@
         {{#if _componentType}}
         <div class="component-type">[{{_componentType.displayName}}]</div>
         {{/if}}
-        <h4 class="component-title">{{#if displayTitle}}{{{displayTitle}}}{{else}}{{t 'app.placeholdernewcomponent'}}{{/if}}</h4>
+        <h4 class="component-title">
+            {{#if displayTitle}}
+                {{{displayTitle}}}
+            {{else}}
+                {{title}}
+            {{/if}}
+        </h4>
         <div class="component-body">{{{body}}}</div>
         
     </div>

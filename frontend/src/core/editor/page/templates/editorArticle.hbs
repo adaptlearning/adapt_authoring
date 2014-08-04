@@ -5,7 +5,13 @@
     <div class="article-detail unselectable">
         <div class="article-detail-inner">
 
-            <h4 class="article-title">{{#if displayTitle}}{{{displayTitle}}}{{else}}{{t 'app.placeholdernewarticle'}}{{/if}}</h4>
+            <h4 class="article-title">
+                {{#if displayTitle}}
+                    {{{displayTitle}}}
+                {{else}}
+                    {{title}}
+                {{/if}}
+            </h4>
             <div class="article-body">{{{body}}}</div>
 
         </div>

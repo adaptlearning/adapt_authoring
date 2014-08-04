@@ -236,19 +236,19 @@ a.open-context-contentObject{color:white}
 .component-right{position:relative;width:48%;float:right}
 .page-components{margin:20px 0px}
 
-.editing-overlay-component-select-body{border-bottom:1px solid #ccc}
+.editing-overlay-component-select-body{border-bottom:1px solid #b7caed;background-color:#f3f3f3}
 .editing-overlay-component-select-body-inner{padding:30px}
-.editing-overlay-component-item{position:relative;overflow:hidden;border-bottom:1px solid #ccc}
-.editing-overlay-component-option{position:relative;z-index:10;border:none;display:block;width:100%;padding:0px;text-align:left;background-color:#e2e2e2;transition:background-color .2s}.editing-overlay-component-option:hover{background-color:#aaa}
+.editing-overlay-component-item{position:relative;overflow:hidden;border-bottom:1px solid #b7caed}
+.editing-overlay-component-option{position:relative;z-index:10;border:none;display:block;width:100%;padding:0px;text-align:left;background-color:#e8e8e8;transition:background-color .2s}.editing-overlay-component-option:hover{background-color:#aaa}
 .editing-overlay-component-option.selected{background-color:#999}
 .editing-overlay-component-option-inner{padding:10px 30px}
 .editing-overlay-component-layout{position:absolute;z-index:5;left:0px;top:0px;height:100%}
-.editing-overlay-component-layout-option{border:none;border-right:1px solid #ccc;padding:0px 10px;float:left;background-color:#777;color:#fff;transition:background-color .2s}.editing-overlay-component-layout-option:hover{background-color:#444}
+.editing-overlay-component-layout-option{border:none;border-right:1px solid #ccc;padding:0px 10px;float:left;background-color:#fff;color:#3e4960;transition:background-color .2s}.editing-overlay-component-layout-option:hover{background-color:#444}
 .editing-overlay-component-layout-option.selected{background-color:#111}
 
 
 .editing-overlay-panel-collapsed{display:none}
-.editing-overlay-panel-title{display:block;background-color:#fff;border-bottom:1px solid #454545}
+.editing-overlay-panel-title{display:block;background-color:#fff;color:#3e4960;border-bottom:1px solid #454545}
 .editing-overlay-panel-title-inner{padding:30px}
 .editing-overlay-panel-content{border-bottom:1px solid #454545}
 .editing-overlay-panel-content-inner{padding:30px}
@@ -341,7 +341,7 @@ button{border:none;background:none;padding:10px 12px;font-size:13px}button:hover
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .editor-item-settings a.open-context-icon{text-decoration:none;color:#3e4960;transition:all 0.3s}
 .editor-item-settings a:hover{color:#15a4fa}
-.editor-item-settings .editor-delete-page-element{color:#de6262}.editor-item-settings .editor-delete-page-element:hover{color:#d53838}
+.editor-item-settings .editor-delete-page-element{color:#de6262;transition:all 0.3s}.editor-item-settings .editor-delete-page-element:hover{color:#d53838}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 body{font-family:'Titillium Web',sans-serif;font-size:13px;font-weight:200}
@@ -377,6 +377,10 @@ body{background-color:#e9f0fa}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .editor-view .paste-zone{background-color:#ffa08d;border:1px solid #ff765a;border:1px solid #ff765a}
+.editing-overlay-component-option{background-color:#e8e8e8;transition:background-color .2s}.editing-overlay-component-option:hover{background-color:#cfcfcf}
+.editing-overlay-component-option.selected{background-color:#b5b5b5}
+.editing-overlay-component-layout-option{border:none;border-right:1px solid #b7caed;padding:0px 10px;float:left;background-color:#fff;color:#3e4960;transition:all 0.2s}.editing-overlay-component-layout-option:hover{color:#fff;background-color:#79cbfc}
+.editing-overlay-component-layout-option.selected{color:#fff;background-color:#15a4fa}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .project-list-item{background-color:#fff}.project-list-item.selected{color:#fff;background-color:#15a4fa}.project-list-item.selected .projects-details-label{color:#fff}

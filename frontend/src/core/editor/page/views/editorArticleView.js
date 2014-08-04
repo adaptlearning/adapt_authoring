@@ -96,7 +96,7 @@ define(function(require){
       var newPageBlockModel = new EditorBlockModel();
 
       newPageBlockModel.save({
-        title: '',
+        title: 'Block title',
         displayTitle: '',
         body: '',
         _parentId: _this.model.get('_id'),

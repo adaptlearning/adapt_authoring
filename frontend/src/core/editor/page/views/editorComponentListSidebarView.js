@@ -28,7 +28,7 @@ define(function(require) {
             var newComponentModel = new EditorComponentModel();
 
             newComponentModel.save({
-              title: '',
+              title: 'Component title',
               displayTitle: '',
               body: '',
               _parentId: this.model.get('_parentId'),
@@ -66,7 +66,7 @@ define(function(require) {
             var newComponentModel = new EditorComponentModel();
 
             newComponentModel.save({
-              title: '',
+              title: 'Component title',
               displayTitle: '',
               body: '',
               _parentId: this.model.get('_parentId'),

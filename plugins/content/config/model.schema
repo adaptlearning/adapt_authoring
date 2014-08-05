@@ -9,6 +9,10 @@
     "_enabledExtensions": {
       "type":"object"
     },
+    "_theme": {
+      "type": "objectid",
+      "editorOnly": true
+    },
     "_courseId": {
       "type": "objectid",
       "required": true
@@ -26,7 +30,7 @@
       "required" : true,
       "_showEasing" : {
         "type" : "string",
-        "default" : ""        
+        "default" : ""
       },
       "_hideEasing" : {
         "type": "string",

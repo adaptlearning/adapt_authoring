@@ -96,10 +96,22 @@ function initialize () {
         return res.json({ success: false, message: 'theme param should be an object id' });
       }
 
-      // @TODO - implement theme disable
-      res.statusCode = 200;
-      res.json({success: true});
-      return res.end();
+      // remove current theme from course
+      database.getDatabase(function (err, db) {
+        if (err) {
+          return next(err);
+        }
+
+        // update the course config object
+        db.update('config', { _courseId: courseId }, { _theme: null }, function (err) {
+          if (err) {
+            return next(err);
+          }
+          res.statusCode = 200;
+          res.json({success: true});
+          return res.end();
+        });
+      });
     });
 
     // enable a theme
@@ -113,9 +125,22 @@ function initialize () {
         return res.json({ success: false, message: 'theme param should be a object id' });
       }
 
-      res.statusCode = 200;
-      res.json({success: true});
-      return res.end();
+      // add selected theme to course config
+      database.getDatabase(function (err, db) {
+        if (err) {
+          return next(err);
+        }
+
+        // update the course config object
+        db.update('config', { _courseId: courseId }, { _theme: theme }, function (err) {
+          if (err) {
+            return next(err);
+          }
+          res.statusCode = 200;
+          res.json({success: true});
+          return res.end();
+        });
+      });
     });
   });
 }

@@ -3,9 +3,8 @@
 .loading{width:100%;height:100%;position:absolute;top:0;left:0;z-index:5000;text-align:center;background-color:rgba(255,255,255,0.8)}.no-opacity .loading{background-image:url('assets/transparency-light.png')}
 .loading .loading-image{width:100%;height:100px;position:absolute;top:50%;margin-top:-50px;background-image:url(assets/ajax-loader.gif);background-repeat:no-repeat;background-position:center}
 
-.context-menu{background-color:#293141;color:#fff}.context-menu .context-menu-pin{position:absolute;top:0px;left:-8px;width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:8px solid #293141}
-.context-menu .context-menu-item .context-menu-item-open{display:block;padding:4px 6px;text-decoration:none;color:#fff}.context-menu .context-menu-item .context-menu-item-open:hover{background-color:#151922}
-.context-menu .context-menu-item h5{color:#fff}
+.context-menu{background-color:#293141;color:#fff}.context-menu .context-menu-pin{position:absolute;top:0px;left:-8px;width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:8px solid #151922}
+.context-menu .context-menu-item{border-left:4px solid #151922;min-width:120px}.context-menu .context-menu-item .context-menu-item-open{display:block;padding:8px 10px;text-decoration:none;color:#9cabc4;transition:all 0.3s}.context-menu .context-menu-item .context-menu-item-open:hover{color:#fff;background-color:#151922}
 a.open-context-icon{color:#fff}
 
 form label{display:block;font-weight:bold;font-size:13px;margin-bottom:4px}
@@ -278,7 +277,7 @@ a.open-context-contentObject{color:white}
 .notify .notify-popup-done{display:inline-block}
 .notify .notify-shadow{display:none;position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:549}
 
-.notify .notify-popup{background-color:#454545;color:#fff}.notify .notify-popup a{outline:none;text-decoration:none}
+.notify .notify-popup{background-color:#293141;color:#fff}.notify .notify-popup a{outline:none;text-decoration:none}
 .notify .notify-popup h5{font-size:24px;color:#fff}
 .notify .notify-type-prompt .notify-popup-inner,.notify .notify-type-alert .notify-popup-inner{padding-top:30px 30px 30px 30px}
 .notify .notify-popup-component-select{height:400px;overflow-y:scroll}
@@ -296,7 +295,7 @@ a.open-context-contentObject{color:white}
 .notify .notify-popup-done{padding:30px 30px 30px 30px;display:inline-block}
 .notify .notify-popup-icon-close{color:#fff}.no-touch .notify .notify-popup-icon-close:hover{color:#000}
 .notify .notify-shadow{background-color:rgba(255,255,255,0.3)}
-.notify-push{position:fixed;top:60px;right:20px;width:380px;background-color:#454545;transition:all 0.3s;opacity:0;margin-top:-30px;color:#fff;z-index:50;border:1px solid #fff;border-radius:3px}@media all and (max-width:800px){.notify-push{width:90%;max-width:380px;right:5%}}.notify-push.show{margin-top:0px;opacity:1}
+.notify-push{position:fixed;top:60px;right:20px;width:380px;background-color:#293141;transition:all 0.3s;opacity:0;margin-top:-30px;color:#fff;z-index:50;border:1px solid #fff;border-radius:3px}@media all and (max-width:800px){.notify-push{width:90%;max-width:380px;right:5%}}.notify-push.show{margin-top:0px;opacity:1}
 .notify-push-inner{padding:30px 0px 30px 30px;margin-right:78px;cursor:pointer}
 .notify-push-close{display:inline-block;text-decoration:none;position:absolute;right:30px;top:50%;margin-top:-12px}.notify-push-close .icon{color:#fff}.no-touch .notify-push-close .icon:hover{color:#000}
 

@@ -24,6 +24,16 @@
 
 .editor-menu-item {
     background-color: #fff;
+    transition:box-shadow 0.3s;
+    box-shadow: 0px 0px 3pt 2pt transparent;
+    &:hover {
+        box-shadow: 0px 0px 3px 3px #e0e0e0;
+        cursor: pointer;
+        .project-settings {
+            top:0%;
+            opacity:1;
+        }
+    }
     
     .editor-menu-item-inner {
        border:1px solid #b7caed; 

@@ -1,36 +1,53 @@
 <div class="course-edit">
   <div class="editing-overlay-panel">
+
     <a href="#" class="editing-overlay-panel-title active">
       <div class="editing-overlay-panel-title-inner">
         <h2>{{t 'app.settingsgeneral'}}</h2>
       </div>
     </a>
+
     <div class="editing-overlay-panel-content">
-      <div class="editing-overlay-panel-content-inner">
-        <form class="forms">
-          <label for="projectDetailTitle">{{t 'app.projecttitle'}} <span class="req">*</span> <span id="titleErrorMessage" class="error"></span>
-            <input type="text" class="width-30" id="projectDetailTitle" value="{{ title }}" autocomplete="off">
-          </label>
-          <label for="projectDetailDescription">{{t 'app.projectdescription'}}
-            <textarea class="text-editor form-control" id="projectDetailDescription" placeholder="Placeholder">{{body}}</textarea>
-          </label>
-          <ul class="forms-list">
-            <li>
-              <input type="radio" name="visibility" id="visibility-1" value="1">
-              <label for="visibility-1">Only visible to me</label>
-            </li>
-            <li>
-              <input type="radio" name="visibility" id="visibility-2" value="2">
-              <label for="visibility-2">Allow my colleagues to view and edit this</label>
-            </li>
-            <li>
-              <input type="radio" name="visibility" id="visibility-3" value="3">
-              <label for="visibility-2">Allow anyone to view this</label>
-            </li>
-          </ul>
-        </form>
-      </div>
+        <div class="editing-overlay-panel-content-inner">
+            <form class="forms">
+
+                <div class="form-group">
+                    <label for="projectDetailTitle">{{t 'app.projecttitle'}} 
+                        <span class="req">*</span> 
+                        <span id="titleErrorMessage" class="error"></span>
+                    </label>
+                    <input type="text" class="width-30" id="projectDetailTitle" value="{{ title }}" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="projectDetailDescription">{{t 'app.projectdescription'}}</label>
+                    <textarea class="text-editor form-control" id="projectDetailDescription" placeholder="Placeholder">{{body}}</textarea>
+                </div>
+            
+            
+                <ul class="form-list">
+
+                    <li>
+                        <input type="radio" name="visibility" id="visibility-1" value="1">
+                        <label for="visibility-1">Only visible to me</label>
+                    </li>
+
+                    <li>
+                        <input type="radio" name="visibility" id="visibility-2" value="2">
+                        <label for="visibility-2">Allow my colleagues to view and edit this</label>
+                    </li>
+
+                    <li>
+                        <input type="radio" name="visibility" id="visibility-3" value="3">
+                        <label for="visibility-3">Allow anyone to view this</label>
+                    </li>
+
+                </ul>
+
+            </form>
+        </div>
     </div>
+
     {{#if _id}}
     <div class="editing-overlay-panel">
         <a href="#" class="editing-overlay-panel-title">
@@ -43,4 +60,5 @@
         </div>
     </div>
     {{/if}}
+
 </div>

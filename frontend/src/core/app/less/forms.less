@@ -2,10 +2,13 @@ form label {
     display:block;
     font-weight:bold;
     font-size:13px;
+    margin-bottom:4px;
 }
 
 .form-group {
     margin-bottom:20px;
+    padding-bottom:20px;
+    border-bottom:1px solid #e3e3e3;
 }
 
 input[type="text"], 
@@ -29,5 +32,15 @@ select[multiple="multiple"] {
         outline:none;
         border-color:#666;
         box-shadow:none;
+    }
+}
+
+.form-list {
+    li {
+        margin-bottom:20px;
+        list-style: none;
+        input, label {
+            display:inline-block;
+        }
     }
 }

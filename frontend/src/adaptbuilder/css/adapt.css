@@ -10,9 +10,10 @@
 .context-menu .context-menu-item h5{color:#fff;font-size:16px;font-weight:normal}
 a.open-context-icon{color:#fff}
 
-form label{display:block;font-weight:bold;font-size:13px}
-.form-group{margin-bottom:20px}
+form label{display:block;font-weight:bold;font-size:13px;margin-bottom:4px}
+.form-group{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #e3e3e3}
 input[type="text"],input[type="password"],input[type="email"],input[type="url"],input[type="phone"],input[type="tel"],input[type="number"],input[type="datetime"],input[type="date"],input[type="search"],input[type="datetime-local"],textarea,select[multiple="multiple"]{padding:10px 10px;border-radius:2px;border:solid 1px #ccc;font-size:13px}input[type="text"]:focus,input[type="password"]:focus,input[type="email"]:focus,input[type="url"]:focus,input[type="phone"]:focus,input[type="tel"]:focus,input[type="number"]:focus,input[type="datetime"]:focus,input[type="date"]:focus,input[type="search"]:focus,input[type="datetime-local"]:focus,textarea:focus,select[multiple="multiple"]:focus{outline:none;border-color:#666;box-shadow:none}
+.form-list li{margin-bottom:20px;list-style:none}.form-list li input,.form-list li label{display:inline-block}
 
 .display-none{display:none}
 .visibility-hidden{visibility:hidden}
@@ -221,7 +222,7 @@ a.open-context-contentObject{color:white}
 .editor-menu-layer-button i{margin-right:8px}
 .editor-menu-layer-actions{width:100%;position:absolute;bottom:0px;z-index:99;padding-top:30px;padding-right:30px;margin-left:-15px}
 
-.article{position:relative;border-radius:3px;overflow:hidden;background-color:#fff;border:1px solid #b7caed;margin-bottom:20px;cursor:pointer}.article-inner{padding:30px 0px 10px}
+.article{position:relative;border-radius:3px;background-color:#fff;border:1px solid #b7caed;margin-bottom:20px;cursor:pointer}.article-inner{padding:30px 0px 10px}
 .article-edit-panel{position:absolute;right:0;top:0}
 .article-blocks{margin:20px 0px}
 .article .add-control{text-align:right;padding-right:10px}
@@ -300,7 +301,7 @@ a.open-context-contentObject{color:white}
 .notify-push-inner{padding:30px 0px 30px 30px;margin-right:78px;cursor:pointer}
 .notify-push-close{display:inline-block;text-decoration:none;position:absolute;right:30px;top:50%;margin-top:-12px}.notify-push-close .icon{color:#fff}.no-touch .notify-push-close .icon:hover{color:#000}
 
-.project-list-item{overflow:hidden;border-radius:3px;background-color:#fff;transition:background-color .3s}.project-list-item:hover{cursor:pointer}.project-list-item:hover .project-settings{top:0%;opacity:1}
+.project-list-item{overflow:hidden;border-radius:3px;background-color:#fff;transition:background-color .3s;transition:box-shadow .3s;box-shadow:0px 0px 3pt 2pt transparent}.project-list-item:hover{box-shadow:0px 0px 3px 3px #e0e0e0;cursor:pointer}.project-list-item:hover .project-settings{top:0%;opacity:1}
 .project-list-item.selected{color:#fff;background-color:#333c4e}.project-list-item.selected .project-settings{top:0%;opacity:1}
 .project-list-item.listing{width:700px}
 .project-header-inner{position:relative}
@@ -371,7 +372,8 @@ body{background-color:#e9f0fa}
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .editor-menu-layer-button{color:#9cabc4;background-color:#333c4e;transition:all 0.3s}.editor-menu-layer-button:hover{color:#fff;background-color:#293141}
 .editor-menu-item-settings a{color:#3e4960;transition:all 0.3s}.editor-menu-item-settings a:hover{color:#52617f}
-.editor-menu-item{background-color:#fff}.editor-menu-item .editor-menu-item-inner{border:1px solid #b7caed}
+.editor-menu-item{background-color:#fff;transition:box-shadow .3s;box-shadow:0px 0px 3pt 2pt transparent}.editor-menu-item:hover{box-shadow:0px 0px 3px 3px #e0e0e0;cursor:pointer}.editor-menu-item:hover .project-settings{top:0%;opacity:1}
+.editor-menu-item .editor-menu-item-inner{border:1px solid #b7caed}
 .editor-menu-item.expanded .editor-menu-item-inner{color:#fff;background-color:#15a4fa;transition:background-color 0;border:1px solid #15a4fa}
 .editor-menu-item.expanded.content-type-menu .editor-menu-item-pin{border-left:10px solid #15a4fa}
 .editor-menu-item.expanded .editor-menu-item-settings a{color:#fff;transition:all 0.3s}.editor-menu-item.expanded .editor-menu-item-settings a:hover{color:#e6e6e6}
@@ -391,6 +393,7 @@ body{background-color:#e9f0fa}
 .editing-overlay-component-option.selected{background-color:#b5b5b5}
 .editing-overlay-component-layout-option{border:none;border-right:1px solid #b7caed;padding:0px 10px;float:left;background-color:#fff;color:#3e4960;transition:all 0.2s}.editing-overlay-component-layout-option:hover{color:#fff;background-color:#79cbfc}
 .editing-overlay-component-layout-option.selected{color:#fff;background-color:#15a4fa}
+.article,.block,.component{transition:box-shadow .3s;box-shadow:0px 0px 3pt 2pt transparent}.article.hovering,.block.hovering,.component.hovering{box-shadow:0px 0px 3px 3px #e0e0e0;position:relative;z-index:10}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .project-list-item{border:1px solid #b7caed;background-color:#fff}.project-list-item.selected{color:#fff;background-color:#15a4fa;border:1px solid #15a4fa}.project-list-item.selected .projects-details-label{color:#fff}

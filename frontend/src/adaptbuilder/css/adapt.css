@@ -13,7 +13,8 @@ a.open-context-icon{color:#fff}
 form label{display:block;font-weight:bold;font-size:13px;margin-bottom:4px}
 .form-group{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #e3e3e3}
 input[type="text"],input[type="password"],input[type="email"],input[type="url"],input[type="phone"],input[type="tel"],input[type="number"],input[type="datetime"],input[type="date"],input[type="search"],input[type="datetime-local"],textarea,select[multiple="multiple"]{padding:10px 10px;border-radius:2px;border:solid 1px #ccc;font-size:13px}input[type="text"]:focus,input[type="password"]:focus,input[type="email"]:focus,input[type="url"]:focus,input[type="phone"]:focus,input[type="tel"]:focus,input[type="number"]:focus,input[type="datetime"]:focus,input[type="date"]:focus,input[type="search"]:focus,input[type="datetime-local"]:focus,textarea:focus,select[multiple="multiple"]:focus{outline:none;border-color:#666;box-shadow:none}
-.form-list li{margin-bottom:20px;list-style:none}.form-list li input,.form-list li label{display:inline-block}
+.form-list li{margin-bottom:20px;list-style:none}.form-list li input,.form-list li label{margin-bottom:0px;display:inline-block}
+.form-list li label{margin-left:10px}
 
 .display-none{display:none}
 .visibility-hidden{visibility:hidden}
@@ -330,6 +331,9 @@ a.open-context-contentObject{color:white}
 .login{max-width:600px;margin:0 auto;font-size:14px}.login .col-1-2{float:left;width:50%;text-align:right;border-right:1px solid #454545}.login .col-1-2 .login-new-user-inner{padding-right:30px}
 .login .col-2-2{float:right;width:49%;text-align:left}.login .col-2-2 .login-returning-user-inner{padding-left:30px}
 .login .login-form-row{margin-bottom:20px}
+.login-already-logged-in{text-align:center}
+
+.logout-inner{padding:30px}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 button{border:none;background:none;padding:10px 12px;font-size:13px}button:hover,button:focus{outline:none}
@@ -393,7 +397,8 @@ body{background-color:#e9f0fa}
 .editing-overlay-component-option.selected{background-color:#b5b5b5}
 .editing-overlay-component-layout-option{border:none;border-right:1px solid #b7caed;padding:0px 10px;float:left;background-color:#fff;color:#3e4960;transition:all 0.2s}.editing-overlay-component-layout-option:hover{color:#fff;background-color:#79cbfc}
 .editing-overlay-component-layout-option.selected{color:#fff;background-color:#15a4fa}
-.article,.block,.component{transition:box-shadow .3s;box-shadow:0px 0px 3pt 2pt transparent}.article.hovering,.block.hovering,.component.hovering{box-shadow:0px 0px 3px 3px #e0e0e0;position:relative;z-index:10}
+.article,.block,.component{transition:box-shadow .3s;box-shadow:0px 0px 3pt 2pt transparent}.article.hovering,.block.hovering,.component.hovering{box-shadow:0px 0px 3px 3px #e0e0e0;position:relative}
+.block{border-left:1px solid transparent;border-right:1px solid transparent}.block.hovering{border-left:1px solid #b7caed;border-right:1px solid #b7caed}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .project-list-item{border:1px solid #b7caed;background-color:#fff}.project-list-item.selected{color:#fff;background-color:#15a4fa;border:1px solid #15a4fa}.project-list-item.selected .projects-details-label{color:#fff}

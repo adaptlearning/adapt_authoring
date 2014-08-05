@@ -47,6 +47,14 @@
     &.hovering {
         box-shadow: 0px 0px 3px 3px #e0e0e0;
         position:relative;
-        z-index:10;
+    }
+}
+
+.block {
+    border-left:1px solid transparent;
+    border-right:1px solid transparent;
+    &.hovering {
+        border-left:1px solid darken(#e0e8f7, 10%);
+        border-right:1px solid darken(#e0e8f7, 10%);
     }
 }

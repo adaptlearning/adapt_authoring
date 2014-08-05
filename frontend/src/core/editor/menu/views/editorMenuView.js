@@ -50,33 +50,31 @@ define(function(require){
         connectWith: ".editor-menu-layer-inner",
 
         stop: function(event,ui) {
-          var element = $(ui.item[0]);
+            var $draggedElement = ui.item;
 
-          var id = element[0].firstChild.dataset.id,
-              sortOrder = ui.item.index() - 1,
-              parentId = ui.item.parent()[0].parentElement.dataset.parentid;
+            var id = $('.editor-menu-item-inner', $draggedElement).attr('data-id');
+            var sortOrder = $draggedElement.index('.editor-menu-item');
+            var parentId = $draggedElement.parent('.editor-menu-layer').attr('data-parentid');
 
-          element.children()[0].children[0].childNodes[3].style.cursor = 'move';
+            console.log(sortOrder);
 
-          $.ajax({
-            type: 'PUT',
-            url:'/api/content/contentobject/' + id,
-            data: {_sortOrder: sortOrder, _parentId: parentId},
-            complete:function(xhr, status) {
-              if (xhr.status == '200' && status == 'success') {
-                // Synchronise the contentObjects collection
-                Origin.editor.data.contentObjects.fetch({reset: true});
+            $.ajax({
+                type: 'PUT',
+                url:'/api/content/contentobject/' + id,
+                data: {_sortOrder: sortOrder, _parentId: parentId},
+                complete:function(xhr, status) {
+                    if (xhr.status == '200' && status == 'success') {
+                        // Synchronise the contentObjects collection
+                        Origin.editor.data.contentObjects.fetch({reset: true});
 
-                // Trigger page refresh
-                Origin.trigger('editorView:refreshPageList');
-              }
-            }
-          });
+                        // Trigger page refresh
+                        Origin.trigger('editorView:refreshPageList');
+                    }
+                }
+            });
+
         },
         over: function(event, ui) {
-          if (ui.item.hasClass('content-type-menu')) {
-            ui.item.children()[0].children[0].childNodes[3].style.cursor = 'no-drop';
-          }
         },
         receive: function(event, ui) {
           if (ui.item.hasClass('content-type-menu')) {

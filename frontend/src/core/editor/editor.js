@@ -93,6 +93,18 @@ define(function(require) {
         });
         break;
 
+      case 'theme':
+        var configModel = new EditorConfigModel({_id: location});
+
+        configModel.fetch({
+          success: function() {
+            Origin.trigger('location:title:update', {title: 'Edit theme'});
+            Origin.sidebar.addView(new EditorConfigEditSidebarView().$el);
+            Origin.editingOverlay.addView(new EditorConfigEditView({model: configModel}).$el);
+          }
+        });
+        break;
+
       case 'extensions':
         Origin.trigger('location:title:update', {title: 'Manage extensions'});
 

@@ -3,6 +3,8 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
+  var ThemeCollection = require('editorTheme/collections/editorThemeCollection');
+  var ThemeView = require('editorTheme/views/editorThemeView');
 
   var EditorThemeEditView = EditorOriginView.extend({
     
@@ -25,12 +27,31 @@ define(function(require) {
     },
 
     preRender: function() {
+      this.collection = new ThemeCollection();
+      this.collection.fetch();
+
+      this.listenTo(this.collection, 'sync', this.addThemeViews);
+
       this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
       this.listenTo(Origin, 'editorThemeEditSidebar:views:save', this.saveData);
 
     },
 
     postRender: function() {     
+    },
+
+    addThemeViews: function() {
+      this.renderThemeViews(this.collection.models);
+    },
+
+    renderThemeViews: function(themes) {
+      // this.$('.dashboard-projects').empty();
+
+      _.each(themes, function(theme) {
+        this.$('.theme-list').append(new ThemeView({model: theme}).$el);
+      }, this);
+
+      // this.evaluateProjectCount(projects);
     },
 
     cancel: function(event) {

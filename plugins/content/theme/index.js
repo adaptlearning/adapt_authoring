@@ -120,7 +120,7 @@ function initialize () {
       var theme = req.body.theme;
       var courseId = req.params.courseid;
 
-      if (!themes || 'string' !== typeof theme) {
+      if (!theme || 'string' !== typeof theme) {
         res.statusCode = 404;
         return res.json({ success: false, message: 'theme param should be a object id' });
       }

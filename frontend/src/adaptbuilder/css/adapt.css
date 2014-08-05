@@ -394,6 +394,7 @@ body{background-color:#e9f0fa}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .project-list-item{border:1px solid #b7caed;background-color:#fff}.project-list-item.selected{color:#fff;background-color:#15a4fa;border:1px solid #15a4fa}.project-list-item.selected .projects-details-label{color:#fff}
+.project-list-item .open-context-icon{color:#3e4960;transition:color 0.3s}.project-list-item .open-context-icon:hover{color:#15a4fa}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .sidebar{background-color:#333c4e;color:#9cabc4}.sidebar a{transition:all 0.3s;color:#fff}.sidebar a:hover,.sidebar a:focus{color:#e6e6e6}

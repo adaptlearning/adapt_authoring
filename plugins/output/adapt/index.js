@@ -554,10 +554,9 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
         // var url = configuration.baseUrl + '/preview/' +  tenantId + '/' + courseId + '/main.html';
         var url = configuration.baseUrl + '/preview/' + tenantId + '/' + courseId + '/main.html';
         var pageres = new Pageres({
-          cookies: ['screenshottest=yes; Path=/; Domain=localhost'], 
           delay: 2,
           crop: true})
-          .src(url, ['350x150', '520x780', '760x570', '1024x768'])
+          .src(url, ['520x780', '760x570', '1024x768'])
           .dest(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId));
           //image-size
         pageres.run(function (err) {

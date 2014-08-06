@@ -50,14 +50,15 @@
     "mongoose": "3.8.x",
     "ncp": "~0.5.1",
     "node-gyp": "~0.12.1",
+    "pageres": "~0.3.0",
     "passport": "~0.1.17",
+    "phantom": "^0.6.5",
     "rimraf": "~2.2.5",
-    "socket.io": "^1.0.6",
     "semver": "^2.3.1",
+    "socket.io": "^1.0.6",
     "underscore": "~1.5.2",
     "validator": "3.3.0",
-    "winston": "~0.7.2",
-    "pageres": "~0.3.0"
+    "winston": "~0.7.2"
   },
   "main": "index",
   "engines": {

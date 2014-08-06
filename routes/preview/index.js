@@ -16,6 +16,7 @@ server.get('/preview/:tenant/:course/*', function (req, res, next) {
       
   var currentUser = usermanager.getCurrentUser();
 
+
    // TODO -- Cimplement security here
   var isServerRequest = true;  
   

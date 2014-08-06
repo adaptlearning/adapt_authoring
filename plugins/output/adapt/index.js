@@ -332,6 +332,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           }
         });
       },
+      
       function(callback) {
 
         fs.exists(path.join(configuration.serverRoot, TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR, 'index.html'), function (exists) {
@@ -546,28 +547,77 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
         );
       },
 
-      //should create a cookie to allow access to main.html, but the cookie isn't read until after the 
-      //screenshots are taken.
       function(callback){
-        res.cookie("screenshots", "value", {expires: new Date(Date.now() + (20*1000))});
-        var Pageres = require('pageres');
-        // var url = configuration.baseUrl + '/preview/' +  tenantId + '/' + courseId + '/main.html';
-        var url = configuration.baseUrl + '/preview/' + tenantId + '/' + courseId + '/main.html';
-        var pageres = new Pageres({
-          delay: 2,
-          crop: true})
-          .src(url, ['520x780', '760x570', '1024x768'])
-          .dest(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId));
-          //image-size
-        pageres.run(function (err) {
-            if (err) {
-                throw err;
-            }
-            console.log('done');
-            callback(null, 'Previews created');
-        });
-      
+        var phantom=require('phantom');
+        phantom.create('--load-images=no', 
+          '--local-to-remote-url-access=yes', 
+          function(ph){
+          var configSmall = outputJson['config'].screenSize.small;
+          var configMedium = outputJson['config'].screenSize.medium;
+          var configLarge = outputJson['config'].screenSize.large;
+          ph.createPage(function(small) {
+            small.set('viewportSize', {width:configSmall,height:(configSmall*1.25)});
+            small.open("http://localhost:3000/preview/53dbb5cadf7d94d4229bedd1/53dbb60ac55485a4150f8933/main.html", function(status){
+              small.evaluate(function() {
+                var style = document.createElement('style'),
+                    text = document.createTextNode('body { background: #fff }');
+                style.setAttribute('type', 'text/css');
+                style.appendChild(text);
+                document.head.insertBefore(style, document.head.firstChild);
+              });
+              setTimeout(function() {
+                small.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "small.png"), function(){
+                  console.log("page rendered");
+                });
+              }, 4000);
+            });
+          });
+
+          ph.createPage(function(medium){
+            medium.set('viewportSize', {width:configMedium,height:configMedium/1.25});
+            medium.set('zoomFactor', 0.5);
+            medium.set("clipRect", { left: 200, top: 100, width: 300, height: 222 });
+            medium.open("http://localhost:3000/preview/53dbb5cadf7d94d4229bedd1/53dbb60ac55485a4150f8933/main.html", function(status){
+              medium.evaluate(function() {
+                var style = document.createElement('style'),
+                    text = document.createTextNode('body { background: #fff }');
+                style.setAttribute('type', 'text/css');
+                style.appendChild(text);
+                document.head.insertBefore(style, document.head.firstChild);
+              });
+              setTimeout(function() {
+                medium.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "medium.png"), function(){
+                  console.log("page rendered");
+                });
+              }, 4000);
+            });
+          });
+
+          ph.createPage(function(large){
+            large.set('viewportSize', {width:configLarge,height:configLarge/1.25});
+            large.set('zoomFactor', 0.32);
+            large.set("clipRect", { left: 350, top: 0, width: 300, height: 222 });
+            large.open("http://localhost:3000/preview/53dbb5cadf7d94d4229bedd1/53dbb60ac55485a4150f8933/main.html", function(status){
+              large.evaluate(function() {
+                var style = document.createElement('style'),
+                    text = document.createTextNode('body { background: #fff }');
+                style.setAttribute('type', 'text/css');
+                style.appendChild(text);
+                document.head.insertBefore(style, document.head.firstChild);
+              });
+              setTimeout(function() {
+                large.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "large.png"), function(){
+                  console.log("page rendered");
+                  
+                });
+              }, 4000);
+            });
+          });
+        });  
+        callback(null, 'screenshots created');    
       },
+
+      
       
     ],
     // optional callback

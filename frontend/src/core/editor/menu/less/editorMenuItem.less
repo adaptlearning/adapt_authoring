@@ -1,36 +1,36 @@
-.editor-menu-inner {
-    /*height: 700px;*/
-}
-
 a.open-context-contentObject {
     color: white;
 }
 
 .editor-menu-item {
-    display: block;
     position: relative;
-    width: 200px;
-    padding-left: 30px;
-    margin: 20px auto;
+    display: block;
+    margin: 20px;
 
-    background-color: #f2f2f2;
-    border: 1px solid #999;
-    cursor: pointer;
-
-    transition:background-color 0.3s;
+    &-inner {
+        overflow:hidden;
+        border-radius:3px;
+        position: relative;
+        background-color: #fff;
+        cursor: pointer;
+        padding: 40px 20px 20px;
+        transition:background-color 0.3s;
+        &:hover {
+            .editor-menu-item-settings {
+                top:0;
+                opacity:1;
+            }
+        }
+    }
 
     &-title {
-        float:right;
-        width:124px;
-        padding:5px;
+        text-align:center;
     }
 
     &-icon {
-        float: left;
-        margin-left: 10px;
-        margin:10px;
+        text-align:center;
         font-size:24px;
-        width:24px;
+        margin-bottom:10px;
         &.page {
         }
 
@@ -38,57 +38,53 @@ a.open-context-contentObject {
         }
     }
 
-    &:hover {
-        background-color:#e2e2e2;
-    }
-
 	&.expanded {
-        border:1px solid lightblue;
-        background-color: lightblue;
+        transition:background-color 0s;
 
-        &.content-type-menu:after { 
-            left: 100%; 
-            top: 50%; 
-            border: solid transparent;
-            content: " "; 
-            height: 0; 
-            width: 0; 
-            position: absolute; 
-            pointer-events: none; 
-            border-color: rgba(136, 183, 213, 0); 
-            border-left-color: lightblue;  
-            border-width: 12px; 
-            margin-top: -12px; 
+        &.content-type-menu .editor-menu-item-pin {
+            display:block;
         }
 	}
 
 	&.selected {
-		border:1px solid lightblue;
-        background-color: lightblue;
+        transition:background-color 0s;
 
-        &.content-type-menu:after { 
-            left: 100%; 
-            top: 50%; 
-            border: solid transparent;
-            content: " "; 
-            height: 0; 
-            width: 0; 
-            position: absolute; 
-            pointer-events: none; 
-            border-color: rgba(136, 183, 213, 0); 
-            border-left-color: lightblue; 
-            border-width: 12px; 
-            margin-top: -12px; 
+        .editor-menu-item-settings {
+            top:0;
+            opacity:1;
+        }
+
+        &.content-type-menu .editor-menu-item-pin {
+            display:block;
         }
 	}
 
-    .settings {
-        height: 20px;
-    }
-
     .handle {
-        height: 50px;
         cursor: move;
-
     }
+}
+
+.editor-menu-item-settings {
+    position: absolute;
+    top: 0%;
+    left: 0px;
+    font-size: 16px;
+    width:100%;
+    opacity:1;
+    transition:all 0.3s;
+    &-inner {
+        padding:6px;
+    }
+}
+
+.editor-menu-item-pin {
+    display:none;
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    margin-top: -5px;
+    width: 0; 
+    height: 0; 
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent; 
 }

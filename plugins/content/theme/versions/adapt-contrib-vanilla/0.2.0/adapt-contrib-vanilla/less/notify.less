@@ -1,0 +1,133 @@
+// Notify styling
+// ==============
+
+.notify {
+
+    .notify-popup {
+        background-color: @notify-color;
+        color: @notify-text-color;
+
+        a {
+          text-decoration: none;
+        }
+    }
+
+    .notify-type-prompt, .notify-type-alert {
+        .notify-popup-inner {
+            padding-top:@notify-popup-padding;
+        }
+    }
+
+    .notify-popup-icon {
+        .icon {
+            font-size:60px;
+            width:60px;
+            height:60px;
+            color: @notify-icon-color;
+        }
+    }
+
+    .notify-popup-buttons {
+        text-align:center;
+        margin-top:10px;
+    }
+
+    .notify-popup-button {
+        background-color:@notify-button-color;
+        color:@notify-button-text-color;
+        padding:@button-padding;
+        display:inline-block;
+        .no-touch &:hover {
+            background-color:darken(@notify-button-hover-color, 10%);
+            color:@notify-button-text-hover-color;
+        }
+    }
+
+    .notify-popup-content {
+        .responsive-layout
+        .ie8 & {
+            max-width: @ie8-max-width;
+            margin:0 auto;
+        }
+    }
+
+    .notify-popup-content-inner {
+        padding-left:80px;
+        @media all and (max-width:(@device-width-medium - 1px)) {
+            padding-left:0px;
+        }
+    }
+
+    .notify-popup-inner {
+        padding: @notify-popup-padding;
+    }
+
+    .notify-popup-toolbar {
+        text-align:right;
+    }
+
+    .notify-popup-done {
+        padding:@navigation-padding;
+        display:inline-block;
+    }
+
+    .notify-popup-icon-close {
+        color: @notify-icon-color;
+        .no-touch &:hover {
+            color:@notify-icon-hover-color;
+        }
+    }
+
+    .notify-shadow {
+        .no-opacity & {
+            background-image:@transparency-fallback-png;
+        }
+        background-color: @transparency;
+    }
+}
+
+.notify-push {
+    position:fixed;
+    top:(@navigation-height + 20px);
+    right:20px;
+    width:380px;
+    background-color:@notify-color;
+    transition:all 0.3s;
+    opacity:0;
+    margin-top:-30px;
+    color:#fff;
+    z-index:50;
+    border: 1px solid @notify-text-color;
+    border-radius:3px;
+    @media all and (max-width:@device-width-medium) {
+        width:90%;
+        max-width:380px;
+        top:(@navigation-height-mobile + 20px);
+        right:5%;
+    }
+    &.show {
+        margin-top:0px;
+        opacity:1;
+    }
+}
+
+.notify-push-inner {
+    padding:30px 0px 30px 30px;
+    margin-right:(30px + @icon-size*2);
+    cursor: pointer;
+}
+
+.notify-push-close {
+    display: inline-block;
+    text-decoration: none;
+    position:absolute;
+    right:30px;
+    top:50%;
+    margin-top:-(@icon-size/2);
+    .icon {
+        .no-touch &:hover {
+            color:@notify-icon-hover-color;
+        }
+        color:@notify-icon-color;
+    }
+}

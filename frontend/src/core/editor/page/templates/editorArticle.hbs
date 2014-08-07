@@ -1,13 +1,27 @@
 {{>part_editorItemSidebar}}
 
-<div class="page-article-detail unselectable">
+<div class="article-inner">
 
-    <h4 class="page-article-title">{{#if displayTitle}}{{{displayTitle}}}{{else}}{{t 'app.placeholdernewarticle'}}{{/if}}</h4>
-    <div class="page-article-body">{{{body}}}</div>
-    <div class="page-article-delete-icon"><a href="#" class="page-article-delete" title="{{ t 'app.clicktodelete'}}"><i class="fa fa-trash-o"></i></a></div>
-    <div class="page-article-blocks"></div>
+    <div class="article-detail unselectable">
+        <div class="article-detail-inner">
+
+            <h4 class="article-title">
+                {{#if displayTitle}}
+                    {{{displayTitle}}}
+                {{else}}
+                    {{title}}
+                {{/if}}
+            </h4>
+            <div class="article-body">{{{body}}}</div>
+
+        </div>
+    </div>
+
+
+    <div class="article-blocks"></div>
 
     <div class="add-control">
-        <a href="#" class="btn add-block">{{t 'app.addblock'}}</a>
+        <a href="#" class="btn btn-primary add-block">{{t 'app.addblock'}}</a>
     </div>
+
 </div>

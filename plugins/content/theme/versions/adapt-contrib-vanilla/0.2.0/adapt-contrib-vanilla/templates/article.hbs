@@ -1,0 +1,20 @@
+{{! Maintainers - Daryl Hedley}}
+{{! .block-container: Adapt will place the articles blocks inside this class}}
+<div class="article-inner block-container">
+    {{! Check if a page title exist and render it}}
+    {{#if displayTitle}}
+    <div class="article-title">
+        <h2 class="article-title-inner">
+            {{{displayTitle}}}
+        </h2>
+    </div>
+    {{/if}}
+    {{! Check if page body exists and render it}}
+    {{#if body}}
+    <div class="article-body">
+        <div class="article-body-inner">
+            {{{body}}}
+        </div>
+    </div>
+    {{/if}}
+</div>

@@ -19,6 +19,7 @@ require.config({
       editorMenu: 'core/editor/menu',
       editorCourse: 'core/editor/course',
       editorConfig: 'core/editor/config',
+      editorTheme: 'core/editor/theme',
       editorGlobal: 'core/editor/global',
       editorExtensions: 'core/editor/extensions',
       tinymce: 'core/libraries/tinymce/tinymce.min'

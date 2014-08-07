@@ -34,6 +34,9 @@ define(function(require) {
   var EditorConfigModel = require('editorConfig/models/editorConfigModel');
   var EditorConfigCollection = require('editorConfig/collections/editorConfigCollection');
 
+  var EditorThemeEditView = require('editorTheme/views/editorThemeEditView');
+  var EditorThemeEditSidebarView = require('editorTheme/views/editorThemeEditSidebarView');
+
   var EditorComponentListView = require('editorPage/views/editorComponentListView');
   var EditorComponentListSidebarView = require('editorPage/views/editorComponentListSidebarView');
 
@@ -89,6 +92,18 @@ define(function(require) {
             Origin.trigger('location:title:update', {title: 'Edit configuration'});
             Origin.sidebar.addView(new EditorConfigEditSidebarView().$el);
             Origin.editingOverlay.addView(new EditorConfigEditView({model: configModel}).$el);
+          }
+        });
+        break;
+
+      case 'theme':
+        var configModel = new EditorConfigModel({_id: location});
+
+        configModel.fetch({
+          success: function() {
+            Origin.trigger('location:title:update', {title: 'Select theme'});
+            Origin.sidebar.addView(new EditorThemeEditSidebarView().$el);
+            Origin.editingOverlay.addView(new EditorThemeEditView({model: configModel}).$el);
           }
         });
         break;

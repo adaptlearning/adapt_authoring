@@ -3,6 +3,7 @@
 /data
 /temp
 /adapt_framework
+/frontend/src/adaptbuilder/css/
 conf/config.json
 .project
 /frontend/build

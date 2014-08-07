@@ -13,17 +13,7 @@ define(function(require) {
     className: "editor-theme-edit",
 
     events: {
-      'click .editing-overlay-panel-title': 'toggleContentPanel'
-    },
 
-    toggleContentPanel: function(event) {
-      event.preventDefault();
-      if (!$(event.currentTarget).hasClass('active')) { 
-        this.$('.editing-overlay-panel-title').removeClass('active');
-        $(event.currentTarget).addClass('active')
-        this.$('.editing-overlay-panel-content').slideUp();
-        $(event.currentTarget).siblings('.editing-overlay-panel-content').slideDown();
-      }
     },
 
     preRender: function() {
@@ -34,7 +24,6 @@ define(function(require) {
 
       this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
       this.listenTo(Origin, 'editorThemeEditSidebar:views:save', this.saveData);
-
     },
 
     postRender: function() {     
@@ -45,13 +34,27 @@ define(function(require) {
     },
 
     renderThemeViews: function(themes) {
-      // this.$('.dashboard-projects').empty();
-
       _.each(themes, function(theme) {
         this.$('.theme-list').append(new ThemeView({model: theme}).$el);
       }, this);
 
-      // this.evaluateProjectCount(projects);
+      this.setSelectedTheme();
+    },
+
+    setSelectedTheme: function() {
+      var selectedTheme = this.model.get('_theme'),
+        $themes;
+
+      if (selectedTheme) {
+        $themes = $('.theme-item');
+
+        _.each($themes, function(theme) {
+          if (theme.dataset.id == selectedTheme) {
+            // This theme should be selected
+            $(theme.parentNode).addClass('selected');
+          }
+        });
+      } 
     },
 
     cancel: function(event) {
@@ -63,25 +66,20 @@ define(function(require) {
       if (event) {
         event.preventDefault();  
       }
+
+      var selectedItem = $('.theme-list-item.selected'),
+        _this = this,
+        selectedThemeId;
+
+      if (selectedItem.length == 0) {
+        alert('No theme selected');
+        return;
+      } 
+
+      selectedThemeId = selectedItem[0].childNodes[0].dataset.id
       
-      var _this = this;
-      // var extensionJson = {};
-
-      // extensionJson = this.getExtensionJson('config');
-
       _this.model.save({
-        // _defaultLanguage: this.$('.config-defaultLanguage').val(),
-        // _questionWeight: this.$('.config-questionWeight').val(),
-        // _drawer: {
-        //   _showEasing: this.$('.config-drawershoweasing').val(),
-        //   _hideEasing: this.$('.config-drawerhideeasing').val(),
-        //   _duration: this.$('.config-drawerduration').val()
-        // },
-        // _accessibility: {
-        //   _isEnabled: this.$('.config-accessibilityenabled').val(),
-        //   _shouldSupportLegacyBrowsers: this.$('.config-accessibilitylegacy').val()
-        // },
-        // _extensions: extensionJson
+        _theme: selectedThemeId
       },
       {
         error: function() {

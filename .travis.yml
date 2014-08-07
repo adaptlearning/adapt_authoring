@@ -3,4 +3,5 @@ node_js:
   - "0.10.2"
 services: mongodb
 before_install:
+  - "npm install npm -g"
   - "npm install adapt-cli -g"

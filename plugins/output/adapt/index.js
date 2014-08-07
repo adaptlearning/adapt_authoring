@@ -555,8 +555,8 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           var configSmall = outputJson['config'].screenSize.small;
           var configMedium = outputJson['config'].screenSize.medium;
           var configLarge = outputJson['config'].screenSize.large;
-          var url = "http://" + configuration.conf.serverName + ":" + configuration.conf.serverPort + "/preview/" + tenantId + "/" + courseId + "/main.html";
-          
+          var url = app.getServerURL() + "/preview/" + tenantId + "/" + courseId + "/main.html";
+
           ph.createPage(function(small) {
             small.set('viewportSize', {width:200, height:222});
             small.set('zoomFactor', 0.4);

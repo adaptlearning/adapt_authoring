@@ -1,14 +1,20 @@
 li.theme-list-item {
-  border: 1px solid;
   height: 200px;
   width: 300px;
   list-style-type: none;
-
-  &.selected {
-    background-color: lightblue;
-  }
-
+  overflow:hidden;
+  border-radius:3px;
+  background-color:#fff;
+  transition:background-color 0.3s;
+  transition:box-shadow 0.3s;
+  box-shadow: 0px 0px 3pt 2pt transparent;
+  margin: 20px;
   &:hover {
-    cursor: pointer;
+      box-shadow: 0px 0px 3px 3px #e0e0e0;
+      cursor: pointer;
+  }
+  &.selected {
+      color:#fff;
+      background-color:#333c4e;
   }
 }

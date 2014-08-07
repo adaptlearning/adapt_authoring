@@ -547,7 +547,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
         );
       },
 
-      function(callback){
+      function(callback) {
         var phantom = require('phantom');
         phantom.create('--load-images=yes', 
           '--local-to-remote-url-access=yes', 
@@ -555,14 +555,14 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           var configSmall = outputJson['config'].screenSize.small;
           var configMedium = outputJson['config'].screenSize.medium;
           var configLarge = outputJson['config'].screenSize.large;
-          var url = "http://" + configuration.conf.serverName + ":" + configuration.conf.serverPort + "/preview/" + tenantId + "/" + courseId + "/main.html"
+          var url = "http://" + configuration.conf.serverName + ":" + configuration.conf.serverPort + "/preview/" + tenantId + "/" + courseId + "/main.html";
           
           ph.createPage(function(small) {
             small.set('viewportSize', {width:200, height:222});
             small.set('zoomFactor', 0.4);
             small.set("clipRect", {left: 0, top: 0, width: 200, height: 222});
 
-            small.open(url, function(status){
+            small.open(url, function(status) {
               small.evaluate(function() { 
                 var style = document.createElement('style'),
                     text = document.createTextNode('body { background: #fff }');
@@ -579,12 +579,12 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
             });
           });
 
-          ph.createPage(function(medium){
+          ph.createPage(function(medium) {
             medium.set('viewportSize', {width:configMedium + 1, height:(configMedium + 1)/1.25});
             medium.set('zoomFactor', 0.45);
             medium.set("clipRect", {left: configMedium/3, top: 0, width: 300, height: 222});
             
-            medium.open(url, function(status){
+            medium.open(url, function(status) {
               medium.evaluate(function() { 
                 var style = document.createElement('style'),
                     text = document.createTextNode('body { background: #fff }');
@@ -601,12 +601,12 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
             });
           });
 
-          ph.createPage(function(large){
+          ph.createPage(function(large) {
             large.set('viewportSize', {width:configLarge + 1, height:(configLarge + 1)/1.25});
             large.set('zoomFactor', 0.3);
             large.set("clipRect", { left: configLarge/3 + 20, top: 0, width: 300, height: 222 });
             
-            large.open(url, function(status){
+            large.open(url, function(status) {
               large.evaluate(function() {
                 var style = document.createElement('style'),
                     text = document.createTextNode('body { background: #fff }');

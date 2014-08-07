@@ -13,11 +13,11 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'page-article editable article-draggable',
+    className: 'article editable article-draggable',
 
     events: _.extend({
       'click a.add-block'            : 'addBlock',
-      'click a.page-article-delete'  : 'deleteArticlePrompt',
+      'click a.article-delete'  : 'deleteArticlePrompt',
       'click a.open-context-article' : 'openContextMenu',
       'dblclick':'loadArticleEdit'
     }, EditorOriginView.prototype.events),
@@ -66,7 +66,7 @@ define(function(require){
     },
 
     addBlockViews: function() {
-      this.$('.page-article-blocks').empty();
+      this.$('.article-blocks').empty();
 
       // Insert the 'pre' paste zone for blocks
       var prePasteBlock = new EditorBlockModel();
@@ -74,17 +74,17 @@ define(function(require){
       prePasteBlock.set('_type', 'block');
       prePasteBlock.set('_pasteZoneSortOrder', 1);
 
-      this.$('.page-article-blocks').append(new EditorPasteZoneView({model: prePasteBlock}).$el);
+      this.$('.article-blocks').append(new EditorPasteZoneView({model: prePasteBlock}).$el);
 
       this.model.getChildren().each(function(block) {
-        this.$('.page-article-blocks').append(new EditorBlockView({model: block}).$el);
+        this.$('.article-blocks').append(new EditorBlockView({model: block}).$el);
 
         var sortOrder = block.get('_sortOrder');
         sortOrder++;
         block.set('_pasteZoneSortOrder', sortOrder);
 
         // Post-block paste zone - sort order of placeholder will be one greater
-        this.$('.page-article-blocks').append(new EditorPasteZoneView({model: block}).$el);
+        this.$('.article-blocks').append(new EditorPasteZoneView({model: block}).$el);
 
       }, this);
     },
@@ -96,7 +96,7 @@ define(function(require){
       var newPageBlockModel = new EditorBlockModel();
 
       newPageBlockModel.save({
-        title: '',
+        title: 'Block title',
         displayTitle: '',
         body: '',
         _parentId: _this.model.get('_id'),

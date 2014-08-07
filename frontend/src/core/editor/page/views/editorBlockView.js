@@ -77,7 +77,7 @@ define(function(require){
       }];
 
       this.model.getChildren().each(function(component) {
-        this.$('.page-article-components').append(new EditorComponentView({model: component}).$el);
+        this.$('.page-components').append(new EditorComponentView({model: component}).$el);
 
         switch (component.get('_layout')) {
           case 'full':
@@ -188,7 +188,7 @@ define(function(require){
     },
 
     addComponentViews: function() {
-      this.$('.page-article-components').empty();
+      this.$('.page-components').empty();
       var components = this.model.getChildren();
       var addPasteZonesFirst = components.length && components.at(0).get('_layout') != 'full';
 
@@ -198,7 +198,7 @@ define(function(require){
 
       // Add component elements
       this.model.getChildren().each(function(component) {
-        this.$('.page-article-components').append(new EditorComponentView({model: component}).$el);
+        this.$('.page-components').append(new EditorComponentView({model: component}).$el);
       }, this);
 
       if (!addPasteZonesFirst) {
@@ -239,7 +239,7 @@ define(function(require){
         pasteComponent.set('_pasteZoneLayout', layout.type);
         var $pasteEl = new EditorComponentPasteZoneView({model: pasteComponent}).$el;
         $pasteEl.addClass('drop-only');
-        this.$('.page-article-components').append($pasteEl);
+        this.$('.page-components').append($pasteEl);
       }, this);
 
       _.each(this.sortArrayByKey(layouts, 'pasteZoneRenderOrder'), function(layout) {
@@ -247,7 +247,7 @@ define(function(require){
         pasteComponent.set('_parentId', this.model.get('_id'));
         pasteComponent.set('_type', 'component');
         pasteComponent.set('_pasteZoneLayout', layout.type);
-        this.$('.page-article-components').append(new EditorComponentPasteZoneView({model: pasteComponent}).$el);
+        this.$('.page-components').append(new EditorComponentPasteZoneView({model: pasteComponent}).$el);
       }, this);
     },
 

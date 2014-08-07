@@ -9,7 +9,7 @@ define(function(require) {
     className: "logout",
 
     events: {
-      'click .logout a#linkLogout' : 'completeLogout'
+      'click a#linkLogout' : 'completeLogout'
     },
 
     completeLogout: function(e) {

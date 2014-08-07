@@ -2,12 +2,16 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var EditorOriginView = require('editorGlobal/views/editorOriginView');
+  var EditorPasteZoneView = require('editorGlobal/views/editorPasteZoneView');
   var Origin = require('coreJS/app/origin');
 
-  var EditorComponentPasteZone = EditorOriginView.extend({
+  var EditorComponentPasteZone = EditorPasteZoneView.extend({
 
-    className : 'paste-zone paste-zone-component visibility-hidden',
+    className : 'paste-zone paste-zone-component display-none',
+
+    events: {
+        'click .editor-paste-zone-paste': 'onPasteElementClicked'
+    },
 
     preRender: function () {
       this.listenTo(this.model, 'destroy', this.remove);

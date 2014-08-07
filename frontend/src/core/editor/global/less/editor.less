@@ -1,10 +1,8 @@
-.add-control {
-  text-align: right;
-}
-
 .hovering {
-  border-style: dotted !important;
-  border-color: blue !important;
+    >.editor-item-settings {
+        opacity:1;
+        top:0;
+    }
 }
 
 .editor-view {
@@ -27,168 +25,36 @@
     background-color: lightgrey;
   }
 
-  .page-detail {
-    margin: 10px;
-    position: relative;
-    height: 100%;
-
-    .page-add-article {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 100px;
-    }
-  }
-
-  .page {
-    .page-name {
-      font-size: 24px;
-    }
-
-    .page-description {
-      font-size: 16px;
-    }
-
-    &-edit-panel {
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-  }
-
-
-  .page-article {
-    border: 1px solid #C9C9C9;
-    background: #F0F0F0;
-    margin: 20px;
-    position: relative;
-    width: 95%;
-
-    &-edit-panel {
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-
-    &-detail {
-      margin: 10px;
-      padding-left: 30px;
-    }
-
-    &-delete {
-      padding-right: 10px;
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-  }
-
-  .block {
-    border: 1px solid #C9C9C9;
-    background: #DEDEDE;
-    margin: 20px;
-    position: relative;
-    width: 95%;
-
-    &-edit-panel {
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-
-    &-detail {
-      margin: 10px;
-      padding-left: 30px;
-    }
-
-    &-delete {
-      padding-right: 10px;
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-  }
-
-  .component {
-    margin: 10px;
-    position: relative;
-    min-height: 90px;
-
-    &-left {
-      position:  relative;
-      width: 45%;
-      float: left;
-      border: 1px solid #C9C9C9;
-      background: #D1D1D1;
-    }
-
-    &-right {
-      position:  relative;
-      width: 45%;
-      float: right;
-      border: 1px solid #C9C9C9;
-      background: #D1D1D1;
-    }
-
-    &-full {
-      border: 1px solid #C9C9C9;
-      background: #D1D1D1;
-    }
-
-    &-detail {
-      margin: 10px;
-      padding-left: 30px;
-    }
-
-    &-delete {
-      padding-right: 10px;
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-  }
-
-  a.component-delete, a.block-delete, a.page-article-delete {
-    color: black;
-  }
-
-  .btn.add-article {
-    border: 1px solid;
-  }
-
-  .btn.add-block {
-    border: 1px solid;
-  }
-
-  .btn.add-component {
-    border: 1px solid;
-  }
-
   .paste-zone {
-    height: 45px;
-    border: 2px dashed #B0B0B0;
-    background-color: #CECECE;
+    margin:30px;
+    
+    border-radius:2px;
+    background-color:darken(#e0e8f7, 10%);
+    border-top:1px solid darken(#e0e8f7, 30%);
+    border-bottom:1px solid darken(#e0e8f7, 30%);
+
+    &-inner {
+        padding:20px 30px;
+    }
 
     &-component-left {
-      height: 95px;
       width: 48%;
       float: left;
-      margin-top: 10px;
-      margin-left: 10px;
     }
 
     &-component-right {
-      height: 95px;
       width: 48%;
       float: right;
-      margin-top: 10px;
-      margin-right: 10px;
+    }
+
+    &-component {
+        margin:0px;
     }
 
     &-component-full {
-      margin-left: 10px;
-      margin-right: 10px;
+        margin-bottom:20px;
     }
+
   }
 
   .paste-zone-available {
@@ -203,12 +69,12 @@
   }
 
   .drop-only {
-    visibility: hidden;
+    display: none;
   }
 
   .component-full {
     float: left;
-    width: 98%;
+    width: 100%;
   }
 
   .page-article-components:after {
@@ -245,4 +111,35 @@
     min-width: 100px;
   }
 
+}
+
+.add-control {
+    text-align: right;
+    padding-right:0px;
+}
+
+
+.editor-item-settings {
+    position: absolute;
+    top: 0%;
+    left: 0px;
+    font-size: 16px;
+    width: 100%;
+    opacity: 1;
+    background-color: transparent;
+    transition: all 0.3s;
+    &-inner {
+        padding:6px;
+    }
+
+    a {
+        text-decoration: none;
+        color:#000;
+        &:hover {
+            color:darken(#fff, 10%);
+        }
+    }
+    .editor-delete-page-element {
+        float:right;
+    }
 }

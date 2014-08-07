@@ -2,10 +2,13 @@ form label {
     display:block;
     font-weight:bold;
     font-size:13px;
+    margin-bottom:4px;
 }
 
 .form-group {
     margin-bottom:20px;
+    padding-bottom:20px;
+    border-bottom:1px solid #e3e3e3;
 }
 
 input[type="text"], 
@@ -21,7 +24,7 @@ input[type="search"],
 input[type="datetime-local"], 
 textarea, 
 select[multiple="multiple"] {
-    padding: 4px;
+    padding: 10px 10px;
     border-radius: 2px;
     border: solid 1px #ccc;
     font-size: 13px;
@@ -29,5 +32,19 @@ select[multiple="multiple"] {
         outline:none;
         border-color:#666;
         box-shadow:none;
+    }
+}
+
+.form-list {
+    li {
+        margin-bottom:20px;
+        list-style: none;
+        input, label {
+            margin-bottom:0px;
+            display:inline-block;
+        }
+        label {
+            margin-left:10px;
+        }
     }
 }

@@ -5,7 +5,7 @@
     </div>
 
     {{#if isAuthenticated}}
-    <h3>{{t 'app.alreadyloggedin'}}<a id="linkDash" href="/#dashboard">{{t 'app.dashboard'}}</a></h3>
+    <h3 class="login-already-logged-in">{{t 'app.alreadyloggedin'}}<a id="linkDash" href="/#dashboard">{{t 'app.dashboard'}}</a></h3>
     {{else}}
     <form class="login-form">
 
@@ -20,7 +20,7 @@
                     {{t 'app.createnewaccount'}}
                 </div>
 
-                <a class="btn">{{t 'app.createnewaccountbutton'}}</a>
+                <button class="btn">{{t 'app.createnewaccountbutton'}}</button>
 
             </div>
         </div>
@@ -60,7 +60,7 @@
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-green login-form-submit" tabindex="3">{{t 'app.login'}}</button>
+                <button type="submit" class="btn btn-primary login-form-submit" tabindex="3">{{t 'app.login'}}</button>
 
             </div>
         </div>

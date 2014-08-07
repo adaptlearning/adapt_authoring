@@ -1,0 +1,33 @@
+{
+  "name": "adapt-contrib-vanilla",
+  "homepage": "https://github.com/darylhedley/adapt-contrib-vanilla",
+  "authors": [
+    "Daryl Hedley <darylhedley@hotmail.com>"
+  ],
+  "displayName": "Vanilla",
+  "theme": "vanilla",
+  "description": "A core bundled theme",
+  "main": "js/vanilla.js",
+  "keywords": [
+    "adapt-plugin",
+    "adapt-theme"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "a448def980",
+  "_resolution": {
+    "type": "branch",
+    "branch": "develop",
+    "commit": "a448def9807b8567f73a21a2fb71eb741ff0b95a"
+  },
+  "_source": "git://github.com/adaptlearning/adapt-contrib-vanilla.git",
+  "_target": "develop",
+  "_originalSource": "adapt-contrib-vanilla",
+  "_direct": true
+}

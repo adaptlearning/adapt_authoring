@@ -1,7 +1,7 @@
 define(function(require) {
 
   var Origin = require('coreJS/app/origin');
-  var AssetManagementView = require('coreJS/assetManagement/views/assetCollectionView');
+  var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
   var AssetManagementSidebarView = require('coreJS/assetManagement/views/assetManagementSidebarView');
   var AssetManagementNewAssetView = require('coreJS/assetManagement/views/assetManagementNewAssetView');
   var AssetManagementNewAssetSidebarView = require('coreJS/assetManagement/views/assetManagementNewAssetSidebarView');

@@ -5,26 +5,26 @@ define(function(require){
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
   var AssetModel = require('coreJS/assetManagement/models/assetModel');
+  var AssetManagementCollectionView = require('coreJS/assetManagement/views/assetCollectionView');
 
-  var AssetView = OriginView.extend({
+  var AssetManagementView = OriginView.extend({
 
     tagName: 'div',
 
-    className: 'asset units-row',
+    className: 'asset-management',
 
     events: {
-      'click .toggle-asset-form'    : 'toggleAssetForm',
-      // 'click .cancel-button'        : 'toggleAssetForm',
-      'click .asset-nav-tabs ul li' : 'switchTab',
-      // 'click .asset-filter-option'  : 'toggleFilterSelection',
-      'click .filterButton'         : 'filterAssets',
-      'click .resetFilterButton'    : 'resetFilterForm'
     },
 
     preRender: function() {
     },
 
     postRender: function() {
+        this.addAssets();
+    },
+
+    addAssets: function() {
+        this.$('asset-management-inner').append(new AssetManagementCollectionView().$el);
     },
 
     resetFilterForm: function(event) {
@@ -138,9 +138,9 @@ define(function(require){
     }
     
   }, {
-    template: 'asset'
+    template: 'assetManagement'
   });
 
-  return AssetView;
+  return AssetManagementView;
 
 });

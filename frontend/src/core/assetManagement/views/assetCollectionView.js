@@ -6,7 +6,6 @@ define(function(require){
   var OriginView = require('coreJS/app/views/originView');
   var AssetItemView = require('coreJS/assetManagement/views/assetItemView');
   var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
-  var AssetView = require('coreJS/assetManagement/views/assetView');
   var AssetModel = require('coreJS/assetManagement/models/assetModel');
   var AssetPreview = require('coreJS/assetManagement/views/assetPreviewView');
 
@@ -72,7 +71,7 @@ define(function(require){
     },
 
     addNewAssetContainer: function() {
-      this.$('.new-asset-container').append(new AssetView({model: new AssetModel()}).$el);
+      //this.$('.new-asset-container').append(new AssetView({model: new AssetModel()}).$el);
     },
 
     addAssetViews: function() {

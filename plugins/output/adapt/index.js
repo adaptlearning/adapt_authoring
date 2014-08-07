@@ -548,56 +548,65 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
       },
 
       function(callback){
-        var phantom=require('phantom');
-        phantom.create('--load-images=no', 
+        var phantom = require('phantom');
+        phantom.create('--load-images=yes', 
           '--local-to-remote-url-access=yes', 
           function(ph){
           var configSmall = outputJson['config'].screenSize.small;
           var configMedium = outputJson['config'].screenSize.medium;
           var configLarge = outputJson['config'].screenSize.large;
+          var url = "http://" + configuration.conf.serverName + ":" + configuration.conf.serverPort + "/preview/" + tenantId + "/" + courseId + "/main.html"
+          
           ph.createPage(function(small) {
-            small.set('viewportSize', {width:configSmall,height:(configSmall*1.25)});
-            small.open("http://localhost:3000/preview/53dbb5cadf7d94d4229bedd1/53dbb60ac55485a4150f8933/main.html", function(status){
-              small.evaluate(function() {
+            small.set('viewportSize', {width:200, height:222});
+            small.set('zoomFactor', 0.4);
+            small.set("clipRect", {left: 0, top: 0, width: 200, height: 222});
+
+            small.open(url, function(status){
+              small.evaluate(function() { 
                 var style = document.createElement('style'),
                     text = document.createTextNode('body { background: #fff }');
                 style.setAttribute('type', 'text/css');
                 style.appendChild(text);
                 document.head.insertBefore(style, document.head.firstChild);
               });
+
               setTimeout(function() {
-                small.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "small.png"), function(){
-                  console.log("page rendered");
+                small.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "screenshots/small.png"), function(){
+                  console.log("small screenshot created");
                 });
               }, 4000);
             });
           });
 
           ph.createPage(function(medium){
-            medium.set('viewportSize', {width:configMedium,height:configMedium/1.25});
-            medium.set('zoomFactor', 0.5);
-            medium.set("clipRect", { left: 200, top: 100, width: 300, height: 222 });
-            medium.open("http://localhost:3000/preview/53dbb5cadf7d94d4229bedd1/53dbb60ac55485a4150f8933/main.html", function(status){
-              medium.evaluate(function() {
+            medium.set('viewportSize', {width:configMedium + 1, height:(configMedium + 1)/1.25});
+            medium.set('zoomFactor', 0.45);
+            medium.set("clipRect", {left: configMedium/3, top: 0, width: 300, height: 222});
+            
+            medium.open(url, function(status){
+              medium.evaluate(function() { 
                 var style = document.createElement('style'),
                     text = document.createTextNode('body { background: #fff }');
                 style.setAttribute('type', 'text/css');
                 style.appendChild(text);
                 document.head.insertBefore(style, document.head.firstChild);
               });
+
               setTimeout(function() {
-                medium.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "medium.png"), function(){
-                  console.log("page rendered");
+                medium.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "screenshots/medium.png"), function(){
+                  console.log("medium screenshot created");
                 });
               }, 4000);
             });
           });
 
           ph.createPage(function(large){
-            large.set('viewportSize', {width:configLarge,height:configLarge/1.25});
-            large.set('zoomFactor', 0.32);
-            large.set("clipRect", { left: 350, top: 0, width: 300, height: 222 });
-            large.open("http://localhost:3000/preview/53dbb5cadf7d94d4229bedd1/53dbb60ac55485a4150f8933/main.html", function(status){
+            large.set('viewportSize', {width:configLarge + 1, height:(configLarge + 1)/1.25});
+            large.set('zoomFactor', 0.3);
+            large.set("clipRect", { left: configLarge/3 + 20, top: 0, width: 300, height: 222 });
+            
+            large.open(url, function(status){
               large.evaluate(function() {
                 var style = document.createElement('style'),
                     text = document.createTextNode('body { background: #fff }');
@@ -605,10 +614,10 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
                 style.appendChild(text);
                 document.head.insertBefore(style, document.head.firstChild);
               });
+
               setTimeout(function() {
-                large.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "large.png"), function(){
-                  console.log("page rendered");
-                  
+                large.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "screenshots/large.png"), function(){
+                  console.log("large screenshot created");
                 });
               }, 4000);
             });

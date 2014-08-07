@@ -13,8 +13,6 @@ define(function(require){
     className: 'asset units-row',
 
     events: {
-      'submit .asset-form'          : 'uploadAsset',
-      'change .asset-file'          : 'onChangeFile',
       'click .toggle-asset-form'    : 'toggleAssetForm',
       // 'click .cancel-button'        : 'toggleAssetForm',
       'click .asset-nav-tabs ul li' : 'switchTab',
@@ -24,11 +22,9 @@ define(function(require){
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'asset:clearForm', this.resetUploadForm);
     },
 
     postRender: function() {
-      this.$('.assets-container').css({height: $('#app').height()});
     },
 
     resetFilterForm: function(event) {
@@ -139,18 +135,6 @@ define(function(require){
 
     triggerFilter: function() {
       Origin.trigger('assetManagement:filter');
-    },
-
-    switchTab: function(e) {
-      e.preventDefault();
-      this.$('.asset-nav-tabs ul li a').removeClass('active');
-      this.$(e.currentTarget).find('a').addClass('active');
-      this.showTab(this.$(e.currentTarget).index());
-    },
-
-    showTab: function (tab) {
-      this.$('.asset-tab-content').removeClass('active');
-      this.$('.asset-tab-content').eq(tab).addClass('active');
     }
     
   }, {

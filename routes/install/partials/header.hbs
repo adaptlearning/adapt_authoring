@@ -2,5 +2,45 @@
 <html>
   <head>
     <title>{{pageTitle}}</title>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="../socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        
+        $(function() {
+            var $installButton = $('.btn.install');
+
+            if ($installButton && $installButton.length != 0) {
+                var socket = io.connect(),
+                    $output = $('.adapt-output'),
+                    $submitButton = $('button[type="submit"]');
+
+                $submitButton.attr('disabled', 'disabled');
+        
+                socket.on('output', function (data) {
+                    $output.val($output.val() + data.value + "\n");
+
+                    $output.scrollTop(
+                        $output[0].scrollHeight - $output.height()
+                    );
+                });
+
+                $installButton.on('click', function(event) {
+                    event.preventDefault();
+
+                    socket.emit('install:framework', null);
+
+                    $installButton.text('Installing ...');
+                    $installButton.attr('disabled', 'disabled');
+                });
+
+                socket.on('installed:framework', function() {
+                    $installButton.hide();
+
+                    $submitButton.removeAttr('disabled');
+                });
+            }
+        });
+    </script>
   </head>
   <body>

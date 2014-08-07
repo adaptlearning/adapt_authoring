@@ -2,6 +2,7 @@
 /tmp
 /data
 /temp
+/adapt_framework
 conf/config.json
 .project
 /frontend/build
@@ -9,10 +10,11 @@ conf/config.json
 /nbproject/
 /.settings
 /frontend/src/templates/templates.js
-/plugins/content/component/componentcache/
 /plugins/content/component/versions/
-/plugins/content/extension/extensioncache/
+/plugins/content/component/componentcache/
 /plugins/content/extension/versions/
-/plugins/content/bower/bowercache
+/plugins/content/extension/extensioncache/
+/plugins/content/theme/versions/
+/plugins/content/theme/extensioncache/
+/plugins/content/bower/bowercache/
 /master/
-

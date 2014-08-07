@@ -88,6 +88,7 @@ require([
     'coreJS/dashboard/dashboard',
     'coreJS/editor/editor',
     'coreJS/assetManagement/assetManagement',
+    'coreJS/pluginManagement/pluginManagement',
     'coreJS/user/models/sessionModel',
     'coreJS/navigation/views/navigationView',
     'coreJS/globalMenu/globalMenu',
@@ -105,25 +106,26 @@ require([
     'scrollTo',
     'templates'
 ], function (
-    Origin, 
-    Router, 
-    User, 
-    Project, 
-    Dashboard, 
-    Editor, 
-    AssetManagement, 
-    SessionModel, 
-    NavigationView, 
-    GlobalMenu, 
-    Sidebar, 
-    Helpers, 
-    ContextMenu, 
-    Location, 
-    Notify, 
+    Origin,
+    Router,
+    User,
+    Project,
+    Dashboard,
+    Editor,
+    AssetManagement,
+    PluginManagement,
+    SessionModel,
+    NavigationView,
+    GlobalMenu,
+    Sidebar,
+    Helpers,
+    ContextMenu,
+    Location,
+    Notify,
     EditingOverlay,
-    Polyglot, 
-    JQueryUI, 
-    JQueryForm, 
+    Polyglot,
+    JQueryUI,
+    JQueryForm,
     MediaElement
 ) {
 
@@ -144,5 +146,5 @@ require([
         Origin.initialize();
       }
     });
-  });    
+  });
 });

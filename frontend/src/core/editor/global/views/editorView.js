@@ -100,6 +100,12 @@ define(function(require){
       if (Origin.editor.data.course) {
         // Config has to be reset -- HACK
         Origin.editor.data.config = new EditorConfigModel({_id: this.currentCourseId});
+
+        // // Not implemented for the time being
+        // Origin.editor.data.config.on('change:_enabledExtensions', function() {
+        //   Origin.socket.emit('project:build', { id: this.currentCourseId });
+        // });
+        
         _.each(Origin.editor.data, function(object) {
           object.fetch({reset:true,
             error: function(model, response, options) {

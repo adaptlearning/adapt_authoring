@@ -1,0 +1,22 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/content.schema",
+  "properties": {
+    "_themeType": {
+      "type": "objectid",
+      "required": true,
+      "ref": "themetype",
+      "editorOnly": true
+    },
+    "_theme": {
+      "type": "string",
+      "required": true,
+      "default": ""
+    },
+    "properies": {
+      "type": "object"
+    }
+  }
+}

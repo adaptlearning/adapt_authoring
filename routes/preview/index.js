@@ -6,14 +6,21 @@ var usermanager = require('../../lib/usermanager');
 server.set('views', __dirname);
 server.set('view engine', 'hbs');
 
-server.get('/preview/:course/:user/*', function (req, res, next) {
+server.get('/preview/:tenant/:course/*', function (req, res, next) {
   var course = req.params.course,
-      user = req.params.user,
-      currentUser = usermanager.getCurrentUser(),
+      tenant = req.params.tenant,
+      // user = req.params.user,
+      // currentUser = usermanager.getCurrentUser(),
       file = req.params[0] || 'main.html',
-      requestedFile = path.join(process.cwd(), 'temp', currentUser.tenant._id, 'adapt_framework', course, 'build', file);
+      requestedFile = path.join(process.cwd(), 'temp', tenant, 'adapt_framework', course, 'build', file);
       
-  if (user == currentUser._id) {
+  var currentUser = usermanager.getCurrentUser();
+
+
+   // TODO -- Cimplement security here
+  var isServerRequest = true;  
+  
+  if (isServerRequest || (currentUser && (currentUser.tenant._id == tenant))) {
     res.sendfile(requestedFile);
   } else {
     // User doesn't have access to this course

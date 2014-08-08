@@ -51,28 +51,28 @@ function slugify(s) {
  * implements OutputPlugin#preview
  *
  */
-AdaptOutput.prototype.preview = function (courseId, req, res, next) {
-  database.getDatabase(function (err, db) {
-    if (err) {
-      return next(err);
-    }
+// AdaptOutput.prototype.preview = function (courseId, req, res, next) {
+//   database.getDatabase(function (err, db) {
+//     if (err) {
+//       return next(err);
+//     }
 
-    db.retrieve('course', { _id: courseId }, function (err, results) {
-      if (err) {
-        return next(err);
-      }
+//     db.retrieve('course', { _id: courseId }, function (err, results) {
+//       if (err) {
+//         return next(err);
+//       }
 
-      if (results && results.length) {
-        db.exportResults(results, function (transformed) {
-          return res.json(transformed);
-        });
-      }
+//       if (results && results.length) {
+//         db.exportResults(results, function (transformed) {
+//           return res.json(transformed);
+//         });
+//       }
 
-      res.statusCode = 404;
-      return res.end();
-    });
-  });
-};
+//       res.statusCode = 404;
+//       return res.end();
+//     });
+//   });
+// };
 
 
 /**
@@ -332,6 +332,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           }
         });
       },
+      
       function(callback) {
 
         fs.exists(path.join(configuration.serverRoot, TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR, 'index.html'), function (exists) {
@@ -489,7 +490,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           }
         });
       },
-
+      
       function(callback) {
         if (isPreview) {
           return callback(null, 'Preview, so no zip');
@@ -512,7 +513,10 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
         archive.bulk([
           { expand: true, cwd: path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR), src: ['**/*'] }
         ]).finalize();
+
       },
+
+
       // Other steps...
       function(callback) {
         if (isPreview) {
@@ -539,8 +543,91 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
 
             readStream.pipe(res);
           }
-        });
-      }
+        }
+        );
+      },
+
+      function(callback) {
+        var phantom = require('phantom');
+        phantom.create('--load-images=yes', 
+          '--local-to-remote-url-access=yes', 
+          function(ph){
+          var configSmall = outputJson['config'].screenSize.small;
+          var configMedium = outputJson['config'].screenSize.medium;
+          var configLarge = outputJson['config'].screenSize.large;
+          var url = app.getServerURL() + "/preview/" + tenantId + "/" + courseId + "/main.html";
+
+          ph.createPage(function(small) {
+            small.set('viewportSize', {width:200, height:222});
+            small.set('zoomFactor', 0.4);
+            small.set("clipRect", {left: 0, top: 0, width: 200, height: 222});
+
+            small.open(url, function(status) {
+              small.evaluate(function() { 
+                var style = document.createElement('style'),
+                    text = document.createTextNode('body { background: #fff }');
+                style.setAttribute('type', 'text/css');
+                style.appendChild(text);
+                document.head.insertBefore(style, document.head.firstChild);
+              });
+
+              setTimeout(function() {
+                small.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "screenshots/small.png"), function(){
+                  console.log("small screenshot created");
+                });
+              }, 4000);
+            });
+          });
+
+          ph.createPage(function(medium) {
+            medium.set('viewportSize', {width:configMedium + 1, height:(configMedium + 1)/1.25});
+            medium.set('zoomFactor', 0.45);
+            medium.set("clipRect", {left: configMedium/3, top: 0, width: 300, height: 222});
+            
+            medium.open(url, function(status) {
+              medium.evaluate(function() { 
+                var style = document.createElement('style'),
+                    text = document.createTextNode('body { background: #fff }');
+                style.setAttribute('type', 'text/css');
+                style.appendChild(text);
+                document.head.insertBefore(style, document.head.firstChild);
+              });
+
+              setTimeout(function() {
+                medium.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "screenshots/medium.png"), function(){
+                  console.log("medium screenshot created");
+                });
+              }, 4000);
+            });
+          });
+
+          ph.createPage(function(large) {
+            large.set('viewportSize', {width:configLarge + 1, height:(configLarge + 1)/1.25});
+            large.set('zoomFactor', 0.3);
+            large.set("clipRect", { left: configLarge/3 + 20, top: 0, width: 300, height: 222 });
+            
+            large.open(url, function(status) {
+              large.evaluate(function() {
+                var style = document.createElement('style'),
+                    text = document.createTextNode('body { background: #fff }');
+                style.setAttribute('type', 'text/css');
+                style.appendChild(text);
+                document.head.insertBefore(style, document.head.firstChild);
+              });
+
+              setTimeout(function() {
+                large.render(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "screenshots/large.png"), function(){
+                  console.log("large screenshot created");
+                });
+              }, 4000);
+            });
+          });
+        });  
+        callback(null, 'screenshots created');    
+      },
+
+      
+      
     ],
     // optional callback
     function(err, results){

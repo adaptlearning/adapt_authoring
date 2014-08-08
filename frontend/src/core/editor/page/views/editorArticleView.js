@@ -126,7 +126,9 @@ define(function(require){
         event.preventDefault();
       }
       var id = this.model.get('_id');
-      var deleteArticle = {
+
+      if (this.model.getChildren().length > 0) {
+        var deleteArticle = {
           _type: 'prompt',
           _showIcon: true,
           title: window.polyglot.t('app.deletearticle'),
@@ -137,7 +139,11 @@ define(function(require){
           ]
         };
 
-      Origin.trigger('notify:prompt', deleteArticle);
+        Origin.trigger('notify:prompt', deleteArticle);
+      }
+      else {
+        Origin.trigger('editorView:deleteArticle:' + id);
+      }
     },
 
 

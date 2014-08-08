@@ -154,7 +154,6 @@ define(function(require){
         },
         error: function(error) {
           alert('An error occured');
-          console.log('error', error);
         }
       });
     },

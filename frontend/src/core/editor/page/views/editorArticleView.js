@@ -38,15 +38,6 @@ define(function(require){
         'contextMenu:article:cut': this.onCut,
         'contextMenu:article:delete': this.deleteArticlePrompt
       });
-
-      /*this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-      this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
-      
-
-      this.on('contextMenu:article:edit', this.loadArticleEdit);
-      this.on('contextMenu:article:copy', this.onCopy);
-      this.on('contextMenu:article:cut', this.onCut);
-      this.on('contextMenu:article:delete', this.deleteArticlePrompt);*/
     },
 
     postRender: function() {
@@ -76,17 +67,29 @@ define(function(require){
 
       this.$('.article-blocks').append(new EditorPasteZoneView({model: prePasteBlock}).$el);
 
+      // Iterate over each block and add it to the article
       this.model.getChildren().each(function(block) {
-        this.$('.article-blocks').append(new EditorBlockView({model: block}).$el);
-
-        var sortOrder = block.get('_sortOrder');
-        sortOrder++;
-        block.set('_pasteZoneSortOrder', sortOrder);
-
-        // Post-block paste zone - sort order of placeholder will be one greater
-        this.$('.article-blocks').append(new EditorPasteZoneView({model: block}).$el);
-
+        this.addBlockView(block);
       }, this);
+    },
+
+    addBlockView: function(blockModel, scrollIntoView) {
+      var newBlockView = new EditorBlockView({model: blockModel}),
+        sortOrder = blockModel.get('_sortOrder');
+      
+      scrollIntoView = scrollIntoView || false;
+
+      this.$('.article-blocks').append(newBlockView.$el);
+      
+      if (scrollIntoView) {
+        $.scrollTo(newBlockView.$el, 200);
+      }
+
+      // Increment the sortOrder property    
+      blockModel.set('_pasteZoneSortOrder', sortOrder++);
+
+      // Post-block paste zone - sort order of placeholder will be one greater
+      this.$('.article-blocks').append(new EditorPasteZoneView({model: blockModel}).$el);
     },
 
     addBlock: function(event) {
@@ -106,8 +109,13 @@ define(function(require){
         error: function() {
           alert('error adding new block');
         },
-        success: function() {
-          Origin.trigger('editorView:fetchData');
+        success: function(model, response, options) {
+          _this.addBlockView(model, true);
+
+          Origin.editor.data.blocks.add(model);
+
+          // Commenting out the next line
+          // Origin.trigger('editorView:fetchData');
         }
       });
     },
@@ -140,16 +148,15 @@ define(function(require){
 
       var _this = this;
 
-
-        this.model.destroy({
-          success: function(success) {
-            _this.remove();
-            Origin.trigger('editorView:fetchData');
-          },
-          error: function(error) {
-            console.log('error', error);
-          }
-        });
+      _this.model.destroy({
+        success: function(model, response) {
+          _this.remove();
+        },
+        error: function(error) {
+          alert('An error occured');
+          console.log('error', error);
+        }
+      });
     },
 
     loadArticleEdit: function (event) {

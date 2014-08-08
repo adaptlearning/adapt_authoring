@@ -16,7 +16,6 @@ define(function(require) {
     },
 
     preRender: function() {
-      console.log(this);
     },
 
     onComponentClicked: function(event) {

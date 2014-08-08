@@ -12,7 +12,12 @@ define(function(require) {
 
     	_siblings:'blocks',
 
-        _children: 'components'
+        _children: 'components',
+
+        // Block specific properties
+        layoutOptions:  null,
+
+        dragLayoutOptions: null
 
 	});
 

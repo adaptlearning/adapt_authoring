@@ -18,7 +18,7 @@ define(function(require){
       'click a.block-delete'        : 'deleteBlockPrompt',
       'click a.add-component'       : 'showComponentList',
       'click a.open-context-block'  : 'openContextMenu',
-      'dblclick':'loadBlockEdit'
+      'dblclick'                    : 'loadBlockEdit'
     }, EditorOriginView.prototype.events),
 
     preRender: function() {
@@ -36,13 +36,7 @@ define(function(require){
         'contextMenu:block:cut': this.onCut,
         'contextMenu:block:delete': this.deleteBlockPrompt
       });
-      /*this.listenTo(this, );
-      this.listenTo(this, );
-      this.on('contextMenu:block:cut', this.onCut);
-      this.on('contextMenu:block:delete', this.deleteBlockPrompt);*/
 
-      // Add a componentTypes property to the model and call toJSON() on the
-      // collection so that the templates work
       this.model.set('componentTypes', Origin.editor.data.componentTypes.toJSON());
 
       this.evaluateComponents();
@@ -134,13 +128,17 @@ define(function(require){
       Origin.trigger('notify:prompt', deleteBlock);
     },
 
-    
-
     deleteBlock: function(event) {
-        if (this.model.destroy()) {
-          this.remove();
-          Origin.trigger('editorView:fetchData');
+      var _this = this;
+      
+      _this.model.destroy({
+        success: function(model, response) {
+          _this.remove();
+        },
+        error: function(model, response) {
+          alert('An error occurred');
         }
+      });
     },
 
     handleRemovedComponent: function() {

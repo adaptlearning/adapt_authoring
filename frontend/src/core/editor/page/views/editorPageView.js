@@ -37,7 +37,7 @@ define(function(require){
       var captureScroll = function() {
         $(window).scroll(function() {
           if (window.scrollY != 0) {
-              Origin.editor.scrollTo = window.scrollY;
+            Origin.editor.scrollTo = window.scrollY;
           }
         });
       };
@@ -46,8 +46,12 @@ define(function(require){
     },
 
     persistScrollPosition: function() {
+      
+
       if (Origin.editor.scrollTo) {
-          window.scrollTo(0, Origin.editor.scrollTo);  
+
+        console.log('in persistScrollPosition' + Origin.editor.scrollTo);
+        $.scrollTo(Origin.editor.scrollTo);
       }
     },
 
@@ -103,16 +107,29 @@ define(function(require){
 
       this.$('.page-articles').append(new EditorPasteZoneView({model: prePasteArticle}).$el);
 
+      // Iterate over each article and add it to the page
       this.model.getChildren().each(function(article) {
-        this.$('.page-articles').append(new EditorArticleView({model: article}).$el);
-
-        var sortOrder = article.get('_sortOrder');
-        sortOrder++;
-        article.set('_pasteZoneSortOrder', sortOrder);
-
-        // Post-article paste zone - sort order of placeholder will be one greater
-        this.$('.page-articles').append(new EditorPasteZoneView({model: article}).$el);
+        this.addArticleView(article);
       }, this);
+    },
+
+    addArticleView: function(articleModel, scrollIntoView) {
+      var newArticleView = new EditorArticleView({model: articleModel}),
+        sortOrder = articleModel.get('_sortOrder');
+      
+      scrollIntoView = scrollIntoView || false;
+        
+      this.$('.page-articles').append(newArticleView.$el);
+      
+      if (scrollIntoView) {
+        $.scrollTo(newArticleView.$el, 200);
+      }
+
+      // Increment the 'sortOrder' property
+      articleModel.set('_pasteZoneSortOrder', sortOrder++);
+
+      // Post-article paste zone - sort order of placeholder will be one greater
+      this.$('.page-articles').append(new EditorPasteZoneView({model: articleModel}).$el);
     },
 
     deletePage: function(event) {
@@ -142,8 +159,13 @@ define(function(require){
         error: function() {
           alert('error adding new article');
         },
-        success: function() {
-          Origin.trigger('editorView:fetchData');
+        success: function(model, response, options) {
+          _this.addArticleView(model, true);
+
+          Origin.editor.data.articles.add(model);
+
+          // Not triggering a 'hard' refresh for the time being
+          // Origin.trigger('editorView:fetchData');
         }
       });
     },

@@ -54,18 +54,18 @@ button{width:auto;overflow:visible}
 .clearfix:after{clear:both}
 .clearfix{zoom:1}
 
-.asset-list{padding-top:15px;padding-right:15px}.asset-list .asset-list-item{border:1px solid lightgray;margin-bottom:10px;height:80px;cursor:pointer}.asset-list .asset-list-item.selected{background-color:lightblue}
-.asset-list .asset-list-item:hover{background-color:lightblue}
-.asset-list .asset-nav-tabs{border-bottom:1px solid #E3E3E3}.asset-list .asset-nav-tabs:after{clear:both;content:".";display:block;height:0;visibility:hidden}
-.asset-list .asset-nav-tabs ul{list-style:none outside none;margin:0}.asset-list .asset-nav-tabs ul:after{clear:both;content:".";display:block;height:0;visibility:hidden}
-.asset-list .asset-nav-tabs ul li{float:left;margin-right:2px}.asset-list .asset-nav-tabs ul li a,.asset-list .asset-nav-tabs ul li span{display:block;line-height:1;padding:8px 12px 9px}
-.asset-list .asset-nav-tabs ul li a{color:#999999;text-decoration:none}.asset-list .asset-nav-tabs ul li a:focus,.asset-list .asset-nav-tabs ul li a:hover{color:#000000;text-decoration:none}
-.asset-list .asset-nav-tabs ul li .active{cursor:pointer;-moz-border-bottom-colors:none;-moz-border-left-colors:none;-moz-border-right-colors:none;-moz-border-top-colors:none;background:none repeat scroll 0 0 #FFFFFF;border-color:#DDDDDD #DDDDDD #FFFFFF;border-image:none;border-style:solid;border-width:1px;bottom:-1px;color:#000000;margin-top:-2px;padding:8px 11px 9px;position:relative}
-.asset-list .asset-tab-content{display:none;padding:10px;border-left:1px solid #E3E3E3;border-right:1px solid #E3E3E3;border-bottom:1px solid #E3E3E3}.asset-list .asset-tab-content.active{display:block}
-.asset-list .break{margin-bottom:2em !important}
-.asset-list .assets-container{overflow-y:scroll}
-.asset-list .asset-preview-panel{border:1px solid lightgray;cursor:pointer;height:100%;margin-bottom:10px;padding:5px}.asset-list .asset-preview-panel .asset-preview-title{padding-top:20px}
-.asset-filter-option.selected{background-color:#159776}
+.asset-management-assets-container{width:66%;float:left;overflow-x:hidden;overflow-y:scroll}.asset-management-assets-container .asset-management-no-assets{text-align:center;position:relative;top:40%}
+.asset-management-collection-inner{padding-top:30px;padding-left:30px}
+.asset-management-preview-container{width:33%;float:right;overflow-x:hidden;overflow-y:scroll;text-align:center;border-left:1px solid #9cabc4;background-color:#fff;color:#9cabc4}.asset-management-preview-container-inner{padding:10px}
+.asset-management-preview-container .asset-management-no-preview{position:relative;top:40%}
+.asset-management-list-item{width:200px;height:270px;margin-right:30px;margin-bottom:30px;float:left;cursor:pointer;background-color:#fff;border:1px solid #b7caed;border-radius:3px;transition:all 0.3s;box-shadow:0px 0px 3pt 2pt transparent}.asset-management-list-item:hover{box-shadow:0px 0px 3px 3px #e0e0e0}
+.asset-management-list-item.selected{border-color:#15a4fa}
+.asset-management-list-item-icon-inner{padding:6px}
+.asset-management-list-item-image{width:200px;height:160px;background-position:center;background-size:cover;background-repeat:no-repeat;text-align:center}.asset-management-list-item-image i{color:#9cabc4;padding-top:60px;font-size:50px}
+.asset-management-list-item-details{word-wrap:break-word;overflow:hidden;width:200px}.asset-management-list-item-details-inner{padding:20px}
+.asset-preview-details-preview{margin-bottom:20px}.asset-preview-details-preview i{font-size:56px}
+.asset-preview-details-preview .fa-file-audio-o{margin-bottom:20px}
+.asset-preview-title{word-wrap:break-word}
 
 .asset-management-new-asset-inner{padding:30px}
 
@@ -382,7 +382,7 @@ h5{font-size:15px;font-weight:200}
 h6{font-size:15px;font-weight:200}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
-body{background-color:#e9f0fa}
+body{background-color:#e9f0fa;color:#3e4960}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .global-menu{background-color:#293141;border-top:1px solid #3e4960}.global-menu a{color:#9cabc4;border-bottom:1px solid #3e4960}.global-menu a:hover{background-color:#151922;color:#fff}

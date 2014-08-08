@@ -1,124 +1,105 @@
-.asset-list {
+.asset-management-assets-container {
+    width:66%;
+    float:left;
+    overflow-x:hidden;
+    overflow-y:scroll;
 
-  padding-top: 15px;
-  padding-right: 15px;
+    .asset-management-no-assets {
+        text-align:center;
+        position:relative;
+        top:40%;
+    }
+}
 
-  .asset-list-item {
-      border: 1px solid lightgray;
-      margin-bottom: 10px;
-      height: 80px;
-      cursor: pointer;
+.asset-management-collection-inner {
+    padding-top:30px;
+    padding-left:30px;
+}
 
-      &.selected {
-        background-color: lightblue;
-      }
+.asset-management-preview-container {
+    width:33%;
+    float:right;
+    overflow-x:hidden;
+    overflow-y:scroll;
 
-      &:hover {
-        background-color: lightblue;
-      }
-  }
+    text-align:center;
+    border-left:1px solid #9cabc4;
+    background-color:#fff;
+    color:#9cabc4;
 
-  .asset-nav-tabs {
-    border-bottom: 1px solid #E3E3E3;
-
-    &:after {
-      clear: both;
-      content: ".";
-      display: block;
-      height: 0;
-      visibility: hidden;
+    &-inner {
+        padding:10px;
     }
 
-    ul {
-      list-style: none outside none;
-      margin: 0;
+    .asset-management-no-preview {
+        position:relative;
+        top:40%;
+    }
+}
 
-      &:after {
-        clear: both;
-        content: ".";
-        display: block;
-        height: 0;
-        visibility: hidden;
-      }
+.asset-management-list-item {
+    width:200px;
+    height: 270px;
+    margin-right:30px;
+    margin-bottom:30px;
+    float:left;
+
+    cursor:pointer;
+    background-color:#fff;
+    border: 1px solid #b7caed;
+    border-radius:3px;
+    transition: all 0.3s;
+    box-shadow: 0px 0px 3pt 2pt transparent;
+    &:hover {
+        box-shadow: 0px 0px 3px 3px #e0e0e0;
     }
 
-    ul li {
-      float: left;
-      margin-right: 2px;
+    &.selected {
+        border-color: #15a4fa;
+    }
 
-      a, span {
-        display: block;
-        line-height: 1;
-        padding: 8px 12px 9px;
-      }
-
-      a {
-        color: #999999;
-        text-decoration: none;
-
-        &:focus, &:hover {
-          color: #000000;
-          text-decoration: none;
+    &-icon {
+        &-inner {
+            padding:6px;
         }
-      }
-
-      .active {
-        cursor: pointer;
-        -moz-border-bottom-colors: none;
-        -moz-border-left-colors: none;
-        -moz-border-right-colors: none;
-        -moz-border-top-colors: none;
-        background: none repeat scroll 0 0 #FFFFFF;
-        border-color: #DDDDDD #DDDDDD #FFFFFF;
-        border-image: none;
-        border-style: solid;
-        border-width: 1px;
-        bottom: -1px;
-        color: #000000;
-        margin-top: -2px;
-        padding: 8px 11px 9px;
-        position: relative;
-      }
     }
-  }
 
-  .asset-tab-content {
-      display: none;
-      padding: 10px;
-      border-left: 1px solid #E3E3E3;
-      border-right: 1px solid #E3E3E3;
-      border-bottom: 1px solid #E3E3E3;
-
-      &.active {
-        display: block;
-      }
-  }
-
-  .break {
-    margin-bottom: 2em !important;
-  }
-
-  .assets-container {
-    overflow-y: scroll;
-  }
-
-  .asset-preview-panel {
-    border: 1px solid lightgray;
-    cursor: pointer;
-    height: 100%;
-    margin-bottom: 10px;
-    padding: 5px;
-
-    .asset-preview-title {
-      padding-top: 20px;
+    &-image {
+        width:200px;
+        height:160px;
+        background-position:center;
+        background-size:cover;
+        background-repeat: no-repeat;
+        text-align:center;
+        i {
+            color:#9cabc4;
+            padding-top:60px;
+            font-size:50px;
+        }
     }
-  }
+
+    &-details {
+        word-wrap: break-word;
+        overflow:hidden;
+        width:200px;
+        &-inner {
+            padding:20px;
+        }
+    } 
 
 }
 
-.asset-filter-option {
+.asset-preview-details-preview {
+    margin-bottom:20px;
 
-  &.selected {
-    background-color: #159776;
-  }
+    i {
+        font-size:56px;
+    }
+    .fa-file-audio-o {
+        margin-bottom:20px;
+    }
+}
+
+.asset-preview-title {
+    word-wrap: break-word;
 }

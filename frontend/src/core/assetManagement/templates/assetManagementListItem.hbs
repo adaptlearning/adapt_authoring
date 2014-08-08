@@ -1,0 +1,59 @@
+<div class="asset-management-list-item-inner">
+
+    <div class="asset-management-list-item-icon">
+        <div class="asset-management-list-item-icon-inner">
+            {{#if_value_equals assetType "image"}}
+            <i class="fa fa-file-image-o"></i>
+            {{/if_value_equals}}
+
+            {{#if_value_equals assetType "audio"}}
+            <i class="fa fa-file-audio-o"></i>
+            {{/if_value_equals}}
+
+            {{#if_value_equals assetType "video"}}
+            <i class="fa fa-file-video-o"></i>
+            {{/if_value_equals}}
+
+            {{#if_value_equals assetType "other"}}
+            <i class="fa fa-file-o"></i>
+            {{/if_value_equals}}
+        </div>
+    </div>
+
+    {{#if_value_equals assetType "image"}}
+    <div class="asset-management-list-item-image" style="background-image:url(api/asset/thumb/{{_id}})">
+    </div>
+    {{/if_value_equals}}
+
+    {{#if_value_equals assetType "video"}}
+    <div class="asset-management-list-item-image" style="background-image:url(api/asset/thumb/{{_id}})">
+    </div>
+    {{/if_value_equals}}
+
+    {{#if_value_equals assetType "audio"}}
+    <div class="asset-management-list-item-image">
+        <i class="fa fa-file-audio-o"></i>
+    </div>
+    {{/if_value_equals}}
+
+    {{#if_value_equals assetType "other"}}
+    <div class="asset-management-list-item-image">
+        <i class="fa fa-file-o"></i>
+    </div>
+    {{/if_value_equals}}
+
+    <div class="asset-management-list-item-details">
+
+        <div class="asset-management-list-item-details-inner">
+
+        <div class="asset-management-list-item-title">
+            <h4 class="asset-management-list-item-title-inner">{{{title}}}</h4>
+        </div>
+
+        </div>
+
+        
+
+    </div>
+
+</div>

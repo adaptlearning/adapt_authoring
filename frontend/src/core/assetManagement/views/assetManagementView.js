@@ -5,7 +5,8 @@ define(function(require){
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
   var AssetModel = require('coreJS/assetManagement/models/assetModel');
-  var AssetManagementCollectionView = require('coreJS/assetManagement/views/assetCollectionView');
+  var AssetManagementCollectionView = require('coreJS/assetManagement/views/assetManagementCollectionView');
+  var AssetManagementPreviewView = require('coreJS/assetManagement/views/assetManagementPreviewView');
 
   var AssetManagementView = OriginView.extend({
 
@@ -17,124 +18,34 @@ define(function(require){
     },
 
     preRender: function() {
+        this.listenTo(Origin, 'window:resize', this.resizeAssetPanels);
+        this.listenTo(Origin, 'assetItemView:preview', this.onAssetClicked)
+        Origin.trigger('assetItemView:preview', this.model);
     },
 
     postRender: function() {
-        this.addAssets();
+        this.setupSubViews();
+        this.resizeAssetPanels();
     },
 
-    addAssets: function() {
-        this.$('asset-management-inner').append(new AssetManagementCollectionView().$el);
+    setupSubViews: function() {
+        this.$('.asset-management-assets-container-inner').append(new AssetManagementCollectionView().$el);
     },
 
-    resetFilterForm: function(event) {
-      event.preventDefault();
-
-      // Reset the filter criteria object
-      Origin.assetManagement.filterData = {};
-
-      // Reset the UI
-      this.$('.filter-form').trigger('reset');
-
-      this.triggerFilter();
+    resizeAssetPanels: function() {
+        var navigationHeight = $('.navigation').outerHeight();
+        var locationTitleHeight = $('.location-title').outerHeight();
+        var windowHeight = $(window).height();
+        var actualHeight = windowHeight - (navigationHeight + locationTitleHeight);
+        this.$('.asset-management-assets-container').height(actualHeight);
+        this.$('.asset-management-preview-container').height(actualHeight);
     },
 
-    resetUploadForm: function() {
-      this.$('.asset-form').trigger("reset");
-    },
-
-    onChangeFile: function(event) {
-      var $title = this.$('.asset-title');
-
-      // Default 'title' -- remove C:\fakepath if it is added
-      $title.val(this.$('.asset-file')[0].value.replace("C:\\fakepath\\", ""));
-    },
-
-    uploadAsset: function(event) {
-      event.preventDefault();
-
-      this.uploadFile();
-
-      // Return false to prevent the page submitting
-      return false;
-    },
-
-    uploadFile: function() {
-      var view = this;
-
-      this.$('.asset-form').ajaxSubmit({
-        error: function(xhr, status, error) {
-          console.log('Error: ' + xhr.status);
-        },
-    
-        success: function(data, status, xhr) {
-          Origin.trigger('assets:update');
-            
-          asset = new AssetModel({_id: data._id});
-          asset.fetch().done(function (data) {
-            Origin.trigger('assetItemView:preview', asset);
-          });
-
-          view.resetUploadForm();
-
-          alert('file uploaded');
-        }
-      });
-
-      // Return false to prevent the page submitting
-      return false;
-    },
-
-    toggleAssetForm: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
-      this.$('.toggle-asset-form').toggleClass('display-none');
-      this.$('.asset-form').slideToggle();
-    },
-
-    toggleFilterSelection: function(event) {
-      event.preventDefault();
-
-      var $control = $(event.target);
-
-      if ($control.hasClass('selected')) {
-        $control.removeClass('selected');
-      } else {
-        $control.addClass('selected');
-      }
-    },
-
-    filterAssets: function(event) {
-      event.preventDefault();
-
-      var $searchControl = $('.input-search');
-      // var assetTypes = $('ul.asset-filter.filetype > li.selected');
-      var assetTypes = $(':checked');
-      var stringValue = $.trim($searchControl.val());
-      var assetFilter = [];
-      
-      Origin.assetManagement.filterData = {};
-      Origin.assetManagement.filterData.searchString = stringValue;
-
-      if (assetTypes.length != 0) {
-        _.each(assetTypes, function(asset) {
-          assetFilter.push(asset.value);
-        });
-      } 
-
-      Origin.assetManagement.filterData.assetType = assetFilter;
-
-      if (Origin.assetManagement.filterData.assetType.length == 0 && Origin.assetManagement.filterData.searchString == '') {
-        // Reset the filter
-        Origin.assetManagement.filterData = {};
-      }
-
-      this.triggerFilter();
-    },
-
-    triggerFilter: function() {
-      Origin.trigger('assetManagement:filter');
+    onAssetClicked: function(model) {
+        this.$('.asset-management-no-preview').hide();
+        this.$('.asset-management-preview-container-inner').html(new AssetManagementPreviewView({
+            model: model
+        }).$el);
     }
     
   }, {

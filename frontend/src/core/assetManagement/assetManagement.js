@@ -1,14 +1,26 @@
 define(function(require) {
 
   var Origin = require('coreJS/app/origin');
-  var AssetManagementView = require('coreJS/assetManagement/views/assetCollectionView');
+  var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
+  var AssetManagementSidebarView = require('coreJS/assetManagement/views/assetManagementSidebarView');
+  var AssetManagementNewAssetView = require('coreJS/assetManagement/views/assetManagementNewAssetView');
+  var AssetManagementNewAssetSidebarView = require('coreJS/assetManagement/views/assetManagementNewAssetSidebarView');
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
     Origin.assetManagement = {};
     Origin.assetManagement.filterData = {};
 
     if (!location) {
-      Origin.router.createView(AssetManagementView);
+        Origin.trigger('location:title:update', {title: 'Asset Management'});
+        Origin.sidebar.addView(new AssetManagementSidebarView().$el);
+        Origin.router.createView(AssetManagementView);
+    } else if (location=== 'new') {
+        Origin.trigger('location:title:update', {title: 'New Asset'});
+        Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el, {
+            "backButtonText": "Back to assets",
+            "backButtonRoute": "/#/assetManagement"
+        });
+        Origin.router.createView(AssetManagementNewAssetView);
     }
   });
 

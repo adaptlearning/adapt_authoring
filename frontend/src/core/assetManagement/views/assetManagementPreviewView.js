@@ -1,22 +1,21 @@
 define(function(require){
 
   var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
 
-  var AssetPreviewView = OriginView.extend({
+  var AssetManagementPreviewView = OriginView.extend({
 
     tagName: 'div',
 
-    className: 'asset-preview-panel',
+    className: 'asset-management-preview',
 
     events: {
     },
 
     preRender: function() {
       this.listenTo(this, 'remove', this.remove);
-      this.listenTo(this.model, 'destroy', this.remove);
+      /*this.listenTo(this.model, 'destroy', this.remove);*/
     },
 
     postRender: function () {
@@ -32,9 +31,9 @@ define(function(require){
     }
 
   }, {
-    template: 'assetPreview'
+    template: 'assetManagementPreview'
   });
 
-  return AssetPreviewView;
+  return AssetManagementPreviewView;
 
 });

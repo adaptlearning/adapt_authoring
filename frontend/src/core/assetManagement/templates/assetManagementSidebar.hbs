@@ -1,0 +1,67 @@
+<div class="sidebar-item-inner">
+
+    <div class="sidebar-row sidebar-item-title">
+        <h2 class="sidebar-item-title-inner">
+            Asset Management
+        </h2>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="primary-color asset-management-sidebar-new">
+            <span class="asset-management-sidebar-new-inner">
+                Add new asset
+            </span>
+        </button>
+    </div>
+
+    {{!-- ASSET FILTERS --}}
+
+    <div class="sidebar-row sidebar-divide">
+        <h3 class="sidebar-divide-inner">
+            Filters
+        </h3>
+    </div>
+
+    {{!-- inline search field with close button --}}
+    <div class="sidebar-row">
+        <div class="sidebar-row-input">
+            <input type="text" class="asset-management-sidebar-filter-search" placeholder="{{t 'app.search'}}"/>
+            <button class="sidebar-inline-input-button asset-management-sidebar-filter-clear-search">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="asset-management-sidebar-filter-image asset-management-sidebar-filter-button" data-filter-type="image">
+            <span class="asset-management-sidebar-filter-image-inner">
+                {{t 'app.filetypeimage' }}
+            </span>
+        </button>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="asset-management-sidebar-filter-audio asset-management-sidebar-filter-button" data-filter-type="audio">
+            <span class="asset-management-sidebar-filter-audio-inner">
+                {{t 'app.filetypeaudio' }}
+            </span>
+        </button>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="asset-management-sidebar-filter-video asset-management-sidebar-filter-button" data-filter-type="video">
+            <span class="asset-management-sidebar-filter-video-inner">
+                {{t 'app.filetypevideo' }}
+            </span>
+        </button>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="asset-management-sidebar-filter-other asset-management-sidebar-filter-button" data-filter-type="other">
+            <span class="asset-management-sidebar-filter-other-inner">
+                {{t 'app.filetypeother' }}
+            </span>
+        </button>
+    </div>
+
+</div>

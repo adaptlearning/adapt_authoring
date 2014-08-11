@@ -5,19 +5,25 @@
 		</h2>
 	</div>
 	<div class="sidebar-row">
-		<button class="dashboard-sidebar-add-course">
+		<button class="primary-color dashboard-sidebar-add-course">
 			<span class="dashboard-sidebar-add-course-inner">
 				Add new course
 			</span>
 		</button>
 	</div>
 
+    <div class="sidebar-row sidebar-divide">
+        <h3 class="sidebar-divide-inner">
+            Filters
+        </h3>
+    </div>
+
+    {{!-- inline search field with close button --}}
     <div class="sidebar-row">
-        <label class="dashboard-sidebar-filter">
-        Filter courses
-        </label>
-        <input class="dashboard-sidebar-filter-input" type="text" placeholder="Enter a course title"/>
-        <a href="#" class="dashboard-sidebar-filter-clear"><i class="fa fa-times"></i></a>
+        <div class="sidebar-row-input">
+            <input type="text" class="dashboard-sidebar-filter-input asset-management-sidebar-filter-search" placeholder="{{t 'app.search'}}"/>
+            <button class="dashboard-sidebar-filter-clear sidebar-inline-input-button"><i class="fa fa-times"></i></button>
+        </div>
     </div>
 
 	<div class="sidebar-row">

@@ -2,7 +2,7 @@
 	position:fixed;
 	top:0px;
 	left:0px;
-	width:260px;
+	width:220px;
 	height:100%;
 	overflow-y:auto;
 	overflow-x:hidden;
@@ -57,6 +57,19 @@
         border:none;
         width:100%;
         padding:18px 20px;
+        &.sidebar-inline-input-button {
+            width:10px;
+            height:10px;
+            padding:8px;
+            border:none;
+            width: 28px;
+            height: 32px;
+            padding: 8px;
+            border: none;
+            &:hover {
+                background:none;
+            }
+        }
     }
 }
 
@@ -68,4 +81,12 @@
     padding:30px 20px;
     font-size: 15px;
     font-weight: 200;
+}
+
+.sidebar-divide {
+    text-align:center;
+}
+
+.sidebar-divide-inner {
+    padding:8px;
 }

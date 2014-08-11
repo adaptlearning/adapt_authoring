@@ -34,7 +34,7 @@ define(function(require) {
 
         onSearchKeyup: function(event) {
             var filterText = $(event.currentTarget).val();
-            Origin.trigger('assetManagement:dashboardSidebarView:filter', filterText);
+            Origin.trigger('assetManagement:sidebarView:filter', filterText);
         },
 
         onClearSearchClicked: function(event) {

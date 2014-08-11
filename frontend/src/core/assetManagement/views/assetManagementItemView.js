@@ -9,7 +9,9 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'asset-management-list-item',
+    className: function() {
+        return 'asset-management-list-item id-' + this.model.get('_id');
+    },
 
     events: {
         'click' : 'onAssetClicked'

@@ -23,6 +23,7 @@ define(function(require){
             this.listenTo(this.collection, 'sync', this.renderAssetItems);
             this.listenTo(Origin, 'assetManagement:sidebarFilter:add', this.addFilter);
             this.listenTo(Origin, 'assetManagement:sidebarFilter:remove', this.removeFilter);
+            this.listenTo(Origin, 'assetManagement:sidebarView:filter', this.filterBySearchInput);
         },
 
         renderAssetItems: function(filteredCollection) {
@@ -43,6 +44,9 @@ define(function(require){
             assetCollection.each(function(asset) {
                 this.$('.asset-management-collection-inner').append(new AssetItemView({model: asset}).$el);
             }, this);
+
+            // Should always check if input has a value and keep the search filter
+            this.filterBySearchInput($('.asset-management-sidebar-filter-search').val());
 
         },
 
@@ -85,6 +89,18 @@ define(function(require){
             // the filter separate
             this.renderAssetItems(new Backbone.Collection(filteredCollection));
 
+        },
+
+        filterBySearchInput: function(filterText) {
+            // Go through each model and hide the ones with this title
+            this.collection.each(function(model) {
+                if (model.get('title').toLowerCase().indexOf(filterText.toLowerCase()) > -1) {
+                    this.$('.id-' + model.get('_id')).removeClass('display-none');
+                } else {
+                    this.$('.id-' + model.get('_id')).addClass('display-none');
+                }
+
+            }, this);
         }
 
     }, {

@@ -1,117 +1,90 @@
 define(function(require){
 
-  var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
-  var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
-  var AssetItemView = require('coreJS/assetManagement/views/assetManagementItemView');
-  var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
-  var AssetModel = require('coreJS/assetManagement/models/assetModel');
-  var AssetManagementPreview = require('coreJS/assetManagement/views/assetManagementPreviewView');
+    var Backbone = require('backbone');
+    var Handlebars = require('handlebars');
+    var Origin = require('coreJS/app/origin');
+    var OriginView = require('coreJS/app/views/originView');
+    var AssetItemView = require('coreJS/assetManagement/views/assetManagementItemView');
+    var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
+    var AssetModel = require('coreJS/assetManagement/models/assetModel');
+    var AssetManagementPreview = require('coreJS/assetManagement/views/assetManagementPreviewView');
 
-  var AssetCollectionView = OriginView.extend({
+    var AssetCollectionView = OriginView.extend({
 
-    tagName: "div",
+        tagName: "div",
 
-    className: "asset-management-collection",
+        className: "asset-management-collection",
 
-    events: {},
+        events: {},
 
-    preRender: function() {
-        this.collection = new AssetCollection();
-        this.listenTo(this.collection, 'sync', this.setupFilteredCollection);
-      
-      /*this.listenTo(Origin, 'assets:update', this.refreshCollection);
-      this.listenTo(Origin, 'assetItemView:preview', this.loadPreview);
-      this.listenTo(Origin, 'assetManagement:filter', this.filterCollection);*/
-    },
+        preRender: function() {
+            this.filters = [];
+            this.collection = new AssetCollection();
+            this.listenTo(this.collection, 'sync', this.renderAssetItems);
+            this.listenTo(Origin, 'assetManagementSidebar:filter:add', this.addFilter);
+            this.listenTo(Origin, 'assetManagementSidebar:filter:remove', this.removeFilter);
+        },
 
-    setupFilteredCollection: function() {
-        // Check if collection has items and hide instructions
-        if (this.collection.length > 0) {
-            $('.asset-management-no-assets').addClass('display-none');
-        }
-        // Empty collection container
-        this.$('.asset-management-collection-inner').empty();
+        renderAssetItems: function(filteredCollection) {
 
-        this.collection.each(function(asset) {
-            this.$('.asset-management-collection-inner').append(new AssetItemView({model: asset}).$el);
-        }, this);
-    },
+            var assetCollection = (filteredCollection || this.collection);
 
-    postRender: function() {
-        this.collection.fetch();
-      /*this.addNewAssetContainer();
-      this.setCollectionHeight();*/
-    },
-
-    /*refreshCollection: function(event) {
-      this.collection.fetch();
-    },
-
-    filterCollection: function(event) {
-      if (Origin.assetManagement.filterData && !$.isEmptyObject(Origin.assetManagement.filterData)) {
-        var partialString = Origin.assetManagement.filterData.searchString;
-        var assetTypes = Origin.assetManagement.filterData.assetType;
-
-        this.filteredCollection = new Backbone.Collection(this.collection.filter(function (model) {
-
-          if (partialString !== '') {
-            if (assetTypes.length > 0) {
-              return _.contains(assetTypes, model.get('assetType')) && model.get('title').toLowerCase().indexOf(partialString) >= 0;
-            } else {
-              return model.get('title').toLowerCase().indexOf(partialString) >= 0;
+            // Check if collection has items and hide instructions
+            if (assetCollection.length > 0) {
+                $('.asset-management-no-assets').addClass('display-none');
             }
-          } else {
-            return _.contains(assetTypes, model.get('assetType'));
-          }
 
-        }));
-      } else {
-        // There is no filter applied
-        this.filteredCollection = this.collection;
-      }
+            // Trigger event to kill zombie views
+            Origin.trigger('assetManagementCollection:assetViews:remove');
+            // Empty collection container
+            this.$('.asset-management-collection-inner').empty();
 
-      this.addAssetViews();
-    },
+            // Render each asset item
+            assetCollection.each(function(asset) {
+                this.$('.asset-management-collection-inner').append(new AssetItemView({model: asset}).$el);
+            }, this);
 
-    addNewAssetContainer: function() {
-      //this.$('.new-asset-container').append(new AssetView({model: new AssetModel()}).$el);
-    },
+        },
 
-    addAssetViews: function() {
-      this.renderAssetViews(this.filteredCollection.models);
-    },
+        postRender: function() {
+            this.collection.fetch();
+        },
 
-    renderAssetViews: function(assets) {
-      this.$('.assets-container').empty();
+        addFilter: function(filterType) {
+            // add filter to this.filters
+            this.filters.push(filterType);
+            this.filterCollection();
 
-      _.each(assets, function(asset) {
-        this.$('.assets-container').append(new AssetItemView({model: asset}).$el);
-      }, this);
+        },
 
-      this.evaluateAssetCount(assets);
-    },
+        removeFilter: function(filterType) {
+            // remove filter from this.filters
+            this.filters = _.filter(this.filters, function(item) {
+                return item != filterType;
+            });
 
-    evaluateAssetCount: function (assets) {
-      if (assets.length == 0) {
-        this.$('.assets-container').append(window.polyglot.t('app.noassetsfound'));
-      }
-    },
+            this.filterCollection();
+        },
 
-    loadPreview: function (previewModel) {
-      this.$('.asset-preview').empty().append(new AssetPreview({model: previewModel}).$el);
-    },
+        filterCollection: function(event) {
+            // Filter collection based upon this.filters array
+            var filteredCollection = this.collection.filter(function(assetItem) {
 
-    setCollectionHeight: function () {
-      var offset = this.$('.assets-container').offset();
-      this.$('.assets-container').height($(window).height() - ($('.navigation').outerHeight() + offset.top));
-    }*/
+                return _.contains(this.filters, assetItem.get('assetType'));
 
-  }, {
-    template: 'assetManagementCollection'
-  });
+            }, this);
 
-  return AssetCollectionView;
+            // Once filter re-render the view
+            // Why re-render is so we can use search on the dom elements whilst keeping
+            // the filter separate
+            this.renderAssetItems(new Backbone.Collection(filteredCollection));
+
+        }
+
+    }, {
+        template: 'assetManagementCollection'
+    });
+
+    return AssetCollectionView;
 
 });

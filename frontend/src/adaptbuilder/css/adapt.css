@@ -430,6 +430,7 @@ body{background-color:#e9f0fa;color:#3e4960}
 .sidebar-breadcrumb{background-color:#15a4fa}.sidebar-breadcrumb a:hover{background-color:#0588d7}
 .sidebar-item-title{background-color:#3e4960;color:#fff}
 .sidebar-row button,.sidebar-row a{border-bottom:1px solid #3e4a5f;color:#9cabc4;transition:all 0.3s}.sidebar-row button:hover,.sidebar-row a:hover{color:#fff;background-color:#293141}
+.sidebar-row button.selected,.sidebar-row a.selected{background-color:#293141}
 .sidebar-divide{background-color:#293141}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);

@@ -22,9 +22,12 @@
         </h2>
     </div>
 
+    {{!-- inline search field with close button --}}
     <div class="sidebar-row">
-        <input class="asset-management-sidebar-filter-search" placeholder="{{t 'app.search'}}">
-        </input>
+        <div class="sidebar-row-input">
+            <input type="text" class="asset-management-sidebar-filter-search" placeholder="{{t 'app.search'}}"/>
+            <button class="sidebar-inline-input-button"><i class="fa fa-times"></i></button>
+        </div>
     </div>
 
     <div class="sidebar-row">

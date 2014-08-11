@@ -34,8 +34,15 @@
             background-color:#293141;
         }
         &.selected {
-            background-color:@navigation-color;
+            background-color:darken(@navigation-color, 5%);
         }  
+    }
+    .sidebar-row-input {
+        border-bottom:1px solid #3e4a5f;
+        input {
+            border:none;
+            border-radius:0px;
+        }
     }
 }
 

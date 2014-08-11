@@ -67,6 +67,12 @@ define(function(require){
         },
 
         filterCollection: function(event) {
+            // If this.filters is empty then no filters are applied
+            // Instead render all items
+            if (this.filters.length === 0) {
+                return this.renderAssetItems(this.collection);
+            }
+
             // Filter collection based upon this.filters array
             var filteredCollection = this.collection.filter(function(assetItem) {
 

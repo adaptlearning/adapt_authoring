@@ -21,8 +21,8 @@ define(function(require){
             this.filters = [];
             this.collection = new AssetCollection();
             this.listenTo(this.collection, 'sync', this.renderAssetItems);
-            this.listenTo(Origin, 'assetManagementSidebar:filter:add', this.addFilter);
-            this.listenTo(Origin, 'assetManagementSidebar:filter:remove', this.removeFilter);
+            this.listenTo(Origin, 'assetManagement:sidebarFilter:add', this.addFilter);
+            this.listenTo(Origin, 'assetManagement:sidebarFilter:remove', this.removeFilter);
         },
 
         renderAssetItems: function(filteredCollection) {
@@ -35,7 +35,7 @@ define(function(require){
             }
 
             // Trigger event to kill zombie views
-            Origin.trigger('assetManagementCollection:assetViews:remove');
+            Origin.trigger('assetManagement:assetViews:remove');
             // Empty collection container
             this.$('.asset-management-collection-inner').empty();
 

@@ -16,7 +16,7 @@ define(function(require){
     },
 
     preRender: function() {
-        this.listenTo(Origin, 'assetManagementCollection:assetViews:remove', this.remove);
+        this.listenTo(Origin, 'assetManagement:assetViews:remove', this.remove);
         this.listenTo(this, 'remove', this.remove);
         this.listenTo(this.model, 'destroy', this.remove);
     },
@@ -25,7 +25,7 @@ define(function(require){
         $('.asset-management-list-item').removeClass('selected');
         this.$el.addClass('selected');
         this.model.set('_isSelected', true);
-        Origin.trigger('assetItemView:preview', this.model);
+        Origin.trigger('assetManagement:assetItemView:preview', this.model);
     }
     
   }, {

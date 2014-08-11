@@ -19,8 +19,8 @@ define(function(require){
 
     preRender: function() {
         this.listenTo(Origin, 'window:resize', this.resizeAssetPanels);
-        this.listenTo(Origin, 'assetItemView:preview', this.onAssetClicked)
-        Origin.trigger('assetItemView:preview', this.model);
+        this.listenTo(Origin, 'assetManagement:assetItemView:preview', this.onAssetClicked)
+        /*Origin.trigger('assetItemView:preview', this.model);*/
     },
 
     postRender: function() {

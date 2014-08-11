@@ -7,7 +7,9 @@ define(function(require) {
 
         events: {
             'click .asset-management-sidebar-new': 'onAddNewAssetClicked',
-            'click .asset-management-sidebar-filter-button': 'onFilterButtonClicked'
+            'click .asset-management-sidebar-filter-button': 'onFilterButtonClicked',
+            'click .asset-management-sidebar-filter-clear-search': 'onClearSearchClicked',
+            'keyup .asset-management-sidebar-filter-search': 'onSearchKeyup'
         },
 
         onAddNewAssetClicked: function() {
@@ -22,12 +24,22 @@ define(function(require) {
             // else add the filter
             if ($currentTarget.hasClass('selected')) {
                 $currentTarget.removeClass('selected');
-                Origin.trigger('assetManagementSidebar:filter:remove', filterType);
+                Origin.trigger('assetManagement:sidebarFilter:remove', filterType);
             } else {
                 $currentTarget.addClass('selected');
-                Origin.trigger('assetManagementSidebar:filter:add', filterType);
+                Origin.trigger('assetManagement:sidebarFilter:add', filterType);
             }
 
+        },
+
+        onSearchKeyup: function(event) {
+            var filterText = $(event.currentTarget).val();
+            Origin.trigger('assetManagement:dashboardSidebarView:filter', filterText);
+        },
+
+        onClearSearchClicked: function(event) {
+            event.preventDefault();
+            this.$('.asset-management-sidebar-filter-search').val('').trigger('keyup');
         }
 
     }, {

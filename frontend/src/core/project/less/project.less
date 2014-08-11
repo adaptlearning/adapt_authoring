@@ -1,3 +1,8 @@
+
+// Tag colors
+@tag-background-color:#9CABC4;
+@tag-title-color:#fff;
+
 .project-list-item {
     overflow:hidden;
     border-radius:3px;
@@ -20,9 +25,41 @@
             top:0%;
             opacity:1;
         }
+
+        .tags {
+
+          li.tag {
+            background-color:@tag-title-color;
+
+            span {
+              color:@tag-background-color;
+            }
+
+          }
+        }
     }
     &.listing {
         width: 700px;
+    }
+
+    .tags {
+
+      ul.tags {
+        margin: 0px 2px;
+      }
+
+      li.tag {
+        margin: 2px 5px;
+        display: inline-block;
+        background-color:@tag-background-color;
+
+        span {
+          margin: 5px;
+          color:@tag-title-color;
+        }
+      }
+
+
     }
 }
 
@@ -45,7 +82,7 @@
     transition:all 0.3s;
     a {
         color:#3e4960;
-    } 
+    }
 }
 
 .project-settings-inner {

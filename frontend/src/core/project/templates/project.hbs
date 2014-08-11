@@ -1,5 +1,5 @@
 <div class="project-inner unselectable" data-id="{{_id}}">
-    
+
     <div class="project-header">
       <div class="project-header-inner">
 
@@ -13,13 +13,13 @@
         <img src="{{posterImage}}"/>
         {{/if}} --}}
         {{!-- Should probably use the one above --}}
-        <img src="images/origami-project.jpg"/> 
+        <img src="images/origami-project.jpg"/>
 
       </div>
     </div>
-    
 
-      
+
+
 
     <div class="project-details">
       <div class="project-details-inner">
@@ -31,6 +31,19 @@
         <div class="project-details-last-updated project-details-row">
           <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
           <div class="projects-details-value">{{formatDate updatedAt}}</div>
+        </div>
+
+        <div class="project-details-tags project-details-row tags">
+          <div class="projects-details-label">{{t 'app.tags'}}</div>
+          <div class="projects-details-value">
+            <ul class="items tags">
+            {{#each tags}}
+              <li class="item-row tag" title="{{{title}}}">
+                <span class="value-text">{{{title}}}</span>
+              </li>
+            {{/each}}
+            </ul>
+          </div>
         </div>
 
       </div>

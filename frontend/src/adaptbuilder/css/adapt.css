@@ -58,11 +58,12 @@ button{width:auto;overflow:visible}
 .asset-management-collection-inner{padding-top:30px;padding-left:30px}
 .asset-management-preview-container{width:33%;float:right;overflow-x:hidden;overflow-y:scroll;text-align:center;border-left:1px solid #9cabc4;background-color:#fff;color:#9cabc4}.asset-management-preview-container-inner{padding:10px}
 .asset-management-preview-container .asset-management-no-preview{position:relative;top:40%}
-.asset-management-list-item{width:200px;height:270px;margin-right:30px;margin-bottom:30px;float:left;cursor:pointer;background-color:#fff;border:1px solid #b7caed;border-radius:3px;transition:all 0.3s;box-shadow:0px 0px 3pt 2pt transparent}.asset-management-list-item:hover{box-shadow:0px 0px 3px 3px #e0e0e0}
+.asset-management-list-item{width:160px;height:240px;margin-right:30px;margin-bottom:30px;float:left;cursor:pointer;background-color:#fff;border:1px solid #b7caed;border-radius:3px;transition:all 0.3s;box-shadow:0px 0px 3pt 2pt transparent}.asset-management-list-item:hover{box-shadow:0px 0px 3px 3px #e0e0e0}
 .asset-management-list-item.selected{border-color:#15a4fa}
 .asset-management-list-item-icon-inner{padding:6px}
-.asset-management-list-item-image{width:200px;height:160px;background-position:center;background-size:cover;background-repeat:no-repeat;text-align:center}.asset-management-list-item-image i{color:#9cabc4;padding-top:60px;font-size:50px}
-.asset-management-list-item-details{word-wrap:break-word;overflow:hidden;width:200px}.asset-management-list-item-details-inner{padding:20px}
+.asset-management-list-item-image{width:160px;height:120px;background-position:center;background-size:cover;background-repeat:no-repeat;text-align:center}.asset-management-list-item-image i{color:#9cabc4;padding-top:40px;font-size:50px}
+.asset-management-list-item-details{word-wrap:break-word;overflow:hidden;width:160px}.asset-management-list-item-details-inner{padding:20px}
+.asset-management-list-item-title{height:52px;overflow:hidden}
 .asset-preview-details-preview{margin-bottom:20px}.asset-preview-details-preview i{font-size:56px}
 .asset-preview-details-preview .fa-file-audio-o{margin-bottom:20px}
 .asset-preview-title{word-wrap:break-word}
@@ -342,6 +343,8 @@ a.open-context-contentObject{color:white}
 .sidebar-row button,select.sidebar-row button{background:none;border:none;width:100%;padding:18px 20px}
 .sidebar-item-title{text-align:center}
 .sidebar-item-title-inner{padding:30px 20px;font-size:15px;font-weight:200}
+.sidebar-divide{text-align:center}
+.sidebar-divide-inner{padding:8px}
 
 .module-user.location-login{background-color:#4e4e4e}.module-user.location-login .sidebar{display:none}
 .module-user.location-login #app{margin-left:0px}
@@ -427,6 +430,7 @@ body{background-color:#e9f0fa;color:#3e4960}
 .sidebar-breadcrumb{background-color:#15a4fa}.sidebar-breadcrumb a:hover{background-color:#0588d7}
 .sidebar-item-title{background-color:#3e4960;color:#fff}
 .sidebar-row button,.sidebar-row a{border-bottom:1px solid #3e4a5f;color:#9cabc4;transition:all 0.3s}.sidebar-row button:hover,.sidebar-row a:hover{color:#fff;background-color:#293141}
+.sidebar-divide{background-color:#293141}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .module-user.location-login{background-color:#e9f0fa}

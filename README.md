@@ -75,6 +75,7 @@ Navigate to the /conf/config.json and ensure the following property is set:
 ```
 "useffmpeg" : true
 ```
+_**Windows users**_: most probably ffmpeg and ffprobe will not be in your %PATH Environment Variables, so you must set %FFMPEG_PATH and %FFPROBE_PATH.  It is imporatant that you enter the full path to the .exe files here.  (This project uses the [node-fluent-ffmpeg] (https://github.com/fluent-ffmpeg/node-fluent-ffmpeg) API.)
 
 ## Run
 

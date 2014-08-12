@@ -33,6 +33,7 @@
           <div class="projects-details-value">{{formatDate updatedAt}}</div>
         </div>
 
+        {{#if tags.length}}
         <div class="project-details-tags project-details-row tags">
           <div class="projects-details-label">{{t 'app.tags'}}</div>
           <div class="projects-details-value">
@@ -45,7 +46,7 @@
             </ul>
           </div>
         </div>
-
+        {{/if}}
       </div>
     </div>
 

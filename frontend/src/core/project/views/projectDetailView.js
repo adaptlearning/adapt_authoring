@@ -3,6 +3,7 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var EditorConfigModel = require('editorConfig/models/editorConfigModel');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
+  var TagsInput = require('core/libraries/jquery.tagsinput.min');
 
   var ProjectDetailView = EditorOriginView.extend({
 
@@ -32,6 +33,13 @@ define(function(require) {
       if (!this.model.isNew()) {
         this.renderExtensionEditor('course');
       }
+
+      // tagging
+      $('#projectTags').tagsInput({
+        autocomplete_url: '/api/content/tag/autocomplete',
+        onAddTag: _.bind(this.onAddTag, this),
+        onRemoveTag: _.bind(this.onRemoveTag, this)
+      });
     },
 
     cancel: function (event) {
@@ -57,32 +65,65 @@ define(function(require) {
     saveProject: function(event) {
       event && event.preventDefault();
 
-      var _this = this;
-      
-      if (!_this.validateInput()) {
+      if (!this.validateInput()) {
         return;
       }
 
-      if (!_this.model.isNew()) {
+      if (!this.model.isNew()) {
         var extensionJson = {};
-        extensionJson = _this.getExtensionJson('course');
-        _this.model.set({_extensions: extensionJson});
+        extensionJson = this.getExtensionJson('course');
+        this.model.set({_extensions: extensionJson});
       }
 
-      _this.model.save({title: $.trim(_this.$('#projectDetailTitle').val()),
-        body: tinyMCE.get('projectDetailDescription').getContent()
-        },
-        {
+      // fix tags
+      var tags = [];
+      _.each(this.model.get('tags'), function (item) {
+        item._id && tags.push(item._id);
+      });
+
+      var self = this;
+      this.model.save({
+        title: $.trim(this.$('#projectDetailTitle').val()),
+        body: tinyMCE.get('projectDetailDescription').getContent(),
+        tags: tags
+        }, {
           error: function() {
             alert('An error occurred doing the save');
           },
           success: function(result) {
             Backbone.history.history.back();
-            _this.remove();
+            self.remove();
           }
         }
       );
+    },
+
+    onAddTag: function (tag) {
+      var model = this.model;
+      $.ajax({
+        url:'/api/content/tag',
+        method:'POST',
+        data: { title: tag }
+      }).done(function (data) {
+        if (data && data._id) {
+          var tags = model.get('tags');
+          tags.push({ _id: data._id, title: data.title });
+          model.set({ tags: tags });
+        }
+      });
+    },
+
+    onRemoveTag: function (tag) {
+      var model = this.model;
+      var tags = [];
+      _.each(model.get('tags'), function (item) {
+        if (item.title !== tag) {
+          tags.push(item);
+        }
+      });
+      this.model.set({ tags: tags });
     }
+
   },
   {
     template: 'projectDetail'

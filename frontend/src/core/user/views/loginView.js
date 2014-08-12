@@ -11,20 +11,31 @@ define(function(require) {
 
     events: {
       'keydown #login-input-username' : 'clearErrorStyling',
-      'click .login-form-submit':'submitLoginDetails'
+      'click .login-form-submit'      : 'submitLoginDetails',
+      'keydown #login-input-password' : 'handleEnterKey'
     },
 
     preRender: function() {
       this.listenTo(Origin, 'login:failed', this.loginFailed, this);
     },
     
+    handleEnterKey: function(e) {
+      if (e.keyCode == 13) {
+        this.submitLoginDetails();
+      }
+
+      return;
+    },
+
     clearErrorStyling: function(e) {
       $('#login-input-username').removeClass('input-error');
       $('#loginErrorMessage').text('');
+
+      this.handleEnterKey(e);
     },
 
     submitLoginDetails: function(e) {
-      e.preventDefault();
+      e && e.preventDefault();
 
       var inputUsernameEmail = $.trim(this.$("#login-input-username").val()).toLowerCase();
       var inputPassword = $.trim(this.$("#login-input-password").val());
@@ -32,6 +43,7 @@ define(function(require) {
       // Validation
       if (inputUsernameEmail === '' || inputPassword === '') {
         this.loginFailed();
+        return false;
       } else {
         $('#login-input-username').removeClass('input-error');
       }
@@ -50,8 +62,6 @@ define(function(require) {
     loginFailed: function() {
       $('#login-input-username').addClass('input-error');
       $('#loginErrorMessage').text(window.polyglot.t('app.invalidusernameoremail'));
-
-      return false;
     }
 
   }, {

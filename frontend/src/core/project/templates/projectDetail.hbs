@@ -12,8 +12,8 @@
             <form class="forms">
 
                 <div class="form-group">
-                    <label for="projectDetailTitle">{{t 'app.projecttitle'}} 
-                        <span class="req">*</span> 
+                    <label for="projectDetailTitle">{{t 'app.projecttitle'}}
+                        <span class="req">*</span>
                         <span id="titleErrorMessage" class="error"></span>
                     </label>
                     <input type="text" class="width-30" id="projectDetailTitle" value="{{ title }}" autocomplete="off">
@@ -23,8 +23,8 @@
                     <label for="projectDetailDescription">{{t 'app.projectdescription'}}</label>
                     <textarea class="text-editor form-control" id="projectDetailDescription" placeholder="Placeholder">{{body}}</textarea>
                 </div>
-            
-            
+
+
                 <ul class="form-list">
 
                     <li>
@@ -43,6 +43,11 @@
                     </li>
 
                 </ul>
+
+                <div class="form-group tags">
+                    <label for="projectTags">{{t 'app.tags'}}</label>
+                    <input type="text" autocomplete="off" class="width-30" id="projectTags" value="{{pickCSV tags "title"}}" />
+                </div>
 
             </form>
         </div>

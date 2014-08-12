@@ -140,5 +140,6 @@
   "app.updateplugin" : "Click to update",
   "app.uptodate" : "Up to date!",
   "app.updatefailed" : "Failed to update!",
-  "app.updating" : "Updating ..."
+  "app.updating" : "Updating ...",
+  "app.tags" : "Tags"
 }

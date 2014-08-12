@@ -1,0 +1,52 @@
+@import 'variables';
+
+div.tagsinput {
+  border:1px solid #CCC;
+  background: #FFF;
+  padding:5px;
+  overflow-y: auto;
+
+  span.tag {
+    border: 1px solid @tag-title-color;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    display: block;
+    float: left;
+    padding: 5px;
+    text-decoration:none;
+    background: @tag-background-color;
+    color: @tag-title-color;
+    margin-right: 5px;
+    margin-bottom:5px;
+
+    a {
+      color: @tag-title-color;
+      font-weight: bold;
+      text-decoration:none;
+    }
+  }
+
+  input {
+    width: 80px;
+    margin:0px;
+    border:1px solid transparent;
+    padding:5px;
+    background: transparent;
+    color: #000;
+    outline:0px;
+    margin-right:5px;
+    margin-bottom:5px;
+  }
+
+  div {
+    display:block;
+    float: left;
+  }
+}
+
+.tags_clear {
+  clear: both;
+  width: 100%;
+  height: 0px;
+}
+

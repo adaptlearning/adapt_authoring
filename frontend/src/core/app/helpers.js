@@ -89,6 +89,19 @@ define(function(require){
             }
 
             return new Handlebars.SafeString(html);
+        },
+        pickCSV: function (list, key) {
+          var vals = [];
+          if (list && list.length) {
+            for (var i = 0; i < list.length; ++i) {
+              if (key && list[i][key]) {
+                vals.push(list[i][key]);
+              } else {
+                vals.push(list[i]);
+              }
+            }
+          }
+          return vals.join(',');
         }
     };
 

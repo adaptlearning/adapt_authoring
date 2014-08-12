@@ -70,8 +70,11 @@ Component.prototype.retrieve = function (search, options, next) {
     options = {};
   }
 
+  var pop = { _componentType: ['displayName'] };
   if (!options.populate) {
-    options.populate = { '_componentType': ['displayName'] };
+    options.populate = pop;
+  } else {
+    options.populate = _.extend(pop, options.populate);
   }
 
   ContentPlugin.prototype.retrieve.call(this, search, options, next);

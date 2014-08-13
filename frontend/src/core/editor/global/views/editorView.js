@@ -6,16 +6,16 @@ define(function(require){
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorMenuView = require('editorMenu/views/editorMenuView');
   var EditorPageView = require('editorPage/views/editorPageView');
-  var EditorCollection = require('editorGlobal/collections/editorCollection');
+  /*var EditorCollection = require('editorGlobal/collections/editorCollection');*/
   var EditorModel = require('editorGlobal/models/editorModel');
-  var EditorCourseModel = require('editorCourse/models/editorCourseModel');
+  /*var EditorCourseModel = require('editorCourse/models/editorCourseModel');*/
   var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
   var EditorArticleModel = require('editorPage/models/editorArticleModel');
   var EditorBlockModel = require('editorPage/models/editorBlockModel');
   var EditorComponentModel = require('editorPage/models/editorComponentModel');
   var EditorClipboardModel = require('editorGlobal/models/editorClipboardModel');
   var EditorComponentTypeModel = require('editorPage/models/editorComponentTypeModel');
-  var EditorConfigModel = require('editorConfig/models/editorConfigModel');
+  /*var EditorConfigModel = require('editorConfig/models/editorConfigModel');*/
   var ExtensionModel = require('editorExtensions/models/extensionModel');
 
   var EditorView = EditorOriginView.extend({
@@ -72,6 +72,8 @@ define(function(require){
     // Origin.editor.course, Origin.editor.config, Origin.editor.contentObjects,
     // Origin.editor.articles, Origin.editor.blocks
     setupEditor: function() {
+
+        return this.renderCurrentEditorView();
       this.loadedData = {
         clipboard: false,
         course: false,
@@ -92,7 +94,7 @@ define(function(require){
 
         if (allDataIsLoaded) {
           Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
-
+          Origin.trigger('editor:dataLoaded');
           this.renderCurrentEditorView();
         }
       }, this);

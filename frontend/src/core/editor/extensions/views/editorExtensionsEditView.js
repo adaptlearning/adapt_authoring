@@ -17,64 +17,132 @@ define(function(require) {
     },
 
     events: {
-      'click button.remove-extension' : 'confirmDeleteExtension'
+      'click button.remove-extension' : 'onRemoveExtensionClicked',
+      'click button.add-extension': 'onAddExtensionClicked'
     },
 
     preRender: function() {
-      this.allExtensionsCollection = new ExtensionCollection();
-      this.allExtensionsCollection.fetch();
-
-      this.listenTo(this.allExtensionsCollection, 'sync', this.setupExtensions, this);
-
-      this.listenTo(Origin, 'editorExtensionsEditSidebar:views:save', this.saveExtensions);
-      this.listenTo(Origin, 'editorExtensionsEditSidebar:views:confirmSave', this.confirmSave);
-      this.listenTo(Origin, 'editorExtensionsEditSidebar:views:delete', this.deleteExtension);
+        this.currentSelectedIds = [];
+        this.listenTo(Origin, 'editorExtensionsEdit:views:add', this.addExtension);
+        this.listenTo(Origin, 'editorExtensionsEdit:views:remove', this.removeExtension);
+        this.setupExtensions();
     },
 
-    /**
-     * Read the enabled extensions from the config and setup the 'enabled' and 'available' lists
-     */
     setupExtensions: function() {
-      var _this = this;
 
-      // Read the enabled extensions from the config
-      $.ajax({
-          url: '/api/content/config/' + _this.model.get('_id')
-        }).done(function(data) {
-          
-          var extensionsData = data._enabledExtensions,
-            extensions = [];
+        // Grab available extensions
+        var availableExtensionsCollection = Origin.editor.data.extensionTypes;
 
-          extensions = _.pluck(extensionsData, '_id');
+        // Get enabled extensions
+        var enabledExtensions = Origin.editor.data.config.get('_enabledExtensions');
 
-          _this.model.set('extensionsToRemove', null);
+        // Pluck Ids so we can compare
+        var enabledExtensionsIds = _.pluck(enabledExtensions, '_id');
 
-          // Remove the enabled extensions from the list of available extensions
-          var enabledExtensionsModels = _this.allExtensionsCollection.filter(function(extension) {
-            return _.indexOf(extensions, extension.get('_id')) > -1;
-          });
+        var enabledExtensionsCollection = new Backbone.Collection();
+        var disabledExtensionsCollection = new Backbone.Collection();
 
-          var enabledExtensionsCollection = new Backbone.Collection(enabledExtensionsModels);
-          _this.model.set('enabledExtensions', enabledExtensionsCollection);
+        // Go through each collection and see if it's enabled 
+        // and push to correct collection
+        availableExtensionsCollection.each(function(extension) {
 
-          var availableExtensionsModels = _this.allExtensionsCollection.filter(function(extension) {
-            return _.indexOf(extensions, extension.get('_id')) == -1;
-          });
-
-          var availableExtensionsCollection = new Backbone.Collection(availableExtensionsModels);
-
-          _this.model.set('availableExtensions', availableExtensionsCollection);
-          _this.model.set('enabledExtensions', _this.model.get('enabledExtensions').toJSON());
-          _this.model.set('availableExtensions', _this.model.get('availableExtensions').toJSON());
-
-          _this.render();
+            if (_.indexOf(enabledExtensionsIds, extension.get('_id')) > -1) {
+                enabledExtensionsCollection.add(extension);
+            } else {
+                disabledExtensionsCollection.add(extension);
+            }
         });
+
+        // Set collections on model render for render
+        this.model.set('enabledExtensions', enabledExtensionsCollection.toJSON());
+        this.model.set('availableExtensions', disabledExtensionsCollection.toJSON());
+
+        this.render();
+
     },
+
+    onAddExtensionClicked: function(event) {
+        this.currentSelectedIds = [$(event.currentTarget).attr('data-id')];
+        var props = {
+            _type: 'prompt',
+            _showIcon: true,
+            title: window.polyglot.t('app.manageextensions'),
+            body: window.polyglot.t('app.confirmapplyextensions'),
+            _prompts: [{
+                    _callbackEvent: 'editorExtensionsEdit:views:add', 
+                    promptText: window.polyglot.t('app.ok')
+                }, {
+                    _callbackEvent:'', 
+                    promptText: window.polyglot.t('app.cancel')
+                }
+            ]
+        };
+
+        Origin.trigger('notify:prompt', props);
+    },
+
+    addExtension: function() {
+        $.post('/api/extension/enable/' + this.model.get('_id'), {
+                extensions: this.currentSelectedIds 
+            }, _.bind(function(result) {
+            if (result.success) {
+                console.log('gettings here');
+                Origin.once('editor:dataLoaded', function() {
+                    console.log('getting here');
+                    this.setupExtensions();
+                }, this);
+
+                Origin.trigger('editorView:fetchData');
+
+            } else {
+                alert('An error occured');
+            }          
+        }, this));
+    },
+
+    onRemoveExtensionClicked: function(event) {
+        this.currentSelectedIds = [$(event.currentTarget).attr('data-id')];
+        var props = {
+            _type: 'prompt',
+            _showIcon: true,
+            title: window.polyglot.t('app.manageextensions'),
+            body: window.polyglot.t('app.confirmapplyextensions'),
+            _prompts: [{
+                    _callbackEvent: 'editorExtensionsEdit:views:remove', 
+                    promptText: window.polyglot.t('app.ok')
+                }, {
+                    _callbackEvent:'', 
+                    promptText: window.polyglot.t('app.cancel')
+                }
+            ]
+        };
+
+        Origin.trigger('notify:prompt', props);
+    },
+
+    removeExtension: function() {
+        $.post('/api/extension/disable/' + this.model.get('_id'), {
+                extensions: this.currentSelectedIds 
+            }, _.bind(function(result) {
+            if (result.success) {
+
+                Origin.once('editor:dataLoaded', function() {
+                    console.log('getting here');
+                    this.setupExtensions();
+                }, this);
+
+                Origin.trigger('editorView:fetchData');
+
+            } else {
+                alert('An error occured');
+            }          
+        }, this));
+    }
 
     /**
      * Trigger a prompt for the user to confirm deletion of an extension 
      */
-    confirmDeleteExtension: function(event) {
+    /*confirmDeleteExtension: function(event) {
       var extensionId = event.currentTarget.value,
         extensions = [];
 
@@ -94,12 +162,12 @@ define(function(require) {
         };
 
         Origin.trigger('notify:prompt', props);  
-    },
+    },*/
 
     /**
      * Remove the extension from the course
      **/
-    deleteExtension: function(event) {
+    /*deleteExtension: function(event) {
       if (event) {
         event.preventDefault();
       }
@@ -119,12 +187,12 @@ define(function(require) {
           }          
         }
       );
-    },
+    },*/
 
     /**
      * Trigger a prompt (if appropriate) for the user to confirm they want to save any extensions
      */
-    confirmSave: function() {
+    /*confirmSave: function() {
 
       var checkedItems = $('input[type="checkbox"]:checked'),
         selected = [],
@@ -161,12 +229,12 @@ define(function(require) {
         Backbone.history.history.back();
         this.remove();
       }
-    },
+    },*/
 
     /**
      * Make the API call to save extensions
      */
-    saveExtensions: function() {
+    /*saveExtensions: function() {
       var _this = this;
 
       $.post('/api/extension/enable/' + _this.model.get('_id'), 
@@ -184,7 +252,7 @@ define(function(require) {
           }          
         }
       );
-    }
+    }*/
 
   },
   {

@@ -129,6 +129,7 @@
   "app.options" : "Options",
   "app.select" : "Select",
   "app.remove" : "Remove",
+  "app.add": "Add",
   "app.enabledextensions" : "Enabled extensions",
   "app.availableextensions" : "Available extensions",
   "app.noextensionsenabled" : "There are currently no extensions enabled.",

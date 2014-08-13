@@ -1,19 +1,23 @@
 <div class="pluginType-inner">
   <div class="pluginType-description col-row">
     <div class="pluginType-title col-20">
-      <h4 class="pluginType-title-inner">{{{displayName}}}</h4>
+      <h4 class="pluginType-title-inner tb-col-inner">{{{displayName}}}</h4>
     </div>
     <div class="pluginType-description col-40">
-      <div class="pluginType-description-inner">{{{description}}}</div>
+      <div class="pluginType-description-inner tb-col-inner">{{{description}}}</div>
     </div>
-    <div class="pluginType-version col-10">
-      <span class="pluginType-version-number">{{version}}</span>
+    <div class="pluginType-version col-10 col-centered">
+      <span class="pluginType-version-number tb-col-inner">{{version}}</span>
     </div>
-    <div class="pluginType-enabled col-10">
-      <input class="plugin-toggle-enabled" type="checkbox" {{#if _isAvailableInEditor}} checked="checked" {{/if}} />
+    <div class="pluginType-enabled col-10 col-centered">
+      <div class="pluginType-enabled-inner  tb-col-inner">
+        <input class="plugin-toggle-enabled" type="checkbox" {{#if _isAvailableInEditor}} checked="checked" {{/if}} />
+      </div>
     </div>
-    <div class="pluginType-update col-20">
-      <button class="btn plugin-update-check btn btn-info">Check for updates</button>
+    <div class="pluginType-update col-20 col-centered">
+      <div class="pluginType-update-inner tb-col-inner">
+        <button class="btn plugin-update-check btn btn-info">Check for updates</button>
+      </div>
     </div>
   </div>
 </div>

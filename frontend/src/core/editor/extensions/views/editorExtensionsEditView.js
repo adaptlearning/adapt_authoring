@@ -10,7 +10,7 @@ define(function(require) {
 
     tagName: "div",
 
-    className: "project",
+    className: "extension-management",
 
     settings: {
       autoRender: false

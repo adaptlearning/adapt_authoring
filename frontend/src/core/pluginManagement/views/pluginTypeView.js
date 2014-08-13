@@ -9,7 +9,7 @@ define(function(require){
 
     tagName: 'div',
 
-    className: 'pluginType-item',
+    className: 'pluginType-item tb-row',
 
     events: {
       'change .plugin-toggle-enabled': 'toggleEnabled',

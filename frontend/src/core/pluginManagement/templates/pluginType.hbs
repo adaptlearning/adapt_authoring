@@ -1,19 +1,19 @@
-<div class="pluginType-inner units-row">
-  <div class="pluginType-description unit-100">
-    <div class="pluginType-title unit-20">
+<div class="pluginType-inner">
+  <div class="pluginType-description col-row">
+    <div class="pluginType-title col-20">
       <h4 class="pluginType-title-inner">{{{displayName}}}</h4>
     </div>
-    <div class="pluginType-description unit-40">
+    <div class="pluginType-description col-40">
       <div class="pluginType-description-inner">{{{description}}}</div>
     </div>
-    <div class="pluginType-version unit-10">
+    <div class="pluginType-version col-10">
       <span class="pluginType-version-number">{{version}}</span>
     </div>
-    <div class="pluginType-enabled unit-10">
+    <div class="pluginType-enabled col-10">
       <input class="plugin-toggle-enabled" type="checkbox" {{#if _isAvailableInEditor}} checked="checked" {{/if}} />
     </div>
-    <div class="pluginType-update unit-20">
-      <a class="btn plugin-update-check" href="#">Check for updates</a>
+    <div class="pluginType-update col-20">
+      <button class="btn plugin-update-check btn btn-info">Check for updates</button>
     </div>
   </div>
 </div>

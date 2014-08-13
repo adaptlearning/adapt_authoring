@@ -8,6 +8,7 @@ define(function(require){
   var ExtensionTypeCollection = require('coreJS/pluginManagement/collections/extensionTypeCollection');
   var ThemeTypeCollection = require('coreJS/pluginManagement/collections/themeTypeCollection');
   var ComponentTypeCollection = require('coreJS/pluginManagement/collections/componentTypeCollection');
+  var Helpers = require('coreJS/app/helpers');
 
   var PluginManagementView = OriginView.extend({
 
@@ -71,8 +72,9 @@ define(function(require){
     renderPluginTypeViews: function(pluginTypes) {
       this.$('.pluginManagement-plugins').empty();
 
-      _.each(pluginTypes, function(pluginType) {
-        this.$('.pluginManagement-plugins').append(new PluginTypeView({model: pluginType}).$el);
+      _.each(pluginTypes, function(pluginType, index) {
+        var oddOrEvenClass = 'tb-row-' + Helpers.odd(index);
+        this.$('.pluginManagement-plugins').append(new PluginTypeView({model: pluginType}).$el.addClass(oddOrEvenClass));
       }, this);
 
       this.evaluatePluginTypeCount(pluginTypes);

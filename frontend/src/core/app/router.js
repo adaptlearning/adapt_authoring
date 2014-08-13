@@ -57,6 +57,10 @@ define(function(require) {
 
       var routeArguments = arguments;
 
+      // Set previous location object
+
+      Origin.previousLocation = Origin.location;
+
       // Set location object
       Origin.location = {};
       _.each(this.locationKeys, function(locationKey, index) {

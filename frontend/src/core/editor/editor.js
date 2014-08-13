@@ -113,8 +113,25 @@ define(function(require) {
 
         var extensionsModel = new Backbone.Model({_id: location});
 
-        Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el);
+        // Setup back button breadcrumb
+
+        // Check whether the user came from the page editor or menu editor
+        var backButtonRoute = "/#/editor/" + location + "/menu";
+        var backButtonText = "Back to menu";
+
+        if (Origin.previousLocation.route2 === "page") {
+            backButtonRoute = "/#/editor/" + location + "/page/" + Origin.previousLocation.route3;
+            backButtonText = "Back to page";
+        }
+
+        var optionsObject = {
+            "backButtonText": backButtonText,
+            "backButtonRoute": backButtonRoute
+        };
+
+        Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el, optionsObject);
         Origin.editingOverlay.addView(new EditorExtensionsEditView({model: extensionsModel}).$el);
+
         break;
 
 			case 'menu':

@@ -342,6 +342,7 @@ li.theme-list-item.selected{color:#fff;background-color:#333c4e}
 .pluginType-headings{border-bottom:1px gray solid;padding:16px 30px}
 .pluginType-heading-version,.pluginType-heading-enabled,.pluginType-heading-action,.pluginType-version,.pluginType-enabled,.pluginType-update{text-align:center}
 .pluginType-title-inner,.pluginType-description-inner,.pluginType-version-inner,.pluginType-enabled-inner,.pluginType-update-inner{padding-right:10px}
+.pluginManagement-loading{text-align:center;padding:30px}
 .pluginType-action-buttons{padding:10px 30px}
 
 

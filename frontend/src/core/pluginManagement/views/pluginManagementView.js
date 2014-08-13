@@ -123,7 +123,7 @@ define(function(require){
         'url': this.collection.url() + '&refreshplugins=1'
       }).done(function (data) {
         // regardless of the result, refresh the view
-        Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger: false});
+        Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger: true});
       });
 
       return false;

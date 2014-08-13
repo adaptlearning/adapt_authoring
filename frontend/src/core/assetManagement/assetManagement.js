@@ -1,6 +1,7 @@
 define(function(require) {
 
   var Origin = require('coreJS/app/origin');
+  var AssetModel = require('coreJS/assetManagement/models/assetModel');
   var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
   var AssetManagementSidebarView = require('coreJS/assetManagement/views/assetManagementSidebarView');
   var AssetManagementNewAssetView = require('coreJS/assetManagement/views/assetManagementNewAssetView');
@@ -20,7 +21,7 @@ define(function(require) {
             "backButtonText": "Back to assets",
             "backButtonRoute": "/#/assetManagement"
         });
-        Origin.router.createView(AssetManagementNewAssetView);
+        Origin.router.createView(AssetManagementNewAssetView, { model: new AssetModel });
     }
   });
 

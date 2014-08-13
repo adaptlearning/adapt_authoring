@@ -90,8 +90,9 @@ define(function(require){
 
             return new Handlebars.SafeString(html);
         },
-        pickCSV: function (list, key) {
+        pickCSV: function (list, key, separator) {
           var vals = [];
+          separator = (separator && separator.length) ? separator : ',';
           if (list && list.length) {
             for (var i = 0; i < list.length; ++i) {
               if (key && list[i][key]) {
@@ -101,7 +102,7 @@ define(function(require){
               }
             }
           }
-          return vals.join(',');
+          return vals.join(separator);
         }
     };
 

@@ -46,6 +46,15 @@
     },
     "metadata": {
       "type": "object"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "objectid",
+        "required": true,
+        "ref": "tag"
+      },
+      "editorOnly": true
     }
   }
 }

@@ -32,4 +32,8 @@
     <div class="asset-height">{{t 'app.assetdimensions'}} : {{{metadata.width}}} X {{{metadata.height}}}</div>
   {{/if}}
 
+  {{#if tags.length}}
+    <div class="asset-tags">{{t 'app.tags'}} : {{pickCSV tags "title" ", "}}</div>
+  {{/if}}
+
 </div>

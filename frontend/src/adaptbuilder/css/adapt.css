@@ -84,7 +84,7 @@ button{width:auto;overflow:visible}
 .clearfix:after{clear:both}
 .clearfix{zoom:1}
 
-.tb-title{background-color:#e8e8e8;text-align:center;border-bottom:1px gray solid;padding:24px 30px!important;border-top:1px solid gray}
+.tb-title{background-color:#9cabc4;color:#fff;text-align:center;border-bottom:1px gray solid;padding:24px 30px!important;border-top:1px solid gray}
 .tb-heading{border-bottom:1px gray solid}
 .tb-row{padding:16px 30px}.tb-row-odd{background-color:#fff}
 .tb-row-even{background-color:#f3f3f3}

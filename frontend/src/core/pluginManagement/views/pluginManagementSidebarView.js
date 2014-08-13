@@ -24,7 +24,7 @@ define(function(require) {
     },
 
     managePluginType: function (pluginType) {
-      Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger: true});
+      Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger: false});
     },
 
     returnToDashboard: function() {

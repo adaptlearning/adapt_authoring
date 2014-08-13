@@ -9,7 +9,11 @@ define(function(require) {
       location = 'extension';
     }
     Origin.router.createView(PluginManagementView, { pluginType: location });
-    Origin.sidebar.addView(new PluginManagementSidebarView().$el);
+    var optionsObject = {
+        "backButtonText": "Back to Dashboard",
+        "backButtonRoute": "/#/dashboard"
+    };
+    Origin.sidebar.addView(new PluginManagementSidebarView().$el, optionsObject);
   });
 
   Origin.on('globalMenu:pluginManagement:open', function() {

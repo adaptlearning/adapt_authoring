@@ -213,7 +213,16 @@ define(function(require){
     },
 
     loadBlockEdit: function (event) {
-      Origin.router.navigate('#/editor/' + this.model.get('_type') + '/' + this.model.get('_id') + '/edit', {trigger: true});
+      var courseId = Origin.editor.data.course.get('_id');
+      var type = this.model.get('_type');
+      var Id = this.model.get('_id');
+      Origin.router.navigate('#/editor/' 
+        + courseId 
+        + '/' 
+        + type 
+        + '/' 
+        + Id 
+        + '/edit', {trigger: true});
     },
 
     showComponentList: function(event) {

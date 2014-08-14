@@ -52,7 +52,8 @@ define(function(require) {
 
 	Origin.on('router:editor', function(route1, route2, route3, route4) {
 
-    if (dataIsLoaded) {
+    // Check if data has already been loaded for this project
+    if (Origin.editor.data.course && Origin.editor.data.course.get('_id') === route1) {
       return routeAfterDataIsLoaded(route1, route2, route3, route4);
     }
 
@@ -69,6 +70,7 @@ define(function(require) {
     };
 
     Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedObject) {
+
       loadedData[loadedObject] = true;
       
       var allDataIsLoaded = _.every(loadedData, function(item) {
@@ -76,10 +78,12 @@ define(function(require) {
       });
 
       if (allDataIsLoaded) {
+
         Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
         Origin.trigger('editor:dataLoaded');
         dataIsLoaded = true;
         routeAfterDataIsLoaded(route1, route2, route3, route4);
+
       }
 
     });
@@ -140,8 +144,8 @@ define(function(require) {
 
   function routeAfterDataIsLoaded(route1, route2, route3, route4) {
 
-    if (route1 === 'article') {
-      var articleModel = new EditorArticleModel({_id: route2});
+    if (route2 === 'article') {
+      var articleModel = new EditorArticleModel({_id: route3});
       articleModel.fetch({
         success: function() {
           Origin.trigger('location:title:update', {title: 'Editing article - ' + articleModel.get('title')});
@@ -152,8 +156,8 @@ define(function(require) {
       return;
     }
 
-    if (route1 === 'block') {
-      var blockModel = new EditorBlockModel({_id: route2});
+    if (route2 === 'block') {
+      var blockModel = new EditorBlockModel({_id: route3});
       blockModel.fetch({
         success: function() {
           Origin.trigger('location:title:update', {title: 'Editing block - ' + blockModel.get('title')});
@@ -164,9 +168,9 @@ define(function(require) {
       return;
     }
 
-    if (route1 === 'component') {
+    if (route2 === 'component') {
       // Display editing a component
-      var componentModel = new EditorComponentModel({_id: route2});
+      var componentModel = new EditorComponentModel({_id: route3});
       componentModel.fetch({
         success: function() {
           Origin.trigger('location:title:update', {title: 'Editing ' + componentModel.get('_componentType').displayName.toLowerCase() + ' component - ' + componentModel.get('title')});

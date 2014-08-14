@@ -53,6 +53,8 @@ define(function(require) {
             }
         });
 
+        console.log(availableExtensionsCollection, Origin.editor.data.config, enabledExtensionsCollection, disabledExtensionsCollection);
+
         // Set collections on model render for render
         this.model.set('enabledExtensions', enabledExtensionsCollection.toJSON());
         this.model.set('availableExtensions', disabledExtensionsCollection.toJSON());
@@ -86,13 +88,10 @@ define(function(require) {
                 extensions: this.currentSelectedIds 
             }, _.bind(function(result) {
             if (result.success) {
-                console.log('gettings here');
-                Origin.once('editor:dataLoaded', function() {
-                    console.log('getting here');
+
+                Origin.trigger('editor:refreshData', function() {
                     this.setupExtensions();
                 }, this);
-
-                Origin.trigger('editorView:fetchData');
 
             } else {
                 alert('An error occured');
@@ -126,12 +125,9 @@ define(function(require) {
             }, _.bind(function(result) {
             if (result.success) {
 
-                Origin.once('editor:dataLoaded', function() {
-                    console.log('getting here');
+                Origin.trigger('editor:refreshData', function() {
                     this.setupExtensions();
                 }, this);
-
-                Origin.trigger('editorView:fetchData');
 
             } else {
                 alert('An error occured');

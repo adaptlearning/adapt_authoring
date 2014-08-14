@@ -252,14 +252,20 @@ define(function(require){
                   thisView.createRecursive(newModel._children, clipboard, model.get('_id'), oldPid);
                 } else {
                   // We're done pasting, no more children to process
-                  Origin.trigger('editorView:fetchData');
+                  Origin.trigger('editor:refreshData', function() {
+                    Origin.trigger('editorView:fetchData');
+                  }, this);
+                  
+                  
                 }
               }
             }
           );
         });
       } else {
-        Origin.trigger('editorView:fetchData');
+        Origin.trigger('editor:refreshData', function() {
+          Origin.trigger('editorView:fetchData');
+        }, this);
       }
     },
 

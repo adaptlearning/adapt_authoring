@@ -80,9 +80,6 @@ define(function(require) {
 
     });
 
-    // Config has to be reset -- HACK
-    Origin.editor.data.config = new EditorConfigModel({_id: this.currentCourseId});
-
     // // Not implemented for the time being
     // Origin.editor.data.config.on('change:_enabledExtensions', function() {
     //   Origin.socket.emit('project:build', { id: this.currentCourseId });
@@ -101,7 +98,7 @@ define(function(require) {
 	Origin.on('router:editor', function(route1, route2, route3, route4) {
 
     // Check if data has already been loaded for this project
-    if (dataIsLoaded && Origin.editor.data.course.get('_id') === route1) {
+    if (dataIsLoaded && Origin.editor.data.course && Origin.editor.data.course.get('_id') === route1) {
       return routeAfterDataIsLoaded(route1, route2, route3, route4);
     }
 
@@ -142,7 +139,7 @@ define(function(require) {
 
   function setupEditorData(route1, route2, route3, route4) {
     Origin.editor.data.course = new EditorCourseModel({_id: route1});
-    Origin.editor.data.config = new EditorConfigModel({_id: route1});
+    Origin.editor.data.config = new EditorConfigModel({_courseId: route1});
 
     Origin.editor.data.contentObjects = new EditorCollection(null, {
       model: EditorContentObjectModel,
@@ -259,7 +256,7 @@ define(function(require) {
         // var collection = new EditorConfigCollection();
         // collection.findWhere({_courseId: location});
 
-        var configModel = new EditorConfigModel({_id: route1});
+        var configModel = new EditorConfigModel({_courseId: route1});
 
         configModel.fetch({
           success: function() {

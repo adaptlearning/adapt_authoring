@@ -48,39 +48,60 @@ define(function(require) {
   var ExtensionModel = require('editorExtensions/models/extensionModel');
 
   var dataIsLoaded = false;
-  var editorCollectionsCreated = false;
 
   Origin.on('editor:refreshData', function(callback, context) {
+    dataIsLoaded = false;
+    var loadedData = {
+      clipboard: false,
+      course: false,
+      config: false,
+      componentTypes: false,
+      extensionTypes: false, 
+      contentObjects: false,
+      articles: false,
+      blocks: false,
+      components: false
+    };
+    Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedObject) {
 
-    if (Origin.editor.data.course) {
-      Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedObject) {
-
-        loadedData[loadedObject] = true;
-        
-        var allDataIsLoaded = _.every(loadedData, function(item) {
-          return item === true;
-        });
-
-        if (allDataIsLoaded) {
-
-          Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
-          Origin.trigger('editor:dataLoaded');
-          dataIsLoaded = true;
-          routeAfterDataIsLoaded(route1, route2, route3, route4);
-
-        }
-
-      });
-    } else {
+      loadedData[loadedObject] = true;
       
-    }   
+      var allDataIsLoaded = _.every(loadedData, function(item) {
+        return item === true;
+      });
+
+      if (allDataIsLoaded) {
+
+        Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
+        Origin.trigger('editor:dataLoaded');
+        dataIsLoaded = true;
+        callback.apply(context);
+      }
+
+    });
+
+    // Config has to be reset -- HACK
+    Origin.editor.data.config = new EditorConfigModel({_id: this.currentCourseId});
+
+    // // Not implemented for the time being
+    // Origin.editor.data.config.on('change:_enabledExtensions', function() {
+    //   Origin.socket.emit('project:build', { id: this.currentCourseId });
+    // });
+    
+    _.each(Origin.editor.data, function(object) {
+      object.fetch({reset:true,
+        error: function(model, response, options) {
+          alert('*****   Oops, something went wrong!  *****');
+        }
+      });
+    });  
 
   });
 
 	Origin.on('router:editor', function(route1, route2, route3, route4) {
 
     // Check if data has already been loaded for this project
-    if (Origin.editor.data.course && Origin.editor.data.course.get('_id') === route1) {
+    if (dataIsLoaded && Origin.editor.data.course.get('_id') === route1) {
       return routeAfterDataIsLoaded(route1, route2, route3, route4);
     }
 
@@ -166,7 +187,6 @@ define(function(require) {
       url: '/api/extensiontype',
       _type: 'extensionTypes'
     });
-    editorCollectionsCreated = true;
   }
 
   function routeAfterDataIsLoaded(route1, route2, route3, route4) {

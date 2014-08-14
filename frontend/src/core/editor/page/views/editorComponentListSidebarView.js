@@ -44,9 +44,10 @@ define(function(require) {
                 alert('error adding new component');
               },
               success: function() {
-                Backbone.history.history.back();
-                Origin.trigger('editingOverlay:views:hide');
-                Origin.trigger('editorView:fetchData');
+                Origin.trigger('editor:refreshData', function() {
+                    Backbone.history.history.back();
+                    Origin.trigger('editingOverlay:views:hide');
+                }, this);
               }
             });
         },

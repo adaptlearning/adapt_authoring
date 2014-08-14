@@ -80,7 +80,6 @@ define(function(require) {
         Origin.trigger('editor:dataLoaded');
         dataIsLoaded = true;
         routeAfterDataIsLoaded(route1, route2, route3, route4);
-        Origin.trigger('origin:hideLoading');
       }
 
     });
@@ -234,19 +233,20 @@ define(function(require) {
         break;
 
       case 'menu':
-        console.log(route4);
+
+        // Edit the menu item
         if (route4 === "edit") {
-          console.log('getting here');
           var contentObjectModel = new EditorContentObjectModel({_id: route3});
           contentObjectModel.fetch({
             success: function() {
-              Origin.trigger('location:title:update', {title: 'Editing page - ' + contentObjectModel.get('title')});
+              Origin.trigger('location:title:update', {title: 'Editing menu - ' + contentObjectModel.get('title')});
               Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel}).$el);
               Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel}).$el);
             }
           });
           return;
         }
+
         // Update page title
         Origin.trigger('location:title:update', {title: 'Menu editor'});
         // Create Editor menu view
@@ -263,6 +263,19 @@ define(function(require) {
         });
         break;
       case 'page':
+
+        // Edit the page item
+        if (route4 === "edit") {
+          var contentObjectModel = new EditorContentObjectModel({_id: route3});
+          contentObjectModel.fetch({
+            success: function() {
+              Origin.trigger('location:title:update', {title: 'Editing page - ' + contentObjectModel.get('title')});
+              Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel}).$el);
+              Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel}).$el);
+            }
+          });
+          return;
+        }
         // Update page title
         Origin.trigger('location:title:update', {title: 'Page editor'});
 

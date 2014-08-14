@@ -95,6 +95,23 @@ define(function(require){
     addBlock: function(event) {
       event.preventDefault();
 
+      var layoutOptions = [
+      {
+        type: 'left',
+        name: 'app.layoutleft',
+        pasteZoneRenderOrder: 2
+      },
+      {
+        type: 'full',
+        name: 'app.layoutfull',
+        pasteZoneRenderOrder: 1
+      },
+      {
+        type: 'right',
+        name: 'app.layoutright',
+        pasteZoneRenderOrder: 3
+      }];
+
       var _this = this;
       var newPageBlockModel = new EditorBlockModel();
 
@@ -103,19 +120,19 @@ define(function(require){
         displayTitle: '',
         body: '',
         _parentId: _this.model.get('_id'),
-        _courseId: Origin.editor.data.course.get('_id')
+        _courseId: Origin.editor.data.course.get('_id'),
+        layoutOptions: layoutOptions
       },
       {
         error: function() {
           alert('error adding new block');
         },
         success: function(model, response, options) {
-          _this.addBlockView(model, true);
 
-          Origin.editor.data.blocks.add(model);
-
-          // Commenting out the next line
-          // Origin.trigger('editorView:fetchData');
+          Origin.trigger('editor:refreshData', function() {
+            _this.addBlockView(model, true);
+          }, this);
+          
         }
       });
     },

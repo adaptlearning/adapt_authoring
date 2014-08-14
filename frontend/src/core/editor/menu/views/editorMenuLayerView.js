@@ -78,8 +78,9 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: function(model) {
-            Origin.trigger('editorView:fetchData');
-            Origin.trigger('editorSidebarView:addEditView', model);
+            Origin.trigger('editor:refreshData', function() {
+              Origin.trigger('editorSidebarView:addEditView', model);
+            }, this);
           }
         });
       },

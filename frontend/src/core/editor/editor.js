@@ -53,8 +53,26 @@ define(function(require) {
   Origin.on('editor:refreshData', function(callback, context) {
 
     if (Origin.editor.data.course) {
-      
+      Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedObject) {
+
+        loadedData[loadedObject] = true;
+        
+        var allDataIsLoaded = _.every(loadedData, function(item) {
+          return item === true;
+        });
+
+        if (allDataIsLoaded) {
+
+          Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
+          Origin.trigger('editor:dataLoaded');
+          dataIsLoaded = true;
+          routeAfterDataIsLoaded(route1, route2, route3, route4);
+
+        }
+
+      });
     } else {
+      
     }   
 
   });

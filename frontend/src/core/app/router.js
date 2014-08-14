@@ -7,11 +7,11 @@ define(function(require) {
 
     routes: {
       ""                                      : "handleIndex",
-      ":module(/*route1)(/*route2)(/*route3)" : "handleRoute"
+      ":module(/*route1)(/*route2)(/*route3)(/*route4)" : "handleRoute"
     },
 
     initialize: function() {
-      this.locationKeys = ['module', 'route1', 'route2', 'route3'];
+      this.locationKeys = ['module', 'route1', 'route2', 'route3', 'route4'];
     },
 
     isUserAuthenticated: function() {
@@ -51,7 +51,7 @@ define(function(require) {
       }
     },
 
-    handleRoute: function(module, route1, route2, route3) {
+    handleRoute: function(module, route1, route2, route3, route4) {
       // Remove views
       this.removeViews();
 
@@ -77,7 +77,7 @@ define(function(require) {
       $('body').removeClass().addClass(locationClass);
 
       // Trigger router event
-      Origin.trigger('router:' + module, route1, route2, route3);
+      Origin.trigger('router:' + module, route1, route2, route3, route4);
     },
 
     removeViews: function() {

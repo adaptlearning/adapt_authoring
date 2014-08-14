@@ -103,7 +103,7 @@ define(function(require){
     },
 
     editMenuItem: function() {
-      Origin.router.navigate('#/editor/' + this.model.get('_id') + '/edit', {trigger: true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/menu/' + this.model.get('_id') + '/edit', {trigger: true});
     },
 
     deleteItemPrompt: function(event) {

@@ -50,10 +50,10 @@ define(function(require) {
   var dataIsLoaded = false;
   var editorCollectionsCreated = false;
 
-	Origin.on('router:editor', function(location, subLocation, action) {
+	Origin.on('router:editor', function(route1, route2, route3, route4) {
 
     if (dataIsLoaded) {
-      return routeAfterDataIsLoaded(location, subLocation, action);
+      return routeAfterDataIsLoaded(route1, route2, route3, route4);
     }
 
     var loadedData = {
@@ -79,46 +79,47 @@ define(function(require) {
         Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
         Origin.trigger('editor:dataLoaded');
         dataIsLoaded = true;
-        routeAfterDataIsLoaded(location, subLocation, action);
+        routeAfterDataIsLoaded(route1, route2, route3, route4);
+        Origin.trigger('origin:hideLoading');
       }
 
     });
 
-    setupEditorData(location, subLocation, action);
+    setupEditorData(route1, route2, route3, route4);
 
 	});
 
-  function setupEditorData(location, subLocation, action) {
-    Origin.editor.data.course = new EditorCourseModel({_id: location});
-    Origin.editor.data.config = new EditorConfigModel({_id: location});
+  function setupEditorData(route1, route2, route3, route4) {
+    Origin.editor.data.course = new EditorCourseModel({_id: route1});
+    Origin.editor.data.config = new EditorConfigModel({_id: route1});
 
     Origin.editor.data.contentObjects = new EditorCollection(null, {
       model: EditorContentObjectModel,
-      url: '/api/content/contentobject?_courseId=' + location,
+      url: '/api/content/contentobject?_courseId=' + route1,
       _type: 'contentObjects'
     });
     
     Origin.editor.data.articles = new EditorCollection(null, {
       model: EditorArticleModel,
-      url: '/api/content/article?_courseId=' + location,
+      url: '/api/content/article?_courseId=' + route1,
       _type: 'articles'
     });
     
     Origin.editor.data.blocks = new EditorCollection(null, {
       model: EditorBlockModel,
-      url: '/api/content/block?_courseId=' + location,
+      url: '/api/content/block?_courseId=' + route1,
       _type: 'blocks'
     });
 
     Origin.editor.data.components = new EditorCollection(null, {
       model: EditorComponentModel,
-      url: '/api/content/component?_courseId=' + location,
+      url: '/api/content/component?_courseId=' + route1,
       _type: 'components'
     });
 
     Origin.editor.data.clipboard = new EditorCollection(null, {
       model: EditorClipboardModel,
-      url: '/api/content/clipboard?_courseId=' + location + '&createdBy=' + Origin.sessionModel.get('id'),
+      url: '/api/content/clipboard?_courseId=' + route1 + '&createdBy=' + Origin.sessionModel.get('id'),
       _type: 'clipboard'
     });
 
@@ -138,9 +139,10 @@ define(function(require) {
     editorCollectionsCreated = true;
   }
 
-  function routeAfterDataIsLoaded(location, subLocation, action) {
-    if (location === 'article') {
-      var articleModel = new EditorArticleModel({_id: subLocation});
+  function routeAfterDataIsLoaded(route1, route2, route3, route4) {
+
+    if (route1 === 'article') {
+      var articleModel = new EditorArticleModel({_id: route2});
       articleModel.fetch({
         success: function() {
           Origin.trigger('location:title:update', {title: 'Editing article - ' + articleModel.get('title')});
@@ -151,8 +153,8 @@ define(function(require) {
       return;
     }
 
-    if (location === 'block') {
-      var blockModel = new EditorBlockModel({_id: subLocation});
+    if (route1 === 'block') {
+      var blockModel = new EditorBlockModel({_id: route2});
       blockModel.fetch({
         success: function() {
           Origin.trigger('location:title:update', {title: 'Editing block - ' + blockModel.get('title')});
@@ -163,9 +165,9 @@ define(function(require) {
       return;
     }
 
-    if (location === 'component') {
+    if (route1 === 'component') {
       // Display editing a component
-      var componentModel = new EditorComponentModel({_id: subLocation});
+      var componentModel = new EditorComponentModel({_id: route2});
       componentModel.fetch({
         success: function() {
           Origin.trigger('location:title:update', {title: 'Editing ' + componentModel.get('_componentType').displayName.toLowerCase() + ' component - ' + componentModel.get('title')});
@@ -176,13 +178,13 @@ define(function(require) {
       return;
     }
 
-    switch (subLocation) {
+    switch (route2) {
       case 'config':
-        // subLocation is the courseid
+        // route2 is the courseid
         // var collection = new EditorConfigCollection();
         // collection.findWhere({_courseId: location});
 
-        var configModel = new EditorConfigModel({_id: location});
+        var configModel = new EditorConfigModel({_id: route1});
 
         configModel.fetch({
           success: function() {
@@ -194,7 +196,7 @@ define(function(require) {
         break;
 
       case 'theme':
-        var configModel = new EditorConfigModel({_id: location});
+        var configModel = new EditorConfigModel({_id: route1});
 
         configModel.fetch({
           success: function() {
@@ -208,16 +210,16 @@ define(function(require) {
       case 'extensions':
         Origin.trigger('location:title:update', {title: 'Manage extensions'});
 
-        var extensionsModel = new Backbone.Model({_id: location});
+        var extensionsModel = new Backbone.Model({_id: route1});
 
         // Setup back button breadcrumb
 
         // Check whether the user came from the page editor or menu editor
-        var backButtonRoute = "/#/editor/" + location + "/menu";
+        var backButtonRoute = "/#/editor/" + route1 + "/menu";
         var backButtonText = "Back to menu";
 
         if (Origin.previousLocation.route2 === "page") {
-            backButtonRoute = "/#/editor/" + location + "/page/" + Origin.previousLocation.route3;
+            backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
             backButtonText = "Back to page";
         }
 
@@ -232,13 +234,26 @@ define(function(require) {
         break;
 
       case 'menu':
+        console.log(route4);
+        if (route4 === "edit") {
+          console.log('getting here');
+          var contentObjectModel = new EditorContentObjectModel({_id: route3});
+          contentObjectModel.fetch({
+            success: function() {
+              Origin.trigger('location:title:update', {title: 'Editing page - ' + contentObjectModel.get('title')});
+              Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel}).$el);
+              Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel}).$el);
+            }
+          });
+          return;
+        }
         // Update page title
         Origin.trigger('location:title:update', {title: 'Menu editor'});
         // Create Editor menu view
         Origin.router.createView(EditorView, {
-          currentCourseId: location,
+          currentCourseId: route1,
           currentView: 'menu',
-          currentPageId: (action || null)
+          currentPageId: (route3 || null)
         });
 
         // update sidebar view
@@ -254,31 +269,21 @@ define(function(require) {
         // Create Editor page view
         Origin.editor.scrollTo = 0;
         Origin.router.createView(EditorView, {
-          currentCourseId: location,
+          currentCourseId: route1,
           currentView: 'page',
-          currentPageId: (action || null)
+          currentPageId: (route3 || null)
         });
         // update sidebar view
         Origin.sidebar.addView(new EditorPageSidebarView().$el, {
           "backButtonText": "Back to course structure",
-          "backButtonRoute": "/#/editor/" + location + "/menu"
-        });
-        break;
-      case 'edit':
-        var contentObjectModel = new EditorContentObjectModel({_id: location});
-        contentObjectModel.fetch({
-          success: function() {
-            Origin.trigger('location:title:update', {title: 'Editing page - ' + contentObjectModel.get('title')});
-            Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel}).$el);
-            Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel}).$el);
-          }
+          "backButtonRoute": "/#/editor/" + route1 + "/menu"
         });
         break;
       case 'component':
         // If adding a new component
 
         // Find block so we can get layout options
-        var containingBlock = Origin.editor.data.blocks.findWhere({_id: location});
+        var containingBlock = Origin.editor.data.blocks.findWhere({_id: route1});
 
         var layoutOptions = containingBlock.get('layoutOptions');
 

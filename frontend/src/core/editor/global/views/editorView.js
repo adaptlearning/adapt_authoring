@@ -72,52 +72,7 @@ define(function(require){
     // Origin.editor.course, Origin.editor.config, Origin.editor.contentObjects,
     // Origin.editor.articles, Origin.editor.blocks
     setupEditor: function() {
-
-        return this.renderCurrentEditorView();
-      this.loadedData = {
-        clipboard: false,
-        course: false,
-        config: false,
-        componentTypes: false,
-        extensionTypes: false, 
-        contentObjects: false,
-        articles: false,
-        blocks: false,
-        components: false
-      };
-
-      Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedData) {
-        this.loadedData[loadedData] = true;
-        var allDataIsLoaded = _.every(this.loadedData, function(item) {
-          return item === true;
-        });
-
-        if (allDataIsLoaded) {
-          Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
-          Origin.trigger('editor:dataLoaded');
-          this.renderCurrentEditorView();
-        }
-      }, this);
-
-      if (Origin.editor.data.course) {
-        // Config has to be reset -- HACK
-        Origin.editor.data.config = new EditorConfigModel({_id: this.currentCourseId});
-
-        // // Not implemented for the time being
-        // Origin.editor.data.config.on('change:_enabledExtensions', function() {
-        //   Origin.socket.emit('project:build', { id: this.currentCourseId });
-        // });
-        
-        _.each(Origin.editor.data, function(object) {
-          object.fetch({reset:true,
-            error: function(model, response, options) {
-              alert('*****   Oops, something went wrong!  *****');
-            }
-          });
-        });
-      } else {
-        this.setupEditorData();
-      }
+      this.renderCurrentEditorView();
     },
 
     publishProject: function() {

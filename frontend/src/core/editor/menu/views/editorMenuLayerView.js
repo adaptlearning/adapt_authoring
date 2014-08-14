@@ -79,7 +79,7 @@ define(function(require) {
           },
           success: function(model) {
             Origin.trigger('editor:refreshData', function() {
-              Origin.trigger('editorSidebarView:addEditView', model);
+              Backbone.history.loadUrl();
             }, this);
           }
         });

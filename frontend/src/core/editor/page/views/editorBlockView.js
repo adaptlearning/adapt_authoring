@@ -14,6 +14,10 @@ define(function(require){
 
     className: 'block editable block-draggable',
 
+    settings: {
+      autoRender: false
+    },
+
     events: _.extend({
       'click a.block-delete'        : 'deleteBlockPrompt',
       'click a.add-component'       : 'showComponentList',
@@ -39,7 +43,7 @@ define(function(require){
 
       this.model.set('componentTypes', Origin.editor.data.componentTypes.toJSON());
 
-      this.evaluateComponents();
+      this.evaluateComponents(this.render);
     },
 
     postRender: function() {
@@ -52,7 +56,7 @@ define(function(require){
       }, this));
     },
 
-    evaluateComponents: function() {
+    evaluateComponents: function(callback) {
       var layoutOptions = [
       {
         type: 'left',
@@ -105,8 +109,20 @@ define(function(require){
         }
       }
 
-      this.model.set('layoutOptions', layoutOptions);
-      this.model.set('dragLayoutOptions', dragLayoutOptions);
+      this.model.save({
+        'layoutOptions': layoutOptions,
+        'dragLayoutOptions': dragLayoutOptions
+      }, {
+        error: function() {
+          console.log('error saving block');
+        },
+        success: _.bind(function() {
+          console.log('saving block');
+          if (callback) {
+            callback.apply(this);
+          }
+        }, this)
+      });
     },
 
     deleteBlockPrompt: function(event) {
@@ -150,13 +166,11 @@ define(function(require){
     },
 
     handleRemovedComponent: function() {
-      this.evaluateComponents();
-      this.render();
+      this.evaluateComponents(this.render);
     },
 
     reRender: function() {
-      this.evaluateComponents();
-      this.render();
+      this.evaluateComponents(this.render);
     },
 
     onCutComponent: function(view) {
@@ -164,8 +178,7 @@ define(function(require){
         view.showPasteZones();
       });
 
-      this.evaluateComponents();
-      this.render();
+      this.evaluateComponents(this.render);
     },
 
     setupDragDrop: function() {
@@ -227,8 +240,17 @@ define(function(require){
 
     showComponentList: function(event) {
       event.preventDefault();
-      
-      Origin.router.navigate('#/editor/'+ this.model.get('_id') +'/component/add', {trigger: true});
+      var courseId = Origin.editor.data.course.get('_id');
+      var type = this.model.get('_type');
+      var Id = this.model.get('_id');
+      Origin.router.navigate('#/editor/' 
+        + courseId 
+        + '/' 
+        + type 
+        + '/' 
+        + Id 
+        + '/add', {trigger: true});
+      /*Origin.router.navigate('#/editor/'+ this.model.get('_id') +'/component/add', {trigger: true});*/
 
     },
 

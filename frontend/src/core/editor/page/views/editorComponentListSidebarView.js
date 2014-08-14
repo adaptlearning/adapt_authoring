@@ -84,7 +84,10 @@ define(function(require) {
               success: function(data) {
                 Origin.trigger('editingOverlay:views:hide');
                 //Origin.trigger('editorView:fetchData');
-                Backbone.history.navigate('#/editor/component/' + data.get('_id'));                
+                Backbone.history.navigate('#/editor/' 
+                    + Origin.editor.data.course.get('_id') 
+                    + '/component/' 
+                    + data.get('_id'));                
               }
             });
         },

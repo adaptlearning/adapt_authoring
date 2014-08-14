@@ -7,6 +7,9 @@
     "_trackingId" : {
         "type" : "number",
         "default" : 0
+    },
+    "layoutOptions": {
+        "type": "array"
     }
   }
 }

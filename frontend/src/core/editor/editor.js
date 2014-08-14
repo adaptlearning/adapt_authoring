@@ -50,6 +50,15 @@ define(function(require) {
   var dataIsLoaded = false;
   var editorCollectionsCreated = false;
 
+  Origin.on('editor:refreshData', function(callback, context) {
+
+    if (Origin.editor.data.course) {
+      
+    } else {
+    }   
+
+  });
+
 	Origin.on('router:editor', function(route1, route2, route3, route4) {
 
     // Check if data has already been loaded for this project
@@ -144,7 +153,7 @@ define(function(require) {
 
   function routeAfterDataIsLoaded(route1, route2, route3, route4) {
 
-    if (route2 === 'article') {
+    if (route2 === 'article' && route4 === 'edit') {
       var articleModel = new EditorArticleModel({_id: route3});
       articleModel.fetch({
         success: function() {
@@ -156,7 +165,7 @@ define(function(require) {
       return;
     }
 
-    if (route2 === 'block') {
+    if (route2 === 'block' && route4 === 'edit') {
       var blockModel = new EditorBlockModel({_id: route3});
       blockModel.fetch({
         success: function() {
@@ -166,6 +175,31 @@ define(function(require) {
         }
       });
       return;
+    }
+
+    if (route2 === 'block' && route4 === 'add') {
+      // If adding a new component
+      console.log(arguments);
+      // Find block so we can get layout options
+      var containingBlock = Origin.editor.data.blocks.findWhere({_id: route3});
+
+      var layoutOptions = containingBlock.get('layoutOptions');
+
+      console.log(containingBlock.get('layoutOptions'));
+
+      var componentSelectModel = new Backbone.Model({
+        title: window.polyglot.t('app.addcomponent'),
+        body: window.polyglot.t('app.pleaseselectcomponent'),
+        _parentId: route3,
+        componentTypes: Origin.editor.data.componentTypes.toJSON(),
+        layoutOptions: layoutOptions
+      })
+      Origin.sidebar.addView(new EditorComponentListSidebarView({
+        model: componentSelectModel
+      }).$el);
+      Origin.editingOverlay.addView(new EditorComponentListView({
+        model: componentSelectModel
+      }).$el);
     }
 
     if (route2 === 'component') {
@@ -295,29 +329,6 @@ define(function(require) {
           "backButtonText": "Back to course structure",
           "backButtonRoute": "/#/editor/" + route1 + "/menu"
         });
-        break;
-      case 'component':
-        // If adding a new component
-
-        // Find block so we can get layout options
-        var containingBlock = Origin.editor.data.blocks.findWhere({_id: route1});
-
-        var layoutOptions = containingBlock.get('layoutOptions');
-
-        var componentSelectModel = new Backbone.Model({
-          title: window.polyglot.t('app.addcomponent'),
-          body: window.polyglot.t('app.pleaseselectcomponent'),
-          _parentId: location,
-          componentTypes: Origin.editor.data.componentTypes.toJSON(),
-          layoutOptions: layoutOptions
-        })
-        Origin.sidebar.addView(new EditorComponentListSidebarView({
-          model: componentSelectModel
-        }).$el);
-        Origin.editingOverlay.addView(new EditorComponentListView({
-          model: componentSelectModel
-        }).$el);
-
         break;
     }
   }

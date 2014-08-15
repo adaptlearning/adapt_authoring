@@ -14,12 +14,6 @@ define(function(require) {
   });
 
   Origin.on('navigation:help', function() {
-    console.log("Should navigate to wiki");
-    
-    console.log(Origin.location);
-    console.log(location);
-
-
     switch (Origin.location.module) {
       case 'dashboard':
         window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#the-dashboard");

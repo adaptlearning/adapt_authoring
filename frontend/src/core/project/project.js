@@ -13,6 +13,50 @@ define(function(require) {
     console.log('Should show profile');
   });
 
+  Origin.on('navigation:help', function() {
+    switch (Origin.location.module) {
+      case 'dashboard':
+        window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#the-dashboard");
+        break;
+      case 'project':
+        window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#course-details");
+        break;
+      case 'editor':
+        switch (Origin.location.route2) {
+          case 'menu':
+            window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#editing-course-details");
+            break;
+          case 'edit':
+             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#sectionpage-settings");
+            break;
+          case 'page':
+            window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#adding-content-to-the-course");
+            break;
+          case 'config':
+            window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#course-settings");
+            break;
+          case 'theme':
+            window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#course-settings");
+            break;
+          case 'extensions':
+            window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#course-settings");
+            break;
+        }
+        switch (Origin.location.route3) {
+          case 'edit':
+            window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#adding-content-to-the-course");
+            break;
+        }
+        break;
+      case 'pluginManagement':
+        window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Plugin-Manager");
+        break;
+      case 'assetManagement':
+        window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Asset-Manager");
+        break;
+    }
+  });
+
   Origin.on('router:project', function(action, id) {
 
     switch (action) {

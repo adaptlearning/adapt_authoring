@@ -117,7 +117,6 @@ define(function(require){
           console.log('error saving block');
         },
         success: _.bind(function() {
-          console.log('saving block');
           if (callback) {
             callback.apply(this);
           }

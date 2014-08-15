@@ -18,8 +18,8 @@ define(function(require) {
 
     cancelEditing: function(event) {
       event.preventDefault();
-      var currentPageId = Origin.editor.currentContentObjectId;
-      var currentCourseId = Origin.editor.currentCourseId;
+      var currentCourseId = Origin.editor.data.course.get('_id');
+      var currentPageId = this.model.getParent().getParent().getParent().get('_id');
       Backbone.history.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
       Origin.trigger('editingOverlay:views:hide');
     }

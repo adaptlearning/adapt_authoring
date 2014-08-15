@@ -12,7 +12,6 @@ define(function(require) {
         },
         
         loadedData: function() {
-            console.log(this._type);
             Origin.trigger('editorCollection:dataLoaded', this._type);
         }
         

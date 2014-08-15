@@ -214,13 +214,10 @@ define(function(require) {
 
     if (route2 === 'block' && route4 === 'add') {
       // If adding a new component
-      console.log(arguments);
       // Find block so we can get layout options
       var containingBlock = Origin.editor.data.blocks.findWhere({_id: route3});
 
       var layoutOptions = containingBlock.get('layoutOptions');
-
-      console.log(containingBlock.get('layoutOptions'));
 
       var componentSelectModel = new Backbone.Model({
         title: window.polyglot.t('app.addcomponent'),
@@ -268,7 +265,7 @@ define(function(require) {
         break;
 
       case 'theme':
-        var configModel = new EditorConfigModel({_id: route1});
+        var configModel = new EditorConfigModel({_courseId: route1});
 
         configModel.fetch({
           success: function() {

@@ -85,7 +85,6 @@ define(function(require) {
               success: function(data) {
                 Origin.trigger('editor:refreshData', function() {
                     Origin.trigger('editingOverlay:views:hide');
-                    //Origin.trigger('editorView:fetchData');
                     Backbone.history.navigate('#/editor/' 
                         + Origin.editor.data.course.get('_id') 
                         + '/component/' 

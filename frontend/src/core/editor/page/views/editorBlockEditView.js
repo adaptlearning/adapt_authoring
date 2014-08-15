@@ -56,7 +56,6 @@ define(function(require) {
             Origin.trigger('editingOverlay:views:hide');
 
             Origin.trigger('editor:refreshData', function() {
-              Origin.trigger('editorView:fetchData');
               Backbone.history.history.back();
               this.remove();
             }, this);

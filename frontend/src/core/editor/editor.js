@@ -75,7 +75,9 @@ define(function(require) {
         Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
         Origin.trigger('editor:dataLoaded');
         dataIsLoaded = true;
-        callback.apply(context);
+        if (callback) {
+            callback.apply(context);
+        }
       }
 
     });

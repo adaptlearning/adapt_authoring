@@ -36,13 +36,10 @@ define(function(require){
     },
 
     preRender: function(options) {
-      this.currentCourseId = options.currentCourseId;
-      this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
-
-      Origin.editor.currentContentObjectId = options.currentPageId;
-      Origin.editor.currentCourseId = options.currentCourseId;
       Origin.editor.pasteParentModel = false;
+      this.currentCourseId = Origin.editor.data.course.get('_id');
+      this.currentPageId = options.currentPageId;
 
       this.listenTo(Origin, 'editorView:fetchData', this.setupEditor);
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
@@ -93,55 +90,6 @@ define(function(require){
         window.open('/api/output/adapt/preview/' + this.currentCourseId, 'adapt_preview');
       }
 
-    },
-
-    setupEditorData: function() {
-      Origin.editor.data.course = new EditorCourseModel({_id: this.currentCourseId});
-      Origin.editor.data.config = new EditorConfigModel({_id: this.currentCourseId});
-
-      Origin.editor.data.contentObjects = new EditorCollection(null, {
-        model: EditorContentObjectModel,
-        url: '/api/content/contentobject?_courseId=' + this.currentCourseId,
-        _type: 'contentObjects'
-      });
-      
-      Origin.editor.data.articles = new EditorCollection(null, {
-        model: EditorArticleModel,
-        url: '/api/content/article?_courseId=' + this.currentCourseId,
-        _type: 'articles'
-      });
-      
-      Origin.editor.data.blocks = new EditorCollection(null, {
-        model: EditorBlockModel,
-        url: '/api/content/block?_courseId=' + this.currentCourseId,
-        _type: 'blocks'
-      });
-
-      Origin.editor.data.components = new EditorCollection(null, {
-        model: EditorComponentModel,
-        url: '/api/content/component?_courseId=' + this.currentCourseId,
-        _type: 'components'
-      });
-
-      Origin.editor.data.clipboard = new EditorCollection(null, {
-        model: EditorClipboardModel,
-        url: '/api/content/clipboard?_courseId=' + this.currentCourseId + '&createdBy=' + Origin.sessionModel.get('id'),
-        _type: 'clipboard'
-      });
-
-      // Store the component types
-      Origin.editor.data.componentTypes = new EditorCollection(null, {
-        model : EditorComponentTypeModel,
-        url: '/api/componenttype',
-        _type: 'componentTypes'
-      });
-      
-      // Store the extensions types
-      Origin.editor.data.extensionTypes = new EditorCollection(null, {
-        model : ExtensionModel,
-        url: '/api/extensiontype',
-        _type: 'extensionTypes'
-      });
     },
 
     /*

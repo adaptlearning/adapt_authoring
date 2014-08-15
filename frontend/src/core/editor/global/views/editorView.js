@@ -6,16 +6,16 @@ define(function(require){
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorMenuView = require('editorMenu/views/editorMenuView');
   var EditorPageView = require('editorPage/views/editorPageView');
-  var EditorCollection = require('editorGlobal/collections/editorCollection');
+  /*var EditorCollection = require('editorGlobal/collections/editorCollection');*/
   var EditorModel = require('editorGlobal/models/editorModel');
-  var EditorCourseModel = require('editorCourse/models/editorCourseModel');
+  /*var EditorCourseModel = require('editorCourse/models/editorCourseModel');*/
   var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
   var EditorArticleModel = require('editorPage/models/editorArticleModel');
   var EditorBlockModel = require('editorPage/models/editorBlockModel');
   var EditorComponentModel = require('editorPage/models/editorComponentModel');
   var EditorClipboardModel = require('editorGlobal/models/editorClipboardModel');
   var EditorComponentTypeModel = require('editorPage/models/editorComponentTypeModel');
-  var EditorConfigModel = require('editorConfig/models/editorConfigModel');
+  /*var EditorConfigModel = require('editorConfig/models/editorConfigModel');*/
   var ExtensionModel = require('editorExtensions/models/extensionModel');
 
   var EditorView = EditorOriginView.extend({
@@ -36,15 +36,12 @@ define(function(require){
     },
 
     preRender: function(options) {
-      this.currentCourseId = options.currentCourseId;
-      this.currentPageId = options.currentPageId;
       this.currentView = options.currentView;
-
-      Origin.editor.currentContentObjectId = options.currentPageId;
-      Origin.editor.currentCourseId = options.currentCourseId;
       Origin.editor.pasteParentModel = false;
+      this.currentCourseId = Origin.editor.data.course.get('_id');
+      this.currentPageId = options.currentPageId;
 
-      this.listenTo(Origin, 'editorView:fetchData', this.setupEditor);
+      this.listenTo(Origin, 'editorView:refreshView', this.setupEditor);
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
       this.listenTo(Origin, 'editorView:cut', this.cutContent);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
@@ -72,50 +69,7 @@ define(function(require){
     // Origin.editor.course, Origin.editor.config, Origin.editor.contentObjects,
     // Origin.editor.articles, Origin.editor.blocks
     setupEditor: function() {
-      this.loadedData = {
-        clipboard: false,
-        course: false,
-        config: false,
-        componentTypes: false,
-        extensionTypes: false, 
-        contentObjects: false,
-        articles: false,
-        blocks: false,
-        components: false
-      };
-
-      Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedData) {
-        this.loadedData[loadedData] = true;
-        var allDataIsLoaded = _.every(this.loadedData, function(item) {
-          return item === true;
-        });
-
-        if (allDataIsLoaded) {
-          Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
-
-          this.renderCurrentEditorView();
-        }
-      }, this);
-
-      if (Origin.editor.data.course) {
-        // Config has to be reset -- HACK
-        Origin.editor.data.config = new EditorConfigModel({_id: this.currentCourseId});
-
-        // // Not implemented for the time being
-        // Origin.editor.data.config.on('change:_enabledExtensions', function() {
-        //   Origin.socket.emit('project:build', { id: this.currentCourseId });
-        // });
-        
-        _.each(Origin.editor.data, function(object) {
-          object.fetch({reset:true,
-            error: function(model, response, options) {
-              alert('*****   Oops, something went wrong!  *****');
-            }
-          });
-        });
-      } else {
-        this.setupEditorData();
-      }
+      this.renderCurrentEditorView();
     },
 
     publishProject: function() {
@@ -136,55 +90,6 @@ define(function(require){
         window.open('/api/output/adapt/preview/' + this.currentCourseId, 'adapt_preview');
       }
 
-    },
-
-    setupEditorData: function() {
-      Origin.editor.data.course = new EditorCourseModel({_id: this.currentCourseId});
-      Origin.editor.data.config = new EditorConfigModel({_id: this.currentCourseId});
-
-      Origin.editor.data.contentObjects = new EditorCollection(null, {
-        model: EditorContentObjectModel,
-        url: '/api/content/contentobject?_courseId=' + this.currentCourseId,
-        _type: 'contentObjects'
-      });
-      
-      Origin.editor.data.articles = new EditorCollection(null, {
-        model: EditorArticleModel,
-        url: '/api/content/article?_courseId=' + this.currentCourseId,
-        _type: 'articles'
-      });
-      
-      Origin.editor.data.blocks = new EditorCollection(null, {
-        model: EditorBlockModel,
-        url: '/api/content/block?_courseId=' + this.currentCourseId,
-        _type: 'blocks'
-      });
-
-      Origin.editor.data.components = new EditorCollection(null, {
-        model: EditorComponentModel,
-        url: '/api/content/component?_courseId=' + this.currentCourseId,
-        _type: 'components'
-      });
-
-      Origin.editor.data.clipboard = new EditorCollection(null, {
-        model: EditorClipboardModel,
-        url: '/api/content/clipboard?_courseId=' + this.currentCourseId + '&createdBy=' + Origin.sessionModel.get('id'),
-        _type: 'clipboard'
-      });
-
-      // Store the component types
-      Origin.editor.data.componentTypes = new EditorCollection(null, {
-        model : EditorComponentTypeModel,
-        url: '/api/componenttype',
-        _type: 'componentTypes'
-      });
-      
-      // Store the extensions types
-      Origin.editor.data.extensionTypes = new EditorCollection(null, {
-        model : ExtensionModel,
-        url: '/api/extensiontype',
-        _type: 'extensionTypes'
-      });
     },
 
     /*
@@ -295,14 +200,20 @@ define(function(require){
                   thisView.createRecursive(newModel._children, clipboard, model.get('_id'), oldPid);
                 } else {
                   // We're done pasting, no more children to process
-                  Origin.trigger('editorView:fetchData');
+                  Origin.trigger('editor:refreshData', function() {
+                    Origin.trigger('editorView:refreshView');
+                  }, this);
+                  
+                  
                 }
               }
             }
           );
         });
       } else {
-        Origin.trigger('editorView:fetchData');
+        Origin.trigger('editor:refreshData', function() {
+          Origin.trigger('editorView:refreshView');
+        }, this);
       }
     },
 

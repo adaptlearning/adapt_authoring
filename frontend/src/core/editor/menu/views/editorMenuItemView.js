@@ -103,7 +103,16 @@ define(function(require){
     },
 
     editMenuItem: function() {
-      Origin.router.navigate('#/editor/' + this.model.get('_id') + '/edit', {trigger: true});
+      var courseId = Origin.editor.data.course.get('_id');
+      var type = this.model.get('_type');
+      var menuItemId = this.model.get('_id');
+      Origin.router.navigate('#/editor/' 
+        + courseId 
+        + '/' 
+        + type 
+        + '/' 
+        + menuItemId 
+        + '/edit', {trigger: true});
     },
 
     deleteItemPrompt: function(event) {

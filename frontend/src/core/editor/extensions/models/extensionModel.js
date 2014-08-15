@@ -5,6 +5,7 @@ define(function(require) {
   var ExtensionModel = EditorModel.extend({
 
     idAttribute: '_id',
+    initialize: function(){},
 
     urlRoot: '/api/extensiontype',
     _parent: null,

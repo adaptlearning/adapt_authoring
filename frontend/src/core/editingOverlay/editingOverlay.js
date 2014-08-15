@@ -18,6 +18,8 @@ define(function(require) {
 
     }
 
-    $('.app-inner').append(new EditingOverlayView().$el);
+    Origin.on('app:dataReady', function() {
+        $('.app-inner').append(new EditingOverlayView().$el);
+    });
 
 });

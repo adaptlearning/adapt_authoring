@@ -160,12 +160,11 @@ define(function(require){
           alert('error adding new article');
         },
         success: function(model, response, options) {
-          _this.addArticleView(model, true);
 
-          Origin.editor.data.articles.add(model);
-
-          // Not triggering a 'hard' refresh for the time being
-          // Origin.trigger('editorView:fetchData');
+          Origin.trigger('editor:refreshData', function() {
+            _this.addArticleView(model, true);
+          }, this);
+          
         }
       });
     },

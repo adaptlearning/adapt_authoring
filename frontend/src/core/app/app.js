@@ -82,6 +82,7 @@ require.config({
 });
 
 require([
+    'templates',
     'coreJS/app/origin',
     'coreJS/app/router',
     'coreJS/user/user',
@@ -104,9 +105,9 @@ require([
     'jquery-form',
     'mediaelement-and-player',
     'velocity',
-    'scrollTo',
-    'templates'
+    'scrollTo'
 ], function (
+    Templates,
     Origin,
     Router,
     User,

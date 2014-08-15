@@ -44,9 +44,10 @@ define(function(require) {
                 alert('error adding new component');
               },
               success: function() {
-                Backbone.history.history.back();
-                Origin.trigger('editingOverlay:views:hide');
-                Origin.trigger('editorView:fetchData');
+                Origin.trigger('editor:refreshData', function() {
+                    Backbone.history.history.back();
+                    Origin.trigger('editingOverlay:views:hide');
+                }, this);
               }
             });
         },
@@ -82,20 +83,30 @@ define(function(require) {
                 alert('error adding new component');
               },
               success: function(data) {
-                Origin.trigger('editingOverlay:views:hide');
-                //Origin.trigger('editorView:fetchData');
-                Backbone.history.navigate('#/editor/component/' + data.get('_id'));                
+                Origin.trigger('editor:refreshData', function() {
+                    Origin.trigger('editingOverlay:views:hide');
+                    Backbone.history.navigate('#/editor/' 
+                        + Origin.editor.data.course.get('_id') 
+                        + '/component/' 
+                        + data.get('_id')); 
+                }, this);
+                               
               }
             });
         },
 
         cancelEditing: function(event) {
             event.preventDefault();
-            var currentPageId = Origin.editor.currentContentObjectId;
-            var currentCourseId = Origin.editor.currentCourseId;
+            var currentCourseId = Origin.location.route1;
+            var currentBlockId = Origin.location.route3;
+            var currentBlock = Origin.editor.data.blocks.findWhere({_id: currentBlockId});
+            // Don't like this line but until we have findAncestor this will do
+            var currentPage = currentBlock.getParent().getParent();
+            var currentPageId = currentPage.get('_id');
+
             Backbone.history.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
             Origin.trigger('editingOverlay:views:hide');
-
+            
         }
 
     }, {

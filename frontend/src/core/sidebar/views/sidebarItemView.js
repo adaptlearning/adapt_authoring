@@ -18,19 +18,19 @@ define(function(require) {
     },
 
     editProject: function() {
-      Origin.router.navigate('#/project/edit/' + Origin.editor.currentCourseId, {trigger: true});
+      Origin.router.navigate('#/project/edit/' + Origin.editor.data.course.get('_id'), {trigger: true});
     },
 
     editConfiguration: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.currentCourseId + '/config', {trigger: true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/config', {trigger: true});
     },
 
     editTheme: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.currentCourseId + '/theme', {trigger: true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/theme', {trigger: true});
     },
 
     manageExtensions: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.currentCourseId + '/extensions', {trigger: true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/extensions', {trigger: true});
     },
 
   	publishProject: function() {

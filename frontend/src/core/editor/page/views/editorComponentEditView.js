@@ -71,7 +71,6 @@ define(function(require) {
       var model = this.model;
 
       model.save({
-        _parentId: this.$('.component-parent').find(':selected').val(),
         _componentType: model.attributes._componentType._id, // TODO -- Not sure about the schema here
         title: this.$('.setting-title').val(),
         displayTitle: this.$('.setting-displaytitle').val(),
@@ -84,12 +83,16 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: _.bind(function() {
+            
             Origin.trigger('editingOverlay:views:hide');
-            Origin.trigger('editorView:fetchData');
-            var currentPageId = Origin.editor.currentContentObjectId;
-            var currentCourseId = Origin.editor.currentCourseId;
-            Backbone.history.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
-            this.remove();
+
+            Origin.trigger('editor:refreshData', function() {
+              var currentPageId = this.model.getParent().getParent().getParent().get('_id');
+              var currentCourseId = Origin.editor.data.course.get('_id');
+              Backbone.history.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
+              this.remove();
+            }, this);
+            
           }, this)
         }
       );

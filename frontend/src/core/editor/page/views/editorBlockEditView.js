@@ -52,10 +52,14 @@ define(function(require) {
             alert('An error occurred doing the save');
           },
           success: _.bind(function() {
+            
             Origin.trigger('editingOverlay:views:hide');
-            Origin.trigger('editorView:fetchData');
-            Backbone.history.history.back();
-            this.remove();
+
+            Origin.trigger('editor:refreshData', function() {
+              Backbone.history.history.back();
+              this.remove();
+            }, this);
+            
           }, this)
       });
     }

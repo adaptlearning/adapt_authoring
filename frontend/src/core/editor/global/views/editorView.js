@@ -41,7 +41,7 @@ define(function(require){
       this.currentCourseId = Origin.editor.data.course.get('_id');
       this.currentPageId = options.currentPageId;
 
-      this.listenTo(Origin, 'editorView:fetchData', this.setupEditor);
+      this.listenTo(Origin, 'editorView:refreshView', this.setupEditor);
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
       this.listenTo(Origin, 'editorView:cut', this.cutContent);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
@@ -201,7 +201,7 @@ define(function(require){
                 } else {
                   // We're done pasting, no more children to process
                   Origin.trigger('editor:refreshData', function() {
-                    Origin.trigger('editorView:fetchData');
+                    Origin.trigger('editorView:refreshView');
                   }, this);
                   
                   
@@ -212,7 +212,7 @@ define(function(require){
         });
       } else {
         Origin.trigger('editor:refreshData', function() {
-          Origin.trigger('editorView:fetchData');
+          Origin.trigger('editorView:refreshView');
         }, this);
       }
     },

@@ -33,7 +33,7 @@
 .col-row .col-75{float:left;width:75%}
 .col-row .col-6th{float:left;width:16.6%}
 
-.context-menu{background-color:#293141;color:#fff}.context-menu .context-menu-pin{position:absolute;top:0px;left:-8px;width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:8px solid #151922}
+.context-menu{position:absolute;background-color:#293141;color:#fff}.context-menu .context-menu-pin{position:absolute;top:0px;left:-8px;width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:8px solid #151922}
 .context-menu .context-menu-item{border-left:4px solid #151922;min-width:120px}.context-menu .context-menu-item .context-menu-item-open{display:block;padding:8px 10px;text-decoration:none;color:#9cabc4;transition:all 0.3s}.context-menu .context-menu-item .context-menu-item-open:hover{color:#fff;background-color:#151922}
 a.open-context-icon{color:#fff}
 

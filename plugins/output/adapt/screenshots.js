@@ -43,13 +43,6 @@ var viewports = [
 
 casper.start(screenshotUrl, function() {
   this.echo('Current location is ' + this.getCurrentUrl(), 'info');
-  this.evaluate(function() {
-    var style = document.createElement('style'),
-        text = document.createTextNode('body { background: #fff }');
-    style.setAttribute('type', 'text/css');
-    style.appendChild(text);
-    document.head.insertBefore(style, document.head.firstChild);
-  });
 }).zoom(0.4);
 
 casper.each(viewports, function(casper, viewport) {

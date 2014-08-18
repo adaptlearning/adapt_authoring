@@ -25,7 +25,17 @@ var origin = require('../../../'),
     mkdirp = require('mkdirp'),
     _ = require('underscore'),
     util = require('util'),
-    path = require('path');
+    path = require('path'),
+    unzip = require('unzip'),
+    IncomingForm = require('formidable').IncomingForm;
+
+// errors
+function PluginPackageError (msg) {
+  this.type = 'PluginPackageError';
+  this.message = msg || 'Error with plugin package';
+}
+
+util.inherits(PluginPackageError, Error);
 
 function BowerPlugin () {
 }
@@ -90,6 +100,25 @@ BowerPlugin.prototype.getPackageType = function () {
 };
 
 /**
+ * extracts the plugin type from a bower.json
+ * @param {object} packageJson - a require'd bower.json file
+ * @return {string} - the plugin type
+ */
+function extractPluginType (packageJson) {
+  // not very intelligent
+  var pluginTypes = ['theme', 'extension', 'component'];
+  var type = false;
+  for (var index = 0; index < pluginTypes.length; ++index) {
+    type = pluginTypes[index];
+    if (packageJson[type] && 'string' === typeof packageJson[type]) {
+      return type;
+    }
+  }
+
+  return false;
+}
+
+/**
  * extracts the necessary attributes to store a package in the DB
  *
  */
@@ -110,7 +139,19 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
 }
 
 /**
- * essential setup
+ * essential setup for this plugin
+ */
+
+function initialize () {
+  var app = origin();
+  app.once('serverStarted', function (server) {
+    // add plugin upload route
+    rest.post('/upload/contentplugin', handleUploadedPlugin);
+  });
+}
+
+/**
+ * essential setup for derived plugins
  *
  */
 BowerPlugin.prototype.initialize = function (plugin) {
@@ -515,6 +556,85 @@ function checkIfHigherVersionExists (package, options, cb) {
       return cb(null, true);
     });
 }
+
+/**
+ * handles uploaded plugins
+ *
+ */
+
+function handleUploadedPlugin (req, res, next) {
+  var form = new IncomingForm();
+  form.parse(req, function (error, fields, files) {
+    if (error) {
+      return next(error);
+    }
+
+    var file = files.file;
+    if (!file || !file.path) {
+      return next(new PluginPackageError('File upload failed!'));
+    }
+
+    // try unzipping
+    var outputPath = file.path + '_unzipped';
+    var rs = fs.createReadStream(file.path);
+    var ws = unzip.Extract({ path: outputPath });
+    rs.on('error', function (error) {
+      return next(error);
+    });
+    ws.on('error', function (error) {
+      return next(error);
+    });
+    ws.on('close', function () {
+      // enumerate output directory and search for bower.json
+      fs.readdir(outputPath, function (err, files) {
+        if (err) {
+          return next(err);
+        }
+
+        // first entry should be our target directory
+        var packageJson;
+        var canonicalDir = path.join(outputPath, files[0]);
+        try {
+          packageJson = require(path.join(canonicalDir, 'bower.json'));
+        } catch (error) {
+          return next(error);
+        }
+
+        // extract the plugin type from the package
+        var pluginType = extractPluginType(packageJson);
+        if (!pluginType) {
+          return next(new PluginPackageError('Unrecognized plugin type for package ' + packageJson.name));
+        }
+
+        // construct packageInfo
+        var packageInfo = {
+          canonicalDir: canonicalDir,
+          pkgMeta: packageJson
+        };
+        app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {
+          if (error) {
+            return next(error);
+          }
+
+          addPackage(contentPlugin.bowerConfig, packageInfo, function (error, results) {
+            if (error) {
+              return next(error);
+            }
+
+            // success!!
+            res.statusCode = 200;
+            return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });
+          });
+        });
+      });
+    });
+    rs.pipe(ws);
+
+    // response should be sent by one of the above handlers
+  });
+}
+
+initialize();
 
 /**
  * Module exports

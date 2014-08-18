@@ -23,7 +23,23 @@ var origin = require('../../../'),
     util = require('util'),
     path = require('path');
 
+var bowerConfig = {
+  type: 'extensiontype',
+  keywords: 'adapt-extension',
+  packageType: 'extension',
+  options: defaultOptions,
+  nameList: [
+    "adapt-contrib-assessment#develop",
+    "adapt-contrib-pageLevelProgress#develop",
+    "adapt-contrib-resources#develop",
+    "adapt-contrib-spoor#develop",
+    "adapt-contrib-trickle#develop",
+    "adapt-contrib-tutor#develop"
+  ]
+};
+
 function Extension () {
+  this.bowerConfig = bowerConfig;
 }
 
 util.inherits(Extension, BowerPlugin);
@@ -272,20 +288,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
  * @api private
  */
 function initialize () {
-  BowerPlugin.prototype.initialize.call(null, {
-    type: 'extensiontype',
-    keywords: 'adapt-extension',
-    packageType: 'extension',
-    options: defaultOptions,
-    nameList: [
-      "adapt-contrib-assessment#develop",
-      "adapt-contrib-pageLevelProgress#develop",
-      "adapt-contrib-resources#develop",
-      "adapt-contrib-spoor#develop",
-      "adapt-contrib-trickle#develop",
-      "adapt-contrib-tutor#develop"
-    ]
-  });
+  BowerPlugin.prototype.initialize.call(null, bowerConfig);
 
   var app = origin();
   app.once('serverStarted', function (server) {

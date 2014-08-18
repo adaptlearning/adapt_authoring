@@ -5,21 +5,26 @@ define(function(require) {
 
   var PluginManagementSidebarView = SidebarItemView.extend({
     events: {
-      'click .pluginManagement-sidebar-extensions'	: 'manageExtensions',
-      'click .pluginManagement-sidebar-themes'	: 'manageThemes',
-      'click .pluginManagement-sidebar-components'	: 'manageComponents',
+      'click .pluginManagement-sidebar-upload'	: 'onAddNewPluginClicked',
+      'click .pluginManagement-sidebar-extensions'	: 'onManageExtensionsClicked',
+      'click .pluginManagement-sidebar-themes'	: 'onManageThemesClicked',
+      'click .pluginManagement-sidebar-components'	: 'onManageComponentsClicked',
       'click .pluginManagement-sidebar-dashboard'	: 'returnToDashboard'
     },
 
-    manageExtensions: function () {
+    onAddNewPluginClicked: function () {
+      Origin.router.navigate('#/pluginManagement/upload', { trigger: true });
+    },
+
+    onManageExtensionsClicked: function () {
       this.managePluginType('extension');
     },
 
-    manageThemes: function () {
+    onManageThemesClicked: function () {
       this.managePluginType('theme');
     },
 
-    manageComponents: function () {
+    onManageComponentsClicked: function () {
       this.managePluginType('component');
     },
 

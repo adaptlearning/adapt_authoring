@@ -1,5 +1,5 @@
 {
-  "name": "adapt-builder-core",
+  "name": "adapt-origin",
   "version": "0.0.1",
   "description": "Adapt framework authoring tool core application",
   "keywords": [
@@ -33,6 +33,10 @@
       "email": "daryl.hedley@kineo.com"
     }
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adaptlearning/adapt_authoring.git"
+  },
   "dependencies": {
     "async": "~0.2.5",
     "bcrypt-nodejs": "~0.0.3",
@@ -56,6 +60,7 @@
     "semver": "^2.3.1",
     "socket.io": "^1.0.6",
     "underscore": "~1.5.2",
+    "unzip": "0.1.8",
     "validator": "3.3.0",
     "winston": "~0.7.2"
   },

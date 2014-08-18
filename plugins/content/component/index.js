@@ -23,7 +23,30 @@ var origin = require('../../../'),
     util = require('util'),
     path = require('path');
 
+
+var bowerConfig = {
+  type: 'componenttype',
+  keywords: 'adapt-component',
+  packageType: 'component',
+  options: defaultOptions,
+  nameList: [
+    "adapt-contrib-text#develop",
+    "adapt-contrib-narrative#develop",
+    "adapt-contrib-media#develop",
+    "adapt-contrib-hotgraphic#develop",
+    "adapt-contrib-blank#develop",
+    "adapt-contrib-accordion#develop",
+    "adapt-contrib-graphic#develop",
+    "adapt-contrib-matching#develop",
+    "adapt-contrib-textInput#develop",
+    "adapt-contrib-mcq#develop",
+    "adapt-contrib-gmcq#develop",
+    "adapt-contrib-slider#develop"
+  ]
+};
+
 function Component () {
+  this.bowerConfig = bowerConfig;
 }
 
 util.inherits(Component, BowerPlugin);
@@ -86,26 +109,7 @@ Component.prototype.retrieve = function (search, options, next) {
  * @api private
  */
 function initialize () {
-  BowerPlugin.prototype.initialize.call(null, {
-    type: 'componenttype',
-    keywords: 'adapt-component',
-    packageType: 'component',
-    options: defaultOptions,
-    nameList: [
-      "adapt-contrib-text#develop",
-      "adapt-contrib-narrative#develop",
-      "adapt-contrib-media#develop",
-      "adapt-contrib-hotgraphic#develop",
-      "adapt-contrib-blank#develop",
-      "adapt-contrib-accordion#develop",
-      "adapt-contrib-graphic#develop",
-      "adapt-contrib-matching#develop",
-      "adapt-contrib-textInput#develop",
-      "adapt-contrib-mcq#develop",
-      "adapt-contrib-gmcq#develop",
-      "adapt-contrib-slider#develop"
-    ]
-  });
+  BowerPlugin.prototype.initialize.call(null, bowerConfig);
 }
 
 

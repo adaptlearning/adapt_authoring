@@ -23,7 +23,18 @@ var origin = require('../../../'),
     util = require('util'),
     path = require('path');
 
+var bowerConfig = {
+  type: 'themetype',
+  keywords: 'adapt-theme',
+  packageType: 'theme',
+  options: defaultOptions,
+  nameList: [
+    'adapt-contrib-vanilla#develop'
+  ]
+};
+
 function Theme () {
+  this.bowerConfig = bowerConfig;
 }
 
 util.inherits(Theme, BowerPlugin);
@@ -72,15 +83,7 @@ Theme.prototype.retrieve = function (search, options, next) {
  * @api private
  */
 function initialize () {
-  BowerPlugin.prototype.initialize.call(null, {
-    type: 'themetype',
-    keywords: 'adapt-theme',
-    packageType: 'theme',
-    options: defaultOptions,
-    nameList: [
-      'adapt-contrib-vanilla#develop'
-    ]
-  });
+  BowerPlugin.prototype.initialize.call(null, bowerConfig);
 
   var app = origin();
   app.once('serverStarted', function (server) {

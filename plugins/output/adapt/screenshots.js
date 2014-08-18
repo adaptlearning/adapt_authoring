@@ -50,7 +50,7 @@ casper.each(viewports, function(casper, viewport) {
     this.viewport(viewport.viewport.width, viewport.viewport.height);
   });
   this.thenOpen(screenshotUrl, function() {
-    this.wait(5000);
+    this.wait(1000);
   });
   this.then(function() {
     this.echo('Screenshot for ' + viewport.name, 'info');

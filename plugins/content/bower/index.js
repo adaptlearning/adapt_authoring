@@ -362,20 +362,34 @@ function fetchInstalledPackages (plugin, options, cb) {
  * adds a new package to the system - fired after bower
  * has installed to the cache
  *
+ * @param {object} plugin - bowerConfig object for a bower plugin type
  * @param {object} packageInfo - the bower package info retrieved during install
+ * @param {boolean} [strict] - don't ignore errors
  * @param {callback} cb
  */
-function addPackage (plugin, packageInfo, cb) {
+function addPackage (plugin, packageInfo, strict, cb) {
+  // shuffle params
+  if ('function' === typeof strict) {
+    cb = strict;
+    strict = false;
+  }
+
   // verify packageInfo meets requirements
   var pkgMeta = packageInfo.pkgMeta;
   if (pkgMeta.keywords) { // only allow our package type
     var keywords = _.isArray(pkgMeta.keywords) ? pkgMeta.keywords : [pkgMeta.keywords];
     if (!_.contains(keywords, plugin.keywords)) {
       logger.log('info', 'ignoring unsupported package: ' + pkgMeta.name);
+      if (strict) {
+        return cb(new PluginPackageError('Package is not a valid ' + plugin.type + ' package'));
+      }
       return cb(null);
     }
   } else {
     logger.log('warn', 'ignoring component without keywords defined: ' + pkgMeta.name);
+    if (strict) {
+      return cb(new PluginPackageError('Package does not define any keywords'));
+    }
     return cb(null);
   }
 
@@ -392,22 +406,29 @@ function addPackage (plugin, packageInfo, cb) {
   fs.exists(schemaPath, function (exists) {
     if (!exists) {
       logger.log('warn', 'ignoring package with no schema: ' + pkgMeta.name);
+      if (strict) {
+        return cb(new PluginPackageError('Package does not contain a schema'));
+      }
       return cb(null);
     }
 
     fs.readFile(schemaPath, function (err, data) {
       var schema = false;
       if (err) {
-        // don't error out, just notify
         logger.log('error', 'failed to parse schema for ' + pkgMeta.name, err);
+        if (strict) {
+          return cb(new PluginPackageError('Failed to parse schema for package ' + pkgMeta.name));
+        }
         return cb(null);
       }
 
       try {
         schema = JSON.parse(data);
       } catch (e) {
-        // don't error out, just notify
         logger.log('error', 'failed to parse schema for ' + pkgMeta.name, e);
+        if (strict) {
+          return cb(new PluginPackageError('Failed to parse schema for package ' + pkgMeta.name));
+        }
         return cb(null);
       }
 
@@ -448,13 +469,18 @@ function addPackage (plugin, packageInfo, cb) {
 
           if (results && 0 !== results.length) {
             // don't add duplicate
+            if (strict) {
+              return cb(new PluginPackageError("Can't add plugin: plugin already exists!"));
+            }
             return cb(null);
           }
 
           db.create(plugin.type, package, function (err, results) {
             if (err) {
-              // don't error out if we didn't add the component, just notify
               logger.log('error', 'Failed to add package: ' + package.name, err);
+              if (strict) {
+                return cb(err);
+              }
               return cb(null);
             }
             logger.log('info', 'Added package: ' + package.name);
@@ -616,7 +642,7 @@ function handleUploadedPlugin (req, res, next) {
             return next(error);
           }
 
-          addPackage(contentPlugin.bowerConfig, packageInfo, function (error, results) {
+          addPackage(contentPlugin.bowerConfig, packageInfo, true, function (error, results) {
             if (error) {
               return next(error);
             }

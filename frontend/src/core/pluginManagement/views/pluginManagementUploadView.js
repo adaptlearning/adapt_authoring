@@ -24,12 +24,17 @@ define(function(require){
     uploadFile: function() {
       var self = this;
       this.$('.plugin-form').ajaxSubmit({
-        error: function(xhr, status, error) {
-          // console.log('Error: ' + xhr.status);
+        error: function(data, status, error) {
+          var message = 'There was an error uploading the plugin';
+          if (data && data.responseJSON && data.responseJSON.error) {
+            message += ":\n\n" + data.responseJSON.error;
+          }
+
+          alert(message);
         },
         success: function(data, status, xhr) {
-          console.log('uploaded plugin', data);
-          // Origin.router.navigate('#/pluginManagement', {trigger:true});
+          var pluginType = data.pluginType ? data.pluginType : '';
+          Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger:true});
         }
       });
 

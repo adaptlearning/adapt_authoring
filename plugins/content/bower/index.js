@@ -129,6 +129,7 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
     displayName: pkgMeta.displayName,
     description: pkgMeta.description,
     version: pkgMeta.version,
+    isLocalPackage: pkgMeta.isLocalPackage ? pkgMeta.isLocalPackage : false,
     properties: schema.properties
   };
 
@@ -631,6 +632,9 @@ function handleUploadedPlugin (req, res, next) {
         if (!pluginType) {
           return next(new PluginPackageError('Unrecognized plugin type for package ' + packageJson.name));
         }
+
+        // mark as a locally installed package
+        packageJson.isLocalPackage = true;
 
         // construct packageInfo
         var packageInfo = {

@@ -146,5 +146,6 @@
   "app.tags" : "Tags",
   "app.pluginmanagment": "Plugin Management",
   "app.uploadplugin": "Upload Plugin",
+  "app.uploadedbyuser": "Uploaded By User",
   "app.pluginfile": "Plugin File"
 }

@@ -36,6 +36,10 @@ TagContent.prototype.getChildType = function () {
 TagContent.prototype.create = function (data, next) {
   // enforce unique tags here, rather than in schema
   var self = this;
+
+  // clean title
+  data.title = data.title.replace(/,/g, '').trim();
+
   this.retrieve({ title: data.title }, function (err, results) {
     if (err) {
       return next(err);

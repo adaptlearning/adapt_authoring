@@ -16,7 +16,11 @@
     </div>
     <div class="pluginType-update col-20 col-centered">
       <div class="pluginType-update-inner tb-col-inner">
-        <button class="btn plugin-update-check btn btn-info">Check for updates</button>
+        {{#if isLocalPackage}}
+        <em class="info">({{t 'app.uploadedbyuser'}})</em>
+        {{else}}
+        <button class="plugin-update-check btn btn-info">Check for updates</button>
+        {{/if}}
       </div>
     </div>
   </div>

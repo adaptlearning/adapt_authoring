@@ -2,18 +2,25 @@ define(function(require) {
 
   var Origin = require('coreJS/app/origin');
   var PluginManagementView = require('coreJS/pluginManagement/views/pluginManagementView');
+  var PluginManagementUploadView = require('coreJS/pluginManagement/views/pluginManagementUploadView');
   var PluginManagementSidebarView = require('coreJS/pluginManagement/views/pluginManagementSidebarView');
+  var PluginManagementUploadSidebarView = require('coreJS/pluginManagement/views/pluginManagementUploadSidebarView');
 
   Origin.on('router:pluginManagement', function(location, subLocation, action) {
     if (!location) {
       location = 'extension';
     }
-    Origin.router.createView(PluginManagementView, { pluginType: location });
-    var optionsObject = {
-        "backButtonText": "Back to Dashboard",
-        "backButtonRoute": "/#/dashboard"
-    };
-    Origin.sidebar.addView(new PluginManagementSidebarView().$el, optionsObject);
+
+    if ('upload' === location) {
+      Origin.router.createView(PluginManagementUploadView);
+      Origin.sidebar.addView(new PluginManagementUploadSidebarView().$el, {
+        "backButtonText": "Back",
+        "backButtonRoute": "/#/pluginManagement"
+      });
+    } else {
+      Origin.router.createView(PluginManagementView, { pluginType: location });
+      Origin.sidebar.addView(new PluginManagementSidebarView().$el);
+    }
   });
 
   Origin.on('globalMenu:pluginManagement:open', function() {

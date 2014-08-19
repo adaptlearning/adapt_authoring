@@ -1,0 +1,38 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/trackedObject.schema",
+  "properties": {
+    "name":{
+      "type": "string",
+      "required": true
+    },
+    "displayName": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": false
+    },
+    "version":{
+      "type": "string",
+      "required": true
+    },
+    "_isAvailableInEditor": {
+      "type":"boolean",
+      "default": true,
+      "required":true,
+      "editorOnly": true
+    },
+    "isLocalPackage" : {
+      "type": "boolean",
+      "default": false,
+      "editorOnly": true
+    },
+    "properties":{
+      "type": "object"
+    }
+  }
+}

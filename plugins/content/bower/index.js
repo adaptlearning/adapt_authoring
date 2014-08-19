@@ -25,7 +25,17 @@ var origin = require('../../../'),
     mkdirp = require('mkdirp'),
     _ = require('underscore'),
     util = require('util'),
-    path = require('path');
+    path = require('path'),
+    unzip = require('unzip'),
+    IncomingForm = require('formidable').IncomingForm;
+
+// errors
+function PluginPackageError (msg) {
+  this.type = 'PluginPackageError';
+  this.message = msg || 'Error with plugin package';
+}
+
+util.inherits(PluginPackageError, Error);
 
 function BowerPlugin () {
 }
@@ -90,6 +100,25 @@ BowerPlugin.prototype.getPackageType = function () {
 };
 
 /**
+ * extracts the plugin type from a bower.json
+ * @param {object} packageJson - a require'd bower.json file
+ * @return {string} - the plugin type
+ */
+function extractPluginType (packageJson) {
+  // not very intelligent
+  var pluginTypes = ['theme', 'extension', 'component'];
+  var type = false;
+  for (var index = 0; index < pluginTypes.length; ++index) {
+    type = pluginTypes[index];
+    if (packageJson[type] && 'string' === typeof packageJson[type]) {
+      return type;
+    }
+  }
+
+  return false;
+}
+
+/**
  * extracts the necessary attributes to store a package in the DB
  *
  */
@@ -100,6 +129,7 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
     displayName: pkgMeta.displayName,
     description: pkgMeta.description,
     version: pkgMeta.version,
+    isLocalPackage: pkgMeta.isLocalPackage ? pkgMeta.isLocalPackage : false,
     properties: schema.properties
   };
 
@@ -110,7 +140,19 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
 }
 
 /**
- * essential setup
+ * essential setup for this plugin
+ */
+
+function initialize () {
+  var app = origin();
+  app.once('serverStarted', function (server) {
+    // add plugin upload route
+    rest.post('/upload/contentplugin', handleUploadedPlugin);
+  });
+}
+
+/**
+ * essential setup for derived plugins
  *
  */
 BowerPlugin.prototype.initialize = function (plugin) {
@@ -321,20 +363,34 @@ function fetchInstalledPackages (plugin, options, cb) {
  * adds a new package to the system - fired after bower
  * has installed to the cache
  *
+ * @param {object} plugin - bowerConfig object for a bower plugin type
  * @param {object} packageInfo - the bower package info retrieved during install
+ * @param {boolean} [strict] - don't ignore errors
  * @param {callback} cb
  */
-function addPackage (plugin, packageInfo, cb) {
+function addPackage (plugin, packageInfo, strict, cb) {
+  // shuffle params
+  if ('function' === typeof strict) {
+    cb = strict;
+    strict = false;
+  }
+
   // verify packageInfo meets requirements
   var pkgMeta = packageInfo.pkgMeta;
   if (pkgMeta.keywords) { // only allow our package type
     var keywords = _.isArray(pkgMeta.keywords) ? pkgMeta.keywords : [pkgMeta.keywords];
     if (!_.contains(keywords, plugin.keywords)) {
       logger.log('info', 'ignoring unsupported package: ' + pkgMeta.name);
+      if (strict) {
+        return cb(new PluginPackageError('Package is not a valid ' + plugin.type + ' package'));
+      }
       return cb(null);
     }
   } else {
     logger.log('warn', 'ignoring component without keywords defined: ' + pkgMeta.name);
+    if (strict) {
+      return cb(new PluginPackageError('Package does not define any keywords'));
+    }
     return cb(null);
   }
 
@@ -351,22 +407,29 @@ function addPackage (plugin, packageInfo, cb) {
   fs.exists(schemaPath, function (exists) {
     if (!exists) {
       logger.log('warn', 'ignoring package with no schema: ' + pkgMeta.name);
+      if (strict) {
+        return cb(new PluginPackageError('Package does not contain a schema'));
+      }
       return cb(null);
     }
 
     fs.readFile(schemaPath, function (err, data) {
       var schema = false;
       if (err) {
-        // don't error out, just notify
         logger.log('error', 'failed to parse schema for ' + pkgMeta.name, err);
+        if (strict) {
+          return cb(new PluginPackageError('Failed to parse schema for package ' + pkgMeta.name));
+        }
         return cb(null);
       }
 
       try {
         schema = JSON.parse(data);
       } catch (e) {
-        // don't error out, just notify
         logger.log('error', 'failed to parse schema for ' + pkgMeta.name, e);
+        if (strict) {
+          return cb(new PluginPackageError('Failed to parse schema for package ' + pkgMeta.name));
+        }
         return cb(null);
       }
 
@@ -407,13 +470,18 @@ function addPackage (plugin, packageInfo, cb) {
 
           if (results && 0 !== results.length) {
             // don't add duplicate
+            if (strict) {
+              return cb(new PluginPackageError("Can't add plugin: plugin already exists!"));
+            }
             return cb(null);
           }
 
           db.create(plugin.type, package, function (err, results) {
             if (err) {
-              // don't error out if we didn't add the component, just notify
               logger.log('error', 'Failed to add package: ' + package.name, err);
+              if (strict) {
+                return cb(err);
+              }
               return cb(null);
             }
             logger.log('info', 'Added package: ' + package.name);
@@ -515,6 +583,88 @@ function checkIfHigherVersionExists (package, options, cb) {
       return cb(null, true);
     });
 }
+
+/**
+ * handles uploaded plugins
+ *
+ */
+
+function handleUploadedPlugin (req, res, next) {
+  var form = new IncomingForm();
+  form.parse(req, function (error, fields, files) {
+    if (error) {
+      return next(error);
+    }
+
+    var file = files.file;
+    if (!file || !file.path) {
+      return next(new PluginPackageError('File upload failed!'));
+    }
+
+    // try unzipping
+    var outputPath = file.path + '_unzipped';
+    var rs = fs.createReadStream(file.path);
+    var ws = unzip.Extract({ path: outputPath });
+    rs.on('error', function (error) {
+      return next(error);
+    });
+    ws.on('error', function (error) {
+      return next(error);
+    });
+    ws.on('close', function () {
+      // enumerate output directory and search for bower.json
+      fs.readdir(outputPath, function (err, files) {
+        if (err) {
+          return next(err);
+        }
+
+        // first entry should be our target directory
+        var packageJson;
+        var canonicalDir = path.join(outputPath, files[0]);
+        try {
+          packageJson = require(path.join(canonicalDir, 'bower.json'));
+        } catch (error) {
+          return next(error);
+        }
+
+        // extract the plugin type from the package
+        var pluginType = extractPluginType(packageJson);
+        if (!pluginType) {
+          return next(new PluginPackageError('Unrecognized plugin type for package ' + packageJson.name));
+        }
+
+        // mark as a locally installed package
+        packageJson.isLocalPackage = true;
+
+        // construct packageInfo
+        var packageInfo = {
+          canonicalDir: canonicalDir,
+          pkgMeta: packageJson
+        };
+        app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {
+          if (error) {
+            return next(error);
+          }
+
+          addPackage(contentPlugin.bowerConfig, packageInfo, true, function (error, results) {
+            if (error) {
+              return next(error);
+            }
+
+            // success!!
+            res.statusCode = 200;
+            return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });
+          });
+        });
+      });
+    });
+    rs.pipe(ws);
+
+    // response should be sent by one of the above handlers
+  });
+}
+
+initialize();
 
 /**
  * Module exports

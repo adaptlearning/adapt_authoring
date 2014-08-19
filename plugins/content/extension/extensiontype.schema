@@ -2,38 +2,11 @@
   "type":"object",
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
-  "$ref": "http://localhost/system/trackedObject.schema",
+  "$ref": "http://localhost/plugins/content/bower/bowerplugin.schema",
   "properties": {
-    "name":{
-      "type": "string",
-      "required": true
-    },
-    "displayName": {
-      "type": "string",
-      "required": true
-    },
     "extension": {
       "type": "string",
       "required": true
-    },
-    "description": {
-      "type": "string",
-      "required": false
-    },
-    "targetAttribute": {
-      "type": "string",
-      "required": true,
-      "default" : "undefined"
-    },
-    "version":{
-      "type": "string",
-      "required": true
-    },
-    "_isAvailableInEditor": {
-      "type":"boolean",
-      "default": true,
-      "required":true,
-      "editorOnly": true
     },
     "properties":{
       "type": "object"

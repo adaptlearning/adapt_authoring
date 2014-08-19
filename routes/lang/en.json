@@ -143,5 +143,9 @@
   "app.uptodate" : "Up to date!",
   "app.updatefailed" : "Failed to update!",
   "app.updating" : "Updating ...",
-  "app.tags" : "Tags"
+  "app.tags" : "Tags",
+  "app.pluginmanagement": "Plugin Management",
+  "app.uploadplugin": "Upload Plugin",
+  "app.uploadedbyuser": "Uploaded By User",
+  "app.pluginfile": "Plugin File"
 }

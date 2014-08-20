@@ -18,9 +18,8 @@ define(function(require) {
 
     preRender: function() {
       this.collection = new ThemeCollection();
-      this.collection.fetch();
-
       this.listenTo(this.collection, 'sync', this.addThemeViews);
+      this.collection.fetch();
 
       this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
       this.listenTo(Origin, 'editorThemeEditSidebar:views:save', this.saveData);
@@ -30,6 +29,7 @@ define(function(require) {
     },
 
     addThemeViews: function() {
+      console.log(this.collection, this);
       this.renderThemeViews(this.collection.models);
     },
 
@@ -76,7 +76,7 @@ define(function(require) {
         return;
       } 
 
-      selectedThemeId = selectedItem[0].childNodes[0].dataset.id
+      selectedThemeId = selectedItem[0].childNodes[0].dataset.id;
       
       _this.model.save({
         _theme: selectedThemeId

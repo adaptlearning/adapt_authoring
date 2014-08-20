@@ -90,8 +90,8 @@ function initialize () {
 
     // enable a theme
     // expects course ID and a theme ID
-    rest.post('/theme/:themeId/makeitso/:courseid', function (req, res, next) {
-      var themeId = req.params.themeId;
+    rest.post('/theme/:themeid/makeitso/:courseid', function (req, res, next) {
+      var themeId = req.params.themeid;
       var courseId = req.params.courseid;
 
       // add selected theme to course config

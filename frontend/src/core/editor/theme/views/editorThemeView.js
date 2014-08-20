@@ -9,7 +9,10 @@ define(function(require){
 
     tagName: 'li',
 
-    className: 'theme-list-item',
+    className: function() {
+        var isSelectedClass = (this.model.get('_isSelected')) ? ' selected' : '';
+        return 'theme-list-item' + isSelectedClass
+    },
 
     events: {
       'click':'toggleSelect'

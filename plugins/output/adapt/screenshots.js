@@ -56,20 +56,23 @@ casper.each(viewports, function(casper, viewport) {
     this.echo('Screenshot for ' + viewport.name, 'info');
     var l = 0;
     var w = 300;
+    var h = 222;
     if (viewport.name == 'large') {
       l = 315;
     }
     if (viewport.name == 'medium') {
       l = 220;
+      h = h * 1.25;
     }
     if (viewport.name == 'small') {
       w = 200;
+      h = h * 2;
     }
-    this.capture("../../../" + filepath + viewport.name + '.png', {
+    this.capture("../../../" + filepath + "/" + viewport.name + '.png', {
       top: 0,
       left: l,
       width: w,
-      height: 222
+      height: h
     });
   });
 });

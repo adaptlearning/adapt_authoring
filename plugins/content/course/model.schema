@@ -30,8 +30,13 @@
       "default": 0
     },
     "_isSelected": {
-      "type":"boolean",
-      "default":false
+      "type": "boolean",
+      "default": false
+    },
+    "_hasScreenshots": {
+      "type": "boolean",
+      "default": false,
+      "editorOnly": true
     }
   }
 }

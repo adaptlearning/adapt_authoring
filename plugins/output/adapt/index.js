@@ -7,7 +7,6 @@ var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     database = require('../../../lib/database'),
     util = require('util'),
     path = require('path'),
-    database = require('../../../lib/database'),
     fs = require('fs'),
     async = require('async'),
     archiver = require('archiver'),
@@ -549,7 +548,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
 
       function(callback) {
         var url = app.getServerURL() + "/preview/" + tenantId + "/" + courseId + "/main.html";
-        var filepath = path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "screenshots/");
+        var filepath = path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "screenshots");
         var configSmall = outputJson['config'].screenSize.small;
         var configMedium = outputJson['config'].screenSize.medium;
         var configLarge = outputJson['config'].screenSize.large;
@@ -559,14 +558,31 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
             cwd: __dirname
           },
           function (error, stdout, stderr) {
-          console.log('stdout: ' + stdout);
-          console.log('stderr: ' + stderr);
           if (error !== null) {
             console.log('exec error: ' + error);
+
           }
-        });
-        callback(null, 'screenshots created');    
+          callback(null, 'screenshots created'); 
+        });    
       },
+
+      function(callback) {
+        database.getDatabase(function(err, db) {
+          var criteria = {_courseId: courseId};
+          var options = {
+            operators : {
+              sort : { _sortOrder : 1}
+            }
+          }
+          db.update('course', {_id: courseId}, {_hasScreenshots: true}, function(error, results) {
+            if (error) {
+              return doneCallback(error);
+            };
+          });
+
+          callback(null, "Preview screenshots added to dashboard");
+        });
+      }
     ],
     // optional callback
     function(err, results){

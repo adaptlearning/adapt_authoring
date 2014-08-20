@@ -18,7 +18,9 @@ define(function(require){
       'click':'toggleSelect'
     },
 
-    preRender: function() {},
+    preRender: function() {
+      this.listenTo(Origin, 'editor:theme:selected', this.deselectItem);
+    },
 
     toggleSelect: function(event) {
       event && event.stopPropagation();
@@ -31,6 +33,7 @@ define(function(require){
     },
 
     selectItem: function() {
+      Origin.trigger('editor:theme:selected');
       this.$el.addClass('selected');
       this.model.set({_isSelected: true});
     },

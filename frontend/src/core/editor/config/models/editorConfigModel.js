@@ -14,4 +14,3 @@ define(function(require) {
 
   return EditorConfigModel;
 });
-0

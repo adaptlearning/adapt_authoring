@@ -9,13 +9,18 @@ define(function(require){
 
     tagName: 'li',
 
-    className: 'theme-list-item',
+    className: function() {
+        var isSelectedClass = (this.model.get('_isSelected')) ? ' selected' : '';
+        return 'theme-list-item' + isSelectedClass
+    },
 
     events: {
       'click':'toggleSelect'
     },
 
-    preRender: function() {},
+    preRender: function() {
+      this.listenTo(Origin, 'editor:theme:selected', this.deselectItem);
+    },
 
     toggleSelect: function(event) {
       event && event.stopPropagation();
@@ -28,6 +33,7 @@ define(function(require){
     },
 
     selectItem: function() {
+      Origin.trigger('editor:theme:selected');
       this.$el.addClass('selected');
       this.model.set({_isSelected: true});
     },

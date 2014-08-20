@@ -88,45 +88,11 @@ function initialize () {
   var app = origin();
   app.once('serverStarted', function (server) {
 
-    // disable a theme
-    // expects course ID and a theme ID
-    rest.post('/theme/disable/:courseid', function (req, res, next) {
-      var theme = req.body.theme;
-      var courseId = req.params.courseid;
-
-      if (!theme || 'string' !== typeof theme) {
-        res.statusCode = 404;
-        return res.json({ success: false, message: 'theme param should be an object id' });
-      }
-
-      // remove current theme from course
-      database.getDatabase(function (err, db) {
-        if (err) {
-          return next(err);
-        }
-
-        // update the course config object
-        db.update('config', { _courseId: courseId }, { _theme: null }, function (err) {
-          if (err) {
-            return next(err);
-          }
-          res.statusCode = 200;
-          res.json({success: true});
-          return res.end();
-        });
-      });
-    });
-
     // enable a theme
     // expects course ID and a theme ID
-    rest.post('/theme/enable/:courseid', function (req, res, next) {
-      var theme = req.body.theme;
+    rest.post('/theme/:themeid/makeitso/:courseid', function (req, res, next) {
+      var themeId = req.params.themeid;
       var courseId = req.params.courseid;
-
-      if (!theme || 'string' !== typeof theme) {
-        res.statusCode = 404;
-        return res.json({ success: false, message: 'theme param should be a object id' });
-      }
 
       // add selected theme to course config
       database.getDatabase(function (err, db) {
@@ -134,14 +100,26 @@ function initialize () {
           return next(err);
         }
 
-        // update the course config object
-        db.update('config', { _courseId: courseId }, { _theme: theme }, function (err) {
+        // verify it's a valid theme
+        db.retrieve('themetype', { _id: themeId }, function (err, results) {
           if (err) {
             return next(err);
           }
-          res.statusCode = 200;
-          res.json({success: true});
-          return res.end();
+
+          if (!results || 1 !== results.length) {
+            res.statusCode = 404;
+            return res.json({ success: false, message: 'theme not found' });
+          }
+
+          // update the course config object
+          db.update('config', { _courseId: courseId }, { _theme: themeId }, function (err) {
+            if (err) {
+              return next(err);
+            }
+            res.statusCode = 200;
+            res.json({success: true});
+            return res.end();
+          });
         });
       });
     });

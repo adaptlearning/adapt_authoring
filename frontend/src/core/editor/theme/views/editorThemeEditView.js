@@ -18,9 +18,8 @@ define(function(require) {
 
     preRender: function() {
       this.collection = new ThemeCollection();
-      this.collection.fetch();
-
       this.listenTo(this.collection, 'sync', this.addThemeViews);
+      this.collection.fetch();
 
       this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
       this.listenTo(Origin, 'editorThemeEditSidebar:views:save', this.saveData);
@@ -30,31 +29,24 @@ define(function(require) {
     },
 
     addThemeViews: function() {
-      this.renderThemeViews(this.collection.models);
+      this.renderThemeViews();
     },
 
-    renderThemeViews: function(themes) {
-      _.each(themes, function(theme) {
+    renderThemeViews: function() {
+
+      this.collection.each(function(theme) {
+        
+        var isSelected = false;
+
+        if (theme.get('_id') === this.model.get('_theme')) {
+          isSelected = true;
+        }
+
+        theme.set('_isSelected', isSelected);
         this.$('.theme-list').append(new ThemeView({model: theme}).$el);
+
       }, this);
 
-      this.setSelectedTheme();
-    },
-
-    setSelectedTheme: function() {
-      var selectedTheme = this.model.get('_theme'),
-        $themes;
-
-      if (selectedTheme) {
-        $themes = $('.theme-item');
-
-        _.each($themes, function(theme) {
-          if (theme.dataset.id == selectedTheme) {
-            // This theme should be selected
-            $(theme.parentNode).addClass('selected');
-          }
-        });
-      } 
     },
 
     cancel: function(event) {
@@ -67,35 +59,32 @@ define(function(require) {
         event.preventDefault();  
       }
 
-      var selectedItem = $('.theme-list-item.selected'),
-        _this = this,
-        selectedThemeId;
+      var selectedTheme = this.collection.findWhere({_isSelected: true});
 
-      if (selectedItem.length == 0) {
+      if (selectedTheme === undefined) {
         alert('No theme selected');
         return;
       } 
 
-      selectedThemeId = selectedItem[0].childNodes[0].dataset.id
+      var selectedThemeId = selectedTheme.get('_id');
       
-      _this.model.save({
-        _theme: selectedThemeId
-      },
-      {
-        error: function() {
+      // Should push to api
+
+      $.post('/api/theme/' + selectedThemeId + '/makeitso/' + this.model.get('_courseId'))
+        .error(function() {
           alert('An error occurred doing the save');
-        },
-        success: function() {
+        })
+        .done(_.bind(function() {
 
           Origin.trigger('editingOverlay:views:hide');
           
           Origin.trigger('editor:refreshData', function() {
             Backbone.history.history.back();
-            _this.remove();
+            this.remove();
           }, this);
-          
-        }
-      });
+
+        }, this));
+
     }
   },
   {

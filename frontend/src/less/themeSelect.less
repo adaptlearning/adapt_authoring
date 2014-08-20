@@ -1,0 +1,15 @@
+@import 'variables';
+
+.theme-list-item {
+  background-color:#fff;
+  transition:background-color 0.3s;
+  transition:all 0.3s;
+  box-shadow: 0px 0px 3pt 2pt transparent;
+  &:hover {
+      box-shadow: 0px 0px 3px 3px #e0e0e0;
+  }
+  &.selected {
+      color:#fff;
+      background-color:@primary-color;
+  }
+}

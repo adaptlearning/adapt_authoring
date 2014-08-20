@@ -342,6 +342,7 @@ li.theme-list-item.selected{color:#fff;background-color:#333c4e}
 .notify-push-close{display:inline-block;text-decoration:none;position:absolute;right:30px;top:50%;margin-top:-12px}.notify-push-close .icon{color:#fff}.no-touch .notify-push-close .icon:hover{color:#000}
 
 .pluginManagement-loading{text-align:center;padding:30px}
+.plugin-management-new-plugin-inner{padding:30px}
 
 
 

@@ -136,6 +136,13 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
   // set the type and package id for the package
   info[plugin.packageType] = pkgMeta[plugin.packageType];
 
+  // set extra properties
+  plugin.extra && plugin.extra.forEach(function (key) {
+    if (pkgMeta[key]) {
+      info[key] = pkgMeta[key];
+    }
+  });
+
   return info;
 }
 

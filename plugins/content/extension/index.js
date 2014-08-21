@@ -28,6 +28,7 @@ var bowerConfig = {
   keywords: 'adapt-extension',
   packageType: 'extension',
   options: defaultOptions,
+  extra: [ "targetAttribute" ],
   nameList: [
     "adapt-contrib-assessment#develop",
     "adapt-contrib-pageLevelProgress#develop",

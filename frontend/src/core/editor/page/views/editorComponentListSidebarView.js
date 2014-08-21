@@ -52,7 +52,7 @@ define(function(require) {
             });
         },
 
-        onSaveAndEditClicked: function() {
+        onSaveAndEditClicked: function(event) {
             event.preventDefault();
 
             if (!this.model.get('component') || !this.model.get('layout')) {

@@ -21,7 +21,7 @@
     {{!-- inline search field with close button --}}
     <div class="sidebar-row">
         <div class="sidebar-row-input">
-            <input type="text" class="dashboard-sidebar-filter-input asset-management-sidebar-filter-search" placeholder="{{t 'app.search'}}"/>
+            <input type="text" class="dashboard-sidebar-filter-input dashboard-sidebar-filter-search-input" placeholder="{{t 'app.search'}}"/>
             <button class="dashboard-sidebar-filter-clear sidebar-inline-input-button"><i class="fa fa-times"></i></button>
         </div>
     </div>
@@ -29,7 +29,7 @@
     {{!-- inline search field with close button --}}
     <div class="sidebar-row">
         <div class="sidebar-row-input">
-            <input type="text" class="dashboard-sidebar-filter-input asset-management-sidebar-filter-tags" placeholder="{{t 'app.tags'}}"/>
+            <input type="text" autocomplete="on" class="dashboard-sidebar-filter-input dashboard-sidebar-filter-tags-input" id="projectTags" value="{{pickCSV tags "title"}}"  placeholder="{{t 'app.tags'}}"/>
             <button class="dashboard-sidebar-filter-clear sidebar-inline-input-button"><i class="fa fa-times"></i></button>
         </div>
     </div>

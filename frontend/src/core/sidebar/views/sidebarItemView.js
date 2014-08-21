@@ -22,7 +22,6 @@ define(function(require) {
         this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
         _.defer(_.bind(function() {
             this.setupView();
-            this.postRender();
         }, this));
     },
 
@@ -33,7 +32,6 @@ define(function(require) {
     },
 
     animateViewIn: function() {
-        console.log('animate in');
         this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
     },
 

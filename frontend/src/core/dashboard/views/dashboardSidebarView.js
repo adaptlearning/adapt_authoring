@@ -11,12 +11,17 @@ define(function(require) {
 			'click a.project-layout-list' 			: 'layoutList',
 			'click a.project-sort-asc' 				: 'sortAscending',
 			'click a.project-sort-desc' 			: 'sortDescending',
-            'keyup .asset-management-sidebar-filter-search':'filterProjectsByTitle',
+            'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
             'click .dashboard-sidebar-filter-clear': 'clearFilterInput'
 		},
 
-        preRender: function() {
-            
+        postRender: function() {
+            // tagging
+            this.$('.dashboard-sidebar-filter-tags-input').tagsInput({
+                autocomplete_url: '/api/content/tag/autocomplete',
+                onAddTag: _.bind(this.onTagInputChanged, this),
+                onRemoveTag: _.bind(this.onTagInputChanged, this)
+            });
         },
 
 		addCourse: function() {
@@ -50,6 +55,10 @@ define(function(require) {
         filterProjectsByTitle: function(event) {
             var filterText = $(event.currentTarget).val();
             Origin.trigger('dashboard:dashboardSidebarView:filter', filterText);
+        },
+
+        onTagInputChanged: function(event) {
+            console.log(event);
         },
 
         clearFilterInput: function(event) {

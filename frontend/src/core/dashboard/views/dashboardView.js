@@ -15,9 +15,9 @@ define(function(require){
 
     preRender: function() {
       this.collection = new ProjectCollection();
+      this.listenTo(this.collection, 'sync', this.addProjectViews);
       this.collection.fetch();
 
-      this.listenTo(this.collection, 'sync', this.addProjectViews);
       this.listenTo(this.collection, 'remove', this.projectRemoved);
 
       // External events

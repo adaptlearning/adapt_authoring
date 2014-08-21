@@ -68,7 +68,6 @@ define(function(require) {
         break;
       case 'edit':
         var project = new ProjectModel({_id: id});
-        
         project.fetch({
           success: function() {
             Origin.trigger('location:title:update', {title: 'Edit course'});

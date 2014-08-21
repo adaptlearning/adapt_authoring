@@ -72,7 +72,7 @@ define(function(require) {
                 this.tags.push(tag);
             }
 
-            Origin.trigger('dashboard:dashboardSidebarView:filterByTag', this.tags);
+            Origin.trigger('dashboard:dashboardSidebarView:filterByTags', this.tags);
 
         }
 		

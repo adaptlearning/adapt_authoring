@@ -14,6 +14,11 @@ define(function(require){
     className: "dashboard",
 
     preRender: function() {
+
+      // Set empty filters
+      this.filterText = '';
+      this.filterTags = [];
+
       this.collection = new ProjectCollection();
       this.listenTo(this.collection, 'sync', this.addProjectViews);
       this.collection.fetch();
@@ -25,15 +30,12 @@ define(function(require){
       this.listenTo(Origin, 'dashboard:layout:list', this.switchLayoutToList);
       this.listenTo(Origin, 'dashboard:sort:asc', this.sortAscending);
       this.listenTo(Origin, 'dashboard:sort:desc', this.sortDescending);
-      this.listenTo(Origin, 'dashboard:dashboardSidebarView:filter', this.filterProjects);
+      this.listenTo(Origin, 'dashboard:dashboardSidebarView:filterBySearch', this.filterCoursesBySearch);
+      this.listenTo(Origin, 'dashboard:dashboardSidebarView:filterByTags', this.filterCoursesByTags);
     },
 
     events: {
       'click #dashboardMenu button'     : 'formclick',
-      'click a#sortProjectsByName'      : 'sortProjectsByName',
-      'click a#sortProjectsByAuthor'    : 'sortProjectsByAuthor',
-      'click a#sortProjectsByLastEdit'  : 'sortProjectsByLastEdit',
-      'keyup .dashboard-sidebar-filter-input': 'filterProjectsByTitle',
       'click': 'removeSelectedItems'
     },
 
@@ -101,55 +103,65 @@ define(function(require){
       this.evaluateProjectCount(this.collection);
     },
 
-    sortProjectsByAuthor: function(e) {
-      e.preventDefault();
+    filterCoursesBySearch: function(filterText) {
+      // Store search input text and call filterCourses
+      this.filterText = filterText;
 
-      var sortedCollection = this.collection.sortBy(function(project){
-        return project.get("createdBy").toLowerCase();
-      });
-
-      this.renderProjectViews(sortedCollection);
+      this.filterCourses();
+      
     },
 
-    sortProjectsByName: function(e) {
-      e.preventDefault();
+    filterCoursesByTags: function(tags) {
+      // Store tags and call filterCourses
+      this.filterTags = tags;
 
-      var sortedCollection = this.collection.sortBy(function(project){
-        return project.get("name").toLowerCase();
-      });
-
-      this.renderProjectViews(sortedCollection);
+      this.filterCourses();
+      
     },
 
-    sortProjectsByLastEdit: function(e) {
-      e.preventDefault();
+    filterCourses: function() {
+      var filteredCollection = this.collection.filter(function(course) {
+        var courseTitle = course.get('title').toLowerCase();
+        var searchText = this.filterText.toLowerCase();
+        var tags = course.get('tags');
+        var shouldShowCourse = false;
 
-      // Temporary variable as we're augmenting the collection
-      var collection = this.collection;
-      // Append a JavaScript date object to the temporary model so we can sort
-      _.each(collection.models, function(project) {
-        var newDate = new Date(project.get("lastUpdated"));
-        project.set({'lastUpdatedDate': newDate});
-      });
+        var tagTitles = _.pluck(tags, 'title');
 
-      var sortedCollection = collection.sortBy(function(project){
-        return -project.get("lastUpdatedDate");
-      });
+        if (this.filterTags.length === 0 && searchText.length === 0) {
+          return course;
+        }
 
-      this.renderProjectViews(sortedCollection);
-    },
+        _.each(this.filterTags, function (tag) {
+          console.log(tagTitles, tag);
+          if (_.contains(tagTitles, tag)) {
+            shouldShowCourse = true;
+          } else {
+            shouldShowCourse = false;
+          }
+        });
 
-    filterProjects: function(filterText) {
-      var filteredCollection = _.filter(this.collection.models, function(model) {
-        return model.get('title').toLowerCase().indexOf(filterText.toLowerCase()) > -1;
-      });
+        // Search should take precedence as this is the main filter
+        // This is why we might want to set shouldShowCourse to false
+        if (courseTitle.indexOf(searchText) > -1) {
+          if (searchText.length != 0) {
+            shouldShowCourse = true;
+          }
+        } else {
+          shouldShowCourse = false;
+        }
+
+        if (shouldShowCourse) {
+          console.log('should show');
+          return course;
+        }
+        
+
+
+      }, this);
 
       this.renderProjectViews(filteredCollection);
-    },
 
-    filterProjectsByTitle: function (event) {
-      var criteria = $(event.currentTarget).val();
-      this.filterProjects(criteria);
     },
 
     removeSelectedItems: function(event) {

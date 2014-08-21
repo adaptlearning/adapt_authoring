@@ -105,6 +105,7 @@ define(function(require) {
         method:'POST',
         data: { title: tag }
       }).done(function (data) {
+        console.log(model);
         if (data && data._id) {
           var tags = model.get('tags');
           tags.push({ _id: data._id, title: data.title });

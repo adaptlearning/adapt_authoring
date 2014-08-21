@@ -12,16 +12,12 @@ define(function(require) {
 			'click a.project-sort-asc' 				: 'sortAscending',
 			'click a.project-sort-desc' 			: 'sortDescending',
             'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
-            'click .dashboard-sidebar-filter-clear': 'clearFilterInput'
+            'click .dashboard-sidebar-filter-clear': 'clearFilterInput',
+            'click .dashboard-sidebar-tag': 'onTagClicked'
 		},
 
         postRender: function() {
-            // tagging
-            this.$('.dashboard-sidebar-filter-tags-input').tagsInput({
-                autocomplete_url: '/api/content/tag/autocomplete',
-                onAddTag: _.bind(this.onTagInputChanged, this),
-                onRemoveTag: _.bind(this.onTagInputChanged, this)
-            });
+            this.tags = [];
         },
 
 		addCourse: function() {
@@ -54,17 +50,30 @@ define(function(require) {
 
         filterProjectsByTitle: function(event) {
             var filterText = $(event.currentTarget).val();
-            Origin.trigger('dashboard:dashboardSidebarView:filter', filterText);
-        },
-
-        onTagInputChanged: function(event) {
-            console.log(event);
+            Origin.trigger('dashboard:dashboardSidebarView:filterBySearch', filterText);
         },
 
         clearFilterInput: function(event) {
             event.preventDefault();
             var $currentTarget = $(event.currentTarget);
             $currentTarget.prev('.dashboard-sidebar-filter-input').val('').trigger('keyup');
+        },
+
+        onTagClicked: function(event) {
+            var tag = $(event.currentTarget).toggleClass('selected').attr('data-tag');
+
+            // Check if the tag is already being filtered and remove it
+            if (_.contains(this.tags, tag)) {
+                this.tags = _.reject(this.tags, function(tagItem) {
+                    return tagItem === tag;
+                });
+            } else {
+                // Else add it to array
+                this.tags.push(tag);
+            }
+
+            Origin.trigger('dashboard:dashboardSidebarView:filterByTag', this.tags);
+
         }
 		
 	}, {

@@ -211,6 +211,7 @@ button{width:auto;overflow:visible}
 .grid-layout .project-list-item{margin-left:30px;min-width:240px;width:22%;max-width:300px;display:inline-block}
 .list-layout{margin-left:30px}.list-layout .project-list-item{margin-left:0px;width:100%}
 .dashboard-sidebar-filter-clear{padding:6px}
+#dashboard-tags_tagsinput{display:inline-block;padding:4px;border:none}
 
 .editing-overlay{position:absolute;z-index:10;top:0px;left:10%;width:100%;opacity:0;background-color:#f2f2f2}
 .editing-overlay-panel-content input,.editing-overlay-panel-content textarea{min-width:50%}
@@ -461,7 +462,7 @@ body{background-color:#e9f0fa;color:#3e4960}
 .sidebar-row button,.sidebar-row a{border-bottom:1px solid #3e4a5f;color:#9cabc4;transition:all 0.3s}.sidebar-row button:hover,.sidebar-row a:hover{color:#fff;background-color:#293141}
 .sidebar-row button.selected,.sidebar-row a.selected{background-color:#1f2531}
 .sidebar-row .sidebar-row-input{border-bottom:1px solid #3e4a5f}.sidebar-row .sidebar-row-input input{border:none;border-radius:0px}
-.sidebar-divide{background-color:#293141}
+.sidebar-divide{background-color:#3e4960}.sidebar-divide h3{font-size:13px;font-weight:600}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 div.tagsinput{border:1px solid #CCC;background:#FFF;padding:5px;overflow-y:auto}div.tagsinput span.tag{border:1px solid #fff;-moz-border-radius:2px;-webkit-border-radius:2px;display:block;float:left;padding:5px;text-decoration:none;background:#9cabc4;color:#fff;margin-right:5px;margin-bottom:5px}div.tagsinput span.tag a{color:#fff;font-weight:bold;text-decoration:none}

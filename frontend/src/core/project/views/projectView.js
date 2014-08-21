@@ -24,6 +24,7 @@ define(function(require){
       this.listenTo(Origin, 'dashboard:projectView:itemSelected', this.deselectItem);
       this.listenTo(Origin, 'dashboard:dashboardView:deselectItem', this.deselectItem);
 
+      this.on('contextMenu:course:editSettings', this.editProjectSettings);
       this.on('contextMenu:course:edit', this.editProject);
       this.on('contextMenu:course:delete', this.deleteProjectPrompt);
       this.on('contextMenu:course:duplicate', this.duplicateProject);
@@ -34,6 +35,14 @@ define(function(require){
       e.preventDefault();
 
       Origin.trigger('contextMenu:open', this, e);
+    },
+
+    editProjectSettings: function() {
+      if (event) {
+        event.preventDefault();  
+      }
+      
+      Backbone.history.navigate('#/project/edit/' + this.model.get('_id'), {trigger: true});
     },
 
     editProject: function(event) {

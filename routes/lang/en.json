@@ -22,6 +22,8 @@
   "app.dashboard" : "Dashboard",
   "app.loggedinas" : "Logged in as",
   "app.edit" : "Edit",
+  "app.editSettings": "Edit settings",
+  "app.editCourse": "Edit course",
   "app.editproperties" : "Edit properties",
   "app.duplicate" : "Duplicate",
   "app.delete" : "Delete",

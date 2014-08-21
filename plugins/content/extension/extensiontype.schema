@@ -8,6 +8,11 @@
       "type": "string",
       "required": true
     },
+    "targetAttribute": {
+      "type": "string",
+      "required": true,
+      "default": "undefined"
+    },
     "properties":{
       "type": "object"
     }

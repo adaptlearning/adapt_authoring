@@ -367,7 +367,7 @@ a.open-context-contentObject{color:white}
 .sidebar-breadcrumb{position:relative;top:-40px}
 .sidebar-breadcrumb-inner{display:block;padding:18px 20px}.sidebar-breadcrumb-inner i{margin-right:10px}
 .sidebar-item-container{position:relative;height:100%}
-.sidebar-item{left:10%;opacity:0}.sidebar-item label{display:block;margin-bottom:4px}
+.sidebar-item{position:relative;left:10%;opacity:0}.sidebar-item label{display:block;margin-bottom:4px}
 .sidebar-row,select.sidebar-row{display:block}.sidebar-row a,select.sidebar-row a{width:100%;padding:18px 20px;display:inline-block}
 .sidebar-row button,select.sidebar-row button{background:none;border:none;width:100%;padding:18px 20px}.sidebar-row button.sidebar-inline-input-button,select.sidebar-row button.sidebar-inline-input-button{width:10px;height:10px;border:none;width:28px;height:32px;padding:8px;border:none}.sidebar-row button.sidebar-inline-input-button:hover,select.sidebar-row button.sidebar-inline-input-button:hover{background:none}
 .sidebar-item-title{text-align:center}

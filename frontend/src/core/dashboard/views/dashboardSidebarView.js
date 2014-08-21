@@ -11,9 +11,13 @@ define(function(require) {
 			'click a.project-layout-list' 			: 'layoutList',
 			'click a.project-sort-asc' 				: 'sortAscending',
 			'click a.project-sort-desc' 			: 'sortDescending',
-            'keyup .dashboard-sidebar-filter-input':'filterProjectsByTitle',
+            'keyup .asset-management-sidebar-filter-search':'filterProjectsByTitle',
             'click .dashboard-sidebar-filter-clear': 'clearFilterInput'
 		},
+
+        preRender: function() {
+            
+        },
 
 		addCourse: function() {
 			Origin.router.navigate('#/project/new', {trigger:true});
@@ -50,7 +54,8 @@ define(function(require) {
 
         clearFilterInput: function(event) {
             event.preventDefault();
-            this.$('.dashboard-sidebar-filter-input').val('').trigger('keyup');
+            var $currentTarget = $(event.currentTarget);
+            $currentTarget.prev('.dashboard-sidebar-filter-input').val('').trigger('keyup');
         }
 		
 	}, {

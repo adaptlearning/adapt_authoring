@@ -19,10 +19,6 @@ define(function(require){
       this.filterText = '';
       this.filterTags = [];
 
-      this.collection = new ProjectCollection();
-      this.listenTo(this.collection, 'sync', this.addProjectViews);
-      this.collection.fetch();
-
       this.listenTo(this.collection, 'remove', this.projectRemoved);
 
       // External events
@@ -37,6 +33,10 @@ define(function(require){
     events: {
       'click #dashboardMenu button'     : 'formclick',
       'click': 'removeSelectedItems'
+    },
+
+    postRender: function() {
+        this.addProjectViews();
     },
 
     switchLayoutToList: function() {

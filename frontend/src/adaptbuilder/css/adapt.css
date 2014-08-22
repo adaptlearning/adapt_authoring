@@ -378,6 +378,7 @@ a.open-context-contentObject{color:white}
 .sidebar-filter{position:absolute;left:220px;top:40%;min-height:200px;border:1px solid #e2e2e2;border-left:none;background-color:#fff}
 .sidebar-filter-toolbar{border-bottom:1px solid #e2e2e2}
 .sidebar-filter-search{padding:10px;border-bottom:1px solid #e2e2e2}
+.sidebar-filter-item{display:block}
 
 .module-user.location-login{background-color:#4e4e4e}.module-user.location-login .sidebar{display:none}
 .module-user.location-login #app{margin-left:0px}

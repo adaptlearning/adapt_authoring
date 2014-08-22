@@ -78,8 +78,26 @@ define(function(require) {
         },
 
         onAddTagClicked: function(event) {
-            console.log(this.collection);
-            Origin.trigger('sidebar:sidebarFilter:add');
+            var availableTags = [];
+            // Go through each project and filter out duplicate tags
+            // to create an array of unique project tags
+            this.collection.each(function(project) {
+                var tags = project.get('tags');
+
+                _.each(tags, function(tag) {
+
+                    var titles = _.pluck(availableTags, 'title');
+                    if (!_.contains(titles, tag.title)) {
+                        availableTags.push(tag);
+                    }
+                })
+                
+            });
+
+            Origin.trigger('sidebar:sidebarFilter:add', {
+                title:'Fitler by Tags',
+                items: availableTags
+            });
         }
 		
 	}, {

@@ -11,9 +11,22 @@ define(function(require) {
             'click .sidebar-filter-toolbar-close': 'onCloseButtonClicked'
         },
 
-        initialize: function() {
+        initialize: function(options) {
+            this.data = {};
+            this.data.title = options.title;
+            this.data.items = options.items;
+            this.listenTo(Origin, 'remove:views', this.remove);
             this.listenTo(Origin, 'sidebar:sidebarFilter:remove', this.remove);
             this.render();
+        },
+
+        render: function() {
+            var template = Handlebars.templates[this.constructor.template];
+            this.$el.html(template(this.data));
+            _.defer(_.bind(function() {
+                this.postRender();
+            }, this));
+            return this;
         },
 
         postRender: function() {

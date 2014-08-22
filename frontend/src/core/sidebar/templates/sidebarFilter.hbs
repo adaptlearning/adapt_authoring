@@ -13,5 +13,12 @@
         <input type="text" class="sidebar-filter-search-input" />
     </div>
     <div class="sidebar-filter-items">
+        {{#each items}}
+        <button class="sidebar-filter-item">
+            <div class="sidebar-filter-item-inner">
+                {{title}}
+            </div>
+        </button>
+        {{/each}}
     </div>
 </div>

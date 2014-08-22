@@ -143,10 +143,7 @@ define(function(require){
         // Search should take precedence as this is the main filter
         // This is why we might want to set shouldShowCourse to false
         if (courseTitle.indexOf(searchText) > -1) {
-            shouldShodCourseBasedOnSearch = true;
-          if (searchText.length != 0) {
-            
-          }
+          shouldShodCourseBasedOnSearch = true;
         }
 
         // Needs to check if both are true

@@ -43,8 +43,8 @@ input[type="text"],input[type="password"],input[type="email"],input[type="url"],
 .form-list li{margin-bottom:20px;list-style:none}.form-list li input,.form-list li label{margin-bottom:0px;display:inline-block}
 .form-list li label{margin-left:10px}
 
-.display-none{display:none}
-.visibility-hidden{visibility:hidden}
+.display-none{display:none!important}
+.visibility-hidden{visibility:hidden!important}
 .unselectable{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 
 html,body,body div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,figure,footer,header,hgroup,menu,nav,section,time,mark,audio,video{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}
@@ -378,7 +378,7 @@ a.open-context-contentObject{color:white}
 .sidebar-filter{position:absolute;left:220px;top:40%;min-height:200px;border:1px solid #e2e2e2;border-left:none;background-color:#fff}
 .sidebar-filter-toolbar{border-bottom:1px solid #e2e2e2}
 .sidebar-filter-search{padding:10px;border-bottom:1px solid #e2e2e2}
-.sidebar-filter-item{display:block}
+.sidebar-filter-item{display:block;width:100%}.sidebar-filter-item.selected{background-color:#d2d2d2}
 
 .module-user.location-login{background-color:#4e4e4e}.module-user.location-login .sidebar{display:none}
 .module-user.location-login #app{margin-left:0px}

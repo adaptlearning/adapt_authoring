@@ -13,7 +13,8 @@ define(function(require) {
 			'click a.project-sort-desc' 			: 'sortDescending',
             'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
             'click .dashboard-sidebar-filter-clear': 'clearFilterInput',
-            'click .dashboard-sidebar-tag': 'onTagClicked'
+            'click .dashboard-sidebar-tag': 'onTagClicked',
+            'click .dashboard-sidebar-add-tag': 'onAddTagClicked'
 		},
 
         postRender: function() {
@@ -74,6 +75,11 @@ define(function(require) {
 
             Origin.trigger('dashboard:dashboardSidebarView:filterByTags', this.tags);
 
+        },
+
+        onAddTagClicked: function(event) {
+            console.log(this.collection);
+            Origin.trigger('sidebar:sidebarFilter:add');
         }
 		
 	}, {

@@ -149,8 +149,10 @@ define(function(require){
           }
         }
 
+        // Needs to check if both are true
+        // also if the search string is empty but a tag matches
+        // also if the filters are not selected but string matches
         if (shouldShowCourseBasedOnTags && shouldShodCourseBasedOnSearch) {
-          console.log('should show');
           return course;
         } else if (shouldShowCourseBasedOnTags && searchText.length === 0) {
             return course;

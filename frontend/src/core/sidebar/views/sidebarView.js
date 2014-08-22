@@ -2,6 +2,7 @@ define(function(require) {
 
 	var Origin = require('coreJS/app/origin');
 	var OriginView = require('coreJS/app/views/originView');
+    var SidebarFilterView = require('coreJS/sidebar/views/sidebarFilterView');
 
 	var Sidebar = OriginView.extend({
 
@@ -10,6 +11,7 @@ define(function(require) {
 		initialize: function() {
 			this.render();
 			this.listenTo(Origin, 'sidebar:sidebarContainer:update', this.updateViews);
+            this.listenTo(Origin, 'sidebar:sidebarFilter:add', this.addFilterView);
 		},
 
 		updateViews: function($element, options) {
@@ -47,7 +49,13 @@ define(function(require) {
 				this.empty();
 				Origin.trigger('sidebar:views:animateIn');
 			});
-		}
+		},
+
+        addFilterView: function(options) {
+            Origin.trigger('sidebar:sidebarFilter:remove');
+            console.log('add filter view');
+            $('body').append(new SidebarFilterView(options).$el);
+        }
 
 	}, {
 		template: 'sidebar'

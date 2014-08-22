@@ -568,12 +568,6 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
 
       function(callback) {
         database.getDatabase(function(err, db) {
-          var criteria = {_courseId: courseId};
-          var options = {
-            operators : {
-              sort : { _sortOrder : 1}
-            }
-          }
           db.update('course', {_id: courseId}, {_hasScreenshots: true}, function(error, results) {
             if (error) {
               return doneCallback(error);

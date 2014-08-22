@@ -124,36 +124,38 @@ define(function(require){
         var courseTitle = course.get('title').toLowerCase();
         var searchText = this.filterText.toLowerCase();
         var tags = course.get('tags');
-        var shouldShowCourse = false;
+        var shouldShowCourseBasedOnTags = false;
+        var shouldShodCourseBasedOnSearch = false;
 
         var tagTitles = _.pluck(tags, 'title');
 
-        if (this.filterTags.length === 0 && searchText.length === 0) {
+        // Think this should be somewhere different
+        /*if (this.filterTags.length === 0 && searchText.length === 0) {
           return course;
-        }
+        }*/
 
         _.each(this.filterTags, function (tag) {
-          console.log(tagTitles, tag);
           if (_.contains(tagTitles, tag)) {
-            shouldShowCourse = true;
-          } else {
-            shouldShowCourse = false;
+            shouldShowCourseBasedOnTags = true;
           }
         });
 
         // Search should take precedence as this is the main filter
         // This is why we might want to set shouldShowCourse to false
         if (courseTitle.indexOf(searchText) > -1) {
+            shouldShodCourseBasedOnSearch = true;
           if (searchText.length != 0) {
-            shouldShowCourse = true;
+            
           }
-        } else {
-          shouldShowCourse = false;
         }
 
-        if (shouldShowCourse) {
+        if (shouldShowCourseBasedOnTags && shouldShodCourseBasedOnSearch) {
           console.log('should show');
           return course;
+        } else if (shouldShowCourseBasedOnTags && searchText.length === 0) {
+            return course;
+        } else if (shouldShodCourseBasedOnSearch && this.filterTags.length === 0) {
+            return course;
         }
         
 

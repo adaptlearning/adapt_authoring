@@ -352,8 +352,7 @@ a.open-context-contentObject{color:white}
 .project-list-item.selected{color:#fff;background-color:#333c4e}.project-list-item.selected .project-settings{top:0%;opacity:1}
 .project-list-item.selected .tags li.tag{background-color:#fff}.project-list-item.selected .tags li.tag span{color:#9CABC4}
 .project-list-item.listing{width:700px}
-.project-list-item .tags ul.tags{margin:0px 2px}
-.project-list-item .tags li.tag{margin:2px 5px;display:inline-block;background-color:#9CABC4}.project-list-item .tags li.tag span{margin:5px;color:#fff}
+.project-list-item .tags li.tag{margin:2px 5px 2px 0px;display:inline-block;background-color:#9CABC4}.project-list-item .tags li.tag span{padding:5px;color:#fff}
 .project-header-inner{position:relative}
 .project-detail-title{margin-bottom:10px}
 .project-settings{position:absolute;top:0%;left:0px;font-size:16px;width:100%;opacity:1;background-color:#fff;transition:all 0.3s}.project-settings a{color:#3e4960}

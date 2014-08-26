@@ -23,8 +23,10 @@ define(function(require){
 
     uploadFile: function() {
       var self = this;
+      $('.loading').show();
       this.$('.plugin-form').ajaxSubmit({
         error: function(data, status, error) {
+          $('.loading').hide();
           var message = 'There was an error uploading the plugin';
           if (data && data.responseJSON && data.responseJSON.error) {
             message += ":\n\n" + data.responseJSON.error;
@@ -33,6 +35,7 @@ define(function(require){
           alert(message);
         },
         success: function(data, status, xhr) {
+          $('.loading').hide();
           var pluginType = data.pluginType ? data.pluginType : '';
           Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger:true});
         }

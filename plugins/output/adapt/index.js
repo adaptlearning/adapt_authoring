@@ -26,12 +26,12 @@ util.inherits(AdaptOutput, OutputPlugin);
 /**
  * Constants
  */
-var TEMP_DIR = 'temp',
-    SOURCE_DIR = 'src',
+var SOURCE_DIR = 'src',
     BUILD_DIR = 'build';
     COURSE_DIR = 'course',
     COMPONENTS_DIR = 'components',
-    ADAPT_FRAMEWORK_DIR = 'adapt_framework';
+    ADAPT_FRAMEWORK_DIR = 'adapt_framework',
+    ALL_COURSES = 'courses';
 
 /**
  * Used to convert a string 's' to a valid filename
@@ -82,26 +82,36 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
   var user = usermanager.getCurrentUser(),
     tenantId = user.tenant._id,
     outputJson = {},
-    friendlyIdentifiers = {};
+    friendlyIdentifiers = {},
+    themeName = 'adapt-contrib-vanilla';
 
 
   // Queries the database to return each collectionType for the given courseId
   var getJson = function (collectionType, doneCallback) {
 
     database.getDatabase(function(err, db) {
-        var criteria = collectionType == 'course' ? {_id: courseId} : {_courseId: courseId};
+        var criteria = collectionType === 'course' ? {_id: courseId} : {_courseId: courseId};
         var options = {
           operators : {
             sort : { _sortOrder : 1}
           }
         };
 
+        if (collectionType === 'config') {
+          options.populate = { _theme: 'name' };
+        }
+
         db.retrieve(collectionType, criteria, options,
           function (error, results) {
             if (error) {
               doneCallback(error);
-            }
-            else if (results && results.length) {
+            } else if (results && results.length) {
+              if (collectionType === 'config') {
+                if (results[0]._theme && results[0]._theme.name) {
+                  themeName = results[0]._theme.name;
+                }
+              }
+
               db.exportResults(results, function (transformed) {
                 var output = [];
                 transformed && transformed.forEach(function (item) {
@@ -173,7 +183,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
   // Writes Adapt Framework JSON files to the /course folder
   var writeJson = function(key, doneCallback) {
     var data = JSON.stringify(outputJson[key], undefined, 2),
-      filepath = path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR, COURSE_DIR),
+      filepath = path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, BUILD_DIR, COURSE_DIR),
       filenames = {},
       filename = '';
 
@@ -219,7 +229,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
   // Copies a specific version of the component to the source folder
   var copyComponentFiles = function(component, doneCallback) {
     var sourceFolder = path.join(configuration.serverRoot, '/plugins/content/component/versions/', component.name, component.version, component.name),
-      destinationFolder = path.join(configuration.serverRoot, TEMP_DIR, courseId, user._id, SOURCE_DIR, COMPONENTS_DIR, component.name);
+      destinationFolder = path.join(configuration.tempDir, courseId, user._id, SOURCE_DIR, COMPONENTS_DIR, component.name);
 
     ncp(sourceFolder, destinationFolder, function (err) {
       if (err) {
@@ -280,7 +290,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
       function(callback) {
         logger.log('info', '2. Verifying temporary folder exists');
 
-        fs.exists(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR), function(exists) {
+        fs.exists(path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR), function(exists) {
             if (exists) {
                 // Do something
                 callback(null, 'Temporary folder OK');
@@ -300,7 +310,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
       function(callback) {
         logger.log('info', '3. Creating/verifying working folder');
 
-        var workingRoot = path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR),
+        var workingRoot = path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, BUILD_DIR),
           workingFolder = path.join(workingRoot, COURSE_DIR, outputJson['config'][0]._defaultLanguage);
 
         fs.exists(workingFolder, function(exists) {
@@ -331,18 +341,20 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           }
         });
       },
-      
+
       function(callback) {
 
-        fs.exists(path.join(configuration.serverRoot, TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR, 'index.html'), function (exists) {
+        fs.exists(path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, BUILD_DIR, 'index.html'), function (exists) {
           if (!exists) {
             logger.log('info', '3.1. Ensuring framework build exists');
 
             var args = [];
-            args.push('--outputdir=' + courseId);
-            args.push('--theme=' + 'adapt-contrib-vanilla'); // Hard-coded theme for now
-     
-            child = exec('grunt server-build ' + args.toString().replace(',', ' '), {cwd: path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR)},
+            args.push('--outputdir=' + path.join(ALL_COURSES, courseId));
+            args.push('--theme=' + themeName);
+
+            logger.log('info', '3.2. Using theme: ' + themeName);
+
+            child = exec('grunt server-build ' + args.toString().replace(',', ' '), {cwd: path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR)},
               function (error, stdout, stderr) {
                 if (error !== null) {
                   logger.log('error', 'exec error: ' + error);
@@ -364,7 +376,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           } else {
             callback(null, 'Framework already built, nothing to do')
           }
-        });        
+        });
       },
       // Sanatize course data
       function(callback) {
@@ -489,14 +501,14 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           }
         });
       },
-      
+
       function(callback) {
         if (isPreview) {
           return callback(null, 'Preview, so no zip');
         }
 
         logger.log('info', '9. Zipping it all up');
-        var output = fs.createWriteStream(path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, 'download.zip')),
+        var output = fs.createWriteStream(path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, 'download.zip')),
           archive = archiver('zip');
 
         output.on('close', function() {
@@ -510,7 +522,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
         archive.pipe(output);
 
         archive.bulk([
-          { expand: true, cwd: path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, BUILD_DIR), src: ['**/*'] }
+          { expand: true, cwd: path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, BUILD_DIR), src: ['**/*'] }
         ]).finalize();
 
       },
@@ -524,7 +536,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
 
         // Trigger the file download
         var filename = slugify(outputJson['course'].title),
-          filePath = path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, 'download.zip');
+          filePath = path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, 'download.zip');
 
         fs.stat(filePath, function(err, stat) {
           if (err) {
@@ -548,22 +560,24 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
 
       function(callback) {
         var url = app.getServerURL() + "/preview/" + tenantId + "/" + courseId + "/main.html";
-        var filepath = path.join(TEMP_DIR, tenantId, ADAPT_FRAMEWORK_DIR, courseId, "screenshots");
+        var filepath = path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, "screenshots/");
         var configSmall = outputJson['config'].screenSize.small;
         var configMedium = outputJson['config'].screenSize.medium;
         var configLarge = outputJson['config'].screenSize.large;
 
-        var child = exec('casperjs screenshots.js ' + url + ' ' + filepath + ' ' + configSmall + ' ' + configMedium + ' ' + configLarge, 
+        var child = exec('casperjs screenshots.js ' + url + ' ' + filepath + ' ' + configSmall + ' ' + configMedium + ' ' + configLarge,
           {
             cwd: __dirname
           },
           function (error, stdout, stderr) {
-          if (error !== null) {
-            console.log('exec error: ' + error);
+            logger.log('info', 'stdout: ' + stdout);
+            logger.log('info', 'stderr: ' + stderr);
+            if (error !== null) {
+              logger.log('error', 'exec error: ' + error);
+            }
+          });
 
-          }
-          callback(null, 'screenshots created'); 
-        });    
+        callback(null, 'screenshots created');
       },
 
       function(callback) {
@@ -580,9 +594,9 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
     ],
     // optional callback
     function(err, results){
-      if (results) {
-        logger.log('info', results);
-      }
+      results && results.forEach(function (el) {
+        logger.log('info', el);
+      });
 
       return next();
     });

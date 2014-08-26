@@ -560,7 +560,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
 
       function(callback) {
         var url = app.getServerURL() + "/preview/" + tenantId + "/" + courseId + "/main.html";
-        var filepath = path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, "screenshots/");
+        var filepath = path.join('temp', tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, "screenshots");
         var configSmall = outputJson['config'].screenSize.small;
         var configMedium = outputJson['config'].screenSize.medium;
         var configLarge = outputJson['config'].screenSize.large;
@@ -570,14 +570,12 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
             cwd: __dirname
           },
           function (error, stdout, stderr) {
-            logger.log('info', 'stdout: ' + stdout);
-            logger.log('info', 'stderr: ' + stderr);
-            if (error !== null) {
-              logger.log('error', 'exec error: ' + error);
+            if (error) {
+              logger.log('error', error.message, error);
             }
-          });
 
-        callback(null, 'screenshots created');
+            callback(null, 'screenshots created');
+          });
       },
 
       function(callback) {

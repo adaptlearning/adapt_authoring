@@ -96,3 +96,91 @@
     color:#15a4fa;
     font-weight:600;
 }
+
+.pos.one {
+    top: 25px;
+    height: 222px;
+    width: 100%;
+    z-index: 4;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: rgba(0,0,0,0);
+}
+
+.pos.two { 
+    top: 25px;
+    height: 100%;
+    width: 80%;
+    z-index: 5;
+    position: absolute;
+    margin-left: 10%;
+    margin-right: 10%;
+    background-color: rgba(0,0,0,0);
+}
+
+.pos.three {
+    top: 25px;
+    height: 100%;
+    width: 50%;
+    z-index: 6;
+    position: absolute;
+    margin-left: 25%;
+    margin-right: 25%;
+    background-color: rgba(0,0,0,0);
+}
+
+.imglarge {
+    display: block;
+    top: 25px;
+    max-width: 100%;
+    z-index: 1;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 1;
+}
+
+.imgmedium { 
+    display: block;
+    top: 25px;
+    max-width: 80%;
+    z-index: 2;
+    position: absolute;
+    margin-left: 10%;
+    margin-right: 10%;
+    opacity: 0;
+}
+
+.imgsmall {
+    display: block;
+    top: 25px;
+    max-height: 100%;
+    width: 50%;
+    z-index: 3;
+    position: absolute;
+    margin-left: 25%;
+    margin-right: 25%;
+    opacity: 0;
+}
+
+.pos.two:hover ~ .imglarge {
+    opacity: 0;
+}
+
+.pos.two:hover ~ .imgmedium {
+    opacity: 1;
+}
+
+.pos.three:hover ~ .imglarge {
+    opacity: 0;
+}
+
+.pos.three:hover ~ .imgsmall {
+    opacity: 1;
+}
+
+.frame {
+    height: 220px;
+    margin-bottom: 10px;
+}

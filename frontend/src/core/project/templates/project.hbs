@@ -12,18 +12,25 @@
         {{!-- {{#if posterImage}}
         <img src="{{posterImage}}"/>
         {{/if}} --}}
-        {{!-- Should probably use the one above --}}
-        <img src="images/origami-project.jpg"/>
+        {{!-- Should probably use the one above <img src="images/origami-project.jpg"/>--}}
 
+        <div class="frame">
+          {{#if _hasScreenshots}}
+            <span class="pos one"></span>
+            <span class="pos two"></span>
+            <span class="pos three"></span>
+            <img class="imglarge" src="screenshots/{{{_tenantId}}}/{{{_id}}}/large.png" onerror="this.src='images/origami-project.jpg'"/>
+            <img class="imgmedium" src="screenshots/{{{_tenantId}}}/{{{_id}}}/medium.png" onerror="this.src='images/origami-project.jpg'" />
+            <img class="imgsmall" src="screenshots/{{{_tenantId}}}/{{{_id}}}/small.png" onerror="this.src='images/origami-project.jpg'"/>
+          {{else}}
+            <img src="images/origami-project.jpg"/>
+          {{/if}}
+        </div>
       </div>
     </div>
-
-
-
-
+    
     <div class="project-details">
       <div class="project-details-inner">
-
         <div class="project-detail-title">
           <h4 class="project-detail-title-inner">{{{title}}}</h4>
         </div>
@@ -32,7 +39,6 @@
           <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
           <div class="projects-details-value">{{formatDate updatedAt}}</div>
         </div>
-
         {{#if tags.length}}
         <div class="project-details-tags project-details-row tags">
           <div class="projects-details-label">{{t 'app.tags'}}</div>

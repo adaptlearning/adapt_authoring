@@ -54,22 +54,25 @@ casper.each(viewports, function(casper, viewport) {
   });
   this.then(function() {
     this.echo('Screenshot for ' + viewport.name, 'info');
-    var l = 0;
-    var w = 300;
+    var tempLeft = 0;
+    var tempWidth = 300;
+    var tempHeight = 222;
     if (viewport.name == 'large') {
-      l = 315;
+      tempLeft = 315;
     }
     if (viewport.name == 'medium') {
-      l = 220;
+      tempLeft = 220;
+      tempHeight = tempHeight * 1.25;
     }
     if (viewport.name == 'small') {
-      w = 200;
+      tempWidth = 200;
+      tempHeight = tempHeight * 2;
     }
-    this.capture("../../../" + filepath + viewport.name + '.png', {
+    this.capture("../../../" + filepath + "/" + viewport.name + '.png', {
       top: 0,
-      left: l,
-      width: w,
-      height: 222
+      left: tempLeft,
+      width: tempWidth,
+      height: tempHeight
     });
   });
 });

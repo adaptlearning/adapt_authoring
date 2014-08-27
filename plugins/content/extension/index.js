@@ -27,6 +27,7 @@ var bowerConfig = {
   type: 'extensiontype',
   keywords: 'adapt-extension',
   packageType: 'extension',
+  srcLocation: 'extensions',
   options: defaultOptions,
   extra: [ "targetAttribute" ],
   nameList: [

@@ -6,7 +6,7 @@
     <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
     <script src="../socket.io/socket.io.js"></script>
     <script type="text/javascript">
-        
+
         $(function() {
             var $installButton = $('.btn.install');
 
@@ -16,9 +16,9 @@
                     $submitButton = $('button[type="submit"]');
 
                 $submitButton.attr('disabled', 'disabled');
-        
+
                 socket.on('output', function (data) {
-                    $output.val($output.val() + data.value + "\n");
+                    $output.val($output.val() + data.message + "\n");
 
                     $output.scrollTop(
                         $output[0].scrollHeight - $output.height()

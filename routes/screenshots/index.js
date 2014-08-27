@@ -11,8 +11,8 @@ server.get('/screenshots/:tenant/:course/*', function (req, res, next) {
   var course = req.params.course,
       tenant = req.params.tenant,
       file = req.params[0],
-      requestedFile = path.join(configuration.serverRoot, 'temp', tenant, 'adapt_framework', course, 'screenshots', file);
-      
+      requestedFile = path.join(configuration.serverRoot, 'temp', tenant, 'adapt_framework', 'courses', course, 'screenshots', file);
+
 
   res.sendfile(requestedFile);
 

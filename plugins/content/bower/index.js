@@ -9,6 +9,7 @@
 
 var origin = require('../../../'),
     contentmanager = require('../../../lib/contentmanager'),
+    usermanager = require('../../../lib/usermanager'),
     rest = require('../../../lib/rest'),
     ContentPlugin = contentmanager.ContentPlugin,
     ContentTypeError = contentmanager.errors.ContentTypeError,
@@ -27,6 +28,7 @@ var origin = require('../../../'),
     util = require('util'),
     path = require('path'),
     unzip = require('unzip'),
+    exec = require('child_process').exec,
     IncomingForm = require('formidable').IncomingForm;
 
 // errors
@@ -443,21 +445,52 @@ function addPackage (plugin, packageInfo, strict, cb) {
       // Copy this version of the component to a holding area (used for publishing).
       // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
       var destination = path.join(plugin.options.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
-      fs.exists(destination, function(exists) {
-        if (!exists) {
-          mkdirp(destination, function (err) {
+      rimraf(destination, function(err) {
+        if (err) {
+          // can't continue
+          return logger.log('error', err.message, err);
+        }
+
+        mkdirp(destination, function (err) {
+          if (err) {
+            return logger.log('error', err.message, err);
+          }
+
+          // move from the cache to the versioned dir
+          ncp(packageInfo.canonicalDir, destination, function (err) {
             if (err) {
-              return cb(err);
+              // don't double call callback
+              return logger.log('error', err.message, err);
             }
 
-            // move from the cache to the versioned dir
-            ncp(packageInfo.canonicalDir, destination, function (err) {
+            // temporary hack to get stuff moving
+            // copy plugin source to tenant dir
+            var currentUser = usermanager.getCurrentUser();
+            var tenantPluginPath = path.join(
+              configuration.tempDir,
+              currentUser.tenant._id.toString(),
+              'adapt_framework',
+              'src',
+              plugin.srcLocation,
+              pkgMeta.name
+            );
+            // remove older version first
+            rimraf(tenantPluginPath, function (err) {
               if (err) {
-                return cb(err);
+                return logger.log('error', err.message, err);
               }
+
+              ncp(packageInfo.canonicalDir, tenantPluginPath, function (err) {
+                if (err) {
+                  return logger.log('error', err.message, err);
+                }
+
+                // done
+                logger.log('info', 'successfully copied plugin to tenant dir');
+              });
             });
           });
-        }
+        });
       });
 
       // build the package information
@@ -658,9 +691,26 @@ function handleUploadedPlugin (req, res, next) {
               return next(error);
             }
 
-            // success!!
-            res.statusCode = 200;
-            return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });
+            // now remove tenant courses and run a grunt build
+            var user = usermanager.getCurrentUser();
+            var tenantId = user.tenant._id;
+            var frameworkPath = path.join(configuration.tempDir, tenantId, 'adapt_framework');
+            var coursesPath = path.join(frameworkPath, 'courses');
+            rimraf(coursesPath, function (err) {
+              if (err) {
+                // log error but don't fail
+                logger.log('error', err.message, err);
+              }
+
+              exec('grunt server-build', { cwd: frameworkPath }, function (err, stdout, stderr) {
+                if (err) {
+                  // log error, but don't fail
+                  logger.log('error', err.message, err);
+                }
+                res.statusCode = 200;
+                return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });
+              });
+            });
           });
         });
       });

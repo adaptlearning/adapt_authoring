@@ -165,7 +165,7 @@ installer.all('/install/framework', function(req, res, next) {
   }
 
   // return;
-  
+
   res.render('framework', {
     'pageTitle': "Installing Adapt framework",
     'formAction': '/install/framework'
@@ -268,9 +268,6 @@ installer.get('/install/complete', function (req, res, next) {
   // by default, auth is local
   configuration.setConfig('auth', 'local');
   configuration.setConfig('dataRoot', 'data');
-  
-  
-
   var cfg = configuration.getConfig();
 
   // write the configuration file
@@ -292,34 +289,8 @@ installer.get('/install/complete', function (req, res, next) {
     // (we use console.log here instead of logger, since logger may not be correctly configured)
     configuration.load(path.join(configuration.serverRoot, 'conf', 'config.json'), function (e) {e && console.log(e);});
     configuration.once('change:config', function () {
-      var grunt = false;
-      // run grunt build if available - developers will appreciate this, but grunt
-      // is a development dependency, so won't be available in production environments
-      // grunt build should be unnecessary in production in any case
-      try {
-        // this may throw
-        grunt = require('grunt');
-
-        // load grunt configuration. could be a nicer way to do this?
-        require(path.join(configuration.serverRoot, 'Gruntfile.js'))(grunt);
-      } catch (e) {
-        // swallow the exception
-        // log warning
-        logger.log('warn', 'failed to require grunt', e);
-        grunt = false;
-      }
-
-      if (grunt) {
-        // run grunt build
-        grunt.tasks(['build'], {}, function (error) {
-          if (error) {
-            logger.log('warn', 'grunt build failed with error. you should manually run "grunt build" from the root of your project', error);
-          }
-          app.restartServer();
-        });
-      } else {
-        app.restartServer();
-      }
+      // skip grunt build
+      return app.restartServer();
     });
   });
 });

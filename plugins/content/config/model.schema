@@ -11,6 +11,7 @@
     },
     "_theme": {
       "type": "objectid",
+      "ref": "themetype",
       "editorOnly": true
     },
     "_courseId": {

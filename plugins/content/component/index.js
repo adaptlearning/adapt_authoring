@@ -28,6 +28,7 @@ var bowerConfig = {
   type: 'componenttype',
   keywords: 'adapt-component',
   packageType: 'component',
+  srcLocation: 'components',
   options: defaultOptions,
   nameList: [
     "adapt-contrib-text#develop",

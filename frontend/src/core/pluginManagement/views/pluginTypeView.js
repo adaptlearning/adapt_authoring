@@ -12,7 +12,7 @@ define(function(require){
     className: 'pluginType-item tb-row',
 
     events: {
-      'change .plugin-toggle-enabled': 'toggleEnabled',
+      // 'change .plugin-toggle-enabled': 'toggleEnabled',
       'click  .plugin-update-check': 'checkForUpdates',
       'click  .plugin-update-confirm': 'updatePlugin'
     },
@@ -22,11 +22,13 @@ define(function(require){
       this.listenTo(this.model, 'destroy', this.remove);
     },
 
-    toggleEnabled: function () {
+    /*toggleEnabled: function () {
       // api call to disable/enable item
+      // NB: disable this functionality until we come up with a plan for courses
+      // that added plugins that were subsequently disabled
       this.model.set('_isAvailableInEditor', this.$('.plugin-toggle-enabled').is(':checked'));
       this.model.save();
-    },
+    },*/
 
     checkForUpdates: function (event) {
       event.preventDefault();

@@ -12,9 +12,10 @@ define(function(require){
     className: 'project-list-item',
 
     events: {
-      'dblclick': 'editProject',
-      'click':'selectProject',
-      'click a.open-context-course' : 'openContextMenu'
+      'dblclick'                    : 'editProject',
+      'click'                       : 'selectProject',
+      'click a.open-context-course' : 'openContextMenu',
+      'click a.course-delete'       : 'deleteProjectPrompt'
     },
 
     preRender: function() {

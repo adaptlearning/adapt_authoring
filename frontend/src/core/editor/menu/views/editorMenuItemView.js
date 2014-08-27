@@ -11,7 +11,8 @@ define(function(require){
 
     events: {
         'click .editor-menu-item-inner'       : 'onMenuItemClicked',
-        'click a.open-context-contentObject'  : 'openContextMenu'
+        'click a.open-context-contentObject'  : 'openContextMenu',
+        'click a.contentObject-delete'        : 'deleteItemPrompt'
     },
 
     preRender: function() {

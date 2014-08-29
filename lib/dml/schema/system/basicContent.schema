@@ -7,29 +7,20 @@
     "_type": {
       "type":"string",
       "id": "http://jsonschema.net/_type"
-     },
-     "title": {
-       "type":"string",
-       "required":false,
-       "default": ""
-      },
-      "displayTitle" : {
-        "type":"string",
-        "required":false,
-        "default": ""
-      },
-      "body":{
-        "type":"string",
-        "default" : ""
-      },
-      "tags": {
-        "type": "array",
-        "items": {
-          "type": "objectid",
-          "required": true,
-          "ref": "tag"
-        },
-        "editorOnly": true
-      }
+    },
+    "title": {
+     "type":"string",
+     "required":false,
+     "default": ""
+    },
+    "displayTitle" : {
+      "type":"string",
+      "required":false,
+      "default": ""
+    },
+    "body":{
+      "type":"string",
+      "default" : ""
+    }
   }
 }

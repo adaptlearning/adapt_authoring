@@ -7,6 +7,15 @@
     "_extensions": {
       "type": "object"
     },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "objectid",
+        "required": true,
+        "ref": "tag"
+      },
+      "editorOnly": true
+    },
     "buttons": {
       "submit": {
         "type": "string",

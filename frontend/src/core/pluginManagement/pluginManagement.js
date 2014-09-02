@@ -30,7 +30,7 @@ define(function(require) {
   var globalMenuObject = {
     "location": "global",
     "text": "Plugin Management",
-    "icon": "pluginManagement",
+    "icon": "fa-plug",
     "callbackEvent": "pluginManagement:open"
   };
 

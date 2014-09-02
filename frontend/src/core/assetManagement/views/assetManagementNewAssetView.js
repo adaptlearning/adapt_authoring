@@ -37,7 +37,11 @@ define(function(require){
 
     uploadAsset: function() {
 
-      this.uploadFile();
+      var $title = this.$('.asset-title')[0].value;
+      var $description = this.$('.asset-description')[0].value;
+      if ($title && $description) {
+        this.uploadFile();
+      }
 
       // Return false to prevent the page submitting
       return false;
@@ -53,6 +57,14 @@ define(function(require){
 
       var self = this;
       this.$('.asset-form').ajaxSubmit({
+
+        uploadProgress: function(event, position, total, percentComplete) {
+          $("#progress-container").css("visibility", "visible");
+          $("#progress-bar").css("visibility", "visible");
+          var percentVal = percentComplete + '%';
+          $("#progress-bar").css("width", percentVal);
+          $('.percent').html(percentVal);
+        },
 
         error: function(xhr, status, error) {
           // console.log('Error: ' + xhr.status);

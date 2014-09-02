@@ -27,7 +27,7 @@ define(function(require) {
   var globalMenuObject = {
     "location": "global",
     "text": "Dashboard",
-    "icon": "dashboard",
+    "icon": "fa-home",
     "callbackEvent": "dashboard:open"
   };
 

@@ -32,7 +32,7 @@ define(function(require) {
   var globalMenuObject = {
     "location": "global",
     "text": "Asset Management",
-    "icon": "assets",
+    "icon": "fa-file-image-o",
     "callbackEvent": "assetManagement:open"
   };
 

@@ -516,7 +516,7 @@ function addPackage (plugin, packageInfo, strict, cb) {
             return cb(null);
           }
 
-          db.create(plugin.type, package, function (err, results) {
+          db.create(plugin.type, package, function (err, newPlugin) {
             if (err) {
               logger.log('error', 'Failed to add package: ' + package.name, err);
               if (strict) {
@@ -525,7 +525,35 @@ function addPackage (plugin, packageInfo, strict, cb) {
               return cb(null);
             }
             logger.log('info', 'Added package: ' + package.name);
-            return cb(null, results);
+
+            // #509 update content targeted by previous versions of this package
+            logger.log('info', 'searching old package types ... ');
+            db.retrieve(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err, results) {
+              if (err) {
+                // strictness doesn't matter at this point
+                logger.log('error', 'Failed to retrieve previous packages: ' + err.message, err);
+              }
+
+              if (results && results.length) {
+                // found previous versions to update
+                // only update content using the id of the most recent version
+                var oldPlugin = false;
+                results.forEach(function (item) {
+                  if (!oldPlugin) {
+                    oldPlugin = item;
+                  } else if (semver.gt(item.version, oldPlugin.version)) {
+                    oldPlugin = item;
+                  }
+                })
+
+                plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
+                  return cb(null, newPlugin);
+                });
+              } else {
+                // nothing to do!
+                return cb(null, newPlugin);
+              }
+            });
           });
         });
       });

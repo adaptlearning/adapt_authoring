@@ -32,7 +32,16 @@ var bowerConfig = {
   options: defaultOptions,
   nameList: [
     'adapt-contrib-vanilla#develop'
-  ]
+  ],
+  updateLegacyContent: function (newPlugin, oldPlugin, next) {
+    database.getDatabase(function (err, db) {
+      if (err) {
+        return next(err);
+      }
+
+      db.update('config', { _theme: oldPlugin._id }, { _theme: newPlugin._id }, next);
+    });
+  }
 };
 
 function Theme () {

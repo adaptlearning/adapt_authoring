@@ -11,6 +11,10 @@ define(function(require) {
             this.fetch({reset:true});
         },
         
+        // comparator: function(model) {
+        //     return model.get('displayName');
+        // },
+
         loadedData: function() {
             Origin.trigger('editorCollection:dataLoaded', this._type);
         }

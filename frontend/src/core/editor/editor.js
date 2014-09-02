@@ -180,6 +180,10 @@ define(function(require) {
       _type: 'componentTypes'
     });
     
+    Origin.editor.data.componentTypes.comparator = function(model) {
+      return model.get('displayName');
+    };
+    
     // Store the extensions types
     Origin.editor.data.extensionTypes = new EditorCollection(null, {
       model : ExtensionModel,
@@ -227,7 +231,8 @@ define(function(require) {
         _parentId: route3,
         componentTypes: Origin.editor.data.componentTypes.toJSON(),
         layoutOptions: layoutOptions
-      })
+      });
+
       Origin.sidebar.addView(new EditorComponentListSidebarView({
         model: componentSelectModel
       }).$el);

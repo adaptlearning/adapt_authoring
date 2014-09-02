@@ -59,11 +59,10 @@ define(function(require){
       this.$('.asset-form').ajaxSubmit({
 
         uploadProgress: function(event, position, total, percentComplete) {
-          $("#progress-container").css("visibility", "visible");
-          $("#progress-bar").css("visibility", "visible");
+          $(".progress-container").css("visibility", "visible");
           var percentVal = percentComplete + '%';
-          $("#progress-bar").css("width", percentVal);
-          $('.percent').html(percentVal);
+          $(".progress-bar").css("width", percentVal);
+          $('.progress-percent').html(percentVal);
         },
 
         error: function(xhr, status, error) {

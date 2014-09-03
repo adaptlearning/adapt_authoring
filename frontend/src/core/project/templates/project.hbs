@@ -18,15 +18,15 @@
         {{!-- Should probably use the one above <img src="images/origami-project.jpg"/>--}}
 
         <div class="frame">
-          {{#if _hasScreenshots}}
-            <span class="pos one"></span>
-            <span class="pos two"></span>
-            <span class="pos three"></span>
-            <img class="imglarge" src="screenshots/{{{_tenantId}}}/{{{_id}}}/large.png" onerror="this.src='images/origami-project.jpg'"/>
-            <img class="imgmedium" src="screenshots/{{{_tenantId}}}/{{{_id}}}/medium.png" onerror="this.src='images/origami-project.jpg'" />
-            <img class="imgsmall" src="screenshots/{{{_tenantId}}}/{{{_id}}}/small.png" onerror="this.src='images/origami-project.jpg'"/>
+          {{#if _hasPreview}}
+              <span class="pos one"></span>
+              <span class="pos two"></span>
+              <span class="pos three"></span>
+              <iframe class="imglarge"
+                src="preview/{{{_tenantId}}}/{{{_id}}}/main.html">
+              </iframe> 
           {{else}}
-            <img src="images/origami-project.jpg"/>
+            <img class="filler" src="images/origami-project.jpg"/>
           {{/if}}
         </div>
       </div>

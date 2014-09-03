@@ -42,7 +42,7 @@
       "type": "boolean",
       "default": false
     },
-    "_hasScreenshots": {
+    "_hasPreview": {
       "type": "boolean",
       "default": false,
       "editorOnly": true

@@ -559,34 +559,14 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
       },
 
       function(callback) {
-        var url = app.getServerURL() + "/preview/" + tenantId + "/" + courseId + "/main.html";
-        var filepath = path.join('temp', tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, "screenshots");
-        var configSmall = outputJson['config'].screenSize.small;
-        var configMedium = outputJson['config'].screenSize.medium;
-        var configLarge = outputJson['config'].screenSize.large;
-
-        var child = exec('casperjs screenshots.js ' + url + ' ' + filepath + ' ' + configSmall + ' ' + configMedium + ' ' + configLarge,
-          {
-            cwd: __dirname
-          },
-          function (error, stdout, stderr) {
-            if (error) {
-              logger.log('error', error.message, error);
-            }
-
-            callback(null, 'screenshots created');
-          });
-      },
-
-      function(callback) {
         database.getDatabase(function(err, db) {
-          db.update('course', {_id: courseId}, {_hasScreenshots: true}, function(error, results) {
+          db.update('course', {_id: courseId}, {_hasPreview: true}, function(error, results) {
             if (error) {
               return doneCallback(error);
             };
           });
 
-          callback(null, "Preview screenshots added to dashboard");
+          callback(null, "Preview is now available on dashboard");
         });
       }
     ],

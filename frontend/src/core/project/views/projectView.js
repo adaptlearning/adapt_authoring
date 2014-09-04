@@ -15,7 +15,12 @@ define(function(require){
       'dblclick'                    : 'editProject',
       'click'                       : 'selectProject',
       'click a.open-context-course' : 'openContextMenu',
-      'click a.course-delete'       : 'deleteProjectPrompt'
+      'click a.course-delete'       : 'deleteProjectPrompt',
+      'mouseover .pos.one'          : 'largeVisible',
+      'mouseover .pos.two'          : 'mediumVisible',
+      'mouseover .pos.three'        : 'smallVisible',
+      'mouseout .pos.two'           : 'largeVisible',
+      'mouseout .pos.three'         : 'largeVisible'
     },
 
     preRender: function() {
@@ -96,7 +101,28 @@ define(function(require){
           alert('error during duplication');
         }
       });
+    },
+
+    largeVisible: function() {
+      this.$('iframe').removeClass('imgmedium');
+      this.$('iframe').removeClass('imgsmall');
+      this.$('iframe').addClass('imglarge');
+    },
+
+    mediumVisible: function() {
+      console.log("got here");
+      this.$('iframe').removeClass('imglarge');
+      this.$('iframe').removeClass('imgsmall');
+      this.$('iframe').addClass('imgmedium');
+    },
+
+    smallVisible: function() {
+      console.log("got here");
+      this.$('iframe').removeClass('imglarge');
+      this.$('iframe').removeClass('imglarge');
+      this.$('iframe').addClass('imgsmall');
     }
+
     
   }, {
     template: 'project'

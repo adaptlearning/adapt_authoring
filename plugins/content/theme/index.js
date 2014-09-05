@@ -139,7 +139,7 @@ function initialize () {
             }
 
 
-            app.emit('rebuildAllCourses', tenantId);
+            app.emit('rebuildCourse', tenantId, courseId);
 
             res.statusCode = 200;
             res.json({success: true});

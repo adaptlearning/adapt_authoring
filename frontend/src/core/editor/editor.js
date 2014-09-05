@@ -50,6 +50,8 @@ define(function(require) {
   var dataIsLoaded = false;
 
   Origin.on('editor:refreshData', function(callback, context) {
+    Origin.editor.data.config.attributes._enabledExtensions = null;
+    
     dataIsLoaded = false;
     var loadedData = {
       clipboard: false,

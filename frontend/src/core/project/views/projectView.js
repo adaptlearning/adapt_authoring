@@ -12,15 +12,16 @@ define(function(require){
     className: 'project-list-item',
 
     events: {
-      'dblclick'                    : 'editProject',
-      'click'                       : 'selectProject',
-      'click a.open-context-course' : 'openContextMenu',
-      'click a.course-delete'       : 'deleteProjectPrompt',
-      'mouseover .pos.one'          : 'largeVisible',
-      'mouseover .pos.two'          : 'mediumVisible',
-      'mouseover .pos.three'        : 'smallVisible',
-      'mouseout .pos.two'           : 'largeVisible',
-      'mouseout .pos.three'         : 'largeVisible'
+      'dblclick'                        : 'editProject',
+      'click'                           : 'selectProject',
+      'click a.open-context-course'     : 'openContextMenu',
+      'click a.course-delete'           : 'deleteProjectPrompt',
+
+      // Preview events
+      'mouseover .pos.large'            : 'showLargePreview',
+      'mouseover .pos.medium'           : 'showMediumPreview',
+      'mouseover .pos.small'            : 'showSmallPreview',
+      'mouseout .pos.medium, .pos.small': 'showLargePreview'
     },
 
     preRender: function() {
@@ -51,8 +52,8 @@ define(function(require){
     },
 
     selectProject: function(event) {
-        event.stopPropagation();
-        this.selectItem();
+      event.stopPropagation();
+      this.selectItem();
     },
 
     selectItem: function() {
@@ -103,26 +104,20 @@ define(function(require){
       });
     },
 
-    largeVisible: function() {
-      this.$('iframe').removeClass('imgmedium');
-      this.$('iframe').removeClass('imgsmall');
-      this.$('iframe').addClass('imglarge');
+    showLargePreview: function() {
+      this.$('iframe').removeClass();
+      this.$('iframe').addClass('preview-large');
     },
 
-    mediumVisible: function() {
-      console.log("got here");
-      this.$('iframe').removeClass('imglarge');
-      this.$('iframe').removeClass('imgsmall');
-      this.$('iframe').addClass('imgmedium');
+    showMediumPreview: function() {
+      this.$('iframe').removeClass();
+      this.$('iframe').addClass('preview-medium');
     },
 
-    smallVisible: function() {
-      console.log("got here");
-      this.$('iframe').removeClass('imglarge');
-      this.$('iframe').removeClass('imglarge');
-      this.$('iframe').addClass('imgsmall');
+    showSmallPreview: function() {
+      this.$('iframe').removeClass();
+      this.$('iframe').addClass('preview-small');
     }
-
     
   }, {
     template: 'project'

@@ -20,11 +20,12 @@ define(function(require) {
     },
     
     handleEnterKey: function(e) {
-      if (e.keyCode == 13) {
+      var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+
+      if (key == 13) {
+        e.preventDefault();
         this.submitLoginDetails();
       }
-
-      return;
     },
 
     clearErrorStyling: function(e) {

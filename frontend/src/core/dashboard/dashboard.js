@@ -28,7 +28,8 @@ define(function(require) {
     "location": "global",
     "text": "Dashboard",
     "icon": "fa-home",
-    "callbackEvent": "dashboard:open"
+    "callbackEvent": "dashboard:open",
+    "sortOrder": 1
   };
 
   Origin.once('app:dataReady', function() {

@@ -8,18 +8,22 @@ define(function(require) {
     var _isActive = false;
     // Create GlobalMenu Store
     var GlobalMenuStore = new Backbone.Collection();
+    GlobalMenuStore.comparator = 'sortOrder';
 
     // Method for adding and item to the global menu
     GlobalMenu.addItem = function(itemObject) {
         // Return if itemObject doesn't have all arguments
-        if (_.size(itemObject) !== 4) {
-            return console.log('Cannot add Global Menu item', itemObject.text);
+        if (_.size(itemObject) < 4) {
+            return console.log('Cannot add Global Menu item ', itemObject.text);
+        }
+
+        if (!itemObject.hasOwnProperty('sortOrder')) {
+            itemObject.sortOrder = 99;
         }
 
         itemObject._isSubMenuItem = false;
         // Push item to GlobalMenuStore
         GlobalMenuStore.add(itemObject);
-
     }
 
     // Method for adding a sub item to the global menu
@@ -61,6 +65,7 @@ define(function(require) {
 
     function openGlobalMenu() {
         _isActive = true;
+
         // Add new view to the .navigation element passing in the GlobalMenuStore as the collection
         $('.navigation').append(new GlobalMenuView({collection: GlobalMenuStore}).$el);
         // Setup listeners to #app to remove menu when main pag is clicked

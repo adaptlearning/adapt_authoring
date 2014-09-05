@@ -83,6 +83,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
     tenantId = user.tenant._id,
     outputJson = {},
     friendlyIdentifiers = {},
+    isRebuildRequired = false;
     themeName = 'adapt-contrib-vanilla';
 
 
@@ -295,14 +296,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
                 // Do something
                 callback(null, 'Temporary folder OK');
             } else {
-              callback('Error');
-              // fs.mkdir(TEMP_DIR, '0777', function(err) {
-              //   if (err) {
-              //     callback(err, 'Unable to make temporary folder');
-              //   } else {
-              //     callback(null, 'Temporary folder OK');
-              //   }
-              // });
+              callback('Error');;
             }
         });
       },
@@ -341,11 +335,32 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, req, res, next) {
           }
         });
       },
+      // Check if a .rebuild file exists in the course directory
+      function(callback) {
+        var rebuildFile = path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, BUILD_DIR, '.rebuild');
 
+        fs.exists(rebuildFile, function(exists) {
+          isRebuildRequired = exists;
+
+          if (exists) {
+            fs.unlink(rebuildFile, function (err) {
+              if (err) {
+                // Log the error, though being unable to remove the .rebuild file should 
+                // not be allowed break everything
+                logger.log('error', err);
+              };
+
+              callback(null);
+            });
+          } else {
+            callback(null);
+          }
+        });
+      },
       function(callback) {
 
         fs.exists(path.join(configuration.tempDir, tenantId, ADAPT_FRAMEWORK_DIR, ALL_COURSES, courseId, BUILD_DIR, 'index.html'), function (exists) {
-          if (!exists) {
+          if (!exists || isRebuildRequired) {
             logger.log('info', '3.1. Ensuring framework build exists');
 
             var args = [];

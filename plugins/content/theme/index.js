@@ -138,17 +138,12 @@ function initialize () {
               return res.json({ success: true });
             }
 
-            var coursePath = path.join(configuration.tempDir, tenantId, 'adapt_framework', courseId);
-            rimraf(coursePath, function (err) {
-              if (err) {
-                // log the error, but don't fail
-                logger.log('error', err.message, err);
-              }
 
-              res.statusCode = 200;
-              res.json({success: true});
-              return res.end();
-            });
+            app.emit('rebuildCourse', tenantId, courseId);
+
+            res.statusCode = 200;
+            res.json({success: true});
+            return res.end();
           });
         });
       });

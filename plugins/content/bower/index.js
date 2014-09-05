@@ -722,23 +722,11 @@ function handleUploadedPlugin (req, res, next) {
             // now remove tenant courses and run a grunt build
             var user = usermanager.getCurrentUser();
             var tenantId = user.tenant._id;
-            var frameworkPath = path.join(configuration.tempDir, tenantId, 'adapt_framework');
-            var coursesPath = path.join(frameworkPath, 'courses');
-            rimraf(coursesPath, function (err) {
-              if (err) {
-                // log error but don't fail
-                logger.log('error', err.message, err);
-              }
 
-              exec('grunt server-build', { cwd: frameworkPath }, function (err, stdout, stderr) {
-                if (err) {
-                  // log error, but don't fail
-                  logger.log('error', err.message, err);
-                }
-                res.statusCode = 200;
-                return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });
-              });
-            });
+            app.emit('rebuildAllCourses', tenantId);
+
+            res.statusCode = 200;
+            return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });
           });
         });
       });

@@ -118,6 +118,7 @@ define(function(require) {
     },
 
     removeExtension: function() {
+        var numCurrentExtensions = this.model.attributes.enabledExtensions.length;
         $.post('/api/extension/disable/' + this.model.get('_id'), {
                 extensions: this.currentSelectedIds 
             }, _.bind(function(result) {
@@ -125,6 +126,11 @@ define(function(require) {
 
                 Origin.trigger('editor:refreshData', function() {
                     this.setupExtensions();
+
+                    if (numCurrentExtensions === 1) {
+                        this.model.set("enabledExtensions", null);
+                        this.render();
+                    }
                 }, this);
 
             } else {
@@ -141,3 +147,5 @@ define(function(require) {
   return EditorExtensionsEditView;
 
 });
+
+    

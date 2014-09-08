@@ -33,7 +33,8 @@ define(function(require) {
     "location": "global",
     "text": "Asset Management",
     "icon": "fa-file-image-o",
-    "callbackEvent": "assetManagement:open"
+    "callbackEvent": "assetManagement:open",
+    "sortOrder": 2
   };
 
   Origin.once('app:dataReady', function() {

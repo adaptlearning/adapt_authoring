@@ -31,7 +31,8 @@ define(function(require) {
     "location": "global",
     "text": "Plugin Management",
     "icon": "fa-plug",
-    "callbackEvent": "pluginManagement:open"
+    "callbackEvent": "pluginManagement:open",
+    "sortOrder": 3
   };
 
   Origin.once('app:dataReady', function() {

@@ -18,6 +18,7 @@ define(function(require) {
 		},
 
         postRender: function() {
+            this.listenTo(Origin, 'sidebarFilter:filterProjectsByTags', this.filterProjectsByTags);
             this.tags = [];
         },
 
@@ -63,6 +64,13 @@ define(function(require) {
         onTagClicked: function(event) {
             var tag = $(event.currentTarget).toggleClass('selected').attr('data-tag');
 
+            this.filterProjectsByTags(tag);
+            
+
+        },
+
+        filterProjectsByTags: function(tag) {
+
             // Check if the tag is already being filtered and remove it
             if (_.contains(this.tags, tag)) {
                 this.tags = _.reject(this.tags, function(tagItem) {
@@ -95,7 +103,7 @@ define(function(require) {
             });
 
             Origin.trigger('sidebar:sidebarFilter:add', {
-                title:'Fitler by Tags',
+                title:'Filter by Tags',
                 items: availableTags
             });
         }

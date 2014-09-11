@@ -375,7 +375,7 @@ a.open-context-contentObject{color:white}
 .sidebar-divide{text-align:center}
 .sidebar-divide-inner{padding:8px}
 
-.sidebar-filter{position:absolute;left:220px;top:40%;max-height:366px;border:1px solid #e2e2e2;border-left:none;background-color:#fff;overflow-y:hidden}
+.sidebar-filter{position:fixed;left:220px;top:40%;max-height:366px;border:1px solid #e2e2e2;border-left:none;background-color:#fff;overflow-y:hidden}
 .sidebar-filter-toolbar{border-bottom:1px solid #e2e2e2}
 .sidebar-filter-toolbar-title{float:left;padding:10px}
 .sidebar-filter-toolbar-close{float:right}.sidebar-filter-toolbar-close button:hover{color:#15a4fa}

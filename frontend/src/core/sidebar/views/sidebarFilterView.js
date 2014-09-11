@@ -9,7 +9,9 @@ define(function(require) {
 
         events: {
             'click .sidebar-filter-toolbar-close': 'onCloseButtonClicked',
-            'keyup .sidebar-filter-search-input': 'onSearchKeyUp'
+            'keydown .sidebar-filter-search-input': 'onSearchKeyDown',
+            'keyup .sidebar-filter-search-input': 'onSearchKeyUp',
+            'click .sidebar-filter-item': 'onFilterItemClicked'
         },
 
         initialize: function(options) {
@@ -38,6 +40,19 @@ define(function(require) {
 
         onCloseButtonClicked: function() {
             this.remove();
+        },
+
+        onSearchKeyDown: function(event) {
+            // This is to stop the cursor moving around the input
+            // element when pressing up and down
+            if (event.which === 38) {
+                event.preventDefault();
+            }
+
+            if (event.which === 40) {
+                event.preventDefault();
+            }
+
         },
 
         onSearchKeyUp: function(event) {
@@ -126,7 +141,15 @@ define(function(require) {
         },
 
         addFilter: function() {
-            console.log('adding filter');
+            var selectedTag = this.$('.sidebar-filter-item.selected').attr('data-tag');
+            console.log(selectedTag);
+            Origin.trigger('sidebarFilter:filterProjectsByTags', selectedTag);
+            this.remove();
+        },
+
+        onFilterItemClicked: function(event) {
+            this.$('.sidebar-filter-item').removeClass('selected');
+            $(event.currentTarget).addClass('selected');
         }
 
     }, {

@@ -375,10 +375,13 @@ a.open-context-contentObject{color:white}
 .sidebar-divide{text-align:center}
 .sidebar-divide-inner{padding:8px}
 
-.sidebar-filter{position:absolute;left:220px;top:40%;min-height:200px;border:1px solid #e2e2e2;border-left:none;background-color:#fff}
+.sidebar-filter{position:absolute;left:220px;top:40%;max-height:366px;border:1px solid #e2e2e2;border-left:none;background-color:#fff;overflow-y:hidden}
 .sidebar-filter-toolbar{border-bottom:1px solid #e2e2e2}
+.sidebar-filter-toolbar-title{float:left;padding:10px}
+.sidebar-filter-toolbar-close{float:right}.sidebar-filter-toolbar-close button:hover{color:#15a4fa}
 .sidebar-filter-search{padding:10px;border-bottom:1px solid #e2e2e2}
-.sidebar-filter-item{display:block;width:100%}.sidebar-filter-item.selected{background-color:#d2d2d2}
+.sidebar-filter-items{overflow-y:scroll;height:260px}
+.sidebar-filter-item{display:block;width:100%;border-bottom:1px solid #e2e2e2}.sidebar-filter-item.selected{background-color:#d2d2d2}
 
 .module-user.location-login{background-color:#4e4e4e}.module-user.location-login .sidebar{display:none}
 .module-user.location-login #app{margin-left:0px}

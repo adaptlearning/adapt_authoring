@@ -1,6 +1,6 @@
 <div class="sidebar-filter-inner">
     <div class="sidebar-filter-toolbar">
-        <div class="sidebar-filter-toolbar-inner">
+        <div class="sidebar-filter-toolbar-inner clearfix">
             <div class="sidebar-filter-toolbar-title">
                 {{{title}}}
             </div>
@@ -13,12 +13,14 @@
         <input type="text" class="sidebar-filter-search-input" />
     </div>
     <div class="sidebar-filter-items">
-        {{#each items}}
-        <button class="sidebar-filter-item">
-            <div class="sidebar-filter-item-inner">
-                {{title}}
-            </div>
-        </button>
-        {{/each}}
+        <div class="sidebar-filter-items-inner">
+            {{#each items}}
+            <button class="sidebar-filter-item">
+                <div class="sidebar-filter-item-inner">
+                    {{title}}
+                </div>
+            </button>
+            {{/each}}
+        </div>
     </div>
 </div>

@@ -62,24 +62,44 @@ define(function(require) {
             // Check if the element is the first one
             // as the first item cannot go any further
             var $selectedItem = this.$('.sidebar-filter-item.selected');
+            var $prevItem = $selectedItem.prevAll('.sidebar-filter-item:visible:first');
+
+            // First check if there's any more visible elements to navigate through
+            if ($prevItem.length === 0) {
+                return;
+            }
+
             if (!$selectedItem.is(':first-child')) {
                 this.$('.sidebar-filter-item.selected')
                     .removeClass('selected')
-                    .prev('.sidebar-filter-item')
-                    .addClass('selected');
+                    .prevAll('.sidebar-filter-item:visible:first')
+                    .addClass('selected')
+                    .focus();
+                this.$('.sidebar-filter-search-input').focus();
             }
             
         },
 
         moveDownThroughItems: function() {
-            // Check if the element is the last one
+            // Check if the element is the last visible one
             // as the last item cannot go any further
             var $selectedItem = this.$('.sidebar-filter-item.selected');
+            var $nextItem = $selectedItem.nextAll('.sidebar-filter-item:visible:first');
+
+            // First check if there's any more visible elements to navigate through
+            if ($nextItem.length === 0) {
+                return;
+            }
+
             if (!$selectedItem.is(':last-child')) {
                 this.$('.sidebar-filter-item.selected')
                     .removeClass('selected')
-                    .next('.sidebar-filter-item')
-                    .addClass('selected');
+                    .nextAll('.sidebar-filter-item:visible:first')
+                    .addClass('selected')
+                    .focus();
+                this.$('.sidebar-filter-search-input').focus();
+            } else {
+                console.log('the else');
             }
         },
 
@@ -101,7 +121,8 @@ define(function(require) {
             });
 
             // Should always select the top one on search
-            this.$('.sidebar-filter-item:visible:first').addClass('selected'); 
+            this.$('.sidebar-filter-item:visible:first').addClass('selected').focus();
+            this.$('.sidebar-filter-search-input').focus();
         },
 
         addFilter: function() {

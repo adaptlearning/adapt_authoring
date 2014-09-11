@@ -2,14 +2,29 @@
     position: absolute;
     left: 220px;
     top: 40%;
-    min-height: 200px;
-    border:1px solid #e2e2e2;
-    border-left:none;
+    max-height: 366px;
+    border: 1px solid #e2e2e2;
+    border-left: none;
     background-color: #fff;
+    overflow-y: hidden;
 }
 
 .sidebar-filter-toolbar {
     border-bottom:1px solid #e2e2e2;
+}
+
+.sidebar-filter-toolbar-title {
+    float:left;
+    padding:10px;
+}
+
+.sidebar-filter-toolbar-close {
+    float:right;
+    & button {
+        &:hover {
+            color:#15a4fa;
+        }
+    }
 }
 
 .sidebar-filter-search {
@@ -17,9 +32,15 @@
     border-bottom:1px solid #e2e2e2;
 }
 
+.sidebar-filter-items {
+    overflow-y: scroll;
+    height: 260px;
+}
+
 .sidebar-filter-item {
     display:block;
     width:100%;
+    border-bottom:1px solid #e2e2e2;
     &.selected {
         background-color:#d2d2d2;
     }

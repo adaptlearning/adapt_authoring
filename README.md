@@ -9,7 +9,66 @@ A web-based authoring tool for the [Adapt Framework](https://community.adaptlear
 * Allows uploading and linking of course assets
 
 ## Installation
+###Windows
 
+The authoring tool is only fully tested with version 0.10.2. 
+Please check your current node version (`node -v`). 
+
+If it is not 0.10.2 then we recommend using a version manager for node.
+
+####nodist
+https://github.com/marcelklehr/nodist
+installs latest nodejs+npm on first run    
+
+1. uninstall existing node installations
+    
+    >note for windows 8:
+    >delete nodejs folder because there is no uninstall
+
+2. `git clone git://github.com/marcelklehr/nodist.git` (or grab the [zip](https://github.com/marcelklehr/nodist/zipball/master))  
+   (Note that certain paths, e.g. `Program Files`, require admin rights!)
+
+3. `setx /M PATH "path\to\nodist\bin;%PATH%"` ([setx not available?](http://www.computerhope.com/issues/ch000549.htm))
+
+4. `setx /M NODIST_PREFIX "path\to\nodist"`
+
+5. Run `nodist selfupdate` (updates the dependencies and sets npm's global prefix)
+
+6. Run `nodist 0.10.2` (the builder is only fully tested with version 0.10.2)
+
+####node modules
+
+* install `npm install grunt-cli -g`
+* install `npm install adapt-cli -g`
+
+####Install FFMPEG
+* download a static build from [here](http://ffmpeg.zeranoe.com/builds/)
+* unpack it anywhere
+* run cmd as administrator
+* add it to the systemvariables `setx /M PATH "path\to\ffmpeg\bin;%PATH%"` 
+
+
+####Install MongoDB
+* download mongodb from [here](http://www.mongodb.org/downloads)
+* run the installer
+* create mongo data folder in your root (C:\data\md)
+* (optional) http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows/#manually-create-a-windows-service-for-mongodb
+
+
+####Running the authoring tool
+
+If you chose to install mongodb as a service start it with `net start MongoDB` and skip steps 1 and 2
+
+1. run `mongod.exe`
+2. run `mongo.exe`
+3. run a new cli window and change to the directory of the authoring tool code
+4. run `npm install`
+5. run `node server`
+6. run a new cli window and change to the directory of the authoring tool code
+7. run  `grunt server`
+8. Open browser at `localhost:3000`
+
+### Linux/Mac
 The tool currently requires that [MongoDB](http://www.mongodb.org) be installed and running. It can be installed by following the instructions for your operating system at the link below: 
 
 * http://docs.mongodb.org/manual/

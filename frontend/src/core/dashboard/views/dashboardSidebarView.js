@@ -14,12 +14,15 @@ define(function(require) {
             'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
             'click .dashboard-sidebar-filter-clear': 'clearFilterInput',
             'click .dashboard-sidebar-tag': 'onTagClicked',
-            'click .dashboard-sidebar-add-tag': 'onAddTagClicked'
+            'click .dashboard-sidebar-add-tag': 'onAddTagClicked',
+            'click .dashboard-sidebar-row-filter': 'onFilterRemovedClicked'
 		},
 
         postRender: function() {
-            this.listenTo(Origin, 'sidebarFilter:filterProjectsByTags', this.filterProjectsByTags);
+            this.listenTo(Origin, 'sidebarFilter:filterByTags', this.filterProjectsByTags);
+            this.listenTo(Origin, 'sidebarFilter:addTagToSidebar', this.addTagToSidebar);
             this.tags = [];
+            this.usedTags = [];
         },
 
 		addCourse: function() {
@@ -63,10 +66,7 @@ define(function(require) {
 
         onTagClicked: function(event) {
             var tag = $(event.currentTarget).toggleClass('selected').attr('data-tag');
-
             this.filterProjectsByTags(tag);
-            
-
         },
 
         filterProjectsByTags: function(tag) {
@@ -95,17 +95,36 @@ define(function(require) {
                 _.each(tags, function(tag) {
 
                     var titles = _.pluck(availableTags, 'title');
-                    if (!_.contains(titles, tag.title)) {
+                    if (!_.contains(titles, tag.title) && !_.contains(this.usedTags, tag.title)) {
                         availableTags.push(tag);
                     }
-                })
+                }, this)
                 
-            });
+            }, this);
 
             Origin.trigger('sidebar:sidebarFilter:add', {
                 title:'Filter by Tags',
                 items: availableTags
             });
+        },
+
+        addTagToSidebar: function(tag) {
+            this.usedTags.push(tag);
+            
+            var template = Handlebars.templates['sidebarRowFilter'];
+            var data = {
+                rowClasses: 'sidebar-row-filter',
+                buttonClasses:'dashboard-sidebar-row-filter',
+                tag: tag
+            };
+
+            this.$('.dashboard-sidebar-add-tag').parent().after(template(data));
+        },
+
+        onFilterRemovedClicked: function(event) {
+            var tag = $(event.currentTarget).attr('data-tag');
+
+            console.log(tag);
         }
 		
 	}, {

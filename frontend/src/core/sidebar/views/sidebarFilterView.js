@@ -33,7 +33,6 @@ define(function(require) {
         },
 
         postRender: function() {
-            console.log('wheeeeee');
             this.$('.sidebar-filter-search-input').focus();
             this.$('.sidebar-filter-item').first().addClass('selected');
         },
@@ -113,9 +112,8 @@ define(function(require) {
                     .addClass('selected')
                     .focus();
                 this.$('.sidebar-filter-search-input').focus();
-            } else {
-                console.log('the else');
             }
+
         },
 
         searchItems: function(event) {
@@ -142,14 +140,15 @@ define(function(require) {
 
         addFilter: function() {
             var selectedTag = this.$('.sidebar-filter-item.selected').attr('data-tag');
-            console.log(selectedTag);
-            Origin.trigger('sidebarFilter:filterProjectsByTags', selectedTag);
+            Origin.trigger('sidebarFilter:filterByTags', selectedTag);
+            Origin.trigger('sidebarFilter:addTagToSidebar', selectedTag);
             this.remove();
         },
 
         onFilterItemClicked: function(event) {
             this.$('.sidebar-filter-item').removeClass('selected');
             $(event.currentTarget).addClass('selected');
+            this.addFilter();
         }
 
     }, {

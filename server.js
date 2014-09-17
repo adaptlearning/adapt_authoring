@@ -1,7 +1,4 @@
-var builder = require('./lib/application'),
-    logger = require('./lib/logger'),
-    winston = require('winston');
-
+var builder = require('./lib/application');
 var app = builder();
 app.run();
 

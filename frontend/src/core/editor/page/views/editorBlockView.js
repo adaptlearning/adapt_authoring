@@ -131,23 +131,18 @@ define(function(require){
 
       var id = this.model.get('_id');
 
-      if (this.model.getChildren().length > 0) {
-        var deleteBlock = {
-          _type: 'prompt',
-          _showIcon: true,
-          title: window.polyglot.t('app.deleteblock'),
-          body: window.polyglot.t('app.confirmdeleteblock') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteblockwarning'),
-          _prompts: [
-            {_callbackEvent: 'editorView:deleteBlock:' + id, promptText: window.polyglot.t('app.ok')},
-            {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
-          ]
-        };
+      var deleteBlock = {
+        _type: 'prompt',
+        _showIcon: true,
+        title: window.polyglot.t('app.deleteblock'),
+        body: window.polyglot.t('app.confirmdeleteblock') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteblockwarning'),
+        _prompts: [
+          {_callbackEvent: 'editorView:deleteBlock:' + id, promptText: window.polyglot.t('app.ok')},
+          {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
+        ]
+      };
 
-        Origin.trigger('notify:prompt', deleteBlock);
-      }
-      else {
-        Origin.trigger('editorView:deleteBlock:' + id);
-      }
+      Origin.trigger('notify:prompt', deleteBlock);
 
     },
 

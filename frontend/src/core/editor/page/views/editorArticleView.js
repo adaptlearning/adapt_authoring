@@ -144,23 +144,20 @@ define(function(require){
       }
       var id = this.model.get('_id');
 
-      if (this.model.getChildren().length > 0) {
-        var deleteArticle = {
-          _type: 'prompt',
-          _showIcon: true,
-          title: window.polyglot.t('app.deletearticle'),
-          body: window.polyglot.t('app.confirmdeletearticle') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletearticlewarning'),
-          _prompts: [
-            {_callbackEvent: 'editorView:deleteArticle:' + id, promptText: window.polyglot.t('app.ok')},
-            {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
-          ]
-        };
 
-        Origin.trigger('notify:prompt', deleteArticle);
-      }
-      else {
-        Origin.trigger('editorView:deleteArticle:' + id);
-      }
+      var deleteArticle = {
+        _type: 'prompt',
+        _showIcon: true,
+        title: window.polyglot.t('app.deletearticle'),
+        body: window.polyglot.t('app.confirmdeletearticle') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletearticlewarning'),
+        _prompts: [
+          {_callbackEvent: 'editorView:deleteArticle:' + id, promptText: window.polyglot.t('app.ok')},
+          {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
+        ]
+      };
+
+      Origin.trigger('notify:prompt', deleteArticle);
+      
     },
 
 

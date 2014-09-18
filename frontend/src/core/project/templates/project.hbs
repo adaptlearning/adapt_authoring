@@ -18,14 +18,7 @@
         {{!-- Should probably use the one above <img src="images/origami-project.jpg"/>--}}
 
         <div class="frame">
-          {{#if _hasPreview}}
-            <span class="pos large"></span>
-            <span class="pos medium"></span>
-            <span class="pos small"></span>
-            <iframe class="preview-large" frameborder="0" sandbox="allow-scripts allow-pointer-lock allow-same-origin" scrolling="no" allowtransparency="true" src="preview/{{{_tenantId}}}/{{{_id}}}/main.html"></iframe> 
-          {{else}}
             <img class="filler" src="images/origami-project.jpg"/>
-          {{/if}}
         </div>
       </div>
     </div>

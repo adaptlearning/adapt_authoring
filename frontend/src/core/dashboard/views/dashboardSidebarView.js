@@ -85,7 +85,7 @@ define(function(require) {
 
         },
 
-        onAddTagClicked: function(event) {
+        onAddTagClicked: function() {
             var availableTags = [];
             // Go through each project and filter out duplicate tags
             // to create an array of unique project tags
@@ -123,8 +123,16 @@ define(function(require) {
 
         onFilterRemovedClicked: function(event) {
             var tag = $(event.currentTarget).attr('data-tag');
+            
+            // Remove this tag from the usedTags
+            this.usedTags = _.reject(this.usedTags, function(item) {
+                return item === tag;
+            });
 
-            console.log(tag);
+            this.filterProjectsByTags(tag);
+
+            $(event.currentTarget).parent().remove();
+
         }
 		
 	}, {

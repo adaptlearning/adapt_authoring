@@ -270,7 +270,7 @@ a.open-context-contentObject{color:white}
 .article .add-control{text-align:right;padding-right:10px}
 .article-detail-inner{padding:0px 30px}
 
-.block{border-top:1px solid #b7caed;border-bottom:1px solid #b7caed;overflow:hidden;background-color:#f3f3f3;position:relative;margin-bottom:-1px}.block-inner{padding:30px 30px 10px}
+.block{border-top:1px solid #b7caed;border-bottom:1px solid #b7caed;background-color:#f3f3f3;position:relative;margin-bottom:-1px}.block-inner{padding:30px 30px 10px}
 .block-edit-panel{position:absolute;right:0;top:0}
 .block .add-control{text-align:right;padding-right:10px;padding-bottom:10px}
 
@@ -461,7 +461,7 @@ body{background-color:#e9f0fa;color:#3e4960}
 .editing-overlay-component-option.selected{background-color:#b5b5b5}
 .editing-overlay-component-layout-option{border:none;border-right:1px solid #b7caed;padding:0px 10px;float:left;background-color:#fff;color:#3e4960;transition:all 0.2s}.editing-overlay-component-layout-option:hover{color:#fff;background-color:#79cbfc}
 .editing-overlay-component-layout-option.selected{color:#fff;background-color:#15a4fa}
-.article,.block,.component{transition:box-shadow .3s;box-shadow:0px 0px 3pt 2pt transparent}.article.hovering,.block.hovering,.component.hovering{box-shadow:0px 0px 3px 3px #e0e0e0;position:relative}
+.article,.block,.component{box-shadow:0px 0px 3pt 2pt transparent}.article.hovering,.block.hovering,.component.hovering{box-shadow:0px 0px 3px 3px #e0e0e0;position:relative}
 .block{border-left:1px solid transparent;border-right:1px solid transparent}.block.hovering{border-left:1px solid #b7caed;border-right:1px solid #b7caed}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);

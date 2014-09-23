@@ -11,7 +11,7 @@ define(function(require) {
 		initialize: function() {
 			this.render();
 			this.listenTo(Origin, 'sidebar:sidebarContainer:update', this.updateViews);
-            this.listenTo(Origin, 'sidebar:sidebarFilter:add', this.addFilterView);
+			this.listenTo(Origin, 'sidebar:sidebarFilter:add', this.addFilterView);
 		},
 
 		updateViews: function($element, options) {

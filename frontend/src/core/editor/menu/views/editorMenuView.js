@@ -44,11 +44,14 @@ define(function(require){
      * Configures the JQuery UI sortable() plugin to enable drag and drop on the menu editor
      */
     setupDragDrop: function() {
+      var view = this;
       $(".editor-menu-layer-inner").sortable({
+        appendTo: '.editor-menu',
         items: '.editor-menu-item',
         handle: '.handle',
         connectWith: ".editor-menu-layer-inner",
-
+        scroll: true,
+        helper:'clone',
         stop: function(event,ui) {
             var $draggedElement = ui.item;
 
@@ -79,7 +82,7 @@ define(function(require){
         receive: function(event, ui) {
           if (ui.item.hasClass('content-type-menu')) {
             // Prevent moving a menu item between levels
-            ui.sender.sortable("cancel");
+            //ui.sender.sortable("cancel");
           }
         }
       });

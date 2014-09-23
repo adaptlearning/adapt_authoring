@@ -53,28 +53,26 @@ define(function(require){
         scroll: true,
         helper:'clone',
         stop: function(event,ui) {
-            var $draggedElement = ui.item;
+          var $draggedElement = ui.item;
 
-            var id = $('.editor-menu-item-inner', $draggedElement).attr('data-id');
-            var sortOrder = $draggedElement.index('.editor-menu-item');
-            var parentId = $draggedElement.parent('.editor-menu-layer').attr('data-parentid');
+          var id = $('.editor-menu-item-inner', $draggedElement).attr('data-id');
+          var sortOrder = $draggedElement.index();
+          var parentId = $draggedElement.closest('.editor-menu-layer').attr('data-parentId');
 
-            console.log(sortOrder);
+          $.ajax({
+            type: 'PUT',
+            url:'/api/content/contentobject/' + id,
+            data: {_sortOrder: sortOrder, _parentId: parentId},
+            complete:function(xhr, status) {
+              if (xhr.status == '200' && status == 'success') {
+                // Synchronise the contentObjects collection
+                Origin.editor.data.contentObjects.fetch({reset: true});
 
-            $.ajax({
-                type: 'PUT',
-                url:'/api/content/contentobject/' + id,
-                data: {_sortOrder: sortOrder, _parentId: parentId},
-                complete:function(xhr, status) {
-                    if (xhr.status == '200' && status == 'success') {
-                        // Synchronise the contentObjects collection
-                        Origin.editor.data.contentObjects.fetch({reset: true});
-
-                        // Trigger page refresh
-                        Origin.trigger('editorView:refreshPageList');
-                    }
-                }
-            });
+                // Trigger page refresh
+                Origin.trigger('editorView:refreshPageList');
+              }
+            }
+          });
 
         },
         over: function(event, ui) {
@@ -82,7 +80,7 @@ define(function(require){
         receive: function(event, ui) {
           if (ui.item.hasClass('content-type-menu')) {
             // Prevent moving a menu item between levels
-            //ui.sender.sortable("cancel");
+            ui.sender.sortable("cancel");
           }
         }
       });

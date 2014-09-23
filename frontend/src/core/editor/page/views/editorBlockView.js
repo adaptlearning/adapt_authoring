@@ -183,9 +183,11 @@ define(function(require){
         revert: 'invalid',
         zIndex: 10000,
         cursorAt: {
-          top: 10,
-          left: 10
+          top: 22,
+          left: 0
         },
+        appendTo:'.editor-view',
+        containment: '.editor-view',
         helper: function (e) {
           return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
         },

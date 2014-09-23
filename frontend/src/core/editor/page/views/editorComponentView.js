@@ -89,13 +89,15 @@ define(function(require){
         revert: 'invalid',
         zIndex: 10000,
         cursorAt: {
-          top: 15,
-          left: 10
+          top: 22,
+          left: 0
         },
+        appendTo:'.editor-view',
+        containment: '.editor-view',
         helper: function (e) {
           return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
         },
-        start: function () {
+        start: function (event, ui) {
           view.showDropZones();
           $(this).attr('data-component-id', view.model.get('_id'));
           $(this).attr('data-block-id', view.model.get('_parentId'));

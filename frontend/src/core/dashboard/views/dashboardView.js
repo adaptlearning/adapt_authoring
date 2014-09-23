@@ -95,7 +95,7 @@ define(function(require){
 
     evaluateProjectCount: function (projects) {
       if (projects.length == 0) {
-        this.$('.dashboard-projects').append('No projects to display');
+        this.$('.dashboard-no-projects').removeClass('display-none');
       }
     },
 

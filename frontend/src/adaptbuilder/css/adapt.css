@@ -212,6 +212,7 @@ button{width:auto;overflow:visible}
 .list-layout{margin-left:30px}.list-layout .project-list-item{margin-left:0px;width:100%}
 .dashboard-sidebar-filter-clear{padding:6px}
 #dashboard-tags_tagsinput{display:inline-block;padding:4px;border:none}
+.dashboard-no-projects{padding-left:30px}
 
 .editing-overlay{position:absolute;z-index:10;top:0px;left:10%;width:100%;opacity:0;background-color:#f2f2f2}
 .editing-overlay-panel-content input,.editing-overlay-panel-content textarea{min-width:50%}

@@ -38,7 +38,7 @@ define(function(require) {
     submitLoginDetails: function(e) {
       e && e.preventDefault();
 
-      var inputUsernameEmail = $.trim(this.$("#login-input-username").val()).toLowerCase();
+      var inputUsernameEmail = $.trim(this.$("#login-input-username").val());
       var inputPassword = $.trim(this.$("#login-input-password").val());
 
       // Validation

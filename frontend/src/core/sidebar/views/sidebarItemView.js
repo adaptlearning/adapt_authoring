@@ -18,7 +18,7 @@ define(function(require) {
     },
 
     editProject: function() {
-      Origin.router.navigate('#/project/edit/' + Origin.editor.data.course.get('_id'), {trigger: true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/settings', {trigger: true});
     },
 
     editConfiguration: function() {

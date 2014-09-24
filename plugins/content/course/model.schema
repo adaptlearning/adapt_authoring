@@ -7,6 +7,15 @@
     "_extensions": {
       "type": "object"
     },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "objectid",
+        "required": true,
+        "ref": "tag"
+      },
+      "editorOnly": true
+    },
     "buttons": {
       "submit": {
         "type": "string",
@@ -30,8 +39,13 @@
       "default": 0
     },
     "_isSelected": {
-      "type":"boolean",
-      "default":false
+      "type": "boolean",
+      "default": false
+    },
+    "_hasPreview": {
+      "type": "boolean",
+      "default": false,
+      "editorOnly": true
     }
   }
 }

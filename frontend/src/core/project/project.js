@@ -26,6 +26,9 @@ define(function(require) {
           case 'menu':
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#editing-course-details");
             break;
+          case 'block':
+            window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#adding-content-to-the-course");
+            break;
           case 'edit':
              window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#sectionpage-settings");
             break;
@@ -41,10 +44,16 @@ define(function(require) {
           case 'extensions':
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#course-settings");
             break;
+          default:
+            window.open("https://github.com/adaptlearning/adapt_authoring/wiki/");
+            break;
         }
         switch (Origin.location.route3) {
           case 'edit':
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#adding-content-to-the-course");
+            break;
+          default:
+            window.open("https://github.com/adaptlearning/adapt_authoring/wiki/");
             break;
         }
         break;
@@ -53,6 +62,9 @@ define(function(require) {
         break;
       case 'assetManagement':
         window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Asset-Manager");
+        break;
+      default:
+        window.open("https://github.com/adaptlearning/adapt_authoring/wiki/");
         break;
     }
   });

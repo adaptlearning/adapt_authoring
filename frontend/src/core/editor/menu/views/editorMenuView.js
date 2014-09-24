@@ -44,34 +44,35 @@ define(function(require){
      * Configures the JQuery UI sortable() plugin to enable drag and drop on the menu editor
      */
     setupDragDrop: function() {
+      var view = this;
       $(".editor-menu-layer-inner").sortable({
+        appendTo: '.editor-menu',
         items: '.editor-menu-item',
         handle: '.handle',
         connectWith: ".editor-menu-layer-inner",
-
+        scroll: true,
+        helper:'clone',
         stop: function(event,ui) {
-            var $draggedElement = ui.item;
+          var $draggedElement = ui.item;
 
-            var id = $('.editor-menu-item-inner', $draggedElement).attr('data-id');
-            var sortOrder = $draggedElement.index('.editor-menu-item');
-            var parentId = $draggedElement.parent('.editor-menu-layer').attr('data-parentid');
+          var id = $('.editor-menu-item-inner', $draggedElement).attr('data-id');
+          var sortOrder = $draggedElement.index();
+          var parentId = $draggedElement.closest('.editor-menu-layer').attr('data-parentId');
 
-            console.log(sortOrder);
+          $.ajax({
+            type: 'PUT',
+            url:'/api/content/contentobject/' + id,
+            data: {_sortOrder: sortOrder, _parentId: parentId},
+            complete:function(xhr, status) {
+              if (xhr.status == '200' && status == 'success') {
+                // Synchronise the contentObjects collection
+                Origin.editor.data.contentObjects.fetch({reset: true});
 
-            $.ajax({
-                type: 'PUT',
-                url:'/api/content/contentobject/' + id,
-                data: {_sortOrder: sortOrder, _parentId: parentId},
-                complete:function(xhr, status) {
-                    if (xhr.status == '200' && status == 'success') {
-                        // Synchronise the contentObjects collection
-                        Origin.editor.data.contentObjects.fetch({reset: true});
-
-                        // Trigger page refresh
-                        Origin.trigger('editorView:refreshPageList');
-                    }
-                }
-            });
+                // Trigger page refresh
+                Origin.trigger('editorView:refreshPageList');
+              }
+            }
+          });
 
         },
         over: function(event, ui) {

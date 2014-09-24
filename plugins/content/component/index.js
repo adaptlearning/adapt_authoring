@@ -23,11 +23,11 @@ var origin = require('../../../'),
     util = require('util'),
     path = require('path');
 
-
 var bowerConfig = {
   type: 'componenttype',
   keywords: 'adapt-component',
   packageType: 'component',
+  srcLocation: 'components',
   options: defaultOptions,
   nameList: [
     "adapt-contrib-text#develop",
@@ -42,7 +42,28 @@ var bowerConfig = {
     "adapt-contrib-mcq#develop",
     "adapt-contrib-gmcq#develop",
     "adapt-contrib-slider#develop"
-  ]
+  ],
+  updateLegacyContent: function (newPlugin, oldPlugin, next) {
+    database.getDatabase(function (err, db) {
+      if (err) {
+        return next(err);
+      }
+
+      db.retrieve('component', { _componentType: oldPlugin._id }, function (err, docs) {
+        async.each(
+          docs,
+          function (doc, next) {
+            db.update('component', { _id: doc._id }, { _componentType: newPlugin._id }, next);
+          }, function (err) {
+            if (err) {
+              logger.log('error', 'Failed to update old documents: ' + err.message, err);
+            }
+
+            return next(null);
+          });
+      });
+    });
+  }
 };
 
 function Component () {

@@ -57,7 +57,7 @@ TagContent.prototype.create = function (data, next) {
 
 function initialize () {
   app.on('serverStarted', function () {
-    app.rest.get('/content/tag/autocomplete', function (req, res, next) {
+    app.rest.get('/autocomplete/tag', function (req, res, next) {
       database.getDatabase(function (err, db) {
         if (err) {
           return next(err);

@@ -32,8 +32,9 @@ define(function(require) {
   var globalMenuObject = {
     "location": "global",
     "text": "Asset Management",
-    "icon": "assets",
-    "callbackEvent": "assetManagement:open"
+    "icon": "fa-file-image-o",
+    "callbackEvent": "assetManagement:open",
+    "sortOrder": 2
   };
 
   Origin.once('app:dataReady', function() {

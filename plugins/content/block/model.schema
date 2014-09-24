@@ -9,7 +9,8 @@
         "default" : 0
     },
     "layoutOptions": {
-        "type": "array"
+        "type": "array",
+        "editorOnly": true
     }
   }
 }

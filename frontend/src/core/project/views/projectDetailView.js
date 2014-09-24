@@ -27,6 +27,11 @@ define(function(require) {
 
     preRender: function() {
       this.listenTo(Origin, 'projectEditSidebar:views:save', this.saveProject);
+
+      if (this.model.isNew()) {
+        // Initialise the 'tags' property for a new course
+        this.model.set('tags', []);
+      }
     },
 
     postRender: function() {

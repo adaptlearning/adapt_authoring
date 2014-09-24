@@ -10,12 +10,13 @@ define(function(require){
     tagName: 'li',
 
     className: function() {
-        var isSelectedClass = (this.model.get('_isSelected')) ? ' selected' : '';
-        return 'theme-list-item' + isSelectedClass
+      var isSelectedClass = (this.model.get('_isSelected')) ? ' selected' : '';
+
+      return 'theme-list-item' + isSelectedClass;
     },
 
     events: {
-      'click':'toggleSelect'
+      'click' : 'toggleSelect'
     },
 
     preRender: function() {
@@ -25,15 +26,14 @@ define(function(require){
     toggleSelect: function(event) {
       event && event.stopPropagation();
 
-      if (this.model.get('_isSelected')) {
-        this.deselectItem();
-      } else {
+      if (!this.model.get('_isSelected')) {
         this.selectItem();
       } 
     },
 
     selectItem: function() {
       Origin.trigger('editor:theme:selected');
+      
       this.$el.addClass('selected');
       this.model.set({_isSelected: true});
     },

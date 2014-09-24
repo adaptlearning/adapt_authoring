@@ -11,6 +11,7 @@ var origin = require('../../../'),
     ContentTypeError = contentmanager.errors.ContentTypeError,
     configuration = require('../../../lib/configuration'),
     database = require('../../../lib/database'),
+    helpers = require('../../../lib/helpers'),
     logger = require('../../../lib/logger'),
     defaultOptions = require('./defaults.json'),
     bower = require('bower'),
@@ -27,7 +28,9 @@ var bowerConfig = {
   type: 'extensiontype',
   keywords: 'adapt-extension',
   packageType: 'extension',
+  srcLocation: 'extensions',
   options: defaultOptions,
+  extra: [ "targetAttribute" ],
   nameList: [
     "adapt-contrib-assessment#develop",
     "adapt-contrib-pageLevelProgress#develop",
@@ -35,7 +38,43 @@ var bowerConfig = {
     "adapt-contrib-spoor#develop",
     "adapt-contrib-trickle#develop",
     "adapt-contrib-tutor#develop"
-  ]
+  ],
+  updateLegacyContent: function (newPlugin, oldPlugin, next) {
+    database.getDatabase(function (err, db) {
+      if (err) {
+        return next(err);
+      }
+
+      // if updating a config, search _enabledExtenions, otherwise, _extensions
+      var search = {};
+      var targetAttr = '_enabledExtensions.' + oldPlugin.extension;
+      search[targetAttr] = { $ne: null };
+      db.retrieve('config', search, function (err, docs) {
+        // for each content item, update the _extensions array
+        async.each(
+          docs,
+          function (doc, nextItem) {
+            // construct the delta
+            var enabledExtensions = doc._enabledExtensions;
+            Object.keys(enabledExtensions).forEach(function (key) {
+              if (enabledExtensions[key]._id.toString() === oldPlugin._id.toString()) {
+                enabledExtensions[key]._id = newPlugin._id;
+                enabledExtensions[key].version = newPlugin.version;
+              }
+            });
+
+            // run the update
+            db.update('config', { _id: doc._id }, { _enabledExtensions: enabledExtensions }, nextItem);
+          }, function (err) {
+            if (err) {
+              logger.log('error', 'Failed to update old documents: ' + err.message, err);
+            }
+
+            return next(null);
+          });
+      });
+    });
+  }
 };
 
 function Extension () {
@@ -142,7 +181,7 @@ function contentCreationHook (contentType, data, cb) {
     contentData._extensions = {};
     extensions.forEach(function (extensionItem) {
       var schema = extensionItem.properties.pluginLocations.properties[contentType].properties; // yeesh
-      var generatedObject = generateExtensionProps(schema, extensionItem.name, extensionItem.version, contentType);
+      var generatedObject = helpers.schemaToObject(schema, extensionItem.name, extensionItem.version, contentType);
       contentData._extensions = _.extend(contentData._extensions, generatedObject);
     });
 
@@ -150,56 +189,6 @@ function contentCreationHook (contentType, data, cb) {
     data[0] = contentData;
     return cb(null, data);
   });
-}
-
-/**
- * function generates an object from json schema - could not find a lib to do this for me :-\
- * if anyone knows of a node lib to generate an object from a json schema, please fix this!
- * based on http://stackoverflow.com/questions/13028400/json-schema-to-javascript-typed-object#answer-16457667
- *
- */
-function generateExtensionProps (schema, id, version, location) {
-  if (!this.memo) {
-    this.memo = Object.create(null);
-  }
-
-  // check if we have already built this object
-  var identifier = id + '#' + version + '/' + location;
-  if (this.memo[identifier]) {
-    return this.memo[identifier];
-  }
-
-  var walkObject = function (props) {
-    var child = {};
-    Object.keys(props).forEach(function (key) {
-      switch (props[key].type) {
-        case "boolean":
-        case "integer":
-        case "number":
-        case "string":
-          child[key] = props[key].default || null;
-          break;
-        case "array":
-          child[key] = [];
-          break;
-        case "object":
-          child[key] = walkObject(props[key].properties);
-          break;
-        default:
-          break;
-      }
-    });
-
-    return child;
-  };
-
-  // memoize the result
-  if (schema) {
-    this.memo[identifier] = walkObject(schema);
-    return this.memo[identifier];
-  }
-
-  return false;
 }
 
 /**
@@ -221,7 +210,6 @@ function toggleExtensions (courseId, action, extensions, cb) {
       return cb(err);
     }
 
-
     // retrieves specified components for the course and either adds or deletes
     // extension properties of the passed extensionItem
     var updateComponentItems = function (componentType, schema, extensionItem, nextComponent) {
@@ -231,7 +219,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
           return cb(err);
         }
 
-        var generatedObject = generateExtensionProps(schema, extensionItem.name, extensionItem.version, componentType);
+        var generatedObject = helpers.schemaToObject(schema, extensionItem.name, extensionItem.version, componentType);
         var targetAttribute = extensionItem.targetAttribute;
         // iterate components and update _extensions attribute
         async.each(results, function (component, next) {

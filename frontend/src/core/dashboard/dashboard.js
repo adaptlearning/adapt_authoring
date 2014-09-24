@@ -35,8 +35,9 @@ define(function(require) {
   var globalMenuObject = {
     "location": "global",
     "text": "Dashboard",
-    "icon": "dashboard",
-    "callbackEvent": "dashboard:open"
+    "icon": "fa-home",
+    "callbackEvent": "dashboard:open",
+    "sortOrder": 1
   };
 
   Origin.once('app:dataReady', function() {

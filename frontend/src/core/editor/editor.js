@@ -47,6 +47,10 @@ define(function(require) {
   var EditorComponentTypeModel = require('editorPage/models/editorComponentTypeModel');
   var ExtensionModel = require('editorExtensions/models/extensionModel');
 
+  var ProjectModel = require('coreJS/project/models/projectModel');
+  var ProjectDetailView = require('coreJS/project/views/projectDetailView');
+  var ProjectDetailEditSidebarView = require('coreJS/project/views/projectDetailEditSidebarView');
+
   var dataIsLoaded = false;
 
   Origin.on('editor:refreshData', function(callback, context) {
@@ -180,6 +184,10 @@ define(function(require) {
       _type: 'componentTypes'
     });
     
+    Origin.editor.data.componentTypes.comparator = function(model) {
+      return model.get('displayName');
+    };
+    
     // Store the extensions types
     Origin.editor.data.extensionTypes = new EditorCollection(null, {
       model : ExtensionModel,
@@ -227,7 +235,8 @@ define(function(require) {
         _parentId: route3,
         componentTypes: Origin.editor.data.componentTypes.toJSON(),
         layoutOptions: layoutOptions
-      })
+      });
+
       Origin.sidebar.addView(new EditorComponentListSidebarView({
         model: componentSelectModel
       }).$el);
@@ -250,6 +259,18 @@ define(function(require) {
     }
 
     switch (route2) {
+      case 'settings':
+        var project = new ProjectModel({_id: route1});
+        
+        project.fetch({
+          success: function() {
+            Origin.trigger('location:title:update', {title: 'Edit course'});
+            Origin.editingOverlay.addView(new ProjectDetailView({model: project}).$el);
+            Origin.sidebar.addView(new ProjectDetailEditSidebarView().$el);
+          }
+        });
+        break;
+
       case 'config':
         // route2 is the courseid
         // var collection = new EditorConfigCollection();

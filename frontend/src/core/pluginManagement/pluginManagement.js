@@ -30,8 +30,9 @@ define(function(require) {
   var globalMenuObject = {
     "location": "global",
     "text": "Plugin Management",
-    "icon": "pluginManagement",
-    "callbackEvent": "pluginManagement:open"
+    "icon": "fa-plug",
+    "callbackEvent": "pluginManagement:open",
+    "sortOrder": 3
   };
 
   Origin.once('app:dataReady', function() {

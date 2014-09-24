@@ -12,9 +12,16 @@ define(function(require){
     className: 'project-list-item',
 
     events: {
-      'dblclick': 'editProject',
-      'click':'selectProject',
-      'click a.open-context-course' : 'openContextMenu'
+      'dblclick'                        : 'editProject',
+      'click'                           : 'selectProject',
+      'click a.open-context-course'     : 'openContextMenu',
+      'click a.course-delete'           : 'deleteProjectPrompt',
+
+      // Preview events
+      'mouseover .pos.large'            : 'showLargePreview',
+      'mouseover .pos.medium'           : 'showMediumPreview',
+      'mouseover .pos.small'            : 'showSmallPreview',
+      'mouseout .pos.medium, .pos.small': 'showLargePreview'
     },
 
     preRender: function() {
@@ -54,8 +61,8 @@ define(function(require){
     },
 
     selectProject: function(event) {
-        event.stopPropagation();
-        this.selectItem();
+      event.stopPropagation();
+      this.selectItem();
     },
 
     selectItem: function() {
@@ -98,12 +105,27 @@ define(function(require){
       $.ajax({
         url:'/api/duplicatecourse/' + this.model.get('_id'),
         success: function (data) {
-          Backbone.history.navigate('/project/edit/' + data.newCourseId, {trigger: true});
+          Backbone.history.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
         },
         error: function() {
           alert('error during duplication');
         }
       });
+    },
+
+    showLargePreview: function() {
+      this.$('iframe').removeClass();
+      this.$('iframe').addClass('preview-large');
+    },
+
+    showMediumPreview: function() {
+      this.$('iframe').removeClass();
+      this.$('iframe').addClass('preview-medium');
+    },
+
+    showSmallPreview: function() {
+      this.$('iframe').removeClass();
+      this.$('iframe').addClass('preview-small');
     }
     
   }, {

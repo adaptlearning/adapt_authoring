@@ -9,6 +9,7 @@
 
 var origin = require('../../../'),
     contentmanager = require('../../../lib/contentmanager'),
+    usermanager = require('../../../lib/usermanager'),
     rest = require('../../../lib/rest'),
     ContentPlugin = contentmanager.ContentPlugin,
     ContentTypeError = contentmanager.errors.ContentTypeError,
@@ -27,6 +28,7 @@ var origin = require('../../../'),
     util = require('util'),
     path = require('path'),
     unzip = require('unzip'),
+    exec = require('child_process').exec,
     IncomingForm = require('formidable').IncomingForm;
 
 // errors
@@ -135,6 +137,13 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
 
   // set the type and package id for the package
   info[plugin.packageType] = pkgMeta[plugin.packageType];
+
+  // set extra properties
+  plugin.extra && plugin.extra.forEach(function (key) {
+    if (pkgMeta[key]) {
+      info[key] = pkgMeta[key];
+    }
+  });
 
   return info;
 }
@@ -436,21 +445,52 @@ function addPackage (plugin, packageInfo, strict, cb) {
       // Copy this version of the component to a holding area (used for publishing).
       // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
       var destination = path.join(plugin.options.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
-      fs.exists(destination, function(exists) {
-        if (!exists) {
-          mkdirp(destination, function (err) {
+      rimraf(destination, function(err) {
+        if (err) {
+          // can't continue
+          return logger.log('error', err.message, err);
+        }
+
+        mkdirp(destination, function (err) {
+          if (err) {
+            return logger.log('error', err.message, err);
+          }
+
+          // move from the cache to the versioned dir
+          ncp(packageInfo.canonicalDir, destination, function (err) {
             if (err) {
-              return cb(err);
+              // don't double call callback
+              return logger.log('error', err.message, err);
             }
 
-            // move from the cache to the versioned dir
-            ncp(packageInfo.canonicalDir, destination, function (err) {
+            // temporary hack to get stuff moving
+            // copy plugin source to tenant dir
+            var currentUser = usermanager.getCurrentUser();
+            var tenantPluginPath = path.join(
+              configuration.tempDir,
+              currentUser.tenant._id.toString(),
+              'adapt_framework',
+              'src',
+              plugin.srcLocation,
+              pkgMeta.name
+            );
+            // remove older version first
+            rimraf(tenantPluginPath, function (err) {
               if (err) {
-                return cb(err);
+                return logger.log('error', err.message, err);
               }
+
+              ncp(packageInfo.canonicalDir, tenantPluginPath, function (err) {
+                if (err) {
+                  return logger.log('error', err.message, err);
+                }
+
+                // done
+                logger.log('info', 'successfully copied plugin to tenant dir');
+              });
             });
           });
-        }
+        });
       });
 
       // build the package information
@@ -476,7 +516,7 @@ function addPackage (plugin, packageInfo, strict, cb) {
             return cb(null);
           }
 
-          db.create(plugin.type, package, function (err, results) {
+          db.create(plugin.type, package, function (err, newPlugin) {
             if (err) {
               logger.log('error', 'Failed to add package: ' + package.name, err);
               if (strict) {
@@ -485,7 +525,35 @@ function addPackage (plugin, packageInfo, strict, cb) {
               return cb(null);
             }
             logger.log('info', 'Added package: ' + package.name);
-            return cb(null, results);
+
+            // #509 update content targeted by previous versions of this package
+            logger.log('info', 'searching old package types ... ');
+            db.retrieve(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err, results) {
+              if (err) {
+                // strictness doesn't matter at this point
+                logger.log('error', 'Failed to retrieve previous packages: ' + err.message, err);
+              }
+
+              if (results && results.length) {
+                // found previous versions to update
+                // only update content using the id of the most recent version
+                var oldPlugin = false;
+                results.forEach(function (item) {
+                  if (!oldPlugin) {
+                    oldPlugin = item;
+                  } else if (semver.gt(item.version, oldPlugin.version)) {
+                    oldPlugin = item;
+                  }
+                })
+
+                plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
+                  return cb(null, newPlugin);
+                });
+              } else {
+                // nothing to do!
+                return cb(null, newPlugin);
+              }
+            });
           });
         });
       });
@@ -651,7 +719,12 @@ function handleUploadedPlugin (req, res, next) {
               return next(error);
             }
 
-            // success!!
+            // now remove tenant courses and run a grunt build
+            var user = usermanager.getCurrentUser();
+            var tenantId = user.tenant._id;
+
+            app.emit('rebuildAllCourses', tenantId);
+
             res.statusCode = 200;
             return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });
           });

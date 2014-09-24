@@ -8,7 +8,7 @@ define(function(require) {
 
   var EditorThemeEditView = EditorOriginView.extend({
     
-    tagName: "div",
+    tagName: "ul",
 
     className: "editor-theme-edit",
 

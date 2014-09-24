@@ -20,11 +20,12 @@ define(function(require) {
     },
     
     handleEnterKey: function(e) {
-      if (e.keyCode == 13) {
+      var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+
+      if (key == 13) {
+        e.preventDefault();
         this.submitLoginDetails();
       }
-
-      return;
     },
 
     clearErrorStyling: function(e) {
@@ -37,7 +38,7 @@ define(function(require) {
     submitLoginDetails: function(e) {
       e && e.preventDefault();
 
-      var inputUsernameEmail = $.trim(this.$("#login-input-username").val()).toLowerCase();
+      var inputUsernameEmail = $.trim(this.$("#login-input-username").val());
       var inputPassword = $.trim(this.$("#login-input-password").val());
 
       // Validation

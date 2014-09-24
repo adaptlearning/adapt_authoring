@@ -14,7 +14,8 @@ define(function(require){
     },
 
     events: {
-        'click' : 'onAssetClicked'
+        'click' : 'onAssetClicked',
+        'inview': 'onInview'
     },
 
     preRender: function() {
@@ -28,6 +29,14 @@ define(function(require){
         this.$el.addClass('selected');
         this.model.set('_isSelected', true);
         Origin.trigger('assetManagement:assetItemView:preview', this.model);
+    },
+
+    onInview: function() {
+      if (this.model.get('assetType') === 'image' || this.model.get('assetType') === 'video') {
+        var $previewImage = this.$('.asset-management-list-item-image');
+        $previewImage.attr('style', $previewImage.attr('data-style'));
+        this.$el.off('inview');
+      }
     }
     
   }, {

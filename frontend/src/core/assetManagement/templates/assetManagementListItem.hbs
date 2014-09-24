@@ -21,12 +21,12 @@
     </div>
 
     {{#if_value_equals assetType "image"}}
-    <div class="asset-management-list-item-image" style="background-image:url(api/asset/thumb/{{_id}})">
+    <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
     </div>
     {{/if_value_equals}}
 
     {{#if_value_equals assetType "video"}}
-    <div class="asset-management-list-item-image" style="background-image:url(api/asset/thumb/{{_id}})">
+    <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
     </div>
     {{/if_value_equals}}
 

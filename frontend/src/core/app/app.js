@@ -6,6 +6,7 @@ require.config({
       backbone: 'core/libraries/backbone',
       modernizr: 'core/libraries/modernizr',
       handlebars: 'core/libraries/handlebars',
+      inview: 'core/libraries/inview',
       imageReady: 'core/libraries/imageReady',
       coreJS: 'core',
       templates: 'templates/templates',
@@ -72,9 +73,15 @@ require.config({
         deps: ['jquery'],
         exports: "$"
       },
+      inview: {
+        deps: [
+          'jquery'
+        ],
+        exports: 'inview'
+      },
       imageReady: {
         deps: [
-            'jquery'
+          'jquery'
         ],
         exports: 'imageready'
       },
@@ -110,6 +117,7 @@ require([
     'polyglot',
     'jquery-ui',
     'jquery-form',
+    'inview',
     'imageReady',
     'mediaelement-and-player',
     'velocity',
@@ -136,6 +144,7 @@ require([
     Polyglot,
     JQueryUI,
     JQueryForm,
+    Inview,
     ImageReady,
     MediaElement
 ) {

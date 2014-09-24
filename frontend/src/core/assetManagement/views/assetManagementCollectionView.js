@@ -18,6 +18,7 @@ define(function(require){
         events: {},
 
         preRender: function() {
+            this.assetDenominator = 12;
             this.filters = [];
             this.collection = new AssetCollection();
             this.listenTo(this.collection, 'sync', this.renderAssetItems);
@@ -27,11 +28,13 @@ define(function(require){
         },
 
         renderAssetItems: function(filteredCollection) {
-
-            var assetCollection = (filteredCollection || this.collection);
+            
+            // Always reset the currentAssetLimit of assets
+            this.currentAssetLimit = 0;
+            this.assetCollection = (filteredCollection || this.collection);
 
             // Check if collection has items and hide instructions
-            if (assetCollection.length > 0) {
+            if (this.assetCollection.length > 0) {
                 $('.asset-management-no-assets').addClass('display-none');
             }
 
@@ -40,14 +43,72 @@ define(function(require){
             // Empty collection container
             this.$('.asset-management-collection-inner').empty();
 
+            // This is used as a switch
+            var hasSetupLazyLoading = false;
             // Render each asset item
-            assetCollection.each(function(asset) {
+            this.assetCollection.each(function(asset) {
+                // Work out if this.assetLimit has been set
+                this.assetLimit = (this.assetLimit || this.assetDenominator);
+                // Check if the asset limit has been reached
+                if (this.currentAssetLimit >= this.assetLimit) {
+                    // Only if the collection is bigger then the currentAssetLimit 
+                    // setup the scroll listener
+                    if (this.assetCollection.length > this.currentAssetLimit && !hasSetupLazyLoading) {
+                        hasSetupLazyLoading = true;
+                        this.setupLazyScrolling();
+                    }
+                    return;
+                }
+                this.currentAssetLimit ++;
                 this.$('.asset-management-collection-inner').append(new AssetItemView({model: asset}).$el);
+
             }, this);
 
             // Should always check if input has a value and keep the search filter
             this.filterBySearchInput($('.asset-management-sidebar-filter-search').val());
 
+        },
+
+        setupLazyScrolling: function() {
+
+            var $assetContainer = $('.asset-management-assets-container');
+            var $assetContainerInner = $('.asset-management-assets-container-inner');
+            // Remove event before attaching
+            $assetContainer.off('scroll');
+
+            $assetContainer.on('scroll', _.bind(function() {
+                var scrollTop = $assetContainer.scrollTop();
+                var scrollableHeight = $assetContainerInner.height();
+                var containerHeight = $assetContainer.height();
+
+                // If the scroll position of the assets container is
+                // near the bottom
+                if ((scrollableHeight-containerHeight) - scrollTop < 30) {
+                    this.lazyRenderCollection();
+                }
+
+            }, this));
+            
+        },
+
+        lazyRenderCollection: function() {
+            // Check if the currentAssetLimit is greater than the asset collection length
+            // if so - remove the scroll event
+            if (this.currentAssetLimit >= this.assetCollection.length) {
+                this.removeLazyScrolling();
+                return;
+            }
+            // Adjust limit based upon the denominator
+            this.assetLimit += this.assetDenominator;
+            this.assetCollection.each(function(asset, index) {
+                // Check if the asset limit has been reached
+                if (this.currentAssetLimit >= this.assetLimit || index < this.currentAssetLimit) {
+                    return;
+                }
+                this.currentAssetLimit ++;
+                this.$('.asset-management-collection-inner').append(new AssetItemView({model: asset}).$el);
+
+            }, this);
         },
 
         postRender: function() {
@@ -101,6 +162,10 @@ define(function(require){
                 }
 
             }, this);
+        },
+
+        removeLazyScrolling: function() {
+            $('.asset-management-assets-container').off('scroll');
         }
 
     }, {

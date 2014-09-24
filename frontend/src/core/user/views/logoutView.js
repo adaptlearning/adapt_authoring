@@ -12,6 +12,10 @@ define(function(require) {
       'click a#linkLogout' : 'completeLogout'
     },
 
+    postRender: function() {
+      this.setViewToReady();
+    },
+
     completeLogout: function(e) {
       e.preventDefault();
       this.model.logout();

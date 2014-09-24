@@ -18,6 +18,10 @@ define(function(require) {
     preRender: function() {
       this.listenTo(Origin, 'login:failed', this.loginFailed, this);
     },
+
+    postRender: function() {
+      this.setViewToReady();
+    },
     
     handleEnterKey: function(e) {
       var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;

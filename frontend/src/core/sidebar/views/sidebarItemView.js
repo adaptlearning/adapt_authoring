@@ -17,6 +17,24 @@ define(function(require) {
       'click button.editor-common-sidebar-close'        : 'closeProject', 
     },
 
+    initialize: function() {
+        this.render();
+        this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
+        _.defer(_.bind(function() {
+            this.setupView();
+        }, this));
+    },
+
+    postRender: function() {},
+
+    setupView: function() {
+        this.listenTo(Origin, 'sidebar:views:remove', this.remove);
+    },
+
+    animateViewIn: function() {
+        this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
+    },
+
     editProject: function() {
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/settings', {trigger: true});
     },
@@ -43,26 +61,7 @@ define(function(require) {
 
     closeProject: function() {
     	Backbone.history.navigate('#/dashboard');
-    },
-		
-		initialize: function() {
-			this.render();
-			this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
-			_.defer(_.bind(function() {
-				this.setupView();
-				this.postRender();
-			}, this));
-		},
-
-		postRender: function() {},
-
-		setupView: function() {
-			this.listenTo(Origin, 'sidebar:views:remove', this.remove);
-		},
-
-		animateViewIn: function() {
-			this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
-		}
+    }
 
 	});
 

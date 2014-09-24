@@ -78,6 +78,19 @@ define(function(require) {
         Origin.editingOverlay.addView(new ProjectDetailView({model: project}).$el);
         Origin.sidebar.addView(new ProjectDetailEditSidebarView().$el);
         break;
+      case 'edit':
+        var project = new ProjectModel({_id: id});
+        project.fetch({
+          success: function() {
+            Origin.trigger('location:title:update', {title: 'Edit course'});
+            Origin.editingOverlay.addView(new ProjectDetailView({model: project}).$el);
+            Origin.sidebar.addView(new ProjectDetailEditSidebarView().$el);
+          }
+        });
+        break;
+      case 'view':
+        console.log('Should view project???');
+        break;
     }
 
   });

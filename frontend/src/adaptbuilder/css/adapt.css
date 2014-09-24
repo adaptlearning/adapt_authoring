@@ -43,8 +43,8 @@ input[type="text"],input[type="password"],input[type="email"],input[type="url"],
 .form-list li{margin-bottom:20px;list-style:none}.form-list li input,.form-list li label{margin-bottom:0px;display:inline-block}
 .form-list li label{margin-left:10px}
 
-.display-none{display:none}
-.visibility-hidden{visibility:hidden}
+.display-none{display:none!important}
+.visibility-hidden{visibility:hidden!important}
 .unselectable{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 
 html,body,body div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,figure,footer,header,hgroup,menu,nav,section,time,mark,audio,video{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}
@@ -211,9 +211,15 @@ button{width:auto;overflow:visible}
 .dashboard ul{list-style-type:none}
 .dashboard li{margin-bottom:30px}
 .dashboard-inner{padding:30px 30px 0px 0px}
+<<<<<<< HEAD
+.grid-layout .project-list-item{margin-left:30px;min-width:240px;width:22%;max-width:300px;display:inline-block}
+=======
 .grid-layout .project-list-item{margin-left:30px;min-width:240px;height:390px;width:22%;max-width:300px;float:left}
+>>>>>>> develop
 .list-layout{margin-left:30px}.list-layout .project-list-item{margin-left:0px;width:100%}
 .dashboard-sidebar-filter-clear{padding:6px}
+#dashboard-tags_tagsinput{display:inline-block;padding:4px;border:none}
+.dashboard-no-projects{padding-left:30px}
 
 .editing-overlay{position:absolute;z-index:10;top:0px;left:10%;width:100%;opacity:0;background-color:#f2f2f2}
 .editing-overlay-panel-content input,.editing-overlay-panel-content textarea{min-width:50%}
@@ -356,9 +362,13 @@ a.open-context-contentObject{color:white}
 .project-list-item.selected{color:#fff;background-color:#333c4e}.project-list-item.selected .project-settings{top:0%;opacity:1}
 .project-list-item.selected .tags li.tag{background-color:#293141}.project-list-item.selected .tags li.tag span{color:#E0E8F7;background-color:#293141}
 .project-list-item.listing{width:700px}
+<<<<<<< HEAD
+.project-list-item .tags li.tag{margin:2px 5px 2px 0px;display:inline-block;background-color:#9CABC4}.project-list-item .tags li.tag span{padding:5px;color:#fff}
+=======
 .project-list-item .tags ul.tags{margin:0px 2px}
 .project-list-item .tags li.tag{margin:1px 0px 1px 0px;display:inline-block;background-color:#9CABC4}.project-list-item .tags li.tag span{margin:5px;color:#fff}
 .project-list-item div.tag-container{height:34px;overflow-y:auto}
+>>>>>>> develop
 .project-header-inner{position:relative}
 .project-detail-title{margin-bottom:10px}
 .project-settings{position:absolute;top:0%;left:0px;font-size:16px;width:100%;height:30px;opacity:1;background-color:#fff;transition:all 0.3s}.project-settings a{color:#3e4960}
@@ -381,13 +391,23 @@ a.open-context-contentObject{color:white}
 .sidebar-breadcrumb{position:relative;top:-40px}
 .sidebar-breadcrumb-inner{display:block;padding:18px 20px}.sidebar-breadcrumb-inner i{margin-right:10px}
 .sidebar-item-container{position:relative;height:100%}
-.sidebar-item{left:10%;opacity:0}.sidebar-item label{display:block;margin-bottom:4px}
+.sidebar-item{position:relative;left:10%;opacity:0}.sidebar-item label{display:block;margin-bottom:4px}
 .sidebar-row,select.sidebar-row{display:block}.sidebar-row a,select.sidebar-row a{width:100%;padding:18px 20px;display:inline-block}
 .sidebar-row button,select.sidebar-row button{background:none;border:none;width:100%;padding:18px 20px}.sidebar-row button.sidebar-inline-input-button,select.sidebar-row button.sidebar-inline-input-button{width:10px;height:10px;border:none;width:28px;height:32px;padding:8px;border:none}.sidebar-row button.sidebar-inline-input-button:hover,select.sidebar-row button.sidebar-inline-input-button:hover{background:none}
 .sidebar-item-title{text-align:center}
 .sidebar-item-title-inner{padding:30px 20px;font-size:15px;font-weight:200}
 .sidebar-divide{text-align:center}
 .sidebar-divide-inner{padding:8px}
+
+.sidebar-filter{position:fixed;left:220px;top:40%;max-height:366px;border:1px solid #e2e2e2;border-left:none;background-color:#fff;overflow-y:hidden}
+.sidebar-filter-toolbar{border-bottom:1px solid #e2e2e2}
+.sidebar-filter-toolbar-title{float:left;padding:10px}
+.sidebar-filter-toolbar-close{float:right}.sidebar-filter-toolbar-close button:hover{color:#15a4fa}
+.sidebar-filter-search{padding:10px;border-bottom:1px solid #e2e2e2}
+.sidebar-filter-items{overflow-y:scroll;max-height:260px}
+.sidebar-filter-item{display:block;width:100%;border-bottom:1px solid #e2e2e2}.sidebar-filter-item.selected{background-color:#d2d2d2}
+.sidebar-row-filter{border-bottom:1px solid #3e4a5f}.sidebar-row-filter.sidebar-row span{padding:8px;float:left}
+.sidebar-row-filter.sidebar-row button{display:inline;float:right;padding:8px;width:auto;border:none}
 
 .module-user.location-login{background-color:#4e4e4e}.module-user.location-login .sidebar{display:none}
 .module-user.location-login #app{margin-left:0px}
@@ -475,7 +495,7 @@ body{background-color:#e9f0fa;color:#3e4960}
 .sidebar-row button,.sidebar-row a{border-bottom:1px solid #3e4a5f;color:#9cabc4;transition:all 0.3s}.sidebar-row button:hover,.sidebar-row a:hover{color:#fff;background-color:#293141}
 .sidebar-row button.selected,.sidebar-row a.selected{background-color:#1f2531}
 .sidebar-row .sidebar-row-input{border-bottom:1px solid #3e4a5f}.sidebar-row .sidebar-row-input input{border:none;border-radius:0px}
-.sidebar-divide{background-color:#293141}
+.sidebar-divide{background-color:#3e4960}.sidebar-divide h3{font-size:13px;font-weight:600}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 div.tagsinput{border:1px solid #CCC;background:#FFF;padding:5px;overflow-y:auto}div.tagsinput span.tag{border:1px solid #fff;-moz-border-radius:2px;-webkit-border-radius:2px;display:block;float:left;padding:5px;text-decoration:none;background:#9cabc4;color:#fff;margin-right:5px;margin-bottom:5px}div.tagsinput span.tag a{color:#fff;font-weight:bold;text-decoration:none}

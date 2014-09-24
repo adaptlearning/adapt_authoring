@@ -130,9 +130,8 @@ define(function(require){
 
       if (extensions) {
    
-
         // Check which extensions are enabled on this course
-        var courseExtensions = Origin.editor.data.config.get('_enabledExtensions'),
+        var courseExtensions = this.model.get('_enabledExtensions'),
           extensionKeys = _.keys(extensions),
           enabledExtensions = _.keys(courseExtensions),
           i = 1;

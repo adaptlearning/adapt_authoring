@@ -19,3 +19,4 @@ conf/config.json
 /plugins/content/theme/extensioncache/
 /plugins/content/bower/bowercache/
 /master/
+/frontend/src/adaptbuilder/css/adapt.css

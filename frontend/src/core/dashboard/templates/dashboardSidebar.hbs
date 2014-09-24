@@ -14,49 +14,58 @@
 
     <div class="sidebar-row sidebar-divide">
         <h3 class="sidebar-divide-inner">
-            Filters
+            Search
         </h3>
     </div>
 
     {{!-- inline search field with close button --}}
     <div class="sidebar-row">
         <div class="sidebar-row-input">
-            <input type="text" class="dashboard-sidebar-filter-input asset-management-sidebar-filter-search" placeholder="{{t 'app.search'}}"/>
+            <input type="text" class="dashboard-sidebar-filter-input dashboard-sidebar-filter-search-input" placeholder="{{t 'app.search'}}"/>
             <button class="dashboard-sidebar-filter-clear sidebar-inline-input-button"><i class="fa fa-times"></i></button>
         </div>
     </div>
 
-	<div class="sidebar-row">
+    <div class="sidebar-row sidebar-divide">
+        <h3 class="sidebar-divide-inner">
+            Tags
+        </h3>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="dashboard-sidebar-tag dashboard-sidebar-tag-archive" data-tag="archive">
+            <span class="dashboard-sidebar-tag-archive-inner">
+                Archive
+            </span>
+        </button>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="dashboard-sidebar-tag dashboard-sidebar-tag-favourites" data-tag="favourites">
+            <span class="dashboard-sidebar-tag-favourites-inner">
+                Favourites
+            </span>
+        </button>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="dashboard-sidebar-add-tag info-color">
+            <span class="dashboard-sidebar-add-tag-inner">
+                Add Tag
+            </span>
+        </button>
+    </div>
+
+	{{!-- <div class="sidebar-row">
 		<a href="#" class="project-layout-grid"><i class="fa fa-th layout-projects-grid"></i> View as grid</a>
-{{!-- 		<button class="dashboard-sidebar-grid-layout">
-			<span class="dashboard-sidebar-grid-layout-inner">
-				<i class="fa fa-th layout-projects-grid"></i>Grid layout
-			</span>
-		</button> --}}
 	</div>
 	<div class="sidebar-row">
 		<a href="#" class="project-layout-list"><i class="fa fa-list layout-projects-list"></i> View as list</a>
-{{!-- 		<button class="dashboard-sidebar-list-layout">
-			<span class="dashboard-sidebar-list-layout-inner">
-				<i class="fa fa-list layout-projects-list"></i>List layout
-			</span>
-		</button> --}}
 	</div>
 	<div class="sidebar-row">
 		<a href="#" class="project-sort-asc"><i class="fa fa-sort-alpha-asc"></i> Ascending</a>
-	{{!-- 	<label>Ordering</label>
-		<select class="dashboard-sidebar-ordering">
-			<option>A to Z</option>
-			<option>Z to A</option>
-		</select> --}}
 	</div>
 	<div class="sidebar-row">
 		<a href="#" class="project-sort-desc"><i class="fa fa-sort-alpha-desc"></i> Descending</a>
-{{!-- 		<label>Category</label>
-		<select class="sidebar-row dashboard-sidebar-category">
-			<option>All courses</option>
-			<option>Compliance</option>
-			<option>Soft skills</option>
-		</select> --}}
-	</div>
+	</div> --}}
 </div>

@@ -3,6 +3,7 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var DashboardView = require('coreJS/dashboard/views/dashboardView');
   var DashboardSidebarView = require('coreJS/dashboard/views/dashboardSidebarView');
+  var ProjectCollection = require('coreJS/project/collections/projectCollection');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
 
@@ -10,11 +11,18 @@ define(function(require) {
     Origin.editor.data = {};
     
     if (!location) {
-      Origin.trigger('location:title:update', {title: 'Dashboard - viewing all courses'});
-      Origin.router.createView(DashboardView);
+      var projects = new ProjectCollection();
+      projects.fetch({
+        success: function() {
+          Origin.trigger('location:title:update', {title: 'Dashboard - viewing all courses'});
+          Origin.router.createView(DashboardView, {collection:projects});
+          Origin.sidebar.addView(new DashboardSidebarView({collection:projects}).$el);
+        }
+      });
+      
     }
 
-    Origin.sidebar.addView(new DashboardSidebarView().$el);
+    
 
   });
 

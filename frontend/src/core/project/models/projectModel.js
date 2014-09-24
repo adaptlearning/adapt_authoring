@@ -7,7 +7,11 @@ define(function(require) {
 
     idAttribute: '_id',
 
-    urlRoot: '/api/content/course'
+    urlRoot: '/api/content/course',
+
+    defaults: {
+        'tags': []
+    }
 
   });
 

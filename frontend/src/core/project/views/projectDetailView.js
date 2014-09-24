@@ -45,6 +45,9 @@ define(function(require) {
         onAddTag: _.bind(this.onAddTag, this),
         onRemoveTag: _.bind(this.onRemoveTag, this)
       });
+
+      // Set view to ready
+      this.setViewToReady();
     },
 
     cancel: function (event) {

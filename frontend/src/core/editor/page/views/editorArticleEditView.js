@@ -21,6 +21,7 @@ define(function(require) {
 
     postRender: function() {
       this.renderExtensionEditor('article');
+      this.setViewToReady();
     },
 
     toggleContentPanel: function(event) {

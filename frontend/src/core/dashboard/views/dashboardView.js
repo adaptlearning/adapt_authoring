@@ -90,7 +90,14 @@ define(function(require){
         this.$('.dashboard-projects').append(new ProjectView({model: project}).$el);
       }, this);
 
+      // Defer imageReady check until all elements are loaded
+      _.defer(_.bind(this.setupImageReady, this));
+
       this.evaluateProjectCount(projects);
+    },
+
+    setupImageReady: function() {
+      this.$el.imageready(this.setViewToReady);
     },
 
     evaluateProjectCount: function (projects) {

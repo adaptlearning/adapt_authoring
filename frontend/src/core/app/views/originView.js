@@ -20,8 +20,6 @@ define(function(require){
         this.render();
       }
       this.listenTo(Origin, 'remove:views', this.remove);
-      this.listenTo(Origin, 'origin:showLoading', this.showLoading);
-      this.listenTo(Origin, 'origin:hideLoading', this.hideLoading);
     },
 
     preRender: function() {},
@@ -41,12 +39,8 @@ define(function(require){
 
     onReady: function() {},
 
-    showLoading: function () {
-      $('.loading').show();
-    },
-
-    hideLoading: function () {
-      $('.loading').hide();
+    setViewToReady: function() {
+      Origin.trigger('router:hideLoading');
     },
 
     sortArrayByKey: function (arr, key) {

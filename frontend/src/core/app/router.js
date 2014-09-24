@@ -11,6 +11,12 @@ define(function(require) {
     },
 
     initialize: function() {
+      // Setup listeners for the loading screen
+      Origin.on('router:hideLoading', this.hideLoading, this);
+      Origin.on('router:showLoading', this.showLoading, this);
+      // Store loading element
+      this.$loading = $('.loading');
+
       this.locationKeys = ['module', 'route1', 'route2', 'route3', 'route4'];
     },
 
@@ -43,6 +49,8 @@ define(function(require) {
     },
 
     handleIndex: function() {
+      // Show loading on any route
+      this.showLoading();
       // console.log('in handleIndex');
       if (this.isUserAuthenticated()) {
         this.navigate('#/dashboard', {trigger: true});
@@ -52,6 +60,8 @@ define(function(require) {
     },
 
     handleRoute: function(module, route1, route2, route3, route4) {
+      // Show loading on any route
+      this.showLoading();
       // Remove views
       this.removeViews();
 
@@ -82,6 +92,19 @@ define(function(require) {
 
     removeViews: function() {
       Origin.trigger('remove:views');
+    },
+
+    showLoading: function() {
+      // 
+      this.$loading.removeClass('display-none fade-out');
+    },
+
+    hideLoading: function() {
+      this.$loading.addClass('fade-out');
+      _.delay(_.bind(function() {
+        this.$loading.addClass('display-none');
+      }, this), 300);
+      
     }
 
   });

@@ -77,6 +77,8 @@ define(function(require){
         this.$('.pluginManagement-plugins').append(new PluginTypeView({model: pluginType}).$el.addClass(oddOrEvenClass));
       }, this);
 
+      _.defer(this.setViewToReady);
+
       this.evaluatePluginTypeCount(pluginTypes);
     },
 

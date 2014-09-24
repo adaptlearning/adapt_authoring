@@ -55,6 +55,7 @@ define(function(require) {
       this.$('.component-properties').jsoneditor(_.extend({schema: componentSchema, startval: this.model.get('properties')}, jsonEditorDefaults));
 
       this.renderExtensionEditor('component');
+      this.setViewToReady();
     },
 
     cancel: function (event) {

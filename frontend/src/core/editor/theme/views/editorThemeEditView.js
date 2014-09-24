@@ -25,11 +25,12 @@ define(function(require) {
       this.listenTo(Origin, 'editorThemeEditSidebar:views:save', this.saveData);
     },
 
-    postRender: function() {     
+    postRender: function() {    
     },
 
     addThemeViews: function() {
       this.renderThemeViews();
+      _.defer(this.setViewToReady);
     },
 
     renderThemeViews: function() {

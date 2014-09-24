@@ -22,7 +22,8 @@ define(function(require){
     },
 
     postRender: function() {
-      this.setupMenuViews();   
+      this.setupMenuViews();
+      _.defer(this.setViewToReady);  
     },
 
     /**

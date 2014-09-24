@@ -6,6 +6,7 @@ require.config({
       backbone: 'core/libraries/backbone',
       modernizr: 'core/libraries/modernizr',
       handlebars: 'core/libraries/handlebars',
+      imageReady: 'core/libraries/imageReady',
       coreJS: 'core',
       templates: 'templates/templates',
       polyglot: 'core/libraries/polyglot.min',
@@ -71,6 +72,12 @@ require.config({
         deps: ['jquery'],
         exports: "$"
       },
+      imageReady: {
+        deps: [
+            'jquery'
+        ],
+        exports: 'imageready'
+      },
       tinyMCE: {
         exports: 'tinyMCE',
         init: function () {
@@ -103,6 +110,7 @@ require([
     'polyglot',
     'jquery-ui',
     'jquery-form',
+    'imageReady',
     'mediaelement-and-player',
     'velocity',
     'scrollTo'
@@ -128,6 +136,7 @@ require([
     Polyglot,
     JQueryUI,
     JQueryForm,
+    ImageReady,
     MediaElement
 ) {
 

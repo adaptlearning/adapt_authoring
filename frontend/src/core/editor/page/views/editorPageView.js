@@ -92,6 +92,7 @@ define(function(require){
 
       _.defer(_.bind(function(){
         this.trigger('pageView:postRender');
+        this.setViewToReady();
       }, this));
     },
 

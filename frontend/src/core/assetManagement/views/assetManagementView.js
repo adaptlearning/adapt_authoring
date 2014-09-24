@@ -26,6 +26,13 @@ define(function(require){
     postRender: function() {
         this.setupSubViews();
         this.resizeAssetPanels();
+        // Set imageReady
+        _.defer(_.bind(this.setupImageReady, this));
+        this.setViewToReady();
+    },
+
+    setupImageReady: function() {
+      this.$el.imageready(this.setViewToReady);
     },
 
     setupSubViews: function() {

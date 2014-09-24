@@ -59,6 +59,12 @@ define(function(require) {
 
         this.render();
 
+        _.defer(this.postRender);
+
+    },
+
+    postRender: function() {
+        this.setViewToReady();
     },
 
     onAddExtensionClicked: function(event) {

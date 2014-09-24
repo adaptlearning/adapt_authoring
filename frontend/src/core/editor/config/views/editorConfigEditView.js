@@ -73,6 +73,7 @@ define(function(require) {
 
     postRender: function() {     
       this.renderExtensionEditor('config');
+      this.setViewToReady();
     },
 
     cancel: function(event) {

@@ -66,6 +66,8 @@ define(function(require){
 
             // Should always check if input has a value and keep the search filter
             this.filterBySearchInput($('.asset-management-sidebar-filter-search').val());
+            // Fake a scroll trigger - just incase the limit is too low and no scroll bars
+            $('.asset-management-assets-container').trigger('scroll');
 
         },
 

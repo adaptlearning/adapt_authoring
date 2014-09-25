@@ -52,15 +52,4 @@ describe('database', function() {
     });
   });
 
-  it ('should provide a connect session store', function (done) {
-    var app = origin();
-    var db = app.db;
-    try {
-      should.exist(db.getSessionStore());
-      done();
-    } catch (error) {
-      done(error);
-    }
-  });
-
 });

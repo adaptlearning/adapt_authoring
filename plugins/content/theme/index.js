@@ -142,8 +142,7 @@ function initialize () {
             app.emit('rebuildCourse', tenantId, courseId);
 
             res.statusCode = 200;
-            res.json({success: true});
-            return res.end();
+            return res.json({success: true});
           });
         });
       });

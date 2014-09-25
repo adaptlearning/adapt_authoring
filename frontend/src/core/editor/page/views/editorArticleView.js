@@ -93,7 +93,8 @@ define(function(require){
     },
 
     addBlock: function(event) {
-      event.preventDefault();
+      if (event) event.preventDefault();
+      
 
       var layoutOptions = [
       {

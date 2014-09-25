@@ -3,6 +3,8 @@ define(function(require) {
 	var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
+  var EditorArticleModel = require('editorPage/models/editorArticleModel');
+  var EditorBlockModel = require('editorPage/models/editorBlockModel');
 
   var EditorMenuLayerView = EditorOriginView.extend({
 
@@ -77,11 +79,54 @@ define(function(require) {
           error: function() {
             alert('An error occurred doing the save');
           },
-          success: function(model) {
+          success: _.bind(function(model) {
+            if (type == 'page') {
+              return this.addNewPageArticleAndBlock(model);
+            }
             Origin.trigger('editor:refreshData', function() {
               Backbone.history.loadUrl();
             }, this);
-          }
+          }, this)
+        });
+      },
+
+      addNewPageArticleAndBlock: function(model) {
+
+        var typeToAdd;
+        var newChildModel;
+        var newChildTitle;
+
+        if (model.get('_type') === 'page') {
+          typeToAdd = 'article';
+          newChildTitle = 'Article title';
+          var newChildModel = new EditorArticleModel();
+        } else {
+          typeToAdd = 'block';
+          newChildTitle = 'Block title';
+          var newChildModel = new EditorBlockModel();
+        }
+
+        newChildModel.save({
+          title: newChildTitle,
+          displayTitle: '',
+          body: '',
+          _parentId: model.get('_id'),
+          _courseId: Origin.editor.data.course.get('_id')
+        }, {
+          error: function() {
+            alert('error adding new ' + typeToAdd);
+          },
+          success: _.bind(function(model, response, options) {
+            
+            if (typeToAdd === 'article') {
+              this.addNewPageArticleAndBlock(model);
+            } else {
+              Origin.trigger('editor:refreshData', function() {
+                Backbone.history.loadUrl();
+              }, this);
+            }
+            
+          }, this)
         });
       },
 

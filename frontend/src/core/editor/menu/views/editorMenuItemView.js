@@ -2,7 +2,7 @@ define(function(require){
 
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
-  
+
   var EditorMenuItemView = EditorOriginView.extend({
 
     tagName: "div",
@@ -37,6 +37,7 @@ define(function(require){
       this.on('contextMenu:page:delete', this.deleteItemPrompt);
 
       this.setupClasses();
+      
     },
 
     copyMenuItem: function() {
@@ -45,13 +46,42 @@ define(function(require){
     },
 
     onMenuItemClicked: function(event) {
-        // If a page has already been selected launch the editor
-        if (this.model.get('_isSelected') && this.model.get('_type') == 'page') {
-            return this.gotoPageEditor();
-        }
+      // Boo - jQuery doesn't allow dblclick and single click on the same element
+      // time for a timer timing clicks against time delay
+      var delay = 300;
+      var timer = null;
+      // Needing to store this on the model as global variables
+      // cause an issue that double click loses scope
+      var clicks = this.model.get('clicks');
+      this.model.set('clicks', clicks ? clicks : 0);
 
-        this.setItemAsSelected();
+      var currentClicks = this.model.get('clicks') + 1;
+      this.model.set('clicks', currentClicks);
+      // No matter what type of click - select the item straight away
+      this.setItemAsSelected();
+
+      if(currentClicks === 1) {
+
+        timer = setTimeout(_.bind(function() {
+
+          this.model.set('clicks', 0);
+
+        }, this), delay);
+
+      } else if (currentClicks === 2) {
+
+        clearTimeout(timer);
+        // Only if the current double clicked it is a page item
+        if (this.model.get('_type') == 'page') {
+          this.gotoPageEditor();
+        }
+        this.model.set('clicks', 0);
+      }
         
+    },
+
+    onMenuItemDblClicked: function(event) {
+      event.preventDefault();
     },
 
     gotoPageEditor: function() {

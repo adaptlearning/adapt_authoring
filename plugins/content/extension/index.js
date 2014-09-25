@@ -296,13 +296,11 @@ function initialize () {
       toggleExtensions(courseId, 'disable', extensions, function(error, result) {
         if (error) {
           res.statusCode = error instanceof ContentTypeError ? 400 : 500;
-          res.json({ success: false, message: error.message });
-          return res.end();
+          return res.json({ success: false, message: error.message });
         }
 
         res.statusCode = 200;
-        res.json({success: true});
-        return res.end();
+        return res.json({success: true});
       });
     });
 
@@ -322,13 +320,11 @@ function initialize () {
         if (error) {
           logger.log('info', 'error = ' + error);
           res.statusCode = error instanceof ContentTypeError ? 400 : 500;
-          res.json({ success: false, message: error.message });
-          return res.end();
+          return res.json({ success: false, message: error.message });
         }
 
         res.statusCode = 200;
-        res.json({success: true});
-        return res.end();
+        return res.json({ success: true });
       });
     });
   });

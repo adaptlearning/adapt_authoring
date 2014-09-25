@@ -30,12 +30,10 @@ function initialize () {
       duplicate({_id: req.params.id}, function (error, newCourse) {
         if (error) {
           res.statusCode = 400;
-          res.json({success: false, message: error.message});
-          return res.end();
+          return res.json({success: false, message: error.message});
         }
         res.statusCode = 200;
-        res.json({success: true, newCourseId: newCourse._id});
-        return res.end();
+        return res.json({success: true, newCourseId: newCourse._id});
       });
     });
   });

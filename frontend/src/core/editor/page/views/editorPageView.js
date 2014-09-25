@@ -114,7 +114,8 @@ define(function(require){
       }, this);
     },
 
-    addArticleView: function(articleModel, scrollIntoView) {
+    addArticleView: function(articleModel, scrollIntoView, addNewBlock) {
+  
       var newArticleView = new EditorArticleView({model: articleModel}),
         sortOrder = articleModel.get('_sortOrder');
       
@@ -128,6 +129,15 @@ define(function(require){
 
       // Increment the 'sortOrder' property
       articleModel.set('_pasteZoneSortOrder', sortOrder++);
+
+      // If adding a new article - add a new block too
+      if (addNewBlock) {
+        // Add a defer to make sure articleView is rendered
+        _.defer(function() {
+          newArticleView.addBlock();
+        });
+        
+      }
 
       // Post-article paste zone - sort order of placeholder will be one greater
       this.$('.page-articles').append(new EditorPasteZoneView({model: articleModel}).$el);
@@ -163,7 +173,7 @@ define(function(require){
         success: function(model, response, options) {
 
           Origin.trigger('editor:refreshData', function() {
-            _this.addArticleView(model, true);
+            _this.addArticleView(model, true, true);
           }, this);
           
         }

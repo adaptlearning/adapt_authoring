@@ -20,8 +20,7 @@ describe('rest', function() {
     // add a dummy put service
     rest.put('/foo/:bar', function (req, res, next) {
       res.statusCode = 200;
-      res.json({ bar: parseInt(req.params.bar,10) });
-      res.end();
+      return res.json({ bar: parseInt(req.params.bar,10) });
     });
 
     // fire request
@@ -40,8 +39,7 @@ describe('rest', function() {
     // add a dummy get service
     rest.get('/foo/:bar', function (req, res, next) {
       res.statusCode = 200;
-      res.json({ bar: parseInt(req.params.bar,10) });
-      res.end();
+      return res.json({ bar: parseInt(req.params.bar,10) });
     });
 
     // fire request
@@ -60,8 +58,7 @@ describe('rest', function() {
     // add a dummy post service
     rest.post('/foo/:bar', function (req, res, next) {
       res.statusCode = 200;
-      res.json({ bar: parseInt(req.params.bar,10) });
-      res.end();
+      return res.json({ bar: parseInt(req.params.bar,10) });
     });
 
     // fire request
@@ -80,8 +77,7 @@ describe('rest', function() {
     // add a dummy delete service
     rest.delete('/foo/:bar', function (req, res, next) {
       res.statusCode = 200;
-      res.json({ bar: parseInt(req.params.bar,10) });
-      res.end();
+      return res.json({ bar: parseInt(req.params.bar,10) });
     });
 
     // fire request

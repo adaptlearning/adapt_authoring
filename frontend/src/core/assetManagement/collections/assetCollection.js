@@ -7,7 +7,7 @@ define(function(require) {
 
     model: AssetModel,
 
-    url: 'api/asset',
+    url: 'api/asset/query',
 
     dateComparator: function(m) {
       return -m.get('lastUpdated').getTime();

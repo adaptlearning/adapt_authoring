@@ -18,61 +18,30 @@ define(function(require){
         events: {},
 
         preRender: function() {
-            this.assetDenominator = 12;
+            this.sort = { createdAt: -1 };
+            this.search = {};
+            this.assetLimit = 0;
+            this.assetDenominator = 16;
             this.filters = [];
             this.collection = new AssetCollection();
-            this.listenTo(this.collection, 'sync', this.renderAssetItems);
+            this.listenTo(this.collection, 'sync', this.onCollectionSynced);
+            this.listenTo(this.collection, 'add', this.appendAssetItem);
             this.listenTo(Origin, 'assetManagement:sidebarFilter:add', this.addFilter);
             this.listenTo(Origin, 'assetManagement:sidebarFilter:remove', this.removeFilter);
             this.listenTo(Origin, 'assetManagement:sidebarView:filter', this.filterBySearchInput);
         },
 
-        renderAssetItems: function(filteredCollection) {
-            
-            // Always reset the currentAssetLimit of assets
-            this.currentAssetLimit = 0;
-            this.assetCollection = (filteredCollection || this.collection);
-
-            // Check if collection has items and hide instructions
-            if (this.assetCollection.length > 0) {
-                $('.asset-management-no-assets').addClass('display-none');
-            }
-
-            // Trigger event to kill zombie views
-            Origin.trigger('assetManagement:assetViews:remove');
-            // Empty collection container
-            this.$('.asset-management-collection-inner').empty();
-
-            // This is used as a switch
-            var hasSetupLazyLoading = false;
-            // Render each asset item
-            this.assetCollection.each(function(asset) {
-                // Work out if this.assetLimit has been set
-                this.assetLimit = (this.assetLimit || this.assetDenominator);
-                // Check if the asset limit has been reached
-                if (this.currentAssetLimit >= this.assetLimit) {
-                    // Only if the collection is bigger then the currentAssetLimit 
-                    // setup the scroll listener
-                    if (this.assetCollection.length > this.currentAssetLimit && !hasSetupLazyLoading) {
-                        hasSetupLazyLoading = true;
-                        this.setupLazyScrolling();
-                    }
-                    return;
-                }
-                this.currentAssetLimit ++;
-                this.$('.asset-management-collection-inner').append(new AssetItemView({model: asset}).$el);
-
-            }, this);
-
-            // Should always check if input has a value and keep the search filter
-            this.filterBySearchInput($('.asset-management-sidebar-filter-search').val());
-            // Fake a scroll trigger - just incase the limit is too low and no scroll bars
-            $('.asset-management-assets-container').trigger('scroll');
-
+        onCollectionSynced: function () {
+          if (this.collection.length) {
+            $('.asset-management-no-assets').addClass('display-none');
+          } 
         },
 
         setupLazyScrolling: function() {
-
+            if (this.hasSetUpLazyScrolling) {
+              return;
+            }
+            
             var $assetContainer = $('.asset-management-assets-container');
             var $assetContainerInner = $('.asset-management-assets-container-inner');
             // Remove event before attaching
@@ -90,38 +59,57 @@ define(function(require){
                 }
 
             }, this));
+            this.hasSetUpLazyScrolling = true;
+        },
+        
+        updateCollection: function (reset) {
+            // If removing items, we need to reset our limits
+            if (reset) {
+              // Trigger event to kill zombie views
+              Origin.trigger('assetManagement:assetViews:remove');
             
+              // Empty collection container
+              this.$('.asset-management-collection-inner').empty();
+              
+              this.assetLimit = 0;
+              this.collection.reset();
+            }
+            
+            this.collection.fetch({ 
+              remove: reset,
+              data: { 
+                search: this.search,
+                operators : { 
+                  skip: this.assetLimit, 
+                  limit: this.assetDenominator,
+                  sort: this.sort
+                } 
+              } 
+            });
+        },
+        
+        appendAssetItem: function (asset) {
+          this.$('.asset-management-collection-inner').append(new AssetItemView({ model: asset }).$el);
         },
 
         lazyRenderCollection: function() {
-            // Check if the currentAssetLimit is greater than the asset collection length
-            // if so - remove the scroll event
-            if (this.currentAssetLimit >= this.assetCollection.length) {
-                this.removeLazyScrolling();
-                return;
-            }
             // Adjust limit based upon the denominator
             this.assetLimit += this.assetDenominator;
-            this.assetCollection.each(function(asset, index) {
-                // Check if the asset limit has been reached
-                if (this.currentAssetLimit >= this.assetLimit || index < this.currentAssetLimit) {
-                    return;
-                }
-                this.currentAssetLimit ++;
-                this.$('.asset-management-collection-inner').append(new AssetItemView({model: asset}).$el);
-
-            }, this);
+            this.updateCollection();
         },
 
         postRender: function() {
-            this.collection.fetch();
+            this.setupLazyScrolling();
+            this.updateCollection();
+
+            // Fake a scroll trigger - just incase the limit is too low and no scroll bars
+            $('.asset-management-assets-container').trigger('scroll');
         },
 
         addFilter: function(filterType) {
             // add filter to this.filters
             this.filters.push(filterType);
             this.filterCollection();
-
         },
 
         removeFilter: function(filterType) {
@@ -134,36 +122,15 @@ define(function(require){
         },
 
         filterCollection: function(event) {
-            // If this.filters is empty then no filters are applied
-            // Instead render all items
-            if (this.filters.length === 0) {
-                return this.renderAssetItems(this.collection);
-            }
-
-            // Filter collection based upon this.filters array
-            var filteredCollection = this.collection.filter(function(assetItem) {
-
-                return _.contains(this.filters, assetItem.get('assetType'));
-
-            }, this);
-
-            // Once filter re-render the view
-            // Why re-render is so we can use search on the dom elements whilst keeping
-            // the filter separate
-            this.renderAssetItems(new Backbone.Collection(filteredCollection));
-
+            this.search.assetType = this.filters.length
+                ? { $in: this.filters }
+                : null ;
+            this.updateCollection(true);
         },
 
-        filterBySearchInput: function(filterText) {
-            // Go through each model and hide the ones with this title
-            this.collection.each(function(model) {
-                if (model.get('title').toLowerCase().indexOf(filterText.toLowerCase()) > -1) {
-                    this.$('.id-' + model.get('_id')).removeClass('display-none');
-                } else {
-                    this.$('.id-' + model.get('_id')).addClass('display-none');
-                }
-
-            }, this);
+        filterBySearchInput: function (filterText) {
+            this.search = { title: '.*' + filterText.toLowerCase() + '.*' };
+            this.updateCollection(true);
         },
 
         removeLazyScrolling: function() {

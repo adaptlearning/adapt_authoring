@@ -13,7 +13,7 @@ define(function(require) {
         },
 
         onAddNewAssetClicked: function() {
-            Origin.router.navigate('#/assetManagement/new', {trigger: true});
+            Origin.router.navigate('#/assetManagement/new', { trigger: true });
         },
 
         onFilterButtonClicked: function(event) {
@@ -32,14 +32,16 @@ define(function(require) {
 
         },
 
-        onSearchKeyup: function(event) {
-            var filterText = $(event.currentTarget).val();
-            Origin.trigger('assetManagement:sidebarView:filter', filterText);
+        onSearchKeyup: function(event, filter) {
+            if (13 == event.keyCode || filter) {
+                var filterText = $(event.currentTarget).val();
+                Origin.trigger('assetManagement:sidebarView:filter', filterText);
+            }
         },
 
         onClearSearchClicked: function(event) {
             event.preventDefault();
-            this.$('.asset-management-sidebar-filter-search').val('').trigger('keyup');
+            this.$('.asset-management-sidebar-filter-search').val('').trigger('keyup', [true]);
         }
 
     }, {

@@ -60,8 +60,7 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
 
     if (!user) {
       res.statusCode = 401;
-      res.json({ success: false });
-      return res.end();
+      return res.json({ success: false });
     }
 
     req.logIn(user, function (error) {
@@ -82,8 +81,7 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
 LocalAuth.prototype.disavow = function (req, res, next) {
   req.logout();
   res.statusCode = 200;
-  res.json({ success: true });
-  return res.end();
+  return res.json({ success: true });
 };
 
 LocalAuth.prototype.registerUser = function (req, res, next) {

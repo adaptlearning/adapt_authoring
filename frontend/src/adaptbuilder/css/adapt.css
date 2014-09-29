@@ -260,7 +260,7 @@ a.open-context-contentObject{color:white}
 .editor-menu-item-settings .editor-delete-contentobject-element{float:right}
 .editor-menu-item-pin{display:none;position:absolute;right:-10px;top:50%;margin-top:-5px;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent}
 
-.editor-menu-layer{height:100%;width:240px;float:left;padding-bottom:30px}.editor-menu-layer:first-child .editor-menu-layer-inner{border-right:2px solid #454545}
+.editor-menu-layer{height:100%;width:240px;float:left;padding-bottom:30px;overflow:hidden}.editor-menu-layer:first-child .editor-menu-layer-inner{border-right:2px solid #454545}
 .editor-menu-layer-inner{position:relative;border-right:2px solid #454545;height:100%;overflow-y:scroll;overflow-x:hidden}
 .editor-menu-layer-button{float:left;width:50%;padding:8px;font-size:13px;border-radius:0px;border-bottom:1px solid #454545;border-right:2px solid #454545}.editor-menu-layer-button:first-child{border-right:1px solid #454545}
 .editor-menu-layer-button i{margin-right:8px}

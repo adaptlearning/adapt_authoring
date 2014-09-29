@@ -182,6 +182,7 @@ define(function(require){
     setupHorizontalScroll: function(windowWidth, windowHeight) {
         var $menuLayers = this.$('.editor-menu-layer');
         var $menuView = this.$el;
+        var $menuControls = this.$('.editor-menu-layer-controls');
         // Get item width
         var itemWidth = $menuLayers.first().outerWidth(true);
         // Set menu holder to width by items length
@@ -192,7 +193,7 @@ define(function(require){
         var menuOffsetTop = this.$el.offset().top;
         // Set height
         this.$el.height(windowHeight - menuOffsetTop);
-        this.$('.editor-menu-layer').height(windowHeight - menuOffsetTop);
+        this.$('.editor-menu-layer').height(windowHeight - menuOffsetTop - $menuControls.height());
 
     }
 

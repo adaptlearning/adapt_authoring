@@ -39,14 +39,29 @@ define(function(require){
 
     uploadAsset: function() {
 
-      var $title = this.$('.asset-title')[0].value;
-      var $description = this.$('.asset-description')[0].value;
-      if ($title && $description) {
-        this.uploadFile();
+      var title = this.$('.asset-title').val();
+      var description = this.$('.asset-description').val();
+      if (title && description) {
+        // If model is new then uploadFile
+        if (this.model.isNew()) {
+          this.uploadFile();
+          // Return false to prevent the page submitting
+          return false;
+        } else {
+          // Else just update the title, description and tags
+          this.model.set({title: title, description: description});
+          this.model.save(null, {
+            error: function(model, response, options) {
+              alert('Error updating asset');
+            },
+            success: function(model, response, options) {
+              Origin.router.navigate('#/assetManagement', {trigger:true});
+            }
+          })
+        }
       }
 
-      // Return false to prevent the page submitting
-      return false;
+      
     },
 
     uploadFile: function() {

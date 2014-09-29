@@ -97,7 +97,12 @@ define(function(require){
     },
 
     setupImageReady: function() {
-      this.$el.imageready(this.setViewToReady);
+      if (this.$el.find('img').length) {
+        this.$el.imageready(this.setViewToReady);
+      } else {
+        this.setViewToReady();
+      }
+      
     },
 
     evaluateProjectCount: function (projects) {

@@ -1,6 +1,7 @@
 #app{margin-top:40px;margin-left:220px}
 .app-inner{position:relative}
-.loading{width:100%;height:100%;position:absolute;top:0;left:0;z-index:5000;text-align:center;background-color:#fff;opacity:1;transition:opacity 0.3s}.loading.fade-out{opacity:0}
+.loading{width:100%;height:100%;position:absolute;top:0;left:0;z-index:5;text-align:center;opacity:1;transition:opacity 0.3s}.loading .loading-inner{position:relative;margin-left:220px;height:100%;background-color:#e9f0fa}
+.loading.fade-out{opacity:0}
 .loading .loading-image{width:100%;height:100px;position:absolute;top:50%;margin-top:-50px;background-image:url(assets/ajax-loader.gif);background-repeat:no-repeat;background-position:center}
 
 .col-row{zoom:1;}.col-row:before,.col-row:after{content:"\0020";display:block;height:0;overflow:hidden}

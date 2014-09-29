@@ -51,7 +51,7 @@ installs latest nodejs+npm on first run
 ####Install MongoDB
 * download mongodb from [here](http://www.mongodb.org/downloads)
 * run the installer
-* create mongo data folder in your root (C:\data\md)
+* create mongo data folder in your root (C:\data\db)
 * (optional) http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows/#manually-create-a-windows-service-for-mongodb
 
 

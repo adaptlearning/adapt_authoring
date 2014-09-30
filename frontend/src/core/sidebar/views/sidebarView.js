@@ -53,7 +53,6 @@ define(function(require) {
 
         addFilterView: function(options) {
             Origin.trigger('sidebar:sidebarFilter:remove');
-            console.log('add filter view');
             $('body').append(new SidebarFilterView(options).$el);
         }
 

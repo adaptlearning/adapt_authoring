@@ -27,7 +27,8 @@
     display:block;
     padding:18px 20px;
     i {
-        margin-right:10px;
+        width: 20px;
+        margin-right:8px;
     }
 }
 
@@ -52,12 +53,18 @@
         width:100%;
         padding:18px 20px;
         display:inline-block;
+        text-align:left;
     }
     button {
         background:none;
         border:none;
         width:100%;
         padding:18px 20px;
+        text-align:left;
+        i {
+            width: 20px;
+            margin-right:8px;
+        }
         &.sidebar-inline-input-button {
             width:10px;
             height:10px;
@@ -86,8 +93,18 @@
 
 .sidebar-divide {
     text-align:center;
+    i {
+        margin-right:4px;
+    }
 }
 
 .sidebar-divide-inner {
     padding:8px;
+}
+
+button.sidebar-tag {
+    padding:14px 20px;
+    &.selected i:before {
+        content:'\f205';
+    }
 }

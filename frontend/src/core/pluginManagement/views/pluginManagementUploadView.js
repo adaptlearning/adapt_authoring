@@ -19,6 +19,7 @@ define(function(require){
     },
 
     postRender: function() {
+      _.defer(this.setViewToReady);
     },
 
     uploadFile: function() {

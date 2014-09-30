@@ -218,6 +218,7 @@ button{width:auto;overflow:visible}
 .dashboard-sidebar-filter-clear{padding:6px}
 #dashboard-tags_tagsinput{display:inline-block;padding:4px;border:none}
 .dashboard-no-projects{padding-left:30px}
+.sidebar-tag{text-align:left}.sidebar-tag.selected i:before{content:'\f205'}
 
 .editing-overlay{position:absolute;z-index:10;top:0px;left:10%;width:100%;opacity:0;background-color:#f2f2f2}
 .editing-overlay-panel-content input,.editing-overlay-panel-content textarea{min-width:50%}
@@ -365,7 +366,7 @@ a.open-context-contentObject{color:white}
 .project-header-inner{position:relative}
 .project-detail-title{margin-bottom:10px}
 .project-settings{position:absolute;top:0%;left:0px;font-size:16px;width:100%;height:30px;opacity:1;background-color:#fff;transition:all 0.3s}.project-settings a{color:#3e4960}
-.project-settings-inner{padding:6px}.project-settings-inner a.course-delete{float:right}
+.project-settings-inner{padding:3px 6px}.project-settings-inner a.course-delete{float:right}
 .project-details-inner{padding:20px}
 .project-details-row{font-size:11px}
 .projects-details-label{color:#15a4fa;font-weight:600}
@@ -382,17 +383,19 @@ a.open-context-contentObject{color:white}
 .sidebar .dashboard-sidebar-filter-clear{display:inline}
 .sidebar-inner{padding-top:41px}
 .sidebar-breadcrumb{position:relative;top:-40px}
-.sidebar-breadcrumb-inner{display:block;padding:18px 20px}.sidebar-breadcrumb-inner i{margin-right:10px}
+.sidebar-breadcrumb-inner{display:block;padding:18px 20px}.sidebar-breadcrumb-inner i{width:20px;margin-right:8px}
 .sidebar-item-container{position:relative;height:100%}
 .sidebar-item{position:relative;left:10%;opacity:0}.sidebar-item label{display:block;margin-bottom:4px}
-.sidebar-row,select.sidebar-row{display:block}.sidebar-row a,select.sidebar-row a{width:100%;padding:18px 20px;display:inline-block}
-.sidebar-row button,select.sidebar-row button{background:none;border:none;width:100%;padding:18px 20px}.sidebar-row button.sidebar-inline-input-button,select.sidebar-row button.sidebar-inline-input-button{width:10px;height:10px;border:none;width:28px;height:32px;padding:8px;border:none}.sidebar-row button.sidebar-inline-input-button:hover,select.sidebar-row button.sidebar-inline-input-button:hover{background:none}
+.sidebar-row,select.sidebar-row{display:block}.sidebar-row a,select.sidebar-row a{width:100%;padding:18px 20px;display:inline-block;text-align:left}
+.sidebar-row button,select.sidebar-row button{background:none;border:none;width:100%;padding:18px 20px;text-align:left}.sidebar-row button i,select.sidebar-row button i{width:20px;margin-right:8px}
+.sidebar-row button.sidebar-inline-input-button,select.sidebar-row button.sidebar-inline-input-button{width:10px;height:10px;border:none;width:28px;height:32px;padding:8px;border:none}.sidebar-row button.sidebar-inline-input-button:hover,select.sidebar-row button.sidebar-inline-input-button:hover{background:none}
 .sidebar-item-title{text-align:center}
 .sidebar-item-title-inner{padding:30px 20px;font-size:15px;font-weight:200}
-.sidebar-divide{text-align:center}
+.sidebar-divide{text-align:center}.sidebar-divide i{margin-right:4px}
 .sidebar-divide-inner{padding:8px}
+button.sidebar-tag{padding:14px 20px}button.sidebar-tag.selected i:before{content:'\f205'}
 
-.sidebar-filter{position:fixed;left:220px;top:40%;max-height:366px;border:1px solid #e2e2e2;border-left:none;background-color:#fff;overflow-y:hidden}
+.sidebar-filter{position:fixed;left:220px;top:40%;max-height:366px;border:1px solid #e2e2e2;border-left:none;background-color:#fff;overflow-y:hidden;display:none}
 .sidebar-filter-toolbar{border-bottom:1px solid #e2e2e2}
 .sidebar-filter-toolbar-title{float:left;padding:10px}
 .sidebar-filter-toolbar-close{float:right}.sidebar-filter-toolbar-close button:hover{color:#15a4fa}

@@ -33,7 +33,12 @@ define(function(require) {
         },
 
         postRender: function() {
+            // Position sidebar filter to filter button
+            var offsetTop = $('.sidebar-filter-button').offset().top;
+            this.$el.css({'top': offsetTop, 'display': 'block'});
+            // Bring focus to the filter input field
             this.$('.sidebar-filter-search-input').focus();
+            // First item should be selected so the user can press enter
             this.$('.sidebar-filter-item').first().addClass('selected');
         },
 

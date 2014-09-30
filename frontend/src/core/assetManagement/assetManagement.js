@@ -22,6 +22,25 @@ define(function(require) {
             "backButtonRoute": "/#/assetManagement"
         });
         Origin.router.createView(AssetManagementNewAssetView, { model: new AssetModel });
+    } else if (subLocation === 'edit') {
+
+      var Asset = new AssetModel({
+        _id: location
+      }); 
+      // Fetch existing asset model
+      Asset.fetch({
+        success: function() {
+          Origin.trigger('location:title:update', {title: 'Edit Asset'});
+          Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el, {
+              "backButtonText": "Back to assets",
+              "backButtonRoute": "/#/assetManagement"
+          });
+          Origin.router.createView(AssetManagementNewAssetView, { 
+            model: Asset
+          });
+        }
+      })
+      
     }
   });
 

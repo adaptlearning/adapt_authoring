@@ -11,6 +11,7 @@ define(function(require){
     className: 'asset-management-preview',
 
     events: {
+      'click .asset-preview-edit-button': 'onEditButtonClicked'
     },
 
     preRender: function() {
@@ -28,6 +29,11 @@ define(function(require){
           features: ['playpause','progress','current','duration']
         });
       }
+    },
+
+    onEditButtonClicked: function() {
+      var assetId = this.model.get('_id');
+      Backbone.history.navigate('#/assetManagement/' + assetId + '/edit', {trigger: true});
     }
 
   }, {

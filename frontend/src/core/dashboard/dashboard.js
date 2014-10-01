@@ -15,14 +15,36 @@ define(function(require) {
       projects.fetch({
         success: function() {
           Origin.trigger('location:title:update', {title: 'Dashboard - viewing all courses'});
+          Origin.options.addItems([
+            {
+              title: 'View as grid',
+              icon: 'th',
+              callbackEvent: 'dashboard:layout:grid',
+              group:'views'
+            }, {
+              title: 'View as list',
+              icon: 'list',
+              callbackEvent: 'dashboard:layout:list',
+              group:'views'
+            },
+            {
+              title: 'Sort ascending',
+              icon: 'th',
+              callbackEvent: 'dashboard:sort:asc',
+              group:'sort'
+            }, {
+              title: 'Sort descending',
+              icon: 'list',
+              callbackEvent: 'dashboard:sort:desc',
+              group:'sort'
+            }
+          ]);
           Origin.router.createView(DashboardView, {collection:projects});
           Origin.sidebar.addView(new DashboardSidebarView({collection:projects}).$el);
         }
       });
       
     }
-
-    
 
   });
 

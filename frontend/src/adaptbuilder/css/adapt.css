@@ -352,6 +352,9 @@ a.open-context-contentObject{color:white}
 .notify-push-inner{padding:30px 0px 30px 30px;margin-right:78px;cursor:pointer}
 .notify-push-close{display:inline-block;text-decoration:none;position:absolute;right:30px;top:50%;margin-top:-12px}.notify-push-close .icon{color:#fff}.no-touch .notify-push-close .icon:hover{color:#000}
 
+.options{position:absolute;top:40px;right:0px}.options-inner{padding:30px}
+.options a{margin-left:10px;margin-right:10px;text-decoration:none;text-align:center}.options a i{margin-right:10px}
+
 .pluginManagement-loading{text-align:center;padding:30px}
 .plugin-management-new-plugin-inner{padding:30px}
 
@@ -470,6 +473,11 @@ body{background-color:#e9f0fa;color:#3e4960}
 .navigation-item{color:#9cabc4}
 .navigation-left a{border-right:1px solid #3e4a5f}
 .navigation-right a{border-left:1px solid #3e4a5f}
+
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
+.options a{color:#3e4960}.options a:hover{transition:color 0.3s;color:#15a4fa}
+.options a.selected{transition:color 0.3s;color:#0588d7}
+.options-group{float:left;padding:4px 0px;border-left:1px solid #8face2}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .editor-view .paste-zone{background-color:#ffa08d;border:1px solid #ff765a;border:1px solid #ff765a}

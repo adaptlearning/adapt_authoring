@@ -92,7 +92,6 @@ define(function(require){
 
       // Defer imageReady check until all elements are loaded
       _.defer(_.bind(this.setupImageReady, this));
-
       this.evaluateProjectCount(projects);
     },
 
@@ -108,6 +107,8 @@ define(function(require){
     evaluateProjectCount: function (projects) {
       if (projects.length == 0) {
         this.$('.dashboard-no-projects').removeClass('display-none');
+      } else {
+        this.$('.dashboard-no-projects').addClass('display-none');
       }
     },
 

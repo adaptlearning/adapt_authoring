@@ -9,7 +9,8 @@ var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
     async = require('async'),
     origin = require('../../../'),
     rest = require('../../../lib/rest'),
-    database = require('../../../lib/database');
+    database = require('../../../lib/database'),
+    usermanager = require('../../../lib/usermanager');
 
 function CourseContent () {
 }
@@ -37,6 +38,27 @@ function initialize () {
       });
     });
   });
+
+  // Content Hook for updatedAt and updatedBy:
+  ['contentobject', 'article', 'block', 'component'].forEach(function (contentType) {
+    app.contentmanager.addContentHook('update', contentType, {when:'post'}, function (contentType, data, next) { 
+      
+      var userId = usermanager.getCurrentUser()._id;
+      var updatedAt = new Date();
+
+      database.getDatabase(function (err, db) {
+        db.update('course', { _id: data._courseId }, { updatedAt: updatedAt, updatedBy: userId }, function (err) {
+          if (err) {
+            next(err);
+          }
+          next(null, data);
+        });
+      });
+
+    }.bind(null, contentType));
+
+  });
+
 }
 
 /**

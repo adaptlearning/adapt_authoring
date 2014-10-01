@@ -28,6 +28,10 @@ define(function(require) {
       }
     },
 
+    postRender: function() {
+      this.setViewToReady();
+    },
+
     saveEditing: function() {
       this.model.save({
         title: this.$('.page-title').val(),

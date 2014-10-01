@@ -392,7 +392,7 @@ a.open-context-contentObject{color:white}
 .sidebar-item-title{text-align:center}
 .sidebar-item-title-inner{padding:30px 20px;font-size:15px;font-weight:200}
 .sidebar-divide{text-align:center}.sidebar-divide i{margin-right:4px}
-.sidebar-divide-inner{padding:8px}
+.sidebar-divide-inner{padding:20px}
 button.sidebar-tag{padding:14px 20px}button.sidebar-tag.selected i:before{content:'\f205'}
 
 .sidebar-filter{position:fixed;left:220px;top:40%;max-height:366px;border:1px solid #e2e2e2;border-left:none;background-color:#fff;overflow-y:hidden;display:none}

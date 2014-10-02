@@ -30,19 +30,13 @@ define(function(require) {
 		setOptions: function(view, options) {
 			var _this = this;
 			var keys = _.keys(options);
+			
 			_.each(keys, function(key) {
-
 				var callbackAttr = view + ':' + key + ':' + options[key];
 				
 				_this.eventsToTrigger.push(callbackAttr);
-
 			});
 			console.log(_this.eventsToTrigger);
-		},
-
-		findOptionByDataCallbackAttr: function(callbackAttr) {
-			var $element = this.$('a').filter('[data-callback="' + callbackAttr + '"]');
-
 		},
 
 		postRender: function() {

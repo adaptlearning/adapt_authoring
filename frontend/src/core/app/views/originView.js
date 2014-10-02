@@ -79,6 +79,14 @@ define(function(require){
       }
     },
 
+    persistOptions: function() {
+      var prefs = this.getUserPreferences();
+
+      if (prefs.hasOwnProperty('options')) {
+        Origin.trigger('options:set', this.settings.preferencesKey, prefs.options);
+      }
+    },
+
     sortArrayByKey: function (arr, key) {
       return arr.sort(function(a, b){
         var keyA = a[key],

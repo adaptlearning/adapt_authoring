@@ -32,11 +32,7 @@ define(function(require){
       this.listenTo(Origin, 'dashboard:dashboardSidebarView:filterBySearch', this.filterCoursesBySearch);
       this.listenTo(Origin, 'dashboard:dashboardSidebarView:filterByTags', this.filterCoursesByTags);
 
-      var prefs = this.getUserPreferences();
-      if (prefs.hasOwnProperty('options')) {
-        Origin.trigger('options:set', this.settings.preferencesKey, prefs.options);
-      }
-      // console.log(this.getUserPreferences());
+      this.persistOptions();
     },
 
     events: {

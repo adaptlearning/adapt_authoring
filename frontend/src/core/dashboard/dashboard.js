@@ -20,25 +20,30 @@ define(function(require) {
               title: 'View as grid',
               icon: 'th',
               callbackEvent: 'dashboard:layout:grid',
-              group:'views'
+              value: 'grid',
+              group: 'layout'
             }, {
               title: 'View as list',
               icon: 'list',
               callbackEvent: 'dashboard:layout:list',
-              group:'views'
+              value: 'list',
+              group: 'layout'
             },
             {
               title: 'Sort ascending',
-              icon: 'th',
+              icon: 'sort-alpha-asc',
               callbackEvent: 'dashboard:sort:asc',
-              group:'sort'
+              value: 'asc',
+              group: 'sort'
             }, {
               title: 'Sort descending',
-              icon: 'list',
+              icon: 'sort-alpha-desc',
               callbackEvent: 'dashboard:sort:desc',
-              group:'sort'
+              value: 'desc',
+              group: 'sort'
             }
           ]);
+
           Origin.router.createView(DashboardView, {collection:projects});
           Origin.sidebar.addView(new DashboardSidebarView({collection:projects}).$el);
         }

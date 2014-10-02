@@ -1,7 +1,7 @@
 /*
 * BuilderView - base class for all views
 * License - http://github.com/adaptlearning/adapt_authoring/LICENSE
-* Maintainers - Kevin Corry <kevinc@learningpool.com>
+* Maintainers - Brian Quinn <brian@learningpool.com>
 */
 define(function(require){
 
@@ -11,7 +11,8 @@ define(function(require){
   var OriginView = Backbone.View.extend({
 
     settings: {
-      autoRender: true
+      autoRender: true,
+      preferencesKey: ''
     },
 
     initialize: function(options) {
@@ -41,6 +42,41 @@ define(function(require){
 
     setViewToReady: function() {
       Origin.trigger('router:hideLoading');
+    },
+
+    setUserPreference: function(setting, isOption) {
+      if (this.settings.preferencesKey && typeof(Storage) !== "undefined") {
+        // Get any previous settings
+        var isOption = isOption || false;
+        var data = setting.split(':');
+        var key = data[0];
+        var value = data[1];
+        var prefs = localStorage.getItem(this.settings.preferencesKey);
+        var json = (prefs) ?
+                    JSON.parse(prefs)
+                    : {};
+
+        if (!isOption) {
+          json[key] = value;
+        } else {
+          if (!json.hasOwnProperty('options')) {
+            json.options = {};
+          }
+
+          json.options[key] = value;          
+        } 
+        
+        localStorage.setItem(this.settings.preferencesKey, JSON.stringify(json));
+      }
+    },
+
+    getUserPreferences: function() {
+      if (this.settings.preferencesKey && typeof(Storage) !== "undefined"
+        && localStorage.getItem(this.settings.preferencesKey)) {
+        return JSON.parse(localStorage.getItem(this.settings.preferencesKey));
+      } else {
+        return null;
+      }
     },
 
     sortArrayByKey: function (arr, key) {

@@ -8,13 +8,16 @@ define(function(require){
   var ProjectCollection = require('coreJS/project/collections/projectCollection');
 
   var DashboardView = OriginView.extend({
+    settings: {
+      autoRender: true,
+      preferencesKey: 'dashboard'
+    },
 
     tagName: "div",
 
     className: "dashboard",
 
     preRender: function() {
-
       // Set empty filters
       this.filterText = '';
       this.filterTags = [];
@@ -28,10 +31,15 @@ define(function(require){
       this.listenTo(Origin, 'dashboard:sort:desc', this.sortDescending);
       this.listenTo(Origin, 'dashboard:dashboardSidebarView:filterBySearch', this.filterCoursesBySearch);
       this.listenTo(Origin, 'dashboard:dashboardSidebarView:filterByTags', this.filterCoursesByTags);
+
+      var prefs = this.getUserPreferences();
+      if (prefs.hasOwnProperty('options')) {
+        Origin.trigger('options:set', this.settings.preferencesKey, prefs.options);
+      }
+      // console.log(this.getUserPreferences());
     },
 
     events: {
-      'click #dashboardMenu button'     : 'formclick',
       'click': 'removeSelectedItems'
     },
 
@@ -44,7 +52,8 @@ define(function(require){
         $items = $('.project-list-item');
 
       $container.removeClass('grid-layout').addClass('list-layout');
-      
+
+      this.setUserPreference('layout:list', true);
     },
 
     switchLayoutToGrid: function() {
@@ -52,6 +61,8 @@ define(function(require){
         $items = $('.project-list-item');
 
       $container.removeClass('list-layout').addClass('grid-layout');
+
+      this.setUserPreference('layout:grid', true);
     },
 
     sortAscending: function() {
@@ -60,6 +71,9 @@ define(function(require){
       });
 
       this.renderProjectViews(sortedCollection);
+      
+      this.setUserPreference('sort:asc', true);
+      console.log('in sortAscending');
     },
 
     sortDescending: function() {
@@ -70,6 +84,8 @@ define(function(require){
       sortedCollection = sortedCollection.reverse();
 
       this.renderProjectViews(sortedCollection);
+
+      this.setUserPreference('sort:desc', true);
     },
 
     editProject: function(event) {
@@ -92,6 +108,7 @@ define(function(require){
 
       // Defer imageReady check until all elements are loaded
       _.defer(_.bind(this.setupImageReady, this));
+
       this.evaluateProjectCount(projects);
     },
 
@@ -101,7 +118,6 @@ define(function(require){
       } else {
         this.setViewToReady();
       }
-      
     },
 
     evaluateProjectCount: function (projects) {
@@ -121,7 +137,6 @@ define(function(require){
       this.filterText = filterText;
 
       this.filterCourses();
-      
     },
 
     filterCoursesByTags: function(tags) {

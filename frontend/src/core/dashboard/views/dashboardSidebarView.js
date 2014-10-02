@@ -4,13 +4,13 @@ define(function(require) {
 	var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
 
 	var DashboardSidebarView = SidebarItemView.extend({
+        settings: {
+          autoRender: true,
+          preferencesKey: 'dashboardSidebar'
+        },
 
 		events: {
 			'click .dashboard-sidebar-add-course'	: 'addCourse',
-			'click a.project-layout-grid' 			: 'layoutGrid',
-			'click a.project-layout-list' 			: 'layoutList',
-			'click a.project-sort-asc' 				: 'sortAscending',
-			'click a.project-sort-desc' 			: 'sortDescending',
             'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
             'click .dashboard-sidebar-filter-clear': 'clearFilterInput',
             'click .dashboard-sidebar-tag': 'onTagClicked',
@@ -29,39 +29,18 @@ define(function(require) {
 			Origin.router.navigate('#/project/new', {trigger:true});
 		},
 
-		layoutList: function(event) {
-			event.preventDefault();
-
-			Origin.trigger('dashboard:layout:list');
-		},
-
-		layoutGrid: function(event) {
-			event.preventDefault();
-
-			Origin.trigger('dashboard:layout:grid');
-		},
-
-		sortAscending: function(event) {
-			event.preventDefault();
-
-			Origin.trigger('dashboard:sort:asc');
-		},
-
-		sortDescending: function(event) {
-			event.preventDefault();
-
-			Origin.trigger('dashboard:sort:desc');
-		},
-
         filterProjectsByTitle: function(event) {
             var filterText = $(event.currentTarget).val();
             Origin.trigger('dashboard:dashboardSidebarView:filterBySearch', filterText);
+
+            this.setUserPreference('filterText:' + filterText);
         },
 
         clearFilterInput: function(event) {
             event.preventDefault();
             var $currentTarget = $(event.currentTarget);
             $currentTarget.prev('.dashboard-sidebar-filter-input').val('').trigger('keyup');
+            this.setUserPreference('filterText:');
         },
 
         onTagClicked: function(event) {

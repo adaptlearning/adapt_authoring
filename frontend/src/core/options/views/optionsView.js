@@ -8,7 +8,9 @@ define(function(require) {
 		className: 'options',
 
 		initialize: function() {
+			this.eventsToTrigger = [];
 			this.listenTo(Origin, 'remove:views', this.remove);
+			this.listenTo(Origin, 'options:set', this.setOptions);
 			this.render();
 		},
 
@@ -25,11 +27,38 @@ define(function(require) {
 		    return this;
 		},
 
+		setOptions: function(view, options) {
+			var _this = this;
+			var keys = _.keys(options);
+			_.each(keys, function(key) {
+
+				var callbackAttr = view + ':' + key + ':' + options[key];
+				
+				_this.eventsToTrigger.push(callbackAttr);
+
+			});
+			console.log(_this.eventsToTrigger);
+		},
+
+		findOptionByDataCallbackAttr: function(callbackAttr) {
+			var $element = this.$('a').filter('[data-callback="' + callbackAttr + '"]');
+
+		},
+
 		postRender: function() {
 			// First sort out the groups
 			this.sortAndRenderGroups();
 			// Add a defer to make sure the groups are rendered
 			_.defer(_.bind(this.renderOptions, this));
+
+			this.triggerStateEvents();
+		},
+
+		triggerStateEvents: function() {
+			_.each(this.eventsToTrigger, function(ev) {
+				console.log('triggering - ' + ev);
+				Origin.trigger(ev);
+			});
 		},
 
 		sortAndRenderGroups: function() {
@@ -55,6 +84,11 @@ define(function(require) {
 				
 				var itemGroup = item.get('group')
 				var $parent = this.$('.options-inner');
+
+				if (_.indexOf(this.eventsToTrigger, item.get('callbackEvent')) > -1) {
+					item.set('selected', true);	
+				}
+
 				var data = item.toJSON();
 
 				if (itemGroup) {
@@ -66,24 +100,29 @@ define(function(require) {
 
 		},
 
-		onOptionClicked: function(event) {
-			event.preventDefault();
-
-			var $selectedOption = $(event.currentTarget);
-			var group = $selectedOption.attr('data-group');
-			var callbackEvent = $selectedOption.attr('data-callback');
+		setSelectedOption: function(selectedOption) {
+			var group = selectedOption.attr('data-group');
+			var callbackEvent = selectedOption.attr('data-callback');
 
 			// If this item is in a group toggle all group items to not selected
-			if (group && !$selectedOption.hasClass('selected')) {
+			if (group && !selectedOption.hasClass('selected')) {
 
 				this.$('.options-group-' + group + ' a').removeClass('selected');
-				$selectedOption.addClass('selected');
+				selectedOption.addClass('selected');
 				Origin.trigger(callbackEvent);
 				
 			} else {
 			// How should we handle items not in groups? Should they be toggles?	
 			}
 
+		},
+
+		onOptionClicked: function(event) {
+			event.preventDefault();
+
+			var $selectedOption = $(event.currentTarget);
+
+			this.setSelectedOption($selectedOption);
 		}
 
 	}, {

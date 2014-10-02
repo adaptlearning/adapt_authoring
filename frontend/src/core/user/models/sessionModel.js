@@ -8,7 +8,8 @@ define(function(require) {
     defaults: {
       isAuthenticated: false,
       id: '',
-      email: ''
+      email: '',
+      preferences: {}
     },
 
     url: "/api/authcheck",

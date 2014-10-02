@@ -477,7 +477,7 @@ body{background-color:#e9f0fa;color:#3e4960}
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .options a{color:#3e4960}.options a:hover{transition:color 0.3s;color:#15a4fa}
 .options a.selected{transition:color 0.3s;color:#0588d7}
-.options-group{float:left;padding:4px 0px;border-left:1px solid #8face2}
+.options-group{float:left;padding:4px 0px;border-left:1px solid #8face2}.options-group:first-child{border-left:none}
 
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,200,600);
 .editor-view .paste-zone{background-color:#ffa08d;border:1px solid #ff765a;border:1px solid #ff765a}

@@ -21,7 +21,7 @@ define(function(require) {
               icon: 'th',
               callbackEvent: 'dashboard:layout:grid',
               value: 'grid',
-              group: 'layout'
+              group: 'layout',
             }, {
               title: 'View as list',
               icon: 'list',

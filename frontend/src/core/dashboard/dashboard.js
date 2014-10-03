@@ -41,6 +41,12 @@ define(function(require) {
               callbackEvent: 'dashboard:sort:desc',
               value: 'desc',
               group: 'sort'
+            }, {
+              title: 'Last updated',
+              icon: 'edit',
+              callbackEvent: 'dashboard:sort:updated',
+              value: 'updated',
+              group: 'sort'
             }
           ]);
 

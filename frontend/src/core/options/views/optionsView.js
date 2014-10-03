@@ -10,7 +10,7 @@ define(function(require) {
 		initialize: function() {
 			this.eventsToTrigger = [];
 			this.listenTo(Origin, 'remove:views', this.remove);
-			this.listenTo(Origin, 'options:set', this.setOptions);
+			this.listenTo(Origin, 'options:update:ui', this.updateUI);
 			this.render();
 		},
 
@@ -27,16 +27,15 @@ define(function(require) {
 		    return this;
 		},
 
-		setOptions: function(view, options) {
-			var _this = this;
-			var keys = _.keys(options);
+		updateUI: function(userPreferences) {
+			// Wait until current render has finished
+			// Then go through each preference and add a class
+			_.defer(_.bind(function() {
+				_.each(userPreferences, function(preference) {
+					this.$('a.option-value-' + preference).addClass('selected');
+				}, this)
+			}, this));
 			
-			_.each(keys, function(key) {
-				var callbackAttr = view + ':' + key + ':' + options[key];
-				
-				_this.eventsToTrigger.push(callbackAttr);
-			});
-			console.log(_this.eventsToTrigger);
 		},
 
 		postRender: function() {
@@ -45,14 +44,6 @@ define(function(require) {
 			// Add a defer to make sure the groups are rendered
 			_.defer(_.bind(this.renderOptions, this));
 
-			this.triggerStateEvents();
-		},
-
-		triggerStateEvents: function() {
-			_.each(this.eventsToTrigger, function(ev) {
-				console.log('triggering - ' + ev);
-				Origin.trigger(ev);
-			});
 		},
 
 		sortAndRenderGroups: function() {

@@ -355,7 +355,7 @@ a.open-context-contentObject{color:white}
 .notify-push-close{display:inline-block;text-decoration:none;position:absolute;right:30px;top:50%;margin-top:-12px}.notify-push-close .icon{color:#fff}.no-touch .notify-push-close .icon:hover{color:#000}
 
 .options{position:absolute;top:40px;right:0px}.options-inner{padding:30px}
-.options a{margin-left:10px;margin-right:10px;text-decoration:none;text-align:center}.options a i{margin-right:10px}
+.options a{margin-left:10px;margin-right:10px;text-decoration:none;text-align:center}.options a i{margin-right:4px}
 
 .pluginManagement-loading{text-align:center;padding:30px}
 .plugin-management-new-plugin-inner{padding:30px}

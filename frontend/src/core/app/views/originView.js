@@ -44,29 +44,17 @@ define(function(require){
       Origin.trigger('router:hideLoading');
     },
 
-    setUserPreference: function(setting, isOption) {
+    setUserPreference: function(key, value, isOption) {
       if (this.settings.preferencesKey && typeof(Storage) !== "undefined") {
-        // Get any previous settings
-        var isOption = isOption || false;
-        var data = setting.split(':');
-        var key = data[0];
-        var value = data[1];
-        var prefs = localStorage.getItem(this.settings.preferencesKey);
-        var json = (prefs) ?
-                    JSON.parse(prefs)
-                    : {};
-
-        if (!isOption) {
-          json[key] = value;
-        } else {
-          if (!json.hasOwnProperty('options')) {
-            json.options = {};
-          }
-
-          json.options[key] = value;          
-        } 
-        
+        // Get preferences for this view
+        var preferences = localStorage.getItem(this.settings.preferencesKey);
+        // Convert string to JSON
+        var json = (JSON.parse(preferences) || {});
+        // Set key and value
+        json[key] = value;
+        // Store in localStorage
         localStorage.setItem(this.settings.preferencesKey, JSON.stringify(json));
+        
       }
     },
 
@@ -76,14 +64,6 @@ define(function(require){
         return JSON.parse(localStorage.getItem(this.settings.preferencesKey));
       } else {
         return null;
-      }
-    },
-
-    persistOptions: function() {
-      var prefs = (this.getUserPreferences() || {});
-
-      if (prefs.hasOwnProperty('options')) {
-        Origin.trigger('options:set', this.settings.preferencesKey, prefs.options);
       }
     },
 

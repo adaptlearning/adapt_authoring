@@ -29,10 +29,10 @@ define(function(require){
       this.listenTo(Origin, 'dashboard:layout:list', this.switchLayoutToList);
       this.listenTo(Origin, 'dashboard:sort:asc', this.sortAscending);
       this.listenTo(Origin, 'dashboard:sort:desc', this.sortDescending);
+      this.listenTo(Origin, 'dashboard:sort:updated', this.sortLastUpdated);
       this.listenTo(Origin, 'dashboard:dashboardSidebarView:filterBySearch', this.filterCoursesBySearch);
       this.listenTo(Origin, 'dashboard:dashboardSidebarView:filterByTags', this.filterCoursesByTags);
 
-      this.persistOptions();
     },
 
     events: {
@@ -49,7 +49,7 @@ define(function(require){
 
       $container.removeClass('grid-layout').addClass('list-layout');
 
-      this.setUserPreference('layout:list', true);
+      this.setUserPreference('layout','list');
     },
 
     switchLayoutToGrid: function() {
@@ -58,7 +58,7 @@ define(function(require){
 
       $container.removeClass('list-layout').addClass('grid-layout');
 
-      this.setUserPreference('layout:grid', true);
+      this.setUserPreference('layout','grid');
     },
 
     sortAscending: function() {
@@ -68,8 +68,7 @@ define(function(require){
 
       this.renderProjectViews(sortedCollection);
       
-      this.setUserPreference('sort:asc', true);
-      console.log('in sortAscending');
+      this.setUserPreference('sort','asc');
     },
 
     sortDescending: function() {
@@ -81,7 +80,17 @@ define(function(require){
 
       this.renderProjectViews(sortedCollection);
 
-      this.setUserPreference('sort:desc', true);
+      this.setUserPreference('sort','desc');
+    },
+
+    sortLastUpdated: function() {
+      var sortedCollection = this.collection.sortBy(function(project){
+        return -Date.parse(project.get("updatedAt"));
+      });
+
+      this.renderProjectViews(sortedCollection);
+
+      this.setUserPreference('sort','updated');
     },
 
     editProject: function(event) {
@@ -92,7 +101,26 @@ define(function(require){
     },
 
     addProjectViews: function() {
-      this.renderProjectViews(this.collection.models);
+      // Preserve the user preferences or display default mode
+      var userPreferences = this.getUserPreferences();
+      // Check if the user preferences are list view
+      // Else if nothing is set or is grid view default to grid view
+      if (userPreferences && userPreferences.layout === 'list') {
+        this.switchLayoutToList();
+      } else {
+        this.switchLayoutToGrid();
+      }
+
+      // Check if sort is set and filter the collection
+      if (userPreferences && userPreferences.sort === 'desc') {
+        this.sortDescending();
+      } else if (userPreferences && userPreferences.sort === 'updated') {
+        this.sortLastUpdated();
+      } else {
+        this.sortAscending();
+      }
+      // Trigger event to update options UI
+      Origin.trigger('options:update:ui', userPreferences);
     },
 
     renderProjectViews: function(projects) {

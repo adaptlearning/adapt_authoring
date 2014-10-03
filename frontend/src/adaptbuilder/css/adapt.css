@@ -367,7 +367,7 @@ a.open-context-contentObject{color:white}
 .project-list-item.selected .tags li.tag{background-color:#293141}.project-list-item.selected .tags li.tag span{color:#E0E8F7;background-color:#293141}
 .project-list-item.listing{width:700px}
 .project-list-item img{display:block}
-.project-list-item .tags li.tag{margin:2px 5px 2px 0px;display:inline-block;background-color:#9CABC4}.project-list-item .tags li.tag span{padding:5px;color:#fff}
+.project-list-item .tags li.tag{margin:2px 5px 2px 0px;padding:4px;display:inline-block;background-color:#9CABC4}.project-list-item .tags li.tag span{color:#fff}
 .project-list-item div.tag-container{height:34px;overflow-y:auto}
 .project-header-inner{position:relative}
 .project-detail-title{margin-bottom:10px}
@@ -376,14 +376,6 @@ a.open-context-contentObject{color:white}
 .project-details-inner{padding:20px}
 .project-details-row{font-size:11px}
 .projects-details-label{color:#15a4fa;font-weight:600}
-.pos{top:30px;height:217px;position:absolute;background-color:rgba(0,0,0,0)}.pos.large{width:100%;z-index:1}
-.pos.medium{width:80%;z-index:2;margin-left:10%}
-.pos.small{width:60%;z-index:3;margin-left:20%}
-.preview-large{-ms-zoom:0.222;-moz-transform:scale(.222);-moz-transform-origin:0% 0px;-o-transform:scale(.222);-o-transform-origin:0px 0px;-webkit-transform:scale(.222);-webkit-transform-origin:0 0;top:30px;width:450%;height:999px;position:relative}
-.preview-medium{-ms-zoom:0.25;-moz-transform:scale(.25);-moz-transform-origin:0 0;-o-transform:scale(.25);-o-transform-origin:0 0;-webkit-transform:translateZ(0) scale(.25);-webkit-transform-origin:0 0;top:30px;width:320%;height:866px;display:block;position:relative;margin-left:10%}
-.preview-small{-ms-zoom:0.25;-moz-transform:scale(.25);-moz-transform-origin:0 0;-o-transform:scale(.25);-o-transform-origin:0px 0px;-webkit-transform:scale(.25);-webkit-transform-origin:0 0;top:30px;width:240%;height:866px;display:block;position:relative;margin-left:20%}
-.frame{margin:0 auto;height:247px;margin-bottom:10px;background-color:#293141;width:100%;overflow:hidden}
-.filler{padding-top:27px;width:300px;height:222px}
 
 .sidebar{position:fixed;top:0px;left:0px;width:220px;height:100%;overflow-y:auto;overflow-x:hidden}.sidebar a{text-decoration:none}
 .sidebar .dashboard-sidebar-filter-clear{display:inline}

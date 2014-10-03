@@ -80,7 +80,7 @@ define(function(require){
     },
 
     persistOptions: function() {
-      var prefs = this.getUserPreferences();
+      var prefs = (this.getUserPreferences() || {});
 
       if (prefs.hasOwnProperty('options')) {
         Origin.trigger('options:set', this.settings.preferencesKey, prefs.options);

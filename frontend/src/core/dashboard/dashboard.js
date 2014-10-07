@@ -17,26 +17,26 @@ define(function(require) {
           Origin.trigger('location:title:update', {title: 'Dashboard - viewing all courses'});
           Origin.options.addItems([
             {
-              title: 'View as grid',
+              title: 'Grid',
               icon: 'th',
               callbackEvent: 'dashboard:layout:grid',
               value: 'grid',
               group: 'layout',
             }, {
-              title: 'View as list',
+              title: 'List',
               icon: 'list',
               callbackEvent: 'dashboard:layout:list',
               value: 'list',
               group: 'layout'
             },
             {
-              title: 'Sort ascending',
+              title: 'Ascending',
               icon: 'sort-alpha-asc',
               callbackEvent: 'dashboard:sort:asc',
               value: 'asc',
               group: 'sort'
             }, {
-              title: 'Sort descending',
+              title: 'Descending',
               icon: 'sort-alpha-desc',
               callbackEvent: 'dashboard:sort:desc',
               value: 'desc',

@@ -44,8 +44,7 @@ define(function(require){
     },
 
     switchLayoutToList: function() {
-      var $container = $('.dashboard-projects'),
-        $items = $('.project-list-item');
+      var $container = $('.dashboard-projects');
 
       $container.removeClass('grid-layout').addClass('list-layout');
 
@@ -53,8 +52,7 @@ define(function(require){
     },
 
     switchLayoutToGrid: function() {
-      var $container = $('.dashboard-projects'),
-        $items = $('.project-list-item');
+      var $container = $('.dashboard-projects');
 
       $container.removeClass('list-layout').addClass('grid-layout');
 

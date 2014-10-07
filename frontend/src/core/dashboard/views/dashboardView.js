@@ -40,7 +40,8 @@ define(function(require){
     },
 
     postRender: function() {
-        this.addProjectViews();
+      this.sortedCollection = this.collection;
+      this.addProjectViews();
     },
 
     switchLayoutToList: function() {
@@ -60,33 +61,33 @@ define(function(require){
     },
 
     sortAscending: function() {
-      var sortedCollection = this.collection.sortBy(function(project){
+      this.sortedCollection = this.collection.sortBy(function(project){
         return project.get("title").toLowerCase();
       });
 
-      this.renderProjectViews(sortedCollection);
+      this.filterCourses();
       
       this.setUserPreference('sort','asc');
     },
 
     sortDescending: function() {
-      var sortedCollection = this.collection.sortBy(function(project){
+      this.sortedCollection = this.collection.sortBy(function(project){
         return project.get("title").toLowerCase();
       });
 
-      sortedCollection = sortedCollection.reverse();
+      this.sortedCollection = this.sortedCollection.reverse();
 
-      this.renderProjectViews(sortedCollection);
+      this.filterCourses();
 
       this.setUserPreference('sort','desc');
     },
 
     sortLastUpdated: function() {
-      var sortedCollection = this.collection.sortBy(function(project){
+      this.sortedCollection = this.collection.sortBy(function(project){
         return -Date.parse(project.get("updatedAt"));
       });
 
-      this.renderProjectViews(sortedCollection);
+      this.filterCourses();
 
       this.setUserPreference('sort','updated');
     },
@@ -170,7 +171,7 @@ define(function(require){
     },
 
     filterCourses: function() {
-      var filteredCollection = this.collection.filter(function(course) {
+      var filteredCollection = this.sortedCollection.filter(function(course) {
         var courseTitle = course.get('title').toLowerCase();
         var searchText = this.filterText.toLowerCase();
         var tags = course.get('tags');

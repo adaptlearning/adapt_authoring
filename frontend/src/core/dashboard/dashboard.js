@@ -49,9 +49,9 @@ define(function(require) {
               group: 'sort'
             }
           ]);
-
-          Origin.router.createView(DashboardView, {collection:projects});
+          
           Origin.sidebar.addView(new DashboardSidebarView({collection:projects}).$el);
+          Origin.router.createView(DashboardView, {collection:projects});
         }
       });
       

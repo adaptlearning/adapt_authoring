@@ -5,8 +5,7 @@ define(function(require) {
 
 	var DashboardSidebarView = SidebarItemView.extend({
         settings: {
-          autoRender: true,
-          preferencesKey: 'dashboardSidebar'
+          autoRender: true
         },
 
 		events: {
@@ -19,10 +18,22 @@ define(function(require) {
 		},
 
         postRender: function() {
+            console.log('post')
             this.listenTo(Origin, 'sidebarFilter:filterByTags', this.filterProjectsByTags);
             this.listenTo(Origin, 'sidebarFilter:addTagToSidebar', this.addTagToSidebar);
+            this.listenTo(Origin, 'sidebar:update:ui', this.updateUI);
             this.tags = [];
             this.usedTags = [];
+        },
+
+        updateUI: function(userPreferences) {
+            console.log('user', userPreferences)
+            if (userPreferences.search) {
+                this.$('.dashboard-sidebar-filter-search-input').val(userPreferences.search);
+            }
+            if (userPreferences.tags) {
+                
+            }
         },
 
 		addCourse: function() {
@@ -40,7 +51,6 @@ define(function(require) {
             event.preventDefault();
             var $currentTarget = $(event.currentTarget);
             $currentTarget.prev('.dashboard-sidebar-filter-input').val('').trigger('keyup');
-            this.setUserPreference('filterText:');
         },
 
         onTagClicked: function(event) {

@@ -110,6 +110,16 @@ define(function(require){
         this.switchLayoutToGrid();
       }
 
+      // Check if there's any user preferences for search and tags
+      // then set on this view
+      if (userPreferences && userPreferences.search) {
+        this.filterText = userPreferences.search;
+      }
+
+      if (userPreferences && userPreferences.tags) {
+        this.filterTags = userPreferences.tags;
+      }
+
       // Check if sort is set and filter the collection
       if (userPreferences && userPreferences.sort === 'desc') {
         this.sortDescending();
@@ -120,6 +130,8 @@ define(function(require){
       }
       // Trigger event to update options UI
       Origin.trigger('options:update:ui', userPreferences);
+      console.log('weee')
+      Origin.trigger('sidebar:update:ui', userPreferences);
     },
 
     renderProjectViews: function(projects) {
@@ -159,12 +171,16 @@ define(function(require){
       // Store search input text and call filterCourses
       this.filterText = filterText;
 
+      this.setUserPreference('search', filterText);
+
       this.filterCourses();
     },
 
     filterCoursesByTags: function(tags) {
       // Store tags and call filterCourses
       this.filterTags = tags;
+
+      this.setUserPreference('tags', tags);
 
       this.filterCourses();
       

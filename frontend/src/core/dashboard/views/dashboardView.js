@@ -120,9 +120,9 @@ define(function(require){
         this.setUserPreference('search', this.filterText);
       }
 
-      if (userPreferences && userPreferences.tags) {
-        this.filterTags = (userPreferences.tags || '');
-        this.setUserPreference('search', this.filterTags);
+      if (userPreferences) {
+        this.filterTags = (userPreferences.tags || []);
+        this.setUserPreference('tags', this.filterTags);
       }
 
       // Check if sort is set and filter the collection

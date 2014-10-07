@@ -8,13 +8,16 @@ define(function(require){
   var ProjectCollection = require('coreJS/project/collections/projectCollection');
 
   var DashboardView = OriginView.extend({
+    settings: {
+      autoRender: true,
+      preferencesKey: 'dashboard'
+    },
 
     tagName: "div",
 
     className: "dashboard",
 
     preRender: function() {
-
       // Set empty filters
       this.filterText = '';
       this.filterTags = [];
@@ -26,50 +29,70 @@ define(function(require){
       this.listenTo(Origin, 'dashboard:layout:list', this.switchLayoutToList);
       this.listenTo(Origin, 'dashboard:sort:asc', this.sortAscending);
       this.listenTo(Origin, 'dashboard:sort:desc', this.sortDescending);
+      this.listenTo(Origin, 'dashboard:sort:updated', this.sortLastUpdated);
       this.listenTo(Origin, 'dashboard:dashboardSidebarView:filterBySearch', this.filterCoursesBySearch);
       this.listenTo(Origin, 'dashboard:dashboardSidebarView:filterByTags', this.filterCoursesByTags);
+
     },
 
     events: {
-      'click #dashboardMenu button'     : 'formclick',
       'click': 'removeSelectedItems'
     },
 
     postRender: function() {
-        this.addProjectViews();
+      this.sortedCollection = this.collection;
+      this.setupUserPreferences();
     },
 
     switchLayoutToList: function() {
-      var $container = $('.dashboard-projects'),
-        $items = $('.project-list-item');
+      var $container = $('.dashboard-projects');
 
       $container.removeClass('grid-layout').addClass('list-layout');
-      
+
+      this.setUserPreference('layout','list');
     },
 
     switchLayoutToGrid: function() {
-      var $container = $('.dashboard-projects'),
-        $items = $('.project-list-item');
+      var $container = $('.dashboard-projects');
 
       $container.removeClass('list-layout').addClass('grid-layout');
+
+      this.setUserPreference('layout','grid');
     },
 
     sortAscending: function() {
-      var sortedCollection = this.collection.sortBy(function(project){
+      this.sortedCollection = this.collection.sortBy(function(project){
         return project.get("title").toLowerCase();
       });
 
-      this.renderProjectViews(sortedCollection);
+      this.setUserPreference('sort','asc');
+
+      this.filterCourses();
+      
     },
 
     sortDescending: function() {
-      var sortedCollection = this.collection.sortBy(function(project){
+      this.sortedCollection = this.collection.sortBy(function(project){
         return project.get("title").toLowerCase();
       });
 
-      sortedCollection = sortedCollection.reverse();
+      this.sortedCollection = this.sortedCollection.reverse();
 
-      this.renderProjectViews(sortedCollection);
+      this.setUserPreference('sort','desc');
+
+      this.filterCourses();
+
+    },
+
+    sortLastUpdated: function() {
+      this.sortedCollection = this.collection.sortBy(function(project){
+        return -Date.parse(project.get("updatedAt"));
+      });
+
+      this.setUserPreference('sort','updated');
+
+      this.filterCourses();
+      
     },
 
     editProject: function(event) {
@@ -79,8 +102,44 @@ define(function(require){
       Backbone.history.navigate('/editor/' + projectId + '/menu', {trigger: true});
     },
 
-    addProjectViews: function() {
-      this.renderProjectViews(this.collection.models);
+    setupUserPreferences: function() {
+      // Preserve the user preferences or display default mode
+      var userPreferences = this.getUserPreferences();
+      // Check if the user preferences are list view
+      // Else if nothing is set or is grid view default to grid view
+      if (userPreferences && userPreferences.layout === 'list') {
+        this.switchLayoutToList();
+      } else {
+        this.switchLayoutToGrid();
+      }
+
+      // Check if there's any user preferences for search and tags
+      // then set on this view
+      if (userPreferences) {
+        this.filterText = (userPreferences.search || '');
+        this.setUserPreference('search', this.filterText);
+      }
+
+      if (userPreferences && userPreferences.tags) {
+        this.filterTags = (userPreferences.tags || '');
+        this.setUserPreference('search', this.filterTags);
+      }
+
+      // Check if sort is set and filter the collection
+      if (userPreferences && userPreferences.sort === 'desc') {
+        this.sortDescending();
+      } else if (userPreferences && userPreferences.sort === 'updated') {
+        this.sortLastUpdated();
+      } else {
+        this.sortAscending();
+      }
+
+      // Once everything has been setup
+      // refresh the userPreferences object
+      userPreferences = this.getUserPreferences();
+      // Trigger event to update options UI
+      Origin.trigger('options:update:ui', userPreferences);
+      Origin.trigger('sidebar:update:ui', userPreferences);
     },
 
     renderProjectViews: function(projects) {
@@ -92,6 +151,7 @@ define(function(require){
 
       // Defer imageReady check until all elements are loaded
       _.defer(_.bind(this.setupImageReady, this));
+
       this.evaluateProjectCount(projects);
     },
 
@@ -101,7 +161,6 @@ define(function(require){
       } else {
         this.setViewToReady();
       }
-      
     },
 
     evaluateProjectCount: function (projects) {
@@ -120,20 +179,23 @@ define(function(require){
       // Store search input text and call filterCourses
       this.filterText = filterText;
 
+      this.setUserPreference('search', filterText);
+
       this.filterCourses();
-      
     },
 
     filterCoursesByTags: function(tags) {
       // Store tags and call filterCourses
       this.filterTags = tags;
 
+      this.setUserPreference('tags', tags);
+
       this.filterCourses();
       
     },
 
     filterCourses: function() {
-      var filteredCollection = this.collection.filter(function(course) {
+      var filteredCollection = this.sortedCollection.filter(function(course) {
         var courseTitle = course.get('title').toLowerCase();
         var searchText = this.filterText.toLowerCase();
         var tags = course.get('tags');

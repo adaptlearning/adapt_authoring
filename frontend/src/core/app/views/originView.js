@@ -1,7 +1,7 @@
 /*
 * BuilderView - base class for all views
 * License - http://github.com/adaptlearning/adapt_authoring/LICENSE
-* Maintainers - Kevin Corry <kevinc@learningpool.com>
+* Maintainers - Brian Quinn <brian@learningpool.com>
 */
 define(function(require){
 
@@ -11,7 +11,8 @@ define(function(require){
   var OriginView = Backbone.View.extend({
 
     settings: {
-      autoRender: true
+      autoRender: true,
+      preferencesKey: ''
     },
 
     initialize: function(options) {
@@ -41,6 +42,29 @@ define(function(require){
 
     setViewToReady: function() {
       Origin.trigger('router:hideLoading');
+    },
+
+    setUserPreference: function(key, value) {
+      if (this.settings.preferencesKey && typeof(Storage) !== "undefined") {
+        // Get preferences for this view
+        var preferences = localStorage.getItem(this.settings.preferencesKey);
+        // Convert string to JSON
+        var json = (JSON.parse(preferences) || {});
+        // Set key and value
+        json[key] = value;
+        // Store in localStorage
+        localStorage.setItem(this.settings.preferencesKey, JSON.stringify(json));
+        
+      }
+    },
+
+    getUserPreferences: function() {
+      if (this.settings.preferencesKey && typeof(Storage) !== "undefined"
+        && localStorage.getItem(this.settings.preferencesKey)) {
+        return JSON.parse(localStorage.getItem(this.settings.preferencesKey));
+      } else {
+        return {};
+      }
     },
 
     sortArrayByKey: function (arr, key) {

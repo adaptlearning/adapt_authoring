@@ -4,13 +4,12 @@ define(function(require) {
 	var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
 
 	var DashboardSidebarView = SidebarItemView.extend({
+        settings: {
+          autoRender: true
+        },
 
 		events: {
 			'click .dashboard-sidebar-add-course'	: 'addCourse',
-			'click a.project-layout-grid' 			: 'layoutGrid',
-			'click a.project-layout-list' 			: 'layoutList',
-			'click a.project-sort-asc' 				: 'sortAscending',
-			'click a.project-sort-desc' 			: 'sortDescending',
             'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
             'click .dashboard-sidebar-filter-clear': 'clearFilterInput',
             'click .dashboard-sidebar-tag': 'onTagClicked',
@@ -19,43 +18,42 @@ define(function(require) {
 		},
 
         postRender: function() {
+            console.log('post')
             this.listenTo(Origin, 'sidebarFilter:filterByTags', this.filterProjectsByTags);
             this.listenTo(Origin, 'sidebarFilter:addTagToSidebar', this.addTagToSidebar);
+            this.listenTo(Origin, 'sidebar:update:ui', this.updateUI);
             this.tags = [];
             this.usedTags = [];
+        },
+
+        updateUI: function(userPreferences) {
+            if (userPreferences.search) {
+                this.$('.dashboard-sidebar-filter-search-input').val(userPreferences.search);
+            }
+            if (userPreferences.tags) {
+                this.tags = userPreferences.tags;
+                var systemTags = ['archive', 'favourites'];
+                _.each(userPreferences.tags, function(tag) {
+                    // If this tag is part of the systemTags
+                    // select this tag
+                    if (_.contains(systemTags, tag)) {
+                        this.$('.dashboard-sidebar-tag-'+tag).addClass('selected');
+                    } else {
+                        this.addTagToSidebar(tag);
+                    }
+                }, this);
+            }
         },
 
 		addCourse: function() {
 			Origin.router.navigate('#/project/new', {trigger:true});
 		},
 
-		layoutList: function(event) {
-			event.preventDefault();
-
-			Origin.trigger('dashboard:layout:list');
-		},
-
-		layoutGrid: function(event) {
-			event.preventDefault();
-
-			Origin.trigger('dashboard:layout:grid');
-		},
-
-		sortAscending: function(event) {
-			event.preventDefault();
-
-			Origin.trigger('dashboard:sort:asc');
-		},
-
-		sortDescending: function(event) {
-			event.preventDefault();
-
-			Origin.trigger('dashboard:sort:desc');
-		},
-
         filterProjectsByTitle: function(event) {
             var filterText = $(event.currentTarget).val();
             Origin.trigger('dashboard:dashboardSidebarView:filterBySearch', filterText);
+
+            this.setUserPreference('filterText:' + filterText);
         },
 
         clearFilterInput: function(event) {

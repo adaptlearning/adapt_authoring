@@ -5,7 +5,6 @@
     overflow:hidden;
     border-radius:3px;
     background-color:#fff;
-    height: 380px;
     transition:background-color 0.3s;
     transition:box-shadow 0.3s;
     box-shadow: 0px 0px 3pt 2pt transparent;
@@ -42,15 +41,19 @@
         width: 700px;
     }
 
+    img {
+        display:block;
+    }
+
     .tags {
 
       li.tag {
         margin:2px 5px 2px 0px;
+        padding:4px;
         display: inline-block;
         background-color:#9CABC4;
 
         span {
-          padding: 5px;
           color:#fff;
         }
       }
@@ -73,9 +76,6 @@
 }
 
 .project-settings {
-    position: absolute;
-    top: 0%;    
-    left: 0px;
     font-size: 16px;
     width:100%;
     height: @toolbar-height;
@@ -106,89 +106,4 @@
 .projects-details-label {
     color:#15a4fa;
     font-weight:600;
-}
-
-.pos {
-    top: @toolbar-height;
-    height: @preview-height - @toolbar-height;
-    position: absolute;
-    background-color: rgba(0,0,0,0);
-    
-    &.large {
-        width: 100%;
-        z-index: 1;    
-    }
-    
-    &.medium {
-        width: 80%;
-        z-index: 2;
-        margin-left: 10%;
-    }
-
-    &.small {
-        width: 60%;
-        z-index: 3;
-        margin-left: 20%;
-    }
-}
-
-.preview-large {
-    -ms-zoom: 0.222;
-    -moz-transform:  scale(0.222);
-    -moz-transform-origin: 0% 0px;
-    -o-transform: scale(0.222);
-    -o-transform-origin: 0px 0px;
-    -webkit-transform: scale(0.222);
-    -webkit-transform-origin: 0 0;
-    top: @toolbar-height;
-    width: 450%;
-    height: 999px;
-    position: relative;
-}
-
-.preview-medium { 
-    -ms-zoom: 0.25;
-    -moz-transform: scale(0.25);
-    -moz-transform-origin: 0 0;
-    -o-transform: scale(0.25);
-    -o-transform-origin: 0 0;
-    -webkit-transform: translateZ(0) scale(0.25);
-    -webkit-transform-origin: 0 0;
-    top: @toolbar-height;
-    width: 320%;
-    height: 866px;
-    display: block;
-    position: relative;
-    margin-left: 10%;
-}
-
-.preview-small {
-    -ms-zoom: 0.25;
-    -moz-transform: scale(0.25);
-    -moz-transform-origin: 0 0;
-    -o-transform: scale(0.25);
-    -o-transform-origin: 0px 0px;
-    -webkit-transform: scale(0.25);
-    -webkit-transform-origin: 0 0;
-    top: @toolbar-height;
-    width: 240%;
-    height: 866px;
-    display: block;
-    position: relative;
-    margin-left: 20%;
-}
-
-.frame {
-    margin: 0 auto;
-    height: @preview-height;
-    margin-bottom: 10px;
-    background-color: #293141;
-    width: 100%;
-    overflow: hidden;
-}
-
-.filler {
-    padding-top: 27px;
-    width: 300px;
-    height: 222px;
 }

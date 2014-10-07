@@ -15,14 +15,47 @@ define(function(require) {
       projects.fetch({
         success: function() {
           Origin.trigger('location:title:update', {title: 'Dashboard - viewing all courses'});
-          Origin.router.createView(DashboardView, {collection:projects});
+          Origin.options.addItems([
+            {
+              title: 'Grid',
+              icon: 'th',
+              callbackEvent: 'dashboard:layout:grid',
+              value: 'grid',
+              group: 'layout',
+            }, {
+              title: 'List',
+              icon: 'list',
+              callbackEvent: 'dashboard:layout:list',
+              value: 'list',
+              group: 'layout'
+            },
+            {
+              title: 'Ascending',
+              icon: 'sort-alpha-asc',
+              callbackEvent: 'dashboard:sort:asc',
+              value: 'asc',
+              group: 'sort'
+            }, {
+              title: 'Descending',
+              icon: 'sort-alpha-desc',
+              callbackEvent: 'dashboard:sort:desc',
+              value: 'desc',
+              group: 'sort'
+            }, {
+              title: 'Last updated',
+              icon: 'edit',
+              callbackEvent: 'dashboard:sort:updated',
+              value: 'updated',
+              group: 'sort'
+            }
+          ]);
+          
           Origin.sidebar.addView(new DashboardSidebarView({collection:projects}).$el);
+          Origin.router.createView(DashboardView, {collection:projects});
         }
       });
       
     }
-
-    
 
   });
 

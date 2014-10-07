@@ -15,10 +15,13 @@
     .project-list-item {
         margin-left: 30px;
         min-width: 240px;
-        height: 390px;
+        min-height: 320px;
         width: 22%;
         max-width:300px;
-        display:inline-block
+        display:inline-block;
+        .project-details-tags {
+            display:none;
+        }
     }
 }
 
@@ -27,6 +30,17 @@
     .project-list-item {
         margin-left:0px;
         width:100%;
+        .project-settings {
+            border-bottom:1px solid #b7caed;
+        }
+        .project-image {
+            max-width:300px;
+            float:left;
+            border-right:1px solid #b7caed;
+        }
+        .project-details {
+            float:left;
+        }
     }
 }
 

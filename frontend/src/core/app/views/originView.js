@@ -44,7 +44,7 @@ define(function(require){
       Origin.trigger('router:hideLoading');
     },
 
-    setUserPreference: function(key, value, isOption) {
+    setUserPreference: function(key, value) {
       if (this.settings.preferencesKey && typeof(Storage) !== "undefined") {
         // Get preferences for this view
         var preferences = localStorage.getItem(this.settings.preferencesKey);
@@ -63,7 +63,7 @@ define(function(require){
         && localStorage.getItem(this.settings.preferencesKey)) {
         return JSON.parse(localStorage.getItem(this.settings.preferencesKey));
       } else {
-        return null;
+        return {};
       }
     },
 

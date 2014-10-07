@@ -27,12 +27,21 @@ define(function(require) {
         },
 
         updateUI: function(userPreferences) {
-            console.log('user', userPreferences)
             if (userPreferences.search) {
                 this.$('.dashboard-sidebar-filter-search-input').val(userPreferences.search);
             }
             if (userPreferences.tags) {
-                
+                this.tags = userPreferences.tags;
+                var systemTags = ['archive', 'favourites'];
+                _.each(userPreferences.tags, function(tag) {
+                    // If this tag is part of the systemTags
+                    // select this tag
+                    if (_.contains(systemTags, tag)) {
+                        this.$('.dashboard-sidebar-tag-'+tag).addClass('selected');
+                    } else {
+                        this.addTagToSidebar(tag);
+                    }
+                }, this);
             }
         },
 

@@ -41,7 +41,7 @@ define(function(require){
 
     postRender: function() {
       this.sortedCollection = this.collection;
-      this.addProjectViews();
+      this.setupUserPreferences();
     },
 
     switchLayoutToList: function() {
@@ -65,9 +65,10 @@ define(function(require){
         return project.get("title").toLowerCase();
       });
 
+      this.setUserPreference('sort','asc');
+
       this.filterCourses();
       
-      this.setUserPreference('sort','asc');
     },
 
     sortDescending: function() {
@@ -77,9 +78,10 @@ define(function(require){
 
       this.sortedCollection = this.sortedCollection.reverse();
 
+      this.setUserPreference('sort','desc');
+
       this.filterCourses();
 
-      this.setUserPreference('sort','desc');
     },
 
     sortLastUpdated: function() {
@@ -87,9 +89,10 @@ define(function(require){
         return -Date.parse(project.get("updatedAt"));
       });
 
-      this.filterCourses();
-
       this.setUserPreference('sort','updated');
+
+      this.filterCourses();
+      
     },
 
     editProject: function(event) {
@@ -99,7 +102,7 @@ define(function(require){
       Backbone.history.navigate('/editor/' + projectId + '/menu', {trigger: true});
     },
 
-    addProjectViews: function() {
+    setupUserPreferences: function() {
       // Preserve the user preferences or display default mode
       var userPreferences = this.getUserPreferences();
       // Check if the user preferences are list view
@@ -112,12 +115,14 @@ define(function(require){
 
       // Check if there's any user preferences for search and tags
       // then set on this view
-      if (userPreferences && userPreferences.search) {
-        this.filterText = userPreferences.search;
+      if (userPreferences) {
+        this.filterText = (userPreferences.search || '');
+        this.setUserPreference('search', this.filterText);
       }
 
       if (userPreferences && userPreferences.tags) {
-        this.filterTags = userPreferences.tags;
+        this.filterTags = (userPreferences.tags || '');
+        this.setUserPreference('search', this.filterTags);
       }
 
       // Check if sort is set and filter the collection
@@ -128,9 +133,12 @@ define(function(require){
       } else {
         this.sortAscending();
       }
+
+      // Once everything has been setup
+      // refresh the userPreferences object
+      userPreferences = this.getUserPreferences();
       // Trigger event to update options UI
       Origin.trigger('options:update:ui', userPreferences);
-      console.log('weee')
       Origin.trigger('sidebar:update:ui', userPreferences);
     },
 

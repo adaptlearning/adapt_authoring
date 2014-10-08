@@ -6,8 +6,6 @@ define(function(require) {
 
   var ProfileModel = Backbone.Model.extend({
 
-    idAttribute: '_id',
-
     defaults: {
       id: -1,
       email: '',
@@ -17,11 +15,34 @@ define(function(require) {
       active: false
     },
 
-    initialize: function() { },
+    initialize: function() {
+      // var profileModel = this;
+      // $.get('/api/user/me',function (res) {
+      //   profileModel.attributes['id'] = res._id;
+      //   profileModel.attributes['email'] = res.email;             
+      // });      
+    },
 
     url: function () {
       //@todo : swap this to the correct url
-      return "/api/user/" + this.get('id');
+      return "/api/user/me";
+    },
+
+    updateUser: function (updatedUserData, cback) {
+      var model = this;      
+
+      $.post(
+        '/api/user/me',
+        {                   
+          'fname':updatedUserData['fname'],
+          'lname':updatedUserData['lname'],
+          'location':updatedUserData['location']
+          
+        },
+        function(result) {
+          cback(false, result);
+        }
+      );
     }
 
   });

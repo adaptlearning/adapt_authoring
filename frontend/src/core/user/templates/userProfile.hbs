@@ -1,3 +1,57 @@
-User profile
+<div class="course-edit">
+  <div class="editing-overlay-panel">
 
-I am the user's profile!
+    <a href="#" class="editing-overlay-panel-title active">
+      <div class="editing-overlay-panel-title-inner">
+        <h2>{{t 'app.settingsgeneral'}}</h2>
+      </div>
+    </a>
+
+    <div class="editing-overlay-panel-content">
+        <div class="editing-overlay-panel-content-inner">
+            <form class="forms">
+
+                <div class="form-group">
+                    <label for="firstName">First Name
+                        <span class="req">*</span>
+                        <span id="firstNameError" class="error">Error</span>
+                    </label>
+                    <input type="text" class="width-30" id="firstName" value="{{firstName}}" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Last Name
+                        <span class="req">*</span>
+                        <span id="lastNameError" class="error">Error</span>
+                    </label>
+                    <input type="text" class="width-30" id="lastName" value="{{lastName}}" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label>Email
+                        <span class="req">*</span>
+                        <span id="titleErrorMessage" class="error"></span>
+                    </label>
+                    {{email}}
+          
+                </div>
+
+                <div class="form-group">
+                    <label for="userNewPassword">New password
+                        <span class="req">*</span>
+                        <span id="titleErrorMessage" class="error"></span>
+                    </label>
+                    <input type="password" class="width-15" id="userNewPassword" value="" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="userConfirmPassword">Confirm password
+                        <span class="req">*</span>
+                        <span id="titleErrorMessage" class="error"></span>
+                    </label>
+                    <input type="password" class="width-15" id="newPassword" value="" autocomplete="off">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

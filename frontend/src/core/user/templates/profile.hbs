@@ -1,35 +1,34 @@
 <div class="row">
   <div class="main">
-    <form role="form">
+<form role="form">
 
       <div class="form-group">
         <label for="inputEmail">Email</label>
         <p class="form-control-static">{{ email }}</p>
       </div>
-      <div class="form-group">
-        <label for="inputAuth" class="control-label">Authentication</label>
-        <input type="text" class="form-control" id="profileViewInputAuth" value="{{ auth }}">
-      </div>
-      <div class="form-group">
-        <label for="inputPassword" class="control-label">Password</label>
-        <input type="password" class="form-control" id="profileViewInputPassword" >
-      </div>
-      <div class="form-group">
-        <label for="confirmPassword" class="control-label">Confirm Password</label>
-        <input type="password" class="form-control" id="profileViewConfirmPassword">
-      </div>
-      <div class="form-group">
-        <label for="inputTenant" class="control-label">Tenant</label>
-        <input type="text" class="form-control" id="profileViewInputTenant" value="{{ tenant }}">
-      </div>
 
-      <button id="profileViewSubmitBtn" type="submit" class="btn btn-success">
-        Save
-      </button>
-      <button id="profileViewCancelBtn" type="button" class="btn btn-danger">
-        Cancel
-      </button>
+      {{#if fname}}
+      <div class="form-group">
+        <label class="control-label">First Name</label>
+        <p id="profileViewInputFName">{{ fname }}</p>
+      </div>
+      {{/if}}
+      {{#if lname}}
+      <div class="form-group">
+        <label class="control-label">Last Name</label>
+        <p id="profileViewInputLName">{{ lname }}</p>
+      </div>
+      {{/if}}
+      {{#if location}}
+      <div class="form-group">
+        <label class="control-label">Location</label>
+        <p id="profileViewInputLocation">{{ location }}</p>
+      </div>
+      {{/if}}
 
+      <button id="profileViewSubmitBtn" type="submit" class="btn btn-edit" data-event="profile:edit">
+        Edit
+      </button>
     </form>
   </div>
 </div>

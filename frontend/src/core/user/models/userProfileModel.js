@@ -5,9 +5,23 @@ define(function(require) {
 
   var UserProfileModel = Backbone.Model.extend({
 
-    // idAttribute: '_id',
+    idAttribute: '_id',
+    url: '/api/user/me',
 
-    url: '/api/user/me'
+    validate: function (attributes, options) {
+    	var validationErrors = {};
+
+    	if (!attributes.firstName) {
+    		validationErrors.firstName = 'Firstname is required';
+    	}
+
+    	if (!attributes.lastName) {
+    		validationErrors.lastName = 'Lastname is required';
+    	}
+
+
+    	return validationErrors;
+    }
 
   });
 

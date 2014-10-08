@@ -16,16 +16,41 @@ define(function(require){
     },
 
     preRender: function() {
-      console.log('in user profile');
-      // this.listenTo(Origin, 'userEditSidebar:views:save', this.saveUser);
+      // console.log('in user profile');
+      this.listenTo(Origin, 'userProfileSidebar:views:save', this.saveUser);
+      this.listenTo(this.model, 'invalid', this.handleValidationError);
     },
 
     postRender: function() {
       // add the tenant selector
       // this.$('.tenant-selector').append(new TenantSelectView().$el);
       this.setViewToReady();
-      console.log('after preRender');
+      // console.log('after preRender');
+    },
+
+    handleValidationError: function(model, error) {
+      alert('error');
+      console.log(error);
+    },
+
+    saveUser: function() {
+      var self = this;
+
+      if (this.model.isValid) {
+        self.model.save({
+          firstName: $('#userFirstName').val(),
+          lastName: $('#userLastName').val()
+        }, {
+          error: function(model, response, optinos) {
+
+          },
+          success: function(model, response, options) {
+
+          }
+        });
+      } 
     }
+
 
     // saveUser: function() {
     //   var self = this;

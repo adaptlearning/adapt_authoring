@@ -48,7 +48,7 @@ define(function(require) {
       case 'profile':
         settings.authenticate = true;
 
-        Origin.trigger('location:title:update', {title: 'Profile - viewing your personal information'});        
+        Origin.trigger('location:title:update', {title: window.polyglot.t('app.editprofileinformation')});        
         currentView = UserProfileView;
         break;
     }

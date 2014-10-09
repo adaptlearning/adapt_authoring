@@ -2,6 +2,7 @@ define(function(require) {
   
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
+  var _ = require('underscore');
 
   var UserProfileModel = Backbone.Model.extend({
 
@@ -12,15 +13,34 @@ define(function(require) {
     	var validationErrors = {};
 
     	if (!attributes.firstName) {
-    		validationErrors.firstName = 'Firstname is required';
+    		validationErrors.firstName = window.polyglot.t('app.validationrequired');
     	}
 
     	if (!attributes.lastName) {
-    		validationErrors.lastName = 'Lastname is required';
+    		validationErrors.lastName = window.polyglot.t('app.validationrequired');
     	}
 
+    	if (attributes._isNewPassword) {
+    		if (!attributes.password) {
+    			validationErrors.password = window.polyglot.t('app.validationrequired');
+    		} else {
+    			if (attributes.password.length < 8) {
+    				validationErrors.password = window.polyglot.t('app.validationlength', {length: 8});
+    			}
+    		}
 
-    	return validationErrors;
+    		if (!attributes.confirmPassword) {
+    			validationErrors.confirmPassword = window.polyglot.t('app.validationrequired');
+    		} else {
+    			if (attributes.password !== attributes.confirmPassword) {
+	    			validationErrors.confirmPassword = window.polyglot.t('app.validationpasswordmatch');
+	    		}	
+    		}
+    	}
+
+    	return _.isEmpty(validationErrors) 
+    		? null
+    		: validationErrors;
     }
 
   });

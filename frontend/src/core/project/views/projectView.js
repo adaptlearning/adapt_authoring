@@ -49,7 +49,7 @@ define(function(require){
         event.preventDefault();  
       }
       
-      Backbone.history.navigate('#/project/edit/' + this.model.get('_id'), {trigger: true});
+      Backbone.history.navigate('#/editor/' + this.model.get('_id') + '/settings', {trigger: true});    
     },
 
     editProject: function(event) {

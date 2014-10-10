@@ -102,7 +102,7 @@ define(function(require){
       	self.model.set('confirmPassword', self.$('#confirmPassword').val());
       } else {
       	self.model.unset('password');
-      	self.model.unsert('confirmPassword');
+      	self.model.unset('confirmPassword');
       }
 
       self.model.save({}, {

@@ -2,7 +2,10 @@ define(function(require) {
 
   var Origin = require('coreJS/app/origin');
   var LoginView = require('coreJS/user/views/loginView');
-  var LogoutView = require('coreJS/user/views/logoutView');
+  var UserProfileView = require('coreJS/user/views/userProfileView');
+  var UserProfileSidebarView = require('coreJS/user/views/userProfileSidebarView');
+  var UserProfileModel = require('coreJS/user/models/userProfileModel');
+
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
   var ResetPasswordView = require('coreJS/user/views/resetPasswordView');
   var UserPasswordResetModel = require('coreJS/user/models/userPasswordResetModel');
@@ -11,42 +14,51 @@ define(function(require) {
     Origin.router.navigate('#/user/logout');
   });
 
-  Origin.on('navigation:profile:toggle', function() {
-    console.log('Should show profile');
+  Origin.on('navigation:user:profile', function() {
+    Origin.router.navigate('#/user/profile');
   });
 
   Origin.on('router:user', function(location, subLocation, action) {
-
     var currentView;
     var settings = {};
+
     settings.authenticate = false;
 
     switch (location) {
       case 'login':
-        Origin.trigger('location:title:hide');
-        currentView = LoginView;
-        break;
+      Origin.trigger('location:title:hide');
+      currentView = LoginView;
+      break;
       case 'logout':
-        Origin.trigger('location:title:hide');
-        currentView = LogoutView;
-        break;
+      Origin.sessionModel.logout();
+      break;
       case 'forgot':
-        currentView = ForgotPasswordView;
-        break;
+      currentView = ForgotPasswordView;
+      break;
       case 'reset':
-        currentView = ResetView;
-        break;
+      currentView = ResetView;
+      break;      
       case 'profile':
-        settings.authenticate = true;
-        currentView = profileView;
-        break;
+      settings.authenticate = true;
+
+      Origin.trigger('location:title:update', {title: window.polyglot.t('app.editprofileinformation')});        
+      currentView = UserProfileView;
+      break;
     }
 
     if (currentView) {
-      Origin.router.createView(currentView, {model: Origin.sessionModel}, settings);
+      if (location == 'profile') {
+        var profile = new UserProfileModel(); 
+        profile.fetch({
+          success: function() {
+            Origin.sidebar.addView(new UserProfileSidebarView().$el);
+            Origin.router.createView(currentView, {model: profile}, settings);
+          }
+        });
+      } else {
+        Origin.router.createView(currentView, {model: Origin.sessionModel}, settings);
+      }
     }
-    
-
   });
 
 })

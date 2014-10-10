@@ -1,3 +1,59 @@
-User profile
+<div class="course-edit">
+  <div class="editing-overlay-panel">
 
-I am the user's profile!
+    <div class="editing-overlay-panel-content">
+        <div class="editing-overlay-panel-content-inner">
+            <form class="forms">
+
+                <div class="form-group">
+                    <label for="firstName">{{t 'app.firstname'}}
+                        <span class="req">*</span>
+                        <span id="firstNameError" class="error"></span>
+                    </label>
+                    <input type="text" class="width-30" id="firstName" value="{{firstName}}" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">{{t 'app.lastname'}}
+                        <span class="req">*</span>
+                        <span id="lastNameError" class="error"></span>
+                    </label>
+                    <input type="text" class="width-30" id="lastName" value="{{lastName}}" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label>{{t 'app.email'}}
+                        <span id="titleErrorMessage" class="error"></span>
+                    </label>
+                    {{email}}
+          
+                </div>
+
+                <div class="change-password-section display-none">
+                  <div class="form-group">
+                      <label for="password">New password
+                          <span class="req">*</span>
+                          <span id="passwordError" class="error"></span>
+                      </label>
+                      <input type="password" class="width-15" id="password" value="" autocomplete="off">
+                      <div id="passwordStrength"></div>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="confirmPassword">Confirm password
+                          <span class="req">*</span>
+                          <span id="confirmPasswordError" class="error"></span>
+                      </label>
+                      <input type="password" class="width-15" id="confirmPassword" value="" autocomplete="off">
+                  </div>
+
+                </div>
+
+                <div class="form-group">
+                  <a href="#" class="btn btn-primary change-password">{{t 'app.changepassword'}}</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

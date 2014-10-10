@@ -8,14 +8,12 @@ define(function(require) {
     defaults: {
       isAuthenticated: false,
       id: '',
-      email: '',
-      preferences: {}
+      email: ''
     },
 
     url: "/api/authcheck",
 
-    initialize: function() {
-    },
+    initialize: function() {},
 
     logout: function (cback) {
       var model = this;

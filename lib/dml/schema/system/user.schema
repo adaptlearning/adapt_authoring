@@ -4,6 +4,12 @@
   "id": "http://jsonschema.net",
   "$ref": "http://localhost/system/tenantObject.schema",
   "properties": {
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
     "email": {
       "type": "string",
       "required": true,

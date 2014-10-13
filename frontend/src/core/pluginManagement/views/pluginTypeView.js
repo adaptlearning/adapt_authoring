@@ -65,7 +65,7 @@ define(function(require){
 
       // hit the update endpoint
       $.ajax({
-        'method': 'GET',
+        'method': 'POST',
         'url': this.model.urlRoot + '/update',
         'data': {
           'targets': [this.model.get('_id')]

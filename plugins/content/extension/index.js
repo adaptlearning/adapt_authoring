@@ -32,12 +32,12 @@ var bowerConfig = {
   options: defaultOptions,
   extra: [ "targetAttribute" ],
   nameList: [
-    "adapt-contrib-assessment#develop",
-    "adapt-contrib-pageLevelProgress#develop",
-    "adapt-contrib-resources#develop",
-    "adapt-contrib-spoor#develop",
-    "adapt-contrib-trickle#develop",
-    "adapt-contrib-tutor#develop"
+    "adapt-contrib-assessment",
+    "adapt-contrib-pageLevelProgress",
+    "adapt-contrib-resources",
+    "adapt-contrib-spoor",
+    "adapt-contrib-trickle",
+    "adapt-contrib-tutor"
   ],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     database.getDatabase(function (err, db) {

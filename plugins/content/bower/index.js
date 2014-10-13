@@ -280,6 +280,7 @@ BowerPlugin.prototype.initialize = function (plugin) {
 
         db.retrieve(plugin.type, { _id: { $in: upgradeTargets} }, function (err, results) {
           if (err) {
+            logger.log('error', err);
             return next(err);
           }
 
@@ -351,17 +352,18 @@ function fetchInstalledPackages (plugin, options, cb) {
       // there should be at least one installed
       if (options.refreshplugins || ((!results || 0 === results.length) && options.retry)) {
         // update plugins retry, return
-        return updatePackages(plugin, options, function (err) {
+        updatePackages(plugin, options, function (err) {
           if (err) {
+            logger.log('error', err);
             return cb(err);
           }
 
-          // try again, but only once
+          // Try again, but only once
           options.retry = false;
           options.refreshplugins = false;
           fetchInstalledPackages(plugin, options, cb);
         });
-      }
+      } 
 
       return cb(null, results);
     });
@@ -409,7 +411,7 @@ function addPackage (plugin, packageInfo, strict, cb) {
     logger.log('warn', 'ignoring unversioned component: ' + pkgMeta.name);
     return cb(null);
     */
-    pkgMeta.version = "0.2.0"; // Remove me later - see above ^
+    pkgMeta.version = "0.0.0"; // Remove me later - see above ^
   }
 
   var schemaPath = path.join(packageInfo.canonicalDir, defaultOptions._adaptSchemaFile);
@@ -445,6 +447,7 @@ function addPackage (plugin, packageInfo, strict, cb) {
       // Copy this version of the component to a holding area (used for publishing).
       // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
       var destination = path.join(plugin.options.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
+
       rimraf(destination, function(err) {
         if (err) {
           // can't continue
@@ -578,7 +581,7 @@ function updatePackages (plugin, options, cb) {
   }
 
   options = _.extend(
-    defaultOptions,
+    _.clone(defaultOptions),
     options
   );
 
@@ -635,17 +638,19 @@ function checkIfHigherVersionExists (package, options, cb) {
     options = {};
   }
 
+  var packageName = package.name;
+
   options = _.extend(
-    defaultOptions,
+    _.clone(defaultOptions),
     options
   );
 
   bower
     .commands
-    .install([package.name+'#develop'], null, options) // @TODO - remove develop tag!
+    .install([packageName], null, options) // Removed #develop tag
     .on('end', function (info) {
       // if info is empty, it means there is no higher version of the plugin available
-      if (!info.pkgMeta) {
+      if (Object.getOwnPropertyNames(info).length == 0 || !info[packageName].pkgMeta) {
         return cb(null, false);
       }
       return cb(null, true);

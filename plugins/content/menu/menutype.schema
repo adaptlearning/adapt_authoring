@@ -1,0 +1,20 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/plugins/content/bower/bowerplugin.schema",
+  "properties": {
+    "menu": {
+      "type": "string",
+      "required": true
+    },
+    "targetAttribute": {
+      "type": "string",
+      "required": true,
+      "default": "undefined"
+    },
+    "properties":{
+      "type": "object"
+    }
+  }
+}

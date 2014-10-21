@@ -10,9 +10,8 @@ var origin = require('../../../'),
     ContentPlugin = contentmanager.ContentPlugin,
     ContentTypeError = contentmanager.errors.ContentTypeError,
     configuration = require('../../../lib/configuration'),
-    database = require('../../../lib/database'),
     usermanager = require('../../../lib/usermanager'),
-    helpers = require('../../../lib/helpers'),
+    database = require('../../../lib/database'),
     logger = require('../../../lib/logger'),
     defaultOptions = require('./defaults.json'),
     bower = require('bower'),
@@ -32,7 +31,7 @@ var bowerConfig = {
   srcLocation: 'menu',
   options: defaultOptions,
   nameList: [
-    "adapt-contrib-boxmenu#develop"
+    'adapt-contrib-boxmenu#develop'
   ],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     database.getDatabase(function (err, db) {
@@ -46,7 +45,6 @@ var bowerConfig = {
 
     });
   }
-
 };
 
 function Menu () {

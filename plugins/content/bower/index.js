@@ -489,7 +489,7 @@ function addPackage (plugin, packageInfo, strict, cb) {
                 }
 
                 // done
-                logger.log('info', 'successfully copied plugin to tenant dir');
+                logger.log('info', 'Successfully copied ' + pkgMeta.name + ' to tenant ' + tenantPluginPath);
               });
             });
           });

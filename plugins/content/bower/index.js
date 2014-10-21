@@ -352,7 +352,7 @@ function fetchInstalledPackages (plugin, options, cb) {
       // there should be at least one installed
       if (options.refreshplugins || ((!results || 0 === results.length) && options.retry)) {
         // update plugins retry, return
-        updatePackages(plugin, options, function (err) {
+        return updatePackages(plugin, options, function (err) {
           if (err) {
             logger.log('error', err);
             return cb(err);

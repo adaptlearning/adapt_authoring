@@ -30,18 +30,18 @@ var bowerConfig = {
   srcLocation: 'components',
   options: defaultOptions,
   nameList: [
-    "adapt-contrib-text#develop",
-    "adapt-contrib-narrative#develop",
-    "adapt-contrib-media#develop",
-    "adapt-contrib-hotgraphic#develop",
-    "adapt-contrib-blank#develop",
-    "adapt-contrib-accordion#develop",
-    "adapt-contrib-graphic#develop",
-    "adapt-contrib-matching#develop",
-    "adapt-contrib-textInput#develop",
-    "adapt-contrib-mcq#develop",
-    "adapt-contrib-gmcq#develop",
-    "adapt-contrib-slider#develop"
+    "adapt-contrib-text#~1.1",
+    "adapt-contrib-narrative#~1.1",
+    "adapt-contrib-media#~1.1",
+    "adapt-contrib-hotgraphic#~1.1",
+    "adapt-contrib-blank#~1.1",
+    "adapt-contrib-accordion#~1.1",
+    "adapt-contrib-graphic#~1.1",
+    "adapt-contrib-matching#~1.1",
+    "adapt-contrib-textInput#~1.1",
+    "adapt-contrib-mcq#~1.1",
+    "adapt-contrib-gmcq#~1.1",
+    "adapt-contrib-slider#~1.1"
   ],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     database.getDatabase(function (err, db) {

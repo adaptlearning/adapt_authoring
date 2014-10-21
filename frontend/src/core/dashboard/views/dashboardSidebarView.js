@@ -18,7 +18,6 @@ define(function(require) {
 		},
 
         postRender: function() {
-            console.log('post')
             this.listenTo(Origin, 'sidebarFilter:filterByTags', this.filterProjectsByTags);
             this.listenTo(Origin, 'sidebarFilter:addTagToSidebar', this.addTagToSidebar);
             this.listenTo(Origin, 'sidebar:update:ui', this.updateUI);

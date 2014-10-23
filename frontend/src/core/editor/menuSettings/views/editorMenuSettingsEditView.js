@@ -20,7 +20,6 @@ define(function(require) {
       this.collection = new MenuSettingsCollection();
       this.listenTo(this.collection, 'sync', this.addMenuItemView);
       this.collection.fetch();
-      logger.log('info', this.collection);
 
       this.listenTo(Origin, 'editorSideBarView:removeEditView', this.remove);
       this.listenTo(Origin, 'editorMenuSettingsEditSidebar:views:save', this.saveData);

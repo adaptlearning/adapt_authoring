@@ -1,4 +1,4 @@
-define(function(require) {
+define(function(require){
 
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
@@ -7,10 +7,10 @@ define(function(require) {
 
   var MenuSettingsView = OriginView.extend({
 
-    tagname: 'li',
+    tagName: 'li',
 
     className: function() {
-      var isSelectedClass = (this.model.get('_selected')) ? ' selected' : '';
+      var isSelectedClass = (this.model.get('_isSelected')) ? ' selected' : '';
 
       return 'menusettings-list-item' + isSelectedClass;
     },
@@ -20,14 +20,14 @@ define(function(require) {
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'editor:menuSettings:selected', this.deselectItem);
+      this.listenTo(Origin, 'editor:menuSettings:selected', this.deselectMenu);
     },
 
     toggleSelect: function(event) {
       event && event.stopPropagation();
 
       if (!this.model.get('_isSelected')) {
-        this.selectItem();
+        this.selectMenu();
       } 
     },
 

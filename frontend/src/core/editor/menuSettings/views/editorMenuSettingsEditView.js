@@ -10,7 +10,7 @@ define(function(require) {
 
     tagName: "ul",
 
-    className: "",
+    className: "editor-menusettings-edit",
 
     events: {
 
@@ -30,7 +30,7 @@ define(function(require) {
 
     addMenuItemView: function() {
       this.renderMenuItemViews();
-      _.defer(this.setViewReady);
+      _.defer(this.setViewToReady);
     },
 
     renderMenuItemViews: function() {

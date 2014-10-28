@@ -31,7 +31,7 @@ var bowerConfig = {
   srcLocation: 'menu',
   options: defaultOptions,
   nameList: [
-    'adapt-contrib-boxmenu#develop'
+    'adapt-contrib-boxMenu#develop'
   ],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     database.getDatabase(function (err, db) {
@@ -49,7 +49,7 @@ var bowerConfig = {
 
 function Menu () {
   this.bowerConfig = bowerConfig;
-}
+};
 
 util.inherits(Menu, BowerPlugin);
 
@@ -151,7 +151,7 @@ BowerPlugin.prototype.initialize.call(null, bowerConfig);
       });
     });
   });
-}
+};
 
 // setup extensions
 initialize();

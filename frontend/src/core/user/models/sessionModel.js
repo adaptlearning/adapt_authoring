@@ -2,6 +2,7 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
+  
 
   var SessionModel = Backbone.Model.extend({
 
@@ -63,7 +64,30 @@ define(function(require) {
           }
         }
       );
+    },
+
+    sendTokenEmail: function (email, cback) {
+      // 1: Check if email exists
+      // Hier abbrechen wenn email nicht passt
+      // 2: Generate Token and save it to DB
+      // Todo later: diese funktion aus der generateResetToken aufrufen und token mitgeben
+      // 3: Send Email
+      $.get(
+        '/api/useremail',
+        {
+          email: "email"
+        },
+        function(result) {
+          if (result.success) {
+             console.log("result success");
+            cback(false, result);
+          }
+        }
+      );
+
     }
+
+
 
   });
 

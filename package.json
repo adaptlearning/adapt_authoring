@@ -90,6 +90,7 @@
     "matchdep": "~0.3.0",
     "mocha": "~1.13.0",
     "node-ffprobe": "~1.2.2",
+    "nodemailer": "^1.3.0",
     "should": "~1.3.0",
     "supertest": "~0.8.1"
   }

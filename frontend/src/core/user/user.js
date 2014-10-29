@@ -36,7 +36,7 @@ define(function(require) {
       currentView = ForgotPasswordView;
       break;
       case 'reset':
-      currentView = ResetView;
+      currentView = ResetPasswordView;
       break;      
       case 'profile':
       settings.authenticate = true;

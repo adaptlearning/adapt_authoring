@@ -12,19 +12,19 @@ define(function(require) {
       ipAddress: false
     },
 
-    initialize : function(options) {},
+    initialize : function(options) {      
+      this.attributes.token = window.location.hash.substr(window.location.hash.lastIndexOf('/')+1);       
+    },
 
     url: function () {
       return "/api/userpasswordreset/" + this.get('token');
     },
 
     resetPassword: function (password, cback) {
-      var model = this;
-
+      var model = this;             
       $.post(
-        '/api/resetpassword',
-        {
-          user: model.get('user'),
+        model.url(),
+        {          
           password: password,
           token: model.get('token')
         },

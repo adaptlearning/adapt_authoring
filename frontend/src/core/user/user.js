@@ -55,6 +55,13 @@ define(function(require) {
             Origin.router.createView(currentView, {model: profile}, settings);
           }
         });
+      }else if(location == 'reset'){
+        var uprm = new UserPasswordResetModel(); 
+        uprm.fetch({
+          success: function() {            
+            Origin.router.createView(currentView, {model: uprm}, settings);
+          }
+        });
       } else {
         Origin.router.createView(currentView, {model: Origin.sessionModel}, settings);
       }

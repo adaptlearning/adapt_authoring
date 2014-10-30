@@ -14,15 +14,18 @@ define(function(require) {
   postRender: function() {
       this.setViewToReady();
     },
-    // preRender: function() {
-    //   this.listenTo(this.model, 'sync', this.verifyToken);
-    // },
+    preRender: function() {
+      this.listenTo(this.model, 'sync', this.verifyToken);
+    },
 
     verifyToken: function() {
-      if (!this.model.get('user')) {
-        // Invalid token entered - Route user back to login
-        Backbone.history.navigate('#/user/login', {trigger: true});
-      }
+      // console.log(this.model.get('user'));
+      // if (!this.model.get('user')) {
+      //   // Invalid token entered - Route user back to login
+      //   Backbone.history.navigate('#/user/login', {trigger: true});
+      // }
+      //todo verification
+      return true;
     },
 
     resetPassword: function(e) {

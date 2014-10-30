@@ -52,6 +52,7 @@
   "app.resetpassword" : "Reset password",
   "app.submit" : "Submit",
   "app.newpassword" : "New password",
+  "app.newpassword-confirm" : "Confirm new password",
   "app.forgotpasswordsuccess" : "Your request is being processed. If the details you provided match our records, you will receive further instructions via email.",
   "app.forgotpassworderror" : "We could not process your request. Please try again.",
   "app.resetpasswordsuccess" : "Your password has been reset successfully.",

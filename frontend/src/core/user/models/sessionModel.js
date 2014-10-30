@@ -67,19 +67,15 @@ define(function(require) {
     },
 
     sendTokenEmail: function (email, cback) {
-      // 1: Check if email exists
       // Hier abbrechen wenn email nicht passt
       // 2: Generate Token and save it to DB
       // Todo later: diese funktion aus der generateResetToken aufrufen und token mitgeben
       // 3: Send Email
-      $.get(
-        '/api/useremail',
-        {
-          email: "email"
-        },
+
+
+      $.get('/api/useremail/' + email, 
         function(result) {
           if (result.success) {
-             console.log("result success");
             cback(false, result);
           }
         }
@@ -88,9 +84,12 @@ define(function(require) {
     }
 
 
-
   });
 
   return SessionModel;
 
 });
+
+
+
+

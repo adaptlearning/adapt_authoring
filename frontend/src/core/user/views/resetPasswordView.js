@@ -11,10 +11,12 @@ define(function(require) {
     events: {
       'click .form-reset-password button':'resetPassword'
     },
-
-    preRender: function() {
-      this.listenTo(this.model, 'sync', this.verifyToken);
+  postRender: function() {
+      this.setViewToReady();
     },
+    // preRender: function() {
+    //   this.listenTo(this.model, 'sync', this.verifyToken);
+    // },
 
     verifyToken: function() {
       if (!this.model.get('user')) {

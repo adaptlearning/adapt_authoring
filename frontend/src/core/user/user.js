@@ -21,7 +21,7 @@ define(function(require) {
   Origin.on('router:user', function(location, subLocation, action) {
     var currentView;
     var settings = {};
-
+    
     settings.authenticate = false;
 
     switch (location) {

@@ -17,6 +17,7 @@ conf/config.json
 /plugins/content/extension/extensioncache/
 /plugins/content/theme/versions/
 /plugins/content/theme/extensioncache/
+/plugins/content/menu/versions/
 /plugins/content/bower/bowercache/
 /master/
 /frontend/src/adaptbuilder/css/adapt.css

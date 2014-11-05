@@ -12,6 +12,7 @@ define(function(require) {
       'click button.editor-common-sidebar-config'       : 'editConfiguration',
       'click button.editor-common-sidebar-theme'        : 'editTheme',
       'click button.editor-common-sidebar-extensions'   : 'manageExtensions',
+      'click button.editor-common-sidebar-menusettings' : 'editMenu',
       'click button.editor-common-sidebar-publish'      : 'publishProject',
       'click button.editor-common-sidebar-preview'      : 'previewProject',
       'click button.editor-common-sidebar-close'        : 'closeProject', 
@@ -45,6 +46,10 @@ define(function(require) {
 
     editTheme: function() {
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/theme', {trigger: true});
+    },
+
+    editMenu: function() {
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/menusettings', {trigger: true});
     },
 
     manageExtensions: function() {

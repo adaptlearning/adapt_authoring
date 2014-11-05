@@ -108,7 +108,7 @@ BowerPlugin.prototype.getPackageType = function () {
  */
 function extractPluginType (packageJson) {
   // not very intelligent
-  var pluginTypes = ['theme', 'extension', 'component'];
+  var pluginTypes = ['theme', 'extension', 'component', 'menu'];
   var type = false;
   for (var index = 0; index < pluginTypes.length; ++index) {
     type = pluginTypes[index];

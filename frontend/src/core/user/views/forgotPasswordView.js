@@ -16,7 +16,6 @@ define(function(require) {
     },
 
      emailEmpty: function() {
-      console.log("Enter Email");
       $('#passwordErrorMessage').text(window.polyglot.t('app.pleaseenteremail'));
     },
 

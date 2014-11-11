@@ -17,7 +17,6 @@ define(function(require) {
 
 
     checkPassword: function(e) {
-      console.log("Call of checkPassword function: " + new Date().getMilliseconds()); 
       e.preventDefault();
       
       var inputPassword = this.$('.input-new-password').val();

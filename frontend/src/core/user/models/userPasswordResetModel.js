@@ -12,18 +12,15 @@ define(function(require) {
       ipAddress: false
     },
 
-    initialize : function(options) {  
-    console.log("Call of init function: " + new Date().getMilliseconds());   
+    initialize : function(options) {    
       this.attributes.token = window.location.hash.substr(window.location.hash.lastIndexOf('/')+1);     
     },
 
     url: function () {
-      console.log("Call of url function: " + new Date().getMilliseconds());
       return "/api/userpasswordreset/" + this.get('token');
     },
 
     resetPassword: function (password, cback) {
-      console.log("Call of resetPassword function with token: " + this.get('token')  + " " + new Date().getMilliseconds());
       var model = this;             
       $.post(
         model.url(),

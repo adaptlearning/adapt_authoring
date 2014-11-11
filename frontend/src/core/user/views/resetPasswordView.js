@@ -9,31 +9,25 @@ define(function(require) {
     className: "reset-password",
 
     events: {
-      'click .form-reset-password button':'resetPassword'
+      'click .form-reset-password button':'checkPassword'
     },
   postRender: function() {
       this.setViewToReady();
     },
-    preRender: function() {
-      this.listenTo(this.model, 'sync', this.verifyToken);
-    },
 
-    verifyToken: function() {
-      // console.log(this.model.get('user'));
-      // if (!this.model.get('user')) {
-      //   // Invalid token entered - Route user back to login
-      //   Backbone.history.navigate('#/user/login', {trigger: true});
-      // }
-      //todo verification
-      return true;
-    },
 
-    resetPassword: function(e) {
+    checkPassword: function(e) {
+      console.log("Call of checkPassword function: " + new Date().getMilliseconds()); 
       e.preventDefault();
       
       var inputPassword = this.$('.input-new-password').val();
+      var confirmPassword = this.$('input-new-password-confirm').val();
       var model = this.model;
       var view = this;
+
+      // Check if passwords are not empty and match and have required length
+      // Reuse validation from userProfileModel
+
 
       model.resetPassword(inputPassword, function(err, result) {
         if( err || !result.success) {

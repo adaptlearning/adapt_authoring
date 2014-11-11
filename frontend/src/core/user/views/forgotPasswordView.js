@@ -8,25 +8,39 @@ define(function(require) {
     className: "forgot-password",
 
     events: {
-      'click .form-forgot-password .submit':'handleReset'
+      'click .form-forgot-password .submit':'emailSubmitted'
     },
 
   postRender: function() {
       this.setViewToReady();
     },
 
+     emailEmpty: function() {
+      console.log("Enter Email");
+      $('#passwordErrorMessage').text(window.polyglot.t('app.pleaseenteremail'));
+    },
 
-    handleReset: function(e) {
+
+    emailSubmitted: function(e) {
       e.preventDefault();
 
       var email = this.$('.input-username-email').val();
       var model = this.model;
       var view = this;
+
+      // Validation
+      if (email === '') {
+        this.emailEmpty();
+        return false;
+      };
+
+
+
       // Display success regardless - we don't want to give them any clues :)
       view.$('.form-forgot-password').addClass('display-none');
       view.$('.success').removeClass('display-none');
 
-      model.sendTokenEmail(email, function(err, result) {
+      model.handleReset(email, function(err, result) {
         console.log(err + " " + result);
       });     
     }

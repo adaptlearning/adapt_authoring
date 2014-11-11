@@ -66,13 +66,7 @@ define(function(require) {
       );
     },
 
-    sendTokenEmail: function (email, cback) {
-      // Hier abbrechen wenn email nicht passt
-      // 2: Generate Token and save it to DB
-      // Todo later: diese funktion aus der generateResetToken aufrufen und token mitgeben
-      // 3: Send Email
-
-
+    handleReset: function (email, cback) {
       $.get('/api/useremail/' + email, 
         function(result) {
           if (result.success) {

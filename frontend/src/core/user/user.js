@@ -9,6 +9,7 @@ define(function(require) {
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
   var ResetPasswordView = require('coreJS/user/views/resetPasswordView');
   var UserPasswordResetModel = require('coreJS/user/models/userPasswordResetModel');
+  var ResetPasswordNotificationView = require('coreJS/user/views/resetPasswordNotificationView')
 
   Origin.on('navigation:user:logout', function() {
     Origin.router.navigate('#/user/logout');
@@ -37,7 +38,10 @@ define(function(require) {
       break;
       case 'reset':
       currentView = ResetPasswordView;
-      break;      
+      break;   
+      case 'notify':
+      currentView = ResetPasswordNotificationView;
+      break;     
       case 'profile':
       settings.authenticate = true;
 

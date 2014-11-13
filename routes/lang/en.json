@@ -165,5 +165,9 @@
   "app.uploadplugin": "Upload Plugin",
   "app.uploadedbyuser": "Uploaded By User",
   "app.pluginfile": "Plugin File",
-  "app.pleaseenteremail" : "Please enter your email here"
+  "app.pleaseenteremail" : "Please enter your email here",
+  "app.passwordnotification" : "Ups something went terribly wrong",
+  "app.passwordnotificationerror" : "For security reasons, this link is no longer valid. Please click the button to generate a new password",
+  "app.generatePassword" : "Generate password",
+  "app.passwordrequired" : "Please enter a password"
 }

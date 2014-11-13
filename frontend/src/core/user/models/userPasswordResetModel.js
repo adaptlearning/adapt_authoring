@@ -22,8 +22,7 @@ define(function(require) {
 
     resetPassword: function (password, cback) {
       var model = this;             
-      $.post(
-        model.url(),
+      $.post('/api/handleResetPassword/',
         {          
           password: password,
           token: this.get('token')

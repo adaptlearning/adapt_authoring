@@ -50,7 +50,7 @@ define(function(require) {
       });
     },
 
-    generateResetToken: function (username, cback) {
+/*    generateResetToken: function (username, cback) {
       var model = this;
 
       $.post(
@@ -64,7 +64,7 @@ define(function(require) {
           }
         }
       );
-    },
+    },*/
 
     handleReset: function (email, cback) {
       $.get('/api/useremail/' + email, 

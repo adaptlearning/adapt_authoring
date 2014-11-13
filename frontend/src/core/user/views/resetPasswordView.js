@@ -29,12 +29,12 @@ define(function(require) {
 
 
       model.resetPassword(inputPassword, function(err, result) {
-        if( err || !result.success) {
+        /*if( err || !result.success) {
           view.$('.error').removeClass('display-none');
         } else {
           view.$('.form-reset-password').addClass('display-none');
           view.$('.success').removeClass('display-none');
-        }
+        }*/
       });
     }
 

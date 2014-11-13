@@ -40,7 +40,6 @@ define(function(require) {
       view.$('.success').removeClass('display-none');
 
       model.handleReset(email, function(err, result) {
-        console.log(err + " " + result);
       });     
     }
 

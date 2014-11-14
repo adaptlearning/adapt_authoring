@@ -8,6 +8,7 @@ define(function(require){
   var ExtensionTypeCollection = require('coreJS/pluginManagement/collections/extensionTypeCollection');
   var ThemeTypeCollection = require('coreJS/pluginManagement/collections/themeTypeCollection');
   var ComponentTypeCollection = require('coreJS/pluginManagement/collections/componentTypeCollection');
+  var MenuTypeCollection = require('coreJS/pluginManagement/collections/menuTypeCollection');
   var Helpers = require('coreJS/app/helpers');
 
   var PluginManagementView = OriginView.extend({
@@ -17,7 +18,8 @@ define(function(require){
     pluginCollections: {
       'extension' : ExtensionTypeCollection,
       'component' : ComponentTypeCollection,
-      'theme' : ThemeTypeCollection
+      'theme' : ThemeTypeCollection,
+      'menu' : MenuTypeCollection
     },
 
     tagName: "div",

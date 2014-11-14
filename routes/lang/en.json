@@ -154,6 +154,7 @@
   "app.noextensionsavailable" : "No extensions can be enabled at this time.",
   "app.extensionmanagement" : "Manage Available Extensions",
   "app.thememanagement" : "Manage Available Themes",
+  "app.menumanagement" : "Manage Available Menus",
   "app.componentmanagement" : "Manage Available Components",
   "app.checking" : "Checking ... ",
   "app.updateplugin" : "Click to update",

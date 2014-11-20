@@ -9,7 +9,8 @@ define(function(require) {
     className: "reset-password",
 
     events: {
-      'click .form-reset-password button':'checkPassword'
+      'click .form-reset-password .submit':'checkPassword',
+      'click .form-reset-password .cancel':'gotoLogin'
     },
     postRender: function() {
       this.setViewToReady();
@@ -21,7 +22,10 @@ define(function(require) {
       });
 
     },
-
+    gotoLogin : function (e) {
+      e.preventDefault();
+      Backbone.history.navigate('#/user/login', {trigger: true});
+    },
     checkPassword: function(e) {
       e.preventDefault();
 

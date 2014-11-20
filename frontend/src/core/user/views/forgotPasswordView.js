@@ -8,18 +8,17 @@ define(function(require) {
     className: "forgot-password",
 
     events: {
-      'click .form-forgot-password .submit':'emailSubmitted'
+      'click .form-forgot-password .submit':'emailSubmitted',
+      'click .form-forgot-password .cancel':'gotoLogin'
     },
 
-  postRender: function() {
+    postRender: function() {
       this.setViewToReady();
     },
-
-     emailEmpty: function() {
-      $('#passwordErrorMessage').text(window.polyglot.t('app.pleaseenteremail'));
+    gotoLogin : function (e) {
+      e.preventDefault();
+      Backbone.history.navigate('#/user/login', {trigger: true});
     },
-
-
     emailSubmitted: function(e) {
       e.preventDefault();
 
@@ -28,18 +27,17 @@ define(function(require) {
       var view = this;
 
       // Validation
+      // maybe add check for valid email format (adapt@example.com)
       if (email === '') {
-        this.emailEmpty();
+        $('#passwordErrorMessage').text(window.polyglot.t('app.pleaseenteremail'));
         return false;
       };
-
-
 
       // Display success regardless - we don't want to give them any clues :)
       view.$('.form-forgot-password').addClass('display-none');
       view.$('.success').removeClass('display-none');
-
-      model.handleReset(email, function(err, result) {
+      model.handleReset(email, function(err, res) {
+        // do nothing.
       });     
     }
 

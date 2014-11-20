@@ -50,24 +50,8 @@ define(function(require) {
       });
     },
 
-/*    generateResetToken: function (username, cback) {
-      var model = this;
-
-      $.post(
-        '/api/createtoken',
-        {
-          email: username
-        },
-        function(result) {
-          if (result.success) {
-            cback(false, result);
-          }
-        }
-      );
-    },*/
-
     handleReset: function (email, cback) {
-      $.get('/api/useremail/' + email, 
+      $.get('/api/sendResetLink/' + email, 
         function(result) {
           if (result.success) {
             cback(false, result);

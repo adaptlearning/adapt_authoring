@@ -37,6 +37,9 @@ define(function(require) {
   var EditorThemeEditView = require('editorTheme/views/editorThemeEditView');
   var EditorThemeEditSidebarView = require('editorTheme/views/editorThemeEditSidebarView');
 
+  var EditorMenuSettingsEditView = require('editorMenuSettings/views/editorMenuSettingsEditView');
+  var EditorMenuSettingsEditSidebarView = require('editorMenuSettings/views/editorMenuSettingsEditSidebarView');
+
   var EditorComponentListView = require('editorPage/views/editorComponentListView');
   var EditorComponentListSidebarView = require('editorPage/views/editorComponentListSidebarView');
 
@@ -299,6 +302,18 @@ define(function(require) {
         });
         break;
 
+      case 'menusettings':
+        var configModel = new EditorConfigModel({_courseId: route1});
+
+        configModel.fetch({
+          success: function() {
+            Origin.trigger('location:title:update', {title: 'Select menu'});
+            Origin.sidebar.addView(new EditorMenuSettingsEditSidebarView().$el);
+            Origin.editingOverlay.addView(new EditorMenuSettingsEditView({model: configModel}).$el);
+          }
+        });
+        break;
+
       case 'extensions':
         Origin.trigger('location:title:update', {title: 'Manage extensions'});
 
@@ -308,7 +323,7 @@ define(function(require) {
 
         // Check whether the user came from the page editor or menu editor
         var backButtonRoute = "/#/editor/" + route1 + "/menu";
-        var backButtonText = "Back to menu";
+        var backButtonText = "Back to course structure";
 
         if (Origin.previousLocation.route2 === "page") {
             backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
@@ -341,7 +356,7 @@ define(function(require) {
         }
 
         // Update page title
-        Origin.trigger('location:title:update', {title: 'Menu editor'});
+        Origin.trigger('location:title:update', {title: 'Course structure'});
         // Create Editor menu view
         Origin.router.createView(EditorView, {
           currentCourseId: route1,

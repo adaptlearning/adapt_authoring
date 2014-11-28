@@ -9,6 +9,7 @@ define(function(require) {
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
   var ResetPasswordView = require('coreJS/user/views/resetPasswordView');
   var UserPasswordResetModel = require('coreJS/user/models/userPasswordResetModel');
+  var ResetPasswordNotificationView = require('coreJS/user/views/resetPasswordNotificationView')
 
   Origin.on('navigation:user:logout', function() {
     Origin.router.navigate('#/user/logout');
@@ -21,7 +22,7 @@ define(function(require) {
   Origin.on('router:user', function(location, subLocation, action) {
     var currentView;
     var settings = {};
-
+    
     settings.authenticate = false;
 
     switch (location) {
@@ -36,8 +37,11 @@ define(function(require) {
       currentView = ForgotPasswordView;
       break;
       case 'reset':
-      currentView = ResetView;
-      break;      
+      currentView = ResetPasswordView;
+      break;   
+      case 'notify':
+      currentView = ResetPasswordNotificationView;
+      break;     
       case 'profile':
       settings.authenticate = true;
 
@@ -53,6 +57,13 @@ define(function(require) {
           success: function() {
             Origin.sidebar.addView(new UserProfileSidebarView().$el);
             Origin.router.createView(currentView, {model: profile}, settings);
+          }
+        });
+      }else if(location == 'reset'){
+        var uprm = new UserPasswordResetModel(); 
+        uprm.fetch({
+          success: function() {            
+            Origin.router.createView(currentView, {model: uprm}, settings);
           }
         });
       } else {

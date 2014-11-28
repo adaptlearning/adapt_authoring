@@ -52,6 +52,7 @@
   "app.resetpassword" : "Reset password",
   "app.submit" : "Submit",
   "app.newpassword" : "New password",
+  "app.newpassword-confirm" : "Confirm new password",
   "app.forgotpasswordsuccess" : "Your request is being processed. If the details you provided match our records, you will receive further instructions via email.",
   "app.forgotpassworderror" : "We could not process your request. Please try again.",
   "app.resetpasswordsuccess" : "Your password has been reset successfully.",
@@ -165,5 +166,10 @@
   "app.pluginmanagement": "Plugin Management",
   "app.uploadplugin": "Upload Plugin",
   "app.uploadedbyuser": "Uploaded By User",
-  "app.pluginfile": "Plugin File"
+  "app.pluginfile": "Plugin File",
+  "app.pleaseenteremail" : "Please enter your email here",
+  "app.passwordnotification" : "Ups something went terribly wrong",
+  "app.passwordnotificationerror" : "For security reasons, this link is no longer valid. Please click the button to generate a new password",
+  "app.generatePassword" : "Generate password",
+  "app.passwordrequired" : "Please enter a password"
 }

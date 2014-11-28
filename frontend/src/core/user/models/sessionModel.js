@@ -2,6 +2,7 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
+  
 
   var SessionModel = Backbone.Model.extend({
 
@@ -49,24 +50,24 @@ define(function(require) {
       });
     },
 
-    generateResetToken: function (username, cback) {
-      var model = this;
-
-      $.post(
-        '/api/createtoken',
-        {
-          email: username
-        },
+    handleReset: function (email, cback) {
+      $.get('/api/sendResetLink/' + email, 
         function(result) {
           if (result.success) {
             cback(false, result);
           }
         }
       );
+
     }
+
 
   });
 
   return SessionModel;
 
 });
+
+
+
+

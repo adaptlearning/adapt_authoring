@@ -19,9 +19,6 @@ define(function(require){
 
   Origin.location = {};
 
-  // Push sockets onto Origin object
-  Origin.socket = io.connect();
-
   // Setup window events
   // This is abstracted so we can listenTo and remove event callbacks
   // when the view is removed without any extra code

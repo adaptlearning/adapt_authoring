@@ -25,6 +25,7 @@ define(function(require){
     },
 
     preRender: function() {
+      this.listenTo(Origin, 'dashboard:dashboardView:removeSubViews', this.remove);
       this.listenTo(this, 'remove', this.remove);
       this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(Origin, 'editorView:deleteProject:' + this.model.get('_id'), this.deleteProject);
@@ -44,7 +45,7 @@ define(function(require){
       Origin.trigger('contextMenu:open', this, e);
     },
 
-    editProjectSettings: function() {
+    editProjectSettings: function(event) {
       if (event) {
         event.preventDefault();  
       }
@@ -103,7 +104,7 @@ define(function(require){
 
     duplicateProject: function() {
       $.ajax({
-        url:'/api/duplicatecourse/' + this.model.get('_id'),
+        url: this.model.getDuplicateURI(),
         success: function (data) {
           Backbone.history.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
         },

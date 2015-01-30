@@ -8,47 +8,26 @@ define(function(require) {
 
     tagName: "div",
 
-    className: "project",
-
-    events: {
-      'click .editing-overlay-panel-title': 'toggleContentPanel'
-    },
+    className: "article-edit",
 
     preRender: function() {
       this.listenTo(Origin, 'editorArticleEditSidebar:views:save', this.saveArticle);
       this.model.set('ancestors', this.model.getPossibleAncestors().toJSON());
     },
 
-    postRender: function() {
-      this.renderExtensionEditor('article');
-      this.setViewToReady();
-    },
-
-    toggleContentPanel: function(event) {
-      event.preventDefault();
-      if (!$(event.currentTarget).hasClass('active')) { 
-        this.$('.editing-overlay-panel-title').removeClass('active');
-        $(event.currentTarget).addClass('active')
-        this.$('.editing-overlay-panel-content').slideUp();
-        $(event.currentTarget).siblings('.editing-overlay-panel-content').slideDown();
-      }
-    },
-
     saveArticle: function() {
-      var extensionJson = {};
+      var self = this;
+      var errors = self.form.commit();
+      // This must trigger no matter what, as sidebar needs to know 
+      // when the form has been resubmitted
+      Origin.trigger('editorSidebar:showErrors', errors);
+      if (errors) {
+        return;
+      }
 
-      extensionJson = this.getExtensionJson('article');
+      self.model.pruneAttributes();
 
-      var model = this.model;
-
-      model.save({
-        title: this.$('.setting-title').val(),
-        displayTitle: this.$('.setting-displaytitle').val(),
-        _classes: this.$('.setting-class').val(),
-        body: tinyMCE.get('setting-body').getContent(),
-        _extensions: extensionJson
-      },
-      {
+      self.model.save(null, {
         error: function() {
           alert('An error occurred doing the save');
         },
@@ -63,6 +42,7 @@ define(function(require) {
           
         }, this)
       });
+
     }
 
   },

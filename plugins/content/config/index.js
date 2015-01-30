@@ -4,6 +4,7 @@
 
 var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
     configuration = require('../../../lib/configuration'),
+    permissions = require('../../../lib/permissions'),
     database = require('../../../lib/database'),
     logger = require('../../../lib/logger'),
     origin = require('../../../'),
@@ -14,6 +15,18 @@ function ConfigContent () {
 }
 
 util.inherits(ConfigContent, ContentPlugin);
+
+/**
+ * overrides base implementation of hasPermission
+ *
+ * @param {string} action
+ * @param {object} a content item
+ * @param {callback} next (function (err, isAllowed))
+ */
+ConfigContent.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
+  var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
+  permissions.hasPermission(userId, action, resource, next);
+};
 
 /**
  * implements ContentObject#getModelName

@@ -31,7 +31,7 @@ var bowerConfig = {
   srcLocation: 'theme',
   options: defaultOptions,
   nameList: [
-    'adapt-contrib-vanilla#develop'
+    'adapt-contrib-vanilla'
   ],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     database.getDatabase(function (err, db) {
@@ -89,18 +89,54 @@ Theme.prototype.retrieve = function (search, options, next) {
 };
 
 /**
+ * overrides BowerPlugin.prototype.updatePluginType
+ *
+ */
+
+Theme.prototype.updatePluginType = function (req, res, next) {
+  // just a demo
+  var themeId = req.params.id;
+  var delta = req.body;
+
+  database.getDatabase(function(err, db) {
+    if (err) {
+      return next(err);
+    }
+
+    db.retrieve('themetype', {_id: themeId}, function(err, results) {
+      if (err) {
+        return next(err);
+      }
+
+      if (!results || 1 !== results.length) {
+        res.statusCode = 404;
+        return res.json({success: false, message: 'Theme not found'});
+      }
+
+      db.update('themetype', {_id: themeId}, delta, function(err, theme) {
+        if (err) {
+          return next(err);
+        }
+
+        res.statusCode = 200;
+        return res.json({ success: true });
+      });
+    });
+  });
+};
+
+/**
  * essential setup
  *
  * @api private
  */
 function initialize () {
-  BowerPlugin.prototype.initialize.call(null, bowerConfig);
+  BowerPlugin.prototype.initialize.call(new Theme(), bowerConfig);
 
   var app = origin();
   app.once('serverStarted', function (server) {
 
-    // enable a theme
-    // expects course ID and a theme ID
+    // Assign a theme to to a course
     rest.post('/theme/:themeid/makeitso/:courseid', function (req, res, next) {
       var themeId = req.params.themeid;
       var courseId = req.params.courseid;
@@ -111,8 +147,7 @@ function initialize () {
           return next(err);
         }
 
-        // verify it's a valid theme
-        db.retrieve('themetype', { _id: themeId }, function (err, results) {
+        db.retrieve('config', { _courseId: courseId }, function(err, results) {
           if (err) {
             return next(err);
           }
@@ -120,35 +155,67 @@ function initialize () {
           if (!results || 1 !== results.length) {
             res.statusCode = 404;
             return res.json({ success: false, message: 'theme not found' });
-          }
+          } else {
+            var config = results[0];
 
-          // update the course config object
-          db.update('config', { _courseId: courseId }, { _theme: themeId }, function (err) {
-            if (err) {
-              return next(err);
-            }
-
-            // if we successfully changed the theme, we need to force a rebuild of the course
-            var user = usermanager.getCurrentUser();
-            var tenantId = user.tenant._id;
-            if (!tenantId) {
-              // log an error, but don't fail
-              logger.log('error', 'failed to determine current tenant', user);
+            if (config._theme == themeId) {
+              // The theme is the same as the one which already is set
+              // Do nothing so that any customisation is persisted
               res.statusCode = 200;
-              return res.json({ success: true });
+              return res.json({success: true});
+            } else {
+              // Verify it's a valid theme
+              db.retrieve('themetype', { _id: themeId }, function (err, results) {
+                if (err) {
+                  return next(err);
+                }
+
+                if (!results || 1 !== results.length) {
+                  res.statusCode = 404;
+                  return res.json({ success: false, message: 'theme not found' });
+                }
+
+                // Update the course config object
+                app.contentmanager.update('config', { _courseId: courseId }, { _theme: themeId }, function (err) {
+                  if (err) {
+                    return next(err);
+                  }
+
+                  // As the theme has changed, lose any previously set theme settings
+                  // These will not apply to the new theme
+                  app.contentmanager.update('course', { _id: courseId }, { themeSettings: null }, function (err) {
+                    if (err) {
+                      return next(err);
+                    }
+
+                    // If we successfully changed the theme, we need to force a rebuild of the course
+                    var user = usermanager.getCurrentUser();
+                    var tenantId = user.tenant._id;
+                    if (!tenantId) {
+                      // log an error, but don't fail
+                      logger.log('error', 'failed to determine current tenant', user);
+                      res.statusCode = 200;
+                      return res.json({ success: true });
+                    }
+
+
+                    app.emit('rebuildCourse', tenantId, courseId);
+
+                    res.statusCode = 200;
+                    return res.json({success: true});
+                  });  
+                });
+              });
             }
-
-
-            app.emit('rebuildCourse', tenantId, courseId);
-
-            res.statusCode = 200;
-            return res.json({success: true});
-          });
+          }
         });
       });
     });
   });
+
+
 }
+
 
 // setup themes
 initialize();

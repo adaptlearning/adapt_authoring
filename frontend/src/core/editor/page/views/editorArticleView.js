@@ -28,9 +28,10 @@ define(function(require){
         'editorPageView:removePageSubViews': this.remove
       });
 
-      this.listenTo(Origin, 'editorView:moveBlock:' + this.model.get('_id'), this.render);
-      this.listenTo(Origin, 'editorView:cutBlock:' + this.model.get('_id'), this.onCutBlock);
-      this.listenTo(Origin, 'editorView:deleteArticle:' + this.model.get('_id'), this.deletePageArticle);
+      this.listenTo(this.model, 'sync', this.setupModelEvents);
+      if (!this.model.isNew()) {
+        this.setupModelEvents();
+      }
 
       this.listenTo(this, {
         'contextMenu:article:edit': this.loadArticleEdit,
@@ -38,6 +39,12 @@ define(function(require){
         'contextMenu:article:cut': this.onCut,
         'contextMenu:article:delete': this.deleteArticlePrompt
       });
+    },
+
+    setupModelEvents: function() {
+      this.listenTo(Origin, 'editorView:moveBlock:' + this.model.get('_id'), this.render);
+      this.listenTo(Origin, 'editorView:cutBlock:' + this.model.get('_id'), this.onCutBlock);
+      this.listenTo(Origin, 'editorView:deleteArticle:' + this.model.get('_id'), this.deletePageArticle);
     },
 
     postRender: function() {
@@ -76,6 +83,11 @@ define(function(require){
     addBlockView: function(blockModel, scrollIntoView) {
       var newBlockView = new EditorBlockView({model: blockModel}),
         sortOrder = blockModel.get('_sortOrder');
+
+      // Add syncing class
+      if (blockModel.isNew()) {
+        newBlockView.$el.addClass('syncing');
+      }
       
       scrollIntoView = scrollIntoView || false;
 
@@ -90,11 +102,12 @@ define(function(require){
 
       // Post-block paste zone - sort order of placeholder will be one greater
       this.$('.article-blocks').append(new EditorPasteZoneView({model: blockModel}).$el);
+      // Return the block view so syncing can be shown
+      return newBlockView;
     },
 
     addBlock: function(event) {
       if (event) event.preventDefault();
-      
 
       var layoutOptions = [
       {
@@ -114,26 +127,26 @@ define(function(require){
       }];
 
       var _this = this;
-      var newPageBlockModel = new EditorBlockModel();
-
-      newPageBlockModel.save({
-        title: 'Block title',
+      var newPageBlockModel = new EditorBlockModel({
+        title: window.polyglot.t('app.placeholdernewblock'),
         displayTitle: '',
         body: '',
         _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
-        layoutOptions: layoutOptions
-      },
-      {
+        layoutOptions: layoutOptions,
+        _type: 'block'
+      });
+
+      var newBlockView = _this.addBlockView(newPageBlockModel, true);
+
+      newPageBlockModel.save(null, {
         error: function() {
           alert('error adding new block');
         },
         success: function(model, response, options) {
-
-          Origin.trigger('editor:refreshData', function() {
-            _this.addBlockView(model, true);
-          }, this);
-          
+          Origin.editor.data.blocks.add(model);
+          newBlockView.$el.removeClass('syncing').addClass('synced');
+          newBlockView.reRender();
         }
       });
     },
@@ -195,6 +208,7 @@ define(function(require){
     setupDragDrop: function() {
       var view = this;
       this.$el.draggable({
+        scroll: true,
         opacity: 0.8,
         handle: '.handle',
         revert: 'invalid',
@@ -206,12 +220,19 @@ define(function(require){
         appendTo:'.editor-view',
         containment: '.editor-view',
         helper: function (e) {
-          return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
-        },
-        start: function () {
+          // Store the offset to stop the page jumping during the start of drag
+          // because of the drop zones changing the scroll position on the page
+          view.offsetTopFromWindow = view.$el.offset().top - $(window).scrollTop();
+          // This is in the helper method because the height needs to be 
+          // manipulated before the drag start method due to adding drop zones
           view.showDropZones();
           $(this).attr('data-' + view.model.get('_type') + '-id', view.model.get('_id'));
           $(this).attr('data-'+ view.model.get('_parent') + '-id', view.model.get('_parentId'));
+          return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
+        },
+        start: function(event) {
+          // Using the initial offset we're able to position the window back in place
+          $(window).scrollTop(view.$el.offset().top -view.offsetTopFromWindow);
         },
         stop: function () {
           view.hideDropZones();

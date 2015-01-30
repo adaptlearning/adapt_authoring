@@ -10,7 +10,16 @@ define(function(require) {
     urlRoot: '/api/content/course',
 
     defaults: {
-        'tags': []
+        'tags': [],
+        _type: 'course'
+    },
+    
+    isShared: function () {
+      return this.get('_isShared');
+    },
+    
+    getDuplicateURI: function () {
+      return '/api/duplicatecourse/' + this.get('_id');
     }
 
   });

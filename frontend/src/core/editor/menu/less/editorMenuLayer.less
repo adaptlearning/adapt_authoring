@@ -15,8 +15,25 @@
   position: relative;
   border-right: 2px solid #454545; 
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x:hidden;
+}
+
+.editor-menu-layer-controls {
+  position:relative;
+  .editor-menu-layer-actions.paste-zone {
+    width: 100%;
+    position: absolute;
+    top: -37px;
+    z-index: 99;
+    margin:0px;
+    padding:0;
+    border:none;
+    transition:top 0.5s cubic-bezier(0.8, 0.0, 0.2, 1);;
+    &.show {
+      top:0px;
+    }
+  }
 }
 
 .editor-menu-layer-button {
@@ -35,12 +52,4 @@
   }
 }
 
-.editor-menu-layer-actions {
-  width: 100%;
-  position: absolute;
-  bottom: 0px;
-  z-index: 99;
-  padding-top: 30px;
-  padding-right: 30px;
-  margin-left: -15px;
-}
+

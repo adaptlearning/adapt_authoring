@@ -18,16 +18,21 @@ define(function(require){
     },
 
     preRender: function() {
+        this.listenTo(Origin, 'assetManagement:modal:selectItem', this.selectItem);
         this.listenTo(Origin, 'assetManagement:assetViews:remove', this.remove);
         this.listenTo(this, 'remove', this.remove);
         this.listenTo(this.model, 'destroy', this.remove);
     },
 
     postRender: function() {
-        // Check if it needs to lazy load the asset image
-        if (this.model.get('assetType') === 'image' || this.model.get('assetType') === 'video') {
-            this.$el.on('inview', _.bind(this.onInview, this));
-        }
+      if (this.model.get('_isSelected')) {
+        this.$el.addClass('selected');
+        Origin.trigger('assetManagement:assetItemView:preview', this.model);
+      }
+      // Check if it needs to lazy load the asset image
+      if (this.model.get('assetType') === 'image' || this.model.get('assetType') === 'video') {
+          this.$el.on('inview', _.bind(this.onInview, this));
+      }
     },
 
     onAssetClicked: function () {
@@ -44,8 +49,14 @@ define(function(require){
         $previewImage.attr('style', $previewImage.attr('data-style'));
         // Remove inview as it's not needed anymore
         this.$el.off('inview');
+    },
+
+    selectItem: function(modelId) {
+      if (modelId === this.model.get('_id')) {
+        this.onAssetClicked();
+      }
     }
-    
+
   }, {
     template: 'assetManagementListItem'
   });

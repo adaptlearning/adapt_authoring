@@ -31,7 +31,7 @@ var bowerConfig = {
   srcLocation: 'menu',
   options: defaultOptions,
   nameList: [
-    'adapt-contrib-boxMenu#develop'
+    'adapt-contrib-boxMenu'
   ],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     database.getDatabase(function (err, db) {
@@ -97,7 +97,7 @@ Menu.prototype.retrieve = function (search, options, next) {
  * @api private
  */
 function initialize () {
-BowerPlugin.prototype.initialize.call(null, bowerConfig);
+BowerPlugin.prototype.initialize.call(new Menu(), bowerConfig);
 
   var app = origin();
   app.once('serverStarted', function (server) {

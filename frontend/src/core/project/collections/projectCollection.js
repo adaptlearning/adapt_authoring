@@ -7,11 +7,7 @@ define(function(require) {
 
     model: ProjectModel,
 
-    url: 'api/content/course',
-
-    dateComparator: function(m) {
-      return -m.get('lastUpdated').getTime();
-    }
+    url: 'api/content/course/query'
 
   });
 

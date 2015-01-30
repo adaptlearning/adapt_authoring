@@ -8,51 +8,29 @@ define(function(require) {
 
     tagName: "div",
 
-    className: "project",
-
-    events: {
-      'click .editing-overlay-panel-title': 'toggleContentPanel'
-    },
+    className: "page-edit",
 
     preRender: function() {
       this.listenTo(Origin, 'editorPageEditSidebar:views:save', this.saveEditing);
     },
 
-    toggleContentPanel: function(event) {
-      event.preventDefault();
-      if (!$(event.currentTarget).hasClass('active')) { 
-        this.$('.editing-overlay-panel-title').removeClass('active');
-        $(event.currentTarget).addClass('active')
-        this.$('.editing-overlay-panel-content').slideUp();
-        $(event.currentTarget).siblings('.editing-overlay-panel-content').slideDown();
-      }
-    },
-
-    postRender: function() {
-      this.setViewToReady();
-    },
-
     saveEditing: function() {
-      this.model.save({
-        title: this.$('.page-title').val(),
-        displayTitle: this.$('.page-displayTitle').val(),
-        body: tinyMCE.get('page-body').getContent(),
-        linkText: this.$('.page-linktext').val(),
-        duration: this.$('.page-duration').val(),
-        _graphic: {
-          alt: this.$('.page-graphic-alt').val(),
-          src: this.$('.page-graphic-src').val()
-        },
-        _type: this.$(".page-type").val(),
-        _classes: this.$(".page-classes").val()
-      }, {
+      var errors = this.form.commit();
+      // This must trigger no matter what, as sidebar needs to know 
+      // when the form has been resubmitted
+      Origin.trigger('editorSidebar:showErrors', errors);
+      if (errors) {
+        return;
+      }
+
+      this.model.save(null, {
         error: function() {
           alert('An error occurred doing the save');
         },
         success: _.bind(function() {
           
           Origin.trigger('editingOverlay:views:hide');
-
+          
           Origin.trigger('editor:refreshData', function() {
             Backbone.history.history.back();
             this.remove();

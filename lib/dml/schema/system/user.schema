@@ -13,7 +13,9 @@
     "email": {
       "type": "string",
       "required": true,
-      "unique": true
+      "index": {
+        "unique": true
+      }
     },
     "auth": {
       "type": "string",
@@ -22,6 +24,27 @@
     "password": {
       "type": "string",
       "protect": true
+    },
+    "roles": {
+      "type": "array",
+      "items": { "type": "objectid", "ref":"role" }
+    },
+    "invalidatePermissionCache" : {
+      "type": "boolean",
+      "protect": "true"
+    },
+    "firstAccess": {
+      "type": "date",
+      "required": false
+    },
+    "lastAccess": {
+      "type": "date",
+      "required": false
+    },
+    "failedLoginCount": {
+      "type" : "number",
+      "required": true,
+      "default": 0
     }
   }
 }

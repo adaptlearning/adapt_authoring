@@ -2,19 +2,38 @@ define(function(require) {
 
   var Origin = require('coreJS/app/origin');
   var AssetModel = require('coreJS/assetManagement/models/assetModel');
+  var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
   var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
   var AssetManagementSidebarView = require('coreJS/assetManagement/views/assetManagementSidebarView');
   var AssetManagementNewAssetView = require('coreJS/assetManagement/views/assetManagementNewAssetView');
   var AssetManagementNewAssetSidebarView = require('coreJS/assetManagement/views/assetManagementNewAssetSidebarView');
+  var TagsCollection = require('coreJS/tags/collections/tagsCollection');
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
     Origin.assetManagement = {};
     Origin.assetManagement.filterData = {};
 
     if (!location) {
-        Origin.trigger('location:title:update', {title: 'Asset Management'});
-        Origin.sidebar.addView(new AssetManagementSidebarView().$el);
-        Origin.router.createView(AssetManagementView);
+
+        var tagsCollection = new TagsCollection();
+
+        tagsCollection.fetch({
+          success: function() {
+            // Load asset collection before so sidebarView has access to it
+            var assetCollection = new AssetCollection();
+            // No need to fetch as the collectionView takes care of this
+            // Mainly due to serverside filtering
+            Origin.trigger('location:title:hide');
+            Origin.sidebar.addView(new AssetManagementSidebarView({collection: tagsCollection}).$el);
+            Origin.router.createView(AssetManagementView, {collection: assetCollection});   
+          },
+          error: function() {
+            console.log('Error occured getting the tags collection - try refreshing your page');
+          }
+        })
+        
+        
+        
     } else if (location=== 'new') {
         Origin.trigger('location:title:update', {title: 'New Asset'});
         Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el, {
@@ -56,7 +75,7 @@ define(function(require) {
     "sortOrder": 2
   };
 
-  Origin.once('app:dataReady', function() {
+  Origin.on('app:dataReady login:changed', function() {
     Origin.globalMenu.addItem(globalMenuObject);
   });
 

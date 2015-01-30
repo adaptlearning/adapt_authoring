@@ -6,6 +6,7 @@ var contentmanager = require('../../../lib/contentmanager'),
     ContentPlugin = contentmanager.ContentPlugin,
     ContentTypeError = contentmanager.errors.ContentTypeError,
     configuration = require('../../../lib/configuration'),
+    permissions = require('../../../lib/permissions'),
     database = require('../../../lib/database'),
     util = require('util'),
     path = require('path');
@@ -14,6 +15,18 @@ function TagContent () {
 }
 
 util.inherits(TagContent, ContentPlugin);
+
+/**
+ * overrides base implementation of hasPermission
+ *
+ * @param {string} action
+ * @param {object} a content item
+ * @param {callback} next (function (err, isAllowed))
+ */
+TagContent.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
+  // @TODO - check if this is ok
+  return next(null, true);
+};
 
 /**
  * implements TagContent#getModelName
@@ -37,10 +50,10 @@ TagContent.prototype.create = function (data, next) {
   // enforce unique tags here, rather than in schema
   var self = this;
 
-  // clean title
+  // clean title and make case insenitive regex
   data.title = data.title.replace(/,/g, '').trim();
-
-  this.retrieve({ title: data.title }, function (err, results) {
+  var tagRegex = new RegExp('^' + data.title + '$', "i");
+  this.retrieve({ title: tagRegex }, function (err, results) {
     if (err) {
       return next(err);
     }
@@ -57,20 +70,31 @@ TagContent.prototype.create = function (data, next) {
 
 function initialize () {
   app.on('serverStarted', function () {
+    permissions.ignoreRoute(/^\/api\/autocomplete\/tag\/?$/);
     app.rest.get('/autocomplete/tag', function (req, res, next) {
       database.getDatabase(function (err, db) {
         if (err) {
           return next(err);
         }
-
-        db.retrieve('tag', { _isDeleted:false }, { fields: 'title' }, function (err, results) {
+        
+        var searchParams;
+        if (req.query.hasOwnProperty('term')){
+          // create regex for "term" and ignore case
+          var termRegex = new RegExp('^' + req.query.term, 'i');
+          searchParams = { _isDeleted:false, title:termRegex };
+        } else {
+          searchParams = { _isDeleted:false };
+        }
+        
+        
+        db.retrieve('tag', searchParams, { fields: 'title' }, function (err, results) {
           if (err) {
             return next(err);
           }
 
           var tags = [];
           results && results.forEach (function (item) {
-            tags.push(item.title);
+            tags.push({title: item.title, value: item.title, _id: item._id});
           });
 
           res.statusCode = 200;

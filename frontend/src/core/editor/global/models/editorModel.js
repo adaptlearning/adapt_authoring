@@ -5,10 +5,11 @@ define(function(require) {
     var EditorModel = Backbone.Model.extend({
 
       idAttribute: '_id',
+      whitelistAttributes: null,
 
       initialize : function(options) {
         this.on('sync', this.loadedData, this);
-        this.on('cahnge', this.loadedData, this);
+        this.on('change', this.loadedData, this);
         this.fetch();
       },
 
@@ -59,14 +60,13 @@ define(function(require) {
             return siblingsCollection;
           } else {
 
-            if (this.get("_siblings")) return this.get("_siblings");
             var siblings = _.reject(Origin.editor.data[this._siblings].where({
                 _parentId:this.get("_parentId")
             }), _.bind(function(model){ 
                 return model.get('_id') == this.get('_id'); 
             }, this));
             var siblingsCollection = new Backbone.Collection(siblings);
-            this.set("_siblings", siblingsCollection);
+
             
             // returns a collection of siblings
             return siblingsCollection;
@@ -104,6 +104,20 @@ define(function(require) {
 
       serialize: function() {
         return JSON.stringify(this);
+      },
+
+      // Remove any attributes which are not on the whitelist
+      // Useful to call before a save()
+      pruneAttributes: function() {
+        var self = this;
+        // Ensure that only valid attributes are pushed back on the save
+        if (self.whitelistAttributes) {
+          _.each(_.keys(self.attributes), function(key) {
+            if (!_.contains(self.whitelistAttributes, key)) {
+              self.unset(key);
+            }
+          });
+        }
       },
 
       serializeChildren: function() {

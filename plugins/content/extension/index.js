@@ -122,6 +122,28 @@ Extension.prototype.retrieve = function (search, options, next) {
 };
 
 /**
+ * overrides BowerPlugin.prototype.updatePluginType
+ *
+ */
+
+Extension.prototype.updatePluginType = function (req, res, next) {
+  var delta = _.pick(req.body, '_isAvailableInEditor'); // only allow update of certain attributes
+  database.getDatabase(function (err, db) {
+    if (err) {
+      return next(err);
+    }
+
+    db.update('extensiontype', { _id: req.params.id }, delta, function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      return res.json({ success: true });
+    });
+  });
+};
+
+/**
  * retrieves an array of extensiontype items that have been enabled on a particular course
  *
  * @param {string} courseId
@@ -276,7 +298,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
  * @api private
  */
 function initialize () {
-  BowerPlugin.prototype.initialize.call(null, bowerConfig);
+  BowerPlugin.prototype.initialize.call(new Extension(), bowerConfig);
 
   var app = origin();
   app.once('serverStarted', function (server) {

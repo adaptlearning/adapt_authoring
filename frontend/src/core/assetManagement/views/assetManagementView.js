@@ -20,7 +20,6 @@ define(function(require){
     preRender: function() {
         this.listenTo(Origin, 'window:resize', this.resizeAssetPanels);
         this.listenTo(Origin, 'assetManagement:assetItemView:preview', this.onAssetClicked)
-        /*Origin.trigger('assetItemView:preview', this.model);*/
     },
 
     postRender: function() {
@@ -28,7 +27,6 @@ define(function(require){
         this.resizeAssetPanels();
         // Set imageReady
         _.defer(_.bind(this.setupImageReady, this));
-        this.setViewToReady();
     },
 
     setupImageReady: function() {
@@ -36,7 +34,8 @@ define(function(require){
     },
 
     setupSubViews: function() {
-        this.$('.asset-management-assets-container-inner').append(new AssetManagementCollectionView().$el);
+        // Push collection through to collection view
+        this.$('.asset-management-assets-container-inner').append(new AssetManagementCollectionView({collection: this.collection}).$el);
     },
 
     resizeAssetPanels: function() {

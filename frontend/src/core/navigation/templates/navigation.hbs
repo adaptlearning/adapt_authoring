@@ -2,7 +2,7 @@
   <div class="navigation-left">
     {{#if isAuthenticated}}
     <a href="#" class="navigation-item navigation-global-menu" data-event="globalMenu:toggle"><i class="fa fa-bars"></i></a>
-    <div href="#" class="navigation-item navigation-product-name">Origin</div>
+    <div href="#" class="navigation-item navigation-product-name">{{t 'app.productname'}}</div>
     {{/if}}
   </div>
   <div class="navigation-right">
@@ -10,12 +10,17 @@
     <a href="#" class="navigation-item navigation-help" data-event="help">
       <span>{{t 'app.help'}}</span>
     </a>
+    <a class="navigation-item typeform-share link" href="https://bri.typeform.com/to/k52YSG" data-mode="2" target="_blank">Feedback</a>
+<script>(function(){var qs,js,q,s,d=document,gi=d.getElementById,ce=d.createElement,gt=d.getElementsByTagName,id='typef_orm',b='https://s3-eu-west-1.amazonaws.com/share.typeform.com/';if(!gi.call(d,id)){js=ce.call(d,'script');js.id=id;js.src=b+'share.js';q=gt.call(d,'script')[0];q.parentNode.insertBefore(js,q)}})()</script>
+
+
     <a href="#" class="navigation-item navigation-profile" data-event="user:profile">
       <span>{{email}}</span>
     </a>
     <a href="#" class="navigation-item navigation-user-logout" data-event="user:logout">
       <span>{{t 'app.logout'}}</span>
     </a>
+
     {{else}}
     {{!-- <li data-route="login">
       <a href="#/user/login">{{t 'app.login'}}</a>

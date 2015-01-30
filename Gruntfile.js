@@ -13,6 +13,12 @@ module.exports = function(grunt) {
               src: ['frontend/src/core/**/assets/**'],
               dest: 'frontend/src/adaptbuilder/css/assets/',
               filter: 'isFile'
+            },
+            {
+              expand: true,
+              cwd: 'frontend/src/core/libraries/tinymce/',
+              src: ['plugins/**/*', 'skins/**/*', 'themes/**/*'],
+              dest: 'frontend/src/adaptbuilder/js/'
             }
           ]
         }
@@ -22,8 +28,9 @@ module.exports = function(grunt) {
           files: [
             {
               'frontend/src/adaptbuilder/css/adapt.css': [
-                'frontend/src/core/**/*.less', 
-                'frontend/src/less/**/*.less'
+                'frontend/src/core/**/*.less',
+                'frontend/src/less/**/*.less',
+                'frontend/src/plugins/**/*.less'
               ]
             }
           ]
@@ -45,7 +52,29 @@ module.exports = function(grunt) {
             partialsPathRegex: /\/partials\//
           },
           files: {
-            "frontend/src/templates/templates.js": "frontend/src/core/**/*.hbs"
+            "frontend/src/templates/templates.js": ["frontend/src/core/**/*.hbs", "frontend/src/plugins/**/*.hbs"]
+          }
+        }
+      },
+      requirejs: {
+        dev: {
+          options: {
+            name: "core/app/app",
+            mainConfigFile: "frontend/src/core/app/config.js",
+            out: "frontend/src/adaptbuilder/js/origin.js",
+            generateSourceMaps: true,
+            preserveLicenseComments:true,
+            include: ['core/app/config'],
+            optimize: "none"
+          }
+        },
+        compile: {
+          options: {
+            name: "core/app/app",
+            mainConfigFile: "frontend/src/core/app/config.js",
+            out: "frontend/src/adaptbuilder/js/origin.js",
+            include: ['core/app/config'],
+            optimize:"uglify2"
           }
         }
       },
@@ -87,8 +116,12 @@ module.exports = function(grunt) {
       },
       server: {
         options: {
-          port: getHttpPort() || 3000
+          port: getHttpPort() || process.env.PORT
         }
+      },
+      requirePlugins: {
+        url: 'frontend/src/plugins/*',
+        dest: 'frontend/src/plugins'
       }
     });
 
@@ -101,14 +134,72 @@ module.exports = function(grunt) {
       }
     };
 
-    grunt.registerTask('default',['less', 'handlebars', 'watch']);
-    grunt.registerTask('build',['less', 'copy', 'handlebars']);
-    grunt.registerTask('dev',['less', 'copy', 'handlebars']);
+    grunt.registerTask('build', 'Running build', function(mode) {
+      // To toggle compilation call either:
+      // grunt build:prod - or
+      // grunt build:dev
+      var configFile = 'conf/config.json';
+
+      if (grunt.file.exists(configFile)) {
+        var config = grunt.file.readJSON(configFile);
+
+        // Check if we're in 'production' mode
+        config.isProduction = (mode === 'prod')
+                              ? true
+                              : false;
+
+        var compilation = (config.isProduction)
+                          ? 'compile'
+                          : 'dev';
+
+        // Save the configuration
+        grunt.file.write(configFile, JSON.stringify(config, null, 2));
+
+        grunt.task.run(['requirePlugins', 'copy', 'less', 'handlebars', 'requirejs:'+ compilation]);
+      } else {
+        grunt.task.run(['requirePlugins', 'copy', 'less', 'handlebars', 'requirejs:dev']);
+      }
+    });
+
+    grunt.registerTask('server', "Running Server", function() {
+      grunt.task.run(['requirePlugins', 'copy', 'less', 'handlebars', 'open:server', 'watch']);
+    });
+
+    // Compiles frontend plugins
+    grunt.registerTask('requirePlugins', 'Compiling plugins', function() {
+
+      var config = grunt.config.get('requirePlugins');
+      var requirePaths = '';
+
+      // Go through each subfolder in the plugins directory
+      var foldersArray = grunt.file.expand({filter: "isDirectory"}, config.url);
+
+      // Check if any plugins are available
+      if (foldersArray.length === 0) {
+        requirePaths += "'";
+      }
+      foldersArray.forEach(function(path, index, folders) {
+
+        // Strip off front of path to make relative path to config file
+        var relativePath = path.replace('frontend/src', '');
+        var splitter = "','";
+
+        if (index === folders.length - 1) {
+            splitter = "'"
+        }
+
+        requirePaths += relativePath + '/index.js' + splitter;
+
+
+      });
+
+      var requireStatement = "require(['" + requirePaths +"]);";
+      grunt.file.write(config.dest + '/plugins.js', requireStatement);
+
+    });
+
+    grunt.registerTask('default',['requirePlugins', 'less', 'handlebars', 'watch']);
     grunt.registerTask('test',['mochaTest']);
     grunt.registerTask('test-ui', ['casperjs']);
-    // grunt.registerTask('compile',['requirejs:dev']);
-    grunt.registerTask('server',['copy', 'less', 'handlebars', 'start', 'open:server', 'watch']);
-    grunt.registerTask('start', 'Start node server', function() {
-      var server = require('./server');
-    });
+
 };

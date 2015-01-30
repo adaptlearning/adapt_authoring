@@ -24,15 +24,25 @@ input[type="search"],
 input[type="datetime-local"], 
 textarea, 
 select[multiple="multiple"] {
-    padding: 10px 10px;
+    padding: 11px 10px;
     border-radius: 2px;
     border: solid 1px #ccc;
     font-size: 13px;
+    width:80%;
+    max-width:700px;
     &:focus {
         outline:none;
         border-color:#666;
         box-shadow:none;
     }
+}
+
+select {
+    padding: 10px;
+}
+
+input:disabled, textarea:disabled {
+    background-color:#e2e2e2;
 }
 
 .form-list {
@@ -47,4 +57,21 @@ select[multiple="multiple"] {
             margin-left:10px;
         }
     }
+}
+
+.field-help {
+    margin-bottom:4px;
+}
+
+form .mce-tinymce.mce-container {
+    width:82%;
+    max-width:720px;
+    border-radius:3px!important;
+    border:1px solid #ccc!important;
+    overflow:hidden;
+}
+
+form .mce-edit-area {
+    border-left:0px!important;
+    border-right:0px!important;
 }

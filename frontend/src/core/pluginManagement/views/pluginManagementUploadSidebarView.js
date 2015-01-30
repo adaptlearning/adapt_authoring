@@ -11,6 +11,7 @@ define(function(require) {
         },
 
         onSaveButtonClicked: function() {
+            this.updateButton('.pluginManagement-upload-sidebar-save-button', window.polyglot.t('app.saving'));
             Origin.trigger('pluginManagement:uploadPlugin');
         },
 

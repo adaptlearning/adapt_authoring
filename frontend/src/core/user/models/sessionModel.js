@@ -8,6 +8,7 @@ define(function(require) {
     defaults: {
       isAuthenticated: false,
       id: '',
+      tenantId: '',
       email: ''
     },
 
@@ -15,14 +16,17 @@ define(function(require) {
 
     initialize: function() {},
 
-    logout: function (cback) {
-      var model = this;
+    logout: function () {
+      var self = this;
+
       $.post(
         '/api/logout',
-        function(){
-          model.attributes['email'] = '';
-          model.attributes['id'] = '';
-          model.attributes['isAuthenticated'] = false;
+        function() {
+          self.set('isAuthenticated', false);
+          self.set('id', '');
+          self.set('tenantId', '');
+          self.set('email', '');
+          self.set('permissions', []);
           
           Origin.trigger('login:changed');
 
@@ -30,41 +34,40 @@ define(function(require) {
       });
     },
 
-    login: function (username, password, cback) {
-      var model = this;
+    login: function (username, password, shouldPersist) {
+      var self = this;
 
-      $.post('/api/login', {email: username, password: password},
-        function(authenticated) {
-          model.fetch().done(function(){
-            model.attributes['id'] = authenticated['id'];
-            model.attributes['email'] = authenticated['email'];            
+      $.ajax({
+        method: 'post',
+        url: '/api/login',
+        data: {email: username, password: password, shouldPersist: shouldPersist},
+        success: function (jqXHR, textStatus, errorThrown) {
+          if (jqXHR.success) {
+            
+            self.set('id', jqXHR.id);
+            self.set('tenantId', jqXHR.tenantId);
+            self.set('email', jqXHR.email);  
+            self.set('isAuthenticated', jqXHR.success);
+            self.set('permissions', jqXHR.permissions);
 
             Origin.trigger('login:changed');
-            
-            Backbone.history.navigate('#/dashboard', {trigger: true});
-          });
-      })
-      .fail(function() {
-        Origin.trigger('login:failed');
-      });
-    },
 
-    generateResetToken: function (username, cback) {
-      var model = this;
-
-      $.post(
-        '/api/createtoken',
-        {
-          email: username
-        },
-        function(result) {
-          if (result.success) {
-            cback(false, result);
+            Origin.trigger('schemas:loadData', function() {
+              Backbone.history.navigate('#/dashboard', {trigger: true});
+            });
           }
-        }
-      );
-    }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          var errorCode = 1;
 
+          if (jqXHR.responseJSON && jqXHR.responseJSON.errorCode) {
+            errorCode = jqXHR.responseJSON.errorCode;
+          }
+
+          Origin.trigger('login:failed', errorCode);
+        }
+      });
+    }
   });
 
   return SessionModel;

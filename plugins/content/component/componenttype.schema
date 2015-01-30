@@ -8,6 +8,9 @@
       "type": "string",
       "required": true
     },
+    "assetFields": {
+      "type": "array"
+    },
     "properties":{
       "type": "object"
     }

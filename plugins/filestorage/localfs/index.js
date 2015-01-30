@@ -8,7 +8,11 @@ var FileStorage = require('../../../lib/filestorage').FileStorage,
     util = require('util'),
     fs = require('fs'),
     path = require('path'),
-    mkdirp = require('mkdirp');
+    mkdirp = require('mkdirp'),
+    async = require('async'),
+    probe = require('node-ffprobe'),
+    logger = require('../../../lib/logger'),
+    FFMpeg = require('fluent-ffmpeg');
 
 function LocalFileStorage() {
   this.dataRoot = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'));
@@ -41,6 +45,26 @@ LocalFileStorage.prototype.resolvePath = function (relativePath) {
   }
 
   return path.join(this.dataRoot, relativePath);
+};
+
+/**
+ * changes a fully qualified path to a relative path, or leaves it untouched
+ *
+ * @param {string} fullPath
+ * @return {string} relative path
+ */
+
+LocalFileStorage.prototype.getRelativePath = function (fullPath) {
+  var user = usermanager.getCurrentUser();
+  if (user) {
+    var tenantName = user.tenant ? user.tenant.name : 'master';
+    var prefix = path.join(this.dataRoot, tenantName);
+    if (0 === fullPath.indexOf(prefix)) {
+      return fullPath.substr(prefix.length);
+    }
+  }
+  
+  return fullPath;
 };
 
 /**
@@ -138,11 +162,20 @@ LocalFileStorage.prototype.moveFile = function (oldPath, newPath, callback) {
  *
  * @param {object} file - information about the file that was uploaded
  * @param {object} newPath - new path for the file
+ * @param {object} [options] - optional settings
  * @param {callback} cb - callback to handle the processed file
  */
 
-LocalFileStorage.prototype.processFileUpload = function (file, newPath, cb) {
+LocalFileStorage.prototype.processFileUpload = function (file, newPath, options, cb) {
   newPath = this.resolvePath(newPath);
+  var relativePath = this.getRelativePath(newPath);
+  var self = this;
+  
+  // shuffle params
+  if ('function' === typeof options) {
+    cb = options;
+    options = {};
+  }
 
   mkdirp(path.dirname(newPath), function (error) {
     if (error) {
@@ -156,15 +189,47 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, cb) {
     rs.pipe(ws);
     rs.on('error', cb);
     rs.on('end', function () {
-      cb(null, {
-        path: newPath,
+      var data = {
+        path: relativePath,
+        thumbnailPath: false,
         name: file.name,
-        type: file.type,
+        mimeType: file.type,
         size: file.size
-      });
+      };
+      
+      // create thumbnail?
+      async.series([
+        function (nextFunc) {
+          if (options.createThumbnail) {
+            return self.createThumbnail(newPath, file.type, options.thumbnailOptions, function (err, thumbnailPath) {
+              if (thumbnailPath) {
+                data.thumbnailPath = thumbnailPath;
+              }
+              nextFunc();
+            });
+          } 
+          
+          return nextFunc();
+        },
+        function (nextFunc) {
+          if (options.createMetadata) {
+            return self.inspectFile(newPath, file.type, function (err, withMeta) {
+              if (withMeta) {
+                data = _.extend(data, withMeta);
+              }
+              nextFunc();
+            });
+          } 
+          
+          return nextFunc();
+        },
+        function (nextFunc) {
+          return cb(null, data);
+        }
+      ]);
     });
   });
-};
+} ;
 
 /**
  * Creates a directory at the given path
@@ -208,6 +273,120 @@ LocalFileStorage.prototype.getDirectoryListing = function (filePath, callback) {
 
 LocalFileStorage.prototype.getFileStats = function (filePath, callback) {
   fs.stat(this.resolvePath(filePath), callback);
+};
+
+/**
+ * Creates a thumbnail for a file
+ *
+ * @param {string} filePath - the path to the desired file
+ * @param {string} fileType - image/video/other
+ * @param {object} options - settings for the thumbnail
+ * @param {callback} next - function of the form function(error, thumbnailPath)
+ */
+
+LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, options, next) {
+  // early return if we can't create thumbnails
+  if (!configuration.getConfig('useffmpeg')) {
+    return next(null, false);
+  }
+  
+  var self = this;
+  var fileFormat = fileType.split('/')[1];
+  var additionalOptions = [];
+  fileType = fileType.split('/')[0];
+  if ('image' === fileType) {
+    if ('gif' === fileFormat){
+      additionalOptions.push('-pix_fmt rgb24');
+    }
+    var imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath) + '_thumb' + path.extname(filePath));
+    return new FFMpeg({ source: filePath })
+      .addOptions(additionalOptions)
+      .withSize(options.width + 'x' + options.height)
+      .keepPixelAspect(true)
+      .on('error', function (err) {
+        logger.log('error', 'Failed to create image thumbnail: ' + err.message);
+        return next(err, false);
+      })
+      .on('end', function () {
+        return next(null, self.getRelativePath(imgThumbPath));
+      })
+      .saveToFile(imgThumbPath);
+      
+  } else if ('video' === fileType) {
+    
+    var pathToDir = path.dirname(filePath);
+    return new FFMpeg({ source : filePath })
+      .withSize(options.width + 'x' + options.height)
+      .on('error', function (err) {
+        logger.log('error', 'Failed to create video thumbnail: ' + err.message);
+        return next(null, false);
+      })
+      .on('end', function (filenames) {
+        // hmmm - do we keep the original file name? should we rename?
+        if (filenames && filenames.length) {          
+          return next(null, self.getRelativePath(path.join(path.dirname(filePath), filenames[0])));
+        }
+        
+        // no screenshots created
+        return next(null, false);
+      })
+      .takeScreenshots(1, pathToDir);
+  }
+  
+  // can't do thumb
+  return next(null, false);
+};
+
+/**
+ * inspects a file using ffprobe and sets metadata
+ *
+ * @param {string} filePath - full path to file?
+ * @param {string} fileType - image | video | audio
+ * @param {callback} next
+ */
+
+LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
+  var data = {
+    assetType : fileType.substr(0, fileType.indexOf('/')),
+    metadata : null
+  };
+  
+  // early return if we can't create thumbnails
+  if (!configuration.getConfig('useffmpeg')) {
+    return next(null, data);
+  }
+  
+  fileType = fileType.split('/')[0];
+  // Interrogate the uploaded file
+  probe(filePath, function (err, probeData) {
+    // Derive assetType and (if available) store extra metadata depending on the type of file uploaded
+    switch (fileType) {
+      case 'image':
+        data.assetType = 'image';
+        data.metadata = probeData
+          ? { width: probeData.streams[0].width, height: probeData.streams[0].height}
+          : null;
+        break;
+      case 'video':
+        data.assetType = 'video';
+        data.metadata = probeData
+          ? {duration: probeData.streams[0].duration, width: probeData.streams[0].width, height: probeData.streams[0].height}
+          : null;
+        break;
+      case 'audio':
+        data.assetType = 'audio';
+        data.metadata = probeData
+          ? {duration: probeData.streams[0].duration}
+          : null;
+      break;
+      default:
+        data.assetType = 'other';
+        data.metadata = null;
+      break;
+    }
+
+    return next(null, data);
+  });
 };
 
 /**

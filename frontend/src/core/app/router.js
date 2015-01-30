@@ -2,6 +2,7 @@ define(function(require) {
 
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
+  var PermissionsView = require('coreJS/app/views/permissionsView');
 
   var Router = Backbone.Router.extend({
 
@@ -65,6 +66,13 @@ define(function(require) {
       // Remove views
       this.removeViews();
 
+      // Check this user has permissions
+      if (!Origin.permissions.checkRoute(Backbone.history.fragment)) {
+        Origin.trigger('sidebar:sidebarContainer:hide');
+        Origin.trigger('location:title:hide');
+        return $('.app-inner').append(new PermissionsView().$el);
+      }
+
       var routeArguments = arguments;
 
       // Set previous location object
@@ -94,15 +102,19 @@ define(function(require) {
       Origin.trigger('remove:views');
     },
 
-    showLoading: function() {
-      // 
-      this.$loading.removeClass('display-none fade-out');
+    showLoading: function(shouldHideTopBar) {
+      // Sometimes you might want to disable the top bar too
+      if (shouldHideTopBar) {
+        this.$loading.removeClass('display-none fade-out').addClass('cover-top-bar');
+      } else {
+        this.$loading.removeClass('display-none fade-out');
+      }
     },
 
     hideLoading: function() {
       this.$loading.addClass('fade-out');
       _.delay(_.bind(function() {
-        this.$loading.addClass('display-none');
+        this.$loading.addClass('display-none').removeClass('cover-top-bar');
       }, this), 300);
       
     }

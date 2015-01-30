@@ -5,7 +5,6 @@ define(function(require){
     var Origin = require('coreJS/app/origin');
     var OriginView = require('coreJS/app/views/originView');
     var AssetItemView = require('coreJS/assetManagement/views/assetManagementItemView');
-    var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
     var AssetModel = require('coreJS/assetManagement/models/assetModel');
     var AssetManagementPreview = require('coreJS/assetManagement/views/assetManagementPreviewView');
 
@@ -17,31 +16,36 @@ define(function(require){
 
         events: {},
 
-        preRender: function() {
+        preRender: function(options) {
             this.sort = { createdAt: -1 };
-            this.search = {};
-            this.assetLimit = 0;
-            this.assetDenominator = 16;
-            this.filters = [];
-            this.collection = new AssetCollection();
-            this.listenTo(this.collection, 'sync', this.onCollectionSynced);
+            this.search = (options.search || {});
+            // Set to minus so we can have more DRY code
+            this.assetLimit = -32;
+            this.assetDenominator = 32;
+            this.filters = (this.search.assetType) ? options.search.assetType.$in : [];
+            this.tags = [];
+            this.collectionLength = 0;
+            this.shouldStopFetches = false;
             this.listenTo(this.collection, 'add', this.appendAssetItem);
             this.listenTo(Origin, 'assetManagement:sidebarFilter:add', this.addFilter);
             this.listenTo(Origin, 'assetManagement:sidebarFilter:remove', this.removeFilter);
             this.listenTo(Origin, 'assetManagement:sidebarView:filter', this.filterBySearchInput);
+            this.listenTo(Origin, 'assetManagement:assetManagementSidebarView:filterByTags', this.filterByTags);
+            this.listenTo(this.collection, 'sync', this.onCollectionSynced);
+            this.listenTo(Origin, 'assetManagement:collection:refresh', this.updateCollection);
+            this.onCollectionSynced();
         },
 
         onCollectionSynced: function () {
-          if (this.collection.length) {
+          if (this.collection.length === 0) {
+            $('.asset-management-no-assets').removeClass('display-none');
+          } else {
             $('.asset-management-no-assets').addClass('display-none');
-          } 
+          }
         },
 
         setupLazyScrolling: function() {
-            if (this.hasSetUpLazyScrolling) {
-              return;
-            }
-            
+
             var $assetContainer = $('.asset-management-assets-container');
             var $assetContainerInner = $('.asset-management-assets-container-inner');
             // Remove event before attaching
@@ -55,39 +59,73 @@ define(function(require){
                 // If the scroll position of the assets container is
                 // near the bottom
                 if ((scrollableHeight-containerHeight) - scrollTop < 30) {
-                    this.lazyRenderCollection();
+                    if (!this.isCollectionFetching) {
+                        this.isCollectionFetching = true;
+                        this.lazyRenderCollection();
+                    }
                 }
 
             }, this));
-            this.hasSetUpLazyScrolling = true;
         },
-        
+
         updateCollection: function (reset) {
+
             // If removing items, we need to reset our limits
             if (reset) {
               // Trigger event to kill zombie views
               Origin.trigger('assetManagement:assetViews:remove');
-            
+
               // Empty collection container
               this.$('.asset-management-collection-inner').empty();
-              
+
+              // Reset fetches cache
+              this.shouldStopFetches = false;
+
               this.assetLimit = 0;
               this.collection.reset();
             }
-            
-            this.collection.fetch({ 
+
+            this.search = _.extend(this.search, {
+                tags: {
+                    $in: this.tags
+                }
+            }, {
+                assetType: {
+                    $in: this.filters
+                }
+            });
+
+            // This is set when the fetched amount is equal to the collection length
+            // Stops any further fetches and HTTP requests
+            if (this.shouldStopFetches) {
+                return;
+            }
+
+            this.collection.fetch({
               remove: reset,
-              data: { 
+              data: {
                 search: this.search,
-                operators : { 
-                  skip: this.assetLimit, 
+                operators : {
+                  skip: this.assetLimit,
                   limit: this.assetDenominator,
                   sort: this.sort
                 } 
-              } 
+              },
+              success: _.bind(function() {
+                // On successful collection fetching set lazy render to enabled
+                 if (this.collectionLength === this.collection.length) {
+                    this.shouldStopFetches = true;
+                } else {
+                    this.shouldStopFetches = false;
+                    this.collectionLength = this.collection.length;
+                }
+
+                this.isCollectionFetching = false;
+                Origin.trigger('assetManagement:assetManagementCollection:fetched');
+              }, this)
             });
         },
-        
+
         appendAssetItem: function (asset) {
           this.$('.asset-management-collection-inner').append(new AssetItemView({ model: asset }).$el);
         },
@@ -95,15 +133,15 @@ define(function(require){
         lazyRenderCollection: function() {
             // Adjust limit based upon the denominator
             this.assetLimit += this.assetDenominator;
-            this.updateCollection();
+            this.updateCollection(false);
         },
 
         postRender: function() {
             this.setupLazyScrolling();
-            this.updateCollection();
 
             // Fake a scroll trigger - just incase the limit is too low and no scroll bars
             $('.asset-management-assets-container').trigger('scroll');
+            this.setViewToReady();
         },
 
         addFilter: function(filterType) {
@@ -121,7 +159,7 @@ define(function(require){
             this.filterCollection();
         },
 
-        filterCollection: function(event) {
+        filterCollection: function() {
             this.search.assetType = this.filters.length
                 ? { $in: this.filters }
                 : null ;
@@ -129,12 +167,18 @@ define(function(require){
         },
 
         filterBySearchInput: function (filterText) {
-            this.search = { title: '.*' + filterText.toLowerCase() + '.*' };
+            var pattern = '.*' + filterText.toLowerCase() + '.*';
+            this.search = { title: pattern, description: pattern };
             this.updateCollection(true);
         },
 
         removeLazyScrolling: function() {
             $('.asset-management-assets-container').off('scroll');
+        },
+
+        filterByTags: function(tags) {
+            this.tags = _.pluck(tags, 'id');
+            this.updateCollection(true);
         }
 
     }, {

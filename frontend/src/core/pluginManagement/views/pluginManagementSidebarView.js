@@ -8,8 +8,8 @@ define(function(require) {
       'click .pluginManagement-sidebar-upload'	: 'onAddNewPluginClicked',
       'click .pluginManagement-sidebar-extensions'	: 'onManageExtensionsClicked',
       'click .pluginManagement-sidebar-themes'	: 'onManageThemesClicked',
-      'click .pluginManagement-sidebar-menus'  : 'onManageMenusClicked',
       'click .pluginManagement-sidebar-components'	: 'onManageComponentsClicked',
+      'click .pluginManagement-sidebar-menus'  : 'onManageMenusClicked',
       'click .pluginManagement-sidebar-dashboard'	: 'returnToDashboard'
     },
 
@@ -25,12 +25,12 @@ define(function(require) {
       this.managePluginType('theme');
     },
 
-    onManageMenusClicked: function () {
-      this.managePluginType('menu');
-    },
-
     onManageComponentsClicked: function () {
       this.managePluginType('component');
+    },
+
+    onManageMenusClicked: function () {
+      this.managePluginType('menu');
     },
 
     managePluginType: function (pluginType) {

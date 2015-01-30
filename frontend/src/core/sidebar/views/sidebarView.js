@@ -12,9 +12,11 @@ define(function(require) {
 			this.render();
 			this.listenTo(Origin, 'sidebar:sidebarContainer:update', this.updateViews);
 			this.listenTo(Origin, 'sidebar:sidebarFilter:add', this.addFilterView);
+			this.listenTo(Origin, 'sidebar:sidebarContainer:hide', this.hideSidebar);				
 		},
 
 		updateViews: function($element, options) {
+			$('html').removeClass('sidebar-hide');
 
 			// Check if options exists
 			var options = (options || {});
@@ -30,6 +32,10 @@ define(function(require) {
 			// Append is better here so we can animate the current view out
 			this.$('.sidebar-item-container').append($element);
 
+		},
+
+		hideSidebar: function() {
+			$('html').addClass('sidebar-hide');
 		},
 
 		setupBackButtonRoute: function(options) {

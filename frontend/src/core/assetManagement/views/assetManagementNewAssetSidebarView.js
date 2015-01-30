@@ -11,6 +11,7 @@ define(function(require) {
         },
 
         onSaveNewAssetClicked: function() {
+            this.updateButton('.asset-management-new-sidebar-save-button', window.polyglot.t('app.saving'));
             Origin.trigger('assetManagement:newAsset');
         },
 

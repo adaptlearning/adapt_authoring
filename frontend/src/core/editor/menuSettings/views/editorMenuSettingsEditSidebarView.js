@@ -14,7 +14,7 @@ define(function(require) {
 
     saveEditing: function(event) {
         event.preventDefault();
-
+        this.updateButton('.editor-menusettings-edit-sidebar-save', window.polyglot.t('app.saving'));
         Origin.trigger('editorMenuSettingsEditSidebar:views:save');
     },
 

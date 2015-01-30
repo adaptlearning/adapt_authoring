@@ -2,15 +2,25 @@
  * Course Content plugin type
  */
 
-var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
+var contentmanager = require('../../../lib/contentmanager'),
+    tenantmanager = require('../../../lib/tenantmanager'),
+    ContentPlugin = contentmanager.ContentPlugin,
+    ContentPermissionError = contentmanager.errors.ContentPermissionError,
     configuration = require('../../../lib/configuration'),
+    permissions = require('../../../lib/permissions'),
+    usermanager = require('../../../lib/usermanager'),
     util = require('util'),
     path = require('path'),
     async = require('async'),
     origin = require('../../../'),
     rest = require('../../../lib/rest'),
+    _ = require('underscore'),
+    ncp = require('ncp').ncp,
+    mkdirp = require('mkdirp'),
+    logger = require('../../../lib/logger'),
     database = require('../../../lib/database'),
     usermanager = require('../../../lib/usermanager');
+
 
 function CourseContent () {
 }
@@ -39,17 +49,34 @@ function initialize () {
     });
   });
 
+
+  app.contentmanager.addContentHook('update', 'course', {when:'pre'}, function (data, next) {
+    if (data[1].hasOwnProperty('themeSettings')) {
+      var tenantId = usermanager.getCurrentUser().tenant._id;
+
+      app.emit('rebuildCourse', tenantId, data[0]._id);
+    }
+
+    next(null, data);
+  });
+
   // Content Hook for updatedAt and updatedBy:
   ['contentobject', 'article', 'block', 'component'].forEach(function (contentType) {
-    app.contentmanager.addContentHook('update', contentType, {when:'post'}, function (contentType, data, next) { 
-      
+    app.contentmanager.addContentHook('update', contentType, {when:'post'}, function (contentType, data, next) {
+
       var userId = usermanager.getCurrentUser()._id;
       var updatedAt = new Date();
 
       database.getDatabase(function (err, db) {
+        // TODO - There is a possible context issue here which needs resolved
+        if (err) {
+            logger.log('error', err);
+            return next(err)
+        }
+
         db.update('course', { _id: data._courseId }, { updatedAt: updatedAt, updatedBy: userId }, function (err) {
           if (err) {
-            next(err);
+            return next(err);
           }
           next(null, data);
         });
@@ -60,6 +87,22 @@ function initialize () {
   });
 
 }
+
+/**
+ * overrides base implementation of hasPermission
+ *
+ * @param {string} action
+ * @param {object} a content item
+ * @param {callback} next (function (err, isAllowed))
+ */
+CourseContent.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
+  if (contentItem._isShared) {
+    return next(null, true);
+  }
+
+  var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._id);
+  permissions.hasPermission(userId, action, resource, next);
+};
 
 /**
  * implements ContentObject#getModelName
@@ -80,35 +123,73 @@ CourseContent.prototype.getChildType = function () {
 };
 
 /**
+ * Overrides base.create
+ * @param {object} data
+ * @param {callback} next
+ */
+CourseContent.prototype.create = function (data, next) {
+  var self = this;
+  var user = usermanager.getCurrentUser();
+  var tenantId = user.tenant && user.tenant._id;
+
+  ContentPlugin.prototype.create.call(self, data, function (error, doc) {
+    // grant the creating user full editor permissions
+    permissions.createPolicy(user._id, function (err, policy) {
+      if (err) {
+        logger.log('error', 'there was an error granting editing permissions', err);
+      }
+
+      var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + doc._id);
+      permissions.addStatement(policy, ['create', 'read', 'update', 'delete'], resource, 'allow', function (err) {
+        if (err) {
+          logger.log('error', 'there was an error granting editing permissions', err);
+        }
+        return next(null, doc);
+      });
+    });
+  });
+};
+
+/**
  * Overrides base.destroy
  * @param {object} search
  * @param {callback} next
  */
-CourseContent.prototype.destroy = function (search, next) {
+CourseContent.prototype.destroy = function (search, force, next) {
   var self = this;
+  var user = app.usermanager.getCurrentUser();
+  var tenantId = user.tenant && user.tenant._id;
 
-  // to cascade deletes, we need the _id, which may not be in the search param
-  self.retrieve(search, function (error, docs) {
-    if (error) {
-      return next(error);
+  // shuffle params
+  if ('function' === typeof force) {
+    next = force;
+    force = false;
+  }
+
+  self.hasPermission('delete', user._id, tenantId, search, function (err, isAllowed) {
+    if (!isAllowed && !force) {
+      return next(new ContentPermissionError());
     }
+    // to cascade deletes, we need the _id, which may not be in the search param
+    self.retrieve(search, function (error, docs) {
+      if (error) {
+        return next(error);
+      }
 
-    // courses use cascading delete
-    if (docs && docs.length) {
-      async.eachSeries(
-        docs,
-        function (doc, cb) {
-          self.destroyChildren(doc._id, '_courseId', function (error) {
-            if (error) {
-              return cb(error);
-            }
-            ContentPlugin.prototype.destroy.call(self, {_id:doc._id}, cb);
+      // courses use cascading delete
+      if (docs && docs.length) {
+        async.eachSeries(
+          docs,
+          function (doc, cb) {
+            self.destroyChildren(doc._id, '_courseId', cb);
+          },
+          function (err) {
+            ContentPlugin.prototype.destroy.call(self, search, true, next);
           });
-        },
-        next);
-    } else {
-      next(null);
-    }
+      } else {
+        next(null);
+      }
+    });
   });
 };
 
@@ -135,20 +216,34 @@ function duplicate (data, cb) {
 
       delete doc._id;
 
+      // As this is a new course, no preview is yet available
+      doc._hasPreview = false;
+
       // New course name
       doc.title = 'Copy of ' + doc.title;
 
       CourseContent.prototype.create(doc, function (error, newCourse) {
+        if (error) {
+          logger.log('error', error);
+          return cb(error);
+        }
+
         var newCourseId = newCourse._id;
         var parentIdMap = [];
 
         database.getDatabase(function (error, db) {
-          async.eachSeries(['contentobject', 'article', 'block', 'component', 'config'],
-          function (contenttype, nextContentType) {
+          if (error) {
+            logger.log('error', error);
+            return cb(error);
+          }
+
+          async.eachSeries(['contentobject', 'article', 'block', 'component', 'config'], function (contenttype, nextContentType) {
             db.retrieve(contenttype, {_courseId: oldCourseId}, function (error, items) {
               if (error) {
+                logger.log('error', error);
                 return nextContentType(error);
               }
+
               if (!parentIdMap.length) {
                 parentIdMap[oldCourseId] = newCourseId;
               }
@@ -168,6 +263,7 @@ function duplicate (data, cb) {
 
                 return db.create(contenttype, contentData, function (error, newContent) {
                   if (error) {
+                    logger.log('error', error);
                     return next(error);
                   }
                   parentIdMap[oldId] = newContent._id;
@@ -176,14 +272,53 @@ function duplicate (data, cb) {
 
               }, function (error) {
                 if (error) {
+                  logger.log('error', error);
                   return cb(error);
                 }
+
                 nextContentType(null);
               });
             });
           }, function (error) {
-            cb(null, newCourse);
-          });
+            if (error) {
+              logger.log('error', error);
+              cb(error, newCourse);
+            } else {
+              // Assuming there are no errors the assets must set the course assets
+              db.retrieve('courseasset', {_courseId: oldCourseId}, function(error, items) {
+                if (error) {
+                  logger.log('error', error);
+                  cb(error, newCourse);
+                } else {
+                  async.eachSeries(items, function(item, next) {
+                    // For each course asset, before inserting the new document
+                    // the _courseId and _contentTypeParentId must be changed
+                    var courseAsset = item.toObject();
+                    delete courseAsset._id;
+
+                    courseAsset._courseId = newCourseId;
+                    courseAsset._contentTypeParentId = parentIdMap[item._contentTypeParentId];
+
+                    return db.create('courseasset', courseAsset, function (error, newCourseAsset) {
+                      if (error) {
+                        logger.log('error', error);
+                        return next(error);
+                      } else {
+                        next();
+                      }
+                    });
+                  }, function(error) {
+                    if (error) {
+                      logger.log('error', error);
+                      cb(error);
+                    } else {
+                      cb(null, newCourse);
+                    }
+                  });
+                }
+              });
+            }
+          }); // end async.eachSeries()
         });
       });
     }

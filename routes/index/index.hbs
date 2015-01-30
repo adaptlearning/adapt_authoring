@@ -3,10 +3,16 @@
   <head>
     <title>Adapt Origin</title>
     <link rel="stylesheet" href="/adaptbuilder/css/adapt.css" />
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-    <script src="socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="core/libraries/font-awesome-4.2.0/css/font-awesome.min.css">
     <script type="text/javascript" src="core/libraries/modernizr.js"></script>
-    <script type="text/javascript" src="core/libraries/require.js" data-main="core/app/app.js"></script>
+    <script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+    {{#if isProduction}}
+    <script type="text/javascript" src="core/libraries/require.js" data-main="adaptbuilder/js/origin.js{{#if dateStampAsString}}?{{dateStampAsString}}{{/if}}"></script>
+    {{else}}
+    <script type="text/javascript" src="core/libraries/require.js"></script>
+    <script type="text/javascript" src="core/app/config.js"></script>
+    <script type="text/javascript" src="core/app/app.js"></script>
+    {{/if}}
   </head>
   <body>
     <div id="app" class="app container">

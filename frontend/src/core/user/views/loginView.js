@@ -44,10 +44,11 @@ define(function(require) {
 
       var inputUsernameEmail = $.trim(this.$("#login-input-username").val());
       var inputPassword = $.trim(this.$("#login-input-password").val());
+      var shouldPersist = this.$('#remember-me').prop('checked');
 
       // Validation
       if (inputUsernameEmail === '' || inputPassword === '') {
-        this.loginFailed();
+        this.loginFailed(LoginView.ERR_MISSING_FIELDS);
         return false;
       } else {
         $('#login-input-username').removeClass('input-error');
@@ -55,21 +56,30 @@ define(function(require) {
 
       var userModel = this.model;
 
-      userModel.login(inputUsernameEmail, inputPassword, function(err, result){
-        if( err || !result.success) {
-          this.loginFailed();
-        } else {
-          Backbone.history.navigate('#/dashboard', {trigger: true});
-        }
-      });
+      userModel.login(inputUsernameEmail, inputPassword, shouldPersist);
     },
 
-    loginFailed: function() {
+    loginFailed: function(errorCode) {
+      var errorMessage = '';
+
+      switch (errorCode) {
+        case LoginView.ERR_INVALID_CREDENTIALS:
+        case LoginView.ERR_MISSING_FIELDS:
+          errorMessage = window.polyglot.t('app.invalidusernameorpassword');        
+          break;
+        case LoginView.ERR_ACCOUNT_LOCKED:
+          errorMessage = window.polyglot.t('app.accountlockedout');
+          break;
+      }
+
       $('#login-input-username').addClass('input-error');
-      $('#loginErrorMessage').text(window.polyglot.t('app.invalidusernameoremail'));
+      $('#loginErrorMessage').text(errorMessage);
     }
 
   }, {
+    ERR_INVALID_CREDENTIALS: 1,
+    ERR_ACCOUNT_LOCKED: 2,
+    ERR_MISSING_FIELDS: 3,
     template: 'login'
   });
 

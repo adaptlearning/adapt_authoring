@@ -3,7 +3,7 @@
 /data
 /temp
 /adapt_framework
-/frontend/src/adaptbuilder/css/
+/frontend/src/adaptbuilder/css/adapt.css
 conf/config.json
 .project
 /frontend/build
@@ -11,6 +11,7 @@ conf/config.json
 /nbproject/
 /.settings
 /frontend/src/templates/templates.js
+/frontend/src/plugins/plugins.js
 /plugins/content/component/versions/
 /plugins/content/component/componentcache/
 /plugins/content/extension/versions/
@@ -21,3 +22,8 @@ conf/config.json
 /plugins/content/bower/bowercache/
 /master/
 /frontend/src/adaptbuilder/css/adapt.css
+/frontend/src/adaptbuilder/js/
+.idea
+*.iml
+.vagrant
+.env

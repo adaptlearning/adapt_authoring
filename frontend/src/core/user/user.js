@@ -33,10 +33,12 @@ define(function(require) {
       Origin.sessionModel.logout();
       break;
       case 'forgot':
+      Origin.trigger('sidebar:sidebarContainer:hide');
       currentView = ForgotPasswordView;
       break;
       case 'reset':
-      currentView = ResetView;
+      Origin.trigger('sidebar:sidebarContainer:hide');
+      currentView = ResetPasswordView;
       break;      
       case 'profile':
       settings.authenticate = true;
@@ -47,16 +49,26 @@ define(function(require) {
     }
 
     if (currentView) {
-      if (location == 'profile') {
-        var profile = new UserProfileModel(); 
-        profile.fetch({
-          success: function() {
-            Origin.sidebar.addView(new UserProfileSidebarView().$el);
-            Origin.router.createView(currentView, {model: profile}, settings);
-          }
-        });
-      } else {
-        Origin.router.createView(currentView, {model: Origin.sessionModel}, settings);
+      switch (location) {
+        case 'profile':
+          var profile = new UserProfileModel(); 
+          profile.fetch({
+            success: function() {
+              Origin.sidebar.addView(new UserProfileSidebarView().$el);
+              Origin.router.createView(currentView, {model: profile}, settings);
+            }
+          });
+          break;
+        case 'reset':
+          var reset = new UserPasswordResetModel({token: subLocation});
+          reset.fetch({
+            success: function() {
+              Origin.router.createView(currentView, {model: reset}, settings);    
+            }
+          });
+          break;
+        default:
+          Origin.router.createView(currentView, {model: Origin.sessionModel}, settings);  
       }
     }
   });

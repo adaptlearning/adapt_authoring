@@ -11,6 +11,9 @@
     },
     "properties":{
       "type": "object"
+    },
+    "settings": {
+      "type": "object"
     }
   }
 }

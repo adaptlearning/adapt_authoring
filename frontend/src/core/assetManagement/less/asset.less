@@ -1,3 +1,14 @@
+.asset-picker-filters {
+    padding: 10px;
+    background-color: lightblue;
+}
+
+.asset-picker-sidebar-filter-button {
+    &.selected {
+        background-color: #F2F2F2;
+    }
+}
+
 .asset-management-assets-container {
     width:66.6%;
     float:left;
@@ -36,6 +47,7 @@
         top:40%;
     }
 }
+
 
 .asset-preview-edit {
     margin-top:10px;
@@ -94,9 +106,28 @@
     &-title {
         height:52px;
         overflow:hidden;
+        color: black;
     }
 
 }
+
+
+  ul.tag-container {
+    margin: 4px;
+  }
+
+  li.tag-item {
+    margin: 1px 0px 1px 0px;
+    display: inline-block;
+
+
+    span.tag-value {
+      margin: 5px;
+      color:#fff;
+      padding: 3px;
+      background-color:#9CABC4;      
+    }
+  }
 
 .asset-preview-details-preview {
     margin-bottom:20px;
@@ -111,4 +142,57 @@
 
 .asset-preview-title {
     word-wrap: break-word;
+}
+
+.asset-management-modal-filters {
+    float: left;
+    width: 50%;
+    display:inline-block;
+    text-align:left;
+    input {
+        border-radius:0px;
+        width: 200px;
+        padding: 11px 10px;
+        border: none;
+        margin-top: -5px;
+        margin-left:-3px;
+        background-color: #3d4960;
+        color: #fff;
+    }
+    .modal & button {
+        background-color: lighten(#293141, 10%);
+        margin-left:-4px;
+        color:#9cabc4;
+        transition:color 0.3s;
+        &:hover {
+            color:#fff;
+        }
+    }
+}
+
+.asset-preview-edit {
+    .modal-popup & {
+        display:none;
+    }
+}
+
+.asset-management-modal-new-asset {
+    position:fixed;
+    top:40px;
+    left:0px;
+    z-index:5;
+    background-color:#fff;
+    box-shadow:1px 2px 4px 0px #666;
+    &-inner {
+        padding:30px;
+    }
+}
+
+.asset-management-modal-new-asset-close {
+    position: absolute;
+    top: 0px;
+    right: 0;
+    &:hover {
+        color:#15a4fa;
+    }
 }

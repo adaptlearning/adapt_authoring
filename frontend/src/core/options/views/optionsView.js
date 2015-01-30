@@ -32,6 +32,11 @@ define(function(require) {
 			// Then go through each preference and add a class
 			_.defer(_.bind(function() {
 				_.each(userPreferences, function(preference) {
+					// If preferences are not classes to be added
+					// return this ship home
+					if (_.isArray(preference)) {
+						return;
+					}
 					this.$('a.option-value-' + preference).addClass('selected');
 				}, this)
 			}, this));

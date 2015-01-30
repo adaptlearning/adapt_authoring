@@ -39,11 +39,6 @@ define(function(require) {
         callbackEvent: "copy"
       },
       {
-        title: window.polyglot.t('app.cut'),
-        className: 'context-menu-item',
-        callbackEvent: "cut"
-      },
-      {
         title: window.polyglot.t('app.delete'),
         className: 'context-menu-item',
         callbackEvent: "delete"
@@ -80,8 +75,22 @@ define(function(require) {
 
     ContextMenu.addItem('course', courseContextItems);
 
+    var sharedCourseContextItems = [
+      {
+        title: window.polyglot.t('app.duplicate'),
+        className: 'context-menu-item',
+        callbackEvent: 'duplicate'
+      },
+      {
+        title: window.polyglot.t('app.preview'),
+        className: 'context-menu-item',
+        callbackEvent: 'preview'
+      }
+    ];
+
+    ContextMenu.addItem('sharedcourse', sharedCourseContextItems);
+    
     var menuContextItems = contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "copy"})), 1);
-    menuContextItems = contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "cut"})), 1);
     ContextMenu.addItem('menu', contextItems);
   }
 

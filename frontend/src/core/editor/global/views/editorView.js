@@ -15,7 +15,6 @@ define(function(require){
   var EditorComponentModel = require('editorPage/models/editorComponentModel');
   var EditorClipboardModel = require('editorGlobal/models/editorClipboardModel');
   var EditorComponentTypeModel = require('editorPage/models/editorComponentTypeModel');
-  /*var EditorConfigModel = require('editorConfig/models/editorConfigModel');*/
   var ExtensionModel = require('editorExtensions/models/extensionModel');
 
   var EditorView = EditorOriginView.extend({
@@ -39,6 +38,7 @@ define(function(require){
       this.currentView = options.currentView;
       Origin.editor.pasteParentModel = false;
       this.currentCourseId = Origin.editor.data.course.get('_id');
+
       this.currentPageId = options.currentPageId;
 
       this.listenTo(Origin, 'editorView:refreshView', this.setupEditor);
@@ -53,6 +53,7 @@ define(function(require){
     },
 
     postRender: function() {
+
     },
 
     onEditableHoverOver: function(e) {
@@ -64,32 +65,41 @@ define(function(require){
       $(e.currentTarget).removeClass('hovering');
     },
 
-    // checks if data is loaded
-    // then create new instances of:
-    // Origin.editor.course, Origin.editor.config, Origin.editor.contentObjects,
-    // Origin.editor.articles, Origin.editor.blocks
     setupEditor: function() {
       this.renderCurrentEditorView();
     },
 
     publishProject: function() {
-
       var canPublish = this.validateCourseContent();
 
       if (canPublish) {
-        window.open('/api/output/adapt/publish/' + this.currentCourseId);
-      }
+        var $downloadForm = $('#downloadForm');
+        var courseId = Origin.editor.data.course.get('_id');
+        var tenantId = Origin.sessionModel.get('tenantId');
 
+        $downloadForm.attr('action', '/download/' + tenantId + '/' + courseId + '/' + 'download.zip');
+        $downloadForm.submit();
+      } else {
+        return false;
+      }
     },
 
     previewProject: function() {
-      
       var canPreview = this.validateCourseContent();
 
       if (canPreview) {
-        window.open('/api/output/adapt/preview/' + this.currentCourseId, 'adapt_preview');
-      }
+        Origin.trigger('router:showLoading', true);
 
+        $.ajax({
+          url: '/api/output/adapt/preview/' + this.currentCourseId
+        }).done(function() {
+          var courseId = Origin.editor.data.course.get('_id');
+          var tenantId = Origin.sessionModel.get('tenantId');
+
+          window.open('/preview/' + tenantId + '/' + courseId + '/main.html');
+          Origin.trigger('router:hideLoading');
+        });
+      }
     },
 
     /*
@@ -100,121 +110,69 @@ define(function(require){
         _.invoke(Origin.editor.data.clipboard.models, 'destroy')
       }, this));
 
-      Origin.editor.pasteParentModel = model.getParent();
+      var self = this;
+      var copiedObjectType = model.get('_type');
 
-      var clipboard = new EditorClipboardModel();
-
-      clipboard.set('referenceType', model._siblings);
-
-      var hasChildren = (model._children && Origin.editor.data[model._children].where({_parentId: model.get('_id')}).length == 0) ? false : true;
-      var currentModel = model;
-      var items = [currentModel];
-
-      if (hasChildren) {
-        // Recusively push all children into an array
-        this.getAllChildren(currentModel, items);
-      }
-
-      // Sort items into their respective types
-      _.each(items, function(item) {
-        var matches = clipboard.get(item._siblings);
-        if (matches) {
-          this.mapValues(item);
-          matches.push(item);
-          clipboard.set(item._siblings, matches);
-        } else {
-          this.mapValues(item);
-          clipboard.set(item._siblings, [item]);
-        }
-      }, this);
-
-      clipboard.save({_courseId: this.currentCourseId}, {
-        error: function() {
-          alert('An error occurred doing the save');
+      $.ajax({
+        method: 'post',
+        url: '/api/content/clipboard/copy',
+        data: {
+          objectId: model.get('_id'), 
+          courseId: Origin.editor.data.course.get('_id'),
+          referenceType: model._siblings
         },
-        success: function() {
-          Origin.editor.data.clipboard.fetch({reset:true});
+        success: function (jqXHR, textStatus, errorThrown) {
+          if (!jqXHR.success) {
+            alert(jqXHR.message);
+            console.log(jqXHR);
+          } else {
+            Origin.editor.clipboardId = jqXHR.clipboardId;
+            Origin.editor.pasteParentModel = model.getParent();
+            self.showPasteZones(copiedObjectType);
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          alert('Error during copy');
+          console.log(jqXHR);
+          console.log(textStatus);
+          console.log(errorThrown);
         }
       });
     },
 
-    mapValues: function(item) {
-      if (item.get('_componentType') && typeof item.get('_componentType') === 'object') {
-        item.set('_componentType', item.get('_componentType')._id);
-      }
-    },
-
-    getAllChildren: function (model, list) {
-      var that = this;
-      var children = model.getChildren();
-      if (children && children.models.length) {
-        children.each(function(child) {
-          list.push(child);
-          that.getAllChildren(child, list);
-        });
-      }
-    },
-
     pasteFromClipboard: function(parentId, sortOrder, layout) {
-      var clipboard = Origin.editor.data.clipboard.models[0];
-      var topitem = clipboard.get(clipboard.get('referenceType'))[0];
-      
-      if (topitem._layout) {
-        topitem._layout = layout;
-      }
-      if (topitem._sortOrder) {
-        topitem._sortOrder = sortOrder;
-      }
-      this.createRecursive(clipboard.get('referenceType'), clipboard, parentId, false);
-    },
-
-    createRecursive: function (type, clipboard, parentId, oldParentId) {
-      var thisView = this;
-      var allitems = clipboard.get(type);
-      var items = [];
-
-      if (oldParentId) {
-        items = _.filter(allitems, function(item) {
-          return item._parentId == oldParentId;
-        });
-      } else {
-        items = allitems;
-      }
-
-      if (items && items.length) {
-        _.each(items, function(childitem) {
-          var newModel = thisView.createModel(type);
-          var oldPid = childitem._id;
-          delete childitem._id;
-
-          childitem._parentId = parentId;
-
-          newModel.save(
-            childitem,
-            {
-              error: function() {
-                alert('error during paste');
-              },
-              success: function(model, response, options) {
-                if (newModel._children) {
-                  thisView.createRecursive(newModel._children, clipboard, model.get('_id'), oldPid);
-                } else {
-                  // We're done pasting, no more children to process
-                  Origin.trigger('editor:refreshData', function() {
-                    Origin.trigger('editorView:refreshView');
-                  }, this);
-                  
-                  
-                }
-              }
-            }
-          );
-        });
-      } else {
-        Origin.trigger('editor:refreshData', function() {
-          Origin.trigger('editorView:refreshView');
-        }, this);
-      }
+      $.ajax({
+        method: 'post',
+        url: '/api/content/clipboard/paste',
+        data: {
+          id: Origin.editor.clipboardId,
+          parentId: parentId,
+          layout: layout,
+          sortOrder: sortOrder, 
+          courseId: Origin.editor.data.course.get('_id')
+        },
+        success: function (jqXHR, textStatus, errorThrown) {
+          if (!jqXHR.success) {
+            alert(jqXHR.message);
+            console.log(jqXHR);
+          } else {
+            Origin.editor.clipboardId = null;
+            Origin.editor.pasteParentModel = null;
+            Origin.trigger('editor:refreshData', function() {
+              // TODO: HACK - I think this should probably pass a callback in
+              // and return it with the new item - this way the individual views
+              // can handle the new views and models
+              Backbone.history.loadUrl();
+            }, this);
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          alert('Error during paste');
+          console.log(jqXHR);
+          console.log(textStatus);
+          console.log(errorThrown);
+        }
+      });
     },
 
     createModel: function (type) {

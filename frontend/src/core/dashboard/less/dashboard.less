@@ -1,9 +1,33 @@
 .dashboard {
+    overflow-y:scroll;
     ul {
         list-style-type: none;
     }
     li {
         margin-bottom:30px;
+    }   
+}
+
+.dashboard-options-container {
+    height: 30px;
+}
+
+ul.dashboard-options {
+    float: right;
+    color: #333C4E;
+    padding-right: 20px;
+    padding-top: 14px;
+
+    a {
+        text-decoration: none;
+        color: #333C4E;
+        &:hover {
+            color: #15a4fa;
+        }
+    }
+
+    li {
+        float: left;
     }
 }
 
@@ -12,7 +36,7 @@
 }
 
 .grid-layout {
-    .project-list-item {
+    .project-list-item, .shared-project-list-item {
         margin-left: 30px;
         min-width: 240px;
         min-height: 320px;
@@ -27,7 +51,7 @@
 
 .list-layout {
     margin-left:30px;
-    .project-list-item {
+    .project-list-item, .shared-project-list-item {
         margin-left:0px;
         width:100%;
         .project-settings {
@@ -44,6 +68,10 @@
     }
 }
 
+.dashboard-sidebar-filter-input {
+    width:168px;
+}
+
 .dashboard-sidebar-filter-clear {
     padding:6px;
 }
@@ -55,7 +83,7 @@
 }
 
 .dashboard-no-projects {
-    padding-left:30px;
+    text-align:center;
 }
 
 .sidebar-tag {

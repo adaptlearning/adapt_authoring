@@ -144,7 +144,14 @@ define(function(require) {
         },
 
         addFilter: function() {
-            var selectedTag = this.$('.sidebar-filter-item.selected').attr('data-tag');
+            var selectedTag = {
+                title: this.$('.sidebar-filter-item.selected').attr('data-title'),
+                id: this.$('.sidebar-filter-item.selected').attr('data-id')
+            };
+
+            if (!selectedTag.title || !selectedTag.id) {
+                return;
+            }
             Origin.trigger('sidebarFilter:filterByTags', selectedTag);
             Origin.trigger('sidebarFilter:addTagToSidebar', selectedTag);
             this.remove();

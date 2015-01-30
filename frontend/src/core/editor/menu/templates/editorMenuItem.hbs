@@ -11,15 +11,7 @@
 
 	<div class="editor-menu-item-icon {{_type}}">
         {{#if_value_equals _type "menu"}}
-            {{#if _isSelected}}
-            <i class="fa fa-folder-open-o"></i> 
-            {{else}}
-                {{#if _isExpanded}}
-                <i class="fa fa-folder-open-o"></i> 
-                {{else}}
             <i class="fa fa-folder-o"></i> 
-            {{/if}}
-            {{/if}}
         {{/if_value_equals}}
         {{#if_value_equals _type "page"}}
             <i class="fa fa-file-o"></i> 

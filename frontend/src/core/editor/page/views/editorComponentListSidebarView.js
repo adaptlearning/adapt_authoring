@@ -15,7 +15,7 @@ define(function(require) {
 
         onSaveClicked: function(event) {
             event.preventDefault();
-
+            this.updateButton('.editor-component-list-sidebar-save', window.polyglot.t('app.saving'));
             if (!this.model.get('component') || !this.model.get('layout')) {
               return;
             }
@@ -28,7 +28,7 @@ define(function(require) {
             var newComponentModel = new EditorComponentModel();
 
             newComponentModel.save({
-              title: 'Component title',
+              title: window.polyglot.t('app.placeholdernewcomponent'),
               displayTitle: '',
               body: '',
               _parentId: this.model.get('_parentId'),
@@ -54,7 +54,7 @@ define(function(require) {
 
         onSaveAndEditClicked: function(event) {
             event.preventDefault();
-
+            this.updateButton('.editor-component-list-sidebar-save-edit', window.polyglot.t('app.saving'));
             if (!this.model.get('component') || !this.model.get('layout')) {
               return;
             }
@@ -67,7 +67,7 @@ define(function(require) {
             var newComponentModel = new EditorComponentModel();
 
             newComponentModel.save({
-              title: 'Component title',
+              title: window.polyglot.t('app.placeholdernewcomponent'),
               displayTitle: '',
               body: '',
               _parentId: this.model.get('_parentId'),

@@ -12,9 +12,9 @@ A web-based authoring tool for the [Adapt Framework](https://community.adaptlear
 
 ### Prerequisites
 
-* Node.js - [http://nodejs.org/](http://nodejs.org/)
-* MongoDB - [http://docs.mongodb.org/manual/](http://docs.mongodb.org/manual/)
 * git - [http://git-scm.com/downloads](http://git-scm.com/downloads)
+* MongoDB - [http://docs.mongodb.org/manual/](http://docs.mongodb.org/manual/)
+* Node.js - [http://nodejs.org/](http://nodejs.org/)
 * grunt-cli - [http://gruntjs.com/getting-started](http://gruntjs.com/getting-started)
 * adapt-cli - [https://github.com/adaptlearning/adapt-cli](https://github.com/adaptlearning/adapt-cli)
 * FFmpeg (optional) - [https://www.ffmpeg.org/index.html](https://www.ffmpeg.org/index.html)
@@ -39,6 +39,11 @@ If this is a fresh install of git, you should configure it:
 git config --global user.name "Your Name"
 git config --global user.email "youremail@domain.com"
 ```
+
+#### MongoDB
+
+[MongoDB](https://www.mongodb.org) is a document based database. Download and install the version appropriate for your system [here](https://www.mongodb.org/downloads).
+
 #### NodeJS & NPM
 
 [NodeJS](http://nodejs.org/) and [NPM](https://www.npmjs.org/) are required. Installing Node.js will also install NPM.

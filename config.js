@@ -7,6 +7,7 @@ require.config({
       handlebars: 'core/libraries/handlebars',
       coreJS: 'core',
       templates: 'templates/templates',
+      partials: 'templates/templates',
       polyglot: 'core/libraries/polyglot.min',
       jsoneditor: 'core/libraries/jquery.jsoneditor.min',
       'jquery-ui': 'core/libraries/jquery-ui.min',

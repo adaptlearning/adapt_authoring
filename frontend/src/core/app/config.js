@@ -10,6 +10,7 @@ require.config({
       imageReady: 'core/libraries/imageReady',
       coreJS: 'core',
       templates: 'templates/templates',
+      partials: 'templates/partials',
       polyglot: 'core/libraries/polyglot.min',
       backboneForms:'core/libraries/backbone-forms',
       backboneFormsLists:'core/libraries/backbone-forms-lists',

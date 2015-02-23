@@ -11,6 +11,7 @@ define(function(require){
     className: 'asset-management-preview',
 
     events: {
+      'click a.confirm-select-asset' : 'selectAsset',
       'click .asset-preview-edit-button': 'onEditButtonClicked'
     },
 
@@ -29,6 +30,13 @@ define(function(require){
           features: ['playpause','progress','current','duration']
         });
       }
+    },
+
+    selectAsset: function (event) {
+      event && event.preventDefault();
+
+      var data = {eventToTrigger: 'assetModal:assetSelected', model: this.model};
+      Origin.trigger('modal:passThrough', data);
     },
 
     onEditButtonClicked: function() {

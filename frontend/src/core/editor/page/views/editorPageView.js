@@ -46,11 +46,7 @@ define(function(require){
     },
 
     persistScrollPosition: function() {
-      
-
       if (Origin.editor.scrollTo) {
-
-        console.log('in persistScrollPosition' + Origin.editor.scrollTo);
         $.scrollTo(Origin.editor.scrollTo);
       }
     },
@@ -118,6 +114,11 @@ define(function(require){
   
       var newArticleView = new EditorArticleView({model: articleModel}),
         sortOrder = articleModel.get('_sortOrder');
+
+        // Add syncing class
+      if (articleModel.isNew()) {
+        newArticleView.$el.addClass('syncing');
+      }
       
       scrollIntoView = scrollIntoView || false;
         
@@ -130,17 +131,10 @@ define(function(require){
       // Increment the 'sortOrder' property
       articleModel.set('_pasteZoneSortOrder', sortOrder++);
 
-      // If adding a new article - add a new block too
-      if (addNewBlock) {
-        // Add a defer to make sure articleView is rendered
-        _.defer(function() {
-          newArticleView.addBlock();
-        });
-        
-      }
-
       // Post-article paste zone - sort order of placeholder will be one greater
       this.$('.page-articles').append(new EditorPasteZoneView({model: articleModel}).$el);
+      // Return the article view so syncing can be shown
+      return newArticleView;
     },
 
     deletePage: function(event) {
@@ -158,23 +152,26 @@ define(function(require){
       event.preventDefault();
       
       var _this = this;
-      var newPageArticleModel = new EditorArticleModel();
-      newPageArticleModel.save({
-        title: 'Article title',
+      var newPageArticleModel = new EditorArticleModel({
+        title: window.polyglot.t('app.placeholdernewarticle'),
         displayTitle: '',
         body: '',
         _parentId: _this.model.get('_id'),
-        _courseId: Origin.editor.data.course.get('_id')
-      },
-      {
+        _courseId: Origin.editor.data.course.get('_id'),
+        _type:'article'
+      });
+
+      var newArticleView = _this.addArticleView(newPageArticleModel);
+
+      newPageArticleModel.save(null, {
         error: function() {
           alert('error adding new article');
         },
         success: function(model, response, options) {
 
-          Origin.trigger('editor:refreshData', function() {
-            _this.addArticleView(model, true, true);
-          }, this);
+          Origin.editor.data.articles.add(model);
+          newArticleView.$el.removeClass('syncing').addClass('synced');
+          newArticleView.addBlock();
           
         }
       });

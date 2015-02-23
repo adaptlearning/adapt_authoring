@@ -1,0 +1,32 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/trackedObject.schema",
+  "properties": {
+    "_courseId":{
+      "type": "string",
+      "required": true
+    },
+    "_contentType": {
+      "type": "string",
+      "required": true
+    },
+    "_contentTypeId": {
+      "type": "string",
+      "required": false
+    },
+    "_contentTypeParentId": {
+      "type": "string",
+      "required": true
+    },
+    "_assetId": {
+      "type": "string",
+      "required": true
+    },
+    "_fieldName": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

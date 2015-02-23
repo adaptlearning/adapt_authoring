@@ -1,6 +1,5 @@
 /*
 * ContextMenu
-* License - https://github.com/adaptlearning/adapt_framework/blob/master/LICENSE
 * Maintainers - Kevin Corry <kevinc@learningpool.com>
 */
 define(function(require) {
@@ -19,6 +18,13 @@ define(function(require) {
       this.listenTo(Origin, 'contextMenu:open', function(view, e) {
         this.contextView = view;
         var type = view.model.get('_type');
+
+        if (type == 'course') {
+          if (view.model.isShared()) {
+            type = 'sharedcourse';
+          }
+        } 
+
         this.toggleContextMenu(type, e);
       });
       this.listenTo(Origin, 'contextMenu:closeContextMenu', this.onCloseContextMenu);

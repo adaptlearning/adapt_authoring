@@ -11,8 +11,11 @@ define(function(require) {
             'click .editor-article-edit-sidebar-cancel': 'cancelEditing'
         },
 
+        postRender: function() {},
+
         saveEditing: function(event) {
             event.preventDefault();
+            this.updateButton('.editor-article-edit-sidebar-save', window.polyglot.t('app.saving'));
             Origin.trigger('editorArticleEditSidebar:views:save');
         },
 

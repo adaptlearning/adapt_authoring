@@ -1,0 +1,85 @@
+// Modal styling
+// ==============
+
+// Modal
+// ======
+
+@modal-color:#E9F0FA;
+@modal-text-color:#fff;
+
+@modal-icon-color:#fff;
+@modal-icon-hover-color:darken(@modal-color, 30%);
+
+@modal-button-color:#fff;
+@modal-button-hover-color:darken(@modal-color, 30%);
+@modal-button-text-color:#3eb4e4;
+@modal-button-text-hover-color:#fff;
+
+@modal-popup-padding-top:10px;
+@modal-popup-padding-right:10px;
+@modal-popup-padding-bottom:10px;
+@modal-popup-padding-left:10px;
+
+@modal-popup-padding:@modal-popup-padding-top @modal-popup-padding-right @modal-popup-padding-bottom @modal-popup-padding-left;
+
+.modal {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:4000;
+    .modal-popup {
+        background-color: @modal-color;
+        color: #000;
+        height: 100%;
+    }
+
+    i {
+        margin-right:4px;
+    }
+
+    .modal-popup-toolbar {
+        background-color: #293141;
+        text-align:right;
+        color:#fff;
+        height:40px;
+        button {
+            color: @modal-icon-color;
+            padding:0px 10px 0px 10px;
+            height:40px;
+            display:inline-block;
+            transition:background-color 0.3s;
+            &:hover {
+                background-color: lighten(#293141, 10%);
+            }
+            &:disabled {
+                color:#666;
+            }
+        }
+    }
+
+    .modal-popup-title {
+        text-align:left;
+        float:left;
+        &-inner {
+            padding:10px;
+        }
+    }
+
+    .modal-popup-body {
+        margin-top:10px;
+        color:#000;
+        &-inner {
+            padding:10px;
+        }
+    }
+
+    .modal-popup-icon-close {
+        color: @modal-icon-color;
+        .no-touch &:hover {
+            color:@modal-icon-hover-color;
+        }
+    }
+
+}

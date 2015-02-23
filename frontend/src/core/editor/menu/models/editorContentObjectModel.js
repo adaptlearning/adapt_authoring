@@ -13,6 +13,11 @@ define(function(require) {
 
         _children: 'articles',
 
+        defaults: {
+        	_isSelected: false,
+        	_isExpanded: false
+        },
+
 		initialize: function() {
 			this.listenTo(this, 'sync', this.setupConstructor);
 			this.setupConstructor();

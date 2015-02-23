@@ -1,105 +1,9 @@
-require.config({
-    baseUrl: '../../',
-    paths: {
-      jquery: 'core/libraries/jquery',
-      underscore: 'core/libraries/underscore',
-      backbone: 'core/libraries/backbone',
-      modernizr: 'core/libraries/modernizr',
-      handlebars: 'core/libraries/handlebars',
-      inview: 'core/libraries/inview',
-      imageReady: 'core/libraries/imageReady',
-      coreJS: 'core',
-      templates: 'templates/templates',
-      polyglot: 'core/libraries/polyglot.min',
-      jsoneditor: 'core/libraries/jquery.jsoneditor.min',
-      'jquery-ui': 'core/libraries/jquery-ui.min',
-      'jquery-form' : 'core/libraries/jquery.form',
-      velocity: 'core/libraries/velocity',
-      scrollTo: 'core/libraries/scrollTo',
-      'mediaelement-and-player' : 'core/libraries/mediaelement-and-player',
-      editorPage: 'core/editor/page',
-      editorMenu: 'core/editor/menu',
-      editorCourse: 'core/editor/course',
-      editorConfig: 'core/editor/config',
-      editorTheme: 'core/editor/theme',
-      editorMenuSettings: 'core/editor/menuSettings',
-      editorGlobal: 'core/editor/global',
-      editorExtensions: 'core/editor/extensions',
-      tinymce: 'core/libraries/tinymce/tinymce.min'
-    },
-    shim: {
-      jquery: [
-
-      ],
-      backbone: {
-          deps: [
-            'underscore',
-            'jquery'
-          ],
-          exports: 'Backbone'
-      },
-      underscore: {
-          exports: '_'
-      },
-      handlebars: {
-        exports: 'Handlebars'
-      },
-      templates: {
-        deps:['handlebars']
-      },
-      polyglot: {
-        exports: 'Polyglot'
-      },
-      jsoneditor: {
-        deps: ['jquery'],
-        exports: 'JsonEditor'
-      },
-      'mediaelement-and-player': {
-        deps: ['jquery'],
-        exports: 'mediaelement-and-player'
-      },
-      velocity: {
-        deps: ['jquery'],
-        exports: 'velocity'
-      },
-      scrollTo: {
-        deps: ['jquery'],
-        exports: 'scrollTo'
-      },
-      'jquery-ui': {
-        deps: ['jquery'],
-        exports: "$"
-      },
-      'jquery-form': {
-        deps: ['jquery'],
-        exports: "$"
-      },
-      inview: {
-        deps: [
-          'jquery'
-        ],
-        exports: 'inview'
-      },
-      imageReady: {
-        deps: [
-          'jquery'
-        ],
-        exports: 'imageready'
-      },
-      tinyMCE: {
-        exports: 'tinyMCE',
-        init: function () {
-          this.tinyMCE.DOM.events.domLoaded = true;
-          return this.tinyMCE;
-        }
-      }
-    }
-});
-
 require([
     'templates',
+    'polyglot',
     'coreJS/app/origin',
     'coreJS/app/router',
+    'coreJS/app/permissions',
     'coreJS/user/user',
     'coreJS/project/project',
     'coreJS/dashboard/dashboard',
@@ -116,18 +20,22 @@ require([
     'coreJS/notify/notify',
     'coreJS/editingOverlay/editingOverlay',
     'coreJS/options/options',
-    'polyglot',
+    'coreJS/scaffold/scaffold',
+    'coreJS/modal/modal',
     'jquery-ui',
     'jquery-form',
     'inview',
     'imageReady',
-    'mediaelement-and-player',
+    'mediaelement',
     'velocity',
-    'scrollTo'
+    'scrollTo',
+    'plugins/plugins'
 ], function (
     Templates,
+    Polyglot,
     Origin,
     Router,
+    Permissions,
     User,
     Project,
     Dashboard,
@@ -144,7 +52,8 @@ require([
     Notify,
     EditingOverlay,
     Options,
-    Polyglot,
+    Scaffold,
+    Modal,
     JQueryUI,
     JQueryForm,
     Inview,
@@ -164,9 +73,18 @@ require([
 
     Origin.sessionModel.fetch({
       success: function(data) {
-        $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
-        Origin.trigger('app:dataReady');
-        Origin.initialize();
+        // This callback is called from the schemasModel.js in scaffold as the schemas
+        // need to load before the app loads
+        Origin.trigger('app:userCreated', function() {
+            $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
+            Origin.trigger('app:dataReady');
+            // Defer here is good - give anything tapping in app:dataReady event
+            // time to do their thang!
+            _.defer(function() {
+                Origin.initialize();
+            })
+        })
+        
       }
     });
   });

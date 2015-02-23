@@ -10,9 +10,11 @@ define(function(require) {
 
 		events: {
 			'click .dashboard-sidebar-add-course'	: 'addCourse',
-            'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
+            'click .dashboard-sidebar-my-courses'   : 'gotoMyCourses',
+            'click .dashboard-sidebar-shared-courses' : 'gotoSharedCourses',
+		    'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
             'click .dashboard-sidebar-filter-clear': 'clearFilterInput',
-            'click .dashboard-sidebar-tag': 'onTagClicked',
+            'click .dashboard-sidebar-tag': 'onFilterButtonClicked',
             'click .dashboard-sidebar-add-tag': 'onAddTagClicked',
             'click .dashboard-sidebar-row-filter': 'onFilterRemovedClicked'
 		},
@@ -31,12 +33,12 @@ define(function(require) {
             }
             if (userPreferences.tags) {
                 this.tags = userPreferences.tags;
-                var systemTags = ['archive', 'favourites'];
+                var systemTags = [/*'archive', 'favourites'*/];
                 _.each(userPreferences.tags, function(tag) {
                     // If this tag is part of the systemTags
                     // select this tag
                     if (_.contains(systemTags, tag)) {
-                        this.$('.dashboard-sidebar-tag-'+tag).addClass('selected');
+                        this.$('.dashboard-sidebar-tag-'+tag.title).addClass('selected');
                     } else {
                         this.addTagToSidebar(tag);
                     }
@@ -48,55 +50,59 @@ define(function(require) {
 			Origin.router.navigate('#/project/new', {trigger:true});
 		},
 
-        filterProjectsByTitle: function(event) {
-            var filterText = $(event.currentTarget).val();
-            Origin.trigger('dashboard:dashboardSidebarView:filterBySearch', filterText);
+        gotoMyCourses: function() {
+            Origin.router.navigate('#/dashboard', {trigger: true});
+        },
 
-            this.setUserPreference('filterText:' + filterText);
+        gotoSharedCourses: function() {
+            Origin.router.navigate('#/dashboard/shared', {trigger: true});
+        },
+
+        filterProjectsByTitle: function(event, filter) {
+            if (event) {
+                event.preventDefault();
+            }
+            if (13 == event.keyCode || filter) {
+                var filterText = $(event.currentTarget).val();
+                Origin.trigger('dashboard:dashboardSidebarView:filterBySearch', filterText);
+            }
         },
 
         clearFilterInput: function(event) {
             event.preventDefault();
             var $currentTarget = $(event.currentTarget);
-            $currentTarget.prev('.dashboard-sidebar-filter-input').val('').trigger('keyup');
+            $currentTarget.prev('.dashboard-sidebar-filter-input').val('').trigger('keyup', [true]);
         },
 
-        onTagClicked: function(event) {
-            var tag = $(event.currentTarget).toggleClass('selected').attr('data-tag');
-            this.filterProjectsByTags(tag);
-        },
+        onFilterButtonClicked: function(event) {
+            $currentTarget = $(event.currentTarget);
+            var filterType = $currentTarget.attr('data-tag');
 
-        filterProjectsByTags: function(tag) {
-
-            // Check if the tag is already being filtered and remove it
-            if (_.contains(this.tags, tag)) {
-                this.tags = _.reject(this.tags, function(tagItem) {
-                    return tagItem === tag;
-                });
+            // If this filter is already selected - remove filter
+            // else add the filter
+            if ($currentTarget.hasClass('selected')) {
+                $currentTarget.removeClass('selected');
+                Origin.trigger('dashboard:sidebarFilter:remove', filterType);
             } else {
-                // Else add it to array
-                this.tags.push(tag);
+                $currentTarget.addClass('selected');
+                Origin.trigger('dashboard:sidebarFilter:add', filterType);
             }
 
-            Origin.trigger('dashboard:dashboardSidebarView:filterByTags', this.tags);
-
         },
 
-        onAddTagClicked: function() {
+        onAddTagClicked: function(event) {
+            event.preventDefault();
             var availableTags = [];
-            // Go through each project and filter out duplicate tags
+            // Go through each tag in the collection and filter out duplicate tags
             // to create an array of unique project tags
-            this.collection.each(function(project) {
-                var tags = project.get('tags');
 
-                _.each(tags, function(tag) {
+            this.collection.each(function(tag) {
+                var availableTagsTitles = _.pluck(availableTags, 'title');
+                var usedTagTitles = _.pluck(this.usedTags, 'title');
+                if (!_.contains(availableTagsTitles, tag.get('title')) && !_.contains(usedTagTitles, tag.get('title'))) {
+                    availableTags.push(tag.attributes);
+                }
 
-                    var titles = _.pluck(availableTags, 'title');
-                    if (!_.contains(titles, tag.title) && !_.contains(this.usedTags, tag.title)) {
-                        availableTags.push(tag);
-                    }
-                }, this)
-                
             }, this);
 
             Origin.trigger('sidebar:sidebarFilter:add', {
@@ -105,9 +111,29 @@ define(function(require) {
             });
         },
 
+        onTagClicked: function(event) {
+            var tag = $(event.currentTarget).toggleClass('selected').attr('data-tag');
+            this.filterProjectsByTags(tag);
+        },
+
+        filterProjectsByTags: function(tag) {
+            
+            // Check if the tag is already being filtered and remove it
+            if (_.findWhere(this.tags, { id: tag.id } )) {
+                this.tags = _.reject(this.tags, function(tagItem) {
+                    return tagItem.id === tag.id;
+                });
+            } else {
+                // Else add it to array
+                this.tags.push(tag);
+            }
+
+            Origin.trigger('dashboard:dashboardSidebarView:filterByTags', this.tags);
+        },
+        
         addTagToSidebar: function(tag) {
             this.usedTags.push(tag);
-            
+
             var template = Handlebars.templates['sidebarRowFilter'];
             var data = {
                 rowClasses: 'sidebar-row-filter',
@@ -119,19 +145,21 @@ define(function(require) {
         },
 
         onFilterRemovedClicked: function(event) {
-            var tag = $(event.currentTarget).attr('data-tag');
-            
+            var tag = {
+                title: $(event.currentTarget).attr('data-title'),
+                id: $(event.currentTarget).attr('data-id')
+            }
+
             // Remove this tag from the usedTags
             this.usedTags = _.reject(this.usedTags, function(item) {
-                return item === tag;
+                return item.id === tag.id;
             });
 
             this.filterProjectsByTags(tag);
 
             $(event.currentTarget).parent().remove();
-
         }
-		
+
 	}, {
 		template: 'dashboardSidebar'
 	});

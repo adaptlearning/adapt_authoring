@@ -95,12 +95,19 @@ define(function(require){
         appendTo:'.editor-view',
         containment: '.editor-view',
         helper: function (e) {
-          return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
-        },
-        start: function (event, ui) {
+          // Store the offset to stop the page jumping during the start of drag
+          // because of the drop zones changing the scroll position on the page
+          view.offsetTopFromWindow = view.$el.offset().top - $(window).scrollTop();
+          // This is in the helper method because the height needs to be 
+          // manipulated before the drag start method due to adding drop zones
           view.showDropZones();
           $(this).attr('data-component-id', view.model.get('_id'));
           $(this).attr('data-block-id', view.model.get('_parentId'));
+          return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
+        },
+        start: function(event) {
+          // Using the initial offset we're able to position the window back in place
+          $(window).scrollTop(view.$el.offset().top -view.offsetTopFromWindow);
         },
         stop: function () {
           view.hideDropZones();

@@ -94,10 +94,17 @@ Component.prototype.getPluginType = function () {
  * add content schema to the database via this function
  *
  * @param {object} db
+ * @param {callback} next
  */
-Component.prototype.onDatabaseCreated = function (db) {
-  BowerPlugin.prototype.onDatabaseCreated.call(this, db);
-  ContentPlugin.prototype.onDatabaseCreated.call(this, db);
+Component.prototype.onDatabaseCreated = function (db, next) {
+  var self = this;
+  BowerPlugin.prototype.onDatabaseCreated.call(self, db, function (err) {
+    if (err) {
+      return next(err);
+    }
+
+    ContentPlugin.prototype.onDatabaseCreated.call(self, db, next);
+  });
 };
 
 /**
@@ -130,7 +137,7 @@ Component.prototype.retrieve = function (search, options, next) {
  * @api private
  */
 function initialize () {
-  BowerPlugin.prototype.initialize.call(null, bowerConfig);
+  BowerPlugin.prototype.initialize.call(new Component(), bowerConfig);
 }
 
 

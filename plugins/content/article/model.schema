@@ -2,7 +2,40 @@
   "type": "object",
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
-  "$ref": "http://localhost/plugins/content/contentobject/model.schema",
+  "$ref": "http://localhost/system/content.schema",
   "properties": {
+  	"title": {
+		"type":"string",
+		"required":true,
+		"default": "New Article Title",
+		"inputType":"Text",
+		"validators": ["required"]
+    },
+    "displayTitle": {
+		"type":"string",
+		"required":false,
+		"default": "New Article Title",
+		"inputType":"DisplayTitle",
+		"validators": [],
+		"help": "When viewing an article - this is the title that will be displayed on the page"
+    },
+    "body":{
+		"type":"string",
+		"default" : "",
+		"inputType":"TextArea",
+		"validators": []
+	},
+	"_classes": {
+		"type":"string",
+		"default":"",
+		"isSetting": true,
+		"inputType":"Text",
+		"validators": [],
+		"title": "Classes",
+		"help": "Used to style or manipulate the look and feel of this Article. These are predefined in the theme."
+    },
+    "_extensions": {
+    	"type":"object"
+    }
   }
 }

@@ -9,33 +9,58 @@ define(function(require) {
     className: "reset-password",
 
     events: {
-      'click .form-reset-password button':'resetPassword'
+      'click .form-reset-password button' : 'resetPassword',
+      'click button.cancel' : 'goToLogin'
     },
 
     preRender: function() {
       this.listenTo(this.model, 'sync', this.verifyToken);
+      this.listenTo(this.model, 'invalid', this.handleValidationError);
+    },
+
+    postRender: function() {
+      this.setViewToReady();
+    },
+
+    goToLogin: function(e) {
+      e.preventDefault();
+
+      Backbone.history.navigate('#/user/login', {trigger: true});
+    },
+
+    handleValidationError: function(model, error) {
+      var self = this;
+
+      if (error && _.keys(error).length !== 0) {
+        _.each(error, function(value, key) {
+          self.$('#' + key + 'Error').text(value);
+        });
+      }
     },
 
     verifyToken: function() {
       if (!this.model.get('user')) {
-        // Invalid token entered - Route user back to login
+        // Invalid token entered, take the user to login
         Backbone.history.navigate('#/user/login', {trigger: true});
       }
     },
 
-    resetPassword: function(e) {
-      e.preventDefault();
+    resetPassword: function(event) {
+      event.preventDefault();
       
-      var inputPassword = this.$('.input-new-password').val();
-      var model = this.model;
-      var view = this;
+      var self = this;
 
-      model.resetPassword(inputPassword, function(err, result) {
-        if( err || !result.success) {
-          view.$('.error').removeClass('display-none');
-        } else {
-          view.$('.form-reset-password').addClass('display-none');
-          view.$('.success').removeClass('display-none');
+      self.model.set('password', self.$('#password').val());
+      self.model.set('confirmPassword', self.$('#confirmPassword').val());
+
+      self.model.save({}, {
+        success: function(model, response, options) {
+          if (response.success) {
+            Backbone.history.navigate('#/user/login', {trigger: true});
+          }
+        }, 
+        error: function(model, response, options) {
+          alert('error');
         }
       });
     }

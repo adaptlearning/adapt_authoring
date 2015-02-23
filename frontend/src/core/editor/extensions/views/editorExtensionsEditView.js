@@ -59,7 +59,7 @@ define(function(require) {
 
         this.render();
 
-        _.defer(this.postRender);
+        _.defer(_.bind(this.postRender, this));
 
     },
 
@@ -92,11 +92,11 @@ define(function(require) {
                 extensions: this.currentSelectedIds 
             }, _.bind(function(result) {
             if (result.success) {
-
-                Origin.trigger('editor:refreshData', function() {
-                    this.setupExtensions();
+                Origin.trigger('scaffold:updateSchemas', function() {
+                    Origin.trigger('editor:refreshData', function() {
+                        this.setupExtensions();
+                    }, this);
                 }, this);
-
             } else {
                 alert('An error occured');
             }          
@@ -109,7 +109,7 @@ define(function(require) {
             _type: 'prompt',
             _showIcon: true,
             title: window.polyglot.t('app.manageextensions'),
-            body: window.polyglot.t('app.confirmapplyextensions'),
+            body: window.polyglot.t('app.confirmdeleteextension'),
             _prompts: [{
                     _callbackEvent: 'editorExtensionsEdit:views:remove', 
                     promptText: window.polyglot.t('app.ok')
@@ -128,11 +128,12 @@ define(function(require) {
                 extensions: this.currentSelectedIds 
             }, _.bind(function(result) {
             if (result.success) {
-
-                Origin.trigger('editor:refreshData', function() {
-                    this.setupExtensions();
+                // Refresh the schemas
+                Origin.trigger('scaffold:updateSchemas', function() {
+                    Origin.trigger('editor:refreshData', function() {
+                        this.setupExtensions();
+                    }, this);
                 }, this);
-
             } else {
                 alert('An error occured');
             }          

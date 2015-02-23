@@ -1,15 +1,15 @@
 define(function(require) {
 
-	var Origin = require('coreJS/app/origin');
-	var EditorView = require('editorGlobal/views/editorView');
-	var EditorModel = require('editorGlobal/models/editorModel');
-	var EditorMenuSidebarView = require('editorMenu/views/editorMenuSidebarView');
+  var Origin = require('coreJS/app/origin');
+  var EditorView = require('editorGlobal/views/editorView');
+  var EditorModel = require('editorGlobal/models/editorModel');
+  var EditorMenuSidebarView = require('editorMenu/views/editorMenuSidebarView');
 
-	var EditorPageSidebarView = require('editorPage/views/editorPageSidebarView');
-	var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
+  var EditorPageSidebarView = require('editorPage/views/editorPageSidebarView');
+  var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
 
-	var EditorPageEditView = require('editorPage/views/editorPageEditView');
-	var EditorPageEditSidebarView = require('editorPage/views/editorPageEditSidebarView');
+  var EditorPageEditView = require('editorPage/views/editorPageEditView');
+  var EditorPageEditSidebarView = require('editorPage/views/editorPageEditSidebarView');
 
   var EditorArticleModel = require('editorPage/models/editorArticleModel');
 
@@ -34,12 +34,11 @@ define(function(require) {
   var EditorConfigModel = require('editorConfig/models/editorConfigModel');
   var EditorConfigCollection = require('editorConfig/collections/editorConfigCollection');
 
-  var EditorThemeEditView = require('editorTheme/views/editorThemeEditView');
-  var EditorThemeEditSidebarView = require('editorTheme/views/editorThemeEditSidebarView');
+  var EditorThemeTypeModel = require('editorTheme/models/editorThemeTypeModel');
 
-  var EditorMenuSettingsEditView = require('editorMenuSettings/views/editorMenuSettingsEditView');
-  var EditorMenuSettingsEditSidebarView = require('editorMenuSettings/views/editorMenuSettingsEditSidebarView');
-
+  var EditorThemeCollectionView = require('editorTheme/views/editorThemeCollectionView');
+  var EditorThemeCollectionSidebarView = require('editorTheme/views/editorThemeCollectionSidebarView');
+  
   var EditorComponentListView = require('editorPage/views/editorComponentListView');
   var EditorComponentListSidebarView = require('editorPage/views/editorComponentListSidebarView');
 
@@ -49,6 +48,10 @@ define(function(require) {
   var EditorClipboardModel = require('editorGlobal/models/editorClipboardModel');
   var EditorComponentTypeModel = require('editorPage/models/editorComponentTypeModel');
   var ExtensionModel = require('editorExtensions/models/extensionModel');
+  var EditorCourseAssetModel = require('editorCourse/models/editorCourseAssetModel');
+
+  var EditorMenuSettingsEditView = require('editorMenuSettings/views/editorMenuSettingsEditView');
+  var EditorMenuSettingsEditSidebarView = require('editorMenuSettings/views/editorMenuSettingsEditSidebarView');
 
   var ProjectModel = require('coreJS/project/models/projectModel');
   var ProjectDetailView = require('coreJS/project/views/projectDetailView');
@@ -67,7 +70,8 @@ define(function(require) {
       contentObjects: false,
       articles: false,
       blocks: false,
-      components: false
+      components: false,
+      courseAssets: false
     };
     Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedObject) {
 
@@ -104,7 +108,7 @@ define(function(require) {
 
   });
 
-	Origin.on('router:editor', function(route1, route2, route3, route4) {
+  Origin.on('router:editor', function(route1, route2, route3, route4) {
 
     // Check if data has already been loaded for this project
     if (dataIsLoaded && Origin.editor.data.course && Origin.editor.data.course.get('_id') === route1) {
@@ -120,7 +124,8 @@ define(function(require) {
       contentObjects: false,
       articles: false,
       blocks: false,
-      components: false
+      components: false,
+      courseAssets: false
     };
 
     Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedObject) {
@@ -144,7 +149,7 @@ define(function(require) {
 
     setupEditorData(route1, route2, route3, route4);
 
-	});
+  });
 
   function setupEditorData(route1, route2, route3, route4) {
     Origin.editor.data.course = new EditorCourseModel({_id: route1});
@@ -197,6 +202,13 @@ define(function(require) {
       url: '/api/extensiontype',
       _type: 'extensionTypes'
     });
+
+    // Store the course assets
+    Origin.editor.data.courseAssets = new EditorCollection(null, {
+      model: EditorCourseAssetModel,
+      url: '/api/content/courseasset?_courseId=' + route1,
+      _type: 'courseAssets'
+    });
   }
 
   function routeAfterDataIsLoaded(route1, route2, route3, route4) {
@@ -205,9 +217,12 @@ define(function(require) {
       var articleModel = new EditorArticleModel({_id: route3});
       articleModel.fetch({
         success: function() {
+          var form = Origin.scaffold.buildForm({
+            model: articleModel
+          });
           Origin.trigger('location:title:update', {title: 'Editing article - ' + articleModel.get('title')});
-          Origin.sidebar.addView(new EditorArticleEditSidebarView({model: articleModel}).$el);
-          Origin.editingOverlay.addView(new EditorArticleEditView({model: articleModel}).$el);
+          Origin.sidebar.addView(new EditorArticleEditSidebarView({model: articleModel, form: form}).$el);
+          Origin.editingOverlay.addView(new EditorArticleEditView({model: articleModel, form: form}).$el);
         }
       });
       return;
@@ -217,9 +232,12 @@ define(function(require) {
       var blockModel = new EditorBlockModel({_id: route3});
       blockModel.fetch({
         success: function() {
+          var form = Origin.scaffold.buildForm({
+            model: blockModel
+          });
           Origin.trigger('location:title:update', {title: 'Editing block - ' + blockModel.get('title')});
-          Origin.sidebar.addView(new EditorBlockEditSidebarView({model: blockModel}).$el);
-          Origin.editingOverlay.addView(new EditorBlockEditView({model: blockModel}).$el);
+          Origin.sidebar.addView(new EditorBlockEditSidebarView({model: blockModel, form: form}).$el);
+          Origin.editingOverlay.addView(new EditorBlockEditView({model: blockModel, form: form}).$el);
         }
       });
       return;
@@ -246,6 +264,8 @@ define(function(require) {
       Origin.editingOverlay.addView(new EditorComponentListView({
         model: componentSelectModel
       }).$el);
+
+      return;
     }
 
     if (route2 === 'component') {
@@ -253,9 +273,12 @@ define(function(require) {
       var componentModel = new EditorComponentModel({_id: route3});
       componentModel.fetch({
         success: function() {
+          var form = Origin.scaffold.buildForm({
+            model: componentModel
+          });
           Origin.trigger('location:title:update', {title: 'Editing ' + componentModel.get('_componentType').displayName.toLowerCase() + ' component - ' + componentModel.get('title')});
-          Origin.sidebar.addView(new EditorComponentEditSidebarView({model: componentModel}).$el);
-          Origin.editingOverlay.addView(new EditorComponentEditView({model: componentModel}).$el);
+          Origin.sidebar.addView(new EditorComponentEditSidebarView({model: componentModel, form:form}).$el);
+          Origin.editingOverlay.addView(new EditorComponentEditView({model: componentModel, form:form}).$el);
         }
       });
       return;
@@ -267,9 +290,12 @@ define(function(require) {
         
         project.fetch({
           success: function() {
+            var form = Origin.scaffold.buildForm({
+              model: project
+            });
             Origin.trigger('location:title:update', {title: 'Edit course'});
-            Origin.editingOverlay.addView(new ProjectDetailView({model: project}).$el);
-            Origin.sidebar.addView(new ProjectDetailEditSidebarView().$el);
+            Origin.editingOverlay.addView(new ProjectDetailView({model: project, form: form}).$el);
+            Origin.sidebar.addView(new ProjectDetailEditSidebarView({form: form}).$el);
           }
         });
         break;
@@ -283,33 +309,25 @@ define(function(require) {
 
         configModel.fetch({
           success: function() {
+            var form = Origin.scaffold.buildForm({
+              model: configModel
+            });
+            
             Origin.trigger('location:title:update', {title: 'Edit configuration'});
-            Origin.sidebar.addView(new EditorConfigEditSidebarView().$el);
-            Origin.editingOverlay.addView(new EditorConfigEditView({model: configModel}).$el);
+            Origin.sidebar.addView(new EditorConfigEditSidebarView({form: form}).$el);
+            Origin.editingOverlay.addView(new EditorConfigEditView({model: configModel, form: form}).$el);
           }
         });
         break;
 
-      case 'theme':
+      case 'selecttheme':
         var configModel = new EditorConfigModel({_courseId: route1});
 
         configModel.fetch({
           success: function() {
             Origin.trigger('location:title:update', {title: 'Select theme'});
-            Origin.sidebar.addView(new EditorThemeEditSidebarView().$el);
-            Origin.editingOverlay.addView(new EditorThemeEditView({model: configModel}).$el);
-          }
-        });
-        break;
-
-      case 'menusettings':
-        var configModel = new EditorConfigModel({_courseId: route1});
-
-        configModel.fetch({
-          success: function() {
-            Origin.trigger('location:title:update', {title: 'Select menu'});
-            Origin.sidebar.addView(new EditorMenuSettingsEditSidebarView().$el);
-            Origin.editingOverlay.addView(new EditorMenuSettingsEditView({model: configModel}).$el);
+            Origin.sidebar.addView(new EditorThemeCollectionSidebarView().$el);
+            Origin.editingOverlay.addView(new EditorThemeCollectionView({model: configModel}).$el);
           }
         });
         break;
@@ -323,7 +341,7 @@ define(function(require) {
 
         // Check whether the user came from the page editor or menu editor
         var backButtonRoute = "/#/editor/" + route1 + "/menu";
-        var backButtonText = "Back to course structure";
+        var backButtonText = "Back to menu";
 
         if (Origin.previousLocation.route2 === "page") {
             backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
@@ -340,6 +358,18 @@ define(function(require) {
 
         break;
 
+      case 'menusettings':
+        var configModel = new EditorConfigModel({_courseId: route1});
+
+        configModel.fetch({
+          success: function() {
+            Origin.trigger('location:title:update', {title: 'Select menu'});
+            Origin.sidebar.addView(new EditorMenuSettingsEditSidebarView().$el);
+            Origin.editingOverlay.addView(new EditorMenuSettingsEditView({model: configModel}).$el);
+          }
+        });
+        break;
+
       case 'menu':
 
         // Edit the menu item
@@ -347,16 +377,24 @@ define(function(require) {
           var contentObjectModel = new EditorContentObjectModel({_id: route3});
           contentObjectModel.fetch({
             success: function() {
+              var form = Origin.scaffold.buildForm({
+                model: contentObjectModel
+              });
               Origin.trigger('location:title:update', {title: 'Editing menu - ' + contentObjectModel.get('title')});
-              Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel}).$el);
-              Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel}).$el);
+              Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel, form: form}).$el);
+              Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel, form: form}).$el);
             }
           });
           return;
         }
+        
+        // If route3 is an id set it to the currentContentObjectId
+        Origin.editor.currentContentObjectId = (route3) ? route3 : undefined;
 
         // Update page title
-        Origin.trigger('location:title:update', {title: 'Course structure'});
+        Origin.trigger('location:title:update', {title: 'Menu editor'});
+
+        Origin.editor.scrollTo = 0;
         // Create Editor menu view
         Origin.router.createView(EditorView, {
           currentCourseId: route1,
@@ -377,9 +415,12 @@ define(function(require) {
           var contentObjectModel = new EditorContentObjectModel({_id: route3});
           contentObjectModel.fetch({
             success: function() {
+              var form = Origin.scaffold.buildForm({
+                model: contentObjectModel
+              });
               Origin.trigger('location:title:update', {title: 'Editing page - ' + contentObjectModel.get('title')});
-              Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel}).$el);
-              Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel}).$el);
+              Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel, form: form}).$el);
+              Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel, form: form}).$el);
             }
           });
           return;
@@ -388,7 +429,7 @@ define(function(require) {
         Origin.trigger('location:title:update', {title: 'Page editor'});
 
         // Create Editor page view
-        Origin.editor.scrollTo = 0;
+        // Origin.editor.scrollTo = 0;
         Origin.router.createView(EditorView, {
           currentCourseId: route1,
           currentView: 'page',
@@ -401,6 +442,7 @@ define(function(require) {
         });
         break;
     }
+
   }
 
 });

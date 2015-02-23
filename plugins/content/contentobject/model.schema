@@ -4,21 +4,76 @@
   "id": "http://jsonschema.net",
   "$ref": "http://localhost/system/content.schema",
   "properties": {
-    "_extensions": {
-      "type": "object"
+    "title": {
+      "type":"string",
+      "required":true,
+      "default": "New Menu/Page Title",
+      "inputType":"Text",
+      "validators": ["required"]
     },
-    "_graphic" : {
-      "alt" : {
-        "type": "string",
-        "default": ""
-      },
-      "src" : {
-        "type": "string",
-        "default": ""
+    "displayTitle": {
+      "type":"string",
+      "required":false,
+      "default": "New Menu/Page Title",
+      "inputType":"DisplayTitle",
+      "validators": [],
+      "help": "When viewing a menu/page - this is the title that will be displayed on the menu/page"
+    },
+    "body":{
+      "type":"string",
+      "default" : "",
+      "inputType":"TextArea",
+      "validators": []
+    },
+    "_graphic": {
+      "type": "object",
+      "title": "",
+      "properties": {
+        "alt": {
+          "type": "string",
+          "required": false,
+          "default": "",
+          "inputType": "Text",
+          "validators": [],
+          "help": "This is the alternative text that is displayed when the image is not visible. This is also used by screen readers."
+        },
+        "src": {
+          "type": "string",
+          "required": false,
+          "default": "",
+          "inputType": "Asset:image",
+          "validators": [],
+          "help": "This is the link to the image."
+        }
       }
     },
-    "linkText" : {
-      "type" : "string"
+    "linkText": {
+      "type": "string",
+      "required": false,
+      "title": "Button link text",
+      "default": "View",
+      "inputType": "Text",
+      "validators" : ["required"]
+    },
+    "duration": {
+      "type": "string",
+      "required": false,
+      "title": "Duration",
+      "default": "",
+      "inputType": "Text",
+      "validators" : [""],
+      "help": "Indicate how long this page or section should take to complete"
+    },
+    "_classes": {
+      "type":"string",
+      "default":"",
+      "isSetting": true,
+      "inputType":"Text",
+      "validators": [],
+      "title": "Classes"
+    },
+    "_extensions": {
+      "type": "object"
     },
     "_sortOrder": {
       "type": "number",

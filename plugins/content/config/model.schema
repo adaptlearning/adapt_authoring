@@ -7,17 +7,16 @@
       "type":"object"
     },
     "_enabledExtensions": {
-      "type":"object"
+      "type":"object",
+      "editorOnly": true
     },
     "_theme": {
       "type": "objectid",
-      "ref": "themetype",
-      "editorOnly": true
+      "ref": "themetype"
     },
     "_menu": {
       "type": "objectid",
-      "ref": "menutype",
-      "editorOnly": true
+      "ref": "menutype"
     },
     "_courseId": {
       "type": "objectid",
@@ -25,52 +24,118 @@
     },
     "_defaultLanguage": {
       "type": "string",
-      "default": "en"
+      "required": true,
+      "default": "en",
+      "title": "Default Language",
+      "inputType": "Text",
+      "validators": ["required"]
     },
     "_questionWeight": {
-      "type": "string",
-      "default": "1"
+      "type": "number",
+      "required": true,
+      "default": 1,
+      "isSetting": true,
+      "title": "Question Weight",
+      "inputType": "Number",
+      "validators": ["required", "number"]
     },
-    "_drawer" : {
-      "type" : "object",
-      "required" : true,
-      "_showEasing" : {
-        "type" : "string",
-        "default" : ""
-      },
-      "_hideEasing" : {
-        "type": "string",
-        "default": ""
-      },
-      "_duration" : {
-        "type" : "number",
-        "default" : 400
-      }
-    },
-    "_accessibility" : {
-      "type" : "object",
-      "required" : true,
-      "_isEnabled" : {
-        "type" : "boolean",
-        "default" : true
-      },
-      "_shouldSupportLegacyBrowsers" : {
-        "type": "boolean",
-        "default" : true
-      }
-    },
-    "screenSize": {
-      "small" : {
-        "type" : "number",
-        "default" : 519
-      },
-      "medium" : {
-        "type" : "number",
-        "default" : 759
-      },
-      "large" : {
-        "type" : "number",
-        "default" : 1024
+    "_drawer": {
+      "type": "object",
+      "isSetting": false,
+      "title": "",
+      "properties": {
+        "_showEasing": {
+          "type": "string",
+          "required": true,
+          "default": "easeOutQuart",
+          "title": "Hide Easing",
+          "inputType": { 
+            "type": "Select", 
+            "options": [
+              "easeInSine", 
+              "easeOutSine",
+              "easeInOutSine",
+              "easeInQuad",
+              "easeOutQuad",
+              "easeInOutQuad",
+              "easeInCubic",
+              "easeOutCubic",
+              "easeInOutCubic",
+              "easeInQuart",
+              "easeOutQuart",
+              "easeInOutQuart",
+              "easeInQuint",
+              "easeOutQuint",
+              "easeInOutQuint",
+              "easeInExpo",
+              "easeOutExpo",
+              "easeInOutExpo",
+              "easeInCirc",
+              "easeOutCirc",
+              "easeInOutCirc",
+              "easeInBack",
+              "easeOutBack",
+              "easeInOutBack",
+              "easeInElastic",
+              "easeOutElastic",
+              "easeInOutElastic",
+              "easeInBounce",
+              "easeOutBounce",
+              "easeInOutBounce"
+            ]
+          },
+          "validators": ["required"]
+        },
+        "_hideEasing": {
+          "type": "string",
+          "required": true,
+          "default": "easeInQuart",
+          "title": "Hide Easing",
+          "inputType": { 
+            "type": "Select", 
+            "options": [
+              "easeInSine", 
+              "easeOutSine",
+              "easeInOutSine",
+              "easeInQuad",
+              "easeOutQuad",
+              "easeInOutQuad",
+              "easeInCubic",
+              "easeOutCubic",
+              "easeInOutCubic",
+              "easeInQuart",
+              "easeOutQuart",
+              "easeInOutQuart",
+              "easeInQuint",
+              "easeOutQuint",
+              "easeInOutQuint",
+              "easeInExpo",
+              "easeOutExpo",
+              "easeInOutExpo",
+              "easeInCirc",
+              "easeOutCirc",
+              "easeInOutCirc",
+              "easeInBack",
+              "easeOutBack",
+              "easeInOutBack",
+              "easeInElastic",
+              "easeOutElastic",
+              "easeInOutElastic",
+              "easeInBounce",
+              "easeOutBounce",
+              "easeInOutBounce"
+            ]
+          },
+          "validators": ["required"]
+        },
+        "_duration": {
+          "type": "number",
+          "required": true,
+          "default": 400,
+          "title": "Duration",
+          "inputType": "Number",
+          "validators": ["required", "number"]
+        }
       }
     }
   }

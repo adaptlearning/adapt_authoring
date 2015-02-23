@@ -6,11 +6,13 @@ server.set('views', __dirname);
 server.set('view engine', 'hbs');
 
 server.get('/', function (req, res, next) {
-  // check if config file is loaded, if not, redirect to install
-  if (!configuration.configFile) {
-    return res.redirect('/install');
-  }
+  var dateStamp = new Date();
+  dateStampAsString = dateStamp.toISOString().replace(/[^0-9]/g, "");
+  var isProduction = configuration.getConfig('isProduction');
 
-  // @TODO if user isn't authenticated, redirect to login
-  res.render('index');
+  res.render('index', {
+  	isProduction: isProduction, 
+  	dateStampAsString: dateStampAsString
+  });
+
 });

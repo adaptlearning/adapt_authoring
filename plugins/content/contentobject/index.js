@@ -2,8 +2,13 @@
  * ContentObject plugin type
  */
 
-var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
+var contentmanager = require('../../../lib/contentmanager'),
+    ContentPlugin = contentmanager.ContentPlugin,
+    ContentPermissionError = contentmanager.errors.ContentPermissionError,
     configuration = require('../../../lib/configuration'),
+    permissions = require('../../../lib/permissions'),
+    logger = require('../../../lib/logger'),
+    usermanager = require('../../../lib/usermanager'),
     util = require('util'),
     path = require('path'),
     async = require('async');
@@ -12,6 +17,18 @@ function ContentObject () {
 }
 
 util.inherits(ContentObject, ContentPlugin);
+
+/**
+ * overrides base implementation of hasPermission
+ *
+ * @param {string} action
+ * @param {object} a content item
+ * @param {callback} next (function (err, isAllowed))
+ */
+ContentObject.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
+  var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
+  permissions.hasPermission(userId, action, resource, next);
+};
 
 /**
  * implements ContentObject#getModelName
@@ -110,6 +127,11 @@ ContentObject.prototype.create = function (data, next) {
   }
 
   ContentPlugin.prototype.create.call(self, data, function (error, doc) {
+    // MAJOR ERROR
+    if (error) {
+      logger.log('error', 'Error creating ContentObject!', error);
+      return next(error);
+    }
     self.updateSiblingSortOrder(doc, next);
   });
 };
@@ -187,37 +209,48 @@ ContentObject.prototype.update = function (search, delta, next) {
  * @param {object} search
  * @param {callback} next
  */
-ContentObject.prototype.destroy = function (search, next) {
+ContentObject.prototype.destroy = function (search, force, next) {
   var self = this;
+  var user = app.usermanager.getCurrentUser();
+  var tenantId = user.tenant && user.tenant._id;
 
-  // for sortOrder update we need to retrieve _parentId first!
-  self.retrieve(search, function (error, docs) {
-    if (error) {
-      return next(error);
+  // shuffle params
+  if ('function' === typeof force) {
+    next = force;
+    force = false;
+  }
+
+  self.hasPermission('delete', user._id, tenantId, search, function (err, isAllowed) {
+    if (!isAllowed && !force) {
+      return next(new ContentPermissionError());
     }
 
-    // contentobjects use cascading delete
-    if (docs && docs.length) {
-      async.eachSeries(
-      docs,
-      function (doc, cb) {
-        self.destroyChildren(doc._id, function (error) {
-          if (error) {
-            return cb(error);
-          }
+    // for sortOrder update we need to retrieve _parentId first!
+    self.retrieve(search, function (error, docs) {
+      if (error) {
+        return next(error);
+      }
 
-          // then destroy self an update sibling sort order
-          ContentPlugin.prototype.destroy.call(self, {_id: doc._id}, function (error) {
-            // if we're retrieving and deleting a bunch of siblings, updating the sort order each
-            // time might be redundant.
-            self.updateSiblingSortOrder({_parentId:doc._parentId, _sortOrder:doc._sortOrder}, cb);
-          });
-        });
-      },
-      next);
-    } else {
-      next(null);
-    }
+      // contentobjects use cascading delete
+      if (docs && docs.length) {
+        async.eachSeries(
+          docs,
+          function (doc, cb) {
+            self.destroyChildren(doc._id, function (err) {
+              // then destroy self and update sibling sort order
+              ContentPlugin.prototype.destroy.call(self, { _id: doc._id }, true, function (error) {
+                // if we're retrieving and deleting a bunch of siblings, updating the sort order each
+                // time might be redundant.
+                self.updateSiblingSortOrder({_parentId:doc._parentId, _sortOrder:doc._sortOrder}, cb);
+              });
+            });
+          },
+          next
+        );
+      } else {
+        next(null);
+      }
+    });
   });
 };
 

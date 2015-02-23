@@ -2,7 +2,7 @@
   "type":"object",
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
-  "$ref": "http://localhost/plugins/content/contentobject/model.schema",
+  "$ref": "http://localhost/system/content.schema",
   "properties": {
     "_trackingId" : {
         "type" : "number",
@@ -11,6 +11,38 @@
     "layoutOptions": {
         "type": "array",
         "editorOnly": true
+    },
+    "title": {
+      "type":"string",
+      "required":true,
+      "default": "New Block Title",
+      "inputType":"Text",
+      "validators": ["required"]
+    },
+    "displayTitle": {
+      "type":"string",
+      "required":false,
+      "default": "New Block Title",
+      "inputType":"DisplayTitle",
+      "validators": [],
+      "help": "When viewing an block - this is the title that will be displayed on the page"
+    },
+    "body":{
+      "type":"string",
+      "default" : "",
+      "inputType":"TextArea",
+      "validators": []
+    },
+    "_classes": {
+      "type":"string",
+      "default":"",
+      "isSetting": true,
+      "inputType":"Text",
+      "validators": [],
+      "title": "Classes"
+    },
+    "_extensions": {
+      "type":"object"
     }
   }
 }

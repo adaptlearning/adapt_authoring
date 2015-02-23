@@ -17,6 +17,9 @@ define(function(require){
 
     initialize: function(options) {
       this.preRender(options);
+      if (this.constructor.template) {
+        Origin.trigger(this.constructor.template + ':preRender', this);
+      }
       if (this.settings.autoRender) {
         this.render();
       }
@@ -32,6 +35,9 @@ define(function(require){
       _.defer(_.bind(function() {
         this.postRender();
         this.onReady();
+        if (this.constructor.template) {
+          Origin.trigger(this.constructor.template + ':postRender', this);
+        }
       }, this));
       return this;
     },
@@ -75,6 +81,16 @@ define(function(require){
         if(keyA > keyB) return 1;
         return 0;
       });
+    },
+
+    remove: function() {
+      // If a view has a form - remove it when removing parent view
+      if (this.form) {
+        this.form.remove();
+      }
+      // Call original remove
+      Backbone.View.prototype.remove.apply(this, arguments);
+
     }
 
   });

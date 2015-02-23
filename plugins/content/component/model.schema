@@ -2,13 +2,17 @@
   "type":"object",
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
-  "$ref": "http://localhost/system/content.schema",
+  "$ref": "http://localhost/system/trackedObject.schema",
   "properties": {
     "_componentType": {
       "type": "objectid",
       "required": true,
       "ref": "componenttype",
-      "editorOnly": true
+      "editorOnly": false
+    },
+    "_type": {
+      "type":"string",
+      "id": "http://jsonschema.net/_type"
     },
     "_component": {
       "type": "string",
@@ -17,6 +21,44 @@
     },
     "_layout": {
       "type": "string"
+    },
+    "_classes": {
+      "type":"string",
+      "default":"",
+      "isSetting": true,
+      "inputType":"Text",
+      "validators": [],
+      "title": "Classes"
+    },
+    "_parentId": {
+      "type":"objectid",
+      "required":true
+    },
+    "_courseId": {
+      "type":"objectid",
+      "required":true,
+      "editorOnly": true
+    },
+    "title": {
+      "type":"string",
+      "required":true,
+      "default": "New Component Title",
+      "inputType":"Text",
+      "validators": ["required"]
+    },
+    "displayTitle": {
+      "type":"string",
+      "required":false,
+      "default": "New Component Title",
+      "inputType":"DisplayTitle",
+      "validators": [],
+      "help": "When viewing a component - this is the title that will be displayed"
+    },
+    "body":{
+      "type":"string",
+      "default" : "",
+      "inputType":"TextArea",
+      "validators": []
     },
     "_extensions": {
       "type":"object"

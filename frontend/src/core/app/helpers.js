@@ -3,22 +3,46 @@ define(function(require){
 
     var helpers = {
         lowerCase: function(text) {
-            return text.toLowerCase();
+          return text.toLowerCase();
         },
         numbers: function(index) {
-            return index +1;
+          return index +1;
         },
         capitalise:  function(text) {
-            return text.charAt(0).toUpperCase() + text.slice(1);
+          return text.charAt(0).toUpperCase() + text.slice(1);
         },
         odd: function (index) {
-            return (index +1) % 2 === 0  ? 'even' : 'odd';
+          return (index +1) % 2 === 0  ? 'even' : 'odd';
         },
-        formatDate: function(isoDate) {
-            // 2014-02-17T17:00:34.196Z
-            var date = new Date(isoDate);
+        stringToClassName: function(text) {
+          if (!text) {
+            return;
+          }
+          // Check if first character is an underscore and remove
+          // Normally used for attribute with '_'s
+          if (text.slice(1) === '_') {
+            text = text.slice(1);
+          }
+          // Remove _ and spaces with dashes
+          return text.replace(/_| /g, "-").toLowerCase();
+        },
+        keyToTitleString: function(key) {
+          if (!key) {
+            return;
+          }
+          // Take in key value and remove all _'s and capitalise
+          var string = key.replace(/_/g, "").toLowerCase();
+          return this.capitalise(string);
+        },
+        formatDate: function(timestamp) {
+          // 2014-02-17T17:00:34.196Z
+          if (typeof(timestamp) !== 'undefined') {
+            var date = new Date(timestamp);
 
             return date.toDateString();
+          } else {
+            return '-';
+          }
         },
         formatDuration: function(duration) {
           var zero = '0', hh, mm, ss;
@@ -103,6 +127,34 @@ define(function(require){
             }
           }
           return vals.join(separator);
+        },
+        renderTags: function(list, key) {
+          var html = '';
+
+          if (list && list.length) {
+            html = '<ul class="tag-container">';
+
+            for (var i = 0; i < list.length; ++i) {
+              var tag = (key && list[i][key]) ?
+                list[i][key]
+                : list[i];
+
+              html += '<li class="tag-item" title="' + tag + '"><span class="tag-value">' + tag  + '</span></li>';
+            }
+
+            html += '</ul>'
+          }
+
+          return html;
+        },
+
+        ifHasPermissions: function(permissions, block) {
+          var permissionsArray = permissions.split(',');
+          if (Origin.permissions.hasPermissions(permissions)) {
+            return block.fn(this);
+          } else {
+            return block.inverse(this);
+          }
         }
     };
 

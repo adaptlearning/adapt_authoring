@@ -1,0 +1,26 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/tenantObject.schema",
+  "properties": {
+    "tenant": {
+      "type": "objectid",
+      "required": true,
+      "ref": "tenant"
+    },
+    "product": {
+      "type": "objectid",
+      "required": true,
+      "ref": "product"
+    },
+    "timeStart": {
+      "type": "date",
+      "required": true  
+    },
+    "timeEnd": {
+      "type": "date",
+      "required": true
+    }
+  }
+}

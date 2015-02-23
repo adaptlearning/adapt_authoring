@@ -17,9 +17,14 @@
       "required":true,
       "editorOnly": true
     },
-    "duration": {
-      "type":"string",
-      "required":false
+    "_extensions": {
+      "type": "object"
+    },
+    "_sortOrder": {
+      "type": "number",
+      "required": true,
+      "default": 1,
+      "editorOnly": true
     }
   }
 }

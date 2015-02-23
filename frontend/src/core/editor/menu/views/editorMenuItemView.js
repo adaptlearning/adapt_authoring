@@ -16,16 +16,22 @@ define(function(require){
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
+      this.setupEvents();
+      this.setupClasses();
+    },
+
+    postRender: function() {
+      // Check if the current item is expanded and update the next menuLayerView
+      // This can end up being recursive if an item is selected inside a few menu items
+      if (this.model.get('_isExpanded')) {
+        Origin.trigger('editorView:menuView:updateSelectedItem', this);
+      }
+    },
+
+    setupEvents: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-      this.listenTo(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
-      this.listenTo(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
-
-      // Listen to _isSelected change to see if we should setup keyboard events
-      this.listenTo(this.model, 'change:_isSelected', this.handleKeyEventsSetup);
-
-      // Trigger initial setup of keyboard events as change is fired on init
-      this.handleKeyEventsSetup(this.model, this.model.get('_isSelected'));
+      this.listenTo(this.model, 'change:_isExpanded', this.onExpandedChange);
+      this.listenTo(this.model, 'change:_isSelected', this.onSelectedChange);
 
       // Handle the context menu clicks
       this.on('contextMenu:menu:edit', this.editMenuItem);
@@ -35,17 +41,23 @@ define(function(require){
       this.on('contextMenu:page:edit', this.editMenuItem);
       this.on('contextMenu:page:copy', this.copyMenuItem);
       this.on('contextMenu:page:delete', this.deleteItemPrompt);
-
-      this.setupClasses();
-      
     },
 
-    copyMenuItem: function() {
-      $('.paste-zone').removeClass('visibility-hidden');
-      Origin.trigger('editorView:copy', this.model);
+    setupClasses: function() {
+      var classString = '';
+      if (this.model.get('_isSelected')) {
+        classString += 'selected ';
+      }
+      if (this.model.get('_isExpanded')) {
+        classString += 'expanded ';
+      }
+      classString += ('content-type-'+this.model.get('_type'));
+      
+      this.$el.addClass(classString);
     },
 
     onMenuItemClicked: function(event) {
+      // TODO - Fix this to the view not the model
       // Boo - jQuery doesn't allow dblclick and single click on the same element
       // time for a timer timing clicks against time delay
       var delay = 300;
@@ -85,36 +97,34 @@ define(function(require){
     },
 
     gotoPageEditor: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'), {trigger:true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'));
     },
 
     setItemAsSelected: function() {
-      this.model.set({'_isSelected': true});
-      this.model.set({'_isExpanded' : (this.model.get('_type') === 'menu' ? true : false)})
 
-      this.showEditorSidebar();
-      this.setParentSelectedState();
-      this.setSiblingsSelectedState();
-      this.setChildrenSelectedState();
+      // If this item is already selected please do nothing
+      // because sometimes nothing is quite compelling
+      if (this.model.get('_isSelected')) return;
+      // When item is clicked check whether this a menu item or not
+      var isMenuType = (this.model.get('_type') === 'menu');
 
-      Origin.trigger('editorView:storeSelectedItem', this.model.get('_id'));
-    },
-
-    showEditorSidebar: function() {
-      Origin.trigger('editorSidebarView:addEditView', this.model);
-    },
-
-    setupClasses: function() {
-      var classString = '';
-      if (this.model.get('_isSelected')) {
-        classString += 'selected ';
-      }
+      // If this view is already expanded - reset to no be expanded
+      // this will trigger the events to remove child views
       if (this.model.get('_isExpanded')) {
-        classString += 'expanded ';
+        this.model.set({'_isExpanded' : false});
+      } else {
+        this.setSiblingsSelectedState();
+        this.setParentSelectedState();
       }
-      classString += ('content-type-'+this.model.get('_type'));
+
+      this.model.set({'_isExpanded' : (isMenuType ? true : false)});
+
+      this.model.set({'_isSelected': true});
       
-      this.$el.addClass(classString);
+      // This event passes out the view to the editorMenuView to add
+      // a editorMenuLayerView and setup this.subView
+      Origin.trigger('editorView:menuView:updateSelectedItem', this);
+
     },
 
     setParentSelectedState: function() {
@@ -131,6 +141,36 @@ define(function(require){
       this.model.getChildren().each(function(child) {
         child.set({'_isSelected': false, '_isExpanded': false});
       })
+    },
+
+    onSelectedChange: function(model, isSelected) {
+      // This is used to toggle between _isSelected on the model
+      if (!isSelected) {
+        this.$el.removeClass('selected');
+      } else {
+        this.$el.addClass('selected');
+      }
+    },
+
+    onExpandedChange: function(model, isExpanded) {
+      var isMenuType = (this.model.get('_type') === 'menu');
+      if (isExpanded) {
+        //Origin.trigger('editorView:menuView:updateSelectedItem', this);
+        this.$el.addClass('expanded');
+      } else {
+        // If not expanded unselect and unexpand child - this will work
+        // recursively as _isExpanded will keep getting set
+        if (isMenuType) {
+          this.setChildrenSelectedState();
+        }
+        this.$el.removeClass('expanded');
+      }
+
+      // If this item is not meant to be expanded - remove subView
+      if (!isExpanded && isMenuType && this.subView) {
+        this.subView.remove();
+      }
+
     },
 
     editMenuItem: function() {
@@ -150,6 +190,7 @@ define(function(require){
       if (event) {
         event.preventDefault();
       }
+
       var id = this.model.get('_id');
       var deleteItem = {
           _type: 'prompt',
@@ -162,45 +203,36 @@ define(function(require){
           ]
         };
 
+      this.listenToOnce(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
+      this.listenToOnce(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
+
       Origin.trigger('notify:prompt', deleteItem);
     },
 
+    copyMenuItem: function() {
+      $('.paste-zone').addClass('show');
+      Origin.trigger('editorView:copy', this.model);
+    },
 
     deleteItem: function(event) {
+      this.stopListening(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
+      this.model.set({_isExpanded:false, _isSelected: false});
       // When deleting an item - the parent needs to be selected
-      this.model.getParent().set({_isSelected:true});
+      this.model.getParent().set({_isSelected:true, _isExpanded: true});
+
+      // We also need to navigate to the parent element - but if it's the courseId let's
+      // navigate up to the menu
+      var parentId = (this.model.get('_parentId') === Origin.editor.data.course.id) ? '' : '/' + this.model.get('_parentId');
+      Origin.router.navigate('#editor/' + Origin.editor.data.course.id + '/menu' + parentId);
+
       if (this.model.destroy()) {
         this.remove();
       }
     },
 
     cancelDeleteItem: function() {
-        this.model.set({_isSelected: true});
-    },
-
-    handleKeyEventsSetup: function(model, isSelected) {
-      // This is used to toggle between _isSelected on the model and 
-      // setting up the events for the keyboard
-      if (!isSelected) {
-        this.stopListening(Origin, 'key:down', this.handleKeyEvents);
-      } else {
-        this.listenTo(Origin, 'key:down', this.handleKeyEvents);
-      }
-    },
-
-    handleKeyEvents: function(event) {
-      // Check if it's the backspace button
-      if (event.which === 8) {
-        event.preventDefault();
-        this.model.set({_isSelected: false});
-        this.deleteItemPrompt();
-      }
-
-      // Check it it's the enter key
-      if (event.which === 13) {
-        this.onMenuItemClicked();
-      }
-      
+      this.stopListening(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
+      this.model.set({_isSelected: true});
     }
     
   }, {

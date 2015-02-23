@@ -35,8 +35,12 @@ define(function(require) {
     "sortOrder": 3
   };
 
-  Origin.once('app:dataReady', function() {
-    Origin.globalMenu.addItem(globalMenuObject);
+  Origin.on('app:dataReady login:changed', function() {
+    var permissions = ["{{tenantid}}/extensiontype/*:update"];
+    Origin.permissions.addRoute('pluginManagement', permissions);
+    if (Origin.permissions.hasPermissions(permissions)) {
+      Origin.globalMenu.addItem(globalMenuObject);
+    }
   });
 
 });

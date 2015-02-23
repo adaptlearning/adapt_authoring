@@ -28,11 +28,10 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
-      this.listenTo(Origin, 'editorView:removeComponent:' + this.model.get('_id'), this.handleRemovedComponent);
-      this.listenTo(Origin, 'editorView:moveComponent:' + this.model.get('_id'), this.reRender);
-      this.listenTo(Origin, 'editorView:cutComponent:' + this.model.get('_id'), this.onCutComponent);
-      this.listenTo(Origin, 'editorView:addComponent:' + this.model.get('_id'), this.addComponent);
-      this.listenTo(Origin, 'editorView:deleteBlock:' + this.model.get('_id'), this.deleteBlock);
+      this.listenTo(this.model, 'sync', this.setupModelEvents);
+      if (!this.model.isNew()) {
+        this.setupModelEvents();
+      }
 
       this.listenTo(this, {
         'contextMenu:block:edit': this.loadBlockEdit,
@@ -44,6 +43,14 @@ define(function(require){
       this.model.set('componentTypes', Origin.editor.data.componentTypes.toJSON());
 
       this.evaluateComponents(this.render);
+    },
+
+    setupModelEvents: function() {
+      this.listenTo(Origin, 'editorView:removeComponent:' + this.model.get('_id'), this.handleRemovedComponent);
+      this.listenTo(Origin, 'editorView:moveComponent:' + this.model.get('_id'), this.reRender);
+      this.listenTo(Origin, 'editorView:cutComponent:' + this.model.get('_id'), this.onCutComponent);
+      this.listenTo(Origin, 'editorView:addComponent:' + this.model.get('_id'), this.addComponent);
+      this.listenTo(Origin, 'editorView:deleteBlock:' + this.model.get('_id'), this.deleteBlock);
     },
 
     postRender: function() {
@@ -109,26 +116,32 @@ define(function(require){
         }
       }
 
-      this.model.save({
-        'layoutOptions': layoutOptions,
-        'dragLayoutOptions': dragLayoutOptions
-      }, {
-        error: function() {
-          console.log('error saving block');
-        },
-        success: _.bind(function() {
-          if (callback) {
-            callback.apply(this);
-          }
-        }, this)
-      });
+      this.model.set({"layoutOptions": layoutOptions, "dragLayoutOptions": dragLayoutOptions});
+
+      if (callback) {
+        callback.apply(this);
+      }
+      
+      // TODO -- Remove the next line if it's not required
+      // this.model.save({
+      //   'layoutOptions': layoutOptions,
+      //   'dragLayoutOptions': dragLayoutOptions
+      // }, {
+      //   error: function() {
+      //     console.log('error saving block');
+      //   },
+      //   success: _.bind(function() {
+      //     if (callback) {
+      //       callback.apply(this);
+      //     }
+      //   }, this)
+      // });
     },
 
     deleteBlockPrompt: function(event) {
       if (event) {
         event.preventDefault();
       }
-
       var id = this.model.get('_id');
 
       var deleteBlock = {
@@ -148,7 +161,6 @@ define(function(require){
 
     deleteBlock: function(event) {
       var _this = this;
-      
       _this.model.destroy({
         success: function(model, response) {
           _this.remove();
@@ -189,12 +201,19 @@ define(function(require){
         appendTo:'.editor-view',
         containment: '.editor-view',
         helper: function (e) {
-          return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
-        },
-        start: function () {
+          // Store the offset to stop the page jumping during the start of drag
+          // because of the drop zones changing the scroll position on the page
+          view.offsetTopFromWindow = view.$el.offset().top - $(window).scrollTop();
+          // This is in the helper method because the height needs to be 
+          // manipulated before the drag start method due to adding drop zones
           view.showDropZones();
           $(this).attr('data-' + view.model.get('_type') + '-id', view.model.get('_id'));
           $(this).attr('data-' + view.model.get('_parent') + '-id', view.model.get('_parentId'));
+          return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
+        },
+        start: function(event) {
+          // Using the initial offset we're able to position the window back in place
+          $(window).scrollTop(view.$el.offset().top -view.offsetTopFromWindow);
         },
         stop: function () {
           view.hideDropZones();

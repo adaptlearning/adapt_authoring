@@ -5,6 +5,7 @@ define(function(require) {
   var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
   var EditorArticleModel = require('editorPage/models/editorArticleModel');
   var EditorBlockModel = require('editorPage/models/editorBlockModel');
+  var EditorMenuItemView = require('editorMenu/views/editorMenuItemView');
 
   var EditorMenuLayerView = EditorOriginView.extend({
 
@@ -21,11 +22,6 @@ define(function(require) {
         if (options._parentId) {
           this._parentId = options._parentId;
         } 
-
-        if (options._isCourseObject) {
-          this.data = {};
-          this.data._isCourseObject = options._isCourseObject;
-        }
 
         this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
         this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
@@ -64,45 +60,78 @@ define(function(require) {
       addMenuItem: function(event, type) {
         event.preventDefault();
 
-        new EditorContentObjectModel({
+        var newMenuItemModel = new EditorContentObjectModel({
           _parentId: this._parentId,
           _courseId: Origin.editor.data.course.get('_id'),
           title: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
-          body: window.polyglot.t('app.placeholdereditthistext'),
+          displayTitle: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
+          body: '',
           linkText: '',
           graphic: {
             alt: '',
             src: ''
           },
           _type: type
-        }).save(null, {
-          error: function() {
-            alert('An error occurred doing the save');
+        });
+
+        // Instantly add the view for UI purposes
+        var newMenuItemView = this.addMenuItemView(newMenuItemModel);
+
+        // Save the model
+        newMenuItemModel.save(null, {
+          error: function(error) {
+            console.log(arguments);
+            // If there's an error show the menu item fading out 
+            // and show an unobtrusive pop notification
+            var timeOut = 3000;
+            newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
+            var pushObject = {
+              title: "Error!",
+              body: "An error occurred doing the save",
+              _timeout:timeOut,
+              _callbackEvent: "",
+              _classes: ""
+            };
+            Origin.trigger('notify:push', pushObject);
+            _.delay(function() {
+              newMenuItemView.remove();
+            }, timeOut);
+            
           },
           success: _.bind(function(model) {
+            Origin.editor.data.contentObjects.add(model);
+            // Force setting the data-id attribute as this is required for drag-drop sorting
+            newMenuItemView.$el.children('.editor-menu-item-inner').attr('data-id', model.get('_id'));
+
             if (type == 'page') {
-              return this.addNewPageArticleAndBlock(model);
+              // HACK -- This should be removed and placed on the server-side
+              return this.addNewPageArticleAndBlock(model, newMenuItemView);
+            } else {
+              newMenuItemView.$el.removeClass('syncing').addClass('synced');
             }
-            Origin.trigger('editor:refreshData', function() {
-              Backbone.history.loadUrl();
-            }, this);
+
           }, this)
         });
       },
 
-      addNewPageArticleAndBlock: function(model) {
+      addNewPageArticleAndBlock: function(model, newMenuItemView) {
 
         var typeToAdd;
         var newChildModel;
         var newChildTitle;
 
+        this.pageModel;
+        this.pageView;
+
         if (model.get('_type') === 'page') {
+          this.pageModel = model;
+          this.pageView = newMenuItemView;
           typeToAdd = 'article';
-          newChildTitle = 'Article title';
+          newChildTitle = window.polyglot.t('app.placeholdernewarticle');
           var newChildModel = new EditorArticleModel();
         } else {
           typeToAdd = 'block';
-          newChildTitle = 'Block title';
+          newChildTitle = window.polyglot.t('app.placeholdernewblock');
           var newChildModel = new EditorBlockModel();
         }
 
@@ -114,33 +143,48 @@ define(function(require) {
           _courseId: Origin.editor.data.course.get('_id')
         }, {
           error: function() {
-            alert('error adding new ' + typeToAdd);
+            var timeOut = 3000;
+            newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
+            var pushObject = {
+              title: "Error!",
+              body: "An error occurred doing the save",
+              _timeout:timeOut,
+              _callbackEvent: "",
+              _classes: "primary-color"
+            };
+            Origin.trigger('notify:push', pushObject);
+            _.delay(function() {
+              newMenuItemView.remove();
+            }, timeOut);
           },
           success: _.bind(function(model, response, options) {
-            
+            // Add this new element to the collect
+            Origin.editor.data[model.get('_type') + 's'].add(model);
+
             if (typeToAdd === 'article') {
-              this.addNewPageArticleAndBlock(model);
+              this.addNewPageArticleAndBlock(model, newMenuItemView);
             } else {
-              Origin.trigger('editor:refreshData', function() {
-                Backbone.history.loadUrl();
-              }, this);
+              newMenuItemView.$el.removeClass('syncing').addClass('synced');
             }
             
           }, this)
         });
       },
 
+      addMenuItemView: function(model) {
+        var newMenuItemView = new EditorMenuItemView({
+          model: model
+        });
+        this.$('.editor-menu-layer-inner').append(newMenuItemView.$el.addClass('syncing'));
+        return newMenuItemView;
+      },
+
       pasteMenuItem: function(event) {
         event.preventDefault();
-        var clipboard = Origin.editor.data.clipboard.models[0];
-        var topitem = clipboard.get(clipboard.get('referenceType'))[0];
-        var parentId = this._parentId;
-        var target = new EditorContentObjectModel({
-          _parentId: parentId,
-          _courseId: Origin.editor.data.course.get('_id'),
-          _type: topitem._type
-        });
-        Origin.trigger('editorView:paste', parentId, this.$('.editor-menu-item').length + 1);
+        Origin.trigger('editorView:paste', this._parentId, this.$('.editor-menu-item').length + 1);
+        /*_.delay(_.bind(function() {
+          Origin.trigger('editorView:menuView:updateSelectedItem', this);
+        }, this), 2000)*/
       },
 
       cancelPasteMenuItem: function(event) {
@@ -152,6 +196,7 @@ define(function(require) {
         });
         Origin.trigger('editorView:pasteCancel', target);
       }
+      
   	}, {
   		template: 'editorMenuLayer'
   });

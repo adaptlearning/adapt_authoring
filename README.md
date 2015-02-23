@@ -4,170 +4,104 @@ A web-based authoring tool for the [Adapt Framework](https://community.adaptlear
 
 ## Features
 
-* Web application built on NodeJS and BackboneJS for creating, editing and publishing Adapt content
+* Web application built on NodeJS, BackboneJS, and MongoDB for creating, editing and publishing Adapt content
 * Supports all core extensions and components
 * Allows uploading and linking of course assets
 
 ## Installation
-###Windows
 
-The authoring tool is only fully tested with version 0.10.2. 
-Please check your current node version (`node -v`). 
+### Prerequisites
 
-If it is not 0.10.2 then we recommend using a version manager for node.
+* git - [http://git-scm.com/downloads](http://git-scm.com/downloads)
+* MongoDB - [http://docs.mongodb.org/manual/](http://docs.mongodb.org/manual/)
+* Node.js - [http://nodejs.org/](http://nodejs.org/)
+* grunt-cli - [http://gruntjs.com/getting-started](http://gruntjs.com/getting-started)
+* adapt-cli - [https://github.com/adaptlearning/adapt-cli](https://github.com/adaptlearning/adapt-cli)
+* FFmpeg (optional) - [https://www.ffmpeg.org/index.html](https://www.ffmpeg.org/index.html)
 
-####nodist
-https://github.com/marcelklehr/nodist
-installs latest nodejs+npm on first run    
+There are various ways of installing these applications depending on your platform.
 
-1. uninstall existing node installations
-    
-    >note for windows 8:
-    >delete nodejs folder because there is no uninstall
+[Installing prerequisites on Windows](README-windows.md)
 
-2. `git clone git://github.com/marcelklehr/nodist.git` (or grab the [zip](https://github.com/marcelklehr/nodist/zipball/master))  
-   (Note that certain paths, e.g. `Program Files`, require admin rights!)
+Users on platforms other than Windows can use the instructions below.
 
-3. `setx /M PATH "path\to\nodist\bin;%PATH%"` ([setx not available?](http://www.computerhope.com/issues/ch000549.htm))
+### Installation of Prerequisite Applications
 
-4. `setx /M NODIST_PREFIX "path\to\nodist"`
+Before installing the tool itself, you must install the following applications.
 
-5. Run `nodist selfupdate` (updates the dependencies and sets npm's global prefix)
+#### Git
 
-6. Run `nodist 0.10.2` (the builder is only fully tested with version 0.10.2)
+You can install git from [here](http://git-scm.com/downloads).
 
-####node modules
-
-* install `npm install grunt-cli -g`
-* install `npm install adapt-cli -g`
-
-####Install FFMPEG
-* download a static build from [here](http://ffmpeg.zeranoe.com/builds/)
-* unpack it anywhere
-* run cmd as administrator
-* add it to the systemvariables `setx /M PATH "path\to\ffmpeg\bin;%PATH%"` 
-
-
-####Install MongoDB
-* download mongodb from [here](http://www.mongodb.org/downloads)
-* run the installer
-* create mongo data folder in your root (C:\data\db)
-* (optional) http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows/#manually-create-a-windows-service-for-mongodb
-
-
-####Running the authoring tool
-
-If you chose to install mongodb as a service start it with `net start MongoDB` and skip steps 1 and 2
-
-1. run `mongod.exe`
-2. run `mongo.exe`
-3. run a new cli window and change to the directory of the authoring tool code
-4. run `npm install`
-5. run `node server`
-6. run a new cli window and change to the directory of the authoring tool code
-7. run  `grunt server`
-8. Open browser at `localhost:3000`
-
-### Linux/Mac
-The tool currently requires that [MongoDB](http://www.mongodb.org) be installed and running. It can be installed by following the instructions for your operating system at the link below: 
-
-* http://docs.mongodb.org/manual/
-
-
-If it is not installed already, you must install git (https://github.com/).
-
-* http://git-scm.com/downloads
-
-* If you just installed git you must configure it:
+If this is a fresh install of git, you should configure it:
 
 ```
 git config --global user.name "Your Name"
 git config --global user.email "youremail@domain.com"
 ```
 
+#### MongoDB
 
-[NPM] (https://www.npmjs.org/) and [Node.js] (http://nodejs.org/) are required. Installing Node.js from its website will also install NPM. After installation, ensure that NPM is updated. 
+[MongoDB](https://www.mongodb.org) is a document based database. Download and install the version appropriate for your system [here](https://www.mongodb.org/downloads).
+
+#### NodeJS & NPM
+
+[NodeJS](http://nodejs.org/) and [NPM](https://www.npmjs.org/) are required. Installing Node.js will also install NPM.
+
+The NodeJS version should be at least 0.10.33. Earlier versions of NodeJS are less stable.
+
+You should use a NodeJS version manager. We recommend using [NVM](https://github.com/creationix/nvm) on non-Windows machines. On Windows, try [nodist](https://github.com/marcelklehr/nodist)
+
+#### Grunt and Adapt Command Line Tools
+
+Install [grunt-cli](http://gruntjs.com/) and [adapt-cli](https://github.com/adaptlearning/adapt-cli) using npm (NOTE the `-g` in both commands is required!):
+
+```
+npm install -g grunt-cli
+npm install -g adapt-cli
+```
+Read more about [grunt](http://gruntjs.com/getting-started)
 
 
+#### FFMPEG (optional)
 
-You must install [NVM] (https://github.com/creationix/nvm). 
+[FFmpeg](https://www.ffmpeg.org/index.html) is not required to use the tool, but it will produce nice thumbnails for images and videos you upload. 
 
+### Clone the adapt_authoring project
 
-
-Adapt also requires [Grunt] (http://gruntjs.com/). First, install Grunt's command line interface. Grunt must also be installed locally to each project which will be done later. Grunt is installed using NPM.
-
-* http://gruntjs.com/getting-started
-
-
-
-[FFmpeg] (https://www.ffmpeg.org/index.html) is optional. It is used to identify different file formats in the Asset Manager. 
-
-
-Next the project must be cloned from Github before installing Grunt and any other dependencies:
+Clone the project from github.com:
 
 ```
 git clone https://github.com/adaptlearning/adapt_authoring.git
 ```
 
-Navigate to the folder you cloned the project to:
+### Run the install script
+
+Firstly ensure that the MongoDB service is started is running correctly. If you installed on Linux, the service should automatically start. OSX users may have to manually run `mongod` from a terminal. 
+
+Navigate to the folder where you cloned the adapt_authoring project and run `npm install`:
 
 ```
-cd /the/project/directory
-```
-
-Checkout the development version:
-
-```
-git checkout develop
-```
-
-Now you must install dependencies and Grunt locally.
-
-```
+cd /path/to/adapt_authoring/
 npm install
-npm install grunt
-```
-
-**If you installed FFmpeg:**
-
-Navigate to the /conf/config.json and ensure the following property is set:
-```
-"useffmpeg" : true
-```
-_**Windows users**_: most probably ffmpeg and ffprobe will not be in your %PATH Environment Variables, so you must set %FFMPEG_PATH and %FFPROBE_PATH.  It is imporatant that you enter the full path to the .exe files here.  (This project uses the [node-fluent-ffmpeg] (https://github.com/fluent-ffmpeg/node-fluent-ffmpeg) API.)
-
-## Run
-
-Firstly ensure that the MongoDB service is started is running correctly. In the root of the project, run the following commands.
-
-To compile the latest code (note this may take some time due to the size of the codebase):
-```
-grunt build
-```
-
-To run the code using the built-in webserver:
-```
-grunt server
-```
-
-Inspect the output from this task to work out which port the application is running on, and navigate to that address in your browser.
-
-## To run unit tests:
-```
-make test
-```
-
-## To run CasperJS tests:
-To run all the tests at once:
 
 ```
-grunt test-ui
-```
 
-To run individual tests:
+And finally run the install script. The script will help you configure the tool. In most cases, you can just accept the default values; the only input you are required to provide are the default username and password. Note that FFmpeg is not used by default, so choose `Y` when prompted if you have it installed:
 
-```
-casperjs test test_frontend/testname.js
-```
+````
+node install
+````
+If the script completes succesfully, you should now be able to run the application. If any error occurs, read the output, and check if you forgot to install one of the above prerequisites.
 
-Screenshots of the steps in each test are stored in test_frontend/img.
+To run the application use:
+
+````
+node server
+````
+
+The ouput on the console will tell you what url to use to access the tool. By default it will be [http://localhost:5000](http://localhost:5000). 
+
+You can run the install script again at anytime. If you chose the same values for the master database connection, you may overwrite any existing data, but this is occasionally desired.
+
+We hope you enjoy using the tool! For help and support, please visit the community page at [http://community.adaptlearning.org](http://community.adaptlearning.org)

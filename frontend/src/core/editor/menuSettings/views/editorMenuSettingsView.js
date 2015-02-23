@@ -12,7 +12,7 @@ define(function(require){
     className: function() {
       var isSelectedClass = (this.model.get('_isSelected')) ? ' selected' : '';
 
-      return 'menusettings-list-item' + isSelectedClass;
+      return 'menu-settings-list-item' + isSelectedClass;
     },
 
     events: {

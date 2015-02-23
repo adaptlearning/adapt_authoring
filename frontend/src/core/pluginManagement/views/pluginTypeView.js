@@ -55,6 +55,7 @@ define(function(require){
 
     updatePlugin: function (event) {
       event.preventDefault();
+      var that = this;
       var btn = this.$('.plugin-update-confirm');
       if (btn.hasClass('disabled')) {
         return false;
@@ -71,8 +72,11 @@ define(function(require){
           'targets': [this.model.get('_id')]
         }
       }).done(function (data) {
-        if (_.contains(data.targets), this.model.get('_id')) {
-          btn.html(window.polyglot.t('app.uptodate'));
+        if (_.contains(data.targets), that.model.get('_id')) {
+          // Refresh the schemas
+          Origin.trigger('scaffold:updateSchemas', function() {
+            btn.html(window.polyglot.t('app.uptodate'));
+          }, this);
         } else {
           btn.html(window.polyglot.t('app.updatefailed'));
         }

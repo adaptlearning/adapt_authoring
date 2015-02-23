@@ -4,48 +4,107 @@
   "id": "http://jsonschema.net",
   "$ref": "http://localhost/system/basicContent.schema",
   "properties": {
+    "title": {
+      "type":"string",
+      "required":true,
+      "default": "New Course Title",
+      "inputType":"Text",
+      "validators": ["required"]
+    },
+    "body":{
+      "type":"string",
+      "default" : "",
+      "inputType":"TextArea",
+      "validators": []
+    },
     "_extensions": {
       "type": "object"
     },
-    "tags": {
-      "type": "array",
-      "items": {
-        "type": "objectid",
-        "required": true,
-        "ref": "tag"
-      },
-      "editorOnly": true
+    "_latestTrackingId": {
+      "type": "number",
+      "required": true,
+      "default": 0
     },
-    "buttons": {
-      "submit": {
-        "type": "string",
-        "default": "Submit"
-      },
-      "reset": {
-        "type": "string",
-        "default": "Reset"
-      },
-      "showCorrectAnswer": {
-        "type": "string",
-        "default": "Model Answer"
-      },
-      "hideCorrectAnswer": {
-        "type": "string",
-        "default": "My Answer"
+    "_buttons": {
+      "type": "object",
+      "default": "",
+      "title": "",
+      "isSetting": false,
+      "properties": {
+        "submit": {
+          "type": "string",
+          "default": "Submit",
+          "inputType": "Text",
+          "required": true,
+          "validators": ["required"]
+        },
+        "reset": {
+          "type": "string",
+          "default": "Reset",
+          "inputType": "Text",
+          "required": true,
+          "validators": ["required"]
+        },
+        "showCorrectAnswer": {
+          "type": "string",
+          "default": "Model Answer",
+          "inputType": "Text",
+          "required": true,
+          "validators": ["required"]
+        },
+        "hideCorrectAnswer": {
+          "type": "string",
+          "default": "My Answer",
+          "inputType": "Text",
+          "required": true,
+          "validators": ["required"]
+        }
       }
     },
-    "_latestTrackingId" : {
-      "type": "number",
-      "default": 0
+    "tags": {
+      "type": "array",
+      "inputType": "Tags",
+      "items": {
+        "type": "objectid",
+        "inputType": "Text",
+        "required": false,
+        "ref": "tag"
+      },
+      "help": "Add tags to your course by entering one or more words, separated with a comma (,)",
+      "editorOnly": true
+    },
+    "_classes": {
+      "type":"string",
+      "default":"",
+      "isSetting": true,
+      "inputType":"Text",
+      "validators": [],
+      "title": "Classes"
     },
     "_isSelected": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "editorOnly": true
     },
     "_hasPreview": {
       "type": "boolean",
       "default": false,
       "editorOnly": true
+    },
+    "_isShared": {
+      "type": "boolean",
+      "default": false,
+      "editorOnly": true,
+      "inputType": {"type": "Boolean", "options": [true, false]},
+      "validators": [],
+      "title": "Share with other users",
+      "help": "When this is set to 'true', your colleagues will be able to see this course from the 'Shared courses' option"
+    },
+    "themeSettings": {
+      "type": "object"
+    },
+    "menuSettings": {
+      "type": "object"
     }
   }
 }

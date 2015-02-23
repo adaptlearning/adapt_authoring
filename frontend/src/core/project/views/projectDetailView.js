@@ -3,133 +3,80 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var EditorConfigModel = require('editorConfig/models/editorConfigModel');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
-  var TagsInput = require('core/libraries/jquery.tagsinput.min');
 
   var ProjectDetailView = EditorOriginView.extend({
 
     tagName: "div",
 
-    className: "project",
-
-    events: {
-      'click .editing-overlay-panel-title': 'toggleContentPanel'
-    },
-
-    toggleContentPanel: function(event) {
-      event.preventDefault();
-      if (!$(event.currentTarget).hasClass('active')) {
-        this.$('.editing-overlay-panel-title').removeClass('active');
-        $(event.currentTarget).addClass('active')
-        this.$('.editing-overlay-panel-content').slideUp();
-        $(event.currentTarget).siblings('.editing-overlay-panel-content').slideDown();
-      }
-    },
+    className: "course-edit",
 
     preRender: function() {
       this.listenTo(Origin, 'projectEditSidebar:views:save', this.saveProject);
 
       if (this.model.isNew()) {
+        this.isNew = true;
         // Initialise the 'tags' property for a new course
         this.model.set('tags', []);
       }
+      
+      // This next line is important for a proper PATCH request on saveProject()
+      this.originalAttributes = _.clone(this.model.attributes);
     },
 
     postRender: function() {
-      if (!this.model.isNew()) {
-        this.renderExtensionEditor('course');
-      }
-
-      // tagging
-      $('#projectTags').tagsInput({
-        autocomplete_url: '/api/content/tag/autocomplete',
-        onAddTag: _.bind(this.onAddTag, this),
-        onRemoveTag: _.bind(this.onRemoveTag, this)
-      });
-
-      // Set view to ready
-      this.setViewToReady();
-    },
-
-    cancel: function (event) {
-      event.preventDefault();
-
-      Backbone.history.navigate('#/dashboard', {trigger: true});
-    },
-
-    validateInput: function() {
-      if (!$.trim(this.$('#projectDetailTitle').val())) {
-        $('#projectDetailTitle').addClass('input-error');
-        $('#titleErrorMessage').text(window.polyglot.t('app.pleaseentervalue'));
-
-        return false;
-      } else {
-        $('#projectDetailTitle').removeClass('input-error');
-        $('#titleErrorMessage').text('');
-
-        return true;
-      }
+      EditorOriginView.prototype.postRender.call(this);
     },
 
     saveProject: function(event) {
-      event && event.preventDefault();
-
-      if (!this.validateInput()) {
+      var errors = this.form.commit();
+      // This must trigger no matter what, as sidebar needs to know 
+      // when the form has been resubmitted
+      Origin.trigger('editorSidebar:showErrors', errors);
+      if (errors) {
         return;
       }
 
-      if (!this.model.isNew()) {
-        var extensionJson = {};
-        extensionJson = this.getExtensionJson('course');
-        this.model.set({_extensions: extensionJson});
-      }
-
-      // fix tags
+      // Fix tags
       var tags = [];
       _.each(this.model.get('tags'), function (item) {
         item._id && tags.push(item._id);
       });
 
-      var self = this;
-      this.model.save({
-        title: $.trim(this.$('#projectDetailTitle').val()),
-        body: tinyMCE.get('projectDetailDescription').getContent(),
-        tags: tags
-        }, {
+      this.model.set('tags', tags);
+
+      // Retrieve any old attributes which might have changed
+      // This step is neccessary because otherwise the complete model is passed up
+      var changedAttributes = this.model.changedAttributes(this.originalAttributes);
+      
+      if (changedAttributes || this.isNew) {
+        // Only save what has changed
+        var attributesToSave = changedAttributes 
+          ? _.pick(this.model.attributes, _.keys(changedAttributes))
+          : null;
+
+        this.model.save(attributesToSave, {
+          patch: true,
+
           error: function() {
             alert('An error occurred doing the save');
           },
-          success: function(result) {
-            Backbone.history.history.back();
-            self.remove();
-          }
-        }
-      );
-    },
-
-    onAddTag: function (tag) {
-      var model = this.model;
-      $.ajax({
-        url:'/api/content/tag',
-        method:'POST',
-        data: { title: tag }
-      }).done(function (data) {
-        if (data && data._id) {
-          var tags = model.get('tags');
-          tags.push({ _id: data._id, title: data.title });
-          model.set({ tags: tags });
-        }
-      });
-    },
-
-    onRemoveTag: function (tag) {
-      var model = this.model;
-      var tags = [];
-      _.each(model.get('tags'), function (item) {
-        if (item.title !== tag) {
-          tags.push(item);
-        }
-      });
-      this.model.set({ tags: tags });
+          success: _.bind(function() {
+            
+            Origin.trigger('editingOverlay:views:hide');
+            if (this.isNew) {
+              return Backbone.history.navigate('#/dashboard', {trigger: true});
+            }
+            Origin.trigger('editor:refreshData', function() {
+              Backbone.history.history.back();
+              this.remove();
+            }, this);
+            
+          }, this)
+        });
+      } else {
+        Backbone.history.history.back();
+        this.remove();
+      }
     }
 
   },

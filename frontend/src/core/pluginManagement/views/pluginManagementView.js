@@ -19,7 +19,7 @@ define(function(require){
       'extension' : ExtensionTypeCollection,
       'component' : ComponentTypeCollection,
       'theme' : ThemeTypeCollection,
-      'menu' : MenuTypeCollection
+      'menu': MenuTypeCollection
     },
 
     tagName: "div",
@@ -34,9 +34,8 @@ define(function(require){
     preRender: function() {
       Origin.trigger('location:title:update', {title: window.polyglot.t('app.' + this.pluginType + 'management')});
       this.collection = new (this.pluginCollections[this.pluginType])();
-      this.collection.fetch();
-
       this.listenTo(this.collection, 'sync', this.addPluginTypeViews);
+      this.collection.fetch();
 
       // External events
       // @TODO - add controls for these
@@ -115,19 +114,22 @@ define(function(require){
       e.preventDefault();
 
       var pluginType = this.pluginType;
-      var btn = this.$('.refresh-all-plugins');
-      if (btn.hasClass('disabled')) {
+      var $btn = this.$('.refresh-all-plugins');
+      if ($btn.hasClass('disabled')) {
         // do nothing!
         return false;
       }
 
-      btn.addClass('disabled').html(window.polyglot.t('app.updating'));
+      $btn.addClass('disabled').html(window.polyglot.t('app.updating'));
       $.ajax({
         'method': 'GET',
         'url': this.collection.url() + '&refreshplugins=1'
       }).done(function (data) {
-        // regardless of the result, refresh the view
-        Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger: true});
+        // Refresh the schemas
+        Origin.trigger('scaffold:updateSchemas', function() {
+          // regardless of the result, refresh the view
+          Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger: true});
+        }, this);
       });
 
       return false;

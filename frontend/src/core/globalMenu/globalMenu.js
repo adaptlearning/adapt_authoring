@@ -22,8 +22,11 @@ define(function(require) {
         }
 
         itemObject._isSubMenuItem = false;
-        // Push item to GlobalMenuStore
-        GlobalMenuStore.add(itemObject);
+        if (!GlobalMenuStore.findWhere({text: itemObject.text})) {
+            // Push item to GlobalMenuStore
+            GlobalMenuStore.add(itemObject);
+        }
+        
     }
 
     // Method for adding a sub item to the global menu
@@ -49,7 +52,7 @@ define(function(require) {
     // Listen to navigation event to toggle
     Origin.on('navigation:globalMenu:toggle', function() {
         // Remove all events off #app
-        $('#app').off('click');
+        $('#app, .sidebar').off('click');
         // Toggle between displaying and removing the menu
         if (_isActive === true) {
             closeGlobalMenu();
@@ -59,8 +62,16 @@ define(function(require) {
     });
 
     Origin.on('remove:views globalMenu:close', function() {
-        $('#app').off('click');
+        $('#app, .sidebar').off('click');
         closeGlobalMenu();
+    });
+
+    // Listen to when the user is logger out and reset the collection as permissions
+    // can be carried over from different users logging into the same machine
+    Origin.on('login:changed', function() {
+        if (!Origin.sessionModel.get('isAuthenticated')) {
+            GlobalMenuStore.remove(GlobalMenuStore.models);
+        }
     });
 
     function openGlobalMenu() {
@@ -68,10 +79,14 @@ define(function(require) {
 
         // Add new view to the .navigation element passing in the GlobalMenuStore as the collection
         $('.navigation').append(new GlobalMenuView({collection: GlobalMenuStore}).$el);
-        // Setup listeners to #app to remove menu when main pag is clicked
-        $('#app').one('click', _.bind(function(event) {
-            Origin.trigger('navigation:globalMenu:toggle');
-        }, this));
+        // Setup listeners to #app to remove menu when main page is clicked
+        // Cheeky little defer here to stop it creating a closing loop
+        _.defer(function() {
+            $('#app, .sidebar, .navigation').one('click', _.bind(function(event) {
+                Origin.trigger('globalMenu:close');
+            }, this));
+        });
+
     }
 
     function closeGlobalMenu() {

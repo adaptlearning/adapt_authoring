@@ -5,14 +5,6 @@ define(function(require) {
   var ProjectDetailView = require('coreJS/project/views/projectDetailView');
   var ProjectDetailEditSidebarView = require('coreJS/project/views/projectDetailEditSidebarView');
 
-  Origin.on('navigation:user:logout', function() {
-    Origin.router.navigate('#/user/logout');
-  });
-
-  Origin.on('navigation:profile:toggle', function() {
-    console.log('Should show profile');
-  });
-
   Origin.on('navigation:help', function() {
     switch (Origin.location.module) {
       case 'dashboard':
@@ -74,17 +66,23 @@ define(function(require) {
     switch (action) {
       case 'new':
         var project = new ProjectModel();
+        var form = Origin.scaffold.buildForm({
+          model: project
+        });
         Origin.trigger('location:title:update', {title: 'Add new course'});
-        Origin.editingOverlay.addView(new ProjectDetailView({model: project}).$el);
-        Origin.sidebar.addView(new ProjectDetailEditSidebarView().$el);
+        Origin.editingOverlay.addView(new ProjectDetailView({model: project, form: form}).$el);
+        Origin.sidebar.addView(new ProjectDetailEditSidebarView({form: form}).$el);
         break;
       case 'edit':
         var project = new ProjectModel({_id: id});
         project.fetch({
           success: function() {
+            var form = Origin.scaffold.buildForm({
+              model: project
+            });
             Origin.trigger('location:title:update', {title: 'Edit course'});
-            Origin.editingOverlay.addView(new ProjectDetailView({model: project}).$el);
-            Origin.sidebar.addView(new ProjectDetailEditSidebarView().$el);
+            Origin.editingOverlay.addView(new ProjectDetailView({model: project, form: form}).$el);
+            Origin.sidebar.addView(new ProjectDetailEditSidebarView({form: form}).$el);
           }
         });
         break;

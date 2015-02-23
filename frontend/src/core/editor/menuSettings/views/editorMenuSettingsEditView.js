@@ -10,7 +10,7 @@ define(function(require) {
 
     tagName: "ul",
 
-    className: "editor-menusettings-edit",
+    className: "editor-menu-settings-edit",
 
     events: {
 
@@ -34,7 +34,7 @@ define(function(require) {
     },
 
     renderMenuItemViews: function() {
-
+  
       this.collection.each(function(menu) {
 
         var isSelected = false;
@@ -43,7 +43,7 @@ define(function(require) {
         }
 
         menu.set('_isSelected', isSelected);
-        this.$('.menusettings-list').append(new MenuSettingsView({model: menu}).$el);
+        this.$('.menu-settings-list').append(new MenuSettingsView({model: menu}).$el);
 
       }, this);
 

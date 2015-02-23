@@ -7,6 +7,10 @@
 	position:relative;
 }
 
+span.error {
+  color: red;
+}
+
 // Loading overlay styling
 // =======================
 
@@ -28,6 +32,13 @@
   }
   &.fade-out {
     opacity: 0;
+  }
+  &.cover-top-bar {
+    position:fixed;
+    z-index:50000;
+    .loading-inner {
+      margin-top:41px;
+    }
   }
   .loading-image {
     width: 100%;

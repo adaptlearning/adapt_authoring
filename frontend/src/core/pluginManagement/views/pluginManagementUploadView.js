@@ -36,9 +36,11 @@ define(function(require){
           alert(message);
         },
         success: function(data, status, xhr) {
-          $('.loading').hide();
-          var pluginType = data.pluginType ? data.pluginType : '';
-          Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger:true});
+          Origin.trigger('scaffold:updateSchemas', function() {
+            $('.loading').hide();
+            var pluginType = data.pluginType ? data.pluginType : '';
+            Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger:true});
+          }, this);
         }
       });
 

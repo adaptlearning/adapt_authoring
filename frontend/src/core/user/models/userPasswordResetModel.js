@@ -5,11 +5,8 @@ define(function(require) {
   var UserPasswordResetModel = Backbone.Model.extend({
 
     defaults: {
-      _id: -1,
-      user: false,
-      token: false,
-      tokenCreated: false,
-      ipAddress: false
+      password: '',
+      confirmPassword: ''
     },
 
     initialize : function(options) {},
@@ -18,22 +15,51 @@ define(function(require) {
       return "/api/userpasswordreset/" + this.get('token');
     },
 
-    resetPassword: function (password, cback) {
-      var model = this;
+    validate: function (attributes, options) {
+      var validationErrors = {};
 
-      $.post(
-        '/api/resetpassword',
-        {
-          user: model.get('user'),
-          password: password,
-          token: model.get('token')
-        },
-        function(result) {
-          cback(false, result);
+      if (!attributes.password) {
+        validationErrors.password = window.polyglot.t('app.validationrequired');
+      } else {
+        if (attributes.password.length < 8) {
+          validationErrors.password = window.polyglot.t('app.validationlength', {length: 8});
         }
-      );
-    }
+      }
 
+      if (!attributes.confirmPassword) {
+        validationErrors.confirmPassword = window.polyglot.t('app.validationrequired');
+      } else {
+        if (attributes.password !== attributes.confirmPassword) {
+          validationErrors.confirmPassword = window.polyglot.t('app.validationpasswordmatch');
+        }   
+      }
+
+      return _.isEmpty(validationErrors) 
+        ? null
+        : validationErrors;
+    },
+
+    resetPassword: function () {
+      var self = this;
+
+      $.ajax({
+        method: 'post',
+        url: '/api/userpasswordreset',
+        data: {
+          user: self.get('user'),
+          // password: password,
+          token: self.get('token')
+        },
+        success: function (jqXHR, textStatus, errorThrown) {
+          if (jqXHR.success) {
+            Backbone.history.navigate('#/dashboard', {trigger: true});
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          alert('error');
+        }
+      });
+    }
   });
 
   return UserPasswordResetModel;

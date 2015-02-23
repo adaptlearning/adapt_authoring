@@ -7,7 +7,9 @@ define(function(require) {
 
     model: ThemeModel,
 
-    url: 'api/themetype'
+    url: 'api/themetype',
+
+    comparator: 'displayName'
 
   });
 

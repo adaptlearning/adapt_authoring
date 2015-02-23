@@ -15,7 +15,7 @@ define(function(require){
     },
 
     events: {
-      'click a':'onNavigationItemClicked'
+      'click a.navigation-item':'onNavigationItemClicked'
     },
 
     render: function() {
@@ -32,6 +32,7 @@ define(function(require){
 
     onNavigationItemClicked: function(event) {
       event.preventDefault();
+      event.stopPropagation();
       Origin.trigger('navigation:' + $(event.currentTarget).attr('data-event'));
     }
 

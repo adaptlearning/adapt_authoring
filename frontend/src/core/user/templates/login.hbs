@@ -10,9 +10,11 @@
     <form class="login-form">
 
         <div class="login-new-user col-1-2">
-            <div class="login-new-user-inner">
 
-                <h2 class="login-title login-form-row">
+            <div class="login-new-user-inner">
+                 Welcome to the Adapt Builder.<br/><br />
+                 This is a pre-release version only intended for selected audiences. 
+         {{!--        <h2 class="login-title login-form-row">
                     {{t 'app.newuser'}}
                 </h2>
 
@@ -20,7 +22,7 @@
                     {{t 'app.createnewaccount'}}
                 </div>
 
-                <button class="btn">{{t 'app.createnewaccountbutton'}}</button>
+                <button class="btn">{{t 'app.createnewaccountbutton'}}</button> --}}
 
             </div>
         </div>
@@ -31,11 +33,6 @@
                 <h2 class="login-title login-form-row">
                     {{t 'app.returninguser'}}
                 </h2>
-
-                <div class="login-body login-form-row">
-                    {{t 'app.pleaseloginor'}}&nbsp;
-                    <a class="login-forgot-password" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
-                </div>
 
                 <span id="loginErrorMessage" class="error"></span>
 
@@ -53,11 +50,13 @@
                     <input type="password" id="login-input-password" tabindex="2">
                 </div>
 
-                <div class="login-remember-me login-form-row">
-                    <input id="remember-me" type="checkbox"/> 
-                    <label>
-                        {{t 'app.rememberme'}}
-                    </label>
+                <div class="login-remember-me">
+                    <input id="remember-me" name="remember-me" type="checkbox"/> 
+                    <label for="remember-me" class="remember-me-label">{{t 'app.rememberme'}}</label>
+                </div>
+
+                <div class="login-forgot-password">
+                    <a class="login-forgot-password" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
                 </div>
 
                 <button type="submit" class="btn btn-primary login-form-submit" tabindex="3">{{t 'app.login'}}</button>

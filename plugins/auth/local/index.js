@@ -9,11 +9,21 @@ var auth = require('../../../lib/auth'),
     fs = require('fs'),
     path = require('path'),
     passport = require('passport'),
+    permissions = require('../../../lib/permissions'),
+    logger = require('../../../lib/logger'),
     LocalStrategy = require('passport-local').Strategy;
 
 var MESSAGES = {
-  INVALID_DETAILS: 'invalid details'
+  INVALID_USERNAME_OR_PASSWORD: 'Invalid username or password',
+  ACCOUNT_LOCKED: 'Account locked -- contact an administrator to unlock'
 };
+
+var ERROR_CODES = {
+  INVALID_USERNAME_OR_PASSWORD: 1,
+  ACCOUNT_LOCKED: 2
+};
+
+var MAX_LOGIN_ATTEMPTS = 3;
 
 function LocalAuth() {
   this.strategy = new LocalStrategy({ usernameField: 'email' }, this.verifyUser);
@@ -26,29 +36,51 @@ LocalAuth.prototype.init = function (app) {
 };
 
 LocalAuth.prototype.verifyUser = function (email, password, done) {
-  // retrieve the user and compare details with those provided
+  // Retrieve the user and compare details with those provided
   usermanager.retrieveUser({ email: email, auth: 'local' }, function (error, user) {
     if (error) {
       return done(error);
     }
 
     if (!user) {
-      return done(null, false, { message: MESSAGES.INVALID_DETAILS });
+      return done(null, false, {message: MESSAGES.INVALID_USERNAME_OR_PASSWORD, 
+        errorCode: ERROR_CODES.INVALID_USERNAME_OR_PASSWORD});
     }
 
-    // validate the user's password
-    auth.validatePassword(password, user.password, function (error, valid) {
-      if (error) {
-        return done(error);
-      }
+    if (user.failedLoginCount < MAX_LOGIN_ATTEMPTS) {
+      // Validate the user's password
+      auth.validatePassword(password, user.password, function (error, valid) {
+        if (error) {
+          return done(error);
+        }
 
-      // did password check out?
-      if (!valid) {
-        return done(null, false, { message: MESSAGES.INVALID_DETAILS });
-      }
+        // Did password check out?
+        if (!valid) {
+          // Increment the count of failed attempts
+          var failedCount = user.failedLoginCount ? user.failedLoginCount : 0;
+          
+          failedCount++;
 
-      return done(null, user);
-    });
+          var delta = {
+            failedLoginCount: failedCount
+          };
+
+          usermanager.updateUser({email: user.email}, delta, function(error) {
+            if (error) {
+              return done(error);
+            }
+            
+            return done(null, false, {message: MESSAGES.INVALID_USERNAME_OR_PASSWORD, 
+              errorCode: ERROR_CODES.INVALID_USERNAME_OR_PASSWORD});
+          });
+        } else {
+          return done(null, user);
+        }
+      });
+    } else {
+      // Indicate that the account is locked out
+      return done(null, false, {message: MESSAGES.ACCOUNT_LOCKED, errorCode: ERROR_CODES.ACCOUNT_LOCKED});
+    }
   });
 };
 
@@ -59,22 +91,50 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
     }
 
     if (!user) {
+      // Check if a valid email was used
       res.statusCode = 401;
-      return res.json({ success: false });
-    }
+      return res.json({ success: false, errorCode: info.errorCode});
+    } else {
+      // Store the login details
+      req.logIn(user, function (error) {
+        if (error) {
+          return next(error);
+        }
 
-    req.logIn(user, function (error) {
-      if (error) {
-        return next(error);
-      }
+        usermanager.logAccess(user, function(error) {
+          if (error) {
+            return next(error);
+          }
 
-      res.statusCode = 200;
-      return res.json({
-        success: true,
-        id: user._id,
-        email: user.email
+
+          //Used to get the users permissions
+          permissions.getUserPermissions(user._id, function(error, userPermissions) {
+            if (error) {
+              return next(error);
+            }
+            res.statusCode = 200;
+
+            if (req.body.shouldPersist && req.body.shouldPersist == 'true') {
+              // Session is persisted for 2 weeks if the user has set 'Remember me'
+              req.session.cookie.maxAge = 14 * 24 * 3600000;
+            } else {
+              req.session.cookie.expires = false;
+            }
+
+            return res.json({
+              success: true,
+              id: user._id,
+              email: user.email,
+              tenantId: user._tenantId,
+              permissions: userPermissions
+            });
+
+          });
+           
+        });
       });
-    });
+    }
+    
   })(req, res, next);
 };
 
@@ -95,6 +155,7 @@ LocalAuth.prototype.registerUser = function (req, res, next) {
     if (error) {
       return next(error);
     }
+
 
     res.statusCode = 200;
     return res.json({ _id:user._id, email: user.email });
@@ -136,86 +197,122 @@ LocalAuth.prototype.resetPassword = function (req, res, next) {
 
   this.internalResetPassword(user, function (error, user) {
     if (error) {
-      return next(error);
+      logger.log('error', error);
+      res.statusCode = 200;
+      return res.json({success: false});
+      // return next(error);
     }
 
     res.statusCode = 200;
-    return res.json({ success: true });
-
+    return res.json({success: true});
   });
-};
+ };
 
-LocalAuth.prototype.internalResetPassword = function (user, cb) {
+LocalAuth.prototype.internalResetPassword = function (user, next) {
   if (!user.id || !user.password) {
-    return cb(new auth.errors.UserResetPasswordError('email and password are required!'));
+    return next(new auth.errors.UserResetPasswordError('User ID and password are required!'));
   }
 
-  // Update user details with hashed password
+  // Hash the password
   auth.hashPassword(user.password, function (error, hash) {
     if (error) {
       return cb(error);
     }
 
-    user.password = hash;
-
-    usermanager.resetUserPassword(user, function (error, user) {
+    // Update user details with hashed password
+    usermanager.updateUser({_id: user.id}, {password: hash, failedLoginCount: 0}, function(err) {
       if (error) {
-        return next(error);
+        return next(error)
       }
 
-      // Remove reset request
-      usermanager.deleteUserPasswordReset({user:user.id}, function (error, user) {
+      usermanager.deleteUserPasswordReset({user: user.id}, function (error, user) {
         if (error) {
-          return cb(error);
+          return next(error);
         }
+
         //Request deleted, password successfully reset
-        return cb(null, user);
+        return next(null, user);
       });
     });
   });
 };
 
 LocalAuth.prototype.generateResetToken = function (req, res, next) {
-  var user = {
-    email: req.body.email,
-    ipAddress: req.connection.remoteAddress
-  };
+  var self = this;
 
-  this.internalGenerateResetToken(user, function (error, user) {
+  usermanager.retrieveUser({email: req.body.email, auth: 'local'}, function (error, userRecord) {
     if (error) {
-      return next(error);
+      logger.log('error', error);
+      res.statusCode = 400;
+      return res.json({success: false});
     }
+      
+    if (userRecord) {
+      var user = {
+        email: req.body.email,
+        ipAddress: req.connection.remoteAddress
+      };
 
-    res.statusCode = 200;
-    return res.json({ success: true });
+      self.internalGenerateResetToken(user, function (error, userToken) {
+        if (error) {
+          logger.log('error', error);
+          return next(error);
+        }
 
+        if (!userToken) {
+          return next(new auth.errors.UserGenerateTokenError('In generateResetToken and user object is not set!'));
+        }
+        
+        var subject = app.polyglot.t('app.emailforgottenpasswordsubject');
+        var body = app.polyglot.t('app.emailforgottenpasswordbody', {rootUrl: configuration.getConfig('rootUrl'), data: userToken.token});
+
+        app.mailer.send(user.email, subject, body, function(error) {
+          if (error) {
+            logger.log('error', error);
+            res.statusCode = 200;
+            return res.json({success: false});
+          } 
+      
+          logger.log('info', 'Password reset for ' + user.email + ' from ' + user.ipAddress);
+
+          res.statusCode = 200;
+          return res.json({success: true});
+        });
+      });
+    } else {
+      // Indicate that all is ok even if the user does not exist
+      // This is to prevent hacking attempts
+      res.statusCode = 200;
+      return res.json({success: true});      
+    }
   });
 };
 
-LocalAuth.prototype.internalGenerateResetToken = function (user, cb) {
+LocalAuth.prototype.internalGenerateResetToken = function (user, next) {
   if (!user.email) {
-    return cb(new auth.errors.UserGenerateTokenError('email is required!'));
+    return next(new auth.errors.UserGenerateTokenError('email is required!'));
   }
 
   auth.createToken(function (error, token) {
     if (error) {
-      return cb(error);
+      return next(error);
     }
 
     var userReset = {
       email: user.email,
       token: token,
-      tokenCreated: new Date(),
+      issueDate: new Date(),
       ipAddress: user.ipAddress
     };
 
     usermanager.createUserPasswordReset(userReset, function (error, user) {
       if (error) {
-        return cb(error);
+        logger.log('error', error);
+        return next(error);
       }
 
       // Success
-      return cb(null, user);
+      return next(null, user);
     });
   });
 };

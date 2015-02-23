@@ -29,13 +29,18 @@
   {{/if}}
 
   {{#if metadata.height}}
-    <div class="asset-height">{{t 'app.assetdimensions'}} : {{{metadata.width}}} X {{{metadata.height}}}</div>
+    <div class="asset-height">{{t 'app.assetdimensions'}} : {{{metadata.width}}} x {{{metadata.height}}}</div>
   {{/if}}
 
   {{#if tags.length}}
-    <div class="asset-tags">{{t 'app.tags'}} : {{pickCSV tags "title" ", "}}</div>
+    <div class="asset-tags">{{t 'app.tags'}} : {{{renderTags tags "title"}}}</div>
   {{/if}}
 
+  {{#if isSelectable}}
+  <div class="assset-select">
+   <a href="#" class="btn btn-primary confirm-select-asset">Select</a>
+  </div>
+  {{/if}}
   <div class="asset-preview-edit">
     <button class="asset-preview-edit-button btn btn-primary">{{t 'app.edit'}}</button>
   </div>

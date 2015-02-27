@@ -800,7 +800,6 @@ function handleUploadedPlugin (req, res, next) {
         var canonicalDir;
 
         if(files.indexOf("bower.json") != -1) {
-          console.log("At root level");
           canonicalDir = outputPath
         }
         else {

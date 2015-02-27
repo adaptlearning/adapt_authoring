@@ -29,11 +29,15 @@ define(function(require){
         error: function(data, status, error) {
           $('.loading').hide();
           var message = 'There was an error uploading the plugin';
+
           if (data && data.responseJSON && data.responseJSON.error) {
             message += ":\n\n" + data.responseJSON.error;
           }
 
           alert(message);
+
+          // go back to the upload, maybe handle this in the sidebar?
+          Origin.router.navigate('#/pluginManagement/upload', { trigger: true });
         },
         success: function(data, status, xhr) {
           Origin.trigger('scaffold:updateSchemas', function() {

@@ -797,7 +797,17 @@ function handleUploadedPlugin (req, res, next) {
 
         // first entry should be our target directory
         var packageJson;
-        var canonicalDir = path.join(outputPath, files[0]);
+        var canonicalDir;
+
+        if(files.indexOf("bower.json") != -1) {
+          console.log("At root level");
+          canonicalDir = outputPath
+        }
+        else {
+          var e = new Error("Cannot find bower.json file in the plugin root, please check your zip file and try again.");
+          return next(e);
+        }
+
         try {
           packageJson = require(path.join(canonicalDir, 'bower.json'));
         } catch (error) {

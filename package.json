@@ -64,9 +64,9 @@
     "semver": "^2.3.1",
     "socket.io": "^1.1.0",
     "underscore": "~1.5.2",
-    "unzip": "0.1.8",
     "validator": "3.3.0",
-    "winston": "0.7.2"
+    "winston": "0.7.2",
+    "unzip2": "^0.2.5"
   },
   "main": "index",
   "engines": {

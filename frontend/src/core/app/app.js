@@ -1,5 +1,6 @@
 require([
     'templates',
+    'partials',
     'polyglot',
     'coreJS/app/origin',
     'coreJS/app/router',
@@ -32,6 +33,7 @@ require([
     'plugins/plugins'
 ], function (
     Templates,
+    Partials,
     Polyglot,
     Origin,
     Router,
@@ -60,7 +62,6 @@ require([
     ImageReady,
     MediaElement
 ) {
-
   var locale = localStorage.getItem('lang') || 'en';
   // Get the language file
   $.getJSON('lang/' + locale, function(data) {
@@ -84,7 +85,7 @@ require([
                 Origin.initialize();
             })
         })
-        
+
       }
     });
   });

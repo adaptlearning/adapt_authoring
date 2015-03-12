@@ -102,6 +102,7 @@
   "app.placeholdereditthistext" : "{Edit this text...}",
   "app.confirmpublish" : "Are you sure you want to publish?",
   "app.publish" : "Publish",
+  "app.publishing" : "Publishing...",
   "app.preview" : "Preview",
   "app.editprofileinformation" : "View/edit your profile",
   "app.firstname" : "First name",

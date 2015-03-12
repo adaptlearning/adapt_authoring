@@ -37,6 +37,7 @@ define(function(require){
     preRender: function(options) {
       this.currentView = options.currentView;
       Origin.editor.pasteParentModel = false;
+      Origin.editor.isPreviewPending = false;
       this.currentCourseId = Origin.editor.data.course.get('_id');
 
       this.currentPageId = options.currentPageId;
@@ -47,6 +48,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
       this.listenTo(Origin, 'editorCommon:publish', this.publishProject);
       this.listenTo(Origin, 'editorCommon:preview', this.previewProject);
+
 
       this.render();
       this.setupEditor();
@@ -69,37 +71,88 @@ define(function(require){
       this.renderCurrentEditorView();
     },
 
-    publishProject: function() {
+    publishProject: function(event) {
+      event && event.preventDefault();
+
       var canPublish = this.validateCourseContent();
 
-      if (canPublish) {
-        var $downloadForm = $('#downloadForm');
+      if (canPublish && !Origin.editor.isPublishPending) {
+        $('.editor-common-sidebar-publishing-progress').animate({ width: '100%' }, 30000);
+        $('.editor-common-sidebar-publish-inner').addClass('display-none');
+        $('.editor-common-sidebar-publishing').removeClass('display-none');
+        //return;
         var courseId = Origin.editor.data.course.get('_id');
         var tenantId = Origin.sessionModel.get('tenantId');
 
-        $downloadForm.attr('action', '/download/' + tenantId + '/' + courseId + '/' + 'download.zip');
-        $downloadForm.submit();
+        $.get('/download/' + tenantId + '/' + courseId, function(data) {
+
+          $('.editor-common-sidebar-publishing-progress').css('width', 0).stop();;
+          Origin.editor.isPublishPending = false;
+          $('.editor-common-sidebar-publish-inner').removeClass('display-none');
+          $('.editor-common-sidebar-publishing').addClass('display-none');
+
+          var $downloadForm = $('#downloadForm');
+
+          $downloadForm.attr('action', '/download/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
+          $downloadForm.submit();
+          
+        });
+        
       } else {
         return false;
       }
     },
 
-    previewProject: function() {
-      var canPreview = this.validateCourseContent();
+    launchCoursePreview: function() {
+      var courseId = Origin.editor.data.course.get('_id');
+      var tenantId = Origin.sessionModel.get('tenantId');
 
-      if (canPreview) {
-        Origin.trigger('router:showLoading', true);
+      window.open('/preview/' + tenantId + '/' + courseId + '/main.html', 'preview');
+    },
+
+    previewProject: function(event) {
+      event && event.preventDefault();
+
+      var self = this;
+      var canPreview = self.validateCourseContent();
+
+      if (canPreview && !Origin.editor.isPreviewPending) {
+        Origin.editor.isPreviewPending = true;
+
+        // Report progress for up to 50 seconds
+        $('.editor-common-sidebar-preview-progress').animate({ width: '100%' }, 50000);
 
         $.ajax({
-          url: '/api/output/adapt/preview/' + this.currentCourseId
-        }).done(function() {
-          var courseId = Origin.editor.data.course.get('_id');
-          var tenantId = Origin.sessionModel.get('tenantId');
+          method: 'get',
+          url: '/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId,
+          success: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.success) {
+              if (jqXHR.pollUrl) {
+                // TODO - Ping the remote URL to check if the job has been completed
 
-          window.open('/preview/' + tenantId + '/' + courseId + '/main.html');
-          Origin.trigger('router:hideLoading');
+              } else {
+                self.launchCoursePreview();
+                self.resetPreviewProgress();
+              }                           
+            } else {
+              self.resetPreviewProgress();
+              alert('Error generating preview, please contact Administrator');
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            self.resetPreviewProgress();
+            alert('Error');
+            console.log(jqXHR);
+            console.log(textStatus);
+            console.log(errorThrown);
+          }
         });
       }
+    },
+
+    resetPreviewProgress: function() {
+      $('.editor-common-sidebar-preview-progress').css('width', 0).stop();;
+      Origin.editor.isPreviewPending = false;
     },
 
     /*

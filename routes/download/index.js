@@ -3,13 +3,10 @@ var logger = require('../../lib/logger');
 var server = module.exports = express();
 var usermanager = require('../../lib/usermanager');
 var configuration = require('../../lib/configuration');
-<<<<<<< HEAD
 var Constants = require('../../lib/outputmanager').Constants;
 var configuration = require('../../lib/configuration');
 var fs = require('fs');
 var path = require('path');
-=======
->>>>>>> learningpool-merge-12th-march
 
 server.get('/download/:tenant/:course', function (req, res, next) {
   var course = req.params.course,
@@ -17,16 +14,13 @@ server.get('/download/:tenant/:course', function (req, res, next) {
       currentUser = usermanager.getCurrentUser();
 
   if (currentUser && (currentUser.tenant._id == tenant)) {
-<<<<<<< HEAD
+
     var outputplugin = app.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), function (error, plugin){
-=======
-    app.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), function (error, plugin){
->>>>>>> learningpool-merge-12th-march
+
       if (error) {
         logger.log('error', error);
         res.json({ success: false, message: error.message });
         return res.end();
-<<<<<<< HEAD
       } else {
         plugin.publish(course, false, req, res, function (error, result) {
           if (error) {
@@ -37,20 +31,7 @@ server.get('/download/:tenant/:course', function (req, res, next) {
           return res.json(result);
         });
       }
-=======
-      } 
-        
-      plugin.publish(course, false, req, res, function (error, result) {
-        if (error) {
-          logger.log('error', 'Unable to publish');
-          return res.json({ success: false, message: error.message });
-        }
 
-        res.statusCode = 200;
-        return res.json({success: true});
-      });
-    
->>>>>>> learningpool-merge-12th-march
     });
   } else {
     // User doesn't have access to this course

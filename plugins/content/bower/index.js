@@ -790,7 +790,9 @@ function handleUploadedPlugin (req, res, next) {
     .on('close', function (data) {
       // enumerate output directory and search for bower.json
       fs.readdir(outputPath, function (err, files) {
-        if (err) return next(err);
+        if (err) {
+          return next(err);
+        }
 
         // first entry should be our target directory
         var packageJson;
@@ -798,14 +800,17 @@ function handleUploadedPlugin (req, res, next) {
 
         if(files.indexOf("bower.json") != -1) {
           canonicalDir = outputPath
-        }
-        else {
+        } else {
           var e = new Error("Cannot find bower.json file in the plugin root, please check your zip file and try again.");
           return next(e);
         }
 
-        try { packageJson = require(path.join(canonicalDir, 'bower.json')); }
-        catch (error) { return next(error); }
+        try {
+          packageJson = require(path.join(canonicalDir, 'bower.json'));
+        }
+        catch (error) {
+          return next(error);
+        }
 
         // extract the plugin type from the package
         var pluginType = extractPluginType(packageJson);

@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * Course Content plugin type
  */
@@ -19,6 +20,7 @@ var contentmanager = require('../../../lib/contentmanager'),
     mkdirp = require('mkdirp'),
     logger = require('../../../lib/logger'),
     database = require('../../../lib/database'),
+    helpers = require('../../../lib/helpers'),
     usermanager = require('../../../lib/usermanager');
 
 
@@ -27,6 +29,10 @@ function CourseContent () {
 
 util.inherits(CourseContent, ContentPlugin);
 
+var DASHBOARD_COURSE_FIELDS = [
+    '_id', '_tenantId', '_type', '_isShared', 'title', 'heroImage', 
+    'updatedAt', 'updatedBy', 'createdAt', 'createdBy', 'tags'
+];
 /**
  * essential setup
  *
@@ -36,6 +42,104 @@ function initialize () {
   var self = this;
   var app = origin();
   app.once('serverStarted', function (server) {
+    // My Courses
+    rest.get('/my/course', function (req, res, next) {
+      var options = _.keys(req.body).length
+      ? req.body
+      : req.query;
+      var search = options.search || {};
+      var self = this;
+      var orList = [];
+      var andList = [];
+
+      // convert searches to regex
+      async.each(
+        Object.keys(search),
+        function (key, nextKey) {
+          var exp = {};
+          // convert strings to regex for likey goodness
+          if ('string' === typeof search[key]) {
+            exp[key] = new RegExp(search[key], 'i');
+            orList.push(exp);
+          } else {
+            exp[key] = search[key];
+            andList.push(exp);
+          }
+          nextKey();
+      }, function () {
+        var query = {};
+        if (orList.length) {
+          query.$or = orList;
+        }
+        
+        query.$and = andList;
+
+        // force search to use only courses created by current user
+        var user = usermanager.getCurrentUser();
+        query.$and.push({ createdBy : user._id });
+
+        options.jsonOnly = true;
+        options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
+        
+        new CourseContent().retrieve(query, options, function (err, results) {
+          if (err) {
+            res.statusCode = 500;
+            return res.json(err);
+          }
+          return res.json(results);
+        });
+      });
+    });
+
+    // Shared Courses
+    rest.get('/shared/course', function (req, res, next) {
+      var options = _.keys(req.body).length
+      ? req.body
+      : req.query;
+      var search = options.search || {};
+      var self = this;
+      var orList = [];
+      var andList = [];
+
+      // convert searches to regex
+      async.each(
+        Object.keys(search),
+        function (key, nextKey) {
+          var exp = {};
+          // convert strings to regex for likey goodness
+          if ('string' === typeof search[key]) {
+            exp[key] = new RegExp(search[key], 'i');
+            orList.push(exp);
+          } else {
+            exp[key] = search[key];
+            andList.push(exp);
+          }
+          nextKey();
+      }, function () {
+        var query = {};
+        if (orList.length) {
+          query.$or = orList;
+        }
+        
+        query.$and = andList;
+
+        // Only return courses which have been shared
+        query.$and.push({ _isShared: true });
+        
+        options.jsonOnly = true;
+        options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
+
+        new CourseContent().retrieve(query, options, function (err, results) {
+          if (err) {
+            res.statusCode = 500;
+            return res.json(err);
+          }
+
+          return res.json(results);
+        });
+      });
+    });
+
     // add course duplicate route - @TODO - Restrict access to this!
     rest.get('/duplicatecourse/:id', function (req, res, next) {
       duplicate({_id: req.params.id}, function (error, newCourse) {
@@ -48,7 +152,6 @@ function initialize () {
       });
     });
   });
-
 
   app.contentmanager.addContentHook('update', 'course', {when:'pre'}, function (data, next) {
     if (data[1].hasOwnProperty('themeSettings')) {
@@ -65,21 +168,28 @@ function initialize () {
     app.contentmanager.addContentHook('update', contentType, {when:'post'}, function (contentType, data, next) {
 
       var userId = usermanager.getCurrentUser()._id;
-      var updatedAt = new Date();
 
       database.getDatabase(function (err, db) {
-        // TODO - There is a possible context issue here which needs resolved
         if (err) {
             logger.log('error', err);
             return next(err)
         }
 
-        db.update('course', { _id: data._courseId }, { updatedAt: updatedAt, updatedBy: userId }, function (err) {
-          if (err) {
-            return next(err);
-          }
+        // Defensive programming -- just in case
+        if (data && data._courseId) {
+          // If the _courseId is present, update the last updated date                   
+          db.update('course', { _id: data._courseId }, { updatedAt: new Date(), updatedBy: userId }, function (err) {
+            if (err) {
+              logger.log('error', err);
+              return next(err);
+            }
+            next(null, data);
+          });
+        } else {
+          logger.log('warn', 'Unexpected value for "data" parameter when updating ' + contentType + ' by ' + userId);
           next(null, data);
-        });
+        }
+        
       });
 
     }.bind(null, contentType));
@@ -96,12 +206,24 @@ function initialize () {
  * @param {callback} next (function (err, isAllowed))
  */
 CourseContent.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
-  if (contentItem._isShared) {
-    return next(null, true);
-  }
+  helpers.hasCoursePermission(action, userId, tenantId, contentItem, function(err, isAllowed) {
+    if (err) {
+      return next(err);
+    }
 
-  var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._id);
-  permissions.hasPermission(userId, action, resource, next);
+    if (!isAllowed) {
+      // Check the permissions string
+      if (contentItem.hasOwnProperty('_courseId')) {
+        var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
+        permissions.hasPermission(userId, action, resource, next);
+      } else {
+        // This is a brand new course
+        return next(null, true);
+      }
+    } else {
+      return next(null, isAllowed);
+    }
+  });
 };
 
 /**
@@ -132,7 +254,12 @@ CourseContent.prototype.create = function (data, next) {
   var user = usermanager.getCurrentUser();
   var tenantId = user.tenant && user.tenant._id;
 
-  ContentPlugin.prototype.create.call(self, data, function (error, doc) {
+  ContentPlugin.prototype.create.call(self, data, function (err, doc) {
+    if (err) {
+      logger.log('error', err);
+      return next(err);
+    }
+
     // grant the creating user full editor permissions
     permissions.createPolicy(user._id, function (err, policy) {
       if (err) {
@@ -176,8 +303,13 @@ CourseContent.prototype.destroy = function (search, force, next) {
         return next(error);
       }
 
-      // courses use cascading delete
       if (docs && docs.length) {
+        // Final check before deletion
+        if (docs[0]._isShared && docs[0].createdBy != user._id) {
+          return next(new ContentPermissionError());
+        }
+        
+        // Courses use cascading delete
         async.eachSeries(
           docs,
           function (doc, cb) {
@@ -200,6 +332,7 @@ CourseContent.prototype.destroy = function (search, force, next) {
  */
 function duplicate (data, cb) {
   var self = this;
+  var user = app.usermanager.getCurrentUser();
 
   if (!data) {
     return cb(null);
@@ -222,6 +355,9 @@ function duplicate (data, cb) {
       // New course name
       doc.title = 'Copy of ' + doc.title;
 
+      // Set the current user's ID as the creator
+      doc.createdBy = user._id;
+      
       CourseContent.prototype.create(doc, function (error, newCourse) {
         if (error) {
           logger.log('error', error);

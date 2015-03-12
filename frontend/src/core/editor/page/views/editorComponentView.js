@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
   var Backbone = require('backbone');
@@ -15,23 +16,29 @@ define(function(require){
     events: _.extend({
       'click a.component-delete'        : 'deleteComponentPrompt',
       'click a.open-context-component'  : 'openContextMenu',
-      'dblclick':'loadComponentEdit'
+      'dblclick'                        : 'loadComponentEdit'
     }, EditorOriginView.prototype.events),
 
     preRender: function() {
+      this.$el.addClass('component-' + this.model.get('_layout'));
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
-      this.listenTo(Origin, 'editorPageView:deleteComponent:' + this.model.get('_id'), this.deleteComponent);
+      this.listenTo(this.model, 'sync', this.setupModelEvents);
+      if (!this.model.isNew()) {
+        this.setupModelEvents();
+      }
       
       this.on('contextMenu:component:edit', this.loadComponentEdit);
       this.on('contextMenu:component:copy', this.onCopy);
       this.on('contextMenu:component:cut', this.onCut);
       this.on('contextMenu:component:delete', this.deleteComponentPrompt);
+    },
 
+    setupModelEvents: function() {
+      this.listenTo(Origin, 'editorPageView:deleteComponent:' + this.model.get('_id'), this.deleteComponent);
     },
 
     postRender: function () {
-      this.$el.addClass('component-' + this.model.get('_layout'));
       this.setupDragDrop();
 
       _.defer(_.bind(function(){
@@ -46,15 +53,15 @@ define(function(require){
       }
       var id = this.model.get('_id');
       var deletePrompt = {
-          _type: 'prompt',
-          _showIcon: true,
-          title: window.polyglot.t('app.deletecomponent'),
-          body: window.polyglot.t('app.confirmdeletecomponent') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletecomponentwarning'),
-          _prompts: [
-            {_callbackEvent: 'editorPageView:deleteComponent:' + id, promptText: window.polyglot.t('app.ok')},
-            {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
-          ]
-        };
+        _type: 'prompt',
+        _showIcon: true,
+        title: window.polyglot.t('app.deletecomponent'),
+        body: window.polyglot.t('app.confirmdeletecomponent') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletecomponentwarning'),
+        _prompts: [
+          {_callbackEvent: 'editorPageView:deleteComponent:' + id, promptText: window.polyglot.t('app.ok')},
+          {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
+        ]
+      };
 
       Origin.trigger('notify:prompt', deletePrompt);
     },
@@ -63,9 +70,9 @@ define(function(require){
       var parentId = this.model.get('_parentId');
 
       if (this.model.destroy()) {
-          this.remove();
-          Origin.trigger('editorView:removeComponent:' + parentId);   
-        }
+        this.remove();
+        Origin.trigger('editorView:removeComponent:' + parentId);   
+      }
     },
 
     loadComponentEdit: function () {

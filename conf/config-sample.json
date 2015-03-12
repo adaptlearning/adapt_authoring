@@ -9,5 +9,6 @@
   "tenantPrefix": "adapt-builder-tenant-",
   "sessionSecret": "your-secret-here",
   "auth": "local",
-  "useffmpeg" : false
+  "useffmpeg" : false,
+  "outputPlugin" : "adapt"
 }

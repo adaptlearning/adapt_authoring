@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
   var Backbone = require('backbone');
@@ -39,7 +40,7 @@ define(function(require) {
         
         var isSelected = false;
 
-        if (theme.get('_id') === this.model.get('_theme')) {
+        if (theme.get('name') === this.model.get('_theme')) {
           isSelected = true;
         }
 

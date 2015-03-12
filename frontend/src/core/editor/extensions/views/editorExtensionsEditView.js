@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
   var Backbone = require('backbone');
@@ -69,11 +70,13 @@ define(function(require) {
 
     onAddExtensionClicked: function(event) {
         this.currentSelectedIds = [$(event.currentTarget).attr('data-id')];
+        var extensionName = $(event.currentTarget).attr('data-displayname');
+
         var props = {
             _type: 'prompt',
             _showIcon: true,
             title: window.polyglot.t('app.manageextensions'),
-            body: window.polyglot.t('app.confirmapplyextensions'),
+            body: window.polyglot.t('app.confirmapplyextension', {extension: extensionName}),
             _prompts: [{
                     _callbackEvent: 'editorExtensionsEdit:views:add', 
                     promptText: window.polyglot.t('app.ok')

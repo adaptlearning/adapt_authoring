@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
     
     var Origin = require('coreJS/app/origin');
@@ -8,9 +9,9 @@ define(function(require) {
     var EditorComponentListSidebarView = SidebarItemView.extend({
 
         events: {
-            'click .editor-component-list-sidebar-save': 'onSaveClicked',
+            'click .editor-component-list-sidebar-save':      'onSaveClicked',
             'click .editor-component-list-sidebar-save-edit': 'onSaveAndEditClicked',
-            'click .editor-component-list-sidebar-cancel': 'cancelEditing'
+            'click .editor-component-list-sidebar-cancel':    'cancelEditing'
         },
 
         onSaveClicked: function(event) {

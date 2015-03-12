@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
     var Backbone = require('backbone');
@@ -69,7 +70,6 @@ define(function(require){
         },
 
         updateCollection: function (reset) {
-
             // If removing items, we need to reset our limits
             if (reset) {
               // Trigger event to kill zombie views
@@ -82,6 +82,7 @@ define(function(require){
               this.shouldStopFetches = false;
 
               this.assetLimit = 0;
+              this.collectionLength = 0;
               this.collection.reset();
             }
 
@@ -113,7 +114,7 @@ define(function(require){
               },
               success: _.bind(function() {
                 // On successful collection fetching set lazy render to enabled
-                 if (this.collectionLength === this.collection.length) {
+                if (this.collectionLength === this.collection.length) {
                     this.shouldStopFetches = true;
                 } else {
                     this.shouldStopFetches = false;
@@ -127,7 +128,7 @@ define(function(require){
         },
 
         appendAssetItem: function (asset) {
-          this.$('.asset-management-collection-inner').append(new AssetItemView({ model: asset }).$el);
+            this.$('.asset-management-collection-inner').append(new AssetItemView({ model: asset }).$el);
         },
 
         lazyRenderCollection: function() {
@@ -170,6 +171,8 @@ define(function(require){
             var pattern = '.*' + filterText.toLowerCase() + '.*';
             this.search = { title: pattern, description: pattern };
             this.updateCollection(true);
+
+            $(".asset-management-modal-filter-search" ).focus();
         },
 
         removeLazyScrolling: function() {

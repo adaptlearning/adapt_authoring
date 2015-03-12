@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 require([
     'templates',
     'polyglot',
@@ -22,6 +23,8 @@ require([
     'coreJS/options/options',
     'coreJS/scaffold/scaffold',
     'coreJS/modal/modal',
+    'coreJS/filters/filters',
+    'coreJS/actions/actions',
     'jquery-ui',
     'jquery-form',
     'inview',
@@ -60,32 +63,38 @@ require([
     ImageReady,
     MediaElement
 ) {
+  // Read in the configuration values/constants
+  $.getJSON('config/config.json', function(configData) {
+    Origin.constants = configData;
 
-  var locale = localStorage.getItem('lang') || 'en';
-  // Get the language file
-  $.getJSON('lang/' + locale, function(data) {
-    // Instantiate Polyglot with phrases
-    window.polyglot = new Polyglot({phrases: data});
+    var locale = localStorage.getItem('lang') || 'en';
 
-    Origin.sessionModel = new SessionModel();
+    // Get the language file
+    $.getJSON('lang/' + locale, function(data) {
+      // Instantiate Polyglot with phrases
+      window.polyglot = new Polyglot({phrases: data});
 
-    Origin.router = new Router();
+      Origin.sessionModel = new SessionModel();
 
-    Origin.sessionModel.fetch({
-      success: function(data) {
-        // This callback is called from the schemasModel.js in scaffold as the schemas
-        // need to load before the app loads
-        Origin.trigger('app:userCreated', function() {
-            $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
-            Origin.trigger('app:dataReady');
-            // Defer here is good - give anything tapping in app:dataReady event
-            // time to do their thang!
-            _.defer(function() {
-                Origin.initialize();
-            })
-        })
-        
-      }
+      Origin.router = new Router();
+
+      Origin.sessionModel.fetch({
+        success: function(data) {
+          // This callback is called from the schemasModel.js in scaffold as the schemas
+          // need to load before the app loads
+          Origin.trigger('app:userCreated', function() {
+              $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
+              Origin.trigger('app:dataReady');
+              // Defer here is good - give anything tapping in app:dataReady event
+              // time to do their thang!
+              _.defer(function() {
+                  Origin.initialize();
+              });
+          });
+          
+        }
+      });
     });
   });
+  
 });

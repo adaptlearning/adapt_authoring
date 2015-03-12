@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * Extension content plugin
  *
@@ -5,6 +6,7 @@
 
 var origin = require('../../../'),
     contentmanager = require('../../../lib/contentmanager'),
+    usermanager = require('../../../lib/usermanager'),
     rest = require('../../../lib/rest'),
     BowerPlugin = require('../bower'),
     ContentPlugin = contentmanager.ContentPlugin,
@@ -122,28 +124,6 @@ Extension.prototype.retrieve = function (search, options, next) {
 };
 
 /**
- * overrides BowerPlugin.prototype.updatePluginType
- *
- */
-
-Extension.prototype.updatePluginType = function (req, res, next) {
-  var delta = _.pick(req.body, '_isAvailableInEditor'); // only allow update of certain attributes
-  database.getDatabase(function (err, db) {
-    if (err) {
-      return next(err);
-    }
-
-    db.update('extensiontype', { _id: req.params.id }, delta, function (err) {
-      if (err) {
-        return next(err);
-      }
-
-      return res.json({ success: true });
-    });
-  });
-};
-
-/**
  * retrieves an array of extensiontype items that have been enabled on a particular course
  *
  * @param {string} courseId
@@ -227,6 +207,13 @@ function toggleExtensions (courseId, action, extensions, cb) {
     return cb(error);
   }
 
+  var user = usermanager.getCurrentUser();
+
+  if (user && user.tenant && user.tenant._id) {
+    // Changes to extensions warrants a full course rebuild
+    app.emit('rebuildCourse', user.tenant._id, courseId);
+  }   
+
   database.getDatabase(function (err, db) {
     if (err) {
       return cb(err);
@@ -234,9 +221,9 @@ function toggleExtensions (courseId, action, extensions, cb) {
 
     // retrieves specified components for the course and either adds or deletes
     // extension properties of the passed extensionItem
-    var updateComponentItems = function (componentType, schema, extensionItem, nextComponent) {
+    var updateComponentItems = function (tenantDb, componentType, schema, extensionItem, nextComponent) {
       var criteria = 'course' == componentType ? { _id : courseId } : { _courseId : courseId };
-      db.retrieve(componentType, criteria, { fields: '_id _extensions _enabledExtensions' }, function (err, results) {
+      tenantDb.retrieve(componentType, criteria, { fields: '_id _extensions _enabledExtensions' }, function (err, results) {
         if (err) {
           return cb(err);
         }
@@ -272,7 +259,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
           if (isConfig) {
             delta._enabledExtensions = enabledExtensions;
           }
-          db.update(componentType, { _id: component._id }, delta, next);
+          tenantDb.update(componentType, { _id: component._id }, delta, next);
         }, nextComponent);
       });
     };
@@ -282,14 +269,23 @@ function toggleExtensions (courseId, action, extensions, cb) {
         return cb(err);
       }
 
-      async.eachSeries(results, function (extensionItem, nextItem) {
-        var locations = extensionItem.properties.pluginLocations.properties;
-        async.eachSeries(Object.keys(locations), function (key, nextLocation) {
-          updateComponentItems(key, locations[key].properties, extensionItem, nextLocation);
-        }, nextItem);
-      }, cb);
+      // Switch to the tenant database
+      database.getDatabase(function(err, tenantDb) {
+        if (err) {
+          logger.log('error', err);
+          return cb(err);
+        }
+
+        async.eachSeries(results, function (extensionItem, nextItem) {
+          var locations = extensionItem.properties.pluginLocations.properties;
+          async.eachSeries(Object.keys(locations), function (key, nextLocation) {
+            updateComponentItems(tenantDb, key, locations[key].properties, extensionItem, nextLocation);
+          }, nextItem);
+        }, cb);  
+      });
+      
     });
-  });
+  }, configuration.getConfig('dbName'));
 }
 
 /**

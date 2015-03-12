@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
     var Origin = require('coreJS/app/origin');
@@ -11,7 +12,7 @@ define(function(require) {
 
         // Check if element is a view element
         if (_.isElement($el[0]) !== true) {
-            return console.log("Sidebar - Cannot add this object to the sidebard view. Please make sure it's the views $el");
+            return console.log("Sidebar - Cannot add this object to the sidebar view. Please make sure it's the views $el");
         }
 
         // Trigger update of views

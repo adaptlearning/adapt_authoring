@@ -43,6 +43,15 @@ ul.dashboard-options {
         width: 22%;
         max-width:300px;
         display:inline-block;
+        .project-image {
+            width:100%;
+            height:222px;
+            background-image:url(/images/origami-project.jpg);
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            border-right:1px solid #b7caed;
+        }
         .project-details-tags {
             display:none;
         }
@@ -58,7 +67,12 @@ ul.dashboard-options {
             border-bottom:1px solid #b7caed;
         }
         .project-image {
-            max-width:300px;
+            width:300px;
+            height:222px;
+            background-image:url(/images/origami-project.jpg);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             float:left;
             border-right:1px solid #b7caed;
         }
@@ -88,7 +102,8 @@ ul.dashboard-options {
 
 .sidebar-tag {
     text-align: left;
-    &.selected i:before {
+
+     &.selected span:first-child i:before{
         content:'\f205';
     }
 }

@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
   var Backbone = require('backbone');
@@ -27,9 +28,9 @@ define(function(require) {
           self.set('tenantId', '');
           self.set('email', '');
           self.set('permissions', []);
-          
-          Origin.trigger('login:changed');
+          self.set('_canRevert', false);
 
+          Origin.trigger('login:changed');
           Backbone.history.navigate('#/user/login', {trigger: true});
       });
     },

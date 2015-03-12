@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 // A module that offers options inside the title bar
 
 define(function(require) {

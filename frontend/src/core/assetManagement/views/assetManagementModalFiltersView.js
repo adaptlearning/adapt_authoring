@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
     var Origin = require('coreJS/app/origin');
@@ -5,6 +6,7 @@ define(function(require) {
     var AssetManagementModalTagsView = require('coreJS/assetManagement/views/assetManagementModalTagsView');
     var AssetManagementModalNewAssetView = require('coreJS/assetManagement/views/assetManagementModalNewAssetView');
     var AssetModel = require('coreJS/assetManagement/models/assetModel');
+    var TagsCollection = require('coreJS/tags/collections/tagsCollection');
 
     var AssetManagementModalFiltersView = Backbone.View.extend({
 
@@ -13,7 +15,7 @@ define(function(require) {
         events: {
             'click .asset-management-modal-filter-button': 'onFilterButtonClicked',
             'click .asset-management-modal-filter-clear-search': 'onClearSearchClicked',
-            'keyup .asset-management-modal-filter-search': 'onSearchKeyup',
+            'keydown .asset-management-modal-filter-search': 'onSearchKeyDown',
             'click .asset-management-modal-add-tag': 'onAddTagClicked',
             'click .asset-management-modal-add-asset': 'onAddAssetClicked'
         },
@@ -23,7 +25,9 @@ define(function(require) {
             this.usedTags = [];
             this.tags = [];
             this.availableTags = [];
-            this.listenTo(this.collection, 'sync', this.setupTags);
+            this.tagsCollection = new TagsCollection();
+            this.listenTo(this.tagsCollection, 'sync', this.setupTags);
+            this.tagsCollection.fetch({reset: true});
             this.listenTo(Origin, 'modal:closed', this.remove);
             this.listenTo(Origin, 'remove:views', this.remove);
             this.listenTo(Origin, 'assetManagement:modalTags:filterByTags', this.filterAssetsByTags);
@@ -31,17 +35,8 @@ define(function(require) {
         },
 
         setupTags: function() {
-            this.collection.each(function(asset) {
-                var tags = asset.get('tags');
-
-                _.each(tags, function(tag) {
-                    var titles = _.pluck(this.availableTags, 'title');
-                    
-                    if (!_.contains(titles, tag.title)) {
-                        this.availableTags.push(tag);
-                    }
-                }, this)
-                
+            this.tagsCollection.each(function(tag) {
+                this.availableTags.push(tag.toJSON());
             }, this);
         },
 
@@ -72,7 +67,7 @@ define(function(require) {
 
         },
 
-        onSearchKeyup: function(event, filter) {
+        onSearchKeyDown: function(event, filter) {
             if (13 == event.keyCode || filter) {
                 var filterText = $(event.currentTarget).val();
                 Origin.trigger('assetManagement:sidebarView:filter', filterText);
@@ -81,7 +76,7 @@ define(function(require) {
 
         onClearSearchClicked: function(event) {
             event.preventDefault();
-            this.$('.asset-management-modal-filter-search').val('').trigger('keyup', [true]);
+            this.$('.asset-management-modal-filter-search').val('').trigger('keydown', [true]);
         },
 
         onAddTagClicked: function(event) {

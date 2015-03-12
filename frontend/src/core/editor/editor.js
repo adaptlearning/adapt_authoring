@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
   var Origin = require('coreJS/app/origin');
@@ -276,7 +277,14 @@ define(function(require) {
           var form = Origin.scaffold.buildForm({
             model: componentModel
           });
-          Origin.trigger('location:title:update', {title: 'Editing ' + componentModel.get('_componentType').displayName.toLowerCase() + ' component - ' + componentModel.get('title')});
+
+          var componentType = _.find(Origin.editor.data.componentTypes.models, function(componentTypeModel) {
+            return componentTypeModel.get('_id') == componentModel.get('_componentType');
+          });
+
+          var componentDisplayName = (componentType) ? componentType.get('displayName').toLowerCase() : '';
+
+          Origin.trigger('location:title:update', {title: 'Editing ' + componentDisplayName + ' component - ' + componentModel.get('title')});
           Origin.sidebar.addView(new EditorComponentEditSidebarView({model: componentModel, form:form}).$el);
           Origin.editingOverlay.addView(new EditorComponentEditView({model: componentModel, form:form}).$el);
         }
@@ -405,7 +413,7 @@ define(function(require) {
         // update sidebar view
         Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
           "backButtonText": "Back to courses",
-          "backButtonRoute": "/#/dashboard"
+          "backButtonRoute": Origin.dashboardRoute
         });
         break;
       case 'page':

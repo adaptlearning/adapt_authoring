@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * Adapt Output plugin
  */
@@ -197,6 +198,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
           archive.bulk([
             { expand: true, cwd: path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build), src: ['**/*'] }
           ]).finalize(); 
+
         } else {
           // No download required -- skip this step
           callback();
@@ -209,11 +211,11 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
         return next(err);
       }
 
+      
       return next(null, resultObject);
     });   
 
 };
-
 /**
  * Module exports
  *

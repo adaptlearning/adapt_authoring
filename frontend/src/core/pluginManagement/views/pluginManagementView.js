@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
   var Backbone = require('backbone');
@@ -74,8 +75,13 @@ define(function(require){
       this.$('.pluginManagement-plugins').empty();
 
       _.each(pluginTypes, function(pluginType, index) {
-        var oddOrEvenClass = 'tb-row-' + Helpers.odd(index);
-        this.$('.pluginManagement-plugins').append(new PluginTypeView({model: pluginType}).$el.addClass(oddOrEvenClass));
+        var cssClass = 'tb-row-' + Helpers.odd(index);
+
+        if (pluginType.get('_isAvailableInEditor') == false) {
+          cssClass += ' row-disabled';
+        }
+
+        this.$('.pluginManagement-plugins').append(new PluginTypeView({model: pluginType}).$el.addClass(cssClass));
       }, this);
 
       _.defer(this.setViewToReady);

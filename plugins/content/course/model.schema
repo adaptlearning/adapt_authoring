@@ -4,6 +4,12 @@
   "id": "http://jsonschema.net",
   "$ref": "http://localhost/system/basicContent.schema",
   "properties": {
+    "heroImage": {
+      "type":"string",
+      "default": "",
+      "inputType": "Asset:image",
+      "validators": []
+    },
     "title": {
       "type":"string",
       "required":true,

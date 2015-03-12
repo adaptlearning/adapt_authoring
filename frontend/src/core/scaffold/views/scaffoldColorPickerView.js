@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
     var Backbone = require('backbone');
@@ -35,6 +36,11 @@ define(function(require) {
         render: function() {
             // Listen to remove:views and remove color picker
             this.listenTo(Origin, 'remove:views', this.removeColorPicker);
+
+            if (this.value === null) {
+                this.value = '';
+            }
+            
             this.setValue(this.value);
             this.$el.css('backgroundColor', this.getValue());
 

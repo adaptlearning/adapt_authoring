@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 var prompt = require('prompt'),
     async = require('async'),
     fs = require('fs'),
@@ -135,16 +136,31 @@ var configItems = [
     name: 'fromAddress',
     type: 'string',
     description: "Sender email address"
+  },
+  {
+    name: 'outputPlugin',
+    type: 'string',
+    description: "Which output plugin will be used?",
+    default: 'adapt'
   }
 ];
 
-tenantConfig = {
-  name: 'name',
-  type: 'string',
-  description: "Set a name for your master tenant",
-  pattern: /^[A-Za-z0-9_-]+\W*$/,
-  default: 'master'
-};
+tenantConfig = [
+  {
+    name: 'name',
+    type: 'string',
+    description: "Set a unique name for your master tenant",
+    pattern: /^[A-Za-z0-9_-]+\W*$/,
+    default: 'master'
+  },
+  {
+    name: 'displayName',
+    type: 'string',
+    description: 'Set the display name for your tenant',
+    required: true,
+    default: 'Master'
+  }
+];
 
 userConfig = [
   {
@@ -222,12 +238,15 @@ var steps = [
           }
           
           var tenantName = result.name;
+          var tenantDisplayName = result.displayName;
 
           // create the tenant according to the user provided details
           var _createTenant = function (cb) {
-            console.log("Creating tenant file system for " + (tenantName).blue + ", please wait ...");        
+            console.log("Creating master tenant file system for " + (tenantName).blue + ", please wait ...");        
             app.tenantmanager.createTenant({ 
                 name: tenantName, 
+                displayName: tenantDisplayName,
+                isMaster: true,
                 database: { 
                   dbName: app.configuration.getConfig('dbName'),
                   dbHost: app.configuration.getConfig('dbHost'),
@@ -244,7 +263,10 @@ var steps = [
             
                 masterTenant = tenant;
                 console.log("Master tenant " + (tenant.name).blue + " was created.");
-                return cb();
+                // save master tenant name to config
+                configuration.setConfig('masterTenantName', tenant.name);
+                configuration.setConfig('masterTenantID', tenant._id);
+                saveConfig(configuration.getConfig(), cb);
               }
             );
           };

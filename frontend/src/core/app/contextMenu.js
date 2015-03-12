@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /*
 * Context Menu
 * License - https://github.com/adaptlearning/adapt_framework/blob/master/LICENSE
@@ -62,7 +63,7 @@ define(function(require) {
         callbackEvent: 'edit'
       },
       {
-        title: window.polyglot.t('app.duplicate'),
+        title: window.polyglot.t('app.copy'),
         className: 'context-menu-item',
         callbackEvent: 'duplicate'
       },

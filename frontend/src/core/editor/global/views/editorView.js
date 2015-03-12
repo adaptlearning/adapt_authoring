@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
   var Backbone = require('backbone');
@@ -119,17 +120,19 @@ define(function(require){
       if (canPreview && !Origin.editor.isPreviewPending) {
         Origin.editor.isPreviewPending = true;
 
-        // Report progress for up to 50 seconds
-        $('.editor-common-sidebar-preview-progress').animate({ width: '100%' }, 50000);
+        if (Origin.constants.outputPlugin == 'adapt') {
+          // Report progress for 45 seconds
+          $('.editor-common-sidebar-preview-progress').animate({ width: '100%' }, 45000); 
+        }
 
         $.ajax({
           method: 'get',
           url: '/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId,
           success: function (jqXHR, textStatus, errorThrown) {
             if (jqXHR.success) {
-              if (jqXHR.pollUrl) {
-                // TODO - Ping the remote URL to check if the job has been completed
-
+              if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) != 'undefined' && jqXHR.payload.pollUrl != '') {
+                // Ping the remote URL to check if the job has been completed
+                self.updatePreviewProgress(jqXHR.payload.pollUrl);
               } else {
                 self.launchCoursePreview();
                 self.resetPreviewProgress();
@@ -142,12 +145,45 @@ define(function(require){
           error: function (jqXHR, textStatus, errorThrown) {
             self.resetPreviewProgress();
             alert('Error');
+            
+          }
+        });
+      }
+    },
+
+    updatePreviewProgress: function(url) {
+      var self = this;
+
+      var pollUrl = function() {
+        $.ajax({
+          method: 'get',
+          url: url,
+          success: function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.progress == "100") {
+              clearInterval(pollId);
+              self.launchCoursePreview();
+              self.resetPreviewProgress();
+            } else {
+               $('.sidebar-progress').animate({ width: jqXHR.progress + '%' }, 1000);
+            }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            alert(errorThrown);
             console.log(jqXHR);
             console.log(textStatus);
             console.log(errorThrown);
           }
         });
       }
+      
+      // Check for updated progress every 3 seconds
+      var pollId = setInterval(pollUrl, 3000);     
+    },
+
+    resetPreviewProgress: function() {
+      $('.editor-common-sidebar-preview-progress').css('width', 0).stop();
+
+      Origin.editor.isPreviewPending = false;
     },
 
     resetPreviewProgress: function() {

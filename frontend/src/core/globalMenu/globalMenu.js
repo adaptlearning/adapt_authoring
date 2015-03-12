@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
     var Origin = require('coreJS/app/origin');
@@ -72,6 +73,11 @@ define(function(require) {
         if (!Origin.sessionModel.get('isAuthenticated')) {
             GlobalMenuStore.remove(GlobalMenuStore.models);
         }
+    });
+
+    // if login as another user reset the collection as per that user's permissions
+    Origin.on('login:loginas', function() {  
+        GlobalMenuStore.remove(GlobalMenuStore.models);
     });
 
     function openGlobalMenu() {

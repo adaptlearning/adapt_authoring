@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
   var Origin = require('coreJS/app/origin');
@@ -28,6 +29,7 @@ define(function(require) {
           this.form = options.form;
         }
         this.render();
+        this.listenTo(Origin, 'sidebar:resetButtons', this.resetButtons);
         this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
         _.defer(_.bind(function() {
             this.setupView();
@@ -85,6 +87,7 @@ define(function(require) {
     },
 
     resetButtons: function() {
+
       var $buttonsSpans = this.$('.sidebar-updating').attr('disabled', false).find('span');
       $buttonsSpans.eq(0).removeClass('display-none');
       $buttonsSpans.eq(1).remove();

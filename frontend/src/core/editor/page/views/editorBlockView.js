@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
   var Backbone = require('backbone');
@@ -7,6 +8,7 @@ define(function(require){
   var EditorComponentModel = require('editorPage/models/editorComponentModel');
   var EditorComponentView = require('editorPage/views/editorComponentView');
   var EditorComponentPasteZoneView = require('editorPage/views/editorComponentPasteZoneView');
+  var EditorComponentListView = require('editorPage/views/editorComponentListView');
 
   var EditorBlockView = EditorOriginView.extend({
 
@@ -82,7 +84,7 @@ define(function(require){
       }];
 
       this.model.getChildren().each(function(component) {
-        this.$('.page-components').append(new EditorComponentView({model: component}).$el);
+        //this.$('.page-components').append(new EditorComponentView({model: component}).$el);
 
         switch (component.get('_layout')) {
           case 'full':
@@ -255,17 +257,23 @@ define(function(require){
 
     showComponentList: function(event) {
       event.preventDefault();
-      var courseId = Origin.editor.data.course.get('_id');
-      var type = this.model.get('_type');
-      var Id = this.model.get('_id');
-      Origin.router.navigate('#/editor/' 
-        + courseId 
-        + '/' 
-        + type 
-        + '/' 
-        + Id 
-        + '/add', {trigger: true});
-      /*Origin.router.navigate('#/editor/'+ this.model.get('_id') +'/component/add', {trigger: true});*/
+      // If adding a new component
+      // get current layoutOptions
+      var layoutOptions = this.model.get('layoutOptions');
+
+      var componentSelectModel = new Backbone.Model({
+        title: window.polyglot.t('app.addcomponent'),
+        body: window.polyglot.t('app.pleaseselectcomponent'),
+        _parentId: this.model.get('_id'),
+        componentTypes: Origin.editor.data.componentTypes.toJSON(),
+        layoutOptions: layoutOptions
+      });
+
+      $('body').append(new EditorComponentListView({
+        model: componentSelectModel,
+        $parentElement: this.$el,
+        parentView: this
+      }).$el);
 
     },
 
@@ -309,6 +317,17 @@ define(function(require){
         newLayout = (layout == 'left') ? 'right' : 'left';
       }
       return newLayout;
+    },
+
+    toggleAddComponentsButton: function() {
+      var layoutOptions = this.model.get('layoutOptions');
+      // Have to check here if it's null as layoutOptions can sometimes not be set
+      if (layoutOptions === null) layoutOptions = [];
+      if (layoutOptions === null || layoutOptions.length === 0) {
+        this.$('.add-control').addClass('display-none');
+      } else {
+        this.$('.add-control').removeClass('display-none');
+      }
     }
 
   }, {

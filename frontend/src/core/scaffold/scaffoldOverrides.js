@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
 	var Backbone = require('backbone');
@@ -51,6 +52,7 @@ define(function(require) {
 	}
 
 	Backbone.Form.editors.TextArea.prototype.render = function() {
+
 	    // Place value
 	    this.setValue(this.value);
 	    _.delay(_.bind(function() {

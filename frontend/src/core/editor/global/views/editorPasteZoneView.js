@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
   var Backbone = require('backbone');
@@ -48,7 +49,7 @@ define(function(require){
             type: 'PUT',
             url:'/api/content/' + type + '/' + contentId,
             data: newData,
-            complete:function(xhr,status) {
+            success: function(jqXHR, textStatus, errorThrown) {
               var contentCollection = Origin.editor.data[view.model._siblings];
               contentCollection.fetch().done(function() {
                 // Re-render the move-from content item
@@ -58,6 +59,9 @@ define(function(require){
                   Origin.trigger('editorView:move' + view.capitalise(type) + ':' + parentId);
                 }
               });
+            }, 
+            error: function(jqXHR, textStatus, errorThrown) {
+              alert(jqXHR.responseJSON.message);
             }
           });
         }

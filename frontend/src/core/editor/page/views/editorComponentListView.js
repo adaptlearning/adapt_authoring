@@ -1,8 +1,10 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
+  var EditorComponentListItemView = require('editorPage/views/editorComponentListItemView');
 
   var EditorComponentListView = EditorOriginView.extend({
 
@@ -11,51 +13,111 @@ define(function(require) {
     className: "editor-component-list",
 
     events: {
-      'click .editing-overlay-component-option': 'onComponentClicked',
-      'click .editing-overlay-component-layout button': 'onLayoutClicked'
+      'click': 'onOverlayClicked',
+      'click .editor-component-list-sidebar-exit': 'closeView',
+      'keyup .editor-component-list-sidebar-search input': 'onSearchKeyup'
     },
 
-    preRender: function() {
+    preRender: function(options) {
+      $('html').css('overflow-y', 'hidden');
+      this.listenTo(Origin, 'editorComponentListView:remove', this.remove);
+      this.listenTo(Origin, 'window:resize', this.onScreenResize);
+      this.setupCollection();
+      this.setupFilters();
+      this.$parentElement = options.$parentElement;
+      this.parentView = options.parentView;
     },
 
-    onComponentClicked: function(event) {
-      // Add selected class and store component data on model
-      var $currentTarget = $(event.currentTarget).addClass('selected');
-      var component = $currentTarget.attr('data-component')
-      this.model.set('component', component);
-      // Show layout options
-      this.showLayoutOptions($currentTarget);
+    setupCollection: function() {
+      this.collection = new Backbone.Collection(this.model.get('componentTypes'));
     },
 
-    showLayoutOptions: function($currentTarget) {
-      // Reset any open layout options opened
-      $('.editing-overlay-component-option')
-        .not($currentTarget)
-        .removeClass('selected')
-        .velocity({left: 0});
+    setupFilters: function() {
+      var layoutOptions = this.model.get('layoutOptions');
+      this.availablePositions = {
+        left: false,
+        right: false,
+        full: false
+      };
 
-      // Get height of option so we can set button height
-      var optionHeight = $('.editing-overlay-component-item').first().height();
-      // Get width of all the buttons so we can move the overlay
-      var buttonsWidth = $('.editing-overlay-component-layout').width();
-      // Set button height
-      this.$('.editing-overlay-component-layout button').height(optionHeight);
-      // Set overlay animation
-      $currentTarget.velocity({left: buttonsWidth});
-    },
+      _.each(layoutOptions, function(layoutOption) {
+        var type = layoutOption.type;
+        if (type === 'left') {
+          this.availablePositions.left = true;
+        } else if (type === 'right') {
+          this.availablePositions.right = true;
+        } else if (type === 'full') {
+          this.availablePositions.full = true;
+        }
+      }, this);
 
-    onLayoutClicked: function(event) {
-      var $currentTarget = $(event.currentTarget).addClass('selected');
-      $('.editing-overlay-component-layout button')
-        .not($currentTarget)
-        .removeClass('selected');
-      var layout = $currentTarget.attr('data-layout')
-      this.model.set('layout', layout);
+      this.model.set('_availablePosition', this.availablePositions);
     },
 
     postRender: function() {
-      this.setViewToReady();
+      this.renderComponentList();
+      this.headerHeight = this.$('.editor-component-list-sidebar-header').height();
+      $(window).resize();
+    },
+
+    closeView: function() {
+      $('html').css('overflow-y', '');
+      this.remove();
+    },
+
+    renderComponentList: function() {
+      Origin.trigger('editorComponentListView:removeSubviews');
+      var componentTypes = this.model.get('componentTypes');
+
+      _.each(componentTypes, function(componentType) {
+
+          var availablePositions = this.availablePositions;
+
+          if (componentType.properties && componentType.properties.hasOwnProperty('._supportedLayout')) {
+            var supportedLayout = componentTypes.properties.hasOwnProperty('._supportedLayout').enum;
+
+            // Prune the available positions
+            if (_.indexOf(supportedLayout, 'half-width') == -1) {
+              availablePositions.left = false;
+              availablePositions.right = false;
+            }
+
+            if (_.indexOf(supportedLayout, 'full-width') == -1) {
+              availablePositions.full = false;
+            }
+          }
+
+          this.$('.editor-component-list-sidebar-list').append(new EditorComponentListItemView({
+            model: new Backbone.Model(componentType),
+            // filter: this.filter,
+            availablePositions: availablePositions,
+            _parentId: this.model.get('_parentId'),
+            $parentElement: this.$parentElement,
+            parentView: this.parentView,
+            searchTerms: componentType.displayName.toLowerCase()
+          }).$el);
+
+      }, this);
+
+    },
+
+    onOverlayClicked: function(event) {
+      if ($(event.target).hasClass('editor-component-list')) {
+        Origin.trigger('editorComponentListView:removeSubviews');
+        $('html').css('overflow-y', '');
+        this.remove();
+      }
+    },
+
+    onSearchKeyup: function(event) {
+      var searchValue = $(event.currentTarget).val();
+      Origin.trigger('editorComponentListView:searchKeyup', searchValue);
+    },
+
+    onScreenResize: function(windowWidth, windowHeight) {
+      this.$('.editor-component-list-sidebar-list').height(windowHeight - this.headerHeight);
     }
+
   },
   {
     template: 'editorComponentList'

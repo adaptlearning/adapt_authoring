@@ -4,9 +4,18 @@
   "id": "http://jsonschema.net",
   "$ref": "http://localhost/system/trackedObject.schema",
   "properties": {
+    "displayName": {
+      "type": "string",
+      "required": true
+    },
     "name": {
       "type": "string",
       "required": true
+    },
+    "isMaster": {
+      "type": "boolean",
+      "required": true,
+      "default": false
     },
     "database": {
       "dbName": {

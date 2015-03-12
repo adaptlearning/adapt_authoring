@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * Theme content plugin
  *
@@ -34,13 +35,8 @@ var bowerConfig = {
     'adapt-contrib-vanilla'
   ],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
-    database.getDatabase(function (err, db) {
-      if (err) {
-        return next(err);
-      }
-
-      db.update('config', { _theme: oldPlugin._id }, { _theme: newPlugin._id }, next);
-    });
+    // Not required for themes
+    return next();
   }
 };
 
@@ -154,18 +150,17 @@ function initialize () {
 
           if (!results || 1 !== results.length) {
             res.statusCode = 404;
-            return res.json({ success: false, message: 'theme not found' });
+            return res.json({ success: false, message: 'config not found' });
           } else {
             var config = results[0];
 
-            if (config._theme == themeId) {
-              // The theme is the same as the one which already is set
-              // Do nothing so that any customisation is persisted
-              res.statusCode = 200;
-              return res.json({success: true});
-            } else {
+            database.getDatabase(function (err, masterDb) {
+              if (err) {
+                return next(err);
+              }
+
               // Verify it's a valid theme
-              db.retrieve('themetype', { _id: themeId }, function (err, results) {
+              masterDb.retrieve('themetype', { _id: themeId }, function (err, results) {
                 if (err) {
                   return next(err);
                 }
@@ -176,7 +171,7 @@ function initialize () {
                 }
 
                 // Update the course config object
-                app.contentmanager.update('config', { _courseId: courseId }, { _theme: themeId }, function (err) {
+                app.contentmanager.update('config', { _courseId: courseId }, { _courseId: courseId, _theme: results[0].name }, function (err) {
                   if (err) {
                     return next(err);
                   }
@@ -206,7 +201,7 @@ function initialize () {
                   });  
                 });
               });
-            }
+            }, configuration.getConfig('dbName'));            
           }
         });
       });

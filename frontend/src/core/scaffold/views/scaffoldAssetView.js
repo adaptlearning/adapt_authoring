@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
     var Backbone = require('backbone');
@@ -102,6 +103,11 @@ define(function(require) {
                 assetType: this.schema.fieldType,
                 onUpdate: function(data) {
                     if (data) {
+
+                        if ('heroImage' === this.key){
+                            this.setValue(data.assetId);
+                            return;
+                        }
                         // Setup courseasset
                         var contentTypeId = Origin.scaffold.getCurrentModel().get('_id') || '';
                         var contentType = Origin.scaffold.getCurrentModel().get('_type');
@@ -110,7 +116,6 @@ define(function(require) {
                         var assetId = data.assetId;
 
                         
-
                         var courseAssetObject = {
                             contentTypeId: contentTypeId,
                             contentType: contentType,
@@ -119,8 +124,10 @@ define(function(require) {
                             assetId: assetId
                         }
 
+
+
                         this.createCourseAsset(courseAssetObject, function() {
-                            this.setValue(data.assetLink);
+                                this.setValue(data.assetLink);
                             this.toggleFieldAvailibility();
                         }, this);
 

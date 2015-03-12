@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
@@ -70,6 +71,12 @@ define(function(require) {
         case LoginView.ERR_ACCOUNT_LOCKED:
           errorMessage = window.polyglot.t('app.accountlockedout');
           break;
+        case LoginView.ERR_TENANT_DISABLED:
+          errorMessage = window.polyglot.t('app.tenantnotenabled');
+          break;
+        case LoginView.ERR_ACCOUNT_INACTIVE:
+          errorMessage = window.polyglot.t('app.accountnotactive');
+          break;
       }
 
       $('#login-input-username').addClass('input-error');
@@ -80,6 +87,8 @@ define(function(require) {
     ERR_INVALID_CREDENTIALS: 1,
     ERR_ACCOUNT_LOCKED: 2,
     ERR_MISSING_FIELDS: 3,
+    ERR_TENANT_DISABLED: 4,
+    ERR_ACCOUNT_INACTIVE: 5,
     template: 'login'
   });
 

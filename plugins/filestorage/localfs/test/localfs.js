@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 var path = require('path'),
     rimraf = require('rimraf'),
     fs = require('fs'),

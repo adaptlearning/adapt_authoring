@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
   var Backbone = require('backbone');
@@ -60,6 +61,18 @@ define(function(require) {
       }
     },
 
+    // Persist any dashboard routing for 'Back to courses' link
+    evaluateDashboardRoute: function() {
+      if (Origin.location && Origin.location.module == 'dashboard') {
+
+        var suffix = Origin.location.route1 
+          ? '/' + Origin.location.route1
+          : '';
+
+        Origin.dashboardRoute = '/#/dashboard' + suffix;
+      } 
+    },
+
     handleRoute: function(module, route1, route2, route3, route4) {
       // Show loading on any route
       this.showLoading();
@@ -76,8 +89,8 @@ define(function(require) {
       var routeArguments = arguments;
 
       // Set previous location object
-
       Origin.previousLocation = Origin.location;
+      this.evaluateDashboardRoute();
 
       // Set location object
       Origin.location = {};

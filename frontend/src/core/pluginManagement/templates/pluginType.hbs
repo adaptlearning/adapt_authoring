@@ -6,10 +6,13 @@
     <div class="pluginType-description col-40">
       <div class="pluginType-description-inner tb-col-inner">{{{description}}}</div>
     </div>
-    <div class="pluginType-version col-20 col-centered">
+    <div class="pluginType-version col-10 col-centered">
       <span class="pluginType-version-number tb-col-inner">{{version}}</span>
     </div>
-    <div class="pluginType-update col-20 col-centered">
+    <div class="pluginType-active col-10 col-centered">
+      <input class="pluginType-enabled" type="checkbox" {{#if _isAvailableInEditor}} checked {{/if}}/>
+    </div>
+    <div class="pluginType-update col-10 col-centered">
       <div class="pluginType-update-inner tb-col-inner">
         {{#if isLocalPackage}}
         <em class="info">({{t 'app.uploadedbyuser'}})</em>

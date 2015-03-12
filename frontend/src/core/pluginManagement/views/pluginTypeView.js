@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
   var Backbone = require('backbone');
@@ -12,9 +13,9 @@ define(function(require){
     className: 'pluginType-item tb-row',
 
     events: {
-      // 'change .plugin-toggle-enabled': 'toggleEnabled',
-      'click  .plugin-update-check': 'checkForUpdates',
-      'click  .plugin-update-confirm': 'updatePlugin'
+      'change .pluginType-enabled':   'toggleEnabled',
+      'click .plugin-update-check':   'checkForUpdates',
+      'click .plugin-update-confirm': 'updatePlugin'
     },
 
     preRender: function () {
@@ -22,13 +23,12 @@ define(function(require){
       this.listenTo(this.model, 'destroy', this.remove);
     },
 
-    /*toggleEnabled: function () {
+    toggleEnabled: function () {
       // api call to disable/enable item
       // NB: disable this functionality until we come up with a plan for courses
       // that added plugins that were subsequently disabled
-      this.model.set('_isAvailableInEditor', this.$('.plugin-toggle-enabled').is(':checked'));
-      this.model.save();
-    },*/
+      this.model.save({_isAvailableInEditor: this.$('.pluginType-enabled').is(':checked')}, {patch: true});
+    },
 
     checkForUpdates: function (event) {
       event.preventDefault();

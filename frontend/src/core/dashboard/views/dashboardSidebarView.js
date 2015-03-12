@@ -1,23 +1,25 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
-	var Origin = require('coreJS/app/origin');
-	var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
+    var Origin = require('coreJS/app/origin');
+    var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
 
-	var DashboardSidebarView = SidebarItemView.extend({
+    var DashboardSidebarView = SidebarItemView.extend({
         settings: {
           autoRender: true
         },
 
-		events: {
-			'click .dashboard-sidebar-add-course'	: 'addCourse',
+        events: {
+            'click .dashboard-sidebar-add-course'   : 'addCourse',
             'click .dashboard-sidebar-my-courses'   : 'gotoMyCourses',
             'click .dashboard-sidebar-shared-courses' : 'gotoSharedCourses',
-		    'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
+            'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
+            'keydown .dashboard-sidebar-filter-search-input':'onInputKeyDown',
             'click .dashboard-sidebar-filter-clear': 'clearFilterInput',
             'click .dashboard-sidebar-tag': 'onFilterButtonClicked',
             'click .dashboard-sidebar-add-tag': 'onAddTagClicked',
             'click .dashboard-sidebar-row-filter': 'onFilterRemovedClicked'
-		},
+        },
 
         postRender: function() {
             this.listenTo(Origin, 'sidebarFilter:filterByTags', this.filterProjectsByTags);
@@ -46,9 +48,9 @@ define(function(require) {
             }
         },
 
-		addCourse: function() {
-			Origin.router.navigate('#/project/new', {trigger:true});
-		},
+        addCourse: function() {
+            Origin.router.navigate('#/project/new', {trigger:true});
+        },
 
         gotoMyCourses: function() {
             Origin.router.navigate('#/dashboard', {trigger: true});
@@ -56,6 +58,12 @@ define(function(require) {
 
         gotoSharedCourses: function() {
             Origin.router.navigate('#/dashboard/shared', {trigger: true});
+        },
+
+        onInputKeyDown: function(event) {
+            if (13 == event.keyCode) {
+                event.preventDefault();
+            }
         },
 
         filterProjectsByTitle: function(event, filter) {
@@ -160,10 +168,10 @@ define(function(require) {
             $(event.currentTarget).parent().remove();
         }
 
-	}, {
-		template: 'dashboardSidebar'
-	});
+    }, {
+        template: 'dashboardSidebar'
+    });
 
-	return DashboardSidebarView;
+    return DashboardSidebarView;
 
 });

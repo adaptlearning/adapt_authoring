@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
   var Backbone = require('backbone');
@@ -18,7 +19,6 @@ define(function(require){
     className: 'dashboard',
 
     preRender: function(options) {
-      this.isSharedCollection = options.isSharedCollection;
       this.setupFilterSettings();
 
       this.listenTo(Origin, 'window:resize', this.resizeDashboard);
@@ -220,10 +220,6 @@ define(function(require){
           }
       });
 
-      if (this.isSharedCollection) {
-        this.search._isShared = true;
-      }
-
       // This is set when the fetched amount is equal to the collection length
       // Stops any further fetches and HTTP requests
       if (this.shouldStopFetches) {
@@ -255,7 +251,7 @@ define(function(require){
     },
 
     appendProjectItem: function(projectModel) {
-      if (this.isSharedCollection) {
+      if (!projectModel.isEditable()) {
         this.$('.dashboard-projects').append(new SharedProjectView({ model: projectModel }).$el);
       } else {
         this.$('.dashboard-projects').append(new ProjectView({ model: projectModel }).$el);
@@ -286,7 +282,7 @@ define(function(require){
 
     convertFilterTextToPattern: function(filterText) {
       var pattern = '.*' + filterText.toLowerCase() + '.*';
-      return { title: pattern, description: pattern };
+      return { title: pattern};
     },
 
     filterBySearchInput: function (filterText) {

@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * Local LocalFileStorage module
  */
@@ -24,18 +25,26 @@ util.inherits(LocalFileStorage, FileStorage);
  * All paths used in local filestorage are relative to the dataRoot
  *
  * @param {string} relativePath
+ * @param {boolean} [forceMaster] optionally force path to master tenant
  * @return {string} full path
  */
 
-LocalFileStorage.prototype.resolvePath = function (relativePath) {
+LocalFileStorage.prototype.resolvePath = function (relativePath, forceMaster) {
   var user = usermanager.getCurrentUser();
   if (user) {
+    var tenantName;
+    if (!forceMaster) {
+      tenantName = user.tenant ? user.tenant.name : configuration.getConfig('masterTenantName');
+    } else {
+      tenantName = configuration.getConfig('masterTenantName');	
+    }
+
     // check that the path isn't already absolute
-    var tenantName = user.tenant ? user.tenant.name : 'master';
     var prefix = path.join(this.dataRoot, tenantName);
     if (0 === relativePath.indexOf(prefix)) {
       return relativePath;
     }
+    
     return path.join(prefix, relativePath);
   }
 
@@ -123,7 +132,12 @@ LocalFileStorage.prototype.createReadStream = function (filePath, options, callb
     callback = options;
     options = null;
   }
-  callback(fs.createReadStream(this.resolvePath(filePath), options));
+  
+  var forceMaster = (options && options.forceMaster)
+    ? true
+    : false;
+
+  callback(fs.createReadStream(this.resolvePath(filePath, forceMaster), options));
 };
 
 /**
@@ -285,20 +299,24 @@ LocalFileStorage.prototype.getFileStats = function (filePath, callback) {
  */
 
 LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, options, next) {
+  var imgThumbPath;
   // early return if we can't create thumbnails
   if (!configuration.getConfig('useffmpeg')) {
     return next(null, false);
   }
-  
+
   var self = this;
   var fileFormat = fileType.split('/')[1];
   var additionalOptions = [];
   fileType = fileType.split('/')[0];
   if ('image' === fileType) {
     if ('gif' === fileFormat){
+      // pixel format for gif required
       additionalOptions.push('-pix_fmt rgb24');
+      // number of frames
+      additionalOptions.push('-frames 1');
     }
-    var imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath) + '_thumb' + path.extname(filePath));
+    imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath) + '_thumb' + path.extname(filePath));
     return new FFMpeg({ source: filePath })
       .addOptions(additionalOptions)
       .withSize(options.width + 'x' + options.height)
@@ -311,28 +329,36 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
         return next(null, self.getRelativePath(imgThumbPath));
       })
       .saveToFile(imgThumbPath);
-      
+
   } else if ('video' === fileType) {
-    
+
+    imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath) + '_thumb.gif');
+    // pixel format for gifs (only needed with ffmpeg older versions eg 1.2)
+    additionalOptions.push('-pix_fmt rgb24');
+    // start position 1sec in case of black screen
+    additionalOptions.push('-ss 00:00:01');
+    // frequency of snaps one every five seconds
+    additionalOptions.push('-vf fps=fps=1/5');
+    // number of frames
+    additionalOptions.push('-frames 7');
+    // frame rate
+    additionalOptions.push('-r 7');
+    // set the limit file size in bytes
+    additionalOptions.push('-fs 300000');
     var pathToDir = path.dirname(filePath);
     return new FFMpeg({ source : filePath })
+      .addOptions(additionalOptions)
       .withSize(options.width + 'x' + options.height)
       .on('error', function (err) {
         logger.log('error', 'Failed to create video thumbnail: ' + err.message);
         return next(null, false);
       })
-      .on('end', function (filenames) {
-        // hmmm - do we keep the original file name? should we rename?
-        if (filenames && filenames.length) {          
-          return next(null, self.getRelativePath(path.join(path.dirname(filePath), filenames[0])));
-        }
-        
-        // no screenshots created
-        return next(null, false);
+      .on('end', function () {
+        return next(null, self.getRelativePath(imgThumbPath));
       })
-      .takeScreenshots(1, pathToDir);
-  }
-  
+      .saveToFile(imgThumbPath);
+  } 
+
   // can't do thumb
   return next(null, false);
 };
@@ -346,7 +372,7 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
  */
 
 LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
-  var data = {
+ var data = {
     assetType : fileType.substr(0, fileType.indexOf('/')),
     metadata : null
   };
@@ -384,7 +410,7 @@ LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
         data.metadata = null;
       break;
     }
-
+    
     return next(null, data);
   });
 };

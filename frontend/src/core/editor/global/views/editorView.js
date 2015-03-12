@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
   var Backbone = require('backbone');
@@ -37,6 +38,7 @@ define(function(require){
     preRender: function(options) {
       this.currentView = options.currentView;
       Origin.editor.pasteParentModel = false;
+      Origin.editor.isPreviewPending = false;
       this.currentCourseId = Origin.editor.data.course.get('_id');
 
       this.currentPageId = options.currentPageId;
@@ -47,6 +49,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
       this.listenTo(Origin, 'editorCommon:publish', this.publishProject);
       this.listenTo(Origin, 'editorCommon:preview', this.previewProject);
+
 
       this.render();
       this.setupEditor();
@@ -69,7 +72,9 @@ define(function(require){
       this.renderCurrentEditorView();
     },
 
-    publishProject: function() {
+    publishProject: function(event) {
+      event && event.preventDefault();
+
       var canPublish = this.validateCourseContent();
 
       if (canPublish) {
@@ -84,22 +89,87 @@ define(function(require){
       }
     },
 
-    previewProject: function() {
-      var canPreview = this.validateCourseContent();
+    launchCoursePreview: function() {
+      var courseId = Origin.editor.data.course.get('_id');
+      var tenantId = Origin.sessionModel.get('tenantId');
 
-      if (canPreview) {
-        Origin.trigger('router:showLoading', true);
+      window.open('/preview/' + tenantId + '/' + courseId + '/main.html', 'preview');
+    },
+
+    previewProject: function(event) {
+      event && event.preventDefault();
+
+      var self = this;
+      var canPreview = self.validateCourseContent();
+
+      if (canPreview && !Origin.editor.isPreviewPending) {
+        Origin.editor.isPreviewPending = true;
+
+        if (Origin.constants.outputPlugin == 'adapt') {
+          // Report progress for 45 seconds
+          $('.sidebar-progress').animate({ width: '100%' }, 45000); 
+        }
 
         $.ajax({
-          url: '/api/output/adapt/preview/' + this.currentCourseId
-        }).done(function() {
-          var courseId = Origin.editor.data.course.get('_id');
-          var tenantId = Origin.sessionModel.get('tenantId');
-
-          window.open('/preview/' + tenantId + '/' + courseId + '/main.html');
-          Origin.trigger('router:hideLoading');
+          method: 'get',
+          url: '/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId,
+          success: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.success) {
+              if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) != 'undefined' && jqXHR.payload.pollUrl != '') {
+                // Ping the remote URL to check if the job has been completed
+                self.updatePreviewProgress(jqXHR.payload.pollUrl);
+              } else {
+                self.launchCoursePreview();
+                self.resetPreviewProgress();
+              }                           
+            } else {
+              self.resetPreviewProgress();
+              alert('Error generating preview, please contact Administrator');
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            self.resetPreviewProgress();
+            alert('Error');
+            
+          }
         });
       }
+    },
+
+    updatePreviewProgress: function(url) {
+      var self = this;
+
+      var pollUrl = function() {
+        $.ajax({
+          method: 'get',
+          url: url,
+          success: function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.progress == "100") {
+              clearInterval(pollId);
+              self.launchCoursePreview();
+              self.resetPreviewProgress();
+            } else {
+               $('.sidebar-progress').animate({ width: jqXHR.progress + '%' }, 1000);
+            }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            alert(errorThrown);
+            console.log(jqXHR);
+            console.log(textStatus);
+            console.log(errorThrown);
+          }
+        });
+      }
+      
+      // Check for updated progress every 3 seconds
+      var pollId = setInterval(pollUrl, 3000);     
+    },
+
+    resetPreviewProgress: function() {
+      $('.sidebar-progress').css('width', 0);
+      $('.sidebar-progress').stop();
+
+      Origin.editor.isPreviewPending = false;
     },
 
     /*

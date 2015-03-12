@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
   var Backbone = require('backbone');
@@ -7,7 +8,7 @@ define(function(require) {
 
     model: ProjectModel,
 
-    url: 'api/content/course/query'
+    url: 'api/content/course'
 
   });
 

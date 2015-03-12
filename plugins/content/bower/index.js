@@ -794,7 +794,6 @@ function handleUploadedPlugin (req, res, next) {
           return next(err);
         }
 
-        // first entry should be our target directory
         var packageJson;
         var canonicalDir;
 

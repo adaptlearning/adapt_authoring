@@ -1,8 +1,4 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-/**
- * Shared courses in the Learning Pool Styleee
- */
-
 var contentmanager = require('../../../lib/contentmanager'),
     tenantmanager = require('../../../lib/tenantmanager'),
     ContentPlugin = contentmanager.ContentPlugin,

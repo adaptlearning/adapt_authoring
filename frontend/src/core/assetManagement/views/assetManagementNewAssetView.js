@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
   var Backbone = require('backbone');
@@ -24,7 +25,9 @@ define(function(require){
       $('#tags').tagsInput({
         autocomplete_url: '/api/autocomplete/tag',
         onAddTag: _.bind(this.onAddTag, this),
-        onRemoveTag: _.bind(this.onRemoveTag, this)
+        onRemoveTag: _.bind(this.onRemoveTag, this),
+        'minChars' : 3,
+        'maxChars' : 15 
       });
       // Set view to ready
       this.setViewToReady();
@@ -37,11 +40,43 @@ define(function(require){
       $title.val(this.$('.asset-file')[0].value.replace("C:\\fakepath\\", ""));
     },
 
+    validateInput: function () {
+      var reqs = this.$('.required');
+      var uploadFile = this.$('.asset-file');
+      var validated = true;
+      var uploadFileErrormsg = $(uploadFile).prev('label').find('span.error');
+      $.each(reqs, function (index, el) {
+        var errormsg = $(el).prev('label').find('span.error');
+        if (!$.trim($(el).val())) {
+          validated = false;
+          $(el).addClass('input-error');
+          $(errormsg).text(window.polyglot.t('app.pleaseentervalue'));
+        } else {
+          $(el).removeClass('input-error');
+          $(errormsg).text('');
+        }
+      });
+      
+      if (this.model.isNew() && !uploadFile.val()) {
+        validated = false;
+        $(uploadFile).addClass('input-error');
+        $(uploadFileErrormsg).text(window.polyglot.t('app.pleaseaddfile'));
+      } else {
+        $(uploadFile).removeClass('input-error');
+        $(uploadFileErrormsg).text('');
+      }
+      return validated;
+    },
+
     uploadAsset: function() {
+
+      if (!this.validateInput()) {
+        Origin.trigger('sidebar:resetButtons');
+        return false;
+      }
 
       var title = this.$('.asset-title').val();
       var description = this.$('.asset-description').val();
-      if (title && description) {
         // If model is new then uploadFile
         if (this.model.isNew()) {
           this.uploadFile();
@@ -59,9 +94,7 @@ define(function(require){
             }
           })
         }
-      }
 
-      
     },
 
     uploadFile: function() {

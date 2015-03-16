@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /*
 * ContextMenu
 * Maintainers - Kevin Corry <kevinc@learningpool.com>
@@ -20,12 +21,12 @@ define(function(require) {
         var type = view.model.get('_type');
 
         if (type == 'course') {
-          if (view.model.isShared()) {
+          if (!view.model.isEditable()) {
             type = 'sharedcourse';
           }
         } 
 
-        this.toggleContextMenu(type, e);
+        this.onOpenContextMenu(type, e);
       });
       this.listenTo(Origin, 'contextMenu:closeContextMenu', this.onCloseContextMenu);
       this.listenTo(Origin, 'remove', this.onCloseContextMenu);
@@ -50,15 +51,16 @@ define(function(require) {
       this.hideContextMenu();
     },
 
-    toggleContextMenu: function(type, e) {
+    onOpenContextMenu: function(type, e) {
       this.type = type;
+
       if (this._isVisible) {
         this._isVisible = false;
         this.hideContextMenu();
-      } else {
-        this._isVisible = true;
-        this.showContextMenu(true, e);
-      }
+      } 
+
+      this._isVisible = true;
+      this.showContextMenu(true, e);
     },
 
     showContextMenu: function(emptyContextMenu, e) {

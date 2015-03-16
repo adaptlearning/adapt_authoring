@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * offers passport-local style authentication
  */
@@ -20,7 +21,10 @@ var MESSAGES = {
 
 var ERROR_CODES = {
   INVALID_USERNAME_OR_PASSWORD: 1,
-  ACCOUNT_LOCKED: 2
+  ACCOUNT_LOCKED: 2,
+  MISSING_FIELDS: 3,
+  TENANT_DISABLED: 4,
+  ACCOUNT_INACTIVE: 5
 };
 
 var MAX_LOGIN_ATTEMPTS = 3;
@@ -85,6 +89,7 @@ LocalAuth.prototype.verifyUser = function (email, password, done) {
 };
 
 LocalAuth.prototype.authenticate = function (req, res, next) {
+  var self = this;
   return passport.authenticate('local', function (error, user, info) {
     if (error) {
       return next(error);
@@ -95,42 +100,57 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
       res.statusCode = 401;
       return res.json({ success: false, errorCode: info.errorCode});
     } else {
-      // Store the login details
-      req.logIn(user, function (error) {
-        if (error) {
-          return next(error);
+      // check user is not deleted
+      if (user._isDeleted) {
+        res.statusCode = 401;
+        return res.json({ success: false, errorCode: ERROR_CODES.ACCOUNT_INACTIVE });
+      }
+
+      // check tenant is enabled
+      self.isTenantEnabled(user, function (err, isEnabled) {
+        if (!isEnabled) {
+          // don't allow login
+          res.statusCode = 401;
+          return res.json({ success: false, errorCode: ERROR_CODES.TENANT_DISABLED });
         }
 
-        usermanager.logAccess(user, function(error) {
+        // Store the login details
+        req.logIn(user, function (error) {
           if (error) {
             return next(error);
           }
-
-
-          //Used to get the users permissions
-          permissions.getUserPermissions(user._id, function(error, userPermissions) {
+  
+          usermanager.logAccess(user, function(error) {
             if (error) {
               return next(error);
             }
-            res.statusCode = 200;
-
-            if (req.body.shouldPersist && req.body.shouldPersist == 'true') {
-              // Session is persisted for 2 weeks if the user has set 'Remember me'
-              req.session.cookie.maxAge = 14 * 24 * 3600000;
-            } else {
-              req.session.cookie.expires = false;
-            }
-
-            return res.json({
-              success: true,
-              id: user._id,
-              email: user.email,
-              tenantId: user._tenantId,
-              permissions: userPermissions
+  
+  
+            //Used to get the users permissions
+            permissions.getUserPermissions(user._id, function(error, userPermissions) {
+              if (error) {
+                return next(error);
+              }
+              res.statusCode = 200;
+  
+              if (req.body.shouldPersist && req.body.shouldPersist == 'true') {
+                // Session is persisted for 2 weeks if the user has set 'Remember me'
+                req.session.cookie.maxAge = 14 * 24 * 3600000;
+              } else {
+                req.session.cookie.expires = false;
+              }
+  
+              return res.json({
+                success: true,
+                id: user._id,
+                email: user.email,
+                tenantId: user._tenantId,
+                permissions: userPermissions
+              });
+  
             });
-
+             
           });
-           
         });
       });
     }

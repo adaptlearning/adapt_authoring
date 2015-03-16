@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
   var Backbone = require('backbone');
@@ -19,13 +20,14 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(this, 'remove', this.remove);
-      this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(Origin, 'editorView:deleteProject:' + this.model.get('_id'), this.deleteProject);
       this.listenTo(Origin, 'dashboard:projectView:itemSelected', this.deselectItem);
       this.listenTo(Origin, 'dashboard:dashboardView:deselectItem', this.deselectItem);
 
       this.on('contextMenu:sharedcourse:duplicate', this.promptDuplicateProject);
       this.on('contextMenu:sharedcourse:preview', this.preview);
+
+      this.model.set('heroImageURI', this.model.getHeroImageURI());
     },
 
     openContextMenu: function (e) {
@@ -36,7 +38,8 @@ define(function(require){
     },
 
     selectProject: function(event) {
-      event.stopPropagation();
+      event && event.preventDefault();
+      
       this.selectItem();
     },
 
@@ -52,11 +55,14 @@ define(function(require){
     },
 
     preview: function() {
-      alert('Preview coming soon!');
+      var tenantId = this.model.get('_tenantId');
+      var courseId = this.model.get('_id');
+      
+      window.open('/preview/' + tenantId + '/' + courseId + '/main.html');
     },
 
     promptDuplicateProject: function() {
-      if (confirm("This course was shared by another user.  Would you like to duplicate this so you can edit it locally?")) {
+      if (confirm(window.polyglot.t('app.confirmduplicate'))) {
         this.duplicateProject();
       }
     },

@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
     var Backbone = require('backbone');
@@ -44,7 +45,9 @@ define(function(require) {
                 this.$el.tagsInput({
                     autocomplete_url: '/api/autocomplete/tag',
                     onAddTag: _.bind(this.onAddTag, this),
-                    onRemoveTag: _.bind(this.onRemoveTag, this)
+                    onRemoveTag: _.bind(this.onRemoveTag, this),
+                    'minChars' : 3,
+                    'maxChars' : 15 
                 });
             }, this), 200)
             

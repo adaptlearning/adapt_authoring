@@ -5,6 +5,7 @@
   "$ref": "http://localhost/system/trackedObject.schema",
   "properties":{
     "_tenantId":{
+      "ref": "tenant",
       "type":"objectid",
       "required":true,
       "default":"000000000000000000000000",

@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * ContentObject plugin type
  */
@@ -11,6 +12,7 @@ var contentmanager = require('../../../lib/contentmanager'),
     usermanager = require('../../../lib/usermanager'),
     util = require('util'),
     path = require('path'),
+    helpers = require('../../../lib/helpers'),    
     async = require('async');
 
 function ContentObject () {
@@ -25,9 +27,21 @@ util.inherits(ContentObject, ContentPlugin);
  * @param {object} a content item
  * @param {callback} next (function (err, isAllowed))
  */
-ContentObject.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
-  var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
-  permissions.hasPermission(userId, action, resource, next);
+ContentObject.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) { 
+
+  helpers.hasCoursePermission(action, userId, tenantId, contentItem, function(err, isAllowed) {
+    if (err) {
+      return next(err);
+    }
+
+    if (!isAllowed) {
+      // Check the permissions string
+      var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
+      permissions.hasPermission(userId, action, resource, next);
+    } else {
+      return next(null, isAllowed);
+    }
+  });
 };
 
 /**
@@ -182,6 +196,12 @@ ContentObject.prototype.update = function (search, delta, next) {
 
     if (docs.length) {
       var oldParentId = docs[0]._parentId;
+
+      // Ensure that _courseId is included
+      if (docs[0]._courseId && !delta.hasOwnProperty('_courseId')) {
+        delta._courseId = docs[0]._courseId;
+      }
+
       ContentPlugin.prototype.update.call(self, search, delta, function (error) {
         // in the case of update, it's easier if we defer sortOrder update until after update
         if (error) {
@@ -220,19 +240,28 @@ ContentObject.prototype.destroy = function (search, force, next) {
     force = false;
   }
 
-  self.hasPermission('delete', user._id, tenantId, search, function (err, isAllowed) {
-    if (!isAllowed && !force) {
-      return next(new ContentPermissionError());
+  // for sortOrder update we need to retrieve _parentId first!
+  self.retrieve(search, function (error, docs) {
+    if (error) {
+      return next(error);
     }
 
-    // for sortOrder update we need to retrieve _parentId first!
-    self.retrieve(search, function (error, docs) {
-      if (error) {
-        return next(error);
-      }
+    // contentobjects use cascading delete
+    if (docs && docs.length) {
 
-      // contentobjects use cascading delete
-      if (docs && docs.length) {
+      // Set the _courseId property as this is required for the hasPermission()
+      search._courseId = docs[0]._courseId;
+
+      helpers.hasCoursePermission('delete', user._id, tenantId, search, function (err, isAllowed) {
+        if (err) {
+          logger.log('error', err);
+          return next(err);
+        }
+
+        if (!isAllowed && !force) {
+          return next(new ContentPermissionError());
+        }
+
         async.eachSeries(
           docs,
           function (doc, cb) {
@@ -247,11 +276,12 @@ ContentObject.prototype.destroy = function (search, force, next) {
           },
           next
         );
-      } else {
-        next(null);
-      }
-    });
+      });
+    } else {
+      next(null);
+    }
   });
+
 };
 
 /**

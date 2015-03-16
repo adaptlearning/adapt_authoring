@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * Component content plugin
  *
@@ -20,6 +21,7 @@ var origin = require('../../../'),
     ncp = require('ncp').ncp,
     mkdirp = require('mkdirp'),
     _ = require('underscore'),
+    helpers = require('../../../lib/helpers'),
     util = require('util'),
     path = require('path');
 
@@ -72,6 +74,32 @@ function Component () {
 
 util.inherits(Component, BowerPlugin);
 
+
+/**
+ * overrides base implementation of hasPermission
+ *
+ * @param {string} action
+ * @param {object} a content item
+ * @param {callback} next (function (err, isAllowed))
+ */
+Component.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
+  var self = this;
+
+  app.contentmanager.getContentPlugin('contentobject', function (error, plugin) {
+    if (error) {
+      return next(error);
+    }
+
+    plugin.hasPermission(action, userId, tenantId, contentItem, function (error, isAllowed) { 
+      if (error) {
+        return next(error);
+      }
+
+      return next(null, isAllowed);
+    });
+  });
+};
+
 /**
  * implements ContentObject#getModelName
  *
@@ -121,14 +149,34 @@ Component.prototype.retrieve = function (search, options, next) {
     options = {};
   }
 
-  var pop = { _componentType: ['displayName'] };
-  if (!options.populate) {
-    options.populate = pop;
-  } else {
-    options.populate = _.extend(pop, options.populate);
-  }
-
   ContentPlugin.prototype.retrieve.call(this, search, options, next);
+};
+
+Component.prototype.update = function (search, delta, next)  {
+  var self = this;
+
+  self.retrieve(search, function (error, docs) {
+    if (error) {
+      return next(error);
+    }
+
+    if (docs.length) {
+      // Ensure that _courseId is included
+      if (docs[0]._courseId && !delta.hasOwnProperty('_courseId')) {
+        delta._courseId = docs[0]._courseId;
+      }
+
+      ContentPlugin.prototype.update.call(self, search, delta, function (error) {
+        if (error) {
+          return next(error);
+        }
+
+        next(null);
+      });
+    } else {
+      next(null);
+    }
+  });
 };
 
 /**

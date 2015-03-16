@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   
   var Origin = require('coreJS/app/origin');
@@ -85,9 +86,6 @@ define(function(require) {
             Origin.sidebar.addView(new ProjectDetailEditSidebarView({form: form}).$el);
           }
         });
-        break;
-      case 'view':
-        console.log('Should view project???');
         break;
     }
 

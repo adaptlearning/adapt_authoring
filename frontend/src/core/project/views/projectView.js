@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
 
   var Backbone = require('backbone');
@@ -27,7 +28,6 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, 'dashboard:dashboardView:removeSubViews', this.remove);
       this.listenTo(this, 'remove', this.remove);
-      this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(Origin, 'editorView:deleteProject:' + this.model.get('_id'), this.deleteProject);
       this.listenTo(Origin, 'dashboard:projectView:itemSelected', this.deselectItem);
       this.listenTo(Origin, 'dashboard:dashboardView:deselectItem', this.deselectItem);
@@ -36,6 +36,8 @@ define(function(require){
       this.on('contextMenu:course:edit', this.editProject);
       this.on('contextMenu:course:delete', this.deleteProjectPrompt);
       this.on('contextMenu:course:duplicate', this.duplicateProject);
+
+      this.model.set('heroImageURI', this.model.getHeroImageURI());
     },
 
     openContextMenu: function (e) {
@@ -62,7 +64,8 @@ define(function(require){
     },
 
     selectProject: function(event) {
-      event.stopPropagation();
+      event && event.preventDefault();
+
       this.selectItem();
     },
 
@@ -97,9 +100,16 @@ define(function(require){
     },
 
     deleteProject: function(event) {
-      if (this.model.destroy()) {
-          this.remove();
+      var self = this;
+
+      self.model.destroy({
+        success: function(model, response, options) {
+          self.remove()
+        },
+        error: function(model, response, options) {
+          alert('Error - ' + response.responseJSON.message);
         }
+      });
     },
 
     duplicateProject: function() {

@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   
   var Backbone = require('backbone');
@@ -13,9 +14,13 @@ define(function(require) {
         'tags': [],
         _type: 'course'
     },
+
+    getHeroImageURI: function () {
+      return '/api/asset/serve/' + this.get('heroImage');
+    },
     
-    isShared: function () {
-      return this.get('_isShared');
+    isEditable: function () {
+      return this.get('_isShared') || this.get('createdBy') == Origin.sessionModel.get('id')
     },
     
     getDuplicateURI: function () {

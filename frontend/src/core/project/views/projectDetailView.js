@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
@@ -60,11 +61,11 @@ define(function(require) {
           error: function() {
             alert('An error occurred doing the save');
           },
-          success: _.bind(function() {
+          success: _.bind(function(model, response, options) {
             
             Origin.trigger('editingOverlay:views:hide');
             if (this.isNew) {
-              return Backbone.history.navigate('#/dashboard', {trigger: true});
+              return Backbone.history.navigate('#/editor/' + response._id + '/menu', {trigger: true});
             }
             Origin.trigger('editor:refreshData', function() {
               Backbone.history.history.back();

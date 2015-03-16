@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * Bower content plugin
  *
@@ -15,6 +16,7 @@ var origin = require('../../../'),
     ContentTypeError = contentmanager.errors.ContentTypeError,
     configuration = require('../../../lib/configuration'),
     permissions = require('../../../lib/permissions'),
+    helpers = require('../../../lib/helpers'),
     database = require('../../../lib/database'),
     logger = require('../../../lib/logger'),
     defaultOptions = require('./defaults.json'),
@@ -53,8 +55,19 @@ util.inherits(BowerPlugin, ContentPlugin);
  * @param {callback} next (function (err, isAllowed))
  */
 BowerPlugin.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
-  var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
-  permissions.hasPermission(userId, action, resource, next);
+  helpers.hasCoursePermission(action, userId, tenantId, contentItem, function(err, isAllowed) {
+    if (err) {
+      return next(err);
+    }
+
+    if (!isAllowed) {
+      // Check the permissions string
+      var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
+      permissions.hasPermission(userId, action, resource, next);
+    } else {
+      return next(null, isAllowed);
+    }
+  });
 };
 
 /**
@@ -192,8 +205,22 @@ function initialize () {
  */
 
 BowerPlugin.prototype.updatePluginType = function (req, res, next) {
-  // not implemented
-  return res.json({ success: false, message: 'not implemented' });
+  var self = this;  
+  var delta = _.pick(req.body, '_isAvailableInEditor'); // only allow update of certain attributes
+  
+  database.getDatabase(function (err, db) {
+    if (err) {
+      return next(err);
+    }
+
+    db.update(self.getPluginType(), { _id: req.params.id }, delta, function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      return res.json({ success: true });
+    });
+  });
 };
 
 /**
@@ -214,7 +241,18 @@ BowerPlugin.prototype.initialize = function (plugin) {
             return next(err);
           }
 
-          db.retrieve(plugin.type, {}, function (err, results) {
+          // Check if requests are on the master tenant
+          var currentUser = usermanager.getCurrentUser();
+          var isMasterTenantUser = currentUser 
+            ? currentUser.tenant.isMaster
+            : false;
+
+          // Users on the master tenant should be able to see all plugins
+          var criteria = !isMasterTenantUser 
+            ? {_isAvailableInEditor: true}
+            : {};
+
+          db.retrieve(plugin.type, criteria, function (err, results) {
             if (err) {
               return next(err);
             }
@@ -222,7 +260,7 @@ BowerPlugin.prototype.initialize = function (plugin) {
             res.statusCode = 200;
             return res.json(results);
           });
-        });
+        }, configuration.getConfig('dbName'));
       } else {
         // we only want to fetch the latest versions
         options.latest = true;
@@ -246,7 +284,11 @@ BowerPlugin.prototype.initialize = function (plugin) {
           return next(err);
         }
 
-        db.retrieve(plugin.type, { _id: req.params.id }, function (err, results) {
+        var options = db.isValidIdentifier(req.params.id) 
+          ? { _id: req.params.id } 
+          : { name: req.params.id}
+
+        db.retrieve(plugin.type, options, function (err, results) {
           if (err) {
             return next(err);
           }
@@ -259,7 +301,7 @@ BowerPlugin.prototype.initialize = function (plugin) {
           res.statusCode = 404;
           return res.json({ success: false, message: 'could not find plugin' });
         });
-      });
+      }, configuration.getConfig('dbName'));
     });
 
     // update a single plugin type definition by id
@@ -298,7 +340,7 @@ BowerPlugin.prototype.initialize = function (plugin) {
             return res.json({ success:true, isUpdateable: exists });
           });
         });
-      });
+      }, configuration.getConfig('dbName'));
     });
 
     // upgrade a plugin/plugins
@@ -351,7 +393,7 @@ BowerPlugin.prototype.initialize = function (plugin) {
               });
             });
         });
-      });
+      }, configuration.getConfig('dbName'));
     });
   });
 };
@@ -827,12 +869,6 @@ function handleUploadedPlugin (req, res, next) {
             if (error) {
               return next(error);
             }
-
-            // now remove tenant courses and run a grunt build
-            var user = usermanager.getCurrentUser();
-            var tenantId = user.tenant._id;
-
-            app.emit('rebuildAllCourses', tenantId);
 
             res.statusCode = 200;
             return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });

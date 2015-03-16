@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * Menu content plugin
  *
@@ -34,16 +35,8 @@ var bowerConfig = {
     'adapt-contrib-boxMenu'
   ],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
-    database.getDatabase(function (err, db) {
-      if (err) {
-        return next(err);
-      }
-      // in future need to update contentObjects with newPlugins attributes
-      // but for time being menus don't have any attributes so just add this menu to config
-
-      db.update('config', { _menu: oldPlugin._id }, { _menu: newPlugin._id }, next);
-
-    });
+    // Not required for menus
+    return next();
   }
 };
 
@@ -114,40 +107,46 @@ BowerPlugin.prototype.initialize.call(new Menu(), bowerConfig);
           return next(err);
         }
 
-        // verify it's a valid menu
-        db.retrieve('menutype', { _id: menuId }, function (err, results) {
+        database.getDatabase(function(err, masterDb) {
           if (err) {
             return next(err);
           }
 
-          if (!results || 1 !== results.length) {
-            res.statusCode = 404;
-            return res.json({ success: false, message: 'menu not found' });
-          }
-
-          // update the course config object
-          db.update('config', { _courseId: courseId }, { _menu: menuId }, function (err) {
+          // verify it's a valid menu
+          masterDb.retrieve('menutype', { _id: menuId }, function (err, results) {
             if (err) {
               return next(err);
             }
 
-            // if we successfully changed the menu, we need to force a rebuild of the course
-            var user = usermanager.getCurrentUser();
-            var tenantId = user.tenant._id;
-            if (!tenantId) {
-              // log an error, but don't fail
-              logger.log('error', 'failed to determine current tenant', user);
-              res.statusCode = 200;
-              return res.json({ success: true });
+            if (!results || 1 !== results.length) {
+              res.statusCode = 404;
+              return res.json({ success: false, message: 'menu not found' });
             }
 
+            // update the course config object
+            db.update('config', { _courseId: courseId }, { _menu: results[0].name }, function (err) {
+              if (err) {
+                return next(err);
+              }
 
-            app.emit('rebuildCourse', tenantId, courseId);
+              // if we successfully changed the menu, we need to force a rebuild of the course
+              var user = usermanager.getCurrentUser();
+              var tenantId = user.tenant._id;
+              if (!tenantId) {
+                // log an error, but don't fail
+                logger.log('error', 'failed to determine current tenant', user);
+                res.statusCode = 200;
+                return res.json({ success: true });
+              }
 
-            res.statusCode = 200;
-            return res.json({success: true});
+
+              app.emit('rebuildCourse', tenantId, courseId);
+
+              res.statusCode = 200;
+              return res.json({success: true});
+            });
           });
-        });
+        }, configuration.getConfig('dbName'));        
       });
     });
   });

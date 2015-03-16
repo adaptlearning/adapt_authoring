@@ -1,16 +1,18 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
   var Origin = require('coreJS/app/origin');
   var DashboardView = require('coreJS/dashboard/views/dashboardView');
   var DashboardSidebarView = require('coreJS/dashboard/views/dashboardSidebarView');
-  var ProjectCollection = require('coreJS/project/collections/projectCollection');
+  var MyProjectCollection = require('coreJS/project/collections/myProjectCollection');
+  var SharedProjectCollection = require('coreJS/project/collections/sharedProjectCollection');
   var TagsCollection = require('coreJS/tags/collections/tagsCollection');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
     Origin.editor = {};
     Origin.editor.data = {};
     
-    Origin.trigger('location:title:update', {title: 'Dashboard - viewing all courses'});
+    Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
     Origin.options.addItems([
       {
         title: 'Grid',
@@ -62,15 +64,14 @@ define(function(require) {
   });
   
   Origin.on('dashboard:loaded', function (options) {
-    var projects = new ProjectCollection();
     switch (options.type) {
       case 'shared':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing shared courses'});
-        Origin.router.createView(DashboardView, {isSharedCollection: true, collection: projects});
+        Origin.router.createView(DashboardView, {collection: new SharedProjectCollection});
         break;
       case 'all':
-        Origin.trigger('location:title:update', {title: 'Dashboard - viewing all courses'});
-        Origin.router.createView(DashboardView, {collection: projects});
+        Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
+        Origin.router.createView(DashboardView, {collection: new MyProjectCollection});
       default:
         break;
     }

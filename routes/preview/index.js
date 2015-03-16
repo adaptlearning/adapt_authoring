@@ -3,6 +3,7 @@ var path = require('path');
 var fs = require('fs');
 var server = module.exports = express();
 var configuration = require('../../lib/configuration');
+var Constants = require('../../lib/outputmanager').Constants;
 var usermanager = require('../../lib/usermanager');
 
 server.set('views', __dirname);
@@ -13,7 +14,7 @@ server.get('/preview/:tenant/:course/*', function (req, res, next) {
       tenant = req.params.tenant,
       currentUser = usermanager.getCurrentUser(),
       file = req.params[0] || 'main.html',
-      requestedFile = path.join(configuration.serverRoot, 'temp', tenant, 'adapt_framework', 'courses', course, 'build', file);
+      requestedFile = path.join(configuration.serverRoot, Constants.Folders.Temp, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenant, course, Constants.Folders.Build, file);
   var currentUrl = 'http://' + configuration.serverName  + ':' + configuration.serverPort + '/preview/' + tenant + '/' + course;
 
   // TODO -- Cimplement security here

@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 require.config({
     baseUrl: '../../',
     paths: {
@@ -16,6 +17,7 @@ require.config({
       jsoneditor: 'core/libraries/jquery.jsoneditor.min',
       'jquery-ui': 'core/libraries/jquery-ui.min',
       'jquery-form' : 'core/libraries/jquery.form',
+      typeahead: 'core/libraries/typeahead',
       velocity: 'core/libraries/velocity',
       scrollTo: 'core/libraries/scrollTo',
       colorPicker: 'core/libraries/colorPicker/js/colorpicker',
@@ -28,7 +30,8 @@ require.config({
       editorMenuSettings: 'core/editor/menuSettings',
       editorGlobal: 'core/editor/global',
       editorExtensions: 'core/editor/extensions',
-      tags: 'core/libraries/jquery.tagsinput.min'
+      tags: 'core/libraries/jquery.tagsinput.min',
+      pikaday: 'core/libraries/pikaday/js/pikaday'
     },
     shim: {
       jquery: [

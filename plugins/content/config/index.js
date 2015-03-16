@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * Config content plugin
  */
@@ -6,6 +7,7 @@ var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
     configuration = require('../../../lib/configuration'),
     permissions = require('../../../lib/permissions'),
     database = require('../../../lib/database'),
+    helpers = require('../../../lib/helpers'),
     logger = require('../../../lib/logger'),
     origin = require('../../../'),
     util = require('util'),
@@ -24,8 +26,19 @@ util.inherits(ConfigContent, ContentPlugin);
  * @param {callback} next (function (err, isAllowed))
  */
 ConfigContent.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
-  var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
-  permissions.hasPermission(userId, action, resource, next);
+  helpers.hasCoursePermission(action, userId, tenantId, contentItem, function(err, isAllowed) {
+    if (err) {
+      return next(err);
+    }
+
+    if (!isAllowed) {
+      // Check the permissions string
+      var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
+      permissions.hasPermission(userId, action, resource, next);
+    } else {
+      return next(null, isAllowed);
+    }
+  });
 };
 
 /**

@@ -8,13 +8,17 @@
             <a href="#" class="open-context-icon open-context-course"><i class="fa fa-cog fa-fw"></i></a>
           </div>
         </div>
-
+        
       </div>
     </div>
     
-    <div class="project-image">
-      <img class="project-image-filler" src="images/origami-project.jpg"/>
+    {{#if heroImage}}
+    <div class="project-image" style="background-image: url({{heroImageURI}});">
     </div>
+    {{else}}
+    <div class="project-image">
+    </div>
+    {{/if}}
 
     <div class="project-details">
       <div class="project-details-inner">

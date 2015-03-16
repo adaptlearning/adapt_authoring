@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * Clipboard content plugin
  */
@@ -41,12 +42,7 @@ function initialize() {
   ['contentobject', 'block', 'component'].forEach(function (contentType) {
     app.contentmanager.addContentHook('destroy', contentType, { when: 'pre' }, function (contentType, data, next) { 
 
-      logger.log('info', 'Pre-destroy hook firing for ' + contentType);
-      logger.log('info', data);
-    
       database.getDatabase(function (err, db) {
-        logger.log('info', 'in getDatabase()');
-
         db.retrieve(contentType, data[0], function(err, items) {
           if (err) {
             logger.log('err', err);
@@ -74,14 +70,15 @@ function initialize() {
                 break;
             }
 
+            // logger.log('info', criteria.toJSON());
             db.destroy('courseasset', criteria, function (err) {
               if (err) {
                 logger.log('error', err);
                 return next(err);
               }
 
-              logger.log('info', 'CourseAsset removed');
-              logger.log('info', criteria);
+              // logger.log('info', 'CourseAsset removed');
+              // logger.log('info', criteria);
 
               next(null, data);
             });

@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
     var Handlebars = require('handlebars');
 
@@ -34,15 +35,21 @@ define(function(require){
           var string = key.replace(/_/g, "").toLowerCase();
           return this.capitalise(string);
         },
-        formatDate: function(timestamp) {
+        formatDate: function(timestamp, noZero) {
+          var noDisplay = '-';
           // 2014-02-17T17:00:34.196Z
           if (typeof(timestamp) !== 'undefined') {
             var date = new Date(timestamp);
 
+            // optionally use noDisplay char if 0 dates are to be interpreted as such
+            if (noZero && 0 === date.valueOf()) {
+              return noDisplay;
+            }
+
             return date.toDateString();
-          } else {
-            return '-';
-          }
+          } 
+          
+          return noDisplay;
         },
         formatDuration: function(duration) {
           var zero = '0', hh, mm, ss;

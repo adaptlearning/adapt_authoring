@@ -1,3 +1,4 @@
+// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 require.config({
     paths: {
       jquery: 'core/libraries/jquery',
@@ -21,7 +22,8 @@ require.config({
       editorTheme: 'core/editor/theme',
       editorGlobal: 'core/editor/global',
       editorExtensions: 'core/editor/extensions',
-      tinymce: 'core/libraries/tinymce/tinymce.min'
+      tinymce: 'core/libraries/tinymce/tinymce.min',
+      tagsInput: 'core/libraries/jquery.tagsinput.min.js'
     },
     shim: {
       jquery: [
@@ -60,6 +62,10 @@ require.config({
         exports: "$"
       },
       'jquery-form': {
+        deps: ['jquery'],
+        exports: "$"
+      },
+  	  'tagsInput': {
         deps: ['jquery'],
         exports: "$"
       },

@@ -1,0 +1,7 @@
+{
+  "name": "Product Manager",
+  "version": "0.0.1",
+ "statement" : [
+    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/product/*", "action":["create","read","update","delete"], "effect":"allow" }
+  ]
+}

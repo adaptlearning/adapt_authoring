@@ -11,12 +11,10 @@
       "editorOnly": true
     },
     "_theme": {
-      "type": "objectid",
-      "ref": "themetype"
+      "type": "string"
     },
     "_menu": {
-      "type": "objectid",
-      "ref": "menutype"
+      "type": "string"
     },
     "_courseId": {
       "type": "objectid",

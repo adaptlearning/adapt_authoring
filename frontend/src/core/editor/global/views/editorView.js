@@ -119,6 +119,8 @@ define(function(require){
 
       if (canPreview && !Origin.editor.isPreviewPending) {
         Origin.editor.isPreviewPending = true;
+        $('.editor-common-sidebar-preview-inner').addClass('display-none');
+        $('.editor-common-sidebar-previewing').removeClass('display-none');
 
         if (Origin.constants.outputPlugin == 'adapt') {
           // Report progress for 45 seconds
@@ -164,7 +166,7 @@ define(function(require){
               self.launchCoursePreview();
               self.resetPreviewProgress();
             } else {
-               $('.sidebar-progress').animate({ width: jqXHR.progress + '%' }, 1000);
+               $('.editor-common-sidebar-preview-progress').animate({ width: jqXHR.progress + '%' }, 1000);
             }
           },
           error: function(jqXHR, textStatus, errorThrown) {
@@ -182,7 +184,8 @@ define(function(require){
 
     resetPreviewProgress: function() {
       $('.editor-common-sidebar-preview-progress').css('width', 0).stop();
-
+      $('.editor-common-sidebar-preview-inner').removeClass('display-none');
+      $('.editor-common-sidebar-previewing').addClass('display-none');
       Origin.editor.isPreviewPending = false;
     },
 

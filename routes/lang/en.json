@@ -115,6 +115,7 @@
   "app.publish" : "Publish",
   "app.publishing" : "Publishing...",
   "app.preview" : "Preview",
+  "app.previewing" : "Previewing...",
   "app.editprofileinformation" : "View/edit your profile",
   "app.firstname" : "First name",
   "app.lastname" : "Last name",

@@ -186,11 +186,6 @@ define(function(require){
       Origin.editor.isPreviewPending = false;
     },
 
-    resetPreviewProgress: function() {
-      $('.editor-common-sidebar-preview-progress').css('width', 0).stop();;
-      Origin.editor.isPreviewPending = false;
-    },
-
     /*
       Archive off the clipboard
     */

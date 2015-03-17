@@ -77,13 +77,28 @@ define(function(require){
 
       var canPublish = this.validateCourseContent();
 
-      if (canPublish) {
-        var $downloadForm = $('#downloadForm');
+      if (canPublish && !Origin.editor.isPublishPending) {
+        $('.editor-common-sidebar-publishing-progress').animate({ width: '100%' }, 30000);
+        $('.editor-common-sidebar-publish-inner').addClass('display-none');
+        $('.editor-common-sidebar-publishing').removeClass('display-none');
+        //return;
         var courseId = Origin.editor.data.course.get('_id');
         var tenantId = Origin.sessionModel.get('tenantId');
 
-        $downloadForm.attr('action', '/download/' + tenantId + '/' + courseId + '/' + 'download.zip');
-        $downloadForm.submit();
+        $.get('/download/' + tenantId + '/' + courseId, function(data) {
+
+          $('.editor-common-sidebar-publishing-progress').css('width', 0).stop();;
+          Origin.editor.isPublishPending = false;
+          $('.editor-common-sidebar-publish-inner').removeClass('display-none');
+          $('.editor-common-sidebar-publishing').addClass('display-none');
+
+          var $downloadForm = $('#downloadForm');
+
+          $downloadForm.attr('action', '/download/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
+          $downloadForm.submit();
+          
+        });
+        
       } else {
         return false;
       }
@@ -104,10 +119,12 @@ define(function(require){
 
       if (canPreview && !Origin.editor.isPreviewPending) {
         Origin.editor.isPreviewPending = true;
+        $('.editor-common-sidebar-preview-inner').addClass('display-none');
+        $('.editor-common-sidebar-previewing').removeClass('display-none');
 
         if (Origin.constants.outputPlugin == 'adapt') {
           // Report progress for 45 seconds
-          $('.sidebar-progress').animate({ width: '100%' }, 45000); 
+          $('.editor-common-sidebar-preview-progress').animate({ width: '100%' }, 45000); 
         }
 
         $.ajax({
@@ -149,7 +166,7 @@ define(function(require){
               self.launchCoursePreview();
               self.resetPreviewProgress();
             } else {
-               $('.sidebar-progress').animate({ width: jqXHR.progress + '%' }, 1000);
+               $('.editor-common-sidebar-preview-progress').animate({ width: jqXHR.progress + '%' }, 1000);
             }
           },
           error: function(jqXHR, textStatus, errorThrown) {
@@ -166,9 +183,9 @@ define(function(require){
     },
 
     resetPreviewProgress: function() {
-      $('.sidebar-progress').css('width', 0);
-      $('.sidebar-progress').stop();
-
+      $('.editor-common-sidebar-preview-progress').css('width', 0).stop();
+      $('.editor-common-sidebar-preview-inner').removeClass('display-none');
+      $('.editor-common-sidebar-previewing').addClass('display-none');
       Origin.editor.isPreviewPending = false;
     },
 

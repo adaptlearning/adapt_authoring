@@ -178,10 +178,14 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
       function(callback) {
         if (!isPreview) {
           // Now zip the build package
-          var output = fs.createWriteStream(path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Filenames.Download)),
+          var filename = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Filenames.Download);
+          var zipName = self.slugify(outputJson['course'].title);
+          var output = fs.createWriteStream(filename),
             archive = archiver('zip');
 
           output.on('close', function() {
+            resultObject.filename = filename;
+            resultObject.zipName = zipName;
             callback();
           });
           archive.on('error', function(err) {
@@ -194,39 +198,14 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
           archive.bulk([
             { expand: true, cwd: path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build), src: ['**/*'] }
           ]).finalize(); 
+
         } else {
           // No download required -- skip this step
           callback();
         }        
-      },
-      function(callback) {
-        if (isPreview) {
-          callback();
-        } else {
-          // Trigger the file download
-          var filename = self.slugify(outputJson['course'].title),
-            filePath = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Filenames.Download);
-
-          fs.stat(filePath, function(err, stat) {
-            if (err) {
-              callback(err, 'Error calling fs.stat');
-            } else {
-              response.writeHead(200, {
-                  'Content-Type': 'application/zip',
-                  'Content-Length': stat.size,
-                  'Content-disposition' : 'attachment; filename=' + filename + '.zip',
-                  'Pragma' : 'no-cache',
-                  'Expires' : '0'
-              });
-
-              var readStream = fs.createReadStream(filePath);
-
-              readStream.pipe(response);
-            }
-          });
-        }
-      }    
+      }   
     ], function(err) {
+
       if (err) {
         logger.log('error', err);
         return next(err);
@@ -237,11 +216,9 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
     });   
 
 };
-
 /**
  * Module exports
  *
  */
 
 exports = module.exports = AdaptOutput;
-

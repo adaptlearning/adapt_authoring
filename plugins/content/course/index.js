@@ -429,20 +429,25 @@ function duplicate (data, cb) {
                   async.eachSeries(items, function(item, next) {
                     // For each course asset, before inserting the new document
                     // the _courseId and _contentTypeParentId must be changed
-                    var courseAsset = item.toObject();
-                    delete courseAsset._id;
+                    if (parentIdMap[item._contentTypeParentId]) {
+                      var courseAsset = item.toObject();
+                      delete courseAsset._id;
 
-                    courseAsset._courseId = newCourseId;
-                    courseAsset._contentTypeParentId = parentIdMap[item._contentTypeParentId];
+                      courseAsset._courseId = newCourseId;
+                      courseAsset._contentTypeParentId = parentIdMap[item._contentTypeParentId];
 
-                    return db.create('courseasset', courseAsset, function (error, newCourseAsset) {
-                      if (error) {
-                        logger.log('error', error);
-                        return next(error);
-                      } else {
-                        next();
-                      }
-                    });
+                      return db.create('courseasset', courseAsset, function (error, newCourseAsset) {
+                        if (error) {
+                          logger.log('error', error);
+                          return next(error);
+                        } else {
+                          next();
+                        }
+                      });
+                    } else {
+                      next();
+                    }
+                    
                   }, function(error) {
                     if (error) {
                       logger.log('error', error);

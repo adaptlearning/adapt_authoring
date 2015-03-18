@@ -86,6 +86,12 @@ define(function(require) {
         return $('.app-inner').append(new PermissionsView().$el);
       }
 
+      // Verify the user is authenticated
+      if (!this.isUserAuthenticated()  && (module !== 'user' && route1 !== 'login')) {
+        alert('Your session has expired, click OK to log on again');
+        return this.redirectToLogin();
+      }
+
       var routeArguments = arguments;
 
       // Set previous location object

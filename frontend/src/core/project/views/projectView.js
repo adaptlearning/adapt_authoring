@@ -5,6 +5,7 @@ define(function(require){
   var Handlebars = require('handlebars');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
+  var Notify = require("coreJS/notify/notify");
 
   var ProjectView = OriginView.extend({
 
@@ -96,7 +97,36 @@ define(function(require){
           ]
         };
 
-      Origin.trigger('notify:prompt', deleteProject);
+        /*Notify.info({
+          name: "Info notification",
+          body: "This is the info body....",
+          _type: "prompt",
+          _prompts: [{
+              label: 'yes',
+              _callbackEvent: 'test:yes'
+            },{
+              label: 'no',
+              _callbackEvent: 'test:no'
+            }
+          ]
+        });*/
+
+        Notify.debug({
+          name: "Debug notification",
+          body: "This is a debug message....",
+          _type: "alert",
+          _prompts: [{
+              label: 'ok',
+              _callbackEvent: 'test:ok'
+            }
+          ]
+        });
+
+        Notify.fatal(new Error("Generic error message..."), {
+          _type: 'log'
+        });
+
+      //Origin.trigger('notify:prompt', deleteProject);
     },
 
     deleteProject: function(event) {

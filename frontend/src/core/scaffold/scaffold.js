@@ -252,6 +252,7 @@ define(function(require) {
 		// This shouldn't need to check whether this is not set
 		// _type:'config' should be set on the model
 		var type = options.model.get('_type') || options.schemaType || 'config';
+		var initialType = type;
 
 		switch (type) {
 			case 'component':
@@ -263,12 +264,24 @@ define(function(require) {
 				type = 'contentobject';
 				break;
 
+			case '_courseStyle':
+				type = 'course';
+				break;
+
 			case 'theme':
 				type = options.schemaType;
 				break;
 		}
 
 		var schema = new Schemas(type);
+
+		// Support ommission of attributes for certain types
+		switch (initialType) {
+			case '_courseStyle':
+				schema = _.pick(schema, 'customStyle');
+				break;
+		}
+		
 		options.model.schema = buildSchema(schema, options, type);
 		options.fieldsets = buildFieldsets(schema, options);
 		currentModel = options.model;

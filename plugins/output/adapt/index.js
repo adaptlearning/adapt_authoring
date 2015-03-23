@@ -90,7 +90,18 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
           callback(null);
         });
       },
+      function(callback) {
+        var temporaryThemeName = tenantId + '-' + courseId;
+        var temporaryThemeFolder = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Theme, temporaryThemeName);
 
+        self.writeCustomStyle(tenantId, courseId, temporaryThemeFolder, function(err) {
+          if (err) {
+            return callback(err);
+          }
+
+          callback(null);
+        });
+      },
       function(callback) {
         var temporaryMenuName = tenantId + '-' + courseId;
         var temporaryMenuFolder = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Menu, temporaryMenuName);

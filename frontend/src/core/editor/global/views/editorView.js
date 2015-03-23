@@ -357,7 +357,8 @@ define(function(require){
             _showIcon: true
           };
 
-          Origin.trigger('notify:alert', alertObject);
+          // alert
+          //Origin.trigger('notify:alert', alertObject);
           return;
 
         } else {

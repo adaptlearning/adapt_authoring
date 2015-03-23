@@ -93,11 +93,11 @@ define(function(require) {
               _callbackEvent: "",
               _classes: ""
             };
-            Origin.trigger('notify:push', pushObject);
+            //Origin.trigger('notify:push', pushObject);
             _.delay(function() {
               newMenuItemView.remove();
             }, timeOut);
-            
+
           },
           success: _.bind(function(model) {
             Origin.editor.data.contentObjects.add(model);
@@ -153,10 +153,12 @@ define(function(require) {
               _callbackEvent: "",
               _classes: "primary-color"
             };
+            /*
+            alert
             Origin.trigger('notify:push', pushObject);
             _.delay(function() {
               newMenuItemView.remove();
-            }, timeOut);
+            }, timeOut);*/
           },
           success: _.bind(function(model, response, options) {
             // Add this new element to the collect
@@ -197,7 +199,7 @@ define(function(require) {
         });
         Origin.trigger('editorView:pasteCancel', target);
       }
-      
+
   	}, {
   		template: 'editorMenuLayer'
   });

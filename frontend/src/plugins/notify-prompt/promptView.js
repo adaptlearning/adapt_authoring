@@ -1,10 +1,12 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+	return {
+		test: "hello"
+	}
 
-	var Origin = require('coreJS/app/origin');
+	/*var Origin = require('coreJS/app/origin');
 
-	var NotifyView = Backbone.View.extend({
-
+	var PromptView = Backbone.View.extend({
 		className: 'notify',
 
 		initialize: function() {
@@ -42,7 +44,7 @@ define(function(require) {
 				if (this.model.get('componentTypes')) {
 					Origin.trigger(eventToTrigger, {componentType: this.model.get('component'), layout: this.model.get('layout')});
 				} else {
-					Origin.trigger(eventToTrigger);					
+					Origin.trigger(eventToTrigger);
 				}
 			}
 
@@ -84,9 +86,9 @@ define(function(require) {
 			var animationSpeed = 400;
 			if (notifyHeight > windowHeight) {
 				this.$('.notify-popup').css({
-					'height':'100%', 
-					'top':0, 
-					'overflow-y': 'scroll', 
+					'height':'100%',
+					'top':0,
+					'overflow-y': 'scroll',
 					'-webkit-overflow-scrolling': 'touch',
 					'opacity': 1
 				});
@@ -121,6 +123,5 @@ define(function(require) {
 
 	});
 
-	return NotifyView;
-
+	return PromptView;*/
 });

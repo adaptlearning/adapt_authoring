@@ -15,33 +15,24 @@
                     </div>
                 </div>
                 {{/if}}
-                {{#if title}}
+                {{#if name}}
                 <div class="notify-popup-title">
                     <h5 class="notify-popup-title-inner">
-                    {{{title}}}
+                    {{{name}}}
                     </h5>
                 </div>
                 {{/if}}
                 {{#if body}}
                 <div class="notify-popup-body">
                     <div class="notify-popup-body-inner">{{{body}}}</div>
-
                 </div>
                 {{/if}}
                 {{#if body}}
                 <div class="notify-popup-buttons">
-
-                    {{#if_value_equals _type "alert"}}
-                    <a href="#" class="notify-popup-button notify-popup-alert-button">{{{confirmText}}}</a>
-                    {{/if_value_equals}}
-
-                    {{#if_value_equals _type "prompt"}}
-                        {{#each _prompts}}
-                        <a href="#" class="notify-popup-button notify-popup-prompt-button" data-event="{{_callbackEvent}}">{{{promptText}}}</a>
-                        {{/each}}
-                    {{/if_value_equals}}
-
-                </div>                
+                    {{#each _prompts}}
+                    <a href="#" class="notify-popup-button notify-popup-prompt-button" data-event="{{_callbackEvent}}">{{{this.label}}}</a>
+                    {{/each}}
+                </div>
                 {{/if}}
             </div>
         </div>

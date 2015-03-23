@@ -1,45 +1,49 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function(require){
+	var _ = require('underscore');
+	var Backbone = require('backbone');
+	var NotifyModel = require('./models/notifyModel');
 
-	var Origin = require('coreJS/app/origin');
-	var NotifyView = require('coreJS/notify/views/notifyView');
-	var NotifyModel = require('coreJS/notify/models/notifyModel');
-	var NotifyPushCollection = require('coreJS/notify/collections/notifyPushCollection');
+	function Notify() {
+		if(typeof Notify.instance !== 'object') {
+			Notify.instance = this;
+			_.extend(Notify.instance, Backbone.Events);
 
-	var NotifyPushes = new NotifyPushCollection();
+			var levels = [
+				'fatal',
+				'error',
+				'warn',
+				'info',
+				'debug'
+			];
 
-	Origin.on('notify:alert', function(notifyObject) {
-		addNotifyView('alert', notifyObject);
-	});
+			function initialise() {
+				for(var i = 0, len = levels.length; i < len; i++) {
+					Notify.instance[levels[i]] = _.bind(handleNotification, Notify.instance, levels[i]);
+				}
+			}
 
-	Origin.on('notify:prompt', function(notifyObject) {
-		addNotifyView('prompt', notifyObject);
-	});
+			function handleNotification(level, model, options) {
+				if(model instanceof Error) {
+					model = NotifyModel.fromError(model, options);
+				}
+				else {
+					model = new NotifyModel(model);
+				}
 
-	Origin.on('notify:popup', function(notifyObject) {
-		addNotifyView('popup', notifyObject);
-	});
+				// console.log(level + ':' + model.get('type') + ', ' + level + ', ' + '*:' + model.get('type') + ', *');
 
-	Origin.on('notify:push', function(notifyObject) {
-		addNotifyView('push', notifyObject);
-	});
+				// different levels of event to allow filtering (should be moved to handler?)
+				this.trigger(level + ':' + model.get('_type'), model);
+				this.trigger(level, model);
+				this.trigger('*:' + model.get('_type'), model);
+				this.trigger('*', model);
+			}
 
-	function addNotifyView(type, notifyObject) {
-		notifyObject._type = type;
-
-		if (type === 'push') {
-
-			NotifyPushes.push(notifyObject);
-
-			return;
-
+			// set up
+			initialise();
 		}
-		// Not sure if we need a popup manager?
-		//Origin.trigger('popup:opened');
-
-		new NotifyView({
-			model: new NotifyModel(notifyObject)
-		});
-	};
-	
+		return Notify.instance;
+	}
+	return new Notify();
 });

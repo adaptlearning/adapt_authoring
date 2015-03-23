@@ -1,16 +1,27 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var Backbone = require('backbone');
 
-	var Backbone = require('backbone');
+  var NotifyModel = Backbone.Model.extend({
+  });
 
-    var NotifyModel = Backbone.Model.extend({
-        defaults: {
-        	_isActive:false,
-        	_showIcon:false,
-        	_timeout:3000
-        }
+  NotifyModel.fromError = function(error, extraOptions) {
+    if(!extraOptions || !extraOptions._type) {
+      var Notify = require('../notify');
+      Notify.debug({
+        name: 'No type specified',
+        body: 'A notification type must be specified.',
+        _type: 'log'
+      });
+      return;
+    }
+
+    return new NotifyModel({
+      name: error.name,
+      body: error.message,
+      _type: extraOptions._type
     });
-    
-    return NotifyModel;
+  }
 
+  return NotifyModel;
 });

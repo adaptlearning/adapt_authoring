@@ -9,16 +9,47 @@ define(function(require){
   _.extend(Origin, Backbone.Events);
 
   Origin.initialize = _.once(function() {
-      Origin.trigger('origin:initialize');
-      Backbone.history.start();
-      Origin.trigger('origin:hideLoading');
+    var initializePluginsLength = initializePlugins.length;
+    if (initializePluginsLength === 0) {
+      initialize();
+    } else {
+      var count = 0;
+
+      function callPlugin() {
+        initializePlugins[count].call(null, function() {
+          count ++;
+          if (count === initializePluginsLength) {
+            initialize();
+          } else {
+            callPlugin();
+          }
+        });
+      }
+
+      callPlugin();
+      
+    }
   });
+
+  function initialize() {
+    Origin.trigger('origin:initialize');
+    Backbone.history.start();
+    Origin.trigger('origin:hideLoading');
+  }
 
   Origin.editor = {};
 
   Origin.editor.data = {};
 
   Origin.location = {};
+
+  var initializePlugins = [];
+
+  Origin.plugins = {
+    addPluginToInitialize: function(pluginMethod) {
+      initializePlugins.push(pluginMethod);
+    }
+  };
 
   // Setup window events
   // This is abstracted so we can listenTo and remove event callbacks

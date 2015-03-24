@@ -211,6 +211,7 @@ define(function(require){
         this.shouldStopFetches = false;
 
         this.courseLimit = 0;
+        this.collectionLength = 0;
         this.collection.reset();
       }
 

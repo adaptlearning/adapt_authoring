@@ -331,6 +331,8 @@ define(function(require){
       // Let's do a standard check for at least one child object
       var containsAtLeastOneChild = true;
 
+      var alerts = [];
+
       function interateOverChildren(model) {
 
         // Return the function if no children - on components
@@ -339,25 +341,19 @@ define(function(require){
         var currentChildren = model.getChildren();
 
         // Do validate across each item
-        if (!currentChildren.length > 0) {
+        if (currentChildren.length == 0) {
 
           containsAtLeastOneChild = false;
 
-          validationError = "There seems to be a " 
-            + model.get('_type') 
-            + " with the title - '" 
-            + model.get('title') 
-            + "' with no " 
-            + model._children;
-          var alertObject = {
-            title: "Validation failed",
-            body: validationError,
-            confirmText: "Ok",
-            _callbackEvent: "editor:courseValidation",
-            _showIcon: true
-          };
+          alerts.push(
+            "There seems to be a "
+            + model.get('_type')
+            + " with the title - '"
+            + model.get('title')
+            + "' with no "
+            + model._children
+          );
 
-          Origin.trigger('notify:alert', alertObject);
           return;
 
         } else {
@@ -366,15 +362,29 @@ define(function(require){
           currentChildren.each(function(childModel) {
             interateOverChildren(childModel);
           });
-          
+
         }
 
       }
 
       interateOverChildren(currentCourse);
 
-      return containsAtLeastOneChild;
+      if(alerts.length > 0) {
+        var errorMessage = ""
+        for(var i = 0, len = alerts.length; i < len; i++) {
+          errorMessage += "<li>" + alerts[i] + "</li>";
+        }
 
+        Origin.trigger('notify:alert', {
+          title: "Validation failed",
+          body: errorMessage,
+          confirmText: "Ok",
+          _callbackEvent: "editor:courseValidation",
+          _showIcon: true
+        });
+      }
+
+      return containsAtLeastOneChild;
     }
 
   }, {

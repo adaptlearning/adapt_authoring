@@ -347,15 +347,14 @@ define(function(require){
 
           alerts.push(
             "There seems to be a "
-            + model.get('_type')
-            + " with the title - '"
-            + model.get('title')
-            + "' with no "
-            + model._children
+              + model.get('_type')
+              + " with the title - '"
+              + model.get('title')
+              + "' with no "
+              + model._children
           );
 
           return;
-
         } else {
 
           // Go over each child and call validation again
@@ -370,7 +369,7 @@ define(function(require){
       interateOverChildren(currentCourse);
 
       if(alerts.length > 0) {
-        var errorMessage = ""
+        var errorMessage = "";
         for(var i = 0, len = alerts.length; i < len; i++) {
           errorMessage += "<li>" + alerts[i] + "</li>";
         }

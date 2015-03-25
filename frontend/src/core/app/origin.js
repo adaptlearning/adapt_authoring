@@ -9,17 +9,36 @@ define(function(require){
   _.extend(Origin, Backbone.Events);
 
   Origin.initialize = _.once(function() {
-    var initializePluginsLength = initializePlugins.length;
-    if (initializePluginsLength === 0) {
-      initialize();
-    } else {
-      var count = 0;
 
+    Origin.tap('initialize', function() {
+      initialize();
+    });
+    
+  });
+
+  function initialize() {
+    Origin.trigger('origin:initialize');
+    Backbone.history.start();
+    Origin.trigger('origin:hideLoading');
+  }
+
+  Origin.tap = function(location, callback) {
+    // Sets up a loading system for plugins to tap into the location
+    // and load their data before everything else kicks off
+    var currentLocationPlugins = _.where(pluginTaps, {location: location});
+    var currentLocationPluginsLength = currentLocationPlugins.length;
+    if (currentLocationPluginsLength === 0) {
+      callback();
+    } else {
+
+      var count = 0;
+      // Goes through each plugin registered using Origin.registerPluginTap 
+      // and that have the same location
       function callPlugin() {
-        initializePlugins[count].call(null, function() {
+        currentLocationPlugins[count].pluginMethod.call(null, function() {
           count ++;
-          if (count === initializePluginsLength) {
-            initialize();
+          if (count === currentLocationPluginsLength) {
+            callback();
           } else {
             callPlugin();
           }
@@ -29,12 +48,6 @@ define(function(require){
       callPlugin();
       
     }
-  });
-
-  function initialize() {
-    Origin.trigger('origin:initialize');
-    Backbone.history.start();
-    Origin.trigger('origin:hideLoading');
   }
 
   Origin.editor = {};
@@ -43,12 +56,15 @@ define(function(require){
 
   Origin.location = {};
 
-  var initializePlugins = [];
+  var pluginTaps = [];
 
-  Origin.plugins = {
-    addPluginToInitialize: function(pluginMethod) {
-      initializePlugins.push(pluginMethod);
-    }
+  // Register a plugin to tap into a certain location before the location loads
+  Origin.registerPluginTap = function(location, pluginMethod) {
+    var pluginTap = {
+      location: location,
+      pluginMethod: pluginMethod
+    };
+    pluginTaps.push(pluginTap);
   };
 
   // Setup window events

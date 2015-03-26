@@ -30,7 +30,7 @@ var origin = require('../../../'),
     _ = require('underscore'),
     util = require('util'),
     path = require('path'),
-    unzip = require('unzip2'),
+    unzip = require('unzip'),
     exec = require('child_process').exec,
     IncomingForm = require('formidable').IncomingForm;
 
@@ -821,35 +821,28 @@ function handleUploadedPlugin (req, res, next) {
     }
 
     // try unzipping
-
     var outputPath = file.path + '_unzipped';
-
-    fs.createReadStream(file.path)
-    .pipe(unzip.Extract({ path: outputPath }))
-    .on('error', function (error) {
+    var rs = fs.createReadStream(file.path);
+    var ws = unzip.Extract({ path: outputPath });
+    rs.on('error', function (error) {
       return next(error);
-    })
-    .on('close', function (data) {
+    });
+    ws.on('error', function (error) {
+      return next(error);
+    });
+    ws.on('close', function () {
       // enumerate output directory and search for bower.json
       fs.readdir(outputPath, function (err, files) {
         if (err) {
           return next(err);
         }
 
+        // first entry should be our target directory
         var packageJson;
-        var canonicalDir;
-
-        if(files.indexOf("bower.json") != -1) {
-          canonicalDir = outputPath
-        } else {
-          var e = new Error("Cannot find bower.json file in the plugin root, please check your zip file and try again.");
-          return next(e);
-        }
-
+        var canonicalDir = path.join(outputPath, files[0]);
         try {
           packageJson = require(path.join(canonicalDir, 'bower.json'));
-        }
-        catch (error) {
+        } catch (error) {
           return next(error);
         }
 
@@ -883,6 +876,7 @@ function handleUploadedPlugin (req, res, next) {
         });
       });
     });
+    rs.pipe(ws);
 
     // response should be sent by one of the above handlers
   });

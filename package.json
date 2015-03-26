@@ -67,7 +67,7 @@
     "underscore": "~1.5.2",
     "validator": "3.3.0",
     "winston": "0.7.2",
-    "unzip2": "^0.2.5"
+    "unzip": "0.1.8"
   },
   "main": "index",
   "engines": {

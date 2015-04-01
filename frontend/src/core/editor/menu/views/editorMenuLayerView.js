@@ -61,16 +61,17 @@ define(function(require) {
       addMenuItem: function(event, type) {
         event.preventDefault();
 
+        var coSchema = Origin.schemas.get('contentobject');
         var newMenuItemModel = new EditorContentObjectModel({
           _parentId: this._parentId,
           _courseId: Origin.editor.data.course.get('_id'),
           title: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
           displayTitle: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
-          body: '',
-          linkText: '',
+          body: coSchema.body.default,
+          linkText: coSchema.linkText.default,
           graphic: {
-            alt: '',
-            src: ''
+            alt: coSchema._graphic.properties.alt.default,
+            src: coSchema._graphic.properties.src.default
           },
           _type: type
         });

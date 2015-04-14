@@ -40,7 +40,7 @@ define(function(require){
 
 			this.removeTemplate = function(name) {
 				if(!templates[name]) {
-					return this.warn({
+					this.warn({
 						body: "Notify.removeTemplate: couldn't find '" + name + "' template!",
 						_template: 'log'
 					});

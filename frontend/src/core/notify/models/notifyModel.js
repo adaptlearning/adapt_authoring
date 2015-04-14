@@ -1,9 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
-  var Notify = require('coreJS/notify/notify');
 
   var NotifyModel = Backbone.Model.extend({
+    // TODO add error checks for creating new models (_type/_level)
     'name': undefined,
     'body': undefined,
     '_level': undefined,
@@ -23,8 +23,9 @@ define(function(require) {
 
   NotifyModel.fromError = function(error, extraOptions) {
     if(!extraOptions || !extraOptions._type) {
-      Notify.debug({
-        body: 'NotifyModel.fromError: no notification type specified.'
+      var Notify = require('../notify');
+      Notify.error({
+        body: 'NotifyModel.fromError: no notification type specified.',
         _template: 'log'
       });
     } else {

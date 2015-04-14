@@ -65,8 +65,15 @@ define(function(require){
 
 				// add in any defaults from template (not overriding model)
 				if(model._template) {
-					for(var attr in templates[model._template]) {
-						if(!model[attr]) model[attr] = templates[model._template][attr];
+					if(!templates[model._template]) {
+						Origin.Notify.warn({
+							body: "Notify.handleNotification: no template with the name '" + model._template + "'",
+							_template: 'log'
+						});
+					} else {
+						for(var attr in templates[model._template]) {
+							if(!model[attr]) model[attr] = templates[model._template][attr];
+						}
 					}
 				}
 

@@ -2,10 +2,16 @@ define(function(require){
 	var Notify = require('coreJS/notify/notify');
 	var PromptView = require('./views/promptView.js');
 
-	Notify.on('*:alert', handleNotification);
+	Notify.addTemplate("alert", {
+		_type: "alert",
+		_prompts: [{
+			label: 'ok'
+		}]
+	});
+
+	Notify.on('alert', handleNotification);
 
 	function handleNotification(model) {
-		console.log('notify-prompt.handleNotification');
 		new PromptView({ model: model });
 	}
 });

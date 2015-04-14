@@ -1,7 +1,7 @@
 <div class="notify-popup notify-type-{{_type}} {{_classes}}">
     {{#if_value_equals _type "popup"}}
     <div class="notify-popup-toolbar">
-        <a href="#" class="notify-popup-done">
+        <a href="#" class="notify-popup-button notify-popup-done">
             <div class="notify-popup-icon-close fa fa-times"></div>
         </a>
     </div>
@@ -30,7 +30,7 @@
                 {{#if body}}
                 <div class="notify-popup-buttons">
                     {{#each _prompts}}
-                    <a href="#" class="notify-popup-button notify-popup-prompt-button" data-event="{{_callbackEvent}}">{{{this.label}}}</a>
+                    <a href="#" class="notify-popup-button notify-popup-prompt-button" data-index="{{this._index}}">{{{this.label}}}</a>
                     {{/each}}
                 </div>
                 {{/if}}
@@ -38,6 +38,5 @@
         </div>
     </div>
 </div>
-
 
 <div class="notify-shadow"></div>

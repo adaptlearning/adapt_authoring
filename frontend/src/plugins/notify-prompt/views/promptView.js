@@ -10,13 +10,21 @@ define(function(require) {
 		initialize: function() {
 			this.listenTo(Origin, 'remove', this.remove);
       		this.listenTo(Origin, 'device:resize', this.resetNotifySize);
+			this.initButtonIds();
 			this.render();
 		},
 
 		events: {
-			'click .notify-popup-alert-button':'onAlertButtonClicked',
-			'click .notify-popup-prompt-button': 'onPromptButtonClicked',
-			'click .notify-popup-done': 'onCloseButtonClicked'
+			'click .notify-popup-alert-button': 'handleButtonClick',
+			'click .notify-popup-prompt-button': 'handleButtonClick',
+			'click .notify-popup-done': 'handleButtonClick'
+		},
+
+		initButtonIds: function() {
+			var prompts = this.model.get('_prompts');
+			for(var i = 0, len = prompts.length; i < len; i++) {
+				prompts[i]._index = i;
+			}
 		},
 
 		render: function() {
@@ -28,25 +36,30 @@ define(function(require) {
             return this;
 		},
 
-		onAlertButtonClicked: function(event) {
+		handleButtonClick: function(event) {
 			event.preventDefault();
-			Origin.trigger(this.model.get('_callbackEvent'), this);
+			this.handleCallback($(event.target).attr('data-index'));
 			this.closeNotify();
 		},
 
-		onPromptButtonClicked: function(event) {
-			event.preventDefault();
-			var eventToTrigger = $(event.currentTarget).attr('data-event');
+		/**
+		* Currently supports:
+		* - Prompt/button specific callback
+		* - Generic callback
+		*/
+		handleCallback: function(buttonIndex) {
+			var prompt = this.model.get('_prompts') && this.model.get('_prompts')[buttonIndex];
 
-			if (eventToTrigger) {
-				if (this.model.get('componentTypes')) {
-					Origin.trigger(eventToTrigger, {componentType: this.model.get('component'), layout: this.model.get('layout')});
-				} else {
-					Origin.trigger(eventToTrigger);
-				}
+			// TODO: refactor, add error checking
+			if(prompt && prompt._callback) {
+				return prompt._callback.apply(this);
+			} else if(this.model.get('_callback')) {
+				return this.model.get('_callback').apply(this);
+			} else {
+				return Notify.debug('NotifyView.handleCallback: no callback specified');
 			}
 
-			this.closeNotify();
+			// TODO: do we need an event triggered? are generic close events useful?
 		},
 
 		onCloseButtonClicked: function(event) {

@@ -2,13 +2,16 @@
 define(function(require){
 	var _ = require('underscore');
 	var Backbone = require('backbone');
+	var Origin = require('coreJS/app/origin');
 	var NotifyModel = require('./models/notifyModel');
 
+	// accessed by instanciating directly, or via Origin.Notify for convenience
 	function Notify() {
-		if(typeof Notify.instance !== 'object') {
-			Notify.instance = this;
-			_.extend(Notify.instance, Backbone.Events);
+		if(typeof Origin.Notify !== 'object') {
+			// shorthand
+			Origin.Notify = this;
 
+			// supported levels of notification
 			var levels = [
 				'fatal',
 				'error',
@@ -17,33 +20,72 @@ define(function(require){
 				'debug'
 			];
 
-			function initialise() {
-				for(var i = 0, len = levels.length; i < len; i++) {
-					Notify.instance[levels[i]] = _.bind(handleNotification, Notify.instance, levels[i]);
-				}
-			}
+			// easy access default settings for notifications
+			var templates = {};
 
-			function handleNotification(level, model, options) {
-				if(model instanceof Error) {
-					model = NotifyModel.fromError(model, options);
+			/**
+			* Static functions
+			*/
+
+			this.addTemplate = function(name, model) {
+				if(templates[name]) {
+					this.warn({
+						body: "Notify.addTemplate: the '" + name + "' template already exists!",
+						_template: 'log'
+					});
+				} else {
+					templates[name] = model;
+				}
+			};
+
+			this.removeTemplate = function(name) {
+				if(!templates[name]) {
+					return this.warn({
+						body: "Notify.removeTemplate: couldn't find '" + name + "' template!",
+						_template: 'log'
+					});
+				} else {
+					delete templates[name];
+				}
+			};
+
+			// set up
+			initialise();
+
+			function initialise() {
+				_.extend(Origin.Notify, Backbone.Events);
+
+				for(var i = 0, len = levels.length; i < len; i++) {
+					Origin.Notify[levels[i]] = _.bind(handleNotification, Origin.Notify, levels[i]);
+				}
+			};
+
+			function handleNotification(level, model) {
+				model._level = level;
+
+				// add in any defaults from template (not overriding model)
+				if(model._template) {
+					for(var attr in templates[model._template]) {
+						if(!model[attr]) model[attr] = templates[model._template][attr];
+					}
+				}
+
+				if(model.error) {
+					model = NotifyModel.fromError(model);
 				}
 				else {
 					model = new NotifyModel(model);
 				}
 
-				// console.log(level + ':' + model.get('type') + ', ' + level + ', ' + '*:' + model.get('type') + ', *');
-
-				// different levels of event to allow filtering (should be moved to handler?)
-				this.trigger(level + ':' + model.get('_type'), model);
+				/*
+				* Trigger multiple events to allow filtering...
+				*/
 				this.trigger(level, model);
-				this.trigger('*:' + model.get('_type'), model);
+				this.trigger(model.get('_type'), model);
 				this.trigger('*', model);
-			}
-
-			// set up
-			initialise();
+			};
 		}
-		return Notify.instance;
+		return this;
 	}
 	return new Notify();
 });

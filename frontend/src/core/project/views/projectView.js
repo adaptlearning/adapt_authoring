@@ -96,36 +96,6 @@ define(function(require){
             {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
           ]
         };
-
-        /*Notify.info({
-          name: "Info notification",
-          body: "This is the info body....",
-          _type: "prompt",
-          _prompts: [{
-              label: 'yes',
-              _callbackEvent: 'test:yes'
-            },{
-              label: 'no',
-              _callbackEvent: 'test:no'
-            }
-          ]
-        });*/
-
-        Notify.debug({
-          title: "Debug notification",
-          message: "This is a debug message....",
-          _type: "alert",
-          _prompts: [{
-              label: 'ok',
-              _callbackEvent: 'test:ok'
-            }
-          ]
-        });
-
-        Notify.fatal(new Error("Generic error message..."), {
-          _type: 'log'
-        });
-
       //Origin.trigger('notify:prompt', deleteProject);
     },
 

@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="/adaptbuilder/css/adapt.css" />
     <link rel="stylesheet" href="core/libraries/font-awesome-4.2.0/css/font-awesome.min.css">
     <script type="text/javascript" src="core/libraries/modernizr.js"></script>
-    <script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+    <script src="//cdn.ckeditor.com/4.4.7/full-all/ckeditor.js"></script>
     {{#if isProduction}}
     <script type="text/javascript" src="core/libraries/require.js" data-main="adaptbuilder/js/origin.js{{#if dateStampAsString}}?{{dateStampAsString}}{{/if}}"></script>
     {{else}}
@@ -26,5 +26,16 @@
         </div>
       </div>
     </div>
+
+    <!--[if IE 9 ]>
+    <div style="display: none">
+      <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
+      <script>
+          // Replace the <textarea id="editor1"> with a CKEditor
+          // instance, using default configuration.
+          CKEDITOR.replace('editor1');
+      </script>
+    </div>
+    <![endif]-->
   </body>
 </html>

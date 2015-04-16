@@ -156,51 +156,29 @@ define(function(require) {
         },
 
         createCourseAsset: function (courseAssetObject, callback, context) {
-            // Has this field been set already?
-            var update = this.findAsset(courseAssetObject.contentTypeId, courseAssetObject.contentType, courseAssetObject.fieldname);
 
-            // Update should only happen if the assetId is different
-            if (update && update.get('_assetId') != courseAssetObject.assetId) {
-            // If so, update it ...
-                update.save({ _assetId: courseAssetObject.assetId },{
-                    error: function() {
-                        alert('An error occurred doing the save');
-                    },
-                    success: function() {
-                        Origin.editor.data.courseAssets.fetch({
-                            reset:true, 
-                            success: function() {
-                                callback.apply(context);
-                            }
-                        });
-                    }
-                });
-            } else  if (!update) {
-                var courseAsset = new EditorCourseAssetModel();
-                // ... otherwise, create it
-                courseAsset.save({
-                    _courseId : Origin.editor.data.course.get('_id'),
-                    _contentType : courseAssetObject.contentType,
-                    _contentTypeId : courseAssetObject.contentTypeId,
-                    _fieldName : courseAssetObject.fieldname,
-                    _assetId : courseAssetObject.assetId,
-                    _contentTypeParentId: courseAssetObject.contentTypeParentId
-                },{
-                    error: function(error) {
-                        alert('An error occurred doing the save');
-                    }, 
-                    success: function() {
-                        Origin.editor.data.courseAssets.fetch({
-                            reset:true, 
-                            success: function() {
-                                callback.apply(context);
-                            }
-                        });
-                    }
-                });
-            } else {
-                callback.apply(context);
-            }
+            var courseAsset = new EditorCourseAssetModel();
+            courseAsset.save({
+                _courseId : Origin.editor.data.course.get('_id'),
+                _contentType : courseAssetObject.contentType,
+                _contentTypeId : courseAssetObject.contentTypeId,
+                _fieldName : courseAssetObject.fieldname,
+                _assetId : courseAssetObject.assetId,
+                _contentTypeParentId: courseAssetObject.contentTypeParentId
+            },{
+                error: function(error) {
+                    alert('An error occurred doing the save');
+                }, 
+                success: function() {
+                    Origin.editor.data.courseAssets.fetch({
+                        reset:true, 
+                        success: function() {
+                            callback.apply(context);
+                        }
+                    });
+                }
+            });
+            
         },
 
         removeCourseAsset: function (contentTypeId, contentType, fieldname) {

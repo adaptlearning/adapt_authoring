@@ -1,4 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
+
+// TODO add NotifyView base class?
+
 define(function(require){
 	var _ = require('underscore');
 	var Backbone = require('backbone');

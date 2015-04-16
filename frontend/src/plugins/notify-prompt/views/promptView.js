@@ -50,16 +50,26 @@ define(function(require) {
 		handleCallback: function(buttonIndex) {
 			var prompt = this.model.get('_prompts') && this.model.get('_prompts')[buttonIndex];
 
-			// TODO: refactor, add error checking
-			if(prompt && prompt._callback) {
-				return prompt._callback.apply(this);
-			} else if(this.model.get('_callback')) {
-				return this.model.get('_callback').apply(this);
-			} else {
-				return Notify.debug('NotifyView.handleCallback: no callback specified');
+			// TODO what to do in the case of multiple callbacks: call one, or all?
+
+			if(prompt) {
+				if(prompt._callback) {
+					prompt._callback.apply(this);
+				}
+				if(prompt._callbackEvent) {
+					Origin.trigger(prompt._callbackEvent);
+				}
 			}
 
-			// TODO: do we need an event triggered? are generic close events useful?
+			if(this.model.get('_callback')) {
+				this.model.get('_callback').apply(this);
+			}
+
+			if(this.model.get('_callbackEvent')) {
+				Origin.trigger(this.model.get('_callbackEvent'));
+			}
+
+			// TODO: do we also need an event triggered? are generic popup:close-style events useful?
 		},
 
 		onCloseButtonClicked: function(event) {

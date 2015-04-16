@@ -54,10 +54,12 @@ define(function(require) {
         },
 
         getValue: function() {
+            return this.value || '';
             return this.$('input').val();
         },
 
         setValue: function(value) {
+            this.value = value;
             this.$('input').val(value);
         },
 
@@ -124,10 +126,9 @@ define(function(require) {
                             assetId: assetId
                         }
 
-
+                        this.value = data.assetLink;
 
                         this.createCourseAsset(courseAssetObject, function() {
-                            this.value = data.assetLink;
                             this.render();
                         }, this);
 
@@ -141,9 +142,9 @@ define(function(require) {
 
         onClearButtonClicked: function(event) {
             event.preventDefault();
-            this.value = '';
-            this.render();
             this.checkValueHasChanged();
+            this.value = '';
+            //this.render();
         },
 
         findAsset: function (contentTypeId, contentType, fieldname) {
@@ -156,6 +157,7 @@ define(function(require) {
         },
 
         createCourseAsset: function (courseAssetObject, callback, context) {
+            var self = this;
 
             var courseAsset = new EditorCourseAssetModel();
             courseAsset.save({
@@ -170,23 +172,54 @@ define(function(require) {
                     alert('An error occurred doing the save');
                 }, 
                 success: function() {
-                    Origin.editor.data.courseAssets.fetch({
-                        reset:true, 
+                    var currentModel = Origin.scaffold.getCurrentModel();
+                    var currentForm = Origin.scaffold.getCurrentForm();
+                    var errors = currentForm.commit({validate: false});
+
+                    currentModel.pruneAttributes();
+
+                    currentModel.save(null, {
+                        error: function() {
+                            alert('An error occurred doing the save');
+                        },
                         success: function() {
-                            callback.apply(context);
+                            
+                            Origin.editor.data.courseAssets.fetch({
+                                reset:true, 
+                                success: function() {
+                                    callback.apply(context);
+                                }
+                            });
+
                         }
-                    });
+                    })
                 }
             });
 
         },
 
         removeCourseAsset: function (contentTypeId, contentType, fieldname) {
+            var that = this;
             var courseAsset = this.findAsset(contentTypeId, contentType, fieldname);
             if (courseAsset) {
                 courseAsset.destroy({
                     success: function(success) {
-                        Origin.editor.data.courseAssets.fetch({reset:true});
+                        var currentModel = Origin.scaffold.getCurrentModel();
+                        var currentForm = Origin.scaffold.getCurrentForm();
+                        var errors = currentForm.commit({validate: false});
+
+                        currentModel.pruneAttributes();
+
+                        currentModel.save(null, {
+                            error: function() {
+                                alert('An error occurred doing the save');
+                            },
+                            success: function() {
+                                that.render();
+                                Origin.editor.data.courseAssets.fetch({reset:true});
+
+                            }
+                        })
                     },
                     error: function(error) {
                         console.log('error', error);

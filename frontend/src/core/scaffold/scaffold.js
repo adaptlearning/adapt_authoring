@@ -21,6 +21,7 @@ define(function(require) {
 	var Scaffold = {};
 	// Used to pass model data around the current form
 	var currentModel;
+	var currentForm;
 
 	// Used to store already build schemas
 	var builtSchemas = {};
@@ -286,6 +287,7 @@ define(function(require) {
 		options.fieldsets = buildFieldsets(schema, options);
 		currentModel = options.model;
 		var form = new Backbone.Form(options).render();
+		currentForm = form;
 		return form;
 
 	}
@@ -331,6 +333,10 @@ define(function(require) {
 
 	Scaffold.getCurrentModel = function() {
 		return currentModel;
+	}
+
+	Scaffold.getCurrentForm = function() {
+		return currentForm;
 	}
 
 	// Listen to modal views

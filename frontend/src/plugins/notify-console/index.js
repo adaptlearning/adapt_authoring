@@ -2,7 +2,7 @@ define(function(require){
 	var Notify = require('coreJS/notify/notify');
 
 	Notify.addTemplate('log', {
-		name: "",
+		title: "",
 		_type: "log"
 	});
 

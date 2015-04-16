@@ -30,7 +30,7 @@ define(function(require){
 			this.addTemplate = function(name, model) {
 				if(templates[name]) {
 					this.warn({
-						body: "Notify.addTemplate: the '" + name + "' template already exists!",
+						message: "Notify.addTemplate: the '" + name + "' template already exists!",
 						_template: 'log'
 					});
 				} else {
@@ -41,7 +41,7 @@ define(function(require){
 			this.removeTemplate = function(name) {
 				if(!templates[name]) {
 					this.warn({
-						body: "Notify.removeTemplate: couldn't find '" + name + "' template!",
+						message: "Notify.removeTemplate: couldn't find '" + name + "' template!",
 						_template: 'log'
 					});
 				} else {
@@ -67,7 +67,7 @@ define(function(require){
 				if(model._template) {
 					if(!templates[model._template]) {
 						Origin.Notify.warn({
-							body: "Notify.handleNotification: no template with the name '" + model._template + "'",
+							message: "Notify.handleNotification: no template with the name '" + model._template + "'",
 							_template: 'log'
 						});
 					} else {

@@ -112,8 +112,8 @@ define(function(require){
         });*/
 
         Notify.debug({
-          name: "Debug notification",
-          body: "This is a debug message....",
+          title: "Debug notification",
+          message: "This is a debug message....",
           _type: "alert",
           _prompts: [{
               label: 'ok',

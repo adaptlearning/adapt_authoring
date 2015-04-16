@@ -15,19 +15,19 @@
                     </div>
                 </div>
                 {{/if}}
-                {{#if name}}
+                {{#if title}}
                 <div class="notify-popup-title">
                     <h5 class="notify-popup-title-inner">
-                    {{{name}}}
+                    {{{title}}}
                     </h5>
                 </div>
                 {{/if}}
-                {{#if body}}
+                {{#if message}}
                 <div class="notify-popup-body">
-                    <div class="notify-popup-body-inner">{{{body}}}</div>
+                    <div class="notify-popup-body-inner">{{{message}}}</div>
                 </div>
                 {{/if}}
-                {{#if body}}
+                {{#if message}}
                 <div class="notify-popup-buttons">
                     {{#each _prompts}}
                     <a href="#" class="notify-popup-button notify-popup-prompt-button" data-index="{{this._index}}">{{{this.label}}}</a>

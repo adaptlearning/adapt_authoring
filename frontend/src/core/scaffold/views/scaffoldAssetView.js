@@ -44,7 +44,7 @@ define(function(require) {
         },
 
         render: function() {
-            this.$el.append(Handlebars.templates[this.constructor.template]());
+            this.$el.html(Handlebars.templates[this.constructor.template]({value: this.value}));
             this.setValue(this.value);
             // Should see if the field contains anything on render
             // if so disable it
@@ -127,8 +127,8 @@ define(function(require) {
 
 
                         this.createCourseAsset(courseAssetObject, function() {
-                                this.setValue(data.assetLink);
-                            this.toggleFieldAvailibility();
+                            this.value = data.assetLink;
+                            this.render();
                         }, this);
 
                     }
@@ -141,8 +141,8 @@ define(function(require) {
 
         onClearButtonClicked: function(event) {
             event.preventDefault();
-            this.setValue('');
-            this.toggleFieldAvailibility();
+            this.value = '';
+            this.render();
             this.checkValueHasChanged();
         },
 
@@ -178,7 +178,7 @@ define(function(require) {
                     });
                 }
             });
-            
+
         },
 
         removeCourseAsset: function (contentTypeId, contentType, fieldname) {

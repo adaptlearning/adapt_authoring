@@ -1,15 +1,18 @@
 define(function(require){
-	var Notify = require('coreJS/notify/notify');
+	var Origin = require('coreJS/app/origin');
 	var PromptView = require('./views/promptView.js');
 
-	Notify.addTemplate("alert", {
-		_type: "alert",
-		_prompts: [{
-			label: 'ok'
-		}]
+	Origin.on('app:dataReady', function() {
+		Origin.Notify.addTemplate("alert", {
+			title: 'app.errortitle',
+			_type: "alert",
+			_prompts: [{
+				label: 'ok'
+			}]
+		});
 	});
 
-	Notify.on('alert', handleNotification);
+	Origin.Notify.on('alert', handleNotification);
 
 	function handleNotification(model) {
 		new PromptView({ model: model });

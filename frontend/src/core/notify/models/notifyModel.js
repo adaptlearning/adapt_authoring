@@ -10,6 +10,25 @@ define(function(require) {
     // TODO useful to have a default value for this? (e.g. log)
     '_type': undefined,
 
+    initialize: function() {
+      this.translateAttribute('title', this.get('title'));
+      this.translateAttribute('message', this.get('message'));
+
+      this.on('change:title', function(model, value) {
+        this.translateAttribute('title', value);
+      });
+      this.on('change:message', function(model, value) {
+        this.translateAttribute('message', value);
+      });
+    },
+
+    translateAttribute: function(attr, value) {
+      var translated = window.polyglot.t(value);
+      if(value !== translated) {
+        this.set(attr, translated, { silent: true });
+      }
+    },
+
     toString: function() {
       var str = "";
 

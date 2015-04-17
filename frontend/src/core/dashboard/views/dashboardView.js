@@ -253,10 +253,8 @@ define(function(require){
     },
 
     appendProjectItem: function(projectModel) {
-      var output = '<span class="highlighted">'+ this.filterText+ '</span>';
-      
-      projectModel.attributes.title=this.highlight(projectModel.attributes.title)
 
+      projectModel.attributes.title=this.highlight(projectModel.attributes.title)
 
       if (!projectModel.isEditable()) {
         this.$('.dashboard-projects').append(new SharedProjectView({ model: projectModel }).$el);

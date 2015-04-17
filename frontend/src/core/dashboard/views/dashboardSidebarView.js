@@ -30,7 +30,7 @@ define(function(require) {
         },
 
         highlightSearchBox: function(){
-                this.$('.dashboard-sidebar-filter-search-input').removeClass('search-highlight')
+            this.$('.dashboard-sidebar-filter-search-input').removeClass('search-highlight')
             if (this.$('.dashboard-sidebar-filter-search-input').val()) {
                 this.$('.dashboard-sidebar-filter-search-input').addClass('search-highlight')
             }

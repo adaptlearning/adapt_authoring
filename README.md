@@ -48,7 +48,7 @@ git config --global user.email "youremail@domain.com"
 
 [NodeJS](http://nodejs.org/) and [NPM](https://www.npmjs.org/) are required. Installing Node.js will also install NPM.
 
-The NodeJS version should be at least 0.10.33. Earlier versions of NodeJS are less stable.
+IMPORTANT: The NodeJS version should be 0.10.33. Earlier versions of NodeJS are less stable and the code currently has issues with 0.12.x.
 
 You should use a NodeJS version manager. We recommend using [NVM](https://github.com/creationix/nvm) on non-Windows machines. On Windows, try [nodist](https://github.com/marcelklehr/nodist)
 

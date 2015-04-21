@@ -231,4 +231,4 @@ define(function(require) {
 
     return ScaffoldAssetView;
 
-})q
+})

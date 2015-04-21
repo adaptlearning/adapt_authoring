@@ -91,7 +91,7 @@ define(function(require) {
         checkValueHasChanged: function() {
             var contentTypeId = Origin.scaffold.getCurrentModel().get('_id');
             var contentType = Origin.scaffold.getCurrentModel().get('_type');
-            var fieldname = (this.value) ? this.value.replace('course/assets/', '') : '';
+            var fieldname = this.getValue() ? this.getValue().replace('course/assets/', '') : '';
             this.removeCourseAsset(contentTypeId, contentType, fieldname);
             this.value = this.getValue();
         },
@@ -141,9 +141,9 @@ define(function(require) {
 
         onClearButtonClicked: function(event) {
             event.preventDefault();
+            this.checkValueHasChanged();
             this.setValue('');
             this.toggleFieldAvailibility();
-            this.checkValueHasChanged();
         },
 
         findAsset: function (contentTypeId, contentType, fieldname) {

@@ -80,6 +80,7 @@ define(function(require) {
       }
 
       $('#login-input-username').addClass('input-error');
+      $('#login-input-password').val('');
       $('#loginErrorMessage').text(errorMessage);
     }
 

@@ -211,6 +211,7 @@ define(function(require){
         this.shouldStopFetches = false;
 
         this.courseLimit = 0;
+        this.collectionLength = 0;
         this.collection.reset();
       }
 
@@ -237,6 +238,7 @@ define(function(require){
           } 
         },
         success: _.bind(function(data) {
+
           // On successful collection fetching set lazy render to enabled
            if (this.collectionLength === this.collection.length) {
               this.shouldStopFetches = true;
@@ -251,11 +253,27 @@ define(function(require){
     },
 
     appendProjectItem: function(projectModel) {
+
+      projectModel.attributes.title=this.highlight(projectModel.attributes.title)
+
       if (!projectModel.isEditable()) {
         this.$('.dashboard-projects').append(new SharedProjectView({ model: projectModel }).$el);
       } else {
         this.$('.dashboard-projects').append(new ProjectView({ model: projectModel }).$el);
       }
+    },
+
+    highlight: function(text){
+
+      regExpEscape = function(str){
+        var specials = /[.*+?|()\[\]{}\\$^]/g; // .*+?|()[]{}\$^
+        return str.replace(specials, "\\$&");
+      };
+
+      var userPreferences =this.getUserPreferences()
+      var search = userPreferences.search || '';
+      var regex = new RegExp( regExpEscape(search), "gi");
+      return text.replace(regex, function(term) {return '<span class="highlighted">'+ term+ '</span>'});
     },
 
     addTag: function(filterType) {
@@ -286,6 +304,7 @@ define(function(require){
     },
 
     filterBySearchInput: function (filterText) {
+      this.filterText = filterText;
       this.search = this.convertFilterTextToPattern(filterText);
       this.setUserPreference('search', filterText);
       this.updateCollection(true);

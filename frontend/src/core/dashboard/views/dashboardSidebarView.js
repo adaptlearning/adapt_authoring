@@ -29,10 +29,18 @@ define(function(require) {
             this.usedTags = [];
         },
 
+        highlightSearchBox: function(){
+            this.$('.dashboard-sidebar-filter-search-input').removeClass('search-highlight')
+            if (this.$('.dashboard-sidebar-filter-search-input').val()) {
+                this.$('.dashboard-sidebar-filter-search-input').addClass('search-highlight')
+            }
+        },
+        
         updateUI: function(userPreferences) {
             if (userPreferences.search) {
                 this.$('.dashboard-sidebar-filter-search-input').val(userPreferences.search);
             }
+            this.highlightSearchBox();
             if (userPreferences.tags) {
                 this.tags = userPreferences.tags;
                 var systemTags = [/*'archive', 'favourites'*/];
@@ -71,15 +79,17 @@ define(function(require) {
                 event.preventDefault();
             }
             if (13 == event.keyCode || filter) {
-                var filterText = $(event.currentTarget).val();
+                var filterText = $(event.currentTarget).val().trim();
                 Origin.trigger('dashboard:dashboardSidebarView:filterBySearch', filterText);
             }
+            this.highlightSearchBox();
         },
 
         clearFilterInput: function(event) {
             event.preventDefault();
             var $currentTarget = $(event.currentTarget);
             $currentTarget.prev('.dashboard-sidebar-filter-input').val('').trigger('keyup', [true]);
+            this.highlightSearchBox();
         },
 
         onFilterButtonClicked: function(event) {

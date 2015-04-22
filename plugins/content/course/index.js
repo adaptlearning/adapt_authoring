@@ -77,7 +77,6 @@ function initialize () {
         // force search to use only courses created by current user
         var user = usermanager.getCurrentUser();
         query.$and.push({ createdBy : user._id });
-
         options.jsonOnly = true;
         options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
         

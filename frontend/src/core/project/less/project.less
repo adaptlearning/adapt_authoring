@@ -2,6 +2,7 @@
 @preview-height: 247px;
 
 .project-list-item {
+    position:relative;
     overflow:hidden;
     border-radius:3px;
     background-color:#fff;
@@ -155,7 +156,7 @@
 }
 
 .project-settings-inner {
-    padding: 3px 6px;
+    padding: 7px 6px;
 
     a.course-delete {
         float: right;
@@ -188,6 +189,10 @@ h4.project-detail-title-inner {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+
+     & span.highlighted {
+    background-color: #ff0;
+    }
 }
 
 .pos {

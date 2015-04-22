@@ -49,7 +49,10 @@ server.get('/download/:tenant/:course/:title/download.zip', function (req, res, 
 
   fs.stat(downloadZipFilename, function(err, stat) {
     if (err) {
-      callback(err, 'Error calling fs.stat');
+      logger.log('error', 'Error calling fs.stat');
+      logger.log('error', error);
+
+      next(err);
     } else {
       res.writeHead(200, {
           'Content-Type': 'application/zip',

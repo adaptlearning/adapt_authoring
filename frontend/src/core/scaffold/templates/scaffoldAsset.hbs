@@ -1,7 +1,35 @@
-<input type="text"/>
-{{console this}}
+{{!-- <input type="text"/> --}}
 {{#if value}}
-<button class="scaffold-asset-clear display-none"><i class="fa fa-times-circle"></i></button>
+
+{{console this}}
+
+{{! Work out which type it is and display the correct html markup}}
+{{#ifValueEquals type 'image'}}
+<img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
+{{/ifValueEquals}}
+
+{{#ifValueEquals type 'other'}}
+<a class="scaffold-asset-preview" href="{{getAssetFromValue value}}" target="_blank">
+	<i class="fa fa-file-o fa-large"></i>
+	<div>{{value}}</div>
+</a>
+{{/ifValueEquals}}
+
+{{#ifValueEquals type 'video'}}
+<img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
+{{/ifValueEquals}}
+
+{{#ifValueEquals type 'audio'}}
+<a class="scaffold-asset-preview" href="{{getAssetFromValue value}}" target="_blank">
+	<i class="fa fa-file-audio-o fa-large"></i>
+	<div>{{value}}</div>
+</a>
+{{/ifValueEquals}}
+<div class="scaffold-asset-buttons">
+<button class="btn scaffold-asset-clear display-none"><i class="fa fa-times-circle"></i> Remove Asset</button>
+</div>
 {{else}}
-<button class="scaffold-asset-picker"><i class="fa fa-file"></i></button>
+<div class="scaffold-asset-buttons">
+<button class="btn scaffold-asset-picker"><i class="fa fa-file"></i> Select an Asset</button>
+</div>
 {{/if}}

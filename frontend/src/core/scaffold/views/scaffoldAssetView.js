@@ -44,7 +44,8 @@ define(function(require) {
         },
 
         render: function() {
-            this.$el.html(Handlebars.templates[this.constructor.template]({value: this.value}));
+            var assetType = this.schema.fieldType.replace('Asset:', '');
+            this.$el.html(Handlebars.templates[this.constructor.template]({value: this.value, type: assetType}));
             this.setValue(this.value);
             // Should see if the field contains anything on render
             // if so disable it
@@ -55,12 +56,12 @@ define(function(require) {
 
         getValue: function() {
             return this.value || '';
-            return this.$('input').val();
+            //return this.$('input').val();
         },
 
         setValue: function(value) {
             this.value = value;
-            this.$('input').val(value);
+            //this.$('input').val(value);
         },
 
         focus: function() {
@@ -91,11 +92,14 @@ define(function(require) {
         },
 
         checkValueHasChanged: function() {
+            if ('heroImage' === this.key){
+                this.saveModel();
+                return;
+            }
             var contentTypeId = Origin.scaffold.getCurrentModel().get('_id');
             var contentType = Origin.scaffold.getCurrentModel().get('_type');
-            var fieldname = (this.value) ? this.value.replace('course/assets/', '') : '';
+            var fieldname = this.getValue() ? this.getValue().replace('course/assets/', '') : '';
             this.removeCourseAsset(contentTypeId, contentType, fieldname);
-            this.value = this.getValue();
         },
 
         onAssetButtonClicked: function(event) {
@@ -108,6 +112,7 @@ define(function(require) {
 
                         if ('heroImage' === this.key){
                             this.setValue(data.assetId);
+                            this.saveModel();
                             return;
                         }
                         // Setup courseasset
@@ -128,9 +133,7 @@ define(function(require) {
 
                         this.value = data.assetLink;
 
-                        this.createCourseAsset(courseAssetObject, function() {
-                            this.render();
-                        }, this);
+                        this.createCourseAsset(courseAssetObject);
 
                     }
                 },
@@ -143,8 +146,8 @@ define(function(require) {
         onClearButtonClicked: function(event) {
             event.preventDefault();
             this.checkValueHasChanged();
-            this.value = '';
-            //this.render();
+            this.setValue('');
+            this.toggleFieldAvailibility();
         },
 
         findAsset: function (contentTypeId, contentType, fieldname) {
@@ -172,27 +175,7 @@ define(function(require) {
                     alert('An error occurred doing the save');
                 }, 
                 success: function() {
-                    var currentModel = Origin.scaffold.getCurrentModel();
-                    var currentForm = Origin.scaffold.getCurrentForm();
-                    var errors = currentForm.commit({validate: false});
-
-                    currentModel.pruneAttributes();
-
-                    currentModel.save(null, {
-                        error: function() {
-                            alert('An error occurred doing the save');
-                        },
-                        success: function() {
-                            
-                            Origin.editor.data.courseAssets.fetch({
-                                reset:true, 
-                                success: function() {
-                                    callback.apply(context);
-                                }
-                            });
-
-                        }
-                    })
+                    self.saveModel();
                 }
             });
 
@@ -204,29 +187,38 @@ define(function(require) {
             if (courseAsset) {
                 courseAsset.destroy({
                     success: function(success) {
-                        var currentModel = Origin.scaffold.getCurrentModel();
-                        var currentForm = Origin.scaffold.getCurrentForm();
-                        var errors = currentForm.commit({validate: false});
-
-                        currentModel.pruneAttributes();
-
-                        currentModel.save(null, {
-                            error: function() {
-                                alert('An error occurred doing the save');
-                            },
-                            success: function() {
-                                that.render();
-                                Origin.editor.data.courseAssets.fetch({reset:true});
-
-                            }
-                        })
+                        that.saveModel();
                     },
                     error: function(error) {
                         console.log('error', error);
                     }
                 });
             }
+        },
+
+        saveModel: function() {
+            var that = this;
+            var currentModel = Origin.scaffold.getCurrentModel();
+            var currentForm = Origin.scaffold.getCurrentForm();
+            var errors = currentForm.commit({validate: false});
+
+            currentModel.pruneAttributes();
+
+            currentModel.save(null, {
+                error: function() {
+                    alert('An error occurred doing the save');
+                },
+                success: function() {
+                    Origin.editor.data.courseAssets.fetch({
+                        reset:true, 
+                        success: function() {
+                            that.render();
+                        }
+                    });
+                }
+            })
         }
+
     }, {
         template: "scaffoldAsset"
     });

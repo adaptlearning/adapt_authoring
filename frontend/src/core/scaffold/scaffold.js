@@ -372,10 +372,6 @@ define(function(require) {
 
 	});*/
 
-	Handlebars.registerHelper('console', function(context) {
-		console.log(context);
-	});
-
 	Origin.scaffold = Scaffold;
 
 });

@@ -22,7 +22,6 @@ require.config({
       editorTheme: 'core/editor/theme',
       editorGlobal: 'core/editor/global',
       editorExtensions: 'core/editor/extensions',
-      tinymce: 'core/libraries/tinymce/tinymce.min',
       tagsInput: 'core/libraries/jquery.tagsinput.min.js'
     },
     shim: {
@@ -68,13 +67,6 @@ require.config({
   	  'tagsInput': {
         deps: ['jquery'],
         exports: "$"
-      },
-      tinyMCE: {
-        exports: 'tinyMCE',
-        init: function () {
-          this.tinyMCE.DOM.events.domLoaded = true;
-          return this.tinyMCE;
-        }
       }
     }
 });

@@ -38,13 +38,20 @@ define(function(require) {
         },
 
         initialize: function(options) {
+            this.listenTo(Origin, 'scaffold:assets:autofill', this.onAutofill);
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
             
         },
 
+        onAutofill: function(courseAssetObject, value) {
+            this.value = value;
+            this.createCourseAsset(courseAssetObject);
+        },
+
         render: function() {
-            this.$el.append(Handlebars.templates[this.constructor.template]());
+            var assetType = this.schema.fieldType.replace('Asset:', '');
+            this.$el.html(Handlebars.templates[this.constructor.template]({value: this.value, type: assetType}));
             this.setValue(this.value);
             // Should see if the field contains anything on render
             // if so disable it
@@ -54,11 +61,13 @@ define(function(require) {
         },
 
         getValue: function() {
-            return this.$('input').val();
+            return this.value || '';
+            //return this.$('input').val();
         },
 
         setValue: function(value) {
-            this.$('input').val(value);
+            this.value = value;
+            //this.$('input').val(value);
         },
 
         focus: function() {
@@ -89,11 +98,14 @@ define(function(require) {
         },
 
         checkValueHasChanged: function() {
+            if ('heroImage' === this.key){
+                this.saveModel();
+                return;
+            }
             var contentTypeId = Origin.scaffold.getCurrentModel().get('_id');
             var contentType = Origin.scaffold.getCurrentModel().get('_type');
-            var fieldname = (this.value) ? this.value.replace('course/assets/', '') : '';
+            var fieldname = this.getValue() ? this.getValue().replace('course/assets/', '') : '';
             this.removeCourseAsset(contentTypeId, contentType, fieldname);
-            this.value = this.getValue();
         },
 
         onAssetButtonClicked: function(event) {
@@ -106,6 +118,7 @@ define(function(require) {
 
                         if ('heroImage' === this.key){
                             this.setValue(data.assetId);
+                            this.saveModel();
                             return;
                         }
                         // Setup courseasset
@@ -124,12 +137,16 @@ define(function(require) {
                             assetId: assetId
                         }
 
+                        // If the data is meant to autofill the rest of the graphic sizes
+                        // pass out an event instead - this is currently only used for the graphic component
+                        if (data._shouldAutofill) {
+                            Origin.trigger('scaffold:assets:autofill', courseAssetObject, data.assetLink);
+                            return;
+                        }
 
+                        this.value = data.assetLink;
 
-                        this.createCourseAsset(courseAssetObject, function() {
-                                this.setValue(data.assetLink);
-                            this.toggleFieldAvailibility();
-                        }, this);
+                        this.createCourseAsset(courseAssetObject);
 
                     }
                 },
@@ -141,9 +158,9 @@ define(function(require) {
 
         onClearButtonClicked: function(event) {
             event.preventDefault();
+            this.checkValueHasChanged();
             this.setValue('');
             this.toggleFieldAvailibility();
-            this.checkValueHasChanged();
         },
 
         findAsset: function (contentTypeId, contentType, fieldname) {
@@ -155,67 +172,66 @@ define(function(require) {
             return asset ? asset : false;
         },
 
-        createCourseAsset: function (courseAssetObject, callback, context) {
-            // Has this field been set already?
-            var update = this.findAsset(courseAssetObject.contentTypeId, courseAssetObject.contentType, courseAssetObject.fieldname);
+        createCourseAsset: function (courseAssetObject) {
+            var self = this;
 
-            // Update should only happen if the assetId is different
-            if (update && update.get('_assetId') != courseAssetObject.assetId) {
-            // If so, update it ...
-                update.save({ _assetId: courseAssetObject.assetId },{
-                    error: function() {
-                        alert('An error occurred doing the save');
-                    },
-                    success: function() {
-                        Origin.editor.data.courseAssets.fetch({
-                            reset:true, 
-                            success: function() {
-                                callback.apply(context);
-                            }
-                        });
-                    }
-                });
-            } else  if (!update) {
-                var courseAsset = new EditorCourseAssetModel();
-                // ... otherwise, create it
-                courseAsset.save({
-                    _courseId : Origin.editor.data.course.get('_id'),
-                    _contentType : courseAssetObject.contentType,
-                    _contentTypeId : courseAssetObject.contentTypeId,
-                    _fieldName : courseAssetObject.fieldname,
-                    _assetId : courseAssetObject.assetId,
-                    _contentTypeParentId: courseAssetObject.contentTypeParentId
-                },{
-                    error: function(error) {
-                        alert('An error occurred doing the save');
-                    }, 
-                    success: function() {
-                        Origin.editor.data.courseAssets.fetch({
-                            reset:true, 
-                            success: function() {
-                                callback.apply(context);
-                            }
-                        });
-                    }
-                });
-            } else {
-                callback.apply(context);
-            }
+            var courseAsset = new EditorCourseAssetModel();
+            courseAsset.save({
+                _courseId : Origin.editor.data.course.get('_id'),
+                _contentType : courseAssetObject.contentType,
+                _contentTypeId : courseAssetObject.contentTypeId,
+                _fieldName : courseAssetObject.fieldname,
+                _assetId : courseAssetObject.assetId,
+                _contentTypeParentId: courseAssetObject.contentTypeParentId
+            },{
+                error: function(error) {
+                    alert('An error occurred doing the save');
+                }, 
+                success: function() {
+                    self.saveModel();
+                }
+            });
+
         },
 
         removeCourseAsset: function (contentTypeId, contentType, fieldname) {
+            var that = this;
             var courseAsset = this.findAsset(contentTypeId, contentType, fieldname);
             if (courseAsset) {
                 courseAsset.destroy({
                     success: function(success) {
-                        Origin.editor.data.courseAssets.fetch({reset:true});
+                        that.saveModel();
                     },
                     error: function(error) {
                         console.log('error', error);
                     }
                 });
             }
+        },
+
+        saveModel: function() {
+            var that = this;
+            var currentModel = Origin.scaffold.getCurrentModel();
+            var currentForm = Origin.scaffold.getCurrentForm();
+            var errors = currentForm.commit({validate: false});
+
+            currentModel.pruneAttributes();
+
+            currentModel.save(null, {
+                error: function() {
+                    alert('An error occurred doing the save');
+                },
+                success: function() {
+                    Origin.editor.data.courseAssets.fetch({
+                        reset:true, 
+                        success: function() {
+                            that.render();
+                        }
+                    });
+                }
+            })
         }
+
     }, {
         template: "scaffoldAsset"
     });

@@ -67,7 +67,7 @@ define(function(require){
 
           return hh + ':' + mm + ':' + ss;
         },
-        if_value_equals: function(value, text, block) {
+        ifValueEquals: function(value, text, block) {
             if (value === text) {
                 return block.fn(this);
             } else {
@@ -170,7 +170,39 @@ define(function(require){
           } else {
             return block.inverse(this);
           }
+        },
+
+        console: function(context) {
+          return console.log(context);
+        },
+
+        getAssetFromValue: function(url) {
+          var urlSplit = url.split('/')
+          var fileName = urlSplit[urlSplit.length - 1];
+          // Get courseAsset model
+          var courseAsset = Origin.editor.data.courseAssets.findWhere({_fieldName: fileName});
+          var courseAssetId = courseAsset.get('_assetId');
+
+          return '/api/asset/serve/' + courseAssetId;
+          //return '/asset/serve/' 
+          //'/asset/serve/:id'
+        },
+
+        getThumbnailFromValue: function(url) {
+          var urlSplit = url.split('/')
+          var fileName = urlSplit[urlSplit.length - 1];
+          // Get courseAsset model
+          var courseAsset = Origin.editor.data.courseAssets.findWhere({_fieldName: fileName});
+          if (courseAsset) {
+            var courseAssetId = courseAsset.get('_assetId');
+            return '/api/asset/thumb/' + courseAssetId;
+          } else {
+            return '/api/asset/thumb/' + url;
+          }
+
+
         }
+
     };
 
     for(var name in helpers) {

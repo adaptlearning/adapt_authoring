@@ -184,11 +184,11 @@ define(function(require){
           var courseAssetId = courseAsset.get('_assetId');
 
           return '/api/asset/serve/' + courseAssetId;
-          //return '/asset/serve/' 
-          //'/asset/serve/:id'
+
         },
 
         getThumbnailFromValue: function(url) {
+
           var urlSplit = url.split('/')
           var fileName = urlSplit[urlSplit.length - 1];
           // Get courseAsset model
@@ -200,6 +200,17 @@ define(function(require){
             return '/api/asset/thumb/' + url;
           }
 
+        },
+
+        ifAssetIsExternal: function(url, block) {
+
+          var urlSplit = url.split('/')
+
+          if (urlSplit[0] != "course" && urlSplit[1] != "assets") {
+            return block.fn(this);
+          } else {
+            return block.inverse(this);
+          }
 
         }
 

@@ -33,7 +33,11 @@ define(function(require) {
                 // This call automatically sets `this.hasFocus` to `false`.
             },
             'click .scaffold-asset-picker': 'onAssetButtonClicked',
-            'click .scaffold-asset-clear': 'onClearButtonClicked'
+            'click .scaffold-asset-external': 'onExternalAssetButtonClicked',
+            'click .scaffold-asset-clear': 'onClearButtonClicked',
+            'click .scaffold-asset-external-input-save': 'onExternalAssetSaveClicked',
+            'click .scaffold-asset-external-input-cancel': 'onExternalAssetCancelClicked',
+            'click .scaffold-asset-clear-external': 'onExternalClearButtonClicked'
 
         },
 
@@ -90,22 +94,48 @@ define(function(require) {
         toggleFieldAvailibility: function() {
             if (this.getValue().length === 0) {
                 this.$('input').attr('disabled', false);
-                this.$('.scaffold-asset-clear').addClass('display-none');
+                //this.$('.scaffold-asset-clear').addClass('display-none');
             } else {
-                this.$('.scaffold-asset-clear').removeClass('display-none');
+                //this.$('.scaffold-asset-clear').removeClass('display-none');
                 this.$('input').attr('disabled', true);
             }
         },
 
         checkValueHasChanged: function() {
             if ('heroImage' === this.key){
-                this.saveModel();
+                this.saveModel(true);
                 return;
             }
             var contentTypeId = Origin.scaffold.getCurrentModel().get('_id');
             var contentType = Origin.scaffold.getCurrentModel().get('_type');
             var fieldname = this.getValue() ? this.getValue().replace('course/assets/', '') : '';
             this.removeCourseAsset(contentTypeId, contentType, fieldname);
+        },
+
+        onExternalAssetButtonClicked: function(event) {
+            event.preventDefault();
+            this.$('.scaffold-asset-external-input').removeClass('display-none');
+            this.$('.scaffold-asset-buttons').addClass('display-none');
+        },
+
+        onExternalAssetSaveClicked: function(event) {
+            event.preventDefault();
+            var inputValue = this.$('.scaffold-asset-external-input-field').val();
+            // Check that there's actually some value
+            if (inputValue.length > 0) {
+                this.value = inputValue;
+                this.saveModel(false);
+            } else {
+                // If nothing don't bother saving - instead revert to showing the buttons again
+                this.$('.scaffold-asset-external-input').addClass('display-none');
+                this.$('.scaffold-asset-buttons').removeClass('display-none');
+            }
+        },
+
+        onExternalAssetCancelClicked: function(event) {
+            event.preventDefault();
+            this.$('.scaffold-asset-external-input').addClass('display-none');
+            this.$('.scaffold-asset-buttons').removeClass('display-none');
         },
 
         onAssetButtonClicked: function(event) {
@@ -118,7 +148,7 @@ define(function(require) {
 
                         if ('heroImage' === this.key){
                             this.setValue(data.assetId);
-                            this.saveModel();
+                            this.saveModel(true);
                             return;
                         }
                         // Setup courseasset
@@ -163,6 +193,13 @@ define(function(require) {
             this.toggleFieldAvailibility();
         },
 
+        onExternalClearButtonClicked: function() {
+            event.preventDefault();
+            this.setValue('');
+            this.saveModel(false);
+            this.toggleFieldAvailibility();
+        },
+
         findAsset: function (contentTypeId, contentType, fieldname) {
             var asset = Origin.editor.data.courseAssets.findWhere({
                 _contentTypeId: contentTypeId,
@@ -188,7 +225,7 @@ define(function(require) {
                     alert('An error occurred doing the save');
                 }, 
                 success: function() {
-                    self.saveModel();
+                    self.saveModel(true);
                 }
             });
 
@@ -200,7 +237,7 @@ define(function(require) {
             if (courseAsset) {
                 courseAsset.destroy({
                     success: function(success) {
-                        that.saveModel();
+                        that.saveModel(true);
                     },
                     error: function(error) {
                         console.log('error', error);
@@ -209,7 +246,7 @@ define(function(require) {
             }
         },
 
-        saveModel: function() {
+        saveModel: function(shouldResetAssetCollection) {
             var that = this;
             var currentModel = Origin.scaffold.getCurrentModel();
             var currentForm = Origin.scaffold.getCurrentForm();
@@ -222,12 +259,19 @@ define(function(require) {
                     alert('An error occurred doing the save');
                 },
                 success: function() {
-                    Origin.editor.data.courseAssets.fetch({
-                        reset:true, 
-                        success: function() {
-                            that.render();
-                        }
-                    });
+                    // Sometimes we don't need to reset the courseAssets
+                    if (shouldResetAssetCollection) {
+
+                        Origin.editor.data.courseAssets.fetch({
+                            reset:true, 
+                            success: function() {
+                                that.render();
+                            }
+                        });
+
+                    } else {
+                        that.render();
+                    }
                 }
             })
         }

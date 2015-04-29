@@ -38,9 +38,15 @@ define(function(require) {
         },
 
         initialize: function(options) {
+            this.listenTo(Origin, 'scaffold:assets:autofill', this.onAutofill);
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
             
+        },
+
+        onAutofill: function(courseAssetObject, value) {
+            this.value = value;
+            this.createCourseAsset(courseAssetObject);
         },
 
         render: function() {
@@ -131,6 +137,13 @@ define(function(require) {
                             assetId: assetId
                         }
 
+                        // If the data is meant to autofill the rest of the graphic sizes
+                        // pass out an event instead - this is currently only used for the graphic component
+                        if (data._shouldAutofill) {
+                            Origin.trigger('scaffold:assets:autofill', courseAssetObject, data.assetLink);
+                            return;
+                        }
+
                         this.value = data.assetLink;
 
                         this.createCourseAsset(courseAssetObject);
@@ -159,7 +172,7 @@ define(function(require) {
             return asset ? asset : false;
         },
 
-        createCourseAsset: function (courseAssetObject, callback, context) {
+        createCourseAsset: function (courseAssetObject) {
             var self = this;
 
             var courseAsset = new EditorCourseAssetModel();

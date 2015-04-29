@@ -45,7 +45,6 @@ define(function(require) {
 	}
 
 	var setupSchemaFields = function(field, key, schema, scaffoldSchema) {
-
 		if (field.type === 'array') {
 
 			if (field.items && field.items.properties) {

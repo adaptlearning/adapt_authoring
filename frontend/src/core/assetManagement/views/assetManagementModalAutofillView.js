@@ -35,8 +35,13 @@ define(function(require) {
 
         onAutofillClicked: function(event) {
             event.preventDefault();
-            this.options.modalView.data._shouldAutofill = true;
-            Origin.trigger('modal:onUpdate');
+            // Sometimes the button can be clicked without selecting an asset
+            if (this.options.modalView.data) {
+                this.options.modalView.data._shouldAutofill = true;
+                Origin.trigger('modal:onUpdate');
+            } else {
+                Origin.trigger('modal:onCancel');
+            }
         }
 
     });

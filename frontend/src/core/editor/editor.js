@@ -389,7 +389,7 @@ define(function(require) {
                 model: contentObjectModel
               });
               Origin.trigger('location:title:update', {title: 'Editing menu - ' + contentObjectModel.get('title')});
-              Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel, form: form}).$el);
+              Origin.sidebar.addView(new EditorPageEditSidebarView().$el);
               Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel, form: form}).$el);
             }
           });
@@ -427,7 +427,7 @@ define(function(require) {
                 model: contentObjectModel
               });
               Origin.trigger('location:title:update', {title: 'Editing page - ' + contentObjectModel.get('title')});
-              Origin.sidebar.addView(new EditorPageEditSidebarView({model: contentObjectModel, form: form}).$el);
+              Origin.sidebar.addView(new EditorPageEditSidebarView().$el);
               Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel, form: form}).$el);
             }
           });

@@ -205,6 +205,10 @@ define(function(require){
         ifAssetIsExternal: function(url, block) {
 
           var urlSplit = url.split('/')
+          // Could well be a hero image for the course
+          if (urlSplit.length === 1) {
+            return block.inverse(this);
+          }
 
           if (urlSplit[0] != "course" && urlSplit[1] != "assets") {
             return block.fn(this);
@@ -212,6 +216,15 @@ define(function(require){
             return block.inverse(this);
           }
 
+        },
+
+        ifAssetIsHeroImage: function(url, block) {
+          var urlSplit = url.split('/')
+          if (urlSplit.length === 1) {
+            return block.fn(this);
+          } else {
+            return block.inverse(this);
+          }
         }
 
     };

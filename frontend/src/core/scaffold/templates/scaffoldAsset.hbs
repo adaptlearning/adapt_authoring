@@ -5,7 +5,11 @@
 	{{#ifAssetIsExternal value}}
 	<img class="scaffold-asset-preview" src="{{value}}"/>
 	{{else}}
-	<img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
+		{{#ifAssetIsHeroImage value}}
+		<img class="scaffold-asset-preview" src="/api/asset/thumb/{{value}}"/>
+		{{else}}
+		<img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
+		{{/ifAssetIsHeroImage}}
 	{{/ifAssetIsExternal}}
 {{/ifValueEquals}}
 

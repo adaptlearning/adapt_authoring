@@ -7,7 +7,7 @@ define(function(require) {
     var AssetManagementModalView = require('coreJS/assetManagement/views/assetManagementModalView');
     var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
     var EditorCourseAssetModel = require('editorCourse/models/editorCourseAssetModel');
-
+    
     var ScaffoldAssetView = Backbone.Form.editors.Base.extend({
 
         tagName: 'div',
@@ -193,7 +193,7 @@ define(function(require) {
             this.toggleFieldAvailibility();
         },
 
-        onExternalClearButtonClicked: function() {
+        onExternalClearButtonClicked: function(event) {
             event.preventDefault();
             this.setValue('');
             this.saveModel(false);

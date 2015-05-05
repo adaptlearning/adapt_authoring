@@ -207,7 +207,8 @@ define(function(require){
       this.listenToOnce(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
       this.listenToOnce(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
 
-      Origin.trigger('notify:prompt', deleteItem);
+      // alert
+      //Origin.trigger('notify:prompt', deleteItem);
     },
 
     copyMenuItem: function() {

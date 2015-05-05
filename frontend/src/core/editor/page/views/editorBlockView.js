@@ -157,7 +157,8 @@ define(function(require){
         ]
       };
 
-      Origin.trigger('notify:prompt', deleteBlock);
+      //alert
+      //Origin.trigger('notify:prompt', deleteBlock);
 
     },
 

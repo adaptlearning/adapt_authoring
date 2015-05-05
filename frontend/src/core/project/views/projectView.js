@@ -5,6 +5,7 @@ define(function(require){
   var Handlebars = require('handlebars');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
+  var Notify = require("coreJS/notify/notify");
 
   var ProjectView = OriginView.extend({
 
@@ -95,8 +96,7 @@ define(function(require){
             {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
           ]
         };
-
-      Origin.trigger('notify:prompt', deleteProject);
+      //Origin.trigger('notify:prompt', deleteProject);
     },
 
     deleteProject: function(event) {

@@ -63,7 +63,8 @@ define(function(require){
         ]
       };
 
-      Origin.trigger('notify:prompt', deletePrompt);
+      //alert
+      //Origin.trigger('notify:prompt', deletePrompt);
     },
 
     deleteComponent: function() {

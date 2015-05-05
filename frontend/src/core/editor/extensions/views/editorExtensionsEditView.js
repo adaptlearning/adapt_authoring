@@ -87,7 +87,8 @@ define(function(require) {
             ]
         };
 
-        Origin.trigger('notify:prompt', props);
+        // alert
+        //Origin.trigger('notify:prompt', props);
     },
 
     addExtension: function() {
@@ -123,7 +124,8 @@ define(function(require) {
             ]
         };
 
-        Origin.trigger('notify:prompt', props);
+        // alert
+        //Origin.trigger('notify:prompt', props);
     },
 
     removeExtension: function() {

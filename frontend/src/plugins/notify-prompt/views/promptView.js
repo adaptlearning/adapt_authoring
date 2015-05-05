@@ -1,57 +1,80 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
+	var Backbone = require('backbone');
 	var Origin = require('coreJS/app/origin');
+	var Notify = require('coreJS/notify/notify');
 
-	var NotifyView = Backbone.View.extend({
-
+	var PromptView = Backbone.View.extend({
 		className: 'notify',
 
 		initialize: function() {
 			this.listenTo(Origin, 'remove', this.remove);
       		this.listenTo(Origin, 'device:resize', this.resetNotifySize);
+			this.initButtonIds();
 			this.render();
 		},
 
 		events: {
-			'click .notify-popup-alert-button':'onAlertButtonClicked',
-			'click .notify-popup-prompt-button': 'onPromptButtonClicked',
-			'click .notify-popup-done': 'onCloseButtonClicked'
+			'click .notify-popup-alert-button': 'handleButtonClick',
+			'click .notify-popup-prompt-button': 'handleButtonClick',
+			'click .notify-popup-done': 'handleButtonClick'
+		},
+
+		initButtonIds: function() {
+			var prompts = this.model.get('_prompts');
+			for(var i = 0, len = prompts.length; i < len; i++) {
+				prompts[i]._index = i;
+			}
 		},
 
 		render: function() {
 			var data = this.model.toJSON();
-            var template = Handlebars.templates['notify'];
+            var template = Handlebars.templates['prompt'];
             this.$el.html(template(data)).appendTo('body');
             this.showNotify();
             this.bringFocusToButton();
             return this;
 		},
 
-		onAlertButtonClicked: function(event) {
+		handleButtonClick: function(event) {
 			event.preventDefault();
-			Origin.trigger(this.model.get('_callbackEvent'), this);
+			this.handleCallback($(event.target).attr('data-index'));
 			this.closeNotify();
 		},
 
-		onPromptButtonClicked: function(event) {
-			event.preventDefault();
-			var eventToTrigger = $(event.currentTarget).attr('data-event');
+		/**
+		* Currently supports:
+		* - Prompt/button specific callback
+		* - Generic callback
+		*/
+		handleCallback: function(buttonIndex) {
+			var prompt = this.model.get('_prompts') && this.model.get('_prompts')[buttonIndex];
 
-			if (eventToTrigger) {
-				if (this.model.get('componentTypes')) {
-					Origin.trigger(eventToTrigger, {componentType: this.model.get('component'), layout: this.model.get('layout')});
-				} else {
-					Origin.trigger(eventToTrigger);					
+			// TODO what to do in the case of multiple callbacks: call one, or all?
+
+			if(prompt) {
+				if(prompt._callback) {
+					prompt._callback.apply(this);
+				}
+				if(prompt._callbackEvent) {
+					Origin.trigger(prompt._callbackEvent);
 				}
 			}
 
-			this.closeNotify();
+			if(this.model.get('_callback')) {
+				this.model.get('_callback').apply(this);
+			}
+
+			if(this.model.get('_callbackEvent')) {
+				Origin.trigger(this.model.get('_callbackEvent'));
+			}
+
+			// TODO: do we also need an event triggered? are generic popup:close-style events useful?
 		},
 
 		onCloseButtonClicked: function(event) {
 			event.preventDefault();
-			Origin.trigger('notify:closed');
+			Notify.trigger('viewClosed');
 			this.closeNotify();
 		},
 
@@ -84,9 +107,9 @@ define(function(require) {
 			var animationSpeed = 400;
 			if (notifyHeight > windowHeight) {
 				this.$('.notify-popup').css({
-					'height':'100%', 
-					'top':0, 
-					'overflow-y': 'scroll', 
+					'height':'100%',
+					'top':0,
+					'overflow-y': 'scroll',
 					'-webkit-overflow-scrolling': 'touch',
 					'opacity': 1
 				});
@@ -118,9 +141,7 @@ define(function(require) {
         bringFocusToButton: function() {
             this.$('.notify-popup-button').first().focus();
         }
-
 	});
 
-	return NotifyView;
-
+	return PromptView;
 });

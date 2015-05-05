@@ -170,9 +170,9 @@ define(function(require){
           {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
         ]
       };
+      // alert
+      //Origin.trigger('notify:prompt', deleteArticle);
 
-      Origin.trigger('notify:prompt', deleteArticle);
-      
     },
 
 

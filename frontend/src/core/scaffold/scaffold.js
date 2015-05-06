@@ -23,6 +23,10 @@ define(function(require) {
 	var currentModel;
 	var currentForm;
 
+	// Used to pass an alternative model and alternative attribute to save
+	var alternativeModel;
+	var alternativeAttribute;
+
 	// Used to store already build schemas
 	var builtSchemas = {};
 
@@ -284,6 +288,8 @@ define(function(require) {
 		
 		options.model.schema = buildSchema(schema, options, type);
 		options.fieldsets = buildFieldsets(schema, options);
+		alternativeModel = options.alternativeModelToSave;
+		alternativeAttribute = options.alternativeAttributeToSave;
 		currentModel = options.model;
 		var form = new Backbone.Form(options).render();
 		currentForm = form;
@@ -336,6 +342,14 @@ define(function(require) {
 
 	Scaffold.getCurrentForm = function() {
 		return currentForm;
+	}
+
+	Scaffold.getAlternativeModel = function() {
+		return alternativeModel
+	}
+
+	Scaffold.getAlternativeAttribute = function() {
+		return alternativeAttribute
 	}
 
 	// Listen to modal views

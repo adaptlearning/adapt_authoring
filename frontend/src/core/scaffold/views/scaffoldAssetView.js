@@ -201,11 +201,17 @@ define(function(require) {
         },
 
         findAsset: function (contentTypeId, contentType, fieldname) {
-            var asset = Origin.editor.data.courseAssets.findWhere({
-                _contentTypeId: contentTypeId,
+            var searchCriteria = {
                 _contentType: contentType,
                 _fieldName: fieldname
-            });
+            };
+
+            if (contentTypeId) {
+                searchCriteria._contentTypeId = contentTypeId;
+            } else {
+                searchCriteria._contentTypeParentId = Origin.editor.data.course.get('_id');
+            }
+            var asset = Origin.editor.data.courseAssets.findWhere(searchCriteria);
             return asset ? asset : false;
         },
 
@@ -248,13 +254,30 @@ define(function(require) {
 
         saveModel: function(shouldResetAssetCollection) {
             var that = this;
-            var currentModel = Origin.scaffold.getCurrentModel();
+            var attributesToSave = {};
+            var isUsingAlternativeModel = false;
+            var currentModel = Origin.scaffold.getCurrentModel()
+            var alternativeModel = Origin.scaffold.getAlternativeModel();
+            var alternativeAttribute = Origin.scaffold.getAlternativeAttribute();
+            // Check if alternative model should be used
+            if (alternativeModel) {
+                currentModel = alternativeModel;
+                isUsingAlternativeModel = true;
+            }
+
             var currentForm = Origin.scaffold.getCurrentForm();
             var errors = currentForm.commit({validate: false});
 
-            currentModel.pruneAttributes();
 
-            currentModel.save(null, {
+            currentModel.pruneAttributes();
+            // Check if alternative attribute should be used
+            if (alternativeAttribute) {
+                attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
+            } else {
+                attributesToSave = null;
+            }
+
+            currentModel.save(attributesToSave, {
                 error: function() {
                     alert('An error occurred doing the save');
                 },

@@ -1,0 +1,25 @@
+{
+  "fieldsets": {
+    "general": {
+      "legend": "General",
+      "fields": ["title","body"]
+    },
+    "settings": {
+      "legend": "Settings",
+      "fields": ["_isSelected","_hasPreview","_isShared","themeSettings","menuSettings"]
+    },
+    "properties": {
+      "legend": "Properties",
+      "fields": ["heroImage","_buttons","tags"]
+    },
+    "extensions": {
+      "legend": "Extensions",
+      "fields": ["_extensions"]
+    },
+    "styling": {
+      "legend": "Styling",
+      "fields": ["_classes","customStyle"]
+    }
+  },
+  "ordering": ["general","settings","properties","extensions","styling"]
+}

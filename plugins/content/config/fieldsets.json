@@ -1,0 +1,13 @@
+{
+    "fieldsets": {
+        "properties": {
+            "legend": "Properties",
+            "fields": ["_defaultLanguage","_questionWeight"]
+        },
+        "extensions": {
+            "legend": "Extensions",
+            "fields": ["_drawer","_extensions"]
+        }
+    },
+    "ordering": ["properties","extensions"]
+}

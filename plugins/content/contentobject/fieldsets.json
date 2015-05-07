@@ -1,0 +1,21 @@
+{
+  "fieldsets": {
+    "general": {
+      "legend": "General",
+      "fields": ["title","displayTitle","body"]
+    },
+    "properties": {
+      "legend": "Properties",
+      "fields": ["duration","linkText","_graphic"]
+    },
+    "extensions": {
+      "legend": "Extensions",
+      "fields": ["_extensions"]
+    },
+    "styling": {
+      "legend": "Styling",
+      "fields": ["_classes"]
+    }
+  },
+  "ordering": ["general","properties","extensions","styling"]
+}

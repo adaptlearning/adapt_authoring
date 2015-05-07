@@ -1,0 +1,17 @@
+{
+  "fieldsets": {
+    "general": {
+      "legend": "General",
+      "fields": ["title","displayTitle","body"]
+    },
+    "extensions": {
+      "legend": "Extensions",
+      "fields": ["_extensions"]
+    },
+    "styling": {
+      "legend": "Styling",
+      "fields": ["_classes"]
+    }
+  },
+  "ordering": ["general","extensions","styling"]
+}

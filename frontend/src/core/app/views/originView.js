@@ -54,13 +54,11 @@ define(function(require){
     setUserPreference: function(key, value) {
       if (this.settings.preferencesKey && typeof(Storage) !== "undefined") {
         // Get preferences for this view
-        var preferences = localStorage.getItem(this.settings.preferencesKey);
-        // Convert string to JSON
-        var json = (JSON.parse(preferences) || {});
+        var preferences = (Origin.sessionModel.get(this.settings.preferencesKey) || {});
         // Set key and value
-        json[key] = value;
+        preferences[key] = value;
         // Store in localStorage
-        localStorage.setItem(this.settings.preferencesKey, JSON.stringify(json));
+        Origin.sessionModel.set(this.settings.preferencesKey, preferences);
         
       }
     },
@@ -68,7 +66,7 @@ define(function(require){
     getUserPreferences: function() {
       if (this.settings.preferencesKey && typeof(Storage) !== "undefined"
         && localStorage.getItem(this.settings.preferencesKey)) {
-        return JSON.parse(localStorage.getItem(this.settings.preferencesKey));
+        return Origin.sessionModel.get(this.settings.preferencesKey);
       } else {
         return {};
       }

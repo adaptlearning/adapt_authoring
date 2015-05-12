@@ -21,6 +21,11 @@ define(function(require) {
 	var Scaffold = {};
 	// Used to pass model data around the current form
 	var currentModel;
+	var currentForm;
+
+	// Used to pass an alternative model and alternative attribute to save
+	var alternativeModel;
+	var alternativeAttribute;
 
 	// Used to store already build schemas
 	var builtSchemas = {};
@@ -44,7 +49,6 @@ define(function(require) {
 	}
 
 	var setupSchemaFields = function(field, key, schema, scaffoldSchema) {
-
 		if (field.type === 'array') {
 
 			if (field.items && field.items.properties) {
@@ -284,8 +288,11 @@ define(function(require) {
 		
 		options.model.schema = buildSchema(schema, options, type);
 		options.fieldsets = buildFieldsets(schema, options);
+		alternativeModel = options.alternativeModelToSave;
+		alternativeAttribute = options.alternativeAttributeToSave;
 		currentModel = options.model;
 		var form = new Backbone.Form(options).render();
+		currentForm = form;
 		return form;
 
 	}
@@ -333,6 +340,18 @@ define(function(require) {
 		return currentModel;
 	}
 
+	Scaffold.getCurrentForm = function() {
+		return currentForm;
+	}
+
+	Scaffold.getAlternativeModel = function() {
+		return alternativeModel
+	}
+
+	Scaffold.getAlternativeAttribute = function() {
+		return alternativeAttribute
+	}
+
 	// Listen to modal views
 	Origin.on('scaffold:increaseActiveModals', function() {
 		ActiveItemsModal++;
@@ -365,10 +384,6 @@ define(function(require) {
         if (value.length < 3) return err;
 
 	});*/
-
-	Handlebars.registerHelper('console', function(context) {
-		console.log(context);
-	});
 
 	Origin.scaffold = Scaffold;
 

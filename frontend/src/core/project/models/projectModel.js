@@ -3,9 +3,8 @@ define(function(require) {
   
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
-  var EditorModel = require('editorGlobal/models/editorModel');
 
-  var ProjectModel = EditorModel.extend({
+  var ProjectModel = Backbone.Model.extend({
 
     idAttribute: '_id',
 

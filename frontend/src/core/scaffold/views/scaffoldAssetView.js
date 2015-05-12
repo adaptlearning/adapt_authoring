@@ -274,6 +274,7 @@ define(function(require) {
             if (alternativeAttribute) {
                 attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
             } else {
+                currentModel.unset('tags');
                 attributesToSave = null;
             }
 

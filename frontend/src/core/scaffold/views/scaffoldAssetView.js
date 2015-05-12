@@ -103,7 +103,7 @@ define(function(require) {
 
         checkValueHasChanged: function() {
             if ('heroImage' === this.key){
-                this.saveModel(true);
+                this.saveModel(false);
                 return;
             }
             var contentTypeId = Origin.scaffold.getCurrentModel().get('_id');
@@ -148,7 +148,7 @@ define(function(require) {
 
                         if ('heroImage' === this.key){
                             this.setValue(data.assetId);
-                            this.saveModel(true);
+                            this.saveModel(false);
                             return;
                         }
                         // Setup courseasset
@@ -274,6 +274,7 @@ define(function(require) {
             if (alternativeAttribute) {
                 attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
             } else {
+                currentModel.unset('tags');
                 attributesToSave = null;
             }
 

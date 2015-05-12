@@ -16,6 +16,7 @@ define(function(require) {
 
       if (this.model.isNew()) {
         this.isNew = true;
+        this.$el.addClass('project-detail-hide-hero');
         // Initialise the 'tags' property for a new course
         this.model.set('tags', []);
       }

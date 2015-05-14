@@ -155,7 +155,7 @@ function upgradeFramework(tagName, callback) {
 // This upgrades the Builder
 function upgradeBuilder(tagName, callback) {
   console.log('Upgrading...please hold on!')
-  var child = exec('git fetch', {
+  var child = exec('git fetch origin', {
     stdio: [0, 'pipe', 'pipe']
   });
   
@@ -174,7 +174,7 @@ function upgradeBuilder(tagName, callback) {
     
     console.log("Fetch from github was successful.\n");
     console.log("Pulling latest changes");
-    var secondChild = exec('git checkout ' + tagName + ' && git pull', {
+    var secondChild = exec('git checkout ' + tagName, {
       stdio: [0, 'pipe', 'pipe']
     });
     

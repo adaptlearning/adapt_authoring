@@ -47,6 +47,7 @@ function initialize () {
       var options = _.keys(req.body).length
       ? req.body
       : req.query;
+      options = JSON.stringify(options);
       var search = options.search || {};
       var self = this;
       var orList = [];

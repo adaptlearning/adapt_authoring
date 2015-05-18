@@ -64,7 +64,7 @@ define(function(require) {
 				itemType: 'Object',
 				subSchema: field.items.properties,
 				fieldType: 'List'
-			}
+			};
 		} else {
 			if (field.inputType) {
 				var fieldObject = {
@@ -84,7 +84,7 @@ define(function(require) {
 					itemType:field.items.inputType,
 					subSchema: field.items,
 					fieldType: field.items.inputType
-				}
+				};
 			}
 		}
 
@@ -248,7 +248,6 @@ define(function(require) {
 			if (schema[key].isSetting) {
 				fieldsets.settings.fields.push(key);
 			} else if (schema[key].type === 'object') {
-				debugger;
 				if(!fieldsets[key]) {
 					fieldsets[key] = {
 						legend: Helpers.keyToTitleString(key),

@@ -16,16 +16,20 @@ var configFile = JSON.parse(fs.readFileSync('conf/config.json'), {encoding: 'utf
 
 var steps = [
   function(callback) {
+
     console.log('Checking versions');
 
     if (versionFile) {
       installedBuilderVersion = versionFile.adapt_authoring;
       installedFrameworkVersion = versionFile.adapt_framework;
     }
+
     console.log('Currently installed versions. Builder: ' + installedBuilderVersion + ', Framework: ' + installedFrameworkVersion);
     callback();
+
   },
   function(callback) {
+
     console.log('Checking available Builder upgrades');
     // Check the latest version of the project
     request({
@@ -35,18 +39,22 @@ var steps = [
       uri: 'https://api.github.com/repos/adaptlearning/adapt_authoring/tags',
       method: 'GET'
     }, function (error, response, body) {
+      
       if (!error && response.statusCode == 200) {
         var tagInfo = JSON.parse(body);
+        
         if (tagInfo) {
           latestBuilderTag = tagInfo[0].name;
         }
+
         callback();
       }
-
           
     });
+
   },
   function(callback) {
+
     console.log('Checking available Framework upgrades');
     // Check the latest version of the framework
     request({
@@ -58,6 +66,7 @@ var steps = [
     }, function (error, response, body) {
       if (!error && response.statusCode == 200) {
         var tagInfo = JSON.parse(body);
+        
         if (tagInfo) {
           // For now - we should only worry about v1 tags of the framework
           async.detectSeries(tagInfo, function(tag, callback) {
@@ -74,6 +83,7 @@ var steps = [
 
       }
     });
+
   }, 
   function(callback) {
     // Check what needs upgrading
@@ -94,6 +104,7 @@ var steps = [
     }
 
     callback();
+
   }, function(callback) {
     // Upgrade Builder if we need to
     if (shouldUpdateBuilder) {
@@ -102,8 +113,10 @@ var steps = [
         if (err) {
           return callback(err);
         }
+
         versionFile.adapt_authoring = latestBuilderTag;
         callback();
+
       });
 
     } else {
@@ -111,21 +124,27 @@ var steps = [
     }
 
   }, function(callback) {
+
     // Upgrade Framework if we need to
     if (shouldUpdateFramework) {
+      
       upgradeFramework(latestFrameworkTag, function(err) {
         if (err) {
           return callback(err);
         }
+        
         versionFile.adapt_framework = latestFrameworkTag;
         callback();
+
       });
+
     } else {
       callback();
     }
-  }, function(callback) {
-    // After upgrading let's update the version.json to the latest version
 
+  }, function(callback) {
+
+    // After upgrading let's update the version.json to the latest version
     fs.writeFile('version.json', JSON.stringify(versionFile, null, 4), function(err) {
         if(err) {
           console.log(err);
@@ -133,6 +152,10 @@ var steps = [
           console.log("Version file updated");
         }
     }); 
+
+  }, function(callback) {
+    // Left empty for any upgrade scripts - just remember to call the callback when done.
+    callback();
   }];
 
 
@@ -156,64 +179,20 @@ prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result)
 
   // run steps
   async.series(steps, function (err, results) {
+
     if (err) {
       console.log('ERROR: ', err);
       return exitUpgrade(1, 'Upgrade was unsuccessful. Please check the console output.');
     }
     
-    exitUpgrade();
+    exitUpgrade('Great work! Your builder is now updated.');
+
   });
 });
 
-// This upgrades the Framework
-function upgradeFramework(tagName, callback) {
-  console.log('Upgrading the Framework...please hold on!');
-  var child = exec('git fetch origin', {
-    cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
-    stdio: [0, 'pipe', 'pipe']
-  });
-  
-  child.stdout.on('data', function(err) {
-    console.log(err);
-  });
-  child.stderr.on('data', function(err) {
-    console.log(err);
-  });
-  
-  child.on('exit', function (error, stdout, stderr) {
-    if (error) {
-      return console.log('ERROR: ' + error);
-    }
-    
-    console.log("Fetch from github was successful.\n");
-    console.log("Pulling latest changes");
-    var secondChild = exec('git reset --hard ' + tagName, {
-      cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
-      stdio: [0, 'pipe', 'pipe']
-    });
-    
-    secondChild.stdout.on('data', function(err) {
-      console.log(err);
-    });
-    secondChild.stderr.on('data', function(err) {
-      console.log(err);
-    });
-    
-    secondChild.on('exit', function (error, stdout, stderr) {
-      if (error) {
-        return console.log('ERROR: ' + error);
-      }
-      
-      callback();
-      console.log("Pulled the big one.\n");
-
-    });
-
-  });
-}
-
 // This upgrades the Builder
 function upgradeBuilder(tagName, callback) {
+
   console.log('Upgrading the Builder...please hold on!');
   var child = exec('git fetch origin', {
     stdio: [0, 'pipe', 'pipe']
@@ -232,7 +211,8 @@ function upgradeBuilder(tagName, callback) {
     }
     
     console.log("Fetch from github was successful.\n");
-    console.log("Pulling latest changes");
+    console.log("Pulling latest changes...");
+
     var secondChild = exec('git reset --hard ' + tagName, {
       stdio: [0, 'pipe', 'pipe']
     });
@@ -240,6 +220,7 @@ function upgradeBuilder(tagName, callback) {
     secondChild.stdout.on('data', function(err) {
       console.log(err);
     });
+
     secondChild.stderr.on('data', function(err) {
       console.log(err);
     });
@@ -249,8 +230,59 @@ function upgradeBuilder(tagName, callback) {
         return console.log('ERROR: ' + error);
       }
       
+      console.log("Builder has been updated.");
       callback();
-      console.log("Pulled the big one.\n");
+
+    });
+
+  });
+}
+
+// This upgrades the Framework
+function upgradeFramework(tagName, callback) {
+  console.log('Upgrading the Framework...please hold on!');
+
+  var child = exec('git fetch origin', {
+    cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
+    stdio: [0, 'pipe', 'pipe']
+  });
+  
+  child.stdout.on('data', function(err) {
+    console.log(err);
+  });
+
+  child.stderr.on('data', function(err) {
+    console.log(err);
+  });
+  
+  child.on('exit', function (error, stdout, stderr) {
+    if (error) {
+      return console.log('ERROR: ' + error);
+    }
+    
+    console.log("Fetch from github was successful.\n");
+    console.log("Pulling latest changes...");
+
+    var secondChild = exec('git reset --hard ' + tagName, {
+      cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
+      stdio: [0, 'pipe', 'pipe']
+    });
+    
+    secondChild.stdout.on('data', function(err) {
+      console.log(err);
+    });
+
+    secondChild.stderr.on('data', function(err) {
+      console.log(err);
+    });
+    
+    secondChild.on('exit', function (error, stdout, stderr) {
+      if (error) {
+        return console.log('ERROR: ' + error);
+      }
+      
+      console.log("Framework has been updated.");
+      callback();
 
     });
 

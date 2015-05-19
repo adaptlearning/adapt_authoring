@@ -102,6 +102,7 @@ var steps = [
         if (err) {
           return callback(err);
         }
+        versionFile.adapt_authoring = latestBuilderTag;
         callback();
       });
 
@@ -116,11 +117,22 @@ var steps = [
         if (err) {
           return callback(err);
         }
+        versionFile.adapt_framework = latestFrameworkTag;
         callback();
       });
     } else {
       callback();
     }
+  }, function(callback) {
+    // After upgrading let's update the version.json to the latest version
+
+    fs.writeFile('version.json', JSON.stringify(versionFile, null, 4), function(err) {
+        if(err) {
+          console.log(err);
+        } else {
+          console.log("Version file updated");
+        }
+    }); 
   }];
 
 

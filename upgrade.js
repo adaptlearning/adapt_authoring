@@ -30,7 +30,7 @@ var steps = [
   },
   function(callback) {
 
-    console.log('Checking available Builder upgrades');
+    console.log('Checking available Builder upgrades\n');
     // Check the latest version of the project
     request({
       headers: {
@@ -55,7 +55,7 @@ var steps = [
   },
   function(callback) {
 
-    console.log('Checking available Framework upgrades');
+    console.log('Checking available Framework upgrades\n');
     // Check the latest version of the framework
     request({
       headers: {
@@ -99,7 +99,7 @@ var steps = [
 
     // If neither of the Builder or Framework need updating then quit the upgrading process
     if (!shouldUpdateFramework && !shouldUpdateBuilder) {
-      console.log('No updates available at this time');
+      console.log('No updates available at this time\n');
       process.exit(0);
     }
 
@@ -149,7 +149,7 @@ var steps = [
         if(err) {
           console.log(err);
         } else {
-          console.log("Version file updated");
+          console.log("Version file updated\n");
         }
     }); 
 
@@ -210,7 +210,7 @@ function upgradeBuilder(tagName, callback) {
       return console.log('ERROR: ' + error);
     }
     
-    console.log("Fetch from github was successful.\n");
+    console.log("Fetch from github was successful.");
     console.log("Pulling latest changes...");
 
     var secondChild = exec('git reset --hard ' + tagName, {
@@ -230,7 +230,7 @@ function upgradeBuilder(tagName, callback) {
         return console.log('ERROR: ' + error);
       }
       
-      console.log("Builder has been updated.");
+      console.log("Builder has been updated.\n");
       callback();
 
     });
@@ -260,7 +260,7 @@ function upgradeFramework(tagName, callback) {
       return console.log('ERROR: ' + error);
     }
     
-    console.log("Fetch from github was successful.\n");
+    console.log("Fetch from github was successful.");
     console.log("Pulling latest changes...");
 
     var secondChild = exec('git reset --hard ' + tagName, {
@@ -281,7 +281,7 @@ function upgradeFramework(tagName, callback) {
         return console.log('ERROR: ' + error);
       }
       
-      console.log("Framework has been updated.");
+      console.log("Framework has been updated.\n");
       callback();
 
     });

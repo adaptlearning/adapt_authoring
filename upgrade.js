@@ -176,6 +176,7 @@ function upgradeFramework(tagName, callback) {
     console.log("Fetch from github was successful.\n");
     console.log("Pulling latest changes");
     var secondChild = exec('git reset --hard ' + tagName, {
+      cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
       stdio: [0, 'pipe', 'pipe']
     });
     

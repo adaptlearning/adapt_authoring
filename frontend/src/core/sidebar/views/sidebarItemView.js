@@ -88,7 +88,7 @@ define(function(require) {
 
     resetButtons: function() {
 
-      var $buttonsSpans = this.$('.sidebar-updating').attr('disabled', false).find('span');
+      var $buttonsSpans = this.$('.sidebar-updating').removeClass('sidebar-updating').attr('disabled', false).find('span');
       $buttonsSpans.eq(0).removeClass('display-none');
       $buttonsSpans.eq(1).remove();
     },

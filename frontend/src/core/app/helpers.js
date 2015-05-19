@@ -1,6 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
     var Handlebars = require('handlebars');
+    var Origin = require('coreJS/app/origin');
 
     var helpers = {
         lowerCase: function(text) {
@@ -70,8 +71,15 @@ define(function(require){
             if (value === text) {
                 return block.fn(this);
             } else {
-                return block.inverse();
+                return block.inverse(this);
             }
+        },
+        ifUserIsMe: function(userId, block) {
+          if (userId === Origin.sessionModel.get('id')) {
+            return block.fn(this);
+          } else {
+            return block.inverse(this);
+          }
         },
         selected: function(option, value){
             if (option === value) {

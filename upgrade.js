@@ -12,6 +12,7 @@ var latestFrameworkTag = '';
 var shouldUpdateBuilder = false;
 var shouldUpdateFramework = false;
 var versionFile = JSON.parse(fs.readFileSync('version.json'), {encoding: 'utf8'});
+var configFile = JSON.parse(fs.readFileSync('conf/config.json'), {encoding: 'utf8'});
 
 var steps = [
   function(callback) {
@@ -111,7 +112,12 @@ var steps = [
   }, function(callback) {
     // Upgrade Framework if we need to
     if (shouldUpdateFramework) {
-      console.log('Upgrading Framework');
+      upgradeFramework(latestFrameworkTag, function(err) {
+        if (err) {
+          return callback(err);
+        }
+        callback();
+      });
     } else {
       callback();
     }
@@ -149,12 +155,53 @@ prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result)
 
 // This upgrades the Framework
 function upgradeFramework(tagName, callback) {
+  console.log('Upgrading the Framework...please hold on!');
+  var child = exec('git fetch origin', {
+    cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
+    stdio: [0, 'pipe', 'pipe']
+  });
+  
+  child.stdout.on('data', function(err) {
+    console.log(err);
+  });
+  child.stderr.on('data', function(err) {
+    console.log(err);
+  });
+  
+  child.on('exit', function (error, stdout, stderr) {
+    if (error) {
+      return console.log('ERROR: ' + error);
+    }
+    
+    console.log("Fetch from github was successful.\n");
+    console.log("Pulling latest changes");
+    var secondChild = exec('git reset --hard ' + tagName, {
+      stdio: [0, 'pipe', 'pipe']
+    });
+    
+    secondChild.stdout.on('data', function(err) {
+      console.log(err);
+    });
+    secondChild.stderr.on('data', function(err) {
+      console.log(err);
+    });
+    
+    secondChild.on('exit', function (error, stdout, stderr) {
+      if (error) {
+        return console.log('ERROR: ' + error);
+      }
+      
+      callback();
+      console.log("Pulled the big one.\n");
 
+    });
+
+  });
 }
 
 // This upgrades the Builder
 function upgradeBuilder(tagName, callback) {
-  console.log('Upgrading...please hold on!')
+  console.log('Upgrading the Builder...please hold on!');
   var child = exec('git fetch origin', {
     stdio: [0, 'pipe', 'pipe']
   });
@@ -208,23 +255,5 @@ function exitUpgrade (code, msg) {
   code = code || 0;
   msg = msg || 'Bye!';
   console.log(msg);
-  
-  // handle borked tenant, users, in case of a non-zero exit
-  // if (0 !== code) {
-  //   if (app && app.db) {
-  //     if (masterTenant) {
-  //       return app.db.destroy('tenant', { _id: masterTenant._id }, function (err) {
-  //         if (superUser) {
-  //           return app.db.destroy('user', { _id: superUser._id }, function (err) {
-  //             return process.exit(code);
-  //           });
-  //         }
-          
-  //         return process.exit(code);
-  //       }); 
-  //     }
-  //   }
-  // }
-  
   process.exit(code);
 }

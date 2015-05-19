@@ -115,7 +115,7 @@ var steps = [
     } else {
       callback();
     }
-  }]
+  }];
 
 
 /*console.log('Latest ' + latestBuilderTag);
@@ -169,7 +169,6 @@ function upgradeBuilder(tagName, callback) {
   child.on('exit', function (error, stdout, stderr) {
     if (error) {
       return console.log('ERROR: ' + error);
-      
     }
     
     console.log("Fetch from github was successful.\n");

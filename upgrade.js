@@ -30,7 +30,7 @@ var steps = [
   },
   function(callback) {
 
-    console.log('Checking available Builder upgrades\n');
+    console.log('Checking available Builder upgrades.');
     // Check the latest version of the project
     request({
       headers: {
@@ -55,7 +55,7 @@ var steps = [
   },
   function(callback) {
 
-    console.log('Checking available Framework upgrades\n');
+    console.log('Checking available Framework upgrades.');
     // Check the latest version of the framework
     request({
       headers: {
@@ -185,7 +185,7 @@ prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result)
       return exitUpgrade(1, 'Upgrade was unsuccessful. Please check the console output.');
     }
     
-    exitUpgrade('Great work! Your builder is now updated.');
+    exitUpgrade(0, 'Great work! Your builder is now updated.');
 
   });
 });

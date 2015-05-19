@@ -147,9 +147,10 @@ var steps = [
     // After upgrading let's update the version.json to the latest version
     fs.writeFile('version.json', JSON.stringify(versionFile, null, 4), function(err) {
         if(err) {
-          console.log(err);
+          callback(err);
         } else {
           console.log("Version file updated\n");
+          callback();
         }
     }); 
 

@@ -2,7 +2,7 @@
   "fieldsets": {
     "general": {
       "legend": "General",
-      "fields": ["title","displayTtitle","body"]
+      "fields": ["title","displayTitle","body"]
     },
     "extensions": {
       "legend": "Extensions",

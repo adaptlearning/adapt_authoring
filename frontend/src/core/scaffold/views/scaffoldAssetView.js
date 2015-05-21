@@ -212,6 +212,12 @@ define(function(require) {
                 searchCriteria._contentTypeParentId = Origin.editor.data.course.get('_id');
             }
             var asset = Origin.editor.data.courseAssets.findWhere(searchCriteria);
+
+            if (!asset) {
+                // HACK - Try relaxing the search criteria for historic data
+                asset = Origin.editor.data.courseAssets.findWhere({_contentType: contentType, _fieldName: fieldname});
+            }
+
             return asset ? asset : false;
         },
 
@@ -272,6 +278,7 @@ define(function(require) {
             currentModel.pruneAttributes();
             // Check if alternative attribute should be used
             if (alternativeAttribute) {
+                currentModel.unset('tags');
                 attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
             } else {
                 currentModel.unset('tags');

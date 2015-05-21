@@ -171,6 +171,12 @@ define(function(require) {
 			}
 		});
 
+		// Remove extensions if none apply
+		// TODO: Make this generic to apply to any field?
+		if(scaffoldSchema._extensions && _.isEmpty(scaffoldSchema._extensions.subSchema)) {
+			delete scaffoldSchema._extensions;
+		}
+
 		builtSchemas[type] = scaffoldSchema;
 		return scaffoldSchema;
 	};
@@ -179,10 +185,8 @@ define(function(require) {
 	* 1. Merge both layout schemas
 	* 2. Extend the initial fieldsets and attempt to categorise
 	*
-	* TODO schema validation
-	* - Check everything in ordering has a corresponding fieldset (see extendLayoutFieldsets)
+	* NOTE: All base fieldsets will be supplied with core
 	*/
-	//
 	var buildFieldSets = function(initialType, type, schema) {
 		// for base type
 		var initialLayout = Origin.editor.data.layouts[initialType];
@@ -190,22 +194,68 @@ define(function(require) {
 		// for custom type
 		var layout = Origin.editor.data.layouts[type];
 		var fieldsets = (layout && layout.fieldsets) ? layout.fieldsets : false;
+		var orderedFieldsets = [];
 
 		if(fieldsets) {
 			if(initialType !== type && initialFieldsets) {
-				return extendLayoutFieldsets(initialLayout, layout);
-			}
-			else {
-				return fieldsets;
+				orderedFieldsets = extendLayoutFieldsets(initialLayout, layout);
+			} else {
+				// convert to an array with correct order
+				var ordering = (initialLayout) ? initialLayout.ordering : layout.ordering;
+				for(var i = 0, len = ordering.length; i < len; i++) {
+					var fieldset;
+					if(initialLayout) fieldset = initialLayout.fieldsets[ordering[i]];
+					else fieldset = layout.fieldsets[ordering[i]]
+					orderedFieldsets.push(fieldset);
+				}
 			}
 		} else if(initialFieldsets) {
 			var newFields = getNewFieldsFromFieldsets(initialFieldsets, fieldsets);
-			var newLayout = {
+			var tempLayout = {
 				fieldsets: generateNewFieldSets(schema, newFields)
 			};
-			return extendLayoutFieldsets(initialLayout, newLayout);
+			orderedFieldsets = extendLayoutFieldsets(initialLayout, tempLayout);
 		}
-		// NOTE assume that all base fieldsets will be supplied with core
+
+		return pruneUnusedFieldsets(orderedFieldsets, schema);
+	};
+
+	/*
+	* Removes any empty fieldsets
+	* TODO: Schema validation
+	*/
+	var pruneUnusedFieldsets = function(fieldsets, schema) {
+		var fieldsetsClone = fieldsets.slice(0);
+
+		for(var i = 0; i < fieldsetsClone.length; i++) {
+			if(0 === fieldsetsClone[i].fields.length) {
+				console.log("'" + fieldsetsClone[i].legend + "' fieldset doesn't have any fields, removing.");
+				fieldsetsClone.splice(i--,1);
+				continue;
+			}
+
+			var empties = 0;
+			for(var j = 0; j < fieldsetsClone[i].fields.length; j++) {
+				var field = fieldsetsClone[i].fields[j];
+				if(schema[field]) {
+					var props = schema[field].properties;
+					if(props && _.isEmpty(props)) {
+						empties++;
+					}
+				} else {
+					console.log("'" + fieldsetsClone[i].legend + "' field '" + field + "' isn't in the schema, removing.");
+					fieldsetsClone[i].fields.splice(j--,1);
+					continue;
+				}
+			}
+
+			if(fieldsetsClone[i].fields.length === empties) {
+				console.log("'" + fieldsetsClone[i].legend + "' fieldset only has empty fields, removing.");
+				fieldsetsClone.splice(i--,1);
+			}
+		}
+
+		return fieldsetsClone;
 	};
 
 	var getFieldsFromFieldsets = function(fieldsets) {
@@ -230,9 +280,13 @@ define(function(require) {
 		return newFields;
 	};
 
-	// create fieldsets from newFields
+	// Create fieldsets from newFields
 	var generateNewFieldSets = function(schema, newFields) {
-		// TODO use localised strings here
+		/*
+		* TODO: Use localised strings here
+		* Should these be stored in the fieldsets.schema, or the routes/lang/*.json?
+		* e.g. window.polyglot.t('fieldsetLegend-' + key)
+		*/
 		var fieldsets = {
 			general: {
 				legend: 'General',
@@ -249,7 +303,7 @@ define(function(require) {
 				continue;
 			}
 
-			// TODO do we have nested .isSettings?
+			// TODO: Do we have nested .isSettings?
 			if (schema[key].isSetting) {
 				fieldsets.settings.fields.push(key);
 			} else if (schema[key].type === 'object') {
@@ -282,17 +336,17 @@ define(function(require) {
 		return fieldsets;
 	};
 
-	// NOTE add fieldsets from the 'extra' layout (any duplicates in the original are replaced)
+	// NOTE: Add fieldsets from the 'extra' layout (any duplicates in the original are replaced)
 	var extendLayoutFieldsets = function(originalLayout, extraLayout) {
 		var extended = [];
 		var ordering = extraLayout.ordering || originalLayout.ordering;
 
-		// NOTE assumes that all ordering fieldsets actually exist
+		// NOTE: Assumes that all ordering fieldsets actually exist
 		for(var i = 0, len = ordering.length; i < len; i++) {
 			extended.push(extraLayout.fieldsets[ordering[i]] || originalLayout.fieldsets[ordering[i]]);
 		}
 
-		// make sure any props in extra are added to the end
+		// Make sure any props in extra are added to the end
 		if(!extraLayout.ordering) {
 			var keys = Object.keys(extraLayout.fieldsets);
 			for(var i = 0, len = keys.length; i < len; i++) {
@@ -310,7 +364,7 @@ define(function(require) {
 	*/
 
 	Scaffold.buildForm = function(options) {
-		// TODO _type:'config' should be set on the model
+		// TODO: _type:'config' should be set on the model
 		var type = options.model.get('_type') || options.schemaType || 'config';
 		var initialType = type;
 
@@ -337,11 +391,7 @@ define(function(require) {
 		}
 
 		options.model.schema = buildSchema(schema, options, type);
-		options.fieldsets = buildFieldSets(initialType, type, schema);
-
-		if(!options.fieldsets) {
-			delete options.fieldsets;
-		}
+		options.fieldsets = buildFieldSets(initialType, type, options.model.schema);
 
 		alternativeModel = options.alternativeModelToSave;
 		alternativeAttribute = options.alternativeAttributeToSave;

@@ -217,7 +217,7 @@ define(function(require) {
         "fieldsets": {
           "general": {
             "legend": "General",
-            "fields": ["title","displayTtitle","body"]
+            "fields": ["title","displayTitle","body"]
           },
           "extensions": {
             "legend": "Extensions",
@@ -345,8 +345,6 @@ define(function(require) {
         "ordering": ["general","settings","properties","items","feedback","extensions","styling"]
       }
     };
-
-    console.log(Origin.editor.data.layouts);
   }
 
   function routeAfterDataIsLoaded(route1, route2, route3, route4) {

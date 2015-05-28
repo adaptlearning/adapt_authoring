@@ -840,15 +840,17 @@ function handleUploadedPlugin (req, res, next) {
         // Read over each directory checking for the correct one that contains a bower.json file
         fs.readdir(outputPath, function (err, directoryList) {
 
-          async.each(directoryList, function(directory, asyncCallback) {
+          async.some(directoryList, function(directory, asyncCallback) {
             var bowerPath = path.join(outputPath, directory, '/bower.json');
 
             fs.exists(bowerPath, function(exists) {
               if (exists) {
                 canonicalDir = path.join(outputPath, directory);
                 packageJson = require(bowerPath);
+                asyncCallback(true);
+              } else {
+                asyncCallback();
               }
-              asyncCallback();
             });
 
           }, function(err) {

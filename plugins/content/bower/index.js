@@ -856,6 +856,10 @@ function handleUploadedPlugin (req, res, next) {
               return next(err);
             }
 
+            if (!packageJson) {
+              return next(new PluginPackageError('Unrecognized plugin - a plugin should have a bower.json file'));
+            }
+
             // extract the plugin type from the package
             var pluginType = extractPluginType(packageJson);
             if (!pluginType) {

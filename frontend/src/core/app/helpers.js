@@ -67,7 +67,7 @@ define(function(require){
 
           return hh + ':' + mm + ':' + ss;
         },
-        if_value_equals: function(value, text, block) {
+        ifValueEquals: function(value, text, block) {
             if (value === text) {
                 return block.fn(this);
             } else {
@@ -170,7 +170,63 @@ define(function(require){
           } else {
             return block.inverse(this);
           }
+        },
+
+        console: function(context) {
+          return console.log(context);
+        },
+
+        getAssetFromValue: function(url) {
+          var urlSplit = url.split('/')
+          var fileName = urlSplit[urlSplit.length - 1];
+          // Get courseAsset model
+          var courseAsset = Origin.editor.data.courseAssets.findWhere({_fieldName: fileName});
+          var courseAssetId = courseAsset.get('_assetId');
+
+          return '/api/asset/serve/' + courseAssetId;
+
+        },
+
+        getThumbnailFromValue: function(url) {
+
+          var urlSplit = url.split('/')
+          var fileName = urlSplit[urlSplit.length - 1];
+          // Get courseAsset model
+          var courseAsset = Origin.editor.data.courseAssets.findWhere({_fieldName: fileName});
+          if (courseAsset) {
+            var courseAssetId = courseAsset.get('_assetId');
+            return '/api/asset/thumb/' + courseAssetId;
+          } else {
+            return '/api/asset/thumb/' + url;
+          }
+
+        },
+
+        ifAssetIsExternal: function(url, block) {
+
+          var urlSplit = url.split('/')
+          // Could well be a hero image for the course
+          if (urlSplit.length === 1) {
+            return block.inverse(this);
+          }
+
+          if (urlSplit[0] != "course" && urlSplit[1] != "assets") {
+            return block.fn(this);
+          } else {
+            return block.inverse(this);
+          }
+
+        },
+
+        ifAssetIsHeroImage: function(url, block) {
+          var urlSplit = url.split('/')
+          if (urlSplit.length === 1) {
+            return block.fn(this);
+          } else {
+            return block.inverse(this);
+          }
         }
+
     };
 
     for(var name in helpers) {

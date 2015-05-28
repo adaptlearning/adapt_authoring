@@ -17,7 +17,8 @@ define(function(require){
       'click'                           : 'selectProject',
       'click a.open-context-course'     : 'openContextMenu',
       'click a.course-delete'           : 'deleteProjectPrompt',
-
+      'click .projects-details-tags-button-show' : 'onProjectShowTagsButtonClicked',
+      'click .projects-details-tags-button-hide' : 'onProjectHideTagsButtonClicked',
       // Preview events
       'mouseover .pos.large'            : 'showLargePreview',
       'mouseover .pos.medium'           : 'showMediumPreview',
@@ -137,6 +138,22 @@ define(function(require){
     showSmallPreview: function() {
       this.$('iframe').removeClass();
       this.$('iframe').addClass('preview-small');
+    },
+
+    onProjectShowTagsButtonClicked: function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.$('.tag-container').show().velocity({
+        opacity: 1
+      });
+    },
+
+    onProjectHideTagsButtonClicked: function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.$('.tag-container').velocity({
+        opacity: 0
+      }).hide();
     }
     
   }, {

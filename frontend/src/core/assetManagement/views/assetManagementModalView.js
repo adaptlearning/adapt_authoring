@@ -8,6 +8,7 @@ define(function(require) {
 	var AssetManagementPreviewView = require('coreJS/assetManagement/views/assetManagementPreviewView');
 	var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
 	var AssetManagementModalFiltersView = require('coreJS/assetManagement/views/assetManagementModalFiltersView');
+	var AssetManagementModelAutofillView = require('coreJS/assetManagement/views/assetManagementModalAutofillView');
 
 	var AssetManagementModalView = AssetManagementView.extend({
 
@@ -19,6 +20,9 @@ define(function(require) {
 		postRender: function() {
 	        this.setupSubViews();
 	        this.setupFilterAndSearchView();
+	        if (this.options.assetType === "Asset:image" && Origin.scaffold.getCurrentModel().get('_component') === 'graphic') {
+	        	this.setupImageAutofillButton();
+	        }
 	        this.resizeAssetPanels();
 	    },
 
@@ -33,6 +37,10 @@ define(function(require) {
 
 	    setupFilterAndSearchView: function() {
 	    	new AssetManagementModalFiltersView(this.options);
+	    },
+
+	    setupImageAutofillButton: function() {
+	    	new AssetManagementModelAutofillView({modalView: this});
 	    },
 
 	    resizeAssetPanels: function() {

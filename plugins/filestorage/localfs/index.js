@@ -377,6 +377,8 @@ LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
     metadata: null
   };
 
+  fileType = fileType.split('/')[0];
+
   switch (fileType) {
     case 'image':
     case 'video':
@@ -392,8 +394,6 @@ LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
   if (!configuration.getConfig('useffmpeg')) {
     return next(null, data);
   }
-
-  fileType = fileType.split('/')[0];
 
   // Interrogate the uploaded file
   probe(filePath, function (err, probeData) {

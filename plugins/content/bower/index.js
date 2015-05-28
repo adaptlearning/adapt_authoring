@@ -837,7 +837,7 @@ function handleUploadedPlugin (req, res, next) {
 
         // first entry should be our target directory
         var packageJson;
-        var canonicalDir = path.join(outputPath, files[0]);
+        var canonicalDir = path.join(outputPath, file.name.replace('.zip', ''));
         try {
           packageJson = require(path.join(canonicalDir, 'bower.json'));
         } catch (error) {

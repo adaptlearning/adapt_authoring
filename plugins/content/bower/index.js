@@ -846,15 +846,19 @@ function handleUploadedPlugin (req, res, next) {
             fs.exists(bowerPath, function(exists) {
               if (exists) {
                 canonicalDir = path.join(outputPath, directory);
-                packageJson = require(bowerPath);
+                try {
+                  packageJson = require(bowerPath);
+                } catch (e) {
+                  return asyncCallback();
+                }
                 asyncCallback(true);
               } else {
                 asyncCallback();
               }
             });
 
-          }, function(err) {
-            if (err) {
+          }, function(hasResults) {
+            if (!hasResults) {
               return next(err);
             }
 

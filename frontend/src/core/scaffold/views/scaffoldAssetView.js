@@ -255,6 +255,9 @@ define(function(require) {
                         console.log('error', error);
                     }
                 });
+            } else {
+                this.setValue('');
+                this.saveModel(true);
             }
         },
 

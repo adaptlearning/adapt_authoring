@@ -269,9 +269,7 @@ BowerPlugin.prototype.initialize = function (plugin) {
           if (err) {
             return next(err);
           }
-
-          res.statusCode = 200;
-          return res.json(_.values(results));
+          return next(null,results)
         });  
       }
       

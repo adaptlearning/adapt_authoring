@@ -45,7 +45,7 @@ ul.dashboard-options {
         display:inline-block;
         .project-image {
             width:100%;
-            height:222px;
+            height:150px;
             background-image:url(/images/origami-project.jpg);
             background-size: cover;
             background-position: center center;
@@ -53,7 +53,18 @@ ul.dashboard-options {
             border-right:1px solid #b7caed;
         }
         .project-details-tags {
+            margin-top:8px;
+        }
+        .tag-container {
             display:none;
+            position:absolute;
+            width:100%;
+            left:0;
+            bottom:0px;
+            padding:20px;
+            border-top:1px solid #eee;
+            background-color:rgba(250,250,250,0.9);
+            opacity:0;
         }
     }
 }
@@ -67,7 +78,7 @@ ul.dashboard-options {
             border-bottom:1px solid #b7caed;
         }
         .project-image {
-            width:300px;
+            width:40%;
             height:222px;
             background-image:url(/images/origami-project.jpg);
             background-size: cover;
@@ -78,6 +89,19 @@ ul.dashboard-options {
         }
         .project-details {
             float:left;
+            width:59%;
+        }
+        .project-details-tags {
+            margin-top:8px;
+        }
+
+        .tag-container {
+            display:block!important;
+            opacity:1!important;
+        }
+        .projects-details-tags-button,
+        .projects-details-tags-button-hide {
+            display:none;
         }
     }
 }
@@ -106,4 +130,8 @@ ul.dashboard-options {
      &.selected span:first-child i:before{
         content:'\f205';
     }
+}
+
+.search-highlight{
+    box-shadow: inset 0 0 8px 5px #ff0;
 }

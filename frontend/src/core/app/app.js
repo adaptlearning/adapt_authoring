@@ -18,6 +18,7 @@ require([
     'coreJS/app/helpers',
     'coreJS/app/contextMenu',
     'coreJS/location/location',
+    'plugins/plugins',
     'coreJS/notify/notify',
     'coreJS/editingOverlay/editingOverlay',
     'coreJS/options/options',
@@ -31,8 +32,7 @@ require([
     'imageReady',
     'mediaelement',
     'velocity',
-    'scrollTo',
-    'plugins/plugins'
+    'scrollTo'
 ], function (
     Templates,
     Polyglot,

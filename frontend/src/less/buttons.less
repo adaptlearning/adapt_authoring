@@ -87,6 +87,12 @@ button {
         background-color:@button-primary-color;
         color:@button-primary-text-color;
         border:1px solid @button-primary-color;
+        i {
+            color:@button-primary-text-color;
+            &:hover, &:focus {
+                color:@button-primary-hover-text-color;
+            }
+        }
         &:hover, &:focus {
             background-color:@button-primary-hover-color;
             color:@button-primary-hover-text-color;

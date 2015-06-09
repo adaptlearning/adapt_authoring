@@ -28,7 +28,8 @@ define(function(require) {
 
 	    setupSubViews: function() {
 	    	this.search = {};
-	    	var assetType = this.options.assetType.replace('Asset:', '');
+	    	// Replace Asset and : so we can have both filtered and all asset types
+	    	var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
 	    	var filters = [assetType];
 	    	this.search.assetType = { $in: filters };
 		    // Push collection through to collection view

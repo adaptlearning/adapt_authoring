@@ -252,9 +252,11 @@ define(function(require) {
                         that.saveModel(true);
                     },
                     error: function(error) {
-                        console.log('error', error);
                     }
                 });
+            } else {
+                this.setValue('');
+                this.saveModel(true);
             }
         },
 

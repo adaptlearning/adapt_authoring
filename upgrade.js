@@ -4,6 +4,9 @@ var request = require('request');
 var async = require('async');
 var exec = require('child_process').exec;
 
+// Constants
+var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
+
 // GLOBALS
 var installedBuilderVersion = '';
 var latestBuilderTag = '';
@@ -24,17 +27,17 @@ var steps = [
       installedFrameworkVersion = versionFile.adapt_framework;
     }
 
-    console.log('Currently installed versions. Builder: ' + installedBuilderVersion + ', Framework: ' + installedFrameworkVersion);
+    console.log('Currently installed versions:\n- Adapt Builder: ' + installedBuilderVersion + '\n- Adapt Framework: ' + installedFrameworkVersion);
     callback();
 
   },
   function(callback) {
 
-    console.log('Checking available Builder upgrades.');
+    console.log('Checking for Adapt Builder upgrades...');
     // Check the latest version of the project
     request({
       headers: {
-        'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36'
+        'User-Agent' : DEFAULT_USER_AGENT
       },
       uri: 'https://api.github.com/repos/adaptlearning/adapt_authoring/tags',
       method: 'GET'
@@ -55,11 +58,11 @@ var steps = [
   },
   function(callback) {
 
-    console.log('Checking available Framework upgrades.');
+    console.log('Checking for Adapt Framework upgrades...');
     // Check the latest version of the framework
     request({
       headers: {
-        'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36'
+        'User-Agent' : DEFAULT_USER_AGENT
       },
       uri: 'https://api.github.com/repos/adaptlearning/adapt_framework/tags',
       method: 'GET'
@@ -89,12 +92,12 @@ var steps = [
     // Check what needs upgrading
     if (latestBuilderTag != installedBuilderVersion) {
       shouldUpdateBuilder = true;
-      console.log('Update for Builder is available: ' + latestBuilderTag);
+      console.log('Update for Adapt Builder is available: ' + latestBuilderTag);
     }
 
     if (latestFrameworkTag != installedFrameworkVersion) {
       shouldUpdateFramework = true;
-      console.log('Update for Framework is available: ' + latestFrameworkTag);
+      console.log('Update for Adapt Framework is available: ' + latestFrameworkTag);
     }
 
     // If neither of the Builder or Framework need updating then quit the upgrading process
@@ -157,26 +160,17 @@ var steps = [
   }, function(callback) {
     // Left empty for any upgrade scripts - just remember to call the callback when done.
     callback();
-  }];
-
-
-/*console.log('Latest ' + latestBuilderTag);
-console.log(installedBuilderVersion + latestBuilderTag);
-console.log(installedFrameworkVersion + latestFrameworkTag);*/
-
-/*prompt.message = '> ';
-prompt.delimiter = '';*/
+  }
+];
 
 prompt.start();
 
 // Prompt the user to begin the install
-console.log('This will update the Adapt builder to the latest version. Would you like to continue?');
+console.log('This script will update the Adapt Builder (and/or Adapt Framework) to the latest released version. Would you like to continue?');
 prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
   if (!/(Y|y)[es]*$/.test(result['Y/n'])) {
     return exitUpgrade();
   }
-  
-  //return exitUpgrade(1, 'whateva');
 
   // run steps
   async.series(steps, function (err, results) {
@@ -186,15 +180,14 @@ prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result)
       return exitUpgrade(1, 'Upgrade was unsuccessful. Please check the console output.');
     }
     
-    exitUpgrade(0, 'Great work! Your builder is now updated.');
-
+    exitUpgrade(0, 'Great work! Your Adapt Builder is now updated.');
   });
 });
 
 // This upgrades the Builder
 function upgradeBuilder(tagName, callback) {
 
-  console.log('Upgrading the Builder...please hold on!');
+  console.log('Upgrading the Adapt Builder...please hold on!');
   var child = exec('git fetch origin', {
     stdio: [0, 'pipe', 'pipe']
   });
@@ -211,7 +204,7 @@ function upgradeBuilder(tagName, callback) {
       return console.log('ERROR: ' + error);
     }
     
-    console.log("Fetch from github was successful.");
+    console.log("Fetch from GitHub was successful.");
     console.log("Pulling latest changes...");
 
     var secondChild = exec('git reset --hard ' + tagName, {
@@ -241,7 +234,7 @@ function upgradeBuilder(tagName, callback) {
 
 // This upgrades the Framework
 function upgradeFramework(tagName, callback) {
-  console.log('Upgrading the Framework...please hold on!');
+  console.log('Upgrading the Adapt Framework...please hold on!');
 
   var child = exec('git fetch origin', {
     cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
@@ -261,7 +254,7 @@ function upgradeFramework(tagName, callback) {
       return console.log('ERROR: ' + error);
     }
     
-    console.log("Fetch from github was successful.");
+    console.log("Fetch from GitHub was successful.");
     console.log("Pulling latest changes...");
 
     var secondChild = exec('git reset --hard ' + tagName, {

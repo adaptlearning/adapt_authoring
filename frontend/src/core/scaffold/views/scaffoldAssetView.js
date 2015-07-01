@@ -252,7 +252,6 @@ define(function(require) {
                         that.saveModel(true);
                     },
                     error: function(error) {
-                        console.log('error', error);
                     }
                 });
             } else {

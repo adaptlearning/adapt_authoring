@@ -317,7 +317,7 @@ var steps = [
           return exitInstall(1, 'Plugin install was unsuccessful. Please check the console output.');
         }
 
-        console.log(('  installing ' + plugin.getPluginType() + ' plugins').grey);
+        console.log('  installing ' + plugin.getPluginType() + ' plugins');
         plugin.updatePackages(plugin.bowerConfig, { tenantId: masterTenant._id.toString(), skipTenantCopy: true }, cb);
       });
     },

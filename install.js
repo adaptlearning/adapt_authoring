@@ -373,8 +373,8 @@ var steps = [
     var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function (err) {
       if (err) {
         console.log('ERROR: ', err);
-        console.log('grunt build:prod command failed. Is the grunt-cli module installed? You can install using ' + 'npm install -g grunt grunt-cli'.grey);
-        console.log('Install will continue. Try running ' + 'grunt build:prod'.grey + ' after installation completes.');
+        console.log('grunt build:prod command failed. Is the grunt-cli module installed? You can install using ' + 'npm install -g grunt grunt-cli');
+        console.log('Install will continue. Try running ' + 'grunt build:prod' + ' after installation completes.');
         return next();
       }
 

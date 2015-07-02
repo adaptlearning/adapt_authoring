@@ -6,6 +6,10 @@ var path = require('path'),
 describe('tenant', function(){
   var tenantRec = {
     name: "unit-test-tenant",
+    displayName: 'UnitTestTenant',
+    createdAt: new Date(),
+    updatedAt: new Date(), 
+    isMaster: true,
     active: true
   };
 

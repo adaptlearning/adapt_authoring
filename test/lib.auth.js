@@ -26,17 +26,17 @@ describe('auth', function() {
   after (function (done) {
     // cleanup
     if (helper.userId) {
-      usermanager.deleteUser({ _id: helper.userId }, done);
-      usermanager.retrieveUserPasswordReset({ token: helper.token }, function (error, record) {
-        if (error) {
-          done(error)
-        } else if (record) {
+      usermanager.deleteUser({ _id: helper.userId }, function (err) {
+        usermanager.retrieveUserPasswordReset({ token: helper.token }, function (error, record) {
+          if (error) {
+            return done(error)
+          }
           usermanager.deleteUserPasswordReset({user:record.id}, function(error) {
             if (error) {
               done(error);
             }
           });
-        }
+        });
       });
     } else {
       done();

@@ -16,28 +16,30 @@ describe('usermanager', function(){
   };
 
   // ensure the user record is deleted
-  after (function () {
+  after (function (done) {
     usermanager.retrieveUser({ email: user.email }, function (error, record) {
       if (error) {
-        done(error)
-      } else if (record) {
-        usermanager.deleteUser(user, function(error) {
-          if (error) {
-            throw error;
-          }
-        });
+        return done(error);
       }
-    });
-    usermanager.retrieveUserPasswordReset({ token: userReset.token }, function (error, record) {
-      if (error) {
-        done(error)
-      } else if (record) {
-        usermanager.deleteUserPasswordReset({user:record.id}, function(error) {
+
+      usermanager.deleteUser(user, function(error) {
+        if (error) {
+          return done(error);
+        }
+        usermanager.retrieveUserPasswordReset({ token: userReset.token }, function (error, record) {
           if (error) {
-            throw error;
+            return done(error);
           }
+
+          usermanager.deleteUserPasswordReset({user:record.id}, function(error) {
+            if (error) {
+              return done(error);
+            }
+
+            return done();
+          });
         });
-      }
+      });
     });
   });
 

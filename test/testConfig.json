@@ -1,15 +1,17 @@
 {
+  "serverPort": 5000,
   "serverName": "localhost",
-  "serverPort": 3030,
   "dbType": "mongoose",
   "dbHost": "localhost",
-  "dbName": "adapt-builder-core-test",
+  "dbName": "adapt-tenant-unit-test",
   "dbPort": 27017,
   "dataRoot": "testDataRoot",
-  "tenantPrefix": "adapt-builder-test-tenant-",
-  "sessionSecret": "your-secret-here",
+  "sessionSecret": "your-session-secret",
   "auth": "local",
-  "viewEngine" : "jade",
-  "viewPath" : "views",
-  "frontend" : "frontend"
+  "smtpService": "none",
+  "smtpUsername": "",
+  "smtpPassword": "",
+  "fromAddress": "",
+  "outputPlugin": "adapt",
+  "masterTenantName": "testTenant"
 }

@@ -397,7 +397,7 @@ LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
 
   // Interrogate the uploaded file
   probe(filePath, function (err, probeData) {
-    if(probeData) {
+    if (probeData) {
       // Store extra metadata depending on the type of file uploaded
       switch (fileType) {
         case 'image':

@@ -16,6 +16,8 @@ var helper = {
   },
   testTenant: {
     name: "testTenant",
+    displayName: 'Test Tenant',
+    isMaster: true
   }
 };
 

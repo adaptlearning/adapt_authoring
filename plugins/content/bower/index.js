@@ -837,7 +837,17 @@ function handleUploadedPlugin (req, res, next) {
 
         // first entry should be our target directory
         var packageJson;
-        var canonicalDir = path.join(outputPath, files[0]);
+        var canonicalDir;
+
+        if (files.indexOf("bower.json") != -1) {
+          // We're at the root level so the zip file is in the expected format
+          canonicalDir = outputPath
+        }
+        else {
+          logger.log('error', 'Received plugin zip file with unexpected folder structure');
+          return next(new Error('Cannot find expected bower.json file in the plugin root, please check the structure of your zip file and try again.'));
+        }
+
         try {
           packageJson = require(path.join(canonicalDir, 'bower.json'));
         } catch (error) {

@@ -1,6 +1,6 @@
 {
   "name": "adapt-origin",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "Adapt framework authoring tool core application",
   "keywords": [
     "adapt",
@@ -19,6 +19,42 @@
     {
       "name": "Daryl Hedley",
       "email": "darylhedley@hotmail.com"
+    },
+    {
+      "name": "Kevin Corry",
+      "email": ""
+    },
+    {
+       "name": "Rob Moore",
+       "email": ""
+    },
+    {
+      "name": "Ryan Adams",
+      "email": "ryana@learningpool.com"
+    },
+    {
+      "name": "Thomas Taylor",
+      "email": "thomas.taylor@kineo.com"
+    },
+    {
+      "name": "Ryan Lafferty",
+      "email": "ryanl@learningpool.com"
+    },
+    {
+      "name": "Dan Gray",
+      "email": "dan@sinensis.co.uk"
+    },
+    {
+      "name": "Sven Laux",
+      "email": "sven.laux@kineo.com" 
+    },
+    {
+      "name": "Petra Nussdorfer",
+      "email": "petra.nussdorfer@learnchamp.com"
+    },
+    {
+      "name": "Thomas Eitler",
+      "email": "thomas.eitler@learnchamp.com"
     }
   ],
   "repository": {
@@ -37,6 +73,20 @@
     "fluent-ffmpeg": "1.7.1",
     "formidable": "1.0.14",
     "fs-extra": "^0.16.3",
+    "grunt": "~0.4.1",
+    "grunt-bower-requirejs": "~0.7.1",
+    "grunt-concurrent": "~0.3.0",
+    "grunt-contrib-connect": "~0.3.0",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-handlebars": "~0.7.0",
+    "grunt-contrib-less": "~0.7.0",
+    "grunt-contrib-requirejs": "~0.4.4",
+    "grunt-contrib-watch": "~0.5.1",
+    "grunt-merge-json": "^0.9.5",
+    "grunt-mocha-test": "~0.7.0",
+    "grunt-open": "~0.2.2",
+    "grunt-requirejs-bundle": "~0.0.7",
+    "matchdep": "~0.3.0",
     "handlebars-form-helpers": "0.1.3",
     "hbs": "2.4.0",
     "json-schema-mapper": "0.0.2",
@@ -67,11 +117,7 @@
     "test": "make test"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-bower-requirejs": "~0.7.1",
     "grunt-casperjs": "^1.5.0",
-    "grunt-concurrent": "~0.3.0",
-    "grunt-contrib-connect": "~0.3.0",
     "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-handlebars": "~0.7.0",
     "grunt-contrib-less": "~0.7.0",

@@ -162,7 +162,7 @@ module.exports = function(grunt) {
         // Save the configuration
         grunt.file.write(configFile, JSON.stringify(config, null, 2));
 
-        grunt.task.run(['requirePlugins','merge-json', 'copy', 'less', 'handlebars', 'requirejs:'+ compilation]);
+        grunt.task.run(['requirePlugins', 'merge-json', 'copy', 'less', 'handlebars', 'requirejs:'+ compilation]);
       } else {
         grunt.task.run(['requirePlugins', 'copy', 'less', 'handlebars', 'requirejs:dev']);
       }

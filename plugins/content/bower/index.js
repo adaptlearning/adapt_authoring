@@ -835,53 +835,72 @@ function handleUploadedPlugin (req, res, next) {
           return next(err);
         }
 
-        // first entry should be our target directory
         var packageJson;
         var canonicalDir;
+        
+        // Read over each directory checking for the correct one that contains a bower.json file
+        fs.readdir(outputPath, function (err, directoryList) {
 
-        if (files.indexOf("bower.json") != -1) {
-          // We're at the root level so the zip file is in the expected format
-          canonicalDir = outputPath
-        }
-        else {
-          logger.log('error', 'Received plugin zip file with unexpected folder structure');
-          return next(new Error('Cannot find expected bower.json file in the plugin root, please check the structure of your zip file and try again.'));
-        }
+          async.some(directoryList, function(directory, asyncCallback) {
+            var bowerPath = path.join(outputPath, directory, 'bower.json');
 
-        try {
-          packageJson = require(path.join(canonicalDir, 'bower.json'));
-        } catch (error) {
-          return next(error);
-        }
+            fs.exists(bowerPath, function(exists) {
+              if (exists) {
+                canonicalDir = path.join(outputPath, directory);
+                try {
+                  packageJson = require(bowerPath);
+                } catch (error) {
+                  logger.log('error', 'failed to find bower file at ' + bowerPath, error);
+                  return asyncCallback();
+                }
+                asyncCallback(true);
+              } else {
+                asyncCallback();
+              }
+            });
 
-        // extract the plugin type from the package
-        var pluginType = extractPluginType(packageJson);
-        if (!pluginType) {
-          return next(new PluginPackageError('Unrecognized plugin type for package ' + packageJson.name));
-        }
-
-        // mark as a locally installed package
-        packageJson.isLocalPackage = true;
-
-        // construct packageInfo
-        var packageInfo = {
-          canonicalDir: canonicalDir,
-          pkgMeta: packageJson
-        };
-        app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {
-          if (error) {
-            return next(error);
-          }
-
-          addPackage(contentPlugin.bowerConfig, packageInfo, { strict: true }, function (error, results) {
-            if (error) {
-              return next(error);
+          }, function(hasResults) {
+            if (!hasResults) {
+              return next(new PluginPackageError('Cannot find expected bower.json file in the plugin root, please check the structure of your zip file and try again.'));
             }
 
-            res.statusCode = 200;
-            return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });
+            if (!packageJson) {
+              return next(new PluginPackageError('Unrecognized plugin - a plugin should have a bower.json file'));
+            }
+
+            // extract the plugin type from the package
+            var pluginType = extractPluginType(packageJson);
+            if (!pluginType) {
+              return next(new PluginPackageError('Unrecognized plugin type for package ' + packageJson.name));
+            }
+
+            // mark as a locally installed package
+            packageJson.isLocalPackage = true;
+
+            // construct packageInfo
+            var packageInfo = {
+              canonicalDir: canonicalDir,
+              pkgMeta: packageJson
+            };
+            app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {
+              if (error) {
+                return next(error);
+              }
+
+              addPackage(contentPlugin.bowerConfig, packageInfo, { strict: true }, function (error, results) {
+                if (error) {
+                  return next(error);
+                }
+
+                res.statusCode = 200;
+                return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });
+              });
+            });
+
           });
+
         });
+
       });
     });
     rs.pipe(ws);

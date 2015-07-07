@@ -848,7 +848,8 @@ function handleUploadedPlugin (req, res, next) {
                 canonicalDir = path.join(outputPath, directory);
                 try {
                   packageJson = require(bowerPath);
-                } catch (e) {
+                } catch (error) {
+                  logger.log('error', 'failed to find bower file at ' + bowerPath, error);
                   return asyncCallback();
                 }
                 asyncCallback(true);
@@ -859,7 +860,7 @@ function handleUploadedPlugin (req, res, next) {
 
           }, function(hasResults) {
             if (!hasResults) {
-              return next(err);
+              return next(new PluginPackageError('Unrecognized plugin - a plugin should have a bower.json file'));
             }
 
             if (!packageJson) {

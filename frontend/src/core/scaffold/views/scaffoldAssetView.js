@@ -212,6 +212,12 @@ define(function(require) {
                 searchCriteria._contentTypeParentId = Origin.editor.data.course.get('_id');
             }
             var asset = Origin.editor.data.courseAssets.findWhere(searchCriteria);
+
+            if (!asset) {
+                // HACK - Try relaxing the search criteria for historic data
+                asset = Origin.editor.data.courseAssets.findWhere({_contentType: contentType, _fieldName: fieldname});
+            }
+
             return asset ? asset : false;
         },
 
@@ -246,9 +252,11 @@ define(function(require) {
                         that.saveModel(true);
                     },
                     error: function(error) {
-                        console.log('error', error);
                     }
                 });
+            } else {
+                this.setValue('');
+                this.saveModel(true);
             }
         },
 
@@ -272,6 +280,7 @@ define(function(require) {
             currentModel.pruneAttributes();
             // Check if alternative attribute should be used
             if (alternativeAttribute) {
+                currentModel.unset('tags');
                 attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
             } else {
                 currentModel.unset('tags');
@@ -310,6 +319,7 @@ define(function(require) {
         Origin.scaffold.addCustomField('Asset:audio', ScaffoldAssetView);
         Origin.scaffold.addCustomField('Asset:video', ScaffoldAssetView);
         Origin.scaffold.addCustomField('Asset:other', ScaffoldAssetView);
+        Origin.scaffold.addCustomField('Asset', ScaffoldAssetView);
     })
     
 

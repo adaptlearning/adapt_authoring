@@ -21,12 +21,24 @@
     </div>
 
     {{#ifValueEquals assetType "image"}}
-    <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
+        {{#if metadata}} 
+        <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
+        {{else}}
+        <div class="asset-management-list-item-image">
+            <i class="fa fa-file-image-o"></i>
+        </div>
+        {{/if}}
     </div>
     {{/ifValueEquals}}
 
     {{#ifValueEquals assetType "video"}}
-    <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
+        {{#if metadata}} 
+        <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})"}>
+        {{else}}
+        <div class="asset-management-list-item-image">
+            <i class="fa fa-file-video-o"></i>
+        </div>
+        {{/if}}
     </div>
     {{/ifValueEquals}}
 

@@ -837,6 +837,7 @@ function handleUploadedPlugin (req, res, next) {
 
         var packageJson;
         var canonicalDir;
+        
         // Read over each directory checking for the correct one that contains a bower.json file
         fs.readdir(outputPath, function (err, directoryList) {
 
@@ -860,7 +861,7 @@ function handleUploadedPlugin (req, res, next) {
 
           }, function(hasResults) {
             if (!hasResults) {
-              return next(new PluginPackageError('Unrecognized plugin - a plugin should have a bower.json file'));
+              return next(new PluginPackageError('Cannot find expected bower.json file in the plugin root, please check the structure of your zip file and try again.'));
             }
 
             if (!packageJson) {

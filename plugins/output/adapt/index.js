@@ -33,7 +33,9 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
       tenantId = user.tenant._id,
       outputJson = {},
       isRebuildRequired = false,
+      // should this be Constants.Defaults.ThemeName?
       themeName = 'adapt-contrib-vanilla';
+      // should this be Constants.Defaults.MenuName?
       menuName = 'adapt-contrib-boxMenu';
 
     var resultObject = {};
@@ -147,10 +149,9 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
 
             var args = [];
 
-            args.push('--outputdir=' + path.join(Constants.Folders.AllCourses, tenantId, courseId));
+            args.push('--outputdir=' + path.join(Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build));
             args.push('--theme=' + themeName);
             args.push('--menu=' + menuName);
-
 
             logger.log('info', '3.2. Using theme: ' + themeName);
             logger.log('info', '3.3. Using menu: ' + menuName);

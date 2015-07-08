@@ -15,13 +15,15 @@ define(function(require) {
 			this.toggleModalOverlay();
 			this.render();
 
-			$(document).keyup(_.bind(function(event) {
+			var onKeyUpHandler = _.bind(function(event) {
 				var code = event.keyCode ? event.keyCode : event.which;
 				if (code === 27) { //escape key
 					this.trigger('cancel');
 					this.close();
+					$(document).off('keyup', onKeyUpHandler);
 				}
-			}, this));
+			}, this);
+			$(document).keyup(onKeyUpHandler);
 		},
 
 		events: {

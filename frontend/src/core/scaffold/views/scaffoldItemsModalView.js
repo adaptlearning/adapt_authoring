@@ -14,6 +14,14 @@ define(function(require) {
 			Origin.trigger('scaffold:increaseActiveModals');
 			this.toggleModalOverlay();
 			this.render();
+
+			$(document).keyup(_.bind(function(event) {
+				var code = event.keyCode ? event.keyCode : event.which;
+				if (code === 27) { //escape key
+					this.trigger('cancel');
+					this.close();
+				}
+			}, this));
 		},
 
 		events: {

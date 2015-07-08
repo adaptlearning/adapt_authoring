@@ -33,10 +33,8 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
       tenantId = user.tenant._id,
       outputJson = {},
       isRebuildRequired = false,
-      // should this be Constants.Defaults.ThemeName?
-      themeName = 'adapt-contrib-vanilla';
-      // should this be Constants.Defaults.MenuName?
-      menuName = 'adapt-contrib-boxMenu';
+      themeName = Constants.Defaults.ThemeName;
+      menuName = Constants.Defaults.MenuName;
 
     var resultObject = {};
 

@@ -3,6 +3,7 @@ var fs = require('fs');
 var request = require('request');
 var async = require('async');
 var exec = require('child_process').exec;
+var rimraf = require('rimraf');
 
 // Constants
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
@@ -276,7 +277,14 @@ function upgradeFramework(tagName, callback) {
       }
       
       console.log("Framework has been updated.\n");
-      callback();
+      
+      rimraf(configFile.root + '/temp/' + configFile.masterTenantID + '/adapt_framework/src/course', function(err) {
+        if (err) {
+            console.log(err);
+        }
+        
+        callback(); 
+      });
 
     });
 

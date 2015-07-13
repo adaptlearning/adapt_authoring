@@ -28,3 +28,4 @@ conf/config.json
 *.iml
 .vagrant
 .env
+version.json

@@ -428,12 +428,13 @@ function duplicate (data, cb) {
                 } else {
                   async.eachSeries(items, function(item, next) {
                     // For each course asset, before inserting the new document
-                    // the _courseId and _contentTypeParentId must be changed
+                    // the _courseId, _contentTypeId and _contentTypeParentId must be changed
                     if (parentIdMap[item._contentTypeParentId]) {
                       var courseAsset = item.toObject();
                       delete courseAsset._id;
 
                       courseAsset._courseId = newCourseId;
+                      courseAsset._contentTypeId = parentIdMap[item._contentTypeId];
                       courseAsset._contentTypeParentId = parentIdMap[item._contentTypeParentId];
 
                       return db.create('courseasset', courseAsset, function (error, newCourseAsset) {

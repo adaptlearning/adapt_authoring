@@ -2,45 +2,57 @@
 
     <div class="asset-management-list-item-icon">
         <div class="asset-management-list-item-icon-inner">
-            {{#if_value_equals assetType "image"}}
+            {{#ifValueEquals assetType "image"}}
             <i class="fa fa-file-image-o"></i>
-            {{/if_value_equals}}
+            {{/ifValueEquals}}
 
-            {{#if_value_equals assetType "audio"}}
+            {{#ifValueEquals assetType "audio"}}
             <i class="fa fa-file-audio-o"></i>
-            {{/if_value_equals}}
+            {{/ifValueEquals}}
 
-            {{#if_value_equals assetType "video"}}
+            {{#ifValueEquals assetType "video"}}
             <i class="fa fa-file-video-o"></i>
-            {{/if_value_equals}}
+            {{/ifValueEquals}}
 
-            {{#if_value_equals assetType "other"}}
+            {{#ifValueEquals assetType "other"}}
             <i class="fa fa-file-o"></i>
-            {{/if_value_equals}}
+            {{/ifValueEquals}}
         </div>
     </div>
 
-    {{#if_value_equals assetType "image"}}
-    <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
+    {{#ifValueEquals assetType "image"}}
+        {{#if metadata}} 
+        <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
+        {{else}}
+        <div class="asset-management-list-item-image">
+            <i class="fa fa-file-image-o"></i>
+        </div>
+        {{/if}}
     </div>
-    {{/if_value_equals}}
+    {{/ifValueEquals}}
 
-    {{#if_value_equals assetType "video"}}
-    <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
+    {{#ifValueEquals assetType "video"}}
+        {{#if metadata}} 
+        <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})"}>
+        {{else}}
+        <div class="asset-management-list-item-image">
+            <i class="fa fa-file-video-o"></i>
+        </div>
+        {{/if}}
     </div>
-    {{/if_value_equals}}
+    {{/ifValueEquals}}
 
-    {{#if_value_equals assetType "audio"}}
+    {{#ifValueEquals assetType "audio"}}
     <div class="asset-management-list-item-image">
         <i class="fa fa-file-audio-o"></i>
     </div>
-    {{/if_value_equals}}
+    {{/ifValueEquals}}
 
-    {{#if_value_equals assetType "other"}}
+    {{#ifValueEquals assetType "other"}}
     <div class="asset-management-list-item-image">
         <i class="fa fa-file-o"></i>
     </div>
-    {{/if_value_equals}}
+    {{/ifValueEquals}}
 
     <div class="asset-management-list-item-details">
 

@@ -1,17 +1,17 @@
 <div class="notify-popup notify-type-{{_type}} {{_classes}}">
-    {{#if_value_equals _type "popup"}}
+    {{#ifValueEquals _type "popup"}}
     <div class="notify-popup-toolbar">
         <a href="#" class="notify-popup-done">
             <div class="notify-popup-icon-close fa fa-times"></div>
         </a>
     </div>
-    {{/if_value_equals}}
+    {{/ifValueEquals}}
     <div class="notify-popup-inner">
         <div class="notify-popup-content">
             <div class="notify-popup-content-inner">
                 {{#if _showIcon}}
                 <div class="notify-popup-icon">
-                    <div class="icon{{#if_value_equals _type "prompt"}} icon-question{{/if_value_equals}}{{#if_value_equals _type "alert"}} icon-warning{{/if_value_equals}}">
+                    <div class="icon{{#ifValueEquals _type "prompt"}} icon-question{{/ifValueEquals}}{{#ifValueEquals _type "alert"}} icon-warning{{/ifValueEquals}}">
                     </div>
                 </div>
                 {{/if}}
@@ -31,15 +31,15 @@
                 {{#if body}}
                 <div class="notify-popup-buttons">
 
-                    {{#if_value_equals _type "alert"}}
+                    {{#ifValueEquals _type "alert"}}
                     <a href="#" class="notify-popup-button notify-popup-alert-button">{{{confirmText}}}</a>
-                    {{/if_value_equals}}
+                    {{/ifValueEquals}}
 
-                    {{#if_value_equals _type "prompt"}}
+                    {{#ifValueEquals _type "prompt"}}
                         {{#each _prompts}}
                         <a href="#" class="notify-popup-button notify-popup-prompt-button" data-event="{{_callbackEvent}}">{{{promptText}}}</a>
                         {{/each}}
-                    {{/if_value_equals}}
+                    {{/ifValueEquals}}
 
                 </div>                
                 {{/if}}

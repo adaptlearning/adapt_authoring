@@ -3,18 +3,24 @@
 	top: 0%;
 	right: -500px;
 	z-index: 3000;
+	height: 100%;
+	width: 100%;
+	transition:right 0.4s cubic-bezier(0.8, 0.0, 0.2, 1);
+	&.show {
+		right:0px;
+	}
+}
+
+.scaffold-items-modal-sidebar {
+	float:right;
 	background-color: #fff;
 	height: 100%;
 	width: 440px;
 	border-left: 1px solid #ccc;
-	transition:right 0.4s cubic-bezier(0.8, 0.0, 0.2, 1);
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
 	&-inner {
 		padding: 30px;
-	}
-	&.show {
-		right:0px;
 	}
 	input, textarea {
 		max-width:440px;

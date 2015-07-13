@@ -42,13 +42,18 @@ git config --global user.email "youremail@domain.com"
 
 #### MongoDB
 
-[MongoDB](https://www.mongodb.org) is a document based database. Download and install the version appropriate for your system [here](https://www.mongodb.org/downloads).
+[MongoDB](https://www.mongodb.org) is a document based database. Download and install the version appropriate for your system [here](https://www.mongodb.org/downloads).  
+
 
 #### NodeJS & NPM
 
 [NodeJS](http://nodejs.org/) and [NPM](https://www.npmjs.org/) are required. Installing Node.js will also install NPM.
 
+<<<<<<< HEAD
 IMPORTANT: The NodeJS version should be 0.10.33. Earlier versions of NodeJS are less stable and the code currently has issues with 0.12.x.
+=======
+The NodeJS version should must be 0.10.33. Earlier versions of NodeJS are less stable and the code is currently not compatibile with 0.12.x.
+>>>>>>> develop
 
 You should use a NodeJS version manager. We recommend using [NVM](https://github.com/creationix/nvm) on non-Windows machines. On Windows, try [nodist](https://github.com/marcelklehr/nodist)
 
@@ -60,10 +65,10 @@ Install [grunt-cli](http://gruntjs.com/) and [adapt-cli](https://github.com/adap
 npm install -g grunt-cli
 npm install -g adapt-cli
 ```
-Read more about [grunt](http://gruntjs.com/getting-started)
+Read more about [Grunt](http://gruntjs.com/getting-started)
 
 
-#### FFMPEG (optional)
+#### FFMPEG (optional, but recommended)
 
 [FFmpeg](https://www.ffmpeg.org/index.html) is not required to use the tool, but it will produce nice thumbnails for images and videos you upload. 
 

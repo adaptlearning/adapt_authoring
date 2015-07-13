@@ -1,8 +1,8 @@
 language: node_js
+sudo: false
 node_js:
   - "0.10.33"
 services: mongodb
 before_install:
-  - "npm install -g npm"
   - "npm cache clean"
   - "npm install -g adapt-cli"

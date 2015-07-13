@@ -44,7 +44,6 @@ define(function(require) {
         data: {email: username, password: password, shouldPersist: shouldPersist},
         success: function (jqXHR, textStatus, errorThrown) {
           if (jqXHR.success) {
-            
             self.set('id', jqXHR.id);
             self.set('tenantId', jqXHR.tenantId);
             self.set('email', jqXHR.email);  

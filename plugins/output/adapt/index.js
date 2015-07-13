@@ -161,6 +161,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
               function (error, stdout, stderr) {
                 if (error !== null) {
                   logger.log('error', 'exec error: ' + error);
+                  logger.log('error', 'stdout error: ' + stdout);
                   resultObject.success = true;
                   return callback(error, 'Error building framework');
                 }

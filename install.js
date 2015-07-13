@@ -3,7 +3,6 @@ var prompt = require('prompt'),
     async = require('async'),
     fs = require('fs'),
     path = require('path'),
-    colors = require('colors'),
     rimraf = require('rimraf'),
     exec = require('child_process').exec,
     builder = require('./lib/application'),
@@ -124,7 +123,8 @@ var configItems = [
   {
     name: 'smtpUsername',
     type: 'string',
-    description: "SMTP username"
+    description: "SMTP username",
+    default: ''
   },
   {
     name: 'smtpPassword',
@@ -135,7 +135,8 @@ var configItems = [
   {
     name: 'fromAddress',
     type: 'string',
-    description: "Sender email address"
+    description: "Sender email address",
+    default: ''
   },
   {
     name: 'outputPlugin',
@@ -149,7 +150,7 @@ tenantConfig = [
   {
     name: 'name',
     type: 'string',
-    description: "Set a unique name for your master tenant",
+    description: "Set a unique name for your tenant",
     pattern: /^[A-Za-z0-9_-]+\W*$/,
     default: 'master'
   },
@@ -232,7 +233,7 @@ var steps = [
     // run the app
     app.run();
     app.on('serverStarted', function () {
-      console.log("You will now be prompted to enter details for the master tenant.");
+      console.log("You will now be prompted to enter details for your tenant.");
       prompt.get(tenantConfig, function (err, result) {
         if (err) {
           console.log('ERROR: ', err);
@@ -250,7 +251,7 @@ var steps = [
 
           // create the tenant according to the user provided details
           var _createTenant = function (cb) {
-            console.log("Creating master tenant file system for " + (tenantName).blue + ", please wait ...");        
+            console.log("Creating file system for " + tenantName + ", please wait ...");        
             app.tenantmanager.createTenant({ 
                 name: tenantName, 
                 displayName: tenantDisplayName,
@@ -270,7 +271,7 @@ var steps = [
                 }
             
                 masterTenant = tenant;
-                console.log("Master tenant " + (tenant.name).blue + " was created.");
+                console.log("Tenant " + tenant.name + " was created.");
                 // save master tenant name to config
                 configuration.setConfig('masterTenantName', tenant.name);
                 configuration.setConfig('masterTenantID', tenant._id);
@@ -324,7 +325,7 @@ var steps = [
           return exitInstall(1, 'Plugin install was unsuccessful. Please check the console output.');
         }
 
-        console.log(('  installing ' + plugin.getPluginType() + ' plugins').grey);
+        console.log('  installing ' + plugin.getPluginType() + ' plugins');
         plugin.updatePackages(plugin.bowerConfig, { tenantId: masterTenant._id.toString(), skipTenantCopy: true }, cb);
       });
     },
@@ -380,8 +381,8 @@ var steps = [
     var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function (err) {
       if (err) {
         console.log('ERROR: ', err);
-        console.log('grunt build:prod command failed. Is the grunt-cli module installed? You can install using ' + 'npm install -g grunt grunt-cli'.grey);
-        console.log('Install will continue. Try running ' + 'grunt build:prod'.grey + ' after installation completes.');
+        console.log('grunt build:prod command failed. Is the grunt-cli module installed? You can install using ' + 'npm install -g grunt grunt-cli');
+        console.log('Install will continue. Try running ' + 'grunt build:prod' + ' after installation completes.');
         return next();
       }
 

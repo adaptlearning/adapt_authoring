@@ -4,6 +4,7 @@ define(function(require) {
     var Backbone = require('backbone');
     var BackboneForms = require('backboneForms');
     var Origin = require('coreJS/app/origin');
+    var jQuery = require('jquery');
     var TagsInput = require('core/libraries/jquery.tagsinput.min');
     var Helpers = require('coreJS/app/helpers');
 
@@ -49,7 +50,7 @@ define(function(require) {
                     'minChars' : 3,
                     'maxChars' : 15 
                 });
-            }, this), 200)
+            }, this), 500)
             
             return this;
         },

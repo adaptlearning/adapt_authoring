@@ -8,6 +8,7 @@ define(function(require) {
 	var AssetManagementPreviewView = require('coreJS/assetManagement/views/assetManagementPreviewView');
 	var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
 	var AssetManagementModalFiltersView = require('coreJS/assetManagement/views/assetManagementModalFiltersView');
+	var AssetManagementModelAutofillView = require('coreJS/assetManagement/views/assetManagementModalAutofillView');
 
 	var AssetManagementModalView = AssetManagementView.extend({
 
@@ -19,12 +20,16 @@ define(function(require) {
 		postRender: function() {
 	        this.setupSubViews();
 	        this.setupFilterAndSearchView();
+	        if (this.options.assetType === "Asset:image" && Origin.scaffold.getCurrentModel().get('_component') === 'graphic') {
+	        	this.setupImageAutofillButton();
+	        }
 	        this.resizeAssetPanels();
 	    },
 
 	    setupSubViews: function() {
 	    	this.search = {};
-	    	var assetType = this.options.assetType.replace('Asset:', '');
+	    	// Replace Asset and : so we can have both filtered and all asset types
+	    	var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
 	    	var filters = [assetType];
 	    	this.search.assetType = { $in: filters };
 		    // Push collection through to collection view
@@ -33,6 +38,10 @@ define(function(require) {
 
 	    setupFilterAndSearchView: function() {
 	    	new AssetManagementModalFiltersView(this.options);
+	    },
+
+	    setupImageAutofillButton: function() {
+	    	new AssetManagementModelAutofillView({modalView: this});
 	    },
 
 	    resizeAssetPanels: function() {

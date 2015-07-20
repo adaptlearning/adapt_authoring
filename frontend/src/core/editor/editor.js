@@ -210,6 +210,141 @@ define(function(require) {
       url: '/api/content/courseasset?_courseId=' + route1,
       _type: 'courseAssets'
     });
+
+    // TODO until this is in the db
+    Origin.editor.data.layouts = {
+      "article": {
+        "fieldsets": {
+          "general": {
+            "legend": "General",
+            "fields": ["title","displayTitle","body"]
+          },
+          "extensions": {
+            "legend": "Extensions",
+            "fields": ["_extensions"]
+          },
+          "styling": {
+            "legend": "Styling",
+            "fields": ["_classes"]
+          }
+        },
+        "ordering": ["general","extensions","styling"]
+      },
+      "block": {
+        "fieldsets": {
+          "general": {
+            "legend": "General",
+            "fields": ["title","displayTitle","body"]
+          },
+          "extensions": {
+            "legend": "Extensions",
+            "fields": ["_extensions"]
+          },
+          "styling": {
+            "legend": "Styling",
+            "fields": ["_classes"]
+          }
+        },
+        "ordering": ["general","extensions","styling"]
+      },
+      "component": {
+        "fieldsets": {
+          "general": {
+            "legend": "General",
+            "fields": ["title","displayTitle","body"]
+          },
+          "extensions": {
+            "legend": "Extensions",
+            "fields": ["_extensions"]
+          },
+          "styling": {
+            "legend": "Styling",
+            "fields": ["_classes"]
+          }
+        },
+        "ordering": ["general","extensions","styling"]
+      },
+      "contentobject": {
+        "fieldsets": {
+          "general": {
+            "legend": "General",
+            "fields": ["title","displayTitle","body"]
+          },
+          "properties": {
+            "legend": "Properties",
+            "fields": ["duration","linkText","_graphic"]
+          },
+          "extensions": {
+            "legend": "Extensions",
+            "fields": ["_extensions"]
+          },
+          "styling": {
+            "legend": "Styling",
+            "fields": ["_classes"]
+          }
+        },
+        "ordering": ["general","properties","extensions","styling"]
+      },
+      "course": {
+        "fieldsets": {
+          "general": {
+            "legend": "General",
+            "fields": ["title","body"]
+          },
+          "settings": {
+            "legend": "Settings",
+            "fields": ["_isSelected","_hasPreview","_isShared","themeSettings","menuSettings"]
+          },
+          "properties": {
+            "legend": "Properties",
+            "fields": ["heroImage","_buttons","tags"]
+          },
+          "extensions": {
+            "legend": "Extensions",
+            "fields": ["_extensions"]
+          },
+          "styling": {
+            "legend": "Styling",
+            "fields": ["_classes","customStyle"]
+          }
+        },
+        "ordering": ["general","settings","properties","extensions","styling"]
+      },
+      "config": {
+        "fieldsets": {
+          "properties": {
+            "legend": "Properties",
+            "fields": ["_defaultLanguage","_questionWeight"]
+          },
+          "extensions": {
+            "legend": "Extensions",
+            "fields": ["_drawer","_extensions"]
+          }
+        },
+        "ordering": ["properties","extensions"]
+      },
+      "mcq": {
+        "fieldsets": {
+          "settings": {
+            "legend": "Settings",
+            "fields": ["_isRandom"]
+          },
+          "properties": {
+            "legend": "Properties",
+            "fields": ["_attempts","_questionWeight","_selectable","_buttons"]
+          },
+          "items": {
+            "legend": "Items",
+            "fields": ["_items"]
+          },
+          "feedback": {
+            "legend": "Feedback",
+            "fields": ["_feedback"]
+          }
+        },
+        "ordering": ["general","settings","properties","items","feedback","extensions","styling"]
+      }
+    };
   }
 
   function routeAfterDataIsLoaded(route1, route2, route3, route4) {

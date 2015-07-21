@@ -34,6 +34,7 @@
     "_accessibility": {
       "type": "object",
       "title": "Accessibility",
+      "required": true,
       "properties": {
         "_accessibilityToggleTextOn": {
           "type": "string",

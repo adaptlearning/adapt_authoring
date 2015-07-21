@@ -3,6 +3,7 @@ define(function(require) {
 
 	var Backbone = require('backbone');
 	var BackboneForms = require('backboneForms');
+	var BackboneFormsLists = require('backboneFormsLists');
 	var Handlebars = require('handlebars');
 
 	// Setup templates
@@ -26,6 +27,47 @@ define(function(require) {
 			fieldType: this.schema.fieldType
 		};
 	};
+
+	Backbone.Form.editors.List.Modal.prototype.itemToString = function(value) {
+		var createTitle = function(key) {
+			var context = { key: key };
+
+			return Backbone.Form.Field.prototype.createTitle.call(context);
+		};
+
+		value = value || {};
+
+		//Pretty print the object keys and values
+		var parts = [];
+		_.each(this.nestedSchema, function(schema, key) {
+			
+			var desc = schema.title ? schema.title : createTitle(key),
+			val = value[key];
+
+			// If value is an array then print out how many items it contains
+			if (_.isArray(val)) {
+				var itemsString = ' items';
+				if (val.length === 1) {
+					itemsString = ' item';
+				}
+				val = val.length + itemsString;
+			} else if (_.isObject(val)) {
+				// If the value is an object print out the keys and values
+				valueText = '';
+				_.each(val, function(value, key) {
+					valueText += '<br>' + key + ' - ' + value;
+				});
+				val = valueText;
+			}
+
+			if (_.isUndefined(val) || _.isNull(val)) val = '';
+
+			parts.push('<b>' + desc + '</b>: ' + val);
+
+		});
+
+		return parts.join('<br />');
+    };
 
 	// Used to setValue with defaults
 

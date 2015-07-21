@@ -43,17 +43,25 @@ define(function(require) {
         var desc = schema.title ? schema.title : createTitle(key),
             val = value[key];
 
-        // If item is an object then print out how many items it contains
+        // If value is an array then print out how many items it contains
         if (_.isArray(val)) {
           var itemsString = ' items';
           if (val.length === 1) {
             itemsString = ' item';
           }
           val = val.length + itemsString;
+        } else if (_.isObject(val)) {
+        	// If the value is an object print out the keys and values
+        	valueText = '';
+        	_.each(val, function(value, key) {
+        		valueText += '<br>' + key + ' - ' + value;
+        	});
+        	val = valueText;
         }
+
         if (_.isUndefined(val) || _.isNull(val)) val = '';
 
-        parts.push(desc + ': ' + val);
+        parts.push('<b>' + desc + '</b>: ' + val);
       });
 
       return parts.join('<br />');

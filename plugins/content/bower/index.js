@@ -274,8 +274,6 @@ BowerPlugin.prototype.initialize = function (plugin) {
           
           res.statusCode = 200;
           return res.json(results);
-          // TODO -- Was this wrong?
-          // return next(null,results)
         });  
       }
       

@@ -79,7 +79,7 @@
       "inputType": {"type": "Boolean", "options": [true, false]},
       "validators": [],
       "title": "Is this optional?",
-      "help": "Indicates whether this must be completed"
+      "help": "If set to 'true' this does not have to be completed"
     },
     "_extensions": {
       "type": "object"

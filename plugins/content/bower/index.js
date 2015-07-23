@@ -32,7 +32,8 @@ var origin = require('../../../'),
     path = require('path'),
     unzip = require('unzip'),
     exec = require('child_process').exec,
-    IncomingForm = require('formidable').IncomingForm;
+    IncomingForm = require('formidable').IncomingForm,
+    version = require('../../../version.json');
 
 // errors
 function PluginPackageError (msg) {
@@ -166,6 +167,7 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
     displayName: pkgMeta.displayName,
     description: pkgMeta.description,
     version: pkgMeta.version,
+    framework: pkgMeta.framework ? pkgMeta.framework : null,
     isLocalPackage: pkgMeta.isLocalPackage ? pkgMeta.isLocalPackage : false,
     properties: schema.properties
   };
@@ -269,7 +271,9 @@ BowerPlugin.prototype.initialize = function (plugin) {
           if (err) {
             return next(err);
           }
-          return next(null,results)
+          
+          res.statusCode = 200;
+          return res.json(results);
         });  
       }
       
@@ -460,6 +464,7 @@ BowerPlugin.prototype.fetchInstalledPackages = function (plugin, options, next) 
         },
         function (err) {
           if (err) {
+            logger.log('error', err);
             return next(err);
           }
 
@@ -562,19 +567,19 @@ function addPackage (plugin, packageInfo, options, cb) {
         rimraf(destination, function(err) {
           if (err) {
             // can't continue
-            return logger.log('error', err.message, err);
+            return logger.log('error', err);
           }
 
           mkdirp(destination, function (err) {
             if (err) {
-              return logger.log('error', err.message, err);
+              return logger.log('error', err);
             }
 
             // move from the cache to the versioned dir
             ncp(packageInfo.canonicalDir, destination, function (err) {
               if (err) {
                 // don't double call callback
-                return logger.log('error', err.message, err);
+                return logger.log('error', err);
               }
 
               // temporary hack to get stuff moving
@@ -595,12 +600,12 @@ function addPackage (plugin, packageInfo, options, cb) {
               // remove older version first
               rimraf(tenantPluginPath, function (err) {
                 if (err) {
-                  return logger.log('error', err.message, err);
+                  return logger.log('error', err);
                 }
 
                 ncp(packageInfo.canonicalDir, tenantPluginPath, function (err) {
                   if (err) {
-                    return logger.log('error', err.message, err);
+                    return logger.log('error', err);
                   }
 
                   // done
@@ -617,12 +622,14 @@ function addPackage (plugin, packageInfo, options, cb) {
       // add the package to the modelname collection
       database.getDatabase(function (err, db) {
         if (err) {
+          logger.log('error', err);
           return cb(err);
         }
 
         // don't duplicate component.name, component.version
         db.retrieve(plugin.type, { name: package.name, version: package.version }, function (err, results) {
           if (err) {
+            logger.log('error', err);
             return cb(err);
           }
 
@@ -761,8 +768,18 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
                 // add details for each to the db
                 async.eachSeries(
                   Object.keys(packageInfo),
-                  function (key, next) {
-                    addPackage(plugin, packageInfo[key], options, next);
+                  function (key, next) {         
+                    if (packageInfo[key].pkgMeta.framework) {
+                      // If the plugin defines a framework, ensure that it is compatible
+                      if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].framework)) {
+                        addPackage(plugin, packageInfo[key], options, next); 
+                      } else {
+                        logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');
+                        next();
+                      }
+                    } else {
+                      addPackage(plugin, packageInfo[key], options, next);      
+                    }
                   },
                   cb);
               });
@@ -797,7 +814,19 @@ function checkIfHigherVersionExists (package, options, cb) {
       if (Object.getOwnPropertyNames(info).length == 0 || !info[packageName].pkgMeta) {
         return cb(null, false);
       }
-      return cb(null, true);
+      
+      // Semver check that the plugin is compatibile with the installed version of the framework
+      if (info[packageName].pkgMeta.framework) {
+          // Check which version of the framework we're running
+          if (semver.satisfies(semver.clean(version.adapt_framework), info[packageName].pkgMeta.framework)) {
+            return cb(null, true);
+          } else {
+            logger.log('warn', 'A later version of ' + packageName + ' is available but is not supported by the installed version of the Adapt framework');
+            return cb(null, false);
+          }
+      } else {
+        return cb(null, true);    
+      }
     });
 }
 
@@ -882,6 +911,12 @@ function handleUploadedPlugin (req, res, next) {
               canonicalDir: canonicalDir,
               pkgMeta: packageJson
             };
+            
+            // Check if the framework has been defined on the plugin and that it's not compatible
+            if (packageInfo.pkgMeta.framework && !semver.satisfies(semver.clean(version.adapt_framework), packageInfo.pkgMeta.framework)) {
+              return next(new PluginPackageError('This plugin is incompatible with version ' + version.adapt_framework + ' of the Adapt framework'));    
+            }
+            
             app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {
               if (error) {
                 return next(error);

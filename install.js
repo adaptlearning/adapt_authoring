@@ -200,7 +200,15 @@ var steps = [
           return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
         }
       
-        return next();
+        // Remove the default course
+        rimraf(path.resolve(__dirname, 'adapt_framework', 'src', 'course'), function(err) {
+          if (err) {
+            console.log('ERROR: ', err);
+            return exitInstall(1, 'Framework install error -- unable to remove default course.');
+          }
+
+          return next();
+        });
       });
      });
   },

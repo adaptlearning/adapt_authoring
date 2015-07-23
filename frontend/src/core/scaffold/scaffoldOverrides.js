@@ -115,7 +115,8 @@ define(function(require) {
 					{ name: 'insert', items: [ 'SpecialChar' ] },
 					{ name: 'tools', items: [  ] },
 					{ name: 'others', items: [ '-' ] }
-				]
+				],
+				extraAllowedContent: 'span(*)'
 			});
 
 	    }, this), 100);

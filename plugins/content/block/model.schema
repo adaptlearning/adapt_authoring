@@ -48,7 +48,7 @@
       "inputType": {"type": "Boolean", "options": [true, false]},
       "validators": [],
       "title": "Is this optional?",
-      "help": "If set to 'true' this block, and components within it, does not have to be completed"
+      "help": "If set to 'true' this block, and components within it, do not have to be completed"
     },
     "_extensions": {
       "type":"object"

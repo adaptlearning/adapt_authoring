@@ -56,6 +56,7 @@ define(function(require) {
 					type: 'List',
 					itemType: 'Object',
 					subSchema: field.items.properties,
+                    confirmDelete: window.polyglot.t('app.confirmdelete'),
 					fieldType: 'List'
 				}
 			} else {

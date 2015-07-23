@@ -774,7 +774,7 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
                       if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].framework)) {
                         addPackage(plugin, packageInfo[key], options, next); 
                       } else {
-                        logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not unsupported in the current version of of the Adapt framework');
+                        logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');
                         next();
                       }
                     } else {

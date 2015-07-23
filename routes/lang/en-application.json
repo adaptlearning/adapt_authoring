@@ -84,7 +84,7 @@
 	"app.resetpassworderror": "Your password could not be reset.",
 	"app.returnto": "Return to",
 	"app.deleteproject": "Delete project",
-    "app.confirmdelete": "Are you sure you want to remove this?",
+	"app.confirmdelete": "Are you sure you want to remove this?",
 	"app.confirmdeleteproject": "Are you sure you want to delete this project?",
 	"app.confirmdeleteuser": "Are you sure you want to delete this user?",
 	"app.confirmrestoreuser": "Are you sure you want to restore this user?",

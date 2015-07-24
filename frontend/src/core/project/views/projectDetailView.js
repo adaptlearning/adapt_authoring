@@ -64,7 +64,6 @@ define(function(require) {
           },
           success: _.bind(function(model, response, options) {
             
-            Origin.trigger('editingOverlay:views:hide');
             if (this.isNew) {
               return Backbone.history.navigate('#/editor/' + response._id + '/menu', {trigger: true});
             }

@@ -147,7 +147,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
 
             var args = [];
 
-            args.push('--outputdir=' + path.join(Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build));
+            args.push('--outputdir=' + path.join(Constants.Folders.AllCourses, tenantId, courseId));
             args.push('--theme=' + themeName);
             args.push('--menu=' + menuName);
 

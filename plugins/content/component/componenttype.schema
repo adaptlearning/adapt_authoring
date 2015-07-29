@@ -14,7 +14,7 @@
     "properties":{
       "type": "object"
     },
-    "globals":{
+    "globals": {
       "type": "object"
     }
   }

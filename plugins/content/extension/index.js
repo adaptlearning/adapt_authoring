@@ -377,13 +377,70 @@ function toggleExtensions (courseId, action, extensions, cb) {
           logger.log('error', err);
           return cb(err);
         }
-
+        
+        // Iterate over all the extensions
         async.eachSeries(results, function (extensionItem, nextItem) {
           var locations = extensionItem.properties.pluginLocations.properties;
-          async.eachSeries(Object.keys(locations), function (key, nextLocation) {
-            updateComponentItems(tenantDb, key, locations[key].properties, extensionItem, nextLocation);
-          }, nextItem);
-        }, cb);  
+          
+          if (extensionItem.globals) {
+            db.retrieve('course', {_id: courseId}, function (err, results) {
+              if (err) {
+                return cb(err);
+              }
+              
+              var courseDoc = results[0]._doc;
+              var key = '_' + extensionItem.extension;
+              // Extract the global defaults
+              var courseGlobals = courseDoc._globals
+                ? courseDoc._globals
+                : {};
+                  
+              if (action == 'enable') { 
+                // Add default value and
+                if (!courseGlobals._extensions) {
+                  courseGlobals._extensions = {};
+                }
+                
+                if (!courseGlobals._extensions[key]) {
+                  // The global JSON does not exist for this extension so set the defaults
+                  var extensionGlobals = {};
+                  
+                  for (var prop in extensionItem.globals) {
+                    if (extensionItem.globals.hasOwnProperty(prop)) {
+                      extensionGlobals[prop] = extensionItem.globals[prop].default;
+                    }
+                  }
+                  
+                  courseGlobals._extensions[key] = extensionGlobals;
+                }
+              } else {
+                // Remove any references to this extension from _globals
+                if (courseGlobals._extensions && courseGlobals._extensions[key]) {
+                  delete courseGlobals._extensions[key];
+                  logger.log('info', JSON.stringify(courseGlobals));
+                }
+              }
+              
+              db.update('course', {_id: courseId}, {_globals: courseGlobals}, function(err, doc) {
+                if (!err) {
+                  async.eachSeries(Object.keys(locations), function (key, nextLocation) {
+                    updateComponentItems(tenantDb, key, locations[key].properties, extensionItem, nextLocation);
+                  }, nextItem); 
+                }
+              });
+            });        
+          } else {
+            async.eachSeries(Object.keys(locations), function (key, nextLocation) {
+              updateComponentItems(tenantDb, key, locations[key].properties, extensionItem, nextLocation);
+            }, nextItem);  
+          }
+        }, function(err) {
+          if (err) {
+            cb(err);
+          } else {
+            cb();
+          }
+        });  
       });
       
     });

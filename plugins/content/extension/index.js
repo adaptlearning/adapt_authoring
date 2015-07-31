@@ -163,8 +163,7 @@ function contentDeletionHook(contentType, data, cb) {
   if (!contentData._id) {
     return cb(null, data);
   }
-  
-  // logger.log('info', 'Deleting component');
+
   // TODO - Check if this is the last component and remove globals?
   return cb(null, data);
 }
@@ -187,8 +186,6 @@ function contentCreationHook (contentType, data, cb) {
   async.series([
     function(callback) {
       if (contentType == 'component') {
-        // logger.log('info', contentType + ' was created');
-        // logger.log('info', JSON.stringify(data));  
         // Check that any globals for this component are set
         database.getDatabase(function (error, db) {
           if (error) {
@@ -206,12 +203,8 @@ function contentCreationHook (contentType, data, cb) {
             
             var componentType = results[0]._doc;
             
-            // logger.log('info', JSON.stringify(componentType));
             if (componentType.globals) {
-              // 
-              // logger.log('info', JSON.stringify(componentType.globals));
-              
-              // TODO: Insert globals here
+             // Insert globals here
               db.retrieve('course', {_id: contentData._courseId}, function(err, results) {
                 if (err) {
                   callback(err);
@@ -359,8 +352,6 @@ function toggleExtensions (courseId, action, extensions, cb) {
             delta._enabledExtensions = enabledExtensions;
           }
           
-          // logger.log('info', componentType);
-          // logger.log('info', JSON.stringify(delta));
           tenantDb.update(componentType, { _id: component._id }, delta, next);
         }, nextComponent);
       });
@@ -417,7 +408,6 @@ function toggleExtensions (courseId, action, extensions, cb) {
                 // Remove any references to this extension from _globals
                 if (courseGlobals._extensions && courseGlobals._extensions[key]) {
                   delete courseGlobals._extensions[key];
-                  logger.log('info', JSON.stringify(courseGlobals));
                 }
               }
               

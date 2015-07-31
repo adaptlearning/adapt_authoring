@@ -332,6 +332,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
             if (isConfig) {
               enabledExtensions[extensionItem.extension] = {
                 _id: extensionItem._id,
+                name: extensionItem.name,
                 version: extensionItem.version,
                 targetAttribute: targetAttribute
               };

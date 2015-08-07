@@ -13,5 +13,5 @@
   "smtpPassword": "",
   "fromAddress": "",
   "outputPlugin": "adapt",
-  "masterTenantName": "testTenant"
+  "masterTenantName": "adapt-tenant-unit-test"
 }

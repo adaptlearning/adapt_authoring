@@ -15,7 +15,7 @@ var helper = {
     _isDeleted: false
   },
   testTenant: {
-    name: "testTenant",
+    name: "adapt-tenant-unit-test",
     displayName: 'Test Tenant',
     isMaster: true
   }
@@ -26,7 +26,7 @@ before(function (done) {
   this.timeout(600000);
 
   // suppress all logging!
-//  logger.clear();
+  logger.clear();
 
   // bootstrapping!
   var app = origin();
@@ -79,6 +79,9 @@ before(function (done) {
         helper.testTenant = tenant;
         // assign user to test tenant
         helper.testUser._tenantId = tenant._id;
+        // set master tenant ID
+        app.configuration.setConfig('masterTenantID', tenant._id);
+        app.configuration.setConfig('masterTenantName', tenant.name);
 
         createTestUser(helper.testUser, function (error, user) {
           if (error) {
@@ -86,16 +89,8 @@ before(function (done) {
           }
 
           helper.testUser._id = user._id;
-          permissions.createPolicy(helper.testUser._id, function (error, policy) {
-            permissions.addStatement(policy, ['create', 'read', 'update', 'delete'], permissions.buildResourceString(helper.testUser._tenantId, '/*'), 'allow', function (error) {
-              if (error) {
-                return done(error);
-              }
-
-              // all set up!
-              done();
-            });
-          });
+          // this user is super ...
+          app.rolemanager.assignRoleByName('Super Admin', user._id, done);
         });
       }
     });

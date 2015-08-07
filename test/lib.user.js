@@ -12,7 +12,8 @@ describe('usermanager', function(){
     email: user.email,
     token: "testtokentesttokentesttokentest1",
     tokenCreated: new Date(),
-    ipAddress: '127.0.0.1'
+    ipAddress: '127.0.0.1',
+    issueDate: new Date()
   };
 
   // ensure the user record is deleted

@@ -8,7 +8,7 @@ describe('tenant', function(){
     name: "unit-test-tenant",
     displayName: 'UnitTestTenant',
     createdAt: new Date(),
-    updatedAt: new Date(), 
+    updatedAt: new Date(),
     isMaster: true,
     active: true
   };

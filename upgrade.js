@@ -76,6 +76,8 @@ var steps = [
           async.detectSeries(tagInfo, function(tag, callback) {
             if (tag.name.split('.')[0] == 'v1') {
               callback(tag);
+            } else {
+                callback(false);
             }
           }, function(latestVersion) {
             

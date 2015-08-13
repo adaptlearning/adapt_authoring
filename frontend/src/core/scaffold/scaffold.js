@@ -52,6 +52,7 @@ define(function(require) {
 		if (field.type === 'array') {
 
 			if (field.items && field.items.properties) {
+				// If Array type has inputType - should use the inputType to render a fieldObject
 				if (field.inputType) {
 					var fieldObject = {
 						type: field.inputType,
@@ -73,6 +74,7 @@ define(function(require) {
 						fieldType: 'List'
 					}
 				}
+
 			} else {
 				if (field.inputType) {
 					var fieldObject = {

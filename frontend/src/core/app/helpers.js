@@ -4,6 +4,9 @@ define(function(require){
     var Origin = require('coreJS/app/origin');
 
     var helpers = {
+        console: function(context) {
+          console.log(context);
+        },
         lowerCase: function(text) {
           return text.toLowerCase();
         },

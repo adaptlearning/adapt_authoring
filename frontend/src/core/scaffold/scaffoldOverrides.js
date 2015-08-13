@@ -7,6 +7,16 @@ define(function(require) {
 	var Handlebars = require('handlebars');
 
 	// Setup templates
+	Backbone.Form.prototype.constructor.template = _.template('\
+	    <form>\
+	     <div data-fieldsets></div>\
+	      <% if (submitButton) { %>\
+	        <button class="btn btn-primary" type="submit"><%= submitButton %></button>\
+	      <% } %>\
+	    </form>\
+	  ', 
+	  null, 
+	  Backbone.Form.constructor.templateSettings);
 	Backbone.Form.Fieldset.prototype.template = Handlebars.templates['fieldset'];
 	Backbone.Form.Field.prototype.template = Handlebars.templates['field'];
 	Backbone.Form.NestedField.prototype.template = Handlebars.templates['field'];

@@ -72,6 +72,15 @@
       "validators": [],
       "title": "Classes"
     },
+    "_isOptional": {
+      "type": "bool",
+      "default": "false",
+      "isSetting": true,
+      "inputType": {"type": "Boolean", "options": [true, false]},
+      "validators": [],
+      "title": "Is this optional?",
+      "help": "If set to 'true' this does not have to be completed"
+    },
     "_extensions": {
       "type": "object"
     },

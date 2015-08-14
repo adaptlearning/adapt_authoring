@@ -31,36 +31,392 @@
       "required": true,
       "default": 0
     },
+    "_accessibility": {
+      "type": "object",
+      "title": "Accessibility",
+      "required": true,
+      "properties": {
+        "_accessibilityToggleTextOn": {
+          "type": "string",
+          "title": "Toggle on label",
+          "default": "Turn accessibility on?",
+          "inputType": "Text",
+          "required": true,
+          "validators": ["required"]
+        },
+        "_accessibilityToggleTextOff": {
+          "type": "string",
+          "title": "Toggle off label",
+          "default": "Turn accessibility off?",
+          "inputType": "Text",
+          "required": true,
+          "validators": ["required"]
+        },
+        "_accessibilityInstructions": {
+          "type": "object",
+          "title": "Accessibility instructions",
+          "properties": {
+            "touch" : {
+              "type": "string",
+              "title": "For touch devices",
+              "default": "Usage instructions. Use swipe left for next. Use swipe right for previous. Use a double tab to select. Use a two finger slide up to go to the top of the page.",
+                "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            },
+            "notouch" : {
+              "type": "string",
+              "title": "For non-touch devices",
+              "default": "Usage instructions. Use tab for next. Use shift tab for previous. Use enter to select. Use escape to go to the top of the page.",
+                "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            },
+            "ipad" : {
+              "type": "string",
+              "title": "For iPad",
+              "default": "Usage instructions for touchscreens. Use swipe left for next. Use swipe right for previous. Use a double tab to select. Use a two finger slide up to go to the top of the page. Usage instructions for keyboard access. Use left for next. Use right for previous. Use up and down together to select.",
+                "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            }
+          }
+        },
+        "_ariaLabels": {
+          "type": "object",
+          "title": "ARIA labels",
+          "properties": {
+            "navigation": {
+              "type": "string",
+              "title": "",
+              "default": "Course navigation bar",
+              "inputType": "Text",
+              "required": true
+            },
+            "menuLoaded": {
+              "type": "string",
+              "title": "",
+              "default": "Menu loaded",
+              "inputType": "Text",
+              "required": true
+            },
+            "menu": {
+              "type": "string",
+              "title": "",
+              "default": "Menu",
+              "inputType": "Text",
+              "required": true
+            },
+            "menuItem": {
+              "type": "string",
+              "title": "",
+              "default": "Menu item",
+              "inputType": "Text",
+              "required": true
+            },
+            "menuViewButton": {
+              "type": "string",
+              "title": "",
+              "default": "Select here to enter",
+              "inputType": "Text",
+              "required": true
+            },
+            "page": {
+              "type": "string",
+              "title": "",
+              "default": "Page",
+              "inputType": "Text",
+              "required": true
+            },
+            "pageLoaded": {
+              "type": "string",
+              "title": "",
+              "default": "Page loaded",
+              "inputType": "Text",
+              "required": true
+            },
+            "previous": {
+              "type": "string",
+              "title": "",
+              "default": "Back",
+              "inputType": "Text",
+              "required": true
+            },
+            "navigationBack": {
+              "type": "string",
+              "title": "",
+              "default": "Navigate back",
+              "inputType": "Text",
+              "required": true
+            },
+            "navigationDrawer": {
+              "type": "string",
+              "title": "",
+              "default": "Open course resources and search",
+              "inputType": "Text",
+              "required": true
+            },
+            "closeResources": {
+              "type": "string",
+              "title": "",
+              "default": "Close resources",
+              "inputType": "Text",
+              "required": true
+            },
+            "drawerBack": {
+              "type": "string",
+              "title": "",
+              "default": "Back to drawer",
+              "inputType": "Text",
+              "required": true
+            },
+            "drawer": {
+              "type": "string",
+              "title": "",
+              "default": "Side drawer",
+              "inputType": "Text",
+              "required": true
+            },
+            "closePopup": {
+              "type": "string",
+              "title": "",
+              "default": "Close popup",
+              "inputType": "Text",
+              "required": true
+            },
+            "next": {
+              "type": "string",
+              "title": "",
+              "default": "Next",
+              "inputType": "Text",
+              "required": true
+            },
+            "done": {
+              "type": "string",
+              "title": "",
+              "default": "Done",
+              "inputType": "Text",
+              "required": true
+            },
+            "complete": {
+              "type": "string",
+              "title": "",
+              "default": "Complete",
+              "inputType": "Text",
+              "required": true
+            },
+            "incomplete": {
+              "type": "string",
+              "title": "",
+              "default": "Incomplete",
+              "inputType": "Text",
+              "required": true
+            },
+            "correct": {
+              "type": "string",
+              "title": "",
+              "default": "Correct",
+              "inputType": "Text",
+              "required": true
+            },
+            "locked": {
+              "type": "string",
+              "title": "",
+              "default": "Locked",
+              "inputType": "Text",
+              "required": true
+            },
+            "accessibilityToggleButton": {
+              "type": "string",
+              "title": "",
+              "default": "By selecting this button you can set whether accessibility is turned on or off",
+              "inputType": "Text",
+              "required": true
+            },
+            "sliderHandle": {
+              "type": "string",
+              "title": "",
+              "default": "Slider handle. Use the left and right arrow keys to move the slider and give your answer. Then tab to the submit button below and press enter.",
+              "inputType": "Text",
+              "required": true
+            },
+            "hotgraphicPopUp": {
+              "type": "string",
+              "title": "",
+              "default": "Hotgraphic popup",
+              "inputType": "Text",
+              "required": true
+            },
+            "feedbackPopUp": {
+              "type": "string",
+              "title": "",
+              "default": "Popup opened",
+              "inputType": "Text",
+              "required": true
+            },
+            "menuBack": {
+              "type": "string",
+              "title": "",
+              "default": "Back to menu",
+              "inputType": "Text",
+              "required": true
+            },
+            "menuIndicatorHeading": {
+              "type": "string",
+              "title": "",
+              "default": "Menu item heading ",
+              "inputType": "Text",
+              "required": true
+            },
+            "pageLevelProgress": {
+              "type": "string",
+              "title": "",
+              "default": "Page sections",
+              "inputType": "Text",
+              "required": true
+            },
+            "pageLevelProgressIndicatorBar": {
+              "type": "string",
+              "title": "",
+              "default": "You have completed ",
+              "inputType": "Text",
+              "required": true
+            }
+          }
+        }
+      }
+    },
     "_buttons": {
       "type": "object",
       "default": "",
       "title": "",
       "isSetting": false,
       "properties": {
-        "submit": {
+        "_submit": {
+          "type": "object",
+          "title": "Submit",
+          "properties": {
+            "buttonText" : {
+              "type": "string",
+              "default": "Submit",
+              "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            },
+            "ariaLabel" : {
+              "type": "string",
+              "title": "ARIA label",
+              "default": "Submit",
+              "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            }
+          }
+        },
+        "_reset": {
+          "type": "object",
+          "title": "Reset",
+          "properties": {
+            "buttonText" : {
+              "type": "string",
+              "default": "Reset",
+              "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            },
+            "ariaLabel" : {
+              "type": "string",
+              "title": "ARIA label",
+              "default": "Reset",
+              "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            }
+          }
+        },
+        "_showCorrectAnswer": {
+          "type": "object",
+          "title": "Show correct answer",
+          "properties": {
+            "buttonText" : {
+              "type": "string",
+              "default": "Show correct answer",
+              "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            },
+            "ariaLabel" : {
+              "type": "string",
+              "title": "ARIA label",
+              "default": "Show correct answer",
+              "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            }
+          }
+        },
+        "_hideCorrectAnswer": {
+          "type": "object",
+          "title": "Hide correct answer",
+          "properties": {
+            "buttonText" : {
+              "type": "string",
+              "default": "Hide correct answer",
+              "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            },
+            "ariaLabel" : {
+              "type": "string",
+              "title": "ARIA label",
+              "default": "Hide correct answer",
+              "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            }
+          }
+        },
+        "_showFeedback" : {
+          "type": "object",
+          "title": "Show feedback",
+          "properties": {
+            "buttonText" : {
+              "type": "string",
+              "default": "Show feedback",
+              "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            },
+            "ariaLabel" : {
+              "type": "string",
+              "title": "ARIA label",
+              "default": "Show feedback",
+              "inputType": "Text",
+              "required": true,
+              "validators": ["required"]
+            }
+          }
+        },
+        "remainingAttemptsText" : {
           "type": "string",
-          "default": "Submit",
+          "title": "Remaining attempts label",
+          "default": "remaining attempts",
           "inputType": "Text",
           "required": true,
           "validators": ["required"]
         },
-        "reset": {
+        "remainingAttemptText" : {
           "type": "string",
-          "default": "Reset",
+          "title": "Final attempt label",
+          "default": "final attempt",
           "inputType": "Text",
           "required": true,
           "validators": ["required"]
         },
-        "showCorrectAnswer": {
+        "disabledAriaLabel" : {
           "type": "string",
-          "default": "Model Answer",
-          "inputType": "Text",
-          "required": true,
-          "validators": ["required"]
-        },
-        "hideCorrectAnswer": {
-          "type": "string",
-          "default": "My Answer",
+          "title": "Disabled ARIA label",
+          "default": "This button is disabled at the moment",
           "inputType": "Text",
           "required": true,
           "validators": ["required"]

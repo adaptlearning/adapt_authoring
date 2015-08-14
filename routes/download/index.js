@@ -50,7 +50,7 @@ server.get('/download/:tenant/:course/:title/download.zip', function (req, res, 
   fs.stat(downloadZipFilename, function(err, stat) {
     if (err) {
       logger.log('error', 'Error calling fs.stat');
-      logger.log('error', error);
+      logger.log('error', err);
 
       next(err);
     } else {

@@ -32,7 +32,7 @@ var bowerConfig = {
   srcLocation: 'theme',
   options: defaultOptions,
   nameList: [
-    'adapt-contrib-vanilla'
+    'adapt-contrib-vanilla#~1.1'
   ],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     // Not required for themes

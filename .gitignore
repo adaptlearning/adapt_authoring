@@ -20,6 +20,7 @@ conf/config.json
 /plugins/content/theme/extensioncache/
 /plugins/content/menu/versions/
 /plugins/content/bower/bowercache/
+/routes/lang/en.json
 /master/
 /frontend/src/adaptbuilder/css/adapt.css
 /frontend/src/adaptbuilder/js/
@@ -27,3 +28,4 @@ conf/config.json
 *.iml
 .vagrant
 .env
+version.json

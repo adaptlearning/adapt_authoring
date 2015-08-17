@@ -373,44 +373,53 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
 
 LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
  var data = {
-    assetType : fileType.substr(0, fileType.indexOf('/')),
-    metadata : null
+    assetType: null,
+    metadata: null
   };
-  
+
+  fileType = fileType.split('/')[0];
+
+  switch (fileType) {
+    case 'image':
+    case 'video':
+    case 'audio':
+      data.assetType = fileType;
+      break;
+    default:
+      data.assetType = 'other';
+      break;
+  }
+
   // early return if we can't create thumbnails
   if (!configuration.getConfig('useffmpeg')) {
     return next(null, data);
   }
-  
-  fileType = fileType.split('/')[0];
+
   // Interrogate the uploaded file
   probe(filePath, function (err, probeData) {
-    // Derive assetType and (if available) store extra metadata depending on the type of file uploaded
-    switch (fileType) {
-      case 'image':
-        data.assetType = 'image';
-        data.metadata = probeData
-          ? { width: probeData.streams[0].width, height: probeData.streams[0].height}
-          : null;
-        break;
-      case 'video':
-        data.assetType = 'video';
-        data.metadata = probeData
-          ? {duration: probeData.streams[0].duration, width: probeData.streams[0].width, height: probeData.streams[0].height}
-          : null;
-        break;
-      case 'audio':
-        data.assetType = 'audio';
-        data.metadata = probeData
-          ? {duration: probeData.streams[0].duration}
-          : null;
-      break;
-      default:
-        data.assetType = 'other';
-        data.metadata = null;
-      break;
+    if (probeData) {
+      // Store extra metadata depending on the type of file uploaded
+      switch (fileType) {
+        case 'image':
+          data.metadata = {
+            width: probeData.streams[0].width,
+            height: probeData.streams[0].height
+          }
+          break;
+        case 'video':
+          data.metadata = {
+            duration: probeData.streams[0].duration,
+            width: probeData.streams[0].width,
+            height: probeData.streams[0].height
+          }
+          break;
+        case 'audio':
+          data.metadata = {
+            duration: probeData.streams[0].duration
+          }
+          break;
+      }
     }
-    
     return next(null, data);
   });
 };

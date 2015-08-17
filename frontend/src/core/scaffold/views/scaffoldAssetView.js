@@ -252,9 +252,11 @@ define(function(require) {
                         that.saveModel(true);
                     },
                     error: function(error) {
-                        console.log('error', error);
                     }
                 });
+            } else {
+                this.setValue('');
+                this.saveModel(true);
             }
         },
 
@@ -317,6 +319,7 @@ define(function(require) {
         Origin.scaffold.addCustomField('Asset:audio', ScaffoldAssetView);
         Origin.scaffold.addCustomField('Asset:video', ScaffoldAssetView);
         Origin.scaffold.addCustomField('Asset:other', ScaffoldAssetView);
+        Origin.scaffold.addCustomField('Asset', ScaffoldAssetView);
     })
     
 

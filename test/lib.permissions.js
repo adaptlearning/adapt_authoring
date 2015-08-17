@@ -1,28 +1,33 @@
 var origin = require('../'),
     should = require('should'),
     usermanager = require('../lib/usermanager'),
-    permissions = require('../lib/permissions');
+    permissions = require('../lib/permissions'),
+    rolemanager = require('../lib/rolemanager'),
+    configuration = require('../lib/configuration');
 
 describe('permissions', function () {
   var user = {
-    email: 'testpermissions@adapt.org',
-    tenant: '0'
+    email: 'testpermissions@adapt.org'
   };
 
   before(function (done) {
+    // set user tenant from config
+    user._tenantId = configuration.getConfig('masterTenantID');
+
     // add a policy with delete access on all foos
     usermanager.createUser(user, function (error, userRec) {
       should.not.exist(error);
       user = userRec;
+
       permissions.createPolicy(user._id, function (error, policy) {
         should.not.exist(error);
         // add a new policy statement
-        permissions.addStatement(policy, 'delete', permissions.buildResourceString(user.tenant, '/foos/*'), 'allow', function (error) {
+        permissions.addStatement(policy, 'delete', permissions.buildResourceString(user._tenantId, '/foos/*'), 'allow', function (error) {
           if (error) {
-            done(error);
-          } else {
-            done();
+            return done(error);
           }
+
+          return rolemanager.assignRoleByName('Authenticated User', user._id, done);
         });
       });
     });
@@ -44,7 +49,7 @@ describe('permissions', function () {
     permissions.createPolicy(user._id, function (error, policy) {
       should.not.exist(error);
       // add a new policy statement
-      permissions.addStatement(policy, 'create', permissions.buildResourceString(user.tenant, '/courses'), 'allow', function (error) {
+      permissions.addStatement(policy, 'create', permissions.buildResourceString(user._tenantId, '/courses'), 'allow', function (error) {
         if (error) {
           return done(error);
         }
@@ -56,7 +61,7 @@ describe('permissions', function () {
 
   it ('should verify user permissions using an exact resource identifier', function (done) {
     // should have permission
-    permissions.hasPermission(user._id, 'create', permissions.buildResourceString(user.tenant, '/courses'), function (error, allowed) {
+    permissions.hasPermission(user._id, 'create', permissions.buildResourceString(user._tenantId, '/courses'), function (error, allowed) {
       should.not.exist(error);
       allowed.should.be.true;
       done();
@@ -65,7 +70,7 @@ describe('permissions', function () {
 
   it ('should verify user permissions using a glob-type resource identifier', function (done) {
     // should have permission
-    permissions.hasPermission(user._id, 'delete', permissions.buildResourceString(user.tenant, '/foos/bars'), function (error, allowed) {
+    permissions.hasPermission(user._id, 'delete', permissions.buildResourceString(user._tenantId, '/foos/bars'), function (error, allowed) {
       should.not.exist(error);
       allowed.should.be.true;
       done();
@@ -74,7 +79,7 @@ describe('permissions', function () {
 
   it ('should deny permission when the action is not matched', function (done) {
     // should have permission
-    permissions.hasPermission(user._id, 'delete', permissions.buildResourceString(user.tenant, '/courses'), function (error, allowed) {
+    permissions.hasPermission(user._id, 'delete', permissions.buildResourceString(user._tenantId, '/courses'), function (error, allowed) {
       should.not.exist(error);
       allowed.should.be.false;
       done();
@@ -83,7 +88,7 @@ describe('permissions', function () {
 
   it ('should deny permission when no specific policy exists', function (done) {
     // should have permission
-    permissions.hasPermission(user._id, 'create', permissions.buildResourceString(user.tenant, '/foos'), function (error, allowed) {
+    permissions.hasPermission(user._id, 'create', permissions.buildResourceString(user._tenantId, '/foos'), function (error, allowed) {
       should.not.exist(error);
       allowed.should.be.false;
       done();

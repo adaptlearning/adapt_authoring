@@ -52,13 +52,29 @@ define(function(require) {
 		if (field.type === 'array') {
 
 			if (field.items && field.items.properties) {
-				scaffoldSchema[key] = {
-					type: 'List',
-					itemType: 'Object',
-					subSchema: field.items.properties,
-					confirmDelete: window.polyglot.t('app.confirmdelete'),
-					fieldType: 'List'
+				// If Array type has inputType - should use the inputType to render a fieldObject
+				if (field.inputType) {
+					var fieldObject = {
+						type: field.inputType,
+						help: field.help,
+						default: field.default,
+						fieldType: field.inputType,
+						subSchema: field.items.properties
+					};
+
+					if (_.isObject(field.inputType)) {
+						fieldObject = _.extend(fieldObject, field.inputType);
+					}
+					scaffoldSchema[key] = fieldObject;
+				} else {
+					scaffoldSchema[key] = {
+						type: 'List',
+						itemType: 'Object',
+						subSchema: field.items.properties,
+						fieldType: 'List'
+					}
 				}
+
 			} else {
 				if (field.inputType) {
 					var fieldObject = {

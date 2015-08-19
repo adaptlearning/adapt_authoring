@@ -1,6 +1,7 @@
 {
   "name": "adapt-origin",
   "version": "0.1.1",
+  "license": "GPL-3.0",
   "description": "Adapt framework authoring tool core application",
   "keywords": [
     "adapt",
@@ -88,7 +89,6 @@
     "grunt-contrib-requirejs": "~0.4.4",
     "grunt-contrib-watch": "~0.5.1",
     "grunt-merge-json": "^0.9.5",
-    "grunt-mocha-test": "~0.7.0",
     "grunt-open": "~0.2.2",
     "grunt-requirejs-bundle": "~0.0.7",
     "handlebars-form-helpers": "0.1.3",
@@ -126,17 +126,8 @@
     "test": "make test"
   },
   "devDependencies": {
-    "grunt-casperjs": "^1.5.0",
-    "grunt-contrib-copy": "~0.4.1",
-    "grunt-contrib-handlebars": "~0.7.0",
-    "grunt-contrib-less": "~0.7.0",
-    "grunt-contrib-requirejs": "~0.4.4",
-    "grunt-contrib-watch": "~0.5.1",
-    "grunt-merge-json": "^0.9.5",
+    "grunt-casperjs": "2.x",
     "grunt-mocha-test": "~0.7.0",
-    "grunt-open": "~0.2.2",
-    "grunt-requirejs-bundle": "~0.0.7",
-    "matchdep": "~0.3.0",
     "mocha": "~1.13.0",
     "phantom": "^0.6.5",
     "should": "~1.3.0",

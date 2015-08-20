@@ -236,8 +236,8 @@ BowerPlugin.prototype.initialize = function (plugin) {
     // Add the componenttype/extensiontype/menutype/themetype route
     rest.get('/' + plugin.type, function (req, res, next) {
       var options = _.extend(plugin.options, _.pick(req.query, 'refreshplugins', 'showall'));
-
-      if (!req.param('refreshplugins')) {
+      
+      if (!req.params.refreshplugins) {
         database.getDatabase(function (err, db) {
           if (err) {
             return next(err);

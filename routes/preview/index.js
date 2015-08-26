@@ -26,7 +26,7 @@ server.get('/preview/:tenant/:course/*', function (req, res, next) {
 
     var isServerRequest = true;
     if (isServerRequest || (currentUser && (currentUser.tenant._id == tenant))) {
-      res.sendfile(requestedFile);
+      res.sendFile(requestedFile);
     } else {
       // User doesn't have access to this course
       res.statusCode = 500;

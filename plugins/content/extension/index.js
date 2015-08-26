@@ -157,6 +157,16 @@ function getEnabledExtensions(courseId, cb) {
   });
 }
 
+function contentDeletionHook(contentType, data, cb) {
+  var contentData = data[0];
+  
+  if (!contentData._id) {
+    return cb(null, data);
+  }
+
+  // TODO - Check if this is the last component and remove globals?
+  return cb(null, data);
+}
 /**
  * hook to modify a newly created content item based on enabled extensions for a course
  *
@@ -172,23 +182,105 @@ function contentCreationHook (contentType, data, cb) {
     return cb(null, data);
   }
 
-  getEnabledExtensions(contentData._courseId, function (error, extensions) {
-    if (error) {
-      // permit content creation to continue, but log error
-      logger.log('error', 'could not load extensions: ' + error.message);
-      return cb(null, data);
+  // Start the async bit
+  async.series([
+    function(callback) {
+      if (contentType == 'component') {
+        // Check that any globals for this component are set
+        database.getDatabase(function (error, db) {
+          if (error) {
+            callback(error);
+          }
+          
+          db.retrieve('componenttype', {_id: contentData._componentType}, function(err, results) {
+            if (err) {
+              callback(err);
+            }
+            
+            if (!results || results.length == 0) {
+              callback('Unexpected number of componentType records');
+            }
+            
+            var componentType = results[0]._doc;
+            
+            if (componentType.globals) {
+             // Insert globals here
+              db.retrieve('course', {_id: contentData._courseId}, function(err, results) {
+                if (err) {
+                  callback(err);
+                }
+                
+                var key = '_' + componentType.component;
+                var courseDoc = results[0]._doc;
+                var courseGlobals = courseDoc._globals
+                  ? courseDoc._globals
+                  : {};
+                  
+                // Add default value and
+                if (!courseGlobals._components) {
+                  courseGlobals._components = {};
+                }
+                
+                if (!courseGlobals._components[key]) {
+                  // The global JSON does not exist for this component so set the defaults
+                  var componentGlobals = {};
+                  
+                  for (var prop in componentType.globals) {
+                    if (componentType.globals.hasOwnProperty(prop)) {
+                      componentGlobals[prop] = componentType.globals[prop].default;
+                    }
+                  }
+                  
+                  courseGlobals._components[key] = componentGlobals;
+                  
+                  db.update('course', {_id: contentData._courseId}, {_globals: courseGlobals}, function(err, doc) {
+                    if (err) {
+                      callback(err);
+                    } else {
+                      callback(null);
+                    }
+                  });
+                } else {
+                  callback(null);
+                }
+              });
+            } else {
+              callback(null)
+            }
+          });
+        });
+      } else {
+        callback(null);
+      }
+    },
+    function(callback) {
+      getEnabledExtensions(contentData._courseId, function (error, extensions) {
+        if (error) {
+          // permit content creation to continue, but log error
+          logger.log('error', 'could not load extensions: ' + error.message);
+          return callback(null);
+        }
+    
+        // _extensions is undefined at this point
+        contentData._extensions = {};
+        extensions.forEach(function (extensionItem) {
+          var schema = extensionItem.properties.pluginLocations.properties[contentType].properties; // yeesh
+          var generatedObject = helpers.schemaToObject(schema, extensionItem.name, extensionItem.version, contentType);
+          contentData._extensions = _.extend(contentData._extensions, generatedObject);
+        });
+    
+        // assign back to passed args
+        data[0] = contentData;
+        callback(null);
+      });
     }
-
-    // _extensions is undefined at this point
-    contentData._extensions = {};
-    extensions.forEach(function (extensionItem) {
-      var schema = extensionItem.properties.pluginLocations.properties[contentType].properties; // yeesh
-      var generatedObject = helpers.schemaToObject(schema, extensionItem.name, extensionItem.version, contentType);
-      contentData._extensions = _.extend(contentData._extensions, generatedObject);
-    });
-
-    // assign back to passed args
-    data[0] = contentData;
+  ],
+  function(err, results) {
+    if (err) {
+      logger.log('error', err);
+      return cb(err);
+    }
+    
     return cb(null, data);
   });
 }
@@ -240,6 +332,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
             if (isConfig) {
               enabledExtensions[extensionItem.extension] = {
                 _id: extensionItem._id,
+                name: extensionItem.name,
                 version: extensionItem.version,
                 targetAttribute: targetAttribute
               };
@@ -259,6 +352,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
           if (isConfig) {
             delta._enabledExtensions = enabledExtensions;
           }
+          
           tenantDb.update(componentType, { _id: component._id }, delta, next);
         }, nextComponent);
       });
@@ -275,13 +369,69 @@ function toggleExtensions (courseId, action, extensions, cb) {
           logger.log('error', err);
           return cb(err);
         }
-
+        
+        // Iterate over all the extensions
         async.eachSeries(results, function (extensionItem, nextItem) {
           var locations = extensionItem.properties.pluginLocations.properties;
-          async.eachSeries(Object.keys(locations), function (key, nextLocation) {
-            updateComponentItems(tenantDb, key, locations[key].properties, extensionItem, nextLocation);
-          }, nextItem);
-        }, cb);  
+          
+          if (extensionItem.globals) {
+            db.retrieve('course', {_id: courseId}, function (err, results) {
+              if (err) {
+                return cb(err);
+              }
+              
+              var courseDoc = results[0]._doc;
+              var key = '_' + extensionItem.extension;
+              // Extract the global defaults
+              var courseGlobals = courseDoc._globals
+                ? courseDoc._globals
+                : {};
+                  
+              if (action == 'enable') { 
+                // Add default value and
+                if (!courseGlobals._extensions) {
+                  courseGlobals._extensions = {};
+                }
+                
+                if (!courseGlobals._extensions[key]) {
+                  // The global JSON does not exist for this extension so set the defaults
+                  var extensionGlobals = {};
+                  
+                  for (var prop in extensionItem.globals) {
+                    if (extensionItem.globals.hasOwnProperty(prop)) {
+                      extensionGlobals[prop] = extensionItem.globals[prop].default;
+                    }
+                  }
+                  
+                  courseGlobals._extensions[key] = extensionGlobals;
+                }
+              } else {
+                // Remove any references to this extension from _globals
+                if (courseGlobals._extensions && courseGlobals._extensions[key]) {
+                  delete courseGlobals._extensions[key];
+                }
+              }
+              
+              db.update('course', {_id: courseId}, {_globals: courseGlobals}, function(err, doc) {
+                if (!err) {
+                  async.eachSeries(Object.keys(locations), function (key, nextLocation) {
+                    updateComponentItems(tenantDb, key, locations[key].properties, extensionItem, nextLocation);
+                  }, nextItem); 
+                }
+              });
+            });        
+          } else {
+            async.eachSeries(Object.keys(locations), function (key, nextLocation) {
+              updateComponentItems(tenantDb, key, locations[key].properties, extensionItem, nextLocation);
+            }, nextItem);  
+          }
+        }, function(err) {
+          if (err) {
+            cb(err);
+          } else {
+            cb();
+          }
+        });  
       });
       
     });
@@ -350,6 +500,10 @@ function initialize () {
   // add content creation hooks for each viable content type
   ['contentobject', 'article', 'block', 'component'].forEach(function (contentType) {
     app.contentmanager.addContentHook('create', contentType, contentCreationHook.bind(null, contentType));
+  });
+  
+  ['component'].forEach(function(contentType) {
+    app.contentmanager.addContentHook('destroy', contentType, contentDeletionHook.bind(null, contentType));
   });
 }
 

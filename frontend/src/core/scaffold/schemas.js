@@ -11,6 +11,7 @@ define(function(require) {
 			// Remove any extensions that are not enabled on this course
 			var enabledExtensions = configModel.get('_enabledExtensions');
 			var enabledExtensionsKeys = [];
+      
 			// Grab the targetAttribute
 			_.each(enabledExtensions, function(value, key) {
 				enabledExtensionsKeys.push(value.targetAttribute);
@@ -26,6 +27,19 @@ define(function(require) {
 					}
 				});
 			}
+      
+      if (schemaName == 'course') {
+        // Remove unrequired globals from the course
+        if (schema._globals && schema._globals.properties._extensions) {
+          _.each(schema._globals.properties._extensions.properties, function(value, key) {
+            if (!_.contains(enabledExtensionsKeys, key)) {
+              delete schema._globals.properties._extensions.properties[key];
+            }
+          });
+        }
+        
+        // TODO We need the same for components
+      }
 
 			// Maybe this is a little bit broken
 			// But if something doesn't have properties object 

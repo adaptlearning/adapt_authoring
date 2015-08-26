@@ -169,7 +169,8 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
     version: pkgMeta.version,
     framework: pkgMeta.framework ? pkgMeta.framework : null,
     isLocalPackage: pkgMeta.isLocalPackage ? pkgMeta.isLocalPackage : false,
-    properties: schema.properties
+    properties: schema.properties,
+    globals: schema.globals ? schema.globals : null
   };
 
   if (pkgMeta.assetFields) {

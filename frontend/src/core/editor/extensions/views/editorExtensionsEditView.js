@@ -4,6 +4,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
+  var EditorConfigModel = require('editorConfig/models/editorConfigModel');
   var ExtensionCollection = require('editorExtensions/collections/extensionCollection');
   var ExtensionModel = require('editorExtensions/models/extensionModel');
 
@@ -91,15 +92,13 @@ define(function(require) {
     },
 
     addExtension: function() {
+        var self = this;
+        
         $.post('/api/extension/enable/' + this.model.get('_id'), {
                 extensions: this.currentSelectedIds 
             }, _.bind(function(result) {
             if (result.success) {
-                Origin.trigger('scaffold:updateSchemas', function() {
-                    Origin.trigger('editor:refreshData', function() {
-                        this.setupExtensions();
-                    }, this);
-                }, this);
+                self.refreshData();
             } else {
                 alert('An error occured');
             }          
@@ -125,18 +124,31 @@ define(function(require) {
 
         Origin.trigger('notify:prompt', props);
     },
+    
+    refreshData: function() {
+      var self = this;
+
+      var configModel = new EditorConfigModel({_courseId: this.model.get('_id')});
+      // Ensure that the latest config model is always up-to-date when entering this screen
+      configModel.fetch({
+        success: function(model, response, options) {
+          Origin.editor.data.config =  model;
+          
+          Origin.trigger('scaffold:updateSchemas', function() {
+            self.setupExtensions();
+          }, this);
+        }
+      });
+    },
 
     removeExtension: function() {
+        var self = this;
+        
         $.post('/api/extension/disable/' + this.model.get('_id'), {
                 extensions: this.currentSelectedIds 
             }, _.bind(function(result) {
             if (result.success) {
-                // Refresh the schemas
-                Origin.trigger('scaffold:updateSchemas', function() {
-                    Origin.trigger('editor:refreshData', function() {
-                        this.setupExtensions();
-                    }, this);
-                }, this);
+                self.refreshData();
             } else {
                 alert('An error occured');
             }          

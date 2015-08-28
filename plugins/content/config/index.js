@@ -144,7 +144,7 @@ ConfigContent.prototype.retrieve = function (search, options, next) {
 
         var configModel = records[0].toObject()
         configModel._enabledComponents = uniqueComponentList;
-        //console.log(records[0], configModel);
+
         return next(null, [configModel]);
         
       })

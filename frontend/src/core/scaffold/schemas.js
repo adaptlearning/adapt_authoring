@@ -7,7 +7,6 @@ define(function(require) {
 	var Schemas = function(schemaName) {
 		var configModel = Origin.editor.data.config;
 
-        console.log(configModel);
         if (configModel) {
             // Remove any extensions and components that are not enabled on this course
             var enabledExtensions = configModel.get('_enabledExtensions');
@@ -45,9 +44,7 @@ define(function(require) {
                     var enabledComponents = configModel.get('_enabledComponents');
                     
                     var enabledComponentsKeys = _.pluck(enabledComponents, '_component');
-                    console.log(enabledComponentsKeys);
                     _.each(schema._globals.properties._components.properties, function(value, key) {
-                        console.log('key', key);
                         if (!_.contains(enabledComponentsKeys, key)) {
                             delete schema._globals.properties._components.properties[key];
                         }

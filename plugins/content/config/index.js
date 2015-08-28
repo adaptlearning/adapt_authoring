@@ -12,7 +12,8 @@ var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
     origin = require('../../../'),
     util = require('util'),
     path = require('path'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    async = require('async');
 
 function ConfigContent () {
 }
@@ -134,18 +135,24 @@ ConfigContent.prototype.retrieve = function (search, options, next) {
       var courseId = records[0]._courseId;
       componentPlugin.retrieve({_courseId: courseId}, function(err, components) {
 
-        var uniqueComponentList = _.map(_.uniq(components, false, function(component) {
+        var uniqueComponents = _.uniq(components, false, function(component) {
           return component._component;
-        }), function(component) {
+        });
+
+        async.map(uniqueComponents, function(component, callback) {
+        
           // Adding an _ here is necessary because of the way the attributes are set
           // onto the _globals object on the schemas
-          return {_componentType: component._componentType, _component: "_" + component._component};
-        })
+          return callback(null, {_componentType: component._componentType, _component: "_" + component._component});
 
-        var configModel = records[0].toObject()
-        configModel._enabledComponents = uniqueComponentList;
+        }, function(err, uniqueComponentList) {
 
-        return next(null, [configModel]);
+          var configModel = records[0].toObject();
+          configModel._enabledComponents = uniqueComponentList;
+
+          return next(null, [configModel]);
+
+        });
         
       })
     });

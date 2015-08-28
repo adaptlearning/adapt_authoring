@@ -68,7 +68,7 @@ define(function(require) {
 					scaffoldSchema[key] = fieldObject;
 				} else {
 					scaffoldSchema[key] = {
-						type: 'List',
+						type: field.items.inputType || 'List',
 						itemType: 'Object',
 						subSchema: field.items.properties,
 						fieldType: 'List'

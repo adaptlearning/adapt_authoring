@@ -11,7 +11,8 @@ var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
     logger = require('../../../lib/logger'),
     origin = require('../../../'),
     util = require('util'),
-    path = require('path');
+    path = require('path'),
+    _ = require('underscore');
 
 function ConfigContent () {
 }
@@ -121,7 +122,34 @@ ConfigContent.prototype.retrieve = function (search, options, next) {
     search._id = search._configId;
   }
 
-  ContentPlugin.prototype.retrieve.call(this, search, options, next);
+  ContentPlugin.prototype.retrieve.call(this, search, options, function(err, records) {
+    if (err) {
+      return next(err);
+    }
+    // When passing down the config model we should 
+    // find out how many and what components are being used
+    // Why you might ask - to sort out _globals and when compiling
+    // this should act as a filter
+    app.contentmanager.getContentPlugin('component', function (err, componentPlugin) {
+      var courseId = records[0]._courseId;
+      componentPlugin.retrieve({_courseId: courseId}, function(err, components) {
+
+        var uniqueComponentList = _.map(_.uniq(components, false, function(component) {
+          return component._component;
+        }), function(component) {
+          // Adding an _ here is necessary because of the way the attributes are set
+          // onto the _globals object on the schemas
+          return {_componentType: component._componentType, _component: "_" + component._component};
+        })
+
+        var configModel = records[0].toObject()
+        configModel._enabledComponents = uniqueComponentList;
+        //console.log(records[0], configModel);
+        return next(null, [configModel]);
+        
+      })
+    });
+  });
 };
 
 // adds content hooks etc.

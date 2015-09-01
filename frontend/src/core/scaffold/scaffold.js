@@ -68,7 +68,7 @@ define(function(require) {
 					scaffoldSchema[key] = fieldObject;
 				} else {
 					scaffoldSchema[key] = {
-						type: 'List',
+						type:  (Backbone.Form.editors[field.items.inputType]) ? field.items.inputType : 'List',
 						itemType: 'Object',
 						subSchema: field.items.properties,
 						fieldType: 'List'

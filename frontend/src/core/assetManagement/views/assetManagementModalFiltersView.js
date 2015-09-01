@@ -43,7 +43,11 @@ define(function(require) {
         render: function() {
             var data = this.options;
             var template = Handlebars.templates['assetManagementModalFilters'];
-            this.$el.html(template(data)).prependTo(this.options.modalView.$el.find('.modal-popup-toolbar'));
+            var $popupToolbar = $('.modal-popup-toolbar');
+            if (this.options.modalView) {
+                $popupToolbar = this.options.modalView.$el.find('.modal-popup-toolbar');
+            }
+            this.$el.html(template(data)).prependTo($popupToolbar);
             _.defer(_.bind(this.postRender, this));
 
             return this;

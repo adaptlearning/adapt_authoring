@@ -1,14 +1,17 @@
+var builder = require('./lib/application');
 var prompt = require('prompt');
 var fs = require('fs');
 var request = require('request');
 var async = require('async');
 var exec = require('child_process').exec;
 var rimraf = require('rimraf');
+var path = require('path');
 
 // Constants
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
 
 // GLOBALS
+var app = builder();
 var installedBuilderVersion = '';
 var latestBuilderTag = '';
 var installedFrameworkVersion = '';
@@ -19,6 +22,14 @@ var versionFile = JSON.parse(fs.readFileSync('version.json'), {encoding: 'utf8'}
 var configFile = JSON.parse(fs.readFileSync('conf/config.json'), {encoding: 'utf8'});
 
 var steps = [
+  function(callback) {
+    app.run({skipVersionCheck: true});
+    
+    app.on('serverStarted', function () {
+      console.log('Server has started');
+      callback();
+    });
+  },
   function(callback) {
 
     console.log('Checking versions');
@@ -72,21 +83,10 @@ var steps = [
         var tagInfo = JSON.parse(body);
         
         if (tagInfo) {
-          // For now - we should only worry about v1 tags of the framework
-          async.detectSeries(tagInfo, function(tag, callback) {
-            if (tag.name.split('.')[0] == 'v1') {
-              callback(tag);
-            } else {
-                callback(false);
-            }
-          }, function(latestVersion) {
-            
-            latestFrameworkTag = latestVersion.name;
-            callback();
-
-          });
+          latestFrameworkTag = tagInfo[0].name;
         }
 
+        callback();
       }
     });
 
@@ -97,7 +97,7 @@ var steps = [
       shouldUpdateBuilder = true;
       console.log('Update for Adapt Builder is available: ' + latestBuilderTag);
     }
-
+    
     if (latestFrameworkTag != installedFrameworkVersion) {
       shouldUpdateFramework = true;
       console.log('Update for Adapt Framework is available: ' + latestFrameworkTag);
@@ -161,6 +161,41 @@ var steps = [
     }); 
 
   }, function(callback) {
+    if (shouldUpdateFramework) {
+      // If the framework has been updated, interrogate the adapt.json file from the adapt_framework
+      // folder and install the latest versions of the core plugins
+      fs.readFile(path.join(configFile.root, 'temp', configFile.masterTenantID, 'adapt_framework', 'adapt.json'), function (err, data) {
+        if (err) {
+          return callback(err); 
+        }
+        
+        var json = JSON.parse(data);
+        // 'dependencies' contains a key-value pair representing the plugin name and the semver
+        var plugins = Object.keys(json.dependencies);
+        
+        async.eachSeries(plugins, function(plugin, pluginCallback) {
+          app.bowermanager.installPlugin(plugin, json.dependencies[plugin], function(err) {
+            if (err) {
+              return pluginCallback(err);
+            }
+            
+            pluginCallback();
+          });
+
+        }, function(err) {
+          if (err) {
+            console.log(err);
+            return callback(err);
+          } 
+          
+          callback();
+        });
+      });
+    } else {
+      callback();
+    }
+  }, 
+   function(callback) {
     // Left empty for any upgrade scripts - just remember to call the callback when done.
     callback();
   }
@@ -182,6 +217,18 @@ prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result)
       console.log('ERROR: ', err);
       return exitUpgrade(1, 'Upgrade was unsuccessful. Please check the console output.');
     }
+    
+    console.log(' ');
+    
+    if (shouldUpdateFramework) {
+      console.log('Run \`npm install\` from  the /temp/' + configFile.masterTenantID + '/adapt_framework folder');
+    }
+    
+    if (shouldUpdateBuilder) {
+      console.log('Run \'npm install\` followed by \'grunt build:prod\'');
+    }
+    
+    console.log(' ');
     
     exitUpgrade(0, 'Great work! Your Adapt Builder is now updated.');
   });

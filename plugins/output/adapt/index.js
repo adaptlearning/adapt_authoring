@@ -20,6 +20,8 @@ var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     usermanager = require('../../../lib/usermanager'),
     assetmanager = require('../../../lib/assetmanager'),
     exec = require('child_process').exec,
+    semver = require('semver'),
+    version = require('../../../version'),
     logger = require('../../../lib/logger');
 
 function AdaptOutput () {
@@ -146,8 +148,14 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
             logger.log('info', '3.1. Ensuring framework build exists');
 
             var args = [];
-
-            args.push('--outputdir=' + path.join(Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build));
+            var outputFolder = path.join(Constants.Folders.AllCourses, tenantId, courseId);
+            
+            // Append the 'build' folder to later versions of the framework
+            if (semver.gt(semver.clean(version.adapt_framework), '2.0.0')) {
+              outputFolder = path.join(outputFolder, Constants.Folders.Build);
+            }
+            
+            args.push('--outputdir=' + outputFolder);
             args.push('--theme=' + themeName);
             args.push('--menu=' + menuName);
 

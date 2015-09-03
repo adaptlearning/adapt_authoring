@@ -8,12 +8,11 @@
       "type": "objectid",
       "required": true,
       "ref": "componenttype",
-      "editorOnly": false
+      "editorOnly": true
     },
     "_type": {
       "type":"string",
-      "id": "http://jsonschema.net/_type",
-      "editorOnly": true
+      "id": "http://jsonschema.net/_type"
     },
     "_component": {
       "type": "string",

@@ -13,7 +13,8 @@ define(function(require){
 
     events: {
       'click a.confirm-select-asset' : 'selectAsset',
-      'click .asset-preview-edit-button': 'onEditButtonClicked'
+      'click .asset-preview-edit-button': 'onEditButtonClicked',
+      'click .asset-preview-delete-button': 'onDeleteButtonClicked'
     },
 
     preRender: function() {
@@ -40,9 +41,21 @@ define(function(require){
       Origin.trigger('modal:passThrough', data);
     },
 
-    onEditButtonClicked: function() {
+    onEditButtonClicked: function(event) {
+      event.preventDefault();
       var assetId = this.model.get('_id');
       Backbone.history.navigate('#/assetManagement/' + assetId + '/edit', {trigger: true});
+    },
+
+    onDeleteButtonClicked: function(event) {
+      event.preventDefault();
+      
+      var shouldDeleteAsset = confirm("Are you sure you want to delete this asset? This cannot be undone");
+
+      if (shouldDeleteAsset) {
+        this.model.destroy();
+      }
+      
     }
 
   }, {

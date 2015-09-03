@@ -122,7 +122,7 @@ define(function(require) {
 					{ name: 'styles', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
 					{ name: 'links', items: [ 'Link', 'Unlink' ] },
 					{ name: 'colors', items: [ 'TextColor', 'BGColor' ] },
-					{ name: 'insert', items: [ 'SpecialChar' ] },
+					{ name: 'insert', items: [ 'SpecialChar', 'Table' ] },
 					{ name: 'tools', items: [  ] },
 					{ name: 'others', items: [ '-' ] }
 				],

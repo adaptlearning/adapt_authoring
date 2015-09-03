@@ -49,8 +49,8 @@ define(function(require){
 
     onDeleteButtonClicked: function(event) {
       event.preventDefault();
-      
-      var shouldDeleteAsset = confirm("Are you sure you want to delete this asset? This cannot be undone");
+
+      var shouldDeleteAsset = confirm(window.polyglot.t('app.assetconfirmdelete'));
 
       if (shouldDeleteAsset) {
         this.model.destroy();

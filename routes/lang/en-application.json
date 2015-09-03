@@ -158,6 +158,7 @@
 	"app.upload": "Upload",
 	"app.assetfilters": "Filters",
 	"app.assetcollections": "Collections",
+	"app.assetconfirmdelete": "Are you sure you want to delete this asset? This cannot be undone",
 	"app.search": "Search",
 	"app.searchtitleordescription": "Search title or description",
 	"app.filetype": "File type",

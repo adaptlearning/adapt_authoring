@@ -12,7 +12,8 @@
     },
     "_type": {
       "type":"string",
-      "id": "http://jsonschema.net/_type"
+      "id": "http://jsonschema.net/_type",
+      "editorOnly": true
     },
     "_component": {
       "type": "string",

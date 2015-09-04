@@ -220,10 +220,6 @@ prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result)
     
     console.log(' ');
     
-    if (shouldUpdateFramework) {
-      console.log('Run \`npm install\` from  the /temp/' + configFile.masterTenantID + '/adapt_framework folder');
-    }
-    
     if (shouldUpdateBuilder) {
       console.log('Run \'npm install\` followed by \'grunt build:prod\'');
     }
@@ -307,7 +303,7 @@ function upgradeFramework(tagName, callback) {
     console.log("Fetch from GitHub was successful.");
     console.log("Pulling latest changes...");
 
-    var secondChild = exec('git reset --hard ' + tagName, {
+    var secondChild = exec('git reset --hard ' + tagName + ' && npm install', {
       cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
       stdio: [0, 'pipe', 'pipe']
     });

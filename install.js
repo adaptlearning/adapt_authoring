@@ -310,22 +310,39 @@ var steps = [
   },
   // install content plugins
   function installContentPlugins (next) {
-    async.eachSeries(['extension', 'component', 'theme', 'menu'], function (contentType, cb) {
-      app.contentmanager.getContentPlugin(contentType, function (err, plugin) {
-        if (err) {
-          console.log('ERROR: ', err);
-          return exitInstall(1, 'Plugin install was unsuccessful. Please check the console output.');
-        }
+    // Interrogate the adapt.json file from the adapt_framework folder and install the latest versions of the core plugins
+     fs.readFile(path.join(process.cwd(), 'temp', app.configuration.getConfig('masterTenantID').toString(), 'adapt_framework', 'adapt.json'), function (err, data) {
+      if (err) {
+        console.log('ERROR: ' + err);
+        return next(err); 
+      }
+      
+      var json = JSON.parse(data);
+      // 'dependencies' contains a key-value pair representing the plugin name and the semver
+      var plugins = Object.keys(json.dependencies);
+      
+      async.eachSeries(plugins, function(plugin, pluginCallback) {
+        app.bowermanager.installPlugin(plugin, json.dependencies[plugin], function(err) {
+          if (err) {
+            return pluginCallback(err);
+          }
+          
+          pluginCallback();
+        });
 
-        console.log('  installing ' + plugin.getPluginType() + ' plugins');
-        plugin.updatePackages(plugin.bowerConfig, { tenantId: masterTenant._id.toString(), skipTenantCopy: true }, cb);
+      }, function(err) {
+        if (err) {
+          console.log(err);
+          return next(err);
+        } 
+        
+        next();
       });
-    },
-    next);
+    });
   },
   // configure the super awesome user
   function createSuperUser (next) {
-    console.log("Create the super user account. This account can be used to manage everything on your Adapt builder instance.");
+    console.log("Create the super user account. This account can be used to manage everything on your Adapt Builder instance.");
     prompt.get(userConfig, function (err, result) {
       if (err) {
         console.log('ERROR: ', err);
@@ -396,7 +413,7 @@ var steps = [
 prompt.start();
 
 // Prompt the user to begin the install
-console.log('This will install the Adapt builder. Would you like to continue?');
+console.log('This script will install the Adapt Builder. Would you like to continue?');
 prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
   if (!/(Y|y)[es]*$/.test(result['Y/n'])) {
     return exitInstall();

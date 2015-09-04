@@ -33,14 +33,7 @@ var bowerConfig = {
   srcLocation: 'extensions',
   options: defaultOptions,
   extra: [ "targetAttribute" ],
-  nameList: [
-    "adapt-contrib-assessment#~1.1",
-    "adapt-contrib-pageLevelProgress#~1.1",
-    "adapt-contrib-resources#~1.1",
-    "adapt-contrib-spoor#~1.1",
-    "adapt-contrib-trickle#~1.1",
-    "adapt-contrib-tutor#~1.1"
-  ],
+  nameList: [],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     database.getDatabase(function (err, db) {
       if (err) {

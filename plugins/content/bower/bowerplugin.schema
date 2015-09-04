@@ -22,7 +22,7 @@
     },
     "framework":{
       "type": "string",
-      "required": true
+      "required": false
     },
     "_isAvailableInEditor": {
       "type":"boolean",

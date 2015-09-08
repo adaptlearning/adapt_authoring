@@ -186,7 +186,6 @@ function initialize () {
             next(null, data);
           });
         } else {
-          logger.log('warn', 'Unexpected value for "data" parameter when updating ' + contentType + ' by ' + userId);
           next(null, data);
         }
         

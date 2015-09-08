@@ -151,7 +151,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
             var outputFolder = path.join(Constants.Folders.AllCourses, tenantId, courseId);
             
             // Append the 'build' folder to later versions of the framework
-            if (semver.gt(semver.clean(version.adapt_framework), '2.0.0')) {
+            if (semver.gte(semver.clean(version.adapt_framework), semver.clean('2.0.0'))) {
               outputFolder = path.join(outputFolder, Constants.Folders.Build);
             }
             

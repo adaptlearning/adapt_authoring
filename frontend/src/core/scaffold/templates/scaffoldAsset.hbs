@@ -8,8 +8,14 @@
 		{{#ifAssetIsHeroImage value}}
 		<img class="scaffold-asset-preview" src="/api/asset/thumb/{{value}}"/>
 		{{else}}
-		<img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
-		{{/ifAssetIsHeroImage}}
+      {{#if thumbnailPath}}
+		  <img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
+		  {{else}}
+      <a class="scaffold-asset-preview" title="{{t 'app.nothumbnailforimage'}}" href="{{getAssetFromValue value}}" target="_blank">
+        <i class="fa fa-file-image-o fa-large"></i>  
+      </a>
+      {{/if}}
+    {{/ifAssetIsHeroImage}}
 	{{/ifAssetIsExternal}}
 {{/ifValueEquals}}
 
@@ -56,9 +62,9 @@
 
 <div class="scaffold-asset-buttons">
 	{{#ifAssetIsExternal value}}
-	<button class="btn scaffold-asset-clear-external"><i class="fa fa-times-circle"></i> Remove External Asset</button>
+	<button class="btn scaffold-asset-clear-external"><i class="fa fa-times-circle"></i> {{t 'app.removeexternalasset'}}</button>
 	{{else}}
-	<button class="btn scaffold-asset-clear"><i class="fa fa-times-circle"></i> Remove Asset</button>
+	<button class="btn scaffold-asset-clear"><i class="fa fa-times-circle"></i> {{t 'app.removeasset'}}</button>
 	{{/ifAssetIsExternal}}
 </div>
 
@@ -67,13 +73,13 @@
 <div class="scaffold-asset-external-input display-none">
 	<input type="text" class="scaffold-asset-external-input-field" />
 	<div class="scaffold-asset-external-input-buttons">
-		<button class="btn btn-primary scaffold-asset-external-input-save"><i class="fa fa-save"></i> Save</button>
-		<button class="btn scaffold-asset-external-input-cancel"><i class="fa fa-times"></i> Cancel</button>
+		<button class="btn btn-primary scaffold-asset-external-input-save"><i class="fa fa-save"></i> {{t 'app.save'}}</button>
+		<button class="btn scaffold-asset-external-input-cancel"><i class="fa fa-times"></i> {{t 'app.cancel'}}</button>
 	</div>
 </div>
 
 <div class="scaffold-asset-buttons">
-	<button class="btn scaffold-asset-picker"><i class="fa fa-file"></i> Select an Asset</button>
-	<button class="btn scaffold-asset-external"><i class="fa fa-file"></i> Select an External Asset</button>
+	<button class="btn scaffold-asset-picker"><i class="fa fa-file"></i> {{t 'app.selectasset'}}</button>
+	<button class="btn scaffold-asset-external"><i class="fa fa-file"></i> {{t 'app.selectexternalasset'}}</button>
 </div>
 {{/if}}

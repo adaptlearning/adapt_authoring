@@ -269,12 +269,53 @@ function upgradeBuilder(tagName, callback) {
       if (error) {
         return console.log('ERROR: ' + error);
       }
-      
-      console.log("Builder has been updated.\n");
-      callback();
 
+      console.log("Installing builder dependencies.\n");
+
+      var thirdChild = exec('npm install', {
+        stdio: [0, 'pipe', 'pipe']
+      });
+
+      thirdChild.stdout.on('data', function(err) {
+        console.log(err);
+      });
+
+      thirdChild.stderr.on('data', function(err) {
+        console.log(err);
+      });
+
+      thirdChild.on('exit', function (error, stdout, stderr) {
+        if (error) {
+          return console.log('ERROR: ' + error);
+        }
+        console.log("Dependencies installed.\n");
+
+        console.log("Building front-end.\n");
+
+        var fourthChild = exec('grunt build', {
+          stdio: [0, 'pipe', 'pipe']
+        });
+
+        fourthChild.stdout.on('data', function(err) {
+          console.log(err);
+        });
+
+        fourthChild.stderr.on('data', function(err) {
+          console.log(err);
+        });
+
+        fourthChild.on('exit', function (error, stdout, stderr) {
+          if (error) {
+            return console.log('ERROR: ' + error);
+          }
+
+          console.log("front-end built.\n");
+
+          console.log("Builder has been updated.\n");
+          callback();
+        });
+      });
     });
-
   });
 }
 

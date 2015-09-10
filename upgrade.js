@@ -286,7 +286,7 @@ function upgradeBuilder(tagName, callback) {
 
         console.log("Building front-end.\n");
 
-        var fourthChild = exec('grunt build', {
+        var fourthChild = exec('grunt build:prod', {
           stdio: [0, 'pipe', 'pipe']
         });
 

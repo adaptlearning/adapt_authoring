@@ -164,6 +164,7 @@ Component.prototype.update = function (search, delta, next)  {
         // HACK -- This next 'if' block is required to keep the courseasset records
         // in sync with the component's position.  This will be removed in a future
         // re-factor to the courseasset collection when we can remove _contentTypeParentId.
+        // The associated issue has been logged as #821
         var latestParentId = doc._parentId.toString();
 
         // Check if the component has been moved.

@@ -24,7 +24,7 @@ var configFile = JSON.parse(fs.readFileSync('conf/config.json'), {encoding: 'utf
 var steps = [
   function(callback) {
     app.run({skipVersionCheck: true});
-    
+
     app.on('serverStarted', function () {
       console.log('Server has started');
       callback();
@@ -54,17 +54,17 @@ var steps = [
       uri: 'https://api.github.com/repos/adaptlearning/adapt_authoring/tags',
       method: 'GET'
     }, function (error, response, body) {
-      
+
       if (!error && response.statusCode == 200) {
         var tagInfo = JSON.parse(body);
-        
+
         if (tagInfo) {
           latestBuilderTag = tagInfo[0].name;
         }
 
         callback();
       }
-          
+
     });
 
   },
@@ -81,7 +81,7 @@ var steps = [
     }, function (error, response, body) {
       if (!error && response.statusCode == 200) {
         var tagInfo = JSON.parse(body);
-        
+
         if (tagInfo) {
           latestFrameworkTag = tagInfo[0].name;
         }
@@ -90,14 +90,14 @@ var steps = [
       }
     });
 
-  }, 
+  },
   function(callback) {
     // Check what needs upgrading
     if (latestBuilderTag != installedBuilderVersion) {
       shouldUpdateBuilder = true;
       console.log('Update for Adapt Builder is available: ' + latestBuilderTag);
     }
-    
+
     if (latestFrameworkTag != installedFrameworkVersion) {
       shouldUpdateFramework = true;
       console.log('Update for Adapt Framework is available: ' + latestFrameworkTag);
@@ -114,7 +114,7 @@ var steps = [
   }, function(callback) {
     // Upgrade Builder if we need to
     if (shouldUpdateBuilder) {
-      
+
       upgradeBuilder(latestBuilderTag, function(err) {
         if (err) {
           return callback(err);
@@ -133,12 +133,12 @@ var steps = [
 
     // Upgrade Framework if we need to
     if (shouldUpdateFramework) {
-      
+
       upgradeFramework(latestFrameworkTag, function(err) {
         if (err) {
           return callback(err);
         }
-        
+
         versionFile.adapt_framework = latestFrameworkTag;
         callback();
 
@@ -158,7 +158,7 @@ var steps = [
           console.log("Version file updated\n");
           callback();
         }
-    }); 
+    });
 
   }, function(callback) {
     if (shouldUpdateFramework) {
@@ -166,19 +166,19 @@ var steps = [
       // folder and install the latest versions of the core plugins
       fs.readFile(path.join(configFile.root, 'temp', configFile.masterTenantID, 'adapt_framework', 'adapt.json'), function (err, data) {
         if (err) {
-          return callback(err); 
+          return callback(err);
         }
-        
+
         var json = JSON.parse(data);
         // 'dependencies' contains a key-value pair representing the plugin name and the semver
         var plugins = Object.keys(json.dependencies);
-        
+
         async.eachSeries(plugins, function(plugin, pluginCallback) {
           app.bowermanager.installPlugin(plugin, json.dependencies[plugin], function(err) {
             if (err) {
               return pluginCallback(err);
             }
-            
+
             pluginCallback();
           });
 
@@ -186,15 +186,15 @@ var steps = [
           if (err) {
             console.log(err);
             return callback(err);
-          } 
-          
+          }
+
           callback();
         });
       });
     } else {
       callback();
     }
-  }, 
+  },
    function(callback) {
     // Left empty for any upgrade scripts - just remember to call the callback when done.
     callback();
@@ -217,15 +217,9 @@ prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result)
       console.log('ERROR: ', err);
       return exitUpgrade(1, 'Upgrade was unsuccessful. Please check the console output.');
     }
-    
+
     console.log(' ');
-    
-    if (shouldUpdateBuilder) {
-      console.log('Run \'npm install\` followed by \'grunt build:prod\'');
-    }
-    
-    console.log(' ');
-    
+
     exitUpgrade(0, 'Great work! Your Adapt Builder is now updated.');
   });
 });
@@ -237,26 +231,26 @@ function upgradeBuilder(tagName, callback) {
   var child = exec('git fetch origin', {
     stdio: [0, 'pipe', 'pipe']
   });
-  
+
   child.stdout.on('data', function(err) {
     console.log(err);
   });
   child.stderr.on('data', function(err) {
     console.log(err);
   });
-  
+
   child.on('exit', function (error, stdout, stderr) {
     if (error) {
       return console.log('ERROR: ' + error);
     }
-    
+
     console.log("Fetch from GitHub was successful.");
     console.log("Pulling latest changes...");
 
     var secondChild = exec('git reset --hard ' + tagName, {
       stdio: [0, 'pipe', 'pipe']
     });
-    
+
     secondChild.stdout.on('data', function(err) {
       console.log(err);
     });
@@ -264,17 +258,58 @@ function upgradeBuilder(tagName, callback) {
     secondChild.stderr.on('data', function(err) {
       console.log(err);
     });
-    
+
     secondChild.on('exit', function (error, stdout, stderr) {
       if (error) {
         return console.log('ERROR: ' + error);
       }
-      
-      console.log("Builder has been updated.\n");
-      callback();
 
+      console.log("Installing builder dependencies.\n");
+
+      var thirdChild = exec('npm install', {
+        stdio: [0, 'pipe', 'pipe']
+      });
+
+      thirdChild.stdout.on('data', function(err) {
+        console.log(err);
+      });
+
+      thirdChild.stderr.on('data', function(err) {
+        console.log(err);
+      });
+
+      thirdChild.on('exit', function (error, stdout, stderr) {
+        if (error) {
+          return console.log('ERROR: ' + error);
+        }
+        console.log("Dependencies installed.\n");
+
+        console.log("Building front-end.\n");
+
+        var fourthChild = exec('grunt build:prod', {
+          stdio: [0, 'pipe', 'pipe']
+        });
+
+        fourthChild.stdout.on('data', function(err) {
+          console.log(err);
+        });
+
+        fourthChild.stderr.on('data', function(err) {
+          console.log(err);
+        });
+
+        fourthChild.on('exit', function (error, stdout, stderr) {
+          if (error) {
+            return console.log('ERROR: ' + error);
+          }
+
+          console.log("front-end built.\n");
+
+          console.log("Builder has been updated.\n");
+          callback();
+        });
+      });
     });
-
   });
 }
 
@@ -286,7 +321,7 @@ function upgradeFramework(tagName, callback) {
     cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
     stdio: [0, 'pipe', 'pipe']
   });
-  
+
   child.stdout.on('data', function(err) {
     console.log(err);
   });
@@ -294,12 +329,12 @@ function upgradeFramework(tagName, callback) {
   child.stderr.on('data', function(err) {
     console.log(err);
   });
-  
+
   child.on('exit', function (error, stdout, stderr) {
     if (error) {
       return console.log('ERROR: ' + error);
     }
-    
+
     console.log("Fetch from GitHub was successful.");
     console.log("Pulling latest changes...");
 
@@ -307,7 +342,7 @@ function upgradeFramework(tagName, callback) {
       cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
       stdio: [0, 'pipe', 'pipe']
     });
-    
+
     secondChild.stdout.on('data', function(err) {
       console.log(err);
     });
@@ -315,20 +350,20 @@ function upgradeFramework(tagName, callback) {
     secondChild.stderr.on('data', function(err) {
       console.log(err);
     });
-    
+
     secondChild.on('exit', function (error, stdout, stderr) {
       if (error) {
         return console.log('ERROR: ' + error);
       }
-      
+
       console.log("Framework has been updated.\n");
-      
+
       rimraf(configFile.root + '/temp/' + configFile.masterTenantID + '/adapt_framework/src/course', function(err) {
         if (err) {
             console.log(err);
         }
-        
-        callback(); 
+
+        callback();
       });
 
     });

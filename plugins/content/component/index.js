@@ -153,12 +153,66 @@ Component.prototype.update = function (search, delta, next)  {
         delta._courseId = docs[0]._courseId;
       }
 
-      ContentPlugin.prototype.update.call(self, search, delta, function (error) {
+      // Hold a reference to the component's parent (block) _id value.
+      var existingParentId = docs[0]._parentId.toString();
+      
+      ContentPlugin.prototype.update.call(self, search, delta, function (error, doc) {
         if (error) {
           return next(error);
         }
 
-        next(null);
+        // HACK -- This next 'if' block is required to keep the courseasset records
+        // in sync with the component's position.  This will be removed in a future
+        // re-factor to the courseasset collection when we can remove _contentTypeParentId.
+        var latestParentId = doc._parentId.toString();
+
+        // Check if the component has been moved.
+        if (existingParentId !== latestParentId) { 
+          // It has.
+          database.getDatabase(function (err, db) {
+            if (err) {
+              return next(err);
+            }
+
+            var assetSearchCriteria = {
+              _contentType: 'component', 
+              _contentTypeParentId: existingParentId
+            };
+
+            db.retrieve('courseasset', assetSearchCriteria, function(error, assets) {
+              if (error) {
+                return next(error);
+              }
+
+              if (assets && assets.length !== 0) {
+                // Iterate over each asset and change the _contentTypeParentId.
+                async.each(assets, function(asset, callback) {
+
+                  db.update('courseasset', {_id: asset._id}, {_contentTypeParentId: latestParentId}, function(err, doc) {
+                    if (err) {
+                      return callback(err);
+                    }
+
+                    callback(null);
+                  });
+
+                }, function(err) {
+                  if (err) {
+                    return next(err);
+                  }
+
+                  next(null);
+                });
+
+              } else {
+                // Nothing to do.
+                next(null);
+              }
+            });
+          });
+        } else {
+          next(null);
+        }
       });
     } else {
       next(null);

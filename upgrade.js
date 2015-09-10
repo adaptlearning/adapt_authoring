@@ -220,12 +220,6 @@ prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result)
 
     console.log(' ');
 
-    if (shouldUpdateBuilder) {
-      console.log('Run \'npm install\` followed by \'grunt build:prod\'');
-    }
-
-    console.log(' ');
-
     exitUpgrade(0, 'Great work! Your Adapt Builder is now updated.');
   });
 });

@@ -43,6 +43,7 @@ define(function(require){
           } else {
             $('.asset-management-no-assets').addClass('display-none');
           }
+          $('.asset-management-assets-container').trigger('scroll');
         },
 
         setupLazyScrolling: function() {

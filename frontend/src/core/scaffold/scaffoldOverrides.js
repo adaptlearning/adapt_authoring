@@ -126,7 +126,8 @@ define(function(require) {
 					{ name: 'tools', items: [  ] },
 					{ name: 'others', items: [ '-' ] }
 				],
-				extraAllowedContent: 'span(*)'
+				extraAllowedContent: 'span(*)',
+        disableNativeSpellChecker: false
 			});
 
 	    }, this), 100);

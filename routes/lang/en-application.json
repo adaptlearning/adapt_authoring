@@ -163,6 +163,7 @@
   "app.removeexternalasset": "Remove External Asset",
   "app.nothumbnailforimage": "No thumbnail available, but click here to view the image",
 	"app.assetcollections": "Collections",
+	"app.assetconfirmdelete": "Are you sure you want to delete this asset?",
 	"app.search": "Search",
 	"app.searchtitleordescription": "Search title or description",
 	"app.filetype": "File type",

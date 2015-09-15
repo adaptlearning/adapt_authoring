@@ -13,12 +13,12 @@ define(function(require){
 
     events: {
       'click a.confirm-select-asset' : 'selectAsset',
-      'click .asset-preview-edit-button': 'onEditButtonClicked'
+      'click .asset-preview-edit-button': 'onEditButtonClicked',
+      'click .asset-preview-delete-button': 'onDeleteButtonClicked'
     },
 
     preRender: function() {
       this.listenTo(this, 'remove', this.remove);
-      /*this.listenTo(this.model, 'destroy', this.remove);*/
     },
 
     postRender: function () {
@@ -40,9 +40,23 @@ define(function(require){
       Origin.trigger('modal:passThrough', data);
     },
 
-    onEditButtonClicked: function() {
+    onEditButtonClicked: function(event) {
+      event.preventDefault();
       var assetId = this.model.get('_id');
       Backbone.history.navigate('#/assetManagement/' + assetId + '/edit', {trigger: true});
+    },
+
+    onDeleteButtonClicked: function(event) {
+      event.preventDefault();
+
+      var shouldDeleteAsset = confirm(window.polyglot.t('app.assetconfirmdelete'));
+
+      if (shouldDeleteAsset) {
+        this.model.destroy();
+        Origin.trigger('assetManagement:assetPreviewView:delete');
+        this.remove();
+      }
+      
     }
 
   }, {

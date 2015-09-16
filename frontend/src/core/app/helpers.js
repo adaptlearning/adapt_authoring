@@ -51,8 +51,8 @@ define(function(require){
             }
 
             return date.toDateString();
-          } 
-          
+          }
+
           return noDisplay;
         },
         formatDuration: function(duration) {
@@ -205,20 +205,14 @@ define(function(require){
 
         },
 
+        // checks for http/https and www. prefix
         ifAssetIsExternal: function(url, block) {
-
-          var urlSplit = url.split('/')
-          // Could well be a hero image for the course
-          if (urlSplit.length === 1) {
-            return block.inverse(this);
-          }
-
-          if (urlSplit[0] != "course" && urlSplit[1] != "assets") {
-            return block.fn(this);
-          } else {
-            return block.inverse(this);
-          }
-
+            var urlRegEx = new RegExp(/(https?:\/\/)|(www\.)/);
+            if(url.match(urlRegEx)) {
+                return block.fn(this);
+            } else {
+                return block.inverse(this);
+            }
         },
 
         ifAssetIsHeroImage: function(url, block) {

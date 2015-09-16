@@ -519,12 +519,8 @@ function addPackage (plugin, packageInfo, options, cb) {
   }
 
   if (!pkgMeta.version) { // don't allow packages that don't define versions
-    /*
-    * @TODO: Re-implement this once properties.schema files make it to master!
     logger.log('warn', 'ignoring unversioned component: ' + pkgMeta.name);
     return cb(null);
-    */
-    pkgMeta.version = "0.0.0"; // Remove me later - see above ^
   }
 
   var schemaPath = path.join(packageInfo.canonicalDir, defaultOptions._adaptSchemaFile);

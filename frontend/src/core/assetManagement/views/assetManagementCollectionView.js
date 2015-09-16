@@ -43,13 +43,17 @@ define(function(require){
             } else {
                 $('.asset-management-no-assets').addClass('display-none');
             }
-            
-            $('.asset-management-list-item').hide();
 
-            _.delay(function() {
-                $('.asset-management-list-item').show();
-            }, 400);
-            
+            // FIX: Purely and lovingly put in for a rendering issue with chrome.
+            // For when the items being re-rendering after a search return an 
+            // amount of items that means the container is not scrollable
+            if (this.assetLimit < this.assetDenominator) {
+                $('.asset-management-assets-container').hide();
+                _.delay(function() {
+                    $('.asset-management-assets-container').show();
+                }, 10);
+            }
+
         },
 
         setupLazyScrolling: function() {
@@ -82,9 +86,6 @@ define(function(require){
             if (reset) {
               // Trigger event to kill zombie views
               Origin.trigger('assetManagement:assetViews:remove');
-
-              // Empty collection container
-              this.$('.asset-management-collection-inner').empty();
 
               // Reset fetches cache
               this.shouldStopFetches = false;

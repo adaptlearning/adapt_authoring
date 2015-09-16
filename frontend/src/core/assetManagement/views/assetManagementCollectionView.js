@@ -38,12 +38,18 @@ define(function(require){
         },
 
         onCollectionSynced: function () {
-          if (this.collection.length === 0) {
-            $('.asset-management-no-assets').removeClass('display-none');
-          } else {
-            $('.asset-management-no-assets').addClass('display-none');
-          }
-          $('.asset-management-assets-container').trigger('scroll');
+            if (this.collection.length === 0) {
+                $('.asset-management-no-assets').removeClass('display-none');
+            } else {
+                $('.asset-management-no-assets').addClass('display-none');
+            }
+            
+            $('.asset-management-list-item').hide();
+
+            _.delay(function() {
+                $('.asset-management-list-item').show();
+            }, 400);
+            
         },
 
         setupLazyScrolling: function() {
@@ -54,6 +60,7 @@ define(function(require){
             $assetContainer.off('scroll');
 
             $assetContainer.on('scroll', _.bind(function() {
+    
                 var scrollTop = $assetContainer.scrollTop();
                 var scrollableHeight = $assetContainerInner.height();
                 var containerHeight = $assetContainer.height();

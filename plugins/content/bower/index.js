@@ -208,9 +208,9 @@ function initialize () {
  */
 
 BowerPlugin.prototype.updatePluginType = function (req, res, next) {
-  var self = this;  
+  var self = this;
   var delta = _.pick(req.body, '_isAvailableInEditor'); // only allow update of certain attributes
-  
+
   database.getDatabase(function (err, db) {
     if (err) {
       return next(err);
@@ -237,7 +237,7 @@ BowerPlugin.prototype.initialize = function (plugin) {
     // Add the componenttype/extensiontype/menutype/themetype route
     rest.get('/' + plugin.type, function (req, res, next) {
       var options = _.extend(plugin.options, _.pick(req.query, 'refreshplugins', 'showall'));
-      
+
       if (!req.params.refreshplugins) {
         database.getDatabase(function (err, db) {
           if (err) {
@@ -246,12 +246,12 @@ BowerPlugin.prototype.initialize = function (plugin) {
 
           // Check if requests are on the master tenant
           var currentUser = usermanager.getCurrentUser();
-          var isMasterTenantUser = currentUser 
+          var isMasterTenantUser = currentUser
             ? currentUser.tenant.isMaster
             : false;
 
           // Users on the master tenant should be able to see all plugins
-          var criteria = !isMasterTenantUser 
+          var criteria = !isMasterTenantUser
             ? {_isAvailableInEditor: true}
             : {};
 
@@ -272,12 +272,12 @@ BowerPlugin.prototype.initialize = function (plugin) {
           if (err) {
             return next(err);
           }
-          
+
           res.statusCode = 200;
           return res.json(results);
-        });  
+        });
       }
-      
+
     });
 
     // get a single pluginType definition by id
@@ -287,8 +287,8 @@ BowerPlugin.prototype.initialize = function (plugin) {
           return next(err);
         }
 
-        var options = db.isValidIdentifier(req.params.id) 
-          ? { _id: req.params.id } 
+        var options = db.isValidIdentifier(req.params.id)
+          ? { _id: req.params.id }
           : { name: req.params.id}
 
         db.retrieve(plugin.type, options, function (err, results) {
@@ -495,7 +495,7 @@ function addPackage (plugin, packageInfo, options, cb) {
     options = {
       strict: false
     };
-  } 
+  }
 
   // verify packageInfo meets requirements
   var pkgMeta = packageInfo.pkgMeta;
@@ -582,7 +582,7 @@ function addPackage (plugin, packageInfo, options, cb) {
               // temporary hack to get stuff moving
               // copy plugin source to tenant dir
               var currentUser = usermanager.getCurrentUser();
-              var tenantId = options.tenantId 
+              var tenantId = options.tenantId
                 ? options.tenantId
                 : currentUser.tenant._id.toString()
               var tenantPluginPath = path.join(
@@ -678,7 +678,7 @@ function addPackage (plugin, packageInfo, options, cb) {
                   }
 
                   // Remove older versions of this plugin
-                  db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) { 
+                  db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
                     if (err) {
                       logger.log('error', err);
                       return cb(err);
@@ -687,13 +687,13 @@ function addPackage (plugin, packageInfo, options, cb) {
                     logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
                     return cb(null, newPlugin);
                   });
-         
-                  
+
+
                 });
               } else {
                 // nothing to do!
                 // Remove older versions of this plugin
-                db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) { 
+                db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
                   if (err) {
                     logger.log('error', err);
                     return cb(err);
@@ -765,17 +765,17 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
                 // add details for each to the db
                 async.eachSeries(
                   Object.keys(packageInfo),
-                  function (key, next) {         
+                  function (key, next) {
                     if (packageInfo[key].pkgMeta.framework) {
                       // If the plugin defines a framework, ensure that it is compatible
                       if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].framework)) {
-                        addPackage(plugin, packageInfo[key], options, next); 
+                        addPackage(plugin, packageInfo[key], options, next);
                       } else {
                         logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');
                         next();
                       }
                     } else {
-                      addPackage(plugin, packageInfo[key], options, next);      
+                      addPackage(plugin, packageInfo[key], options, next);
                     }
                   },
                   cb);
@@ -809,19 +809,19 @@ function checkIfHigherVersionExists (package, options, cb) {
       logger.log('error', err);
       return cb(null, false);
     })
-    .on('end', function (results) { 
+    .on('end', function (results) {
       if (!results || results.length == 0) {
         logger.log('warn', 'Plugin ' + packageName + ' not found!');
         return callback('Plugin ' + packageName + ' not found!');
       }
-      
+
       bower.commands.install([packageName], null, options) // Removed #develop tag
       .on('end', function (info) {
         // if info is empty, it means there is no higher version of the plugin available
         if (Object.getOwnPropertyNames(info).length == 0 || !info[packageName].pkgMeta) {
           return cb(null, false);
         }
-        
+
         // Semver check that the plugin is compatibile with the installed version of the framework
         if (info[packageName].pkgMeta.framework) {
             // Check which version of the framework we're running
@@ -832,15 +832,15 @@ function checkIfHigherVersionExists (package, options, cb) {
               return cb(null, false);
             }
         } else {
-          return cb(null, true);    
+          return cb(null, true);
         }
       })
       .on('error', function(err) {
         logger.log('error', err);
         return cb(null, false);
-      });     
+      });
     });
-  
+
 }
 
 /**
@@ -879,7 +879,7 @@ function handleUploadedPlugin (req, res, next) {
 
         var packageJson;
         var canonicalDir;
-        
+
         // Read over each directory checking for the correct one that contains a bower.json file
         fs.readdir(outputPath, function (err, directoryList) {
 
@@ -924,12 +924,12 @@ function handleUploadedPlugin (req, res, next) {
               canonicalDir: canonicalDir,
               pkgMeta: packageJson
             };
-            
+
             // Check if the framework has been defined on the plugin and that it's not compatible
             if (packageInfo.pkgMeta.framework && !semver.satisfies(semver.clean(version.adapt_framework), packageInfo.pkgMeta.framework)) {
-              return next(new PluginPackageError('This plugin is incompatible with version ' + version.adapt_framework + ' of the Adapt framework'));    
+              return next(new PluginPackageError('This plugin is incompatible with version ' + version.adapt_framework + ' of the Adapt framework'));
             }
-            
+
             app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {
               if (error) {
                 return next(error);

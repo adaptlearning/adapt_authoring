@@ -207,7 +207,7 @@ define(function(require){
 
         // checks for http/https and www. prefix
         ifAssetIsExternal: function(url, block) {
-            var urlRegEx = new RegExp(/(https?:\/\/)|(www\.)/);
+            var urlRegEx = new RegExp(/^(https?:\/\/)|^(www\.)/);
             if(url.match(urlRegEx)) {
                 return block.fn(this);
             } else {

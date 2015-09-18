@@ -5,7 +5,7 @@ define(function(require){
 
     var helpers = {
         console: function(context) {
-          console.log(context);
+          return console.log(context);
         },
         lowerCase: function(text) {
           return text.toLowerCase();
@@ -69,6 +69,11 @@ define(function(require){
           ss = (zero+ss).slice(-2);
 
           return hh + ':' + mm + ':' + ss;
+        },
+        // checks for http/https and www. prefix
+        isAssetExternal: function(url) {
+            var urlRegEx = new RegExp(/^(https?:\/\/)|^(www\.)/);
+            return url.match(urlRegEx) !== null;
         },
         ifValueEquals: function(value, text, block) {
             if (value === text) {
@@ -175,9 +180,6 @@ define(function(require){
           }
         },
 
-        console: function(context) {
-          return console.log(context);
-        },
 
         getAssetFromValue: function(url) {
           var urlSplit = url.split('/')
@@ -205,10 +207,8 @@ define(function(require){
 
         },
 
-        // checks for http/https and www. prefix
         ifAssetIsExternal: function(url, block) {
-            var urlRegEx = new RegExp(/^(https?:\/\/)|^(www\.)/);
-            if(url.match(urlRegEx)) {
+            if(isAssetExternal(url)) {
                 return block.fn(this);
             } else {
                 return block.inverse(this);

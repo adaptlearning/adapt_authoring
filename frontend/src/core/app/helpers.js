@@ -175,10 +175,6 @@ define(function(require){
           }
         },
 
-        console: function(context) {
-          return console.log(context);
-        },
-
         getAssetFromValue: function(url) {
           var urlSplit = url.split('/')
           var fileName = urlSplit[urlSplit.length - 1];
@@ -190,6 +186,14 @@ define(function(require){
 
         },
 
+        ifImageIsCourseAsset: function(url, block) {
+          if (url.length !== 0 && url.indexOf('course/assets') == 0) {
+            return block.fn(this);;  
+          } else {
+            return block.inverse(this);;
+          }
+        },
+        
         getThumbnailFromValue: function(url) {
 
           var urlSplit = url.split('/')

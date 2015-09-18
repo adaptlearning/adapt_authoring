@@ -11,9 +11,13 @@
       {{#if thumbnailPath}}
 		  <img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
 		  {{else}}
-      <a class="scaffold-asset-preview" title="{{t 'app.nothumbnailforimage'}}" href="{{getAssetFromValue value}}" target="_blank">
-        <i class="fa fa-file-image-o fa-large"></i>  
-      </a>
+        {{#ifImageIsCourseAsset value}}
+        <img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
+        {{else}}
+        <a class="scaffold-asset-preview" title="{{t 'app.nothumbnailforimage'}}" href="{{getAssetFromValue value}}" target="_blank">
+          <i class="fa fa-file-image-o fa-large"></i>  
+        </a>
+        {{/ifImageIsCourseAsset}}
       {{/if}}
     {{/ifAssetIsHeroImage}}
 	{{/ifAssetIsExternal}}

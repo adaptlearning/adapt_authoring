@@ -3,7 +3,7 @@ language: node_js
 node_js:
   - '0.10'
 
-sudo: false
+sudo: required
 
 branches:
   only:
@@ -30,9 +30,6 @@ before_install:
 
 install:
   - npm config set spin false
-
-matrix:
-  fast_finish: true
 
 notifications:
   email: false

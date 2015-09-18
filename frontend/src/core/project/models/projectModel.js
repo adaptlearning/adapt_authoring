@@ -1,6 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  
+
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var Helpers = require('coreJS/app/helpers');
@@ -27,11 +27,11 @@ define(function(require) {
         return '/api/asset/serve/' + this.get('heroImage');
       }
     },
-    
+
     isEditable: function () {
       return this.get('_isShared') || this.get('createdBy') == Origin.sessionModel.get('id')
     },
-    
+
     getDuplicateURI: function () {
       return '/api/duplicatecourse/' + this.get('_id');
     }

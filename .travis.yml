@@ -3,14 +3,12 @@ language: node_js
 node_js:
   - '0.10'
 
+sudo: required
+
 branches:
   only:
     - master
     - develop
-    - /^(?i:release)\/.*$/
-    - /^(?i:hotfix)\/.*$/
-    - /^(?i:feature)\/.*$/
-    - /^(?i:issues?)\/.*$/
 
 git:
   depth: 10
@@ -28,6 +26,10 @@ before_install:
 
 install:
   - npm config set spin false
+  - npm install
+
+matrix:
+  fast_finish: true
 
 notifications:
   email: false

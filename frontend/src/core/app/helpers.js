@@ -5,7 +5,7 @@ define(function(require){
 
     var helpers = {
         console: function(context) {
-          console.log(context);
+          return console.log(context);
         },
         lowerCase: function(text) {
           return text.toLowerCase();
@@ -175,9 +175,6 @@ define(function(require){
           }
         },
 
-        console: function(context) {
-          return console.log(context);
-        },
 
         getAssetFromValue: function(url) {
           var urlSplit = url.split('/')

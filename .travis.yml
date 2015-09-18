@@ -32,7 +32,6 @@ matrix:
   fast_finish: true
 
 notifications:
-  email: false
   webhooks:
     urls:
       - https://webhooks.gitter.im/e/984c2f87fa167719344b

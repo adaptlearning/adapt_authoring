@@ -3,6 +3,7 @@ define(function(require) {
   
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
+  var Helpers = require('coreJS/app/helpers');
   var EditorModel = require('editorGlobal/models/editorModel');
 
   var ProjectModel = EditorModel.extend({
@@ -20,7 +21,11 @@ define(function(require) {
     },
 
     getHeroImageURI: function () {
-      return '/api/asset/serve/' + this.get('heroImage');
+      if(Helpers.isAssetExternal(this.get('heroImage'))) {
+        return this.get('heroImage');
+      } else {
+        return '/api/asset/serve/' + this.get('heroImage');
+      }
     },
     
     isEditable: function () {

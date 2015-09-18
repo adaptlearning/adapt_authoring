@@ -70,6 +70,11 @@ define(function(require){
 
           return hh + ':' + mm + ':' + ss;
         },
+        // checks for http/https and www. prefix
+        isAssetExternal: function(url) {
+            var urlRegEx = new RegExp(/^(https?:\/\/)|^(www\.)/);
+            return url.match(urlRegEx) !== null;
+        },
         ifValueEquals: function(value, text, block) {
             if (value === text) {
                 return block.fn(this);
@@ -202,10 +207,8 @@ define(function(require){
 
         },
 
-        // checks for http/https and www. prefix
         ifAssetIsExternal: function(url, block) {
-            var urlRegEx = new RegExp(/^(https?:\/\/)|^(www\.)/);
-            if(url.match(urlRegEx)) {
+            if(isAssetExternal(url)) {
                 return block.fn(this);
             } else {
                 return block.inverse(this);

@@ -22,7 +22,7 @@
     },
     "displayTitle": {
       "type": "string",
-      "required": true,
+      "required": false,
       "default": "New Course Title",
       "inputType": "DisplayTitle",
       "validators": [],

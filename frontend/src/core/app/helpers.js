@@ -5,7 +5,7 @@ define(function(require){
 
     var helpers = {
         console: function(context) {
-          console.log(context);
+          return console.log(context);
         },
         lowerCase: function(text) {
           return text.toLowerCase();
@@ -51,8 +51,8 @@ define(function(require){
             }
 
             return date.toDateString();
-          } 
-          
+          }
+
           return noDisplay;
         },
         formatDuration: function(duration) {
@@ -69,6 +69,11 @@ define(function(require){
           ss = (zero+ss).slice(-2);
 
           return hh + ':' + mm + ':' + ss;
+        },
+        // checks for http/https and www. prefix
+        isAssetExternal: function(url) {
+            var urlRegEx = new RegExp(/^(https?:\/\/)|^(www\.)/);
+            return url.match(urlRegEx) !== null;
         },
         ifValueEquals: function(value, text, block) {
             if (value === text) {
@@ -210,19 +215,11 @@ define(function(require){
         },
 
         ifAssetIsExternal: function(url, block) {
-
-          var urlSplit = url.split('/')
-          // Could well be a hero image for the course
-          if (urlSplit.length === 1) {
-            return block.inverse(this);
-          }
-
-          if (urlSplit[0] != "course" && urlSplit[1] != "assets") {
-            return block.fn(this);
-          } else {
-            return block.inverse(this);
-          }
-
+            if(isAssetExternal(url)) {
+                return block.fn(this);
+            } else {
+                return block.inverse(this);
+            }
         },
 
         ifAssetIsHeroImage: function(url, block) {

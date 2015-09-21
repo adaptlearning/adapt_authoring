@@ -807,28 +807,44 @@ function checkIfHigherVersionExists (package, options, cb) {
     options
   );
 
-  bower
-    .commands
-    .install([packageName], null, options) // Removed #develop tag
-    .on('end', function (info) {
-      // if info is empty, it means there is no higher version of the plugin available
-      if (Object.getOwnPropertyNames(info).length == 0 || !info[packageName].pkgMeta) {
-        return cb(null, false);
+  // Query bower to verify that the specified plugin exists.
+  bower.commands.search(packageName, options)
+    .on('error', function(err) {
+      logger.log('error', err);
+      return cb(null, false);
+    })
+    .on('end', function (results) { 
+      if (!results || results.length == 0) {
+        logger.log('warn', 'Plugin ' + packageName + ' not found!');
+        return callback('Plugin ' + packageName + ' not found!');
       }
       
-      // Semver check that the plugin is compatibile with the installed version of the framework
-      if (info[packageName].pkgMeta.framework) {
-          // Check which version of the framework we're running
-          if (semver.satisfies(semver.clean(version.adapt_framework), info[packageName].pkgMeta.framework)) {
-            return cb(null, true);
-          } else {
-            logger.log('warn', 'A later version of ' + packageName + ' is available but is not supported by the installed version of the Adapt framework');
-            return cb(null, false);
-          }
-      } else {
-        return cb(null, true);    
-      }
+      bower.commands.install([packageName], null, options) // Removed #develop tag
+      .on('end', function (info) {
+        // if info is empty, it means there is no higher version of the plugin available
+        if (Object.getOwnPropertyNames(info).length == 0 || !info[packageName].pkgMeta) {
+          return cb(null, false);
+        }
+        
+        // Semver check that the plugin is compatibile with the installed version of the framework
+        if (info[packageName].pkgMeta.framework) {
+            // Check which version of the framework we're running
+            if (semver.satisfies(semver.clean(version.adapt_framework), info[packageName].pkgMeta.framework)) {
+              return cb(null, true);
+            } else {
+              logger.log('warn', 'A later version of ' + packageName + ' is available but is not supported by the installed version of the Adapt framework');
+              return cb(null, false);
+            }
+        } else {
+          return cb(null, true);    
+        }
+      })
+      .on('error', function(err) {
+        logger.log('error', err);
+        return cb(null, false);
+      });     
     });
+  
 }
 
 /**

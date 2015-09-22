@@ -752,7 +752,10 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
     // now do search and install
     bower.commands
       .search(options._searchItems, options)
-      .on('error', cb)
+      .on('error', function(err) {
+        logger.log('error', err);
+        return cb(err);
+      })
       .on('end', function (results) {
         // lets bower install each
         async.map(results,
@@ -764,7 +767,10 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
             bower
               .commands
               .install(nameList, { save: true }, options)
-              .on('error', cb)
+              .on('error', function(err) {
+                logger.log('error', err);
+                return cb(err);
+              })
               .on('end', function (packageInfo) {
                 // add details for each to the db
                 async.eachSeries(

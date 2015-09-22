@@ -215,7 +215,7 @@ define(function(require){
         },
 
         ifAssetIsExternal: function(url, block) {
-            if(isAssetExternal(url)) {
+            if(Handlebars.helpers.isAssetExternal(url)) {
                 return block.fn(this);
             } else {
                 return block.inverse(this);

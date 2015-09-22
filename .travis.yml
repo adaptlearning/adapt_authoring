@@ -1,8 +1,40 @@
+---
 language: node_js
 node_js:
-  - "0.10.33"
-services: mongodb
+  - '0.10'
+
+sudo: required
+
+branches:
+  only:
+    - master
+    - develop
+
+git:
+  depth: 10
+
+services:
+  - mongodb
+
+cache:
+  directories:
+    - node_modules
+
 before_install:
-  - "npm install -g npm"
-  - "npm cache clean"
-  - "npm install -g adapt-cli"
+  - npm install -g npm
+  - npm install -g adapt-cli
+
+install:
+  - npm config set spin false
+  - npm install
+
+matrix:
+  fast_finish: true
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/984c2f87fa167719344b
+    on_success: change  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: false     # default: false

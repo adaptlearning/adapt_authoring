@@ -162,9 +162,12 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
             logger.log('info', '3.2. Using theme: ' + themeName);
             logger.log('info', '3.3. Using menu: ' + menuName);
 
-            logger.log('info', 'grunt server-build ' + args.join(' '));
+            var isProduction = configuration.conf.isProduction;
+            var buildMode = isProduction ? 'prod' : 'dev';
 
-            child = exec('grunt server-build ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
+            logger.log('info', 'grunt server-build:' + buildMode + ' ' + args.join(' '));
+
+            child = exec('grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
               function (error, stdout, stderr) {
                 if (error !== null) {
                   logger.log('error', 'exec error: ' + error);

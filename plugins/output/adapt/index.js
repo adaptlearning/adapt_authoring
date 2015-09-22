@@ -119,7 +119,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
         });
       },
       function(callback) {
-        var assetsFolder = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, 
+        var assetsFolder = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId,
           Constants.Folders.Build, Constants.Folders.Course, outputJson['config']._defaultLanguage, Constants.Folders.Assets);
 
         self.writeCourseAssets(tenantId, courseId, assetsFolder, outputJson, function(err, modifiedJson) {
@@ -149,12 +149,12 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
 
             var args = [];
             var outputFolder = path.join(Constants.Folders.AllCourses, tenantId, courseId);
-            
+
             // Append the 'build' folder to later versions of the framework
             if (semver.gte(semver.clean(version.adapt_framework), semver.clean('2.0.0'))) {
               outputFolder = path.join(outputFolder, Constants.Folders.Build);
             }
-            
+
             args.push('--outputdir=' + outputFolder);
             args.push('--theme=' + themeName);
             args.push('--menu=' + menuName);
@@ -182,14 +182,14 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
                   return callback(null, 'Framework built OK');
                 }
 
-                if (stderr.length != 0) {                  
+                if (stderr.length != 0) {
                   logger.log('error', 'stderr: ' + stderr);
                   resultObject.success = false;
                   return callback(stderr, 'Error (stderr) building framework!');
                 }
 
                 resultObject.success = true;
-                return callback(null, 'Framework built');  
+                return callback(null, 'Framework built');
             });
           } else {
             resultObject.success = true;
@@ -219,13 +219,13 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
 
           archive.bulk([
             { expand: true, cwd: path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build), src: ['**/*'] }
-          ]).finalize(); 
+          ]).finalize();
 
         } else {
           // No download required -- skip this step
           callback();
-        }        
-      }   
+        }
+      }
     ], function(err) {
 
       if (err) {
@@ -233,9 +233,9 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
         return next(err);
       }
 
-      
+
       return next(null, resultObject);
-    });   
+    });
 
 };
 /**

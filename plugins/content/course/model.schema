@@ -20,6 +20,14 @@
         "required"
       ]
     },
+    "displayTitle": {
+      "type": "string",
+      "required": false,
+      "default": "New Course Title",
+      "inputType": "DisplayTitle",
+      "validators": [],
+      "help": "This is the title that will be displayed on the main menu"
+    },
     "body": {
       "type": "string",
       "default": "",

@@ -9,23 +9,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:3000" on the host will access port 3000 on the guest machine.
-  config.vm.network "forwarded_port", guest: 3000, host: 3000
+  # accessing "localhost:5000" on the host will access port 5000 on the guest machine.
+  config.vm.network "forwarded_port", guest: 5000, host: 5000
   config.vm.network "forwarded_port", guest: 27017, host: 27027
 
-  # Enable provisioning with chef solo
-  # see http://berkshelf.com/ for details of this
-  # end
-  config.berkshelf.enabled = true
-  
-  config.vm.provision :chef_solo do |chef|
-    chef.add_recipe "git"
-    chef.add_recipe "nodejs"
-    chef.add_recipe "mongodb::mongodb_org_repo"
-    chef.add_recipe "mongodb::default"
-    chef.add_recipe "grunt_cookbook::install_grunt_cli"
-  end
-
-  config.vm.provision "shell", path: "vagrant_setup.sh"
+  config.vm.provision "shell", path: "vagrant_setup.sh", privileged: true
+  config.vm.provision "shell", path: "pm2_start.sh", privileged: true, run: "always"
 
 end

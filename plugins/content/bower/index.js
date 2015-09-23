@@ -821,7 +821,7 @@ function checkIfHigherVersionExists (package, options, cb) {
     .on('end', function (results) { 
       if (!results || results.length == 0) {
         logger.log('warn', 'Plugin ' + packageName + ' not found!');
-        return callback('Plugin ' + packageName + ' not found!');
+        return cb('Plugin ' + packageName + ' not found!');
       }
       
       bower.commands.install([packageName], null, options) // Removed #develop tag

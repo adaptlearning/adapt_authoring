@@ -2,6 +2,7 @@
 define(function(require){
 
   var Backbone = require('backbone');
+  var Helpers = require('coreJS/app/helpers');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
   var AssetModel = require('coreJS/assetManagement/models/assetModel');
@@ -31,11 +32,15 @@ define(function(require){
           $('.loading').hide();
           var message = 'There was an error uploading the plugin';
 
-          if (data && data.responseJSON && data.responseJSON.error) {
-            message += ":\n\n" + data.responseJSON.error;
+          if (data) {
+              if (data.responseText) {
+                  message += ":\n\n" + data.responseText;
+              } else if(data.responseJSON && data.responseJSON.error) {
+                  message += ":\n\n" + data.responseJSON.error;
+              }
           }
 
-          alert(message);
+          alert(Helpers.decodeHTML(message));
 
           // go back to the upload, maybe handle this in the sidebar?
           Origin.router.navigate('#/pluginManagement/upload', { trigger: true });

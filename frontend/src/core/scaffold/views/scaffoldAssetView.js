@@ -187,9 +187,9 @@ define(function(require) {
         },
 
         onClearButtonClicked: function(event) {
-            event.preventDefault();
-            this.setValue('');
+            event.preventDefault();            
             this.checkValueHasChanged();
+            this.setValue('');
             this.toggleFieldAvailibility();
         },
 

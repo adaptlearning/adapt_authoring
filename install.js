@@ -115,30 +115,30 @@ var configItems = [
     },
     default: 'N'
   },
-//  {
-//    name: 'smtpService',
-//    type: 'string',
-//    description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
-//    default: 'none'
-//  },
-//  {
-//    name: 'smtpUsername',
-//    type: 'string',
-//    description: "SMTP username",
-//    default: ''
-//  },
-//  {
-//    name: 'smtpPassword',
-//    type: 'string',
-//    description: "SMTP password",
-//    hidden: true
-//  },
-//  {
-//    name: 'fromAddress',
-//    type: 'string',
-//    description: "Sender email address",
-//    default: ''
-//  },
+  {
+    name: 'smtpService',
+    type: 'string',
+    description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
+    default: 'none'
+  },
+  {
+    name: 'smtpUsername',
+    type: 'string',
+    description: "SMTP username",
+    default: ''
+  },
+  {
+    name: 'smtpPassword',
+    type: 'string',
+    description: "SMTP password",
+    hidden: true
+  },
+  {
+    name: 'fromAddress',
+    type: 'string',
+    description: "Sender email address",
+    default: ''
+  },
   // {
   //   name: 'outputPlugin',
   //   type: 'string',

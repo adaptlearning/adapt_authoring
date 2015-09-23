@@ -763,7 +763,6 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
             next(null, item.name);
           },
           function (err, nameList) {
-            nameList = plugin.nameList; // TODO - remove when components/extensions are up to date
             bower
               .commands
               .install(nameList, { save: true }, options)
@@ -778,7 +777,7 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
                   function (key, next) {         
                     if (packageInfo[key].pkgMeta.framework) {
                       // If the plugin defines a framework, ensure that it is compatible
-                      if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].framework)) {
+                      if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].pkgMeta.framework)) {
                         addPackage(plugin, packageInfo[key], options, next); 
                       } else {
                         logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');

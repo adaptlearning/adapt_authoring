@@ -1,5 +1,8 @@
 #!/bin/bash
+#
+# This script handles the provisioning of software for the machine.
 
+# need this ppa for ffmpeg on trusty tahr
 add-apt-repository ppa:mc3man/trusty-media
 apt-get update
 apt-get dist-upgrade
@@ -12,16 +15,21 @@ apt-get install -y ffmpeg
 curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
 apt-get install -y nodejs
 
-# npm needs some swap space
+# npm needs some swap space, else it fails
 fallocate -l 1G /swapfile
 chmod 600 /swapfile
 mkswap /swapfile
 swapon /swapfile
 
+# global npm dependencies
 npm install -g pm2
 npm install -g grunt-cli
 npm install -g adapt-cli
 
+# run the install with some default configuration settings
+# url: http://localhost:5000
+# username: admin
+# password: password
 cd /vagrant/
 npm install --production
 node install --install Y --serverPort 5000 --serverName localhost --dbHost localhost \

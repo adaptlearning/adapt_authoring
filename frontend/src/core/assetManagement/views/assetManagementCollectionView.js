@@ -95,13 +95,9 @@ define(function(require){
               this.collection.reset();
             }
 
-            var isDeleted = [false];
-            // Only super admins can see the deleted assets
-            var permissions = ["*"];
-
-            if (Origin.permissions.hasPermissions(permissions)) {
-                isDeleted.push(true);
-            }
+            if (!Origin.permissions.hasPermissions(["*"])) {
+                this.search = {_isDeleted: false};
+            } 
 
             this.search = _.extend(this.search, {
                 tags: {
@@ -110,10 +106,6 @@ define(function(require){
             }, {
                 assetType: {
                     $in: this.filters
-                }
-            }, {
-                _isDeleted: {
-                    $in: isDeleted
                 }
             });
 

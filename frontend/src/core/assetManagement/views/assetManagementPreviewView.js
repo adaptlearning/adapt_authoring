@@ -57,19 +57,23 @@ define(function(require){
         Origin.trigger('assetManagement:assetPreviewView:delete');
         this.remove();
       }
-      
     },
 
     onRestoreButtonClicked: function(event) {
       event.preventDefault();
+      var self = this;
+      
+      var shouldRestoreAsset = confirm(window.polyglot.t('app.assetconfirmrestore'));
 
-      var shouldDeleteAsset = confirm(window.polyglot.t('app.assetconfirmrestore'));
-
-      if (shouldDeleteAsset) {
-        $.put('/asset/restore/' + this.model.get('_id'), _.bind(function() {
-          Origin.trigger('assetManagement:assetPreviewView:delete');
-          this.remove();
-        }, this));
+      if (shouldRestoreAsset) {
+        $.ajax({
+          url: '/api/asset/restore/' + self.model.get('_id'),
+          type: 'PUT',
+          success: function() {
+            Origin.trigger('assetManagement:assetPreviewView:delete');
+            self.remove();
+          }
+        });
       }
     }
 

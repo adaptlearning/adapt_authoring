@@ -95,7 +95,10 @@ define(function(require){
               this.collection.reset();
             }
 
-            this.search = {_isDeleted: false};
+            if (!Origin.permissions.hasPermissions(["*"])) {
+                this.search = {_isDeleted: false};
+            } 
+
             this.search = _.extend(this.search, {
                 tags: {
                     $in: this.tags

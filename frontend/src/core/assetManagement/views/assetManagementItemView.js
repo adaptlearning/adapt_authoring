@@ -23,6 +23,14 @@ define(function(require){
         this.listenTo(Origin, 'assetManagement:assetViews:remove', this.remove);
         this.listenTo(this, 'remove', this.remove);
         this.listenTo(this.model, 'destroy', this.remove);
+        this.listenTo(this.model, 'change:_isDeleted', this.onReRender);
+    },
+
+    onReRender: function() {
+      this.render();
+      _.defer(_.bind(function() {
+        this.onInview();
+      }, this));
     },
 
     postRender: function() {

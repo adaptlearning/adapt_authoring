@@ -66,12 +66,10 @@ define(function(require){
       var shouldDeleteAsset = confirm(window.polyglot.t('app.assetconfirmrestore'));
 
       if (shouldDeleteAsset) {
-        $.put('/asset/restore/' + this.model.get('_id'), function() {
-          console.log(arguments);
+        $.put('/asset/restore/' + this.model.get('_id'), _.bind(function() {
           Origin.trigger('assetManagement:assetPreviewView:delete');
           this.remove();
-        }) 
-        /*this.model.save({_isDeleted: false}, {patch: true})*/
+        }, this));
       }
     }
 

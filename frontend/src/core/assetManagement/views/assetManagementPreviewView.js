@@ -14,7 +14,8 @@ define(function(require){
     events: {
       'click a.confirm-select-asset' : 'selectAsset',
       'click .asset-preview-edit-button': 'onEditButtonClicked',
-      'click .asset-preview-delete-button': 'onDeleteButtonClicked'
+      'click .asset-preview-delete-button': 'onDeleteButtonClicked',
+      'click .asset-preview-restore-button': 'onRestoreButtonClicked'
     },
 
     preRender: function() {
@@ -57,6 +58,21 @@ define(function(require){
         this.remove();
       }
       
+    },
+
+    onRestoreButtonClicked: function(event) {
+      event.preventDefault();
+
+      var shouldDeleteAsset = confirm(window.polyglot.t('app.assetconfirmrestore'));
+
+      if (shouldDeleteAsset) {
+        $.post('/asset/restore/' + this.model.get('_id'), function() {
+          console.log(arguments);
+          Origin.trigger('assetManagement:assetPreviewView:delete');
+          this.remove();
+        }) 
+        /*this.model.save({_isDeleted: false}, {patch: true})*/
+      }
     }
 
   }, {

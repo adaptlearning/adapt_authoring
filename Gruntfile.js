@@ -17,7 +17,7 @@ module.exports = function(grunt) {
             {
               expand: true,
               flatten: true,
-              src: ['frontend/src/core/**/assets/**'],
+              src: ['frontend/src/core/**/assets/**','frontend/src/plugins/**/assets/**'],
               dest: 'frontend/src/adaptbuilder/css/assets/',
               filter: 'isFile'
             },

@@ -18,7 +18,8 @@ define(function(require) {
 
 	// loads the built-in plugins in ./plugins
 	function loadPLugins() {
-		// TODO
+		var notifyConsole = require('./plugins/console/index');
+		notifyConsole();
 	};
 
 	return Notify;

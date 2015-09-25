@@ -23,6 +23,9 @@ define(function(require) {
 
 		var notifyConsole = require('./plugins/console/index');
 		notifyConsole();
+
+		var notifyToastr = require('./plugins/toastr/index');
+		notifyToastr();
 	};
 
 	return Notify;

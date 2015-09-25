@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 	var Origin = require('coreJS/app/origin');
-	var toastr = require('./toastr.min.js');
+	var toastr = require('./toastr.min');
 
 	// TODO do this properly...
 	(function loadCss(url) {
@@ -18,10 +18,14 @@ define(function(require) {
 
 	var Toastr = function(data) {
 		if(!toastr[data.type]) console.log("Notify.toastr: invalid type '" + data.type + "'");
-		
+
 		if(data.callback) data.onHidden = data.callback;
 		toastr[data.type](data.text, data.title, data);
 	};
 
-	Origin.Notify.register('toastr', Toastr);
+	var init = function() {
+		Origin.Notify.register('toastr', Toastr);
+	};
+
+	return init;
 });

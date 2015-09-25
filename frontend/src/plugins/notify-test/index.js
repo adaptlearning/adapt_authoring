@@ -74,5 +74,6 @@ define(function(require) {
 		];
 		// iterate through
 		tests[index++]();
+		if(index === tests.length) index = 0;
 	});
 });

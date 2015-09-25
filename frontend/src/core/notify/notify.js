@@ -18,6 +18,9 @@ define(function(require) {
 
 	// loads the built-in plugins in ./plugins
 	function loadPLugins() {
+		var notifyAlert = require('./plugins/alert/index');
+		notifyAlert();
+
 		var notifyConsole = require('./plugins/console/index');
 		notifyConsole();
 	};

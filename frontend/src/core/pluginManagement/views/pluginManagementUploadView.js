@@ -33,11 +33,11 @@ define(function(require){
 
           var message = '';
           if (data) {
-              if (data.responseText) {
-                  message += ":\n\n" + data.responseText;
-              } else if(data.responseJSON && data.responseJSON.error) {
-                  message += ":\n\n" + data.responseJSON.error;
-              }
+            if (data.responseText) {
+              message = data.responseText;
+            } else if(data.responseJSON && data.responseJSON.error) {
+              message = data.responseJSON.error;
+            }
           }
           Origin.Notify.alert({
             type: 'error',

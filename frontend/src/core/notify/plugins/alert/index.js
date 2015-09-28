@@ -72,6 +72,10 @@ define(function(require) {
 	var init = function() {
 		Origin.Notify.register('alert', Alert);
 		Origin.Notify.register('confirm', Confirm);
+
+		// shortcuts to override window methods
+		window.alert = alert = Alert;
+		window.confirm = confirm = Confirm;
 	};
 
 	return init;

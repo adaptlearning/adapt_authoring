@@ -30,8 +30,8 @@ define(function(require){
       this.$('.plugin-form').ajaxSubmit({
         error: function(data, status, error) {
           $('.loading').hide();
-          var message = 'There was an error uploading the plugin';
 
+          var message = '';
           if (data) {
               if (data.responseText) {
                   message += ":\n\n" + data.responseText;
@@ -39,14 +39,22 @@ define(function(require){
                   message += ":\n\n" + data.responseJSON.error;
               }
           }
-
-          alert(Helpers.decodeHTML(message));
+          Origin.Notify.alert({
+            type: 'error',
+            title: window.polyglot.t('app.uploadpluginerror'),
+            text: Helpers.decodeHTML(message)
+          });
 
           // go back to the upload, maybe handle this in the sidebar?
           Origin.router.navigate('#/pluginManagement/upload', { trigger: true });
         },
         success: function(data, status, xhr) {
           Origin.trigger('scaffold:updateSchemas', function() {
+            Origin.Notify.toastr({
+              type: 'success',
+              text: window.polyglot.t('app.uploadpluginsuccess')
+            });
+
             $('.loading').hide();
             var pluginType = data.pluginType ? data.pluginType : '';
             Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger:true});

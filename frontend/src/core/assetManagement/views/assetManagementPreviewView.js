@@ -48,15 +48,18 @@ define(function(require){
 
     onDeleteButtonClicked: function(event) {
       event.preventDefault();
+      Origin.Notify.confirm({
+        text: window.polyglot.t('app.assetconfirmdelete'),
+        callback: _.bind(this.onDeleteConfirmed, this)
+      });
+    },
 
-      var shouldDeleteAsset = confirm(window.polyglot.t('app.assetconfirmdelete'));
-
-      if (shouldDeleteAsset) {
+    onDeleteConfirmed: function(confirmed) {
+      if (confirmed) {
         this.model.destroy();
         Origin.trigger('assetManagement:assetPreviewView:delete');
         this.remove();
       }
-      
     }
 
   }, {

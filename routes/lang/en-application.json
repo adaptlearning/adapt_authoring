@@ -73,6 +73,8 @@
 	"app.editthistext": "{Edit this text}",
 	"app.overview": "Overview",
 	"app.resetpassword": "Reset password",
+	"app.resetpasswordsuccess": "You password has been changed",
+	"app.resetpassworderror": "Your password could not be changed",
 	"app.submit": "Submit",
 	"app.newpassword": "New password",
 	"app.forgotpasswordblurb": "Enter the e-mail address associated with your Learning Pool Adapt account, then click Continue. We'll email you a link to a page where you can easily create a new password.",

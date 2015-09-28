@@ -14,14 +14,6 @@ define(function(require) {
 	})();
 
 	function getSettings(data) {
-		// allow for string input
-		if(_.isString(data)) {
-			data = {
-				title: " ",
-				text: data
-			};
-		}
-
 		var defaults = {
 			title: null,
 			animation: "slide-from-bottom",
@@ -61,10 +53,22 @@ define(function(require) {
 	}
 
 	var Alert = function(data) {
+		// allow for string input
+		if(_.isString(data)) {
+			data = {
+				title: data
+			};
+		}
 		openPopup(data);
 	};
 
 	var Confirm = function(data) {
+		// allow for string input
+		if(_.isString(data)) {
+			data = {
+				text: data
+			};
+		}
 		data.type = "confirm";
 		openPopup(data);
 	};

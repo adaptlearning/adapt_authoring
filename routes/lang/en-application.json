@@ -205,7 +205,7 @@
 	"app.pluginmanagement": "Plugin Management",
 	"app.uploadplugin": "Upload Plugin",
 	"app.uploadpluginsuccess": "The plugin was uploaded successfully!",
-	"app.uploadpluginerror": "Toastr",
+	"app.uploadpluginerror": "Plugin upload failed",
 	"app.uploadedbyuser": "Uploaded By User",
 	"app.pluginfile": "Plugin File",
 	"app.menupicker": "Menu picker",

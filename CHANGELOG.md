@@ -118,3 +118,10 @@ Changes below come from submissions by several developers:
  - fixed session cookie security issues
  - asset records now use relative paths
  - removed iframe previews
+
+[unreleased]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/adaptlearning/adapt_authoring/tree/v0.1.0
+
+

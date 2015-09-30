@@ -48,7 +48,7 @@ describe('contentmanager', function() {
         db.destroy('course', { _id: contentObj._id }, function (error) {
           db.destroy('course', { _id: otherContentObj._id }, done);
         });
-      });
+      }, configuration.getConfig('dbName'));
     }
   });
 

@@ -50,6 +50,7 @@ define(function(require) {
       }
       this.modalView = new this.view(this.options);
       this.$('.modal-popup-content-inner').append(this.modalView.$el);
+      $('html').addClass('no-scroll');
     },
 
     onCloseButtonClicked: function(event) {
@@ -85,6 +86,7 @@ define(function(require) {
       }
       this.modalView.remove();
       Origin.trigger('modal:closed');
+      $('html').removeClass('no-scroll');
       this.remove();
     }
 

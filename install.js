@@ -38,21 +38,21 @@ var configItems = [
     description: 'Server name',
     default: 'localhost'
   },
-  {
-    name: 'dbType',
-    type: 'string',
-    description: getDriversPrompt(),
-    conform: function (v) {
-      // validate against db drivers
-      v = parseInt(v, 10);
-      return  v > 0 && v <= drivers.length;
-    },
-    before: function (v) {
-      // convert's the numeric answer to one of the available drivers
-      return drivers[(parseInt(v, 10) - 1)];
-    },
-    default: '1'
-  },
+  // {
+  //   name: 'dbType',
+  //   type: 'string',
+  //   description: getDriversPrompt(),
+  //   conform: function (v) {
+  //     // validate against db drivers
+  //     v = parseInt(v, 10);
+  //     return  v > 0 && v <= drivers.length;
+  //   },
+  //   before: function (v) {
+  //     // convert's the numeric answer to one of the available drivers
+  //     return drivers[(parseInt(v, 10) - 1)];
+  //   },
+  //   default: '1'
+  // },
   {
     name: 'dbHost',
     type: 'string',
@@ -87,21 +87,21 @@ var configItems = [
     pattern: /^.+$/,
     default: 'your-session-secret'
   },
-  {
-    name: 'auth',
-    type: 'string',
-    description: getAuthPrompt(),
-    conform: function (v) {
-      // validate against auth types
-      v = parseInt(v, 10);
-      return  v > 0 && v <= auths.length;
-    },
-    before: function (v) {
-      // convert's the numeric answer to one of the available auth types
-      return auths[(parseInt(v, 10) - 1)];
-    },
-    default: '1'
-  },
+  // {
+  //   name: 'auth',
+  //   type: 'string',
+  //   description: getAuthPrompt(),
+  //   conform: function (v) {
+  //     // validate against auth types
+  //     v = parseInt(v, 10);
+  //     return  v > 0 && v <= auths.length;
+  //   },
+  //   before: function (v) {
+  //     // convert's the numeric answer to one of the available auth types
+  //     return auths[(parseInt(v, 10) - 1)];
+  //   },
+  //   default: '1'
+  // },
   {
     name: 'useffmpeg',
     type: 'string',
@@ -138,12 +138,12 @@ var configItems = [
     description: "Sender email address",
     default: ''
   },
-  {
-    name: 'outputPlugin',
-    type: 'string',
-    description: "Which output plugin will be used?",
-    default: 'adapt'
-  }
+  // {
+  //   name: 'outputPlugin',
+  //   type: 'string',
+  //   description: "Which output plugin will be used?",
+  //   default: 'adapt'
+  // }
 ];
 
 tenantConfig = [
@@ -214,7 +214,7 @@ var steps = [
   },
   // configure environment
   function configureEnvironment (next) {
-    console.log('You will now be prompted to set configuration items. Just press enter to accept the default.');
+    console.log('You will now be prompted to set configuration items. Just press ENTER to accept the default value (in brackets).');
     prompt.get(configItems, function (err, results) {
       if (err) {
         console.log('ERROR: ', err);
@@ -318,22 +318,39 @@ var steps = [
   },
   // install content plugins
   function installContentPlugins (next) {
-    async.eachSeries(['extension', 'component', 'theme', 'menu'], function (contentType, cb) {
-      app.contentmanager.getContentPlugin(contentType, function (err, plugin) {
-        if (err) {
-          console.log('ERROR: ', err);
-          return exitInstall(1, 'Plugin install was unsuccessful. Please check the console output.');
-        }
+    // Interrogate the adapt.json file from the adapt_framework folder and install the latest versions of the core plugins
+     fs.readFile(path.join(process.cwd(), 'temp', app.configuration.getConfig('masterTenantID').toString(), 'adapt_framework', 'adapt.json'), function (err, data) {
+      if (err) {
+        console.log('ERROR: ' + err);
+        return next(err); 
+      }
+      
+      var json = JSON.parse(data);
+      // 'dependencies' contains a key-value pair representing the plugin name and the semver
+      var plugins = Object.keys(json.dependencies);
+      
+      async.eachSeries(plugins, function(plugin, pluginCallback) {
+        app.bowermanager.installPlugin(plugin, json.dependencies[plugin], function(err) {
+          if (err) {
+            return pluginCallback(err);
+          }
+          
+          pluginCallback();
+        });
 
-        console.log('  installing ' + plugin.getPluginType() + ' plugins');
-        plugin.updatePackages(plugin.bowerConfig, { tenantId: masterTenant._id.toString(), skipTenantCopy: true }, cb);
+      }, function(err) {
+        if (err) {
+          console.log(err);
+          return next(err);
+        } 
+        
+        next();
       });
-    },
-    next);
+    });
   },
   // configure the super awesome user
   function createSuperUser (next) {
-    console.log("Create the super user account. This account can be used to manage everything on your Adapt builder instance.");
+    console.log("Create the super user account. This account can be used to manage everything on your Adapt Builder instance.");
     prompt.get(userConfig, function (err, result) {
       if (err) {
         console.log('ERROR: ', err);
@@ -377,7 +394,7 @@ var steps = [
   },
   // run grunt build
   function gruntBuild (next) {
-    console.log('Compiling the front end application, please wait a moment ... ');
+    console.log('Compiling the Adapt Builder web application, please wait a moment ... ');
     var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function (err) {
       if (err) {
         console.log('ERROR: ', err);
@@ -386,7 +403,7 @@ var steps = [
         return next();
       }
 
-      console.log('The front end application was compiled.');
+      console.log('The Adapt Builder web application was compiled and is now ready to use.');
       return next();
     });
 
@@ -404,7 +421,7 @@ var steps = [
 prompt.start();
 
 // Prompt the user to begin the install
-console.log('This will install the Adapt builder. Would you like to continue?');
+console.log('This script will install the Adapt Builder. Would you like to continue?');
 prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
   if (!/(Y|y)[es]*$/.test(result['Y/n'])) {
     return exitInstall();
@@ -442,6 +459,11 @@ function saveConfig (configItems, next) {
     console.log('ERROR: Failed to write .env file. Do you have write permissions for the current directory?');
     process.exit(1, 'Install Failed.');
   }
+  
+  // Defaulting these config settings until there are actual options.
+  configItems.outputPlugin = 'adapt';
+  configItems.dbType = 'mongoose';
+  configItems.auth = 'local';
   
   // write the config.json file!
   if (0 === fs.writeSync(fs.openSync(path.join('conf', 'config.json'), 'w'), JSON.stringify(configItems))) {

@@ -31,9 +31,7 @@ var bowerConfig = {
   packageType: 'theme',
   srcLocation: 'theme',
   options: defaultOptions,
-  nameList: [
-    'adapt-contrib-vanilla'
-  ],
+  nameList: [],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     // Not required for themes
     return next();

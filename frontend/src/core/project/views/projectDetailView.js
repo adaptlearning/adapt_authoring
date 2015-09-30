@@ -19,6 +19,9 @@ define(function(require) {
         this.$el.addClass('project-detail-hide-hero');
         // Initialise the 'tags' property for a new course
         this.model.set('tags', []);
+      } else {
+        // Ensure that the latest config model is always up-to-date when entering this screen
+        Origin.editor.data.config = new EditorConfigModel({_courseId: this.model.get('_id')});
       }
       
       // This next line is important for a proper PATCH request on saveProject()
@@ -64,7 +67,6 @@ define(function(require) {
           },
           success: _.bind(function(model, response, options) {
             
-            Origin.trigger('editingOverlay:views:hide');
             if (this.isNew) {
               return Backbone.history.navigate('#/editor/' + response._id + '/menu', {trigger: true});
             }

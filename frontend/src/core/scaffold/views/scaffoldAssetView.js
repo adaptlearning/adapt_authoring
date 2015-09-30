@@ -103,7 +103,7 @@ define(function(require) {
 
         checkValueHasChanged: function() {
             if ('heroImage' === this.key){
-                this.saveModel(false);
+                this.saveModel(false, {heroImage: this.getValue()});
                 return;
             }
             var contentTypeId = Origin.scaffold.getCurrentModel().get('_id');
@@ -148,7 +148,7 @@ define(function(require) {
 
                         if ('heroImage' === this.key){
                             this.setValue(data.assetId);
-                            this.saveModel(false);
+                            this.saveModel(false, {heroImage: data.assetId});
                             return;
                         }
                         // Setup courseasset
@@ -187,7 +187,7 @@ define(function(require) {
         },
 
         onClearButtonClicked: function(event) {
-            event.preventDefault();
+            event.preventDefault();            
             this.checkValueHasChanged();
             this.setValue('');
             this.toggleFieldAvailibility();
@@ -260,13 +260,19 @@ define(function(require) {
             }
         },
 
-        saveModel: function(shouldResetAssetCollection) {
+        saveModel: function(shouldResetAssetCollection, attributesToSave) {
             var that = this;
-            var attributesToSave = {};
+            // var attributesToSave = {};
             var isUsingAlternativeModel = false;
             var currentModel = Origin.scaffold.getCurrentModel()
             var alternativeModel = Origin.scaffold.getAlternativeModel();
             var alternativeAttribute = Origin.scaffold.getAlternativeAttribute();
+            var isPatch = false;
+            
+            attributesToSave = typeof attributesToSave == 'undefined' 
+              ? null
+              : attributesToSave;
+              
             // Check if alternative model should be used
             if (alternativeModel) {
                 currentModel = alternativeModel;
@@ -276,18 +282,20 @@ define(function(require) {
             var currentForm = Origin.scaffold.getCurrentForm();
             var errors = currentForm.commit({validate: false});
 
-
-            currentModel.pruneAttributes();
             // Check if alternative attribute should be used
             if (alternativeAttribute) {
-                currentModel.unset('tags');
                 attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
+            } 
+            
+            if (!attributesToSave) {
+               currentModel.pruneAttributes();
+               currentModel.unset('tags');
             } else {
-                currentModel.unset('tags');
-                attributesToSave = null;
+              isPatch = true;
             }
 
             currentModel.save(attributesToSave, {
+                patch: isPatch,
                 error: function() {
                     alert('An error occurred doing the save');
                 },

@@ -31,9 +31,7 @@ var bowerConfig = {
   packageType: 'menu',
   srcLocation: 'menu',
   options: defaultOptions,
-  nameList: [
-    'adapt-contrib-boxMenu'
-  ],
+  nameList: [],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     // Not required for menus
     return next();

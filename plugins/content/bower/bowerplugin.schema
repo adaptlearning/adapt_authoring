@@ -20,6 +20,10 @@
       "type": "string",
       "required": true
     },
+    "framework":{
+      "type": "string",
+      "required": false
+    },
     "_isAvailableInEditor": {
       "type":"boolean",
       "default": true,

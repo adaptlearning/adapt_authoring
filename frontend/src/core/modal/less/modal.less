@@ -33,6 +33,7 @@
         background-color: @modal-color;
         color: #000;
         height: 100%;
+        overflow-y: scroll;
     }
 
     i {
@@ -80,6 +81,10 @@
         .no-touch &:hover {
             color:@modal-icon-hover-color;
         }
+    }
+
+    .modal-popup-content-inner {
+        overflow-y:auto;
     }
 
 }

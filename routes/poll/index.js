@@ -13,7 +13,7 @@ server.get('/poll/:id', function (request, response, next) {
 
   var pollUrl = configuration.getConfig('buildServerStatusUrl');
 
-  if (pollUrl && id != 0) {
+  if (pollUrl && id !== 0) {
 
     var req = http.get(pollUrl + id, function(res) {
       // Buffer the body entirely for processing as a whole.

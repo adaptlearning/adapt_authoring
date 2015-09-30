@@ -4,6 +4,9 @@ define(function(require){
     var Origin = require('coreJS/app/origin');
 
     var helpers = {
+        console: function(context) {
+          return console.log(context);
+        },
         lowerCase: function(text) {
           return text.toLowerCase();
         },
@@ -48,8 +51,8 @@ define(function(require){
             }
 
             return date.toDateString();
-          } 
-          
+          }
+
           return noDisplay;
         },
         formatDuration: function(duration) {
@@ -66,6 +69,11 @@ define(function(require){
           ss = (zero+ss).slice(-2);
 
           return hh + ':' + mm + ':' + ss;
+        },
+        // checks for http/https and www. prefix
+        isAssetExternal: function(url) {
+            var urlRegEx = new RegExp(/^(https?:\/\/)|^(www\.)/);
+            return url.match(urlRegEx) !== null;
         },
         ifValueEquals: function(value, text, block) {
             if (value === text) {
@@ -162,6 +170,11 @@ define(function(require){
 
           return html;
         },
+        decodeHTML: function(html) {
+          var el = document.createElement('div');
+          el.innerHTML = html;
+          return el.childNodes.length === 0 ? "" : el.childNodes[0].nodeValue;
+        },
 
         ifHasPermissions: function(permissions, block) {
           var permissionsArray = permissions.split(',');
@@ -170,10 +183,6 @@ define(function(require){
           } else {
             return block.inverse(this);
           }
-        },
-
-        console: function(context) {
-          return console.log(context);
         },
 
         getAssetFromValue: function(url) {
@@ -187,6 +196,14 @@ define(function(require){
 
         },
 
+        ifImageIsCourseAsset: function(url, block) {
+          if (url.length !== 0 && url.indexOf('course/assets') == 0) {
+            return block.fn(this);
+          } else {
+            return block.inverse(this);
+          }
+        },
+        
         getThumbnailFromValue: function(url) {
 
           var urlSplit = url.split('/')
@@ -203,19 +220,11 @@ define(function(require){
         },
 
         ifAssetIsExternal: function(url, block) {
-
-          var urlSplit = url.split('/')
-          // Could well be a hero image for the course
-          if (urlSplit.length === 1) {
-            return block.inverse(this);
-          }
-
-          if (urlSplit[0] != "course" && urlSplit[1] != "assets") {
-            return block.fn(this);
-          } else {
-            return block.inverse(this);
-          }
-
+            if(Handlebars.helpers.isAssetExternal(url)) {
+                return block.fn(this);
+            } else {
+                return block.inverse(this);
+            }
         },
 
         ifAssetIsHeroImage: function(url, block) {

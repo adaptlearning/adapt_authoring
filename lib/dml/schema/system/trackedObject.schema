@@ -4,37 +4,50 @@
   "id": "http://jsonschema.net",
   "required":false,
   "properties":{
-      "createdAt": {
-          "type":"date",
-          "id": "http://jsonschema.net/createdAt",
-          "required":false,
-          "editorOnly": true
-      },
-      "createdBy": {
-          "type":"objectid",
-          "id": "http://jsonschema.net/createdBy",
-          "required":false,
-          "ref": "user",
-          "editorOnly": true
-      },
-      "_isDeleted": {
-          "type":"boolean",
-          "id": "http://jsonschema.net/deleted",
-          "default":false,
-          "editorOnly": true
-      },
-      "updatedAt": {
-          "type":"date",
-          "id": "http://jsonschema.net/updatedAt",
-          "required":false,
-          "editorOnly": true
-      },
-      "updatedBy": {
-          "type":"objectid",
-          "id": "http://jsonschema.net/updatedBy",
-          "required":false,
-          "ref": "user",
-          "editorOnly": true
-      }
+    "createdAt": {
+      "type":"date",
+      "id": "http://jsonschema.net/createdAt",
+      "required":false,
+      "editorOnly": true
+    },
+    "createdBy": {
+      "type":"objectid",
+      "id": "http://jsonschema.net/createdBy",
+      "required":false,
+      "ref": "user",
+      "editorOnly": true
+    },
+    "_isDeleted": {
+      "type":"boolean",
+      "id": "http://jsonschema.net/deleted",
+      "default":false,
+      "editorOnly": true
+    },
+    "updatedAt": {
+      "type":"date",
+      "id": "http://jsonschema.net/updatedAt",
+      "required":false,
+      "editorOnly": true
+    },
+    "updatedBy": {
+      "type":"objectid",
+      "id": "http://jsonschema.net/updatedBy",
+      "required":false,
+      "ref": "user",
+      "editorOnly": true
+    },
+    "deletedAt": {
+      "type":"date",
+      "id": "http://jsonschema.net/deletedAt",
+      "required":false,
+      "editorOnly": true
+    },
+    "deletedBy": {
+      "type":"objectid",
+      "id": "http://jsonschema.net/deletedBy",
+      "required":false,
+      "ref": "user",
+      "editorOnly": true
+    }
   }
 }

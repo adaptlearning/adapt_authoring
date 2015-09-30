@@ -42,7 +42,12 @@
   </div>
   {{/if}}
   <div class="asset-preview-edit">
+    {{#if _isDeleted}}
+    <button class="asset-preview-restore-button btn btn-alert">{{t 'app.restore'}}</button>
+    {{else}}
     <button class="asset-preview-edit-button btn btn-primary">{{t 'app.edit'}}</button>
+    <button class="asset-preview-delete-button btn btn-alert">{{t 'app.delete'}}</button>
+    {{/if}}
   </div>
 
 </div>

@@ -20,7 +20,8 @@ define(function(require){
 
     preRender: function() {
         this.listenTo(Origin, 'window:resize', this.resizeAssetPanels);
-        this.listenTo(Origin, 'assetManagement:assetItemView:preview', this.onAssetClicked)
+        this.listenTo(Origin, 'assetManagement:assetItemView:preview', this.onAssetClicked);
+        this.listenTo(Origin, 'assetManagement:assetPreviewView:delete', this.onAssetDeleted);
     },
 
     postRender: function() {
@@ -53,6 +54,10 @@ define(function(require){
         this.$('.asset-management-preview-container-inner').html(new AssetManagementPreviewView({
             model: model
         }).$el);
+    },
+
+    onAssetDeleted: function() {
+        this.$('.asset-management-no-preview').show();
     }
     
   }, {

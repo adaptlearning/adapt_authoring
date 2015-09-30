@@ -2,52 +2,61 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased][unreleased]
-### Changed
 
 ## [0.1.2] - 2015-09-30
+IMPORTANT: If upgrading from a previous installation, first remove the node_modules folder and run
+```javascript 
+npm install --production
+```
+ to install the latest code dependencies, then run
+```javascript 
+node upgrade
+``` 
+ to get the latest authoring tool and framework changes.
+
 ### Added
-- Adapt v2.0: Add support for _isOptional
-- Adapt v2.0 - Add support for accessibility
-- Adapt v2.0 - Make Publish/Preview with new framework Gruntfile
-- Adapt v2.0 - Update templates, views and models for new attributes
-- Automatically run 'npm install' and 'grunt build' from the upgrade
-- Add support for table editing
-- 'Global' configs for plugins should be conditionally applied
-- Support plugin globals
+- Support for _isOptional (Adapt Framework v2.x)
+- Support for accessibility (Adapt Framework v2.x)
+- Support for plugin 'globals' (Adapt Framework v2.x)
+- Improved install/upgrade
+- 'Global' configurations for plugins are conditionally applied
+- Added basic browser-based spell-check to HTML editor
+- Table editing is now an option on the HTML editor
+- Any <span> tag added in the HTML editor is now preserved
+- Support for 'Autofill' on graphic components
+- Confirmation when deleting a component/extension item, such as a narrative or question stem
+- Ability to delete assets
+- Support for Adapt Framework v2.x assessment extension
 
 ### Changed
-- Bump 'winston' references
-- Update login logo
-- CK editor does not have spell check
-- Refactor: Make the install routine install the default plugins from the framework
-- add better logging for Validation Failed errors on database operations
+- Course now has a Display Title property
+- Default plugins are now taken from the framework adapt.json file, hard-coded references to plugins are 
+- Removed the dependency on adapt-cli
+- Added better logging for Validation Failed errors on database operations
 - Remove hard-coded references to core plugins
-- Upgrade to Express 4, support NodeJS 0.12.6
-- Confirmation when deleting an item such as a narrative item or question stem
+- Upgrade to Express 4, support NodeJS 0.12.6, i.e. removed hard dependency on 0.10.33
+- Any logger.log() calls now support placeholders properly
+- Authoring tool specific properties now removed from output JSON
+- Updated logo
+
 
 ### Fixed
 
 - Bug: Course tags lost when a hero image is added or removed
-- Broken preview and publish after deleting asset
-- Bug: Unable to update Tutor plugin
-- Handlebars.helpers.isAssetExternal: bad scope reference
+- Bug: Broken preview and publish after deleting asset
 - Bug: Tutor extension breaks configuration screen
-- Course now requires a field for Display Title
-- Issue with asset collection view being searched and a small amount of items returning
+- Bug: Asset collection not displaying results when a small number of records should have been retrieved
 - Bug: Component type label gets lost on plugin upgrade
-- 500 error when updating plugins with framework v1.1.5
-- Resource link save errors
+- Bug: 500 error when updating plugins with framework v1.1.5
+- Bug: Resource link save errors
 - Bug: Assets on moved components hold reference to previous block
 - Bug: When ffmpeg is not installed, the thumbnailPath 'none' causes issues with routers
 - Bug: Deleting an article or page does not remove associated assets contained with in
-- Placeholder issue with logger.log() calls
-- Extension editing broken in develop branch?
-- Modal overlay has a few responsive issues when appending content/custom editing views
-- Issue with long list item attribute values going outside of the list item box
-- Issue with nested items in backbone forms showing as [object Object]
-- Sanitise builder specific properties from output JSON
-- Any <span> tag added in the wysiwyg editor is removed when going in to re-edit
+- Bug: Modal overlay has a few responsive issues when appending content/custom editing views
+- Bug: Issue with long list item attribute values going outside of the list item box
+- Bug: Issue with nested items in backbone forms showing as [object Object]
+- Bug: Course tags were removed when a hero image was added or removed
+
 
 
 ## [0.1.1] - 2015-03-12 Brian Quinn <brian@learningpool.com>

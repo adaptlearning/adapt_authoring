@@ -162,34 +162,49 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
             logger.log('info', '3.2. Using theme: ' + themeName);
             logger.log('info', '3.3. Using menu: ' + menuName);
 
-            var isProduction = configuration.conf.isProduction;
-            var buildMode = isProduction ? 'prod' : 'dev';
-
-            logger.log('info', 'grunt server-build:' + buildMode + ' ' + args.join(' '));
-
-            child = exec('grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
-              function (error, stdout, stderr) {
-                if (error !== null) {
-                  logger.log('error', 'exec error: ' + error);
-                  logger.log('error', 'stdout error: ' + stdout);
-                  resultObject.success = true;
-                  return callback(error, 'Error building framework');
+            database.getDatabase(function (error, db) {
+                if (error) {
+                    return next(error);
                 }
 
-                if (stdout.length != 0) {
-                  logger.log('info', 'stdout: ' + stdout);
-                  resultObject.success = true;
-                  return callback(null, 'Framework built OK');
-                }
+                db.retrieve('config', { _courseId: courseId }, function (error, matches) {
+                    if (error) {
+                        return next(error);
+                    }
 
-                if (stderr.length != 0) {
-                  logger.log('error', 'stderr: ' + stderr);
-                  resultObject.success = false;
-                  return callback(stderr, 'Error (stderr) building framework!');
-                }
+                    if (matches && matches[0]) {
+                        var generateSourcemap = matches[0]._doc._generateSourcemap;
+                    }
 
-                resultObject.success = true;
-                return callback(null, 'Framework built');
+                    var buildMode = generateSourcemap === true ? 'dev' : 'prod';
+
+                    logger.log('info', 'grunt server-build:' + buildMode + ' ' + args.join(' '));
+
+                    child = exec('grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
+                      function (error, stdout, stderr) {
+                        if (error !== null) {
+                          logger.log('error', 'exec error: ' + error);
+                          logger.log('error', 'stdout error: ' + stdout);
+                          resultObject.success = true;
+                          return callback(error, 'Error building framework');
+                        }
+
+                        if (stdout.length != 0) {
+                          logger.log('info', 'stdout: ' + stdout);
+                          resultObject.success = true;
+                          return callback(null, 'Framework built OK');
+                        }
+
+                        if (stderr.length != 0) {
+                          logger.log('error', 'stderr: ' + stderr);
+                          resultObject.success = false;
+                          return callback(stderr, 'Error (stderr) building framework!');
+                        }
+
+                        resultObject.success = true;
+                        return callback(null, 'Framework built');
+                    });
+                });
             });
           } else {
             resultObject.success = true;

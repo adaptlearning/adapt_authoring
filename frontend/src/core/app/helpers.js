@@ -72,8 +72,12 @@ define(function(require){
         },
         // checks for http/https and www. prefix
         isAssetExternal: function(url) {
+          if (url && url.length > 0) {
             var urlRegEx = new RegExp(/^(https?:\/\/)|^(www\.)/);
             return url.match(urlRegEx) !== null;
+          } else {
+            return true;
+          }
         },
         ifValueEquals: function(value, text, block) {
             if (value === text) {

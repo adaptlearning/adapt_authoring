@@ -330,7 +330,10 @@ function toggleExtensions (courseId, action, extensions, cb) {
                 targetAttribute: targetAttribute
               };
             }
-            updatedExtensions = _.extend(updatedExtensions, generatedObject);
+            
+            if (generatedObject) {
+              updatedExtensions = _.extend(updatedExtensions, generatedObject);  
+            }
           } else {
             // remove from list of enabled extensions in config object
             if (isConfig) {
@@ -367,6 +370,11 @@ function toggleExtensions (courseId, action, extensions, cb) {
         async.eachSeries(results, function (extensionItem, nextItem) {
           var locations = extensionItem.properties.pluginLocations.properties;
           
+          // 
+          if (!_.has(locations, 'config')) {
+            locations.config = {};
+          }
+
           if (extensionItem.globals) {
             db.retrieve('course', {_id: courseId}, function (err, results) {
               if (err) {

@@ -370,7 +370,8 @@ function toggleExtensions (courseId, action, extensions, cb) {
         async.eachSeries(results, function (extensionItem, nextItem) {
           var locations = extensionItem.properties.pluginLocations.properties;
           
-          // 
+          // Ensure that the 'config' key always exists, as this is required
+          // to presist the list of enabled extensions.
           if (!_.has(locations, 'config')) {
             locations.config = {};
           }

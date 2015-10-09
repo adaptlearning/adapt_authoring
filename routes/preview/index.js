@@ -28,10 +28,17 @@ server.get('/preview/:tenant/:course/*', function (req, res, next) {
   };
   
   if (file == Constants.Filenames.Main) {
+    // Compare the tenantId values
+    if (tenantId !== user.tenant._id.toString()) {
+      logger.log('warn', 'Preview: User %s does not have permission to view course %s on tenant %s', user._id, courseId, tenantId);
+      return res.status(404).end();
+    }    
+
     // When requesting the first page, check the user has access to this course.
     helpers.hasCoursePermission('*', user._id, tenantId, {_id: courseId}, function(err, hasPermission) {
       if (err) {
         logger.log('error', err);
+        return res.status(404).end();
       }
       
       // Verify the session is configured to hold the course previews accessible for this user.

@@ -53,7 +53,7 @@ define(function(require){
         classString += 'expanded ';
       }
       classString += ('content-type-'+this.model.get('_type'));
-      
+
       this.$el.addClass(classString);
     },
 
@@ -90,7 +90,7 @@ define(function(require){
         }
         this.model.set('clicks', 0);
       }
-        
+
     },
 
     onMenuItemDblClicked: function(event) {
@@ -121,7 +121,7 @@ define(function(require){
       this.model.set({'_isExpanded' : (isMenuType ? true : false)});
 
       this.model.set({'_isSelected': true});
-      
+
       // This event passes out the view to the editorMenuView to add
       // a editorMenuLayerView and setup this.subView
       Origin.trigger('editorView:menuView:updateSelectedItem', this);
@@ -178,12 +178,12 @@ define(function(require){
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
       var menuItemId = this.model.get('_id');
-      Origin.router.navigate('#/editor/' 
-        + courseId 
-        + '/' 
-        + type 
-        + '/' 
-        + menuItemId 
+      Origin.router.navigate('#/editor/'
+        + courseId
+        + '/'
+        + type
+        + '/'
+        + menuItemId
         + '/edit', {trigger: true});
     },
 
@@ -192,22 +192,28 @@ define(function(require){
         event.preventDefault();
       }
 
-      var id = this.model.get('_id');
-      var deleteItem = {
-          _type: 'prompt',
-          _showIcon: true,
-          title: window.polyglot.t('app.deleteitem'+ this.model.get('_type')),
-          body: window.polyglot.t('app.confirmdelete' + this.model.get('_type')) + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletewarning'+ this.model.get('_type')),
-          _prompts: [
-            {_callbackEvent: 'editorView:removeItem:' + id, promptText: window.polyglot.t('app.ok')},
-            {_callbackEvent: 'editorView:cancelRemoveItem:' + id, promptText: window.polyglot.t('app.cancel')}
-          ]
-        };
-
       this.listenToOnce(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
       this.listenToOnce(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
 
-      Origin.trigger('notify:prompt', deleteItem);
+      Origin.Notify.confirm({
+        title: window.polyglot.t('app.deleteitem'+ this.model.get('_type')),
+        text: window.polyglot.t('app.confirmdelete' + this.model.get('_type')) + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletewarning'+ this.model.get('_type')),
+        html: true,
+        closeOnConfirm: true,
+        confirmButtonText: window.polyglot.t('app.ok'),
+        cancelButtonText: window.polyglot.t('app.cancel'),
+        callback: _.bind(this.deleteItemConfirm, this)
+      });
+
+    },
+
+    deleteItemConfirm: function(isConfirm) {
+      var id = this.model.get('_id');
+      if (isConfirm) {
+        Origin.trigger('editorView:removeItem:' + id);
+      } else {
+        Origin.trigger('editorView:cancelRemoveItem:' + id);
+      }
     },
 
     copyMenuItem: function() {
@@ -235,7 +241,7 @@ define(function(require){
       this.stopListening(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
       this.model.set({_isSelected: true});
     }
-    
+
   }, {
     template: 'editorMenuItem'
   });

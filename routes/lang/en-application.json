@@ -267,5 +267,8 @@
 	"app.timeend": "Time End",
 	"app.unlimited": "Unlimited",
 	"app.deletesubscription": "Delete Subscription",
-	"app.confirmdeletesubscription": "Are you sure you want to delete this subscription?"
+	"app.confirmdeletesubscription": "Are you sure you want to delete this subscription?",
+  "app.errormenueditortitle": "Error!",
+  "app.errormenueditorbody": "An error occurred during the save",
+  "app.validationfailed": "Validation failed"
 }

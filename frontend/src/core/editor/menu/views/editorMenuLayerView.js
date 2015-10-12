@@ -22,7 +22,7 @@ define(function(require) {
       preRender: function(options) {
         if (options._parentId) {
           this._parentId = options._parentId;
-        } 
+        }
 
         this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
         this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
@@ -82,22 +82,23 @@ define(function(require) {
         newMenuItemModel.save(null, {
           error: function(error) {
             console.log(arguments);
-            // If there's an error show the menu item fading out 
+            // If there's an error show the menu item fading out
             // and show an unobtrusive pop notification
             var timeOut = 3000;
             newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
-            var pushObject = {
-              title: "Error!",
-              body: "An error occurred doing the save",
-              _timeout:timeOut,
-              _callbackEvent: "",
-              _classes: ""
-            };
-            Origin.trigger('notify:push', pushObject);
+
+            Origin.Notify.confirm({
+              title: window.polyglot.t('app.errormenueditortitle'),
+              text: window.polyglot.t('app.errormenueditorbody'),
+              closeOnConfirm: true,
+              showCancelButton: false,
+              confirmButtonText: window.polyglot.t('app.ok')
+            });
+
             _.delay(function() {
               newMenuItemView.remove();
             }, timeOut);
-            
+
           },
           success: _.bind(function(model) {
             Origin.editor.data.contentObjects.add(model);
@@ -146,14 +147,15 @@ define(function(require) {
           error: function() {
             var timeOut = 3000;
             newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
-            var pushObject = {
-              title: "Error!",
-              body: "An error occurred doing the save",
-              _timeout:timeOut,
-              _callbackEvent: "",
-              _classes: "primary-color"
-            };
-            Origin.trigger('notify:push', pushObject);
+
+            Origin.Notify.confirm({
+              title: window.polyglot.t('app.errormenueditortitle'),
+              text: window.polyglot.t('app.errormenueditorbody'),
+              closeOnConfirm: true,
+              showCancelButton: false,
+              confirmButtonText: window.polyglot.t('app.ok')
+            });
+
             _.delay(function() {
               newMenuItemView.remove();
             }, timeOut);
@@ -167,7 +169,7 @@ define(function(require) {
             } else {
               newMenuItemView.$el.removeClass('syncing').addClass('synced');
             }
-            
+
           }, this)
         });
       },
@@ -197,7 +199,7 @@ define(function(require) {
         });
         Origin.trigger('editorView:pasteCancel', target);
       }
-      
+
   	}, {
   		template: 'editorMenuLayer'
   });

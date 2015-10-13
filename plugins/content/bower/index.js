@@ -748,7 +748,10 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
     // now do search and install
     bower.commands
       .search(options._searchItems, options)
-      .on('error', cb)
+      .on('error', function(err) {
+        logger.log('error', err);
+        return cb(err);
+      })
       .on('end', function (results) {
         // lets bower install each
         async.map(results,
@@ -756,11 +759,13 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
             next(null, item.name);
           },
           function (err, nameList) {
-            nameList = plugin.nameList; // TODO - remove when components/extensions are up to date
             bower
               .commands
               .install(nameList, { save: true }, options)
-              .on('error', cb)
+              .on('error', function(err) {
+                logger.log('error', err);
+                return cb(err);
+              })
               .on('end', function (packageInfo) {
                 // add details for each to the db
                 async.eachSeries(
@@ -768,8 +773,8 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
                   function (key, next) {
                     if (packageInfo[key].pkgMeta.framework) {
                       // If the plugin defines a framework, ensure that it is compatible
-                      if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].framework)) {
-                        addPackage(plugin, packageInfo[key], options, next);
+                      if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].pkgMeta.framework)) {
+                        addPackage(plugin, packageInfo[key], options, next); 
                       } else {
                         logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');
                         next();
@@ -812,7 +817,7 @@ function checkIfHigherVersionExists (package, options, cb) {
     .on('end', function (results) {
       if (!results || results.length == 0) {
         logger.log('warn', 'Plugin ' + packageName + ' not found!');
-        return callback('Plugin ' + packageName + ' not found!');
+        return cb('Plugin ' + packageName + ' not found!');
       }
 
       bower.commands.install([packageName], null, options) // Removed #develop tag

@@ -257,9 +257,11 @@ function contentCreationHook (contentType, data, cb) {
         // _extensions is undefined at this point
         contentData._extensions = {};
         extensions.forEach(function (extensionItem) {
-          var schema = extensionItem.properties.pluginLocations.properties[contentType].properties; // yeesh
-          var generatedObject = helpers.schemaToObject(schema, extensionItem.name, extensionItem.version, contentType);
-          contentData._extensions = _.extend(contentData._extensions, generatedObject);
+          if (extensionItem.properties.hasOwnProperty('pluginLocations') && extensionItem.properties.pluginLocations.properties[contentType]) {
+            var schema = extensionItem.properties.pluginLocations.properties[contentType].properties; // yeesh
+            var generatedObject = helpers.schemaToObject(schema, extensionItem.name, extensionItem.version, contentType);
+            contentData._extensions = _.extend(contentData._extensions, generatedObject);  
+          }          
         });
     
         // assign back to passed args

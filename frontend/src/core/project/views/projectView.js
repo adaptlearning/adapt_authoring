@@ -90,6 +90,7 @@ define(function(require){
         title: window.polyglot.t('app.deleteproject'),
         text: window.polyglot.t('app.confirmdeleteproject') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteprojectwarning'),
         html: true,
+        type: 'warning',
         closeOnConfirm: true,
         confirmButtonText: window.polyglot.t('app.ok'),
         cancelButtonText: window.polyglot.t('app.cancel'),

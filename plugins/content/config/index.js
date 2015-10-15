@@ -75,7 +75,7 @@ function initialize () {
           _duration : 400
         },
         _accessibility : {
-          _isEnabled : true,
+          _isEnabled : false,
           _shouldSupportLegacyBrowsers : true
         },
         screenSize : {

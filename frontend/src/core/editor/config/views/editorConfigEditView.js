@@ -17,7 +17,7 @@ define(function(require) {
     },
 
     saveData: function(event) {
-      var errors = this.form.commit();
+      var errors = this.form.commit({validate: true});
       // This must trigger no matter what, as sidebar needs to know 
       // when the form has been resubmitted
       Origin.trigger('editorSidebar:showErrors', errors);

@@ -195,6 +195,8 @@ define(function(require){
       this.listenToOnce(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
       this.listenToOnce(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
 
+      var self = this;
+
       Origin.Notify.confirm({
         title: window.polyglot.t('app.deleteitem'+ this.model.get('_type')),
         text: window.polyglot.t('app.confirmdelete' + this.model.get('_type')) + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletewarning'+ this.model.get('_type')),
@@ -202,18 +204,16 @@ define(function(require){
         closeOnConfirm: true,
         confirmButtonText: window.polyglot.t('app.ok'),
         cancelButtonText: window.polyglot.t('app.cancel'),
-        callback: _.bind(this.deleteItemConfirm, this)
+        callback: function(isConfirm) {
+          var id = self.model.get('_id');
+          if (isConfirm) {
+            Origin.trigger('editorView:removeItem:' + id);
+          } else {
+            Origin.trigger('editorView:cancelRemoveItem:' + id);
+          }
+        }
       });
 
-    },
-
-    deleteItemConfirm: function(isConfirm) {
-      var id = this.model.get('_id');
-      if (isConfirm) {
-        Origin.trigger('editorView:removeItem:' + id);
-      } else {
-        Origin.trigger('editorView:cancelRemoveItem:' + id);
-      }
     },
 
     copyMenuItem: function() {

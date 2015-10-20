@@ -34,6 +34,7 @@
 	"app.dashboard": "Dashboard",
 	"app.loggedinas": "Logged in as",
 	"app.edit": "Edit",
+  "app.view": "View",
 	"app.restore": "Restore",
 	"app.editSettings": "Edit settings",
 	"app.editCourse": "Edit course",

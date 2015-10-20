@@ -67,7 +67,7 @@ define(function(require) {
           title: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
           displayTitle: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
           body: '',
-          linkText: '',
+          linkText: window.polyglot.t('app.view'),
           graphic: {
             alt: '',
             src: ''

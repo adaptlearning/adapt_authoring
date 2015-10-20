@@ -51,7 +51,7 @@
           "default": "false",
           "isSetting": false,
           "inputType": {"type": "Boolean", "options": [true, false]},
-          "validators": ["required"],
+          "validators": [],
           "title": "Enable accessibility?",
           "help": "If set to 'true' accessibility features will be enabled in this course"
         },
@@ -60,7 +60,7 @@
           "default": "false",
           "isSetting": false,
           "inputType": {"type": "Boolean", "options": [true, false]},
-          "validators": ["required"],
+          "validators": [],
           "title": "Support legacy browsers?",
           "help": "If set to 'true' the course will make special allowances for Internet Explorer 8"
         },
@@ -69,7 +69,7 @@
           "default": "false",
           "isSetting": false,
           "inputType": {"type": "Boolean", "options": [true, false]},
-          "validators": ["required"],
+          "validators": [],
           "title": "Enable text reader support?",
           "help": "If set to 'true' the course will add focusing to assist text reader software"
         }

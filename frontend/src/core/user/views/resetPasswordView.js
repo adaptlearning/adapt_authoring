@@ -2,9 +2,10 @@
 define(function(require) {
   var Backbone = require('backbone');
   var OriginView = require('coreJS/app/views/originView');
+  var Origin = require('coreJS/app/origin');
 
   var ResetPasswordView = OriginView.extend({
-    
+
     tagName: "div",
 
     className: "reset-password",
@@ -48,7 +49,7 @@ define(function(require) {
 
     resetPassword: function(event) {
       event.preventDefault();
-      
+
       var self = this;
 
       self.model.set('password', self.$('#password').val());
@@ -57,11 +58,18 @@ define(function(require) {
       self.model.save({}, {
         success: function(model, response, options) {
           if (response.success) {
+            Origin.Notify.toast({
+              type: 'success',
+              text: window.polyglot.t('app.resetpasswordsuccess')
+            });
             Backbone.history.navigate('#/user/login', {trigger: true});
           }
-        }, 
+        },
         error: function(model, response, options) {
-          alert('error');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.resetpassworderror')
+          });
         }
       });
     }

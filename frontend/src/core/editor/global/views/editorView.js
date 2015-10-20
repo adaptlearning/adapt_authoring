@@ -96,9 +96,9 @@ define(function(require){
 
           $downloadForm.attr('action', '/download/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
           $downloadForm.submit();
-          
+
         });
-        
+
       } else {
         return false;
       }
@@ -124,7 +124,7 @@ define(function(require){
 
         if (Origin.constants.outputPlugin == 'adapt') {
           // Report progress for 45 seconds
-          $('.editor-common-sidebar-preview-progress').animate({ width: '100%' }, 45000); 
+          $('.editor-common-sidebar-preview-progress').animate({ width: '100%' }, 45000);
         }
 
         $.ajax({
@@ -138,7 +138,7 @@ define(function(require){
               } else {
                 self.launchCoursePreview();
                 self.resetPreviewProgress();
-              }                           
+              }
             } else {
               self.resetPreviewProgress();
               alert('Error generating preview, please contact Administrator');
@@ -147,7 +147,7 @@ define(function(require){
           error: function (jqXHR, textStatus, errorThrown) {
             self.resetPreviewProgress();
             alert('Error');
-            
+
           }
         });
       }
@@ -177,9 +177,9 @@ define(function(require){
           }
         });
       }
-      
+
       // Check for updated progress every 3 seconds
-      var pollId = setInterval(pollUrl, 3000);     
+      var pollId = setInterval(pollUrl, 3000);
     },
 
     resetPreviewProgress: function() {
@@ -204,7 +204,7 @@ define(function(require){
         method: 'post',
         url: '/api/content/clipboard/copy',
         data: {
-          objectId: model.get('_id'), 
+          objectId: model.get('_id'),
           courseId: Origin.editor.data.course.get('_id'),
           referenceType: model._siblings
         },
@@ -235,7 +235,7 @@ define(function(require){
           id: Origin.editor.clipboardId,
           parentId: parentId,
           layout: layout,
-          sortOrder: sortOrder, 
+          sortOrder: sortOrder,
           courseId: Origin.editor.data.course.get('_id')
         },
         success: function (jqXHR, textStatus, errorThrown) {
@@ -374,16 +374,24 @@ define(function(require){
           errorMessage += "<li>" + alerts[i] + "</li>";
         }
 
-        Origin.trigger('notify:alert', {
-          title: "Validation failed",
-          body: errorMessage,
-          confirmText: "Ok",
-          _callbackEvent: "editor:courseValidation",
-          _showIcon: true
+        Origin.Notify.confirm({
+          title: window.polyglot.t('app.validationfailed'),
+          text: errorMessage,
+          html: true,
+          closeOnConfirm: true,
+          showCancelButton: false,
+          confirmButtonText: window.polyglot.t('app.ok'),
+          callback: _.bind(this.validateCourseConfirm, this)
         });
       }
 
       return containsAtLeastOneChild;
+    },
+
+    validateCourseConfirm: function(isConfirmed) {
+      if (isConfirmed) {
+        Origin.trigger('editor:courseValidation');
+      }
     }
 
   }, {

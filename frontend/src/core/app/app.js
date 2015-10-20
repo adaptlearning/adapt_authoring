@@ -2,6 +2,7 @@
 require([
     'templates',
     'polyglot',
+    'sweetalert',
     'coreJS/app/origin',
     'coreJS/app/router',
     'coreJS/app/permissions',
@@ -36,6 +37,7 @@ require([
 ], function (
     Templates,
     Polyglot,
+    SweetAlert,
     Origin,
     Router,
     Permissions,

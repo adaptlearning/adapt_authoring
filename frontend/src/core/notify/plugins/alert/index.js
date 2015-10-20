@@ -2,16 +2,16 @@
 define(function(require) {
 	var _ = require('underscore');
 	var Origin = require('coreJS/app/origin');
-	var SweetAlert = require('./sweetalert.min');
+	var SweetAlert = require('sweetalert');
 
 	// TODO do this properly...
-	(function loadCss(url) {
-    var link = document.createElement("link");
-    link.type = "text/css";
-    link.rel = "stylesheet";
-    link.href = "/adaptbuilder/css/assets/sweetalert.css";
-    document.getElementsByTagName("head")[0].appendChild(link);
-	})();
+	// (function loadCss(url) {
+  //   var link = document.createElement("link");
+  //   link.type = "text/css";
+  //   link.rel = "stylesheet";
+  //   link.href = "/adaptbuilder/css/assets/sweetalert.css";
+  //   document.getElementsByTagName("head")[0].appendChild(link);
+	// })();
 
 	function getSettings(data) {
 		var defaults = {

@@ -23,9 +23,6 @@ define(function(require) {
 
 		var notifyConsole = require('./plugins/console/index');
 		notifyConsole();
-
-		var notifyToast = require('./plugins/toast/index');
-		notifyToast();
 	};
 
 	return Notify;

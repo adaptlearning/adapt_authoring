@@ -28,6 +28,53 @@
       "inputType": "Text",
       "validators": ["required"]
     },
+    "_defaultDirection": {
+      "type": "string",
+      "required": true,
+      "default" : "ltr",
+      "title" : "Text Direction",
+      "validators": ["required"],
+      "inputType": {
+        "type": "Select",
+        "options": [
+          "ltr",
+          "rtl"
+        ]
+      }
+    },
+    "_accessibility": {
+      "type": "object",
+      "title": "Accessibility",
+      "properties" : {
+        "_isEnabled": {
+          "type": "bool",
+          "default": "false",
+          "isSetting": false,
+          "inputType": {"type": "Boolean", "options": [true, false]},
+          "validators": ["required"],
+          "title": "Enable accessibility?",
+          "help": "If set to 'true' accessibility features will be enabled in this course"
+        },
+        "_shouldSupportLegacyBrowsers": {
+          "type": "bool",
+          "default": "false",
+          "isSetting": false,
+          "inputType": {"type": "Boolean", "options": [true, false]},
+          "validators": ["required"],
+          "title": "Support legacy browsers?",
+          "help": "If set to 'true' the course will make special allowances for Internet Explorer 8"
+        },
+        "_isTextProcessorEnabled": {
+           "type": "bool",
+          "default": "false",
+          "isSetting": false,
+          "inputType": {"type": "Boolean", "options": [true, false]},
+          "validators": ["required"],
+          "title": "Enable text reader support?",
+          "help": "If set to 'true' the course will add focusing to assist text reader software"
+        }
+      }
+    },
     "_questionWeight": {
       "type": "number",
       "required": true,

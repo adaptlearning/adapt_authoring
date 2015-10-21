@@ -3,6 +3,27 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [0.1.3] - 2015-10-21
+
+### Added
+- Support for MongoDB replicasets
+- More robust processing for missing schema pluginLocations
+- Support for _accessibility added to Configuration Settings
+- Support for screen breakpoints added to Configuration Settings
+- Added security to preview route
+
+### Changed
+- Standardised notifications and implemented SweetAlert library
+- Bumped CKEditor version to 4.5.4
+
+### Fixed
+- Bug: Page and menu/sections were created without a linkText property set
+- Bug: IE 9 issue with editor and list formatting
+- Bug: Problem with isAssetExternal()
+- Bug: Dashboard problems when a hero image is not set
+- Bug: Added validation for length of database name
+- Bug: Added validation to Confugration Settings 
+
 ## [0.1.2] - 2015-09-30
 IMPORTANT: If upgrading from a previous installation, first remove the node_modules folder and run
 ```javascript 

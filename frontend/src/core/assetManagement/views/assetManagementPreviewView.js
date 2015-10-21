@@ -49,11 +49,17 @@ define(function(require){
 
     onDeleteButtonClicked: function(event) {
       event.preventDefault();
+
+      Origin.Notify.confirm({
+        text: window.polyglot.t('app.assetconfirmdelete'),
+        callback: _.bind(this.onDeleteConfirmed, this)
+      });
+    },
+
+    onDeleteConfirmed: function(confirmed) {
       var self = this;
 
-      var shouldDeleteAsset = confirm(window.polyglot.t('app.assetconfirmdelete'));
-
-      if (shouldDeleteAsset) {
+      if (confirmed) {
         $.ajax({
           url: '/api/asset/trash/' + self.model.get('_id'),
           type: 'PUT',
@@ -75,11 +81,19 @@ define(function(require){
 
     onRestoreButtonClicked: function(event) {
       event.preventDefault();
+      
+      event.preventDefault();
+
+      Origin.Notify.confirm({
+        text: window.polyglot.t('app.assetconfirmrestore'),
+        callback: _.bind(this.onRestoreConfirmed, this)
+      });
+    },
+    
+    onRestoreConfirmed: function(confirmed) {
       var self = this;
       
-      var shouldRestoreAsset = confirm(window.polyglot.t('app.assetconfirmrestore'));
-
-      if (shouldRestoreAsset) {
+      if (confirmed) {
         $.ajax({
           url: '/api/asset/restore/' + self.model.get('_id'),
           type: 'PUT',

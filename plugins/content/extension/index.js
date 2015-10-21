@@ -197,51 +197,54 @@ function contentCreationHook (contentType, data, cb) {
             var componentType = results[0]._doc;
             
             if (componentType.globals) {
-             // Insert globals here
-              db.retrieve('course', {_id: contentData._courseId}, function(err, results) {
-                if (err) {
-                  callback(err);
-                }
-                
-                var key = '_' + componentType.component;
-                var courseDoc = results[0]._doc;
-                var courseGlobals = courseDoc._globals
-                  ? courseDoc._globals
-                  : {};
-                  
-                // Add default value and
-                if (!courseGlobals._components) {
-                  courseGlobals._components = {};
-                }
-                
-                if (!courseGlobals._components[key]) {
-                  // The global JSON does not exist for this component so set the defaults
-                  var componentGlobals = {};
-                  
-                  for (var prop in componentType.globals) {
-                    if (componentType.globals.hasOwnProperty(prop)) {
-                      componentGlobals[prop] = componentType.globals[prop].default;
-                    }
+              // The component has globals.
+              database.getDatabase(function(error, tenantDb) {
+                // Add the globals to the course.
+                tenantDb.retrieve('course', {_id: contentData._courseId}, function(err, results) {
+                  if (err) {
+                    callback(err);
                   }
                   
-                  courseGlobals._components[key] = componentGlobals;
+                  var key = '_' + componentType.component;
+                  var courseDoc = results[0]._doc;
+                  var courseGlobals = courseDoc._globals
+                    ? courseDoc._globals
+                    : {};
+                    
+                  // Create the _components global object.
+                  if (!courseGlobals._components) {
+                    courseGlobals._components = {};
+                  }
                   
-                  db.update('course', {_id: contentData._courseId}, {_globals: courseGlobals}, function(err, doc) {
-                    if (err) {
-                      callback(err);
-                    } else {
-                      callback(null);
+                  if (!courseGlobals._components[key]) {
+                    // The global JSON does not exist for this component so set the defaults.
+                    var componentGlobals = {};
+                    
+                    for (var prop in componentType.globals) {
+                      if (componentType.globals.hasOwnProperty(prop)) {
+                        componentGlobals[prop] = componentType.globals[prop].default;
+                      }
                     }
-                  });
-                } else {
-                  callback(null);
-                }
-              });
+                    
+                    courseGlobals._components[key] = componentGlobals;
+                    
+                    tenantDb.update('course', {_id: contentData._courseId}, {_globals: courseGlobals}, function(err, doc) {
+                      if (err) {
+                        callback(err);
+                      } else {
+                        callback(null);
+                      }
+                    });
+                  } else {
+                    callback(null);
+                  }
+                });  
+              });              
             } else {
               callback(null)
             }
           });
-        });
+        }, configuration.getConfig('dbName'));
       } else {
         callback(null);
       }
@@ -257,9 +260,11 @@ function contentCreationHook (contentType, data, cb) {
         // _extensions is undefined at this point
         contentData._extensions = {};
         extensions.forEach(function (extensionItem) {
-          var schema = extensionItem.properties.pluginLocations.properties[contentType].properties; // yeesh
-          var generatedObject = helpers.schemaToObject(schema, extensionItem.name, extensionItem.version, contentType);
-          contentData._extensions = _.extend(contentData._extensions, generatedObject);
+          if (extensionItem.properties.hasOwnProperty('pluginLocations') && extensionItem.properties.pluginLocations.properties[contentType]) {
+            var schema = extensionItem.properties.pluginLocations.properties[contentType].properties; // yeesh
+            var generatedObject = helpers.schemaToObject(schema, extensionItem.name, extensionItem.version, contentType);
+            contentData._extensions = _.extend(contentData._extensions, generatedObject);  
+          }          
         });
     
         // assign back to passed args
@@ -330,7 +335,10 @@ function toggleExtensions (courseId, action, extensions, cb) {
                 targetAttribute: targetAttribute
               };
             }
-            updatedExtensions = _.extend(updatedExtensions, generatedObject);
+            
+            if (generatedObject) {
+              updatedExtensions = _.extend(updatedExtensions, generatedObject);  
+            }
           } else {
             // remove from list of enabled extensions in config object
             if (isConfig) {
@@ -367,8 +375,14 @@ function toggleExtensions (courseId, action, extensions, cb) {
         async.eachSeries(results, function (extensionItem, nextItem) {
           var locations = extensionItem.properties.pluginLocations.properties;
           
+          // Ensure that the 'config' key always exists, as this is required
+          // to presist the list of enabled extensions.
+          if (!_.has(locations, 'config')) {
+            locations.config = {};
+          }
+
           if (extensionItem.globals) {
-            db.retrieve('course', {_id: courseId}, function (err, results) {
+            tenantDb.retrieve('course', {_id: courseId}, function (err, results) {
               if (err) {
                 return cb(err);
               }
@@ -405,7 +419,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
                 }
               }
               
-              db.update('course', {_id: courseId}, {_globals: courseGlobals}, function(err, doc) {
+              tenantDb.update('course', {_id: courseId}, {_globals: courseGlobals}, function(err, doc) {
                 if (!err) {
                   async.eachSeries(Object.keys(locations), function (key, nextLocation) {
                     updateComponentItems(tenantDb, key, locations[key].properties, extensionItem, nextLocation);

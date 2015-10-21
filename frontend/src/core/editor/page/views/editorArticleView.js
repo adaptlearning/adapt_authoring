@@ -89,16 +89,16 @@ define(function(require){
       if (blockModel.isNew()) {
         newBlockView.$el.addClass('syncing');
       }
-      
+
       scrollIntoView = scrollIntoView || false;
 
       this.$('.article-blocks').append(newBlockView.$el);
-      
+
       if (scrollIntoView) {
         $.scrollTo(newBlockView.$el, 200);
       }
 
-      // Increment the sortOrder property    
+      // Increment the sortOrder property
       blockModel.set('_pasteZoneSortOrder', sortOrder++);
 
       // Post-block paste zone - sort order of placeholder will be one greater
@@ -157,24 +157,25 @@ define(function(require){
       if (event) {
         event.preventDefault();
       }
-      var id = this.model.get('_id');
 
-
-      var deleteArticle = {
-        _type: 'prompt',
-        _showIcon: true,
+      Origin.Notify.confirm({
         title: window.polyglot.t('app.deletearticle'),
-        body: window.polyglot.t('app.confirmdeletearticle') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletearticlewarning'),
-        _prompts: [
-          {_callbackEvent: 'editorView:deleteArticle:' + id, promptText: window.polyglot.t('app.ok')},
-          {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
-        ]
-      };
+        text: window.polyglot.t('app.confirmdeletearticle') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletearticlewarning'),
+        html: true,
+        closeOnConfirm: true,
+        confirmButtonText: window.polyglot.t('app.ok'),
+        cancelButtonText: window.polyglot.t('app.cancel'),
+        callback: _.bind(this.deleteArticleConfirm, this)
+      });
 
-      Origin.trigger('notify:prompt', deleteArticle);
-      
     },
 
+    deleteArticleConfirm: function(confirmed) {
+      if (confirmed) {
+        var id = this.model.get('_id');
+        Origin.trigger('editorView:deleteArticle:' + id);
+      }
+    },
 
     deletePageArticle: function(event) {
       if (event) {
@@ -197,12 +198,12 @@ define(function(require){
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
       var Id = this.model.get('_id');
-      Origin.router.navigate('#/editor/' 
-        + courseId 
-        + '/' 
-        + type 
-        + '/' 
-        + Id 
+      Origin.router.navigate('#/editor/'
+        + courseId
+        + '/'
+        + type
+        + '/'
+        + Id
         + '/edit', {trigger: true});
     },
 
@@ -224,7 +225,7 @@ define(function(require){
           // Store the offset to stop the page jumping during the start of drag
           // because of the drop zones changing the scroll position on the page
           view.offsetTopFromWindow = view.$el.offset().top - $(window).scrollTop();
-          // This is in the helper method because the height needs to be 
+          // This is in the helper method because the height needs to be
           // manipulated before the drag start method due to adding drop zones
           view.showDropZones();
           $(this).attr('data-' + view.model.get('_type') + '-id', view.model.get('_id'));

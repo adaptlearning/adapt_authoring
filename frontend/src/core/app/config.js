@@ -12,6 +12,7 @@ require.config({
       coreJS: 'core',
       templates: 'templates/templates',
       polyglot: 'core/libraries/polyglot.min',
+      sweetalert: 'core/libraries/sweetalert.min',
       backboneForms:'core/libraries/backbone-forms',
       backboneFormsLists:'core/libraries/backbone-forms-lists',
       jsoneditor: 'core/libraries/jquery.jsoneditor.min',
@@ -55,6 +56,10 @@ require.config({
       },
       polyglot: {
         exports: 'Polyglot'
+      },
+      sweetalert: {
+        deps: ['jquery'],
+        exports: 'sweetAlert'
       },
       jsoneditor: {
         deps: ['jquery'],

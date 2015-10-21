@@ -69,14 +69,16 @@ function initialize () {
         _courseId : course._id,
         _questionWeight : 1,
         _defaultLanguage : "en",
+        _defaultDirection: 'ltr',
         _drawer : {
           _showEasing : "easeOutQuart",
           _hideEasing : "easeInQuart",
           _duration : 400
         },
         _accessibility : {
-          _isEnabled : true,
-          _shouldSupportLegacyBrowsers : true
+          _isEnabled : false,
+          _shouldSupportLegacyBrowsers : true,
+          _isTextProcessorEnabled: false
         },
         screenSize : {
           small : 519,
@@ -127,6 +129,7 @@ ConfigContent.prototype.retrieve = function (search, options, next) {
     if (err) {
       return next(err);
     }
+    
     // When passing down the config model we should 
     // find out how many and what components are being used
     // Why you might ask - to sort out _globals and when compiling
@@ -135,25 +138,44 @@ ConfigContent.prototype.retrieve = function (search, options, next) {
       var courseId = records[0]._courseId;
       componentPlugin.retrieve({_courseId: courseId}, function(err, components) {
 
-        var uniqueComponents = _.uniq(components, false, function(component) {
-          return component._component;
-        });
-
-        async.map(uniqueComponents, function(component, callback) {
-        
-          // Adding an _ here is necessary because of the way the attributes are set
-          // onto the _globals object on the schemas
-          return callback(null, {_componentType: component._componentType, _component: "_" + component._component});
-
-        }, function(err, uniqueComponentList) {
-
-          var configModel = records[0].toObject();
-          configModel._enabledComponents = uniqueComponentList;
-
-          return next(null, [configModel]);
-
-        });
-        
+        // Retrieve the component types.
+        database.getDatabase(function(err, db) {
+          if (err) {
+            logger.log('error', err);
+            return next(err);
+          }
+          
+          db.retrieve('componenttype', {}, function(err, componentTypes) {
+            if (err) {
+              return next(err);
+            }
+            
+            var uniqueComponents = _.uniq(components, false, function(component) {
+              return component._component;
+            });
+    
+            async.map(uniqueComponents, function(component, callback) {
+              var componentType = _.findWhere(componentTypes, {component: component._component});
+              
+              // Adding an _ here is necessary because of the way the attributes are set
+              // onto the _globals object on the schemas
+              var definition = {
+                name: componentType.name, 
+                _componentType: component._componentType, 
+                _component: "_" + component._component
+              };
+              
+              return callback(null, definition);
+    
+            }, function(err, uniqueComponentList) {
+    
+              var configModel = records[0].toObject();
+              configModel._enabledComponents = uniqueComponentList;
+    
+              return next(null, [configModel]);
+            });    
+          });
+        }, configuration.getConfig('dbName'));
       })
     });
   });

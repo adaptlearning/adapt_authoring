@@ -1,45 +1,29 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
+	var _ = require('underscore');
+	var Backbone = require('backbone');
 	var Origin = require('coreJS/app/origin');
-	var NotifyView = require('coreJS/notify/views/notifyView');
-	var NotifyModel = require('coreJS/notify/models/notifyModel');
-	var NotifyPushCollection = require('coreJS/notify/collections/notifyPushCollection');
 
-	var NotifyPushes = new NotifyPushCollection();
+	var Notify = Origin.Notify;
 
-	Origin.on('notify:alert', function(notifyObject) {
-		addNotifyView('alert', notifyObject);
-	});
+	if(!Notify) {
+		Notify = Origin.Notify = _.extend({}, Backbone.Events);
 
-	Origin.on('notify:prompt', function(notifyObject) {
-		addNotifyView('prompt', notifyObject);
-	});
+		Notify.register = function(name, func) {
+			Notify[name] = func;
+		};
 
-	Origin.on('notify:popup', function(notifyObject) {
-		addNotifyView('popup', notifyObject);
-	});
+		loadPLugins();
+	}
 
-	Origin.on('notify:push', function(notifyObject) {
-		addNotifyView('push', notifyObject);
-	});
+	// loads the built-in plugins in ./plugins
+	function loadPLugins() {
+		var notifyAlert = require('./plugins/alert/index');
+		notifyAlert();
 
-	function addNotifyView(type, notifyObject) {
-		notifyObject._type = type;
-
-		if (type === 'push') {
-
-			NotifyPushes.push(notifyObject);
-
-			return;
-
-		}
-		// Not sure if we need a popup manager?
-		//Origin.trigger('popup:opened');
-
-		new NotifyView({
-			model: new NotifyModel(notifyObject)
-		});
+		var notifyConsole = require('./plugins/console/index');
+		notifyConsole();
 	};
-	
+
+	return Notify;
 });

@@ -26,7 +26,9 @@ server.get('/preview/:tenant/:course/*', function (req, res, next) {
     tenantId = req.params.tenant,
     user = usermanager.getCurrentUser(),
     file = req.params[0] || Constants.Filenames.Main,
-    root = path.join(configuration.serverRoot, Constants.Folders.Temp, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build);
+    masterTenantId = configuration.getConfig('masterTenantID'),
+    previewKey = tenantId + '-' + courseId,
+    root = path.join(configuration.serverRoot, Constants.Folders.Temp, masterTenantId, Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build);
     
   if (!user) {
     logger.log('warn', 'Preview: Unauthorised attempt to view course %s on tenant %s', courseId, tenantId);
@@ -39,52 +41,86 @@ server.get('/preview/:tenant/:course/*', function (req, res, next) {
   };
   
   if (file == Constants.Filenames.Main) {
+    // Verify the session is configured to hold the course previews accessible for this user.
+    if (!req.session.previews || Array.isArray(req.session.previews)) {
+      req.session.previews = [];
+    }
+    
     // Compare the tenantId values
-    if (tenantId !== user.tenant._id.toString()) {
+    if (tenantId !== user.tenant._id.toString() && tenantId !== masterTenantId) {
       logger.log('warn', 'Preview: User %s does not have permission to view course %s on tenant %s', user._id, courseId, tenantId);
       
       return next(new PreviewPermissionError());
     }    
 
-    // When requesting the first page, check the user has access to this course.
-    helpers.hasCoursePermission('*', user._id, tenantId, {_id: courseId}, function(err, hasPermission) {
-      if (err) {
-        logger.log('error', err);
-        
-        return next(new PreviewPermissionError());
-      }
-      
-      // Verify the session is configured to hold the course previews accessible for this user.
-      if (!req.session.previews || Array.isArray(req.session.previews)) {
-        req.session.previews = [];
-      }
-      
-      if (!hasPermission) {
-        // Remove this course from the cached sessions.
-        var position = req.session.previews.indexOf(courseId);
-        
-        if (position > -1) {
-          req.session.previews.splice(position, 1);  
+    if (tenantId == masterTenantId) {
+      // Viewing a preview on master courses, so check that the course is shared
+      // Store in the session that the user has access to this course.
+      helpers.isMasterCourseShared(courseId, function(err, hasPermission) {
+        if (err) {
+          logger.log('error', err);
+          
+          return next(new PreviewPermissionError());
         }
         
-        logger.log('warn', 'Preview: User %s does not have permission to view course %s on tenant %s', user._id, courseId, tenantId);
-
-        return next(new PreviewPermissionError());
-      }
+        if (!hasPermission) {
+          // Remove this course from the cached sessions.
+          var position = req.session.previews.indexOf(previewKey);
+          
+          if (position > -1) {
+            req.session.previews.splice(position, 1);  
+          }
+          
+          logger.log('warn', 'Preview: User %s does not have permission to view course %s on tenant %s', user._id, courseId, tenantId);
+  
+          return next(new PreviewPermissionError());
+        } else {
+          req.session.previews.push(previewKey);
       
-      // Store in the session that the user has access to this course.
-      req.session.previews.push(courseId);
-      
-      res.sendFile(file, options, function(err) {
-        if (err) {
-          // Display the error to the user.
-          res.status(err.status).end();
+          res.sendFile(file, options, function(err) {
+            if (err) {
+              // Display the error to the user.
+              res.status(err.status).end();
+            }
+          });
         }
       });
-    });
+    } else {
+      // When requesting the first page, check the user has access to this course.
+      helpers.hasCoursePermission('*', user._id, tenantId, {_id: courseId}, function(err, hasPermission) {
+        if (err) {
+          logger.log('error', err);
+          
+          return next(new PreviewPermissionError());
+        }
+        
+        if (!hasPermission) {
+          // Remove this course from the cached sessions.
+          var position = req.session.previews.indexOf(previewKey);
+          
+          if (position > -1) {
+            req.session.previews.splice(position, 1);  
+          }
+          
+          logger.log('warn', 'Preview: User %s does not have permission to view course %s on tenant %s', user._id, courseId, tenantId);
+  
+          return next(new PreviewPermissionError());
+        }
+        
+        // Store in the session that the user has access to this course.
+        req.session.previews.push(previewKey);
+        
+        res.sendFile(file, options, function(err) {
+          if (err) {
+            // Display the error to the user.
+            res.status(err.status).end();
+          }
+        });
+      });
+    }
   } else {
     // Verify that the user has appropriate access to the requested file.
-    if (req.session.previews && req.session.previews.indexOf(courseId) > -1) {
+    if (req.session.previews && req.session.previews.indexOf(previewKey) > -1) {
       res.sendFile(file, options, function(err) {
         if (err) {
           // Display the error to the user.

@@ -58,7 +58,7 @@ define(function(require) {
       self.model.save({}, {
         success: function(model, response, options) {
           if (response.success) {
-            Origin.Notify.toast({
+            Origin.Notify.alert({
               type: 'success',
               text: window.polyglot.t('app.resetpasswordsuccess')
             });

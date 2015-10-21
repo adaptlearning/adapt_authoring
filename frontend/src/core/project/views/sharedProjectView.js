@@ -67,7 +67,9 @@ define(function(require){
       Origin.Notify.confirm({
         text: window.polyglot.t('app.confirmduplicate'),
         callback: function(confirmed) {
-          self.duplicateProject();
+          if (confirmed) {
+            self.duplicateProject(); 
+          }
         }
       });
     },

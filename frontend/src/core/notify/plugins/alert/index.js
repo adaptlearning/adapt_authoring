@@ -19,15 +19,16 @@ define(function(require) {
 				defaults.confirmButtonText = "Yes, I'm sure";
 				defaults.cancelButtonText = "No";
 				break;
-			case "input":
-			case "success":
-			case "info":
-			case "error":
 			case "warning":
         defaults.showCancelButton = true;
         defaults.confirmButtonText = "Yes, I'm sure";
         defaults.cancelButtonText = "No";
         defaults.confirmButtonColor = "#DD6B55";
+				break;
+			case "input":
+			case "success":
+			case "info":
+			case "error":
 				break;
 			default:
 				if(data.type) {
@@ -64,7 +65,7 @@ define(function(require) {
 				text: data
 			};
 		}
-    
+
 		data.type = data.type || "confirm";
 		openPopup(data);
 	};

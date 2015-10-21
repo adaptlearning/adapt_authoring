@@ -50,7 +50,7 @@ define(function(require){
         },
         success: function(data, status, xhr) {
           Origin.trigger('scaffold:updateSchemas', function() {
-            Origin.Notify.toast({
+            Origin.Notify.alert({
               type: 'success',
               text: window.polyglot.t('app.uploadpluginsuccess')
             });

@@ -6,7 +6,7 @@ define(function(require) {
 
 	function getSettings(data) {
 		var defaults = {
-			title: null,
+			title: '',
 			animation: "slide-from-bottom",
 			confirmButtonColor: "#15a4fa"
 		};
@@ -27,11 +27,16 @@ define(function(require) {
 				break;
 			case "input":
 			case "success":
+        defaults.title = 'Success';
+        break;
 			case "info":
+        defaults.title = 'Information';
+        break;
 			case "error":
+        defaults.title = 'Error';
 				break;
 			default:
-				if(data.type) {
+				if (data.type) {
 					Origin.	Notify.console({
 						type: "error",
 						text: "'" + data.type + "' is not a valid alert type"

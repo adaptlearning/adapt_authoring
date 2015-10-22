@@ -14,26 +14,26 @@ define(function(require) {
 		switch(data.type) {
 			case "confirm":
 				data.type = null;
-				defaults.title = "Are you sure?";
+				defaults.title = app.polyglot.t('app.confirmdefaulttitle');
 				defaults.showCancelButton = true;
-				defaults.confirmButtonText = "Yes, I'm sure";
-				defaults.cancelButtonText = "No";
+				defaults.confirmButtonText = app.polyglot.t('app.confirmdefaultyes');
+				defaults.cancelButtonText = app.polyglot.t('app.no');
 				break;
 			case "warning":
         defaults.showCancelButton = true;
-        defaults.confirmButtonText = "Yes, I'm sure";
-        defaults.cancelButtonText = "No";
+        defaults.confirmButtonText = app.polyglot.t('app.confirmdefaultyes');
+        defaults.cancelButtonText = app.polyglot.t('app.no');
         defaults.confirmButtonColor = "#DD6B55";
 				break;
 			case "input":
 			case "success":
-        defaults.title = 'Success';
+        defaults.title = app.polyglot.t('app.sucessdefaulttitle');
         break;
 			case "info":
-        defaults.title = 'Information';
+        defaults.title = app.polyglot.t('app.infodefaulttitle');
         break;
 			case "error":
-        defaults.title = 'Error';
+        defaults.title = app.polyglot.t('app.errordefaulttitle');
 				break;
 			default:
 				if (data.type) {

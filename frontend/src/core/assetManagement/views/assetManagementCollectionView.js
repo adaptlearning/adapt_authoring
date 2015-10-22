@@ -96,7 +96,7 @@ define(function(require){
             }
 
             if (!Origin.permissions.hasPermissions(["*"])) {
-                this.search = {_isDeleted: false};
+                this.search = _.extend(this.search, {_isDeleted: false});
             } 
 
             this.search = _.extend(this.search, {

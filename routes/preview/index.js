@@ -56,7 +56,7 @@ server.get('/preview/:tenant/:course/*', function (req, res, next) {
     if (tenantId == masterTenantId) {
       // Viewing a preview on master courses, so check that the course is shared
       // Store in the session that the user has access to this course.
-      helpers.isMasterCourseShared(courseId, function(err, hasPermission) {
+      helpers.isMasterPreviewAccessible(courseId, user._id, function(err, hasPermission) {
         if (err) {
           logger.log('error', err);
           

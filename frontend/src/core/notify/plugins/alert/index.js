@@ -63,6 +63,10 @@ define(function(require) {
 		openPopup(data);
 	};
 
+	/**
+	* NOTE if callback isn't an annonymous function, it won't be called on cancel
+	* See: https://github.com/t4t5/sweetalert/issues/431 
+	*/
 	var Confirm = function(data) {
 		// allow for string input
 		if(_.isString(data)) {

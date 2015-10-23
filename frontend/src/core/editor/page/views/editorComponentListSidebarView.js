@@ -42,7 +42,10 @@ define(function(require) {
             },
             {
               error: function() {
-                alert('error adding new component');
+                  Origin.Notify.alert({
+                    type: 'error',
+                    text: window.polyglot.t('app.erroraddingcomponent')
+                  });
               },
               success: function() {
                 Origin.trigger('editor:refreshData', function() {
@@ -81,7 +84,10 @@ define(function(require) {
             },
             {
               error: function() {
-                alert('error adding new component');
+                  Origin.Notify.alert({
+                    type: 'error',
+                    text: window.polyglot.t('app.erroraddingcomponent')
+                  });
               },
               success: function(data) {
                 Origin.trigger('editor:refreshData', function() {

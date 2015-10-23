@@ -142,7 +142,10 @@ define(function(require){
 
       newPageBlockModel.save(null, {
         error: function() {
-          alert('error adding new block');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.erroraddingblock')
+          });
         },
         success: function(model, response, options) {
           Origin.editor.data.blocks.add(model);
@@ -186,7 +189,10 @@ define(function(require){
           _this.remove();
         },
         error: function(error) {
-          alert('An error occured');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorgeneric')
+          });
         }
       });
     },

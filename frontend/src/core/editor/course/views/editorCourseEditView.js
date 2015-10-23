@@ -40,7 +40,10 @@ define(function(require) {
       },
       {
         error: function() {
-          alert('An error occurred doing the save');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorsave')
+          });
         },
         success: function() {
           Origin.trigger('editor:refreshData', function() {

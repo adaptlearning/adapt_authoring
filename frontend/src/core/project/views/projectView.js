@@ -109,7 +109,10 @@ define(function(require){
           self.remove()
         },
         error: function(model, response, options) {
-          alert('Error - ' + response.responseJSON.message);
+          Origin.Notify.alert({
+            type: 'error',
+            text: response.responseJSON.message
+          });
         }
       });
     },
@@ -121,7 +124,10 @@ define(function(require){
           Backbone.history.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
         },
         error: function() {
-          alert('error during duplication');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorduplication')
+          });
         }
       });
     },

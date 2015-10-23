@@ -276,5 +276,18 @@
   "app.infodefaulttitle": "Information",
   "app.errordefaulttitle": "Error",
   "app.confirmdefaulttitle": "Are you sure?",
-  "app.confirmdefaultyes": "Yes, I'm sure"
+  "app.confirmdefaultyes": "Yes, I'm sure",
+  "app.errorsessionexpired": "Your session has expired, click OK to log on again",
+  "app.errorassetupdate": "Something went wrong while updating the asset.<br/>Please try again.",
+  "app.errordeleteasset": "Couldn't delete this asset, %{message}",
+  "app.errorsave": "Something went wrong while saving your data.<br/>Please try again.",
+  "app.errorgeneric": "Oops, something went wrong!",
+  "app.errorpreview": "Something went wrong while generating your preview. <br/>Please contact Administrator for assistance.",
+  "app.errornomenuselected": "No menu has been selected.",
+  "app.errornothemeselected": "No theme has been selected.",
+  "app.erroraddingarticle": "Something went wrong while adding article. <br/>Please try again.",
+  "app.erroraddingblock": "Something went wrong while adding block. <br/>Please try again.",
+  "app.erroraddingcomponent": "Something went wrong while adding component. <br/>Please try again.",
+  "app.errorduplication": "Something went wrong during duplication. <br/>Please try again.",
+  "app.errorgettingschemas": "An error occurred while getting schemas."
 }

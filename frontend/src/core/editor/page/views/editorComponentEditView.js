@@ -38,7 +38,10 @@ define(function(require) {
 
       self.model.save(null, {
         error: function() {
-          alert('An error occurred doing the save');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorsave')
+          });
         },
         success: _.bind(function() {
           

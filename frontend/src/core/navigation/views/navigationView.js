@@ -52,7 +52,10 @@ define(function(require){
           Backbone.history.navigate('#/dashboard', {trigger: true});
         },
         failure: function (err) {
-          alert(window.polyglot.t('app.errorlogginginas'));
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorlogginginas')
+          });
         }
       });
     },

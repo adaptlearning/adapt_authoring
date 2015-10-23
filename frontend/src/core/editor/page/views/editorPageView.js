@@ -166,7 +166,10 @@ define(function(require){
 
       newPageArticleModel.save(null, {
         error: function() {
-          alert('error adding new article');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.erroraddingarticle')
+          });
         },
         success: function(model, response, options) {
 

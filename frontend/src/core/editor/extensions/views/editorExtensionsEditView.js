@@ -96,7 +96,10 @@ define(function(require) {
             if (result.success) {
                 self.refreshData();
             } else {
-                alert('An error occured');
+                Origin.Notify.alert({
+                  type: 'error',
+                  text: window.polyglot.t('app.errorgeneric')
+                });
             }
         }, this));
     },
@@ -144,7 +147,10 @@ define(function(require) {
             if (result.success) {
                 self.refreshData();
             } else {
-                alert('An error occured');
+                Origin.Notify.alert({
+                  type: 'error',
+                  text: window.polyglot.t('app.errorgeneric')
+                });
             }
         }, this));
     }

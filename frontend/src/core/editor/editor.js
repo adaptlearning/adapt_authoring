@@ -98,14 +98,17 @@ define(function(require) {
     // Origin.editor.data.config.on('change:_enabledExtensions', function() {
     //   Origin.socket.emit('project:build', { id: this.currentCourseId });
     // });
-    
+
     _.each(Origin.editor.data, function(object) {
       object.fetch({reset:true,
         error: function(model, response, options) {
-          alert('*****   Oops, something went wrong!  *****');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorgeneric')
+          });
         }
       });
-    });  
+    });
 
   });
 

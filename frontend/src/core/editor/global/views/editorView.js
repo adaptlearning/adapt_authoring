@@ -1,4 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
+/*
+ * TODO This needs a tidy:
+ * - Remove commented lines
+ * - Sort out error handling
+ */
 define(function(require){
 
   var Backbone = require('backbone');

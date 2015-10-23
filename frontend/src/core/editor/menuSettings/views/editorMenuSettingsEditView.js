@@ -63,7 +63,10 @@ define(function(require) {
       var selectedMenu = this.collection.findWhere({_isSelected: true});
 
       if (selectedMenu === undefined) {
-        alert('No menu selected');
+        Origin.Notify.alert({
+          type: 'error',
+          text: window.polyglot.t('app.errornomenuselected')
+        });
         return;
       } 
 
@@ -73,7 +76,10 @@ define(function(require) {
 
       $.post('/api/menu/' + selectedMenuId + '/makeitso/' + this.model.get('_courseId'))
         .error(function() {
-          alert('An error occurred doing the save');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorsave')
+          });
         })
         .done(_.bind(function() {
 

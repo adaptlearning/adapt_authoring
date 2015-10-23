@@ -57,7 +57,10 @@ define(function(require) {
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          alert('error');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorgeneric')
+          });
         }
       });
     }

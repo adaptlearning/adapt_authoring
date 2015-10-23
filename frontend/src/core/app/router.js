@@ -88,7 +88,10 @@ define(function(require) {
 
       // Verify the user is authenticated
       if (!this.isUserAuthenticated()  && (module !== 'user' && route1 !== 'login')) {
-        alert('Your session has expired, click OK to log on again');
+        Origin.Notify.alert({
+          type: 'error',
+          text: window.polyglot.t('app.errorsessionexpired')
+        });
         return this.redirectToLogin();
       }
 

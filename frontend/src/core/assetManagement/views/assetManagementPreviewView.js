@@ -74,7 +74,10 @@ define(function(require){
             self.remove();
           },
           error: function(data) {
-            alert("Couldn't delete this asset", data.message);
+            Origin.Notify.alert({
+              type: 'error',
+              text: window.polyglot.t('app.errordeleteasset', { message: data.message })
+            });
           }
         });
       }
@@ -104,7 +107,10 @@ define(function(require){
             self.remove();
           },
           error: function(data) {
-            alert("Couldn't restore this asset", data.message);
+            Origin.Notify.alert({
+              type: 'error',
+              text: window.polyglot.t('app.errorrestoreasset', { message: data.message })
+            });
           }
         });
       }

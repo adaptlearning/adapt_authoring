@@ -51,6 +51,7 @@ define(function(require){
       event.preventDefault();
 
       Origin.Notify.confirm({
+        type: 'warning',
         text: window.polyglot.t('app.assetconfirmdelete'),
         callback: _.bind(this.onDeleteConfirmed, this)
       });
@@ -81,7 +82,7 @@ define(function(require){
 
     onRestoreButtonClicked: function(event) {
       event.preventDefault();
-      
+
       event.preventDefault();
 
       Origin.Notify.confirm({
@@ -89,10 +90,10 @@ define(function(require){
         callback: _.bind(this.onRestoreConfirmed, this)
       });
     },
-    
+
     onRestoreConfirmed: function(confirmed) {
       var self = this;
-      
+
       if (confirmed) {
         $.ajax({
           url: '/api/asset/restore/' + self.model.get('_id'),

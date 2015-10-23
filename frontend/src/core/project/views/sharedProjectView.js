@@ -39,7 +39,7 @@ define(function(require){
 
     selectProject: function(event) {
       event && event.preventDefault();
-      
+
       this.selectItem();
     },
 
@@ -57,18 +57,18 @@ define(function(require){
     preview: function() {
       var tenantId = this.model.get('_tenantId');
       var courseId = this.model.get('_id');
-      
+
       window.open('/preview/' + tenantId + '/' + courseId + '/main.html');
     },
 
     promptDuplicateProject: function() {
       var self = this;
-      
+
       Origin.Notify.confirm({
         text: window.polyglot.t('app.confirmduplicate'),
         callback: function(confirmed) {
           if (confirmed) {
-            self.duplicateProject(); 
+            self.duplicateProject();
           }
         }
       });
@@ -89,7 +89,7 @@ define(function(require){
         }
       });
     }
-    
+
   }, {
     template: 'sharedProject'
   });

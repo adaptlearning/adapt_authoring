@@ -27,7 +27,7 @@ define(function(require){
         onAddTag: _.bind(this.onAddTag, this),
         onRemoveTag: _.bind(this.onRemoveTag, this),
         'minChars' : 3,
-        'maxChars' : 15 
+        'maxChars' : 15
       });
       // Set view to ready
       this.setViewToReady();
@@ -56,7 +56,7 @@ define(function(require){
           $(errormsg).text('');
         }
       });
-      
+
       if (this.model.isNew() && !uploadFile.val()) {
         validated = false;
         $(uploadFile).addClass('input-error');

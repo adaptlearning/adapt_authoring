@@ -17,7 +17,7 @@ define(function(require) {
 
     saveEditing: function() {
       var errors = this.form.commit();
-      // This must trigger no matter what, as sidebar needs to know 
+      // This must trigger no matter what, as sidebar needs to know
       // when the form has been resubmitted
       Origin.trigger('editorSidebar:showErrors', errors);
       if (errors) {
@@ -32,14 +32,14 @@ define(function(require) {
           });
         },
         success: _.bind(function() {
-          
+
           Origin.trigger('editingOverlay:views:hide');
-          
+
           Origin.trigger('editor:refreshData', function() {
             Backbone.history.history.back();
             this.remove();
           }, this);
-          
+
         }, this)
       });
     }

@@ -39,7 +39,7 @@ define(function(require) {
 
   var EditorThemeCollectionView = require('editorTheme/views/editorThemeCollectionView');
   var EditorThemeCollectionSidebarView = require('editorTheme/views/editorThemeCollectionSidebarView');
-  
+
   var EditorComponentListView = require('editorPage/views/editorComponentListView');
   var EditorComponentListSidebarView = require('editorPage/views/editorComponentListSidebarView');
 
@@ -67,7 +67,7 @@ define(function(require) {
       course: false,
       config: false,
       componentTypes: false,
-      extensionTypes: false, 
+      extensionTypes: false,
       contentObjects: false,
       articles: false,
       blocks: false,
@@ -77,7 +77,7 @@ define(function(require) {
     Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedObject) {
 
       loadedData[loadedObject] = true;
-      
+
       var allDataIsLoaded = _.every(loadedData, function(item) {
         return item === true;
       });
@@ -124,7 +124,7 @@ define(function(require) {
       course: false,
       config: false,
       componentTypes: false,
-      extensionTypes: false, 
+      extensionTypes: false,
       contentObjects: false,
       articles: false,
       blocks: false,
@@ -135,7 +135,7 @@ define(function(require) {
     Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedObject) {
 
       loadedData[loadedObject] = true;
-      
+
       var allDataIsLoaded = _.every(loadedData, function(item) {
         return item === true;
       });
@@ -164,13 +164,13 @@ define(function(require) {
       url: '/api/content/contentobject?_courseId=' + route1,
       _type: 'contentObjects'
     });
-    
+
     Origin.editor.data.articles = new EditorCollection(null, {
       model: EditorArticleModel,
       url: '/api/content/article?_courseId=' + route1,
       _type: 'articles'
     });
-    
+
     Origin.editor.data.blocks = new EditorCollection(null, {
       model: EditorBlockModel,
       url: '/api/content/block?_courseId=' + route1,
@@ -195,11 +195,11 @@ define(function(require) {
       url: '/api/componenttype',
       _type: 'componentTypes'
     });
-    
+
     Origin.editor.data.componentTypes.comparator = function(model) {
       return model.get('displayName');
     };
-    
+
     // Store the extensions types
     Origin.editor.data.extensionTypes = new EditorCollection(null, {
       model : ExtensionModel,
@@ -298,7 +298,7 @@ define(function(require) {
     switch (route2) {
       case 'settings':
         var project = new ProjectModel({_id: route1});
-        
+
         project.fetch({
           success: function() {
             var form = Origin.scaffold.buildForm({
@@ -323,7 +323,7 @@ define(function(require) {
             var form = Origin.scaffold.buildForm({
               model: configModel
             });
-            
+
             Origin.trigger('location:title:update', {title: 'Edit configuration'});
             Origin.sidebar.addView(new EditorConfigEditSidebarView({form: form}).$el);
             Origin.editingOverlay.addView(new EditorConfigEditView({model: configModel, form: form}).$el);
@@ -398,7 +398,7 @@ define(function(require) {
           });
           return;
         }
-        
+
         // If route3 is an id set it to the currentContentObjectId
         Origin.editor.currentContentObjectId = (route3) ? route3 : undefined;
 

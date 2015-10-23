@@ -18,7 +18,7 @@ define(function(require) {
 			} else {
 				callback.call();
 			}
-			
+
 		},
 
 		onUserAuthenticated: function(callback) {

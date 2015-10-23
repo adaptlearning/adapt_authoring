@@ -6,7 +6,7 @@ define(function(require) {
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
 
   var EditorCourseEditView = EditorOriginView.extend({
-    
+
     tagName: "div",
 
     className: "project",
@@ -34,7 +34,7 @@ define(function(require) {
         title: this.$('.course-title').val(),
         body: this.$('.course-body').val(),
         submit: this.$('.course-submit').val(),
-        reset: this.$('.course-reset').val(), 
+        reset: this.$('.course-reset').val(),
         showCorrectAnswer: this.$('.course-show-correct').val(),
         hideCorrectAnswer: this.$('.course-hide-correct').val()
       },
@@ -53,7 +53,7 @@ define(function(require) {
         }
       });
     }
-  
+
   },
   {
     template: 'editorCourseEdit'

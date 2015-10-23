@@ -59,7 +59,7 @@ define(function(require){
                   Origin.trigger('editorView:move' + view.capitalise(type) + ':' + parentId);
                 }
               });
-            }, 
+            },
             error: function(jqXHR, textStatus, errorThrown) {
               Origin.Notify.alert({
                 type: 'error',

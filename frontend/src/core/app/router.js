@@ -47,7 +47,7 @@ define(function(require) {
       }
 
       $('.app-inner').append(currentView.$el);
-      
+
     },
 
     handleIndex: function() {
@@ -65,12 +65,12 @@ define(function(require) {
     evaluateDashboardRoute: function() {
       if (Origin.location && Origin.location.module == 'dashboard') {
 
-        var suffix = Origin.location.route1 
+        var suffix = Origin.location.route1
           ? '/' + Origin.location.route1
           : '';
 
         Origin.dashboardRoute = '/#/dashboard' + suffix;
-      } 
+      }
     },
 
     handleRoute: function(module, route1, route2, route3, route4) {
@@ -138,7 +138,7 @@ define(function(require) {
       _.delay(_.bind(function() {
         this.$loading.addClass('display-none').removeClass('cover-top-bar');
       }, this), 300);
-      
+
     }
 
   });

@@ -89,7 +89,6 @@ define(function(require) {
 
     addExtension: function() {
         var self = this;
-
         $.post('/api/extension/enable/' + this.model.get('_id'), {
                 extensions: this.currentSelectedIds
             }, _.bind(function(result) {

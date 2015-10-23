@@ -43,7 +43,7 @@ define(function(require){
           sessionModel.set('_canRevert', false);
           sessionModel.set('id', jqXHR.id);
           sessionModel.set('tenantId', jqXHR.tenantId);
-          sessionModel.set('email', jqXHR.email);  
+          sessionModel.set('email', jqXHR.email);
           sessionModel.set('isAuthenticated', jqXHR.success);
           sessionModel.set('permissions', jqXHR.permissions);
           delete sessionModel._revertLogin;

@@ -65,13 +65,14 @@ define(function(require) {
 
 	var Confirm = function(data) {
 		// allow for string input
-		if(_.isString(data)) {
-			data = {
-				text: data
+		if (_.isString(data)) {
+      data = {
+        text: data
 			};
 		}
 
 		data.type = data.type || "confirm";
+
 		openPopup(data);
 	};
 

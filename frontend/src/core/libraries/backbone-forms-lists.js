@@ -169,19 +169,36 @@ define(['jquery', 'underscore', 'backbone', 'backboneForms'], function($, _, Bac
     removeItem: function(item) {
       //Confirm delete
       var confirmMsg = this.schema.confirmDelete;
-      if (confirmMsg && !confirm(confirmMsg)) return;
-
-      var index = _.indexOf(this.items, item);
-
-      this.items[index].remove();
-      this.items.splice(index, 1);
+      var self = this;
       
-      if (item.addEventTriggered) {
-        this.trigger('remove', this, item.editor);
-        this.trigger('change', this);
+      if (!confirmMsg) {
+        return;
       }
-
-      if (!this.items.length && !this.Editor.isAsync) this.addItem();
+      
+      window.confirm({
+        title: "Are you sure?",
+        text: confirmMsg,
+        type: "confirm",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, delete it!",
+        closeOnConfirm: true,
+        callback: function(confirmed) {
+          if (confirmed) {
+            var index = _.indexOf(self.items, item);
+  
+            self.items[index].remove();
+            self.items.splice(index, 1);
+            
+            if (item.addEventTriggered) {
+              self.trigger('remove', self, item.editor);
+              self.trigger('change', self);
+            }
+      
+            if (!self.items.length && !self.Editor.isAsync) self.addItem(); 
+          }
+        } 
+      });
     },
 
     getValue: function() {

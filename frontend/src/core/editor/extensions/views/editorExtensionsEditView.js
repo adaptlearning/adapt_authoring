@@ -5,8 +5,6 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorConfigModel = require('editorConfig/models/editorConfigModel');
-  var ExtensionCollection = require('editorExtensions/collections/extensionCollection');
-  var ExtensionModel = require('editorExtensions/models/extensionModel');
 
   var EditorExtensionsEditView = EditorOriginView.extend({
 
@@ -20,7 +18,7 @@ define(function(require) {
 
     events: {
       'click button.remove-extension' : 'onRemoveExtensionClicked',
-      'click button.add-extension': 'onAddExtensionClicked'
+      'click button.add-extension'    : 'onAddExtensionClicked'
     },
 
     preRender: function() {
@@ -32,23 +30,22 @@ define(function(require) {
 
     setupExtensions: function() {
 
-        // Grab available extensions
+        // Grab all available extensions
         var availableExtensionsCollection = Origin.editor.data.extensionTypes;
 
-        // Get enabled extensions
+        // Get the extensions on the current course
         var enabledExtensions = Origin.editor.data.config.get('_enabledExtensions');
 
-        // Pluck Ids so we can compare
-        var enabledExtensionsIds = _.pluck(enabledExtensions, '_id');
-
+        // Pluck on extension name
+        var enabledExtensionNames = _.pluck(enabledExtensions, 'name');
+        
         var enabledExtensionsCollection = new Backbone.Collection();
         var disabledExtensionsCollection = new Backbone.Collection();
 
         // Go through each collection and see if it's enabled
         // and push to correct collection
         availableExtensionsCollection.each(function(extension) {
-
-            if (_.indexOf(enabledExtensionsIds, extension.get('_id')) > -1) {
+            if (_.indexOf(enabledExtensionNames, extension.get('name')) > -1) {
                 enabledExtensionsCollection.add(extension);
             } else {
                 disabledExtensionsCollection.add(extension);

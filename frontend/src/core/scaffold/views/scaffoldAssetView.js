@@ -284,6 +284,7 @@ define(function(require) {
 
             // Check if alternative attribute should be used
             if (alternativeAttribute) {
+                attributesToSave = [];
                 attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
             } 
             

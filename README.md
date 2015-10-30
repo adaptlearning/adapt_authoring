@@ -1,4 +1,6 @@
 # Adapt Builder [![Build Status](https://secure.travis-ci.org/adaptlearning/adapt_authoring.png)](http://travis-ci.org/adaptlearning/adapt_authoring)
+
+[![Join the chat at https://gitter.im/adaptlearning/adapt_authoring](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/adaptlearning/adapt_authoring?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
  
 A web-based authoring tool for the [Adapt Framework](https://community.adaptlearning.org/).
 
@@ -49,7 +51,7 @@ git config --global user.email "youremail@domain.com"
 
 [NodeJS](http://nodejs.org/) and [NPM](https://www.npmjs.org/) are required. Installing Node.js will also install NPM.
 
-The NodeJS version should must be 0.10.33. Earlier versions of NodeJS are less stable and the code is currently not compatibile with 0.12.x.
+IMPORTANT: The NodeJS version must be 0.10.33. Earlier versions of NodeJS are less stable and the code is currently not compatibile with 0.12.x.
 
 You should use a NodeJS version manager. We recommend using [NVM](https://github.com/creationix/nvm) on non-Windows machines. On Windows, try [nodist](https://github.com/marcelklehr/nodist)
 

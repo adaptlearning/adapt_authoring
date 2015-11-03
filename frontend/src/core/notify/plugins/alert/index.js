@@ -23,7 +23,7 @@ define(function(require) {
 			case 'input':
 				break;
 			case 'success':
-				defaults.title = window.polyglot.t('app.sucessdefaulttitle');
+				defaults.title = window.polyglot.t('app.successdefaulttitle');
         break;
 			case 'info':
 				defaults.title = window.polyglot.t('app.infodefaulttitle');

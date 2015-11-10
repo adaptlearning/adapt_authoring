@@ -103,6 +103,7 @@
     "morgan": "^1.6.1",
     "multer": "^1.0.3",
     "ncp": "~0.5.1",
+    "needle": "^0.10.0",
     "node-ffprobe": "~1.2.2",
     "node-gyp": "~0.12.1",
     "node-polyglot": "~0.4.1",

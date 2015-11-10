@@ -113,7 +113,7 @@ LocalFileStorage.prototype.createWriteStream = function (filePath, options, call
   if ('function' === typeof options) {
     // only callback was passed
     callback = options;
-    options = null;
+    options = {};
   }
   callback(fs.createWriteStream(this.resolvePath(filePath), options));
 };
@@ -130,7 +130,7 @@ LocalFileStorage.prototype.createReadStream = function (filePath, options, callb
   if ('function' === typeof options) {
     // only callback was passed
     callback = options;
-    options = null;
+    options = {};
   }
   
   var forceMaster = (options && options.forceMaster)

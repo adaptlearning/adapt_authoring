@@ -59,9 +59,12 @@ define(function(require){
                   Origin.trigger('editorView:move' + view.capitalise(type) + ':' + parentId);
                 }
               });
-            }, 
+            },
             error: function(jqXHR, textStatus, errorThrown) {
-              alert(jqXHR.responseJSON.message);
+              Origin.Notify.alert({
+                type: 'error',
+                text: jqXHR.responseJSON.message
+              });
             }
           });
         }

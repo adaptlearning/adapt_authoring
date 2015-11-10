@@ -198,22 +198,23 @@ define(function(require){
       var self = this;
 
       Origin.Notify.confirm({
+        type: 'warning',
         title: window.polyglot.t('app.deleteitem'+ this.model.get('_type')),
-        text: window.polyglot.t('app.confirmdelete' + this.model.get('_type')) + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletewarning'+ this.model.get('_type')),
-        html: true,
-        closeOnConfirm: true,
-        confirmButtonText: window.polyglot.t('app.ok'),
-        cancelButtonText: window.polyglot.t('app.cancel'),
-        callback: function(isConfirm) {
-          var id = self.model.get('_id');
-          if (isConfirm) {
-            Origin.trigger('editorView:removeItem:' + id);
-          } else {
-            Origin.trigger('editorView:cancelRemoveItem:' + id);
-          }
+        text: window.polyglot.t('app.confirmdelete' + this.model.get('_type')) + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletewarning' + this.model.get('_type')),
+        callback: function(isConfirmed) {
+          self.onConfirmRemovePopup(isConfirmed);
         }
       });
 
+    },
+
+    onConfirmRemovePopup: function(isConfirmed) {
+      var id = this.model.get('_id');
+      if (isConfirmed) {
+        Origin.trigger('editorView:removeItem:' + id);
+      } else {
+        Origin.trigger('editorView:cancelRemoveItem:' + id);
+      }
     },
 
     copyMenuItem: function() {

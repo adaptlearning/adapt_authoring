@@ -146,12 +146,9 @@ define(function(require){
       }
 
       Origin.Notify.confirm({
+        type: 'warning',
         title: window.polyglot.t('app.deleteblock'),
         text: window.polyglot.t('app.confirmdeleteblock') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteblockwarning'),
-        html: true,
-        closeOnConfirm: true,
-        confirmButtonText: window.polyglot.t('app.ok'),
-        cancelButtonText: window.polyglot.t('app.cancel'),
         callback: _.bind(this.deleteBlockConfirm, this)
       });
     },
@@ -170,7 +167,10 @@ define(function(require){
           _this.remove();
         },
         error: function(model, response) {
-          alert('An error occurred');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorgeneric')
+          });
         }
       });
     },

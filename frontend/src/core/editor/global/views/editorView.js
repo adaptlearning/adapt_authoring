@@ -1,4 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
+/*
+ * TODO This needs a tidy:
+ * - Remove commented lines
+ * - Sort out error handling
+ */
 define(function(require){
 
   var Backbone = require('backbone');
@@ -374,13 +379,10 @@ define(function(require){
           errorMessage += "<li>" + alerts[i] + "</li>";
         }
 
-        Origin.Notify.confirm({
+        Origin.Notify.alert({
+          type: 'error',
           title: window.polyglot.t('app.validationfailed'),
           text: errorMessage,
-          html: true,
-          closeOnConfirm: true,
-          showCancelButton: false,
-          confirmButtonText: window.polyglot.t('app.ok'),
           callback: _.bind(this.validateCourseConfirm, this)
         });
       }

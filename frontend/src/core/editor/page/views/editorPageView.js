@@ -155,7 +155,7 @@ define(function(require){
       var _this = this;
       var newPageArticleModel = new EditorArticleModel({
         title: window.polyglot.t('app.placeholdernewarticle'),
-        displayTitle: '',
+        displayTitle: window.polyglot.t('app.placeholdernewarticle'),
         body: '',
         _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),

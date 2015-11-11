@@ -130,7 +130,7 @@ define(function(require){
       var _this = this;
       var newPageBlockModel = new EditorBlockModel({
         title: window.polyglot.t('app.placeholdernewblock'),
-        displayTitle: '',
+        displayTitle: window.polyglot.t('app.placeholdernewblock'),
         body: '',
         _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),

@@ -77,7 +77,7 @@ define(function(require) {
 
 			var newComponentModel = new EditorComponentModel({
 				title: window.polyglot.t('app.placeholdernewcomponent'),
-				displayTitle: '',
+				displayTitle: window.polyglot.t('app.placeholdernewcomponent'),
 				body: '',
 				_parentId: this._parentId,
 				_courseId: Origin.editor.data.course.get('_id'),

@@ -53,12 +53,12 @@ define(function(require) {
 
     var courseContextItems = [
       {
-        title: window.polyglot.t('app.editSettings'),
+        title: window.polyglot.t('app.editsettings'),
         className: 'context-menu-item',
         callbackEvent: 'editSettings'
       },
       {
-        title: window.polyglot.t('app.editCourse'),
+        title: window.polyglot.t('app.editcourse'),
         className: 'context-menu-item',
         callbackEvent: 'edit'
       },

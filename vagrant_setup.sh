@@ -12,7 +12,7 @@ apt-get install -y mongodb
 apt-get install -y ffmpeg
 
 # install nodejs via nodesource
-curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
+curl -sL https://deb.nodesource.com/setup_4.x | sudo bash -
 apt-get install -y nodejs
 
 # npm needs some swap space, else it fails

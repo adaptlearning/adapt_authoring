@@ -123,7 +123,7 @@ define(function(require){
       if (callback) {
         callback.apply(this);
       }
-      
+
       // TODO -- Remove the next line if it's not required
       // this.model.save({
       //   'layoutOptions': layoutOptions,
@@ -144,21 +144,23 @@ define(function(require){
       if (event) {
         event.preventDefault();
       }
-      var id = this.model.get('_id');
 
-      var deleteBlock = {
-        _type: 'prompt',
-        _showIcon: true,
+      Origin.Notify.confirm({
         title: window.polyglot.t('app.deleteblock'),
-        body: window.polyglot.t('app.confirmdeleteblock') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteblockwarning'),
-        _prompts: [
-          {_callbackEvent: 'editorView:deleteBlock:' + id, promptText: window.polyglot.t('app.ok')},
-          {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
-        ]
-      };
+        text: window.polyglot.t('app.confirmdeleteblock') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteblockwarning'),
+        html: true,
+        closeOnConfirm: true,
+        confirmButtonText: window.polyglot.t('app.ok'),
+        cancelButtonText: window.polyglot.t('app.cancel'),
+        callback: _.bind(this.deleteBlockConfirm, this)
+      });
+    },
 
-      Origin.trigger('notify:prompt', deleteBlock);
-
+    deleteBlockConfirm: function(confirmed) {
+      if (confirmed) {
+        var id = this.model.get('_id');
+        Origin.trigger('editorView:deleteBlock:' + id);
+      }
     },
 
     deleteBlock: function(event) {
@@ -206,7 +208,7 @@ define(function(require){
           // Store the offset to stop the page jumping during the start of drag
           // because of the drop zones changing the scroll position on the page
           view.offsetTopFromWindow = view.$el.offset().top - $(window).scrollTop();
-          // This is in the helper method because the height needs to be 
+          // This is in the helper method because the height needs to be
           // manipulated before the drag start method due to adding drop zones
           view.showDropZones();
           $(this).attr('data-' + view.model.get('_type') + '-id', view.model.get('_id'));
@@ -246,12 +248,12 @@ define(function(require){
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
       var Id = this.model.get('_id');
-      Origin.router.navigate('#/editor/' 
-        + courseId 
-        + '/' 
-        + type 
-        + '/' 
-        + Id 
+      Origin.router.navigate('#/editor/'
+        + courseId
+        + '/'
+        + type
+        + '/'
+        + Id
         + '/edit', {trigger: true});
     },
 

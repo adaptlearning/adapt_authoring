@@ -28,6 +28,86 @@
       "inputType": "Text",
       "validators": ["required"]
     },
+    "_defaultDirection": {
+      "type": "string",
+      "required": true,
+      "default" : "ltr",
+      "title" : "Text Direction",
+      "validators": ["required"],
+      "inputType": {
+        "type": "Select",
+        "options": [
+          "ltr",
+          "rtl"
+        ]
+      }
+    },
+    "_accessibility": {
+      "type": "object",
+      "title": "Accessibility",
+      "properties" : {
+        "_isEnabled": {
+          "type": "bool",
+          "default": "false",
+          "isSetting": false,
+          "inputType": {"type": "Boolean", "options": [true, false]},
+          "validators": [],
+          "title": "Enable accessibility?",
+          "help": "If set to 'true' accessibility features will be enabled in this course"
+        },
+        "_shouldSupportLegacyBrowsers": {
+          "type": "bool",
+          "default": "false",
+          "isSetting": false,
+          "inputType": {"type": "Boolean", "options": [true, false]},
+          "validators": [],
+          "title": "Support legacy browsers?",
+          "help": "If set to 'true' the course will make special allowances for Internet Explorer 8"
+        },
+        "_isTextProcessorEnabled": {
+           "type": "bool",
+          "default": "false",
+          "isSetting": false,
+          "inputType": {"type": "Boolean", "options": [true, false]},
+          "validators": [],
+          "title": "Enable text reader support?",
+          "help": "If set to 'true' the course will add focusing to assist text reader software"
+        }
+      }
+    },
+    "screenSize": {
+      "type": "object",
+      "title": "Screen Size",
+      "properties": {
+        "small": {
+          "type": "number",
+          "required": true,
+          "default": 519,
+          "title": "Small",
+          "inputType": "Number",
+          "validators": ["required", "number"],
+          "help": "Pixel width for the small breakpoint, e.g. cellphones"
+        },
+        "medium": {
+          "type": "number",
+          "required": true,
+          "default": 759,
+          "title": "Medium",
+          "inputType": "Number",
+          "validators": ["required", "number"],
+          "help": "Pixel width for the medium breakpoint, e.g. tablet devices"
+        },
+        "large": {
+          "type": "number",
+          "required": true,
+          "default": 1024,
+          "title": "Large",
+          "inputType": "Number",
+          "validators": ["required", "number"],
+          "help": "Pixel width for the large breakpoint, e.g. laptop/desktop computers"
+        }
+      }
+    },
     "_questionWeight": {
       "type": "number",
       "required": true,

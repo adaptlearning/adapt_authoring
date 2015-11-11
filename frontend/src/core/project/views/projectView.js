@@ -50,17 +50,17 @@ define(function(require){
 
     editProjectSettings: function(event) {
       if (event) {
-        event.preventDefault();  
+        event.preventDefault();
       }
-      
-      Backbone.history.navigate('#/editor/' + this.model.get('_id') + '/settings', {trigger: true});    
+
+      Backbone.history.navigate('#/editor/' + this.model.get('_id') + '/settings', {trigger: true});
     },
 
     editProject: function(event) {
       if (event) {
-        event.preventDefault();  
+        event.preventDefault();
       }
-      
+
       Backbone.history.navigate('/editor/' + this.model.get('_id') + '/menu', {trigger: true});
     },
 
@@ -85,19 +85,24 @@ define(function(require){
       if (event) {
         event.preventDefault();
       }
-      var id = this.model.get('_id');
-      var deleteProject = {
-          _type: 'prompt',
-          _showIcon: true,
-          title: window.polyglot.t('app.deleteproject'),
-          body: window.polyglot.t('app.confirmdeleteproject') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteprojectwarning'),
-          _prompts: [
-            {_callbackEvent: 'editorView:deleteProject:' + id, promptText: window.polyglot.t('app.ok')},
-            {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
-          ]
-        };
 
-      Origin.trigger('notify:prompt', deleteProject);
+      Origin.Notify.confirm({
+        title: window.polyglot.t('app.deleteproject'),
+        text: window.polyglot.t('app.confirmdeleteproject') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteprojectwarning'),
+        html: true,
+        type: 'warning',
+        closeOnConfirm: true,
+        confirmButtonText: window.polyglot.t('app.ok'),
+        cancelButtonText: window.polyglot.t('app.cancel'),
+        callback: _.bind(this.deleteProjectConfirm, this)
+      });
+    },
+
+    deleteProjectConfirm: function(confirmed) {
+      if (confirmed) {
+        var id = this.model.get('_id');
+        Origin.trigger('editorView:deleteProject:' + id);
+      }
     },
 
     deleteProject: function(event) {
@@ -155,7 +160,7 @@ define(function(require){
         opacity: 0
       }).hide();
     }
-    
+
   }, {
     template: 'project'
   });

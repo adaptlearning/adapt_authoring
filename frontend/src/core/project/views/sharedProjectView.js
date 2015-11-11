@@ -62,9 +62,16 @@ define(function(require){
     },
 
     promptDuplicateProject: function() {
-      if (confirm(window.polyglot.t('app.confirmduplicate'))) {
-        this.duplicateProject();
-      }
+      var self = this;
+      
+      Origin.Notify.confirm({
+        text: window.polyglot.t('app.confirmduplicate'),
+        callback: function(confirmed) {
+          if (confirmed) {
+            self.duplicateProject(); 
+          }
+        }
+      });
     },
 
     duplicateProject: function() {

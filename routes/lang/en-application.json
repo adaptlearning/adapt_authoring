@@ -289,5 +289,9 @@
   "app.erroraddingblock": "Something went wrong while adding block. <br/>Please try again.",
   "app.erroraddingcomponent": "Something went wrong while adding component. <br/>Please try again.",
   "app.errorduplication": "Something went wrong during duplication. <br/>Please try again.",
-  "app.errorgettingschemas": "An error occurred while getting schemas."
+  "app.errorgettingschemas": "An error occurred while getting schemas.",
+  "app.errorgeneratingpreview": "Error generating preview, please contact Administrator.",
+  "app.errorcopy": "Error during copy.",
+  "app.errorpaste": "Error during paste",
+  "app.errorsaveasset": "An error occurred doing the save"
 }

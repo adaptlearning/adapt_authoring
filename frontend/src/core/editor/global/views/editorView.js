@@ -146,13 +146,18 @@ define(function(require){
               }
             } else {
               self.resetPreviewProgress();
-              alert('Error generating preview, please contact Administrator');
+              Origin.Notify.alert({
+                type: 'error',
+                text: window.polyglot.t('app.errorgeneratingpreview')
+              });
             }
           },
           error: function (jqXHR, textStatus, errorThrown) {
             self.resetPreviewProgress();
-            alert('Error');
-
+            Origin.Notify.alert({
+              type: 'error',
+              text: window.polyglot.t('app.errorgeneric')
+            });
           }
         });
       }
@@ -175,7 +180,10 @@ define(function(require){
             }
           },
           error: function(jqXHR, textStatus, errorThrown) {
-            alert(errorThrown);
+            Origin.Notify.alert({
+              type: 'error',
+              text: errorThrown
+            });
             console.log(jqXHR);
             console.log(textStatus);
             console.log(errorThrown);
@@ -215,7 +223,10 @@ define(function(require){
         },
         success: function (jqXHR, textStatus, errorThrown) {
           if (!jqXHR.success) {
-            alert(jqXHR.message);
+            Origin.Notify.alert({
+              type: 'error',
+              text: jqXHR.message
+            });
             console.log(jqXHR);
           } else {
             Origin.editor.clipboardId = jqXHR.clipboardId;
@@ -224,7 +235,10 @@ define(function(require){
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          alert('Error during copy');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorcopy')
+          });
           console.log(jqXHR);
           console.log(textStatus);
           console.log(errorThrown);
@@ -245,7 +259,10 @@ define(function(require){
         },
         success: function (jqXHR, textStatus, errorThrown) {
           if (!jqXHR.success) {
-            alert(jqXHR.message);
+            Origin.Notify.alert({
+              type: 'error',
+              text: jqXHR.message
+            });
             console.log(jqXHR);
           } else {
             Origin.editor.clipboardId = null;
@@ -259,7 +276,10 @@ define(function(require){
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          alert('Error during paste');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorpaste')
+          });
           console.log(jqXHR);
           console.log(textStatus);
           console.log(errorThrown);

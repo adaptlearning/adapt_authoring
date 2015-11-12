@@ -184,9 +184,6 @@ define(function(require){
               type: 'error',
               text: errorThrown
             });
-            console.log(jqXHR);
-            console.log(textStatus);
-            console.log(errorThrown);
           }
         });
       }
@@ -227,7 +224,6 @@ define(function(require){
               type: 'error',
               text: jqXHR.message
             });
-            console.log(jqXHR);
           } else {
             Origin.editor.clipboardId = jqXHR.clipboardId;
             Origin.editor.pasteParentModel = model.getParent();
@@ -239,9 +235,6 @@ define(function(require){
             type: 'error',
             text: window.polyglot.t('app.errorcopy')
           });
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
         }
       });
     },
@@ -263,7 +256,6 @@ define(function(require){
               type: 'error',
               text: jqXHR.message
             });
-            console.log(jqXHR);
           } else {
             Origin.editor.clipboardId = null;
             Origin.editor.pasteParentModel = null;
@@ -280,9 +272,6 @@ define(function(require){
             type: 'error',
             text: window.polyglot.t('app.errorpaste')
           });
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
         }
       });
     },

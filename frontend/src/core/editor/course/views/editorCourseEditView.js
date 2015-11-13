@@ -6,7 +6,7 @@ define(function(require) {
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
 
   var EditorCourseEditView = EditorOriginView.extend({
-    
+
     tagName: "div",
 
     className: "project",
@@ -34,13 +34,16 @@ define(function(require) {
         title: this.$('.course-title').val(),
         body: this.$('.course-body').val(),
         submit: this.$('.course-submit').val(),
-        reset: this.$('.course-reset').val(), 
+        reset: this.$('.course-reset').val(),
         showCorrectAnswer: this.$('.course-show-correct').val(),
         hideCorrectAnswer: this.$('.course-hide-correct').val()
       },
       {
         error: function() {
-          alert('An error occurred doing the save');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorsave')
+          });
         },
         success: function() {
           Origin.trigger('editor:refreshData', function() {
@@ -50,7 +53,7 @@ define(function(require) {
         }
       });
     }
-  
+
   },
   {
     template: 'editorCourseEdit'

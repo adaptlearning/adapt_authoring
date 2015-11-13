@@ -70,7 +70,7 @@ define(function(require) {
 			Origin.trigger('editorComponentListView:remove');
 
 			var componentName = this.model.get('name');
-			
+
 			var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
 				return type.get('name') == componentName;
 			});
@@ -91,22 +91,25 @@ define(function(require) {
 
 			var newComponentView = new EditorComponentView({model: newComponentModel}).$el.addClass('syncing');
 			this.$parentElement
-                .find('.page-components')
-                .append(newComponentView);
+        .find('.page-components')
+        .append(newComponentView);
 
 			newComponentModel.save(null, {
-          		error: function() {
-          			$('html').css('overflow-y', '');
-                	alert('error adding new component');
-              	},
-              	success: _.bind(function() {
-              		Origin.editor.data.components.add(newComponentModel);
+    		error: function() {
+    			$('html').css('overflow-y', '');
+					Origin.Notify.alert({
+						type: 'error',
+						text: window.polyglot.t('app.erroraddingcomponent')
+					});
+      	},
+      	success: _.bind(function() {
+      		Origin.editor.data.components.add(newComponentModel);
 					this.parentView.evaluateComponents(this.parentView.toggleAddComponentsButton);
-              		newComponentView.addClass('synced');
-              		$('html').css('overflow-y', '');
-              		$.scrollTo(newComponentView.$el);
-              	}, this)
-            });
+      		newComponentView.addClass('synced');
+      		$('html').css('overflow-y', '');
+      		$.scrollTo(newComponentView.$el);
+      	}, this)
+      });
 		}
 
 	}, {

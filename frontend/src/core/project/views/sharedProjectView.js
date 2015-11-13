@@ -39,7 +39,7 @@ define(function(require){
 
     selectProject: function(event) {
       event && event.preventDefault();
-      
+
       this.selectItem();
     },
 
@@ -57,14 +57,21 @@ define(function(require){
     preview: function() {
       var tenantId = this.model.get('_tenantId');
       var courseId = this.model.get('_id');
-      
+
       window.open('/preview/' + tenantId + '/' + courseId + '/main.html');
     },
 
     promptDuplicateProject: function() {
-      if (confirm(window.polyglot.t('app.confirmduplicate'))) {
-        this.duplicateProject();
-      }
+      var self = this;
+
+      Origin.Notify.confirm({
+        text: window.polyglot.t('app.confirmduplicate'),
+        callback: function(confirmed) {
+          if (confirmed) {
+            self.duplicateProject();
+          }
+        }
+      });
     },
 
     duplicateProject: function() {
@@ -75,11 +82,14 @@ define(function(require){
           Backbone.history.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
         },
         error: function() {
-          alert('error during duplication');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorduplication')
+          });
         }
       });
     }
-    
+
   }, {
     template: 'sharedProject'
   });

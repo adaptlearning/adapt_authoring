@@ -154,7 +154,7 @@ function initialize () {
   });
 
   app.contentmanager.addContentHook('update', 'course', {when:'pre'}, function (data, next) {
-    if (data[1].hasOwnProperty('themeSettings')) {
+    if (data[1].hasOwnProperty('themeSettings') || data[1].hasOwnProperty('customStyle')) {
       var tenantId = usermanager.getCurrentUser().tenant._id;
 
       app.emit('rebuildCourse', tenantId, data[0]._id);

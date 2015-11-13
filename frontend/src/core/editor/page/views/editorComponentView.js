@@ -27,7 +27,7 @@ define(function(require){
       if (!this.model.isNew()) {
         this.setupModelEvents();
       }
-      
+
       this.on('contextMenu:component:edit', this.loadComponentEdit);
       this.on('contextMenu:component:copy', this.onCopy);
       this.on('contextMenu:component:cut', this.onCut);
@@ -51,19 +51,21 @@ define(function(require){
       if (event) {
         event.preventDefault();
       }
-      var id = this.model.get('_id');
-      var deletePrompt = {
-        _type: 'prompt',
-        _showIcon: true,
-        title: window.polyglot.t('app.deletecomponent'),
-        body: window.polyglot.t('app.confirmdeletecomponent') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletecomponentwarning'),
-        _prompts: [
-          {_callbackEvent: 'editorPageView:deleteComponent:' + id, promptText: window.polyglot.t('app.ok')},
-          {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
-        ]
-      };
 
-      Origin.trigger('notify:prompt', deletePrompt);
+      Origin.Notify.confirm({
+        type: 'warning',
+        title: window.polyglot.t('app.deletecomponent'),
+        text: window.polyglot.t('app.confirmdeletecomponent') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletecomponentwarning'),
+        callback: _.bind(this.deleteComponentConfirm, this)
+      });
+
+    },
+
+    deleteComponentConfirm: function(confirmed) {
+      if (confirmed) {
+        var id = this.model.get('_id');
+        Origin.trigger('editorPageView:deleteComponent:' + id);
+      }
     },
 
     deleteComponent: function() {
@@ -71,7 +73,7 @@ define(function(require){
 
       if (this.model.destroy()) {
         this.remove();
-        Origin.trigger('editorView:removeComponent:' + parentId);   
+        Origin.trigger('editorView:removeComponent:' + parentId);
       }
     },
 
@@ -79,12 +81,12 @@ define(function(require){
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
       var Id = this.model.get('_id');
-      Origin.router.navigate('#/editor/' 
-        + courseId 
-        + '/' 
-        + type 
-        + '/' 
-        + Id 
+      Origin.router.navigate('#/editor/'
+        + courseId
+        + '/'
+        + type
+        + '/'
+        + Id
         + '/edit', {trigger: true});
     },
 
@@ -105,7 +107,7 @@ define(function(require){
           // Store the offset to stop the page jumping during the start of drag
           // because of the drop zones changing the scroll position on the page
           view.offsetTopFromWindow = view.$el.offset().top - $(window).scrollTop();
-          // This is in the helper method because the height needs to be 
+          // This is in the helper method because the height needs to be
           // manipulated before the drag start method due to adding drop zones
           view.showDropZones();
           $(this).attr('data-component-id', view.model.get('_id'));

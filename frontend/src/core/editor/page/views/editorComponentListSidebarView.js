@@ -1,6 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-    
+
     var Origin = require('coreJS/app/origin');
     var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
     var Backbone = require('backbone');
@@ -42,7 +42,10 @@ define(function(require) {
             },
             {
               error: function() {
-                alert('error adding new component');
+                  Origin.Notify.alert({
+                    type: 'error',
+                    text: window.polyglot.t('app.erroraddingcomponent')
+                  });
               },
               success: function() {
                 Origin.trigger('editor:refreshData', function() {
@@ -81,17 +84,20 @@ define(function(require) {
             },
             {
               error: function() {
-                alert('error adding new component');
+                  Origin.Notify.alert({
+                    type: 'error',
+                    text: window.polyglot.t('app.erroraddingcomponent')
+                  });
               },
               success: function(data) {
                 Origin.trigger('editor:refreshData', function() {
                     Origin.trigger('editingOverlay:views:hide');
-                    Backbone.history.navigate('#/editor/' 
-                        + Origin.editor.data.course.get('_id') 
-                        + '/component/' 
-                        + data.get('_id')); 
+                    Backbone.history.navigate('#/editor/'
+                        + Origin.editor.data.course.get('_id')
+                        + '/component/'
+                        + data.get('_id'));
                 }, this);
-                               
+
               }
             });
         },
@@ -107,7 +113,7 @@ define(function(require) {
 
             Backbone.history.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
             Origin.trigger('editingOverlay:views:hide');
-            
+
         }
 
     }, {

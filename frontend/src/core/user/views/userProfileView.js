@@ -56,7 +56,7 @@ define(function(require){
         this.$('div.change-password-section').removeClass('display-none');
         this.$('.change-password').text(window.polyglot.t('app.undochangepassword'));
       } else {
-        this.$('.change-password').text(window.polyglot.t('app.changepassword'));       
+        this.$('.change-password').text(window.polyglot.t('app.changepassword'));
         this.$('div.change-password-section').addClass('display-none');
         this.$('#password').val('');
         this.$('#confirmPassword').val('');
@@ -76,7 +76,7 @@ define(function(require){
 
       // Must be at least 8 characters long
       var okRegex = new RegExp("(?=.{8,}).*", "g");
-      
+
       if (okRegex.test(password) === false) {
         // If ok regex doesn't match the password
         $('#passwordStrength').removeClass().addClass('alert alert-error').html(window.polyglot.t('app.validationlength', {length: 8}));
@@ -108,7 +108,10 @@ define(function(require){
 
       self.model.save({}, {
         error: function(model, response, optinos) {
-          alert('An error occurred');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorgeneric')
+          });
         },
         success: function(model, response, options) {
           Backbone.history.history.back();
@@ -116,7 +119,7 @@ define(function(require){
         }
       });
     }
-    
+
   }, {
     template: 'userProfile'
   });

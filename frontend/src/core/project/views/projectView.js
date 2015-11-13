@@ -50,17 +50,17 @@ define(function(require){
 
     editProjectSettings: function(event) {
       if (event) {
-        event.preventDefault();  
+        event.preventDefault();
       }
-      
-      Backbone.history.navigate('#/editor/' + this.model.get('_id') + '/settings', {trigger: true});    
+
+      Backbone.history.navigate('#/editor/' + this.model.get('_id') + '/settings', {trigger: true});
     },
 
     editProject: function(event) {
       if (event) {
-        event.preventDefault();  
+        event.preventDefault();
       }
-      
+
       Backbone.history.navigate('/editor/' + this.model.get('_id') + '/menu', {trigger: true});
     },
 
@@ -85,19 +85,20 @@ define(function(require){
       if (event) {
         event.preventDefault();
       }
-      var id = this.model.get('_id');
-      var deleteProject = {
-          _type: 'prompt',
-          _showIcon: true,
-          title: window.polyglot.t('app.deleteproject'),
-          body: window.polyglot.t('app.confirmdeleteproject') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteprojectwarning'),
-          _prompts: [
-            {_callbackEvent: 'editorView:deleteProject:' + id, promptText: window.polyglot.t('app.ok')},
-            {_callbackEvent: '', promptText: window.polyglot.t('app.cancel')}
-          ]
-        };
 
-      Origin.trigger('notify:prompt', deleteProject);
+      Origin.Notify.confirm({
+        type: 'warning',
+        title: window.polyglot.t('app.deleteproject'),
+        text: window.polyglot.t('app.confirmdeleteproject') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteprojectwarning'),
+        callback: _.bind(this.deleteProjectConfirm, this)
+      });
+    },
+
+    deleteProjectConfirm: function(confirmed) {
+      if (confirmed) {
+        var id = this.model.get('_id');
+        Origin.trigger('editorView:deleteProject:' + id);
+      }
     },
 
     deleteProject: function(event) {
@@ -108,7 +109,10 @@ define(function(require){
           self.remove()
         },
         error: function(model, response, options) {
-          alert('Error - ' + response.responseJSON.message);
+          Origin.Notify.alert({
+            type: 'error',
+            text: response.responseJSON.message
+          });
         }
       });
     },
@@ -120,7 +124,10 @@ define(function(require){
           Backbone.history.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
         },
         error: function() {
-          alert('error during duplication');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorduplication')
+          });
         }
       });
     },
@@ -155,7 +162,7 @@ define(function(require){
         opacity: 0
       }).hide();
     }
-    
+
   }, {
     template: 'project'
   });

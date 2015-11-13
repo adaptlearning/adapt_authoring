@@ -8,7 +8,7 @@ define(function(require) {
   var ThemeView = require('editorTheme/views/editorThemeView');
 
   var EditorThemeEditView = EditorOriginView.extend({
-    
+
     tagName: "ul",
 
     className: "editor-theme-edit",
@@ -26,7 +26,7 @@ define(function(require) {
       this.listenTo(Origin, 'editorThemeEditSidebar:views:save', this.saveData);
     },
 
-    postRender: function() {    
+    postRender: function() {
     },
 
     addThemeViews: function() {
@@ -37,7 +37,7 @@ define(function(require) {
     renderThemeViews: function() {
 
       this.collection.each(function(theme) {
-        
+
         var isSelected = false;
 
         if (theme.get('_id') === this.model.get('_theme')) {
@@ -58,28 +58,34 @@ define(function(require) {
 
     saveData: function(event) {
       if (event) {
-        event.preventDefault();  
+        event.preventDefault();
       }
 
       var selectedTheme = this.collection.findWhere({_isSelected: true});
 
       if (selectedTheme === undefined) {
-        alert('No theme selected');
+        Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errornothemeselected')
+          });
         return;
-      } 
+      }
 
       var selectedThemeId = selectedTheme.get('_id');
-      
+
       // Should push to api
 
       $.post('/api/theme/' + selectedThemeId + '/makeitso/' + this.model.get('_courseId'))
         .error(function() {
-          alert('An error occurred doing the save');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorsave')
+          });
         })
         .done(_.bind(function() {
 
           Origin.trigger('editingOverlay:views:hide');
-          
+
           Origin.trigger('editor:refreshData', function() {
             Backbone.history.history.back();
             this.remove();

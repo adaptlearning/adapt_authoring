@@ -5,8 +5,6 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorConfigModel = require('editorConfig/models/editorConfigModel');
-  var ExtensionCollection = require('editorExtensions/collections/extensionCollection');
-  var ExtensionModel = require('editorExtensions/models/extensionModel');
 
   var EditorExtensionsEditView = EditorOriginView.extend({
 
@@ -20,7 +18,7 @@ define(function(require) {
 
     events: {
       'click button.remove-extension' : 'onRemoveExtensionClicked',
-      'click button.add-extension': 'onAddExtensionClicked'
+      'click button.add-extension'    : 'onAddExtensionClicked'
     },
 
     preRender: function() {
@@ -32,23 +30,22 @@ define(function(require) {
 
     setupExtensions: function() {
 
-        // Grab available extensions
+        // Grab all available extensions
         var availableExtensionsCollection = Origin.editor.data.extensionTypes;
 
-        // Get enabled extensions
+        // Get the extensions on the current course
         var enabledExtensions = Origin.editor.data.config.get('_enabledExtensions');
 
-        // Pluck Ids so we can compare
-        var enabledExtensionsIds = _.pluck(enabledExtensions, '_id');
-
+        // Pluck on extension name
+        var enabledExtensionNames = _.pluck(enabledExtensions, 'name');
+        
         var enabledExtensionsCollection = new Backbone.Collection();
         var disabledExtensionsCollection = new Backbone.Collection();
 
-        // Go through each collection and see if it's enabled 
+        // Go through each collection and see if it's enabled
         // and push to correct collection
         availableExtensionsCollection.each(function(extension) {
-
-            if (_.indexOf(enabledExtensionsIds, extension.get('_id')) > -1) {
+            if (_.indexOf(enabledExtensionNames, extension.get('name')) > -1) {
                 enabledExtensionsCollection.add(extension);
             } else {
                 disabledExtensionsCollection.add(extension);
@@ -73,58 +70,54 @@ define(function(require) {
         this.currentSelectedIds = [$(event.currentTarget).attr('data-id')];
         var extensionName = $(event.currentTarget).attr('data-displayname');
 
-        var props = {
-            _type: 'prompt',
-            _showIcon: true,
-            title: window.polyglot.t('app.manageextensions'),
-            body: window.polyglot.t('app.confirmapplyextension', {extension: extensionName}),
-            _prompts: [{
-                    _callbackEvent: 'editorExtensionsEdit:views:add', 
-                    promptText: window.polyglot.t('app.ok')
-                }, {
-                    _callbackEvent:'', 
-                    promptText: window.polyglot.t('app.cancel')
-                }
-            ]
-        };
+        Origin.Notify.confirm({
+          title: window.polyglot.t('app.manageextensions'),
+          text: window.polyglot.t('app.confirmapplyextension', {extension: extensionName}),
+          html: true,
+          callback: _.bind(this.onAddExtensionConfirmed, this)
+        });
+    },
 
-        Origin.trigger('notify:prompt', props);
+    onAddExtensionConfirmed: function(confirmed) {
+        if (confirmed) {
+          Origin.trigger('editorExtensionsEdit:views:add');
+        }
     },
 
     addExtension: function() {
         var self = this;
-        
         $.post('/api/extension/enable/' + this.model.get('_id'), {
-                extensions: this.currentSelectedIds 
+                extensions: this.currentSelectedIds
             }, _.bind(function(result) {
             if (result.success) {
                 self.refreshData();
             } else {
-                alert('An error occured');
-            }          
+                Origin.Notify.alert({
+                  type: 'error',
+                  text: window.polyglot.t('app.errorgeneric')
+                });
+            }
         }, this));
     },
 
     onRemoveExtensionClicked: function(event) {
         this.currentSelectedIds = [$(event.currentTarget).attr('data-id')];
-        var props = {
-            _type: 'prompt',
-            _showIcon: true,
-            title: window.polyglot.t('app.manageextensions'),
-            body: window.polyglot.t('app.confirmdeleteextension'),
-            _prompts: [{
-                    _callbackEvent: 'editorExtensionsEdit:views:remove', 
-                    promptText: window.polyglot.t('app.ok')
-                }, {
-                    _callbackEvent:'', 
-                    promptText: window.polyglot.t('app.cancel')
-                }
-            ]
-        };
 
-        Origin.trigger('notify:prompt', props);
+        Origin.Notify.confirm({
+          type: 'warning',
+          title: window.polyglot.t('app.deleteextension'),
+          text: window.polyglot.t('app.confirmdeleteextension'),
+          callback: _.bind(this.onRemoveExtensionConfirmed, this)
+        });
+
     },
-    
+
+    onRemoveExtensionConfirmed: function(confirmed) {
+        if (confirmed) {
+            Origin.trigger('editorExtensionsEdit:views:remove');
+        }
+    },
+
     refreshData: function() {
       var self = this;
 
@@ -133,7 +126,7 @@ define(function(require) {
       configModel.fetch({
         success: function(model, response, options) {
           Origin.editor.data.config =  model;
-          
+
           Origin.trigger('scaffold:updateSchemas', function() {
             self.setupExtensions();
           }, this);
@@ -143,15 +136,18 @@ define(function(require) {
 
     removeExtension: function() {
         var self = this;
-        
+
         $.post('/api/extension/disable/' + this.model.get('_id'), {
-                extensions: this.currentSelectedIds 
+                extensions: this.currentSelectedIds
             }, _.bind(function(result) {
             if (result.success) {
                 self.refreshData();
             } else {
-                alert('An error occured');
-            }          
+                Origin.Notify.alert({
+                  type: 'error',
+                  text: window.polyglot.t('app.errorgeneric')
+                });
+            }
         }, this));
     }
 

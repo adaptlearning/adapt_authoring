@@ -107,39 +107,40 @@ define(function(require) {
 
 	    // Place value
 	    this.setValue(this.value);
-	    _.delay(_.bind(function() {
+	    _.defer(_.bind(function() {
 	    	// Initialize the editor
 	    	var textarea = this.$el[0];
 	    	this.editor = CKEDITOR.replace(textarea, {
 	    		toolbar: [
-					{ name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'ShowBlocks' ] },
-					{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-					{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
-					{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv' ] },
-					{name: 'direction', items: ['BidiLtr', 'BidiRtl']},
-					'/',
-					{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
-					{ name: 'styles', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-					{ name: 'links', items: [ 'Link', 'Unlink' ] },
-					{ name: 'colors', items: [ 'TextColor', 'BGColor' ] },
-					{ name: 'insert', items: [ 'SpecialChar', 'Table' ] },
-					{ name: 'tools', items: [  ] },
-					{ name: 'others', items: [ '-' ] }
-				],
-				extraAllowedContent: 'span(*)',
-        disableNativeSpellChecker: false
-			});
+            { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'ShowBlocks' ] },
+            { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+            { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
+            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv' ] },
+            {name: 'direction', items: ['BidiLtr', 'BidiRtl']},
+            '/',
+            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
+            { name: 'styles', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+            { name: 'links', items: [ 'Link', 'Unlink' ] },
+            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+            { name: 'insert', items: [ 'SpecialChar', 'Table' ] },
+            { name: 'tools', items: [  ] },
+            { name: 'others', items: [ '-' ] }
+          ],
+          extraAllowedContent: 'span(*)',
+          disableNativeSpellChecker: false
+        });
 
-	    }, this), 100);
+	    }, this));
 
 	    return this;
 	}
 
 	Backbone.Form.editors.TextArea.prototype.setValue = function(value) {
 		if (!value && typeof this.schema.default !== 'undefined') {
-            value = this.schema.default;
-        }
-        this.$el.html(value);
+      value = this.schema.default;
+    }
+    
+    this.$el.val(value);
 	}
 
 	Backbone.Form.editors.TextArea.prototype.getValue = function() {

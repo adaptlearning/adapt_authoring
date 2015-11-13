@@ -25,7 +25,7 @@ define(function(require) {
     saveComponent: function() {
       var self = this;
       var errors = self.form.commit();
-      // This must trigger no matter what, as sidebar needs to know 
+      // This must trigger no matter what, as sidebar needs to know
       // when the form has been resubmitted
       Origin.trigger('editorSidebar:showErrors', errors);
       if (errors) {
@@ -38,19 +38,22 @@ define(function(require) {
 
       self.model.save(null, {
         error: function() {
-          alert('An error occurred doing the save');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorsave')
+          });
         },
         success: _.bind(function() {
-          
+
           Origin.trigger('editingOverlay:views:hide');
-          
+
           Origin.trigger('editor:refreshData', function() {
             var currentPageId = self.model.getParent().getParent().getParent().get('_id');
             var currentCourseId = Origin.editor.data.course.get('_id');
             Backbone.history.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
             self.remove();
           }, this);
-          
+
         }, this)
       });
     }

@@ -262,7 +262,6 @@ define(function(require) {
 
         saveModel: function(shouldResetAssetCollection, attributesToSave) {
             var that = this;
-            // var attributesToSave = {};
             var isUsingAlternativeModel = false;
             var currentModel = Origin.scaffold.getCurrentModel()
             var alternativeModel = Origin.scaffold.getAlternativeModel();
@@ -270,7 +269,7 @@ define(function(require) {
             var isPatch = false;
             
             attributesToSave = typeof attributesToSave == 'undefined' 
-              ? null
+              ? []
               : attributesToSave;
               
             // Check if alternative model should be used
@@ -287,7 +286,7 @@ define(function(require) {
                 attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
             } 
             
-            if (!attributesToSave) {
+            if (!attributesToSave && !attributesToSave.length) {
                currentModel.pruneAttributes();
                currentModel.unset('tags');
             } else {

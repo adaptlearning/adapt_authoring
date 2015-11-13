@@ -49,11 +49,18 @@ define(function(require){
 
     onDeleteButtonClicked: function(event) {
       event.preventDefault();
+
+      Origin.Notify.confirm({
+        type: 'warning',
+        text: window.polyglot.t('app.assetconfirmdelete'),
+        callback: _.bind(this.onDeleteConfirmed, this)
+      });
+    },
+
+    onDeleteConfirmed: function(confirmed) {
       var self = this;
 
-      var shouldDeleteAsset = confirm(window.polyglot.t('app.assetconfirmdelete'));
-
-      if (shouldDeleteAsset) {
+      if (confirmed) {
         $.ajax({
           url: '/api/asset/trash/' + self.model.get('_id'),
           type: 'PUT',
@@ -67,7 +74,10 @@ define(function(require){
             self.remove();
           },
           error: function(data) {
-            alert("Couldn't delete this asset", data.message);
+            Origin.Notify.alert({
+              type: 'error',
+              text: window.polyglot.t('app.errordeleteasset', { message: data.message })
+            });
           }
         });
       }
@@ -75,11 +85,19 @@ define(function(require){
 
     onRestoreButtonClicked: function(event) {
       event.preventDefault();
-      var self = this;
-      
-      var shouldRestoreAsset = confirm(window.polyglot.t('app.assetconfirmrestore'));
 
-      if (shouldRestoreAsset) {
+      event.preventDefault();
+
+      Origin.Notify.confirm({
+        text: window.polyglot.t('app.assetconfirmrestore'),
+        callback: _.bind(this.onRestoreConfirmed, this)
+      });
+    },
+
+    onRestoreConfirmed: function(confirmed) {
+      var self = this;
+
+      if (confirmed) {
         $.ajax({
           url: '/api/asset/restore/' + self.model.get('_id'),
           type: 'PUT',
@@ -89,7 +107,10 @@ define(function(require){
             self.remove();
           },
           error: function(data) {
-            alert("Couldn't restore this asset", data.message);
+            Origin.Notify.alert({
+              type: 'error',
+              text: window.polyglot.t('app.errorrestoreasset', { message: data.message })
+            });
           }
         });
       }

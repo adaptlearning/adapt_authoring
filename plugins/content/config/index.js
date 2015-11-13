@@ -69,6 +69,7 @@ function initialize () {
         _courseId : course._id,
         _questionWeight : 1,
         _defaultLanguage : "en",
+        _defaultDirection: 'ltr',
         _drawer : {
           _showEasing : "easeOutQuart",
           _hideEasing : "easeInQuart",
@@ -76,7 +77,8 @@ function initialize () {
         },
         _accessibility : {
           _isEnabled : false,
-          _shouldSupportLegacyBrowsers : true
+          _shouldSupportLegacyBrowsers : true,
+          _isTextProcessorEnabled: false
         },
         screenSize : {
           small : 519,

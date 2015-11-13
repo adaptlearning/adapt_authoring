@@ -26,6 +26,9 @@ npm install -g pm2
 npm install -g grunt-cli
 npm install -g adapt-cli
 
+# upgrade the version of npm to help Windows users
+sudo npm install npm -g
+
 # run the install with some default configuration settings
 # url: http://localhost:5000
 # username: admin

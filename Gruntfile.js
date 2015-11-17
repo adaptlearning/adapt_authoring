@@ -63,6 +63,41 @@ module.exports = function(grunt) {
           }
         }
       },
+      jshint: {
+        options: {
+          reporter: require('jshint-stylish'),
+          curly: true,
+          undef: true,
+          asi: true,
+          eqnull: false,
+          sub: true
+        },
+        frontend: {
+          options: {
+            browser: true,
+            es3: true,
+            jquery: true,
+            globals: {
+              Backbone: false,
+              Handlebars: false,
+              _: false,
+              define: false,
+              require: false
+            }
+          },
+          files: {
+            src: ['frontend/src/core/**/*.js','!frontend/src/core/libraries/**/*.js']
+          }
+        },
+        backend: {
+          options: {
+            node: true
+          },
+          files: {
+            src: ['lib/**/*.js','plugins/**/*.js','!plugins/content/**','routes/**/*.js','!**/node_modules/**']
+          }
+        }
+      },
       requirejs: {
         dev: {
           options: {

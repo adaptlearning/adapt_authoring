@@ -24,35 +24,35 @@ var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     version = require('../../../version'),
     logger = require('../../../lib/logger');
 
-function AdaptOutput () {
+function AdaptOutput() {
 }
 
 util.inherits(AdaptOutput, OutputPlugin);
 
-AdaptOutput.prototype.publish = function (courseId, isPreview, request, response, next) {
-    var self = this;
-    var user = usermanager.getCurrentUser(),
-      tenantId = user.tenant._id,
-      outputJson = {},
-      isRebuildRequired = false,
-      themeName = Constants.Defaults.ThemeName;
-      menuName = Constants.Defaults.MenuName;
+AdaptOutput.prototype.publish = function(courseId, isPreview, request, response, next) {
+  var self = this;
+  var user = usermanager.getCurrentUser(),
+    tenantId = user.tenant._id,
+    outputJson = {},
+    isRebuildRequired = false,
+    themeName = Constants.Defaults.ThemeName;
+  menuName = Constants.Defaults.MenuName;
 
-    var resultObject = {};
+  var resultObject = {};
 
-    var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+  var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
 
-    async.series([
+  async.series([
       function(callback) {
         self.getCourseJSON(tenantId, courseId, function(err, data) {
-            if (err) {
-              return callback(err);
-            }
+          if (err) {
+            return callback(err);
+          }
 
-            // Store off the retrieved collections
-            outputJson = data;
+          // Store off the retrieved collections
+          outputJson = data;
 
-            callback(null);
+          callback(null);
         });
       },
       function(callback) {
@@ -143,7 +143,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
         });
       },
       function(callback) {
-        fs.exists(path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build, Constants.Filenames.Main), function (exists) {
+        fs.exists(path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build, Constants.Filenames.Main), function(exists) {
           if (!exists || isRebuildRequired) {
             logger.log('info', '3.1. Ensuring framework build exists');
 
@@ -162,26 +162,13 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
             logger.log('info', '3.2. Using theme: ' + themeName);
             logger.log('info', '3.3. Using menu: ' + menuName);
 
-            database.getDatabase(function (error, db) {
-                if (error) {
-                    return next(error);
-                }
+            var generateSourcemap = outputJson.config._generateSourcemap;
+            var buildMode = generateSourcemap === true ? 'dev' : 'prod';
 
-                db.retrieve('config', { _courseId: courseId }, function (error, matches) {
-                    if (error) {
-                        return next(error);
-                    }
+            logger.log('info', 'grunt server-build:' + buildMode + ' ' + args.join(' '));
 
-                    if (matches && matches[0]) {
-                        var generateSourcemap = matches[0]._doc._generateSourcemap;
-                    }
-
-                    var buildMode = generateSourcemap === true ? 'dev' : 'prod';
-
-                    logger.log('info', 'grunt server-build:' + buildMode + ' ' + args.join(' '));
-
-                    child = exec('grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
-                      function (error, stdout, stderr) {
+            child = exec('grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
+                      function(error, stdout, stderr) {
                         if (error !== null) {
                           logger.log('error', 'exec error: ' + error);
                           logger.log('error', 'stdout error: ' + stdout);
@@ -203,9 +190,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
 
                         resultObject.success = true;
                         return callback(null, 'Framework built');
-                    });
-                });
-            });
+                      });
           } else {
             resultObject.success = true;
             callback(null, 'Framework already built, nothing to do')
@@ -233,14 +218,14 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
           archive.pipe(output);
 
           archive.bulk([
-            { expand: true, cwd: path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build), src: ['**/*'] }
+            { expand: true, cwd: path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build), src: ['**/*'] },
           ]).finalize();
 
         } else {
           // No download required -- skip this step
           callback();
         }
-      }
+      },
     ], function(err) {
 
       if (err) {

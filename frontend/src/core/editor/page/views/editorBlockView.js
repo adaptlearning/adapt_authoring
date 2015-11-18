@@ -123,21 +123,6 @@ define(function(require){
       if (callback) {
         callback.apply(this);
       }
-
-      // TODO -- Remove the next line if it's not required
-      // this.model.save({
-      //   'layoutOptions': layoutOptions,
-      //   'dragLayoutOptions': dragLayoutOptions
-      // }, {
-      //   error: function() {
-      //     console.log('error saving block');
-      //   },
-      //   success: _.bind(function() {
-      //     if (callback) {
-      //       callback.apply(this);
-      //     }
-      //   }, this)
-      // });
     },
 
     deleteBlockPrompt: function(event) {

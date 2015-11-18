@@ -67,26 +67,25 @@ define(function(require){
 
     evaluateComponents: function(callback) {
       var layoutOptions = [
-      {
-        type: 'left',
-        name: 'app.layoutleft',
-        pasteZoneRenderOrder: 2
-      },
-      {
-        type: 'full',
-        name: 'app.layoutfull',
-        pasteZoneRenderOrder: 1
-      },
-      {
-        type: 'right',
-        name: 'app.layoutright',
-        pasteZoneRenderOrder: 3
-      }];
+        {
+          type: 'left',
+          name: 'app.layoutleft',
+          pasteZoneRenderOrder: 2
+        },
+        {
+          type: 'full',
+          name: 'app.layoutfull',
+          pasteZoneRenderOrder: 1
+        },
+        {
+          type: 'right',
+          name: 'app.layoutright',
+          pasteZoneRenderOrder: 3
+        }
+      ];
 
       this.model.getChildren().each(function(component) {
-        //this.$('.page-components').append(new EditorComponentView({model: component}).$el);
-
-        switch (component.get('_layout')) {
+         switch (component.get('_layout')) {
           case 'full':
             layoutOptions = null;
             break;

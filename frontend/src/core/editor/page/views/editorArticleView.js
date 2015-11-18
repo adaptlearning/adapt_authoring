@@ -82,8 +82,8 @@ define(function(require){
     },
 
     addBlockView: function(blockModel, scrollIntoView) {
-      var newBlockView = new EditorBlockView({model: blockModel}),
-        sortOrder = blockModel.get('_sortOrder');
+      var newBlockView = new EditorBlockView({model: blockModel});
+      var sortOrder = blockModel.get('_sortOrder');
 
       // Add syncing class
       if (blockModel.isNew()) {
@@ -99,7 +99,7 @@ define(function(require){
       }
 
       // Increment the sortOrder property
-      blockModel.set('_pasteZoneSortOrder', sortOrder++);
+      blockModel.set('_pasteZoneSortOrder', ++sortOrder);
 
       // Post-block paste zone - sort order of placeholder will be one greater
       this.$('.article-blocks').append(new EditorPasteZoneView({model: blockModel}).$el);

@@ -146,13 +146,18 @@ define(function(require){
               }
             } else {
               self.resetPreviewProgress();
-              alert('Error generating preview, please contact Administrator');
+              Origin.Notify.alert({
+                type: 'error',
+                text: window.polyglot.t('app.errorgeneratingpreview')
+              });
             }
           },
           error: function (jqXHR, textStatus, errorThrown) {
             self.resetPreviewProgress();
-            alert('Error');
-
+            Origin.Notify.alert({
+              type: 'error',
+              text: window.polyglot.t('app.errorgeneric')
+            });
           }
         });
       }
@@ -175,10 +180,10 @@ define(function(require){
             }
           },
           error: function(jqXHR, textStatus, errorThrown) {
-            alert(errorThrown);
-            console.log(jqXHR);
-            console.log(textStatus);
-            console.log(errorThrown);
+            Origin.Notify.alert({
+              type: 'error',
+              text: errorThrown
+            });
           }
         });
       }
@@ -215,8 +220,10 @@ define(function(require){
         },
         success: function (jqXHR, textStatus, errorThrown) {
           if (!jqXHR.success) {
-            alert(jqXHR.message);
-            console.log(jqXHR);
+            Origin.Notify.alert({
+              type: 'error',
+              text: jqXHR.message
+            });
           } else {
             Origin.editor.clipboardId = jqXHR.clipboardId;
             Origin.editor.pasteParentModel = model.getParent();
@@ -224,10 +231,10 @@ define(function(require){
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          alert('Error during copy');
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorcopy')
+          });
         }
       });
     },
@@ -245,8 +252,10 @@ define(function(require){
         },
         success: function (jqXHR, textStatus, errorThrown) {
           if (!jqXHR.success) {
-            alert(jqXHR.message);
-            console.log(jqXHR);
+            Origin.Notify.alert({
+              type: 'error',
+              text: jqXHR.message
+            });
           } else {
             Origin.editor.clipboardId = null;
             Origin.editor.pasteParentModel = null;
@@ -259,10 +268,10 @@ define(function(require){
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          alert('Error during paste');
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorpaste')
+          });
         }
       });
     },

@@ -68,6 +68,9 @@ define(function(require) {
           type: 'error',
           text: window.polyglot.t('app.errornothemeselected')
         });
+        
+        Origin.trigger('sidebar:resetButtons');
+        
         return;
       }
 

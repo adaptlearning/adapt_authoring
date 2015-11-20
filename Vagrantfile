@@ -13,8 +13,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 5000, host: 5000
   config.vm.network "forwarded_port", guest: 27017, host: 27027
 
-  config.vm.provision "shell", path: "vagrant_setup.sh", privileged: true
-  config.vm.provision "shell", path: "pm2_start.sh", privileged: true, run: "always"
+  if Vagrant::Util::Platform.windows?
+    config.vm.provision "shell", path: "vagrant_setup_win.sh", privileged: true
+    config.vm.provision "shell", path: "pm2_start_win.sh", privileged: true, run: "always"
+  else
+    config.vm.provision "shell", path: "vagrant_setup.sh", privileged: true
+    config.vm.provision "shell", path: "pm2_start.sh", privileged: true, run: "always"
+  end
+
 
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/htdocs", "1"]

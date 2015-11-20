@@ -28,7 +28,7 @@ mkswap /swapfile
 swapon /swapfile
 
 # update npm version
-sudo npm install npm -g
+# sudo npm install npm -g
 
 # global npm dependencies
 npm install -g pm2

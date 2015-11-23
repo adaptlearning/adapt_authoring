@@ -293,5 +293,9 @@
   "app.errorgeneratingpreview": "Error generating preview, please contact Administrator.",
   "app.errorcopy": "Error during copy.",
   "app.errorpaste": "Error during paste",
-  "app.errorsaveasset": "An error occurred doing the save"
+  "app.errorsaveasset": "An error occurred doing the save",
+  "app.grid": "Grid",
+  "app.list": "List",
+  "app.ascending": "Ascending",
+  "app.descending": "Descending"
 }

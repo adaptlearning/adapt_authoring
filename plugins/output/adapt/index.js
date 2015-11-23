@@ -230,11 +230,28 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
         return next(err);
       }
 
-      
+
       return next(null, resultObject);
-    });   
+    });
 
 };
+
+AdaptOutput.prototype.export = function (courseId, request, response, next) {
+    var self = this;
+    var user = usermanager.getCurrentUser();
+    var tenantId = user.tenant._id;
+    
+    var outputJson = {};
+    var themeName = Constants.Defaults.ThemeName;
+    var menuName = Constants.Defaults.MenuName;
+    var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+
+    return next(null, {
+        message: "woohoo",
+        success: true
+    });
+};
+
 /**
  * Module exports
  *

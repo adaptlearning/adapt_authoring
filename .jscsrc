@@ -10,6 +10,7 @@
     "beforeOpeningRoundBrace": true
   },
   "disallowTrailingWhitespace": true,
+  "disallowTrailingComma": true,
   "requireCamelCaseOrUpperCaseIdentifiers": true,
   "requireCapitalizedConstructors": true,
   "requireCurlyBraces": true,
@@ -21,9 +22,6 @@
   "requireSpaceBeforeObjectValues": true,
   "requireSpacesInFunction": {
     "beforeOpeningCurlyBrace": true
-  },
-  "requireTrailingComma": {
-    "ignoreSingleLine": true
   },
   "validateIndentation": 2,
   "validateLineBreaks": "LF",

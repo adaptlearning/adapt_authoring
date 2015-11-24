@@ -27,7 +27,7 @@ define(function(require){
         onAddTag: _.bind(this.onAddTag, this),
         onRemoveTag: _.bind(this.onRemoveTag, this),
         'minChars' : 3,
-        'maxChars' : 15
+        'maxChars' : 30
       });
       // Set view to ready
       this.setViewToReady();

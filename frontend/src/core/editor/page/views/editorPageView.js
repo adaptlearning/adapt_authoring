@@ -19,7 +19,6 @@ define(function(require){
     events: {
       'click a.add-article'  : 'addArticle',
       'click a.edit-page'    : 'loadPageEdit',
-      'click a.delete-page'  : 'deletePage',
       'click .paste-cancel'  : 'pasteCancel'
     },
 
@@ -136,17 +135,6 @@ define(function(require){
       this.$('.page-articles').append(new EditorPasteZoneView({model: articleModel}).$el);
       // Return the article view so syncing can be shown
       return newArticleView;
-    },
-
-    deletePage: function(event) {
-      event.preventDefault();
-
-      if (confirm(window.polyglot.t('app.confirmdeletepage'))) {
-        if (this.model.destroy()) {
-          this.remove();
-          Origin.trigger('editorView:refreshPageList');
-        }
-      }
     },
 
     addArticle: function(event) {

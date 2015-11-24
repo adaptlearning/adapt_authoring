@@ -34,6 +34,7 @@ define(function(require) {
 
     setupFilters: function() {
       var layoutOptions = this.model.get('layoutOptions');
+      // Checks the available layouts in the block
       this.availablePositions = {
         left: false,
         right: false,
@@ -71,31 +72,42 @@ define(function(require) {
 
       _.each(componentTypes, function(componentType) {
 
-          var availablePositions = this.availablePositions;
+        // Checks whether this component has the right supportedLayouts
+        var availablePositions = {
+          left: false,
+          right: false,
+          full: false
+        };
 
-          if (componentType.properties && componentType.properties.hasOwnProperty('._supportedLayout')) {
-            var supportedLayout = componentTypes.properties.hasOwnProperty('._supportedLayout').enum;
-
-            // Prune the available positions
-            if (_.indexOf(supportedLayout, 'half-width') == -1) {
-              availablePositions.left = false;
-              availablePositions.right = false;
+        if (componentType.properties) {
+          if (componentType.properties._supportedLayout) {
+            // Each component should have a _supportedLayout array that tells us
+            // which layout is supported by the component
+            var supportedLayout = componentType.properties._supportedLayout.enum;
+            
+            if (_.contains(supportedLayout, 'half-width') && this.availablePositions.left) {
+              availablePositions.left = true;
             }
 
-            if (_.indexOf(supportedLayout, 'full-width') == -1) {
-              availablePositions.full = false;
+            if (_.contains(supportedLayout, 'half-width') && this.availablePositions.right) {
+              availablePositions.right = true;
             }
+
+            if (_.contains(supportedLayout, 'full-width') &&  this.availablePositions.full) {
+              availablePositions.full = true;
+            }
+
           }
+        }
 
-          this.$('.editor-component-list-sidebar-list').append(new EditorComponentListItemView({
-            model: new Backbone.Model(componentType),
-            // filter: this.filter,
-            availablePositions: availablePositions,
-            _parentId: this.model.get('_parentId'),
-            $parentElement: this.$parentElement,
-            parentView: this.parentView,
-            searchTerms: componentType.displayName.toLowerCase()
-          }).$el);
+        this.$('.editor-component-list-sidebar-list').append(new EditorComponentListItemView({
+          model: new Backbone.Model(componentType),
+          availablePositions: availablePositions,
+          _parentId: this.model.get('_parentId'),
+          $parentElement: this.$parentElement,
+          parentView: this.parentView,
+          searchTerms: componentType.displayName.toLowerCase()
+        }).$el);
 
       }, this);
 

@@ -225,7 +225,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
           // No download required -- skip this step
           callback();
         }
-      },
+      }
     ], function(err) {
 
       if (err) {

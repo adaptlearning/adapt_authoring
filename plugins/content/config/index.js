@@ -95,6 +95,16 @@ function initialize () {
         next(null, course);
       }]);
     });
+
+    app.contentmanager.addContentHook('update', 'config', { when: 'pre' }, function (data, next) {
+      if (data[1].hasOwnProperty('_generateSourcemap')) {
+        var tenant = usermanager.getCurrentUser().tenant._id;
+        var course = data[0]._id;
+        app.emit('rebuildCourse', tenant, course);
+      }
+
+      next(null, data);
+    });
   });
 }
 

@@ -39,7 +39,7 @@ define(function(require) {
           }, this);
           
         }, this)
-      })
+      }, { patch: true});
     }
   },
   {

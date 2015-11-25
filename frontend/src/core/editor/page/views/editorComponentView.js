@@ -53,12 +53,9 @@ define(function(require){
       }
 
       Origin.Notify.confirm({
+        type: 'warning',
         title: window.polyglot.t('app.deletecomponent'),
         text: window.polyglot.t('app.confirmdeletecomponent') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletecomponentwarning'),
-        html: true,
-        closeOnConfirm: true,
-        confirmButtonText: window.polyglot.t('app.ok'),
-        cancelButtonText: window.polyglot.t('app.cancel'),
         callback: _.bind(this.deleteComponentConfirm, this)
       });
 

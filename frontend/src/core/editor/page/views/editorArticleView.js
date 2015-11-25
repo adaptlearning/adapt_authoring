@@ -82,8 +82,8 @@ define(function(require){
     },
 
     addBlockView: function(blockModel, scrollIntoView) {
-      var newBlockView = new EditorBlockView({model: blockModel}),
-        sortOrder = blockModel.get('_sortOrder');
+      var newBlockView = new EditorBlockView({model: blockModel});
+      var sortOrder = blockModel.get('_sortOrder');
 
       // Add syncing class
       if (blockModel.isNew()) {
@@ -99,7 +99,7 @@ define(function(require){
       }
 
       // Increment the sortOrder property
-      blockModel.set('_pasteZoneSortOrder', sortOrder++);
+      blockModel.set('_pasteZoneSortOrder', ++sortOrder);
 
       // Post-block paste zone - sort order of placeholder will be one greater
       this.$('.article-blocks').append(new EditorPasteZoneView({model: blockModel}).$el);
@@ -108,43 +108,48 @@ define(function(require){
     },
 
     addBlock: function(event) {
-      if (event) event.preventDefault();
-
+      if (event) {
+        event.preventDefault();
+      } 
+      
+      var self = this;
       var layoutOptions = [
-      {
-        type: 'left',
-        name: 'app.layoutleft',
-        pasteZoneRenderOrder: 2
-      },
-      {
-        type: 'full',
-        name: 'app.layoutfull',
-        pasteZoneRenderOrder: 1
-      },
-      {
-        type: 'right',
-        name: 'app.layoutright',
-        pasteZoneRenderOrder: 3
-      }];
+        {
+          type: 'left',
+          name: 'app.layoutleft',
+          pasteZoneRenderOrder: 2
+        },
+        {
+          type: 'full',
+          name: 'app.layoutfull',
+          pasteZoneRenderOrder: 1
+        },
+        {
+          type: 'right',
+          name: 'app.layoutright',
+          pasteZoneRenderOrder: 3
+        }
+      ];
 
-      var _this = this;
       var newPageBlockModel = new EditorBlockModel({
         title: window.polyglot.t('app.placeholdernewblock'),
         displayTitle: window.polyglot.t('app.placeholdernewblock'),
         body: '',
-        _parentId: _this.model.get('_id'),
+        _parentId: self.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
         layoutOptions: layoutOptions,
         _type: 'block'
       });
 
-      var newBlockView = _this.addBlockView(newPageBlockModel, true);
-
       newPageBlockModel.save(null, {
         error: function() {
-          alert('error adding new block');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.erroraddingblock')
+          });
         },
         success: function(model, response, options) {
+          var newBlockView = self.addBlockView(model, true);
           Origin.editor.data.blocks.add(model);
           newBlockView.$el.removeClass('syncing').addClass('synced');
           newBlockView.reRender();
@@ -152,19 +157,15 @@ define(function(require){
       });
     },
 
-
     deleteArticlePrompt: function(event) {
       if (event) {
         event.preventDefault();
       }
 
       Origin.Notify.confirm({
+        type: 'warning',
         title: window.polyglot.t('app.deletearticle'),
         text: window.polyglot.t('app.confirmdeletearticle') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletearticlewarning'),
-        html: true,
-        closeOnConfirm: true,
-        confirmButtonText: window.polyglot.t('app.ok'),
-        cancelButtonText: window.polyglot.t('app.cancel'),
         callback: _.bind(this.deleteArticleConfirm, this)
       });
 
@@ -189,7 +190,10 @@ define(function(require){
           _this.remove();
         },
         error: function(error) {
-          alert('An error occured');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorgeneric')
+          });
         }
       });
     },

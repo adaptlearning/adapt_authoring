@@ -32,10 +32,10 @@ define(function(require) {
       } else {
         if (attributes.password !== attributes.confirmPassword) {
           validationErrors.confirmPassword = window.polyglot.t('app.validationpasswordmatch');
-        }   
+        }
       }
 
-      return _.isEmpty(validationErrors) 
+      return _.isEmpty(validationErrors)
         ? null
         : validationErrors;
     },
@@ -57,7 +57,10 @@ define(function(require) {
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          alert('error');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorgeneric')
+          });
         }
       });
     }

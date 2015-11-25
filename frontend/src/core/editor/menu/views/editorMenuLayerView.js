@@ -87,12 +87,9 @@ define(function(require) {
             var timeOut = 3000;
             newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
 
-            Origin.Notify.confirm({
-              title: window.polyglot.t('app.errormenueditortitle'),
+            Origin.Notify.alert({
+              type: 'error',
               text: window.polyglot.t('app.errormenueditorbody'),
-              closeOnConfirm: true,
-              showCancelButton: false,
-              confirmButtonText: window.polyglot.t('app.ok')
             });
 
             _.delay(function() {
@@ -148,12 +145,9 @@ define(function(require) {
             var timeOut = 3000;
             newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
 
-            Origin.Notify.confirm({
-              title: window.polyglot.t('app.errormenueditortitle'),
+            Origin.Notify.alert({
+              type: 'error',
               text: window.polyglot.t('app.errormenueditorbody'),
-              closeOnConfirm: true,
-              showCancelButton: false,
-              confirmButtonText: window.polyglot.t('app.ok')
             });
 
             _.delay(function() {

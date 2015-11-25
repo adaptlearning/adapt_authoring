@@ -505,8 +505,7 @@
       "inputType": "TextArea:blank",
       "validators": [],
       "title": "Custom CSS/LESS code",
-      "help": "Add any custom CSS or valid LESS code here",
-      "editorOnly": true
+      "help": "Add any custom CSS or valid LESS code here"
     }
   }
 }

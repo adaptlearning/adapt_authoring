@@ -63,6 +63,14 @@ module.exports = function(grunt) {
           }
         }
       },
+      jscs: {
+        src: ['frontend/src/core/**/*.js','!frontend/src/core/libraries/**/*.js','lib/**/*.js','plugins/**/*.js','!plugins/content/**','routes/**/*.js','!**/node_modules/**'],
+        options: {
+          config: ".jscsrc",
+          reporter: "unix",
+          fix: true
+        }
+      },
       jshint: {
         options: {
           reporter: require('jshint-stylish'),

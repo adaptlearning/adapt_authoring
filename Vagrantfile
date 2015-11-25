@@ -21,6 +21,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.provision "shell", path: "pm2_start.sh", privileged: true, run: "always"
   end
 
+  config.vm.provision "shell", path: "log_defaults.sh", privileged: true, run: "always"
 
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/htdocs", "1"]

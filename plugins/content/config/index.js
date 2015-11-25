@@ -5,6 +5,7 @@
 
 var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
     configuration = require('../../../lib/configuration'),
+    usermanager = require('../../../lib/usermanager'),
     permissions = require('../../../lib/permissions'),
     database = require('../../../lib/database'),
     helpers = require('../../../lib/helpers'),
@@ -100,6 +101,7 @@ function initialize () {
       if (data[1].hasOwnProperty('_generateSourcemap')) {
         var tenant = usermanager.getCurrentUser().tenant._id;
         var course = data[0]._id;
+        
         app.emit('rebuildCourse', tenant, course);
       }
 

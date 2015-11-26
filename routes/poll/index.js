@@ -2,7 +2,8 @@
   Pass-through route to hide Kue end-points from client requests
 */
 var configuration = require('../../lib/configuration');
-var http = require('http');
+var logger = require('../../lib/logger');
+var needle = require('needle');
 var express = require('express');
 var server = module.exports = express();
 
@@ -15,18 +16,16 @@ server.get('/poll/:id', function (request, response, next) {
 
   if (pollUrl && id !== 0) {
 
-    var req = http.get(pollUrl + id, function(res) {
-      // Buffer the body entirely for processing as a whole.
-      var bodyChunks = [];
-      res.on('data', function(chunk) {
-        // Process the streamed parts
-        bodyChunks.push(chunk);
-      }).on('end', function() {
-        var body = Buffer.concat(bodyChunks);
-
-        return response.json(JSON.parse(body));
-      });
-    });    
+    needle.get(pollUrl + id, {rejectUnauthorized: false}, function(error, res, body) {
+      if (!error && res.statusCode == 200) {
+        return response.json(body);
+      } else {
+        logger.log('error', error);
+        response.statusCode = 500;
+        return response.end();
+      }
+    }); 
+    
   } else {
     response.statusCode = 404;
     return response.end();

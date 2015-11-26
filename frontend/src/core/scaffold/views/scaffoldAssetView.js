@@ -181,7 +181,7 @@ define(function(require) {
                     }
                 },
                 onCancel: function(data) {
-                    console.log('cancelled', data);
+                    // console.log('cancelled', data);
                 }
             }, this);
         },
@@ -234,7 +234,10 @@ define(function(require) {
                 _contentTypeParentId: courseAssetObject.contentTypeParentId
             },{
                 error: function(error) {
-                    alert('An error occurred doing the save');
+                    Origin.Notify.alert({
+                        type: 'error',
+                        text: window.polyglot.t('app.errorsaveasset')
+                    });
                 }, 
                 success: function() {
                     self.saveModel(true);
@@ -262,7 +265,6 @@ define(function(require) {
 
         saveModel: function(shouldResetAssetCollection, attributesToSave) {
             var that = this;
-            // var attributesToSave = {};
             var isUsingAlternativeModel = false;
             var currentModel = Origin.scaffold.getCurrentModel()
             var alternativeModel = Origin.scaffold.getAlternativeModel();
@@ -270,7 +272,7 @@ define(function(require) {
             var isPatch = false;
             
             attributesToSave = typeof attributesToSave == 'undefined' 
-              ? null
+              ? []
               : attributesToSave;
               
             // Check if alternative model should be used
@@ -287,7 +289,7 @@ define(function(require) {
                 attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
             } 
             
-            if (!attributesToSave) {
+            if (!attributesToSave && !attributesToSave.length) {
                currentModel.pruneAttributes();
                currentModel.unset('tags');
             } else {
@@ -297,7 +299,10 @@ define(function(require) {
             currentModel.save(attributesToSave, {
                 patch: isPatch,
                 error: function() {
-                    alert('An error occurred doing the save');
+                    Origin.Notify.alert({
+                        type: 'error',
+                        text: window.polyglot.t('app.errorsaveasset')
+                    });
                 },
                 success: function() {
                     // Sometimes we don't need to reset the courseAssets

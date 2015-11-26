@@ -14,10 +14,11 @@ define(function(require){
     },
 
     onPasteElementClicked: function(event) {
-        event.preventDefault();
+        event && event.preventDefault();
         var parentId = this.model.get('_parentId');
         var sortOrder = this.model.get('_pasteZoneSortOrder');
-        var layout = this.model.get('_pasteZoneLayout')
+        var layout = this.model.get('_pasteZoneLayout');
+        
         Origin.trigger('editorView:paste', parentId, sortOrder, layout);
     },
 
@@ -59,9 +60,12 @@ define(function(require){
                   Origin.trigger('editorView:move' + view.capitalise(type) + ':' + parentId);
                 }
               });
-            }, 
+            },
             error: function(jqXHR, textStatus, errorThrown) {
-              alert(jqXHR.responseJSON.message);
+              Origin.Notify.alert({
+                type: 'error',
+                text: jqXHR.responseJSON.message
+              });
             }
           });
         }

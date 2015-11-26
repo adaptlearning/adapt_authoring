@@ -74,9 +74,6 @@ define(function(require) {
           title: window.polyglot.t('app.manageextensions'),
           text: window.polyglot.t('app.confirmapplyextension', {extension: extensionName}),
           html: true,
-          closeOnConfirm: true,
-          confirmButtonText: window.polyglot.t('app.ok'),
-          cancelButtonText: window.polyglot.t('app.cancel'),
           callback: _.bind(this.onAddExtensionConfirmed, this)
         });
     },
@@ -89,14 +86,16 @@ define(function(require) {
 
     addExtension: function() {
         var self = this;
-
         $.post('/api/extension/enable/' + this.model.get('_id'), {
                 extensions: this.currentSelectedIds
             }, _.bind(function(result) {
             if (result.success) {
                 self.refreshData();
             } else {
-                alert('An error occured');
+                Origin.Notify.alert({
+                  type: 'error',
+                  text: window.polyglot.t('app.errorgeneric')
+                });
             }
         }, this));
     },
@@ -105,12 +104,9 @@ define(function(require) {
         this.currentSelectedIds = [$(event.currentTarget).attr('data-id')];
 
         Origin.Notify.confirm({
-          title: window.polyglot.t('app.manageextensions'),
+          type: 'warning',
+          title: window.polyglot.t('app.deleteextension'),
           text: window.polyglot.t('app.confirmdeleteextension'),
-          html: true,
-          closeOnConfirm: true,
-          confirmButtonText: window.polyglot.t('app.ok'),
-          cancelButtonText: window.polyglot.t('app.cancel'),
           callback: _.bind(this.onRemoveExtensionConfirmed, this)
         });
 
@@ -147,7 +143,10 @@ define(function(require) {
             if (result.success) {
                 self.refreshData();
             } else {
-                alert('An error occured');
+                Origin.Notify.alert({
+                  type: 'error',
+                  text: window.polyglot.t('app.errorgeneric')
+                });
             }
         }, this));
     }

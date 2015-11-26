@@ -34,7 +34,6 @@ define(function(require){
             this.listenTo(Origin, 'assetManagement:assetManagementSidebarView:filterByTags', this.filterByTags);
             this.listenTo(this.collection, 'sync', this.onCollectionSynced);
             this.listenTo(Origin, 'assetManagement:collection:refresh', this.updateCollection);
-            this.onCollectionSynced();
         },
 
         onCollectionSynced: function () {

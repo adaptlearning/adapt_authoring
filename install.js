@@ -11,7 +11,8 @@ var prompt = require('prompt'),
     database = require('./lib/database'),
     helpers = require('./lib/helpers'),
     localAuth = require('./plugins/auth/local'),
-    logger = require('./lib/logger');
+    logger = require('./lib/logger'),
+    optimist = require('optimist');
 
 prompt.message = '> ';
 prompt.delimiter = '';
@@ -80,7 +81,7 @@ var configItems = [
     pattern: /^[A-Za-z0-9_-]+\W*$/,
     default: 'data'
   },
-  { 
+  {
     name: 'sessionSecret',
     type: 'string',
     description: 'Session secret',
@@ -192,14 +193,14 @@ var steps = [
   // install the framework
   function installFramework (next) {
     // AB-277 always remove framework folder on install
-    rimraf(path.resolve(__dirname, 'adapt_framework'), function () { 
+    rimraf(path.resolve(__dirname, 'adapt_framework'), function () {
       // now clone the framework
       frameworkHelper.cloneFramework(function (err) {
         if (err) {
       	  console.log('ERROR: ', err);
           return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
         }
-      
+
         // Remove the default course
         rimraf(path.resolve(__dirname, 'adapt_framework', 'src', 'course'), function(err) {
           if (err) {
@@ -220,7 +221,7 @@ var steps = [
         console.log('ERROR: ', err);
         return exitInstall(1, 'Could not save configuration items.');
       }
-      
+
       saveConfig(results, next);
     });
   },
@@ -229,7 +230,7 @@ var steps = [
     console.log("Checking configuration, please wait a moment ... ");
     // suppress app log output
     logger.clear();
-    
+
     // run the app
     app.run();
     app.on('serverStarted', function () {
@@ -245,31 +246,31 @@ var steps = [
             console.log('ERROR: ', err);
             return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
           }
-          
+
           var tenantName = result.name;
           var tenantDisplayName = result.displayName;
 
           // create the tenant according to the user provided details
           var _createTenant = function (cb) {
-            console.log("Creating file system for " + tenantName + ", please wait ...");        
-            app.tenantmanager.createTenant({ 
-                name: tenantName, 
+            console.log("Creating file system for " + tenantName + ", please wait ...");
+            app.tenantmanager.createTenant({
+                name: tenantName,
                 displayName: tenantDisplayName,
                 isMaster: true,
-                database: { 
+                database: {
                   dbName: app.configuration.getConfig('dbName'),
                   dbHost: app.configuration.getConfig('dbHost'),
                   dbUser: app.configuration.getConfig('dbUser'),
                   dbPass: app.configuration.getConfig('dbPass'),
                   dbPort: app.configuration.getConfig('dbPort')
                 }
-              }, 
+              },
               function (err, tenant) {
                 if (err || !tenant) {
                   console.log('ERROR: ', err);
                   return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
                 }
-            
+
                 masterTenant = tenant;
                 console.log("Tenant " + tenant.name + " was created.");
                 // save master tenant name to config
@@ -290,7 +291,7 @@ var steps = [
               cb
             );
           };
-          
+
           if (tenant) {
             // deal with duplicate tenant. permanently.
             console.log("Tenant already exists. It will be deleted.");
@@ -298,18 +299,18 @@ var steps = [
               if (err || !/(Y|y)[es]*/.test(result.confirm)) {
                 return exitInstall(1, 'Exiting install ... ');
               }
-            
+
               // buh-leted
               _deleteCollections(function (err) {
                 if (err) {
                   return next(err);
                 }
-                
+
                 return _createTenant(next);
               });
             });
           }
-          
+
           // tenant is fresh
           return _createTenant(next);
         });
@@ -322,19 +323,19 @@ var steps = [
      fs.readFile(path.join(process.cwd(), 'temp', app.configuration.getConfig('masterTenantID').toString(), 'adapt_framework', 'adapt.json'), function (err, data) {
       if (err) {
         console.log('ERROR: ' + err);
-        return next(err); 
+        return next(err);
       }
-      
+
       var json = JSON.parse(data);
       // 'dependencies' contains a key-value pair representing the plugin name and the semver
       var plugins = Object.keys(json.dependencies);
-      
+
       async.eachSeries(plugins, function(plugin, pluginCallback) {
         app.bowermanager.installPlugin(plugin, json.dependencies[plugin], function(err) {
           if (err) {
             return pluginCallback(err);
           }
-          
+
           pluginCallback();
         });
 
@@ -342,8 +343,8 @@ var steps = [
         if (err) {
           console.log(err);
           return next(err);
-        } 
-        
+        }
+
         next();
       });
     });
@@ -356,7 +357,7 @@ var steps = [
         console.log('ERROR: ', err);
         return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
       }
-      
+
       var userEmail = result.email;
       var userPassword = result.password;
       // ruthlessly remove any existing users (we're already nuclear if we've deleted the existing tenant)
@@ -365,7 +366,7 @@ var steps = [
           console.log('ERROR: ', err);
           return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
         }
-        
+
         // add a new user using default auth plugin
         new localAuth().internalRegisterUser({
             email: userEmail,
@@ -376,7 +377,7 @@ var steps = [
               console.log('ERROR: ', err);
               return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
             }
-          
+
             superUser = user;
             // grant super permissions!
             helpers.grantSuperPermissions(user._id, function (err) {
@@ -384,7 +385,7 @@ var steps = [
                 console.log('ERROR: ', err);
                 return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
               }
-            
+
               return next();
             });
           }
@@ -418,22 +419,25 @@ var steps = [
   }
 ];
 
+// set overrides from command line arguments
+prompt.override = optimist.argv;
+
 prompt.start();
 
 // Prompt the user to begin the install
 console.log('This script will install the Adapt Builder. Would you like to continue?');
-prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
-  if (!/(Y|y)[es]*$/.test(result['Y/n'])) {
+prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
+  if (!/(Y|y)[es]*$/.test(result['install'])) {
     return exitInstall();
   }
-  
+
   // run steps
   async.series(steps, function (err, results) {
     if (err) {
       console.log('ERROR: ', err);
       return exitInstall(1, 'Install was unsuccessful. Please check the console output.');
     }
-    
+
     exitInstall();
   });
 });
@@ -443,7 +447,7 @@ prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result)
 /**
  * This will write out the config items both as a config.json file and
  * as a .env file for foreman
- * 
+ *
  * @param {object} configItems
  * @param {callback} next
  */
@@ -453,18 +457,18 @@ function saveConfig (configItems, next) {
   Object.keys(configItems).forEach(function (key) {
     env.push(key + "=" + configItems[key]);
   });
-  
+
   // write the env file!
   if (0 === fs.writeSync(fs.openSync('.env', 'w'), env.join("\n"))) {
     console.log('ERROR: Failed to write .env file. Do you have write permissions for the current directory?');
     process.exit(1, 'Install Failed.');
   }
-  
+
   // Defaulting these config settings until there are actual options.
   configItems.outputPlugin = 'adapt';
   configItems.dbType = 'mongoose';
   configItems.auth = 'local';
-  
+
   // write the config.json file!
   if (0 === fs.writeSync(fs.openSync(path.join('conf', 'config.json'), 'w'), JSON.stringify(configItems))) {
     console.log('ERROR: Failed to write conf/config.json file. Do you have write permissions for the directory?');
@@ -484,7 +488,7 @@ function getDriversPrompt() {
   drivers.forEach(function (d, index) {
     str += (index+1) + ". " + d + "\n";
   });
-  
+
   return str;
 }
 
@@ -499,7 +503,7 @@ function getAuthPrompt () {
   auths.forEach(function (a, index) {
     str += (index+1) + ". " + a + "\n";
   });
-  
+
   return str;
 }
 
@@ -514,7 +518,7 @@ function exitInstall (code, msg) {
   code = code || 0;
   msg = msg || 'Bye!';
   console.log(msg);
-  
+
   // handle borked tenant, users, in case of a non-zero exit
   if (0 !== code) {
     if (app && app.db) {
@@ -525,13 +529,13 @@ function exitInstall (code, msg) {
               return process.exit(code);
             });
           }
-          
+
           return process.exit(code);
-        }); 
+        });
       }
     }
   }
-  
+
   process.exit(code);
 }
 

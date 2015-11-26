@@ -176,13 +176,9 @@ define(['jquery', 'underscore', 'backbone', 'backboneForms'], function($, _, Bac
       }
       
       window.confirm({
-        title: "Are you sure?",
+        title: window.polyglot.t('app.confirmdelete'),
         text: confirmMsg,
-        type: "confirm",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, delete it!",
-        closeOnConfirm: true,
+        type: "warning",
         callback: function(confirmed) {
           if (confirmed) {
             var index = _.indexOf(self.items, item);

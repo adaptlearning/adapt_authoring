@@ -4,9 +4,9 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
-
+  
   var EditorConfigEditView = EditorOriginView.extend({
-    
+
     tagName: "div",
 
     className: "config-edit",
@@ -18,28 +18,36 @@ define(function(require) {
 
     saveData: function(event) {
       var errors = this.form.commit({validate: true});
-      // This must trigger no matter what, as sidebar needs to know 
+      // This must trigger no matter what, as sidebar needs to know
       // when the form has been resubmitted
       Origin.trigger('editorSidebar:showErrors', errors);
       if (errors) {
         return;
       }
 
-      this.model.save(null, {
+      // Ensure the _id is always passed.
+      var attributesToUpdate = _.extend(this.model.changedAttributes(), 
+        {_id: this.model.get('_id'), _courseId: this.model.get('_courseId')});
+      
+      this.model.save(attributesToUpdate, {
+        patch: true,
         error: function() {
-          alert('An error occurred doing the save');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorsave')
+          });
         },
         success: _.bind(function() {
-          
+
           Origin.trigger('editingOverlay:views:hide');
-          
+
           Origin.trigger('editor:refreshData', function() {
             Backbone.history.history.back();
             this.remove();
           }, this);
-          
+
         }, this)
-      })
+      });
     }
   },
   {

@@ -67,10 +67,16 @@ define(function(require) {
     switch (action) {
       case 'new':
         var project = new ProjectModel();
+        
+        // Default the new project title
+        project.set('title', window.polyglot.t('app.placeholdernewcourse'));
+        project.set('displayTitle', window.polyglot.t('app.placeholdernewcourse'));
+        
         var form = Origin.scaffold.buildForm({
           model: project
         });
-        Origin.trigger('location:title:update', {title: 'Add new course'});
+        
+        Origin.trigger('location:title:update', {title: window.polyglot.t('app.addnewproject')});
         Origin.editingOverlay.addView(new ProjectDetailView({model: project, form: form}).$el);
         Origin.sidebar.addView(new ProjectDetailEditSidebarView({form: form}).$el);
         break;
@@ -81,7 +87,7 @@ define(function(require) {
             var form = Origin.scaffold.buildForm({
               model: project
             });
-            Origin.trigger('location:title:update', {title: 'Edit course'});
+            Origin.trigger('location:title:update', {title: window.polyglot.t('app.editcourse')});
             Origin.editingOverlay.addView(new ProjectDetailView({model: project, form: form}).$el);
             Origin.sidebar.addView(new ProjectDetailEditSidebarView({form: form}).$el);
           }

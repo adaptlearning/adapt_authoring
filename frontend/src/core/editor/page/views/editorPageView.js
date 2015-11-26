@@ -19,7 +19,6 @@ define(function(require){
     events: {
       'click a.add-article'  : 'addArticle',
       'click a.edit-page'    : 'loadPageEdit',
-      'click a.delete-page'  : 'deletePage',
       'click .paste-cancel'  : 'pasteCancel'
     },
 
@@ -112,7 +111,7 @@ define(function(require){
     },
 
     addArticleView: function(articleModel, scrollIntoView, addNewBlock) {
-  
+
       var newArticleView = new EditorArticleView({model: articleModel}),
         sortOrder = articleModel.get('_sortOrder');
 
@@ -120,11 +119,11 @@ define(function(require){
       if (articleModel.isNew()) {
         newArticleView.$el.addClass('syncing');
       }
-      
+
       scrollIntoView = scrollIntoView || false;
-        
+
       this.$('.page-articles').append(newArticleView.$el);
-      
+
       if (scrollIntoView) {
         $.scrollTo(newArticleView.$el, 200);
       }
@@ -138,24 +137,13 @@ define(function(require){
       return newArticleView;
     },
 
-    deletePage: function(event) {
-      event.preventDefault();
-      
-      if (confirm(window.polyglot.t('app.confirmdeletepage'))) {
-        if (this.model.destroy()) {
-          this.remove();
-          Origin.trigger('editorView:refreshPageList');
-        }
-      }
-    },
-
     addArticle: function(event) {
       event.preventDefault();
-      
+
       var _this = this;
       var newPageArticleModel = new EditorArticleModel({
         title: window.polyglot.t('app.placeholdernewarticle'),
-        displayTitle: '',
+        displayTitle: window.polyglot.t('app.placeholdernewarticle'),
         body: '',
         _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
@@ -166,14 +154,15 @@ define(function(require){
 
       newPageArticleModel.save(null, {
         error: function() {
-          alert('error adding new article');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.erroraddingarticle')
+          });
         },
         success: function(model, response, options) {
-
           Origin.editor.data.articles.add(model);
           newArticleView.$el.removeClass('syncing').addClass('synced');
           newArticleView.addBlock();
-          
         }
       });
     },

@@ -7,39 +7,35 @@ define(function(require) {
 	function getSettings(data) {
 		var defaults = {
 			title: '',
-			animation: "slide-from-bottom",
-			confirmButtonColor: "#15a4fa"
+			animation: 'slide-from-bottom',
+			confirmButtonColor: '#15a4fa',
+			html: true
 		};
 
 		switch(data.type) {
-			case "confirm":
+			case 'confirm':
 				data.type = null;
-				defaults.title = "Are you sure?";
-				defaults.showCancelButton = true;
-				defaults.confirmButtonText = "Yes, I'm sure";
-				defaults.cancelButtonText = "No";
+				defaults.title = window.polyglot.t('app.confirmdefaulttitle');
 				break;
-			case "warning":
-        defaults.showCancelButton = true;
-        defaults.confirmButtonText = "Yes, I'm sure";
-        defaults.cancelButtonText = "No";
-        defaults.confirmButtonColor = "#DD6B55";
+			case 'warning':
+				defaults.confirmButtonColor = '#DD6B55';
 				break;
-			case "input":
-			case "success":
-        defaults.title = 'Success';
+			case 'input':
+				break;
+			case 'success':
+				defaults.title = window.polyglot.t('app.successdefaulttitle');
         break;
-			case "info":
-        defaults.title = 'Information';
+			case 'info':
+				defaults.title = window.polyglot.t('app.infodefaulttitle');
         break;
-			case "error":
-        defaults.title = 'Error';
+			case 'error':
+				defaults.title = window.polyglot.t('app.errordefaulttitle');
 				break;
 			default:
 				if (data.type) {
 					Origin.	Notify.console({
-						type: "error",
-						text: "'" + data.type + "' is not a valid alert type"
+						type: 'error',
+						text: '"' + data.type + '" is not a valid alert type'
 					});
 				}
 				data.type = null;
@@ -63,6 +59,10 @@ define(function(require) {
 		openPopup(data);
 	};
 
+	/**
+	* NOTE if callback isn't an annonymous function, it won't be called on cancel
+	* See: https://github.com/t4t5/sweetalert/issues/431
+	*/
 	var Confirm = function(data) {
 		// allow for string input
 		if (_.isString(data)) {
@@ -71,9 +71,15 @@ define(function(require) {
 			};
 		}
 
-		data.type = data.type || "confirm";
+		// some defaults, in the case of an additional type being passed
+		var defaults = {
+			type: data.type || 'confirm',
+			showCancelButton: true,
+			confirmButtonText: window.polyglot.t('app.confirmdefaultyes'),
+			cancelButtonText: window.polyglot.t('app.no')
+		};
 
-		openPopup(data);
+		openPopup(_.extend(defaults, data));
 	};
 
 	var init = function() {

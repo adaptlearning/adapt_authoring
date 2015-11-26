@@ -1,6 +1,12 @@
 #!/bin/bash
 #
-# This script handles the provisioning of software for the machine.
+# This script handles the provisioning of software for windows machines.
+
+cd /vagrant/
+
+# copy the authoring_tool into the VM box
+# move to /home/vagrant/
+mv conf frontend lib plugins routes test test_frontend .editorconfig .gitignore config.js Gruntfile.js index.js install.js package.json server.js upgrade.js version.json /home/vagrant/
 
 # need this ppa for ffmpeg on trusty tahr
 add-apt-repository ppa:mc3man/trusty-media
@@ -21,19 +27,21 @@ chmod 600 /swapfile
 mkswap /swapfile
 swapon /swapfile
 
+# update npm version
+# sudo npm install npm -g
+
 # global npm dependencies
 npm install -g pm2
 npm install -g grunt-cli
 npm install -g adapt-cli
 
-# upgrade the version of npm to help Windows users
-# sudo npm install npm -g
+# navigate to the AT src
+cd /home/vagrant/
 
 # run the install with some default configuration settings
 # url: http://localhost:5000
 # username: admin
 # password: password
-cd /vagrant/
 npm install --production
 node install --install Y --serverPort 5000 --serverName localhost --dbHost localhost \
   --dbName adapt-tenant-master --dbPort 27017 \

@@ -32,13 +32,30 @@ define(function(require) {
 		},
 
 		postRender: function() {
-			if (this.model.get('_isAvailableInEditor') == false) {
+			
+			// Checks whether this component should be restricted. Depends
+			// on if the component has available positions and is available
+			// to the editor
+			var isRestricted = false;
+
+			_.each(this.model.get('availablePositions'), function(availablePosition) {
+				if (availablePosition === true) {
+					isRestricted = true;
+				}
+			}, this);
+
+			if (!isRestricted || !this.model.get('_isAvailableInEditor')) {
 				this.$el.addClass('restricted');
-			}
+			} 
+
 		},
 
 		onItemClicked: function(event) {
 			event.preventDefault();
+			// If this item is restricted don't allow this to be selected
+			if (this.$el.hasClass('restricted')) {
+				return;
+			}
 			Origin.trigger('editorComponentListItemView:deselect')
 			this.$el.addClass('selected');
 			this.$('.editor-component-list-item-overlay')
@@ -70,14 +87,14 @@ define(function(require) {
 			Origin.trigger('editorComponentListView:remove');
 
 			var componentName = this.model.get('name');
-			
+
 			var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
 				return type.get('name') == componentName;
 			});
 
 			var newComponentModel = new EditorComponentModel({
 				title: window.polyglot.t('app.placeholdernewcomponent'),
-				displayTitle: '',
+				displayTitle: window.polyglot.t('app.placeholdernewcomponent'),
 				body: '',
 				_parentId: this._parentId,
 				_courseId: Origin.editor.data.course.get('_id'),
@@ -91,22 +108,25 @@ define(function(require) {
 
 			var newComponentView = new EditorComponentView({model: newComponentModel}).$el.addClass('syncing');
 			this.$parentElement
-                .find('.page-components')
-                .append(newComponentView);
+        .find('.page-components')
+        .append(newComponentView);
 
 			newComponentModel.save(null, {
-          		error: function() {
-          			$('html').css('overflow-y', '');
-                	alert('error adding new component');
-              	},
-              	success: _.bind(function() {
-              		Origin.editor.data.components.add(newComponentModel);
+    		error: function() {
+    			$('html').css('overflow-y', '');
+					Origin.Notify.alert({
+						type: 'error',
+						text: window.polyglot.t('app.erroraddingcomponent')
+					});
+      	},
+      	success: _.bind(function() {
+      		Origin.editor.data.components.add(newComponentModel);
 					this.parentView.evaluateComponents(this.parentView.toggleAddComponentsButton);
-              		newComponentView.addClass('synced');
-              		$('html').css('overflow-y', '');
-              		$.scrollTo(newComponentView.$el);
-              	}, this)
-            });
+      		newComponentView.addClass('synced');
+      		$('html').css('overflow-y', '');
+      		$.scrollTo(newComponentView.$el);
+      	}, this)
+      });
 		}
 
 	}, {

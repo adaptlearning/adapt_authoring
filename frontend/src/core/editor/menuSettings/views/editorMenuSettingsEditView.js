@@ -35,7 +35,7 @@ define(function(require) {
     },
 
     renderMenuItemViews: function() {
-  
+
       this.collection.each(function(menu) {
 
         var isSelected = false;
@@ -57,28 +57,34 @@ define(function(require) {
 
     saveData: function(event) {
       if (event) {
-        event.preventDefault();  
+        event.preventDefault();
       }
 
       var selectedMenu = this.collection.findWhere({_isSelected: true});
 
       if (selectedMenu === undefined) {
-        alert('No menu selected');
+        Origin.Notify.alert({
+          type: 'error',
+          text: window.polyglot.t('app.errornomenuselected')
+        });
         return;
-      } 
+      }
 
       var selectedMenuId = selectedMenu.get('_id');
-      
+
       // Should push to api
 
       $.post('/api/menu/' + selectedMenuId + '/makeitso/' + this.model.get('_courseId'))
         .error(function() {
-          alert('An error occurred doing the save');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorsave')
+          });
         })
         .done(_.bind(function() {
 
           Origin.trigger('editingOverlay:views:hide');
-          
+
           Origin.trigger('editor:refreshData', function() {
             Backbone.history.history.back();
             this.remove();

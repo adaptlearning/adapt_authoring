@@ -87,13 +87,9 @@ define(function(require){
       }
 
       Origin.Notify.confirm({
+        type: 'warning',
         title: window.polyglot.t('app.deleteproject'),
         text: window.polyglot.t('app.confirmdeleteproject') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteprojectwarning'),
-        html: true,
-        type: 'warning',
-        closeOnConfirm: true,
-        confirmButtonText: window.polyglot.t('app.ok'),
-        cancelButtonText: window.polyglot.t('app.cancel'),
         callback: _.bind(this.deleteProjectConfirm, this)
       });
     },
@@ -113,7 +109,10 @@ define(function(require){
           self.remove()
         },
         error: function(model, response, options) {
-          alert('Error - ' + response.responseJSON.message);
+          Origin.Notify.alert({
+            type: 'error',
+            text: response.responseJSON.message
+          });
         }
       });
     },
@@ -125,7 +124,10 @@ define(function(require){
           Backbone.history.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
         },
         error: function() {
-          alert('error during duplication');
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorduplication')
+          });
         }
       });
     },

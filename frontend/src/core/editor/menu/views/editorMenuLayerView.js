@@ -87,12 +87,9 @@ define(function(require) {
             var timeOut = 3000;
             newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
 
-            Origin.Notify.confirm({
-              title: window.polyglot.t('app.errormenueditortitle'),
+            Origin.Notify.alert({
+              type: 'error',
               text: window.polyglot.t('app.errormenueditorbody'),
-              closeOnConfirm: true,
-              showCancelButton: false,
-              confirmButtonText: window.polyglot.t('app.ok')
             });
 
             _.delay(function() {
@@ -139,7 +136,7 @@ define(function(require) {
 
         newChildModel.save({
           title: newChildTitle,
-          displayTitle: '',
+          displayTitle: newChildTitle,
           body: '',
           _parentId: model.get('_id'),
           _courseId: Origin.editor.data.course.get('_id')
@@ -148,12 +145,9 @@ define(function(require) {
             var timeOut = 3000;
             newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
 
-            Origin.Notify.confirm({
-              title: window.polyglot.t('app.errormenueditortitle'),
+            Origin.Notify.alert({
+              type: 'error',
               text: window.polyglot.t('app.errormenueditorbody'),
-              closeOnConfirm: true,
-              showCancelButton: false,
-              confirmButtonText: window.polyglot.t('app.ok')
             });
 
             _.delay(function() {

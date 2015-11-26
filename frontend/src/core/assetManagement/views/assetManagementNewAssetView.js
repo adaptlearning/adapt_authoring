@@ -27,7 +27,7 @@ define(function(require){
         onAddTag: _.bind(this.onAddTag, this),
         onRemoveTag: _.bind(this.onRemoveTag, this),
         'minChars' : 3,
-        'maxChars' : 15 
+        'maxChars' : 30
       });
       // Set view to ready
       this.setViewToReady();
@@ -56,7 +56,7 @@ define(function(require){
           $(errormsg).text('');
         }
       });
-      
+
       if (this.model.isNew() && !uploadFile.val()) {
         validated = false;
         $(uploadFile).addClass('input-error');
@@ -87,7 +87,10 @@ define(function(require){
           this.model.set({title: title, description: description});
           this.model.save(null, {
             error: function(model, response, options) {
-              alert('Error updating asset');
+              Origin.Notify.alert({
+                type: 'error',
+                text: window.polyglot.t('app.errorassetupdate')
+              });
             },
             success: function(model, response, options) {
               Origin.router.navigate('#/assetManagement', {trigger:true});

@@ -18,7 +18,7 @@ define(function(require) {
 			} else {
 				callback.call();
 			}
-			
+
 		},
 
 		onUserAuthenticated: function(callback) {
@@ -26,7 +26,10 @@ define(function(require) {
 			// If so fetch the schemas model and call the callback which kicks starts the app
 			this.fetch({
 				error: function() {
-					alert('An error occured when getting the schemas');
+					Origin.Notify.alert({
+						type: 'error',
+						text: window.polyglot.t('app.errorgettingschemas')
+					});
 				},
 				success: function() {
 					Origin.schemas = that;

@@ -127,10 +127,10 @@
           "required": true,
           "default": "easeOutQuart",
           "title": "Hide Easing",
-          "inputType": { 
-            "type": "Select", 
+          "inputType": {
+            "type": "Select",
             "options": [
-              "easeInSine", 
+              "easeInSine",
               "easeOutSine",
               "easeInOutSine",
               "easeInQuad",
@@ -169,10 +169,10 @@
           "required": true,
           "default": "easeInQuart",
           "title": "Hide Easing",
-          "inputType": { 
-            "type": "Select", 
+          "inputType": {
+            "type": "Select",
             "options": [
-              "easeInSine", 
+              "easeInSine",
               "easeOutSine",
               "easeInOutSine",
               "easeInQuad",
@@ -215,6 +215,15 @@
           "validators": ["required", "number"]
         }
       }
+    },
+    "_generateSourcemap": {
+      "type": "bool",
+      "default": "false",
+      "isSetting": true,
+      "inputType": {"type": "Boolean", "options": [true, false]},
+      "validators": [],
+      "title": "Generate sourcemap",
+      "help": "Creates a JavaScript sourcemap for the output code - useful for debugging (in browsers that support it)."
     }
   }
 }

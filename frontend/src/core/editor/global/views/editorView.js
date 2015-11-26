@@ -1,4 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
+/*
+ * TODO This needs a tidy:
+ * - Remove commented lines
+ * - Sort out error handling
+ */
 define(function(require){
 
   var Backbone = require('backbone');
@@ -141,13 +146,18 @@ define(function(require){
               }
             } else {
               self.resetPreviewProgress();
-              alert('Error generating preview, please contact Administrator');
+              Origin.Notify.alert({
+                type: 'error',
+                text: window.polyglot.t('app.errorgeneratingpreview')
+              });
             }
           },
           error: function (jqXHR, textStatus, errorThrown) {
             self.resetPreviewProgress();
-            alert('Error');
-
+            Origin.Notify.alert({
+              type: 'error',
+              text: window.polyglot.t('app.errorgeneric')
+            });
           }
         });
       }
@@ -170,10 +180,10 @@ define(function(require){
             }
           },
           error: function(jqXHR, textStatus, errorThrown) {
-            alert(errorThrown);
-            console.log(jqXHR);
-            console.log(textStatus);
-            console.log(errorThrown);
+            Origin.Notify.alert({
+              type: 'error',
+              text: errorThrown
+            });
           }
         });
       }
@@ -210,8 +220,10 @@ define(function(require){
         },
         success: function (jqXHR, textStatus, errorThrown) {
           if (!jqXHR.success) {
-            alert(jqXHR.message);
-            console.log(jqXHR);
+            Origin.Notify.alert({
+              type: 'error',
+              text: jqXHR.message
+            });
           } else {
             Origin.editor.clipboardId = jqXHR.clipboardId;
             Origin.editor.pasteParentModel = model.getParent();
@@ -219,10 +231,10 @@ define(function(require){
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          alert('Error during copy');
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorcopy')
+          });
         }
       });
     },
@@ -240,8 +252,10 @@ define(function(require){
         },
         success: function (jqXHR, textStatus, errorThrown) {
           if (!jqXHR.success) {
-            alert(jqXHR.message);
-            console.log(jqXHR);
+            Origin.Notify.alert({
+              type: 'error',
+              text: jqXHR.message
+            });
           } else {
             Origin.editor.clipboardId = null;
             Origin.editor.pasteParentModel = null;
@@ -254,10 +268,10 @@ define(function(require){
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          alert('Error during paste');
-          console.log(jqXHR);
-          console.log(textStatus);
-          console.log(errorThrown);
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.errorpaste')
+          });
         }
       });
     },
@@ -374,13 +388,10 @@ define(function(require){
           errorMessage += "<li>" + alerts[i] + "</li>";
         }
 
-        Origin.Notify.confirm({
+        Origin.Notify.alert({
+          type: 'error',
           title: window.polyglot.t('app.validationfailed'),
           text: errorMessage,
-          html: true,
-          closeOnConfirm: true,
-          showCancelButton: false,
-          confirmButtonText: window.polyglot.t('app.ok'),
           callback: _.bind(this.validateCourseConfirm, this)
         });
       }

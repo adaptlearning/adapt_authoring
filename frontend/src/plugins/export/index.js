@@ -6,26 +6,30 @@ define(function(require) {
     var courseId = Origin.editor.data.course.get('_id');
     var tenantId = Origin.sessionModel.get('tenantId');
 
+    Origin.Notify.alert({
+      title: "Exporting course",
+      text: "Please stand by...",
+      imageUrl: "adaptbuilder/css/assets/export.GIF",
+      showConfirmButton: false
+    });
+
     $.get('/export/' + tenantId + '/' + courseId, function(data) {
       Origin.Notify.alert({
-        type: (data.success) ? "success" : "error",
-        title: "Exporting course",
+        type: data.success ? "success" : "error",
+        title: data.success ? window.polyglot.t('app.successdefaulttitle') : window.polyglot.t('app.errordefaulttitle'),
         text: data.message
       });
     });
 
-    // newWindow = window.open(uriContent, 'neuesDokument');
   });
 
-  var globalMenuObject = {
-    "location": "global",
-    "text": "Export course",
-    "icon": "fa-download",
-    "callbackEvent": "export",
-    "sortOrder": 4
-  };
-
   Origin.on('app:dataReady login:changed', function() {
-    Origin.globalMenu.addItem(globalMenuObject);
+    Origin.globalMenu.addItem({
+      "location": "editor",
+      "text": "Export course",
+      "icon": "fa-download",
+      "callbackEvent": "export",
+      "sortOrder": 4
+    });
   });
 });

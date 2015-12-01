@@ -1,9 +1,4 @@
-/**
- * Exposes selected server-side configurations to the client-side
- **/
-var express = require('express');
-var server = module.exports = express();
-
+var server = module.exports = require('express')();
 var configuration = require('../../lib/configuration');
 var logger = require('../../lib/logger');
 var usermanager = require('../../lib/usermanager');
@@ -32,13 +27,10 @@ server.get('/export/:tenant/:course', function (req, res, next) {
             });
           }
           res.statusCode = 200;
-          return res.json({
-            message: "Can't believe this actually worked",
-            course: course,
-            tenant: tenant,
-            success: true
-          });
-          // return res.json(result);
+
+          result.success = true;
+          result.message = app.polyglot.t('app.exportcoursesuccess');
+          return res.json(result);
         });
       }
 

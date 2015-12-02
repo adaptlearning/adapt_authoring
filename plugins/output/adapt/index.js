@@ -238,55 +238,83 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
 };
 
 AdaptOutput.prototype.export = function (courseId, request, response, next) {
-    // do a publish first
-    this.publish(courseId, false, request, response, function(error) {
-        if(error) return next(error);
+    var self = this;
+    var tenantId = usermanager.getCurrentUser().tenant._id;
+    var userId = usermanager.getCurrentUser()._id;
+    var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
 
-        // TODO create meta file
+    var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+    var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
 
-        // copy framework folder
-        var tenantId = usermanager.getCurrentUser().tenant._id;
-        var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
-        // TODO externalise this
-        var excludes = [ 'node_modules', 'courses' ];
+    var exportName;
+    var exportDir;
 
-        var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
-        var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
-        // TODO externalise this
-        var EXPORT_FOLDER = path.join(configuration.tempDir, 'export-' + timestamp);
-
-        fse.copy(FRAMEWORK_ROOT_FOLDER, EXPORT_FOLDER, {
-            filter: function(path) {
-                for(var i = 0, count = excludes.length; i < count; i++) {
-                    if(path.indexOf(excludes[i]) !== -1) return false;
+    async.waterfall([
+    // pre
+        function publishCourse(callback) {
+            self.publish(courseId, false, request, response, callback);
+        },
+        function getCourseName(results, callback) {
+            database.getDatabase(function (error, db) {
+                if (error) {
+                    return callback(err);
                 }
-                return true;
-            }
-        }, function done(error) {
-            if (error) return next(error);
 
-            // copy course data
-            fse.copy(path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course), path.join(EXPORT_FOLDER, Constants.Folders.Source, Constants.Folders.Course), function done(error) {
-                if (error) return next(error);
+                db.retrieve('course', { _id: courseId }, { jsonOnly: true }, function (error, results) {
+                    if (error) {
+                        return callback(error);
+                    }
+                    if(!results || results.length > 1) {
+                        return callback(new Error('Unexpected results returned for course ' + courseId + ' (' + results.length + ')', self));
+                    }
 
-                // zip up
-                var archive = archiver('zip');
-                var filename = EXPORT_FOLDER +  '.zip';
-                var output = fs.createWriteStream(filename);
-
-                archive.on('error', next);
-                output.on('close', function() {
-                    fse.remove(EXPORT_FOLDER, function (error) {
-                        if (error) return next(error);
-                        return next(null, { zip: filename });
-                    })
+                    var courseName = results[0].title.toLowerCase().replace(/\s/g, '-');
+                    exportName = courseName + '-export-' + timestamp;
+                    callback();
                 });
-                archive.pipe(output);
-
-                archive.bulk([{ expand: true, cwd: EXPORT_FOLDER, src: ['**/*'] }]).finalize();
             });
-        });
-    });
+        },
+    // intra
+        function generateMetadata(callback) {
+            // TODO create meta file here
+            setTimeout(callback, 3000);
+        },
+        function copyFiles(callback) {
+            exportDir = path.join(COURSE_ROOT_FOLDER, userId, exportName);
+            var excludes = [ 'node_modules', 'courses' ];
+
+            fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
+                filter: function(path) {
+                    for(var i = 0, count = excludes.length; i < count; i++) {
+                        if(path.indexOf(excludes[i]) !== -1) return false;
+                    }
+                    return true;
+                }
+            }, function done(error) {
+                if (error) {
+                    return callback(error);
+                }
+                var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
+                var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
+                fse.copy(source, dest, callback);
+            });
+        },
+    // post
+        function zipFiles(callback) {
+            var archive = archiver('zip');
+            var output = fs.createWriteStream(exportDir +  '.zip');
+
+            archive.on('error', callback);
+            output.on('close', function() {
+                fse.remove(exportDir, function (error) {
+                    callback(error, { zipName: exportName + '.zip' });
+                });
+            });
+            archive.pipe(output);
+            archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
+        }
+    ],
+    next);
 };
 
 /**

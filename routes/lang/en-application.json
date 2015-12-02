@@ -274,7 +274,6 @@
   "app.validationfailed": "Validation failed",
   "app.successdefaulttitle": "Success",
   "app.exportcoursesuccess": "Course exported successfully!",
-  "app.exportcoursesuccess": "Course export failed.",
   "app.infodefaulttitle": "Information",
   "app.errordefaulttitle": "Error",
   "app.confirmdefaulttitle": "Are you sure?",

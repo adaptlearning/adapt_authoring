@@ -268,8 +268,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
                         return callback(new Error('Unexpected results returned for course ' + courseId + ' (' + results.length + ')', self));
                     }
 
-                    var courseName = results[0].title.toLowerCase().replace(/\s/g, '-');
-                    exportName = courseName + '-export-' + timestamp;
+                    exportName = self.slugify(results[0].title) + '-export-' + timestamp;
                     callback();
                 });
             });

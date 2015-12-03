@@ -273,6 +273,8 @@
   "app.errormenueditorbody": "An error occurred during the save",
   "app.validationfailed": "Validation failed",
   "app.successdefaulttitle": "Success",
+  "app.exportcoursetitle": "Exporting course",
+  "app.exportcoursetext": "Please stand by, this may take a few moments.",
   "app.exportcoursesuccess": "Course exported successfully!",
   "app.infodefaulttitle": "Information",
   "app.errordefaulttitle": "Error",
@@ -294,5 +296,6 @@
   "app.errorgeneratingpreview": "Error generating preview, please contact Administrator.",
   "app.errorcopy": "Error during copy.",
   "app.errorpaste": "Error during paste",
-  "app.errorsaveasset": "An error occurred doing the save"
+  "app.errorsaveasset": "An error occurred doing the save",
+  "app.errorusernoaccess": "Sorry, the current user doesn't have access to this course"
 }

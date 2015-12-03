@@ -7,8 +7,8 @@ define(function(require) {
     var tenantId = Origin.sessionModel.get('tenantId');
 
     Origin.Notify.alert({
-      title: "Exporting course",
-      text: "Please stand by...",
+      title: window.polyglot.t('app.exportcoursetitle'),
+      text: window.polyglot.t('app.exportcoursetext'),
       imageUrl: "adaptbuilder/css/assets/export.GIF",
       showConfirmButton: false
     });

@@ -41,7 +41,7 @@ server.get('/export/:tenant/:course', function (req, res, next) {
     res.statusCode = 401;
     return res.json({
       success: false,
-      message: "Sorry, the current user doesn't have access to this course"
+      message: app.polyglot.t('app.errorusernoaccess')
     });
   }
 });

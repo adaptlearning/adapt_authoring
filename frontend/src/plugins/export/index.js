@@ -6,6 +6,7 @@ define(function(require) {
     var courseId = Origin.editor.data.course.get('_id');
     var tenantId = Origin.sessionModel.get('tenantId');
 
+    // TODO sort styling
     Origin.Notify.alert({
       title: window.polyglot.t('app.exportcoursetitle'),
       text: window.polyglot.t('app.exportcoursetext'),
@@ -21,6 +22,7 @@ define(function(require) {
         text: data.message
       });
 
+      // get the zip
       var form = document.createElement("form");
       form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
       form.submit();

@@ -65,7 +65,6 @@ server.get('/export/:tenant/:course/:title/download.zip', function (req, res, ne
 
   fs.stat(zipDir, function(err, stat) {
     if (err) {
-      logger.log('error', 'Error calling fs.stat');
       logger.log('error', err);
 
       next(err);

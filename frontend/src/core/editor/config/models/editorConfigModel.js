@@ -6,11 +6,12 @@ define(function(require) {
     sync: function(method, model, options) {
         options = options || {};
 
-        switch(method.toLowerCase()) {
+        switch (method.toLowerCase()) {
             case 'read':
             options.url = '/api/content/config/' + this.get('_courseId');
             break;
             case 'update':
+            case 'patch':
             options.url = '/api/content/config/' + this.get('_id');
             break;
         }

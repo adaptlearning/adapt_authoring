@@ -3,6 +3,37 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [0.1.4] - 2015-11-25
+This version adds support for Node.js v4.2.2 LTS.  
+
+IMPORTANT: If upgrading from a previous installation, first remove the `node_modules` folder and run
+```javascript 
+npm install --production
+```
+ to install the latest code dependencies, then run
+```javascript 
+node upgrade
+``` 
+ to get the latest authoring tool and framework changes.
+
+### Added
+- Support for Node.js v4.2.2 LTS
+- Support for generating JavaScript source maps on preview or download (via Configuration Settings)
+- Support for Vagrant
+- Support for JSCS
+
+### Changed
+- Locking the Title and Display Title by default
+- Renamed 'Publish' button to 'Download'
+- Updated package dependencies to correct security issues
+- Assets can now be defined in articles.json
+- Tag length has been increased to 30 characters
+
+### Fixed
+- Bug: Error on copying and pasting a block
+- Bug: Custom CSS/LESS not pulling through
+- Bug: _supportedLayout not working correctly
+
 ## [0.1.3] - 2015-10-21
 
 ### Added

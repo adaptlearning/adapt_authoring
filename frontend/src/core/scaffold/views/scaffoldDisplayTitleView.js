@@ -54,7 +54,7 @@ define(function(require) {
             
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-            
+                       
         },
 
         render: function() {

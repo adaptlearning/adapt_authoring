@@ -18,32 +18,32 @@ define(function(require) {
       Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
       Origin.options.addItems([
         {
-          title: 'Grid',
+          title: window.polyglot.t('app.grid'),
           icon: 'th',
           callbackEvent: 'dashboard:layout:grid',
           value: 'grid',
           group: 'layout',
         }, {
-          title: 'List',
+          title: window.polyglot.t('app.list'),
           icon: 'list',
           callbackEvent: 'dashboard:layout:list',
           value: 'list',
           group: 'layout'
         },
         {
-          title: 'Ascending',
+          title: window.polyglot.t('app.ascending'),
           icon: 'sort-alpha-asc',
           callbackEvent: 'dashboard:sort:asc',
           value: 'asc',
           group: 'sort'
         }, {
-          title: 'Descending',
+          title: window.polyglot.t('app.descending'),
           icon: 'sort-alpha-desc',
           callbackEvent: 'dashboard:sort:desc',
           value: 'desc',
           group: 'sort'
         }, {
-          title: 'Last updated',
+          title: window.polyglot.t('app.lastupdated'),
           icon: 'edit',
           callbackEvent: 'dashboard:sort:updated',
           value: 'updated',

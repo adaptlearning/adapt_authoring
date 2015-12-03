@@ -4,7 +4,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
-
+  
   var EditorConfigEditView = EditorOriginView.extend({
 
     tagName: "div",
@@ -25,7 +25,12 @@ define(function(require) {
         return;
       }
 
-      this.model.save(null, {
+      // Ensure the _id is always passed.
+      var attributesToUpdate = _.extend(this.model.changedAttributes(), 
+        {_id: this.model.get('_id'), _courseId: this.model.get('_courseId')});
+      
+      this.model.save(attributesToUpdate, {
+        patch: true,
         error: function() {
           Origin.Notify.alert({
             type: 'error',
@@ -42,7 +47,7 @@ define(function(require) {
           }, this);
 
         }, this)
-      })
+      });
     }
   },
   {

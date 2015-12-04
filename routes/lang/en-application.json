@@ -1,5 +1,5 @@
 {
-  "app.productname": "Adapt Builder",
+  "app.productname": "Adapt authoring tool",
   "app.rememberme": "Remember me",
   "app.ok": "OK",
   "app.yes": "Yes",
@@ -229,7 +229,7 @@
   "app.databasepass": "Database Password",
   "app.databaseport": "Database Port",
   "app.emailadminpasswordresetsubject": "Your Adapt password has been reset",
-  "app.emailadminpasswordresetbody": "Your password for Adapt Builder has been reset.  Your new password is: %{data}",
+  "app.emailadminpasswordresetbody": "Your password has been reset.  Your new password is: %{data}",
   "app.emailforgottenpasswordsubject": "Password reset",
   "app.emailforgottenpasswordbody": "You (or someone else) has requested to reset your password. To reset your password follow the link:\n%{rootUrl}/#user/reset/%{data}",
   "app.edittenant": "Edit Tenant",

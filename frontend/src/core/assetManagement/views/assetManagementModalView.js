@@ -30,8 +30,12 @@ define(function(require) {
 	    	this.search = {};
 	    	// Replace Asset and : so we can have both filtered and all asset types
 	    	var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
-	    	var filters = [assetType];
-	    	this.search.assetType = { $in: filters };
+        
+        if (assetType) {
+          var filters = [assetType];
+	    	  this.search.assetType = { $in: filters };  
+        }
+	    	
 		    // Push collection through to collection view
 		    this.$('.asset-management-assets-container-inner').append(new AssetManagementCollectionView({collection: this.collection, search: this.search}).$el);
 		},

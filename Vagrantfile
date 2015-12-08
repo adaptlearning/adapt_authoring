@@ -11,6 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:5000" on the host will access port 5000 on the guest machine.
   config.vm.network "forwarded_port", guest: 5000, host: 5000
+  config.vm.network "forwarded_port", guest: 5858, host: 5858
   config.vm.network "forwarded_port", guest: 27017, host: 27027
 
   if Vagrant::Util::Platform.windows?

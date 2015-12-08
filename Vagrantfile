@@ -15,10 +15,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   if Vagrant::Util::Platform.windows?
     config.vm.provision "shell", path: "vagrant_setup_win.sh", privileged: true
-    config.vm.provision "shell", path: "pm2_start_win.sh", privileged: true, run: "always"
+    config.vm.provision "shell", path: "pm2_start_win.sh", privileged: false, run: "always"
   else
     config.vm.provision "shell", path: "vagrant_setup.sh", privileged: true
-    config.vm.provision "shell", path: "pm2_start.sh", privileged: true, run: "always"
+    config.vm.provision "shell", path: "pm2_start.sh", privileged: false, run: "always"
   end
 
   config.vm.provision "shell", path: "log_defaults.sh", privileged: true, run: "always"

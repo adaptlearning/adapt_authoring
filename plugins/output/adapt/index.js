@@ -241,82 +241,136 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 };
 
 AdaptOutput.prototype.export = function (courseId, request, response, next) {
-    var self = this;
-    var tenantId = usermanager.getCurrentUser().tenant._id;
-    var userId = usermanager.getCurrentUser()._id;
-    var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
+  var self = this;
+  var tenantId = usermanager.getCurrentUser().tenant._id;
+  var userId = usermanager.getCurrentUser()._id;
+  var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
 
-    var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
-    var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
+  var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+  var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
 
-    var exportName;
-    var exportDir;
+  // set in getCourseName
+  var exportName;
+  var exportDir;
 
-    async.waterfall([
-    // pre
-        function publishCourse(callback) {
-            self.publish(courseId, false, request, response, callback);
-        },
-        function getCourseName(results, callback) {
-            database.getDatabase(function (error, db) {
-                if (error) {
-                    return callback(err);
-                }
-
-                db.retrieve('course', { _id: courseId }, { jsonOnly: true }, function (error, results) {
-                    if (error) {
-                        return callback(error);
-                    }
-                    if(!results || results.length > 1) {
-                        return callback(new Error('Unexpected results returned for course ' + courseId + ' (' + results.length + ')', self));
-                    }
-
-                    exportName = self.slugify(results[0].title) + '-export-' + timestamp;
-                    callback();
-                });
-            });
-        },
-    // intra
-        function generateMetadata(callback) {
-            // TODO create meta file here
-            setTimeout(callback, 3000);
-        },
-        function copyFiles(callback) {
-            exportDir = path.join(COURSE_ROOT_FOLDER, userId, exportName);
-            var excludes = [ 'node_modules', 'courses' ];
-
-            fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
-                filter: function(path) {
-                    for(var i = 0, count = excludes.length; i < count; i++) {
-                        if(path.indexOf(excludes[i]) !== -1) return false;
-                    }
-                    return true;
-                }
-            }, function done(error) {
-                if (error) {
-                    return callback(error);
-                }
-                var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
-                var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
-                fse.copy(source, dest, callback);
-            });
-        },
-    // post
-        function zipFiles(callback) {
-            var archive = archiver('zip');
-            var output = fs.createWriteStream(exportDir +  '.zip');
-
-            archive.on('error', callback);
-            output.on('close', function() {
-                fse.remove(exportDir, function (error) {
-                    callback(error, { zipName: exportName + '.zip' });
-                });
-            });
-            archive.pipe(output);
-            archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
+  async.waterfall([
+    function publishCourse(callback) {
+      self.publish(courseId, false, request, response, callback);
+    },
+    function getCourseName(results, callback) {
+      database.getDatabase(function (error, db) {
+        if (error) {
+          return callback(err);
         }
-    ],
-    next);
+
+        db.retrieve('course', { _id: courseId }, { jsonOnly: true }, function (error, results) {
+          if (error) {
+            return callback(error);
+          }
+          if(!results || results.length > 1) {
+            return callback(new Error('Unexpected results returned for course ' + courseId + ' (' + results.length + ')', self));
+          }
+
+          exportName = self.slugify(results[0].title) + '-export-' + timestamp;
+          exportDir = path.join(COURSE_ROOT_FOLDER, userId, exportName);
+          callback();
+        });
+      });
+    },
+    function generateMetadata(callback) {
+      database.getDatabase(function (error, db) {
+        if (error) {
+          return callback(err);
+        }
+
+        async.parallel([
+          function assets(callback) {
+            db.retrieve('courseasset', { _courseId: courseId }, { jsonOnly: true }, function (error, courseassets) {
+              if(!courseassets) {
+                return callback();
+              }
+
+              var assetData = {};
+              async.each(courseassets, function(courseasset, callback) {
+                if(assetData[courseasset._assetId]) {
+                  assetData[courseasset._assetId].courseassets.push(courseasset);
+                  callback();
+                } else {
+                  db.retrieve('asset', { _id: courseasset._assetId }, { jsonOnly: true }, function (error, assets) {
+                    if(!assets || assets.length > 1) {
+                      return callback(new Error('Unexpected results returned for asset ' + courseasset._assetId + ' (' + assets.length + ')', self));
+                    }
+                    var asset = assetData[assets[0]._id] = assets[0];
+
+                    if(!asset.courseassets) {
+                      asset.courseassets = [];
+                    }
+
+                    asset.courseassets.push(courseasset);
+                    callback();
+                  });
+                }
+              }, function doneLoop() {
+                callback(null, assetData);
+              });
+            });
+          },
+          function tags(callback) {
+            callback(null, { to:'do'});
+          },
+          function settings(callback) {
+            callback(null, { to:'do'});
+          }
+        ],
+        function done(error, results) {
+          console.log(error, results);
+          var metaData = {
+            assets: results[0],
+            tags: results[1],
+            settings: results[2]
+          };
+
+          fse.ensureDir(exportDir, function (err) {
+            fse.writeJson(path.join(exportDir, 'manifest.json'), metaData, { spaces: 2 }, callback);
+          });
+        });
+      });
+    },
+    function copyFiles(callback) {
+      var excludes = [ 'node_modules', 'courses' ];
+
+      fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
+        filter: function(path) {
+          for(var i = 0, count = excludes.length; i < count; i++) {
+            if(path.indexOf(excludes[i]) !== -1) return false;
+          }
+          return true;
+        }
+      }, function done(error) {
+        if (error) {
+          return callback(error);
+        }
+        var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
+        var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
+        fse.copy(source, dest, callback);
+      });
+    },
+    function zipFiles(callback) {
+      var archive = archiver('zip');
+      var output = fs.createWriteStream(exportDir +  '.zip');
+
+      archive.on('error', callback);
+      output.on('close', callback);
+      archive.pipe(output);
+      archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
+    },
+    function cleanUp(callback) {
+      fse.remove(exportDir, function (error) {
+        callback(error, { zipName: exportName + '.zip' });
+      });
+    }
+  ],
+  next);
 };
 
 /**

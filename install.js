@@ -12,7 +12,8 @@ var prompt = require('prompt'),
     helpers = require('./lib/helpers'),
     localAuth = require('./plugins/auth/local'),
     logger = require('./lib/logger'),
-    optimist = require('optimist');
+    optimist = require('optimist'),
+    util = require('util');
 
 prompt.message = '> ';
 prompt.delimiter = '';
@@ -23,6 +24,8 @@ var auths = auth.getAvailableAuthPluginsSync();
 var app = builder();
 var masterTenant = false;
 var superUser = false;
+var currentDir = process.cwd();
+var vagrant = '/vagrant';
 
 // config items
 var configItems = [
@@ -214,8 +217,12 @@ var steps = [
      });
   },
   // configure environment
-  function configureEnvironment (next) {
-    console.log('You will now be prompted to set configuration items. Just press ENTER to accept the default value (in brackets).');
+  function configureEnvironment (next) {    
+    if (currentDir == vagrant) {
+      console.log('This is a Vagrant installation - the default configuration items will be set..')
+    } else {
+          console.log('You will now be prompted to set configuration items. Just press ENTER to accept the default value (in brackets).');
+    }
     prompt.get(configItems, function (err, results) {
       if (err) {
         console.log('ERROR: ', err);
@@ -234,7 +241,11 @@ var steps = [
     // run the app
     app.run();
     app.on('serverStarted', function () {
-      console.log("You will now be prompted to enter details for your tenant.");
+        if (currentDir == vagrant) {
+        console.log('This is a Vagrant installation - the default master tenant details will be used..')
+      } else {
+        console.log("You will now be prompted to enter details for your tenant.");
+      }
       prompt.get(tenantConfig, function (err, result) {
         if (err) {
           console.log('ERROR: ', err);
@@ -351,7 +362,11 @@ var steps = [
   },
   // configure the super awesome user
   function createSuperUser (next) {
+    if (currentDir == vagrant) {
+      console.log('This is a Vagrant installtion - the default super user account will be used..')
+    } else {
     console.log("Create the super user account. This account can be used to manage everything on your Adapt Builder instance.");
+    }
     prompt.get(userConfig, function (err, result) {
       if (err) {
         console.log('ERROR: ', err);
@@ -414,7 +429,12 @@ var steps = [
   },
   // all done
   function finalize (next) {
+    if (currentDir == vagrant) {
+      console.log('Installation complete.')
+    } else {
     console.log("Installation complete.\nRun the command 'node server' (or 'foreman start' if using heroku toolbelt) to start your instance.");
+    }
+    
     return next();
   }
 ];

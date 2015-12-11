@@ -22,10 +22,12 @@ define(function(require) {
         text: data.message
       });
 
-      // get the zip
-      var form = document.createElement("form");
-      form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
-      form.submit();
+      if(success) {
+        // get the zip
+        var form = document.createElement("form");
+        form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
+        form.submit();
+      }
     });
 
   });

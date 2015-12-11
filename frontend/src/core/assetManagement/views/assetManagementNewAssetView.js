@@ -119,7 +119,11 @@ define(function(require){
         },
 
         error: function(xhr, status, error) {
-          // console.log('Error: ' + xhr.status);
+          Origin.trigger('sidebar:resetButtons');
+          Origin.Notify.alert({
+            type: 'error',
+            text: xhr.responseJSON.message
+          });
         },
 
         success: function(data, status, xhr) {

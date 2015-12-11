@@ -32,19 +32,7 @@ define(function(require) {
 		},
 
 		postRender: function() {
-			
-			// Checks whether this component should be restricted. Depends
-			// on if the component has available positions and is available
-			// to the editor
-			var isRestricted = false;
-
-			_.each(this.model.get('availablePositions'), function(availablePosition) {
-				if (availablePosition === true) {
-					isRestricted = true;
-				}
-			}, this);
-
-			if (!isRestricted || !this.model.get('_isAvailableInEditor')) {
+			if (this.model.get('_isAvailableInEditor') == false) {
 				this.$el.addClass('restricted');
 			} 
 
@@ -52,10 +40,7 @@ define(function(require) {
 
 		onItemClicked: function(event) {
 			event.preventDefault();
-			// If this item is restricted don't allow this to be selected
-			if (this.$el.hasClass('restricted')) {
-				return;
-			}
+      
 			Origin.trigger('editorComponentListItemView:deselect')
 			this.$el.addClass('selected');
 			this.$('.editor-component-list-item-overlay')

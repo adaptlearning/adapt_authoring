@@ -277,65 +277,6 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
         });
       });
     },
-    function generateMetadata(callback) {
-      database.getDatabase(function (error, db) {
-        if (error) {
-          return callback(err);
-        }
-
-        async.parallel([
-          function assets(callback) {
-            db.retrieve('courseasset', { _courseId: courseId }, { jsonOnly: true }, function (error, courseassets) {
-              if(!courseassets) {
-                return callback();
-              }
-
-              var assetData = {};
-              async.each(courseassets, function(courseasset, callback) {
-                if(assetData[courseasset._assetId]) {
-                  assetData[courseasset._assetId].courseassets.push(courseasset);
-                  callback();
-                } else {
-                  db.retrieve('asset', { _id: courseasset._assetId }, { jsonOnly: true }, function (error, assets) {
-                    if(!assets || assets.length > 1) {
-                      return callback(new Error('Unexpected results returned for asset ' + courseasset._assetId + ' (' + assets.length + ')', self));
-                    }
-                    var asset = assetData[assets[0]._id] = assets[0];
-
-                    if(!asset.courseassets) {
-                      asset.courseassets = [];
-                    }
-
-                    asset.courseassets.push(courseasset);
-                    callback();
-                  });
-                }
-              }, function doneLoop() {
-                callback(null, assetData);
-              });
-            });
-          },
-          function tags(callback) {
-            callback(null, { to:'do'});
-          },
-          function settings(callback) {
-            callback(null, { to:'do'});
-          }
-        ],
-        function done(error, results) {
-          console.log(error, results);
-          var metaData = {
-            assets: results[0],
-            tags: results[1],
-            settings: results[2]
-          };
-
-          fse.ensureDir(exportDir, function (err) {
-            fse.writeJson(path.join(exportDir, 'manifest.json'), metaData, { spaces: 2 }, callback);
-          });
-        });
-      });
-    },
     function copyFiles(callback) {
       var excludeFolders = [ '^\\.', 'node_modules', 'courses', 'course' ]; // [0] = hidden files
 

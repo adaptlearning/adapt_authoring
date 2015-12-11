@@ -19,7 +19,7 @@ define(function(require) {
       'click button.editor-common-sidebar-select-theme' : 'selectTheme',
       'click button.editor-common-sidebar-publish'      : 'publishProject',
       'click button.editor-common-sidebar-preview'      : 'previewProject',
-      'click button.editor-common-sidebar-export'      : 'exportProject',
+      'click button.editor-common-sidebar-export'       : 'exportProject',
       'click button.editor-common-sidebar-close'        : 'closeProject',
     },
 

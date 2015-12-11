@@ -116,21 +116,34 @@ define(function(require){
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
 
-      // TODO sort styling
+      /*
       Origin.Notify.alert({
         title: window.polyglot.t('app.exportcoursetitle'),
         text: window.polyglot.t('app.exportcoursetext'),
         imageUrl: "adaptbuilder/css/assets/export.GIF",
         showConfirmButton: false
       });
+      */
+
+      // switch icons
+      $('.editor-common-sidebar-export-inner').addClass('display-none');
+      $('.editor-common-sidebar-exporting').removeClass('display-none');
+
 
       $.get('/export/' + tenantId + '/' + courseId, function(data, textStatus, jqXHR) {
         var success = jqXHR.status === 200;
+
+        // switch icons
+        $('.editor-common-sidebar-export-inner').removeClass('display-none');
+        $('.editor-common-sidebar-exporting').addClass('display-none');
+
+        /*
         Origin.Notify.alert({
           type: success ? "success" : "error",
           title: success ? window.polyglot.t('app.successdefaulttitle') : window.polyglot.t('app.errordefaulttitle'),
           text: data.message
         });
+        */
 
         if(success) {
           // get the zip

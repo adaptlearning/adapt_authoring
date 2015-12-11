@@ -272,7 +272,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
           }
 
           exportName = self.slugify(results[0].title) + '-export-' + timestamp;
-          exportDir = path.join(COURSE_ROOT_FOLDER, userId, exportName);
+          exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course, exportName);
           callback();
         });
       });
@@ -337,12 +337,14 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
       });
     },
     function copyFiles(callback) {
-      var excludes = [ 'node_modules', 'courses' ];
+      var excludeFolders = [ '^\\.', 'node_modules', 'courses', 'course' ]; // [0] = hidden files
 
       fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
-        filter: function(path) {
-          for(var i = 0, count = excludes.length; i < count; i++) {
-            if(path.indexOf(excludes[i]) !== -1) return false;
+        filter: function(filePath) {
+          // only filter dirs (files w/o an extension will also be included here)
+          if(!path.extname(filePath)) {
+            var filter = path.basename(filePath).search(new RegExp(excludeFolders.join('|'))) === -1;
+            return filter;
           }
           return true;
         }
@@ -352,7 +354,12 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
         }
         var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
         var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
-        fse.copy(source, dest, callback);
+        fse.ensureDir(dest, function (error) {
+          if(error) {
+            return callback(error);
+          }
+          fse.copy(source, dest, callback);
+        });
       });
     },
     function zipFiles(callback) {

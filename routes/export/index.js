@@ -51,22 +51,17 @@ server.get('/export/:tenant/:course/:title/download.zip', function (req, res, ne
   var courseId = req.params.course;
   var userId = usermanager.getCurrentUser()._id;
   var zipName = req.params.title;
-
   var zipDir = path.join(
     configuration.tempDir,
     configuration.getConfig('masterTenantID'),
     Constants.Folders.Framework,
-    Constants.Folders.AllCourses,
-    tenantId,
-    courseId,
-    userId,
+    Constants.Folders.Source,
+    Constants.Folders.Course,
     zipName
   );
 
   fs.stat(zipDir, function(err, stat) {
     if (err) {
-      logger.log('error', err);
-
       next(err);
     } else {
       res.writeHead(200, {

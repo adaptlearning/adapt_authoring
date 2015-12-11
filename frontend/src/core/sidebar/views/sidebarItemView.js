@@ -19,7 +19,8 @@ define(function(require) {
       'click button.editor-common-sidebar-select-theme' : 'selectTheme',
       'click button.editor-common-sidebar-publish'      : 'publishProject',
       'click button.editor-common-sidebar-preview'      : 'previewProject',
-      'click button.editor-common-sidebar-close'        : 'closeProject', 
+      'click button.editor-common-sidebar-export'      : 'exportProject',
+      'click button.editor-common-sidebar-close'        : 'closeProject',
     },
 
     initialize: function(options) {
@@ -58,7 +59,7 @@ define(function(require) {
 
     onShowErrors: function(errors) {
       this.$('.sidebar-fieldset-filter').removeClass('error');
-      
+
       if (errors) {
         // If there's error we should reset the save button
         this.resetButtons();
@@ -122,6 +123,10 @@ define(function(require) {
 
     previewProject: function() {
       Origin.trigger('editorCommon:preview');
+    },
+
+    exportProject: function() {
+      Origin.trigger('editorCommon:export');
     },
 
     closeProject: function() {

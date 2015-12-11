@@ -274,6 +274,8 @@
   "app.errormenueditorbody": "An error occurred during the save",
   "app.validationfailed": "Validation failed",
   "app.successdefaulttitle": "Success",
+  "app.export": "Export",
+  "app.exporting": "Exporting",
   "app.exportcoursetitle": "Exporting course",
   "app.exportcoursetext": "Please stand by, this may take a few moments.",
   "app.exportcoursesuccess": "Course exported successfully!",

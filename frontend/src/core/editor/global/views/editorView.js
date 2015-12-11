@@ -54,6 +54,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
       this.listenTo(Origin, 'editorCommon:publish', this.publishProject);
       this.listenTo(Origin, 'editorCommon:preview', this.previewProject);
+      this.listenTo(Origin, 'editorCommon:export', this.exportProject);
 
 
       this.render();
@@ -107,6 +108,37 @@ define(function(require){
       } else {
         return false;
       }
+    },
+
+    exportProject: function(event) {
+      event && event.preventDefault();
+
+      var courseId = Origin.editor.data.course.get('_id');
+      var tenantId = Origin.sessionModel.get('tenantId');
+
+      // TODO sort styling
+      Origin.Notify.alert({
+        title: window.polyglot.t('app.exportcoursetitle'),
+        text: window.polyglot.t('app.exportcoursetext'),
+        imageUrl: "adaptbuilder/css/assets/export.GIF",
+        showConfirmButton: false
+      });
+
+      $.get('/export/' + tenantId + '/' + courseId, function(data, textStatus, jqXHR) {
+        var success = jqXHR.status === 200;
+        Origin.Notify.alert({
+          type: success ? "success" : "error",
+          title: success ? window.polyglot.t('app.successdefaulttitle') : window.polyglot.t('app.errordefaulttitle'),
+          text: data.message
+        });
+
+        if(success) {
+          // get the zip
+          var form = document.createElement("form");
+          form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
+          form.submit();
+        }
+      });
     },
 
     launchCoursePreview: function() {

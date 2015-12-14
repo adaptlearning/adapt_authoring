@@ -347,7 +347,7 @@ define(function(require){
 
       var alerts = [];
 
-      function interateOverChildren(model) {
+      function iterateOverChildren(model) {
 
         // Return the function if no children - on components
         if(!model._children) return;
@@ -373,14 +373,14 @@ define(function(require){
 
           // Go over each child and call validation again
           currentChildren.each(function(childModel) {
-            interateOverChildren(childModel);
+            iterateOverChildren(childModel);
           });
 
         }
 
       }
 
-      interateOverChildren(currentCourse);
+      iterateOverChildren(currentCourse);
 
       if(alerts.length > 0) {
         var errorMessage = "";

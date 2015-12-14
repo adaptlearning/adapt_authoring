@@ -12,7 +12,12 @@ var prompt = require('prompt'),
     helpers = require('./lib/helpers'),
     localAuth = require('./plugins/auth/local'),
     logger = require('./lib/logger'),
-    optimist = require('optimist');
+    optimist = require('optimist'),
+    util = require('util');
+    
+// set overrides from command line arguments
+prompt.override = optimist.argv;
+prompt.start();
 
 prompt.message = '> ';
 prompt.delimiter = '';
@@ -213,9 +218,10 @@ var steps = [
       });
      });
   },
-  // configure environment
-  function configureEnvironment (next) {
-    console.log('You will now be prompted to set configuration items. Just press ENTER to accept the default value (in brackets).');
+  
+   function configureEnvironment(next) {
+    console.log('Now setting configuration items.');
+    console.log('You may be prompted to enter a setting if one is missing. Just press ENTER to accept the default value (in brackets).');
     prompt.get(configItems, function (err, results) {
       if (err) {
         console.log('ERROR: ', err);
@@ -234,7 +240,7 @@ var steps = [
     // run the app
     app.run();
     app.on('serverStarted', function () {
-      console.log("You will now be prompted to enter details for your tenant.");
+      console.log('Creating your tenant. If these details are not set you will be prompted. Please wait ...')
       prompt.get(tenantConfig, function (err, result) {
         if (err) {
           console.log('ERROR: ', err);
@@ -252,7 +258,7 @@ var steps = [
 
           // create the tenant according to the user provided details
           var _createTenant = function (cb) {
-            console.log("Creating file system for " + tenantName + ", please wait ...");
+            console.log("Creating file system for tenant: " + tenantName + ", please wait ...");
             app.tenantmanager.createTenant({
                 name: tenantName,
                 displayName: tenantDisplayName,
@@ -414,7 +420,15 @@ var steps = [
   },
   // all done
   function finalize (next) {
-    console.log("Installation complete.\nRun the command 'node server' (or 'foreman start' if using heroku toolbelt) to start your instance.");
+    var currentDir = process.cwd();
+    var vagrant = '/vagrant';
+    
+    if (currentDir == vagrant) {
+      console.log("'Installation complete.\nTo restart your instance run the command 'pm2 restart all'");
+    } else {
+    console.log("Installation complete.\n To restart your instance run the command 'node server' (or 'foreman start' if using heroku toolbelt).");
+    }
+    
     return next();
   }
 ];

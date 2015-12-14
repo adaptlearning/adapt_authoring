@@ -1,0 +1,8 @@
+{
+  "apps" : [{
+  "name"        : "adapt",
+  "script"      : "server.js",
+  "watch"       : true,
+  "node_args"   : "--debug=5858"
+}]
+}

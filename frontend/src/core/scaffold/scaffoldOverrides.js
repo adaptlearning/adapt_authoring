@@ -146,6 +146,12 @@ define(function(require) {
 	Backbone.Form.editors.TextArea.prototype.getValue = function() {
 		return this.editor.getData();
 	}
+  
+  Backbone.Form.editors.TextArea.prototype.remove = function() {
+    this.editor.removeAllListeners();
+    CKEDITOR.remove(this.editor);
+    console.log('text area was removed');
+  }
 
 	Backbone.Form.prototype.validate = function(options) {
 	    var self = this,

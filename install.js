@@ -29,6 +29,8 @@ var app = builder();
 var masterTenant = false;
 var superUser = false;
 
+var isVagrantInstallation = false;
+
 // config items
 var configItems = [
   {
@@ -278,7 +280,7 @@ var steps = [
                 }
 
                 masterTenant = tenant;
-                console.log("Tenant " + tenant.name + " was created.");
+                console.log("Tenant " + tenant.name + " was created. Now saving configuration, please wait...");
                 // save master tenant name to config
                 configuration.setConfig('masterTenantName', tenant.name);
                 configuration.setConfig('masterTenantID', tenant._id);
@@ -420,15 +422,22 @@ var steps = [
   },
   // all done
   function finalize (next) {
-    var currentDir = process.cwd();
-    var vagrant = '/vagrant';
-    
-    if (currentDir == vagrant) {
-      console.log("'Installation complete.\nTo restart your instance run the command 'pm2 restart all'");
-    } else {
-    console.log("Installation complete.\n To restart your instance run the command 'node server' (or 'foreman start' if using heroku toolbelt).");
+    var passedArgs = process.argv.slice(2);
+
+    for (var i = 2; i < passedArgs.length; i++) {
+      if (passedArgs[i] == undefined) {
+        isVagrantInstallation = false;
+        break;
+      } else {
+        isVagrantInstallation = true;
+      }
     }
-    
+
+    if (isVagrantInstallation) {
+      console.log("Installation complete.\nTo restart your instance run the command 'pm2 restart all'");
+    } else {
+      console.log("Installation complete.\n To restart your instance run the command 'node server' (or 'foreman start' if using heroku toolbelt).");
+    }
     return next();
   }
 ];

@@ -30,9 +30,11 @@ var masterTenant = false;
 var superUser = false;
 
 var isVagrant = function () {
-  if (process.argv.length != 2) {
-      return true;
-    }
+  if (process.argv.length > 2) {
+        return true;
+  }
+
+  return false;
 };
 
 // config items

@@ -29,7 +29,11 @@ var app = builder();
 var masterTenant = false;
 var superUser = false;
 
-var isVagrantInstallation = false;
+var isVagrant = function () {
+  if (process.argv.length != 2) {
+      return true;
+    }
+};
 
 // config items
 var configItems = [
@@ -220,19 +224,22 @@ var steps = [
       });
      });
   },
-  
-   function configureEnvironment(next) {
-    console.log('Now setting configuration items.');
-    console.log('You may be prompted to enter a setting if one is missing. Just press ENTER to accept the default value (in brackets).');
-    prompt.get(configItems, function (err, results) {
-      if (err) {
-        console.log('ERROR: ', err);
-        return exitInstall(1, 'Could not save configuration items.');
-      }
 
-      saveConfig(results, next);
-    });
-  },
+   function configureEnvironment(next) {
+     if (isVagrant()) {
+       console.log('Now setting configuration items.');
+     } else {
+       console.log('Now set configuration items. Just press ENTER to accept the default value (in brackets).');
+     }
+     prompt.get(configItems, function (err, results) {
+       if (err) {
+         console.log('ERROR: ', err);
+         return exitInstall(1, 'Could not save configuration items.');
+       }
+
+       saveConfig(results, next);
+     });
+   },
   // configure tenant
   function configureTenant (next) {
     console.log("Checking configuration, please wait a moment ... ");
@@ -242,7 +249,11 @@ var steps = [
     // run the app
     app.run();
     app.on('serverStarted', function () {
-      console.log('Creating your tenant. If these details are not set you will be prompted. Please wait ...')
+      if (isVagrant()) {
+        console.log('Creating your tenant. Please wait ...');
+      } else {
+        console.log('Now create your tenant. Just press ENTER to accept the default value (in brackets). Please wait ...');
+      }
       prompt.get(tenantConfig, function (err, result) {
         if (err) {
           console.log('ERROR: ', err);
@@ -280,7 +291,7 @@ var steps = [
                 }
 
                 masterTenant = tenant;
-                console.log("Tenant " + tenant.name + " was created. Now saving configuration, please wait...");
+                console.log("Tenant " + tenant.name + " was created. Now saving configuration, please wait ...");
                 // save master tenant name to config
                 configuration.setConfig('masterTenantName', tenant.name);
                 configuration.setConfig('masterTenantID', tenant._id);
@@ -359,7 +370,12 @@ var steps = [
   },
   // configure the super awesome user
   function createSuperUser (next) {
-    console.log("Create the super user account. This account can be used to manage everything on your Adapt Builder instance.");
+    if (isVagrant()) {
+      console.log("Creating the super user account. This account can be used to manage everything on your Adapt Builder instance.");
+    } else {
+      console.log("Create the super user account. This account can be used to manage everything on your Adapt Builder instance.");
+    }
+
     prompt.get(userConfig, function (err, result) {
       if (err) {
         console.log('ERROR: ', err);
@@ -422,22 +438,12 @@ var steps = [
   },
   // all done
   function finalize (next) {
-    var passedArgs = process.argv.slice(2);
-
-    for (var i = 2; i < passedArgs.length; i++) {
-      if (passedArgs[i] == undefined) {
-        isVagrantInstallation = false;
-        break;
-      } else {
-        isVagrantInstallation = true;
-      }
-    }
-
-    if (isVagrantInstallation) {
+    if (isVagrant()) {
       console.log("Installation complete.\nTo restart your instance run the command 'pm2 restart all'");
     } else {
       console.log("Installation complete.\n To restart your instance run the command 'node server' (or 'foreman start' if using heroku toolbelt).");
     }
+
     return next();
   }
 ];
@@ -448,7 +454,11 @@ prompt.override = optimist.argv;
 prompt.start();
 
 // Prompt the user to begin the install
-console.log('This script will install the Adapt Builder. Would you like to continue?');
+if (isVagrant()) {
+  console.log('This script will install the Adapt Builder. Please wait ...');
+} else {
+  console.log('This script will install the Adapt Builder. Would you like to continue?');
+}
 prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
   if (!/(Y|y)[es]*$/.test(result['install'])) {
     return exitInstall();

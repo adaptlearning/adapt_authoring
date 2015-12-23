@@ -52,7 +52,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
       this.listenTo(Origin, 'editorView:cut', this.cutContent);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
-      this.listenTo(Origin, 'editorCommon:publish', this.publishProject);
+      this.listenTo(Origin, 'editorCommon:download', this.downloadProject);
       this.listenTo(Origin, 'editorCommon:preview', this.previewProject);
 
 
@@ -77,25 +77,25 @@ define(function(require){
       this.renderCurrentEditorView();
     },
 
-    publishProject: function(event) {
+    downloadProject: function(event) {
       event && event.preventDefault();
 
       var canPublish = this.validateCourseContent();
 
       if (canPublish && !Origin.editor.isPublishPending) {
-        $('.editor-common-sidebar-publishing-progress').animate({ width: '100%' }, 30000);
-        $('.editor-common-sidebar-publish-inner').addClass('display-none');
-        $('.editor-common-sidebar-publishing').removeClass('display-none');
+        $('.editor-common-sidebar-downloading-progress').animate({ width: '100%' }, 30000);
+        $('.editor-common-sidebar-download-inner').addClass('display-none');
+        $('.editor-common-sidebar-downloading').removeClass('display-none');
         //return;
         var courseId = Origin.editor.data.course.get('_id');
         var tenantId = Origin.sessionModel.get('tenantId');
 
         $.get('/download/' + tenantId + '/' + courseId, function(data) {
 
-          $('.editor-common-sidebar-publishing-progress').css('width', 0).stop();;
+          $('.editor-common-sidebar-downloading-progress').css('width', 0).stop();;
           Origin.editor.isPublishPending = false;
-          $('.editor-common-sidebar-publish-inner').removeClass('display-none');
-          $('.editor-common-sidebar-publishing').addClass('display-none');
+          $('.editor-common-sidebar-download-inner').removeClass('display-none');
+          $('.editor-common-sidebar-downloading').addClass('display-none');
 
           var $downloadForm = $('#downloadForm');
 
@@ -347,7 +347,7 @@ define(function(require){
 
       var alerts = [];
 
-      function interateOverChildren(model) {
+      function iterateOverChildren(model) {
 
         // Return the function if no children - on components
         if(!model._children) return;
@@ -373,14 +373,14 @@ define(function(require){
 
           // Go over each child and call validation again
           currentChildren.each(function(childModel) {
-            interateOverChildren(childModel);
+            iterateOverChildren(childModel);
           });
 
         }
 
       }
 
-      interateOverChildren(currentCourse);
+      iterateOverChildren(currentCourse);
 
       if(alerts.length > 0) {
         var errorMessage = "";

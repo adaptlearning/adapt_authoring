@@ -71,6 +71,7 @@ define(function(require) {
         		assetFilename: filename
         	}
 	        this.data = assetObject;
+            Origin.trigger('modal:assetSelected',assetObject);
 	    },
 
 	    getData: function() {

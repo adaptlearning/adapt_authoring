@@ -30,12 +30,12 @@ define(function(require) {
 	    	this.search = {};
 	    	// Replace Asset and : so we can have both filtered and all asset types
 	    	var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
-        
+
         if (assetType) {
           var filters = [assetType];
-	    	  this.search.assetType = { $in: filters };  
+	    	  this.search.assetType = { $in: filters };
         }
-	    	
+
 		    // Push collection through to collection view
 		    this.$('.asset-management-assets-container-inner').append(new AssetManagementCollectionView({collection: this.collection, search: this.search}).$el);
 		},
@@ -71,7 +71,7 @@ define(function(require) {
         		assetFilename: filename
         	}
 	        this.data = assetObject;
-            Origin.trigger('modal:assetSelected',assetObject);
+          Origin.trigger('modal:assetSelected', assetObject);
 	    },
 
 	    getData: function() {

@@ -295,7 +295,14 @@ define(function(require){
           }
 
           return containsAtLeastOneChild;
+        },
+
+      validateCourseConfirm: function(isConfirmed) {
+        if (isConfirmed) {
+          Origin.trigger('editor:courseValidation');
         }
+      }
+
     };
 
     for(var name in helpers) {

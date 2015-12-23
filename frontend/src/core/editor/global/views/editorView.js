@@ -9,6 +9,7 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
+  var helpers = require('coreJS/app/helpers');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorMenuView = require('editorMenu/views/editorMenuView');
   var EditorPageView = require('editorPage/views/editorPageView');
@@ -80,7 +81,7 @@ define(function(require){
     downloadProject: function(event) {
       event && event.preventDefault();
 
-      var canPublish = this.validateCourseContent();
+      var canPublish = helpers.validateCourseContent();
 
       if (canPublish && !Origin.editor.isPublishPending) {
         $('.editor-common-sidebar-downloading-progress').animate({ width: '100%' }, 30000);
@@ -120,7 +121,7 @@ define(function(require){
       event && event.preventDefault();
 
       var self = this;
-      var canPreview = self.validateCourseContent();
+      var canPreview = helpers.validateCourseContent();
 
       if (canPreview && !Origin.editor.isPreviewPending) {
         Origin.editor.isPreviewPending = true;
@@ -332,77 +333,9 @@ define(function(require){
       Origin.editor.data[collectionType].remove(view.model);
       view.model.destroy();
 
-      _.defer(function(){
+      _.defer(function () {
         Origin.trigger('editorView:cut' + type + ':' + view.model.get('_parentId'), view);
       });
-    },
-
-    validateCourseContent: function() {
-
-      // Store current course
-      var currentCourse = Origin.editor.data.course;
-
-      // Let's do a standard check for at least one child object
-      var containsAtLeastOneChild = true;
-
-      var alerts = [];
-
-      function iterateOverChildren(model) {
-
-        // Return the function if no children - on components
-        if(!model._children) return;
-
-        var currentChildren = model.getChildren();
-
-        // Do validate across each item
-        if (currentChildren.length == 0) {
-
-          containsAtLeastOneChild = false;
-
-          alerts.push(
-            "There seems to be a "
-              + model.get('_type')
-              + " with the title - '"
-              + model.get('title')
-              + "' with no "
-              + model._children
-          );
-
-          return;
-        } else {
-
-          // Go over each child and call validation again
-          currentChildren.each(function(childModel) {
-            iterateOverChildren(childModel);
-          });
-
-        }
-
-      }
-
-      iterateOverChildren(currentCourse);
-
-      if(alerts.length > 0) {
-        var errorMessage = "";
-        for(var i = 0, len = alerts.length; i < len; i++) {
-          errorMessage += "<li>" + alerts[i] + "</li>";
-        }
-
-        Origin.Notify.alert({
-          type: 'error',
-          title: window.polyglot.t('app.validationfailed'),
-          text: errorMessage,
-          callback: _.bind(this.validateCourseConfirm, this)
-        });
-      }
-
-      return containsAtLeastOneChild;
-    },
-
-    validateCourseConfirm: function(isConfirmed) {
-      if (isConfirmed) {
-        Origin.trigger('editor:courseValidation');
-      }
     }
 
   }, {

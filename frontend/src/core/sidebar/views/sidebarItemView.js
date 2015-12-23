@@ -17,9 +17,9 @@ define(function(require) {
       'click button.editor-common-sidebar-extensions'   : 'manageExtensions',
       'click button.editor-common-sidebar-menusettings' : 'editMenu',
       'click button.editor-common-sidebar-select-theme' : 'selectTheme',
-      'click button.editor-common-sidebar-publish'      : 'publishProject',
+      'click button.editor-common-sidebar-download'     : 'downloadProject',
       'click button.editor-common-sidebar-preview'      : 'previewProject',
-      'click button.editor-common-sidebar-close'        : 'closeProject', 
+      'click button.editor-common-sidebar-close'        : 'closeProject',
     },
 
     initialize: function(options) {
@@ -58,7 +58,7 @@ define(function(require) {
 
     onShowErrors: function(errors) {
       this.$('.sidebar-fieldset-filter').removeClass('error');
-      
+
       if (errors) {
         // If there's error we should reset the save button
         this.resetButtons();
@@ -116,8 +116,8 @@ define(function(require) {
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/extensions', {trigger: true});
     },
 
-    publishProject: function() {
-      Origin.trigger('editorCommon:publish');
+    downloadProject: function() {
+      Origin.trigger('editorCommon:download');
     },
 
     previewProject: function() {

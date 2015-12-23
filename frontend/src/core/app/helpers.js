@@ -240,10 +240,7 @@ define(function(require){
           }
         },
 
-        validateCourseContent: function() {
-          // Store current course
-          var currentCourse = Origin.editor.data.course;
-
+        validateCourseContent: function(currentCourse) {
           // Let's do a standard check for at least one child object
           var containsAtLeastOneChild = true;
 

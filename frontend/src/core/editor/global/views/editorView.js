@@ -46,7 +46,7 @@ define(function(require){
       Origin.editor.pasteParentModel = false;
       Origin.editor.isPreviewPending = false;
       this.currentCourseId = Origin.editor.data.course.get('_id');
-
+      this.currentCourse = Origin.editor.data.course;
       this.currentPageId = options.currentPageId;
 
       this.listenTo(Origin, 'editorView:refreshView', this.setupEditor);
@@ -80,8 +80,7 @@ define(function(require){
 
     downloadProject: function(event) {
       event && event.preventDefault();
-
-      var canPublish = helpers.validateCourseContent();
+      var canPublish = helpers.validateCourseContent(this.currentCourse);
 
       if (canPublish && !Origin.editor.isPublishPending) {
         $('.editor-common-sidebar-downloading-progress').animate({ width: '100%' }, 30000);
@@ -121,7 +120,7 @@ define(function(require){
       event && event.preventDefault();
 
       var self = this;
-      var canPreview = helpers.validateCourseContent();
+      var canPreview = helpers.validateCourseContent(this.currentCourse);
 
       if (canPreview && !Origin.editor.isPreviewPending) {
         Origin.editor.isPreviewPending = true;

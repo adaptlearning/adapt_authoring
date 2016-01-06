@@ -3,7 +3,8 @@
  * Adapt Output plugin
  */
 
-var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
+var origin = require('../../../'),
+    OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     Constants = require('../../../lib/outputmanager').Constants,
     configuration = require('../../../lib/configuration'),
     filestorage = require('../../../lib/filestorage'),
@@ -30,13 +31,14 @@ function AdaptOutput() {
 util.inherits(AdaptOutput, OutputPlugin);
 
 AdaptOutput.prototype.publish = function(courseId, isPreview, request, response, next) {
+  var app = origin();
   var self = this;
   var user = usermanager.getCurrentUser(),
     tenantId = user.tenant._id,
     outputJson = {},
     isRebuildRequired = false,
-    themeName = Constants.Defaults.ThemeName;
-  menuName = Constants.Defaults.MenuName;
+    themeName = Constants.Defaults.ThemeName,
+    menuName = Constants.Defaults.MenuName;
 
   var resultObject = {};
 
@@ -179,6 +181,10 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
                         if (stdout.length != 0) {
                           logger.log('info', 'stdout: ' + stdout);
                           resultObject.success = true;
+                          
+                          // Indicate that the course has built successfully
+                          app.emit('previewCreated', tenantId, courseId, outputFolder);
+                          
                           return callback(null, 'Framework built OK');
                         }
 
@@ -208,6 +214,10 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
           output.on('close', function() {
             resultObject.filename = filename;
             resultObject.zipName = zipName;
+            
+            // Indicate that the zip file is ready for download
+            app.emit('zipCreated', tenantId, courseId, filename, zipName);
+            
             callback();
           });
           archive.on('error', function(err) {

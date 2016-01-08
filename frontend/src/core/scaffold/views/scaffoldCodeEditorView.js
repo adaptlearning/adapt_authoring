@@ -30,6 +30,7 @@ define(function(require) {
             var self = this;
             
             _.defer(_.bind(function() {
+                window.ace.config.set("basePath", "./adaptbuilder/js/ace");
                 this.editor = window.ace.edit(self.$el[0]);
                 this.editor.$blockScrolling = Infinity;
                 this.editor.setTheme("ace/theme/chrome");

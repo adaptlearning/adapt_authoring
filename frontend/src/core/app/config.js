@@ -32,7 +32,7 @@ require.config({
       editorGlobal: 'core/editor/global',
       editorExtensions: 'core/editor/extensions',
       tags: 'core/libraries/jquery.tagsinput.min',
-      ace: 'core/libraries/ace/src-min-noconflict',
+      ace: 'core/libraries/ace',
       pikaday: 'core/libraries/pikaday/js/pikaday'
     },
     shim: {

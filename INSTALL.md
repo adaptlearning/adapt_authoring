@@ -20,7 +20,7 @@ The following are optional:
 * [Robomongo](http://robomongo.org/) is not used by the authoring tool, but you might find it helpful in your work with MongoDB.
 
 > **Tips:**
-> + Windows users should run these commands in Git Bash if Git was installed using default settings. Otherwise run run the command prompt window as Administrator.
+> + Windows users should run these commands in Git Bash if Git was installed using default settings. Otherwise, run the command prompt window as Administrator.
 > + Mac and Linux users may need to prefix the commands with `sudo` or give yourself elevated permissions on the */usr/local directory* as documented [here](http://foohack.com/2010/08/intro-to-npm/#what_no_sudo).
 
 ###2. Clone the Adapt_Authoring Project

@@ -33,7 +33,8 @@ require([
     'imageReady',
     'mediaelement',
     'velocity',
-    'scrollTo'
+    'scrollTo',
+    'ace/ace'
 ], function (
     Templates,
     Polyglot,

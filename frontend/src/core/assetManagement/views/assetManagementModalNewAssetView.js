@@ -36,10 +36,12 @@ define(function(require){
     postRender: function() {
       // tagging
 
-      $('#tags').tagsInput({
+      this.$('#tags_control').tagsInput({
         autocomplete_url: '/api/autocomplete/tag',
         onAddTag: _.bind(this.onAddTag, this),
-        onRemoveTag: _.bind(this.onRemoveTag, this)
+        onRemoveTag: _.bind(this.onRemoveTag, this),
+        'minChars' : 3,
+        'maxChars' : 30
       });
       // Set view to ready
       this.setViewToReady();
@@ -84,7 +86,7 @@ define(function(require){
       if (!this.validateInput()) {
         return false;
       }
-
+     
       var title = this.$('.asset-title').val();
       var description = this.$('.asset-description').val();
         // If model is new then uploadFile
@@ -130,7 +132,10 @@ define(function(require){
         },
 
         error: function(xhr, status, error) {
-          // console.log('Error: ' + xhr.status);
+          Origin.Notify.alert({
+            type: 'error',
+            text: xhr.responseJSON.message
+          });
         },
 
         success: function(data, status, xhr) {

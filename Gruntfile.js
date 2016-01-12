@@ -26,6 +26,12 @@ module.exports = function(grunt) {
               cwd: 'frontend/src/core/libraries/tinymce/',
               src: ['plugins/**/*', 'skins/**/*', 'themes/**/*'],
               dest: 'frontend/src/adaptbuilder/js/'
+            },
+            {
+              expand: true,
+              flatten: true,
+              src: ['frontend/src/core/libraries/ace/**/*'],
+              dest: 'frontend/src/adaptbuilder/js/ace'
             }
           ]
         }

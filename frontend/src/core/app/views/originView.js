@@ -98,7 +98,7 @@ define(function(require){
             } 
           } catch (e) {
           }
-        })
+        });
 
         this.form.remove();
       } 

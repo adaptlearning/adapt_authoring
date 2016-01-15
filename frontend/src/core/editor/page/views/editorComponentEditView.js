@@ -42,6 +42,8 @@ define(function(require) {
             type: 'error',
             text: window.polyglot.t('app.errorsave')
           });
+          
+          Origin.trigger('sidebar:resetButtons');
         },
         success: _.bind(function() {
 

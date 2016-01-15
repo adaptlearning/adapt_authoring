@@ -207,7 +207,7 @@ define(function(require){
             return block.inverse(this);
           }
         },
-        
+
         getThumbnailFromValue: function(url) {
 
           var urlSplit = url.split('/')
@@ -238,7 +238,67 @@ define(function(require){
           } else {
             return block.inverse(this);
           }
+        },
+
+        validateCourseContent: function(currentCourse) {
+          // Let's do a standard check for at least one child object
+          var containsAtLeastOneChild = true;
+
+          var alerts = [];
+
+          function iterateOverChildren(model) {
+            // Return the function if no children - on components
+            if(!model._children) return;
+
+            var currentChildren = model.getChildren();
+
+            // Do validate across each item
+            if (currentChildren.length == 0) {
+              containsAtLeastOneChild = false;
+
+              alerts.push(
+                "There seems to be a "
+                + model.get('_type')
+                + " with the title - '"
+                + model.get('title')
+                + "' with no "
+                + model._children
+              );
+
+              return;
+            } else {
+              // Go over each child and call validation again
+              currentChildren.each(function(childModel) {
+                iterateOverChildren(childModel);
+              });
+            }
+
+          }
+
+          iterateOverChildren(currentCourse);
+
+          if(alerts.length > 0) {
+            var errorMessage = "";
+            for(var i = 0, len = alerts.length; i < len; i++) {
+              errorMessage += "<li>" + alerts[i] + "</li>";
+            }
+
+            Origin.Notify.alert({
+              type: 'error',
+              title: window.polyglot.t('app.validationfailed'),
+              text: errorMessage,
+              callback: _.bind(this.validateCourseConfirm, this)
+            });
+          }
+
+          return containsAtLeastOneChild;
+        },
+
+      validateCourseConfirm: function(isConfirmed) {
+        if (isConfirmed) {
+          Origin.trigger('editor:courseValidation');
         }
+      }
 
     };
 

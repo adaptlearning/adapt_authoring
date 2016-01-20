@@ -30,6 +30,7 @@ define(function(require){
 
       this.on('contextMenu:component:edit', this.loadComponentEdit);
       this.on('contextMenu:component:copy', this.onCopy);
+      this.on('contextMenu:component:copyID', this.onCopyID),
       this.on('contextMenu:component:cut', this.onCut);
       this.on('contextMenu:component:delete', this.deleteComponentPrompt);
     },

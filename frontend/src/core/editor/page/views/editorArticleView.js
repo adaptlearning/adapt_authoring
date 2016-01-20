@@ -37,6 +37,7 @@ define(function(require){
       this.listenTo(this, {
         'contextMenu:article:edit': this.loadArticleEdit,
         'contextMenu:article:copy': this.onCopy,
+        'contextMenu:article:copyID': this.onCopyID,
         'contextMenu:article:cut': this.onCut,
         'contextMenu:article:delete': this.deleteArticlePrompt
       });

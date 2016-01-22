@@ -162,7 +162,7 @@ define(function(require){
       var siblings = this.model.getSiblings();
 
       if (siblings && siblings.length > 0) {
-        var siblingId = siblings.models[0].get('_id')
+        var siblingId = siblings.models[0].get('_id');
       }
 
       if (siblingId) {

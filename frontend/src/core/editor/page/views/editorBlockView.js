@@ -263,7 +263,8 @@ define(function(require){
 
     },
 
-    addComponent: function(data) {
+    addComponent: function() {
+      this.reRender();
     },
 
     setupPasteZones: function() {

@@ -38,6 +38,7 @@ define(function(require){
       this.listenTo(this, {
         'contextMenu:block:edit': this.loadBlockEdit,
         'contextMenu:block:copy': this.onCopy,
+        'contextMenu:block:copyID': this.onCopyID,
         'contextMenu:block:cut': this.onCut,
         'contextMenu:block:delete': this.deleteBlockPrompt
       });

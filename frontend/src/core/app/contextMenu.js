@@ -40,6 +40,11 @@ define(function(require) {
         callbackEvent: "copy"
       },
       {
+        title: window.polyglot.t('app.copyidtoclipboard'),
+        className: 'context-menu-item',
+        callbackEvent: "copyID"
+      },
+      {
         title: window.polyglot.t('app.delete'),
         className: 'context-menu-item',
         callbackEvent: "delete"
@@ -50,6 +55,7 @@ define(function(require) {
     ContextMenu.addItem('block', contextItems);
     ContextMenu.addItem('component', contextItems);
     ContextMenu.addItem('page', contextItems);
+    ContextMenu.addItem('menu', contextItems);
 
     var courseContextItems = [
       {
@@ -90,11 +96,8 @@ define(function(require) {
     ];
 
     ContextMenu.addItem('sharedcourse', sharedCourseContextItems);
-    
-    var menuContextItems = contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "copy"})), 1);
-    ContextMenu.addItem('menu', contextItems);
   }
-
+  
   Origin.once('app:dataReady', function() {
     init();
   });

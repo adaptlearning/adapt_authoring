@@ -264,9 +264,6 @@ define(function(require){
 
     },
 
-    addComponent: function(data) {
-    },
-
     setupPasteZones: function() {
       // Add available paste zones
       var layouts = [];

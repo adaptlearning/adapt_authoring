@@ -108,7 +108,7 @@ define(function(require) {
           Origin.editor.data.components.add(newComponentModel);
           this.parentView.evaluateComponents(this.parentView.toggleAddComponentsButton);
           // Re-render the block
-          this.parentView.addComponent();
+          this.parentView.reRender();
           newComponentView.addClass('synced');
           $('html').css('overflow-y', '');
           $.scrollTo(newComponentView.$el);

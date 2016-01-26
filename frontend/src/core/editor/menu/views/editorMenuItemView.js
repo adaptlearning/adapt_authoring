@@ -37,10 +37,12 @@ define(function(require){
       // Handle the context menu clicks
       this.on('contextMenu:menu:edit', this.editMenuItem);
       this.on('contextMenu:menu:copy', this.copyMenuItem);
+      this.on('contextMenu:menu:copyID', this.copyID);
       this.on('contextMenu:menu:delete', this.deleteItemPrompt);
 
       this.on('contextMenu:page:edit', this.editMenuItem);
       this.on('contextMenu:page:copy', this.copyMenuItem);
+      this.on('contextMenu:page:copyID', this.copyID);
       this.on('contextMenu:page:delete', this.deleteItemPrompt);
     },
 
@@ -222,6 +224,10 @@ define(function(require){
       Origin.trigger('editorView:copy', this.model);
     },
 
+    copyID: function() {
+      Origin.trigger('editorView:copyID', this.model);
+    },
+    
     deleteItem: function(event) {
       this.stopListening(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
       this.model.set({_isExpanded:false, _isSelected: false});

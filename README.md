@@ -6,11 +6,33 @@ A web-based authoring tool for the [Adapt Framework](https://community.adaptlear
 
 ## Features
 
-* Web application built on NodeJS, BackboneJS, and MongoDB for creating, editing and publishing Adapt content
+* Web application built on Node.js, Backbone.js, and MongoDB for creating, editing and publishing Adapt content
 * Supports all core extensions and components
 * Allows uploading and linking of course assets
 
-## Installation
+## Vagrant Installation
+
+You can either install the authoring tool as a web application (see [Server Installation](#server-installation)), or as a Vagrant installation running on Virtual Box.
+
+If you are a non-technical user, the Vagrant option is the quicker and easier option.
+
+The steps for installing on Vagrant are:
+
+1. Install [Vagrant](https://docs.vagrantup.com/v2/installation/).
+2. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
+3. Get the code by downloading a zip [directly from GitHub](https://github.com/adaptlearning/adapt_authoring/releases), or [by cloning the repository using git](#clone-the-adapt_authoring-project).
+4. Launch a terminal window (or command prompt) and `cd` into the `adapt_authoring` directory you have just downloaded.  (**Windows users**: it is essential that you launch command prompt as an Administrator.). <br/>*If you're unfamiliar with the terminal, have a look at our [Just Enough Command Line for Installing](https://github.com/adaptlearning/adapt_authoring/wiki/Just-Enough-Command-Line-for-Installing) page first.*  
+5. Run the command `vagrant up`.  (**Windows users**: during this process you may receive prompts from your firewall software, to which you must allow access, as installation will fail if the VM cannot access the internet to download the required dependencies.)
+6. Depending on the performance of your hardware, allow 10 to 20 minutes for setup complete. Once it finishes, you can browse to *http://localhost:5000* to access the authoring tool. You can then login with the following credentials:
+
+```
+ E-mail address: admin
+ Password: password
+```
+At this point you do not need to keep your terminal/command prompt window open. When you want to shut down, just `cd` into the `adapt_authoring` directory again, and run the command `vagrant halt`.  To restart it again later run the `vagrant up` command from the same directory.
+
+
+## Server Installation
 
 ### Prerequisites
 
@@ -47,13 +69,13 @@ git config --global user.email "youremail@domain.com"
 [MongoDB](https://www.mongodb.org) is a document based database. Download and install the version appropriate for your system [here](https://www.mongodb.org/downloads).  
 
 
-#### NodeJS & NPM
+#### Node.js and npm
 
-[NodeJS](http://nodejs.org/) and [NPM](https://www.npmjs.org/) are required. Installing Node.js will also install NPM.
+[Node.js](http://nodejs.org/) and [npm](https://www.npmjs.org/) are required. Installing Node.js will also install npm.
 
-IMPORTANT: The NodeJS version must be 0.10.33. Earlier versions of NodeJS are less stable and the code is currently not compatibile with 0.12.x.
+**IMPORTANT**: Please ensure that you install Node.js 4.2.x. LTS. This is the long-term supported version that this software has been tested with. 
 
-You should use a NodeJS version manager. We recommend using [NVM](https://github.com/creationix/nvm) on non-Windows machines. On Windows, try [nodist](https://github.com/marcelklehr/nodist)
+You should use a Node.js version manager. We recommend using [NVM](https://github.com/creationix/nvm) on non-Windows machines. On Windows, try [nodist](https://github.com/marcelklehr/nodist).
 
 #### Grunt and Adapt Command Line Tools
 
@@ -63,7 +85,7 @@ Install [grunt-cli](http://gruntjs.com/) and [adapt-cli](https://github.com/adap
 npm install -g grunt-cli
 npm install -g adapt-cli
 ```
-Read more about [Grunt](http://gruntjs.com/getting-started)
+Read more about [Grunt](http://gruntjs.com/getting-started).
 
 
 #### FFMPEG (optional, but recommended)
@@ -103,7 +125,7 @@ To run the application use:
 node server
 ````
 
-The ouput on the console will tell you what url to use to access the tool. By default it will be [http://localhost:5000](http://localhost:5000). 
+The ouput on the console will tell you what url to use to access the tool. By default it will be *http://localhost:5000*. 
 
 You can run the install script again at anytime. If you chose the same values for the master database connection, you may overwrite any existing data, but this is occasionally desired.
 

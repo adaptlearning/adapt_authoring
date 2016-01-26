@@ -22,12 +22,12 @@ define(function(require){
 
     postRender: function() {
       // tagging
-      $('#tags').tagsInput({
+      this.$('#tags_control').tagsInput({
         autocomplete_url: '/api/autocomplete/tag',
         onAddTag: _.bind(this.onAddTag, this),
         onRemoveTag: _.bind(this.onRemoveTag, this),
         'minChars' : 3,
-        'maxChars' : 15
+        'maxChars' : 30
       });
       // Set view to ready
       this.setViewToReady();
@@ -119,7 +119,11 @@ define(function(require){
         },
 
         error: function(xhr, status, error) {
-          // console.log('Error: ' + xhr.status);
+          Origin.trigger('sidebar:resetButtons');
+          Origin.Notify.alert({
+            type: 'error',
+            text: xhr.responseJSON.message
+          });
         },
 
         success: function(data, status, xhr) {

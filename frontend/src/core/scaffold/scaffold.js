@@ -11,6 +11,7 @@ define(function(require) {
 	var ScaffoldQuestionButtonView = require('coreJS/scaffold/views/scaffoldQuestionButtonView');
 	var ScaffoldColorPickerView = require('coreJS/scaffold/views/scaffoldColorPickerView');
 	var ScaffoldDisplayTitleView = require('coreJS/scaffold/views/scaffoldDisplayTitleView');
+  var ScaffoldCodeEditorView = require('coreJS/scaffold/views/scaffoldCodeEditorView');
 	var ScaffoldTextAreaView = require('coreJS/scaffold/views/scaffoldTextAreaView');
 	var Schemas = require('coreJS/scaffold/schemas');
 	var Overrides = require('coreJS/scaffold/scaffoldOverrides');

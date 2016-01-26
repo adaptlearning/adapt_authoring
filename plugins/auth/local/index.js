@@ -78,7 +78,13 @@ LocalAuth.prototype.verifyUser = function (email, password, done) {
               errorCode: ERROR_CODES.INVALID_USERNAME_OR_PASSWORD});
           });
         } else {
-          return done(null, user);
+          usermanager.updateUser({email: user.email}, {failedLoginCount: 0}, function(error) {
+            if (error) {
+              return done(error);
+            }
+
+            return done(null, user);
+          });
         }
       });
     } else {

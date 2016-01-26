@@ -3,7 +3,8 @@
  * Adapt Output plugin
  */
 
-var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
+var origin = require('../../../'),
+    OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     Constants = require('../../../lib/outputmanager').Constants,
     configuration = require('../../../lib/configuration'),
     filestorage = require('../../../lib/filestorage'),
@@ -24,35 +25,36 @@ var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
     version = require('../../../version'),
     logger = require('../../../lib/logger');
 
-function AdaptOutput () {
+function AdaptOutput() {
 }
 
 util.inherits(AdaptOutput, OutputPlugin);
 
-AdaptOutput.prototype.publish = function (courseId, isPreview, request, response, next) {
-    var self = this;
-    var user = usermanager.getCurrentUser(),
-      tenantId = user.tenant._id,
-      outputJson = {},
-      isRebuildRequired = false,
-      themeName = Constants.Defaults.ThemeName;
-      menuName = Constants.Defaults.MenuName;
+AdaptOutput.prototype.publish = function(courseId, isPreview, request, response, next) {
+  var app = origin();
+  var self = this;
+  var user = usermanager.getCurrentUser(),
+    tenantId = user.tenant._id,
+    outputJson = {},
+    isRebuildRequired = false,
+    themeName = Constants.Defaults.ThemeName,
+    menuName = Constants.Defaults.MenuName;
 
-    var resultObject = {};
+  var resultObject = {};
 
-    var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+  var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
 
-    async.series([
+  async.series([
       function(callback) {
         self.getCourseJSON(tenantId, courseId, function(err, data) {
-            if (err) {
-              return callback(err);
-            }
+          if (err) {
+            return callback(err);
+          }
 
-            // Store off the retrieved collections
-            outputJson = data;
+          // Store off the retrieved collections
+          outputJson = data;
 
-            callback(null);
+          callback(null);
         });
       },
       function(callback) {
@@ -119,7 +121,7 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
         });
       },
       function(callback) {
-        var assetsFolder = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, 
+        var assetsFolder = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId,
           Constants.Folders.Build, Constants.Folders.Course, outputJson['config']._defaultLanguage, Constants.Folders.Assets);
 
         self.writeCourseAssets(tenantId, courseId, assetsFolder, outputJson, function(err, modifiedJson) {
@@ -143,18 +145,18 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
         });
       },
       function(callback) {
-        fs.exists(path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build, Constants.Filenames.Main), function (exists) {
+        fs.exists(path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build, Constants.Filenames.Main), function(exists) {
           if (!exists || isRebuildRequired) {
             logger.log('info', '3.1. Ensuring framework build exists');
 
             var args = [];
             var outputFolder = path.join(Constants.Folders.AllCourses, tenantId, courseId);
-            
+
             // Append the 'build' folder to later versions of the framework
             if (semver.gte(semver.clean(version.adapt_framework), semver.clean('2.0.0'))) {
               outputFolder = path.join(outputFolder, Constants.Folders.Build);
             }
-            
+
             args.push('--outputdir=' + outputFolder);
             args.push('--theme=' + themeName);
             args.push('--menu=' + menuName);
@@ -162,32 +164,39 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
             logger.log('info', '3.2. Using theme: ' + themeName);
             logger.log('info', '3.3. Using menu: ' + menuName);
 
-            logger.log('info', 'grunt server-build ' + args.join(' '));
+            var generateSourcemap = outputJson.config._generateSourcemap;
+            var buildMode = generateSourcemap === true ? 'dev' : 'prod';
 
-            child = exec('grunt server-build ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
-              function (error, stdout, stderr) {
-                if (error !== null) {
-                  logger.log('error', 'exec error: ' + error);
-                  logger.log('error', 'stdout error: ' + stdout);
-                  resultObject.success = true;
-                  return callback(error, 'Error building framework');
-                }
+            logger.log('info', 'grunt server-build:' + buildMode + ' ' + args.join(' '));
 
-                if (stdout.length != 0) {
-                  logger.log('info', 'stdout: ' + stdout);
-                  resultObject.success = true;
-                  return callback(null, 'Framework built OK');
-                }
+            child = exec('grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
+                      function(error, stdout, stderr) {
+                        if (error !== null) {
+                          logger.log('error', 'exec error: ' + error);
+                          logger.log('error', 'stdout error: ' + stdout);
+                          resultObject.success = true;
+                          return callback(error, 'Error building framework');
+                        }
 
-                if (stderr.length != 0) {                  
-                  logger.log('error', 'stderr: ' + stderr);
-                  resultObject.success = false;
-                  return callback(stderr, 'Error (stderr) building framework!');
-                }
+                        if (stdout.length != 0) {
+                          logger.log('info', 'stdout: ' + stdout);
+                          resultObject.success = true;
+                          
+                          // Indicate that the course has built successfully
+                          app.emit('previewCreated', tenantId, courseId, outputFolder);
+                          
+                          return callback(null, 'Framework built OK');
+                        }
 
-                resultObject.success = true;
-                return callback(null, 'Framework built');  
-            });
+                        if (stderr.length != 0) {
+                          logger.log('error', 'stderr: ' + stderr);
+                          resultObject.success = false;
+                          return callback(stderr, 'Error (stderr) building framework!');
+                        }
+
+                        resultObject.success = true;
+                        return callback(null, 'Framework built');
+                      });
           } else {
             resultObject.success = true;
             callback(null, 'Framework already built, nothing to do')
@@ -205,6 +214,10 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
           output.on('close', function() {
             resultObject.filename = filename;
             resultObject.zipName = zipName;
+            
+            // Indicate that the zip file is ready for download
+            app.emit('zipCreated', tenantId, courseId, filename, zipName);
+            
             callback();
           });
           archive.on('error', function(err) {
@@ -215,14 +228,14 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
           archive.pipe(output);
 
           archive.bulk([
-            { expand: true, cwd: path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build), src: ['**/*'] }
-          ]).finalize(); 
+            { expand: true, cwd: path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build), src: ['**/*'] },
+          ]).finalize();
 
         } else {
           // No download required -- skip this step
           callback();
-        }        
-      }   
+        }
+      }
     ], function(err) {
 
       if (err) {
@@ -230,9 +243,9 @@ AdaptOutput.prototype.publish = function (courseId, isPreview, request, response
         return next(err);
       }
 
-      
+
       return next(null, resultObject);
-    });   
+    });
 
 };
 /**

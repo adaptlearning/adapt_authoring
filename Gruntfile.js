@@ -26,6 +26,12 @@ module.exports = function(grunt) {
               cwd: 'frontend/src/core/libraries/tinymce/',
               src: ['plugins/**/*', 'skins/**/*', 'themes/**/*'],
               dest: 'frontend/src/adaptbuilder/js/'
+            },
+            {
+              expand: true,
+              flatten: true,
+              src: ['frontend/src/core/libraries/ace/**/*'],
+              dest: 'frontend/src/adaptbuilder/js/ace'
             }
           ]
         }
@@ -60,6 +66,49 @@ module.exports = function(grunt) {
           },
           files: {
             "frontend/src/templates/templates.js": ["frontend/src/core/**/*.hbs", "frontend/src/plugins/**/*.hbs"]
+          }
+        }
+      },
+      jscs: {
+        src: ['frontend/src/core/**/*.js','!frontend/src/core/libraries/**/*.js','lib/**/*.js','plugins/**/*.js','!plugins/content/**','routes/**/*.js','!**/node_modules/**'],
+        options: {
+          config: ".jscsrc",
+          reporter: "unix",
+          fix: true
+        }
+      },
+      jshint: {
+        options: {
+          reporter: require('jshint-stylish'),
+          curly: true,
+          undef: true,
+          asi: true,
+          eqnull: false,
+          sub: true
+        },
+        frontend: {
+          options: {
+            browser: true,
+            es3: true,
+            jquery: true,
+            globals: {
+              Backbone: false,
+              Handlebars: false,
+              _: false,
+              define: false,
+              require: false
+            }
+          },
+          files: {
+            src: ['frontend/src/core/**/*.js','!frontend/src/core/libraries/**/*.js']
+          }
+        },
+        backend: {
+          options: {
+            node: true
+          },
+          files: {
+            src: ['lib/**/*.js','plugins/**/*.js','!plugins/content/**','routes/**/*.js','!**/node_modules/**']
           }
         }
       },

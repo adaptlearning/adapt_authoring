@@ -19,7 +19,6 @@ define(function(require){
     events: {
       'click a.add-article'  : 'addArticle',
       'click a.edit-page'    : 'loadPageEdit',
-      'click a.delete-page'  : 'deletePage',
       'click .paste-cancel'  : 'pasteCancel'
     },
 
@@ -138,24 +137,13 @@ define(function(require){
       return newArticleView;
     },
 
-    deletePage: function(event) {
-      event.preventDefault();
-
-      if (confirm(window.polyglot.t('app.confirmdeletepage'))) {
-        if (this.model.destroy()) {
-          this.remove();
-          Origin.trigger('editorView:refreshPageList');
-        }
-      }
-    },
-
     addArticle: function(event) {
       event.preventDefault();
 
       var _this = this;
       var newPageArticleModel = new EditorArticleModel({
         title: window.polyglot.t('app.placeholdernewarticle'),
-        displayTitle: '',
+        displayTitle: window.polyglot.t('app.placeholdernewarticle'),
         body: '',
         _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),

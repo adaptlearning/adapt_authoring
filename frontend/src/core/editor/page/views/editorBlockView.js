@@ -38,6 +38,7 @@ define(function(require){
       this.listenTo(this, {
         'contextMenu:block:edit': this.loadBlockEdit,
         'contextMenu:block:copy': this.onCopy,
+        'contextMenu:block:copyID': this.onCopyID,
         'contextMenu:block:cut': this.onCut,
         'contextMenu:block:delete': this.deleteBlockPrompt
       });
@@ -67,26 +68,25 @@ define(function(require){
 
     evaluateComponents: function(callback) {
       var layoutOptions = [
-      {
-        type: 'left',
-        name: 'app.layoutleft',
-        pasteZoneRenderOrder: 2
-      },
-      {
-        type: 'full',
-        name: 'app.layoutfull',
-        pasteZoneRenderOrder: 1
-      },
-      {
-        type: 'right',
-        name: 'app.layoutright',
-        pasteZoneRenderOrder: 3
-      }];
+        {
+          type: 'left',
+          name: 'app.layoutleft',
+          pasteZoneRenderOrder: 2
+        },
+        {
+          type: 'full',
+          name: 'app.layoutfull',
+          pasteZoneRenderOrder: 1
+        },
+        {
+          type: 'right',
+          name: 'app.layoutright',
+          pasteZoneRenderOrder: 3
+        }
+      ];
 
       this.model.getChildren().each(function(component) {
-        //this.$('.page-components').append(new EditorComponentView({model: component}).$el);
-
-        switch (component.get('_layout')) {
+         switch (component.get('_layout')) {
           case 'full':
             layoutOptions = null;
             break;
@@ -123,21 +123,6 @@ define(function(require){
       if (callback) {
         callback.apply(this);
       }
-
-      // TODO -- Remove the next line if it's not required
-      // this.model.save({
-      //   'layoutOptions': layoutOptions,
-      //   'dragLayoutOptions': dragLayoutOptions
-      // }, {
-      //   error: function() {
-      //     console.log('error saving block');
-      //   },
-      //   success: _.bind(function() {
-      //     if (callback) {
-      //       callback.apply(this);
-      //     }
-      //   }, this)
-      // });
     },
 
     deleteBlockPrompt: function(event) {
@@ -277,9 +262,6 @@ define(function(require){
         parentView: this
       }).$el);
 
-    },
-
-    addComponent: function(data) {
     },
 
     setupPasteZones: function() {

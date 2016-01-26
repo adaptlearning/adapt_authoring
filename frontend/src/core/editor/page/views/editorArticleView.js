@@ -37,6 +37,7 @@ define(function(require){
       this.listenTo(this, {
         'contextMenu:article:edit': this.loadArticleEdit,
         'contextMenu:article:copy': this.onCopy,
+        'contextMenu:article:copyID': this.onCopyID,
         'contextMenu:article:cut': this.onCut,
         'contextMenu:article:delete': this.deleteArticlePrompt
       });
@@ -82,8 +83,8 @@ define(function(require){
     },
 
     addBlockView: function(blockModel, scrollIntoView) {
-      var newBlockView = new EditorBlockView({model: blockModel}),
-        sortOrder = blockModel.get('_sortOrder');
+      var newBlockView = new EditorBlockView({model: blockModel});
+      var sortOrder = blockModel.get('_sortOrder');
 
       // Add syncing class
       if (blockModel.isNew()) {
@@ -99,7 +100,7 @@ define(function(require){
       }
 
       // Increment the sortOrder property
-      blockModel.set('_pasteZoneSortOrder', sortOrder++);
+      blockModel.set('_pasteZoneSortOrder', ++sortOrder);
 
       // Post-block paste zone - sort order of placeholder will be one greater
       this.$('.article-blocks').append(new EditorPasteZoneView({model: blockModel}).$el);
@@ -108,37 +109,38 @@ define(function(require){
     },
 
     addBlock: function(event) {
-      if (event) event.preventDefault();
-
+      if (event) {
+        event.preventDefault();
+      } 
+      
+      var self = this;
       var layoutOptions = [
-      {
-        type: 'left',
-        name: 'app.layoutleft',
-        pasteZoneRenderOrder: 2
-      },
-      {
-        type: 'full',
-        name: 'app.layoutfull',
-        pasteZoneRenderOrder: 1
-      },
-      {
-        type: 'right',
-        name: 'app.layoutright',
-        pasteZoneRenderOrder: 3
-      }];
+        {
+          type: 'left',
+          name: 'app.layoutleft',
+          pasteZoneRenderOrder: 2
+        },
+        {
+          type: 'full',
+          name: 'app.layoutfull',
+          pasteZoneRenderOrder: 1
+        },
+        {
+          type: 'right',
+          name: 'app.layoutright',
+          pasteZoneRenderOrder: 3
+        }
+      ];
 
-      var _this = this;
       var newPageBlockModel = new EditorBlockModel({
         title: window.polyglot.t('app.placeholdernewblock'),
-        displayTitle: '',
+        displayTitle: window.polyglot.t('app.placeholdernewblock'),
         body: '',
-        _parentId: _this.model.get('_id'),
+        _parentId: self.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
         layoutOptions: layoutOptions,
         _type: 'block'
       });
-
-      var newBlockView = _this.addBlockView(newPageBlockModel, true);
 
       newPageBlockModel.save(null, {
         error: function() {
@@ -148,13 +150,13 @@ define(function(require){
           });
         },
         success: function(model, response, options) {
+          var newBlockView = self.addBlockView(model, true);
           Origin.editor.data.blocks.add(model);
           newBlockView.$el.removeClass('syncing').addClass('synced');
           newBlockView.reRender();
         }
       });
     },
-
 
     deleteArticlePrompt: function(event) {
       if (event) {

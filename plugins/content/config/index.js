@@ -5,10 +5,12 @@
 
 var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
     configuration = require('../../../lib/configuration'),
+    usermanager = require('../../../lib/usermanager'),
     permissions = require('../../../lib/permissions'),
     database = require('../../../lib/database'),
     helpers = require('../../../lib/helpers'),
     logger = require('../../../lib/logger'),
+    usermanager = require('../../../lib/usermanager'),
     origin = require('../../../'),
     util = require('util'),
     path = require('path'),
@@ -94,6 +96,17 @@ function initialize () {
         }
         next(null, course);
       }]);
+    });
+
+    app.contentmanager.addContentHook('update', 'config', { when: 'pre' }, function (data, next) {
+      if (data[1].hasOwnProperty('_generateSourcemap')) {
+        var tenant = usermanager.getCurrentUser().tenant._id;
+        var course = data[1]._courseId;
+        
+        app.emit('rebuildCourse', tenant, course);
+      }
+
+      next(null, data);
     });
   });
 }

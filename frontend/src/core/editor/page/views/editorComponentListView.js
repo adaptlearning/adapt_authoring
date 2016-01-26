@@ -34,6 +34,7 @@ define(function(require) {
 
     setupFilters: function() {
       var layoutOptions = this.model.get('layoutOptions');
+      // Checks the available layouts in the block
       this.availablePositions = {
         left: false,
         right: false,
@@ -71,32 +72,31 @@ define(function(require) {
 
       _.each(componentTypes, function(componentType) {
 
-          var availablePositions = this.availablePositions;
+        var availablePositions = this.availablePositions;
 
-          if (componentType.properties && componentType.properties.hasOwnProperty('._supportedLayout')) {
-            var supportedLayout = componentTypes.properties.hasOwnProperty('._supportedLayout').enum;
-
-            // Prune the available positions
-            if (_.indexOf(supportedLayout, 'half-width') == -1) {
-              availablePositions.left = false;
-              availablePositions.right = false;
-            }
-
-            if (_.indexOf(supportedLayout, 'full-width') == -1) {
-              availablePositions.full = false;
-            }
+        if (componentType.properties && componentType.properties.hasOwnProperty('._supportedLayout')) {
+          var supportedLayout = componentTypes.properties.hasOwnProperty('._supportedLayout').enum;
+        
+          // Prune the available positions
+          if (_.indexOf(supportedLayout, 'half-width') == -1) {
+            availablePositions.left = false;
+            availablePositions.right = false;
           }
-
-          this.$('.editor-component-list-sidebar-list').append(new EditorComponentListItemView({
+          
+          if (_.indexOf(supportedLayout, 'full-width') == -1) {
+            availablePositions.full = false; 
+          }
+        }
+        
+        this.$('.editor-component-list-sidebar-list').append(new EditorComponentListItemView({
             model: new Backbone.Model(componentType),
-            // filter: this.filter,
             availablePositions: availablePositions,
             _parentId: this.model.get('_parentId'),
             $parentElement: this.$parentElement,
             parentView: this.parentView,
             searchTerms: componentType.displayName.toLowerCase()
           }).$el);
-
+        
       }, this);
 
     },

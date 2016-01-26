@@ -37,9 +37,9 @@
 
         <div class="form-group tags">
             <label for="tags">{{t 'app.tags'}}</label>
-            <input type="text" autocomplete="off" class="width-30" id="tags" name="tags" value="{{pickCSV tags "title"}}" />
+            <input type="text" autocomplete="off" class="width-30" id="tags_control" name="tags_control" value="{{pickCSV tags "title"}}" />
         </div>
-
+        <input type="hidden" name="tags" id="tags" />
     </form>
     <!-- end upload form -->
 </div>

@@ -136,7 +136,7 @@ define(function(require) {
 
         newChildModel.save({
           title: newChildTitle,
-          displayTitle: '',
+          displayTitle: newChildTitle,
           body: '',
           _parentId: model.get('_id'),
           _courseId: Origin.editor.data.course.get('_id')

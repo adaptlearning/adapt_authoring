@@ -35,10 +35,12 @@ define(function(require) {
 			if (this.model.get('_isAvailableInEditor') == false) {
 				this.$el.addClass('restricted');
 			}
+
 		},
 
 		onItemClicked: function(event) {
 			event.preventDefault();
+
 			Origin.trigger('editorComponentListItemView:deselect')
 			this.$el.addClass('selected');
 			this.$('.editor-component-list-item-overlay')
@@ -77,7 +79,7 @@ define(function(require) {
 
 			var newComponentModel = new EditorComponentModel({
 				title: window.polyglot.t('app.placeholdernewcomponent'),
-				displayTitle: '',
+				displayTitle: window.polyglot.t('app.placeholdernewcomponent'),
 				body: '',
 				_parentId: this._parentId,
 				_courseId: Origin.editor.data.course.get('_id'),
@@ -103,11 +105,13 @@ define(function(require) {
 					});
       	},
       	success: _.bind(function() {
-      		Origin.editor.data.components.add(newComponentModel);
-					this.parentView.evaluateComponents(this.parentView.toggleAddComponentsButton);
-      		newComponentView.addClass('synced');
-      		$('html').css('overflow-y', '');
-      		$.scrollTo(newComponentView.$el);
+          Origin.editor.data.components.add(newComponentModel);
+          this.parentView.evaluateComponents(this.parentView.toggleAddComponentsButton);
+          // Re-render the block
+          this.parentView.reRender();
+          newComponentView.addClass('synced');
+          $('html').css('overflow-y', '');
+          $.scrollTo(newComponentView.$el);
       	}, this)
       });
 		}

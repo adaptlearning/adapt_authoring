@@ -669,26 +669,32 @@ function addPackage (plugin, packageInfo, options, cb) {
                   } else if (semver.gt(item.version, oldPlugin.version)) {
                     oldPlugin = item;
                   }
-                })
+                });
 
-                plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
+                // Persist the _isAvailableInEditor flag.
+                db.update(plugin.type, {_id: newPlugin._id}, {_isAvailableInEditor: oldPlugin._isAvailableInEditor}, function(err, results) {
                   if (err) {
                     logger.log('error', err);
                     return cb(err);
                   }
-
-                  // Remove older versions of this plugin
-                  db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
+                  
+                  plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
                     if (err) {
                       logger.log('error', err);
                       return cb(err);
                     }
 
-                    logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
-                    return cb(null, newPlugin);
+                    // Remove older versions of this plugin
+                    db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
+                      if (err) {
+                        logger.log('error', err);
+                        return cb(err);
+                      }
+
+                      logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
+                      return cb(null, newPlugin);
+                    });
                   });
-
-
                 });
               } else {
                 // nothing to do!

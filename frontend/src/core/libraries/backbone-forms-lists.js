@@ -170,30 +170,29 @@ define(['jquery', 'underscore', 'backbone', 'backboneForms'], function($, _, Bac
       //Confirm delete
       var confirmMsg = this.schema.confirmDelete;
       var self = this;
-      
-      if (!confirmMsg) {
-        return;
-      }
-      
+      var confirmCallback = function(confirmed) {
+        if (!confirmed) return;
+
+        var index = _.indexOf(self.items, item);
+
+        self.items[index].remove();
+        self.items.splice(index, 1);
+
+        if (item.addEventTriggered) {
+          self.trigger('remove', self, item.editor);
+          self.trigger('change', self);
+        }
+
+        if (!self.items.length && !self.Editor.isAsync) self.addItem();
+      };
+
+      if (!confirmMsg) return confirmCallback(true);
+
       window.confirm({
         title: window.polyglot.t('app.confirmdelete'),
         text: confirmMsg,
         type: "warning",
-        callback: function(confirmed) {
-          if (confirmed) {
-            var index = _.indexOf(self.items, item);
-  
-            self.items[index].remove();
-            self.items.splice(index, 1);
-            
-            if (item.addEventTriggered) {
-              self.trigger('remove', self, item.editor);
-              self.trigger('change', self);
-            }
-      
-            if (!self.items.length && !self.Editor.isAsync) self.addItem(); 
-          }
-        } 
+        callback: confirmCallback
       });
     },
 

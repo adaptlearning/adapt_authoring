@@ -9,6 +9,7 @@ define(function(require) {
 
     routes: {
       ""                                      : "handleIndex",
+      "_=_"                                   : "handleIndex",  
       ":module(/*route1)(/*route2)(/*route3)(/*route4)" : "handleRoute"
     },
 

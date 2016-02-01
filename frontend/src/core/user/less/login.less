@@ -1,7 +1,9 @@
+@white: #FFF;
+
 .module-user {
-    color: white;
 	&.location-login {
- background-image:url(../../images/login_bg.jpg);
+     color: white;       
+ background-image:url(assets/login_bg.jpg);
 		.sidebar {
 			display:none;
 		}
@@ -13,7 +15,7 @@
 
 .login-logo {
     width:200px;
-    margin:80px auto 40px;
+    margin:80px 0 40px 100px;
 }
 
 .login-title{
@@ -25,33 +27,14 @@
     max-width:450px;
     margin:0 auto;
 
-    // .col-1-2 {
-    //     float:left;
-    //     width:50%;
-    //     text-align:right;
-    //     border-right:1px solid #454545;
-    //     .login-new-user-inner {
-    //         padding-right:30px;
-    //     }
-    // }
-
-    // .col-2-2 {
-    //     float:right;
-    //     width:49%;
-    //     text-align:left;
-    //     .login-returning-user-inner {
-    //         padding-left:30px;
-    //     }
-    // }
-
     &-fields {
         opacity: 0.8;
 
         .login-input-username, .login-input-password {
             font-size: 24px;
-            background-color: #CCC;
-            color: white;
-            padding-bottom: 5px;
+            background-color: rgba(255, 255, 255, 0.5);
+            color: @white;
+            margin-bottom: 5px;
         }
 
         .login-form-submit {
@@ -61,15 +44,18 @@
 
 
     &-remember-me {
-        margin-left: 100px;
+        padding: 20px 20px 20px 140px;
     }    
 
-    .login-form-row {
+    &-form-row {
         margin-bottom: 20px;
     }
 }
 
-
+.login-forgot-password-button{
+    text-decoration: none;
+    margin-left: 20px;    
+}
 
 .remember-me-label {
     display: inline;
@@ -77,4 +63,5 @@
 
 .login-already-logged-in {
     text-align:center;
+
 }

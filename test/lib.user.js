@@ -5,6 +5,7 @@ var path = require('path'),
 describe('usermanager', function(){
   var user = {
     email: "foo@bar.com",
+    auth: 'local',
     _isDeleted: false
   };
 

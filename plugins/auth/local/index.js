@@ -36,7 +36,8 @@ function LocalAuth() {
 
 util.inherits(LocalAuth, auth.AuthPlugin);
 
-LocalAuth.prototype.init = function (app) {
+LocalAuth.prototype.init = function (app, next) {
+  return next(null);
 };
 
 LocalAuth.prototype.verifyUser = function (email, password, done) {

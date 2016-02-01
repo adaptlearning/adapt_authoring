@@ -13,6 +13,11 @@
 
             <div class="login-new-user-inner">
                   Welcome to the Adapt Builder.<br/><br />
+
+                  {{#each otherLoginLinks}}
+                    <div class="login-other-type">{{{html}}}</div>
+                  {{/each}}
+
          {{!--        <h2 class="login-title login-form-row">
                     {{t 'app.newuser'}}
                 </h2>

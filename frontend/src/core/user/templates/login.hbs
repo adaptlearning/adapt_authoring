@@ -34,22 +34,24 @@
         <div class="login-returning-user">
             <div class="login-returning-user-inner">
 
-                <h2 class="login-title login-form-row">
+                <h1 class="login-title login-form-row">
                     Sign in
-                </h2>
+                </h1>
 
                 <span id="loginErrorMessage" class="error"></span>
                 <div class="login-fields">
     {{!--                     <label for="login-input-username">
                             {{t 'app.usernameoremail'}}:
                         </label> --}}
-                        <input type="email" id="login-input-username" placeholder="{{t 'app.usernameoremail'}}" tabindex="1" autocomplete="off"/>
-
     {{!--                     <label for="login-input-password">
                             {{t 'app.password'}}:
-                        </label> --}}
-                        <input type="password" id="login-input-password" placeholder="{{t 'app.password'}}" tabindex="2">
-                </div>
+                        </label> --}}         
+                                       
+                    <input type="email" class="login-input-username" id="login-input-username" placeholder="{{t 'app.usernameoremail'}}" tabindex="1" autocomplete="off"/>
+                    <input type="password" class="login-input-password" id="login-input-password" placeholder="{{t 'app.password'}}" tabindex="2">
+
+                    <button type="submit" class="btn btn-primary login-form-submit" tabindex="3">{{t 'app.login'}}</button>
+                </div>                
 
                 <div class="login-remember-me">
                     <input id="remember-me" name="remember-me" type="checkbox"/> 
@@ -60,7 +62,6 @@
                     <a class="login-forgot-password" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
                 </div>
 
-                <button type="submit" class="btn btn-primary login-form-submit" tabindex="3">{{t 'app.login'}}</button>
 
             </div>
         </div>

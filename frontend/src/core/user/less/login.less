@@ -1,5 +1,6 @@
 .module-user {
-	&.location-login{
+    color: white;
+	&.location-login {
  background-image:url(../../images/login_bg.jpg);
 		.sidebar {
 			display:none;
@@ -15,10 +16,14 @@
     margin:80px auto 40px;
 }
 
+.login-title{
+    margin-left: 100px;
+    font-size: 56px;
+}
+
 .login {
-    max-width:600px;
+    max-width:450px;
     margin:0 auto;
-    font-size:14px;
 
     // .col-1-2 {
     //     float:left;
@@ -40,16 +45,23 @@
     // }
 
     &-fields {
-        opacity: 0.6;
-        .login-forgot-password {
-            margin-left: 44px;
-            padding-top: 50px;
+        opacity: 0.8;
+
+        .login-input-username, .login-input-password {
+            font-size: 24px;
+            background-color: #CCC;
+            color: white;
+            padding-bottom: 5px;
+        }
+
+        .login-form-submit {
+            width: 85%;
         }
     }
 
 
     &-remember-me {
-        margin-left: 300px;
+        margin-left: 100px;
     }    
 
     .login-form-row {
@@ -57,20 +69,12 @@
     }
 }
 
-.login-title{
-    margin-left: 300px;
-}
+
 
 .remember-me-label {
     display: inline;
 }
 
-
-
 .login-already-logged-in {
     text-align:center;
-}
-
-.login-form-submit {
-    width: 150px;
 }

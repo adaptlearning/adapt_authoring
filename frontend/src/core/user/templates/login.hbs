@@ -1,7 +1,7 @@
 <div class="login-inner">
 
     <div class="login-logo">
-        <img src="adaptbuilder/css/assets/adapt-learning-logo.png"/>
+        <img src="adaptbuilder/css/assets/adapt-learning-logo-white.png"/>
     </div>
 
     {{#if isAuthenticated}}
@@ -24,7 +24,7 @@
                 </div>                
 
                 <div class="login-remember-me">
-                    <input id="remember-me" name="remember-me" type="checkbox"/> 
+                    <input id="remember-me" class="remember-me-checkbox" name="remember-me" type="checkbox"/> 
                     <label for="remember-me" class="remember-me-label">{{t 'app.rememberme'}}</label>
                 </div>
             </div>
@@ -32,7 +32,7 @@
     </form>
     <div class="login-forgot-password">
         Have you forgotten your password?
-        <a class="btn btn-primary login-forgot-password-button" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
+        <a class="login-forgot-password-button btn" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
     </div>
     {{/if}}
 

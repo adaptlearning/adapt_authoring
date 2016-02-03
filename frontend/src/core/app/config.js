@@ -32,6 +32,7 @@ require.config({
       editorGlobal: 'core/editor/global',
       editorExtensions: 'core/editor/extensions',
       tags: 'core/libraries/jquery.tagsinput.min',
+      ace: 'core/libraries/ace',
       pikaday: 'core/libraries/pikaday/js/pikaday'
     },
     shim: {
@@ -102,6 +103,9 @@ require.config({
           'jquery'
         ],
         exports: 'imageready'
+      },
+      ace: {
+        exports: 'ace/ace'
       },
       tags: {
         deps: ['jquery'],

@@ -101,7 +101,7 @@ function initialize () {
     app.contentmanager.addContentHook('update', 'config', { when: 'pre' }, function (data, next) {
       if (data[1].hasOwnProperty('_generateSourcemap')) {
         var tenant = usermanager.getCurrentUser().tenant._id;
-        var course = data[0]._id;
+        var course = data[1]._courseId;
         
         app.emit('rebuildCourse', tenant, course);
       }
@@ -125,8 +125,10 @@ ConfigContent.prototype.retrieve = function (search, options, next) {
     options = {};
   }
 
+  var modelName = this.getModelName();
+  
   // must have a model name
-  if (!this.getModelName()) {
+  if (!modelName) {
     return next(new ContentTypeError('this.getModelName() must be set!'));
   }
 
@@ -141,6 +143,10 @@ ConfigContent.prototype.retrieve = function (search, options, next) {
   ContentPlugin.prototype.retrieve.call(this, search, options, function(err, records) {
     if (err) {
       return next(err);
+    }
+    
+    if (!records || records.length == 0) {
+      return next(new Error(`Unable to retrieve ${modelName} for ${JSON.stringify(search)}`));
     }
     
     // When passing down the config model we should 

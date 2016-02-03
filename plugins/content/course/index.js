@@ -163,6 +163,71 @@ function initialize () {
     next(null, data);
   });
 
+  ['component'].forEach(function (contentType) {
+    app.contentmanager.addContentHook('create', contentType, {when: 'pre'}, function(contentType, data, next) {
+      var user = usermanager.getCurrentUser();
+      
+      database.getDatabase(function (err, db) {
+        if (err) {
+            logger.log('error', err);
+            return next(err)
+        }
+        
+        var delta = data[0];
+        
+        db.retrieve('component', {_courseId: delta._courseId, _component: delta._component}, function(err, results) {
+          if (results.length == 0) {
+            // This is the first time this component has been added, so trigger a rebuild.
+            if (user && user.tenant && user.tenant._id) {
+              app.emit('rebuildCourse', user.tenant._id, delta._courseId);
+            } 
+          }
+          
+          return next(null, data); 
+        });
+        
+      });
+    }.bind(null, contentType));
+  });
+  
+  ['component'].forEach(function (contentType) {
+    app.contentmanager.addContentHook('destroy', contentType, {when: 'pre'}, function(contentType, data, next) {
+      var user = usermanager.getCurrentUser();
+      
+      database.getDatabase(function (err, db) {
+        if (err) {
+            logger.log('error', err);
+            return next(err)
+        }
+        
+        db.retrieve('component', {_id: data[0]._id}, function(err, results) {
+          if (err) {
+            logger.log('error', err);
+            return next(err);
+          }
+          
+          if (results && results.length == 1) {
+            var delta = results[0];
+            
+            db.retrieve('component', {_courseId: delta._courseId, _component: delta._component}, function(err, results) {
+              if (results.length <= 1) {
+                // This component is no longer used in this course, so trigger a rebuild.
+                if (user && user.tenant && user.tenant._id) {
+                  app.emit('rebuildCourse', user.tenant._id, delta._courseId.toString());
+                } 
+              }
+              
+              return next(null, data); 
+            });    
+          } else {
+            // In theory the next line should never run.
+            return next(null, data);
+          }
+        });
+      });
+    }.bind(null, contentType));
+  });
+  
   // Content Hook for updatedAt and updatedBy:
   ['contentobject', 'article', 'block', 'component'].forEach(function (contentType) {
     app.contentmanager.addContentHook('update', contentType, {when:'post'}, function (contentType, data, next) {

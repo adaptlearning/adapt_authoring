@@ -19,7 +19,12 @@
 
 .login-title {
     margin-left: 110px;
+    padding-bottom: 25px;
     font-size: 48px;
+}
+
+.error {
+    position: absolute;
 }
 
 .login {
@@ -27,13 +32,20 @@
     margin:0 auto;
 
     &-fields {
+        margin-top: 20px;
         .login-input-username, .login-input-password{
             font-size: 24px;
-            background-color: rgba(255, 255,255, 0.5);
+            border-radius: 5px;
+            border: 0px solid;
+            background-color: rgba(255, 255,255, 0.4);
             color: white;
             margin-bottom: 5px;
             height: 40px;
         }
+
+    &-form {
+        padding-bottom: 50px;
+    }
 
         .login-form-submit {
             width: 85%;
@@ -42,25 +54,22 @@
     }
 
     &-remember-me {
-        .remember-me-checkbox{
-            border-radius: 10px;
-        }
         padding: 20px 20px 20px 140px;
-        
     }    
-
-    &-form-row {
-        margin-bottom: 20px;
-    }
 }
 
+
 .login-forgot-password {
-    padding-top: 50px;
     width: 150%;
 }
 
 .login-forgot-password-button {
     margin-left: 20px;
+    .btn-transparent {
+        border: 1px solid #FFF;
+        color: white;
+        background: transparent;
+    }
 }
 
 .remember-me-label {

@@ -8,15 +8,15 @@
     <h3 class="login-already-logged-in">{{t 'app.alreadyloggedin'}}<a id="linkDash" href="/#dashboard">{{t 'app.dashboard'}}</a></h3>
     {{else}}
     <form class="login-form" autocomplete="off">
-
         <div class="login-returning-user">
             <div class="login-returning-user-inner">
 
-                <h1 class="login-title login-form-row">
+                <h1 class="login-title">
                     Sign in
                 </h1>
 
-                <span id="loginErrorMessage" class="error"></span>
+                <span id="loginErrorMessage" class="error" />
+
                 <div class="login-fields">                                     
                     <input type="email" class="login-input-username" id="login-input-username" placeholder="{{t 'app.usernameoremail'}}" tabindex="1" />
                     <input type="password" class="login-input-password" id="login-input-password" placeholder="{{t 'app.password'}}" tabindex="2" />
@@ -32,7 +32,7 @@
     </form>
     <div class="login-forgot-password">
         Have you forgotten your password?
-        <a class="login-forgot-password-button btn" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
+        <a class="btn btn-transparent" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
     </div>
     {{/if}}
 

@@ -1,7 +1,7 @@
-# Adapt Builder [![Build Status](https://secure.travis-ci.org/adaptlearning/adapt_authoring.png)](http://travis-ci.org/adaptlearning/adapt_authoring)
+# Adapt authoring tool [![Build Status](https://secure.travis-ci.org/adaptlearning/adapt_authoring.png)](http://travis-ci.org/adaptlearning/adapt_authoring)
 
 [![Join the chat at https://gitter.im/adaptlearning/adapt_authoring](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/adaptlearning/adapt_authoring?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
- 
+
 A web-based authoring tool for the [Adapt Framework](https://community.adaptlearning.org/).
 
 ## Features
@@ -73,7 +73,7 @@ git config --global user.email "youremail@domain.com"
 
 [Node.js](http://nodejs.org/) and [npm](https://www.npmjs.org/) are required. Installing Node.js will also install npm.
 
-**IMPORTANT**: Please ensure that you install Node.js 4.2.x. LTS. This is the long-term supported version that this software has been tested with. 
+**IMPORTANT**: Please ensure that you install Node.js 4.2.x. LTS. This is the long-term supported version that this software has been tested with.
 
 You should use a Node.js version manager. We recommend using [NVM](https://github.com/creationix/nvm) on non-Windows machines. On Windows, try [nodist](https://github.com/marcelklehr/nodist).
 
@@ -90,7 +90,7 @@ Read more about [Grunt](http://gruntjs.com/getting-started).
 
 #### FFMPEG (optional, but recommended)
 
-[FFmpeg](https://www.ffmpeg.org/index.html) is not required to use the tool, but it will produce nice thumbnails for images and videos you upload. 
+[FFmpeg](https://www.ffmpeg.org/index.html) is not required to use the tool, but it will produce nice thumbnails for images and videos you upload.
 
 ### Clone the adapt_authoring project
 
@@ -102,7 +102,7 @@ git clone https://github.com/adaptlearning/adapt_authoring.git
 
 ### Run the install script
 
-Firstly ensure that the MongoDB service is started is running correctly. If you installed on Linux, the service should automatically start. OSX users may have to manually run `mongod` from a terminal. 
+Firstly ensure that the MongoDB service is started is running correctly. If you installed on Linux, the service should automatically start. OSX users may have to manually run `mongod` from a terminal.
 
 Navigate to the folder where you cloned the adapt_authoring project and run `npm install`:
 
@@ -125,7 +125,7 @@ To run the application use:
 node server
 ````
 
-The ouput on the console will tell you what url to use to access the tool. By default it will be *http://localhost:5000*. 
+The ouput on the console will tell you what url to use to access the tool. By default it will be *http://localhost:5000*.
 
 You can run the install script again at anytime. If you chose the same values for the master database connection, you may overwrite any existing data, but this is occasionally desired.
 

@@ -14,6 +14,10 @@
             <div class="login-new-user-inner">
                   Welcome to the {{t 'app.productname'}}.<br/><br/>
 
+                  {{#each otherLoginLinks}}
+                    <div class="login-other-type">{{{html}}}</div>
+                  {{/each}}
+
          {{!--        <h2 class="login-title login-form-row">
                     {{t 'app.newuser'}}
                 </h2>
@@ -51,7 +55,7 @@
                 </div>
 
                 <div class="login-remember-me">
-                    <input id="remember-me" name="remember-me" type="checkbox"/> 
+                    <input id="remember-me" name="remember-me" type="checkbox"/>
                     <label for="remember-me" class="remember-me-label">{{t 'app.rememberme'}}</label>
                 </div>
 

@@ -10,7 +10,8 @@ define(function(require) {
       isAuthenticated: false,
       id: '',
       tenantId: '',
-      email: ''
+      email: '',
+      otherLoginLinks: []
     },
 
     url: "/api/authcheck",

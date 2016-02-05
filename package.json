@@ -76,7 +76,7 @@
     "errorhandler": "^1.4.2",
     "express": "^4.13.3",
     "express-session": "^1.11.3",
-    "fluent-ffmpeg": "1.7.1",
+    "fluent-ffmpeg": "~2.x",
     "formidable": "1.0.17",
     "fs-extra": "^0.16.3",
     "grunt": "~0.4.1",

@@ -52,15 +52,24 @@ define(function(require) {
       // Retrieve any old attributes which might have changed
       // This step is neccessary because otherwise the complete model is passed up
       var changedAttributes = this.model.changedAttributes(this.originalAttributes);
-
+      
       if (changedAttributes || this.isNew) {
         // Only save what has changed
         var attributesToSave = changedAttributes
           ? _.pick(this.model.attributes, _.keys(changedAttributes))
           : null;
 
+        var isPatch = _.keys(changedAttributes).length == 1 
+          ? false
+          : true;
+        
+        if (!isPatch) { 
+          // Save everything
+          attributesToSave = null;
+        }
+        
         this.model.save(attributesToSave, {
-          patch: true,
+          patch: isPatch,
 
           error: function() {
             Origin.Notify.alert({

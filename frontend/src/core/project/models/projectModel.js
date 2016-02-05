@@ -14,7 +14,8 @@ define(function(require) {
 
     defaults: {
         'tags': [],
-        _type: 'course'
+        _type: 'course',
+        customStyle: ''
     },
 
     initialize : function(options) {

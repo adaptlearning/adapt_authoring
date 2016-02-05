@@ -51,6 +51,7 @@ define(function(require){
 
       this.listenTo(Origin, 'editorView:refreshView', this.setupEditor);
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
+      this.listenTo(Origin, 'editorView:copyID', this.copyIdToClipboard);
       this.listenTo(Origin, 'editorView:cut', this.cutContent);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
       this.listenTo(Origin, 'editorCommon:download', this.downloadProject);
@@ -282,6 +283,22 @@ define(function(require){
           });
         }
       });
+    },
+    
+    copyIdToClipboard: function(model) {
+      var id = model.get('_id');
+      
+      if (helpers.copyStringToClipboard(id)) {
+        Origin.Notify.alert({
+          type: 'success',
+          text: window.polyglot.t('app.copyidtoclipboardsuccess', {id: id})
+        });
+      } else {
+        Origin.Notify.alert({
+          type: 'warning',
+          text: window.polyglot.t('app.app.copyidtoclipboarderror', {id: id})
+        });
+      }
     },
 
     pasteFromClipboard: function(parentId, sortOrder, layout) {

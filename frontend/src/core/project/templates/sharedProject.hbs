@@ -28,7 +28,7 @@
 
         <div class="project-details-last-updated project-details-row">
           <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
-          <div class="projects-details-value">{{formatDate updatedAt}}</div>
+          <div class="projects-details-value">{{momentFormat updatedAt 'ddd D MMM YYYY'}}</div>
         </div>
         {{#if tags.length}}
         <div class="project-details-tags project-details-row tags">

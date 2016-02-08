@@ -39,13 +39,13 @@ var steps = [
       installedFrameworkVersion = versionFile.adapt_framework;
     }
 
-    console.log('Currently installed versions:\n- Adapt Builder: ' + installedBuilderVersion + '\n- Adapt Framework: ' + installedFrameworkVersion);
+    console.log('Currently installed versions:\n- ' + app.polyglot.t('app.productname') + ': ' + installedBuilderVersion + '\n- Adapt Framework: ' + installedFrameworkVersion);
     callback();
 
   },
   function(callback) {
 
-    console.log('Checking for Adapt Builder upgrades...');
+    console.log('Checking for ' + app.polyglot.t('app.productname') + ' upgrades...');
     // Check the latest version of the project
     request({
       headers: {
@@ -95,7 +95,7 @@ var steps = [
     // Check what needs upgrading
     if (latestBuilderTag != installedBuilderVersion) {
       shouldUpdateBuilder = true;
-      console.log('Update for Adapt Builder is available: ' + latestBuilderTag);
+      console.log('Update for ' + app.polyglot.t('app.productname') + ' is available: ' + latestBuilderTag);
     }
 
     if (latestFrameworkTag != installedFrameworkVersion) {
@@ -204,7 +204,7 @@ var steps = [
 prompt.start();
 
 // Prompt the user to begin the install
-console.log('This script will update the Adapt Builder (and/or Adapt Framework) to the latest released version. Would you like to continue?');
+console.log('This script will update the ' + app.polyglot.t('app.productname') + ' (and/or Adapt Framework) to the latest released version. Would you like to continue?');
 prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
   if (!/(Y|y)[es]*$/.test(result['Y/n'])) {
     return exitUpgrade();
@@ -220,14 +220,14 @@ prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result)
 
     console.log(' ');
 
-    exitUpgrade(0, 'Great work! Your Adapt Builder is now updated.');
+    exitUpgrade(0, 'Great work! Your ' + app.polyglot.t('app.productname') + ' is now updated.');
   });
 });
 
 // This upgrades the Builder
 function upgradeBuilder(tagName, callback) {
 
-  console.log('Upgrading the Adapt Builder...please hold on!');
+  console.log('Upgrading the ' + app.polyglot.t('app.productname') + '...please hold on!');
   var child = exec('git fetch origin', {
     stdio: [0, 'pipe', 'pipe']
   });
@@ -264,7 +264,7 @@ function upgradeBuilder(tagName, callback) {
         return console.log('ERROR: ' + error);
       }
 
-      console.log("Installing builder dependencies.\n");
+      console.log("Installing " + app.polyglot.t('app.productname') + " dependencies.\n");
 
       var thirdChild = exec('npm install', {
         stdio: [0, 'pipe', 'pipe']
@@ -305,7 +305,7 @@ function upgradeBuilder(tagName, callback) {
 
           console.log("front-end built.\n");
 
-          console.log("Builder has been updated.\n");
+          console.log(app.polyglot.t('app.productname') + " has been updated.\n");
           callback();
         });
       });

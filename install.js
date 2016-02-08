@@ -14,7 +14,7 @@ var prompt = require('prompt'),
     logger = require('./lib/logger'),
     optimist = require('optimist'),
     util = require('util');
-    
+
 // set overrides from command line arguments
 prompt.override = optimist.argv;
 prompt.start();
@@ -373,9 +373,9 @@ var steps = [
   // configure the super awesome user
   function createSuperUser (next) {
     if (isVagrant()) {
-      console.log("Creating the super user account. This account can be used to manage everything on your Adapt Builder instance.");
+      console.log("Creating the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
     } else {
-      console.log("Create the super user account. This account can be used to manage everything on your Adapt Builder instance.");
+      console.log("Create the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
     }
 
     prompt.get(userConfig, function (err, result) {
@@ -421,7 +421,7 @@ var steps = [
   },
   // run grunt build
   function gruntBuild (next) {
-    console.log('Compiling the Adapt Builder web application, please wait a moment ... ');
+    console.log('Compiling the ' + app.polyglot.t('app.productname') + ' web application, please wait a moment ... ');
     var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function (err) {
       if (err) {
         console.log('ERROR: ', err);
@@ -430,7 +430,7 @@ var steps = [
         return next();
       }
 
-      console.log('The Adapt Builder web application was compiled and is now ready to use.');
+      console.log('The ' + app.polyglot.t('app.productname') + ' web application was compiled and is now ready to use.');
       return next();
     });
 
@@ -457,10 +457,11 @@ prompt.start();
 
 // Prompt the user to begin the install
 if (isVagrant()) {
-  console.log('This script will install the Adapt Builder. Please wait ...');
+  console.log('This script will install the application. Please wait ...');
 } else {
-  console.log('This script will install the Adapt Builder. Would you like to continue?');
+  console.log('This script will install the application. Would you like to continue?');
 }
+
 prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
   if (!/(Y|y)[es]*$/.test(result['install'])) {
     return exitInstall();
@@ -573,4 +574,3 @@ function exitInstall (code, msg) {
 
   process.exit(code);
 }
-

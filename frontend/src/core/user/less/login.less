@@ -1,6 +1,6 @@
 .module-user {  
 	&.location-login {
-        color: white;       
+        color: #fff;    
         background-image:url(assets/login_bg.jpg);
         background-size: 100%;
 		.sidebar, .navigation {
@@ -26,38 +26,48 @@
 .error {
     position: absolute;
 }
-
+    
 .login {
     max-width:450px;
     margin:0 auto;
-
-    &-fields {
-        margin-top: 20px;
-        .login-input-username, .login-input-password{
-            font-size: 24px;
-            border-radius: 5px;
-            border: 0px solid;
-            background-color: rgba(255, 255,255, 0.4);
-            color: white;
-            margin-bottom: 5px;
-            height: 40px;
-        }
-
-    &-form {
-        padding-bottom: 50px;
-    }
-
-        .login-form-submit {
-            width: 85%;
-            height: 65px;
-        }
-    }
-
-    &-remember-me {
-        padding: 20px 20px 20px 140px;
-    }    
 }
 
+.login-form-submit {
+    width: 85%;
+    height: 65px;
+}
+
+.login-form {
+    padding-bottom: 50px;
+}
+
+.login-fields {
+    margin-top: 20px;
+    .login-input-username, .login-input-password{
+        font-size: 24px;
+        border-radius: 5px;
+        border: 0;
+        background-color: fade(#fff, 40%);
+        // background-color: rgba(255, 255,255, 0.4);
+        color: white;
+        margin-bottom: 5px;
+        height: 40px;
+    }
+
+    .login-form-submit {
+        width: 85%;
+        height: 65px;
+    }
+
+    input::-webkit-input-placeholder,
+    input:-moz-placeholder {
+        color: #fff;
+    }
+}
+
+.login-remember-me {
+    padding: 20px 20px 20px 140px;
+}
 
 .login-forgot-password {
     width: 150%;
@@ -66,7 +76,7 @@
 .login-forgot-password-button {
     margin-left: 20px;
     .btn-transparent {
-        border: 1px solid #FFF;
+        border: 1px solid #fff;
         color: white;
         background: transparent;
     }

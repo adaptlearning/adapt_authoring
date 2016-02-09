@@ -15,15 +15,16 @@ server.get('/export/:tenant/:course', function (req, res, next) {
     var outputplugin = app.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), function (error, plugin){
       if (error) {
         logger.log('error', error);
-        res.json({
+        res.statusCode = 500;
+        return res.json({
           success: false,
           message: error.message
         });
-        return res.end();
       } else {
         plugin.export(course, req, res, function (error, result) {
           if (error) {
-            logger.log('error', 'Unable to export');
+            logger.log('error', 'Unable to export:', error);
+            res.statusCode = 500;
             return res.json({
               success: false,
               message: error.message

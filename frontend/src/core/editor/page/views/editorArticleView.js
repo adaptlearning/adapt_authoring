@@ -134,7 +134,7 @@ define(function(require){
 
       var newPageBlockModel = new EditorBlockModel({
         title: window.polyglot.t('app.placeholdernewblock'),
-        displayTitle: window.polyglot.t('app.placeholdernewblock'),
+        displayTitle: '',
         body: '',
         _parentId: self.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),

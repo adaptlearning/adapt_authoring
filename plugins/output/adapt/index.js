@@ -265,7 +265,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
 
   async.waterfall([
     function publishCourse(callback) {
-      self.publish(courseId, false, request, response, callback);
+      self.publish(courseId, true, request, response, callback);
     },
     function getCourseName(results, callback) {
       database.getDatabase(function (error, db) {
@@ -282,34 +282,50 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
           }
 
           exportName = self.slugify(results[0].title) + '-export-' + timestamp;
-          exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course, exportName);
+          exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, exportName);
           callback();
         });
       });
     },
     function copyFiles(callback) {
-      var excludeFolders = [ '^\\.', 'node_modules', 'courses', 'course' ]; // [0] = hidden files
-
-      fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
-        filter: function(filePath) {
-          // only filter dirs (files w/o an extension will also be included here)
-          if(!path.extname(filePath)) {
-            var filter = path.basename(filePath).search(new RegExp(excludeFolders.join('|'))) === -1;
-            return filter;
-          }
-          return true;
-        }
-      }, function done(error) {
-        if (error) {
+      self.generateIncludesForCourse(courseId, function(error, includes) {
+        if(error) {
           return callback(error);
         }
-        var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
-        var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
-        fse.ensureDir(dest, function (error) {
-          if(error) {
+
+        for(var i = 0, count = includes.length; i < count; i++)
+          includes[i] = '\/' + includes[i] + '(\/|$)';
+
+        // regular expressions
+        var includesRE = new RegExp(includes.join('|'));
+        var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
+        var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
+
+        fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
+          filter: function(filePath) {
+            var isIncluded = filePath.search(includesRE) > -1;
+            var isExcluded = filePath.search(excludesRE) > -1;
+            var isPlugin = filePath.search(pluginsRE) > -1;
+
+            // exclude any matches to excludesRE
+            if(isExcluded) return false;
+            // exclude any plugins not in includes
+            else if(isPlugin) return isIncluded;
+            // include everything else
+            else return true;
+          }
+        }, function done(error) {
+          if (error) {
             return callback(error);
           }
-          fse.copy(source, dest, callback);
+          var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
+          var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
+          fse.ensureDir(dest, function (error) {
+            if(error) {
+              return callback(error);
+            }
+            fse.copy(source, dest, callback);
+          });
         });
       });
     },

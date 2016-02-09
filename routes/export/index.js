@@ -52,12 +52,12 @@ server.get('/export/:tenant/:course/:title/download.zip', function (req, res, ne
   var courseId = req.params.course;
   var userId = usermanager.getCurrentUser()._id;
   var zipName = req.params.title;
+  // TODO don't like having to specify this here AND in plugins/output/adapt.export->getCourseName()-exportDir
   var zipDir = path.join(
     configuration.tempDir,
     configuration.getConfig('masterTenantID'),
     Constants.Folders.Framework,
-    Constants.Folders.Source,
-    Constants.Folders.Course,
+    Constants.Folders.Exports,
     zipName
   );
 

@@ -136,7 +136,7 @@ define(function(require) {
 
         newChildModel.save({
           title: newChildTitle,
-          displayTitle: newChildTitle,
+          displayTitle: (typeToAdd == 'block') ? '' : newChildTitle,
           body: '',
           _parentId: model.get('_id'),
           _courseId: Origin.editor.data.course.get('_id')

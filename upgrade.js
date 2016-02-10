@@ -193,14 +193,14 @@ var steps = [
   }
 ];
 
-app.run({skipVersionCheck: true});
+app.run({skipVersionCheck: true, skipStartLog: true});
 
 app.on('serverStarted', function () {
   prompt.start();
 
   // Prompt the user to begin the install
-  console.log(`This script will update the ${app.polyglot.t('app.productname')} (and/or Adapt Framework) to the latest released version. Would you like to continue?`);
-  
+  console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} (and/or Adapt Framework) to the latest released version. Would you like to continue?`);
+
   prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
     if (!/(Y|y)[es]*$/.test(result['Y/n'])) {
       return exitUpgrade();

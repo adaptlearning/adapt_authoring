@@ -38,7 +38,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
     tenantId = user.tenant._id,
     outputJson = {},
     isRebuildRequired = false,
-    themeName = Constants.Defaults.ThemeName,
+    themeName = '',
     menuName = Constants.Defaults.MenuName;
 
   var resultObject = {};
@@ -54,6 +54,23 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 
           // Store off the retrieved collections
           outputJson = data;
+
+          callback(null);
+        });
+      },
+      function(callback) {
+        var temporaryThemeName = tenantId + '-' + courseId;
+        var temporaryThemeFolder = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Theme, temporaryThemeName);
+
+        self.applyTheme(tenantId, courseId, outputJson, temporaryThemeFolder, function(err, appliedThemeName) {
+          if (err) {
+            return callback(err);
+          }
+
+          // Replace the theme in outputJson with the applied theme name.
+          themeName = appliedThemeName;
+          
+          outputJson['config'][0]._theme = themeName;
 
           callback(null);
         });
@@ -77,20 +94,6 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
           }
 
           isRebuildRequired = exists;
-
-          callback(null);
-        });
-      },
-      function(callback) {
-        var temporaryThemeName = tenantId + '-' + courseId;
-        var temporaryThemeFolder = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Theme, temporaryThemeName);
-
-        self.applyTheme(tenantId, courseId, outputJson, temporaryThemeFolder, function(err, appliedThemeName) {
-          if (err) {
-            return callback(err);
-          }
-
-          themeName = appliedThemeName;
 
           callback(null);
         });

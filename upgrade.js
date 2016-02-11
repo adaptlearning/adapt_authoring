@@ -23,14 +23,6 @@ var configFile = JSON.parse(fs.readFileSync('conf/config.json'), {encoding: 'utf
 
 var steps = [
   function(callback) {
-    app.run({skipVersionCheck: true});
-
-    app.on('serverStarted', function () {
-      console.log('Server has started');
-      callback();
-    });
-  },
-  function(callback) {
 
     console.log('Checking versions');
 
@@ -201,26 +193,31 @@ var steps = [
   }
 ];
 
-prompt.start();
+app.run({skipVersionCheck: true, skipStartLog: true});
 
-// Prompt the user to begin the install
-console.log('This script will update the ' + app.polyglot.t('app.productname') + ' (and/or Adapt Framework) to the latest released version. Would you like to continue?');
-prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
-  if (!/(Y|y)[es]*$/.test(result['Y/n'])) {
-    return exitUpgrade();
-  }
+app.on('serverStarted', function () {
+  prompt.start();
 
-  // run steps
-  async.series(steps, function (err, results) {
+  // Prompt the user to begin the install
+  console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} (and/or Adapt Framework) to the latest released version. Would you like to continue?`);
 
-    if (err) {
-      console.log('ERROR: ', err);
-      return exitUpgrade(1, 'Upgrade was unsuccessful. Please check the console output.');
+  prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
+    if (!/(Y|y)[es]*$/.test(result['Y/n'])) {
+      return exitUpgrade();
     }
 
-    console.log(' ');
+    // run steps
+    async.series(steps, function (err, results) {
 
-    exitUpgrade(0, 'Great work! Your ' + app.polyglot.t('app.productname') + ' is now updated.');
+      if (err) {
+        console.log('ERROR: ', err);
+        return exitUpgrade(1, 'Upgrade was unsuccessful. Please check the console output.');
+      }
+
+      console.log(' ');
+
+      exitUpgrade(0, 'Great work! Your ' + app.polyglot.t('app.productname') + ' is now updated.');
+    });
   });
 });
 

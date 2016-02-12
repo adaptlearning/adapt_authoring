@@ -61,7 +61,7 @@
             </span>
         </button>
     </div>
-    {{#ifHasPermissions ""}}
+    {{#ifHasPermissions "*/*:create,*/*:read,*/*:update,*/*:delete"}}
     <div class="sidebar-row">
         <button class="editor-common-sidebar-export">
             <span class="editor-common-sidebar-export-inner">

@@ -2,49 +2,63 @@ var fs = require('fs');
 var server = module.exports = require('express')();
 var configuration = require('../../lib/configuration');
 var Constants = require('../../lib/outputmanager').Constants;
+var helpers = require('../../lib/helpers');
 var logger = require('../../lib/logger');
 var path = require('path');
 var usermanager = require('../../lib/usermanager');
+
+function ExportPermissionError(message, httpCode) {
+  this.message = message || "Permission denied";
+  this.http_code = httpCode || 401;
+}
 
 server.get('/export/:tenant/:course', function (req, res, next) {
   var course = req.params.course;
   var tenant = req.params.tenant;
   var currentUser = usermanager.getCurrentUser();
 
-  if (currentUser && (currentUser.tenant._id == tenant)) {
-    var outputplugin = app.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), function (error, plugin){
-      if (error) {
-        logger.log('error', error);
-        res.statusCode = 500;
-        return res.json({
-          success: false,
-          message: error.message
-        });
-      } else {
-        plugin.export(course, req, res, function (error, result) {
-          if (error) {
-            logger.log('error', 'Unable to export:', error);
-            res.statusCode = 500;
-            return res.json({
-              success: false,
-              message: error.message
-            });
-          }
+  console.log(JSON.stringify(currentUser));
 
-          result.success = true;
-          result.message = app.polyglot.t('app.exportcoursesuccess');
-          res.statusCode = 200;
-          return res.json(result);
-        });
-      }
-    });
-  } else {
-    res.statusCode = 401;
-    return res.json({
-      success: false,
-      message: app.polyglot.t('app.errorusernoaccess')
-    });
-  }
+  helpers.hasCoursePermission('', currentUser._id, tenant, {_id: course}, function(err, hasPermission) {
+    if (err || !hasPermission) {
+      return next(err || new ExportPermissionError());
+    }
+
+    if (currentUser && (currentUser.tenant._id == tenant)) {
+      var outputplugin = app.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), function (error, plugin){
+        if (error) {
+          logger.log('error', error);
+          res.statusCode = 500;
+          return res.json({
+            success: false,
+            message: error.message
+          });
+        } else {
+          plugin.export(course, req, res, function (error, result) {
+            if (error) {
+              logger.log('error', 'Unable to export:', error);
+              res.statusCode = 500;
+              return res.json({
+                success: false,
+                message: error.message
+              });
+            }
+
+            result.success = true;
+            result.message = app.polyglot.t('app.exportcoursesuccess');
+            res.statusCode = 200;
+            return res.json(result);
+          });
+        }
+      });
+    } else {
+      res.statusCode = 401;
+      return res.json({
+        success: false,
+        message: app.polyglot.t('app.errorusernoaccess')
+      });
+    }
+  });
 });
 // TODO probably needs to be moved to download route
 server.get('/export/:tenant/:course/:title/download.zip', function (req, res, next) {

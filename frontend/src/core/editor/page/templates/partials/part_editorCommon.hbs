@@ -61,8 +61,9 @@
             </span>
         </button>
     </div>
+    {{#ifHasPermissions ""}}
     <div class="sidebar-row">
-       <button class="editor-common-sidebar-export">
+        <button class="editor-common-sidebar-export">
             <span class="editor-common-sidebar-export-inner">
                 <i class="fa fa-code"></i>{{ t 'app.export'}}
             </span>
@@ -71,6 +72,7 @@
             </span>
         </button>
     </div>
+    {{/ifHasPermissions}}
     <div class="sidebar-row">
         <button class="editor-common-sidebar-close">
             <span class="editor-common-sidebar-close-inner">

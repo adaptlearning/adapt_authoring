@@ -5,12 +5,18 @@ var Constants = require('../../lib/outputmanager').Constants;
 var helpers = require('../../lib/helpers');
 var logger = require('../../lib/logger');
 var path = require('path');
+var permissions = require('../../lib/permissions');
 var usermanager = require('../../lib/usermanager');
+var util = require('util');
 
 function ExportPermissionError(message, httpCode) {
   this.message = message || "Permission denied";
   this.http_code = httpCode || 401;
 }
+util.inherits(ExportPermissionError, Error);
+
+// stop any auto permissions checks
+permissions.ignoreRoute(/^\/export\/?.*$/);
 
 server.get('/export/:tenant/:course', function (req, res, next) {
   var course = req.params.course;

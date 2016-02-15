@@ -405,8 +405,7 @@ define(function(require) {
         Origin.editor.currentContentObjectId = (route3) ? route3 : undefined;
 
         // Update page title
-        Origin.trigger('location:title:update', {title: Origin.editor.data.course.attributes.displayTitle});
-        //Origin.trigger('location:title:update', {subTitle: 'hi'});
+        Origin.trigger('location:title:update', {title: Origin.editor.data.course.attributes.displayTitle, subTitle: 'Projects'});
 
         Origin.editor.scrollTo = 0;
         // Create Editor menu view

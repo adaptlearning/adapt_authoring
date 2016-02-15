@@ -1,6 +1,7 @@
+@import '../../../../less/variables.less';
 .editor-menu-layer {
   height: 100%;
-  width: 350px;
+  width: 300px;
   float:left;
   padding-bottom:30px;
   overflow:hidden;
@@ -21,10 +22,11 @@
 
 .editor-menu-layer-controls {
   position:relative;
+  padding-top:30px;
   .editor-menu-layer-actions.paste-zone {
     width: 100%;
     position: absolute;
-    top: -37px;
+    top: -70px;
     z-index: 99;
     margin:0px;
     padding:0;
@@ -36,20 +38,35 @@
   }
 }
 
+//UI refresh
+
 .editor-menu-layer-button {
   float:left;
-  width:50%;
-  padding:8px;
+  width:35%;
+  height: 60px;
+  margin-left:10%;
   font-size:13px;
-  border-radius:0px;
-  border-bottom:1px solid #454545;
-  border-right:2px solid #454545;
-  &:first-child {
-    border-right:1px solid #454545;
-  }
-  & i {
-    margin-right:8px;
-  }
+  border-radius:2px;
+  border:3px;
+  // border-bottom:1px solid #454545;
+  // border-right:2px solid #454545;
+  // &:first-child {
+  //   border-right:1px solid #454545;
+  // }
+  // & i {
+  //   margin-right:8px;
+  // }
 }
 
+.editor-menu-layer-add-page {
+  background-color:@light-green;
+  color:white;
+  padding:12px;
+}
 
+.editor-menu-layer-add-menu {
+  border-color:@light-green;
+  border-style: solid;
+  color:@light-green;
+  padding:9px;
+} 

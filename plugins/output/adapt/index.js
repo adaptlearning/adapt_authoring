@@ -306,9 +306,11 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
 
         fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
           filter: function(filePath) {
-            var isIncluded = filePath.search(includesRE) > -1;
-            var isExcluded = filePath.search(excludesRE) > -1;
-            var isPlugin = filePath.search(pluginsRE) > -1;
+            var posixFilePath = filePath.replace(/\\/g, '/');
+
+            var isIncluded = posixFilePath.search(includesRE) > -1;
+            var isExcluded = posixFilePath.search(excludesRE) > -1;
+            var isPlugin = posixFilePath.search(pluginsRE) > -1;
 
             // exclude any matches to excludesRE
             if(isExcluded) return false;

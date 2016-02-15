@@ -1,19 +1,24 @@
+@import '../../../../less/variables.less';
 a.open-context-contentObject {
-    color: white;
+    color:white;
+    float:right;
+    padding-top:25px;
 }
 
 .editor-menu-item {
-    position: relative;
-    display: block;
+    position:relative;
+    display:block;
     margin: 20px;
+    background:white;
+    color:@light-blue;
 
     &-inner {
         overflow:hidden;
         border-radius:3px;
         position: relative;
-        background-color: #fff;
+        background-color: transparent;
         cursor: pointer;
-        padding: 40px 20px 20px;
+        padding: 40px 30px 20px;
         transition:background-color 0.3s;
         &:hover {
             .editor-menu-item-settings {
@@ -25,12 +30,14 @@ a.open-context-contentObject {
 
     &-title {
         text-align:center;
+        float:left;
+        padding-left:30px;
     }
 
     &-icon {
         text-align:center;
         float: left;
-        font-size:24px;
+        font-size:20px;
         margin-bottom:10px;
         &.page {
         }

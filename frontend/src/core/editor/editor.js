@@ -295,6 +295,8 @@ define(function(require) {
       return;
     }
 
+    var pageTitle = Origin.data
+
     switch (route2) {
       case 'settings':
         var project = new ProjectModel({_id: route1});
@@ -403,7 +405,8 @@ define(function(require) {
         Origin.editor.currentContentObjectId = (route3) ? route3 : undefined;
 
         // Update page title
-        Origin.trigger('location:title:update', {title: 'Menu editor'});
+        Origin.trigger('location:title:update', {title: Origin.editor.data.course.attributes.displayTitle});
+        //Origin.trigger('location:title:update', {subTitle: 'hi'});
 
         Origin.editor.scrollTo = 0;
         // Create Editor menu view

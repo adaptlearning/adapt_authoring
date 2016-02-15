@@ -23,7 +23,7 @@
 }
 
 .editor-menu-item {
-    background-color: #fff;
+    border-radius:5px;
     transition:box-shadow 0.3s;
     box-shadow: 0px 0px 3pt 2pt transparent;
     &:hover {
@@ -43,13 +43,13 @@
         
         .editor-menu-item-inner {
             color:#fff;
-            background-color: @selected-color;
+            background-color: @light-blue;
             transition:background-color 0s;
-            border:1px solid @selected-color;
+            border:1px solid @light-blue;
         }
         
         &.content-type-menu .editor-menu-item-pin {
-            border-left: 10px solid @selected-color;
+            border-left: 10px solid @light-blue;
         }
 
         .editor-menu-item-settings {

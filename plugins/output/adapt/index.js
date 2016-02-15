@@ -69,7 +69,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 
           // Replace the theme in outputJson with the applied theme name.
           themeName = appliedThemeName;
-          
+
           outputJson['config'][0]._theme = themeName;
 
           callback(null);
@@ -185,10 +185,10 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
                         if (stdout.length != 0) {
                           logger.log('info', 'stdout: ' + stdout);
                           resultObject.success = true;
-                          
+
                           // Indicate that the course has built successfully
                           app.emit('previewCreated', tenantId, courseId, outputFolder);
-                          
+
                           return callback(null, 'Framework built OK');
                         }
 
@@ -218,10 +218,10 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
           output.on('close', function() {
             resultObject.filename = filename;
             resultObject.zipName = zipName;
-            
+
             // Indicate that the zip file is ready for download
             app.emit('zipCreated', tenantId, courseId, filename, zipName);
-            
+
             callback();
           });
           archive.on('error', function(err) {

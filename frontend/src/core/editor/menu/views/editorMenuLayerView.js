@@ -16,7 +16,10 @@ define(function(require) {
         'click button.editor-menu-layer-add-page' : 'addPage',
         'click button.editor-menu-layer-add-menu' : 'addMenu',
         'click .editor-menu-layer-paste'          : 'pasteMenuItem',
-        'click .editor-menu-layer-paste-cancel'   : 'cancelPasteMenuItem'
+        'click .editor-menu-layer-paste-cancel'   : 'cancelPasteMenuItem',
+        'click button.location-button-primary'    : 'previewProject',
+        'click button.location-button-secondary'  : 'downloadProject'
+
       },
 
       preRender: function(options) {
@@ -192,7 +195,15 @@ define(function(require) {
           _courseId: Origin.editor.data.course.get('_id')
         });
         Origin.trigger('editorView:pasteCancel', target);
-      }
+      },
+
+      downloadProject: function() {
+        Origin.trigger('editorCommon:download');
+      },
+
+      previewProject: function() {
+        Origin.trigger('editorCommon:preview');
+      } 
 
   	}, {
   		template: 'editorMenuLayer'

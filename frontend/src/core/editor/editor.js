@@ -405,7 +405,7 @@ define(function(require) {
         Origin.editor.currentContentObjectId = (route3) ? route3 : undefined;
 
         // Update page title
-        Origin.trigger('location:title:update', {title: Origin.editor.data.course.attributes.displayTitle, subTitle: 'Projects'});
+        Origin.trigger('location:title:update', {title: Origin.editor.data.course.attributes.displayTitle, subTitle: 'Projects', secondary: 'Publish', primary: 'Preview'});
 
         Origin.editor.scrollTo = 0;
         // Create Editor menu view
@@ -439,7 +439,7 @@ define(function(require) {
           return;
         }
         // Update page title
-        Origin.trigger('location:title:update', {title: 'Page editor'});
+        Origin.trigger('location:title:update', {title: 'Page editor', secondary: 'Secondary', primary: 'Primary'});
 
         // Create Editor page view
         // Origin.editor.scrollTo = 0;

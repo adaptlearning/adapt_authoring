@@ -1,10 +1,14 @@
 <div class="location-buttons">
+	{{#if secondary}}
 	<button class="location-button-secondary">
-		Preview
+		{{{secondary}}}
 	</button>
+	{{/if}}
+	{{#if primary}}
 	<button class="location-button-primary">
-		Publish
+		{{{primary}}}
 	</button>
+	{{/if}}
 </div>
 <div class="location-title-inner">
 	<div class="location-title-directory">

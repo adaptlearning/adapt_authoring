@@ -12,6 +12,7 @@ var origin = require('../../../'),
     util = require('util'),
     path = require('path'),
     fs = require('fs'),
+    fse = require('fs-extra'),
     async = require('async'),
     archiver = require('archiver'),
     _ = require('underscore'),
@@ -68,7 +69,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 
           // Replace the theme in outputJson with the applied theme name.
           themeName = appliedThemeName;
-          
+
           outputJson['config'][0]._theme = themeName;
 
           callback(null);
@@ -184,10 +185,10 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
                         if (stdout.length != 0) {
                           logger.log('info', 'stdout: ' + stdout);
                           resultObject.success = true;
-                          
+
                           // Indicate that the course has built successfully
                           app.emit('previewCreated', tenantId, courseId, outputFolder);
-                          
+
                           return callback(null, 'Framework built OK');
                         }
 
@@ -217,10 +218,10 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
           output.on('close', function() {
             resultObject.filename = filename;
             resultObject.zipName = zipName;
-            
+
             // Indicate that the zip file is ready for download
             app.emit('zipCreated', tenantId, courseId, filename, zipName);
-            
+
             callback();
           });
           archive.on('error', function(err) {
@@ -251,6 +252,106 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
     });
 
 };
+
+AdaptOutput.prototype.export = function (courseId, request, response, next) {
+  var self = this;
+  var tenantId = usermanager.getCurrentUser().tenant._id;
+  var userId = usermanager.getCurrentUser()._id;
+  var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
+
+  var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+  var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
+
+  // set in getCourseName
+  var exportName;
+  var exportDir;
+
+  async.waterfall([
+    function publishCourse(callback) {
+      self.publish(courseId, true, request, response, callback);
+    },
+    function getCourseName(results, callback) {
+      database.getDatabase(function (error, db) {
+        if (error) {
+          return callback(err);
+        }
+
+        db.retrieve('course', { _id: courseId }, { jsonOnly: true }, function (error, results) {
+          if (error) {
+            return callback(error);
+          }
+          if(!results || results.length > 1) {
+            return callback(new Error('Unexpected results returned for course ' + courseId + ' (' + results.length + ')', self));
+          }
+
+          exportName = self.slugify(results[0].title) + '-export-' + timestamp;
+          exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, exportName);
+          callback();
+        });
+      });
+    },
+    function copyFiles(callback) {
+      self.generateIncludesForCourse(courseId, function(error, includes) {
+        if(error) {
+          return callback(error);
+        }
+
+        for(var i = 0, count = includes.length; i < count; i++)
+          includes[i] = '\/' + includes[i] + '(\/|$)';
+
+        // regular expressions
+        var includesRE = new RegExp(includes.join('|'));
+        var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
+        var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
+
+        fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
+          filter: function(filePath) {
+            var posixFilePath = filePath.replace(/\\/g, '/');
+
+            var isIncluded = posixFilePath.search(includesRE) > -1;
+            var isExcluded = posixFilePath.search(excludesRE) > -1;
+            var isPlugin = posixFilePath.search(pluginsRE) > -1;
+
+            // exclude any matches to excludesRE
+            if(isExcluded) return false;
+            // exclude any plugins not in includes
+            else if(isPlugin) return isIncluded;
+            // include everything else
+            else return true;
+          }
+        }, function done(error) {
+          if (error) {
+            return callback(error);
+          }
+          var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
+          var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
+          fse.ensureDir(dest, function (error) {
+            if(error) {
+              return callback(error);
+            }
+            fse.copy(source, dest, callback);
+          });
+        });
+      });
+    },
+    function zipFiles(callback) {
+      var archive = archiver('zip');
+      var output = fs.createWriteStream(exportDir +  '.zip');
+
+      archive.on('error', callback);
+      output.on('close', callback);
+      archive.pipe(output);
+      archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
+    },
+    function cleanUp(callback) {
+      fse.remove(exportDir, function (error) {
+        callback(error, { zipName: exportName + '.zip' });
+      });
+    }
+  ],
+  next);
+};
+
 /**
  * Module exports
  *

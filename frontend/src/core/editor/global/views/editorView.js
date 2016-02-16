@@ -30,6 +30,8 @@ define(function(require){
       autoRender: false
     },
 
+    exporting: false,
+
     tagName: "div",
 
     className: "editor-view",
@@ -56,6 +58,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
       this.listenTo(Origin, 'editorCommon:download', this.downloadProject);
       this.listenTo(Origin, 'editorCommon:preview', this.previewProject);
+      this.listenTo(Origin, 'editorCommon:export', this.exportProject);
 
 
       this.render();
@@ -107,6 +110,56 @@ define(function(require){
 
       } else {
         return false;
+      }
+    },
+
+    exportProject: function(event) {
+      event && event.preventDefault();
+
+      // aleady processing, don't try again
+      if(this.exporting) return;
+
+      var courseId = Origin.editor.data.course.get('_id');
+      var tenantId = Origin.sessionModel.get('tenantId');
+
+      this.showExportAnimation();
+      this.exporting = true;
+
+      var self = this;
+      $.ajax({
+         url: '/export/' + tenantId + '/' + courseId,
+         success: function(data, textStatus, jqXHR) {
+           self.showExportAnimation(false);
+           self.exporting = false;
+
+           // get the zip
+           var form = document.createElement("form");
+           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
+           form.submit();
+         },
+         error: function(jqXHR, textStatus, errorThrown) {
+           var messageText = errorThrown;
+           if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) messageText += ':<br/>' + jqXHR.responseJSON.message;
+
+           self.showExportAnimation(false);
+           self.exporting = false;
+
+           Origin.Notify.alert({
+             type: 'error',
+             title: window.polyglot.t('app.exporterrortitle'),
+             text: messageText
+           });
+         }
+      });
+    },
+
+    showExportAnimation: function(show) {
+      if(show !== false) {
+        $('.editor-common-sidebar-export-inner').addClass('display-none');
+        $('.editor-common-sidebar-exporting').removeClass('display-none');
+      } else {
+        $('.editor-common-sidebar-export-inner').removeClass('display-none');
+        $('.editor-common-sidebar-exporting').addClass('display-none');
       }
     },
 
@@ -239,10 +292,10 @@ define(function(require){
         }
       });
     },
-    
+
     copyIdToClipboard: function(model) {
       var id = model.get('_id');
-      
+
       if (helpers.copyStringToClipboard(id)) {
         Origin.Notify.alert({
           type: 'success',

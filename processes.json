@@ -6,7 +6,6 @@
   "ignore_watch" : ["temp", "data", "node_modules"],
   "watch_options": {
     "followSymLinks": false
-  },
-  "node_args"    : "--debug=5858"
+  }
 }]
 }

@@ -29,6 +29,7 @@
           
                 </div>
 
+                {{#ifValueEquals auth "local"}}
                 <div class="change-password-section display-none">
                   <div class="form-group">
                       <label for="password">New password
@@ -52,7 +53,7 @@
                 <div class="form-group">
                   <a href="#" class="btn btn-primary change-password">{{t 'app.changepassword'}}</a>
                 </div>
-
+                {{/ifValueEquals}}
             </form>
         </div>
     </div>

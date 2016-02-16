@@ -100,7 +100,7 @@ define(function(require){
 
             this.search = _.extend(this.search, {
                 tags: {
-                    $in: this.tags
+                    $all: this.tags
                 }
             }, {
                 assetType: {

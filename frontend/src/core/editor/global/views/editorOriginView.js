@@ -70,6 +70,14 @@ define(function(require){
 
       Origin.trigger('editorView:copy', this.model);
     },
+    
+    onCopyID: function(event) {
+      if (event) {
+        event.preventDefault();
+      }
+      
+      Origin.trigger('editorView:copyID', this.model);
+    },
 
     onCut: function(event) {
       if (event) {

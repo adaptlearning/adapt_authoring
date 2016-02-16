@@ -12,7 +12,12 @@ var prompt = require('prompt'),
     helpers = require('./lib/helpers'),
     localAuth = require('./plugins/auth/local'),
     logger = require('./lib/logger'),
-    optimist = require('optimist');
+    optimist = require('optimist'),
+    util = require('util');
+
+// set overrides from command line arguments
+prompt.override = optimist.argv;
+prompt.start();
 
 prompt.message = '> ';
 prompt.delimiter = '';
@@ -23,6 +28,14 @@ var auths = auth.getAvailableAuthPluginsSync();
 var app = builder();
 var masterTenant = false;
 var superUser = false;
+
+var isVagrant = function () {
+  if (process.argv.length > 2) {
+        return true;
+  }
+
+  return false;
+};
 
 // config items
 var configItems = [
@@ -213,18 +226,22 @@ var steps = [
       });
      });
   },
-  // configure environment
-  function configureEnvironment (next) {
-    console.log('You will now be prompted to set configuration items. Just press ENTER to accept the default value (in brackets).');
-    prompt.get(configItems, function (err, results) {
-      if (err) {
-        console.log('ERROR: ', err);
-        return exitInstall(1, 'Could not save configuration items.');
-      }
 
-      saveConfig(results, next);
-    });
-  },
+   function configureEnvironment(next) {
+     if (isVagrant()) {
+       console.log('Now setting configuration items.');
+     } else {
+       console.log('Now set configuration items. Just press ENTER to accept the default value (in brackets).');
+     }
+     prompt.get(configItems, function (err, results) {
+       if (err) {
+         console.log('ERROR: ', err);
+         return exitInstall(1, 'Could not save configuration items.');
+       }
+
+       saveConfig(results, next);
+     });
+   },
   // configure tenant
   function configureTenant (next) {
     console.log("Checking configuration, please wait a moment ... ");
@@ -234,7 +251,11 @@ var steps = [
     // run the app
     app.run();
     app.on('serverStarted', function () {
-      console.log("You will now be prompted to enter details for your tenant.");
+      if (isVagrant()) {
+        console.log('Creating your tenant. Please wait ...');
+      } else {
+        console.log('Now create your tenant. Just press ENTER to accept the default value (in brackets). Please wait ...');
+      }
       prompt.get(tenantConfig, function (err, result) {
         if (err) {
           console.log('ERROR: ', err);
@@ -252,7 +273,7 @@ var steps = [
 
           // create the tenant according to the user provided details
           var _createTenant = function (cb) {
-            console.log("Creating file system for " + tenantName + ", please wait ...");
+            console.log("Creating file system for tenant: " + tenantName + ", please wait ...");
             app.tenantmanager.createTenant({
                 name: tenantName,
                 displayName: tenantDisplayName,
@@ -272,7 +293,7 @@ var steps = [
                 }
 
                 masterTenant = tenant;
-                console.log("Tenant " + tenant.name + " was created.");
+                console.log("Tenant " + tenant.name + " was created. Now saving configuration, please wait ...");
                 // save master tenant name to config
                 configuration.setConfig('masterTenantName', tenant.name);
                 configuration.setConfig('masterTenantID', tenant._id);
@@ -351,7 +372,12 @@ var steps = [
   },
   // configure the super awesome user
   function createSuperUser (next) {
-    console.log("Create the super user account. This account can be used to manage everything on your Adapt Builder instance.");
+    if (isVagrant()) {
+      console.log("Creating the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
+    } else {
+      console.log("Create the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
+    }
+
     prompt.get(userConfig, function (err, result) {
       if (err) {
         console.log('ERROR: ', err);
@@ -395,7 +421,7 @@ var steps = [
   },
   // run grunt build
   function gruntBuild (next) {
-    console.log('Compiling the Adapt Builder web application, please wait a moment ... ');
+    console.log('Compiling the ' + app.polyglot.t('app.productname') + ' web application, please wait a moment ... ');
     var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function (err) {
       if (err) {
         console.log('ERROR: ', err);
@@ -404,7 +430,7 @@ var steps = [
         return next();
       }
 
-      console.log('The Adapt Builder web application was compiled and is now ready to use.');
+      console.log('The ' + app.polyglot.t('app.productname') + ' web application was compiled and is now ready to use.');
       return next();
     });
 
@@ -414,7 +440,12 @@ var steps = [
   },
   // all done
   function finalize (next) {
-    console.log("Installation complete.\nRun the command 'node server' (or 'foreman start' if using heroku toolbelt) to start your instance.");
+    if (isVagrant()) {
+      console.log("Installation complete.\nTo restart your instance run the command 'pm2 restart all'");
+    } else {
+      console.log("Installation complete.\n To restart your instance run the command 'node server' (or 'foreman start' if using heroku toolbelt).");
+    }
+
     return next();
   }
 ];
@@ -425,7 +456,12 @@ prompt.override = optimist.argv;
 prompt.start();
 
 // Prompt the user to begin the install
-console.log('This script will install the Adapt Builder. Would you like to continue?');
+if (isVagrant()) {
+  console.log('This script will install the application. Please wait ...');
+} else {
+  console.log('This script will install the application. Would you like to continue?');
+}
+
 prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
   if (!/(Y|y)[es]*$/.test(result['install'])) {
     return exitInstall();
@@ -538,4 +574,3 @@ function exitInstall (code, msg) {
 
   process.exit(code);
 }
-

@@ -32,7 +32,9 @@ require.config({
       editorGlobal: 'core/editor/global',
       editorExtensions: 'core/editor/extensions',
       tags: 'core/libraries/jquery.tagsinput.min',
-      pikaday: 'core/libraries/pikaday/js/pikaday'
+      ace: 'core/libraries/ace',
+      pikaday: 'core/libraries/pikaday/js/pikaday',
+      moment: 'core/libraries/moment.min'
     },
     shim: {
       jquery: [
@@ -64,6 +66,9 @@ require.config({
       jsoneditor: {
         deps: ['jquery'],
         exports: 'JsonEditor'
+      },
+      moment: {
+        exports: 'moment'
       },
       'mediaelement': {
         deps: ['jquery'],
@@ -102,6 +107,9 @@ require.config({
           'jquery'
         ],
         exports: 'imageready'
+      },
+      ace: {
+        exports: 'ace/ace'
       },
       tags: {
         deps: ['jquery'],

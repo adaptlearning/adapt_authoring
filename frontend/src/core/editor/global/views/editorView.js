@@ -9,6 +9,7 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
+  var helpers = require('coreJS/app/helpers');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorMenuView = require('editorMenu/views/editorMenuView');
   var EditorPageView = require('editorPage/views/editorPageView');
@@ -29,6 +30,8 @@ define(function(require){
       autoRender: false
     },
 
+    exporting: false,
+
     tagName: "div",
 
     className: "editor-view",
@@ -45,15 +48,17 @@ define(function(require){
       Origin.editor.pasteParentModel = false;
       Origin.editor.isPreviewPending = false;
       this.currentCourseId = Origin.editor.data.course.get('_id');
-
+      this.currentCourse = Origin.editor.data.course;
       this.currentPageId = options.currentPageId;
 
       this.listenTo(Origin, 'editorView:refreshView', this.setupEditor);
       this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
+      this.listenTo(Origin, 'editorView:copyID', this.copyIdToClipboard);
       this.listenTo(Origin, 'editorView:cut', this.cutContent);
       this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
-      this.listenTo(Origin, 'editorCommon:publish', this.publishProject);
+      this.listenTo(Origin, 'editorCommon:download', this.downloadProject);
       this.listenTo(Origin, 'editorCommon:preview', this.previewProject);
+      this.listenTo(Origin, 'editorCommon:export', this.exportProject);
 
 
       this.render();
@@ -77,25 +82,24 @@ define(function(require){
       this.renderCurrentEditorView();
     },
 
-    publishProject: function(event) {
+    downloadProject: function(event) {
       event && event.preventDefault();
-
-      var canPublish = this.validateCourseContent();
+      var canPublish = helpers.validateCourseContent(this.currentCourse);
 
       if (canPublish && !Origin.editor.isPublishPending) {
-        $('.editor-common-sidebar-publishing-progress').animate({ width: '100%' }, 30000);
-        $('.editor-common-sidebar-publish-inner').addClass('display-none');
-        $('.editor-common-sidebar-publishing').removeClass('display-none');
+        $('.editor-common-sidebar-downloading-progress').animate({ width: '100%' }, 30000);
+        $('.editor-common-sidebar-download-inner').addClass('display-none');
+        $('.editor-common-sidebar-downloading').removeClass('display-none');
         //return;
         var courseId = Origin.editor.data.course.get('_id');
         var tenantId = Origin.sessionModel.get('tenantId');
 
         $.get('/download/' + tenantId + '/' + courseId, function(data) {
 
-          $('.editor-common-sidebar-publishing-progress').css('width', 0).stop();;
+          $('.editor-common-sidebar-downloading-progress').css('width', 0).stop();;
           Origin.editor.isPublishPending = false;
-          $('.editor-common-sidebar-publish-inner').removeClass('display-none');
-          $('.editor-common-sidebar-publishing').addClass('display-none');
+          $('.editor-common-sidebar-download-inner').removeClass('display-none');
+          $('.editor-common-sidebar-downloading').addClass('display-none');
 
           var $downloadForm = $('#downloadForm');
 
@@ -109,18 +113,68 @@ define(function(require){
       }
     },
 
+    exportProject: function(event) {
+      event && event.preventDefault();
+
+      // aleady processing, don't try again
+      if(this.exporting) return;
+
+      var courseId = Origin.editor.data.course.get('_id');
+      var tenantId = Origin.sessionModel.get('tenantId');
+
+      this.showExportAnimation();
+      this.exporting = true;
+
+      var self = this;
+      $.ajax({
+         url: '/export/' + tenantId + '/' + courseId,
+         success: function(data, textStatus, jqXHR) {
+           self.showExportAnimation(false);
+           self.exporting = false;
+
+           // get the zip
+           var form = document.createElement("form");
+           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
+           form.submit();
+         },
+         error: function(jqXHR, textStatus, errorThrown) {
+           var messageText = errorThrown;
+           if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) messageText += ':<br/>' + jqXHR.responseJSON.message;
+
+           self.showExportAnimation(false);
+           self.exporting = false;
+
+           Origin.Notify.alert({
+             type: 'error',
+             title: window.polyglot.t('app.exporterrortitle'),
+             text: messageText
+           });
+         }
+      });
+    },
+
+    showExportAnimation: function(show) {
+      if(show !== false) {
+        $('.editor-common-sidebar-export-inner').addClass('display-none');
+        $('.editor-common-sidebar-exporting').removeClass('display-none');
+      } else {
+        $('.editor-common-sidebar-export-inner').removeClass('display-none');
+        $('.editor-common-sidebar-exporting').addClass('display-none');
+      }
+    },
+
     launchCoursePreview: function() {
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
 
-      window.open('/preview/' + tenantId + '/' + courseId + '/main.html', 'preview');
+      window.open('/preview/' + tenantId + '/' + courseId + '/', 'preview');
     },
 
     previewProject: function(event) {
       event && event.preventDefault();
 
       var self = this;
-      var canPreview = self.validateCourseContent();
+      var canPreview = helpers.validateCourseContent(this.currentCourse);
 
       if (canPreview && !Origin.editor.isPreviewPending) {
         Origin.editor.isPreviewPending = true;
@@ -239,6 +293,22 @@ define(function(require){
       });
     },
 
+    copyIdToClipboard: function(model) {
+      var id = model.get('_id');
+
+      if (helpers.copyStringToClipboard(id)) {
+        Origin.Notify.alert({
+          type: 'success',
+          text: window.polyglot.t('app.copyidtoclipboardsuccess', {id: id})
+        });
+      } else {
+        Origin.Notify.alert({
+          type: 'warning',
+          text: window.polyglot.t('app.app.copyidtoclipboarderror', {id: id})
+        });
+      }
+    },
+
     pasteFromClipboard: function(parentId, sortOrder, layout) {
       $.ajax({
         method: 'post',
@@ -332,77 +402,9 @@ define(function(require){
       Origin.editor.data[collectionType].remove(view.model);
       view.model.destroy();
 
-      _.defer(function(){
+      _.defer(function () {
         Origin.trigger('editorView:cut' + type + ':' + view.model.get('_parentId'), view);
       });
-    },
-
-    validateCourseContent: function() {
-
-      // Store current course
-      var currentCourse = Origin.editor.data.course;
-
-      // Let's do a standard check for at least one child object
-      var containsAtLeastOneChild = true;
-
-      var alerts = [];
-
-      function interateOverChildren(model) {
-
-        // Return the function if no children - on components
-        if(!model._children) return;
-
-        var currentChildren = model.getChildren();
-
-        // Do validate across each item
-        if (currentChildren.length == 0) {
-
-          containsAtLeastOneChild = false;
-
-          alerts.push(
-            "There seems to be a "
-              + model.get('_type')
-              + " with the title - '"
-              + model.get('title')
-              + "' with no "
-              + model._children
-          );
-
-          return;
-        } else {
-
-          // Go over each child and call validation again
-          currentChildren.each(function(childModel) {
-            interateOverChildren(childModel);
-          });
-
-        }
-
-      }
-
-      interateOverChildren(currentCourse);
-
-      if(alerts.length > 0) {
-        var errorMessage = "";
-        for(var i = 0, len = alerts.length; i < len; i++) {
-          errorMessage += "<li>" + alerts[i] + "</li>";
-        }
-
-        Origin.Notify.alert({
-          type: 'error',
-          title: window.polyglot.t('app.validationfailed'),
-          text: errorMessage,
-          callback: _.bind(this.validateCourseConfirm, this)
-        });
-      }
-
-      return containsAtLeastOneChild;
-    },
-
-    validateCourseConfirm: function(isConfirmed) {
-      if (isConfirmed) {
-        Origin.trigger('editor:courseValidation');
-      }
     }
 
   }, {

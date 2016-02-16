@@ -15,6 +15,7 @@ define(function(require){
 
     events: _.extend({
       'click a.component-delete'        : 'deleteComponentPrompt',
+      'click a.component-move'          : 'evaluateMove',
       'click a.open-context-component'  : 'openContextMenu',
       'dblclick'                        : 'loadComponentEdit'
     }, EditorOriginView.prototype.events),
@@ -27,9 +28,11 @@ define(function(require){
       if (!this.model.isNew()) {
         this.setupModelEvents();
       }
+      this.evaluateLayout();
 
       this.on('contextMenu:component:edit', this.loadComponentEdit);
       this.on('contextMenu:component:copy', this.onCopy);
+      this.on('contextMenu:component:copyID', this.onCopyID),
       this.on('contextMenu:component:cut', this.onCut);
       this.on('contextMenu:component:delete', this.deleteComponentPrompt);
     },
@@ -40,7 +43,6 @@ define(function(require){
 
     postRender: function () {
       this.setupDragDrop();
-
       _.defer(_.bind(function(){
         this.trigger('componentView:postRender');
         Origin.trigger('pageView:itemRendered');
@@ -120,6 +122,118 @@ define(function(require){
         },
         stop: function () {
           view.hideDropZones();
+        }
+      });
+    },
+
+    evaluateLayout: function() {
+      var movePositions = {
+        left: false,
+        right: false,
+        full: false
+      };
+
+      var siblings = this.model.getSiblings();
+      var showFull = !siblings.length;
+      var type = this.model.get('_layout');
+      switch (type) {
+        case 'left':
+          movePositions.right = true;
+          movePositions.full = showFull;
+          break;
+        case 'right':
+          movePositions.left = true;
+          movePositions.full = showFull;
+          break;
+        case 'full':
+          movePositions.left = true;
+          movePositions.right = true;
+          break
+      }
+
+      this.model.set('_movePositions', movePositions);
+
+    },
+
+    evaluateMove: function(event) {
+      event.preventDefault();
+      var left = $(event.currentTarget).hasClass('component-move-left');
+      var right = $(event.currentTarget).hasClass('component-move-right');
+      var newComponentLayout = (!left && !right) ? 'full' : (left ? 'left' : 'right');
+      var siblings = this.model.getSiblings();
+
+      if (siblings && siblings.length > 0) {
+        var siblingId = siblings.models[0].get('_id');
+      }
+
+      if (siblingId) {
+        this.moveSiblings(newComponentLayout, siblingId);
+      } else {
+        this.moveComponent(newComponentLayout);
+      }
+    },
+
+    moveComponent: function (layout) {
+      var componentId = this.model.get('_id');
+      var parentId = this.model.get('_parentId');
+      var layoutData = {
+        _layout: layout,
+        _parentId: parentId
+      };
+
+      $.ajax({
+        type: 'PUT',
+        url:'/api/content/component/' + componentId,
+        data: layoutData,
+        success: function(jqXHR, textStatus, errorThrown) {
+          var componentModel = Origin.editor.data.components.get(componentId);
+          componentModel.set(layoutData);
+
+          // Re-render the block
+          Origin.trigger('editorView:moveComponent:' + parentId);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: jqXHR.responseJSON.message
+          });
+        }
+      });
+    },
+
+    moveSiblings: function (layout, siblingId) {
+      var componentId = this.model.get('_id');
+      var parentId = this.model.get('_parentId');
+      var newSiblingLayout = (layout == 'left') ? 'right' : 'left';
+      var layoutData = {
+        newLayout: {
+          _layout: layout,
+          _parentId: parentId
+        },
+        siblingLayout: {
+          _layout: newSiblingLayout,
+          _parentId: parentId
+        }
+      };
+      $.ajax({
+        type: 'PUT',
+        url:'/api/content/component/switch/' + componentId +'/'+ siblingId,
+        data: layoutData,
+        success: function(jqXHR, textStatus, errorThrown) {
+          var componentModel = Origin.editor.data.components.get(componentId);
+          componentModel.set(layoutData.newLayout);
+
+          var siblingModel = Origin.editor.data.components.get(siblingId);
+          siblingModel.set(layoutData.siblingLayout);
+
+          // Re-render the block
+          Origin.trigger('editorView:moveComponent:' + parentId);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: jqXHR.responseJSON.message
+          });
         }
       });
     }

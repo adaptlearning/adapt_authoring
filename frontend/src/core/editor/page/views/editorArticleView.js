@@ -37,6 +37,7 @@ define(function(require){
       this.listenTo(this, {
         'contextMenu:article:edit': this.loadArticleEdit,
         'contextMenu:article:copy': this.onCopy,
+        'contextMenu:article:copyID': this.onCopyID,
         'contextMenu:article:cut': this.onCut,
         'contextMenu:article:delete': this.deleteArticlePrompt
       });
@@ -133,7 +134,7 @@ define(function(require){
 
       var newPageBlockModel = new EditorBlockModel({
         title: window.polyglot.t('app.placeholdernewblock'),
-        displayTitle: window.polyglot.t('app.placeholdernewblock'),
+        displayTitle: '',
         body: '',
         _parentId: self.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),

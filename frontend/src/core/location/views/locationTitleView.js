@@ -9,8 +9,8 @@ define(function(require) {
 		el: '.location-title',
 
 		events: {
-	      'click button.location-button-publish'	: 'downloadProject',
-	      'click button.location-button-preview'	: 'previewProject',
+	      'click button.location-button-primary'	: 'downloadProject',
+	      'click button.location-button-secondary'	: 'previewProject',
 	    },
 
 		initialize: function() {
@@ -39,12 +39,10 @@ define(function(require) {
 
 	    downloadProject: function() {
 	    	Origin.trigger('editorCommon:download');
-	    	console.log("publish");
 	    },
 
 	    previewProject: function() {
 	    	Origin.trigger('editorCommon:preview');
-	    	console.log("preview");
 	    }	
 
 	}, 

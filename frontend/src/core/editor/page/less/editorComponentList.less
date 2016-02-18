@@ -4,14 +4,16 @@
 	left:0px;
 	width:100%;
 	height:100%;
-	z-index:500;
+	z-index:1;
+	background-color:rgba(150,150,150,0.9);
 
 	&-sidebar {
-		float:right;
-		width:440px;
-		height:100%;
+		width:85%;	
+		height:79%;
+		margin: 150px 100px;
 		background-color:#fff;
 		box-shadow:0px 0px 4px 0px #454545;
+		z-index: 2;
 	}
 
 	&-sidebar-exit {
@@ -25,6 +27,9 @@
 
 	&-sidebar-list {
 		width: 100%;
+		overflow-y: auto;
+		overflow-x: hidden;
+		height: 400px;
 	}
 	
 	&-sidebar-title-inner {
@@ -66,12 +71,6 @@
 		}
 		
 	}
-
-	&-sidebar-list {
-		overflow-y: auto;
-		overflow-x: hidden;
-	}
-
 
 	&-sidebar-filter-half {
 		float:left;

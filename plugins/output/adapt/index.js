@@ -154,6 +154,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
             logger.log('info', '3.1. Ensuring framework build exists');
 
             var args = [];
+            var domain = configuration.getConfig('serverName');
             var outputFolder = path.join(Constants.Folders.AllCourses, tenantId, courseId);
 
             // Append the 'build' folder to later versions of the framework
@@ -164,6 +165,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
             args.push('--outputdir=' + outputFolder);
             args.push('--theme=' + themeName);
             args.push('--menu=' + menuName);
+            args.push('--domain=' + domain);
 
             logger.log('info', '3.2. Using theme: ' + themeName);
             logger.log('info', '3.3. Using menu: ' + menuName);

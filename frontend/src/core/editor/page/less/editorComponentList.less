@@ -1,3 +1,4 @@
+ @import '../../../../less/variables.less';
 .editor-component-list {
 	position:fixed;
 	top:0px;
@@ -16,20 +17,12 @@
 		z-index: 2;
 	}
 
-	&-sidebar-exit {
-		float: right;
-		padding: 5px;
-
-		&:hover {
-			cursor: pointer;
-		}
-	}
-
 	&-sidebar-list {
 		width: 100%;
 		overflow-y: auto;
 		overflow-x: hidden;
 		height: 400px;
+		padding-top: 10px;
 	}
 	
 	&-sidebar-title-inner {
@@ -114,45 +107,59 @@
 
 .editor-component-list-item {
 	position:relative;
-	width:100%;
+	width: 18%;
+	float: left;
+	margin: 0 0 20px 20px;
+	height: 200px;
 	padding:0;
 	overflow:hidden;
 	text-align:left;
-	border-bottom:1px solid #ccc;
+	border:1px solid #ccc;
+	border-radius: 2px;
 	transition: background-color 0.3s;
 	cursor: pointer;
+	color: #999;
 
 	&.restricted {
 		color: lightgray;
 	}
 
 	&.selected {
-		background-color:darken(#e9f0fa, 10%);
+		background-color:@light-green;
 		&:hover {
-			background-color:darken(#e9f0fa, 10%);
+			background-color:@light-green;
 		}
 		&.restricted {
 			color: black;
 		}
 	}
 
-	&-details {
-		padding-left: 54px;
-	}
-
 	&:hover {
-		background-color:#e9f0fa;
+		background-color:@light-green;
 	}
 
 	&-inner {
 		padding:10px;
 		min-height: 44px;
+		margin-left:10px;
+		.selected & {
+			color: #FFF;
+		}
 	}
 
 
 	&-display-name {
-		font-weight:600;
+		font-weight:500;
+		font-size: 18px;
+		color: #666;
+		.selected & {
+			color: #FFF;
+		}		
 	}
+
+	&-description {
+		font-size: 16px;
+	}	
 	
 	&-version, &-name {
 		margin-top:6px;
@@ -199,9 +206,8 @@
 	}
 
 	&-icon {
-		width: 45px;
-		height: 45px;
-		float: left;
-		background: lightblue;
+		width: 80px;
+		height: 60px;
+		background-image: url("../../../images/theme_bg.png");
 	}
 }

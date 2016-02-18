@@ -115,7 +115,7 @@ define(function(require) {
     },
 
     onScreenResize: function(windowWidth, windowHeight) {
-      this.$('.editor-component-list-sidebar-list').height(windowHeight - this.headerHeight - 200);
+      this.$('.editor-component-list-sidebar-list').height(windowHeight - this.headerHeight - 217);
     }
 
   },

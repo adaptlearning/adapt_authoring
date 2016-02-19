@@ -3,6 +3,40 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [0.1.5] - 2016-02-16
+This version aligns closely with the re-work on the Adapt Framework v2.0.7 release, with a focus on performance improvements around preview and downloading courses.
+
+IMPORTANT: If upgrading from a previous installation, first remove the `node_modules` folder and run
+```javascript 
+npm install --production
+```
+ to install the latest code dependencies, then run
+```javascript 
+node upgrade
+``` 
+ to get the latest authoring tool and framework changes.
+ 
+### Added
+- Support for v2.0.7 of the Adapt Framework
+- Optimised build process, i.e. only plugins used are bundled
+- Ability to copy the _id value of contentobjects, articles, blocks and components to clipboard
+- Ability to easily change component layouts without using drag and drop
+- Ability to export the source code of a particular course
+- Caching added to assets to improve performance
+
+### Changed
+- _isAvailableInEditor flag persisted when a new plugin is uploaded
+- Optimised performance of processing course assets in preview/download
+- Preview redirects to index.html rather than main.html
+- The count of failed logins is reset after a successful login
+- Turned off automatic population of Display Title for blocks
+
+### Fixed
+- Bug: Non-essential attributes removed from course.json
+- Bug: ACE JavaScript error when creating a new course
+- Bug: Hard 100kb limit on JSON payload
+- Bug: Corrected Project Details save issue
+
 ## [0.1.4] - 2015-11-25
 This version adds support for Node.js v4.2.2 LTS.  
 

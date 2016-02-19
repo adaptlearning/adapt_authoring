@@ -9,8 +9,10 @@ define(function(require) {
 		el: '.location-title',
 
 		events: {
-	      'click button.location-button-primary'	: 'downloadProject',
-	      'click button.location-button-secondary'	: 'previewProject',
+	      'click button.publish'	: 'downloadProject',
+	      'click button.preview'	: 'previewProject',
+	      'click button.save'		: 'saveComponent',
+	      'click button.cancel'		: 'cancelComponent'
 	    },
 
 		initialize: function() {
@@ -43,7 +45,15 @@ define(function(require) {
 
 	    previewProject: function() {
 	    	Origin.trigger('editorCommon:preview');
-	    }	
+	    },
+
+	    saveComponent: function() {
+	    	console.log('save');
+	    },
+
+	    cancelComponent: function() {
+	    	console.log('cancel');
+	    },
 
 	}, 
 	{

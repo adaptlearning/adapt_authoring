@@ -22,6 +22,9 @@ define(function(require){
 
     events: _.extend({
       'click a.block-delete'        : 'deleteBlockPrompt',
+      'click a.add-full'            : 'addFullComponent',      
+      'click a.add-left'            : 'addLeftComponent',
+      'click a.add-right'           : 'addRightComponent',
       'click a.add-component'       : 'showComponentList',
       'click a.open-context-block'  : 'openContextMenu',
       'dblclick'                    : 'loadBlockEdit'
@@ -242,9 +245,22 @@ define(function(require){
         + '/edit', {trigger: true});
     },
 
-    showComponentList: function(event) {
+    addFullComponent: function(event){
+      this.showComponentList('full',event);
+    },
+
+    addLeftComponent: function(event){
+      this.showComponentList('left',event);
+    },
+
+    addRightComponent: function(event){
+      this.showComponentList('right',event);
+    },        
+
+    showComponentList: function(layout,event) {
+      //position sets up if it will be full (1), left (2) or right (3)
       event.preventDefault();
-      // If adding a new component
+      // If adding a new components
       // get current layoutOptions
       var layoutOptions = this.model.get('layoutOptions');
 

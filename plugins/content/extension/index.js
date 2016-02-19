@@ -436,6 +436,12 @@ function toggleExtensions (courseId, action, extensions, cb) {
           if (err) {
             cb(err);
           } else {
+            // The results array should only ever contain one item now, but using a FOR loop just in case.
+            for (var i = 0; i < results.length; i++) {
+              // Trigger an event to indicate that the extension has been enabled/disabled.
+              app.emit(`extension:${action}`, results[0].name, user.tenant._id, courseId, user._id);
+            }
+            
             cb();
           }
         });  

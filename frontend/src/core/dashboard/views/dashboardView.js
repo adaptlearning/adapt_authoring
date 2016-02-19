@@ -217,7 +217,7 @@ define(function(require){
 
       this.search = _.extend(this.search, {
           tags: {
-              $in: this.tags
+              $all: this.tags
           }
       });
 
@@ -293,7 +293,7 @@ define(function(require){
 
     filterCollection: function() {
       this.search.tags = this.tags.length
-          ? { $in: this.tags }
+          ? { $all: this.tags }
           : null ;
       this.updateCollection(true);
     },

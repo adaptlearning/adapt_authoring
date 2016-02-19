@@ -61,6 +61,18 @@
             </span>
         </button>
     </div>
+    {{#ifHasPermissions "*/*:create,*/*:read,*/*:update,*/*:delete"}}
+    <div class="sidebar-row">
+        <button class="editor-common-sidebar-export">
+            <span class="editor-common-sidebar-export-inner">
+                <i class="fa fa-code"></i>{{ t 'app.export'}}
+            </span>
+            <span class="editor-common-sidebar-exporting display-none">
+                <i class="fa fa-circle-o-notch fa-spin"></i>{{ t 'app.exporting'}}
+            </span>
+        </button>
+    </div>
+    {{/ifHasPermissions}}
     <div class="sidebar-row">
         <button class="editor-common-sidebar-close">
             <span class="editor-common-sidebar-close-inner">

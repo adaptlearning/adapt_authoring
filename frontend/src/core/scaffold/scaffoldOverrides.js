@@ -89,9 +89,13 @@ define(function(require) {
 	}
 
 	Backbone.Form.editors.Text.prototype.setValue = function(value) {
-		if (!value && typeof this.schema.default !== 'undefined') {
-            value = this.schema.default;
-        }
+		var schemaDefault = this.schema.default;
+
+		if (!value && typeof schemaDefault !== 'undefined' &&
+			!(schemaDefault instanceof Array)) {
+			value = schemaDefault;
+		}
+
 		this.$el.val(value);
 	}
 

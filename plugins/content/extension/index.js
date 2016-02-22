@@ -182,16 +182,16 @@ function contentCreationHook (contentType, data, cb) {
         // Check that any globals for this component are set
         database.getDatabase(function (error, db) {
           if (error) {
-            callback(error);
+            return callback(error);
           }
           
-          db.retrieve('componenttype', {_id: contentData._componentType}, function(err, results) {
+          db.retrieve('componenttype', {component: contentData._component}, function(err, results) {
             if (err) {
-              callback(err);
+              return callback(err);
             }
             
             if (!results || results.length == 0) {
-              callback('Unexpected number of componentType records');
+              return callback('Unexpected number of componentType records');
             }
             
             var componentType = results[0]._doc;
@@ -202,7 +202,7 @@ function contentCreationHook (contentType, data, cb) {
                 // Add the globals to the course.
                 tenantDb.retrieve('course', {_id: contentData._courseId}, function(err, results) {
                   if (err) {
-                    callback(err);
+                    return callback(err);
                   }
                   
                   var key = '_' + componentType.component;
@@ -230,23 +230,23 @@ function contentCreationHook (contentType, data, cb) {
                     
                     tenantDb.update('course', {_id: contentData._courseId}, {_globals: courseGlobals}, function(err, doc) {
                       if (err) {
-                        callback(err);
+                        return callback(err);
                       } else {
-                        callback(null);
+                        return callback(null);
                       }
                     });
                   } else {
-                    callback(null);
+                    return callback(null);
                   }
                 });  
               });              
             } else {
-              callback(null)
+              return callback(null)
             }
           });
         }, configuration.getConfig('dbName'));
       } else {
-        callback(null);
+        return callback(null);
       }
     },
     function(callback) {
@@ -436,6 +436,12 @@ function toggleExtensions (courseId, action, extensions, cb) {
           if (err) {
             cb(err);
           } else {
+            // The results array should only ever contain one item now, but using a FOR loop just in case.
+            for (var i = 0; i < results.length; i++) {
+              // Trigger an event to indicate that the extension has been enabled/disabled.
+              app.emit(`extension:${action}`, results[0].name, user.tenant._id, courseId, user._id);
+            }
+            
             cb();
           }
         });  

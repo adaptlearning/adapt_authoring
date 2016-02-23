@@ -1,0 +1,67 @@
+.userManagement {
+    .fa {
+        padding-left: 5px;
+    }
+
+    .tb-row {
+        &.align-right {
+            text-align: right;
+        }
+    }
+
+    .col-row {
+        word-break: break-word;
+    }
+
+    .user-item {
+        &.me {
+            font-weight: bold;
+        }
+
+        &.inactive {
+            .tb-col-inner {
+                color: #BBBBBB;
+            }
+        }
+
+        li {
+            margin-left: 0;
+            list-style: none;
+        }
+
+        a {
+            cursor: pointer;
+            padding-left: 3px;
+        }
+
+        .fa-lock {
+            color: rgb(200,0,0);
+        }
+
+        button {
+            font-size: 90%;
+            padding: 5px 7px;
+            margin-bottom: 5px;
+            width: 100%;
+        }
+    }
+}
+
+.addUser {
+    .inner {
+        padding: 30px;
+
+        li {
+            margin-left: 0;
+            list-style: none;
+        }
+
+        .role, .tenant {
+            padding: 3px;
+
+            label {
+                font-weight: normal;
+            }
+        }
+    }
+}

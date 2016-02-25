@@ -299,7 +299,8 @@ LocalFileStorage.prototype.getFileStats = function (filePath, callback) {
  */
 LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destinationTenantName, callback) {
   // Verify the destination folder exists
-  var assetFolder = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'), destinationTenantName, asset.directory);
+  var dataRoot = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'));
+  var assetFolder = path.join(dataRoot, destinationTenantName, asset.directory);
 
   mkdirp(assetFolder, function(error) {
     if (error) {
@@ -308,8 +309,8 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
     }
 
     // Copy the asset
-    var sourceFile = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'), sourceTenantName, asset.path);
-    var destinationFile = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'), destinationTenantName, asset.path);
+    var sourceFile = path.join(dataRoot, sourceTenantName, asset.path);
+    var destinationFile = path.join(dataRoot, destinationTenantName, asset.path);
 
     ncp(sourceFile, destinationFile, {clobber:false}, function(error) {
       if (error) {
@@ -321,8 +322,8 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
       // Copy the thumbnail (if required)
       if (asset.thumbnailPath && asset.thumbnailPath !== 'false' && (asset.assetType == 'image' || asset.assetType == 'video')) {
 
-        var sourceThumbnailFile = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'), sourceTenantName, asset.thumbnailPath);
-        var destinationThumbnailFile = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'), destinationTenantName, asset.thumbnailPath);
+        var sourceThumbnailFile = path.join(dataRoot, sourceTenantName, asset.thumbnailPath);
+        var destinationThumbnailFile = path.join(dataRoot, destinationTenantName, asset.thumbnailPath);
 
         ncp(sourceThumbnailFile, destinationThumbnailFile, function(error) {
           if (error) {

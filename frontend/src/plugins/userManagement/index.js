@@ -40,10 +40,11 @@ define(function(require) {
 
   Origin.on('router:userManagement', function(location, subLocation, action) {
     // unauthorised users can turn back around
+    // TODO lang string
     if (!Origin.permissions.hasPermissions(data.featurePermissions)) {
       Origin.Notify.alert({
         type: 'warning',
-        title: "No tresspassing",
+        title: "No trespassing",
         text: "You aren't authorised to view this area."
       });
       Origin.router.navigate('#/dashboard');

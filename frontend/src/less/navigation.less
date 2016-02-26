@@ -1,8 +1,10 @@
 @import 'variables.less';
+@import 'fonts.less';
 
 .navigation {
-    background-color:@navigation-color;
-    border-bottom:1px solid #3e4a5f;
+    background:url("assets/login_bg.jpg");
+    // border-bottom:1px solid #3e4a5f;
+    font-family: @font-raleway-regular;
     a {
         transition:all 0.3s;
         &:hover {
@@ -12,17 +14,17 @@
 }
 
 .navigation-item {
-  color:@navigation-text-color;
+  color:#EEE;
 }
 
 .navigation-left {
     a {
-        border-right:1px solid #3e4a5f;
+        // border-right:1px solid #FFF;
     }
 }
 
 .navigation-right {
     a {
-        border-left:1px solid #3e4a5f;
+        // border-left:1px solid #FFF;
     }
 }

@@ -47,7 +47,8 @@
 
 .login-fields {
     width: 500px;
-    margin-top: 20px;
+    margin: 20px 0 20px 0;
+
 
     .login-input-username, .login-input-password{
         font-family: @font-raleway-regular;
@@ -74,25 +75,26 @@
 }
 
 .login-remember-me {
-    padding: 20px 20px 20px 140px;
-}
-
-.login-forgot-password {
-    width: 150%;
-    .transparent {
-        margin-left: 20px;
-        border: 1px solid #fff;
-        color: white;
-        background: transparent;
-    }
-
+    float: left;
+    padding-left: 40px;  
 }
 
 .remember-me-label {
-    padding-left: 5px;
+    padding-left: 10px;
     display: inline;
-
+   font-family: @font-raleway-extralight;
 }
+
+.login-forgot-password {
+    float: right;
+    padding-right: 70px;
+    a {
+        color: white;
+        text-decoration: none;         
+    }
+}
+
+
 
 .login-already-logged-in {
     text-align:center;

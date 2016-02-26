@@ -1,5 +1,8 @@
+@import '../../../less/fonts.less';
+
 .module-user {  
 	&.location-login {
+        font-family: @font-raleway-regular;
         color: #fff;    
         background-image:url(assets/login_bg.jpg);
         background-size: 100%;
@@ -13,14 +16,15 @@
 
 }
 
+
 .login-logo {
-    margin:120px 0 40px 140px;
+    margin:120px 0 80px 140px;
 }
 
 .login-title {
-    margin-left: 110px;
-    padding-bottom: 25px;
-    font-size: 48px;
+    margin-left: 145px;
+    padding-bottom: 15px;
+    font-size: 32px;
 }
 
 .error {
@@ -42,20 +46,24 @@
 }
 
 .login-fields {
+    width: 500px;
     margin-top: 20px;
+
     .login-input-username, .login-input-password{
+        font-family: @font-raleway-regular;
         font-size: 24px;
-        border-radius: 5px;
+        border-radius: 4px;
         border: 0;
         background-color: fade(#fff, 40%);
-        // background-color: rgba(255, 255,255, 0.4);
         color: white;
         margin-bottom: 5px;
         height: 40px;
     }
 
     .login-form-submit {
-        width: 85%;
+        font-family: @font-raleway-regular;
+        border-radius: 4px;
+        width: 421px;
         height: 65px;
     }
 
@@ -71,20 +79,19 @@
 
 .login-forgot-password {
     width: 150%;
-}
-
-.login-forgot-password-button {
-    margin-left: 20px;
-    .btn-transparent {
+    .transparent {
+        margin-left: 20px;
         border: 1px solid #fff;
         color: white;
         background: transparent;
     }
+
 }
 
 .remember-me-label {
-    padding-left: 30px;
+    padding-left: 5px;
     display: inline;
+
 }
 
 .login-already-logged-in {

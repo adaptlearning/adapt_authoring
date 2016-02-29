@@ -55,6 +55,9 @@ define(function(require) {
     ContextMenu.addItem('block', contextItems);
     ContextMenu.addItem('component', contextItems);
     ContextMenu.addItem('page', contextItems);
+
+    // Set the section/menu menu options
+    contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "copy"})), 1);		
     ContextMenu.addItem('menu', contextItems);
 
     var courseContextItems = [

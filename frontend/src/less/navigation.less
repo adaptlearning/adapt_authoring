@@ -4,7 +4,8 @@
 .navigation {
     background:url("assets/login_bg.jpg");
     border-bottom:1px solid rgba(255,255,255,0.2);
-    font-family: @font-raleway-regular;
+    font-family: @font-raleway-semibold;
+    font-size: 16px;
     a {
         transition:all 0.3s;
         &:hover {
@@ -13,11 +14,18 @@
     }
 }
 
+.navigation-inner {
+    padding-top: 15px;
+}
+
 .navigation-item {
-  color:#EEE;
+  color:@navigation-text-color;
 }
 
 .navigation-left {
+    .navigation-product-name {
+        font-weight: 300;
+    }
     a {
         // border-right:1px solid #FFF;
     }

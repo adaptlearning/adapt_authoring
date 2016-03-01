@@ -8,12 +8,8 @@
     <h3 class="login-already-logged-in">{{t 'app.alreadyloggedin'}}<a id="linkDash" href="/#dashboard">{{t 'app.dashboard'}}</a></h3>
     {{else}}
     <form class="login-form" autocomplete="off">
-            <h1 class="login-title">
-               {{t 'app.signin'}}
-            </h1>
-
+            <span class="login-title">{{t 'app.login'}}</span>
             <span id="loginErrorMessage" class="error" />
-
             <div class="login-fields">                                     
                 <input type="email" autocomplete="off" class="login-input-username" value="" id="login-input-username" placeholder="{{t 'app.usernameoremail'}}" tabindex="1" />
                 <input type="password" autocomplete="off" class="login-input-password" value="" id="login-input-password" placeholder="{{t 'app.password'}}" tabindex="2" />

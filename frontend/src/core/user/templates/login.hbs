@@ -8,31 +8,26 @@
     <h3 class="login-already-logged-in">{{t 'app.alreadyloggedin'}}<a id="linkDash" href="/#dashboard">{{t 'app.dashboard'}}</a></h3>
     {{else}}
     <form class="login-form" autocomplete="off">
-        <div class="login-returning-user">
-            <div class="login-returning-user-inner">
+            <h1 class="login-title">
+               {{t 'app.signin'}}
+            </h1>
 
-                <h1 class="login-title">
-                    Sign in
-                </h1>
+            <span id="loginErrorMessage" class="error" />
 
-                <span id="loginErrorMessage" class="error" />
+            <div class="login-fields">                                     
+                <input type="email" autocomplete="off" class="login-input-username" value="" id="login-input-username" placeholder="{{t 'app.usernameoremail'}}" tabindex="1" />
+                <input type="password" autocomplete="off" class="login-input-password" value="" id="login-input-password" placeholder="{{t 'app.password'}}" tabindex="2" />
+                <button type="submit" class="btn btn-primary login-form-submit" tabindex="3">{{t 'app.login'}}</button>
+            </div>                
 
-                <div class="login-fields">                                     
-                    <input type="email" class="login-input-username" id="login-input-username" placeholder="{{t 'app.usernameoremail'}}" tabindex="1" />
-                    <input type="password" class="login-input-password" id="login-input-password" placeholder="{{t 'app.password'}}" tabindex="2" />
-                    <button type="submit" class="btn btn-primary login-form-submit" tabindex="3">{{t 'app.login'}}</button>
-                </div>                
-
-                <div class="login-remember-me">
-                    <input id="remember-me" class="remember-me-checkbox" name="remember-me" type="checkbox"/> 
-                    <label for="remember-me" class="remember-me-label">{{t 'app.rememberme'}}</label>
-                </div>
-
-                <div class="login-forgot-password">
-                    <a class="transparent" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
-                </div>
+            <div class="login-remember-me">
+                <input id="remember-me" class="remember-me-checkbox" name="remember-me" type="checkbox"/> 
+                <label for="remember-me" class="remember-me-label">{{t 'app.rememberme'}}</label>
             </div>
-        </div>
+
+            <div class="login-forgot-password">
+                <a class="transparent" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
+            </div>
     </form>
 
     {{/if}}

@@ -142,7 +142,38 @@ button {
             border:1px solid @button-alert-hover-color;
         }
     }
+
+
+    // UI REFRESH    
+
+    &-invis {
+        background-color: transparent;
+        background: transparent;
+        color:@button-color;
+        border:2px solid @button-color;
+        border-radius: 3px;
+        &:hover, &:focus {
+            color: @button-invis-hover-text-color;
+            background-color: @button-invis-hover-color;
+            border:2px solid @button-invis-hover-color;
+        }        
+    }
+
+    &-invis-blue-bg {
+        background-color: transparent;
+        background: transparent;
+        color:@button-color;
+        border:2px solid @button-color;
+        border-radius: 3px;
+        &:hover, &:focus {
+            color: @button-invis-blue-bg-hover-text-color;
+            background-color: @button-invis-blue-bg-hover-color;
+            border:2px solid @button-invis-blue-bg-hover-color;
+        }        
+    }    
     
+    // end
+
     &-fixed-width {
       width: 150px;
     }

@@ -10,6 +10,14 @@
 				<i class="fa-plus fa"></i>{{t 'app.addnewproject'}}
 			</span>
 		</button>
+        {{!TODO make these permissions a bit more specific?}}
+        {{#ifHasPermissions "*/*:create,*/*:read,*/*:update,*/*:delete"}}
+		<button class="dashboard-sidebar-import-course">
+			<span class="dashboard-sidebar-import-course-inner">
+				<i class="fa-upload fa"></i>Import course
+			</span>
+		</button>
+        {{/ifHasPermissions}}
 	</div>
     <div class="sidebar-row">
         <button class="dashboard-sidebar-my-courses">

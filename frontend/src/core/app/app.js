@@ -9,6 +9,7 @@ require([
     'coreJS/user/user',
     'coreJS/project/project',
     'coreJS/dashboard/dashboard',
+    'coreJS/courseImport/courseImport',
     'coreJS/editor/editor',
     'coreJS/assetManagement/assetManagement',
     'coreJS/pluginManagement/pluginManagement',
@@ -45,6 +46,7 @@ require([
     User,
     Project,
     Dashboard,
+    CourseImport,
     Editor,
     AssetManagement,
     PluginManagement,
@@ -96,10 +98,10 @@ require([
                   Origin.initialize();
               });
           });
-          
+
         }
       });
     });
   });
-  
+
 });

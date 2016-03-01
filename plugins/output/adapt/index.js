@@ -24,7 +24,8 @@ var origin = require('../../../'),
     exec = require('child_process').exec,
     semver = require('semver'),
     version = require('../../../version'),
-    logger = require('../../../lib/logger');
+    logger = require('../../../lib/logger'),
+    IncomingForm = require('formidable').IncomingForm;
 
 function AdaptOutput() {
 }
@@ -156,7 +157,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
             var args = [];
             var outputFolder = path.join(Constants.Folders.AllCourses, tenantId, courseId);
 
-            // Append the 'build' folder to later versions of the framework
+            // HACK Append the 'build' folder to later versions of the framework
             if (semver.gte(semver.clean(version.adapt_framework), semver.clean('2.0.0'))) {
               outputFolder = path.join(outputFolder, Constants.Folders.Build);
             }
@@ -247,6 +248,8 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         return next(err);
       }
 
+      var config = require(path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build, Constants.Folders.Course, 'config.json'));
+      console.log('end-build:', JSON.stringify(config.build,null,' '));
 
       return next(null, resultObject);
     });
@@ -335,13 +338,15 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
       });
     },
     function zipFiles(callback) {
-      var archive = archiver('zip');
+      var archive = archiver('zip', { store: false });
       var output = fs.createWriteStream(exportDir +  '.zip');
 
       archive.on('error', callback);
       output.on('close', callback);
       archive.pipe(output);
       archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
+
+      var archive = archiver.create('zip', {}); // or archiver('zip', {});
     },
     function cleanUp(callback) {
       fse.remove(exportDir, function (error) {
@@ -350,6 +355,165 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
     }
   ],
   next);
+};
+
+function ImportError(message, httpStatus) {
+  this.message = message || "Course import failed";
+  this.httpStatus = httpStatus || 500;
+};
+util.inherits(ImportError, Error);
+
+/*
+* Wrapper for prepareImport and restoreData
+*/
+AdaptOutput.prototype.import = function (request, response, next) {
+  var form = IncomingForm();
+  form.parse(request, function (error, fields, files) {
+    if(error) return next(error);
+    if(!files.file || !files.file.path) return next(new ImportError('File upload failed.'));
+
+    var zipPath = files.file.path;
+    var outputDir = zipPath + '_unzipped';
+    prepareImport(zipPath, outputDir, function importPrepared(error) {
+      if(error) return next(error);
+      restoreData(outputDir, function dataRestored(error) {
+        if(error) return next(error);
+        response.status(200).json({ sucess: true, message: 'Successfully imported your course!' });
+      });
+    });
+  });
+};
+
+/*
+* 1. Unzips uploaded zip
+* 2. Checks compatibility of import with this AT instance
+* 3. Validates the import's metadata
+*/
+var prepareImport = function(zipPath, unzipPath, callback) {
+  var decompress = require('decompress');
+  new decompress()
+    .src(zipPath)
+    .dest(unzipPath)
+    .use(decompress.zip({ strip: 0 }))
+    .run(function onUnzipped(error, files) {
+      if(error) return callback(error);
+      async.parallel([
+        function checkVersionCompatibility(asyncCallback) {
+          try {
+            // TODO abstract this into framework helper
+            var packageJson = require(path.join(unzipPath, 'package.json'));
+          } catch(e) {
+            return asyncCallback(new ImportError('Invalid import archive, no package.json found.', 400));
+          }
+          try {
+            // TODO this data needs to be stored somewhere other than this file...
+            var versionJson = require('../../../version.json');
+          } catch(e) {
+            return asyncCallback(e);
+          }
+
+          var importVersion = semver.clean(packageJson.version);
+          var installedVersion = semver.clean(versionJson.adapt_framework);
+
+          // TODO remove hard-coded error
+          // TODO safe to assume installed framework has a valid version?
+          if(!importVersion) return asyncCallback(new ImportError('Invalid version number (' + packageJson.version + ') found in import package.json'), 400)
+
+          // check the import's within the major version number
+          if(semver.satisfies(importVersion,semver.major(installedVersion).toString())) {
+            asyncCallback();
+          } else {
+            // TODO remove hard-coded error
+            asyncCallback(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
+          }
+        },
+        function validateMetadata(asyncCallback) {
+          // TODO metadata
+          asyncCallback();
+        }
+      ], callback); // pass anything back? (e.g. metadata)
+    });
+};
+
+/*
+* 1. Loads and imports the course JSON
+* 2. Imports the assets
+* 3. Imports the plugins
+*/
+function restoreData(importDir, callback) {
+  var jsonData = {};
+  async.parallel([
+    function loadCourseJson(asyncCallback) {
+      var jsonRegEx = /\.json$/;
+      // looks for json files, and returns the data as an object
+      var getJSONRecursive = function(dir, doneRecursion) {
+        fs.readdir(dir, function onRead(error, files) {
+          if(error) return doneRecursion(error);
+          async.each(files, function iterator(file, doneIteratee) {
+            var newPath = path.join(dir, file);
+            fs.stat(newPath, function(error, stats) {
+              if(error) return doneIteratee(error);
+              // if dir, do recursion
+              if(stats.isDirectory()) {
+                return getJSONRecursive(newPath, doneIteratee);
+                // if json, load file and add to jsonData
+              } else if(file.search(jsonRegEx) > -1) {
+                var jsonKey = file.replace(jsonRegEx,'');
+                if(!jsonData[jsonKey]) {
+                  try { jsonData[jsonKey] = require(newPath); }
+                  catch(e) { return doneIteratee(e); }
+                }
+                doneIteratee();
+              }
+            });
+          }, doneRecursion);
+        });
+      };
+      // get all JSON from the course folder
+      getJSONRecursive(path.join(importDir, 'src', 'course'), function onJsonLoaded(error) {
+        if(error) return asyncCallback(error);
+
+        console.log(Object.keys(jsonData));
+
+        // now just need to import course JSON.........
+
+        asyncCallback(null);
+      });
+    },
+    function importAssets(assetsImported) {
+      console.log('importAssets');
+
+      // assetmanager.createAsset (steal postAsset code)
+      // how do we handle filenames? if we generate new ones, course JSON values become invalid
+      // probably easiest to rip out all mongo data for assets. EXCEPT:
+      //  - filename
+      //  - directory
+      //  - createdBy
+      //  - path
+      //  - createdAt
+
+      assetsImported();
+    },
+    function importPlugins(pluginsImported) {
+      console.log('importPlugins');
+
+      // only do this for uninstalled plugins
+
+      /*
+      See plugins/content/bower/index.js
+      app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {
+        addPackage(contentPlugin.bowerConfig, packageInfo, { strict: true }, function (error, results) {
+        });
+      });
+      */
+
+      pluginsImported();
+    }
+  ], function doneAsync(error) {
+    if(error) return next(error);
+    console.log('doneAsync, restoreData');
+    callback();
+  });
 };
 
 /**

@@ -4,10 +4,11 @@
 .navigation {
     background:url("assets/login_bg.jpg");
     border-bottom:1px solid rgba(255,255,255,0.2);
-    font-family: @font-raleway-semibold;
-    font-size: 16px;
+    font-family: @font-raleway-medium;
+    font-size: 14px;
+    font-weight: 500;
     a {
-        transition:all 0.3s;
+        // transition:all 0.3s;
         &:hover {
             color:@navigation-hover-text-color;
         }
@@ -23,16 +24,22 @@
 }
 
 .navigation-left {
-    .navigation-product-name {
-        font-weight: 300;
-    }
-    a {
-        // border-right:1px solid #FFF;
+    .navigation-user-global-menu {
+        &:hover {
+            color:@navigation-hover-text-color;
+        }
     }
 }
 
 .navigation-right {
-    a {
-        // border-left:1px solid #FFF;
-    }
+    .navigation-user-logout {
+        border: 1px solid @button-invis-blue-bg-hover-color;
+        border-radius: 3px;
+
+        &:hover {
+            border: 1px solid @button-invis-blue-bg-hover-color;
+            background-color: @button-invis-blue-bg-hover-color;
+            color: @button-invis-blue-bg-hover-text-color;
+        }
+    }           
 }

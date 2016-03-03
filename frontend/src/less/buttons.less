@@ -144,19 +144,9 @@ button {
     }
 
 
-    // UI REFRESH    
+    // UI REFRESH- Buttons created as part of the UI refresh in 2016.
 
-    &-invis {
-        background-color: transparent;
-        background: transparent;
-        color:@button-color;
-        border-color: @button-color;
-        &:hover, &:focus {
-            color: @button-invis-hover-text-color;
-            background-color: @button-invis-hover-color;
-            border:2px solid @button-invis-hover-color;
-        }        
-    }
+    // This button is used for secondary actions. It appears as invisble and fills in.
 
     &-invis-blue-bg {
         background-color: transparent;
@@ -170,7 +160,9 @@ button {
         }        
     }
 
-    &-invis-darkblue-bg {
+    // This button operates in a similar way to invis-blue-bg but is used on the sidebar because of it's darker background.
+
+    &-invis-darkblue-bg { 
         background-color: transparent;
         background: transparent;
         color:@sidebar-text-color;
@@ -180,10 +172,23 @@ button {
             background-color: @sidebar-text-color;
             border:2px solid @sidebar-text-color;
         }        
-    }        
-    
-    // end
+    }
 
+    // button to appear on the page. White background with blue outline. Fills when hovered.
+
+    &-invis {
+        background-color: transparent;
+        background: transparent;
+        color:@button-color;
+        border-color: @button-color;
+        &:hover, &:focus {
+            color: @button-invis-hover-text-color;
+            background-color: @button-invis-hover-color;
+            border:2px solid @button-invis-hover-color;
+        }
+    }
+    
+    
     &-fixed-width {
       width: 150px;
     }

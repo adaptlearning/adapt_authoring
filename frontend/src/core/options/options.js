@@ -11,7 +11,7 @@ define(function(require) {
 	Options.addItems = function(items) {
 
 		var itemsCollection = new Backbone.Collection(items);
-		$('#app').prepend(new OptionsView({collection:itemsCollection}).$el);
+		$('#options-wrapper').prepend(new OptionsView({collection:itemsCollection}).$el);
 
 	}
 

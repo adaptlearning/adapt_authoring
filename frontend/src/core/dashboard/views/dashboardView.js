@@ -56,14 +56,13 @@ define(function(require){
 
       this.collectionLength = 0;
       this.shouldStopFetches = false;
-      
+
     },
 
     resizeDashboard: function() {
-      var navigationHeight = $('.navigation').outerHeight();
-      var locationTitleHeight = $('.location-title').outerHeight();
       var windowHeight = $(window).height();
-      var actualHeight = windowHeight - (navigationHeight + locationTitleHeight);
+      var offsetTop = this.$el.offset().top;
+      var actualHeight = windowHeight-offsetTop;
       this.$el.css('height', actualHeight);
     },
 
@@ -118,7 +117,7 @@ define(function(require){
     },
 
     sortDescending: function(shouldRenderProjects) {
-      
+
       this.sort = {
         title: -1
       }
@@ -235,7 +234,7 @@ define(function(require){
             skip: this.courseLimit,
             limit: this.courseDenominator,
             sort: this.sort
-          } 
+          }
         },
         success: _.bind(function(data) {
 

@@ -96,7 +96,7 @@ define(function(require){
 
         $.get('/download/' + tenantId + '/' + courseId, function(data) {
 
-          $('.editor-common-sidebar-downloading-progress').css('width', 0).stop();;
+          $('.editor-common-sidebar-downloading-progress').css('width', 0).stop();
           Origin.editor.isPublishPending = false;
           $('.editor-common-sidebar-download-inner').removeClass('display-none');
           $('.editor-common-sidebar-downloading').addClass('display-none');

@@ -71,7 +71,7 @@ button {
     padding:10px 12px;
     background:none;
     border:@button-border;
-    border-radius:3px;
+    border-radius:@button-radius;
     background-color:@button-color;
     color:@button-text-color;
     font-size:13px;
@@ -150,8 +150,7 @@ button {
         background-color: transparent;
         background: transparent;
         color:@button-color;
-        border:2px solid @button-color;
-        border-radius: 3px;
+        border-color: @button-color;
         &:hover, &:focus {
             color: @button-invis-hover-text-color;
             background-color: @button-invis-hover-color;
@@ -163,14 +162,25 @@ button {
         background-color: transparent;
         background: transparent;
         color:@button-color;
-        border:2px solid @button-color;
-        border-radius: 3px;
+        border-color:@button-color;
         &:hover, &:focus {
             color: @button-invis-blue-bg-hover-text-color;
             background-color: @button-invis-blue-bg-hover-color;
             border:2px solid @button-invis-blue-bg-hover-color;
         }        
-    }    
+    }
+
+    &-invis-darkblue-bg {
+        background-color: transparent;
+        background: transparent;
+        color:@sidebar-text-color;
+        border-color:@sidebar-text-color;
+        &:hover, &:focus {
+            color: @button-invis-darkblue-bg-hover-text-color;
+            background-color: @sidebar-text-color;
+            border:2px solid @sidebar-text-color;
+        }        
+    }        
     
     // end
 

@@ -1,3 +1,4 @@
+@import '../../../less/variables.less';
 
 .sidebar-hide {
     #app {
@@ -22,13 +23,34 @@
     }
     .dashboard-sidebar-filter-clear {
         display:inline;
+        position: absolute;
+        left: 160px;
+        top: 10px;
+        width: 0px;
+        padding: 0;
+        background: none;
+        color: @sidebar-input-text-color;
+
     }
     .sidebar-row .sidebar-row-input input {
-        width:168px;
-    }  
+        width:140px;
+        margin-left: 20px;
+        border-radius: @button-radius;
+        background: @sidebar-input-color;
+        color: @sidebar-input-text-color;
+    }
+
+    .btn-primary, .btn-invis, 
+    .btn-invis-blue-bg, .btn-invis-darkblue-bg {
+        margin: 10px 20px;
+        width: 160px;
+        height: 50px;
+    }
+    
+    .btn-primary {
+        margin-top: 30px;
+    }
 }
-
-
 
 .sidebar-inner {
     padding-top:41px;

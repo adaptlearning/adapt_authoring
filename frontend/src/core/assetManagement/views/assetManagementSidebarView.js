@@ -9,7 +9,7 @@ define(function(require) {
         events: {
             'click .asset-management-sidebar-new': 'onAddNewAssetClicked',
             'click .asset-management-sidebar-filter-button': 'onFilterButtonClicked',
-            'click .asset-management-sidebar-filter-clear-search': 'onClearSearchClicked',
+            'click .sidebar-filter-clear': 'onClearSearchClicked',
             'keyup .asset-management-sidebar-filter-search': 'onSearchKeyup',
             'click .asset-management-sidebar-add-tag': 'onAddTagClicked',
             'click .asset-management-sidebar-row-filter': 'onFilterRemovedClicked'

@@ -314,14 +314,11 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
     function zipFiles(callback) {
       var archive = archiver('zip');
       var zipPath = exportDir +  '.zip';
-      // fse.remove(zipPath, function(error) {
-        // if(error) return callback(error);
-        var output = fs.createWriteStream(zipPath);
-        archive.on('error', callback);
-        output.on('close', callback);
-        archive.pipe(output);
-        archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
-      // });
+      var output = fs.createWriteStream(zipPath);
+      archive.on('error', callback);
+      output.on('close', callback);
+      archive.pipe(output);
+      archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
     }
   ],
   function onDone(asyncError) {

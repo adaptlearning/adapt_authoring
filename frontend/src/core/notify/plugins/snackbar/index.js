@@ -67,6 +67,29 @@ define(function(require) {
 			$el = $('#snackbar');
 			$el.fadeOut(0);
 			$('.close a', $el).click(closeSnack);
+
+			$('body').append('<button class="btn btn-primary notify-me" style="width:185px; position:fixed; z-index:1000; bottom:15px; left:15px">Notify Me!</button>');
+			$('button.notify-me').click(function() {
+				var notifies = [
+					"Just a string!",
+					{
+						type: "error",
+						text: "Uh-oh, something bad has happened :("
+					},
+					{
+						type: "alert",
+						text: "Hello Tom, my name is HAL",
+						buttonText: "Say hello",
+						persist: true
+					},
+					{
+						type: "info",
+						text: "Today is " + new Date().toDateString()
+					}
+				];
+				var index = Math.floor(Math.random()*notifies.length);
+				Snackbar(notifies[index]);
+			});
 		});
 	};
 

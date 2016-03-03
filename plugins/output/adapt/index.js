@@ -24,6 +24,7 @@ var origin = require('../../../'),
     exec = require('child_process').exec,
     semver = require('semver'),
     version = require('../../../version'),
+    helpers = require('../../../lib/helpers'),
     logger = require('../../../lib/logger');
 
 function AdaptOutput() {
@@ -211,7 +212,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         if (!isPreview) {
           // Now zip the build package
           var filename = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Filenames.Download);
-          var zipName = self.slugify(outputJson['course'].title);
+          var zipName = helpers.slugify(outputJson['course'].title);
           var output = fs.createWriteStream(filename),
             archive = archiver('zip');
 
@@ -257,40 +258,16 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
   var self = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var userId = usermanager.getCurrentUser()._id;
-  var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
 
   var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
   var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
-
-  // set in getCourseName
-  var exportName;
-  var exportDir;
+  var exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, userId);
 
   async.waterfall([
     function publishCourse(callback) {
       self.publish(courseId, true, request, response, callback);
     },
-    function getCourseName(results, callback) {
-      database.getDatabase(function (error, db) {
-        if (error) {
-          return callback(err);
-        }
-
-        db.retrieve('course', { _id: courseId }, { jsonOnly: true }, function (error, results) {
-          if (error) {
-            return callback(error);
-          }
-          if(!results || results.length > 1) {
-            return callback(new Error('Unexpected results returned for course ' + courseId + ' (' + results.length + ')', self));
-          }
-
-          exportName = self.slugify(results[0].title) + '-export-' + timestamp;
-          exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, exportName);
-          callback();
-        });
-      });
-    },
-    function copyFiles(callback) {
+    function copyFiles(results, callback) {
       self.generateIncludesForCourse(courseId, function(error, includes) {
         if(error) {
           return callback(error);
@@ -336,20 +313,24 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
     },
     function zipFiles(callback) {
       var archive = archiver('zip');
-      var output = fs.createWriteStream(exportDir +  '.zip');
-
-      archive.on('error', callback);
-      output.on('close', callback);
-      archive.pipe(output);
-      archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
-    },
-    function cleanUp(callback) {
-      fse.remove(exportDir, function (error) {
-        callback(error, { zipName: exportName + '.zip' });
-      });
+      var zipPath = exportDir +  '.zip';
+      // fse.remove(zipPath, function(error) {
+        // if(error) return callback(error);
+        var output = fs.createWriteStream(zipPath);
+        archive.on('error', callback);
+        output.on('close', callback);
+        archive.pipe(output);
+        archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
+      // });
     }
   ],
-  next);
+  function onDone(asyncError) {
+    // remove the exportDir, if there is one
+    fse.remove(exportDir, function(removeError) {
+      // async error more important
+      next(asyncError || removeError);
+    });
+  });
 };
 
 /**

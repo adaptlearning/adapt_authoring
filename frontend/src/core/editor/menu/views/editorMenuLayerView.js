@@ -186,6 +186,7 @@ define(function(require) {
 
       cancelPasteMenuItem: function(event) {
         event.preventDefault();
+        $('.add-zone').css('visibility','visible');
         var parentId = this._parentId;
         var target = new EditorContentObjectModel({
           _parentId: parentId,

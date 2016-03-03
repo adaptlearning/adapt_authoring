@@ -1,6 +1,6 @@
 .editor-menu-layer {
   height: 100%;
-  width:240px;
+  width:380px;
   float:left;
   padding-bottom:30px;
   overflow:hidden;
@@ -21,32 +21,36 @@
 
 .editor-menu-layer-controls {
   position:relative;
+  margin: 20px;
   .editor-menu-layer-actions.paste-zone {
     width: 100%;
     position: absolute;
-    top: -37px;
+    top: -67px;
     z-index: 99;
     margin:0px;
     padding:0;
     border:none;
+    background: none;
     transition:top 0.5s cubic-bezier(0.8, 0.0, 0.2, 1);;
     &.show {
       top:0px;
     }
+    .btn-primary, .btn-invis {
+        width: 150px;
+        height: 45px;
+    }
+
   }
 }
 
+
+
 .editor-menu-layer-button {
   float:left;
-  width:50%;
+  width:150px;
   padding:8px;
+  height: 45px;
   font-size:13px;
-  border-radius:0px;
-  border-bottom:1px solid #454545;
-  border-right:2px solid #454545;
-  &:first-child {
-    border-right:1px solid #454545;
-  }
   & i {
     margin-right:8px;
   }

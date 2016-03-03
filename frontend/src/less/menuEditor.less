@@ -3,13 +3,14 @@
 @selected-color: @primary-color;
 
 .editor-menu-layer-button {
-    color:@sidebar-text-color;
-    background-color:@sidebar-color;
-    transition:all 0.3s;
-    &:hover {
-        color:#fff;
-        background-color:#293141;
-    } 
+    background-color: @theme-color;
+    color:@button-color;
+    border-color:@button-color;
+    &:hover, &:focus {
+        color: @button-color;
+        background-color: darken(@theme-color, 20%);
+        border:2px solid darken(@theme-color, 20%);
+    }        
 }
 
 .editor-menu-item-settings {

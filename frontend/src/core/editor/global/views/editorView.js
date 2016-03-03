@@ -134,7 +134,7 @@ define(function(require){
 
            // get the zip
            var form = document.createElement("form");
-           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
+           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
            form.submit();
          },
          error: function(jqXHR, textStatus, errorThrown) {

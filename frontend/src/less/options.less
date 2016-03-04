@@ -2,24 +2,33 @@
 
 .options {
 	a {
-		color:#3e4960;
+		color:@option-color;
+		margin-left:30px;
 		&:hover {
 			transition:color 0.3s;
-			color:@primary-color;
+			color:@option-hover-color;
 		}
 		&.selected {
 			transition:color 0.3s;
-			color:darken(@primary-color, 10%);
+			color:@option-selected-color;
 		}
 	}
 
 	&-group {
 		float:left;
 		padding:4px 0px;
-		border-left:1px solid darken(#e0e8f7, 20%);
-
-		&:first-child {
-			border-left: none;
+		// border-left:1px solid darken(#e0e8f7, 20%);
+		i {
+			font-size: 20px;
 		}
 	}
+}
+
+.option-value-item {
+	display: inline-block;
+	padding-right: 20px;
+}
+
+.option-value-title {
+	margin-left: 15px;
 }

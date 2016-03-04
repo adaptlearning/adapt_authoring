@@ -154,7 +154,7 @@
   "app.themepicker": "Theme picker",
   "app.themecustomisation": "Theme customisation",
   "app.status": "Status",
-  "app.lastupdated": "Last updated",
+  "app.lastupdated": "Last Updated",
   "app.category": "Category",
   "app.owner": "Owner",
   "app.assettitle": "Asset title",
@@ -301,6 +301,6 @@
   "app.copyingidtoclipboarderror": "Error copying %{id} to clipboard",
   "app.grid": "Grid",
   "app.list": "List",
-  "app.ascending": "Ascending",
-  "app.descending": "Descending"
+  "app.ascending": "A to Z",
+  "app.descending": "Z to A"
 }

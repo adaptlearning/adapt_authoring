@@ -53,6 +53,7 @@ define(function(require) {
     // Listen to navigation event to toggle
     Origin.on('navigation:globalMenu:toggle', function() {
         // Remove all events off #app
+        $('#hamburger-icon').toggleClass('open');
         $('#app, .sidebar').off('click');
         // Toggle between displaying and removing the menu
         if (_isActive === true) {

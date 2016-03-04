@@ -1,14 +1,17 @@
 @import 'variables';
 
 .global-menu {
-    background-color:#36cde8;
-    border-top:1px solid #63def4;
+    background-color:@theme-color;
+    border-top:1px solid darken(@theme-color,20%);
     a {
         color:@navigation-text-color;
-        border-bottom:1px solid #63def4;
+        border-bottom:1px solid darken(@theme-color,20%);
         &:hover {
-            background-color:#63def4;
+            background-color:darken(@theme-color,20%);
             color:@navigation-text-color;
         }
+    }
+    .global-menu-inner{
+        border: 1px solid rgba(0,0,0,0.1);
     }
 }

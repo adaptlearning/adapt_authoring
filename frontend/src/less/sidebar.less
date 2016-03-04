@@ -5,17 +5,20 @@
     color:@sidebar-text-color;
     a {
         transition:all 0.3s;
-        color:#fff;
+        color:@sidebar-text-color;
         &:hover, &:focus {
-            color:darken(#fff, 10%);
+            color:darken(@sidebar-text-color, 10%);
         }
     }
 }
 
 .sidebar-breadcrumb {
-    background-color:@primary-color;
-    a:hover {
-        background-color:darken(@primary-color, 10%);
+    button {
+        background-color:@sidebar-color;
+        color:@sidebar-text-color;
+        &:hover {
+            background-color:darken(@sidebar-color, 10%);
+        }
     }
 }
 
@@ -35,7 +38,7 @@
     opacity: 0.3;
 }
 
-.sidebar-row {
+.sidebar-row, .sidebar-breadcrumb {
     button, a {
         // border-bottom:1px solid #3e4a5f;
         color:@sidebar-text-color;

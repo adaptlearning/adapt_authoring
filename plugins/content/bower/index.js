@@ -488,7 +488,7 @@ BowerPlugin.prototype.fetchInstalledPackages = function (plugin, options, next) 
  * @param {object} options
  * @param {callback} cb
  */
-function addPackage (plugin, packageInfo, options, cb) {
+BowerPlugin.prototype.addPackage = function(plugin, packageInfo, options, cb) {
   // shuffle params
   if ('function' === typeof options) {
     cb = options;
@@ -677,7 +677,7 @@ function addPackage (plugin, packageInfo, options, cb) {
                     logger.log('error', err);
                     return cb(err);
                   }
-                  
+
                   plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
                     if (err) {
                       logger.log('error', err);
@@ -780,7 +780,7 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
                     if (packageInfo[key].pkgMeta.framework) {
                       // If the plugin defines a framework, ensure that it is compatible
                       if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].pkgMeta.framework)) {
-                        addPackage(plugin, packageInfo[key], options, next); 
+                        addPackage(plugin, packageInfo[key], options, next);
                       } else {
                         logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');
                         next();

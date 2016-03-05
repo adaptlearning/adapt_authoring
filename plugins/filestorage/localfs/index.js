@@ -13,6 +13,7 @@ var FileStorage = require('../../../lib/filestorage').FileStorage,
     async = require('async'),
     probe = require('node-ffprobe'),
     logger = require('../../../lib/logger'),
+    ncp = require('ncp').ncp,
     FFMpeg = require('fluent-ffmpeg');
 
 function LocalFileStorage() {
@@ -287,6 +288,58 @@ LocalFileStorage.prototype.getDirectoryListing = function (filePath, callback) {
 
 LocalFileStorage.prototype.getFileStats = function (filePath, callback) {
   fs.stat(this.resolvePath(filePath), callback);
+};
+
+/**
+ * Copies an asset from one tenant to another.
+ * 
+ * @param {object} asset - A valid 'asset' record
+ * @param {string} sourceTenantName - Source tenant.name
+ * @param {string} destinationTenantName - Destination tenant.name
+ */
+LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destinationTenantName, callback) {
+  // Verify the destination folder exists
+  var dataRoot = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'));
+  var assetFolder = path.join(dataRoot, destinationTenantName, asset.directory);
+
+  mkdirp(assetFolder, function(error) {
+    if (error) {
+      logger.log('error', 'mkdirp error while copying asset, creating ' + assetFolder);
+      return callback(error);
+    }
+
+    // Copy the asset
+    var sourceFile = path.join(dataRoot, sourceTenantName, asset.path);
+    var destinationFile = path.join(dataRoot, destinationTenantName, asset.path);
+
+    ncp(sourceFile, destinationFile, {clobber:false}, function(error) {
+      if (error) {
+        logger.log('error', 'ncp error while copying ' + asset.filename);
+        logger.log('error', 'error copying ' + sourceFile + ' to ' + destinationFile);
+        return callback(error);
+      }
+
+      // Copy the thumbnail (if required)
+      if (asset.thumbnailPath && asset.thumbnailPath !== 'false' && (asset.assetType == 'image' || asset.assetType == 'video')) {
+
+        var sourceThumbnailFile = path.join(dataRoot, sourceTenantName, asset.thumbnailPath);
+        var destinationThumbnailFile = path.join(dataRoot, destinationTenantName, asset.thumbnailPath);
+
+        ncp(sourceThumbnailFile, destinationThumbnailFile, function(error) {
+          if (error) {
+            logger.log('error', 'ncp error while copying ' + asset.thumbnailPath);
+            logger.log('error', 'error copying (thumbnail) ' + sourceThumbnailFile + ' to ' + destinationThumbnailFile);
+
+            // TODO If thumbnails fail it's not the end of the world -- for now
+          }
+
+          return callback(null);
+        });
+      } else {
+        return callback(null);
+      }
+    });
+  });
 };
 
 /**

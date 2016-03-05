@@ -367,7 +367,12 @@ util.inherits(ImportError, Error);
 * Wrapper for prepareImport and restoreData
 */
 AdaptOutput.prototype.import = function (request, response, next) {
+  var tenantId = usermanager.getCurrentUser().tenant._id;
+  var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
+
   var form = IncomingForm();
+  form.uploadDir = COURSE_ROOT_FOLDER;
+
   form.parse(request, function (error, fields, files) {
     if(error) return next(error);
     if(!files.file || !files.file.path) return next(new ImportError('File upload failed.'));
@@ -388,8 +393,9 @@ AdaptOutput.prototype.import = function (request, response, next) {
 * 1. Unzips uploaded zip
 * 2. Checks compatibility of import with this AT instance
 * 3. Validates the import's metadata
+* TODO Should we fail the task on every error?
 */
-var prepareImport = function(zipPath, unzipPath, callback) {
+function prepareImport(zipPath, unzipPath, callback) {
   var decompress = require('decompress');
   new decompress()
     .src(zipPath)
@@ -398,6 +404,9 @@ var prepareImport = function(zipPath, unzipPath, callback) {
     .run(function onUnzipped(error, files) {
       if(error) return callback(error);
       async.parallel([
+        function removeZip(asyncCallback) {
+          fse.remove(zipPath, asyncCallback);
+        },
         function checkVersionCompatibility(asyncCallback) {
           try {
             // TODO abstract this into framework helper
@@ -428,11 +437,38 @@ var prepareImport = function(zipPath, unzipPath, callback) {
           }
         },
         function validateMetadata(asyncCallback) {
-          // TODO metadata
+          // TODO
           asyncCallback();
         }
       ], callback); // pass anything back? (e.g. metadata)
     });
+};
+
+// Recursively grabs all json content and returns an object
+function getJSONRecursive(dir, doneRecursion) {
+  var jsonRegEx = /\.json$/;
+  var jsonData = {};
+  fs.readdir(dir, function onRead(error, files) {
+    if(error) return doneRecursion(error);
+    async.each(files, function iterator(file, doneIteratee) {
+      var newPath = path.join(dir, file);
+      fs.stat(newPath, function(error, stats) {
+        if(error) return doneIteratee(error);
+        // if dir, do recursion
+        if(stats.isDirectory()) {
+          return getJSONRecursive(newPath, doneIteratee);
+          // if json, load file and add to jsonData
+        } else if(file.search(jsonRegEx) > -1) {
+          var jsonKey = file.replace(jsonRegEx,'');
+          if(!jsonData[jsonKey]) {
+            try { jsonData[jsonKey] = require(newPath); }
+            catch(e) { return doneIteratee(e); }
+          }
+          doneIteratee(jsonData);
+        }
+      });
+    }, doneRecursion);
+  });
 };
 
 /*
@@ -441,76 +477,138 @@ var prepareImport = function(zipPath, unzipPath, callback) {
 * 3. Imports the plugins
 */
 function restoreData(importDir, callback) {
-  var jsonData = {};
+  var app = origin();
+  try {
+    var metadataJson = require(path.join(importDir, 'metadata.json'));
+  } catch e {
+    return callback(e);
+  }
   async.parallel([
     function loadCourseJson(asyncCallback) {
-      var jsonRegEx = /\.json$/;
-      // looks for json files, and returns the data as an object
-      var getJSONRecursive = function(dir, doneRecursion) {
-        fs.readdir(dir, function onRead(error, files) {
-          if(error) return doneRecursion(error);
-          async.each(files, function iterator(file, doneIteratee) {
-            var newPath = path.join(dir, file);
-            fs.stat(newPath, function(error, stats) {
-              if(error) return doneIteratee(error);
-              // if dir, do recursion
-              if(stats.isDirectory()) {
-                return getJSONRecursive(newPath, doneIteratee);
-                // if json, load file and add to jsonData
-              } else if(file.search(jsonRegEx) > -1) {
-                var jsonKey = file.replace(jsonRegEx,'');
-                if(!jsonData[jsonKey]) {
-                  try { jsonData[jsonKey] = require(newPath); }
-                  catch(e) { return doneIteratee(e); }
-                }
-                doneIteratee();
-              }
-            });
-          }, doneRecursion);
-        });
-      };
       // get all JSON from the course folder
-      getJSONRecursive(path.join(importDir, 'src', 'course'), function onJsonLoaded(error) {
+      getJSONRecursive(path.join(importDir, 'src', 'course'), function onJsonLoaded(error, jsonData) {
         if(error) return asyncCallback(error);
 
-        console.log(Object.keys(jsonData));
-
-        // now just need to import course JSON.........
+        // now just need to import course JSON (jsonData)
 
         asyncCallback(null);
       });
     },
+    // adapted from assetmanager.postAsset
+    // TODO deal with filenames
     function importAssets(assetsImported) {
-      console.log('importAssets');
+      var assetsDir = path.join(importDir, 'src', 'course', 'assets');
+      fs.readdir(assetsDir, function(error, courseAssets) {
+        console.log(courseAssets);
 
-      // assetmanager.createAsset (steal postAsset code)
-      // how do we handle filenames? if we generate new ones, course JSON values become invalid
-      // probably easiest to rip out all mongo data for assets. EXCEPT:
-      //  - filename
-      //  - directory
-      //  - createdBy
-      //  - path
-      //  - createdAt
+        async.each(courseAssets, function(assetName, callback) {
+          var repository = configuration.getConfig('filestorage') || 'localfs';
 
-      assetsImported();
+          filestorage.getStorage(repository, function (error, storage) {
+            if (error) return next(error);
+
+            // VINYL FILE
+            var file = {
+              name: filename
+              path: "path/in/unzip"
+              type: mimeType
+              size: size
+            };
+            var user = usermanager.getCurrentUser();
+            var date = new Date();
+            var hash = crypto.createHash('sha1');
+            // think these options might be defaults?
+            var rs = fs.createReadStream(file.path);
+
+            rs.on('data', function (data) {
+              hash.update(data, 'utf8');
+            });
+            rs.on('close', function () {
+              var filehash = hash.digest('hex');
+              var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
+              var filepath = path.join(directory, filehash) + path.extname(file.name);
+              var fileOptions = {
+                createMetadata: true,
+                createThumbnail: true,
+                thumbnailOptions: {
+                  width: THUMBNAIL_WIDTH,
+                  height: THUMBNAIL_HEIGHT
+                }
+              };
+
+              // the repository should move the file to a suitable location
+              storage.processFileUpload(file, filepath, fileOptions, function (error, storedFile) {
+                if (error) return next(error);
+
+                // It's better not to set thumbnailPath if it's not set.
+                if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
+                var asset = _.extend(metadata, storedFile);
+
+                // Create the asset record
+                self.createAsset(asset,function (createError, assetRec) {
+                  if (createError) {
+                    storage.deleteFile(storedFile.path, callback);
+                  }
+                  else {
+                    callback();
+                  }
+                });
+              });
+            });
+          });
+        }, assetsImported);
+      });
     },
     function importPlugins(pluginsImported) {
-      console.log('importPlugins');
+      return pluginsImported();
+      database.getDatabase(function (error, db) {
+        if (error) return next(error);
 
-      // only do this for uninstalled plugins
-
-      /*
-      See plugins/content/bower/index.js
-      app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {
-        addPackage(contentPlugin.bowerConfig, packageInfo, { strict: true }, function (error, results) {
-        });
+        // TODO this is awful...get this from the metadata
+        var pluginTypes = [
+          ["components","component"],
+          ["extensions","extension"],
+          ["menu","menu"],
+          ["theme","theme"]
+        ];
+        async.each(pluginTypes, function(pluginType, callback) {
+          var pluginTypeDir = path.join(importDir, 'src', pluginType[0]);
+          fs.readdir(pluginTypeDir, function(error, files) {
+            async.each(files, function(file, callback) {
+              var pluginDir = path.join(pluginTypeDir, file);
+              try {
+                var bowerJson = require(path.join(pluginDir, 'bower.json'));
+              } catch(e) {
+                return pluginsImported(e);
+              }
+              app.contentmanager.getContentPlugin(pluginType[1], function(error, plugin) {
+                if(error) return pluginsImported(error);
+                db.retrieve(plugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, function (error, records) {
+                  // if(!records) {
+                  if(true) {
+                    console.log(bowerJson.displayName, ' not found, installing...');
+                    bowerJson.isLocalPackage = true;
+                    // do we need to check framework version on plugin at this point?
+                    plugin.addPackage(contentPlugin.bowerConfig, {
+                      canonicalDir: pluginDir,
+                      pkgMeta: bowerJson
+                    }, { strict: true }, pluginsImported);
+                  } else {
+                    var serverPlugin = records[0];
+                    if(semver.gt(bowerJson.version,serverPlugin.version)) {
+                      console.log('Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + ')');
+                    }
+                    pluginsImported();
+                  }
+                });
+              });
+            }, callback);
+          });
+        }, pluginsImported);
       });
-      */
-
-      pluginsImported();
     }
   ], function doneAsync(error) {
-    if(error) return next(error);
+    if(error) return callback(error);
     console.log('doneAsync, restoreData');
     callback();
   });

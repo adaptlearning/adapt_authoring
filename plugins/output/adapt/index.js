@@ -26,7 +26,8 @@ var origin = require('../../../'),
     version = require('../../../version'),
     helpers = require('../../../lib/helpers'),
     logger = require('../../../lib/logger'),
-    IncomingForm = require('formidable').IncomingForm;
+    IncomingForm = require('formidable').IncomingForm,
+    crypto = require('crypto');
 
 function AdaptOutput() {
 }
@@ -243,93 +244,130 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         }
       }
     ], function(err) {
-
-      if (err) {
-        logger.log('error', err);
-        return next(err);
-      }
-
-      var config = require(path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build, Constants.Folders.Course, 'config.json'));
-      console.log('end-build:', JSON.stringify(config.build,null,' '));
-
-      return next(null, resultObject);
+      return next(err, resultObject);
     });
-
 };
 
 AdaptOutput.prototype.export = function (courseId, request, response, next) {
+  var app = origin();
   var self = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var userId = usermanager.getCurrentUser()._id;
-
   var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
   var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
   var exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, userId);
 
-  async.waterfall([
-    function publishCourse(callback) {
-      self.publish(courseId, true, request, response, callback);
-    },
-    function copyFiles(results, callback) {
-      self.generateIncludesForCourse(courseId, function(error, includes) {
-        if(error) {
-          return callback(error);
-        }
+  var metadata = {
+    assets: {}
+  };
 
-        for(var i = 0, count = includes.length; i < count; i++)
-          includes[i] = '\/' + includes[i] + '(\/|$)';
-
-        // regular expressions
-        var includesRE = new RegExp(includes.join('|'));
-        var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
-        var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
-
-        fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
-          filter: function(filePath) {
-            var posixFilePath = filePath.replace(/\\/g, '/');
-
-            var isIncluded = posixFilePath.search(includesRE) > -1;
-            var isExcluded = posixFilePath.search(excludesRE) > -1;
-            var isPlugin = posixFilePath.search(pluginsRE) > -1;
-
-            // exclude any matches to excludesRE
-            if(isExcluded) return false;
-            // exclude any plugins not in includes
-            else if(isPlugin) return isIncluded;
-            // include everything else
-            else return true;
+  async.parallel([
+    function generateMetaData(generatedMetadata) {
+      app.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
+        plugin.retrieve({ _courseId:courseId }, function(error, results) {
+          if(error) {
+            return generatedMetadata(error);
           }
-        }, function done(error) {
-          if (error) {
-            return callback(error);
-          }
-          var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
-          var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
-          fse.ensureDir(dest, function (error) {
-            if(error) {
-              return callback(error);
-            }
-            fse.copy(source, dest, callback);
-          });
+          async.each(results, function iterator(courseasset, doneIterator) {
+            app.assetmanager.retrieveAsset({ _id:courseasset._assetId }, function(error, matchedAssets) {
+              if(error) {
+                return doneIterator(error);
+              }
+              // TODO safe to assume only one's returned?
+              if(!matchedAssets) {
+                return doneIterator(new Error('No asset found with id: ' + courseasset._assetId));
+              }
+              var asset = matchedAssets[0];
+
+              // TODO look for _ method to pick these
+              if(!metadata.assets[asset.filename]) {
+                metadata.assets[asset.filename] = {
+                  "title": asset.title,
+                  "description": asset.description,
+                  "type": asset.mimeType,
+                  "size": asset.size
+                };
+              }
+              // else console.log('Asset already stored:', asset.filename);
+
+              doneIterator();
+            })
+          }, generatedMetadata);
         });
       });
     },
-    function zipFiles(callback) {
-      var archive = archiver('zip', { store: false });
+    // builds course & copies framework files
+    function getLatestBuild(preparedFiles) {
+      self.publish(courseId, true, request, response, function coursePublished(error) {
+        if(error) {
+          return preparedFiles(error);
+        }
+        self.generateIncludesForCourse(courseId, function(error, includes) {
+          if(error) {
+            return preparedFiles(error);
+          }
+
+          for(var i = 0, count = includes.length; i < count; i++)
+          includes[i] = '\/' + includes[i] + '(\/|$)';
+
+          // regular expressions
+          var includesRE = new RegExp(includes.join('|'));
+          var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
+          var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
+
+          fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
+            filter: function(filePath) {
+              var posixFilePath = filePath.replace(/\\/g, '/');
+              var isIncluded = posixFilePath.search(includesRE) > -1;
+              var isExcluded = posixFilePath.search(excludesRE) > -1;
+              var isPlugin = posixFilePath.search(pluginsRE) > -1;
+
+              // exclude any matches to excludesRE
+              if(isExcluded) return false;
+              // exclude any plugins not in includes
+              else if(isPlugin) return isIncluded;
+              // include everything else
+              else return true;
+            }
+          }, function doneCopy(error) {
+            if (error) {
+              return preparedFiles(error);
+            }
+            var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
+            var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
+            fse.ensureDir(dest, function(error) {
+              if(error) {
+                return preparedFiles(error);
+              }
+              fse.copy(source, dest, preparedFiles);
+            });
+          });
+        });
+      });
+    }
+  ], function doneParallel(error) {
+    // write metadata, zip files
+    if(error) return next(error);
+
+    // TODO add filename to constants
+    fse.writeJson(path.join(exportDir, 'metadata.json'), metadata, function (error) {
+      if(error) return next(error);
+
+      var archive = archiver('zip');
       var output = fs.createWriteStream(exportDir +  '.zip');
-      archive.on('error', callback);
-      output.on('close', callback);
+      archive.on('error', cleanUpExport);
+      output.on('close', cleanUpExport);
       archive.pipe(output);
       archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
-    }
-  ],
-  function onDone(asyncError) {
-    // remove the exportDir, if there is one
-    fse.remove(exportDir, function(removeError) {
-      // async error more important
-      next(asyncError || removeError);
     });
   });
+  // remove the exportDir, if there is one
+  function cleanUpExport(exportError) {
+    fse.remove(exportDir, function(removeError) {
+      // prefer exportError
+      next(exportError || removeError)
+    });
+  }
 };
 
 function ImportError(message, httpStatus) {
@@ -354,11 +392,20 @@ AdaptOutput.prototype.import = function (request, response, next) {
 
     var zipPath = files.file.path;
     var outputDir = zipPath + '_unzipped';
-    prepareImport(zipPath, outputDir, function importPrepared(error) {
+    prepareImport(zipPath, outputDir, function importPrepared(error, metadata) {
       if(error) return next(error);
-      restoreData(outputDir, function dataRestored(error) {
+      metadata.importDir = outputDir;
+      restoreData(metadata, function dataRestored(error) {
+        console.log('restoreData', error);
         if(error) return next(error);
-        response.status(200).json({ sucess: true, message: 'Successfully imported your course!' });
+        cleanUpImport(outputDir, function(error) {
+          console.log('cleanUpImport');
+          if(error) return next(error);
+          response.status(200).json({
+            sucess: true,
+            message: 'Successfully imported your course!'
+          });
+        });
       });
     });
   });
@@ -372,6 +419,7 @@ AdaptOutput.prototype.import = function (request, response, next) {
 */
 function prepareImport(zipPath, unzipPath, callback) {
   var decompress = require('decompress');
+  var metadata = {};
   new decompress()
     .src(zipPath)
     .dest(unzipPath)
@@ -411,38 +459,54 @@ function prepareImport(zipPath, unzipPath, callback) {
             asyncCallback(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
           }
         },
-        function validateMetadata(asyncCallback) {
-          // TODO
+        function loadMetadata(asyncCallback) {
+          try {
+            metadata = require(path.join(unzipPath, 'metadata.json'));
+          } catch(e) {
+            return asyncCallback(new Error('No metadata found for import, please check the archive.'));
+          }
+
+          // TODO validation checks? (for manually created files)
+
           asyncCallback();
         }
-      ], callback); // pass anything back? (e.g. metadata)
+      ], function doneAsync(error) {
+        callback(error, metadata);
+      });
     });
 };
 
 // Recursively grabs all json content and returns an object
 function getJSONRecursive(dir, doneRecursion) {
-  var jsonRegEx = /\.json$/;
   var jsonData = {};
+  var jsonRegEx = /\.json$/;
   fs.readdir(dir, function onRead(error, files) {
     if(error) return doneRecursion(error);
-    async.each(files, function iterator(file, doneIteratee) {
+    async.each(files, function iterator(file, doneIterator) {
       var newPath = path.join(dir, file);
       fs.stat(newPath, function(error, stats) {
-        if(error) return doneIteratee(error);
+        if(error) return doneIterator(error);
         // if dir, do recursion
         if(stats.isDirectory()) {
-          return getJSONRecursive(newPath, doneIteratee);
+          getJSONRecursive(newPath, function(error, data) {
+            _.extend(jsonData, data);
+            doneIterator(error);
+          });
           // if json, load file and add to jsonData
         } else if(file.search(jsonRegEx) > -1) {
           var jsonKey = file.replace(jsonRegEx,'');
           if(!jsonData[jsonKey]) {
             try { jsonData[jsonKey] = require(newPath); }
-            catch(e) { return doneIteratee(e); }
+            catch(e) { return doneIterator(e); }
           }
-          doneIteratee(jsonData);
+          doneIterator(null, jsonData);
+        } else {
+          doneIterator();
         }
       });
-    }, doneRecursion);
+    }, function(error) {
+      doneRecursion(null, jsonData);
+    });
   });
 };
 
@@ -451,93 +515,94 @@ function getJSONRecursive(dir, doneRecursion) {
 * 2. Imports the assets
 * 3. Imports the plugins
 */
-function restoreData(importDir, callback) {
+function restoreData(metadata, callback) {
   var app = origin();
-  try {
-    var metadataJson = require(path.join(importDir, 'metadata.json'));
-  } catch e {
-    return callback(e);
-  }
   async.parallel([
-    function loadCourseJson(asyncCallback) {
+    function loadCourseJson(loadedJson) {
       // get all JSON from the course folder
-      getJSONRecursive(path.join(importDir, 'src', 'course'), function onJsonLoaded(error, jsonData) {
-        if(error) return asyncCallback(error);
+      getJSONRecursive(path.join(metadata.importDir, 'src', 'course'), function onJsonLoaded(error, jsonData) {
+        if(error) return loadedJson(error);
 
         // now just need to import course JSON (jsonData)
 
-        asyncCallback(null);
+        loadedJson();
       });
     },
-    // adapted from assetmanager.postAsset
-    // TODO deal with filenames
+    // TODO adapted from assetmanager.postAsset, don't be duplicating
+    // TODO deal with filenames, adds duplicates atm
     function importAssets(assetsImported) {
-      var assetsDir = path.join(importDir, 'src', 'course', 'assets');
-      fs.readdir(assetsDir, function(error, courseAssets) {
-        console.log(courseAssets);
+      // TODO deal with lang folders
+      var assetsDir = path.join(metadata.importDir, 'src', 'course', 'en', 'assets');
+      fs.readdir(assetsDir, function onDirRead(error, courseAssets) {
+        if(error) {
+          return assetsImported(error);
+        }
+        var repository = configuration.getConfig('filestorage') || 'localfs';
+        filestorage.getStorage(repository, function gotStorage(error, storage) {
+          if (error) {
+            return assetsImported(error);
+          }
+          async.each(courseAssets, function iterator(assetName, doneAsset) {
+            if (error) {
+              return doneAsset(error);
+            }
 
-        async.each(courseAssets, function(assetName, callback) {
-          var repository = configuration.getConfig('filestorage') || 'localfs';
+            var fileMeta = _.extend(metadata.assets[assetName], {
+              filename: assetName,
+              path: path.join(assetsDir, assetName),
+              repository: repository
+            });
 
-          filestorage.getStorage(repository, function (error, storage) {
-            if (error) return next(error);
+            if(!fileMeta) {
+              return doneAsset(new Error('No metadata found for asset: ' + assetName));
+            }
 
-            // VINYL FILE
-            var file = {
-              name: filename
-              path: "path/in/unzip"
-              type: mimeType
-              size: size
-            };
-            var user = usermanager.getCurrentUser();
             var date = new Date();
             var hash = crypto.createHash('sha1');
-            // think these options might be defaults?
-            var rs = fs.createReadStream(file.path);
+            var rs = fs.createReadStream(fileMeta.path);
 
-            rs.on('data', function (data) {
+            rs.on('data', function onReadData(data) {
               hash.update(data, 'utf8');
             });
-            rs.on('close', function () {
+            rs.on('close', function onReadClose() {
               var filehash = hash.digest('hex');
               var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
-              var filepath = path.join(directory, filehash) + path.extname(file.name);
+              var filepath = path.join(directory, filehash) + path.extname(assetName);
               var fileOptions = {
                 createMetadata: true,
-                createThumbnail: true,
-                thumbnailOptions: {
-                  width: THUMBNAIL_WIDTH,
-                  height: THUMBNAIL_HEIGHT
-                }
+                // TODO thumbnail
+                createThumbnail: false
               };
 
               // the repository should move the file to a suitable location
-              storage.processFileUpload(file, filepath, fileOptions, function (error, storedFile) {
-                if (error) return next(error);
-
+              storage.processFileUpload(fileMeta, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
+                if (error) {
+                  return doneAsset(error);
+                }
                 // It's better not to set thumbnailPath if it's not set.
                 if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
-                var asset = _.extend(metadata, storedFile);
+                var asset = _.extend(fileMeta, storedFile);
 
                 // Create the asset record
-                self.createAsset(asset,function (createError, assetRec) {
+                app.assetmanager.createAsset(asset,function onAssetCreated(createError, assetRec) {
                   if (createError) {
-                    storage.deleteFile(storedFile.path, callback);
+                    storage.deleteFile(storedFile.path, doneAsset);
                   }
                   else {
-                    callback();
+                    doneAsset();
                   }
                 });
               });
             });
-          });
-        }, assetsImported);
+          }, assetsImported);
+        });
       });
     },
     function importPlugins(pluginsImported) {
-      return pluginsImported();
-      database.getDatabase(function (error, db) {
-        if (error) return next(error);
+      database.getDatabase(function gotDB(error, db) {
+        if (error) {
+          return pluginsImported(error);
+        }
 
         // TODO this is awful...get this from the metadata
         var pluginTypes = [
@@ -546,47 +611,56 @@ function restoreData(importDir, callback) {
           ["menu","menu"],
           ["theme","theme"]
         ];
-        async.each(pluginTypes, function(pluginType, callback) {
-          var pluginTypeDir = path.join(importDir, 'src', pluginType[0]);
-          fs.readdir(pluginTypeDir, function(error, files) {
-            async.each(files, function(file, callback) {
+        async.each(pluginTypes, function(pluginType, donePluginTypeIterator) {
+          var pluginTypeDir = path.join(metadata.importDir, 'src', pluginType[0]);
+          fs.readdir(pluginTypeDir, function onReadDir(error, files) {
+            async.each(files, function(file, donePluginIterator) {
               var pluginDir = path.join(pluginTypeDir, file);
               try {
                 var bowerJson = require(path.join(pluginDir, 'bower.json'));
               } catch(e) {
-                return pluginsImported(e);
+                return donePluginIterator(e);
               }
-              app.contentmanager.getContentPlugin(pluginType[1], function(error, plugin) {
-                if(error) return pluginsImported(error);
+              app.contentmanager.getContentPlugin(pluginType[1], function onGotPlugin(error, plugin) {
+                if(error) {
+                  return donePluginIterator(error);
+                }
                 db.retrieve(plugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, function (error, records) {
-                  // if(!records) {
-                  if(true) {
+                  if(!records) {
                     console.log(bowerJson.displayName, ' not found, installing...');
                     bowerJson.isLocalPackage = true;
                     // do we need to check framework version on plugin at this point?
                     plugin.addPackage(contentPlugin.bowerConfig, {
                       canonicalDir: pluginDir,
                       pkgMeta: bowerJson
-                    }, { strict: true }, pluginsImported);
+                    }, { strict: true }, donePluginIterator);
                   } else {
                     var serverPlugin = records[0];
                     if(semver.gt(bowerJson.version,serverPlugin.version)) {
                       console.log('Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + ')');
                     }
-                    pluginsImported();
+                    donePluginIterator();
                   }
                 });
               });
-            }, callback);
+            }, donePluginTypeIterator);
           });
         }, pluginsImported);
       });
     }
   ], function doneAsync(error) {
     if(error) return callback(error);
-    console.log('doneAsync, restoreData');
     callback();
   });
+};
+
+/*
+* 1. Loads and imports the course JSON
+* 2. Imports the assets
+* 3. Imports the plugins
+*/
+function cleanUpImport(importDir, doneCleanUp) {
+  fse.remove(importDir, doneCleanUp)
 };
 
 /**

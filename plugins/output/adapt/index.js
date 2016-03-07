@@ -1,6 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /**
  * Adapt Output plugin
+ * TODO this file is too long. Suggest maybe splitting exports into separate files
  */
 
 var origin = require('../../../'),
@@ -423,7 +424,7 @@ AdaptOutput.prototype.import = function (request, response, next) {
 * 1. Unzips uploaded zip
 * 2. Checks compatibility of import with this AT instance
 * 3. Validates the import's metadata
-* TODO Should we fail the task on every error?
+* TODO take out some of the nested functions
 */
 function prepareImport(zipPath, unzipPath, callback) {
   var decompress = require('decompress');
@@ -526,164 +527,166 @@ function getJSONRecursive(dir, doneRecursion) {
 function restoreData(metadata, callback) {
   var app = origin();
   async.parallel([
-    function loadCourseJson(loadedJson) {
-      // get all JSON from the course folder
-      getJSONRecursive(path.join(metadata.importDir, 'src', 'course'), function onJsonLoaded(error, jsonData) {
-        if(error) return loadedJson(error);
-
-        // now just need to import course JSON (jsonData)
-        console.log(jsonData);
-
-        loadedJson();
-      });
+    function(cb) {
+      restoreData(metadata, cb);
     },
-    // TODO adapted from assetmanager.postAsset (change this, don't duplicate)
-    // TODO deal with filenames
-    function importAssets(assetsImported) {
-      var assetsGlob = path.join(metadata.importDir, 'src', 'course', '**', 'assets', '*');
-      glob(assetsGlob, function (error, courseAssets) {
-        if(error) {
-          return assetsImported(error);
-        }
-        var repository = configuration.getConfig('filestorage') || 'localfs';
-        filestorage.getStorage(repository, function gotStorage(error, storage) {
-          if (error) {
-            return assetsImported(error);
-          }
-          async.each(courseAssets, function iterator(assetPath, doneAsset) {
-            if (error) {
-              return doneAsset(error);
-            }
-            var assetName = path.basename(assetPath);
-            var fileMeta = _.extend(metadata.assets[assetName], {
-              filename: assetName,
-              path: assetPath,
-              repository: repository
-            });
-
-            if(!fileMeta) {
-              return doneAsset(new Error('No metadata found for asset: ' + assetName));
-            }
-
-            // look for assets with the same name and size; chances are they're duplicates, so don't add
-            app.assetmanager.retrieveAsset({ name: fileMeta.filename, size: fileMeta.size }, function gotAsset(error, results) {
-              if(results) {
-                console.log(fileMeta.filename, 'similar file found in DB, not importing');
-                return doneAsset();
-              }
-
-              var date = new Date();
-              var hash = crypto.createHash('sha1');
-              var rs = fs.createReadStream(fileMeta.path);
-
-              rs.on('data', function onReadData(data) {
-                hash.update(data, 'utf8');
-              });
-              rs.on('close', function onReadClose() {
-                var filehash = hash.digest('hex');
-                var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
-                var filepath = path.join(directory, filehash) + path.extname(assetName);
-                var fileOptions = {
-                  createMetadata: true,
-                  // TODO thumbnail
-                  createThumbnail: false
-                };
-
-                // the repository should move the file to a suitable location
-                storage.processFileUpload(fileMeta, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
-                  if (error) {
-                    return doneAsset(error);
-                  }
-                  // It's better not to set thumbnailPath if it's not set.
-                  if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
-                  var asset = _.extend(fileMeta, storedFile);
-
-                  // Create the asset record
-                  app.assetmanager.createAsset(asset,function onAssetCreated(createError, assetRec) {
-                    if (createError) {
-                      storage.deleteFile(storedFile.path, doneAsset);
-                    }
-                    else {
-                      doneAsset();
-                    }
-                  });
-                });
-              });
-            });
-          }, assetsImported);
-        });
-      });
+    function(cb) {
+      restoreAssets(metadata, cb);
     },
-    function importPlugins(pluginsImported) {
-      database.getDatabase(function gotDB(error, db) {
-        if (error) {
-          return pluginsImported(error);
-        }
-
-        // TODO get this from the metadata
-        // - content plugin name
-        // - import folder
-        var pluginTypes = [
-          {
-            type: 'component',
-            folder: 'components'
-          },
-          {
-            type: 'extension',
-            folder: 'extensions'
-          },
-          {
-            type: 'menu',
-            folder: 'menu'
-          },
-          {
-            type: 'theme',
-            folder: 'theme'
-          }
-        ];
-        async.each(pluginTypes, function(pluginType, donePluginTypeIterator) {
-          var pluginTypeDir = path.join(metadata.importDir, 'src', pluginType.folder);
-          fs.readdir(pluginTypeDir, function onReadDir(error, files) {
-            async.each(files, function(file, donePluginIterator) {
-              var pluginDir = path.join(pluginTypeDir, file);
-              try {
-                var bowerJson = require(path.join(pluginDir, 'bower.json'));
-              } catch(e) {
-                return donePluginIterator(e);
-              }
-              app.contentmanager.getContentPlugin(pluginType.type, function onGotPlugin(error, plugin) {
-                if(error) {
-                  return donePluginIterator(error);
-                }
-                db.retrieve(plugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, function (error, records) {
-                  if(!records) {
-                    console.log(bowerJson.displayName, ' not installed, installing...');
-                    bowerJson.isLocalPackage = true;
-                    // TODO do we need to check framework version on plugin at this point?
-                    plugin.addPackage(contentPlugin.bowerConfig, {
-                      canonicalDir: pluginDir,
-                      pkgMeta: bowerJson
-                    }, { strict: true }, donePluginIterator);
-                  } else {
-                    var serverPlugin = records[0];
-                    // TODO what do we do with newer versions of plugins? (could affect other courses if we install new version)
-                    if(semver.gt(bowerJson.version,serverPlugin.version)) {
-                      console.log('Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + ')');
-                    } else {
-                      console.log('Import version of ' + bowerJson.displayName + ' *not* newer, nothing to do');
-                    }
-                    donePluginIterator();
-                  }
-                });
-              });
-            }, donePluginTypeIterator);
-          });
-        }, pluginsImported);
-      });
+    function(cb) {
+      importPlugins(metadata, cb);
     }
   ], function doneAsync(error) {
     if(error) return callback(error);
     callback();
+  });
+};
+
+// TODO move these somewhere
+function restoreCourseJson(metadata, loadedJson) {
+  // get all JSON from the course folder
+  getJSONRecursive(path.join(metadata.importDir, 'src', 'course'), function onJsonLoaded(error, jsonData) {
+    if(error) return loadedJson(error);
+
+    // now just need to import course JSON (jsonData)
+    console.log(jsonData);
+
+    loadedJson();
+  });
+};
+
+// TODO adapted from assetmanager.postAsset (change this, don't like duplication)
+// TODO deal with filenames
+function importAssets(assetsImported) {
+  var assetsGlob = path.join(metadata.importDir, 'src', 'course', '**', 'assets', '*');
+  glob(assetsGlob, function (error, courseAssets) {
+    if(error) {
+      return assetsImported(error);
+    }
+    var repository = configuration.getConfig('filestorage') || 'localfs';
+    filestorage.getStorage(repository, function gotStorage(error, storage) {
+      if (error) {
+        return assetsImported(error);
+      }
+      async.each(courseAssets, function iterator(assetPath, doneAsset) {
+        if (error) {
+          return doneAsset(error);
+        }
+        var assetName = path.basename(assetPath);
+        var fileMeta = _.extend(metadata.assets[assetName], {
+          filename: assetName,
+          path: assetPath,
+          repository: repository
+        });
+
+        if(!fileMeta) {
+          return doneAsset(new Error('No metadata found for asset: ' + assetName));
+        }
+
+        // look for assets with the same name and size; chances are they're duplicates, so don't add
+        app.assetmanager.retrieveAsset({ name: fileMeta.filename, size: fileMeta.size }, function gotAsset(error, results) {
+          if(results) {
+            console.log(fileMeta.filename, 'similar file found in DB, not importing');
+            return doneAsset();
+          }
+
+          var date = new Date();
+          var hash = crypto.createHash('sha1');
+          var rs = fs.createReadStream(fileMeta.path);
+
+          rs.on('data', function onReadData(data) {
+            hash.update(data, 'utf8');
+          });
+          rs.on('close', function onReadClose() {
+            var filehash = hash.digest('hex');
+            var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
+            var filepath = path.join(directory, filehash) + path.extname(assetName);
+            var fileOptions = {
+              createMetadata: true,
+              // TODO thumbnail
+              createThumbnail: false
+            };
+
+            // the repository should move the file to a suitable location
+            storage.processFileUpload(fileMeta, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
+              if (error) {
+                return doneAsset(error);
+              }
+              // It's better not to set thumbnailPath if it's not set.
+              if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
+              var asset = _.extend(fileMeta, storedFile);
+
+              // Create the asset record
+              app.assetmanager.createAsset(asset,function onAssetCreated(createError, assetRec) {
+                if (createError) {
+                  storage.deleteFile(storedFile.path, doneAsset);
+                }
+                else {
+                  doneAsset();
+                }
+              });
+            });
+          });
+        });
+      }, assetsImported);
+    });
+  });
+};
+
+/**
+* Installs any plugins which aren't already in the system.
+* NOTE no action taken for plugins which are newer than installed version (just logged)
+*/
+function importPlugins(pluginsImported) {
+  database.getDatabase(function gotDB(error, db) {
+    if (error) {
+      return pluginsImported(error);
+    }
+    /*
+    * We need:
+    * - content plugin name
+    * - import folder
+    * TODO get this from the metadata?
+    */
+    var pluginTypes = [
+      { type: 'component', folder: 'components' },
+      { type: 'extension', folder: 'extensions' },
+      { type: 'menu',      folder: 'menu'       },
+      { type: 'theme',     folder: 'theme'      }
+    ];
+    async.each(pluginTypes, function(pluginType, donePluginTypeIterator) {
+      var pluginTypeDir = path.join(metadata.importDir, 'src', pluginType.folder);
+      fs.readdir(pluginTypeDir, function onReadDir(error, files) {
+        async.each(files, function(file, donePluginIterator) {
+          var pluginDir = path.join(pluginTypeDir, file);
+          try {
+            var bowerJson = require(path.join(pluginDir, 'bower.json'));
+          } catch(e) {
+            return donePluginIterator(e);
+          }
+          app.contentmanager.getContentPlugin(pluginType.type, function onGotPlugin(error, plugin) {
+            if(error) {
+              return donePluginIterator(error);
+            }
+            db.retrieve(plugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, function (error, records) {
+              if(records.length === 0) {
+                console.log(bowerJson.displayName, ' not installed, installing...');
+                bowerJson.isLocalPackage = true;
+                // TODO do we need to check framework version on plugin at this point?
+                plugin.addPackage(plugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, donePluginIterator);
+              } else {
+                var serverPlugin = records[0];
+                // TODO what do we do with newer versions of plugins? (could affect other courses if we install new version)
+                if(semver.gt(bowerJson.version,serverPlugin.version)) {
+                  console.log('Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + ')');
+                }
+                donePluginIterator();
+              }
+            });
+          });
+        }, donePluginTypeIterator);
+      });
+    }, pluginsImported);
   });
 };
 

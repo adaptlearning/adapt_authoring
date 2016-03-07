@@ -27,7 +27,8 @@ var origin = require('../../../'),
     helpers = require('../../../lib/helpers'),
     logger = require('../../../lib/logger'),
     IncomingForm = require('formidable').IncomingForm,
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    glob = require('glob');
 
 function AdaptOutput() {
 }
@@ -387,20 +388,27 @@ AdaptOutput.prototype.import = function (request, response, next) {
   form.uploadDir = COURSE_ROOT_FOLDER;
 
   form.parse(request, function (error, fields, files) {
-    if(error) return next(error);
-    if(!files.file || !files.file.path) return next(new ImportError('File upload failed.'));
-
+    if(error) {
+      return next(error);
+    }
+    if(!files.file || !files.file.path) {
+      return next(new ImportError('File upload failed.'));
+    }
     var zipPath = files.file.path;
     var outputDir = zipPath + '_unzipped';
-    prepareImport(zipPath, outputDir, function importPrepared(error, metadata) {
-      if(error) return next(error);
+    prepareImport(zipPath, outputDir, function importPrepared(prepError, metadata) {
+      if(error) {
+        return cleanUpImport(outputDir, function(cleanupError) {
+          next(prepError || cleanupError);
+        });
+      }
       metadata.importDir = outputDir;
-      restoreData(metadata, function dataRestored(error) {
-        console.log('restoreData', error);
-        if(error) return next(error);
-        cleanUpImport(outputDir, function(error) {
-          console.log('cleanUpImport');
-          if(error) return next(error);
+      restoreData(metadata, function dataRestored(restoreError) {
+        // clean up unzipped data, error or no
+        cleanUpImport(outputDir, function(cleanupError) {
+          if(restoreError || cleanupError) {
+            return next(restoreError || cleanupError);
+          }
           response.status(200).json({
             sucess: true,
             message: 'Successfully imported your course!'
@@ -532,9 +540,8 @@ function restoreData(metadata, callback) {
     // TODO adapted from assetmanager.postAsset (change this, don't duplicate)
     // TODO deal with filenames
     function importAssets(assetsImported) {
-      // TODO deal with lang folders
-      var assetsDir = path.join(metadata.importDir, 'src', 'course', 'en', 'assets');
-      fs.readdir(assetsDir, function onDirRead(error, courseAssets) {
+      var assetsGlob = path.join(metadata.importDir, 'src', 'course', '**', 'assets', '*');
+      glob(assetsGlob, function (error, courseAssets) {
         if(error) {
           return assetsImported(error);
         }
@@ -543,14 +550,14 @@ function restoreData(metadata, callback) {
           if (error) {
             return assetsImported(error);
           }
-          async.each(courseAssets, function iterator(assetName, doneAsset) {
+          async.each(courseAssets, function iterator(assetPath, doneAsset) {
             if (error) {
               return doneAsset(error);
             }
-
+            var assetName = path.basename(assetPath);
             var fileMeta = _.extend(metadata.assets[assetName], {
               filename: assetName,
-              path: path.join(assetsDir, assetName),
+              path: assetPath,
               repository: repository
             });
 
@@ -558,10 +565,10 @@ function restoreData(metadata, callback) {
               return doneAsset(new Error('No metadata found for asset: ' + assetName));
             }
 
-            // look for assets with the same name and size, chances are they're duplicates
+            // look for assets with the same name and size; chances are they're duplicates, so don't add
             app.assetmanager.retrieveAsset({ name: fileMeta.filename, size: fileMeta.size }, function gotAsset(error, results) {
               if(results) {
-                console.log(fileMeta.filename, 'already found in DB, not adding again');
+                console.log(fileMeta.filename, 'similar file found in DB, not importing');
                 return doneAsset();
               }
 
@@ -613,15 +620,29 @@ function restoreData(metadata, callback) {
           return pluginsImported(error);
         }
 
-        // TODO this is awful...get this from the metadata
+        // TODO get this from the metadata
+        // - content plugin name
+        // - import folder
         var pluginTypes = [
-          ["components","component"],
-          ["extensions","extension"],
-          ["menu","menu"],
-          ["theme","theme"]
+          {
+            type: 'component',
+            folder: 'components'
+          },
+          {
+            type: 'extension',
+            folder: 'extensions'
+          },
+          {
+            type: 'menu',
+            folder: 'menu'
+          },
+          {
+            type: 'theme',
+            folder: 'theme'
+          }
         ];
         async.each(pluginTypes, function(pluginType, donePluginTypeIterator) {
-          var pluginTypeDir = path.join(metadata.importDir, 'src', pluginType[0]);
+          var pluginTypeDir = path.join(metadata.importDir, 'src', pluginType.folder);
           fs.readdir(pluginTypeDir, function onReadDir(error, files) {
             async.each(files, function(file, donePluginIterator) {
               var pluginDir = path.join(pluginTypeDir, file);
@@ -630,23 +651,26 @@ function restoreData(metadata, callback) {
               } catch(e) {
                 return donePluginIterator(e);
               }
-              app.contentmanager.getContentPlugin(pluginType[1], function onGotPlugin(error, plugin) {
+              app.contentmanager.getContentPlugin(pluginType.type, function onGotPlugin(error, plugin) {
                 if(error) {
                   return donePluginIterator(error);
                 }
                 db.retrieve(plugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, function (error, records) {
                   if(!records) {
-                    console.log(bowerJson.displayName, ' not found, installing...');
+                    console.log(bowerJson.displayName, ' not installed, installing...');
                     bowerJson.isLocalPackage = true;
-                    // do we need to check framework version on plugin at this point?
+                    // TODO do we need to check framework version on plugin at this point?
                     plugin.addPackage(contentPlugin.bowerConfig, {
                       canonicalDir: pluginDir,
                       pkgMeta: bowerJson
                     }, { strict: true }, donePluginIterator);
                   } else {
                     var serverPlugin = records[0];
+                    // TODO what do we do with newer versions of plugins? (could affect other courses if we install new version)
                     if(semver.gt(bowerJson.version,serverPlugin.version)) {
                       console.log('Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + ')');
+                    } else {
+                      console.log('Import version of ' + bowerJson.displayName + ' *not* newer, nothing to do');
                     }
                     donePluginIterator();
                   }
@@ -664,9 +688,7 @@ function restoreData(metadata, callback) {
 };
 
 /*
-* 1. Loads and imports the course JSON
-* 2. Imports the assets
-* 3. Imports the plugins
+* Just removes the unzipped files
 */
 function cleanUpImport(importDir, doneCleanUp) {
   fse.remove(importDir, doneCleanUp)

@@ -279,7 +279,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
               }
               var asset = matchedAssets[0];
 
-              // TODO look for _ method to pick these
+              // would _.pick, but need to map some keys
               if(!metadata.assets[asset.filename]) {
                 metadata.assets[asset.filename] = {
                   "title": asset.title,
@@ -524,12 +524,13 @@ function restoreData(metadata, callback) {
         if(error) return loadedJson(error);
 
         // now just need to import course JSON (jsonData)
+        console.log(jsonData);
 
         loadedJson();
       });
     },
-    // TODO adapted from assetmanager.postAsset, don't be duplicating
-    // TODO deal with filenames, adds duplicates atm
+    // TODO adapted from assetmanager.postAsset (change this, don't duplicate)
+    // TODO deal with filenames
     function importAssets(assetsImported) {
       // TODO deal with lang folders
       var assetsDir = path.join(metadata.importDir, 'src', 'course', 'en', 'assets');
@@ -557,40 +558,48 @@ function restoreData(metadata, callback) {
               return doneAsset(new Error('No metadata found for asset: ' + assetName));
             }
 
-            var date = new Date();
-            var hash = crypto.createHash('sha1');
-            var rs = fs.createReadStream(fileMeta.path);
+            // look for assets with the same name and size, chances are they're duplicates
+            app.assetmanager.retrieveAsset({ name: fileMeta.filename, size: fileMeta.size }, function gotAsset(error, results) {
+              if(results) {
+                console.log(fileMeta.filename, 'already found in DB, not adding again');
+                return doneAsset();
+              }
 
-            rs.on('data', function onReadData(data) {
-              hash.update(data, 'utf8');
-            });
-            rs.on('close', function onReadClose() {
-              var filehash = hash.digest('hex');
-              var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
-              var filepath = path.join(directory, filehash) + path.extname(assetName);
-              var fileOptions = {
-                createMetadata: true,
-                // TODO thumbnail
-                createThumbnail: false
-              };
+              var date = new Date();
+              var hash = crypto.createHash('sha1');
+              var rs = fs.createReadStream(fileMeta.path);
 
-              // the repository should move the file to a suitable location
-              storage.processFileUpload(fileMeta, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
-                if (error) {
-                  return doneAsset(error);
-                }
-                // It's better not to set thumbnailPath if it's not set.
-                if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
-                var asset = _.extend(fileMeta, storedFile);
+              rs.on('data', function onReadData(data) {
+                hash.update(data, 'utf8');
+              });
+              rs.on('close', function onReadClose() {
+                var filehash = hash.digest('hex');
+                var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
+                var filepath = path.join(directory, filehash) + path.extname(assetName);
+                var fileOptions = {
+                  createMetadata: true,
+                  // TODO thumbnail
+                  createThumbnail: false
+                };
 
-                // Create the asset record
-                app.assetmanager.createAsset(asset,function onAssetCreated(createError, assetRec) {
-                  if (createError) {
-                    storage.deleteFile(storedFile.path, doneAsset);
+                // the repository should move the file to a suitable location
+                storage.processFileUpload(fileMeta, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
+                  if (error) {
+                    return doneAsset(error);
                   }
-                  else {
-                    doneAsset();
-                  }
+                  // It's better not to set thumbnailPath if it's not set.
+                  if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
+                  var asset = _.extend(fileMeta, storedFile);
+
+                  // Create the asset record
+                  app.assetmanager.createAsset(asset,function onAssetCreated(createError, assetRec) {
+                    if (createError) {
+                      storage.deleteFile(storedFile.path, doneAsset);
+                    }
+                    else {
+                      doneAsset();
+                    }
+                  });
                 });
               });
             });

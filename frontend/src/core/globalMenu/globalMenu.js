@@ -66,6 +66,7 @@ define(function(require) {
     Origin.on('remove:views globalMenu:close', function() {
         $('#app, .sidebar').off('click');
         closeGlobalMenu();
+        $('#hamburger-icon').removeClass('open');
     });
 
     // Listen to when the user is logger out and reset the collection as permissions

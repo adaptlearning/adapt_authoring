@@ -23,10 +23,21 @@
 }
 
 .navigation-left {
-    .navigation-user-global-menu {
-        &:hover {
-            color:@navigation-hover-text-color;
+    .navigation-loading-bar {
+        width: 120px;
+        height: 20px;
+        padding: 0;
+        margin-top: 7px;
+        radius: @button-radius;
+        background: darken(@navigation-hover-text-color,10%);
+        border: 1px solid @navigation-hover-text-color;
+        &.display-none {
+            display: none;
         }
+    }
+    .navigation-loading-progress {
+        height: 20px;
+        background-color: @primary-color;
     }
 }
 

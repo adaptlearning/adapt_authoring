@@ -87,6 +87,7 @@ define(function(require){
         $('.editor-common-sidebar-downloading-progress').animate({ width: '100%' }, 30000);
         $('.editor-common-sidebar-download-inner').addClass('display-none');
         $('.editor-common-sidebar-downloading').removeClass('display-none');
+        $('.navigation-loading-bar').removeClass('display-none');
         //return;
         var courseId = Origin.editor.data.course.get('_id');
         var tenantId = Origin.sessionModel.get('tenantId');
@@ -97,6 +98,7 @@ define(function(require){
           Origin.editor.isPublishPending = false;
           $('.editor-common-sidebar-download-inner').removeClass('display-none');
           $('.editor-common-sidebar-downloading').addClass('display-none');
+          $('.navigation-loading-bar').addClass('display-none'); 
 
           var $downloadForm = $('#downloadForm');
 
@@ -125,12 +127,13 @@ define(function(require){
 
       if (canPreview && !Origin.editor.isPreviewPending) {
         Origin.editor.isPreviewPending = true;
+        $('.navigation-loading-bar').removeClass('display-none');        
         $('.editor-common-sidebar-preview-inner').addClass('display-none');
         $('.editor-common-sidebar-previewing').removeClass('display-none');
 
         if (Origin.constants.outputPlugin == 'adapt') {
           // Report progress for 45 seconds
-          $('.editor-common-sidebar-preview-progress').animate({ width: '100%' }, 45000);
+          $('.navigation-loading-progress').animate({ width: '100%' }, 45000);
         }
 
         $.ajax({
@@ -177,7 +180,7 @@ define(function(require){
               self.launchCoursePreview();
               self.resetPreviewProgress();
             } else {
-               $('.editor-common-sidebar-preview-progress').animate({ width: jqXHR.progress + '%' }, 1000);
+               $('.navigation-loading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
             }
           },
           error: function(jqXHR, textStatus, errorThrown) {
@@ -194,9 +197,10 @@ define(function(require){
     },
 
     resetPreviewProgress: function() {
-      $('.editor-common-sidebar-preview-progress').css('width', 0).stop();
+      $('.navigation-loading-progress').css('width', 0).stop();
       $('.editor-common-sidebar-preview-inner').removeClass('display-none');
       $('.editor-common-sidebar-previewing').addClass('display-none');
+      $('.navigation-loading-bar').addClass('display-none');    
       Origin.editor.isPreviewPending = false;
     },
 

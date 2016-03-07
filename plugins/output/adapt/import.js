@@ -25,7 +25,6 @@ util.inherits(ImportError, Error);
 * Wrapper for prepareImport and restoreData
 */
 function Import(request, response, next) {
-  console.log('Import');
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
 
@@ -122,40 +121,6 @@ function prepareImport(zipPath, unzipPath, callback) {
     });
 };
 
-// Recursively grabs all json content and returns an object
-function getJSONRecursive(dir, doneRecursion) {
-  var jsonData = {};
-  var jsonRegEx = /\.json$/;
-  fse.readdir(dir, function onRead(error, files) {
-    if(error) return doneRecursion(error);
-    async.each(files, function iterator(file, doneIterator) {
-      var newPath = path.join(dir, file);
-      fse.stat(newPath, function(error, stats) {
-        if(error) return doneIterator(error);
-        // if dir, do recursion
-        if(stats.isDirectory()) {
-          getJSONRecursive(newPath, function(error, data) {
-            _.extend(jsonData, data);
-            doneIterator(error);
-          });
-          // if json, load file and add to jsonData
-        } else if(file.search(jsonRegEx) > -1) {
-          var jsonKey = file.replace(jsonRegEx,'');
-          if(!jsonData[jsonKey]) {
-            try { jsonData[jsonKey] = require(newPath); }
-            catch(e) { return doneIterator(e); }
-          }
-          doneIterator(null, jsonData);
-        } else {
-          doneIterator();
-        }
-      });
-    }, function(error) {
-      doneRecursion(null, jsonData);
-    });
-  });
-};
-
 /*
 * 1. Loads and imports the course JSON
 * 2. Imports the assets
@@ -189,6 +154,40 @@ function importCourseJson(metadata, importedJson) {
     console.log(jsonData);
 
     importedJson();
+  });
+};
+
+// Recursively grabs all json content and returns an object
+function getJSONRecursive(dir, doneRecursion) {
+  var jsonData = {};
+  var jsonRegEx = /\.json$/;
+  fse.readdir(dir, function onRead(error, files) {
+    if(error) return doneRecursion(error);
+    async.each(files, function iterator(file, doneIterator) {
+      var newPath = path.join(dir, file);
+      fse.stat(newPath, function(error, stats) {
+        if(error) return doneIterator(error);
+        // if dir, do recursion
+        if(stats.isDirectory()) {
+          getJSONRecursive(newPath, function(error, data) {
+            _.extend(jsonData, data);
+            doneIterator(error);
+          });
+          // if json, load file and add to jsonData
+        } else if(file.search(jsonRegEx) > -1) {
+          var jsonKey = file.replace(jsonRegEx,'');
+          if(!jsonData[jsonKey]) {
+            try { jsonData[jsonKey] = require(newPath); }
+            catch(e) { return doneIterator(e); }
+          }
+          doneIterator(null, jsonData);
+        } else {
+          doneIterator();
+        }
+      });
+    }, function(error) {
+      doneRecursion(null, jsonData);
+    });
   });
 };
 

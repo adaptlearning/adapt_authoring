@@ -12,7 +12,12 @@ var version = require('../../../version');
 var helpers = require('../../../lib/helpers');
 var logger = require('../../../lib/logger');
 
-function Publish(courseId, isPreview, request, response, next) {
+/**
+* Course publish function
+* TODO notes?
+*/
+
+exports = module.exports = function Publish(courseId, isPreview, request, response, next) {
   var app = origin();
   var self = this;
   var user = usermanager.getCurrentUser(),
@@ -225,8 +230,3 @@ function Publish(courseId, isPreview, request, response, next) {
       return next(err, resultObject);
     });
 };
-
-/**
- * Module exports
- */
-exports = module.exports = Publish;

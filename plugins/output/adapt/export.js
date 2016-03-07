@@ -7,7 +7,12 @@ var async = require('async');
 var archiver = require('archiver');
 var usermanager = require('../../../lib/usermanager');
 
-function Export(courseId, request, response, next) {
+/**
+* Course import function
+* TODO notes?
+*/
+
+exports = module.exports = function Export(courseId, request, response, next) {
   var app = origin();
   var self = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
@@ -128,8 +133,3 @@ function Export(courseId, request, response, next) {
     });
   }
 };
-
-/**
- * Module exports
- */
-exports = module.exports = Export;

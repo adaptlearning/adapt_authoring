@@ -21,10 +21,13 @@ function ImportError(message, httpStatus) {
 };
 util.inherits(ImportError, Error);
 
-/*
+/**
+* Course import function
 * Wrapper for prepareImport and restoreData
+* TODO notes?
 */
-function Import(request, response, next) {
+
+exports = module.exports = function Import(request, response, next) {
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
 
@@ -332,8 +335,3 @@ function importPlugins(metadata, pluginsImported) {
 function cleanUpImport(importDir, doneCleanUp) {
   fse.remove(importDir, doneCleanUp)
 };
-
-/**
- * Module exports
- */
-exports = module.exports = Import;

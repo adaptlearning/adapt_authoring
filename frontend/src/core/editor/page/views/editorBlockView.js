@@ -30,7 +30,7 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
-      this.listenTo(this.model, 'sync', this.setupModelEvents);
+      this.setupModelEvents();
 
       this.listenTo(this, {
         'contextMenu:block:edit': this.loadBlockEdit,

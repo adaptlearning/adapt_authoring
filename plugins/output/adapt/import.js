@@ -153,10 +153,24 @@ function importCourseJson(metadata, importedJson) {
   getJSONRecursive(path.join(metadata.importDir, 'src', 'course'), function onJsonLoaded(error, jsonData) {
     if(error) return importedJson(error);
 
-    // now just need to import course JSON (jsonData)
-    console.log(jsonData);
-
-    importedJson();
+    async.each(Object.keys(jsonData), function topIterator(key, doneTopIterator) {
+      var data = jsonData[key];
+      if(_.isArray(data)) {
+        async.each(data, function arrayIterator(item, doneArrayIterator) {
+        }, doneTopIterator);
+      } else {
+        app.contentmanager.getContentPlugin(key, function onGotPlugin(error, plugin) {
+          if(error) {
+            return doneTopIterator(error);
+          }
+          if(key === 'course') {
+            delete data._id;
+            console.log(data);
+          }
+          plugin.create(data, doneTopIterator);
+        });
+      }
+    }, importedJson);
   });
 };
 
@@ -212,6 +226,7 @@ function importAssets(metadata, assetsImported) {
           return doneAsset(error);
         }
         var assetName = path.basename(assetPath);
+        // TODO look into creating a vinyl file here
         var fileMeta = _.extend(metadata.assets[assetName], {
           filename: assetName,
           path: assetPath,
@@ -281,19 +296,7 @@ function importPlugins(metadata, pluginsImported) {
     if (error) {
       return pluginsImported(error);
     }
-    /*
-    * We need:
-    * - content plugin name
-    * - import folder
-    * TODO get this from the metadata?
-    */
-    var pluginTypes = [
-      { type: 'component', folder: 'components' },
-      { type: 'extension', folder: 'extensions' },
-      { type: 'menu',      folder: 'menu'       },
-      { type: 'theme',     folder: 'theme'      }
-    ];
-    async.each(pluginTypes, function(pluginType, donePluginTypeIterator) {
+    async.each(metadata.pluginTypes, function(pluginType, donePluginTypeIterator) {
       var pluginTypeDir = path.join(metadata.importDir, 'src', pluginType.folder);
       fse.readdir(pluginTypeDir, function onReadDir(error, files) {
         async.each(files, function(file, donePluginIterator) {

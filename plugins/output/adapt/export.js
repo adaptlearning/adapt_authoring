@@ -4,17 +4,22 @@ var Constants = require('../../../lib/outputmanager').Constants;
 var configuration = require('../../../lib/configuration');
 var database = require('../../../lib/database');
 var fse = require('fs-extra');
-var origin = require('../../../');
+var origin = require('../../../')();
 var path = require('path');
 var usermanager = require('../../../lib/usermanager');
 
 /**
 * Course import function
 * TODO need implementation notes
+* TODO customise for standard export:
+* - No core, core plugins or associated files
+* - No json
+* - Yes metadata
+* - Yes assets
+* - Yes custom plugins
 */
 
 exports = module.exports = function Export(courseId, request, response, next) {
-  var app = origin();
   var self = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var userId = usermanager.getCurrentUser()._id;
@@ -23,7 +28,7 @@ exports = module.exports = function Export(courseId, request, response, next) {
   var exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, userId);
 
   // ensure the exportDir exists
-  fse.mkdir(exportDir, function(error) {
+  fse.ensureDir(exportDir, function(error) {
     if(error) {
       return next(error);
     }
@@ -43,12 +48,9 @@ exports = module.exports = function Export(courseId, request, response, next) {
           if(error) {
             return generatedMetadata(error);
           }
-
-          var metadata = _.reduce(results, function(memo, result) { return _.extend(memo, result); });
-          console.log(metadata);
-
           // TODO add filename to constants?
-          fse.writeJson(path.join(exportDir, 'metadata.json'), JSON.stringify(metadata), generatedMetadata(error));
+          var metadata = _.reduce(results, function(memo,result){ return _.extend(memo,result); });
+          fse.writeJson(path.join(exportDir, 'metadata.json'), metadata, generatedMetadata);
         });
       },
       // builds course & copies framework files
@@ -137,13 +139,24 @@ function getCourseMetdata(courseId, gotCourseMetadata) {
         if (error) {
           callback(doneIterator);
         }
-        // only store the _doc values
         // TODO need save as little metadata as possible
         // HACK do this if check better
-        if(collectionType === 'course' || collectionType === 'config') {
-          metadata.course[collectionType] = results[0]._doc;
-        }
-        metadata.course[collectionType] = _.pluck(results, '_doc');
+        // only store the _doc values
+        var isConfig = collectionType === 'course' || collectionType === 'config';
+        var toSave = _.pluck(results,'_doc');
+
+        // remove blacklisted properties (TODO and JSON data?)
+        var blacklist = [
+          '__v',
+          '_isDeleted',
+          'createdAt',
+          'createdBy',
+          'updatedAt',
+          'updatedBy'
+        ];
+        _.each(toSave, function(item, index) { toSave[index] = _.omit(item, blacklist); });
+        metadata.course[collectionType] = toSave;
+
         doneIterator();
       });
     }, function doneEach(error) {
@@ -156,13 +169,13 @@ function getAssetMetadata(courseId, gotAssetMetadata) {
   var metadata = {
     assets: {}
   };
-  app.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
+  origin.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
     plugin.retrieve({ _courseId:courseId }, function(error, results) {
       if(error) {
         return gotAssetMetadata(error);
       }
       async.each(results, function iterator(courseasset, doneIterator) {
-        app.assetmanager.retrieveAsset({ _id:courseasset._assetId }, function(error, matchedAssets) {
+        origin.assetmanager.retrieveAsset({ _id:courseasset._assetId }, function(error, matchedAssets) {
           if(error) {
             return doneIterator(error);
           }

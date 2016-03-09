@@ -5,8 +5,7 @@
 cd /vagrant/
 
 # copy the authoring_tool into the VM box
-# move to /home/vagrant/
-mv conf frontend lib plugins routes test test_frontend .editorconfig .gitignore config.js Gruntfile.js index.js install.js package.json server.js upgrade.js version.json /home/vagrant/
+cp -r * /home/vagrant/
 
 # need this ppa for ffmpeg on trusty tahr
 add-apt-repository ppa:mc3man/trusty-media

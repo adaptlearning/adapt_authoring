@@ -4,7 +4,21 @@
 // Colors
 /////////*/
 
-@primary-color:#00DD95; // green
+// please don't edit here. Instead edit below.
+@adapt-primary-color: #34bee0;
+@adapt-secondary-color: #00dd95;
+@adapt-tertiary-color: #263944;
+@adapt-quaternary-color: #36cde8;
+
+@primary-color: @adapt-primary-color;
+@secondary-color: @adapt-secondary-color;
+@tertiary-color: @adapt-tertiary-color;
+@quaternary-color: @adapt-quaternary-color;
+
+
+
+
+
 @theme-color: #36cde8; // lightblue
 @ui-color:#333c4e;
 
@@ -56,12 +70,37 @@
 
 @button-radius: 3px;
 
+
+
 // Primary button
 @button-primary-color:@primary-color;
 @button-primary-hover-color:darken(@primary-color, 10%);
 
 @button-primary-text-color:#fff;
 @button-primary-hover-text-color:#fff;
+
+// Secondary button
+@button-secondary-color:@secondary-color;
+@button-secondary-hover-color:darken(@secondary-color, 10%);
+
+@button-secondary-text-color:#fff;
+@button-secondary-hover-text-color:#fff;
+
+// tertiary button
+@button-tertiary-color:@tertiary-color;
+@button-tertiary-hover-color:darken(@tertiary-color, 10%);
+
+@button-tertiary-text-color:#fff;
+@button-tertiary-hover-text-color:#fff;
+
+// quaternary button
+@button-quaternary-color:@quaternary-color;
+@button-quaternary-hover-color:darken(@quaternary-color, 10%);
+
+@button-quaternary-text-color:#fff;
+@button-quaternary-hover-text-color:#fff;
+
+
 
 // Warning button
 @button-info-color:@info-color;

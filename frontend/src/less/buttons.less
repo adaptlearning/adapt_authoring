@@ -96,7 +96,7 @@ button {
     &-primary {
         background-color:@button-primary-color;
         color:@button-primary-text-color;
-        border:1px solid @button-primary-color;
+        border:@button-radius solid @button-primary-color;
         i {
             color:@button-primary-text-color;
             &:hover, &:focus {
@@ -106,9 +106,27 @@ button {
         &:hover, &:focus {
             background-color:@button-primary-hover-color;
             color:@button-primary-hover-text-color;
-            border:1px solid @button-primary-hover-color;
+            border:@button-radius solid @button-primary-hover-color;
         }
-    }    
+    }
+
+    &-primary-hollow { 
+        background-color: transparent;
+        background: transparent;
+        color: @button-primary-color;
+        border:@button-radius solid @button-primary-color;
+        i {
+            color:@button-primary-text-color;
+            &:hover, &:focus {
+                color:@button-primary-hover-text-color;
+            }
+        }
+        &:hover, &:focus {
+            color: @button-primary-text-color;
+            background-color: @button-primary-color;
+            border:@button-radius solid @button-primary-color;
+        }        
+    }
 
     &-secondary {
         background-color:@button-secondary-color;
@@ -179,17 +197,17 @@ button {
 
     // This button operates in a similar way to invis-blue-bg but is used on the sidebar because of it's darker background.
 
-    &-invis-darkblue-bg { 
-        background-color: transparent;
-        background: transparent;
-        color:@sidebar-text-color;
-        border-color:@sidebar-text-color;
-        &:hover, &:focus {
-            color: @button-invis-darkblue-bg-hover-text-color;
-            background-color: @sidebar-text-color;
-            border:2px solid @sidebar-text-color;
-        }        
-    }
+    // &-invis-darkblue-bg { 
+    //     background-color: transparent;
+    //     background: transparent;
+    //     color:@sidebar-text-color;
+    //     border-color:@sidebar-text-color;
+    //     &:hover, &:focus {
+    //         color: @button-invis-darkblue-bg-hover-text-color;
+    //         background-color: @sidebar-text-color;
+    //         border:@button-radius solid @sidebar-text-color;
+    //     }        
+    // }
 
     // button to appear on the page. White background with blue outline. Fills when hovered.
 

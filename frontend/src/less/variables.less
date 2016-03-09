@@ -4,23 +4,29 @@
 // Colors
 /////////*/
 
-// please don't edit here. Instead edit below.
+
+/*///////////
+// Default adapt variables. (please don't touch!)
+/////////*/
 @adapt-primary-color: #34bee0;
 @adapt-secondary-color: #00dd95;
 @adapt-tertiary-color: #263944;
 @adapt-quaternary-color: #36cde8;
+////////////
+
+/*///////////
+// Editable variables
+//
+// -Changes you make here will pull through most of the pages.
+/////////*/
 
 @primary-color: @adapt-primary-color;
 @secondary-color: @adapt-secondary-color;
 @tertiary-color: @adapt-tertiary-color;
 @quaternary-color: @adapt-quaternary-color;
 
+///////////
 
-
-
-
-@theme-color: #36cde8; // lightblue
-@ui-color:#333c4e;
 
 @ui-content-header-color:#e0e8f7;
 @ui-content-color:#e9f0fa;
@@ -49,7 +55,7 @@
 @location-color: #2DA4CF;
 @location-background-color: #fff;
 
-@option-color: @theme-color;
+@option-color: @primary-color;
 @option-hover-color: darken(@option-color, 10%);
 @option-selected-color: darken(@option-color, 20%);
 
@@ -129,10 +135,10 @@
 
 // button invis
 @button-invis-hover-text-color:#fff;
-@button-invis-hover-color:@theme-color;
+@button-invis-hover-color:@primary-color;
 
 // button invis blue-bg
-@button-invis-blue-bg-hover-text-color:@theme-color;
+@button-invis-blue-bg-hover-text-color:@primary-color;
 @button-invis-blue-bg-hover-color:#fff;
  		
 //button invis darkblue (currently only used on sidebar)

@@ -2,18 +2,13 @@
   height: 100%;
   width:380px;
   float:left;
+  border-right: 2px solid #454545; 
   padding-bottom:30px;
   overflow:hidden;
-  &:first-child {
-    .editor-menu-layer-inner {
-      border-right: 2px solid #454545; 
-    }
-  }
 }
 
 .editor-menu-layer-inner {
   position: relative;
-  border-right: 2px solid #454545; 
   height: 100%;
   overflow-y: auto;
   overflow-x:hidden;
@@ -22,38 +17,34 @@
 .editor-menu-layer-controls {
   position:relative;
   margin: 20px;
-  .editor-menu-layer-actions.paste-zone {
-    width: 100%;
-    position: absolute;
-    top: -67px;
-    z-index: 99;
-    margin:0px;
-    padding:0;
-    border:none;
-    background: none;
-    transition:top 0.5s cubic-bezier(0.8, 0.0, 0.2, 1);;
-    &.show {
-      top:0px;
-    }
-    .btn-secondary, .btn-invis {
-        width: 150px;
-        height: 45px;
-    }
 
-  }
+    .editor-menu-layer-actions.paste-zone {
+      width: 100%;
+      position: absolute;
+      top: -67px;
+      z-index: 99;
+      margin:0px;
+      padding:0;
+      border:none;
+      background: none;
+      transition:top 0.5s cubic-bezier(0.8, 0.0, 0.2, 1);;
+      &.show {
+        top:0px;
+      }
+    }    
 }
 
-
-
-.editor-menu-layer-button {
-  float:left;
-  width:150px;
-  padding:8px;
-  height: 45px;
-  font-size:13px;
-  & i {
-    margin-right:8px;
+.editor-menu-layer-controls {
+  button {
+    width:150px;
+    padding:8px;
+    height: 45px;
+    font-size:13px;
+    & i {
+      margin-right:8px;
+    }  
   }
+
 }
 
 

@@ -145,6 +145,95 @@ button {
         }
     }
 
+    &-secondary-hollow { 
+        background-color: transparent;
+        background: transparent;
+        color: @button-secondary-color;
+        border:@button-radius solid @button-secondary-color;
+        i {
+            color:@button-secondary-text-color;
+            &:hover, &:focus {
+                color:@button-secondary-hover-text-color;
+            }
+        }
+        &:hover, &:focus {
+            color: @button-secondary-text-color;
+            background-color: @button-secondary-color;
+            border:@button-radius solid @button-secondary-color;
+        }        
+    }
+
+    &-tertiary {
+        background-color:@button-tertiary-color;
+        color:@button-tertiary-text-color;
+        border:@button-radius solid @button-tertiary-color;
+        i {
+            color:@button-tertiary-text-color;
+            &:hover, &:focus {
+                color:@button-tertiary-hover-text-color;
+            }
+        }
+        &:hover, &:focus {
+            background-color:@button-tertiary-hover-color;
+            color:@button-tertiary-hover-text-color;
+            border:@button-radius solid @button-tertiary-hover-color;
+        }
+    }
+
+    &-tertiary-hollow { 
+        background-color: transparent;
+        background: transparent;
+        color: @button-tertiary-color;
+        border:@button-radius solid @button-tertiary-color;
+        i {
+            color:@button-tertiary-text-color;
+            &:hover, &:focus {
+                color:@button-tertiary-hover-text-color;
+            }
+        }
+        &:hover, &:focus {
+            color: @button-tertiary-text-color;
+            background-color: @button-tertiary-color;
+            border:@button-radius solid @button-tertiary-color;
+        }        
+    }    
+
+    &-quaternary {
+        background-color:@button-quaternary-color;
+        color:@button-quaternary-text-color;
+        border:@button-radius solid @button-quaternary-color;
+        i {
+            color:@button-quaternary-text-color;
+            &:hover, &:focus {
+                color:@button-quaternary-hover-text-color;
+            }
+        }
+        &:hover, &:focus {
+            background-color:@button-quaternary-hover-color;
+            color:@button-quaternary-hover-text-color;
+            border:@button-radius solid @button-quaternary-hover-color;
+        }
+    }
+
+    &-quaternary-hollow { 
+        background-color: transparent;
+        background: transparent;
+        color: @button-quaternary-color;
+        border:@button-radius solid @button-quaternary-color;
+        i {
+            color:@button-quaternary-text-color;
+            &:hover, &:focus {
+                color:@button-quaternary-hover-text-color;
+            }
+        }
+        &:hover, &:focus {
+            color: @button-quaternary-text-color;
+            background-color: @button-quaternary-color;
+            border:@button-radius solid @button-quaternary-color;
+        }        
+    }
+
+
     &-info {
         background-color:@button-info-color;
         color:@button-info-text-color;
@@ -183,17 +272,17 @@ button {
 
     // This button is used for secondary actions. It appears as invisble and fills in.
 
-    &-invis-blue-bg {
-        background-color: transparent;
-        background: transparent;
-        color:@button-color;
-        border-color:@button-color;
-        &:hover, &:focus {
-            color: @button-invis-blue-bg-hover-text-color;
-            background-color: @button-invis-blue-bg-hover-color;
-            border:2px solid @button-invis-blue-bg-hover-color;
-        }
-    }
+    // &-invis-blue-bg {
+    //     background-color: transparent;
+    //     background: transparent;
+    //     color:@button-color;
+    //     border-color:@button-color;
+    //     &:hover, &:focus {
+    //         color: @button-invis-blue-bg-hover-text-color;
+    //         background-color: @button-invis-blue-bg-hover-color;
+    //         border:2px solid @button-invis-blue-bg-hover-color;
+    //     }
+    // }
 
     // This button operates in a similar way to invis-blue-bg but is used on the sidebar because of it's darker background.
 

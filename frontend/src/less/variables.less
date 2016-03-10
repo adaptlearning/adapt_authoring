@@ -4,27 +4,26 @@
 // Colors
 /////////*/
 
-
 /*///////////
-// Default adapt variables. (please don't touch!)
+// Default adapt variables. (please don't touch!) If you don't like us then comment us out!
 /////////*/
-@adapt-primary-color: #34bee0;
-@adapt-secondary-color: #00dd95;
-@adapt-tertiary-color: #263944;
-@adapt-quaternary-color: #36cde8;
+@adapt-primary-color:#34bee0;
+@adapt-secondary-color:#00dd95;
+@adapt-tertiary-color:#263944;
+@adapt-quaternary-color:#36cde8;
+@adapt-white:#fff;
 ////////////
 
 /*///////////
 // Editable variables
 //
-// -Changes you make here will pull through most of the pages.
+// Changes you make here will pull through the whole of the Authoring Tool.
 /////////*/
-
 @primary-color: @adapt-primary-color;
 @secondary-color: @adapt-secondary-color;
 @tertiary-color: @adapt-tertiary-color;
 @quaternary-color: @adapt-quaternary-color;
-
+@white:@adapt-white;
 ///////////
 
 
@@ -41,19 +40,19 @@
 /////////*/
 
 @navigation-color:#293141;
-@navigation-text-color:#fff;
+@navigation-text-color:@white;
 @navigation-hover-text-color:darken(@navigation-text-color, 10%);
 
-@sidebar-title-text-color:#fff;
-@sidebar-color:#263944;
+@sidebar-title-text-color:@white;
+@sidebar-color:@tertiary-color;
 @sidebar-text-color:#32BFDA;
-@sidebar-item-hover-color:lighten(#263944,10%);
+@sidebar-item-hover-color:lighten(@tertiary-color, 10%);
 @sidebar-item-hover-text-color:darken(#32BFDA,5%);
 @sidebar-input-color:#627178;
 @sidebar-input-text-color:#eee;
 
-@location-color: #2DA4CF;
-@location-background-color: #fff;
+@location-color:#2DA4CF;
+@location-background-color:@white;
 
 @option-color: @primary-color;
 @option-hover-color: darken(@option-color, 10%);
@@ -64,89 +63,72 @@
 /////////*/
 
 // Default button
-@button-color:#fff;
-@button-hover-color:#fff;
+@button-color:@white;
+@button-hover-color:@white;
+@button-radius: 2px;
 
 @button-text-color:#7787a1;
 @button-hover-text-color:#293141;
-@button-border:1px solid #7787a1;
-@button-hover-border: 1px solid #293141;
-
-// Used to round the button
-
-@button-radius: 2px;
-
-
+@button-border:@button-radius solid #7787a1;
+@button-hover-border: @button-radius solid #293141;
 
 // Primary button
 @button-primary-color:@primary-color;
 @button-primary-hover-color:darken(@primary-color, 10%);
 
-@button-primary-text-color:#fff;
-@button-primary-hover-text-color:#fff;
+@button-primary-text-color:@white;
+@button-primary-hover-text-color:@white;
 
 // Secondary button
 @button-secondary-color:@secondary-color;
 @button-secondary-hover-color:darken(@secondary-color, 10%);
 
-@button-secondary-text-color:#fff;
-@button-secondary-hover-text-color:#fff;
+@button-secondary-text-color:@white;
+@button-secondary-hover-text-color:@white;
 
 // tertiary button
 @button-tertiary-color:@tertiary-color;
 @button-tertiary-hover-color:darken(@tertiary-color, 10%);
 
-@button-tertiary-text-color:#fff;
-@button-tertiary-hover-text-color:#fff;
+@button-tertiary-text-color:@white;
+@button-tertiary-hover-text-color:@white;
 
 // quaternary button
 @button-quaternary-color:@quaternary-color;
 @button-quaternary-hover-color:darken(@quaternary-color, 10%);
 
-@button-quaternary-text-color:#fff;
-@button-quaternary-hover-text-color:#fff;
-
-
+@button-quaternary-text-color:@white;
+@button-quaternary-hover-text-color:@white;
 
 // Warning button
 @button-info-color:@info-color;
 @button-info-hover-color:darken(@info-color, 10%);
 
-@button-info-text-color:#fff;
-@button-info-hover-text-color:#fff;
+@button-info-text-color:@white;
+@button-info-hover-text-color:@white;
 
 // Warning button
 @button-warning-color:@warning-color;
 @button-warning-hover-color:darken(@warning-color, 10%);
 
-@button-warning-text-color:#fff;
-@button-warning-hover-text-color:#fff;
+@button-warning-text-color:@white;
+@button-warning-hover-text-color:@white;
 
 // Alert button
 @button-alert-color:@alert-color;
 @button-alert-hover-color:darken(@alert-color, 10%);
 
-@button-alert-text-color:#fff;
-@button-alert-hover-text-color:#fff;
+@button-alert-text-color:@white;
+@button-alert-hover-text-color:@white;
 
 // Disabled button
 @button-disabled-color:@disabled-color;
-@button-disabled-text-color:#fff;
+@button-disabled-text-color:@white;
 
 // button invis
-@button-invis-hover-text-color:#fff;
+@button-invis-hover-text-color:@white;
 @button-invis-hover-color:@primary-color;
-
-// button invis blue-bg
-@button-invis-blue-bg-hover-text-color:@primary-color;
-@button-invis-blue-bg-hover-color:#fff;
- 		
-//button invis darkblue (currently only used on sidebar)
-
-// @button-invis-darkblue-bg-text-color:#263944;
-// @button-invis-darkblue-bg-hover-text-color:@button-hover-color;
-// @button-invis-darkblue-bg-hover-color:@button-invis-darkblue-bg-text-color;
 
 // Tag colors
 @tag-background-color:#9CABC4;
-@tag-title-color:#fff;
+@tag-title-color:@white;

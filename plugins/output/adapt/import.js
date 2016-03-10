@@ -205,6 +205,9 @@ function restoreData(data, callback) {
 };
 
 function importCourseJson(data, importedJson) {
+  var userId = usermanager.getCurrentUser()._id;
+  var oldCourseId;
+  var newCourseId;
   // TODO this is bad...
   var order = [
     'course',
@@ -220,9 +223,28 @@ function importCourseJson(data, importedJson) {
         return doneTypeIterator(error);
       }
       async.each(data.metadata.course[courseKey], function itemIterator(item, doneItemIterator) {
-        console.log(courseKey, item, plugin.create);
-        // import item
-        doneItemIterator();
+        if (courseKey === 'course') {
+          oldCourseId = item._id;
+          item._hasPreview = false;
+          item.createdBy = userId;
+          delete item._id;
+        } else {
+          // TODO do something with IDs here?
+          item._courseId = newCourseId;
+          if(item._parentId === oldCourseId) {
+            item._parentId = newCourseId;
+          }
+        }
+        plugin.create(item, function onCreated(error, newDoc) {
+          var newObj = newDoc.toObject();
+          if(error) {
+            return doneItemIterator(error);
+          }
+          if (courseKey === 'course') {
+            newCourseId = newObj._id;
+          }
+          doneItemIterator();
+        });
       }, doneTypeIterator);
     });
   }, importedJson);
@@ -259,7 +281,7 @@ function importAssets(data, assetsImported) {
 
         // look for assets with the same name and size; chances are they're duplicates, so don't add
         origin.assetmanager.retrieveAsset({ name: fileMeta.filename, size: fileMeta.size }, function gotAsset(error, results) {
-          if(results) {
+          if(results.length > 0) {
             console.log(fileMeta.filename, 'similar file found in DB, not importing');
             return doneAsset();
           }

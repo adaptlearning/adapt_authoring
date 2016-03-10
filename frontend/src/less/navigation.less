@@ -10,6 +10,9 @@
         // transition:all 0.3s;
         &:hover {
             color:@navigation-hover-text-color;
+            &.navigation-user-logout {
+                color:@button-white-hollow-hover-text-color;
+            }
         }
     }
 }
@@ -36,20 +39,13 @@
         }
     }
     .navigation-loading-progress {
-        height: 20px;
-        background-color: @secondary-color;
+        height:20px;
+        background-color:@secondary-color;
     }
 }
 
 .navigation-right {
     .navigation-user-logout {
-        border: 1px solid @button-color;
-        border-radius: 3px;
-
-        &:hover {
-            border: 1px solid @button-color;
-            background-color: @button-color;
-            color: @primary-color;
-        }
-    }           
+        padding: 0px 25px;
+    }
 }

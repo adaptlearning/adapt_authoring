@@ -96,7 +96,7 @@ button {
     &-primary {
         background-color:@button-primary-color;
         color:@button-primary-text-color;
-        border:@button-radius solid @button-primary-color;
+        border-color: @button-primary-color;
         i {
             color:@button-primary-text-color;
             &:hover, &:focus {
@@ -106,15 +106,14 @@ button {
         &:hover, &:focus {
             background-color:@button-primary-hover-color;
             color:@button-primary-hover-text-color;
-            border:@button-radius solid @button-primary-hover-color;
+            border-color:@button-primary-hover-color;
         }
     }
 
     &-primary-hollow { 
-        background-color: transparent;
-        background: transparent;
+        background-color:@button-transparent;
         color: @button-primary-color;
-        border:@button-radius solid @button-primary-color;
+        border-color:@button-primary-color;
         i {
             color:@button-primary-text-color;
             &:hover, &:focus {
@@ -124,14 +123,14 @@ button {
         &:hover, &:focus {
             color: @button-primary-text-color;
             background-color: @button-primary-color;
-            border:@button-radius solid @button-primary-color;
+            border-color:@button-primary-color;
         }        
     }
 
     &-secondary {
         background-color:@button-secondary-color;
         color:@button-secondary-text-color;
-        border:1px solid @button-secondary-color;
+        border-color:@button-secondary-color;
         i {
             color:@button-secondary-text-color;
             &:hover, &:focus {
@@ -141,15 +140,14 @@ button {
         &:hover, &:focus {
             background-color:@button-secondary-hover-color;
             color:@button-secondary-hover-text-color;
-            border:1px solid @button-secondary-hover-color;
+            border-color:@button-secondary-hover-color;
         }
     }
 
     &-secondary-hollow { 
-        background-color: transparent;
-        background: transparent;
+        background-color:@button-transparent;
         color: @button-secondary-color;
-        border:@button-radius solid @button-secondary-color;
+        border-color:@button-secondary-color;
         i {
             color:@button-secondary-text-color;
             &:hover, &:focus {
@@ -159,14 +157,14 @@ button {
         &:hover, &:focus {
             color: @button-secondary-text-color;
             background-color: @button-secondary-color;
-            border:@button-radius solid @button-secondary-color;
+            border-color:@button-secondary-color;
         }        
     }
 
     &-tertiary {
         background-color:@button-tertiary-color;
         color:@button-tertiary-text-color;
-        border:@button-radius solid @button-tertiary-color;
+        border-color:@button-tertiary-color;
         i {
             color:@button-tertiary-text-color;
             &:hover, &:focus {
@@ -176,15 +174,14 @@ button {
         &:hover, &:focus {
             background-color:@button-tertiary-hover-color;
             color:@button-tertiary-hover-text-color;
-            border:@button-radius solid @button-tertiary-hover-color;
+            border-color:@button-tertiary-hover-color;
         }
     }
 
     &-tertiary-hollow { 
-        background-color: transparent;
-        background: transparent;
-        color: @button-tertiary-color;
-        border:@button-radius solid @button-tertiary-color;
+        background-color:@button-transparent;
+        color:@button-tertiary-color;
+        border-color:@button-tertiary-color;
         i {
             color:@button-tertiary-text-color;
             &:hover, &:focus {
@@ -194,14 +191,14 @@ button {
         &:hover, &:focus {
             color: @button-tertiary-text-color;
             background-color: @button-tertiary-color;
-            border:@button-radius solid @button-tertiary-color;
+            border-color:@button-tertiary-color;
         }        
     }    
 
     &-quaternary {
         background-color:@button-quaternary-color;
         color:@button-quaternary-text-color;
-        border:@button-radius solid @button-quaternary-color;
+        border-color:@button-quaternary-color;
         i {
             color:@button-quaternary-text-color;
             &:hover, &:focus {
@@ -211,15 +208,14 @@ button {
         &:hover, &:focus {
             background-color:@button-quaternary-hover-color;
             color:@button-quaternary-hover-text-color;
-            border:@button-radius solid @button-quaternary-hover-color;
+            border-color:@button-quaternary-hover-color;
         }
     }
 
     &-quaternary-hollow { 
-        background-color: transparent;
-        background: transparent;
-        color: @button-quaternary-color;
-        border:@button-radius solid @button-quaternary-color;
+        background-color:@button-transparent;
+        color:@button-quaternary-color;
+        border-color:@button-quaternary-color;
         i {
             color:@button-quaternary-text-color;
             &:hover, &:focus {
@@ -227,91 +223,55 @@ button {
             }
         }
         &:hover, &:focus {
-            color: @button-quaternary-text-color;
-            background-color: @button-quaternary-color;
-            border:@button-radius solid @button-quaternary-color;
+            color:@button-quaternary-text-color;
+            background-color:@button-quaternary-color;
+            border-color:@button-quaternary-color;
         }        
     }
 
+    &-white-hollow {
+        background-color:@button-transparent;
+        color:@button-white-hollow-text-color;
+        border-color:@button-white-hollow-text-color;
+        &:hover, &:focus {
+            color:@button-white-hollow-hover-text-color;
+            background-color:@button-white-hollow-hover-color;
+            border-color:@button-white-hollow-hover-color;
+        }
+    }    
 
     &-info {
         background-color:@button-info-color;
         color:@button-info-text-color;
-        border:1px solid @button-info-color;
+        border-color:@button-info-color;
         &:hover, &:focus {
             background-color:@button-info-hover-color;
             color:@button-info-hover-text-color;
-            border:1px solid @button-info-hover-color;
+            border-color:@button-info-hover-color;
         }
     }
 
     &-warning {
         background-color:@button-warning-color;
         color:@button-warning-text-color;
-        border:1px solid @button-warning-color;
+        border-color:@button-warning-color;
         &:hover, &:focus {
             background-color:@button-warning-hover-color;
             color:@button-warning-text-color;
-            border:1px solid @button-warning-hover-color;
+            border-color:@button-warning-hover-color;
         }
     }
 
     &-alert {
         background-color:@button-alert-color;
         color:@button-alert-text-color;
-        border:1px solid @button-alert-color;
+        border-color:@button-alert-color;
         &:hover, &:focus {
             background-color:@button-alert-hover-color;
             color:@button-alert-hover-text-color;
-            border:1px solid @button-alert-hover-color;
+            border-color:@button-alert-hover-color;
         }
     }
-
-
-    // UI REFRESH- Buttons created as part of the UI refresh in 2016.
-
-    // This button is used for secondary actions. It appears as invisble and fills in.
-
-    // &-invis-blue-bg {
-    //     background-color: transparent;
-    //     background: transparent;
-    //     color:@button-color;
-    //     border-color:@button-color;
-    //     &:hover, &:focus {
-    //         color: @button-invis-blue-bg-hover-text-color;
-    //         background-color: @button-invis-blue-bg-hover-color;
-    //         border:2px solid @button-invis-blue-bg-hover-color;
-    //     }
-    // }
-
-    // This button operates in a similar way to invis-blue-bg but is used on the sidebar because of it's darker background.
-
-    // &-invis-darkblue-bg { 
-    //     background-color: transparent;
-    //     background: transparent;
-    //     color:@sidebar-text-color;
-    //     border-color:@sidebar-text-color;
-    //     &:hover, &:focus {
-    //         color: @button-invis-darkblue-bg-hover-text-color;
-    //         background-color: @sidebar-text-color;
-    //         border:@button-radius solid @sidebar-text-color;
-    //     }        
-    // }
-
-    // button to appear on the page. White background with blue outline. Fills when hovered.
-
-    &-invis {
-        background-color: transparent;
-        background: transparent;
-        color:@button-color;
-        border-color: @button-color;
-        &:hover, &:focus {
-            color: @button-invis-hover-text-color;
-            background-color: @button-invis-hover-color;
-            border:2px solid @button-invis-hover-color;
-        }
-    }
-    
     
     &-fixed-width {
       width: 150px;

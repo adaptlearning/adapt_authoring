@@ -49,7 +49,6 @@ exports = module.exports = function Import(request, response, next) {
           next(prepError || cleanupError);
         });
       }
-      console.log(data);
       data.importDir = outputDir;
       restoreData(data, function dataRestored(restoreError) {
         // clean up unzipped data, error or no
@@ -189,7 +188,6 @@ function getJSONRecursive(dir, doneRecursion) {
 * 3. Imports the plugins
 */
 function restoreData(data, callback) {
-  console.log("data: ", data)
   async.parallel([
     function(cb) {
       importCourseJson(data, cb);

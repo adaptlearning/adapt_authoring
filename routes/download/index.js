@@ -46,27 +46,32 @@ server.get('/download/:tenant/:course/:title/download.zip', function (req, res, 
   var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
   var downloadZipFilename = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Filenames.Download);
   var zipName = req.params.title;
+  var currentUser = usermanager.getCurrentUser();
 
-  fs.stat(downloadZipFilename, function(err, stat) {
-    if (err) {
-      logger.log('error', 'Error calling fs.stat');
-      logger.log('error', err);
+  if (currentUser && (currentUser.tenant._id == tenantId)) {
+    fs.stat(downloadZipFilename, function(err, stat) {
+      if (err) {
+        logger.log('error', 'Error calling fs.stat');
+        logger.log('error', err);
 
-      next(err);
-    } else {
-      res.writeHead(200, {
-          'Content-Type': 'application/zip',
-          'Content-Length': stat.size,
-          'Content-disposition' : 'attachment; filename=' + zipName + '.zip',
-          'Pragma' : 'no-cache',
-          'Expires' : '0'
-      });
+        next(err);
+      } else {
+        res.writeHead(200, {
+            'Content-Type': 'application/zip',
+            'Content-Length': stat.size,
+            'Content-disposition' : 'attachment; filename=' + zipName + '.zip',
+            'Pragma' : 'no-cache',
+            'Expires' : '0'
+        });
 
-      var readStream = fs.createReadStream(downloadZipFilename);
+        var readStream = fs.createReadStream(downloadZipFilename);
 
-      readStream.pipe(res);
-
-    }
-  });
-
+        readStream.pipe(res);
+      }
+    });
+  } else {
+    // User does not have access to this download.
+    res.statusCode = 401;
+    return res.json({success: false});
+  }
 });

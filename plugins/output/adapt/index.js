@@ -208,6 +208,11 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         });
       },
       function(callback) {
+        self.clearBuildFlag(path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build, Constants.Filenames.Rebuild), function(err) {
+          callback(null);
+        });
+      },
+      function(callback) {
         if (!isPreview) {
           // Now zip the build package
           var filename = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Filenames.Download);

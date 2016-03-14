@@ -26,7 +26,8 @@ define(function(require) {
             // Mainly due to serverside filtering
             Origin.trigger('location:title:hide');
             Origin.sidebar.addView(new AssetManagementSidebarView({collection: tagsCollection}).$el);
-            Origin.router.createView(AssetManagementView, {collection: assetCollection});   
+            Origin.router.createView(AssetManagementView, {collection: assetCollection});
+            Origin.trigger('assetManagement:loaded');
           },
           error: function() {
             console.log('Error occured getting the tags collection - try refreshing your page');

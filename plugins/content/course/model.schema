@@ -264,6 +264,13 @@
                   "inputType": "Text",
                   "required": true
                 },
+                "visited": {
+                  "type": "string",
+                  "title": "",
+                  "default": "Visited",
+                  "inputType": "Text",
+                  "required": true
+                },
                 "menuBack": {
                   "type": "string",
                   "title": "",

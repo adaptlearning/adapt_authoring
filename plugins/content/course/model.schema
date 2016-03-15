@@ -69,7 +69,7 @@
             "properties": {
               "_id": {
                 "type": "string",
-                "title: "ID",
+                "title": "ID",
                 "inputType": "Text",
                 "required": true
               },

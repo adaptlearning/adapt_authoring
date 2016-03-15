@@ -50,3 +50,6 @@ node install --install Y --serverPort 5000 --serverName localhost --dbHost local
   
 # change permissions
 sudo chown -R vagrant:vagrant /home/vagrant
+
+# upgrade the AuthoringTool and or Framework
+node upgrade --Y/n Y

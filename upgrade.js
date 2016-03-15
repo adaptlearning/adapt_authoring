@@ -6,9 +6,18 @@ var async = require('async');
 var exec = require('child_process').exec;
 var rimraf = require('rimraf');
 var path = require('path');
+var optimist = require('optimist');
 
 // Constants
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
+
+// Helper
+var isVagrant = function () {
+  if (process.argv.length > 2) {
+    return true;
+  }
+  return false;
+};
 
 // GLOBALS
 var app = builder();
@@ -196,10 +205,15 @@ var steps = [
 app.run({skipVersionCheck: true, skipStartLog: true});
 
 app.on('serverStarted', function () {
+  prompt.override = optimist.argv;
   prompt.start();
 
   // Prompt the user to begin the install
-  console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} (and/or Adapt Framework) to the latest released version. Would you like to continue?`);
+  if (isVagrant()) {
+    console.log(`\nUpdate the ${app.polyglot.t('app.productname')} (and/or Adapt Framework) to the latest released version.`);
+  } else {
+    console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} (and/or Adapt Framework) to the latest released version. Would you like to continue?`);
+  }
 
   prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
     if (!/(Y|y)[es]*$/.test(result['Y/n'])) {

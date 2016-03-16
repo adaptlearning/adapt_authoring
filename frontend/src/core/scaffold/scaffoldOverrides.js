@@ -99,14 +99,6 @@ define(function(require) {
 		this.$el.val(value);
 	}
 
-	Backbone.Form.editors.Checkbox.prototype.setValue = function(value) {
-		if (value || this.schema.default) {
-			this.$el.prop('checked', true);
-		}else {
-			this.$el.prop('checked', false);
-		}
-	}
-
 	Backbone.Form.editors.TextArea.prototype.render = function() {
 
 	    // Place value

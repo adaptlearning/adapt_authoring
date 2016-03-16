@@ -24,10 +24,7 @@ define(function(require){
       this.$el.addClass('component-' + this.model.get('_layout'));
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
-      this.listenTo(this.model, 'sync', this.setupModelEvents);
-      if (!this.model.isNew()) {
-        this.setupModelEvents();
-      }
+
       this.evaluateLayout();
 
       this.on('contextMenu:component:edit', this.loadComponentEdit);
@@ -35,10 +32,6 @@ define(function(require){
       this.on('contextMenu:component:copyID', this.onCopyID),
       this.on('contextMenu:component:cut', this.onCut);
       this.on('contextMenu:component:delete', this.deleteComponentPrompt);
-    },
-
-    setupModelEvents: function() {
-      this.listenTo(Origin, 'editorPageView:deleteComponent:' + this.model.get('_id'), this.deleteComponent);
     },
 
     postRender: function () {
@@ -64,10 +57,7 @@ define(function(require){
     },
 
     deleteComponentConfirm: function(confirmed) {
-      if (confirmed) {
-        var id = this.model.get('_id');
-        Origin.trigger('editorPageView:deleteComponent:' + id);
-      }
+      confirmed && this.deleteComponent();
     },
 
     deleteComponent: function() {

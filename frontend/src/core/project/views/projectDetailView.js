@@ -71,11 +71,18 @@ define(function(require) {
         this.model.save(attributesToSave, {
           patch: isPatch,
 
-          error: function() {
+          error: function(model, response, options) { 
+            // If a specific error message exists, display it.
+            var messageText = typeof response.responseJSON == 'object' && response.responseJSON.hasOwnProperty('message')
+              ? response.responseJSON.message
+              : window.polyglot.t('app.errorsave');
+              
             Origin.Notify.alert({
               type: 'error',
-              text: window.polyglot.t('app.errorsave')
+              text: messageText
             });
+            
+            Origin.trigger('sidebar:resetButtons');
           },
           success: _.bind(function(model, response, options) {
 

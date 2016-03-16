@@ -32,8 +32,7 @@ server.get('/export/:tenant/:course', function (req, res, next) {
       var outputplugin = app.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), function (error, plugin){
         if (error) {
           logger.log('error', error);
-          res.statusCode = 500;
-          return res.json({
+          return res.status(500).json({
             success: false,
             message: error.message
           });

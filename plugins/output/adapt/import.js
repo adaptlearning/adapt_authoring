@@ -25,6 +25,7 @@ util.inherits(ImportError, Error);
 * Course import function
 * Wrapper for prepareImport and restoreData
 * TODO notes?
+* TODO convert consoles to loggers
 */
 
 exports = module.exports = function Import(request, response, next) {

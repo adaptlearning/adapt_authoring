@@ -11,6 +11,7 @@ var usermanager = require('../../../lib/usermanager');
 /**
 * Course import function
 * TODO need implementation notes
+* TODO take out IDs
 * TODO customise for standard export:
 * - No core, core plugins or associated files
 * - No json
@@ -190,6 +191,7 @@ function getAssetMetadata(courseId, gotAssetMetadata) {
           var asset = matchedAssets[0];
 
           // would _.pick, but need to map some keys
+          // TODO sort this out
           if(!metadata.assets[asset.filename]) {
             metadata.assets[asset.filename] = {
               "oldId": asset._id,

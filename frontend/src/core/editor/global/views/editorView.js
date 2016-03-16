@@ -154,9 +154,9 @@ define(function(require){
            self.exporting = false;
 
            // get the zip
-           var form = document.createElement("form");
+           var form = document.createElement('form');
+           self.$el.append(form);
            form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
-           this.$el.append(form);
            form.submit();
          },
          error: function(jqXHR, textStatus, errorThrown) {

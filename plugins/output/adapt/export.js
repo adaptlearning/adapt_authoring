@@ -192,6 +192,7 @@ function getAssetMetadata(courseId, gotAssetMetadata) {
           // would _.pick, but need to map some keys
           if(!metadata.assets[asset.filename]) {
             metadata.assets[asset.filename] = {
+              "oldId": asset._id,
               "title": asset.title,
               "description": asset.description,
               "type": asset.mimeType,

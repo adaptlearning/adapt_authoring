@@ -277,12 +277,12 @@ function importAssets(data, assetsImported) {
       if(!fileMeta) {
         return doneAsset(new Error('No metadata found for asset: ' + assetName));
       }
-      importAsset(fileMeta, doneAsset);
+      importAsset(fileMeta, data, doneAsset);
     }, assetsImported);
   });
 };
 
-function importAsset(metadata, assetImported) {
+function importAsset(metadata, data, assetImported) {
   // look for assets with the same name and size; chances are they're duplicates, so don't add
   origin.assetmanager.retrieveAsset({ name: metadata.filename, size: metadata.size }, function gotAsset(error, results) {
     if(results.length > 0) {
@@ -323,10 +323,15 @@ function importAsset(metadata, assetImported) {
           origin.assetmanager.createAsset(asset,function onAssetCreated(createError, assetRec) {
             if (createError) {
               storage.deleteFile(storedFile.path, assetImported);
+              return;
             }
-            else {
-              assetImported();
-            }
+            // replace references to the old asset ID in courseassets metadata
+            async.each(data.metadata.courseassets, function(courseasset, cb) {
+              if(courseasset._assetId === metadata.oldId) {
+                courseasset._assetId = assetRec._id;
+              }
+              cb();
+            }, assetImported);
           });
         });
       });

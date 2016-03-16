@@ -13,9 +13,7 @@ define(function(require){
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorMenuView = require('editorMenu/views/editorMenuView');
   var EditorPageView = require('editorPage/views/editorPageView');
-  /*var EditorCollection = require('editorGlobal/collections/editorCollection');*/
   var EditorModel = require('editorGlobal/models/editorModel');
-  /*var EditorCourseModel = require('editorCourse/models/editorCourseModel');*/
   var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
   var EditorArticleModel = require('editorPage/models/editorArticleModel');
   var EditorBlockModel = require('editorPage/models/editorBlockModel');

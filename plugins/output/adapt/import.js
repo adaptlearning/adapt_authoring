@@ -188,12 +188,16 @@ function getJSONRecursive(dir, doneRecursion) {
 * 3. Imports the plugins
 */
 function restoreData(data, callback) {
-  async.parallel([
+  // TODO parallelise this somehow (note that we need the courseId in importCourseassets)
+  async.series([
     function(cb) {
       importCourseJson(data, cb);
     },
     function(cb) {
       importAssets(data, cb);
+    },
+    function(cb) {
+      importCourseassets(data, cb);
     },
     function(cb) {
       importPlugins(data, cb);
@@ -207,7 +211,6 @@ function restoreData(data, callback) {
 function importCourseJson(data, importedJson) {
   var userId = usermanager.getCurrentUser()._id;
   var oldCourseId;
-  var newCourseId;
   // TODO this is bad...
   var order = [
     'course',
@@ -222,26 +225,27 @@ function importCourseJson(data, importedJson) {
       if(error) {
         return doneTypeIterator(error);
       }
-      async.each(data.metadata.course[courseKey], function itemIterator(item, doneItemIterator) {
+      async.each(data.metadata.course[courseKey], function itemIterator(json, doneItemIterator) {
         if (courseKey === 'course') {
-          oldCourseId = item._id;
-          item._hasPreview = false;
-          item.createdBy = userId;
-          delete item._id;
+          oldCourseId = json._id;
+          json._hasPreview = false;
+          json.createdBy = userId;
+          delete json._id;
         } else {
-          // TODO do something with IDs here?
-          item._courseId = newCourseId;
-          if(item._parentId === oldCourseId) {
-            item._parentId = newCourseId;
+          // TODO need to do something with IDs here
+          json._courseId = data.newCourseId;
+          if(json._parentId === oldCourseId) {
+            json._parentId = data.newCourseId;
           }
         }
-        plugin.create(item, function onCreated(error, newDoc) {
+        plugin.create(json, function onCreated(error, newDoc) {
           var newObj = newDoc.toObject();
           if(error) {
             return doneItemIterator(error);
           }
+          json = newObj;
           if (courseKey === 'course') {
-            newCourseId = newObj._id;
+            data.newCourseId = newObj._id;
           }
           doneItemIterator();
         });
@@ -254,78 +258,88 @@ function importCourseJson(data, importedJson) {
 // TODO deal with filenames
 function importAssets(data, assetsImported) {
   var assetsGlob = path.join(data.importDir, 'src', 'course', '**', 'assets', '*');
-  glob(assetsGlob, function (error, courseAssets) {
+  glob(assetsGlob, function (error, assets) {
     if(error) {
       return assetsImported(error);
     }
     var repository = configuration.getConfig('filestorage') || 'localfs';
-    filestorage.getStorage(repository, function gotStorage(error, storage) {
+    async.each(assets, function iterator(assetPath, doneAsset) {
       if (error) {
-        return assetsImported(error);
+        return doneAsset(error);
       }
-      async.each(courseAssets, function iterator(assetPath, doneAsset) {
-        if (error) {
-          return doneAsset(error);
-        }
-        var assetName = path.basename(assetPath);
-        // TODO look into creating a vinyl file here
-        var fileMeta = _.extend(data.metadata.assets[assetName], {
-          filename: assetName,
-          path: assetPath,
-          repository: repository
-        });
+      var assetName = path.basename(assetPath);
+      // TODO look into creating a vinyl file here
+      var fileMeta = _.extend(data.metadata.assets[assetName], {
+        filename: assetName,
+        path: assetPath,
+        repository: repository
+      });
+      if(!fileMeta) {
+        return doneAsset(new Error('No metadata found for asset: ' + assetName));
+      }
+      importAsset(fileMeta, doneAsset);
+    }, assetsImported);
+  });
+};
 
-        if(!fileMeta) {
-          return doneAsset(new Error('No metadata found for asset: ' + assetName));
-        }
+function importAsset(metadata, assetImported) {
+  // look for assets with the same name and size; chances are they're duplicates, so don't add
+  origin.assetmanager.retrieveAsset({ name: metadata.filename, size: metadata.size }, function gotAsset(error, results) {
+    if(results.length > 0) {
+      console.log(metadata.filename, 'similar file found in DB, not importing');
+      return assetImported();
+    }
 
-        // look for assets with the same name and size; chances are they're duplicates, so don't add
-        origin.assetmanager.retrieveAsset({ name: fileMeta.filename, size: fileMeta.size }, function gotAsset(error, results) {
-          if(results.length > 0) {
-            console.log(fileMeta.filename, 'similar file found in DB, not importing');
-            return doneAsset();
-          }
+    var date = new Date();
+    var hash = crypto.createHash('sha1');
+    var rs = fse.createReadStream(metadata.path);
 
-          var date = new Date();
-          var hash = crypto.createHash('sha1');
-          var rs = fse.createReadStream(fileMeta.path);
-
-          rs.on('data', function onReadData(pData) {
-            hash.update(pData, 'utf8');
-          });
-          rs.on('close', function onReadClose() {
-            var filehash = hash.digest('hex');
-            var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
-            var filepath = path.join(directory, filehash) + path.extname(assetName);
-            var fileOptions = {
-              createMetadata: true,
-              // TODO thumbnail
-              createThumbnail: false
-            };
-
-            // the repository should move the file to a suitable location
-            storage.processFileUpload(fileMeta, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
-              if (error) {
-                return doneAsset(error);
-              }
-              // It's better not to set thumbnailPath if it's not set.
-              if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
-              var asset = _.extend(fileMeta, storedFile);
-
-              // Create the asset record
-              origin.assetmanager.createAsset(asset,function onAssetCreated(createError, assetRec) {
-                if (createError) {
-                  storage.deleteFile(storedFile.path, doneAsset);
-                }
-                else {
-                  doneAsset();
-                }
-              });
-            });
-          });
-        });
-      }, assetsImported);
+    rs.on('data', function onReadData(pData) {
+      hash.update(pData, 'utf8');
     });
+    rs.on('close', function onReadClose() {
+      var filehash = hash.digest('hex');
+      var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
+      var filepath = path.join(directory, filehash) + path.extname(metadata.filename);
+      var fileOptions = {
+        createMetadata: true,
+        // TODO thumbnail
+        createThumbnail: false
+      };
+      filestorage.getStorage(metadata.repository, function gotStorage(error, storage) {
+        if (error) {
+          return assetImported(error);
+        }
+        // the repository should move the file to a suitable location
+        storage.processFileUpload(metadata, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
+          if (error) {
+            return assetImported(error);
+          }
+          // It's better not to set thumbnailPath if it's not set.
+          if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
+          var asset = _.extend(metadata, storedFile);
+
+          // Create the asset record
+          origin.assetmanager.createAsset(asset,function onAssetCreated(createError, assetRec) {
+            if (createError) {
+              storage.deleteFile(storedFile.path, assetImported);
+            }
+            else {
+              assetImported();
+            }
+          });
+        });
+      });
+    });
+  });
+};
+
+function importCourseassets(data, courseassetsImported) {
+  origin.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
+    async.each(data.metadata.courseassets, function(courseasset, createdCourseasset) {
+      courseasset._courseId = data.newCourseId;
+      plugin.create(courseasset, createdCourseasset);
+    }, courseassetsImported);
   });
 };
 
@@ -334,50 +348,55 @@ function importAssets(data, assetsImported) {
 * NOTE no action taken for plugins which are newer than installed version (just logged)
 */
 function importPlugins(data, pluginsImported) {
-  database.getDatabase(function gotDB(error, db) {
-    if (error) {
-      return pluginsImported(error);
+  async.each(data.metadata.pluginTypes, function(pluginType, donePluginTypeIterator) {
+    var pluginTypeDir = path.join(data.importDir, 'src', pluginType.folder);
+    fse.readdir(pluginTypeDir, function onReadDir(error, files) {
+      async.each(files, function(file, donePluginIterator) {
+        var pluginDir = path.join(pluginTypeDir, file);
+        importPlugin(pluginDir, pluginType.type, donePluginIterator);
+      }, donePluginTypeIterator);
+    });
+  }, pluginsImported);
+};
+
+function importPlugin(pluginDir, pluginType, pluginImported) {
+  fse.readJson(path.join(pluginDir, 'bower.json'), function onJsonRead(error, bowerJson) {
+    if(error) {
+      return pluginImported(error);
     }
-    async.each(data.metadata.pluginTypes, function(pluginType, donePluginTypeIterator) {
-      var pluginTypeDir = path.join(data.importDir, 'src', pluginType.folder);
-      fse.readdir(pluginTypeDir, function onReadDir(error, files) {
-        async.each(files, function(file, donePluginIterator) {
-          var pluginDir = path.join(pluginTypeDir, file);
-          fse.readJson(path.join(pluginDir, 'bower.json'), function onJsonRead(error, bowerJson) {
-            if(error) {
-              return donePluginIterator(error);
-            }
-            origin.contentmanager.getContentPlugin(pluginType.type, function onGotPlugin(error, plugin) {
-              if(error) {
-                return donePluginIterator(error);
-              }
-              db.retrieve(plugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, function (error, records) {
-                if(records.length === 0) {
-                  console.log(bowerJson.displayName, ' not installed, installing...');
-                  bowerJson.isLocalPackage = true;
-                  // TODO do we need to check framework version on plugin at this point?
-                  plugin.addPackage(plugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, donePluginIterator);
-                } else {
-                  var serverPlugin = records[0];
-                  // TODO what do we do with newer versions of plugins? (could affect other courses if we install new version)
-                  if(semver.gt(bowerJson.version,serverPlugin.version)) {
-                    console.log('Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + ')');
-                  } /*else {
-                    console.log('Import version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') not newer than server (' + serverPlugin.version + '), nothing to do');
-                  }*/
-                  donePluginIterator();
-                }
-              });
-            });
-          });
-        }, donePluginTypeIterator);
+    origin.contentmanager.getContentPlugin(pluginType, function onGotPlugin(error, plugin) {
+      if(error) {
+        return pluginImported(error);
+      }
+      database.getDatabase(function gotDB(error, db) {
+        if (error) {
+          return pluginsImported(error);
+        }
+        db.retrieve(plugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, function (error, records) {
+          if(records.length === 0) {
+            console.log(bowerJson.displayName, ' not installed, installing...');
+            bowerJson.isLocalPackage = true;
+            // TODO do we need to check framework version on plugin at this point?
+            plugin.addPackage(plugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, pluginImported);
+          } else {
+            var serverPlugin = records[0];
+            // TODO what do we do with newer versions of plugins? (could affect other courses if we install new version)
+            if(semver.gt(bowerJson.version,serverPlugin.version)) {
+              console.log('Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + ')');
+            } /*else {
+              console.log('Import version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') not newer than server (' + serverPlugin.version + '), nothing to do');
+            }*/
+            pluginImported();
+          }
+        });
       });
-    }, pluginsImported);
+    });
   });
 };
 
 /*
 * Just removes the unzipped files
+* TODO delete course and assets
 */
 function cleanUpImport(importDir, doneCleanUp) {
   fse.remove(importDir, doneCleanUp)

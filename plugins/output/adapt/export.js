@@ -19,6 +19,15 @@ var usermanager = require('../../../lib/usermanager');
 * - Yes custom plugins
 */
 
+var blacklistedProps = [
+  '__v',
+  '_isDeleted',
+  'createdAt',
+  'createdBy',
+  'updatedAt',
+  'updatedBy'
+];
+
 exports = module.exports = function Export(courseId, request, response, next) {
   var self = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
@@ -129,6 +138,7 @@ function getCourseMetdata(courseId, gotCourseMetadata) {
     if (error) {
       return callback(error);
     }
+    // metadata structure
     var metadata = {
       course: {}
     };
@@ -140,21 +150,13 @@ function getCourseMetdata(courseId, gotCourseMetadata) {
           callback(doneIterator);
         }
         // TODO need save as little metadata as possible
-        // HACK do this if check better
-        // only store the _doc values
+        // HACK do this check better
         var isConfig = collectionType === 'course' || collectionType === 'config';
+        // only store the _doc values
         var toSave = _.pluck(results,'_doc');
-
-        // remove blacklisted properties (TODO and JSON data?)
-        var blacklist = [
-          '__v',
-          '_isDeleted',
-          'createdAt',
-          'createdBy',
-          'updatedAt',
-          'updatedBy'
-        ];
-        _.each(toSave, function(item, index) { toSave[index] = _.omit(item, blacklist); });
+        // store data, remove blacklisted properties
+        // TODO also do this for JSON data?
+        _.each(toSave, function(item, index) { toSave[index] = _.omit(item, blacklistedProps); });
         metadata.course[collectionType] = toSave;
 
         doneIterator();
@@ -166,8 +168,10 @@ function getCourseMetdata(courseId, gotCourseMetadata) {
 };
 
 function getAssetMetadata(courseId, gotAssetMetadata) {
+  // metadata structure
   var metadata = {
-    assets: {}
+    assets: {},
+    courseassets: []
   };
   origin.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
     plugin.retrieve({ _courseId:courseId }, function(error, results) {
@@ -196,8 +200,11 @@ function getAssetMetadata(courseId, gotAssetMetadata) {
           }
           // else console.log('Asset already stored:', asset.filename);
 
+          // store the courseasset too
+          metadata.courseassets.push(_.omit(courseasset._doc, blacklistedProps));
+
           doneIterator();
-        })
+        });
       }, function doneEach(error) {
         gotAssetMetadata(error, metadata);
       });
@@ -207,7 +214,7 @@ function getAssetMetadata(courseId, gotAssetMetadata) {
 
 function getPluginMetadata(courseId, gotPluginMetadata) {
   /*
-  * TODO there's got to be a way to get this info dynamically
+  * HACK there's got to be a way to get this info dynamically
   * We need:
   * - Content plugin name to see if it's already installed (so need plugin type)
   * - Plugin folder name to find plugin code (so need the plugin folder name -- maybe do this with a glob/search?)

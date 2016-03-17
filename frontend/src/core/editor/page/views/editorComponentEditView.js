@@ -11,7 +11,6 @@ define(function(require) {
 
     className: "component-edit",
 
-
     preRender: function() {
       this.listenTo(Origin, 'editorComponentEditSidebar:views:save', this.saveComponent);
       this.model.set('ancestors', this.model.getPossibleAncestors().toJSON());

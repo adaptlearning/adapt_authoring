@@ -42,6 +42,79 @@
       "required": true,
       "default": 0
     },
+    "_start": {
+      "type": "object",
+      "title": "Start settings",
+      "properties": {
+        "_isEnabled": {
+          "type": "boolean",
+          "default": false,
+          "editorOnly": true,
+          "inputType": {
+            "type": "Boolean",
+            "options": [
+              true,
+              false
+            ]
+          },
+          "validators": [],
+          "title": "Enable start controller",
+          "help": "When this is set to 'true', you can control which page is rendered when a course loads, potentially bypassing the menu"
+        },
+        "_startIds": {
+          "type": "array",
+          "title": "Start List",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "title": "ID",
+                "inputType": "Text",
+                "required": true
+              },
+              "_skipIfComplete": {
+                "type": "boolean",
+                "default": false,
+                "editorOnly": true,
+                "inputType": {
+                  "type": "Boolean",
+                  "options": [
+                    true,
+                    false
+                  ]
+                },
+                "validators": [],
+                "title": "Skip if complete",
+                "help": "When this is set to 'true', the page will not be selected as the first page if it has been already viewed/completed"
+              },
+              "_className": {
+                "type": "string",
+                "inputType": "Text",
+                "required": true,
+                "title": "Classes",
+                "help": "Optional comma-separated list of class names which will be used to select this start page"
+              }
+            }
+          }
+        },
+        "_force": {
+          "type": "boolean",
+          "default": false,
+          "editorOnly": true,
+          "inputType": {
+            "type": "Boolean",
+            "options": [
+              true,
+              false
+            ]
+          },
+          "validators": [],
+          "title": "Force routing",
+          "help": "When this is set to 'true', the routing will be forced to the appropriate start page, regardless of the URL"
+        }
+      }
+    },
     "_globals": {
       "type": "object",
       "properties": {
@@ -261,6 +334,13 @@
                   "type": "string",
                   "title": "",
                   "default": "Popup opened",
+                  "inputType": "Text",
+                  "required": true
+                },
+                "visited": {
+                  "type": "string",
+                  "title": "",
+                  "default": "Visited",
                   "inputType": "Text",
                   "required": true
                 },

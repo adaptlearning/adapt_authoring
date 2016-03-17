@@ -111,7 +111,7 @@
           },
           "validators": [],
           "title": "Force routing",
-          "help": "When this is set to 'true', the routing will be forced to the apporpriate start page, regardless of the URL"
+          "help": "When this is set to 'true', the routing will be forced to the appropriate start page, regardless of the URL"
         }
       }
     },

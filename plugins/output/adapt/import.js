@@ -242,12 +242,11 @@ function importCourseJson(data, importedJson) {
         var oldParentId = json._parentId;
         delete json._id;
 
-        // as we're doing everything in order, we know the parent will have been mapped (and if no courseId, there will be no parent)
         if(newCourseId) {
-          json._courseId = newCourseId;
+          // we're doing everything in order, so parent will have been mapped
           json._parentId = data.idMap[oldParentId];
+          json._courseId = newCourseId;
         }
-
         json.createdBy = userId;
 
         plugin.create(json, function onCreated(error, newDoc) {

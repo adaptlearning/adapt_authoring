@@ -26,7 +26,8 @@ var blacklistedProps = [
   'createdAt',
   'createdBy',
   'updatedAt',
-  'updatedBy'
+  'updatedBy',
+  '_hasPreview'
 ];
 
 exports = module.exports = function Export(courseId, request, response, next) {
@@ -204,7 +205,10 @@ function getAssetMetadata(courseId, gotAssetMetadata) {
           // else console.log('Asset already stored:', asset.filename);
 
           // store the courseasset too
-          metadata.courseassets.push(_.omit(courseasset._doc, blacklistedProps));
+          var courseassetData = _.omit(courseasset._doc, blacklistedProps);
+          // TODO do this better later
+          delete courseassetData._id;
+          metadata.courseassets.push(courseassetData);
 
           doneIterator();
         });

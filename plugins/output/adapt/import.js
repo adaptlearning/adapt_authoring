@@ -25,6 +25,9 @@ util.inherits(ImportError, Error);
 * Course import function
 * Wrapper for prepareImport and restoreData
 * TODO notes?
+* TODO hero images broken
+* TODO cannot import if course with same ID already exists
+* TODO import course data first, so there's less cleanup after error
 * TODO convert consoles to loggers
 */
 
@@ -204,15 +207,19 @@ function restoreData(data, callback) {
       importPlugins(data, cb);
     }
   ], function doneAsync(error) {
-    if(error) return callback(error);
+    if(error) {
+      return removeImport(data, callback);
+    }
     callback();
   });
 };
 
 function importCourseJson(data, importedJson) {
   var userId = usermanager.getCurrentUser()._id;
-  var oldCourseId;
-  // TODO this is bad...
+  // TODO this is bad
+  var oldCourseId = data.metadata.course.course[0]._id;
+  var newCourseId;
+  // TODO this is also bad...
   var order = [
     'course',
     'config',
@@ -221,33 +228,38 @@ function importCourseJson(data, importedJson) {
     'block',
     'component',
   ];
+
+  // init the id map
+  data.idMap = {};
+
   async.eachSeries(order, function typeIterator(courseKey, doneTypeIterator) {
     origin.contentmanager.getContentPlugin(courseKey, function gotContentPlugin(error, plugin) {
       if(error) {
         return doneTypeIterator(error);
       }
       async.each(data.metadata.course[courseKey], function itemIterator(json, doneItemIterator) {
-        if (courseKey === 'course') {
-          oldCourseId = json._id;
-          json._hasPreview = false;
-          json.createdBy = userId;
-          delete json._id;
-        } else {
-          // TODO need to do something with IDs here
-          json._courseId = data.newCourseId;
-          if(json._parentId === oldCourseId) {
-            json._parentId = data.newCourseId;
-          }
+        var oldId = json._id;
+        var oldParentId = json._parentId;
+        delete json._id;
+
+        // as we're doing everything in order, we know the parent will have been mapped (and if no courseId, there will be no parent)
+        if(newCourseId) {
+          json._courseId = newCourseId;
+          json._parentId = data.idMap[oldParentId];
         }
+
+        json.createdBy = userId;
+
         plugin.create(json, function onCreated(error, newDoc) {
-          var newObj = newDoc.toObject();
           if(error) {
             return doneItemIterator(error);
           }
-          json = newObj;
-          if (courseKey === 'course') {
-            data.newCourseId = newObj._id;
+          var newObj = newDoc.toObject();
+          // must be a course
+          if(!newCourseId) {
+            newCourseId = newObj._id;
           }
+          data.idMap[oldId] = newObj._id;
           doneItemIterator();
         });
       }, doneTypeIterator);
@@ -283,17 +295,17 @@ function importAssets(data, assetsImported) {
   });
 };
 
-function importAsset(metadata, data, assetImported) {
+function importAsset(fileMetadata, data, assetImported) {
   // look for assets with the same name and size; chances are they're duplicates, so don't add
-  origin.assetmanager.retrieveAsset({ name: metadata.filename, size: metadata.size }, function gotAsset(error, results) {
+  origin.assetmanager.retrieveAsset({ name: fileMetadata.filename, size: fileMetadata.size }, function gotAsset(error, results) {
     if(results.length > 0) {
-      console.log(metadata.filename, 'similar file found in DB, not importing');
+      console.log(fileMetadata.filename, 'similar file found in DB, not importing');
       return assetImported();
     }
 
     var date = new Date();
     var hash = crypto.createHash('sha1');
-    var rs = fse.createReadStream(metadata.path);
+    var rs = fse.createReadStream(fileMetadata.path);
 
     rs.on('data', function onReadData(pData) {
       hash.update(pData, 'utf8');
@@ -301,24 +313,24 @@ function importAsset(metadata, data, assetImported) {
     rs.on('close', function onReadClose() {
       var filehash = hash.digest('hex');
       var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
-      var filepath = path.join(directory, filehash) + path.extname(metadata.filename);
+      var filepath = path.join(directory, filehash) + path.extname(fileMetadata.filename);
       var fileOptions = {
         createMetadata: true,
         // TODO thumbnail
         createThumbnail: false
       };
-      filestorage.getStorage(metadata.repository, function gotStorage(error, storage) {
+      filestorage.getStorage(fileMetadata.repository, function gotStorage(error, storage) {
         if (error) {
           return assetImported(error);
         }
         // the repository should move the file to a suitable location
-        storage.processFileUpload(metadata, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
+        storage.processFileUpload(fileMetadata, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
           if (error) {
             return assetImported(error);
           }
           // It's better not to set thumbnailPath if it's not set.
           if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
-          var asset = _.extend(metadata, storedFile);
+          var asset = _.extend(fileMetadata, storedFile);
 
           // Create the asset record
           origin.assetmanager.createAsset(asset,function onAssetCreated(createError, assetRec) {
@@ -326,13 +338,10 @@ function importAsset(metadata, data, assetImported) {
               storage.deleteFile(storedFile.path, assetImported);
               return;
             }
-            // replace references to the old asset ID in courseassets metadata
-            async.each(data.metadata.courseassets, function(courseasset, cb) {
-              if(courseasset._assetId === metadata.oldId) {
-                courseasset._assetId = assetRec._id;
-              }
-              cb();
-            }, assetImported);
+            // add entry to the map
+            data.idMap[fileMetadata.oldId] = assetRec._id;
+
+            assetImported();
           });
         });
       });
@@ -343,7 +352,9 @@ function importAsset(metadata, data, assetImported) {
 function importCourseassets(data, courseassetsImported) {
   origin.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
     async.each(data.metadata.courseassets, function(courseasset, createdCourseasset) {
-      courseasset._courseId = data.newCourseId;
+      console.log(data.idMap[courseasset._assetId]);
+      courseasset._courseId = data.idMap[courseasset._courseId];
+      courseasset._assetId = data.idMap[courseasset._assetId];
       plugin.create(courseasset, createdCourseasset);
     }, courseassetsImported);
   });
@@ -400,9 +411,17 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
   });
 };
 
+// called after import error
+function removeImport(data, doneRemove) {
+  // importCourseJson
+  // importAssets
+  // importCourseassets
+  // importPlugins
+  console.log(data);
+};
+
 /*
 * Just removes the unzipped files
-* TODO delete course and assets
 */
 function cleanUpImport(importDir, doneCleanUp) {
   fse.remove(importDir, doneCleanUp)

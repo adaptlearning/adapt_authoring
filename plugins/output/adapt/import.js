@@ -297,9 +297,11 @@ function importAssets(data, assetsImported) {
 
 function importAsset(fileMetadata, data, assetImported) {
   // look for assets with the same name and size; chances are they're duplicates, so don't add
-  origin.assetmanager.retrieveAsset({ name: fileMetadata.filename, size: fileMetadata.size }, function gotAsset(error, results) {
+  origin.assetmanager.retrieveAsset({ filename: fileMetadata.filename, size: fileMetadata.size }, function gotAsset(error, results) {
     if(results.length > 0) {
-      logger.log('info', fileMetadata.filename + ': similar file found in DB, not importing');
+      logger.log('debug', fileMetadata.filename + ': similar file found in DB, not importing');
+      // map ID to existing asset
+      data.idMap[fileMetadata.oldId] = results[0]._id;
       return assetImported();
     }
 
@@ -333,7 +335,11 @@ function importAsset(fileMetadata, data, assetImported) {
           var asset = _.extend(fileMetadata, storedFile);
 
           // Create the asset record
-          origin.assetmanager.createAsset(asset,function onAssetCreated(createError, assetRec) {
+          /*
+          * TODO intermittent permissions error here, investigate
+          * permissions.js.addStatement: db.update 'no document found'
+          */
+          origin.assetmanager.createAsset(asset, function onAssetCreated(createError, assetRec) {
             if (createError) {
               storage.deleteFile(storedFile.path, assetImported);
               return;

@@ -12,7 +12,7 @@ var usermanager = require('../../../lib/usermanager');
 * Course import function
 * TODO need implementation notes
 * TODO take out IDs
-* TODO customise for standard export:
+* TODO add minimal export (for import):
 * - No core, core plugins or associated files
 * - No json
 * - Yes metadata
@@ -221,6 +221,7 @@ function getAssetMetadata(courseId, gotAssetMetadata) {
 
 function getPluginMetadata(courseId, gotPluginMetadata) {
   /*
+  * TODO get list of new plugins
   * HACK there's got to be a way to get this info dynamically
   * We need:
   * - Content plugin name to see if it's already installed (so need plugin type)

@@ -24,11 +24,11 @@ util.inherits(ImportError, Error);
 /**
 * Course import function
 * Wrapper for prepareImport and restoreData
-* TODO notes?
+* TODO need import configuration options (UI/forms)
 * TODO hero images broken
 * TODO cannot import if course with same ID already exists
-* TODO import course data first, so there's less cleanup after error
 * TODO convert consoles to loggers
+* TODO implementation notes
 */
 
 exports = module.exports = function Import(request, response, next) {
@@ -192,7 +192,7 @@ function getJSONRecursive(dir, doneRecursion) {
 * 3. Imports the plugins
 */
 function restoreData(data, callback) {
-  // TODO parallelise this somehow (note that we need the courseId in importCourseassets)
+  // TODO parallelise this somehow? (note that we need the courseId in importCourseassets)
   async.series([
     function(cb) {
       importCourseJson(data, cb);
@@ -216,10 +216,10 @@ function restoreData(data, callback) {
 
 function importCourseJson(data, importedJson) {
   var userId = usermanager.getCurrentUser()._id;
-  // TODO this is bad
+  // HACK this is bad
   var oldCourseId = data.metadata.course.course[0]._id;
   var newCourseId;
-  // TODO this is also bad...
+  // HACK this is also bad...
   var order = [
     'course',
     'config',
@@ -412,11 +412,11 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
 
 // called after import error
 function removeImport(data, doneRemove) {
-  // importCourseJson
-  // importAssets
-  // importCourseassets
-  // importPlugins
+  // TODO delete course & courseassets
+  // TODO delete assets
+  // TODO delete plugins
   console.log(data);
+  doneRemove();
 };
 
 /*

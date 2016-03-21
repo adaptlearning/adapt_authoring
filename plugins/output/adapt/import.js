@@ -376,38 +376,38 @@ function importPlugins(data, pluginsImported) {
 };
 
 function importPlugin(pluginDir, pluginType, pluginImported) {
-  fse.readJson(path.join(pluginDir, 'bower.json'), function onJsonRead(error, bowerJson) {
-    if(error) {
-      return pluginImported(error);
-    }
-    origin.contentmanager.getContentPlugin(pluginType, function onGotPlugin(error, plugin) {
-      if(error) {
-        return pluginImported(error);
-      }
-      database.getDatabase(function gotDB(error, db) {
-        if (error) {
-          return pluginsImported(error);
+  var bowerJson, contentPlugin;
+  async.waterfall([
+    function readBowerJson(cb) {
+      fse.readJson(path.join(pluginDir, 'bower.json'), cb);
+    },
+    function getContentPlugin(json, cb) {
+      bowerJson = json;
+      origin.contentmanager.getContentPlugin(pluginType, cb);
+    },
+    function getDB(plugin, cb) {
+      contentPlugin = plugin;
+      database.getDatabase(cb);
+    },
+    function retrievePluginDoc(db, cb) {
+      db.retrieve(contentPlugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, cb);
+    },
+    function retrievePlugin(records, cb) {
+      if(records.length === 0) {
+        logger.log('info', bowerJson.displayName + ' not installed, installing...');
+        bowerJson.isLocalPackage = true;
+        // TODO do we need to check framework version on plugin at this point?
+        contentPlugin.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
+      } else {
+        var serverPlugin = records[0];
+        // TODO what do we do with newer versions of plugins? (could affect other courses if we install new version)
+        if(semver.gt(bowerJson.version,serverPlugin.version)) {
+          logger.log('info', 'Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + ')');
         }
-        db.retrieve(plugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, function (error, records) {
-          if(records.length === 0) {
-            console.log(bowerJson.displayName, ' not installed, installing...');
-            bowerJson.isLocalPackage = true;
-            // TODO do we need to check framework version on plugin at this point?
-            plugin.addPackage(plugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, pluginImported);
-          } else {
-            var serverPlugin = records[0];
-            // TODO what do we do with newer versions of plugins? (could affect other courses if we install new version)
-            if(semver.gt(bowerJson.version,serverPlugin.version)) {
-              console.log('Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + ')');
-            } /*else {
-              console.log('Import version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') not newer than server (' + serverPlugin.version + '), nothing to do');
-            }*/
-            pluginImported();
-          }
-        });
-      });
-    });
-  });
+        cb();
+      }
+    }
+  ], pluginImported);
 };
 
 // called after import error

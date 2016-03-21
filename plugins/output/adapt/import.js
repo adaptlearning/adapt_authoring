@@ -351,7 +351,6 @@ function importAsset(fileMetadata, data, assetImported) {
 function importCourseassets(data, courseassetsImported) {
   origin.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
     async.each(data.metadata.courseassets, function(courseasset, createdCourseasset) {
-      console.log(data.idMap[courseasset._assetId]);
       courseasset._courseId = data.idMap[courseasset._courseId];
       courseasset._assetId = data.idMap[courseasset._assetId];
       plugin.create(courseasset, createdCourseasset);

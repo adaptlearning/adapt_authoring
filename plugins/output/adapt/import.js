@@ -7,6 +7,7 @@ var database = require('../../../lib/database');
 var filestorage = require('../../../lib/filestorage');
 var fse = require('fs-extra');
 var glob = require('glob');
+var logger = require('../../../lib/logger');
 var IncomingForm = require('formidable').IncomingForm;
 var origin = require('../../../')();
 var path = require('path');
@@ -170,7 +171,7 @@ function getJSONRecursive(dir, doneRecursion) {
             }
             var type = fileJson._type || fileJson[0] && fileJson[0]._type || 'config';
             if(!type) {
-              console.log('No type found for', file);
+              logger.log('error', 'No type found for ' + file);
               return doneIterator();
             }
             if(!jsonData[type]) jsonData[type] = fileJson;
@@ -298,7 +299,7 @@ function importAsset(fileMetadata, data, assetImported) {
   // look for assets with the same name and size; chances are they're duplicates, so don't add
   origin.assetmanager.retrieveAsset({ name: fileMetadata.filename, size: fileMetadata.size }, function gotAsset(error, results) {
     if(results.length > 0) {
-      console.log(fileMetadata.filename, 'similar file found in DB, not importing');
+      logger.log('info', fileMetadata.filename + ': similar file found in DB, not importing');
       return assetImported();
     }
 

@@ -209,7 +209,9 @@ function restoreData(data, callback) {
     }
   ], function doneAsync(error) {
     if(error) {
-      return removeImport(data, callback);
+      return removeImport(data, function doneCleanUp(cleanupError) {
+        callback(cleanupError || error);
+      });
     }
     callback();
   });
@@ -239,18 +241,17 @@ function importCourseJson(data, importedJson) {
         return doneTypeIterator(error);
       }
       async.each(data.metadata.course[courseKey], function itemIterator(json, doneItemIterator) {
-        var oldId = json._id;
-        var oldParentId = json._parentId;
-        delete json._id;
+        // memoise to keep the metadata as it is, omitting below fields
+        var memo = _.omit(json, '_id');
 
         if(newCourseId) {
           // we're doing everything in order, so parent will have been mapped
-          json._parentId = data.idMap[oldParentId];
-          json._courseId = newCourseId;
+          memo._parentId = data.idMap[json._parentId];
+          memo._courseId = newCourseId;
         }
-        json.createdBy = userId;
+        memo.createdBy = userId;
 
-        plugin.create(json, function onCreated(error, newDoc) {
+        plugin.create(memo, function onCreated(error, newDoc) {
           if(error) {
             return doneItemIterator(error);
           }
@@ -259,7 +260,7 @@ function importCourseJson(data, importedJson) {
           if(!newCourseId) {
             newCourseId = newObj._id;
           }
-          data.idMap[oldId] = newObj._id;
+          data.idMap[json._id] = newObj._id;
           doneItemIterator();
         });
       }, doneTypeIterator);
@@ -344,9 +345,10 @@ function importAsset(fileMetadata, data, assetImported) {
               storage.deleteFile(storedFile.path, assetImported);
               return;
             }
+            // store that asset was imported (used in cleanup if error)
+            data.metadata.assets[assetRec.filename].wasImported = true;
             // add entry to the map
             data.idMap[fileMetadata.oldId] = assetRec._id;
-
             assetImported();
           });
         });
@@ -416,13 +418,36 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
   ], pluginImported);
 };
 
-// called after import error
+/*
+* Completely removes an imported course (i.e. course data, assets, plugins)
+*/
 function removeImport(data, doneRemove) {
-  // TODO delete course & courseassets
-  // TODO delete assets
-  // TODO delete plugins
-  console.log(data);
-  doneRemove();
+  var newCourseId = data.idMap[data.metadata.course.course[0]._id];
+  async.parallel([
+    function deleteCourse(cb) {
+      origin.contentmanager.getContentPlugin('course', function gotCoursePlugin(error, coursePlugin) {
+        if(error) return cb(error);
+        coursePlugin.destroy({ _id: newCourseId }, cb);
+      });
+    },
+    // TODO this should be done by course.destroy
+    function deleteCourseassets(cb) {
+      database.getDatabase(function (error, db) {
+        if(error) return cb(error);
+        db.destroy('courseasset', { _courseId: newCourseId }, cb);
+      });
+    },
+    function deleteAssets(cb) {
+      var importedAssets = _.where(data.metadata.assets, { wasImported: true });
+      async.each(importedAssets, function deleteAsset(asset, assetDeleted) {
+        origin.assetmanager.destroyAsset(data.idMap[asset.oldId], assetDeleted);
+      }, cb);
+    },
+    // TODO delete plugins
+    function deletePlugins(cb) {
+      cb();
+    }
+  ], doneRemove);
 };
 
 /*

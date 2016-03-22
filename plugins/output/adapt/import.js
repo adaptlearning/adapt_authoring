@@ -297,11 +297,10 @@ function importAssets(data, assetsImported) {
 };
 
 function importAsset(fileMetadata, data, assetImported) {
-  // look for assets with the same name and size; chances are they're duplicates, so don't add
+  // if similar asset exists (same name and size), map ID to existing asset
   origin.assetmanager.retrieveAsset({ filename: fileMetadata.filename, size: fileMetadata.size }, function gotAsset(error, results) {
     if(results.length > 0) {
       logger.log('debug', fileMetadata.filename + ': similar file found in DB, not importing');
-      // map ID to existing asset
       data.idMap[fileMetadata.oldId] = results[0]._id;
       return assetImported();
     }

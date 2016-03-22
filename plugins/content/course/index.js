@@ -140,6 +140,11 @@ function initialize () {
       });
     });
 
+    /**
+     * API Endpoint to duplicate a course
+     *
+     * @fires ~courseDuplicated
+     */
     // add course duplicate route - @TODO - Restrict access to this!
     rest.get('/duplicatecourse/:id', function (req, res, next) {
       duplicate({_id: req.params.id}, function (error, newCourse) {
@@ -147,6 +152,11 @@ function initialize () {
           res.statusCode = 400;
           return res.json({success: false, message: error.message});
         }
+        /**
+         * @event courseDuplicated
+         * @type object
+         */
+        app.emit('courseDuplicated', newCourse);
         res.statusCode = 200;
         return res.json({success: true, newCourseId: newCourse._id});
       });

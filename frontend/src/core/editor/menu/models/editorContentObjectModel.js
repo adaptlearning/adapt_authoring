@@ -10,14 +10,14 @@ define(function(require) {
 
 		_parent: 'contentObjects',
 
-    	_siblings:'contentObjects',
+    _siblings:'contentObjects',
 
-        _children: 'articles',
+    _children: 'articles',
 
-        defaults: {
-        	_isSelected: false,
-        	_isExpanded: false
-        },
+    defaults: {
+      _isSelected: false,
+      _isExpanded: false
+    },
 
 		initialize: function() {
 			this.listenTo(this, 'sync', this.setupConstructor);

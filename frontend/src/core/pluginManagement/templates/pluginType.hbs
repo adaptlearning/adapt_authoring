@@ -1,7 +1,13 @@
 <div class="pluginType-inner">
   <div class="pluginType-description col-row">
     <div class="pluginType-title col-20">
+      {{#if homepage}}
+      <a href="{{homepage}}" class="pluginType-title-inner tb-col-inner" target="_blank">
+        <span>{{{displayName}}}</span>
+      </a>
+      {{else}}
       <h4 class="pluginType-title-inner tb-col-inner">{{{displayName}}}</h4>
+      {{/if}}
     </div>
     <div class="pluginType-description col-40">
       <div class="pluginType-description-inner tb-col-inner">{{{description}}}</div>

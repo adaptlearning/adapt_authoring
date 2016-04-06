@@ -38,36 +38,34 @@ exports = module.exports = function Import(request, response, next) {
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
 
-  var form = IncomingForm();
-  form.uploadDir = COURSE_ROOT_FOLDER;
-
-  form.parse(request, function (error, fields, files) {
-    if(error) {
-      return next(error);
-    }
-    if(!files.file || !files.file.path) {
-      return next(new ImportError('File upload failed.'));
-    }
-    var zipPath = files.file.path;
-    var outputDir = zipPath + '_unzipped';
-    prepareImport(zipPath, outputDir, function importPrepared(prepError, metadata) {
-      if(error) {
-        return cleanUpImport(outputDir, function(cleanupError) {
-          next(prepError || cleanupError);
-        });
+  async.waterfall([
+    function courseFolderExists(cb) {
+      fse.ensureDir(COURSE_ROOT_FOLDER, cb);
+    },
+    function parseForm(data, cb) {
+      var form = IncomingForm();
+      form.uploadDir = COURSE_ROOT_FOLDER;
+      form.parse(request, cb);
+    },
+    function doPreparation(fields, files, cb) {
+      if(!files.file || !files.file.path) {
+        return cb(new ImportError('File upload failed.'));
       }
-      metadata.importDir = outputDir;
-      restoreData(metadata, function dataRestored(restoreError) {
-        // clean up unzipped data, error or no
-        cleanUpImport(outputDir, function(cleanupError) {
-          if(restoreError || cleanupError) {
-            return next(restoreError || cleanupError);
-          }
-          response.status(200).json({
-            sucess: true,
-            message: 'Successfully imported your course!'
-          });
-        });
+      prepareImport(files.file.path, zipPath + '_unzipped', cb);
+    },
+    function doRestoration(pMetadata, cb) {
+      restoreData(pMetadata, function(error) {
+        cb(error, pMetadata);
+      });
+    }
+  ], function doneWaterfall(error, metadata) {
+    cleanUpImport(metadata.importDir, function(cleanupError) {
+      if(error || cleanupError) {
+        return next(error || cleanupError);
+      }
+      response.status(200).json({
+        success: true,
+        message: 'Successfully imported your course!'
       });
     });
   });
@@ -111,6 +109,8 @@ function prepareImport(zipPath, unzipPath, callback) {
         var metadata = data.loadMetadata;
         var installedVersion = semver.clean(versionJson.adapt_framework);
         var importVersion = semver.clean(metadata.version);
+
+        metadata.importDir = unzipPath;
 
         // TODO remove hard-coded error
         if(!importVersion) {
@@ -316,7 +316,6 @@ function importCourseassets(metadata, courseassetsImported) {
 function importPlugins(metadata, pluginsImported) {
   var srcDir = path.join(metadata.importDir, ctx.Constants.Folders.Plugins);
   async.each(metadata.pluginIncludes, function(pluginData, donePluginTypeIterator) {
-    // TODO remove hard-coded names
     fse.readdir(path.join(srcDir, pluginData.name), function onReadDir(error, files) {
       async.each(files, function(file, donePluginIterator) {
         importPlugin(path.join(srcDir, pluginData.name), pluginData.type, donePluginIterator);

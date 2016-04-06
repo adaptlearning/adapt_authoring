@@ -11,13 +11,8 @@ var usermanager = require('../../../lib/usermanager');
 /**
 * Course import function
 * TODO need implementation notes
-* TODO take out IDs
-* TODO add minimal export (for import):
-* - No core, core plugins or associated files
-* - No json
-* - Yes metadata
-* - Yes assets
-* - Yes custom plugins
+*      - metadata structure
+*      - devMode param
 */
 
 var blacklistedProps = [
@@ -30,111 +25,170 @@ var blacklistedProps = [
   '_hasPreview'
 ];
 
-exports = module.exports = function Export(courseId, request, response, next) {
+// TODO bit messy having all these functions in here
+exports = module.exports = function Export(courseId, devMode, request, response, next) {
   var self = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var userId = usermanager.getCurrentUser()._id;
   var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
   var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
   var exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, userId);
+  var metadata;
 
-  // ensure the exportDir exists
   fse.ensureDir(exportDir, function(error) {
     if(error) {
       return next(error);
     }
+    // export tasks vary based on type of export
+    // TODO parallelise these where poss
+    async.series(devMode === 'true' ? [
+      // dev export
+      generateLatestBuild,
+      copyFrameworkFiles,
+      copyCourseFiles
+    ] : [
+      // standard export
+      // TODO remove this build task
+      generateLatestBuild,
+      generateMetaData,
+      copyCustomPlugins,
+      copyAssets
+    ], zipExport);
+  });
+
+  function generateMetaData(generatedMetadata) {
     async.parallel([
-      function generateMetaData(generatedMetadata) {
-        async.parallel([
-          function(callback) {
-            getCourseMetdata(courseId, callback);
-          },
-          function(callback) {
-            getAssetMetadata(courseId, callback);
-          },
-          function(callback) {
-            getPluginMetadata(courseId, callback);
-          },
-        ], function(error, results) {
-          if(error) {
-            return generatedMetadata(error);
-          }
-          // TODO add filename to constants?
-          var metadata = _.reduce(results, function(memo,result){ return _.extend(memo,result); });
-          fse.writeJson(path.join(exportDir, 'metadata.json'), metadata, generatedMetadata);
-        });
+      function(callback) {
+        getPackageData(FRAMEWORK_ROOT_FOLDER, callback);
       },
-      // builds course & copies framework files
-      function getLatestBuild(preparedFiles) {
-        self.publish(courseId, true, request, response, function coursePublished(error) {
-          if(error) {
-            return preparedFiles(error);
-          }
-          self.generateIncludesForCourse(courseId, function(error, includes) {
-            if(error) {
-              return preparedFiles(error);
-            }
-
-            for(var i = 0, count = includes.length; i < count; i++)
-            includes[i] = '\/' + includes[i] + '(\/|$)';
-
-            // regular expressions
-            var includesRE = new RegExp(includes.join('|'));
-            var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
-            var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
-
-            fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
-              filter: function(filePath) {
-                var posixFilePath = filePath.replace(/\\/g, '/');
-                var isIncluded = posixFilePath.search(includesRE) > -1;
-                var isExcluded = posixFilePath.search(excludesRE) > -1;
-                var isPlugin = posixFilePath.search(pluginsRE) > -1;
-
-                // exclude any matches to excludesRE
-                if(isExcluded) return false;
-                // exclude any plugins not in includes
-                else if(isPlugin) return isIncluded;
-                // include everything else
-                else return true;
-              }
-            }, function doneCopy(error) {
-              if (error) {
-                return preparedFiles(error);
-              }
-              var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
-              var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
-              fse.ensureDir(dest, function(error) {
-                if(error) {
-                  return preparedFiles(error);
-                }
-                fse.copy(source, dest, preparedFiles);
-              });
-            });
-          });
-        });
+      function(callback) {
+        getCourseMetdata(courseId, callback);
+      },
+      function(callback) {
+        getAssetMetadata(courseId, callback);
+      },
+      function(callback) {
+        getPluginMetadata(courseId, callback);
+      },
+    ], function(error, results) {
+      if(error) {
+        return generatedMetadata(error);
       }
-    ], function doneParallel(error) {
-      // write metadata, zip files
-      if(error) return next(error);
+      metadata = _.reduce(results, function(memo,result){ return _.extend(memo,result); });
+      // TODO should we add filename to constants?
+      fse.writeJson(path.join(exportDir, 'metadata.json'), metadata, { spaces:0 }, generatedMetadata);
+    });
+  };
 
+  function generateLatestBuild(courseBuilt) {
+    self.publish(courseId, true, request, response, courseBuilt);
+  };
+
+  // uses the metadata list to include only relevant plugin files
+  function copyCustomPlugins(filesCopied) {
+    if(metadata.pluginIncludes.length === 0) {
+      return filesCopied();
+    }
+    var src = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source);
+    var dest = path.join(exportDir,'plugins');
+    async.each(metadata.pluginIncludes, function iterator(plugin, cb) {
+      var pluginDir = path.join(src, plugin.folder, plugin.name);
+      fse.copy(pluginDir, path.join(dest, plugin.name), cb);
+    }, filesCopied);
+  };
+
+  function copyFrameworkFiles(filesCopied) {
+    self.generateIncludesForCourse(courseId, function(error, includes) {
+      if(error) {
+        return includesGenerated(error);
+      }
+      // create list of includes
+      for(var i = 0, count = includes.length; i < count; i++)
+        includes[i] = '\/' + includes[i] + '(\/|$)';
+
+      var includesRE = new RegExp(includes.join('|'));
+      var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
+      var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
+
+      fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
+        filter: function(filePath) {
+          var posixFilePath = filePath.replace(/\\/g, '/');
+          var isIncluded = posixFilePath.search(includesRE) > -1;
+          var isExcluded = posixFilePath.search(excludesRE) > -1;
+          var isPlugin = posixFilePath.search(pluginsRE) > -1;
+
+          // exclude any matches to excludesRE
+          if(isExcluded) return false;
+          // exclude any plugins not in includes
+          else if(isPlugin) return isIncluded;
+          // include everything else
+          else return true;
+        }
+      }, function doneCopy(error) {
+        if (error) {
+          return filesCopied(error);
+        }
+        copyCourseFiles(filesCopied);
+      });
+    });
+  };
+
+  // everything in the course folder
+  function copyCourseFiles(filesCopied) {
+    var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
+    var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
+    fse.ensureDir(dest, function(error) {
+      if (error) {
+        return filesCopied(error);
+      }
+      fse.copy(source, dest, filesCopied);
+    });
+  };
+
+  // TODO rip these from the database, don't do a build
+  function copyAssets(filesCopied) {
+    // TODO hard-coded lang folder needs to go
+    var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course, 'en', Constants.Folders.Assets);
+    var dest = path.join(exportDir, Constants.Folders.Assets);
+    fse.ensureDir(dest, function(error) {
+      if (error) {
+        return filesCopied(error);
+      }
+      fse.copy(source, dest, filesCopied);
+    });
+  };
+
+  function zipExport(error) {
+      if(error) {
+        return next(error);
+      }
       var archive = archiver('zip');
       var output = fse.createWriteStream(exportDir +  '.zip');
       archive.on('error', cleanUpExport);
       output.on('close', cleanUpExport);
       archive.pipe(output);
       archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
-    });
-  });
+  };
 
   // remove the exportDir, if there is one
   function cleanUpExport(exportError) {
     fse.remove(exportDir, function(removeError) {
-      // prefer exportError
-      next(exportError || removeError)
+      next(exportError || removeError);
     });
-  }
+  };
 };
 
+// pulls out relevant attributes from package.json
+function getPackageData(frameworkDir, gotPackageJson) {
+  // TODO should we hard-code the string?
+  fse.readJson(path.join(frameworkDir, 'package.json'), function onJsonRead(error, packageJson) {
+    gotPackageJson(null, _.pick(packageJson,
+      'version'
+    ));
+  });
+};
+
+// rips all course data from the DB
 function getCourseMetdata(courseId, gotCourseMetadata) {
   database.getDatabase(function(error, db) {
     if (error) {
@@ -149,15 +203,12 @@ function getCourseMetdata(courseId, gotCourseMetadata) {
       var criteria = collectionType === 'course' ? { _id: courseId } : { _courseId: courseId };
       db.retrieve(collectionType, criteria, {operators: { sort: { _sortOrder: 1}}}, function dbRetrieved(error, results) {
         if (error) {
-          callback(doneIterator);
+          gotCourseMetadata(doneIterator);
         }
-        // TODO need save as little metadata as possible
-        // HACK do this check better
-        var isConfig = collectionType === 'course' || collectionType === 'config';
         // only store the _doc values
         var toSave = _.pluck(results,'_doc');
         // store data, remove blacklisted properties
-        // TODO also do this for JSON data?
+        // TODO make sure we're only saving what we need
         _.each(toSave, function(item, index) { toSave[index] = _.omit(item, blacklistedProps); });
         metadata.course[collectionType] = toSave;
 
@@ -185,14 +236,16 @@ function getAssetMetadata(courseId, gotAssetMetadata) {
           if(error) {
             return doneIterator(error);
           }
-          // TODO safe to assume only one's returned?
           if(!matchedAssets) {
             return doneIterator(new Error('No asset found with id: ' + courseasset._assetId));
+          }
+          if(matchedAssets.length > 1) {
+            logger.log('info',"export.getAssetMetadata: multiple assets found with id", courseasset._assetId, "using first result");
           }
           var asset = matchedAssets[0];
 
           // would _.pick, but need to map some keys
-          // TODO sort this out
+          // TODO not ideal
           if(!metadata.assets[asset.filename]) {
             metadata.assets[asset.filename] = {
               "oldId": asset._id,
@@ -204,10 +257,9 @@ function getAssetMetadata(courseId, gotAssetMetadata) {
           }
           // else console.log('Asset already stored:', asset.filename);
 
-          // store the courseasset too
-          var courseassetData = _.omit(courseasset._doc, blacklistedProps);
-          // TODO do this better later
-          delete courseassetData._id;
+          // store the courseasset, omitting the blacklistedProps + _id
+          var toOmit = blacklistedProps.concat([ "_id" ]);
+          var courseassetData = _.omit(courseasset._doc, toOmit);
           metadata.courseassets.push(courseassetData);
 
           doneIterator();
@@ -219,9 +271,14 @@ function getAssetMetadata(courseId, gotAssetMetadata) {
   });
 };
 
+/**
+* Generates:
+* - A map for component types
+* - List of plugins to include (i.e. plugins that have been manually updated,
+*   or are completely custom)
+*/
 function getPluginMetadata(courseId, gotPluginMetadata) {
   /*
-  * TODO get list of new plugins
   * HACK there's got to be a way to get this info dynamically
   * We need:
   * - Content plugin name to see if it's already installed (so need plugin type)
@@ -229,12 +286,45 @@ function getPluginMetadata(courseId, gotPluginMetadata) {
   * (See Import.importPlugins for context)
   * For now, add map to metadata
   */
-  gotPluginMetadata(null, {
+  var metadata = {
     pluginTypes: [
       { type: 'component', folder: 'components' },
       { type: 'extension', folder: 'extensions' },
       { type: 'menu',      folder: 'menu'       },
       { type: 'theme',     folder: 'theme'      }
-    ]
+    ],
+    pluginIncludes: []
+  };
+
+  var includes;
+  async.waterfall([
+    function getPlugin(cb) {
+      origin.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), cb);
+    },
+    function getIncludes(plugin, cb) {
+      plugin.generateIncludesForCourse(courseId, cb);
+    },
+    function getDb(pIncludes, cb) {
+      includes = pIncludes;
+      database.getDatabase(cb);
+    },
+    function generateIncludes(db, cb) {
+      async.each(metadata.pluginTypes, function iterator(pluginType, doneIterator) {
+        db.retrieve(pluginType.type + 'type', { "isLocalPackage": true, "_isDeleted": false }, function gotTypeDoc(error, results) {
+          if(error) {
+            return cb(error);
+          }
+          async.each(results, function iterator(result, doneIterator2) {
+            if(_.indexOf(includes, result.name) !== -1) {
+              var data = _.extend(pluginType, { name: result.name });
+              metadata.pluginIncludes.push(data);
+            }
+            doneIterator2();
+          }, doneIterator);
+        });
+      }, cb);
+    }
+  ], function doneWaterfall(error) {
+    gotPluginMetadata(error, metadata);
   });
 };

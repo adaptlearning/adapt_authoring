@@ -12,7 +12,6 @@ var Export = require('./export');
 
 function AdaptOutput() {
 }
-
 util.inherits(AdaptOutput, OutputPlugin);
 
 AdaptOutput.prototype.publish = Publish;

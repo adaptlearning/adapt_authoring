@@ -14,7 +14,7 @@ var path = require('path');
 var semver = require('semver');
 var usermanager = require('../../../lib/usermanager');
 var util = require('util');
-var version = require('../../../version');
+var versionJson = require('../../../version');
 
 function ImportError(message, httpStatus) {
   this.message = message || "Course import failed";
@@ -25,11 +25,9 @@ util.inherits(ImportError, Error);
 /**
 * Course import function
 * Wrapper for prepareImport and restoreData
-* TODO need import configuration options (UI/forms)
-* TODO hero images broken
-* TODO cannot import if course with same ID already exists
-* TODO convert consoles to loggers
 * TODO implementation notes
+* TODO need import configuration options (UI/forms) ????
+* TODO hero images broken
 */
 
 exports = module.exports = function Import(request, response, next) {
@@ -48,14 +46,14 @@ exports = module.exports = function Import(request, response, next) {
     }
     var zipPath = files.file.path;
     var outputDir = zipPath + '_unzipped';
-    prepareImport(zipPath, outputDir, function importPrepared(prepError, data) {
+    prepareImport(zipPath, outputDir, function importPrepared(prepError, metadata) {
       if(error) {
         return cleanUpImport(outputDir, function(cleanupError) {
           next(prepError || cleanupError);
         });
       }
-      data.importDir = outputDir;
-      restoreData(data, function dataRestored(restoreError) {
+      metadata.importDir = outputDir;
+      restoreData(metadata, function dataRestored(restoreError) {
         // clean up unzipped data, error or no
         cleanUpImport(outputDir, function(cleanupError) {
           if(restoreError || cleanupError) {
@@ -75,114 +73,56 @@ exports = module.exports = function Import(request, response, next) {
 * 1. Unzips uploaded zip
 * 2. Checks compatibility of import with this AT instance
 * 3. Validates the import's metadata
-* TODO take out some of the nested functions
 */
 function prepareImport(zipPath, unzipPath, callback) {
   var decompress = require('decompress');
-  new decompress()
+  var d = new decompress()
     .src(zipPath)
     .dest(unzipPath)
-    .use(decompress.zip({ strip: 0 }))
-    .run(function onUnzipped(error, files) {
-      if(error) {
-        return callback(error);
-      }
-      async.parallel([
-        function removeZip(asyncCallback) {
-          fse.remove(zipPath, asyncCallback);
-        },
-        function checkVersionCompatibility(asyncCallback) {
-          // TODO abstract this into framework helper
-          fse.readJson(path.join(unzipPath, 'package.json'), function onJsonRead(error, packageJson) {
-            if(error) {
-              return asyncCallback(new ImportError('Invalid import archive, no package.json found.', 400));
-            }
-            var importVersion = semver.clean(packageJson.version);
-            var installedVersion = semver.clean(version.adapt_framework);
+    .use(decompress.zip({ strip: 0 }));
 
-            // TODO remove hard-coded error
-            // TODO safe to assume installed framework has a valid version?
-            if(!importVersion) return asyncCallback(new ImportError('Invalid version number (' + packageJson.version + ') found in import package.json'), 400)
-
-            // check the import's within the major version number
-            if(semver.satisfies(importVersion,semver.major(installedVersion).toString())) {
-              asyncCallback();
-            } else {
-              // TODO remove hard-coded error
-              asyncCallback(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
-            }
-          });
-        },
-        function loadMetadata(asyncCallback) {
-          fse.readJson(path.join(unzipPath, 'metadata.json'), function onJsonRead(error, metadata) {
-            if(error) {
-              switch(error.name) {
-                case 'SyntaxError':
-                return asyncCallback(new Error('Import contains invalid metadata, please check the archive.'));
-                default:
-                return asyncCallback(new Error('No metadata found for import, please check the archive.'));
-              }
-            }
-            asyncCallback(null, metadata);
-          });
-        },
-        // get all JSON from the course folder
-        function loadCourseData(asyncCallback) {
-          getJSONRecursive(path.join(unzipPath, 'src', 'course'), asyncCallback);
-        }
-      ], function(error, data) {
-        if(error) {
-          return callback(error);
-        }
-        // TODO assume both return something? (or otherwise an error)
-        callback(null, {
-          metadata: data[2],
-          course: data[3]
-        });
-      });
-    });
-};
-
-// Recursively grabs all json content and returns an object
-function getJSONRecursive(dir, doneRecursion) {
-  var jsonData = {};
-  var jsonRegEx = /\.json$/;
-  fse.readdir(dir, function onRead(error, files) {
+  d.run(function onUnzipped(error, files) {
     if(error) {
-      return doneRecursion(error);
+      return callback(error);
     }
-    async.each(files, function iterator(file, doneIterator) {
-      var newPath = path.join(dir, file);
-      fse.stat(newPath, function(error, stats) {
-        if(error) {
-          return doneIterator(error);
+    async.auto({
+      removeZip: function(cb) {
+        fse.remove(zipPath, cb);
+      },
+      loadMetadata: function(cb) {
+        // TODO don't think we should hard-code the metadata path here...
+        fse.readJson(path.join(unzipPath, 'metadata.json'), function onJsonRead(error, metadata) {
+          if(error) {
+            // TODO any other possible errors?
+            switch(error.name) {
+              case 'SyntaxError':
+                return cb(new Error('Import contains invalid metadata, please check the archive.'));
+              default:
+                return cb(new Error('No metadata found for import, please check the archive.'));
+            }
+          }
+          cb(null, metadata);
+        });
+      },
+      checkVersionCompatibility: ['loadMetadata', function(cb, data) {
+        var metadata = data.loadMetadata;
+        var installedVersion = semver.clean(versionJson.adapt_framework);
+        var importVersion = semver.clean(metadata.version);
+
+        // TODO remove hard-coded error
+        if(!importVersion) {
+          return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
         }
-        // if dir, do recursion
-        if(stats.isDirectory()) {
-          getJSONRecursive(newPath, function(error, data) {
-            _.extend(jsonData, data);
-            doneIterator(error);
-          });
-          // if json, load file and add to jsonData
-        } else if(file.search(jsonRegEx) > -1) {
-          fse.readJson(newPath, function onJsonRead(error, fileJson) {
-            if(error) {
-              return doneIterator(error);
-            }
-            var type = fileJson._type || fileJson[0] && fileJson[0]._type || 'config';
-            if(!type) {
-              logger.log('error', 'No type found for ' + file);
-              return doneIterator();
-            }
-            if(!jsonData[type]) jsonData[type] = fileJson;
-            doneIterator(null, jsonData);
-          });
+        // check the import's within the major version number
+        if(semver.satisfies(importVersion,semver.major(installedVersion).toString())) {
+          cb();
         } else {
-          doneIterator();
+          // TODO remove hard-coded error
+          cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
         }
-      });
-    }, function(error) {
-      doneRecursion(null, jsonData);
+      }]
+    }, function doneAuto(error, data) {
+      callback(error, data.loadMetadata);
     });
   });
 };
@@ -192,24 +132,23 @@ function getJSONRecursive(dir, doneRecursion) {
 * 2. Imports the assets
 * 3. Imports the plugins
 */
-function restoreData(data, callback) {
-  // TODO parallelise this somehow? (note that we need the courseId in importCourseassets)
-  async.series([
-    function(cb) {
-      importCourseJson(data, cb);
+function restoreData(metadata, callback) {
+  async.auto({
+    importCourseJson: function(cb) {
+      importCourseJson(metadata, cb);
     },
-    function(cb) {
-      importAssets(data, cb);
+    importAssets: function(cb) {
+      importAssets(metadata, cb);
     },
-    function(cb) {
-      importCourseassets(data, cb);
-    },
-    function(cb) {
-      importPlugins(data, cb);
+    importCourseassets: ['importCourseJson', 'importAssets', function(cb) {
+      importCourseassets(metadata, cb);
+    }],
+    importPlugins: function(cb) {
+      importPlugins(metadata, cb);
     }
-  ], function doneAsync(error) {
+  }, function doneAuto(error) {
     if(error) {
-      return removeImport(data, function doneCleanUp(cleanupError) {
+      return removeImport(metadata, function doneCleanUp(cleanupError) {
         callback(cleanupError || error);
       });
     }
@@ -217,10 +156,10 @@ function restoreData(data, callback) {
   });
 };
 
-function importCourseJson(data, importedJson) {
+function importCourseJson(metadata, importedJson) {
   var userId = usermanager.getCurrentUser()._id;
   // HACK this is bad
-  var oldCourseId = data.metadata.course.course[0]._id;
+  var oldCourseId = metadata.course.course[0]._id;
   var newCourseId;
   // HACK this is also bad...
   var order = [
@@ -233,20 +172,20 @@ function importCourseJson(data, importedJson) {
   ];
 
   // init the id map
-  data.idMap = {};
+  metadata.idMap = {};
 
   async.eachSeries(order, function typeIterator(courseKey, doneTypeIterator) {
     origin.contentmanager.getContentPlugin(courseKey, function gotContentPlugin(error, plugin) {
       if(error) {
         return doneTypeIterator(error);
       }
-      async.each(data.metadata.course[courseKey], function itemIterator(json, doneItemIterator) {
-        // memoise to keep the metadata as it is, omitting below fields
+      async.each(metadata.course[courseKey], function itemIterator(json, doneItemIterator) {
+        // memoise to keep the metadata as it is, omitting id
         var memo = _.omit(json, '_id');
 
         if(newCourseId) {
           // we're doing everything in order, so parent will have been mapped
-          memo._parentId = data.idMap[json._parentId];
+          memo._parentId = metadata.idMap[json._parentId];
           memo._courseId = newCourseId;
         }
         memo.createdBy = userId;
@@ -260,7 +199,7 @@ function importCourseJson(data, importedJson) {
           if(!newCourseId) {
             newCourseId = newObj._id;
           }
-          data.idMap[json._id] = newObj._id;
+          metadata.idMap[json._id] = newObj._id;
           doneItemIterator();
         });
       }, doneTypeIterator);
@@ -268,10 +207,9 @@ function importCourseJson(data, importedJson) {
   }, importedJson);
 };
 
-// TODO adapted from assetmanager.postAsset (change this, don't like duplication)
-// TODO deal with filenames
-function importAssets(data, assetsImported) {
-  var assetsGlob = path.join(data.importDir, 'src', 'course', '**', 'assets', '*');
+// TODO adapted from assetmanager.postAsset (...don't duplicate...)
+function importAssets(metadata, assetsImported) {
+  var assetsGlob = path.join(metadata.importDir, Constants.Folders.Assets, '*');
   glob(assetsGlob, function (error, assets) {
     if(error) {
       return assetsImported(error);
@@ -283,7 +221,7 @@ function importAssets(data, assetsImported) {
       }
       var assetName = path.basename(assetPath);
       // TODO look into creating a vinyl file here
-      var fileMeta = _.extend(data.metadata.assets[assetName], {
+      var fileMeta = _.extend(metadata.assets[assetName], {
         filename: assetName,
         path: assetPath,
         repository: repository
@@ -291,17 +229,21 @@ function importAssets(data, assetsImported) {
       if(!fileMeta) {
         return doneAsset(new Error('No metadata found for asset: ' + assetName));
       }
-      importAsset(fileMeta, data, doneAsset);
+      importAsset(fileMeta, metadata, doneAsset);
     }, assetsImported);
   });
 };
 
-function importAsset(fileMetadata, data, assetImported) {
+function importAsset(fileMetadata, metadata, assetImported) {
   // if similar asset exists (same name and size), map ID to existing asset
-  origin.assetmanager.retrieveAsset({ filename: fileMetadata.filename, size: fileMetadata.size }, function gotAsset(error, results) {
+  var search = {
+    filename: fileMetadata.filename,
+    size: fileMetadata.size
+  };
+  origin.assetmanager.retrieveAsset(search, function gotAsset(error, results) {
     if(results.length > 0) {
       logger.log('debug', fileMetadata.filename + ': similar file found in DB, not importing');
-      data.idMap[fileMetadata.oldId] = results[0]._id;
+      metadata.idMap[fileMetadata.oldId] = results[0]._id;
       return assetImported();
     }
 
@@ -314,6 +256,7 @@ function importAsset(fileMetadata, data, assetImported) {
     });
     rs.on('close', function onReadClose() {
       var filehash = hash.digest('hex');
+      // TODO these vars are a bit dodgy
       var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
       var filepath = path.join(directory, filehash) + path.extname(fileMetadata.filename);
       var fileOptions = {
@@ -335,19 +278,16 @@ function importAsset(fileMetadata, data, assetImported) {
           var asset = _.extend(fileMetadata, storedFile);
 
           // Create the asset record
-          /*
-          * TODO intermittent permissions error here, investigate
-          * permissions.js.addStatement: db.update 'no document found'
-          */
           origin.assetmanager.createAsset(asset, function onAssetCreated(createError, assetRec) {
+            // TODO intermittent permissions error here, need to investigate (permissions.js.addStatement: db.update 'no document found').
             if (createError) {
               storage.deleteFile(storedFile.path, assetImported);
               return;
             }
             // store that asset was imported (used in cleanup if error)
-            data.metadata.assets[assetRec.filename].wasImported = true;
+            metadata.assets[assetRec.filename].wasImported = true;
             // add entry to the map
-            data.idMap[fileMetadata.oldId] = assetRec._id;
+            metadata.idMap[fileMetadata.oldId] = assetRec._id;
             assetImported();
           });
         });
@@ -356,11 +296,11 @@ function importAsset(fileMetadata, data, assetImported) {
   });
 };
 
-function importCourseassets(data, courseassetsImported) {
+function importCourseassets(metadata, courseassetsImported) {
   origin.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
-    async.each(data.metadata.courseassets, function(courseasset, createdCourseasset) {
-      courseasset._courseId = data.idMap[courseasset._courseId];
-      courseasset._assetId = data.idMap[courseasset._assetId];
+    async.each(metadata.courseassets, function(courseasset, createdCourseasset) {
+      courseasset._courseId = metadata.idMap[courseasset._courseId];
+      courseasset._assetId = metadata.idMap[courseasset._assetId];
       plugin.create(courseasset, createdCourseasset);
     }, courseassetsImported);
   });
@@ -370,13 +310,13 @@ function importCourseassets(data, courseassetsImported) {
 * Installs any plugins which aren't already in the system.
 * NOTE no action taken for plugins which are newer than installed version (just logged)
 */
-function importPlugins(data, pluginsImported) {
-  async.each(data.metadata.pluginTypes, function(pluginType, donePluginTypeIterator) {
-    var pluginTypeDir = path.join(data.importDir, 'src', pluginType.folder);
-    fse.readdir(pluginTypeDir, function onReadDir(error, files) {
+function importPlugins(metadata, pluginsImported) {
+  var srcDir = path.join(metadata.importDir, 'plugins');
+  async.each(metadata.pluginIncludes, function(pluginData, donePluginTypeIterator) {
+    // TODO remove hard-coded names
+    fse.readdir(path.join(srcDir, pluginData.name), function onReadDir(error, files) {
       async.each(files, function(file, donePluginIterator) {
-        var pluginDir = path.join(pluginTypeDir, file);
-        importPlugin(pluginDir, pluginType.type, donePluginIterator);
+        importPlugin(path.join(srcDir, pluginData.name), pluginData.type, donePluginIterator);
       }, donePluginTypeIterator);
     });
   }, pluginsImported);
@@ -420,8 +360,8 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
 /*
 * Completely removes an imported course (i.e. course data, assets, plugins)
 */
-function removeImport(data, doneRemove) {
-  var newCourseId = data.idMap[data.metadata.course.course[0]._id];
+function removeImport(metadata, doneRemove) {
+  var newCourseId = metadata.idMap[metadata.course.course[0]._id];
   async.parallel([
     function deleteCourse(cb) {
       origin.contentmanager.getContentPlugin('course', function gotCoursePlugin(error, coursePlugin) {
@@ -437,9 +377,9 @@ function removeImport(data, doneRemove) {
       });
     },
     function deleteAssets(cb) {
-      var importedAssets = _.where(data.metadata.assets, { wasImported: true });
+      var importedAssets = _.where(metadata.assets, { wasImported: true });
       async.each(importedAssets, function deleteAsset(asset, assetDeleted) {
-        origin.assetmanager.destroyAsset(data.idMap[asset.oldId], assetDeleted);
+        origin.assetmanager.destroyAsset(metadata.idMap[asset.oldId], assetDeleted);
       }, cb);
     },
     // TODO delete plugins

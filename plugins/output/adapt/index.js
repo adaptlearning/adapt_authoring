@@ -10,10 +10,24 @@ var Publish = require('./publish');
 var Import = require('./import');
 var Export = require('./export');
 
+// TODO should these go in OutputManager.Constants?
+var Constants = {
+  Filenames: {
+    Bower: 'bower.json',
+    Metadata: 'metadata.json',
+    Package: 'package.json'
+  },
+  Folders: {
+    Plugins: 'plugins',
+    Assets: 'assets'
+  }
+};
+
 function AdaptOutput() {
 }
 util.inherits(AdaptOutput, OutputPlugin);
 
+AdaptOutput.prototype.Constants = Constants;
 AdaptOutput.prototype.publish = Publish;
 AdaptOutput.prototype.export = Export;
 AdaptOutput.prototype.import = Import;

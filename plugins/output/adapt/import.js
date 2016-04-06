@@ -22,6 +22,9 @@ function ImportError(message, httpStatus) {
 };
 util.inherits(ImportError, Error);
 
+// the 'this' context for AdaptOutput
+var ctx;
+
 /**
 * Course import function
 * Wrapper for prepareImport and restoreData
@@ -31,6 +34,7 @@ util.inherits(ImportError, Error);
 */
 
 exports = module.exports = function Import(request, response, next) {
+  ctx = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
 
@@ -90,8 +94,7 @@ function prepareImport(zipPath, unzipPath, callback) {
         fse.remove(zipPath, cb);
       },
       loadMetadata: function(cb) {
-        // TODO don't think we should hard-code the metadata path here...
-        fse.readJson(path.join(unzipPath, 'metadata.json'), function onJsonRead(error, metadata) {
+        fse.readJson(path.join(unzipPath, ctx.Constants.Filenames.Metadata), function onJsonRead(error, metadata) {
           if(error) {
             // TODO any other possible errors?
             switch(error.name) {
@@ -209,7 +212,7 @@ function importCourseJson(metadata, importedJson) {
 
 // TODO adapted from assetmanager.postAsset (...don't duplicate...)
 function importAssets(metadata, assetsImported) {
-  var assetsGlob = path.join(metadata.importDir, Constants.Folders.Assets, '*');
+  var assetsGlob = path.join(metadata.importDir, ctx.Constants.Folders.Assets, '*');
   glob(assetsGlob, function (error, assets) {
     if(error) {
       return assetsImported(error);
@@ -311,7 +314,7 @@ function importCourseassets(metadata, courseassetsImported) {
 * NOTE no action taken for plugins which are newer than installed version (just logged)
 */
 function importPlugins(metadata, pluginsImported) {
-  var srcDir = path.join(metadata.importDir, 'plugins');
+  var srcDir = path.join(metadata.importDir, ctx.Constants.Folders.Plugins);
   async.each(metadata.pluginIncludes, function(pluginData, donePluginTypeIterator) {
     // TODO remove hard-coded names
     fse.readdir(path.join(srcDir, pluginData.name), function onReadDir(error, files) {
@@ -326,7 +329,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
   var bowerJson, contentPlugin;
   async.waterfall([
     function readBowerJson(cb) {
-      fse.readJson(path.join(pluginDir, 'bower.json'), cb);
+      fse.readJson(path.join(pluginDir, ctx.Constants.Filenames.Bower), cb);
     },
     function getContentPlugin(json, cb) {
       bowerJson = json;

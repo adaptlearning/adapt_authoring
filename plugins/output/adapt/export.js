@@ -102,8 +102,7 @@ function generateMetadata(generatedMetadata) {
       return generatedMetadata(error);
     }
     metadata = _.reduce(results, function(memo,result){ return _.extend(memo,result); });
-    // TODO should we add filename to constants?
-    fse.writeJson(path.join(EXPORT_DIR, 'metadata.json'), metadata, { spaces:0 }, generatedMetadata);
+    fse.writeJson(path.join(EXPORT_DIR, ctx.Constants.Filenames.Metadata), metadata, { spaces:0 }, generatedMetadata);
   });
 };
 
@@ -111,7 +110,7 @@ function generateMetadata(generatedMetadata) {
 // pulls out relevant attributes from package.json
 function getPackageData(frameworkDir, gotPackageJson) {
   // TODO should we hard-code the string?
-  fse.readJson(path.join(frameworkDir, 'package.json'), function onJsonRead(error, packageJson) {
+  fse.readJson(path.join(frameworkDir, ctx.Constants.Filenames.Package), function onJsonRead(error, packageJson) {
     gotPackageJson(null, _.pick(packageJson,
       'version'
     ));
@@ -303,7 +302,7 @@ function copyFrameworkFiles(filesCopied) {
 // uses the metadata list to include only relevant plugin files
 function copyCustomPlugins(filesCopied) {
   var src = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Source);
-  var dest = path.join(EXPORT_DIR, 'plugins');
+  var dest = path.join(EXPORT_DIR, ctx.Constants.Folders.Plugins);
   async.each(metadata.pluginIncludes, function iterator(plugin, cb) {
     var pluginDir = path.join(src, plugin.folder, plugin.name);
     fse.copy(pluginDir, path.join(dest, plugin.name), cb);
@@ -324,7 +323,7 @@ function copyCourseFiles(filesCopied) {
 
 // copies used assets directly from the data folder
 function copyAssets(assetsCopied) {
-  var dest = path.join(EXPORT_DIR, Constants.Folders.Assets);
+  var dest = path.join(EXPORT_DIR, ctx.Constants.Folders.Assets);
   fse.ensureDir(dest, function(error) {
     if (error) {
       return filesCopied(error);

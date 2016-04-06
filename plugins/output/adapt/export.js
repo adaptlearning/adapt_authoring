@@ -9,12 +9,27 @@ var path = require('path');
 var usermanager = require('../../../lib/usermanager');
 
 /**
-* Course import function
-* TODO need implementation notes
-*      - metadata structure
-*      - devMode param
+* Global vars
+* For access by the other funcs
 */
 
+// directories
+var FRAMEWORK_ROOT_DIR = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+var COURSE_ROOT_DIR;
+var EXPORT_DIR;
+
+// the 'this' context for AdaptOutput
+var ctx;
+
+var courseId;
+
+// the top-level callback
+var next;
+
+// var httpRequest;
+// var httpResponse;
+
+// used with _.omit when saving metadata
 var blacklistedProps = [
   '__v',
   '_isDeleted',
@@ -25,17 +40,26 @@ var blacklistedProps = [
   '_hasPreview'
 ];
 
-// TODO bit messy having all these functions in here
-exports = module.exports = function Export(courseId, devMode, request, response, next) {
-  var self = this;
-  var tenantId = usermanager.getCurrentUser().tenant._id;
-  var userId = usermanager.getCurrentUser()._id;
-  var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
-  var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
-  var exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, userId);
-  var metadata;
+/**
+* Course import function
+* TODO need implementation notes
+*      - metadata structure
+*      - devMode param
+*/
 
-  fse.ensureDir(exportDir, function(error) {
+exports = module.exports = function Export(pCourseId, devMode, request, response, pNext) {
+  // store the params
+  var currentUser = usermanager.getCurrentUser();
+  COURSE_ROOT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.AllCourses, currentUser.tenant._id, pCourseId);
+  EXPORT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Exports, currentUser._id);
+  ctx = this;
+  courseId = pCourseId;
+  // httpRequest = request;
+  // httpRequest = response;
+  next = pNext;
+
+  // create the EXPORT_DIR if it isn't there
+  fse.ensureDir(EXPORT_DIR, function(error) {
     if(error) {
       return next(error);
     }
@@ -55,128 +79,41 @@ exports = module.exports = function Export(courseId, devMode, request, response,
       copyAssets
     ], zipExport);
   });
-
-  function generateMetaData(generatedMetadata) {
-    async.parallel([
-      function(callback) {
-        getPackageData(FRAMEWORK_ROOT_FOLDER, callback);
-      },
-      function(callback) {
-        getCourseMetdata(courseId, callback);
-      },
-      function(callback) {
-        getAssetMetadata(courseId, callback);
-      },
-      function(callback) {
-        getPluginMetadata(courseId, callback);
-      },
-    ], function(error, results) {
-      if(error) {
-        return generatedMetadata(error);
-      }
-      metadata = _.reduce(results, function(memo,result){ return _.extend(memo,result); });
-      // TODO should we add filename to constants?
-      fse.writeJson(path.join(exportDir, 'metadata.json'), metadata, { spaces:0 }, generatedMetadata);
-    });
-  };
-
-  function generateLatestBuild(courseBuilt) {
-    self.publish(courseId, true, request, response, courseBuilt);
-  };
-
-  // uses the metadata list to include only relevant plugin files
-  function copyCustomPlugins(filesCopied) {
-    if(metadata.pluginIncludes.length === 0) {
-      return filesCopied();
-    }
-    var src = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source);
-    var dest = path.join(exportDir,'plugins');
-    async.each(metadata.pluginIncludes, function iterator(plugin, cb) {
-      var pluginDir = path.join(src, plugin.folder, plugin.name);
-      fse.copy(pluginDir, path.join(dest, plugin.name), cb);
-    }, filesCopied);
-  };
-
-  function copyFrameworkFiles(filesCopied) {
-    self.generateIncludesForCourse(courseId, function(error, includes) {
-      if(error) {
-        return includesGenerated(error);
-      }
-      // create list of includes
-      for(var i = 0, count = includes.length; i < count; i++)
-        includes[i] = '\/' + includes[i] + '(\/|$)';
-
-      var includesRE = new RegExp(includes.join('|'));
-      var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
-      var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
-
-      fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
-        filter: function(filePath) {
-          var posixFilePath = filePath.replace(/\\/g, '/');
-          var isIncluded = posixFilePath.search(includesRE) > -1;
-          var isExcluded = posixFilePath.search(excludesRE) > -1;
-          var isPlugin = posixFilePath.search(pluginsRE) > -1;
-
-          // exclude any matches to excludesRE
-          if(isExcluded) return false;
-          // exclude any plugins not in includes
-          else if(isPlugin) return isIncluded;
-          // include everything else
-          else return true;
-        }
-      }, function doneCopy(error) {
-        if (error) {
-          return filesCopied(error);
-        }
-        copyCourseFiles(filesCopied);
-      });
-    });
-  };
-
-  // everything in the course folder
-  function copyCourseFiles(filesCopied) {
-    var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
-    var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
-    fse.ensureDir(dest, function(error) {
-      if (error) {
-        return filesCopied(error);
-      }
-      fse.copy(source, dest, filesCopied);
-    });
-  };
-
-  // TODO rip these from the database, don't do a build
-  function copyAssets(filesCopied) {
-    // TODO hard-coded lang folder needs to go
-    var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course, 'en', Constants.Folders.Assets);
-    var dest = path.join(exportDir, Constants.Folders.Assets);
-    fse.ensureDir(dest, function(error) {
-      if (error) {
-        return filesCopied(error);
-      }
-      fse.copy(source, dest, filesCopied);
-    });
-  };
-
-  function zipExport(error) {
-      if(error) {
-        return next(error);
-      }
-      var archive = archiver('zip');
-      var output = fse.createWriteStream(exportDir +  '.zip');
-      archive.on('error', cleanUpExport);
-      output.on('close', cleanUpExport);
-      archive.pipe(output);
-      archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
-  };
-
-  // remove the exportDir, if there is one
-  function cleanUpExport(exportError) {
-    fse.remove(exportDir, function(removeError) {
-      next(exportError || removeError);
-    });
-  };
 };
+
+function generateLatestBuild(courseBuilt) {
+  ctx.publish(courseId, true, null, null, courseBuilt);
+};
+
+/**
+* Metadata functions
+*/
+
+// creates metadata.json file
+function generateMetaData(generatedMetadata) {
+  async.parallel([
+    function(callback) {
+      getPackageData(FRAMEWORK_ROOT_DIR, callback);
+    },
+    function(callback) {
+      getCourseMetdata(courseId, callback);
+    },
+    function(callback) {
+      getAssetMetadata(courseId, callback);
+    },
+    function(callback) {
+      getPluginMetadata(courseId, callback);
+    },
+  ], function(error, results) {
+    if(error) {
+      return generatedMetadata(error);
+    }
+    metadata = _.reduce(results, function(memo,result){ return _.extend(memo,result); });
+    // TODO should we add filename to constants?
+    fse.writeJson(path.join(EXPORT_DIR, 'metadata.json'), metadata, { spaces:0 }, generatedMetadata);
+  });
+};
+
 
 // pulls out relevant attributes from package.json
 function getPackageData(frameworkDir, gotPackageJson) {
@@ -326,5 +263,107 @@ function getPluginMetadata(courseId, gotPluginMetadata) {
     }
   ], function doneWaterfall(error) {
     gotPluginMetadata(error, metadata);
+  });
+};
+
+/**
+* Copy functions
+*/
+
+// copies relevant files in adapt_framework
+function copyFrameworkFiles(filesCopied) {
+  ctx.generateIncludesForCourse(courseId, function(error, includes) {
+    if(error) {
+      return includesGenerated(error);
+    }
+    // create list of includes
+    for(var i = 0, count = includes.length; i < count; i++)
+    includes[i] = '\/' + includes[i] + '(\/|$)';
+
+    var includesRE = new RegExp(includes.join('|'));
+    var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
+    var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
+
+    fse.copy(FRAMEWORK_ROOT_DIR, EXPORT_DIR, {
+      filter: function(filePath) {
+        var posixFilePath = filePath.replace(/\\/g, '/');
+        var isIncluded = posixFilePath.search(includesRE) > -1;
+        var isExcluded = posixFilePath.search(excludesRE) > -1;
+        var isPlugin = posixFilePath.search(pluginsRE) > -1;
+
+        // exclude any matches to excludesRE
+        if(isExcluded) return false;
+        // exclude any plugins not in includes
+        else if(isPlugin) return isIncluded;
+        // include everything else
+        else return true;
+      }
+    }, function doneCopy(error) {
+      if (error) {
+        return filesCopied(error);
+      }
+      copyCourseFiles(filesCopied);
+    });
+  });
+};
+
+// uses the metadata list to include only relevant plugin files
+function copyCustomPlugins(filesCopied) {
+  if(metadata.pluginIncludes.length === 0) {
+    return filesCopied();
+  }
+  var src = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Source);
+  var dest = path.join(EXPORT_DIR,'plugins');
+  async.each(metadata.pluginIncludes, function iterator(plugin, cb) {
+    var pluginDir = path.join(src, plugin.folder, plugin.name);
+    fse.copy(pluginDir, path.join(dest, plugin.name), cb);
+  }, filesCopied);
+};
+
+// copies everything in the course folder
+function copyCourseFiles(filesCopied) {
+  var source = path.join(COURSE_ROOT_DIR, Constants.Folders.Build, Constants.Folders.Course);
+  var dest = path.join(EXPORT_DIR, Constants.Folders.Source, Constants.Folders.Course);
+  fse.ensureDir(dest, function(error) {
+    if (error) {
+      return filesCopied(error);
+    }
+    fse.copy(source, dest, filesCopied);
+  });
+};
+
+// TODO rip these from the database, don't do a build
+function copyAssets(filesCopied) {
+  // TODO hard-coded lang folder needs to go
+  var source = path.join(COURSE_ROOT_DIR, Constants.Folders.Build, Constants.Folders.Course, 'en', Constants.Folders.Assets);
+  var dest = path.join(EXPORT_DIR, Constants.Folders.Assets);
+  fse.ensureDir(dest, function(error) {
+    if (error) {
+      return filesCopied(error);
+    }
+    fse.copy(source, dest, filesCopied);
+  });
+};
+
+/**
+* post-processing
+*/
+
+function zipExport(error) {
+  if(error) {
+    return next(error);
+  }
+  var archive = archiver('zip');
+  var output = fse.createWriteStream(EXPORT_DIR +  '.zip');
+  archive.on('error', cleanUpExport);
+  output.on('close', cleanUpExport);
+  archive.pipe(output);
+  archive.bulk([{ expand: true, cwd: EXPORT_DIR, src: ['**/*'] }]).finalize();
+};
+
+// remove the EXPORT_DIR, if there is one
+function cleanUpExport(exportError) {
+  fse.remove(EXPORT_DIR, function(removeError) {
+    next(exportError || removeError);
   });
 };

@@ -18,12 +18,13 @@ util.inherits(ExportPermissionError, Error);
 // stop any auto permissions checks
 permissions.ignoreRoute(/^\/export\/?.*$/);
 
-// TODO probably needs to be moved to download route
+// TODO think we should move these to plugins/output/adapt/export
+
 server.get('/export/:tenant/:course/download.zip', function (req, res, next) {
   var tenantId = req.params.tenant;
   var courseId = req.params.course;
   var userId = usermanager.getCurrentUser()._id;
-  // TODO not good specifying this here AND in plugins/output/adapt/export->getCourseName()-exportDir
+  // TODO not good specifying this here AND in plugins/output/adapt/export EXPORT_DIR
   var zipDir = path.join(
     configuration.tempDir,
     configuration.getConfig('masterTenantID'),

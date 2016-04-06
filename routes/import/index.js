@@ -7,7 +7,8 @@ var util = require('util');
 // stop any auto permissions checks
 permissions.ignoreRoute(/^\/import\/?.*$/);
 
-// should this plugin into rest?
+// TODO think we should move this to plugins/output/adapt/import
+
 server.post('/import', function (request, response, next) {
   var currentUser = usermanager.getCurrentUser();
 

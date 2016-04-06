@@ -304,9 +304,6 @@ function copyFrameworkFiles(filesCopied) {
 
 // uses the metadata list to include only relevant plugin files
 function copyCustomPlugins(filesCopied) {
-  if(metadata.pluginIncludes.length === 0) {
-    return filesCopied();
-  }
   var src = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Source);
   var dest = path.join(EXPORT_DIR,'plugins');
   async.each(metadata.pluginIncludes, function iterator(plugin, cb) {

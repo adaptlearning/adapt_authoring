@@ -59,20 +59,17 @@ exports = module.exports = function Export(pCourseId, devMode, request, response
       return next(error);
     }
     // export tasks vary based on type of export
-    // TODO parallelise these where poss
-    async.series(devMode === 'true' ? [
+    async.auto(devMode === 'true' ? {
       // dev export
-      generateLatestBuild,
-      copyFrameworkFiles,
-      copyCourseFiles
-    ] : [
+      generateLatestBuild: generateLatestBuild,
+      copyFrameworkFiles: ['generateLatestBuild', copyFrameworkFiles],
+      copyCourseFiles: ['generateLatestBuild', copyCourseFiles]
+    } : {
       // standard export
-      // TODO remove this build task
-      generateLatestBuild,
-      generateMetaData,
-      copyCustomPlugins,
-      copyAssets
-    ], zipExport);
+      generateMetadata: generateMetadata,
+      copyCustomPlugins: ['generateMetadata', copyCustomPlugins],
+      copyAssets: ['generateMetadata', copyAssets]
+    }, zipExport);
   });
 };
 
@@ -85,7 +82,7 @@ function generateLatestBuild(courseBuilt) {
 */
 
 // creates metadata.json file
-function generateMetaData(generatedMetadata) {
+function generateMetadata(generatedMetadata) {
   async.parallel([
     function(callback) {
       getPackageData(FRAMEWORK_ROOT_DIR, callback);

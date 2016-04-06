@@ -3,6 +3,7 @@ var async = require('async');
 var Constants = require('../../../lib/outputmanager').Constants;
 var configuration = require('../../../lib/configuration');
 var database = require('../../../lib/database');
+var filestorage = require('../../../lib/filestorage');
 var fse = require('fs-extra');
 var origin = require('../../../')();
 var path = require('path');
@@ -302,7 +303,7 @@ function copyFrameworkFiles(filesCopied) {
 // uses the metadata list to include only relevant plugin files
 function copyCustomPlugins(filesCopied) {
   var src = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Source);
-  var dest = path.join(EXPORT_DIR,'plugins');
+  var dest = path.join(EXPORT_DIR, 'plugins');
   async.each(metadata.pluginIncludes, function iterator(plugin, cb) {
     var pluginDir = path.join(src, plugin.folder, plugin.name);
     fse.copy(pluginDir, path.join(dest, plugin.name), cb);
@@ -321,16 +322,26 @@ function copyCourseFiles(filesCopied) {
   });
 };
 
-// TODO rip these from the database, don't do a build
-function copyAssets(filesCopied) {
-  // TODO hard-coded lang folder needs to go
-  var source = path.join(COURSE_ROOT_DIR, Constants.Folders.Build, Constants.Folders.Course, 'en', Constants.Folders.Assets);
+// copies used assets directly from the data folder
+function copyAssets(assetsCopied) {
   var dest = path.join(EXPORT_DIR, Constants.Folders.Assets);
   fse.ensureDir(dest, function(error) {
     if (error) {
       return filesCopied(error);
     }
-    fse.copy(source, dest, filesCopied);
+    async.each(Object.keys(metadata.assets), function iterator(assetKey, doneIterator) {
+      var oldId = metadata.assets[assetKey].oldId;
+      origin.assetmanager.retrieveAsset({ _id:oldId }, function(error, results) {
+        if(error) {
+          return doneIterator(error);
+        }
+        filestorage.getStorage(results[0].repository, function gotStorage(error, storage) {
+          var srcPath = storage.resolvePath(results[0].path);
+          var destPath = path.join(dest, assetKey);
+          fse.copy(srcPath, destPath, doneIterator);
+        });
+      });
+    }, assetsCopied);
   });
 };
 

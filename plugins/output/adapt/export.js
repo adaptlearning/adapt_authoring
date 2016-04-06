@@ -26,9 +26,6 @@ var courseId;
 // the top-level callback
 var next;
 
-// var httpRequest;
-// var httpResponse;
-
 // used with _.omit when saving metadata
 var blacklistedProps = [
   '__v',
@@ -54,8 +51,6 @@ exports = module.exports = function Export(pCourseId, devMode, request, response
   EXPORT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Exports, currentUser._id);
   ctx = this;
   courseId = pCourseId;
-  // httpRequest = request;
-  // httpRequest = response;
   next = pNext;
 
   // create the EXPORT_DIR if it isn't there

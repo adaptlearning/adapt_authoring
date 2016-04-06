@@ -51,7 +51,8 @@ exports = module.exports = function Import(request, response, next) {
       if(!files.file || !files.file.path) {
         return cb(new ImportError('File upload failed.'));
       }
-      prepareImport(files.file.path, zipPath + '_unzipped', cb);
+      var zipPath = files.file.path;
+      prepareImport(zipPath, zipPath + '_unzipped', cb);
     },
     function doRestoration(pMetadata, cb) {
       restoreData(pMetadata, function(error) {
@@ -315,12 +316,8 @@ function importCourseassets(metadata, courseassetsImported) {
 */
 function importPlugins(metadata, pluginsImported) {
   var srcDir = path.join(metadata.importDir, ctx.Constants.Folders.Plugins);
-  async.each(metadata.pluginIncludes, function(pluginData, donePluginTypeIterator) {
-    fse.readdir(path.join(srcDir, pluginData.name), function onReadDir(error, files) {
-      async.each(files, function(file, donePluginIterator) {
-        importPlugin(path.join(srcDir, pluginData.name), pluginData.type, donePluginIterator);
-      }, donePluginTypeIterator);
-    });
+  async.each(metadata.pluginIncludes, function(pluginData, donePluginIterator) {
+    importPlugin(path.join(srcDir, pluginData.name), pluginData.type, donePluginIterator);
   }, pluginsImported);
 };
 

@@ -151,18 +151,18 @@ function prepareImport(zipPath, unzipPath, callback) {
 */
 function restoreData(metadata, callback) {
   async.auto({
-    importCourseJson: function(cb) {
-      importCourseJson(metadata, cb);
-    },
-    importAssets: function(cb) {
-      importAssets(metadata, cb);
-    },
-    importCourseassets: ['importCourseJson', 'importAssets', function(cb) {
-      importCourseassets(metadata, cb);
-    }],
     importPlugins: function(cb) {
       importPlugins(metadata, cb);
-    }
+    },
+    importCourseJson: ['importPlugins', function(cb) {
+      importCourseJson(metadata, cb);
+    }],
+    importAssets: ['importCourseJson', function(cb) {
+      importAssets(metadata, cb);
+    }],
+    importCourseassets: ['importCourseJson', 'importAssets', function(cb) {
+      importCourseassets(metadata, cb);
+    }]
   }, function doneAuto(error) {
     if(error) {
       return removeImport(metadata, function doneCleanUp(cleanupError) {

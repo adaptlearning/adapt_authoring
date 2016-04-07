@@ -109,10 +109,14 @@ define(function(require){
           self.remove()
         },
         error: function(model, response, options) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: response.responseJSON.message
-          });
+          var errorMsg = function() {
+            Origin.Notify.alert({
+              type: 'error',
+              text: response.responseJSON.message
+            });
+          };
+          
+          _.delay(errorMsg, 1000);  
         }
       });
     },

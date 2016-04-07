@@ -5,8 +5,7 @@
 cd /vagrant/
 
 # copy the authoring_tool into the VM box
-# move to /home/vagrant/
-mv conf frontend lib plugins routes test test_frontend .editorconfig .gitignore config.js Gruntfile.js index.js install.js package.json server.js upgrade.js version.json /home/vagrant/
+cp -r * /home/vagrant/
 
 # need this ppa for ffmpeg on trusty tahr
 add-apt-repository ppa:mc3man/trusty-media
@@ -48,3 +47,9 @@ node install --install Y --serverPort 5000 --serverName localhost --dbHost local
   --dataRoot data --sessionSecret your-session-secret --useffmpeg Y \
   --smtpService dummy --smtpUsername smtpUser --smtpPassword smtpPass --fromAddress you@example.com \
   --name master --displayName Master --email admin --password password
+  
+# change permissions
+sudo chown -R vagrant:vagrant /home/vagrant
+
+# upgrade the AuthoringTool and or Framework
+node upgrade --Y/n Y

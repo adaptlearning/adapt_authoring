@@ -38,6 +38,8 @@ exports = module.exports = function Import(request, response, next) {
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
 
+  var cleanupDirs = [];
+
   async.waterfall([
     function courseFolderExists(cb) {
       fse.ensureDir(COURSE_ROOT_FOLDER, cb);
@@ -52,7 +54,9 @@ exports = module.exports = function Import(request, response, next) {
         return cb(new ImportError('File upload failed.'));
       }
       var zipPath = files.file.path;
-      prepareImport(zipPath, zipPath + '_unzipped', cb);
+      var unzipPath = zipPath + '_unzipped';
+      cleanupDirs.push(zipPath,unzipPath);
+      prepareImport(zipPath, unzipPath, cb);
     },
     function doRestoration(pMetadata, cb) {
       restoreData(pMetadata, function(error) {
@@ -60,7 +64,7 @@ exports = module.exports = function Import(request, response, next) {
       });
     }
   ], function doneWaterfall(error, metadata) {
-    cleanUpImport(metadata.importDir, function(cleanupError) {
+    cleanUpImport(cleanupDirs, function(cleanupError) {
       if(error || cleanupError) {
         return next(error || cleanupError);
       }
@@ -400,6 +404,6 @@ function removeImport(metadata, doneRemove) {
 /*
 * Just removes the unzipped files
 */
-function cleanUpImport(importDir, doneCleanUp) {
-  fse.remove(importDir, doneCleanUp)
+function cleanUpImport(dirs, doneCleanUp) {
+  async.each(dirs, fse.remove, doneCleanUp);
 };

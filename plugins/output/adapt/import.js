@@ -232,7 +232,12 @@ function importAssets(metadata, assetsImported) {
       return assetsImported(error);
     }
     var repository = configuration.getConfig('filestorage') || 'localfs';
-    async.each(assets, function iterator(assetPath, doneAsset) {
+    /**
+    * TODO look into possibility of doing this parallel
+    * Just using .each as is causes error in permissions.js.addStatement: db.update 'VersionError: no document found').
+    * See: http://aaronheckmann.blogspot.co.uk/2012/06/mongoose-v3-part-1-versioning.html for background info
+    */
+    async.eachSeries(assets, function iterator(assetPath, doneAsset) {
       if (error) {
         return doneAsset(error);
       }
@@ -296,7 +301,6 @@ function importAsset(fileMetadata, metadata, assetImported) {
 
           // Create the asset record
           origin.assetmanager.createAsset(asset, function onAssetCreated(createError, assetRec) {
-            // TODO intermittent permissions error here, need to investigate (permissions.js.addStatement: db.update 'no document found').
             if (createError) {
               storage.deleteFile(storedFile.path, assetImported);
               return;

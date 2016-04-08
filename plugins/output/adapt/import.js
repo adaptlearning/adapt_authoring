@@ -86,51 +86,43 @@ function prepareImport(zipPath, unzipPath, callback) {
     if(error) {
       return callback(error);
     }
-    fse.stat(path.join(unzipPath, ctx.Constants.Filenames.Metadata), function gotStats(error, stats) {
-      if(error) {
-        if(error.code === 'ENOENT') {
-          return callback(new Error("Unable to load metadata. Please check archive is a valid import package."));
-        }
-        callback(error);
-      }
-      async.auto({
-        removeZip: function(cb) {
-          fse.remove(zipPath, cb);
-        },
-        loadMetadata: function(cb) {
-          fse.readJson(path.join(unzipPath, ctx.Constants.Filenames.Metadata), function onJsonRead(error, metadata) {
-            if(error) {
-              // TODO any other possible errors?
-              switch(error.name) {
-                case 'SyntaxError':
-                return cb(new Error('Import contains invalid metadata, please check the archive.'));
-                default:
-                return cb(new Error('No metadata found for import, please check the archive.'));
-              }
+    async.auto({
+      removeZip: function(cb) {
+        fse.remove(zipPath, cb);
+      },
+      loadMetadata: function(cb) {
+        fse.readJson(path.join(unzipPath, ctx.Constants.Filenames.Metadata), function onJsonRead(error, metadata) {
+          if(error) {
+            // TODO any other possible errors?
+            switch(error.name) {
+              case 'SyntaxError':
+                return cb(new ImportError('Import contains invalid metadata, please check the archive.', 400));
+              default:
+                return cb(new ImportError('Unable to load metadata. Please check archive is a valid import package.', 400));
             }
-            // store this for later
-            metadata.importDir = unzipPath;
-            cb(null, metadata);
-          });
-        },
-        checkVersionCompatibility: ['loadMetadata', function(cb, data) {
-          var metadata = data.loadMetadata;
-          var installedVersion = semver.clean(versionJson.adapt_framework);
-          var importVersion = semver.clean(metadata.version);
+          }
+          // store this for later
+          metadata.importDir = unzipPath;
+          cb(null, metadata);
+        });
+      },
+      checkVersionCompatibility: ['loadMetadata', function(cb, data) {
+        var metadata = data.loadMetadata;
+        var installedVersion = semver.clean(versionJson.adapt_framework);
+        var importVersion = semver.clean(metadata.version);
 
-          if(!importVersion) {
-            return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
-          }
-          // check the import's within the major version number
-          if(semver.satisfies(importVersion,semver.major(installedVersion).toString())) {
-            cb();
-          } else {
-            cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
-          }
-        }]
-      }, function doneAuto(error, data) {
-        callback(error, data.loadMetadata);
-      });
+        if(!importVersion) {
+          return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
+        }
+        // check the import's within the major version number
+        if(semver.satisfies(importVersion,semver.major(installedVersion).toString())) {
+          cb();
+        } else {
+          cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
+        }
+      }]
+    }, function doneAuto(error, data) {
+      callback(error, data && data.loadMetadata);
     });
   });
 };

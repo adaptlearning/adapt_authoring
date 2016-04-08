@@ -128,9 +128,10 @@ function prepareImport(zipPath, unzipPath, callback) {
 };
 
 /*
-* 1. Loads and imports the course JSON
-* 2. Imports the assets
-* 3. Imports the plugins
+* 1. Imports the plugins
+* 2. Loads and imports the course JSON
+* 3. Imports the assets
+* 4. Imports the courseasset records
 */
 function restoreData(metadata, callback) {
   async.auto({

@@ -232,7 +232,7 @@ function importAssets(metadata, assetsImported) {
         repository: repository
       });
       if(!fileMeta) {
-        return doneAsset(new Error('No metadata found for asset: ' + assetName));
+        return doneAsset(new ImportError('No metadata found for asset: ' + assetName));
       }
       importAsset(fileMeta, metadata, doneAsset);
     }, assetsImported);

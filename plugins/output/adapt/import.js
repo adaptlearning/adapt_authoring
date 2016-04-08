@@ -95,7 +95,6 @@ function prepareImport(zipPath, unzipPath, callback) {
     fse.stat(path.join(unzipPath, ctx.Constants.Filenames.Metadata), function gotStats(error, stats) {
       if(error) {
         if(error.code === 'ENOENT') {
-          // TODO remove hard-coded error message
           return callback(new Error("Unable to load metadata. Please check archive is a valid import package."));
         }
         callback(error);
@@ -115,6 +114,8 @@ function prepareImport(zipPath, unzipPath, callback) {
                 return cb(new Error('No metadata found for import, please check the archive.'));
               }
             }
+            // store this for later
+            metadata.importDir = unzipPath;
             cb(null, metadata);
           });
         },
@@ -123,9 +124,6 @@ function prepareImport(zipPath, unzipPath, callback) {
           var installedVersion = semver.clean(versionJson.adapt_framework);
           var importVersion = semver.clean(metadata.version);
 
-          metadata.importDir = unzipPath;
-
-          // TODO remove hard-coded error
           if(!importVersion) {
             return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
           }
@@ -133,7 +131,6 @@ function prepareImport(zipPath, unzipPath, callback) {
           if(semver.satisfies(importVersion,semver.major(installedVersion).toString())) {
             cb();
           } else {
-            // TODO remove hard-coded error
             cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
           }
         }]
@@ -165,20 +162,19 @@ function restoreData(metadata, callback) {
     }]
   }, function doneAuto(error) {
     if(error) {
-      return removeImport(metadata, function doneCleanUp(cleanupError) {
-        callback(cleanupError || error);
+      return removeImport(metadata, function ImportRemoved(removalError) {
+        callback(removalError || error);
       });
     }
-    callback();
+    callback(error);
   });
 };
 
 function importCourseJson(metadata, importedJson) {
   var userId = usermanager.getCurrentUser()._id;
-  // HACK this is bad
   var oldCourseId = metadata.course.course[0]._id;
   var newCourseId;
-  // HACK this is also bad...
+  // HACK this is bad
   var order = [
     'course',
     'config',
@@ -256,6 +252,7 @@ function importAssets(metadata, assetsImported) {
   });
 };
 
+// TODO look into createdBy
 function importAsset(fileMetadata, metadata, assetImported) {
   // if similar asset exists (same name and size), map ID to existing asset
   var search = {
@@ -405,9 +402,7 @@ function removeImport(metadata, doneRemove) {
   ], doneRemove);
 };
 
-/*
-* Just removes the unzipped files
-*/
+// deletes list of dirs/files
 function cleanUpImport(dirs, doneCleanUp) {
   async.each(dirs, fse.remove, doneCleanUp);
 };

@@ -341,7 +341,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
     },
     function retrievePlugin(records, cb) {
       if(records.length === 0) {
-        logger.log('info', bowerJson.displayName + ' not installed, installing...');
+        logger.log('info', 'Installing', pluginType, "'" + bowerJson.displayName + "'");
         bowerJson.isLocalPackage = true;
         // TODO do we need to check framework version on plugin at this point?
         contentPlugin.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
@@ -349,7 +349,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
         var serverPlugin = records[0];
         // TODO what do we do with newer versions of plugins? (could affect other courses if we install new version)
         if(semver.gt(bowerJson.version,serverPlugin.version)) {
-          logger.log('info', 'Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + ')');
+          logger.log('info', 'Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + '), not installing');
         }
         cb();
       }
@@ -361,6 +361,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
 * Completely removes an imported course (i.e. course data, assets, plugins)
 */
 function removeImport(metadata, doneRemove) {
+  console.log('removeImport');
   var newCourseId = metadata.idMap[metadata.course.course[0]._id];
   async.parallel([
     function deleteCourse(cb) {

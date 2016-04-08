@@ -33,7 +33,7 @@ var ctx;
 * TODO hero images broken
 */
 
-exports = module.exports = function Import(request, response, next) {
+exports = module.exports = function Import(request, next) {
   ctx = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
@@ -65,13 +65,7 @@ exports = module.exports = function Import(request, response, next) {
     }
   ], function doneWaterfall(error, metadata) {
     cleanUpImport(cleanupDirs, function(cleanupError) {
-      if(error || cleanupError) {
-        return next(error || cleanupError);
-      }
-      response.status(200).json({
-        success: true,
-        message: 'Successfully imported your course!'
-      });
+      next(error || cleanupError);
     });
   });
 };

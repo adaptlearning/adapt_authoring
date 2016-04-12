@@ -339,17 +339,25 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
     function retrievePluginDoc(db, cb) {
       db.retrieve(contentPlugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, cb);
     },
-    function retrievePlugin(records, cb) {
+    function addPlugin(records, cb) {
       if(records.length === 0) {
-        logger.log('info', 'Installing', pluginType, "'" + bowerJson.displayName + "'");
-        bowerJson.isLocalPackage = true;
-        // TODO do we need to check framework version on plugin at this point?
-        contentPlugin.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
+        var serverVersion = semver.clean(versionJson.adapt_framework);
+        var pluginRange = semver.validRange(bowerJson.framework);
+        // check the plugin's compatible with the framework
+        if(semver.satisfies(serverVersion, pluginRange)) {
+          logger.log('info', 'Installing', pluginType, "'" + bowerJson.displayName + "'");
+          bowerJson.isLocalPackage = true;
+          contentPlugin.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
+        } else {
+          console.log(bowerJson.framework);
+          logger.log('info', "Can't install " + bowerJson.displayName + ", it requires framework v" + pluginVersion + " (" + versionJson.adapt_framework + " installed)");
+          cb();
+        }
       } else {
         var serverPlugin = records[0];
         // TODO what do we do with newer versions of plugins? (could affect other courses if we install new version)
         if(semver.gt(bowerJson.version,serverPlugin.version)) {
-          logger.log('info', 'Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + '), not installing');
+          logger.log('info', 'Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + '), but not installing');
         }
         cb();
       }

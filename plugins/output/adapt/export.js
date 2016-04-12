@@ -109,7 +109,6 @@ function generateMetadata(generatedMetadata) {
 
 // pulls out relevant attributes from package.json
 function getPackageData(frameworkDir, gotPackageJson) {
-  // TODO should we hard-code the string?
   fse.readJson(path.join(frameworkDir, ctx.Constants.Filenames.Package), function onJsonRead(error, packageJson) {
     gotPackageJson(null, _.pick(packageJson,
       'version'

@@ -361,10 +361,12 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
 * Completely removes an imported course (i.e. course data, assets, plugins)
 */
 function removeImport(metadata, doneRemove) {
-  console.log('removeImport');
-  var newCourseId = metadata.idMap[metadata.course.course[0]._id];
+  // if there's no idMap, there's no course to delete
+  var idsMapped = metadata.idMap !== undefined;
+  var newCourseId = metadata.idMap && metadata.idMap[metadata.course.course[0]._id];
   async.parallel([
     function deleteCourse(cb) {
+      if(!idsMapped) return cb();
       origin.contentmanager.getContentPlugin('course', function gotCoursePlugin(error, coursePlugin) {
         if(error) return cb(error);
         coursePlugin.destroy({ _id: newCourseId }, cb);
@@ -372,20 +374,23 @@ function removeImport(metadata, doneRemove) {
     },
     // TODO this should be done by course.destroy
     function deleteCourseassets(cb) {
+      if(!idsMapped) return cb();
       database.getDatabase(function (error, db) {
         if(error) return cb(error);
         db.destroy('courseasset', { _courseId: newCourseId }, cb);
       });
     },
     function deleteAssets(cb) {
+      if(!idsMapped) return cb();
       var importedAssets = _.where(metadata.assets, { wasImported: true });
       async.each(importedAssets, function deleteAsset(asset, assetDeleted) {
         origin.assetmanager.destroyAsset(metadata.idMap[asset.oldId], assetDeleted);
       }, cb);
     },
-    // TODO delete plugins
     function deletePlugins(cb) {
-      cb();
+      async.each(metadata.pluginIncludes, function(pluginData, donePluginIterator) {
+        origin.bowermanager.destroyPlugin(pluginData.type, pluginData.name, donePluginIterator);
+      }, cb);
     }
   ], doneRemove);
 };

@@ -24,7 +24,9 @@ define(function(require){
       // (FF, I'm looking at you - https://bugzilla.mozilla.org/show_bug.cgi?id=826176)
       var isZip = this.$('.import-form input[type="file"]').val().search(/.(?:\.zip$)/) > -1;
       if(!isZip) {
-        return this.showError("This isn't a zip!");
+        return this.showError();
+      } else {
+        this.hideError();
       }
 
       // TODO localise notify strings
@@ -51,7 +53,10 @@ define(function(require){
     },
 
     showError: function(errorText) {
-      this.$('.import-form .error').html(errorText);
+      this.$('.import-form .error').removeClass('display-none');
+    },
+    hideError: function(errorText) {
+      this.$('.import-form .error').addClass('display-none');
     }
   }, {
     template: 'courseImport'

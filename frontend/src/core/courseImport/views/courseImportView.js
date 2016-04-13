@@ -12,7 +12,7 @@ define(function(require){
       //events
       Origin.on('courseImport:import', this.submit, this);
 
-      Origin.trigger('location:title:update', {title: 'Import Course'});
+      Origin.trigger('location:title:update', {title: window.polyglot.t('app.importsidebartitle')});
     },
 
     postRender: function() {
@@ -27,6 +27,7 @@ define(function(require){
         return this.showError("This isn't a zip!");
       }
 
+      // TODO localise notify strings
       this.$('.import-form').ajaxSubmit({
         error: function(data, status, error) {
           Origin.Notify.alert({

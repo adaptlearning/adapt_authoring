@@ -32,11 +32,10 @@ server.post('/import', function (request, response, next) {
             message: error.message
           });
         }
-
         logger.log('info', 'Course imported successfully');
         response.status(200).json({
           success: true,
-          message: app.polyglot.t('app.exportcoursesuccess')
+          message: app.polyglot.t('app.importcoursesuccess')
         });
       });
     }

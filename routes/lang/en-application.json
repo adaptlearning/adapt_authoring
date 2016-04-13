@@ -281,8 +281,15 @@
   "app.exporting": "Exporting course",
   "app.exportcoursetitle": "Exporting course",
   "app.exporterrortitle": "Course export failed",
-  "app.exportcoursetext": "Please stand by, this may take a few moments.",
   "app.exportcoursesuccess": "Course exported successfully!",
+
+  "app.importdashboardbutton": "Import course xxxxxxxxxx",
+  "app.importsidebartitle": "Import Course xxxxxxxxxx",
+  "app.importsidebarbutton": "Import xxxxxxxxxx",
+  "app.importinstruction": "Select course zip for import xxxxxxxxxx",
+  "app.importerrortitle": "Course import failed xxxxxxxxxx",
+  "app.importcoursesuccess": "Course imported successfully! xxxxxxxxxx",
+
   "app.infodefaulttitle": "Information",
   "app.errordefaulttitle": "Error",
   "app.confirmdefaulttitle": "Are you sure?",

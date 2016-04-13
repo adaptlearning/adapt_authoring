@@ -229,7 +229,8 @@ function importAssets(metadata, assetsImported) {
       var fileMeta = _.extend(metadata.assets[assetName], {
         filename: assetName,
         path: assetPath,
-        repository: repository
+        repository: repository,
+        createdBy: origin.usermanager.getCurrentUser()._id
       });
       if(!fileMeta) {
         return doneAsset(new ImportError('No metadata found for asset: ' + assetName));

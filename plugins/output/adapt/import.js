@@ -103,7 +103,8 @@ function prepareImport(zipPath, unzipPath, callback) {
           }
           // store this for later
           metadata.importDir = unzipPath;
-          cb(null, metadata);
+          // make sure everything's in the right order for processing
+          sortMetadata(metadata, cb);
         });
       },
       checkVersionCompatibility: ['loadMetadata', function(cb, data) {
@@ -128,10 +129,25 @@ function prepareImport(zipPath, unzipPath, callback) {
 };
 
 /*
-* 1. Imports the plugins
-* 2. Loads and imports the course JSON
-* 3. Imports the assets
-* 4. Imports the courseasset records
+* Sorts the metadata ABCs to make sure processing can happen
+*/
+function sortMetadata(metadata, callback) {
+  var copy = _.extend({}, metadata);
+  async.forEachOf(copy.course, function iterator(item, type, cb) {
+    switch(type) {
+      case 'contentobject':
+        break;
+      default:
+        break;
+    }
+    cb(null, copy);
+  }, function doneEach(error) {
+    callback(error, copy);
+  });
+};
+
+/*
+* Async wrapper for delegate functions
 */
 function restoreData(metadata, callback) {
   async.auto({

@@ -27,10 +27,11 @@ var ctx;
 
 /**
 * Course import function
-* Wrapper for prepareImport and restoreData
+* Async wrapper for prepareImport and restoreData
 * TODO implementation notes
-* TODO need import configuration options (UI/forms) ????
+*
 * TODO hero images broken
+* TODO need import configuration options (UI/forms) [not for MVP]
 */
 
 exports = module.exports = function Import(request, next) {
@@ -72,8 +73,8 @@ exports = module.exports = function Import(request, next) {
 
 /*
 * 1. Unzips uploaded zip
-* 2. Checks compatibility of import with this AT instance
-* 3. Validates the import's metadata
+* 2. Validates the import's metadata
+* 3. Checks compatibility of import with this AT instance
 */
 function prepareImport(zipPath, unzipPath, callback) {
   var decompress = require('decompress');
@@ -173,6 +174,7 @@ function restoreData(metadata, callback) {
   });
 };
 
+// TODO broken for sections?
 function importCourseJson(metadata, importedJson) {
   var userId = usermanager.getCurrentUser()._id;
   var oldCourseId = metadata.course.course[0]._id;
@@ -198,9 +200,8 @@ function importCourseJson(metadata, importedJson) {
       async.each(metadata.course[courseKey], function itemIterator(json, doneItemIterator) {
         // memoise to keep the metadata as it is, omitting id
         var memo = _.omit(json, '_id');
-
         if(newCourseId) {
-          // we're doing everything in order, so parent will have been mapped
+          // we're doing everything in hierarchy order, so should have a _parentId
           memo._parentId = metadata.idMap[json._parentId];
           memo._courseId = newCourseId;
         }
@@ -223,7 +224,6 @@ function importCourseJson(metadata, importedJson) {
   }, importedJson);
 };
 
-// TODO adapted from assetmanager.postAsset (...don't duplicate...)
 function importAssets(metadata, assetsImported) {
   var assetsGlob = path.join(metadata.importDir, ctx.Constants.Folders.Assets, '*');
   glob(assetsGlob, function (error, assets) {
@@ -256,9 +256,13 @@ function importAssets(metadata, assetsImported) {
   });
 };
 
-// TODO look into createdBy
+/**
+* Adds asset to the DB
+* Checks for a similar asset first (filename & size). if similar found, map that
+* to the import course.
+* TODO adapted from assetmanager.postAsset (...don't duplicate...)
+*/
 function importAsset(fileMetadata, metadata, assetImported) {
-  // if similar asset exists (same name and size), map ID to existing asset
   var search = {
     filename: fileMetadata.filename,
     size: fileMetadata.size
@@ -279,7 +283,7 @@ function importAsset(fileMetadata, metadata, assetImported) {
     });
     rs.on('close', function onReadClose() {
       var filehash = hash.digest('hex');
-      // TODO these vars are a bit dodgy
+      // TODO get rid of hard-coded assets
       var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
       var filepath = path.join(directory, filehash) + path.extname(fileMetadata.filename);
       var fileOptions = {
@@ -420,7 +424,7 @@ function removeImport(metadata, doneRemove) {
   ], doneRemove);
 };
 
-// deletes list of dirs/files
+// deletes passed list of dirs/files
 function cleanUpImport(dirs, doneCleanUp) {
   async.each(dirs, fse.remove, doneCleanUp);
 };

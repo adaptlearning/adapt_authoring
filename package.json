@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "archiver": "~0.16.0",
-    "async": "0.2.5",
+    "async": "1.5.2",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.13.3",
     "bower": "1.6.5",

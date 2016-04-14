@@ -137,12 +137,16 @@ function sortMetadata(metadata, callback) {
   async.forEachOf(copy.course, function iterator(item, type, cb) {
     switch(type) {
       case 'contentobject':
+        var sections = _.where(item, { _type: 'menu' });
+        console.log(sections);
+        // copy.course[type] = _.(copy.course[type]);
         break;
       default:
         break;
     }
     cb(null, copy);
   }, function doneEach(error) {
+    // console.log(error, copy.course.contentobject);
     callback(error, copy);
   });
 };

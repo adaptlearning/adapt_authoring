@@ -170,7 +170,7 @@ define(function(require) {
 		if (field.title) {
 			scaffoldSchema[key].title = field.title;
 			
-		} else if (field.type === 'object') {
+		} else if (field.type === 'object' || field.type === 'array') {
 			scaffoldSchema[key].title = '';
 			scaffoldSchema[key].legend = field.legend;
 		}

@@ -130,25 +130,40 @@ function prepareImport(zipPath, unzipPath, callback) {
 };
 
 /*
-* Sorts the metadata ABCs to make sure processing can happen
+* Sorts in-place the metadata ABCs to make sure processing can happen
+* (only needed for content objects currently)
 */
 function sortMetadata(metadata, callback) {
-  var copy = _.extend({}, metadata);
-  async.forEachOf(copy.course, function iterator(item, type, cb) {
+  async.forEachOf(metadata.course, function iterator(item, type, cb) {
     switch(type) {
       case 'contentobject':
-        var sections = _.where(item, { _type: 'menu' });
-        console.log(sections);
-        // copy.course[type] = _.(copy.course[type]);
+        var groups = _.groupBy(item, '_type');
+        var sortedSections = sortContentObjects(groups.menu, metadata.course.course[0]._id, []);
+        metadata.course[type] = sortedSections.concat(groups.page);
         break;
       default:
         break;
     }
-    cb(null, copy);
-  }, function doneEach(error) {
-    // console.log(error, copy.course.contentobject);
-    callback(error, copy);
+    cb();
+  }, function(error) {
+    callback(error, metadata);
   });
+};
+
+/**
+* Recursively sorts list to ensure parents come before children
+*/
+function sortContentObjects(list, parentId, sorted) {
+  // remove parent
+  var parentIndex = _.findIndex(list, { _id: parentId });
+  if(parentIndex > -1) list.splice(_.findIndex(list, { _id: parentId }), 1);
+  // recursively store children
+  var thisChildren = _.where(list, { _parentId: parentId });
+  _.each(thisChildren, function(child, index) {
+    sorted.push(child);
+    sortContentObjects(list, child._id, sorted);
+  });
+  return sorted;
 };
 
 /*
@@ -201,7 +216,7 @@ function importCourseJson(metadata, importedJson) {
       if(error) {
         return doneTypeIterator(error);
       }
-      async.each(metadata.course[courseKey], function itemIterator(json, doneItemIterator) {
+      async.eachSeries(metadata.course[courseKey], function itemIterator(json, doneItemIterator) {
         // memoise to keep the metadata as it is, omitting id
         var memo = _.omit(json, '_id');
         if(newCourseId) {

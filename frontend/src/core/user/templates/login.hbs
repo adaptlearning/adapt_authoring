@@ -12,22 +12,13 @@
         <div class="login-new-user col-1-2">
 
             <div class="login-new-user-inner">
-                  Welcome to the {{t 'app.productname'}}.<br/><br/>
+                  <h2 class="welcome-blurb">{{t 'app.welcomeblurb'}}.</h2>
 
+                  <div class="login-sign-up">
                   {{#each otherLoginLinks}}
                     <div class="login-other-type">{{{html}}}</div>
                   {{/each}}
-
-         {{!--        <h2 class="login-title login-form-row">
-                    {{t 'app.newuser'}}
-                </h2>
-
-                <div class="login-body login-form-row">
-                    {{t 'app.createnewaccount'}}
-                </div>
-
-                <button class="btn">{{t 'app.createnewaccountbutton'}}</button> --}}
-
+                  </div>
             </div>
         </div>
 

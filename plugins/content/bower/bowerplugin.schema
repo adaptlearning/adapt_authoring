@@ -24,6 +24,14 @@
       "type": "string",
       "required": false
     },
+    "homepage":{
+      "type": "string",
+      "required": false
+    },
+    "issues":{
+      "type": "string",
+      "required": false
+    },
     "_isAvailableInEditor": {
       "type":"boolean",
       "default": true,

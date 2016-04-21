@@ -310,5 +310,6 @@
   "app.grid": "Grid",
   "app.list": "List",
   "app.ascending": "Ascending",
-  "app.descending": "Descending"
+  "app.descending": "Descending",
+  "app.visitpluginhomepage": "Visit plugin homepage"
 }

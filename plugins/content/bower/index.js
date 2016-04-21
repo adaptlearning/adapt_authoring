@@ -168,6 +168,8 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
     description: pkgMeta.description,
     version: pkgMeta.version,
     framework: pkgMeta.framework ? pkgMeta.framework : null,
+    homepage: pkgMeta.homepage ? pkgMeta.homepage : null,
+    issues: pkgMeta.issues ? pkgMeta.issues : null,
     isLocalPackage: pkgMeta.isLocalPackage ? pkgMeta.isLocalPackage : false,
     properties: schema.properties,
     globals: schema.globals ? schema.globals : null

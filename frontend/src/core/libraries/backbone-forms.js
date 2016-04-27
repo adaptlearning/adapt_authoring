@@ -1316,6 +1316,8 @@ Form.editors.Text = Form.Editor.extend({
     if (schema && schema.dataType) type = schema.dataType;
 
     this.$el.attr('type', type);
+    // HACK to disable auto-completion
+    this.$el.attr('autocomplete', 'off');
   },
 
   /**

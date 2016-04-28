@@ -305,6 +305,7 @@ define(function(require) {
                     });
                 },
                 success: function() {
+                    
                     // Sometimes we don't need to reset the courseAssets
                     if (shouldResetAssetCollection) {
 
@@ -312,11 +313,13 @@ define(function(require) {
                             reset:true, 
                             success: function() {
                                 that.render();
+                                that.trigger('change', that);
                             }
                         });
 
                     } else {
                         that.render();
+                        that.trigger('change', that);
                     }
                 }
             })

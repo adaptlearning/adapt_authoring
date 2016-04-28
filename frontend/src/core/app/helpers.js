@@ -202,10 +202,14 @@ define(function(require){
           var fileName = urlSplit[urlSplit.length - 1];
           // Get courseAsset model
           var courseAsset = Origin.editor.data.courseAssets.findWhere({_fieldName: fileName});
-          var courseAssetId = courseAsset.get('_assetId');
+          
+          if (courseAsset) {
+            var courseAssetId = courseAsset.get('_assetId');
 
-          return '/api/asset/serve/' + courseAssetId;
-
+            return '/api/asset/serve/' + courseAssetId;  
+          } else {
+            return '';
+          }
         },
 
         ifImageIsCourseAsset: function(url, block) {

@@ -2,6 +2,36 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.7] - 2016-04-28
+This version contains numerous minor bug fixes and enhamcements, and supports the new menu locking feature released in version 2.0.9 of the Adapt Framework.
+
+IMPORTANT: If upgrading from a previous installation, first remove the `node_modules` folder and run
+```javascript
+npm install --production
+```
+ to install the latest code dependencies, then run
+```javascript
+node upgrade
+```
+ to get the latest authoring tool and framework changes.
+ 
+ ### Added
+- Support for new Adapt Framework 'menu locking' functionality
+- Support for v2.0.9 of the Adapt Framework
+- Support for _isAvailable flag
+- Added link to GitHub repositories for plugins
+
+### Changed
+- Extended `<legend>` styles to arrays
+- Improved database connection caching
+- Updated code to respect property order in schema files
+
+### Fixed
+- Bug: Role statements not updated on a server restart
+- Bug: Autocomplete enabled on text input fields
+- Bug: MongoStore does not support replicasets
+- Bug: Removed @learningpool.com e-mail address hack
+ 
 ## [0.1.6] - 2016-03-29
 This version adds the ability to export the source code for a course that can be built using the Adapt Framework. It also fixes some important issues for installing using Vagrant.
 

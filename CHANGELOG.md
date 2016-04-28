@@ -24,6 +24,7 @@ node upgrade
 ### Changed
 - Extended `<legend>` styles to arrays
 - Improved database connection caching
+- Updated code to respect property order in schema files
 
 ### Fixed
 - Bug: Role statements not updated on a server restart

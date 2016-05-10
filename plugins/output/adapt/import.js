@@ -32,6 +32,7 @@ var ctx;
 *
 * TODO hero images broken
 * TODO need import configuration options (UI/forms) [not for MVP]
+* TODO investigate strange error thrown due to inability to map courseasset to an asset id (see ln349)
 */
 
 exports = module.exports = function Import(request, next) {
@@ -180,7 +181,7 @@ function restoreData(metadata, callback) {
     importAssets: ['importCourseJson', function(cb) {
       importAssets(metadata, cb);
     }],
-    importCourseassets: ['importCourseJson', 'importAssets', function(cb) {
+    importCourseassets: ['importAssets', function(cb) {
       importCourseassets(metadata, cb);
     }]
   }, function doneAuto(error) {

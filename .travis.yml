@@ -1,8 +1,6 @@
 ---
 language: node_js
 node_js:
-  - "0.10"
-  - "0.12"
   - "4"
   - stable
 
@@ -23,9 +21,9 @@ before_install:
   - git --version
   - mongod --version
   - npm install -g adapt-cli
+  - adapt --version
 
 install:
-  - adapt --version
   - npm config set spin false
   - npm install
 

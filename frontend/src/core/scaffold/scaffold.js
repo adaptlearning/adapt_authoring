@@ -191,7 +191,7 @@ define(function(require) {
         
       });
       
-      b// The 'course' schema is a special case as it is augmented depending
+      // The 'course' schema is a special case as it is augmented depending
       // on what plugins are enabled on the course.
       if (type !== 'course') {
         builtSchemas[type] = scaffoldSchema;

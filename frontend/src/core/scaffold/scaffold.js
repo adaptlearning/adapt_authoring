@@ -191,7 +191,11 @@ define(function(require) {
         
       });
       
-      builtSchemas[type] = scaffoldSchema;
+      b// The 'course' schema is a special case as it is augmented depending
+      // on what plugins are enabled on the course.
+      if (type !== 'course') {
+        builtSchemas[type] = scaffoldSchema;
+      }
       
       return scaffoldSchema;  
     } catch (e) {

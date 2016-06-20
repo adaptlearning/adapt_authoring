@@ -18,7 +18,7 @@ define(function(require) {
             });
 
             // Get the schema
-            var schema = _.clone(Origin.schemas.get(schemaName));
+            var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
             // Compare the enabledExtensions against the current schemas
             if (schema._extensions) {
                 _.each(schema._extensions.properties, function(value, key) {
@@ -65,7 +65,7 @@ define(function(require) {
 			return schema;
 
 		} else {
-            var schema = _.clone(Origin.schemas.get(schemaName));
+            var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
             delete schema._extensions;
             // Remove globals as these are appended to the course model
             delete schema.globals;

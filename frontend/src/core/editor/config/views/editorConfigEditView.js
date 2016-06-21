@@ -17,13 +17,14 @@ define(function(require) {
     },
 
     saveData: function(event) {
-      var errors = this.form.commit({validate: true});
+      var errors = this.form.validate();
       // This must trigger no matter what, as sidebar needs to know
       // when the form has been resubmitted
       Origin.trigger('editorSidebar:showErrors', errors);
       if (errors) {
         return;
       }
+      this.form.commit();
 
       // Ensure the _id is always passed.
       var attributesToUpdate = _.extend(this.model.changedAttributes(), 

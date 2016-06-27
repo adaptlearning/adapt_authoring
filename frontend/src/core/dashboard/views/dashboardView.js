@@ -108,7 +108,7 @@ define(function(require){
         title: 1
       };
 
-      this.setUserPreference('sort','asc');
+      this.setUserPreference('sort','asc', true);
       if (shouldRenderProjects) {
 
         this.updateCollection(true);
@@ -123,7 +123,7 @@ define(function(require){
         title: -1
       }
 
-      this.setUserPreference('sort','desc');
+      this.setUserPreference('sort','desc', true);
 
       if (shouldRenderProjects) {
 
@@ -139,7 +139,7 @@ define(function(require){
         updatedAt: -1
       }
 
-      this.setUserPreference('sort','updated');
+      this.setUserPreference('sort','updated', true);
 
       if (shouldRenderProjects) {
 
@@ -165,9 +165,9 @@ define(function(require){
       if (userPreferences) {
         var searchString = (userPreferences.search || '');
         this.search = this.convertFilterTextToPattern(searchString);
-        this.setUserPreference('search', searchString);
+        this.setUserPreference('search', searchString, true);
         this.tags = (_.pluck(userPreferences.tags, 'id') || []);
-        this.setUserPreference('tags', userPreferences.tags);
+        this.setUserPreference('tags', userPreferences.tags, true);
       }
 
       // Check if sort is set and sort the collection
@@ -306,12 +306,12 @@ define(function(require){
     filterBySearchInput: function (filterText) {
       this.filterText = filterText;
       this.search = this.convertFilterTextToPattern(filterText);
-      this.setUserPreference('search', filterText);
+      this.setUserPreference('search', filterText, true);
       this.updateCollection(true);
     },
 
     filterCoursesByTags: function(tags) {
-      this.setUserPreference('tags', tags);
+      this.setUserPreference('tags', tags, true);
       this.tags = _.pluck(tags, 'id');
       this.updateCollection(true);
     },

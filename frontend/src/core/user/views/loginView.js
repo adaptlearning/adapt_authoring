@@ -22,6 +22,7 @@ define(function(require) {
 
     postRender: function() {
       this.setViewToReady();
+      Origin.trigger('login:loaded');
     },
     
     handleEnterKey: function(e) {

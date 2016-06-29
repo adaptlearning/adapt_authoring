@@ -352,22 +352,12 @@ var steps = [
       var plugins = Object.keys(json.dependencies);
 
       async.eachSeries(plugins, function(plugin, pluginCallback) {
-        app.bowermanager.installPlugin(plugin, json.dependencies[plugin], function(err) {
-          if (err) {
-            return pluginCallback(err);
-          }
-
-          pluginCallback();
-        });
-
-      }, function(err) {
-        if (err) {
-          console.log(err);
-          return next(err);
+        if(json.dependencies[plugin] === '*') {
+          app.bowermanager.installLatestCompatibleVersion(plugin, pluginCallback);
+        } else {
+          app.bowermanager.installPlugin(plugin, json.dependencies[plugin], pluginCallback);
         }
-
-        next();
-      });
+      }, next);
     });
   },
   // configure the super awesome user

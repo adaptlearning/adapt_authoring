@@ -1,21 +1,12 @@
 @import 'variables';
-.editor-item-settings {
+@import 'variables';
+.editor-item-settings, .editor-menu-item-settings {
     a {
-        &.open-context-icon{
-            text-decoration: none;
-            color:#3e4960;
-            transition:all 0.3s;
-        }
+        color:@primary-color;
+        transition: all 0.3s;
         
         &:hover {
-            color:@primary-color;
-        }
-    }
-    .editor-delete-page-element {
-        color:@alert-color;
-        transition:all 0.3s;
-        &:hover {
-            color:darken(@alert-color, 10%);
+            color:darken(@primary-color,5%);
         }
     }
 }

@@ -126,6 +126,7 @@ define(function(require){
       // Purposeful global selector here
       $('.paste-zone').addClass('display-none');
       // Hide the links within the dropzone
+      $('.add-control').addClass('display-none');
       $('.paste-zone-'+ this.model.get('_type') + ' a').addClass('display-none');
       $('.paste-zone-'+ this.model.get('_type')).addClass('paste-zone-available').removeClass('display-none');
       this.$el.parent().children('.drop-only').removeClass('display-none');
@@ -134,6 +135,7 @@ define(function(require){
     hideDropZones: function() {
       // Purposeful global selectors here
       $('.paste-zone').addClass('display-none').removeClass('paste-zone-available');
+      $('.add-control').removeClass('display-none');
       // Show the links within the dropzone again, incase copy is initiated
       $('.paste-zone a').removeClass('display-none');
       this.$el.parent().children('.drop-only').addClass('display-none')

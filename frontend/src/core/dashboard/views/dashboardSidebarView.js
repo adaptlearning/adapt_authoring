@@ -15,7 +15,7 @@ define(function(require) {
             'click .dashboard-sidebar-shared-courses' : 'gotoSharedCourses',
             'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
             'keydown .dashboard-sidebar-filter-search-input':'onInputKeyDown',
-            'click .dashboard-sidebar-filter-clear': 'clearFilterInput',
+            'click .sidebar-filter-clear': 'clearFilterInput',
             'click .dashboard-sidebar-tag': 'onFilterButtonClicked',
             'click .dashboard-sidebar-add-tag': 'onAddTagClicked',
             'click .dashboard-sidebar-row-filter': 'onFilterRemovedClicked'

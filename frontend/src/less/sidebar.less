@@ -1,65 +1,76 @@
 @import 'variables.less';
+@import 'buttons.less';
+
+// Used for editing the color of buttons in the sdiebar
+
+.sidebar-item-inner {
+    margin-top: 30px;
+    button {
+        &.action-primary, &.action-secondary {
+            margin: 5px 25px;
+            width: 200px;
+            height: 50px;
+            border:@button-border;
+            border-radius:@button-radius;
+            font-size: 15px;
+            text-align: center;
+        }
+        // Use these attributes to easily configure the sidebar buttons
+        &.action-primary {
+            .secondary;
+        }
+        &.action-secondary {
+            .primary-hollow;
+        }
+    }
+}
 
 .sidebar {
     background-color:@sidebar-color;
     color:@sidebar-text-color;
     a {
         transition:all 0.3s;
-        color:#fff;
+        color:@sidebar-text-color;
         &:hover, &:focus {
-            color:darken(#fff, 10%);
+            color:darken(@sidebar-text-color, 10%);
         }
     }
 }
 
-.sidebar-breadcrumb {
-    background-color:@primary-color;
-    a:hover {
-        background-color:darken(@primary-color, 10%);
-    }
-}
-
 .sidebar-item-title {
-    background-color:@sidebar-title-color;
+    background-color:@sidebar-color;
     color:@sidebar-title-text-color;
 }
+
 
 .sidebar-progress {
     z-index: 1;
     width: 0px;
     height:100%;
     position: absolute;
-    background: darken(@primary-color, 10%);
+    background: darken(@secondary-color, 10%);
     left: 0px;
     top: 0px;
     opacity: 0.3;
 }
 
-.sidebar-row {
+.sidebar-row, .sidebar-breadcrumb {
     button, a {
-        border-bottom:1px solid #3e4a5f;
+        // border-bottom:1px solid #3e4a5f;
         color:@sidebar-text-color;
         transition:all 0.3s;
         &:hover {
-            color:#fff;
-            background-color:#293141;
+            color:@sidebar-item-hover-text-color;
+            background-color: @sidebar-item-hover-color;
         }
         &.selected {
-            background-color:darken(@navigation-color, 5%);
+            background-color:darken(@sidebar-item-hover-color, 15%);
         }  
-    }
-    .sidebar-row-input {
-        border-bottom:1px solid #3e4a5f;
-        input {
-            width:auto;
-            border:none;
-            border-radius:0px;
-        }
     }
 }
 
 .sidebar-divide {
-    background-color:@sidebar-title-color;
+    background-color:@sidebar-color;
     h3 {
         font-size:13px;
         font-weight:600;

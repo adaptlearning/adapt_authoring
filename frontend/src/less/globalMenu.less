@@ -1,14 +1,16 @@
 @import 'variables';
 
 .global-menu {
-    background-color:@navigation-color;
-    border-top:1px solid @sidebar-title-color;
+    background-color:@quaternary-color;
     a {
         color:@navigation-text-color;
-        border-bottom:1px solid @sidebar-title-color;
+        border-bottom:1px solid #63def4;
         &:hover {
-            background-color:darken(@navigation-color, 10%);
-            color:@navigation-hover-text-color;
+            background-color:#63def4;
+            color:@navigation-text-color;
         }
+    }
+    .global-menu-inner{
+        border: 1px solid rgba(0,0,0,0.1);
     }
 }

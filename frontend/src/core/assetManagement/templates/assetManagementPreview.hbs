@@ -38,15 +38,15 @@
 
   {{#if isSelectable}}
   <div class="assset-select">
-   <a href="#" class="btn btn-primary confirm-select-asset">Select</a>
+   <a href="#" class="btn primary confirm-select-asset">Select</a>
   </div>
   {{/if}}
   <div class="asset-preview-edit">
     {{#if _isDeleted}}
-    <button class="asset-preview-restore-button btn btn-alert">{{t 'app.restore'}}</button>
+    <button class="asset-preview-restore-button btn alert">{{t 'app.restore'}}</button>
     {{else}}
-    <button class="asset-preview-edit-button btn btn-primary">{{t 'app.edit'}}</button>
-    <button class="asset-preview-delete-button btn btn-alert">{{t 'app.delete'}}</button>
+    <button class="asset-preview-edit-button btn primary">{{t 'app.edit'}}</button>
+    <button class="asset-preview-delete-button btn alert">{{t 'app.delete'}}</button>
     {{/if}}
   </div>
 

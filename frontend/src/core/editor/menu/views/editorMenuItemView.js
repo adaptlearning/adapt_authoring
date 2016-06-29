@@ -95,6 +95,22 @@ define(function(require){
 
     },
 
+    selectedLevel: function() {
+      $(".editor-menu-layer").each(function() {
+        if($(this).hasClass("selected")){
+            $(this).removeClass("selected");
+        }
+      });
+
+      if($(this.el).hasClass("content-type-menu")) {
+        $(this.el).parent().parent().next().addClass("selected");
+      }
+      else {
+        $(this.el).parent().parent().addClass("selected");
+      }
+      event.preventDefault();
+    },    
+
     onMenuItemDblClicked: function(event) {
       event.preventDefault();
     },
@@ -127,6 +143,8 @@ define(function(require){
       // This event passes out the view to the editorMenuView to add
       // a editorMenuLayerView and setup this.subView
       Origin.trigger('editorView:menuView:updateSelectedItem', this);
+
+      this.selectedLevel();
 
     },
 
@@ -222,6 +240,7 @@ define(function(require){
 
     copyMenuItem: function() {
       $('.paste-zone').addClass('show');
+      $('.add-zone').css('visibility','hidden');
       Origin.trigger('editorView:copy', this.model);
     },
 

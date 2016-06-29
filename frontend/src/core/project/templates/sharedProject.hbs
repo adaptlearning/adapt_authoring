@@ -23,12 +23,12 @@
     <div class="project-details">
       <div class="project-details-inner">
         <div class="project-detail-title">
-          <h4 class="project-detail-title-inner">{{{title}}}</h4>
+          <h2 class="project-detail-title-inner">{{{title}}}</h2>
         </div>
 
         <div class="project-details-last-updated project-details-row">
-          <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
-          <div class="projects-details-value">{{momentFormat updatedAt 'ddd D MMM YYYY'}}</div>
+          <div class="projects-details-label">{{t 'app.recent'}}</div>
+          <div class="projects-details-value">{{formatDate updatedAt}}</div>
         </div>
         {{#if tags.length}}
         <div class="project-details-tags project-details-row tags">

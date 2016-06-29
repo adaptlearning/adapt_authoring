@@ -8,7 +8,7 @@ define(function(require) {
 		var defaults = {
 			title: '',
 			animation: 'slide-from-bottom',
-			confirmButtonColor: '#15a4fa',
+			confirmButtonColor: '',
 			html: true
 		};
 
@@ -18,7 +18,6 @@ define(function(require) {
 				defaults.title = window.polyglot.t('app.confirmdefaulttitle');
 				break;
 			case 'warning':
-				defaults.confirmButtonColor = '#DD6B55';
 				break;
 			case 'input':
 				break;

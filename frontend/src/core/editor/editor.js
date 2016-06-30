@@ -304,27 +304,9 @@ define(function(require) {
               model: project
             });
 
-            var backButtonRoute = Origin.dashboardRoute;
-            var backButtonText = "Back to Dashboard";
-
-            if (Origin.previousLocation.route2 === "page") {
-                backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
-                backButtonText = "Back to page";
-            }
-
-            if (Origin.previousLocation.route2 === "menu") {
-            var backButtonRoute = "/#/editor/" + route1 + "/menu";
-            var backButtonText = "Back to menu";
-            }
-
-            var optionsObject = {
-                "backButtonText": backButtonText,
-                "backButtonRoute": backButtonRoute
-            };
-
             Origin.trigger('location:title:update', {title: 'Edit course'});
             Origin.editingOverlay.addView(new ProjectDetailView({model: project, form: form}).$el);
-            Origin.sidebar.addView(new ProjectDetailEditSidebarView({form: form}).$el, optionsObject);
+            Origin.sidebar.addView(new ProjectDetailEditSidebarView({form: form}).$el);
           }
         });
         break;
@@ -342,21 +324,8 @@ define(function(require) {
               model: configModel
             });
 
-            var backButtonRoute = "/#/editor/" + route1 + "/menu";
-            var backButtonText = "Back to menu";
-
-            if (Origin.previousLocation.route2 === "page") {
-                backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
-                backButtonText = "Back to page";
-            }
-
-            var optionsObject = {
-                "backButtonText": backButtonText,
-                "backButtonRoute": backButtonRoute
-            };
-
             Origin.trigger('location:title:update', {title: 'Edit configuration'});
-            Origin.sidebar.addView(new EditorConfigEditSidebarView({form: form}).$el, optionsObject);
+            Origin.sidebar.addView(new EditorConfigEditSidebarView({form: form}).$el);
             Origin.editingOverlay.addView(new EditorConfigEditView({model: configModel, form: form}).$el);
           }
         });

@@ -4,7 +4,6 @@
 // Used for editing the color of buttons in the sdiebar
 
 .sidebar-item-inner {
-    /*margin-top: 30px;*/
     button {
         &.action-primary, &.action-secondary {
             margin: 5px 25px;
@@ -56,15 +55,10 @@
 
 .sidebar-row, .sidebar-breadcrumb {
     button, a {
-        // border-bottom:1px solid #3e4a5f;
         color:@sidebar-text-color;
         transition:all 0.3s;
         &:hover {
             color:@sidebar-item-hover-text-color;
-            background-color: @sidebar-item-hover-color;
-        }
-        &.selected {
-            background-color:darken(@sidebar-item-hover-color, 15%);
         }
     }
 }

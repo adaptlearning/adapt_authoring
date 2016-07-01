@@ -30,11 +30,10 @@
 
         <div class="project-details-last-updated project-details-row">
           <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
-          <div class="projects-details-value">{{formatDate updatedAt}}</div>
+          <div class="projects-details-value">{{momentFormat updatedAt "Do MMMM YYYY"}}</div>
         </div>
         {{#if tags.length}}
         <div class="project-details-tags project-details-row tags">
-          <div class="projects-details-label">{{t 'app.tags'}}</div>
           <div class="projects-details-tags-button">
             <button class="btn secondary-hollow projects-details-tags-button-show">View tags</button>
           </div>
@@ -47,13 +46,6 @@
             {{/each}}
             </ul>
             <button class="btn secondary-hollow projects-details-tags-button-hide">Hide tags</button>
-          </div>
-        </div>
-        {{else}}
-        <div class="project-details-tags project-details-row tags">
-          <div class="projects-details-label">{{t 'app.tags'}}</div>
-          <div class="projects-details-value tag-container-no-items">
-            No tags added
           </div>
         </div>
         {{/if}}

@@ -1,13 +1,21 @@
 @import 'variables';
 
-.editor-view {
-    .paste-zone-article, .paste-zone-block, .paste-zone-component {
-        .btn {
-            padding: 18px 90px;
-            margin: 1px 20px;
-            max-width: 30px;
+.page {
+    .paste-zone {
+        margin: 0 0 30px 0;
+        &-inner {
+            text-align: center;
+            padding: 0;
         }
-    }
+        .btn {
+            padding: 12px 60px;
+            margin: 0 10px;
+        }
+     }
+     .page-components .paste-zone a {
+        padding: 7px 35px;
+        margin: 20px 0 0 0;
+     }
 }
 
 
@@ -43,16 +51,16 @@
 .article, 
 .block, 
 .component {
-    box-shadow: 0px 0px 3pt 2pt transparent;
     &.hovering {
-        box-shadow: 0px 0px 3px 3px #e0e0e0;
+        box-shadow: 0px 0px 5px 2px #CBE1E6;
         position:relative;
     }
 }
 
 .add-control {
     .add-article, .add-block, .add-component {
-        font-size: 18px;
+        font-size: 16px;
+        font-weight: 600;
         width: 100%;
         padding: 0;
         line-height: 50px;
@@ -61,29 +69,35 @@
         border: 1px dashed @primary-color;
         transition: all 0s;
 
+        &.add-article {
+            position: absolute;
+            background-color:#F6FBFE;
+            margin-bottom: 50px;
+            width: 93.5%;
+        }
+
         &.add-block {
-            background-color: #EAF8FB;
-            width: 98%;
-            margin-left: 1%;
+            background-color:#EAF8FB;
+            width: 96%;
+            margin: 0 18px 10px 18px;
         }
 
         &.add-component {
             background-color: #D6F3F9;
             &.full {
-                width: 96%;
-                margin-left: 2%;
-                margin-bottom: 20px;
+                margin: 25px 30px;
+                width: 93.5%;
             }
             &.left {
-                width: 46%;
+                width: 44%;
                 position: absolute;
-                top: 62px;
-                left: 2%;
+                top: 60px;
+                left: 4%;
             }
             &.right {
-                width: 46%;
+                width: 45%;
                 position: absolute;
-                top: 62px;
+                top: 60px;
                 left: 51.8%;
             }
         }

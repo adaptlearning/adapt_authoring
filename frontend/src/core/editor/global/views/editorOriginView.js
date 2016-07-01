@@ -107,6 +107,7 @@ define(function(require){
     hidePasteZones: function() {
       // Purposeful global selector here
       $('.paste-zone').addClass('display-none');
+      $('.add-control').removeClass('display-none');
     },
 
     openContextMenu: function (e) {
@@ -118,7 +119,7 @@ define(function(require){
 
     showPasteZones: function (type) {
       $('.paste-zone').addClass('display-none');
-
+      $('.add-control').addClass('display-none');
       type && $('.paste-zone-' + type).removeClass('display-none');
     },
 

@@ -3,27 +3,6 @@
 
 // Used for editing the color of buttons in the sdiebar
 
-.sidebar-item-inner {
-    button {
-        &.action-primary, &.action-secondary {
-            margin: 5px 25px;
-            width: 200px;
-            height: 50px;
-            border:@button-border;
-            border-radius:@button-radius;
-            font-size: 15px;
-            text-align: center;
-        }
-        // Use these attributes to easily configure the sidebar buttons
-        &.action-primary {
-            .secondary;
-        }
-        &.action-secondary {
-            .primary-hollow;
-        }
-    }
-}
-
 .sidebar {
     background-color:@sidebar-color;
     color:@sidebar-text-color;
@@ -34,39 +13,54 @@
             color:darken(@sidebar-text-color, 10%);
         }
     }
-}
-
-.sidebar-item-title {
-    background-color:@sidebar-color;
-    color:@sidebar-title-text-color;
-}
-
-
-.sidebar-progress {
-    z-index: 1;
-    width: 0px;
-    height:100%;
-    position: absolute;
-    background: darken(@secondary-color, 10%);
-    left: 0px;
-    top: 0px;
-    opacity: 0.3;
-}
-
-.sidebar-row, .sidebar-breadcrumb {
-    button, a {
-        color:@sidebar-text-color;
-        transition:all 0.3s;
-        &:hover {
-            color:@sidebar-item-hover-text-color;
+    button {
+        &[class^="action-"],
+        &[class*=" action-"] {
+            margin: 5px 25px;
+            width: 200px;
+            height: 50px;
+            border-width: 1px;
+            border-style: solid;
+            border-radius:@button-radius;
+            font-size: 15px;
+            text-align: center;
         }
     }
-}
 
-.sidebar-divide {
-    background-color:@sidebar-color;
-    h3 {
-        font-size:13px;
-        font-weight:600;
+    .sidebar-item-title {
+        background-color:@sidebar-color;
+        color:@sidebar-title-text-color;
     }
+
+
+    .sidebar-progress {
+        z-index: 1;
+        width: 0px;
+        height:100%;
+        position: absolute;
+        background: darken(@secondary-color, 10%);
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+    }
+
+    .sidebar-row, .sidebar-breadcrumb {
+        button, a {
+            margin: 0;
+            color:@sidebar-text-color;
+            transition:all 0.3s;
+            &:hover {
+                color:@sidebar-item-hover-text-color;
+            }
+        }
+    }
+
+    .sidebar-divide {
+        background-color:@sidebar-color;
+        h3 {
+            font-size:13px;
+            font-weight:600;
+        }
+    }
+
 }

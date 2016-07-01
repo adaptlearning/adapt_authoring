@@ -17,9 +17,10 @@ define(function(require){
     className: 'page',
 
     events: {
-      'click a.add-article'  : 'addArticle',
-      'click a.edit-page'    : 'loadPageEdit',
-      'click .paste-cancel'  : 'pasteCancel'
+      'click a.add-article'      : 'addArticle',
+      'click a.page-edit-button' : 'loadPageEdit',
+      'dblclick .page-detail'    : 'loadPageEdit',
+      'click .paste-cancel'      : 'pasteCancel'
     },
 
     childrenCount: 0,
@@ -36,7 +37,7 @@ define(function(require){
 
       var captureScroll = function() {
         $(window).scroll(function() {
-          if (window.scrollY != 0) {
+          if (window.scrollY !== 0) {
             Origin.editor.scrollTo = window.scrollY;
           }
         });
@@ -167,9 +168,10 @@ define(function(require){
       });
     },
 
-    loadPageEdit: function (event) {
-      event.preventDefault();
-      Origin.trigger('editorSidebarView:addEditView', this.model);
+    loadPageEdit: function(event) {
+      event && event.preventDefault();
+       var route = '#/editor/' + this.model.get('_courseId') + '/page/' + this.model.get('_id') + '/edit';
+       Backbone.history.navigate(route);
     },
 
     onCutArticle: function(view) {

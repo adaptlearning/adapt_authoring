@@ -210,6 +210,17 @@ button {
     }
 }
 
+/*
+* Action buttons
+*/
+// Use these attributes to easily configure the sidebar buttons
+&.action-primary {
+    .secondary;
+}
+&.action-secondary {
+    .primary-hollow;
+}
+
 .warning {
     background-color:@button-warning-color;
     color:@button-warning-text-color;

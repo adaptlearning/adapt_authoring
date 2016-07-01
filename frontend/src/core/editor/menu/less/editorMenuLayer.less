@@ -7,7 +7,7 @@
   overflow:hidden;
 
   &.selected {
-    background-color: #f1f9fb;
+    background-color: #F1F9FC;
   }
 }
 
@@ -34,23 +34,31 @@
       transition:top 0.5s cubic-bezier(0.8, 0.0, 0.2, 1);
       &.show {
         top:0px;
+        text-align: center;
       }
     }    
 }
 
 .editor-menu-layer-controls {
   button {
-    width:49%;
-    padding:5px;
-    height: 45px;
     & i {
       margin-right:8px;
     }
-    .fa-folder-o {
+    .fa-folder {
       margin-right: 3px;
     }
   }
 
+}
+
+.editor-menu-item {
+  &-title {
+    padding: 8px 0 0 35px;
+    h3 {
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
 }
 
 

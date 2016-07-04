@@ -43,10 +43,8 @@ define(function(require) {
         },
 
         onSearchKeyup: function(event, filter) {
-            if (13 == event.keyCode || filter) {
-                var filterText = $(event.currentTarget).val();
-                Origin.trigger('assetManagement:sidebarView:filter', filterText);
-            }
+            var filterText = $(event.currentTarget).val();
+            Origin.trigger('assetManagement:sidebarView:filter', filterText);
         },
 
         onClearSearchClicked: function(event) {

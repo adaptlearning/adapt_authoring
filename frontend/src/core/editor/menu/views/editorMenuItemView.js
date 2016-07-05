@@ -89,6 +89,8 @@ define(function(require){
         // Only if the current double clicked it is a page item
         if (this.model.get('_type') == 'page') {
           this.gotoPageEditor();
+        } else if (this.model.get('_type') == 'menu') {
+          this.gotoSubMenuEditor();
         }
         this.model.set('clicks', 0);
       }
@@ -118,6 +120,11 @@ define(function(require){
     gotoPageEditor: function() {
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'));
     },
+
+
+   gotoSubMenuEditor: function() {
+     Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/menu/' + this.model.get('_id') + '/edit');
+   },
 
     setItemAsSelected: function() {
 

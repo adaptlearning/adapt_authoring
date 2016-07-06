@@ -57,6 +57,10 @@
     }
 }
 
+.block .add-control {
+    padding: 0 5px 5px 5px;
+}
+
 .add-control {
     .add-article, .add-block, .add-component {
         font-size: 16px;
@@ -84,21 +88,15 @@
 
         &.add-component {
             background-color: #D6F3F9;
-            &.full {
-                margin: 25px 30px;
-                width: 93.5%;
-            }
-            &.left {
-                width: 44%;
-                position: absolute;
-                top: 60px;
-                left: 4%;
+            &.left,
+            &.right {
+                width: 48%;
+                position: relative;
+                top: -105px;
+                float: left;
             }
             &.right {
-                width: 45%;
-                position: absolute;
-                top: 60px;
-                left: 51.8%;
+                float: right;
             }
         }
 

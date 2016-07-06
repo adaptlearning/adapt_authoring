@@ -14,11 +14,11 @@
     </div>
 
     <div class="page-components clearfix"></div>
+    
+    {{#if layoutOptions}}
+    <div class="add-control">
+        <a href="#" class="btn add-component">{{t 'app.addcomponent'}}</a>
+    </div>
+    {{/if}}
 
 </div>
-
-{{#if layoutOptions}}
-<div class="add-control">
-    <a href="#" class="btn add-component">{{t 'app.addcomponent'}}</a>
-</div>
-{{/if}}

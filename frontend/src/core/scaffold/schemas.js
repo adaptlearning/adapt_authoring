@@ -1,11 +1,10 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+    var Origin = require('coreJS/app/origin');
+    var SchemasModel = require('coreJS/scaffold/models/schemasModel');
 
-  var Origin = require('coreJS/app/origin');
-  var SchemasModel = require('coreJS/scaffold/models/schemasModel');
-
-  var Schemas = function(schemaName) {
-    var configModel = Origin.editor.data.config;
+    var Schemas = function(schemaName) {
+        var configModel = Origin.editor.data.config;
 
         if (configModel) {
             // Remove any extensions and components that are not enabled on this course
@@ -54,31 +53,30 @@ define(function(require) {
 
                 // trim off the empty globals objects
                 _.each(schema._globals.properties, function(value, key) {
-                  if(_.isEmpty(value.properties)) {
+                    if(_.isEmpty(value.properties)) {
                     delete schema._globals.properties[key];
-                  }
+                    }
                 });
 
             }
 
-      // Maybe this is a little bit broken
-      // But if something doesn't have properties object
-      // - remove it all together
-      if (schema.properties && !schema.properties.properties) {
-        delete schema.properties;
-      }
+            // trim off any empty fieldsets
+            _.each(schema, function(value, key) {
+                if(value.hasOwnProperty('properties') && _.isEmpty(value.properties)) {
+                delete schema[key];
+                }
+            });
 
-      // Return the modified schema
-      return schema;
-
-    } else {
+            // Return the modified schema
+            return schema;
+        } else {
             var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
             delete schema._extensions;
             // Remove globals as these are appended to the course model
             delete schema.globals;
             return schema;
         }
-  };
+    };
 
   return Schemas;
-})
+});

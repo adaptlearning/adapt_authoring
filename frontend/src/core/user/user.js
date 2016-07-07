@@ -27,26 +27,25 @@ define(function(require) {
 
     switch (location) {
       case 'login':
-      Origin.trigger('location:title:hide');
-      currentView = LoginView;
-      break;
+        Origin.trigger('location:title:hide');
+        currentView = LoginView;
+        break;
       case 'logout':
-      Origin.sessionModel.logout();
-      break;
+        Origin.sessionModel.logout();
+        break;
       case 'forgot':
-      Origin.trigger('sidebar:sidebarContainer:hide');
-      currentView = ForgotPasswordView;
-      break;
+        Origin.trigger('sidebar:sidebarContainer:hide');
+        currentView = ForgotPasswordView;
+        break;
       case 'reset':
-      Origin.trigger('sidebar:sidebarContainer:hide');
-      currentView = ResetPasswordView;
-      break;      
+        Origin.trigger('sidebar:sidebarContainer:hide');
+        currentView = ResetPasswordView;
+        break;      
       case 'profile':
-      settings.authenticate = true;
-
-      Origin.trigger('location:title:update', {title: window.polyglot.t('app.editprofileinformation')});        
-      currentView = UserProfileView;
-      break;
+        settings.authenticate = true;
+        Origin.trigger('location:title:update', {title: window.polyglot.t('app.editprofiletitle')});        
+        currentView = UserProfileView;
+        break;
     }
 
     if (currentView) {

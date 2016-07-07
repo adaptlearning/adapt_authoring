@@ -1,4 +1,10 @@
 <div class="course-edit">
+  <div class="error-text display-none">
+      {{t 'app.fixerrors'}}
+  </div>
+  <div class="intro-text">
+      {{t 'app.editprofileinformation'}}
+  </div>
   <div class="editing-overlay-panel">
 
     <div class="editing-overlay-panel-content">
@@ -26,32 +32,23 @@
                         <span id="titleErrorMessage" class="error"></span>
                     </label>
                     {{email}}
-          
                 </div>
 
                 {{#ifValueEquals auth "local"}}
-                <div class="change-password-section display-none">
-                  <div class="form-group">
-                      <label for="password">New password
-                          <span class="req">*</span>
-                          <span id="passwordError" class="error"></span>
-                      </label>
-                      <input type="password" class="width-15" id="password" value="" autocomplete="off">
-                      <div id="passwordStrength"></div>
-                  </div>
+                <div class="change-password-section">
+                    <div class="form-group">
+                        <div class="inner display-none">
+                            <label for="password">New password
+                                <span class="req">*</span>
+                                <span id="passwordError" class="error feedback"></span>
+                            </label>
 
-                  <div class="form-group">
-                      <label for="confirmPassword">Confirm password
-                          <span class="req">*</span>
-                          <span id="confirmPasswordError" class="error"></span>
-                      </label>
-                      <input type="password" class="width-15" id="confirmPassword" value="" autocomplete="off">
-                  </div>
-
-                </div>
-
-                <div class="form-group">
-                  <a href="#" class="btn primary change-password">{{t 'app.changepassword'}}</a>
+                            <input type="password" class="width-15" id="password" value="" autocomplete="off">
+                            <input type="text" class="width-15 display-none" id="passwordText" value="" autocomplete="off">
+                            <button href="#" class="toggle-password display-none"><i class="fa fa-eye"></i></button>
+                        </div>
+                        <a href="#" class="btn primary change-password">{{t 'app.changepassword'}}</a>
+                    </div>
                 </div>
                 {{/ifValueEquals}}
             </form>

@@ -63,6 +63,8 @@ define(function(require) {
 	* NOTE if callback isn't an annonymous function, it won't be called on cancel
 	* See: https://github.com/t4t5/sweetalert/issues/431
 	*/
+	var interval;
+
 	var Confirm = function(data) {
 		// allow for string input
 		if (_.isString(data)) {
@@ -78,6 +80,27 @@ define(function(require) {
 			confirmButtonText: window.polyglot.t('app.confirmdefaultyes'),
 			cancelButtonText: window.polyglot.t('app.no')
 		};
+
+		if(data.destructive === true) {
+			_.defer(function() {
+				var count = 5;
+				var oldLabel = $('.sweet-alert button.confirm').text();
+
+				$('.sweet-alert button.confirm').attr('disabled', true);
+				$('.sweet-alert button.confirm').text('Wait ' + count);
+
+				clearInterval(interval);
+				interval = setInterval(function() {
+					if(--count > 0) {
+						$('.sweet-alert button.confirm').text(window.polyglot.t('app.confirmwait') + ' ' + count);
+					} else {
+						clearInterval(interval);
+						$('.sweet-alert button.confirm').text(oldLabel);
+						$('.sweet-alert button.confirm').attr('disabled', false);
+					}
+				}, 1000);
+			});
+		}
 
 		openPopup(_.extend(defaults, data));
 	};

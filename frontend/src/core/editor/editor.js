@@ -446,7 +446,7 @@ define(function(require) {
           // update sidebar view
           Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
             "backButtonText": "Back to courses",
-            "backButtonRoute": Origin.dashboardRoute
+            "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
           });
         }
         break;

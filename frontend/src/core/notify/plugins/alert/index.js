@@ -82,6 +82,7 @@ define(function(require) {
 			cancelButtonText: window.polyglot.t('app.no')
 		};
 
+		// forces the user to wait before the confirm button can be clicked
 		if(data.destructive === true) {
 			_.defer(function() {
 				var count = DISABLE_TIME_SECS;

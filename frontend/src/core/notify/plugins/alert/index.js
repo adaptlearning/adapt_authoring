@@ -63,6 +63,7 @@ define(function(require) {
 	* NOTE if callback isn't an annonymous function, it won't be called on cancel
 	* See: https://github.com/t4t5/sweetalert/issues/431
 	*/
+	var DISABLE_TIME_SECS = 5;
 	var interval;
 
 	var Confirm = function(data) {
@@ -83,7 +84,7 @@ define(function(require) {
 
 		if(data.destructive === true) {
 			_.defer(function() {
-				var count = 5;
+				var count = DISABLE_TIME_SECS;
 				var oldLabel = $('.sweet-alert button.confirm').text();
 
 				$('.sweet-alert button.confirm').attr('disabled', true);

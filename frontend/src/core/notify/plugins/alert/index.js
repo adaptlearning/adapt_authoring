@@ -82,29 +82,39 @@ define(function(require) {
 			cancelButtonText: window.polyglot.t('app.no')
 		};
 
+		openPopup(_.extend(defaults, data));
+
 		// forces the user to wait before the confirm button can be clicked
 		if(data.destructive === true) {
-			_.defer(function() {
-				var count = DISABLE_TIME_SECS;
-				var oldLabel = $('.sweet-alert button.confirm').text();
+			var setWaitText = function(n) {
+				$('.sweet-alert button.confirm').html(
+					'<span class="wait-text">' + 
+					window.polyglot.t('app.confirmwait') + 
+					'</span> ' + 
+					n
+				);
+			};
 
-				$('.sweet-alert button.confirm').attr('disabled', true);
-				$('.sweet-alert button.confirm').text('Wait ' + count);
+			var count = DISABLE_TIME_SECS;
+			var oldLabel = $('.sweet-alert button.confirm').text();
 
-				clearInterval(interval);
-				interval = setInterval(function() {
-					if(--count > 0) {
-						$('.sweet-alert button.confirm').text(window.polyglot.t('app.confirmwait') + ' ' + count);
-					} else {
-						clearInterval(interval);
-						$('.sweet-alert button.confirm').text(oldLabel);
-						$('.sweet-alert button.confirm').attr('disabled', false);
-					}
-				}, 1000);
-			});
+			$('.sweet-alert').addClass('destructive');
+			$('.sweet-alert button.confirm').attr('disabled', true);
+			
+			setWaitText(count);
+
+			clearInterval(interval);
+			interval = setInterval(function() {
+				if(--count > 0) {
+					$('.sweet-alert button.confirm').html('<span class="wait-text">' + window.polyglot.t('app.confirmwait') + '</span> ' + count);
+				} else {
+					clearInterval(interval);
+					$('.sweet-alert button.confirm').text(oldLabel);
+					$('.sweet-alert button.confirm').attr('disabled', false);
+					$('.sweet-alert').removeClass('destructive');
+				}
+			}, 1000);
 		}
-
-		openPopup(_.extend(defaults, data));
 	};
 
 	var init = function() {

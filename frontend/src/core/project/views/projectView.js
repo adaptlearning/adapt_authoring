@@ -82,16 +82,24 @@ define(function(require){
     },
 
     deleteProjectPrompt: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
+      event && event.preventDefault();
 
-      Origin.Notify.confirm({
-        type: 'warning',
-        title: window.polyglot.t('app.deleteproject'),
-        text: window.polyglot.t('app.confirmdeleteproject') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteprojectwarning'),
-        callback: _.bind(this.deleteProjectConfirm, this)
-      });
+      if(this.model.get('_isShared') === true) {
+        Origin.Notify.confirm({
+          type: 'warning',
+          title: window.polyglot.t('app.deletesharedproject'),
+          text: window.polyglot.t('app.confirmdeleteproject') + '<br/><br/>' + window.polyglot.t('app.confirmdeletesharedprojectwarning'),
+          destructive: true,
+          callback: _.bind(this.deleteProjectConfirm, this)
+        });
+      } else {
+        Origin.Notify.confirm({
+          type: 'warning',
+          title: window.polyglot.t('app.deleteproject'),
+          text: window.polyglot.t('app.confirmdeleteproject') + '<br/><br/>' + window.polyglot.t('app.confirmdeleteprojectwarning'),
+          callback: _.bind(this.deleteProjectConfirm, this)
+        });
+      }
     },
 
     deleteProjectConfirm: function(confirmed) {

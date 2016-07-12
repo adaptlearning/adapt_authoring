@@ -1,3 +1,16 @@
+.sweet-alert.destructive .wait-text {
+  margin-right: 22px;
+}
+.sweet-alert.destructive .la-ball-fall {
+  left: 59%;
+  top: 44px;
+}
+.sweet-alert.destructive .la-ball-fall > div {
+  width: 4px;
+  height: 4px;
+  margin: 1.5px;
+}
+
 body.stop-scrolling {
   height: 100%;
   overflow: hidden; }

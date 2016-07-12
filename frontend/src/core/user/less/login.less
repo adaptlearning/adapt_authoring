@@ -1,6 +1,8 @@
-.module-user {  
+@import '../../../less/variables.less';
+
+.module-user {
 	&.location-login, &.location-forgot {
-        color: #fff; 
+        color: #fff;
         background: url(assets/login_bg.jpg) no-repeat center center fixed;
         -webkit-background-size: cover;
         -moz-background-size: cover;
@@ -23,10 +25,25 @@
         font-size: 32px;
     }
 
-    .error {
-        color:white;
+    #loginError {
+				width: 400px;
+				text-align: center;
+		    background-color: rgba(0,0,0,0.2);
+				border-radius: 4px;
+				margin: 5px 0;
+		    padding: 10px;
+				i.fa {
+					color: @alert-color;
+					font-size: 110%;
+					margin-right: 5px;
+				}
+				#loginErrorMessage {
+					font-size: 110%;
+	        color:white;
+					position: static;
+				}
     }
-        
+
     .login {
         max-width: 450px;
         margin: 0 auto;

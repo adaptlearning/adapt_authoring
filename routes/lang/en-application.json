@@ -32,7 +32,7 @@
   "app.pleaseloginor": "Please login, or",
   "app.invalidusernameoremail": "Invalid e-mail address",
   "app.invalidusernameorpassword": "Invalid e-mail address or password",
-  "app.accountlockedout": "Your account is locked out, please contact an administrator to un-lock it",
+  "app.accountlockedout": "Your account is locked. Please contact an administrator.",
   "app.areyousureyouwantto": "Are you sure you want to",
   "app.dashboard": "Dashboard",
   "app.loggedinas": "Logged in as",

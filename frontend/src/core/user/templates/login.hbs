@@ -10,7 +10,9 @@
     <form class="login-form" autocomplete="off">
             <span class="login-title">{{t 'app.signin'}}</span>
             <div class="login-fields">
-                <span id="loginErrorMessage" class="error" />
+                <div id="loginError" class="display-none">
+                  <i class="fa fa-times"></i><span id="loginErrorMessage"/>
+                </div>
                 <input type="email" autocomplete="off" class="login-input-username" value="" id="login-input-username" placeholder="{{t 'app.usernameoremail'}}" tabindex="1" />
                 <input type="password" autocomplete="off" class="login-input-password" value="" id="login-input-password" placeholder="{{t 'app.password'}}" tabindex="2" />
                 <button type="submit" class="btn secondary login-form-submit" tabindex="3">{{t 'app.login'}}</button>

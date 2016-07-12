@@ -62,6 +62,9 @@ define(function(require) {
 	* NOTE if callback isn't an annonymous function, it won't be called on cancel
 	* See: https://github.com/t4t5/sweetalert/issues/431
 	*/
+	var DISABLE_TIME_SECS = 5;
+	var interval;
+
 	var Confirm = function(data) {
 		// allow for string input
 		if (_.isString(data)) {
@@ -79,6 +82,38 @@ define(function(require) {
 		};
 
 		openPopup(_.extend(defaults, data));
+
+		// forces the user to wait before the confirm button can be clicked
+		if(data.destructive === true) {
+			var setWaitText = function(n) {
+				$('.sweet-alert button.confirm').html(
+					'<span class="wait-text">' + 
+					window.polyglot.t('app.confirmwait') + 
+					'</span> ' + 
+					n
+				);
+			};
+
+			var count = DISABLE_TIME_SECS;
+			var oldLabel = $('.sweet-alert button.confirm').text();
+
+			$('.sweet-alert').addClass('destructive');
+			$('.sweet-alert button.confirm').attr('disabled', true);
+			
+			setWaitText(count);
+
+			clearInterval(interval);
+			interval = setInterval(function() {
+				if(--count > 0) {
+					$('.sweet-alert button.confirm').html('<span class="wait-text">' + window.polyglot.t('app.confirmwait') + '</span> ' + count);
+				} else {
+					clearInterval(interval);
+					$('.sweet-alert button.confirm').text(oldLabel);
+					$('.sweet-alert button.confirm').attr('disabled', false);
+					$('.sweet-alert').removeClass('destructive');
+				}
+			}, 1000);
+		}
 	};
 
 	var init = function() {

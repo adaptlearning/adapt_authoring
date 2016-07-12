@@ -25,6 +25,9 @@
         .project-settings {
             top:0%;
             opacity:1;
+            a {
+              color: #fff;
+            }
         }
 
         .tags {
@@ -162,12 +165,8 @@
     width:100%;
     height: @toolbar-height;
     opacity:1;
-    background-color:rgba(255,255,255,1);
     transition:all 0.3s;
-    // a {
-    //     color:#3e4960;
-    // }
-}
+  }
 
 .project-detail-hide-hero {
     .field-hero-image {
@@ -221,12 +220,12 @@ h4.project-detail-title-inner {
     height: @preview-height - @toolbar-height;
     position: absolute;
     background-color: rgba(0,0,0,0);
-    
+
     &.large {
         width: 100%;
-        z-index: 1;    
+        z-index: 1;
     }
-    
+
     &.medium {
         width: 80%;
         z-index: 2;
@@ -254,7 +253,7 @@ h4.project-detail-title-inner {
     position: relative;
 }
 
-.preview-medium { 
+.preview-medium {
     -ms-zoom: 0.25;
     -moz-transform: scale(0.25);
     -moz-transform-origin: 0 0;
@@ -300,4 +299,3 @@ h4.project-detail-title-inner {
     width: 300px;
     height: 222px;
 }
-

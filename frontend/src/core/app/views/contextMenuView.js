@@ -73,13 +73,13 @@ define(function(require) {
       var newCSS = {
         position: 'absolute',
         left: $(e.currentTarget).offset().left + $(e.currentTarget).width() + 10,
-        top: $(e.currentTarget).offset().top
+        top: $(e.currentTarget).offset().top-($(e.currentTarget).height()/2)
       };
 
       this.$el.css(newCSS).removeClass('display-none');
 
       this.addBodyEvent();
-      
+
       Origin.trigger('contextMenu:opened');
     },
 

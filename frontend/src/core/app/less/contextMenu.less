@@ -17,6 +17,7 @@
     position:absolute;
     background-color: @context-menu-color;
     color: @context-menu-text-color;
+    box-shadow: 0 0 12px 1px rgba(0,0,0,0.15);
     z-index: 100;
 
     /*.context-menu-pin {
@@ -32,16 +33,17 @@
 
     .context-menu-item {
         /*border-left:4px solid darken(@context-menu-color, 10%);*/
-        min-width:120px;
+        min-width:130px;
         .context-menu-item-open {
             display:block;
             padding:12px;
             text-decoration: none;
             color: @context-menu-item-text-color;
+                border-top: 1px solid #63def4;
             transition:all 0.3s;
             &:hover {
                 color:@context-menu-item-text-hover-color;
-                background-color:darken(@context-menu-color, 10%);
+                background-color:lighten(@context-menu-color, 15%);
             }
         }
     }

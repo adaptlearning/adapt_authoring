@@ -1,16 +1,3 @@
-.sweet-alert.destructive .wait-text {
-  margin-right: 22px;
-}
-.sweet-alert.destructive .la-ball-fall {
-  left: 59%;
-  top: 44px;
-}
-.sweet-alert.destructive .la-ball-fall > div {
-  width: 4px;
-  height: 4px;
-  margin: 1.5px;
-}
-
 body.stop-scrolling {
   height: 100%;
   overflow: hidden; }
@@ -184,6 +171,44 @@ body.stop-scrolling {
     margin-top: 4px;
     opacity: 0;
     visibility: hidden; }
+  .sweet-alert button {
+    background-color: #8CD4F5;
+    color: white;
+    border: none;
+    box-shadow: none;
+    font-size: 17px;
+    font-weight: 500;
+    -webkit-border-radius: 4px;
+    border-radius: 5px;
+    padding: 10px 32px;
+    margin: 26px 5px 0 5px;
+    cursor: pointer; }
+    .sweet-alert button:focus {
+      outline: none;
+      box-shadow: 0 0 2px rgba(128, 179, 235, 0.5), inset 0 0 0 1px rgba(0, 0, 0, 0.05); }
+    .sweet-alert button:hover {
+      background-color: #7ecff4; }
+    .sweet-alert button:active {
+      background-color: #5dc2f1; }
+    .sweet-alert button.cancel {
+      background-color: #C1C1C1; }
+      .sweet-alert button.cancel:hover {
+        background-color: #b9b9b9; }
+      .sweet-alert button.cancel:active {
+        background-color: #a8a8a8; }
+      .sweet-alert button.cancel:focus {
+        box-shadow: rgba(197, 205, 211, 0.8) 0px 0px 2px, rgba(0, 0, 0, 0.0470588) 0px 0px 0px 1px inset !important; }
+    .sweet-alert button[disabled] {
+      opacity: .6;
+      cursor: default; }
+    .sweet-alert button.confirm[disabled] {
+      color: transparent; }
+      .sweet-alert button.confirm[disabled] ~ .la-ball-fall {
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 0s; }
+    .sweet-alert button::-moz-focus-inner {
+      border: 0; }
   .sweet-alert[data-has-cancel-button=false] button {
     box-shadow: none !important; }
   .sweet-alert[data-has-confirm-button=false][data-has-cancel-button=false] {

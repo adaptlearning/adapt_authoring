@@ -1,3 +1,5 @@
+@import '../../../less/variables.less';
+
 .asset-picker-filters {
     padding: 10px;
     background-color: lightblue;
@@ -14,7 +16,7 @@
 }
 
 .asset-management-assets-container {
-    width:66.6%;
+    width:75%;
     float:left;
     overflow-x:hidden;
     overflow-y:scroll;
@@ -32,18 +34,26 @@
 }
 
 .asset-management-preview-container {
-    width:33.2%;
+    width:25%;
     float:right;
     overflow-x:hidden;
-    overflow-y:scroll;
-
     text-align:center;
-    border-left:1px solid #9cabc4;
     background-color:#fff;
-    color:#9cabc4;
 
     &-inner {
-        padding:10px;
+        padding: 30px 15px;
+        color: #9d9d9d;
+        .asset-preview-title {
+          padding-bottom: 10px;
+          color: @primary-color;
+        }
+        .asset-preview-description,
+        .asset-size {
+          margin-bottom: 25px;
+        }
+        .asset-tags {
+          margin-bottom: 30px;
+        }
     }
 
     .asset-management-no-preview {
@@ -60,23 +70,23 @@
 .asset-management-list-item {
     position:relative;
     width:160px;
-    height: 240px;
+    height: 197px;
     margin-right:30px;
     margin-bottom:30px;
     float:left;
-
     cursor:pointer;
     background-color:#fff;
-    border: 1px solid #b7caed;
+    border: 1px solid #d6f2f9;
     border-radius:3px;
     transition: all 0.3s;
     box-shadow: 0px 0px 3pt 2pt transparent;
     &:hover {
-        box-shadow: 0px 0px 3px 3px #e0e0e0;
+        box-shadow: 0 0 5px 2px #CBE1E6;
     }
 
     &.selected {
-        border-color: #15a4fa;
+        background-color: @primary-color;
+        color: @button-primary-text-color;
     }
 
     &-icon {
@@ -91,10 +101,14 @@
         background-position:center;
         background-size:cover;
         background-repeat: no-repeat;
+        background-color: white;
         text-align:center;
+        border: 1px solid #d6f2f9;
+        border-left: none;
+        border-right: none;
         i {
-            color:#9cabc4;
-            padding-top:40px;
+            color:rgb(214, 242, 249);
+            padding-top:35px;
             font-size:50px;
         }
     }
@@ -104,14 +118,13 @@
         overflow:hidden;
         width:160px;
         &-inner {
-            padding:20px;
+            padding:10px;
         }
     }
 
     &-title {
-        height:52px;
+        height:30px;
         overflow:hidden;
-        color: black;
     }
 
     .asset-management-list-item-deleted {
@@ -148,7 +161,7 @@
       margin: 5px;
       color:#fff;
       padding: 3px;
-      background-color:#9CABC4;      
+      background-color:@primary-color;
     }
   }
 

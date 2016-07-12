@@ -22,18 +22,18 @@
 
   <h1 class="asset-preview-title">{{title}}</h1>
   <div class="asset-preview-description">{{description}}</div>
-  <div class="asset-size">{{t 'app.assetsize'}} : {{{bytesToSize size}}}</div>
+  <div class="asset-size">{{t 'app.assetsize'}}: {{{bytesToSize size}}}</div>
 
   {{#if metadata.duration}}
-    <div class="asset-duration break">{{t 'app.assetduration'}} : {{{formatDuration metadata.duration}}}</div>
+    <div class="asset-duration break">{{t 'app.assetduration'}}: {{{formatDuration metadata.duration}}}</div>
   {{/if}}
 
   {{#if metadata.height}}
-    <div class="asset-height">{{t 'app.assetdimensions'}} : {{{metadata.width}}} x {{{metadata.height}}}</div>
+    <div class="asset-height">{{t 'app.assetdimensions'}}: {{{metadata.width}}} x {{{metadata.height}}}</div>
   {{/if}}
 
   {{#if tags.length}}
-    <div class="asset-tags">{{t 'app.tags'}} : {{{renderTags tags "title"}}}</div>
+    <div class="asset-tags">{{t 'app.tags'}}: {{{renderTags tags "title"}}}</div>
   {{/if}}
 
   {{#if isSelectable}}

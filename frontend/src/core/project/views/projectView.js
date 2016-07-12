@@ -53,7 +53,7 @@ define(function(require){
         event.preventDefault();
       }
 
-      Backbone.history.navigate('#/editor/' + this.model.get('_id') + '/settings', {trigger: true});
+      Origin.router.navigate('#/editor/' + this.model.get('_id') + '/settings', { trigger: true });
     },
 
     editProject: function(event) {
@@ -61,7 +61,7 @@ define(function(require){
         event.preventDefault();
       }
 
-      Backbone.history.navigate('/editor/' + this.model.get('_id') + '/menu', {trigger: true});
+      Origin.router.navigate('#/editor/' + this.model.get('_id') + '/menu', { trigger: true });
     },
 
     selectProject: function(event) {
@@ -123,8 +123,8 @@ define(function(require){
               text: response.responseJSON.message
             });
           };
-          
-          _.delay(errorMsg, 1000);  
+
+          _.delay(errorMsg, 1000);
         }
       });
     },
@@ -133,7 +133,7 @@ define(function(require){
       $.ajax({
         url: this.model.getDuplicateURI(),
         success: function (data) {
-          Backbone.history.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
+          Origin.router.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
         },
         error: function() {
           Origin.Notify.alert({

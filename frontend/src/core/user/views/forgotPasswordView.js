@@ -22,7 +22,7 @@ define(function(require) {
     goToLogin: function(e) {
       e.preventDefault();
 
-      Backbone.history.navigate('#user/login', {trigger: true});
+      Origin.router.navigate('#user/login', {trigger: true});
     },
 
     handleKeydown: function(e) {

@@ -49,7 +49,7 @@ define(function(require){
           delete sessionModel._revertLogin;
           Origin.trigger('login:changed');
           Origin.trigger('globalMenu:refresh');
-          Backbone.history.navigate('#/dashboard', {trigger: true});
+          Origin.router.navigate('#/dashboard', {trigger: true});
         },
         failure: function (err) {
           Origin.Notify.alert({

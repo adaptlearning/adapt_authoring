@@ -171,7 +171,7 @@ define(function(require){
     loadPageEdit: function(event) {
       event && event.preventDefault();
        var route = '#/editor/' + this.model.get('_courseId') + '/page/' + this.model.get('_id') + '/edit';
-       Backbone.history.navigate(route);
+       Origin.router.navigate(route);
     },
 
     onCutArticle: function(view) {

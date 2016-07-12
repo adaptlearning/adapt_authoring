@@ -87,7 +87,7 @@ define(function(require) {
           success: _.bind(function(model, response, options) {
 
             if (this.isNew) {
-              return Backbone.history.navigate('#/editor/' + response._id + '/menu', {trigger: true});
+              return Origin.router.navigate('#/editor/' + response._id + '/menu', {trigger: true});
             }
             Origin.trigger('editor:refreshData', function() {
               Backbone.history.history.back();

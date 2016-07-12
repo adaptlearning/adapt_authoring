@@ -51,7 +51,7 @@ define(function(require) {
           Origin.trigger('editor:refreshData', function() {
             var currentPageId = self.model.getParent().getParent().getParent().get('_id');
             var currentCourseId = Origin.editor.data.course.get('_id');
-            Backbone.history.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
+            Origin.router.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
             self.remove();
           }, this);
 

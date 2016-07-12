@@ -32,7 +32,7 @@ define(function(require) {
           self.set('_canRevert', false);
 
           Origin.trigger('login:changed');
-          Backbone.history.navigate('#/user/login', {trigger: true});
+          Origin.router.navigate('#/user/login', {trigger: true});
       });
     },
 
@@ -54,7 +54,7 @@ define(function(require) {
             Origin.trigger('login:changed');
 
             Origin.trigger('schemas:loadData', function() {
-              Backbone.history.navigate('#/dashboard', {trigger: true});
+              Origin.router.navigate('#/dashboard', {trigger: true});
             });
           }
         },

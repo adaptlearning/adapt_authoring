@@ -15,7 +15,7 @@ define(function(require) {
         events: {
             'click .asset-management-modal-filter-button': 'onFilterButtonClicked',
             'click .asset-management-modal-filter-clear-search': 'onClearSearchClicked',
-            'keydown .asset-management-modal-filter-search': 'onSearchKeyDown',
+            'keyup .asset-management-modal-filter-search': 'onSearchKeyDown',
             'click .asset-management-modal-add-tag': 'onAddTagClicked',
             'click .asset-management-modal-add-asset': 'onAddAssetClicked'
         },
@@ -32,6 +32,9 @@ define(function(require) {
             this.listenTo(Origin, 'remove:views', this.remove);
             this.listenTo(Origin, 'assetManagement:modalTags:filterByTags', this.filterAssetsByTags);
             this.render();
+
+            // used to delay filter
+            this.filterDelay = null;
         },
 
         setupTags: function() {
@@ -72,10 +75,18 @@ define(function(require) {
         },
 
         onSearchKeyDown: function(event, filter) {
-            if (13 == event.keyCode || filter) {
+          switch(event.which) {
+            case 16: // shift
+            case 18: // alt
+              return;
+            default:
+              window.clearTimeout(this.filterDelay);
+              this.filterDelay = window.setTimeout(function() {
                 var filterText = $(event.currentTarget).val();
                 Origin.trigger('assetManagement:sidebarView:filter', filterText);
-            }
+              }, 500);
+              break;
+          }
         },
 
         onClearSearchClicked: function(event) {

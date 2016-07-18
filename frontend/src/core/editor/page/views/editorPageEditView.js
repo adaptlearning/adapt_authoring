@@ -16,13 +16,14 @@ define(function(require) {
     },
 
     saveEditing: function() {
-      var errors = this.form.commit();
+      var errors = this.form.validate();
       // This must trigger no matter what, as sidebar needs to know
       // when the form has been resubmitted
       Origin.trigger('editorSidebar:showErrors', errors);
       if (errors) {
         return;
       }
+      this.form.commit();
 
       this.model.save(null, {
         error: function() {

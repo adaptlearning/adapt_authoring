@@ -96,6 +96,8 @@ define(function(require) {
 
         onAddTagClicked: function(event) {
             event.preventDefault();
+            var exists = $('.asset-management-modal-tags').length > 0;
+            if(!exists) {
             $('.modal-popup-toolbar').after(new AssetManagementModalTagsView({title: 'Filter by tags', items: this.availableTags}).$el);
         },
 

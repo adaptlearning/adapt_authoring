@@ -90,15 +90,16 @@ define(function(require) {
         },
 
         onClearSearchClicked: function(event) {
-            event.preventDefault();
+            event && event.preventDefault();
             this.$('.asset-management-modal-filter-search').val('').trigger('keydown', [true]);
         },
 
         onAddTagClicked: function(event) {
-            event.preventDefault();
+            event && event.preventDefault();
             var exists = $('.asset-management-modal-tags').length > 0;
             if(!exists) {
-            $('.modal-popup-toolbar').after(new AssetManagementModalTagsView({title: 'Filter by tags', items: this.availableTags}).$el);
+              $('.modal-popup-toolbar').after(new AssetManagementModalTagsView({title: 'Filter by tags', items: this.availableTags}).$el);
+            }
         },
 
         filterAssetsByTags: function(tag) {
@@ -121,7 +122,7 @@ define(function(require) {
         },
 
         onAddAssetClicked: function(event) {
-            event.preventDefault();
+            event && event.preventDefault();
             Origin.trigger('assetManagement:modal:newAssetOpened');
             $('.modal-popup-content').append(new AssetManagementModalNewAssetView({model: new AssetModel()}).$el);
         }

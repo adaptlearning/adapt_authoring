@@ -110,11 +110,11 @@ define(function(require){
       else {
         $(this.el).parent().parent().addClass("selected");
       }
-      event.preventDefault();
-    },    
+      event && event.preventDefault();
+    },
 
     onMenuItemDblClicked: function(event) {
-      event.preventDefault();
+      event && event.preventDefault();
     },
 
     gotoPageEditor: function() {
@@ -205,7 +205,7 @@ define(function(require){
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
       var menuItemId = this.model.get('_id');
-      
+
       Origin.router.navigate('#/editor/'
         + courseId
         + '/'
@@ -216,9 +216,7 @@ define(function(require){
     },
 
     deleteItemPrompt: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
+      event && event.preventDefault();
 
       this.listenToOnce(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
       this.listenToOnce(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
@@ -254,7 +252,7 @@ define(function(require){
     copyID: function() {
       Origin.trigger('editorView:copyID', this.model);
     },
-    
+
     deleteItem: function(event) {
       this.stopListening(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
       this.model.set({_isExpanded:false, _isSelected: false});

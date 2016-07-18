@@ -40,16 +40,28 @@
         margin-top: 20px;
     }
 
-    .sidebar-row .sidebar-row-input input {
-        margin: 10px 25px;
-        width: 180px;
-        height: 25px;
-        font-size: @sidebar-input-font-size;
-        border-radius: @button-radius;
-        border-color: @sidebar-input-color;
-        background: @sidebar-input-color;
-        color: @sidebar-input-text-color;
-        text-align: left;
+    .sidebar-row {
+      .error {
+        position: inherit;
+        top: inherit;
+        left: inherit;
+        font-size: inherit;
+        color: white !important;
+        i {
+          color: white !important;
+        }
+      }
+      .sidebar-row-input input {
+          margin: 10px 25px;
+          width: 180px;
+          height: 25px;
+          font-size: @sidebar-input-font-size;
+          border-radius: @button-radius;
+          border-color: @sidebar-input-color;
+          background: @sidebar-input-color;
+          color: @sidebar-input-text-color;
+          text-align: left;
+      }
     }
 }
 

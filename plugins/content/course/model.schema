@@ -595,7 +595,7 @@
       },
       "title": "Menu lock type",
       "help": "Defines which (if any) locking mechanism will be used for menu items",
-      "validators": ["required"]
+      "validators": []
     },
     "customStyle": {
       "type": "string",

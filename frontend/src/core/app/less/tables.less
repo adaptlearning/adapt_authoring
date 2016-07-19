@@ -1,3 +1,5 @@
+@import '../../../less/variables.less';
+
 .tb-title {
     background-color: #9cabc4;
     color:#fff;
@@ -7,14 +9,19 @@
     border-top: 1px solid gray;
 }
 
-.tb-heading {
-    border-bottom: 1px gray solid;
+.tb-row {
+  padding:20px 30px;
+  border-bottom: 1px solid #efefef;
+
+  .tb-col-inner {
+    padding-right:10px;
+  }
 }
 
-.tb-row {
-    padding:16px 30px;
-
-    .tb-col-inner {
-        padding-right:10px;
-    }
+.tb-heading {
+  padding: 35px 30px;
+  h1, h2, h3, h4, h5, h6 {
+    color: @primary-color;
+    font-weight: bold;
+  }
 }

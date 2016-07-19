@@ -27,7 +27,7 @@ define(function(require) {
       this.form.commit();
 
       // Ensure the _id is always passed.
-      var attributesToUpdate = _.extend(this.model.changedAttributes(), 
+      var attributesToUpdate = _.extend(this.model.changedAttributes() || {}, 
         {_id: this.model.get('_id'), _courseId: this.model.get('_courseId')});
       
       this.model.save(attributesToUpdate, {

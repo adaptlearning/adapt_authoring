@@ -38,7 +38,9 @@
     }
 }
 
-.page {
+.editor-inner {
+    > .page {
+    overflow-y: scroll;
     .title {
         font-size: 16px;
         font-weight: 400;
@@ -48,14 +50,14 @@
         font-size: 16px;
     }
 
-    &-edit-panel {
+    .page-edit-panel {
         position: absolute;
         right: 0;
         top: 0;
     }
 
-    &-articles {
+    .page-articles {
         margin:20px 0px;
     }
-
+  }
 }

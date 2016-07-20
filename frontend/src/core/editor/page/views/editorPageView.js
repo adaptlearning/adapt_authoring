@@ -46,6 +46,14 @@ define(function(require){
       _.delay(captureScroll, 2000);
     },
 
+    resize: function() {
+      _.defer(_.bind(function() {
+        var windowHeight = $(window).height();
+        this.$el.height(windowHeight - this.$el.offset().top);
+        console.log(this.$el);
+      }, this));
+    },
+
     persistScrollPosition: function() {
       if (Origin.editor.scrollTo) {
         $.scrollTo(Origin.editor.scrollTo);
@@ -88,6 +96,7 @@ define(function(require){
       this.addArticleViews();
 
       _.defer(_.bind(function(){
+        this.resize();
         this.trigger('pageView:postRender');
         this.setViewToReady();
       }, this));

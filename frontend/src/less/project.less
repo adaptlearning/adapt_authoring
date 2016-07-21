@@ -6,11 +6,11 @@
     color:#9d9d9d;
     text-align:center;
     &.selected {
-        background-color:@primary-color;
         .projects-details-label, .project-detail-title-inner {
             color:#fff;
         }
-        .projects-details-tags-button {
+        .projects-details-tags-button,
+        .projects-details-value {
             button {
                 .white-hollow;
             }
@@ -23,8 +23,5 @@
 
     .project-detail-title-inner, .project-settings a {
         color: @primary-color;
-        // &:hover {
-        //     color:darken(@primary-color,10%);
-        // }
     }    
 }

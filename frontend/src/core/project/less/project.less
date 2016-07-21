@@ -1,3 +1,5 @@
+@import '../../../less/variables.less';
+
 @toolbar-height: 30px;
 @preview-height: 247px;
 
@@ -21,7 +23,7 @@
     &.selected {
         color:#fff;
         box-shadow: 0px 0px 5px 2px #CBE1E6;
-        background-color:#333c4e;
+        background-color: @primary-color;
         .project-settings {
             top:0%;
             opacity:1;
@@ -29,18 +31,18 @@
               color: #fff;
             }
         }
-
-        .tags {
-
-          li.tag {
-            background-color:#293141;
-
-            span {
-              color:#E0E8F7;
-              background-color:#293141;
+        .project-details {
+            .tag-container {
+                background-color: @primary-color;
+                .tags {
+                    li.tag {
+                        background-color:#fff;
+                        span {
+                            color:@primary-color;
+                        }
+                    }
+                }
             }
-
-          }
         }
     }
     &.listing {
@@ -51,24 +53,23 @@
         display:block;
     }
 
-    .tags {
-
-      li.tag {
-        margin:2px 5px 2px 0px;
-        padding:4px;
-        display: inline-block;
-        background-color:#9CABC4;
-
-        span {
-          color:#fff;
+    .tag-container {
+        .tags {
+            li.tag {
+                background-color: @primary-color;
+                margin:2px 5px 2px 0px;
+                padding:4px;
+                display: inline-block;
+                span {
+                    color:#fff;
+                }
+            }
         }
-      }
-
-
     }
 
     div.tag-container {
         overflow-y: auto;
+        background-color: white;
     }
     .tag-container-no-items {
         margin-bottom:12px;
@@ -211,7 +212,7 @@ h4.project-detail-title-inner {
     -webkit-box-orient: vertical;
 
      & span.highlighted {
-    background-color: #ff0;
+        background-color: #ff0;
     }
 }
 

@@ -18,7 +18,7 @@ define(function(require){
 
     events: {
       'click a.add-article'      : 'addArticle',
-      'click a.page-edit-button' : 'loadPageEdit',
+      'click a.page-edit-button' : 'openContextMenu',
       'dblclick .page-detail'    : 'loadPageEdit',
       'click .paste-cancel'      : 'pasteCancel'
     },
@@ -182,14 +182,33 @@ define(function(require){
        Origin.router.navigate(route);
     },
 
+    // TODO fragile HACK, refactor context menu code to allow what I want to do later... 
+    openContextMenu: function(event) {
+      if(!event) return console.log('Error: needs a current target to attach the menu to...');
+      
+      event.preventDefault();
+      event.stopPropagation();
+ 
+      var fakeView = new Backbone.View({
+        model: new Backbone.Model({ _type: 'page-min' }) 
+      });
+
+      
+      this.listenTo(fakeView, {
+        'contextMenu:page-min:edit': this.loadPageEdit,
+        'contextMenu:page-min:copyID': this.onCopyID
+      });
+
+      Origin.trigger('contextMenu:open', fakeView, event);
+    },
+
     onCutArticle: function(view) {
       this.once('pageView:postRender', function() {
         view.showPasteZones();
       });
 
       this.render();
-    },
-
+    }
   }, {
     template: 'editorPage'
   });

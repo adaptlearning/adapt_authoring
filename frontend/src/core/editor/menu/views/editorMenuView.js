@@ -153,14 +153,6 @@ define(function(require){
         var itemWidth = $menuLayers.first().outerWidth(true);
         // Set menu holder to width by items length
         $('.editor-menu-inner').width(itemWidth * $menuLayers.length);
-
-        // Set editor menu container to height of available space
-        // Get offset to work out space menu is set inside
-        var menuOffsetTop = this.$el.offset().top;
-        // Set height
-        this.$el.height(windowHeight - menuOffsetTop);
-        this.$('.editor-menu-layer').height(windowHeight - menuOffsetTop - $menuControls.height());
-
     },
 
     scrollToElement: function() {

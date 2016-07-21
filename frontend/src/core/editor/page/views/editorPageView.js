@@ -50,7 +50,6 @@ define(function(require){
       _.defer(_.bind(function() {
         var windowHeight = $(window).height();
         this.$el.height(windowHeight - this.$el.offset().top);
-        console.log(this.$el);
       }, this));
     },
 

@@ -9,8 +9,14 @@ define(function(require) {
   Origin.on('navigation:help', function() {
     switch (Origin.location.module) {
       case 'dashboard':
-        window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#the-dashboard");
-        return;
+        switch (Origin.location.route1) {
+          case 'shared':
+            window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#shared-courses");
+          return;
+        default:
+            window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#the-dashboard");
+          return;
+      }
       case 'project':
         window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#course-details");
         return;

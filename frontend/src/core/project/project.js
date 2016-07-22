@@ -10,55 +10,55 @@ define(function(require) {
     switch (Origin.location.module) {
       case 'dashboard':
         window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#the-dashboard");
-        break;
+        return;
       case 'project':
         window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#course-details");
-        break;
+        return;
       case 'editor':
         switch (Origin.location.route2) {
           case 'menu':
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#editing-course-details");
-            break;
+            return;
           case 'block':
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#adding-content-to-the-course");
-            break;
+            return;
           case 'edit':
              window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#sectionpage-settings");
-            break;
+            return;
           case 'page':
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#adding-content-to-the-course");
-            break;
+            return;
           case 'config':
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#course-settings");
-            break;
+            return;
           case 'theme':
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#course-settings");
-            break;
+            return;
           case 'extensions':
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#course-settings");
-            break;
+            return;
           default:
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/");
-            break;
+            return;
         }
         switch (Origin.location.route3) {
           case 'edit':
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Creating-a-Course#adding-content-to-the-course");
-            break;
+            return;
           default:
             window.open("https://github.com/adaptlearning/adapt_authoring/wiki/");
-            break;
+            return;
         }
-        break;
+        return;
       case 'pluginManagement':
         window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Plugin-Manager");
-        break;
+        return;
       case 'assetManagement':
         window.open("https://github.com/adaptlearning/adapt_authoring/wiki/Asset-Manager");
-        break;
+        return;
       default:
         window.open("https://github.com/adaptlearning/adapt_authoring/wiki/");
-        break;
+        return;
     }
   });
 

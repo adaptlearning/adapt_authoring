@@ -2,6 +2,20 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.8] - 2016-07-26
+This version introduces a new look and feel to the user interface of the authoring tool, and closely matches the new theme of the Adapt community site introduced at the beginning of the year. 
+
+In addition, this release also includes the following:
+
+### Changed
+- Disabled SSL certificate check during Vagrant install
+
+### Fixed
+- Caching issue related to course schemas
+- Tag autocomplete mechanism sometimes throws 500 error
+- Form validation
+- Saving course settings hangs if nothing has been changed  
+
 ## [0.1.7] - 2016-04-28
 This version contains numerous minor bug fixes and enhamcements, and supports the new menu locking feature released in version 2.0.9 of the Adapt Framework.
 
@@ -275,7 +289,13 @@ Changes below come from submissions by several developers:
  - asset records now use relative paths
  - removed iframe previews
 
-[unreleased]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.2...HEAD
+[unreleased]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.7...v0.1.8
+[0.1.7]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.6...v0.1.7
+[0.1.6]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.5...v0.1.6
+[0.1.5]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.4...v0.1.5
+[0.1.4]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.3...v0.1.4
+[0.1.3]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/adaptlearning/adapt_authoring/tree/v0.1.0

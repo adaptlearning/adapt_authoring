@@ -14,8 +14,7 @@ define(function(require) {
             'click .dashboard-sidebar-my-courses'   : 'gotoMyCourses',
             'click .dashboard-sidebar-shared-courses' : 'gotoSharedCourses',
             'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
-            'keydown .dashboard-sidebar-filter-search-input':'onInputKeyDown',
-            'click .dashboard-sidebar-filter-clear': 'clearFilterInput',
+            'click .sidebar-filter-clear': 'clearFilterInput',
             'click .dashboard-sidebar-tag': 'onFilterButtonClicked',
             'click .dashboard-sidebar-add-tag': 'onAddTagClicked',
             'click .dashboard-sidebar-row-filter': 'onFilterRemovedClicked'
@@ -68,20 +67,13 @@ define(function(require) {
             Origin.router.navigate('#/dashboard/shared', {trigger: true});
         },
 
-        onInputKeyDown: function(event) {
-            if (13 == event.keyCode) {
-                event.preventDefault();
-            }
-        },
-
         filterProjectsByTitle: function(event, filter) {
             if (event) {
                 event.preventDefault();
             }
-            if (13 == event.keyCode || filter) {
-                var filterText = $(event.currentTarget).val().trim();
-                Origin.trigger('dashboard:dashboardSidebarView:filterBySearch', filterText);
-            }
+            var filterText = $(event.currentTarget).val().trim();
+            Origin.trigger('dashboard:dashboardSidebarView:filterBySearch', filterText);
+
             this.highlightSearchBox();
         },
 

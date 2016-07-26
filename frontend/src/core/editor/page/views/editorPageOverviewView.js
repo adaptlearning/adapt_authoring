@@ -116,7 +116,7 @@ define(function(require) {
       goToPage: function (event) {
         event.preventDefault();
 
-        Backbone.history.navigate('/editor/' + Origin.editor.data.course.get('_id') + '/page/' + $(event.currentTarget).data('page-id'), {trigger: true});
+        Origin.router.navigate('/editor/' + Origin.editor.data.course.get('_id') + '/page/' + $(event.currentTarget).data('page-id'), {trigger: true});
       }
 
     }, {

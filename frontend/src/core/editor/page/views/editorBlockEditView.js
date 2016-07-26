@@ -18,13 +18,14 @@ define(function(require) {
 
     saveBlock: function() {
       var self = this;
-      var errors = self.form.commit();
+      var errors = self.form.validate();
       // This must trigger no matter what, as sidebar needs to know
       // when the form has been resubmitted
       Origin.trigger('editorSidebar:showErrors', errors);
       if (errors) {
         return;
       }
+      self.form.commit();
 
       self.model.pruneAttributes();
 

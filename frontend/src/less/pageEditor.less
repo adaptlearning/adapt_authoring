@@ -1,12 +1,21 @@
 @import 'variables';
 
-.editor-view {
-
+.page {
     .paste-zone {
-        background-color:@warning-color;
-        border:1px solid darken(@warning-color, 10%);
-        border:1px solid darken(@warning-color, 10%);
-    }
+        margin: 0 0 30px 0;
+        &-inner {
+            text-align: center;
+            padding: 0;
+        }
+        .btn {
+            padding: 12px 60px;
+            margin: 0 10px;
+        }
+     }
+     .page-components .paste-zone a {
+        padding: 7px 35px;
+        margin: 20px 0 0 0;
+     }
 }
 
 
@@ -31,29 +40,70 @@
     transition:all 0.2s;
     &:hover {
         color:#fff;
-        background-color:lighten(@primary-color, 20%);
+        background-color:lighten(@secondary-color, 20%);
     }
     &.selected {
         color:#fff;
-        background-color:@primary-color;
+        background-color:@secondary-color;
     }
 }
 
-.article, 
-.block, 
+.article,
+.block,
 .component {
-    box-shadow: 0px 0px 3pt 2pt transparent;
     &.hovering {
-        box-shadow: 0px 0px 3px 3px #e0e0e0;
+        box-shadow: 0px 0px 5px 2px #CBE1E6;
         position:relative;
     }
 }
 
-.block {
-    border-left:1px solid transparent;
-    border-right:1px solid transparent;
-    &.hovering {
-        border-left:1px solid darken(#e0e8f7, 10%);
-        border-right:1px solid darken(#e0e8f7, 10%);
+.block .add-control {
+    padding: 0 5px 5px 5px;
+}
+
+.add-control {
+    .add-article, .add-block, .add-component {
+        font-size: 16px;
+        font-weight: 600;
+        width: 100%;
+        padding: 0;
+        line-height: 50px;
+        text-align: center;
+        color: @primary-color;
+        border: 1px dashed @primary-color;
+        transition: all 0s;
+
+        &.add-article {
+            background-color:#F6FBFE;
+            margin-bottom: 50px;
+        }
+
+        &.add-block {
+            background-color:#EAF8FB;
+            width: 96%;
+            margin: 0 18px 10px 18px;
+        }
+
+        &.add-component {
+            background-color: #D6F3F9;
+            &.left,
+            &.right {
+                width: 48%;
+                position: relative;
+                top: -100px;
+                float: left;
+            }
+            &.right {
+                float: right;
+            }
+        }
+
+        &:hover, &:focus {
+            padding: 0;
+            line-height: 50px;
+            text-align: center;
+            color: @primary-color;
+            border: 1px solid @primary-color;
+        }
     }
 }

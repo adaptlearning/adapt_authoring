@@ -9,7 +9,7 @@ define(function(require) {
         events: {
             'click .asset-management-sidebar-new': 'onAddNewAssetClicked',
             'click .asset-management-sidebar-filter-button': 'onFilterButtonClicked',
-            'click .asset-management-sidebar-filter-clear-search': 'onClearSearchClicked',
+            'click .sidebar-filter-clear': 'onClearSearchClicked',
             'keyup .asset-management-sidebar-filter-search': 'onSearchKeyup',
             'click .asset-management-sidebar-add-tag': 'onAddTagClicked',
             'click .asset-management-sidebar-row-filter': 'onFilterRemovedClicked'
@@ -43,10 +43,8 @@ define(function(require) {
         },
 
         onSearchKeyup: function(event, filter) {
-            if (13 == event.keyCode || filter) {
-                var filterText = $(event.currentTarget).val();
-                Origin.trigger('assetManagement:sidebarView:filter', filterText);
-            }
+            var filterText = $(event.currentTarget).val();
+            Origin.trigger('assetManagement:sidebarView:filter', filterText);
         },
 
         onClearSearchClicked: function(event) {

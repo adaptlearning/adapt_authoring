@@ -1,7 +1,6 @@
 form label {
     display:block;
-    font-weight:bold;
-    font-size:13px;
+    font-size:15px;
     margin-bottom:4px;
 }
 
@@ -11,25 +10,25 @@ form label {
     border-bottom:1px solid #e3e3e3;
 }
 
-input[type="text"], 
-input[type="password"], 
-input[type="email"], 
-input[type="url"], 
-input[type="phone"], 
-input[type="tel"], 
-input[type="number"], 
-input[type="datetime"], 
-input[type="date"], 
-input[type="search"], 
-input[type="datetime-local"], 
-textarea, 
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="phone"],
+input[type="tel"],
+input[type="number"],
+input[type="datetime"],
+input[type="date"],
+input[type="search"],
+input[type="datetime-local"],
+textarea,
 select[multiple="multiple"] {
     padding: 11px 10px;
     border-radius: 2px;
     border: solid 1px #ccc;
     font-size: 13px;
-    width:80%;
-    max-width:700px;
+    width:90%;
+    /*max-width:700px;*/
     &:focus {
         outline:none;
         border-color:#666;
@@ -46,6 +45,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 
 select {
     padding: 10px;
+    min-width: 100px;
 }
 
 input:disabled, textarea:disabled {
@@ -68,4 +68,5 @@ input:disabled, textarea:disabled {
 
 .field-help {
     margin-bottom:4px;
+    color: #666;
 }

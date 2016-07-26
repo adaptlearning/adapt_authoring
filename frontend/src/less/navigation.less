@@ -1,28 +1,42 @@
 @import 'variables.less';
+@import 'fonts.less';
 
 .navigation {
-    background-color:@navigation-color;
-    border-bottom:1px solid #3e4a5f;
-    a {
-        transition:all 0.3s;
-        &:hover {
-            color:@navigation-hover-text-color;
-        }
+    background:url("assets/top-bar-1080.jpg");
+    @media (min-width: 1920px) {
+    background:url("assets/top-bar-2560.jpg");
     }
+    background-position: right;
+    border-bottom:1px solid rgba(0,0,0,0.15);
+    font-size: 15px;
+    font-family: @font-title;
 }
 
 .navigation-item {
-  color:@navigation-text-color;
+    color:@navigation-text-color;
 }
 
 .navigation-left {
-    a {
-        border-right:1px solid #3e4a5f;
+    .navigation-product-name {
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none; 
+          user-select: none;
+          cursor: default;   
     }
 }
 
 .navigation-right {
+    .navigation-user-logout {
+        padding: 0px 25px;
+    }
     a {
-        border-left:1px solid #3e4a5f;
+        // transition:all 0.3s;
+        &:hover {
+        text-decoration: underline;
+            &.navigation-user-logout {
+                text-decoration: none;
+            }
+        }
     }
 }

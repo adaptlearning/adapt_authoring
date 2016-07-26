@@ -1,27 +1,24 @@
 .block {
-    border-top:1px solid darken(#e0e8f7, 10%);
-    border-bottom:1px solid darken(#e0e8f7, 10%);
-    background-color:#f3f3f3;
+    background-color:#EAF8FB;
+    border: 1px solid #D3E2E5;
+    width: 96%;
+    margin-left: 2%;
     position: relative;
-    margin-bottom:-1px;
+    margin-bottom: 20px;
 
     &-inner {
-        padding:30px 30px 10px;
+        padding:15px;
+        .block-detail {
+            padding: 0 30px;
+        }
+        .page-components {
+            padding: 20px 5px 5px 5px;
+        }
     }
 
     &-edit-panel {
         position: absolute;
         right: 0;
         top: 0;
-    }
-
-    &-detail {
-
-    }
-
-    .add-control {
-        text-align: right;
-        padding-right:10px;
-        padding-bottom:10px;
     }
 }

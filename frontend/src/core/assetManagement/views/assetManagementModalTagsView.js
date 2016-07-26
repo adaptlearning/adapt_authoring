@@ -6,7 +6,7 @@ define(function(require) {
 
     var AssetManagementModalTagsView = OriginView.extend({
 
-        className: 'asset-management-modal-tags',
+        className: 'asset-management-modal-tags sidebar-filter',
 
         events: {
             'click .asset-management-modal-tags-toolbar-close': 'onCloseButtonClicked',
@@ -97,7 +97,7 @@ define(function(require) {
                     .focus();
                 this.$('.asset-management-modal-tags-search-input').focus();
             }
-            
+
         },
 
         moveDownThroughItems: function() {

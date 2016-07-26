@@ -53,7 +53,7 @@ define(function(require) {
         },
         success: function (jqXHR, textStatus, errorThrown) {
           if (jqXHR.success) {
-            Backbone.history.navigate('#/dashboard', {trigger: true});
+            Origin.router.navigate('#/dashboard', {trigger: true});
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {

@@ -1,26 +1,29 @@
 .sidebar-filter {
     position: fixed;
-    left: 220px;
+    left: 240px;
     top: 40%;
+    width:250px;
     max-height: 366px;
     border: 1px solid #e2e2e2;
-    border-left: none;
     background-color: #fff;
     overflow-y: hidden;
     display:none;
 }
 
-.sidebar-filter-toolbar {
-    border-bottom:1px solid #e2e2e2;
+.sidebar-filter-toolbar-title {
+    padding:10px;
+    margin-left: 10px;
+    font-weight: bold;
 }
 
-.sidebar-filter-toolbar-title {
-    float:left;
-    padding:10px;
+.sidebar-filter-toolbar-subtitle {
+    margin-left: 20px;
 }
 
 .sidebar-filter-toolbar-close {
-    float:right;
+    position: absolute;
+    top: 5px;
+    right: 0px;
     & button {
         &:hover {
             color:#15a4fa;
@@ -29,26 +32,46 @@
 }
 
 .sidebar-filter-search {
-    padding:10px;
-    border-bottom:1px solid #e2e2e2;
+    padding: 15px;
+    border-bottom: 1px solid #e2e2e2;
+    input{
+        border: 0;
+        background-color: #e2e2e2;
+    }
+    input::-webkit-input-placeholder {
+        color:#333;
+    }
+    input:-moz-placeholder {
+        color:#333;
+    }
+    i {
+        position: absolute;
+        top: 85px;
+        right: 30px;
+        color: #808080;
+    }
 }
 
 .sidebar-filter-items {
-    overflow-y: scroll;
+    overflow-y: auto;
     max-height: 260px;
 }
 
 .sidebar-filter-item {
     display:block;
     width:100%;
+    text-align: left;
+    padding: 20px;
+    font-weight: 600;
     border-bottom:1px solid #e2e2e2;
-    &.selected {
-        background-color:#d2d2d2;
+    &:hover {
+        background-color:#f7f7f7;
     }
 }
 
 .sidebar-row-filter {
     border-bottom:1px solid #3e4a5f;
+    padding: 0 20px 0 30px;
     &.sidebar-row span {
         padding:8px;
         float:left;

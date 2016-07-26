@@ -14,7 +14,7 @@ define(function(require) {
 
     events: {
       'click': 'onOverlayClicked',
-      'click .editor-component-list-sidebar-exit': 'closeView',
+      'click .editor-component-list-sidebar-exit, .click-capture': 'closeView',
       'keyup .editor-component-list-sidebar-search input': 'onSearchKeyup'
     },
 
@@ -59,11 +59,16 @@ define(function(require) {
       this.renderComponentList();
       this.headerHeight = this.$('.editor-component-list-sidebar-header').height();
       $(window).resize();
+      // move bar into place and animate in
+      this.$el.css({ right:this.$('.editor-component-list-sidebar').width()*-1}).animate({ right:"0" }, 400,"easeOutQuart");
     },
 
     closeView: function() {
-      $('html').css('overflow-y', '');
-      this.remove();
+      var self = this;
+      this.$el.animate({right:this.$('.editor-component-list-sidebar').width()*-1}, 400,"easeOutQuart", function onAnimOut() {
+        $('html').css('overflow-y', '');
+        self.remove();
+      });
     },
 
     renderComponentList: function() {
@@ -117,7 +122,6 @@ define(function(require) {
     onScreenResize: function(windowWidth, windowHeight) {
       this.$('.editor-component-list-sidebar-list').height(windowHeight - this.headerHeight);
     }
-
   },
   {
     template: 'editorComponentList'

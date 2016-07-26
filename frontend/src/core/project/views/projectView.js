@@ -53,7 +53,7 @@ define(function(require){
         event.preventDefault();
       }
 
-      Backbone.history.navigate('#/editor/' + this.model.get('_id') + '/settings', {trigger: true});
+      Origin.router.navigate('#/editor/' + this.model.get('_id') + '/settings', { trigger: true });
     },
 
     editProject: function(event) {
@@ -61,7 +61,7 @@ define(function(require){
         event.preventDefault();
       }
 
-      Backbone.history.navigate('/editor/' + this.model.get('_id') + '/menu', {trigger: true});
+      Origin.router.navigate('#/editor/' + this.model.get('_id') + '/menu', { trigger: true });
     },
 
     selectProject: function(event) {
@@ -82,16 +82,24 @@ define(function(require){
     },
 
     deleteProjectPrompt: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
+      event && event.preventDefault();
 
-      Origin.Notify.confirm({
-        type: 'warning',
-        title: window.polyglot.t('app.deleteproject'),
-        text: window.polyglot.t('app.confirmdeleteproject') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteprojectwarning'),
-        callback: _.bind(this.deleteProjectConfirm, this)
-      });
+      if(this.model.get('_isShared') === true) {
+        Origin.Notify.confirm({
+          type: 'warning',
+          title: window.polyglot.t('app.deletesharedproject'),
+          text: window.polyglot.t('app.confirmdeleteproject') + '<br/><br/>' + window.polyglot.t('app.confirmdeletesharedprojectwarning'),
+          destructive: true,
+          callback: _.bind(this.deleteProjectConfirm, this)
+        });
+      } else {
+        Origin.Notify.confirm({
+          type: 'warning',
+          title: window.polyglot.t('app.deleteproject'),
+          text: window.polyglot.t('app.confirmdeleteproject') + '<br/><br/>' + window.polyglot.t('app.confirmdeleteprojectwarning'),
+          callback: _.bind(this.deleteProjectConfirm, this)
+        });
+      }
     },
 
     deleteProjectConfirm: function(confirmed) {
@@ -115,8 +123,8 @@ define(function(require){
               text: response.responseJSON.message
             });
           };
-          
-          _.delay(errorMsg, 1000);  
+
+          _.delay(errorMsg, 1000);
         }
       });
     },
@@ -125,7 +133,7 @@ define(function(require){
       $.ajax({
         url: this.model.getDuplicateURI(),
         success: function (data) {
-          Backbone.history.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
+          Origin.router.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
         },
         error: function() {
           Origin.Notify.alert({

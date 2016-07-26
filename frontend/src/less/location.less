@@ -1,10 +1,16 @@
 @import 'variables';
+@import 'fonts.less';
 
 .location-title {
-    background-color:@ui-content-header-color;
-    color:@sidebar-title-color;
+	font-family: @font-title;
+    background-color:@location-background-color;
+    border-bottom: 1px solid fade(@primary-color, 20%);
 }
 
 .location-title-inner {
-  padding:30px;
+	font-size: 17px;
+	font-weight:600;
+	line-height: 20px;
+  	padding:25px;
+    color:@location-title;
 }

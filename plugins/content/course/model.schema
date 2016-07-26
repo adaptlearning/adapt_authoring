@@ -112,6 +112,21 @@
           "validators": [],
           "title": "Force routing",
           "help": "When this is set to 'true', the routing will be forced to the appropriate start page, regardless of the URL"
+        },
+        "_isMenuDisabled": {
+          "type": "boolean",
+          "default": false,
+          "editorOnly": true,
+          "inputType": {
+            "type": "Boolean",
+            "options": [
+              true,
+              false
+            ]
+          },
+          "validators": [],
+          "title": "Disable menu",
+          "help": "When this is set to 'true', the user will be prevented from seeing or navigating to the main menu"
         }
       }
     },
@@ -595,7 +610,7 @@
       },
       "title": "Menu lock type",
       "help": "Defines which (if any) locking mechanism will be used for menu items",
-      "validators": ["required"]
+      "validators": []
     },
     "customStyle": {
       "type": "string",

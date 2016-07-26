@@ -79,7 +79,7 @@ define(function(require){
         url: this.model.getDuplicateURI(),
         type: 'GET',
         success: function (data) {
-          Backbone.history.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
+          Origin.router.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
         },
         error: function() {
           Origin.Notify.alert({

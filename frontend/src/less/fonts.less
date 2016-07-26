@@ -1,43 +1,77 @@
 @import 'variables';
 
-// Fonts
+// RALEWAY TO BE USED IN FUTURE VERSIONS
+//--------
+
+@font-face {
+    font-family: 'ralewaybold';
+    src: url('../../fonts/raleway-bold-webfont.eot');
+    src: url('../../fonts/raleway-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../../fonts/raleway-bold-webfont.woff2') format('woff2'),
+         url('../../fonts/raleway-bold-webfont.woff') format('woff'),
+         url('../../fonts/raleway-bold-webfont.ttf') format('truetype'),
+         url('../../fonts/raleway-bold-webfont.svg#ralewaybold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-raleway-bold:'ralewaybold', sans-serif;
+
+@font-face {
+    font-family: 'ralewayregular';
+    src: url('../../fonts/raleway-regular-webfont.eot');
+    src: url('../../fonts/raleway-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../../fonts/raleway-regular-webfont.woff2') format('woff2'),
+         url('../../fonts/raleway-regular-webfont.woff') format('woff'),
+         url('../../fonts/raleway-regular-webfont.ttf') format('truetype'),
+         url('../../fonts/raleway-regular-webfont.svg#ralewayregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-raleway-regular:'ralewayregular', sans-serif;
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+@font-title: @font-raleway-regular;
+@font-family: 'Open Sans', sans-serif;
+
+@font-size:13px;
+@font-weight:400;   
+
+// Fonts sizes
 
 body {
     font-family:@font-family;
-    font-size: 13px;
+    font-size: @font-size;
     font-weight:@font-weight;
 }
 
 h1 {
     font-size:15px;
-    font-weight:200;
+    font-family: @font-title;
+    font-weight:300;
 }
 
 h2 {
-    font-size:15px;
-    font-weight:200;
+    font-weight:300;
 }
 
 h3 {
-    font-size:15px;
-    font-weight:200;
+    font-weight:300;
 }
 
 h4 {
-    font-size:15px;
     font-weight:200;
 }
 
 h5 {
-    font-size:15px;
     font-weight:200;
 }
 
 h6 {
-    font-size:15px;
     font-weight:200;
 }
 
 button, input, textarea {
     font-family:@font-family;
+    font-size:13px;
 }

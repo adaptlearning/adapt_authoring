@@ -127,15 +127,6 @@ This version adds support for Node.js v4.2.2 LTS.
 - Added validation to Confugration Settings
 
 ## [0.1.2] - 2015-09-30
-IMPORTANT: If upgrading from a previous installation, first remove the node_modules folder and run
-```javascript
-npm install --production
-```
- to install the latest code dependencies, then run
-```javascript
-node upgrade
-```
- to get the latest authoring tool and framework changes.
 
 ### Added
 - Support for _isOptional (Adapt Framework v2.x)
@@ -182,7 +173,8 @@ node upgrade
 
 ## [0.1.1] - 2015-03-12
 
-**IMPORTANT**: If upgrading from a previous version, please add the following keys to your config.json
+## Upgrade Notes
+If upgrading from a previous version, please add the following keys to your config.json
 - "outputPlugin" - "adapt"
 - "masterTenantName" - {name of the folder containing your master tenant files}
 - "masterTenantID" - {MongoDB _id of the initial first row in the 'tenants' collection}

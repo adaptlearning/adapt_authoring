@@ -3,6 +3,10 @@
 * This version of instructions contains only the essential details. [A more detailed set of installation instructions is also available.](https://github.com/adaptlearning/adapt_authoring/wiki/Install-on-Server) If you need assistance troubleshooting, consult the Adapt community's <a href="https://community.adaptlearning.org/mod/forum/view.php?id=4" target="_blank">Technical Discussion Forum</a>.
 * As an alternative to this manual installation, the Adapt authoring tool may be installed on VirtualBox with Vagrant. Please reference [Install with Vagrant](https://github.com/adaptlearning/adapt_authoring/wiki/Install-with-Vagrant).
 
+### Navigation
+- [Installing Manually](#to-install-manually)
+- [Updating the tool](#updating-the-tool)
+
 ##To Install Manually
 
 ###1. Install Prerequisites
@@ -61,3 +65,18 @@ If your server is listening on a different port, take note of it.
 `localhost:5000` (If your server is listening on a different port, substitute your port for 5000.)
 
 When the login page appears, **enter the super user's e-mail address and password.**
+
+## Updating the tool
+
+We've written a Node.js script to allow you to easily update both the authoring tool core and the installed Adapt framework to the latest versions.
+
+**IMPORTANT**: 
+- Before upgrading, make sure to first remove the `node_modules` folder and re-install the dependencies to ensure that you get the correct package dependencies for the updated code.
+- Also please consult the [CHANGELOG](https://github.com/adaptlearning/adapt_authoring/blob/update-changelog/CHANGELOG.md) for the release you're upgrading to; any extra upgrade instructions will be noted here.
+
+```javascript
+npm install --production
+node upgrade
+```
+
+The upgrade script will ask for confirmation before proceeding. Once you've consented, the process will begin.

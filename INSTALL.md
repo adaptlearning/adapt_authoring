@@ -4,8 +4,8 @@
 * As an alternative to this manual installation, the Adapt authoring tool may be installed on VirtualBox with Vagrant. Please reference [Install with Vagrant](https://github.com/adaptlearning/adapt_authoring/wiki/Install-with-Vagrant).
 
 ### Navigation
-- [Installing Manually](#Installing-Manually)
-- [Updating the tool](#Updating-the-tool)
+- [Installing Manually](#to-install-manually)
+- [Updating the tool](#updating-the-tool)
 
 ##To Install Manually
 

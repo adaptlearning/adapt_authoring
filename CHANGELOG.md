@@ -289,8 +289,7 @@ Changes below come from submissions by several developers:
  - asset records now use relative paths
  - removed iframe previews
 
-[unreleased]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.8...HEAD
-[0.1.8]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.7...v0.1.8
+[0.2.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.7...v0.2.0
 [0.1.7]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.4...v0.1.5

@@ -10,52 +10,56 @@
   ],
   "contributors": [
     {
-      "name": "Dennis Heaney",
-      "email": "dennis@learningpool.com"
-    },
-    {
-      "name": "Brian Quinn",
-      "email": "brian@learningpool.com"
-    },
-    {
-      "name": "Daryl Hedley",
-      "email": "darylhedley@hotmail.com"
-    },
-    {
-      "name": "Kevin Corry",
-      "email": ""
-    },
-    {
-      "name": "Rob Moore",
-      "email": ""
-    },
-    {
       "name": "Ryan Adams",
       "email": "ryana@learningpool.com"
     },
     {
-      "name": "Thomas Taylor",
-      "email": "thomas.taylor@kineo.com"
+      "name": "Kevin Corry",
+      "email": "kevinc@learningpool.com"
     },
     {
-      "name": "Ryan Lafferty",
-      "email": "ryanl@learningpool.com"
+      "name": "Simon Date",
+      "email": "simondate@yahoo.co.uk"
+    },
+    {
+      "name": "Thomas Eitler",
+      "email": "thomas.eitler@learnchamp.com"
     },
     {
       "name": "Dan Gray",
       "email": "dan@sinensis.co.uk"
     },
     {
+      "name": "Daryl Hedley",
+      "email": "darylhedley@hotmail.com"
+    },
+    {
+      "name": "Dennis Heaney",
+      "email": "dennis@learningpool.com"
+    },
+    {
+      "name": "Ryan Lafferty",
+      "email": "ryanl@learningpool.com"
+    },
+    {
       "name": "Sven Laux",
       "email": "sven.laux@kineo.com"
+    },
+    {
+      "name": "Rob Moore",
+      "email": "rob@learningpool.com"
     },
     {
       "name": "Petra Nussdorfer",
       "email": "petra.nussdorfer@learnchamp.com"
     },
     {
-      "name": "Thomas Eitler",
-      "email": "thomas.eitler@learnchamp.com"
+      "name": "Brian Quinn",
+      "email": "brian@learningpool.com"
+    },
+    {
+      "name": "Thomas Taylor",
+      "email": "hello@taylortom.co.uk"
     }
   ],
   "repository": {

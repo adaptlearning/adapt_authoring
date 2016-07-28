@@ -92,7 +92,7 @@ define(function(require) {
               success: function(data) {
                 Origin.trigger('editor:refreshData', function() {
                     Origin.trigger('editingOverlay:views:hide');
-                    Backbone.history.navigate('#/editor/'
+                    Origin.router.navigate('#/editor/'
                         + Origin.editor.data.course.get('_id')
                         + '/component/'
                         + data.get('_id'));
@@ -111,7 +111,7 @@ define(function(require) {
             var currentPage = currentBlock.getParent().getParent();
             var currentPageId = currentPage.get('_id');
 
-            Backbone.history.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
+            Origin.router.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
             Origin.trigger('editingOverlay:views:hide');
 
         }

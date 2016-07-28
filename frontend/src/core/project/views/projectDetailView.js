@@ -33,13 +33,14 @@ define(function(require) {
     },
 
     saveProject: function(event) {
-      var errors = this.form.commit();
+      var errors = this.form.validate();
       // This must trigger no matter what, as sidebar needs to know
       // when the form has been resubmitted
       Origin.trigger('editorSidebar:showErrors', errors);
       if (errors) {
         return;
       }
+      this.form.commit();
 
       // Fix tags
       var tags = [];
@@ -87,7 +88,7 @@ define(function(require) {
           success: _.bind(function(model, response, options) {
 
             if (this.isNew) {
-              return Backbone.history.navigate('#/editor/' + response._id + '/menu', {trigger: true});
+              return Origin.router.navigate('#/editor/' + response._id + '/menu', {trigger: true});
             }
             Origin.trigger('editor:refreshData', function() {
               Backbone.history.history.back();

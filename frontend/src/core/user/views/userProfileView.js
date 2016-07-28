@@ -1,20 +1,19 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
 
   var UserProfileView = OriginView.extend({
-
     tagName: 'div',
-
     className: 'user-profile',
 
     events: {
       'click a.change-password' : 'togglePassword',
-      'keyup #password'         : 'indicatePasswordStrength'
+      'keyup #password'         : 'onPasswordKeyup',
+      'keyup #passwordText'         : 'onPasswordTextKeyup',
+      'click .toggle-password'  : 'togglePasswordView'
     },
 
     preRender: function() {
@@ -30,81 +29,98 @@ define(function(require){
     },
 
     handleValidationError: function(model, error) {
-      var self = this;
+      Origin.trigger('sidebar:resetButtons');
 
       if (error && _.keys(error).length !== 0) {
         _.each(error, function(value, key) {
-          self.$('#' + key + 'Error').text(value);
-        });
+          this.$('#' + key + 'Error').text(value);
+        }, this);
+        this.$('.error-text').removeClass('display-none');
+        console.log(error);
       }
-
-      console.log(error);
     },
 
     togglePassword: function(event) {
-      event.preventDefault();
-
-      if (this.model.get('_isNewPassword')) {
-        this.model.set('_isNewPassword', false);
-      } else {
-        this.model.set('_isNewPassword', true);
-      }
+      event && event.preventDefault();
+      // convert to bool and invert
+      this.model.set('_isNewPassword', !!!this.model.get('_isNewPassword'));
     },
 
     togglePasswordUI: function(model, showPaswordUI) {
+      var formSelector = 'div.change-password-section .form-group .inner'; 
+      var buttonSelector = '.change-password'; 
+
       if (showPaswordUI) {
-        this.$('div.change-password-section').removeClass('display-none');
-        this.$('.change-password').text(window.polyglot.t('app.undochangepassword'));
+        this.$(formSelector).removeClass('display-none');
+        this.$(buttonSelector).text(window.polyglot.t('app.undochangepassword'));
       } else {
-        this.$('.change-password').text(window.polyglot.t('app.changepassword'));
-        this.$('div.change-password-section').addClass('display-none');
-        this.$('#password').val('');
-        this.$('#confirmPassword').val('');
+        this.$(buttonSelector).text(window.polyglot.t('app.changepassword'));
+        this.$(formSelector).addClass('display-none');
+
+        this.$('#password').val('').removeClass('display-none');
+        this.$('#passwordText').val('').addClass('display-none');
+        this.$('.toggle-password i').addClass('fa-eye').removeClass('fa-eye-slash'); 
+
+        this.$('.toggle-password').addClass('display-none');
+        this.$('#passwordError').html('');
+
         this.model.set('password', '');
-        this.model.set('confirmPassword', '');
       }
+    },
+
+    togglePasswordView: function() {
+      event && event.preventDefault();
+
+      this.$('#passwordText').toggleClass('display-none');
+      this.$('#password').toggleClass('display-none');
+      this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash'); 
     },
 
     indicatePasswordStrength: function(event) {
       var password = $('#password').val();
-      var $passwordStrength = $('#passwordStrength');
+      var $passwordStrength = $('#passwordError');
+
       // Must have capital letter, numbers and lowercase letters
       var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
-
       // Must have either capitals and lowercase letters or lowercase and numbers
       var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
-
       // Must be at least 8 characters long
       var okRegex = new RegExp("(?=.{8,}).*", "g");
 
       if (okRegex.test(password) === false) {
-        // If ok regex doesn't match the password
-        $('#passwordStrength').removeClass().addClass('alert alert-error').html(window.polyglot.t('app.validationlength', {length: 8}));
+        var classes = 'alert alert-error';
+        var htmlText = window.polyglot.t('app.validationlength', {length: 8});
       } else if (strongRegex.test(password)) {
-        // If reg ex matches strong password
-        $passwordStrength.removeClass().addClass('alert alert-success').html(window.polyglot.t('app.passwordindicatorstrong'));
+        var classes = 'alert alert-success';
+        var htmlText = window.polyglot.t('app.passwordindicatorstrong');
       } else if (mediumRegex.test(password)) {
-        // If medium password matches the reg ex
-        $passwordStrength.removeClass().addClass('alert alert-info').html(window.polyglot.t('app.passwordindicatormedium'));
+        var classes = 'alert alert-info';
+        var htmlText = window.polyglot.t('app.passwordindicatormedium');
       } else {
-        // If password is ok
-        $passwordStrength.removeClass().addClass('alert alert-error').html(window.polyglot.t('app.passwordindicatorweak'));
+        var classes = 'alert alert-info';
+        var htmlText = window.polyglot.t('app.passwordindicatorweak');
       }
+
+      $passwordStrength.removeClass().addClass(classes).html(htmlText);
     },
 
     saveUser: function() {
       var self = this;
 
-      this.model.set('firstName', self.$('#firstName').val().trim());
-      this.model.set('lastName', self.$('#lastName').val().trim());
+      this.$('.error-text').addClass('display-none');
 
+      var toChange = {
+        'firstName': self.$('#firstName').val().trim(),
+        'lastName': self.$('#lastName').val().trim()
+      };
+      
       if (self.model.get('_isNewPassword')) {
-        self.model.set('password', self.$('#password').val());
-        self.model.set('confirmPassword', self.$('#confirmPassword').val());
+        toChange.password = self.$('#password').val();
       } else {
         self.model.unset('password');
-        self.model.unset('confirmPassword');
       }
+
+      this.model.set(toChange);
 
       self.model.save({}, {
         error: function(model, response, optinos) {
@@ -118,12 +134,24 @@ define(function(require){
           Origin.trigger('editingOverlay:views:hide');
         }
       });
-    }
+    },
 
+    onPasswordKeyup: function() {
+      if(this.$('#password').val().length > 0) {
+        this.$('#passwordText').val(this.$('#password').val());
+        this.indicatePasswordStrength();
+        this.$('.toggle-password').removeClass('display-none');
+      } else {
+        this.$('.toggle-password').addClass('display-none');
+      }
+    },
+
+    onPasswordTextKeyup: function() {
+      
+    }
   }, {
     template: 'userProfile'
   });
 
   return UserProfileView;
-
 });

@@ -14,10 +14,7 @@ define(function(require) {
 
     if ('upload' === location) {
       Origin.router.createView(PluginManagementUploadView);
-      Origin.sidebar.addView(new PluginManagementUploadSidebarView().$el, {
-        "backButtonText": "Back",
-        "backButtonRoute": "/#/pluginManagement"
-      });
+      Origin.sidebar.addView(new PluginManagementUploadSidebarView().$el, {});
     } else {
       Origin.router.createView(PluginManagementView, { pluginType: location });
       Origin.sidebar.addView(new PluginManagementSidebarView().$el);

@@ -24,26 +24,29 @@
         </ul>
     </div>
     {{else}}
-    {{#with properties}}
-    <div class="theme-pallet-container">
-        <ul class="theme-palette">
-            <li>
-                <div class="swatch-top" style="background-color:{{primary_color.default}}" title="{{primary_color.title}}">
-                    <div class="swatch-bottom" style="background-color:{{secondary_color.default}}" title="{{secondary_color.title}}"></div>
-                </div>
-            </li>
-            <li>
-                <div class="swatch-top" style="background-color:{{foreground_color.default}}" title="{{foreground_color.title}}">
-                    <div class="swatch-bottom" style="background-color:{{background_color.default}}" title="{{background_color.title}}"></div>
-                </div>
-            </li>
-            <li>
-                <div class="swatch-top" style="background-color:{{inverted_foreground_color.default}}" title="{{inverted_foreground_color.title}}">
-                    <div class="swatch-bottom" style="background-color:{{inverted_background_color.default}}" title="{{inverted_background_color.title}}"></div>
-                </div>
-            </li>
-        </ul>
-    </div>
-    {{/with}}
+      {{#if settings}}
+        {{#with properties}}
+        <div class="theme-pallet-container">
+            <ul class="theme-palette">
+                <li>
+                    <div class="swatch-top" style="background-color:{{primary_color.default}}" title="{{primary_color.title}}">
+                        <div class="swatch-bottom" style="background-color:{{secondary_color.default}}" title="{{secondary_color.title}}"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="swatch-top" style="background-color:{{foreground_color.default}}" title="{{foreground_color.title}}">
+                        <div class="swatch-bottom" style="background-color:{{background_color.default}}" title="{{background_color.title}}"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="swatch-top" style="background-color:{{inverted_foreground_color.default}}" title="{{inverted_foreground_color.title}}">
+                        <div class="swatch-bottom" style="background-color:{{inverted_background_color.default}}" title="{{inverted_background_color.title}}"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        {{/with}}
+      {{else}}
+      {{/if}}
     {{/if}}
 </div>

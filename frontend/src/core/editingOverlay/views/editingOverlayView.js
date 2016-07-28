@@ -25,11 +25,10 @@ define(function(require) {
         },
 
         postRender: function() {
-            
+
         },
 
         showOverlay: function(element) {
-
             if (this._isVisible) {
                 return;
             }
@@ -37,34 +36,31 @@ define(function(require) {
             this.$('.editing-overlay-inner').html(element);
             _.defer(_.bind(function() {
                 this.$el.removeClass('display-none');
-                this.$el.velocity({left: 0, opacity: 1}, 300, function() {
+                this.$el.velocity({left: 0, opacity: 1}, 300, _.bind(function() {
                     this._isVisible = true;
-                });
+                    this.resizeOverlay();
+                }, this));
                 this.listenToOnce(Origin, 'remove:views', this.hideOverlay);
             }, this));
-
         },
 
         hideOverlay: function() {
-
             if (!this._isVisible) {
                 return;
             }
-            
+
             this.$el.velocity({left: '10%', opacity: 0}, 300, _.bind(function() {
                 this.$el.addClass('display-none');
                 this._isVisible = false;
             }, this));
-            
         },
 
         resizeOverlay: function() {
-            /*var windowHeight = $(window).height();
-            var navigationHeight = $('.navigation').outerHeight();
-            var locationTitleHeight = $('.location-title').outerHeight();
-            this.$el.height(windowHeight - (navigationHeight + locationTitleHeight));*/
+          _.defer(_.bind(function() {
+            var windowHeight = $(window).height();
+            this.$el.height(windowHeight - this.$el.offset().top);
+          }, this));
         }
-
     }, {
         template: 'editingOverlay'
     });

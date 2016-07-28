@@ -303,6 +303,7 @@ define(function(require) {
             var form = Origin.scaffold.buildForm({
               model: project
             });
+
             Origin.trigger('location:title:update', {title: 'Edit course'});
             Origin.editingOverlay.addView(new ProjectDetailView({model: project, form: form}).$el);
             Origin.sidebar.addView(new ProjectDetailEditSidebarView({form: form}).$el);
@@ -328,18 +329,33 @@ define(function(require) {
             Origin.editingOverlay.addView(new EditorConfigEditView({model: configModel, form: form}).$el);
           }
         });
+
         break;
 
       case 'selecttheme':
         var configModel = new EditorConfigModel({_courseId: route1});
 
+        var backButtonRoute = "/#/editor/" + route1 + "/menu";
+        var backButtonText = "Back to menu";
+
+        if (Origin.previousLocation.route2 === "page") {
+            backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
+            backButtonText = "Back to page";
+        }
+
+        var optionsObject = {
+            "backButtonText": backButtonText,
+            "backButtonRoute": backButtonRoute
+        };
+
         configModel.fetch({
           success: function() {
             Origin.trigger('location:title:update', {title: 'Select theme'});
-            Origin.sidebar.addView(new EditorThemeCollectionSidebarView().$el);
+            Origin.sidebar.addView(new EditorThemeCollectionSidebarView().$el, optionsObject);
             Origin.editingOverlay.addView(new EditorThemeCollectionView({model: configModel}).$el);
           }
         });
+
         break;
 
       case 'extensions':
@@ -373,8 +389,22 @@ define(function(require) {
 
         configModel.fetch({
           success: function() {
+
+            var backButtonRoute = "/#/editor/" + route1 + "/menu";
+            var backButtonText = "Back to menu";
+
+            if (Origin.previousLocation.route2 === "page") {
+                backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
+                backButtonText = "Back to page";
+            }
+
+            var optionsObject = {
+                "backButtonText": backButtonText,
+                "backButtonRoute": backButtonRoute
+            };
+
             Origin.trigger('location:title:update', {title: 'Select menu'});
-            Origin.sidebar.addView(new EditorMenuSettingsEditSidebarView().$el);
+            Origin.sidebar.addView(new EditorMenuSettingsEditSidebarView().$el, optionsObject);
             Origin.editingOverlay.addView(new EditorMenuSettingsEditView({model: configModel}).$el);
           }
         });
@@ -385,6 +415,7 @@ define(function(require) {
         // Edit the menu item
         if (route4 === "edit") {
           var contentObjectModel = new EditorContentObjectModel({_id: route3});
+
           contentObjectModel.fetch({
             success: function() {
               
@@ -415,7 +446,7 @@ define(function(require) {
           // update sidebar view
           Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
             "backButtonText": "Back to courses",
-            "backButtonRoute": Origin.dashboardRoute
+            "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
           });
         }
         break;

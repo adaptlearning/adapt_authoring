@@ -17,9 +17,10 @@ define(function(require){
     className: 'page',
 
     events: {
-      'click a.add-article'  : 'addArticle',
-      'click a.edit-page'    : 'loadPageEdit',
-      'click .paste-cancel'  : 'pasteCancel'
+      'click a.add-article'      : 'addArticle',
+      'click a.page-edit-button' : 'openContextMenu',
+      'dblclick .page-detail'    : 'loadPageEdit',
+      'click .paste-cancel'      : 'pasteCancel'
     },
 
     childrenCount: 0,
@@ -36,13 +37,20 @@ define(function(require){
 
       var captureScroll = function() {
         $(window).scroll(function() {
-          if (window.scrollY != 0) {
+          if (window.scrollY !== 0) {
             Origin.editor.scrollTo = window.scrollY;
           }
         });
       };
 
       _.delay(captureScroll, 2000);
+    },
+
+    resize: function() {
+      _.defer(_.bind(function() {
+        var windowHeight = $(window).height();
+        this.$el.height(windowHeight - this.$el.offset().top);
+      }, this));
     },
 
     persistScrollPosition: function() {
@@ -87,6 +95,7 @@ define(function(require){
       this.addArticleViews();
 
       _.defer(_.bind(function(){
+        this.resize();
         this.trigger('pageView:postRender');
         this.setViewToReady();
       }, this));
@@ -167,9 +176,30 @@ define(function(require){
       });
     },
 
-    loadPageEdit: function (event) {
+    loadPageEdit: function(event) {
+      event && event.preventDefault();
+       var route = '#/editor/' + this.model.get('_courseId') + '/page/' + this.model.get('_id') + '/edit';
+       Origin.router.navigate(route);
+    },
+
+    // TODO fragile HACK, refactor context menu code to allow what I want to do later... 
+    openContextMenu: function(event) {
+      if(!event) return console.log('Error: needs a current target to attach the menu to...');
+      
       event.preventDefault();
-      Origin.trigger('editorSidebarView:addEditView', this.model);
+      event.stopPropagation();
+ 
+      var fakeView = new Backbone.View({
+        model: new Backbone.Model({ _type: 'page-min' }) 
+      });
+
+      
+      this.listenTo(fakeView, {
+        'contextMenu:page-min:edit': this.loadPageEdit,
+        'contextMenu:page-min:copyID': this.onCopyID
+      });
+
+      Origin.trigger('contextMenu:open', fakeView, event);
     },
 
     onCutArticle: function(view) {
@@ -178,8 +208,7 @@ define(function(require){
       });
 
       this.render();
-    },
-
+    }
   }, {
     template: 'editorPage'
   });

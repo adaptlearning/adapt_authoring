@@ -36,7 +36,21 @@ define(function(require) {
         postRender: function() {
             // Position sidebar filter to filter button
             var offsetTop = $('.sidebar-filter-button').offset().top;
+            var sidebarHeight = $('.sidebar-filter').height();
+            var windowHeight = $(window).height();
+            
+            if(offsetTop+sidebarHeight > windowHeight) {
+                offsetTop = windowHeight - (sidebarHeight + 10); 
+            }
+ 
             this.$el.css({'top': offsetTop, 'display': 'block'});
+
+            // resize
+            var popupHeight = $('.sidebar-filter').outerHeight();
+            var top = $('.sidebar-filter').offset().top;
+            var containerTop = $('.sidebar-filter-items').offset().top;
+            $('.sidebar-filter-items').height(popupHeight-(containerTop-top));
+
             // Bring focus to the filter input field
             this.$('.sidebar-filter-search-input').focus();
             // First item should be selected so the user can press enter

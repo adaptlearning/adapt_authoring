@@ -268,7 +268,7 @@ define(['jquery', 'underscore', 'backbone', 'backboneForms'], function($, _, Bac
     template: _.template('\
       <div class="list-items">\
         <div data-items></div>\
-        <button class="btn btn-primary" type="button" data-action="add">Add</button>\
+        <button class="btn primary" type="button" data-action="add">Add</button>\
       </div>\
     ', null, Form.templateSettings)
 

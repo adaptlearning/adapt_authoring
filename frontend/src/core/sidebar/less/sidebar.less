@@ -1,37 +1,72 @@
-
-.sidebar-hide {
-    #app {
-        margin-left: 0px;
-    }
-
-    .sidebar {
-        display: none;
-    }
-}
-
+@import '../../../less/variables.less';
 .sidebar {
     position:fixed;
-    top:0px;
+    top:0;
     left:0px;
-    width:220px;
+    width:250px;
     height:100%;
     overflow-y:auto;
     overflow-x:hidden;
     a {
         text-decoration: none;
     }
-    .dashboard-sidebar-filter-clear {
+    .sidebar-filter-clear {
         display:inline;
+        position: absolute;
+        left: 205px;
+        top: 25px;
+        width: 0px;
+        padding: 0;
+        background: none;
+        color: @sidebar-input-text-color;
     }
-    .sidebar-row .sidebar-row-input input {
-        width:168px;
-    }  
+
+    .sidebar-item-container {
+        position: relative;
+        height:100%;
+    }
+
+    .sidebar-hide {
+        #app {
+            margin-left: 0px;
+        }
+
+        .sidebar {
+            display: none;
+        }
+    }
+
+    .separator {
+        margin-top: 20px;
+    }
+
+    .sidebar-row {
+      .error {
+        position: inherit;
+        top: inherit;
+        left: inherit;
+        font-size: inherit;
+        color: white !important;
+        i {
+          color: white !important;
+        }
+      }
+      .sidebar-row-input input {
+          margin: 10px 25px;
+          width: 180px;
+          height: 25px;
+          font-size: @sidebar-input-font-size;
+          border-radius: @button-radius;
+          border-color: @sidebar-input-color;
+          background: @sidebar-input-color;
+          color: @sidebar-input-text-color;
+          text-align: left;
+      }
+    }
 }
 
-
-
 .sidebar-inner {
-    padding-top:41px;
+    padding: 61px 0 25px 0;
 }
 
 .sidebar-breadcrumb {
@@ -41,16 +76,12 @@
 
 .sidebar-breadcrumb-inner {
     display:block;
-    padding:18px 20px;
+    padding:30px 30px;
+    font-size: @sidebar-input-font-size;
     i {
-        width: 20px;
+        color: @secondary-color;
         margin-right:8px;
     }
-}
-
-.sidebar-item-container {
-    position:relative;
-    height:100%;
 }
 
 .sidebar-item {
@@ -66,39 +97,31 @@
 .sidebar-row, select.sidebar-row {
     display:block;
     position: relative;
-    a {
-        width:100%;
-        padding:18px 20px;
-        display:inline-block;
-        text-align:left;
-        font-size:13px;
-        font-weight:normal;
-        i {
-            margin-right:16px;
-        }
-    }
     button {
+        font-size: @sidebar-input-font-size;
         background:none;
         border:none;
         width:100%;
-        padding:18px 20px;
+        padding:18px 30px;
         text-align:left;
+
         i {
-            margin-right:16px;
-        }
-        &.sidebar-inline-input-button {
-            width:10px;
-            height:10px;
-            padding:8px;
-            border:none;
-            width: 28px;
-            height: 32px;
-            padding: 8px;
-            border: none;
-            &:hover {
-                background:none;
+            margin-right:8px;
+
+            &.fa-toggle-off, .fa-toggle-on {
+                float: right;
+                color:@secondary-color;
+                font-size: 20px;
+            }
+
+            &.fa-chevron-right, &.primary-color {
+                color:@secondary-color;
+            }
+            &.fa-times {
+                color:@sidebar-input-text-color;
             }
         }
+
     }
 }
 
@@ -108,7 +131,7 @@
 
 .sidebar-item-title-inner {
     padding:30px 20px;
-    font-size: 15px;
+    font-size: @sidebar-input-font-size;
     font-weight: 200;
 }
 
@@ -133,5 +156,5 @@
 }
 
 button.sidebar-tag {
-    padding:14px 20px;
+    padding: 14px 15px 14px 30px;
 }

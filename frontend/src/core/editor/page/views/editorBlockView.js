@@ -212,6 +212,8 @@ define(function(require){
       var components = this.model.getChildren();
       var addPasteZonesFirst = components.length && components.at(0).get('_layout') != 'full';
 
+      this.addComponentButtonLayout(components);
+
       if (addPasteZonesFirst) {
         this.setupPasteZones();
       }
@@ -224,6 +226,20 @@ define(function(require){
       if (!addPasteZonesFirst) {
         this.setupPasteZones();
       }
+    },
+
+    addComponentButtonLayout: function(components){
+        if(components.length == 2) return;
+        else if (components.length == 0){
+            this.$('.add-component').addClass('full');
+            return;
+        }
+        else {
+          if(components.models[0].attributes._layout == 'left')
+            this.$('.add-component').addClass('right');
+          else
+            this.$('.add-component').addClass('left');  
+        }
     },
 
     loadBlockEdit: function (event) {

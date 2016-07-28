@@ -53,6 +53,7 @@ define(function(require) {
     // Listen to navigation event to toggle
     Origin.on('navigation:globalMenu:toggle', function() {
         // Remove all events off #app
+        $('#global-menu-icon').toggleClass('open');
         $('#app, .sidebar').off('click');
         // Toggle between displaying and removing the menu
         if (_isActive === true) {
@@ -65,6 +66,7 @@ define(function(require) {
     Origin.on('remove:views globalMenu:close', function() {
         $('#app, .sidebar').off('click');
         closeGlobalMenu();
+        $('#global-menu-icon').removeClass('open');
     });
 
     // Listen to when the user is logger out and reset the collection as permissions

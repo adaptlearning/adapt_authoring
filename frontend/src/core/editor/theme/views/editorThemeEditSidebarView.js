@@ -8,20 +8,13 @@ define(function(require) {
   var EditorThemeEditSidebarView = SidebarItemView.extend({
 
     events: {
-        'click .editor-theme-edit-sidebar-save'     : 'saveEditing',
-        'click .editor-theme-edit-sidebar-cancel'   : 'cancelEditing'
+        'click .editor-theme-edit-sidebar-save' : 'saveEditing'
     },
 
     saveEditing: function(event) {
         event.preventDefault();
 
         Origin.trigger('editorThemeEditSidebar:views:save');
-    },
-
-    cancelEditing: function(event) {
-        event.preventDefault();
-        Backbone.history.history.back();
-        Origin.trigger('editingOverlay:views:hide');
     }
 
   }, {

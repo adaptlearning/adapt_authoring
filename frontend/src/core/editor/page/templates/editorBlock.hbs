@@ -3,7 +3,7 @@
 <div class="block-inner">
 
     <div class="block-detail unselectable">
-        <h4 class="block-title">
+        <h4 class="block-title title">
             {{#if displayTitle}}
                 {{{displayTitle}}}
             {{else}}
@@ -14,11 +14,11 @@
     </div>
 
     <div class="page-components clearfix"></div>
+    
+    {{#if layoutOptions}}
+    <div class="add-control">
+        <a href="#" class="btn add-component">{{t 'app.addcomponent'}}</a>
+    </div>
+    {{/if}}
 
 </div>
-
-{{#if layoutOptions}}
-<div class="add-control">
-    <a href="#" class="btn btn-primary add-component">{{t 'app.addcomponent'}}</a>
-</div>
-{{/if}}

@@ -13,9 +13,9 @@ a.open-context-contentObject {
         position: relative;
         background-color: #fff;
         cursor: pointer;
-        padding: 40px 20px 20px;
+        padding: 30px 20px 10px;
         transition:background-color 0.3s;
-        &:hover {
+        &:hover {   
             .editor-menu-item-settings {
                 top:0;
                 opacity:1;
@@ -24,13 +24,14 @@ a.open-context-contentObject {
     }
 
     &-title {
-        text-align:center;
+        padding: 5px 0 0 30px;
     }
 
     &-icon {
-        text-align:center;
+        float: left;
         font-size:24px;
         margin-bottom:10px;
+        color: #999;
         &.page {
         }
 
@@ -47,6 +48,10 @@ a.open-context-contentObject {
         .editor-menu-item-icon.menu i:before {
             content: "\f115";
         }
+        
+        .editor-menu-item-icon {
+            color: #fff;
+        }
 	}
 
 	&.selected {
@@ -59,6 +64,10 @@ a.open-context-contentObject {
 
         &.content-type-menu .editor-menu-item-pin {
             display:block;
+        }
+
+        .editor-menu-item-icon {
+            color: #fff;
         }
 	}
 

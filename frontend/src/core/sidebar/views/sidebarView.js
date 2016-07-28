@@ -58,11 +58,10 @@ define(function(require) {
 			});
 		},
 
-        addFilterView: function(options) {
-            Origin.trigger('sidebar:sidebarFilter:remove');
-            $('body').append(new SidebarFilterView(options).$el);
-        }
-
+		addFilterView: function(options) {
+			Origin.trigger('sidebar:sidebarFilter:remove');
+			$('body').append(new SidebarFilterView(options).$el);
+		}
 	}, {
 		template: 'sidebar'
 	});

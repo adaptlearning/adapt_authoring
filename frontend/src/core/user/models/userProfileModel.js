@@ -29,14 +29,6 @@ define(function(require) {
             validationErrors.password = window.polyglot.t('app.validationlength', {length: 8});
           }
         }
-
-        if (!attributes.confirmPassword) {
-          validationErrors.confirmPassword = window.polyglot.t('app.validationrequired');
-        } else {
-          if (attributes.password !== attributes.confirmPassword) {
-            validationErrors.confirmPassword = window.polyglot.t('app.validationpasswordmatch');
-          }   
-        }
       }
 
       return _.isEmpty(validationErrors) 

@@ -27,7 +27,7 @@
     </div>
 
     {{#ifValueEquals assetType "image"}}
-        {{#if thumbnailPath}} 
+        {{#if metadata}} 
         <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
         {{else}}
         <div class="asset-management-list-item-image">

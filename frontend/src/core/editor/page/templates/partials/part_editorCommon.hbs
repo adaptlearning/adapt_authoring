@@ -24,6 +24,8 @@
         </button>
 
     <div class="separator" />
+    
+    {{#ifHasPermissions "*/*:create,*/*:read,*/*:update,*/*:delete"}}
     <div class="sidebar-row">
         <button class="editor-common-sidebar-export">
             <span class="editor-common-sidebar-export-inner">
@@ -34,6 +36,8 @@
             </span>
         </button>
     </div>
+    {{/ifHasPermissions}}
+
     <div class="separator" />
 
     <div class="sidebar-row">

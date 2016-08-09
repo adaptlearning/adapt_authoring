@@ -248,7 +248,7 @@ define(function(require){
         drag: function(event) {
           window.clearInterval(autoScrollTimer);
 
-          var SCROLL_THRESHOLD = 100;
+          var SCROLL_THRESHOLD = $container.height()*0.2;
           var SCROLL_INCREMENT = 7;
 
           var offsetTop = $container.offset().top;

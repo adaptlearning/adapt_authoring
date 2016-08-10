@@ -285,7 +285,7 @@
   "app.validationfailed": "Validation failed",
   "app.successdefaulttitle": "Success",
   "app.export": "Export source code",
-  "app.exporting": "Exporting course",
+  "app.exporting": "Exporting source code",
   "app.exportcoursetitle": "Exporting course",
   "app.exporterrortitle": "Course export failed",
   "app.exportcoursetext": "Please stand by, this may take a few moments.",

@@ -12,7 +12,7 @@ define(function(require) {
     className: "course-edit",
 
     preRender: function() {
-      this.listenTo(Origin, 'projectEditSidebar:views:save', this.saveProject);
+      this.listenTo(Origin, 'projectEditSidebar:views:save', this.save);
 
       if (this.model.isNew()) {
         this.isNew = true;
@@ -32,82 +32,49 @@ define(function(require) {
       EditorOriginView.prototype.postRender.call(this);
     },
 
-    saveProject: function(event) {
-      var errors = this.form.validate();
-      // This must trigger no matter what, as sidebar needs to know
-      // when the form has been resubmitted
-      Origin.trigger('editorSidebar:showErrors', errors);
-      if (errors) {
-        return;
-      }
-      this.form.commit();
-
-      // Fix tags
+    getAttributesToSave: function() {
+      // set tags
       var tags = [];
-      _.each(this.model.get('tags'), function (item) {
+      _.each(this.model.get('tags'), function(item) {
         item._id && tags.push(item._id);
       });
-
       this.model.set('tags', tags);
 
-      // Retrieve any old attributes which might have changed
-      // This step is neccessary because otherwise the complete model is passed up
       var changedAttributes = this.model.changedAttributes(this.originalAttributes);
-      
-      if (changedAttributes || this.isNew) {
-        // Only save what has changed
-        var attributesToSave = changedAttributes
-          ? _.pick(this.model.attributes, _.keys(changedAttributes))
-          : null;
+      if(changedAttributes) {
+        return _.pick(this.model.attributes, _.keys(changedAttributes));
+      }
 
-        var isPatch = _.keys(changedAttributes).length == 1 
-          ? false
-          : true;
-        
-        if (!isPatch) { 
-          // Save everything
-          attributesToSave = null;
-        }
-        
-        this.model.save(attributesToSave, {
-          patch: isPatch,
+      return null;
+    },
 
-          error: function(model, response, options) { 
-            // If a specific error message exists, display it.
-            var messageText = typeof response.responseJSON == 'object' && response.responseJSON.hasOwnProperty('message')
-              ? response.responseJSON.message
-              : window.polyglot.t('app.errorsave');
-              
-            Origin.Notify.alert({
-              type: 'error',
-              text: messageText
-            });
-            
-            Origin.trigger('sidebar:resetButtons');
-          },
-          success: _.bind(function(model, response, options) {
-
-            if (this.isNew) {
-              return Origin.router.navigate('#/editor/' + response._id + '/menu', {trigger: true});
-            }
-            Origin.trigger('editor:refreshData', function() {
-              Backbone.history.history.back();
-              this.remove();
-            }, this);
-
-          }, this)
-        });
-      } else {
+    onSaveSuccess: function(model, response, options) {
+      if (this.isNew) {
+        return Origin.router.navigate('#/editor/' + response._id + '/menu', {trigger: true});
+      }
+      Origin.trigger('editor:refreshData', function() {
         Backbone.history.history.back();
         this.remove();
-      }
-    }
+      }, this);
+    },
 
+    onSaveError: function(model, response, options) {
+      // If a specific error message exists, display it.
+      var messageText = typeof response.responseJSON == 'object' && response.responseJSON.hasOwnProperty('message')
+        ? response.responseJSON.message
+        : window.polyglot.t('app.errorsave');
+
+      Origin.Notify.alert({
+        type: 'error',
+        text: messageText
+      });
+
+      Origin.trigger('sidebar:resetButtons');
+    }
   },
   {
     template: 'projectDetail'
   });
 
   return ProjectDetailView;
-
 });

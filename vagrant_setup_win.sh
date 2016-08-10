@@ -5,7 +5,7 @@
 cd /vagrant/
 
 # copy the authoring_tool into the VM box
-cp -r * /home/vagrant/
+cp -r /vagrant /home/vagrant
 
 # need this ppa for ffmpeg on trusty tahr
 add-apt-repository ppa:mc3man/trusty-media

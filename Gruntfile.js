@@ -48,8 +48,8 @@ module.exports = function(grunt) {
             generateSourceMaps: true,
             compress: false,
             dest: 'frontend/src/adaptbuilder/css',
-            cssFilename: "adapt.css",
-            mapFilename: "adapt.css.map"
+            cssFilename: 'adapt.css',
+            mapFilename: 'adapt.css.map'
           }
         },
         compile: {
@@ -63,8 +63,8 @@ module.exports = function(grunt) {
             generateSourceMaps: false,
             compress: true,
             dest: 'frontend/src/adaptbuilder/css',
-            cssFilename: "adapt.css",
-            mapFilename: "adapt.css.map"
+            cssFilename: 'adapt.css',
+            mapFilename: 'adapt.css.map'
           }
         }
       },
@@ -326,7 +326,7 @@ module.exports = function(grunt) {
       }
 
       function complete(error, output) {
-        if (error) return grunt.fail.fatal(JSON.stringify(error, false, " "));
+        if (error) return grunt.fail.fatal(JSON.stringify(error, false, ' '));
 
         var outputMap = output.map;
 

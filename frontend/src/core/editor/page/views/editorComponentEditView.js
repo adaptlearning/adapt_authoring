@@ -24,16 +24,6 @@ define(function(require) {
       this.model.set('_componentType', this.model.get('_componentType')._id);
       return EditorOriginView.prototype.getAttributesToSave.apply(this, arguments);
     },
-
-    onSaveError: function() {
-      Origin.trigger('sidebar:resetButtons');
-      Origin.trigger('editor:refreshData', function() {
-        var currentPageId = this.model.getParent().getParent().getParent().get('_id');
-        var currentCourseId = Origin.editor.data.course.get('_id');
-        Origin.router.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
-        this.remove();
-      }, this);
-    },
     */
   },
   {

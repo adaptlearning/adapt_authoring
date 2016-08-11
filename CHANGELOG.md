@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 **IMPORTANT**: For information on how to *correctly* update your installation, consult [INSTALL.md](https://github.com/adaptlearning/adapt_authoring/blob/master/INSTALL.md#updating-the-tool).
 
-## [0.2.1] - 2016-08-10
+## [0.2.1] - 2016-08-11
 This is a patch release which fixes minor issues with v0.2.0 uncovered by community user testing.
 
 ## Added

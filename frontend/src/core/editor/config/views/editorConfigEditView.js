@@ -18,7 +18,10 @@ define(function(require) {
       if(!changed) {
         return null;
       }
-      return _.extend(changed, mandatory);
+      return _.extend(changed, {
+        _id: this.model.get('_id'),
+        _courseId: this.model.get('_courseId')
+      });
     }
   },
   {

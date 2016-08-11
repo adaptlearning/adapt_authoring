@@ -157,11 +157,7 @@ define(function(require){
           this.buildErrorMessage(errors, '');
 
         // TODO remove when we've got a better solution
-        Origin.Notify.alert({
-          type: "error",
-          title: window.polyglot.t('app.validationfailed'),
-          text: errorText
-        });
+        this.onSaveError(window.polyglot.t('app.validationfailed'), errorText);
 
         return;
       }
@@ -193,10 +189,14 @@ define(function(require){
       return null;
     },
 
-    onSaveError: function() {
+    onSaveError: function(pTitle, pText) {
+      var title = _.isString(pTitle) ? pTitle : null;
+      var text = _.isString(pText) ? pText : window.polyglot.t('app.errorsave');
+
       Origin.Notify.alert({
         type: 'error',
-        text: window.polyglot.t('app.errorsave')
+        title: title,
+        text: text
       });
       Origin.trigger('sidebar:resetButtons');
     },

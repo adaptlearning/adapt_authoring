@@ -5,7 +5,7 @@
 cd /vagrant/
 
 # copy the authoring_tool into the VM box
-# this will create the following /home/vagrant/vagrnat
+# this will create the following /home/vagrant/vagrant
 cp -r /vagrant /home/vagrant
 # move back into right location
 mv /home/vagrant/vagrant/{.,}* /home/vagrant

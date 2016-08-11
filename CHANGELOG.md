@@ -7,11 +7,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.2.1] - 2016-08-10
 This is a patch release which fixes minor issues with v0.2.0 uncovered by community user testing.
 
+## Added
+- LESS sourcemaps
+
 ### Fixed
 - Block drop-zone padding
 - Export button now hidden again for all non-admin users
 - Auto-scrolling while dragging on menu editor and page editor screens
 - Styling of scaffold list items
+- LESS imports now working
+- reset.less now loaded before *everything*
 
 ## [0.2.0] - 2016-07-27
 This version introduces a new look and feel to the user interface of the authoring tool, and closely matches the new theme of the Adapt community site introduced at the beginning of the year. 

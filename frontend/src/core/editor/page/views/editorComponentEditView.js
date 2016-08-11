@@ -18,10 +18,13 @@ define(function(require) {
       Origin.trigger('editorSidebarView:removeEditView', this.model);
     },
 
+    /*
     getAttributesToSave: function() {
-      self.model.set('_componentType', self.model.get('_componentType')._id);
+      // TODO look into this, always seems undefined
+      this.model.set('_componentType', this.model.get('_componentType')._id);
       return EditorOriginView.prototype.getAttributesToSave.apply(this, arguments);
     },
+    */
 
     onSaveError: function() {
       Origin.trigger('sidebar:resetButtons');

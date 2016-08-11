@@ -138,6 +138,7 @@
     "test": "make test"
   },
   "devDependencies": {
+    "less": "^2.7.1",
     "mocha": "~1.13.0",
     "phantom": "^0.6.5",
     "should": "~1.3.0",

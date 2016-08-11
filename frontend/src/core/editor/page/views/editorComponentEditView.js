@@ -35,6 +35,7 @@ define(function(require) {
         this.remove();
       }, this);
     },
+    */
   },
   {
     template: 'editorComponentEdit'

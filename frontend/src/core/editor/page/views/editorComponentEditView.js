@@ -24,6 +24,7 @@ define(function(require) {
     },
 
     onSaveError: function() {
+      Origin.trigger('sidebar:resetButtons');
       Origin.trigger('editor:refreshData', function() {
         var currentPageId = this.model.getParent().getParent().getParent().get('_id');
         var currentCourseId = Origin.editor.data.course.get('_id');

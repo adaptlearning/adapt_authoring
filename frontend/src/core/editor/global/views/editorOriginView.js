@@ -190,7 +190,7 @@ define(function(require){
     },
 
     onSaveError: function(pTitle, pText) {
-      var title = _.isString(pTitle) ? pTitle : null;
+      var title = _.isString(pTitle) ? pTitle : window.polyglot.t('app.errordefaulttitle');
       var text = _.isString(pText) ? pText : window.polyglot.t('app.errorsave');
 
       Origin.Notify.alert({

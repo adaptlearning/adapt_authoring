@@ -54,18 +54,14 @@ define(function(require) {
       }, this);
     },
 
+    // TODO not really  good enough to handle model save errors and other errors here
     onSaveError: function(model, response, options) {
-      // If a specific error message exists, display it.
-      var messageText = typeof response.responseJSON == 'object' && response.responseJSON.hasOwnProperty('message')
-        ? response.responseJSON.message
-        : window.polyglot.t('app.errorsave');
+      if(arguments.length == 2) {
+        return EditorOriginView.prototype.onSaveError.apply(this, arguments);
+      }
 
-      Origin.Notify.alert({
-        type: 'error',
-        text: messageText
-      });
-
-      Origin.trigger('sidebar:resetButtons');
+      var messageText = typeof response.responseJSON == 'object' && response.responseJSON.message;
+      EditorOriginView.prototype.onSaveError.call(this, null, messageText);
     }
   },
   {

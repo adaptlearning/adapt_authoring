@@ -63,11 +63,7 @@ define(function(require) {
       var selectedMenu = this.collection.findWhere({_isSelected: true});
 
       if (selectedMenu === undefined) {
-        Origin.Notify.alert({
-          type: 'error',
-          text: window.polyglot.t('app.errornomenuselected')
-        });
-        return;
+        return this.onSaveError(null, window.polyglot.t('app.errornomenuselected'));
       }
 
       var selectedMenuId = selectedMenu.get('_id');
@@ -75,22 +71,8 @@ define(function(require) {
       // Should push to api
 
       $.post('/api/menu/' + selectedMenuId + '/makeitso/' + this.model.get('_courseId'))
-        .error(function() {
-          Origin.Notify.alert({
-            type: 'error',
-            text: window.polyglot.t('app.errorsave')
-          });
-        })
-        .done(_.bind(function() {
-
-          Origin.trigger('editingOverlay:views:hide');
-
-          Origin.trigger('editor:refreshData', function() {
-            Backbone.history.history.back();
-            this.remove();
-          }, this);
-
-        }, this));
+        .error(this.onSaveError)
+        .done(this.onSaveSuccess);
     }
 
   },

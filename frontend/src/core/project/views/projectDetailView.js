@@ -47,11 +47,9 @@ define(function(require) {
     onSaveSuccess: function(model, response, options) {
       if (this.isNew) {
         return Origin.router.navigate('#/editor/' + response._id + '/menu', {trigger: true});
+      } else {
+        EditorOriginView.prototype.onSaveSuccess.apply(this, arguments);
       }
-      Origin.trigger('editor:refreshData', function() {
-        Backbone.history.history.back();
-        this.remove();
-      }, this);
     },
 
     // TODO not really  good enough to handle model save errors and other errors here

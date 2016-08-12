@@ -28,10 +28,6 @@ define(function(require) {
       this.originalAttributes = _.clone(this.model.attributes);
     },
 
-    postRender: function() {
-      EditorOriginView.prototype.postRender.call(this);
-    },
-
     getAttributesToSave: function() {
       // set tags
       var tags = [];

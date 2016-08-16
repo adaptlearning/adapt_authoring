@@ -283,6 +283,7 @@
   "app.confirmdeletesubscription": "Are you sure you want to delete this subscription?",
   "app.errormenueditorbody": "An error occurred during the save",
   "app.validationfailed": "Validation failed",
+  "app.validationfailedmessage": "You need to fix the following before you can save your data:",
   "app.successdefaulttitle": "Success",
   "app.export": "Export source code",
   "app.exporting": "Exporting source code",

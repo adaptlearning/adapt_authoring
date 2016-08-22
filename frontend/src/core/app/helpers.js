@@ -193,7 +193,7 @@ define(function(require){
                 : list[i];
               html += '<li class="tag-item" title="' + tag + '"><span class="tag-value">' + tag  + '</span></li>';
             }
-            html += '</ul>'
+            html += '</ul>';
           }
 
           return html;
@@ -214,7 +214,7 @@ define(function(require){
         },
 
         getAssetFromValue: function(url) {
-          var urlSplit = url.split('/')
+          var urlSplit = url.split('/');
           var fileName = urlSplit[urlSplit.length - 1];
           // Get courseAsset model
           var courseAsset = Origin.editor.data.courseAssets.findWhere({_fieldName: fileName});
@@ -222,7 +222,7 @@ define(function(require){
           if (courseAsset) {
             var courseAssetId = courseAsset.get('_assetId');
 
-            return '/api/asset/serve/' + courseAssetId;  
+            return '/api/asset/serve/' + courseAssetId;
           } else {
             return '';
           }
@@ -237,7 +237,7 @@ define(function(require){
         },
 
         getThumbnailFromValue: function(url) {
-          var urlSplit = url.split('/')
+          var urlSplit = url.split('/');
           var fileName = urlSplit[urlSplit.length - 1];
           // Get courseAsset model
           var courseAsset = Origin.editor.data.courseAssets.findWhere({_fieldName: fileName});
@@ -316,7 +316,7 @@ define(function(require){
             var currentChildren = model.getChildren();
 
             // Do validate across each item
-            if (currentChildren.length == 0) {
+            if (currentChildren.length === 0) {
               containsAtLeastOneChild = false;
 
               alerts.push(
@@ -336,6 +336,7 @@ define(function(require){
             }
           }
 
+          // call iterator
           iterateOverChildren(currentCourse);
 
           if(alerts.length > 0) {
@@ -355,9 +356,10 @@ define(function(require){
           return containsAtLeastOneChild;
         },
 
-      validateCourseConfirm: function(isConfirmed) {
-        if (isConfirmed) {
-          Origin.trigger('editor:courseValidation');
+        validateCourseConfirm: function(isConfirmed) {
+          if (isConfirmed) {
+            Origin.trigger('editor:courseValidation');
+          }
         }
     };
 

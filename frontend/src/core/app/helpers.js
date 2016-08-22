@@ -190,7 +190,7 @@ define(function(require){
 
         ifHasPermissions: function(permissions, block) {
           var permissionsArray = permissions.split(',');
-          if (Origin.permissions.hasPermissions(permissions)) {
+          if (Origin.permissions.hasPermissions(permissionsArray)) {
             return block.fn(this);
           } else {
             return block.inverse(this);

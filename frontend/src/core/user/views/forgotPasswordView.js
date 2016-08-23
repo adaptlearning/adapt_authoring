@@ -1,6 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
+  var Helpers = require('coreJS/app/helpers');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
 
@@ -39,15 +40,12 @@ define(function(require) {
 
     isValid: function() {
       var email = this.$('.input-username-email').val().trim();
-      var regEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-      if (email.length == 0 || !regEx.test(email)) {
+      var valid = Helpers.isValidEmail(email);
+      if (valid) {
         this.$('.input-username-email').addClass('input-error');
         this.$('.validation-message').removeClass('display-none');
-        return false;
-      } else {
-        return true;
       }
+      return valid;
     },
 
     requestResetToken: function(e) {

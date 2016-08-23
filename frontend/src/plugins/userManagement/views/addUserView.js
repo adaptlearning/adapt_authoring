@@ -17,7 +17,27 @@ define(function(require){
       this.setViewToReady();
     },
 
+    isValid: function() {
+      var email = this.$('input[name=email]').val().trim();
+      var valid = Helpers.isValidEmail(email);
+      if(valid) {
+        this.$('.field-error').addClass('display-none');
+      } else {
+        this.$('.field-error').removeClass('display-none');
+        Origin.Notify.alert({
+          type: 'error',
+          title: window.polyglot.t('app.validationfailed'),
+          text: window.polyglot.t('app.invalidusernameoremail')
+        });
+      }
+      return valid;
+    },
+
     saveNewUser: function() {
+      if(!this.isValid()) {
+        return;
+      }
+
       var self = this;
       // TODO fix this awful nesting
       // submit form data

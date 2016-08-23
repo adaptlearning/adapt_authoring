@@ -348,8 +348,16 @@ define(function(require){
         if (isConfirmed) {
           Origin.trigger('editor:courseValidation');
         }
-      }
+      },
 
+      isValidEmail: function(value) {
+        var regEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (value.length === 0 || !regEx.test(value)) {
+          return false;
+        } else {
+          return true;
+        }
+      }
     };
 
     for(var name in helpers) {

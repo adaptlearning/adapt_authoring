@@ -39,33 +39,10 @@ define(function(require){
       }
 
       var self = this;
-      // TODO fix this awful nesting
       // submit form data
       this.$('form.addUser').ajaxSubmit({
         error: this.onAjaxError,
-        success: function(userData, userStatus, userXhr) {
-          var roleID = $('form.addUser select[name=role]').val()
-          // HACK find the default role dynamically
-          var defaultRole = '565f304ddca12e4b3702e579';
-          if(roleID !== defaultRole) {
-            // unassign the default role
-            $.ajax('/api/role/' + defaultRole + '/unassign/' + userData._id,{
-              method: 'POST',
-              error: self.onAjaxError,
-              success: function() {
-                // assign chosen role
-                $.ajax('/api/role/' + roleID + '/assign/' + userData._id,{
-                  method: 'POST',
-                  error: self.onAjaxError,
-                  success: function() {
-                    self.goBack();
-                  }
-                });
-              }
-            });
-          }
-          else self.goBack();
-        }
+        success: this.onAjaxSuccess
       });
 
       return false;
@@ -73,6 +50,30 @@ define(function(require){
 
     goBack: function() {
       Origin.router.navigate('#/userManagement', { trigger:true });
+    },
+
+    onAjaxSuccess: function(userData, userStatus, userXhr) {
+      var roleID = $('form.addUser select[name=role]').val();
+      // HACK find the default role dynamically
+      var defaultRole = '565f304ddca12e4b3702e579';
+      if(roleID !== defaultRole) {
+        // unassign the default role
+        $.ajax('/api/role/' + defaultRole + '/unassign/' + userData._id,{
+          method: 'POST',
+          error: self.onAjaxError,
+          success: function() {
+            // assign chosen role
+            $.ajax('/api/role/' + roleID + '/assign/' + userData._id,{
+              method: 'POST',
+              error: self.onAjaxError,
+              success: function() {
+                self.goBack();
+              }
+            });
+          }
+        });
+      }
+      else self.goBack();
     },
 
     onAjaxError: function(data, status, error) {

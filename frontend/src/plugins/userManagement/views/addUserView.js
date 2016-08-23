@@ -60,7 +60,7 @@ define(function(require){
       Origin.Notify.alert({
         type: 'error',
         title: "Couldn't add user",
-        text: error + (data.responseText ? '<br/><br/>' + data.responseText : '')
+        text: data.responseText || error
       });
     },
 

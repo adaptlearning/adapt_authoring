@@ -22,7 +22,7 @@ define(function(require){
     initialize: function() {
       OriginView.prototype.initialize.apply(this, arguments);
 
-      Origin.trigger('location:title:update', { title: "All users" });
+      Origin.trigger('location:title:update', { title: window.polyglot.t('app.usermanagementtitle') });
       this.initData();
     },
 
@@ -44,8 +44,14 @@ define(function(require){
 
       OriginView.prototype.render.apply(this, arguments);
 
+      this.setHeight();
       this.switchToViewMode();
       this.renderUserViews();
+    },
+
+    setHeight: function() {
+      var newHeight = $(window).height()-$('.'+this.className).offset().top;
+      $('.'+this.className).height(newHeight);
     },
 
     postRender: function() {

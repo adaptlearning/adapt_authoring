@@ -23,7 +23,7 @@
         {{/unless}}
       </div>
     </div>
-    <div class="col-10">
+    <div class="col-15">
       <div class="tb-col-inner">
         <span class="read">{{tenantName}}</span>
         {{#ifUserNotMe _id}}{{#unless _isDeleted}}
@@ -40,7 +40,7 @@
         {{/unless}}{{/ifUserNotMe}}
       </div>
     </div>
-    <div class="col-10">
+    <div class="col-20">
       <div class="tb-col-inner">
         <div class="read">
           <ul>
@@ -79,22 +79,14 @@
         {{/ifValueEquals}}
       </div>
     </div>
-    <div class="col-10 col-centered">
+    <div class="col-15 col-centered">
       <div class="tb-col-inner">{{momentFormat lastAccess 'Do MMM YYYY'}}</div>
-    </div>
-    <div class="col-10 col-centered">
-      <div class="tb-col-inner">{{momentFormat firstAccess 'Do MMM YYYY'}}</div>
-    </div>
-    <div class="col-10">
-      <div class="tb-col-inner">
-      </div>
     </div>
     {{#ifUserIsMe _id}}
       <div class="col-15">
         <div class="tb-col-inner">
           <div class="edit-mode">
-            {{!TODO lang string}}
-            The actions you can perform on your own user are limited.</br></br>Please log in as another administrator for full control.
+            {{t 'app.changeadminaccounts'}}
           </div>
         </div>
       </div>
@@ -103,13 +95,12 @@
         <div class="tb-col-inner">
           <div class="buttons edit-mode">
             {{#if _isDeleted}}
-              <button class="btn btn-primary restore">Restore user<i class="fa fa-undo"></i></button>
-              {{!TODO delete user }}
-              <button class="btn btn-alert edit-input delete">Delete user<i class="fa fa-trash"></i></button>
+              <button class="btn alert edit-input delete">{{t 'app.deleteuser'}}</button>
+              <button class="btn action-primary restore">{{t 'app.restoreuser'}}</button>
             {{else}}
               {{!TODO reset password <button class="btn btn-primary edit-input resetPassword">Reset password<i class="fa fa-envelope"></i></button>}}
-              <button class="btn btn-info changePassword">Change password<i class="fa fa-key"></i></button>
-              <button class="btn btn-alert disable">Disable user<i class="fa fa-ban"></i></button>
+              <button class="btn action-primary changePassword">{{t 'app.resetpassword'}}</button>
+              <button class="btn alert disable">{{t 'app.disableuser'}}</button>
             {{/if}}
           </div>
         </div>

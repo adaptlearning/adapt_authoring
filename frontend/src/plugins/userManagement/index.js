@@ -15,7 +15,6 @@ define(function(require) {
   };
 
   Origin.on('app:dataReady login:changed', function() {
-    console.log('User Management: app:dataReady login:changed');
   	if (Origin.permissions.hasPermissions(data.featurePermissions)) {
       data.allRoles.on('sync', onDataFetched);
       data.allRoles.url = 'api/role';
@@ -40,12 +39,11 @@ define(function(require) {
 
   Origin.on('router:userManagement', function(location, subLocation, action) {
     // unauthorised users can turn back around
-    // TODO lang string
     if (!Origin.permissions.hasPermissions(data.featurePermissions)) {
       Origin.Notify.alert({
         type: 'warning',
-        title: "No trespassing",
-        text: "You aren't authorised to view this area."
+        title: window.polyglot.t('app.notauthorisedtitle'),
+        text: window.polyglot.t('app.notauthorisedmessage')
       });
       Origin.router.navigate('#/dashboard');
       return;

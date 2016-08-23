@@ -9,7 +9,7 @@ define(function(require){
     className: 'addUser',
 
     preRender: function() {
-      Origin.trigger('location:title:update', { title: "Add new user" });
+      Origin.trigger('location:title:update', { title: window.polyglot.t('app.addusertitle') });
       this.listenTo(Origin, 'userManagement:saveUser', this.saveNewUser);
     },
 

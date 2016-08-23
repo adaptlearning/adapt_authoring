@@ -1,16 +1,28 @@
+@import '../../../less/sharedStyles.less';
+
 .userManagement {
-    .fa {
-        padding-left: 5px;
+    overflow-y: scroll;
+
+    .container {
+        .form-container-style;
+        max-width: inherit;
+    }
+
+    .view-buttons {
+        text-align: right;
+        padding-bottom: 20px;
+    }
+    .action-buttons{
+        margin-top: 30px;
+        margin-bottom: 15px;
     }
 
     .tb-row {
+        padding: 10px;
+
         &.align-right {
             text-align: right;
         }
-    }
-
-    .col-row {
-        word-break: break-word;
     }
 
     .user-item {
@@ -44,11 +56,25 @@
             margin-bottom: 5px;
             width: 100%;
         }
+
+        input {
+            border-radius: 3px;
+            border: 1px solid #dedede;
+            width: 70%;
+            padding: 3px;
+            margin-right: 4px;
+        }
+        select {
+            max-width: 115px;
+
+        }
     }
 }
 
 .addUser {
     .inner {
+        .form-container-style;
+
         padding: 30px;
 
         li {
@@ -56,11 +82,15 @@
             list-style: none;
         }
 
-        .role, .tenant {
-            padding: 3px;
+        .title {
+            padding-bottom: 30px;
+            font-size: 16px;
+            font-weight: 600;
+        }
 
-            label {
-                font-weight: normal;
+        form {
+            .form-group {
+                border: none;
             }
         }
     }

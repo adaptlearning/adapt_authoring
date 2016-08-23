@@ -4,27 +4,8 @@ button {
     border:none;
     background:none;
     padding:10px 12px;
-    font-size:13px;
     &:hover, &:focus {
         outline:none;
-    }
-
-    &.primary-color {
-        background:@button-primary-color!important;
-        color:@button-primary-text-color!important;
-        &:hover {
-            background:@button-primary-hover-color!important;
-            color:@button-primary-hover-text-color!important; 
-        }
-    }
-
-    &.info-color {
-        background:@button-info-color!important;
-        color:@button-info-text-color!important;
-        &:hover {
-            background:@button-info-hover-color!important;
-            color:@button-info-hover-text-color!important; 
-        }
     }
 
     &.warning-color {
@@ -63,7 +44,6 @@ button {
             color:@button-disabled-text-color!important; 
         }
     }
-
 }
 
 .btn {
@@ -71,11 +51,8 @@ button {
     padding:10px 12px;
     background:none;
     border:@button-border;
-    border-radius:3px;
-    background-color:@button-color;
-    color:@button-text-color;
-    font-size:13px;
-    font-weight:300;
+    border-radius:@button-radius;
+    font-weight:600;
     text-decoration: none;
     transition:all 0.3s;
 
@@ -84,70 +61,204 @@ button {
         color:@button-hover-text-color;
         border:@button-hover-border;
     }
+}
 
-    &-block {
-        display:inline-block;
-        width:100%;
-        max-width:300px;
-        margin:0 auto;
-        text-align:center;
-    }
-
-    &-primary {
-        background-color:@button-primary-color;
+.primary {
+    background-color:@button-primary-color;
+    color:@button-primary-text-color;
+    border-color: @button-primary-color;
+    i {
         color:@button-primary-text-color;
-        border:1px solid @button-primary-color;
-        i {
-            color:@button-primary-text-color;
-            &:hover, &:focus {
-                color:@button-primary-hover-text-color;
-            }
-        }
         &:hover, &:focus {
-            background-color:@button-primary-hover-color;
             color:@button-primary-hover-text-color;
-            border:1px solid @button-primary-hover-color;
         }
     }
+    &:hover, &:focus {
+        background-color:@button-primary-hover-color;
+        color:@button-primary-hover-text-color;
+        border-color:@button-primary-hover-color;
+    }
+}
 
-    &-info {
-        background-color:@button-info-color;
-        color:@button-info-text-color;
-        border:1px solid @button-info-color;
+.primary-hollow { 
+    background-color:@button-transparent;
+    color: @button-primary-color;
+    border-color:@button-primary-color;
+    i {
+        color:@button-primary-text-color;
         &:hover, &:focus {
-            background-color:@button-info-hover-color;
-            color:@button-info-hover-text-color;
-            border:1px solid @button-info-hover-color;
+            color:@button-primary-hover-text-color;
         }
     }
+    &:hover, &:focus {
+        color: @button-primary-text-color;
+        background-color: @button-primary-color;
+        border-color:@button-primary-color;
+    }        
+}
 
-    &-warning {
-        background-color:@button-warning-color;
+.secondary {
+    background-color:@button-secondary-color;
+    color:@button-secondary-text-color;
+    border-color:@button-secondary-color;
+    i {
+        color:@button-secondary-text-color;
+        &:hover, &:focus {
+            color:@button-secondary-hover-text-color;
+        }
+    }
+    &:hover, &:focus {
+        background-color:@button-secondary-hover-color;
+        color:@button-secondary-hover-text-color;
+        border-color:@button-secondary-hover-color;
+    }
+}
+
+.secondary-hollow { 
+    background-color:@button-transparent;
+    color: @button-secondary-color;
+    border-color:@button-secondary-color;
+    i {
+        color:@button-secondary-text-color;
+        &:hover, &:focus {
+            color:@button-secondary-hover-text-color;
+        }
+    }
+    &:hover, &:focus {
+        color: @button-secondary-text-color;
+        background-color: @button-secondary-color;
+        border-color:@button-secondary-color;
+    }        
+}
+
+.tertiary {
+    background-color:@button-tertiary-color;
+    color:@button-tertiary-text-color;
+    border-color:@button-tertiary-color;
+    i {
+        color:@button-tertiary-text-color;
+        &:hover, &:focus {
+            color:@button-tertiary-hover-text-color;
+        }
+    }
+    &:hover, &:focus {
+        background-color:@button-tertiary-hover-color;
+        color:@button-tertiary-hover-text-color;
+        border-color:@button-tertiary-hover-color;
+    }
+}
+
+.tertiary-hollow { 
+    background-color:@button-transparent;
+    color:@button-tertiary-color;
+    border-color:@button-tertiary-color;
+    i {
+        color:@button-tertiary-text-color;
+        &:hover, &:focus {
+            color:@button-tertiary-hover-text-color;
+        }
+    }
+    &:hover, &:focus {
+        color: @button-tertiary-text-color;
+        background-color: @button-tertiary-color;
+        border-color:@button-tertiary-color;
+    }        
+}    
+
+.quaternary {
+    background-color:@button-quaternary-color;
+    color:@button-quaternary-text-color;
+    border-color:@button-quaternary-color;
+    i {
+        color:@button-quaternary-text-color;
+        &:hover, &:focus {
+            color:@button-quaternary-hover-text-color;
+        }
+    }
+    &:hover, &:focus {
+        background-color:@button-quaternary-hover-color;
+        color:@button-quaternary-hover-text-color;
+        border-color:@button-quaternary-hover-color;
+    }
+}
+
+.quaternary-hollow { 
+    background-color:@button-transparent;
+    color:@button-quaternary-color;
+    border-color:@button-quaternary-color;
+    i {
+        color:@button-quaternary-text-color;
+        &:hover, &:focus {
+            color:@button-quaternary-hover-text-color;
+        }
+    }
+    &:hover, &:focus {
+        color:@button-quaternary-text-color;
+        background-color:@button-quaternary-color;
+        border-color:@button-quaternary-color;
+    }        
+}
+
+.white-hollow {
+    background-color:@button-transparent;
+    color:@button-white-hollow-text-color;
+    border-color:@button-white-hollow-text-color;
+    &:hover, &:focus {
+        color:@button-white-hollow-hover-text-color;
+        background-color:@button-white-hollow-hover-color;
+        border-color:@button-white-hollow-hover-color;
+    }
+}
+
+/*
+* Action buttons
+*/
+// Use these attributes to easily configure the sidebar buttons
+&.action-primary {
+    .secondary;
+}
+&.action-secondary {
+    .primary-hollow;
+}
+
+.warning {
+    background-color:@button-warning-color;
+    color:@button-warning-text-color;
+    border-color:@button-warning-color;
+    &:hover, &:focus {
+        background-color:@button-warning-hover-color;
         color:@button-warning-text-color;
-        border:1px solid @button-warning-color;
-        &:hover, &:focus {
-            background-color:@button-warning-hover-color;
-            color:@button-warning-text-color;
-            border:1px solid @button-warning-hover-color;
-        }
+        border-color:@button-warning-hover-color;
     }
+}
 
-    &-alert {
-        background-color:@button-alert-color;
-        color:@button-alert-text-color;
-        border:1px solid @button-alert-color;
-        &:hover, &:focus {
-            background-color:@button-alert-hover-color;
-            color:@button-alert-hover-text-color;
-            border:1px solid @button-alert-hover-color;
-        }
+.alert {
+    background-color:@button-alert-color;
+    color:@button-alert-text-color;
+    border-color:@button-alert-color;
+    &:hover, &:focus {
+        background-color:@button-alert-hover-color;
+        color:@button-alert-hover-text-color;
+        border-color:@button-alert-hover-color;
     }
-    
-    &-fixed-width {
-      width: 150px;
-    }
-    
-    &-icon {
-      padding-right: 16px;
-    }
+}
+
+.btn-social {
+  width: 160px;
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  padding-left: 56px;
+}
+
+.btn-social > :first-child {
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 18px;
+  line-height: 34px;
+  font-size: 1.6em;
+  text-align: center;
+  border-right: 1px solid rgba(0,0,0,0.2);
 }

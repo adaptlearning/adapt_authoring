@@ -11,6 +11,7 @@ define(function(require) {
       'click .pluginManagement-sidebar-themes'	: 'onManageThemesClicked',
       'click .pluginManagement-sidebar-components'	: 'onManageComponentsClicked',
       'click .pluginManagement-sidebar-menus'  : 'onManageMenusClicked',
+      'click .pluginManagement-sidebar-getPlugins'  : 'onGetPluginsClicked',
       'click .pluginManagement-sidebar-dashboard'	: 'returnToDashboard'
     },
 
@@ -32,6 +33,10 @@ define(function(require) {
 
     onManageMenusClicked: function () {
       this.managePluginType('menu');
+    },
+
+    onGetPluginsClicked: function () {
+        var win = window.open("https://www.adaptlearning.org/index.php/plugin-browser/", '_blank');
     },
 
     managePluginType: function (pluginType) {

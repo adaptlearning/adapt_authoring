@@ -55,6 +55,22 @@ define(function(require) {
     ContextMenu.addItem('block', contextItems);
     ContextMenu.addItem('component', contextItems);
     ContextMenu.addItem('page', contextItems);
+
+    ContextMenu.addItem('page-min', [
+      {
+        title: window.polyglot.t('app.edit'),
+        className: 'context-menu-item',
+        callbackEvent: "edit"
+      },
+      {
+        title: window.polyglot.t('app.copyidtoclipboard'),
+        className: 'context-menu-item',
+        callbackEvent: "copyID"
+      }
+    ]);
+
+    // Set the section/menu menu options
+    contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "copy"})), 1);		
     ContextMenu.addItem('menu', contextItems);
 
     var courseContextItems = [

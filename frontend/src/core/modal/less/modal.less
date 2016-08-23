@@ -1,3 +1,5 @@
+@import '../../../less/variables.less';
+
 // Modal styling
 // ==============
 
@@ -30,8 +32,7 @@
     height:100%;
     z-index:4000;
     .modal-popup {
-        background-color: @modal-color;
-        color: #000;
+        background-color: @ui-content-color;
         height: 100%;
         overflow-y: scroll;
     }
@@ -41,18 +42,22 @@
     }
 
     .modal-popup-toolbar {
-        background-color: #293141;
+        background-color: @adapt-tertiary-color;
         text-align:right;
         color:#fff;
-        height:40px;
+        padding: 5px 10px;
         button {
-            color: @modal-icon-color;
+            color: @adapt-primary-color;
             padding:0px 10px 0px 10px;
             height:40px;
             display:inline-block;
             transition:background-color 0.3s;
+            i {
+              color: @adapt-secondary-color;
+            }
             &:hover {
-                background-color: lighten(#293141, 10%);
+              // background-color: lighten(@adapt-tertiary-color, 10%);
+              color: white;
             }
             &:disabled {
                 color:#666;

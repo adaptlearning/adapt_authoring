@@ -11,7 +11,6 @@ define(function(require) {
 
     className: "component-edit",
 
-
     preRender: function() {
       this.listenTo(Origin, 'editorComponentEditSidebar:views:save', this.saveComponent);
       this.model.set('ancestors', this.model.getPossibleAncestors().toJSON());
@@ -24,13 +23,14 @@ define(function(require) {
 
     saveComponent: function() {
       var self = this;
-      var errors = self.form.commit();
+      var errors = self.form.validate();
       // This must trigger no matter what, as sidebar needs to know
       // when the form has been resubmitted
       Origin.trigger('editorSidebar:showErrors', errors);
       if (errors) {
         return;
       }
+      self.form.commit();
 
       self.model.set('_componentType', self.model.get('_componentType')._id);
 
@@ -52,7 +52,7 @@ define(function(require) {
           Origin.trigger('editor:refreshData', function() {
             var currentPageId = self.model.getParent().getParent().getParent().get('_id');
             var currentCourseId = Origin.editor.data.course.get('_id');
-            Backbone.history.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
+            Origin.router.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
             self.remove();
           }, this);
 

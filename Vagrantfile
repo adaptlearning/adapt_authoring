@@ -5,7 +5,8 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "ubuntu/trusty32"
+  config.vm.box_download_insecure = true
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -26,5 +27,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/htdocs", "1"]
+    ### Change network card to PCnet-FAST III
+    # For NAT adapter
+    vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
+    # For host-only adapter
+    vb.customize ["modifyvm", :id, "--nictype2", "Am79C973"]
   end
 end

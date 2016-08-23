@@ -1,74 +1,33 @@
 <div class="login-inner">
 
     <div class="login-logo">
-        <img src="adaptbuilder/css/assets/adapt-learning-logo.png"/>
+        <img src="adaptbuilder/css/assets/adapt-learning-logo-white.png"/>
     </div>
 
     {{#if isAuthenticated}}
     <h3 class="login-already-logged-in">{{t 'app.alreadyloggedin'}}<a id="linkDash" href="/#dashboard">{{t 'app.dashboard'}}</a></h3>
     {{else}}
-    <form class="login-form">
-
-        <div class="login-new-user col-1-2">
-
-            <div class="login-new-user-inner">
-                  Welcome to the {{t 'app.productname'}}.<br/><br/>
-
-                  {{#each otherLoginLinks}}
-                    <div class="login-other-type">{{{html}}}</div>
-                  {{/each}}
-
-         {{!--        <h2 class="login-title login-form-row">
-                    {{t 'app.newuser'}}
-                </h2>
-
-                <div class="login-body login-form-row">
-                    {{t 'app.createnewaccount'}}
+    <form class="login-form" autocomplete="off">
+            <span class="login-title">{{t 'app.signin'}}</span>
+            <div class="login-fields">
+                <div id="loginError" class="display-none">
+                  <i class="fa fa-times"></i><span id="loginErrorMessage"/>
                 </div>
-
-                <button class="btn">{{t 'app.createnewaccountbutton'}}</button> --}}
-
+                <input type="email" autocomplete="off" class="login-input-username" value="" id="login-input-username" placeholder="{{t 'app.usernameoremail'}}" tabindex="1" />
+                <input type="password" autocomplete="off" class="login-input-password" value="" id="login-input-password" placeholder="{{t 'app.password'}}" tabindex="2" />
+                <button type="submit" class="btn secondary login-form-submit" tabindex="3">{{t 'app.login'}}</button>
             </div>
-        </div>
 
-        <div class="login-returning-user col-2-2">
-            <div class="login-returning-user-inner">
-
-                <h2 class="login-title login-form-row">
-                    {{t 'app.returninguser'}}
-                </h2>
-
-                <span id="loginErrorMessage" class="error"></span>
-
-                <div class="login-username login-form-row">
-                    <label for="login-input-username">
-                        {{t 'app.usernameoremail'}}:
-                    </label>
-                    <input type="email" id="login-input-username" tabindex="1" autocomplete="off"/>
-                </div>
-
-                <div class="login-password">
-                    <label for="login-input-password">
-                        {{t 'app.password'}}:
-                    </label>
-                    <input type="password" id="login-input-password" tabindex="2">
-                </div>
-
-                <div class="login-remember-me">
-                    <input id="remember-me" name="remember-me" type="checkbox"/>
-                    <label for="remember-me" class="remember-me-label">{{t 'app.rememberme'}}</label>
-                </div>
-
-                <div class="login-forgot-password">
-                    <a class="login-forgot-password" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
-                </div>
-
-                <button type="submit" class="btn btn-primary login-form-submit" tabindex="3">{{t 'app.login'}}</button>
-
+            <div class="login-remember-me">
+                <input id="remember-me" class="remember-me-checkbox" name="remember-me" type="checkbox"/>
+                <label for="remember-me" class="remember-me-label">{{t 'app.rememberme'}}</label>
             </div>
-        </div>
 
+            <div class="login-forgot-password">
+                <a class="" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
+            </div>
     </form>
+
     {{/if}}
 
 </div>

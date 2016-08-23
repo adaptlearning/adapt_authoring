@@ -33,13 +33,14 @@ define(function(require) {
     },
 
     saveProject: function(event) {
-      var errors = this.form.commit();
+      var errors = this.form.validate();
       // This must trigger no matter what, as sidebar needs to know
       // when the form has been resubmitted
       Origin.trigger('editorSidebar:showErrors', errors);
       if (errors) {
         return;
       }
+      this.form.commit();
 
       // Fix tags
       var tags = [];
@@ -71,16 +72,23 @@ define(function(require) {
         this.model.save(attributesToSave, {
           patch: isPatch,
 
-          error: function() {
+          error: function(model, response, options) { 
+            // If a specific error message exists, display it.
+            var messageText = typeof response.responseJSON == 'object' && response.responseJSON.hasOwnProperty('message')
+              ? response.responseJSON.message
+              : window.polyglot.t('app.errorsave');
+              
             Origin.Notify.alert({
               type: 'error',
-              text: window.polyglot.t('app.errorsave')
+              text: messageText
             });
+            
+            Origin.trigger('sidebar:resetButtons');
           },
           success: _.bind(function(model, response, options) {
 
             if (this.isNew) {
-              return Backbone.history.navigate('#/editor/' + response._id + '/menu', {trigger: true});
+              return Origin.router.navigate('#/editor/' + response._id + '/menu', {trigger: true});
             }
             Origin.trigger('editor:refreshData', function() {
               Backbone.history.history.back();

@@ -89,18 +89,14 @@ define(function(require) {
 	}
 
 	Backbone.Form.editors.Text.prototype.setValue = function(value) {
-		if (!value && typeof this.schema.default !== 'undefined') {
-            value = this.schema.default;
-        }
-		this.$el.val(value);
-	}
+		var schemaDefault = this.schema.default;
 
-	Backbone.Form.editors.Checkbox.prototype.setValue = function(value) {
-		if (value || this.schema.default) {
-			this.$el.prop('checked', true);
-		}else {
-			this.$el.prop('checked', false);
+		if (!value && typeof schemaDefault !== 'undefined' &&
+			!(schemaDefault instanceof Array)) {
+			value = schemaDefault;
 		}
+
+		this.$el.val(value);
 	}
 
 	Backbone.Form.editors.TextArea.prototype.render = function() {

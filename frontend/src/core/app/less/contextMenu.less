@@ -1,15 +1,15 @@
 // Context Menu styling
 // ==============
-@context-menu-color:#293141;
+@context-menu-color:#34bee0;
 @context-menu-text-color:#fff;
 
 @context-menu-icon-color:#fff;
 
-@context-menu-item-color:#3eb4e4;
+@context-menu-item-color:@context-menu-color;
 @context-menu-item-hover-color:darken(@context-menu-item-color,10%);
 
-@context-menu-item-text-color:#9cabc4;
-@context-menu-item-text-hover-color:#fff;
+@context-menu-item-text-color:white;
+@context-menu-item-text-hover-color:@context-menu-item-text-color;
 
 @contect-menu-item-border:1px solid #3e4a5f;
 
@@ -17,31 +17,33 @@
     position:absolute;
     background-color: @context-menu-color;
     color: @context-menu-text-color;
+    box-shadow: 0 0 12px 1px rgba(0,0,0,0.15);
     z-index: 100;
-    
-    .context-menu-pin {
+
+    /*.context-menu-pin {
         position:absolute;
         top:0px;
         left:-8px;
-        width: 0; 
-        height: 0; 
+        width: 0;
+        height: 0;
         border-top: 8px solid transparent;
-        border-bottom: 8px solid transparent; 
+        border-bottom: 8px solid transparent;
         border-right:8px solid darken(@context-menu-color, 10%);
-    }
+    }*/
 
     .context-menu-item {
-        border-left:4px solid darken(@context-menu-color, 10%);
-        min-width:120px;
+        /*border-left:4px solid darken(@context-menu-color, 10%);*/
+        min-width:130px;
         .context-menu-item-open {
             display:block;
-            padding:8px 10px;
+            padding:12px;
             text-decoration: none;
             color: @context-menu-item-text-color;
+                border-top: 1px solid #60cce7;
             transition:all 0.3s;
             &:hover {
                 color:@context-menu-item-text-hover-color;
-                background-color:darken(@context-menu-color, 10%);
+                background-color:lighten(@context-menu-color, 15%);
             }
         }
     }

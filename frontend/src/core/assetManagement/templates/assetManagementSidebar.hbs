@@ -1,18 +1,20 @@
 <div class="sidebar-item-inner">
 
-    <div class="sidebar-row sidebar-item-title">
+{{!--     <div class="sidebar-row sidebar-item-title">
         <h2 class="sidebar-item-title-inner">
             Asset Management
         </h2>
-    </div>
+    </div> --}}
 
-    <div class="sidebar-row">
-        <button class="primary-color asset-management-sidebar-new">
-            <span class="asset-management-sidebar-new-inner">
-                <i class="fa fa-plus"></i>Add new asset
-            </span>
-        </button>
-    </div>
+    <div class="separator"></div>
+
+    <button class="asset-management-sidebar-new action-primary">
+        <span class="asset-management-sidebar-new-inner">
+            Add new asset
+        </span>
+    </button>
+
+    <div class="separator"></div>
 
     {{!-- ASSET FILTERS --}}
 
@@ -25,8 +27,8 @@
     {{!-- inline search field with close button --}}
     <div class="sidebar-row">
         <div class="sidebar-row-input">
-            <input type="text" class="asset-management-sidebar-filter-search" placeholder="{{t 'app.search'}}"/>
-            <button class="sidebar-inline-input-button asset-management-sidebar-filter-clear-search">
+            <input type="text" class="asset-management-sidebar-filter-search" placeholder="{{t 'app.searchbyname'}}"/>
+            <button class="sidebar-filter-clear">
                 <i class="fa fa-times"></i>
             </button>
         </div>
@@ -82,12 +84,10 @@
         </h3>
     </div>
 
-    <div class="sidebar-row">
-        <button class="asset-management-sidebar-add-tag sidebar-filter-button sidebar-tag info-color">
+        <button class="asset-management-sidebar-add-tag sidebar-filter-button sidebar-tag action-secondary">
             <span class="dashboard-sidebar-add-tag-inner">
-                <i class="fa-plus fa"></i>Add Tag
+                {{t 'app.searchbytag' }}
             </span>
         </button>
-    </div>
 
 </div>

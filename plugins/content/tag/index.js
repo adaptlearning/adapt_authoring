@@ -53,7 +53,7 @@ TagContent.prototype.create = function (data, next) {
 
   // clean title and make case insenitive regex
   data.title = data.title.replace(/,/g, '').trim();
-  var tagRegex = new RegExp('^' + data.title + '$', "i");
+  var tagRegex = new RegExp('^' + escapeRegExp(data.title) + '$', "i");
   this.retrieve({ title: tagRegex }, function (err, results) {
     if (err) {
       return next(err);
@@ -77,17 +77,17 @@ function initialize () {
         if (err) {
           return next(err);
         }
-        
+
         var searchParams;
         if (req.query.hasOwnProperty('term')){
           // create regex for "term" and ignore case
-          var termRegex = new RegExp('^' + req.query.term, 'i');
+          var termRegex = new RegExp('^' + escapeRegExp(req.query.term), 'i');
           searchParams = { _isDeleted:false, title:termRegex };
         } else {
           searchParams = { _isDeleted:false };
         }
-        
-        
+
+
         db.retrieve('tag', searchParams, { fields: 'title' }, function (err, results) {
           if (err) {
             return next(err);
@@ -104,6 +104,14 @@ function initialize () {
       });
     });
   });
+}
+
+/**
+* escape regex
+* see http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+*/
+function escapeRegExp(str) {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
 }
 
 initialize();

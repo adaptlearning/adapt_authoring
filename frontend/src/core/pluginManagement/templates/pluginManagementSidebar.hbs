@@ -1,16 +1,16 @@
 <div class="sidebar-item-inner">
-  <div class="sidebar-row sidebar-item-title">
+{{!--   <div class="sidebar-row sidebar-item-title">
     <h2 class="sidebar-item-title-inner">
       {{t 'app.pluginmanagement'}}
     </h2>
-  </div>
-  <div class="sidebar-row">
-    <button class="primary-color pluginManagement-sidebar-upload">
+  </div> --}}
+    <div class="separator"></div>
+    <button class="pluginManagement-sidebar-upload action-primary">
       <span class="plugin-management-sidebar-view-inner">
-        <i class="fa fa-upload"></i>{{t 'app.uploadplugin'}}
+        {{!-- <i class="fa fa-upload"></i> --}}{{t 'app.uploadplugin'}}
       </span>
     </button>
-  </div>
+    <div class="separator"></div>
   <div class="sidebar-row">
     <button class="pluginManagement-sidebar-extensions">
       <span class="pluginManagement-sidebar-extensions">
@@ -37,6 +37,11 @@
       <span class="pluginManagement-sidebar-menus">
         <i class="fa fa-sitemap"></i>Menus
       </span>
+    </button>
+  <div class="separator"></div>
+  <div class="sidebar-row">
+    <button class="pluginManagement-sidebar-getPlugins">
+      <i class="fa fa-external-link"></i>Get new plugins
     </button>
   </div>
 </div>

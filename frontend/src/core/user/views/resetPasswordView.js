@@ -27,7 +27,7 @@ define(function(require) {
     goToLogin: function(e) {
       e.preventDefault();
 
-      Backbone.history.navigate('#/user/login', {trigger: true});
+      Origin.router.navigate('#/user/login', {trigger: true});
     },
 
     handleValidationError: function(model, error) {
@@ -43,7 +43,7 @@ define(function(require) {
     verifyToken: function() {
       if (!this.model.get('user')) {
         // Invalid token entered, take the user to login
-        Backbone.history.navigate('#/user/login', {trigger: true});
+        Origin.router.navigate('#/user/login', {trigger: true});
       }
     },
 
@@ -62,7 +62,7 @@ define(function(require) {
               type: 'success',
               text: window.polyglot.t('app.resetpasswordsuccess')
             });
-            Backbone.history.navigate('#/user/login', {trigger: true});
+            Origin.router.navigate('#/user/login', {trigger: true});
           }
         },
         error: function(model, response, options) {

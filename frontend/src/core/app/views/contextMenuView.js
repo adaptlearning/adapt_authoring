@@ -24,12 +24,13 @@ define(function(require) {
           if (!view.model.isEditable()) {
             type = 'sharedcourse';
           }
-        } 
+        }
 
         this.onOpenContextMenu(type, e);
       });
       this.listenTo(Origin, 'contextMenu:closeContextMenu', this.onCloseContextMenu);
       this.listenTo(Origin, 'remove', this.onCloseContextMenu);
+      this.listenTo(Origin, 'remove:views', this.onCloseContextMenu);
       this.render();
     },
 
@@ -44,9 +45,8 @@ define(function(require) {
     },
 
     onCloseContextMenu: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
+      event && event.preventDefault();
+
       this._isVisible = false;
       this.hideContextMenu();
     },
@@ -57,28 +57,30 @@ define(function(require) {
       if (this._isVisible) {
         this._isVisible = false;
         this.hideContextMenu();
-      } 
+      }
 
       this._isVisible = true;
       this.showContextMenu(true, e);
     },
 
     showContextMenu: function(emptyContextMenu, e) {
-      var contextMenuWidth = this.$el.width();
       if (emptyContextMenu) {
         this.emptyContextMenu();
         this.renderItems();
         Origin.trigger('contextMenu:openedItemView');
       }
-      _.defer(_.bind(function() {
-        this.$el.css({position: 'absolute',
-          left: $(e.currentTarget).offset().left + $(e.currentTarget).width() + 10,
-          top: $(e.currentTarget).offset().top})
-        .removeClass('display-none');
-      
-        this.addBodyEvent();
-        Origin.trigger('contextMenu:opened');
-      }, this));
+
+      var newCSS = {
+        position: 'absolute',
+        left: $(e.currentTarget).offset().left + $(e.currentTarget).width() + 10,
+        top: $(e.currentTarget).offset().top-($(e.currentTarget).height()/2)
+      };
+
+      this.$el.css(newCSS).removeClass('display-none');
+
+      this.addBodyEvent();
+
+      Origin.trigger('contextMenu:opened');
     },
 
     emptyContextMenu: function() {
@@ -136,7 +138,7 @@ define(function(require) {
 
     onContextMenuItemClicked: function(event) {
       event.preventDefault();
-      
+
       var callbackEvent = this.model.get('callbackEvent');
       this.model.get('contextView').trigger('contextMenu:' + this.model.get('type') + ':' + callbackEvent);
 

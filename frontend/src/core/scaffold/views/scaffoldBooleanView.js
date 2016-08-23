@@ -16,7 +16,7 @@ define(function(require) {
         },
 
         setValue: function(value) {
-            if (typeof value == 'undefined' && typeof this.schema.default !== 'undefined') {
+            if ((typeof value == 'undefined' || value == null) && typeof this.schema.default !== 'undefined') {
                 value = this.schema.default;
             }
             this.$('option[value="' + value + '"]').attr("selected", "selected");

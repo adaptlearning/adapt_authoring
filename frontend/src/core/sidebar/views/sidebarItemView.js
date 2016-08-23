@@ -130,7 +130,7 @@ define(function(require) {
     },
 
     closeProject: function() {
-      Backbone.history.navigate('#/dashboard');
+      Origin.router.navigate('#/dashboard');
     }
 
   });

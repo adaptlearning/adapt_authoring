@@ -43,7 +43,7 @@ define(function(require) {
           value: 'desc',
           group: 'sort'
         }, {
-          title: window.polyglot.t('app.lastupdated'),
+          title: window.polyglot.t('app.recent'),
           icon: 'edit',
           callbackEvent: 'dashboard:sort:updated',
           value: 'updated',

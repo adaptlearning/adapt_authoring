@@ -5,7 +5,7 @@
     }
     li {
         margin-bottom:30px;
-    }   
+    }
 }
 
 .dashboard-options-container {
@@ -37,9 +37,9 @@ ul.dashboard-options {
 
 .grid-layout {
     .project-list-item, .shared-project-list-item {
-        margin-left: 30px;
-        min-width: 240px;
-        min-height: 320px;
+        margin-left: 25px;
+        min-width: 200px;
+        min-height: 341px;
         width: 22%;
         max-width:300px;
         display:inline-block;
@@ -50,7 +50,9 @@ ul.dashboard-options {
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
-            border-right:1px solid #b7caed;
+            border: 1px solid #d6f2f9;
+            border-left: none;
+            border-right: none;
         }
         .project-details-tags {
             margin-top:8px;
@@ -61,10 +63,9 @@ ul.dashboard-options {
             width:100%;
             left:0;
             bottom:0px;
-            padding:20px;
+            padding:20px 0px;
             border-top:1px solid #eee;
-            background-color:rgba(250,250,250,0.9);
-            opacity:0;
+            min-height: 119px;
         }
     }
 }
@@ -75,7 +76,7 @@ ul.dashboard-options {
         margin-left:0px;
         width:100%;
         .project-settings {
-            border-bottom:1px solid #b7caed;
+            border-bottom:1px solid #d6f2f9;
         }
         .project-image {
             width:40%;
@@ -85,7 +86,7 @@ ul.dashboard-options {
             background-position: center;
             background-repeat: no-repeat;
             float:left;
-            border-right:1px solid #b7caed;
+            border-right: 1px solid #d6f2f9;
         }
         .project-details {
             float:left;
@@ -124,14 +125,14 @@ ul.dashboard-options {
     text-align:center;
 }
 
+.sidebar-search-tag {
+    margin-top: 40px;
+}
+
 .sidebar-tag {
     text-align: left;
 
      &.selected span:first-child i:before{
         content:'\f205';
     }
-}
-
-.search-highlight{
-    box-shadow: inset 0 0 8px 5px #ff0;
 }

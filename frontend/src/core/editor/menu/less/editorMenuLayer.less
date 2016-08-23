@@ -1,55 +1,62 @@
 .editor-menu-layer {
   height: 100%;
-  width:240px;
+  width:300px;
   float:left;
-  padding-bottom:30px;
+  border-right: 1px solid #ddf2fa;
   overflow:hidden;
-  &:first-child {
-    .editor-menu-layer-inner {
-      border-right: 2px solid #454545; 
-    }
+
+  &.selected {
+    background-color: #F1F9FC;
   }
 }
 
 .editor-menu-layer-inner {
   position: relative;
-  border-right: 2px solid #454545; 
-  height: 100%;
   overflow-y: auto;
   overflow-x:hidden;
 }
 
 .editor-menu-layer-controls {
   position:relative;
-  .editor-menu-layer-actions.paste-zone {
-    width: 100%;
-    position: absolute;
-    top: -37px;
-    z-index: 99;
-    margin:0px;
-    padding:0;
-    border:none;
-    transition:top 0.5s cubic-bezier(0.8, 0.0, 0.2, 1);;
-    &.show {
-      top:0px;
+  padding: 20px;
+  border-bottom: 1px solid #d6f2f9;
+
+    .editor-menu-layer-actions.paste-zone {
+      width: 100%;
+      position: absolute;
+      top: -67px;
+      z-index: 99;
+      margin:0px;
+      padding:0;
+      border:none;
+      background: none;
+      transition:top 0.5s cubic-bezier(0.8, 0.0, 0.2, 1);
+      &.show {
+        top:20px;
+      }
+    }
+}
+
+.editor-menu-layer-controls {
+  button {
+    width: 128px;
+    padding: 10px 0px;
+    & i {
+      margin-right:8px;
+    }
+    .fa-folder {
+      margin-right: 3px;
+    }
+  }
+
+}
+
+.editor-menu-item {
+  &-title {
+    padding: 8px 0 0 35px;
+    h3 {
+      font-size: 14px;
+      font-weight: 400;
     }
   }
 }
-
-.editor-menu-layer-button {
-  float:left;
-  width:50%;
-  padding:8px;
-  font-size:13px;
-  border-radius:0px;
-  border-bottom:1px solid #454545;
-  border-right:2px solid #454545;
-  &:first-child {
-    border-right:1px solid #454545;
-  }
-  & i {
-    margin-right:8px;
-  }
-}
-
-

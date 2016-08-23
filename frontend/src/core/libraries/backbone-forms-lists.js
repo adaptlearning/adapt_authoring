@@ -56,9 +56,12 @@ define(['jquery', 'underscore', 'backbone', 'backboneForms'], function($, _, Bac
 
       //Create main element
       var $el = $($.trim(this.template()));
+      var schemaDefault = this.schema.default;
 
       //Store a reference to the list (item container)
       this.$list = $el.is('[data-items]') ? $el : $el.find('[data-items]');
+
+      if (!value.length && schemaDefault instanceof Array) value = schemaDefault;
 
       //Add existing items
       if (value.length) {
@@ -265,7 +268,7 @@ define(['jquery', 'underscore', 'backbone', 'backboneForms'], function($, _, Bac
     template: _.template('\
       <div class="list-items">\
         <div data-items></div>\
-        <button class="btn btn-primary" type="button" data-action="add">Add</button>\
+        <button class="btn primary" type="button" data-action="add">Add</button>\
       </div>\
     ', null, Form.templateSettings)
 

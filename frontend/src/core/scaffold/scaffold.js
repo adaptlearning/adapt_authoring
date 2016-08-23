@@ -2,6 +2,7 @@
 define(function(require) {
 
 	var Origin = require('coreJS/app/origin');
+  var _ = require('underscore');
 	var BackboneForms = require('backboneForms');
 	var BackboneFormsLists = require('backboneFormsLists');
 	var ScaffoldItemsModalView = require('coreJS/scaffold/views/scaffoldItemsModalView');
@@ -122,12 +123,14 @@ define(function(require) {
 						validators.push(validator);
 					} else {
 						// If custom - search custom validators
-						var customValidator = _.findWhere(customValidators, {name: validator});
-						if (!customValidator) {
-							return console.log('No validator of that sort - please register: "' + validator + '" by using Origin.scaffold.addCustomValidator(name, validatorMethod)');
-						}
-						// If match is found - add the method
-						validators.push(customValidator.validatorMethod);
+            if (validator !== '') {
+              var customValidator = _.findWhere(customValidators, {name: validator});
+              if (!customValidator) {
+                console.log('No validator of that sort - please register: "' + validator + '" by using Origin.scaffold.addCustomValidator(name, validatorMethod)');
+              }
+              // If match is found - add the method
+              validators.push(customValidator.validatorMethod);  
+            }
 					}
 				}
 			})
@@ -167,7 +170,7 @@ define(function(require) {
 		if (field.title) {
 			scaffoldSchema[key].title = field.title;
 			
-		} else if (field.type === 'object') {
+		} else if (field.type === 'object' || field.type === 'array') {
 			scaffoldSchema[key].title = '';
 			scaffoldSchema[key].legend = field.legend;
 		}
@@ -175,21 +178,30 @@ define(function(require) {
 
 	var buildSchema = function(schema, options, type) {
 
-		if (builtSchemas[type]) {
-			return builtSchemas[type];
-		}
-		
-		var scaffoldSchema = {};
-		
-		_.each(schema, function(field, key) {
-			// Build schema
-			setupSchemaFields(field, key, schema, scaffoldSchema);
-			
-		});
+    	try {
+            // These types of schemas change frequently and cannot be cached.
+    	    var volatileTypes = ['course', 'config', 'article', 'block', 'component'];
 
-		builtSchemas[type] = scaffoldSchema;
+    	    if (_.indexOf(volatileTypes, type) == -1 && builtSchemas[type]) {
+    	       return builtSchemas[type];
+            }
 
-		return scaffoldSchema;
+            var scaffoldSchema = {};
+
+            _.each(schema, function(field, key) {
+    	       // Build schema
+                setupSchemaFields(field, key, schema, scaffoldSchema);
+            });
+
+            // Only cache non-volatile types.
+            if (_.indexOf(volatileTypes, type) == -1) {
+                builtSchemas[type] = scaffoldSchema;
+            }
+
+            return scaffoldSchema;
+        } catch (e) {
+            alert('buildSchema - ' + e.message);
+        }
 	}
 
 	var buildFieldsets = function(schema, options) {
@@ -271,48 +283,54 @@ define(function(require) {
 	}
 
 	Scaffold.buildForm = function(options) {
+    try {
 
-		// This shouldn't need to check whether this is not set
-		// _type:'config' should be set on the model
-		var type = options.model.get('_type') || options.schemaType || 'config';
-		var initialType = type;
+      // This shouldn't need to check whether this is not set
+      // _type:'config' should be set on the model
+      var type = options.model.get('_type') || options.schemaType || 'config';
+      var initialType = type;
 
-		switch (type) {
-			case 'component':
-				type = options.model.get('_component');
-				break;
+      switch (type) {
+        case 'component':
+          type = options.model.get('_component');
+          break;
 
-			case 'page':
-			case 'menu':
-				type = 'contentobject';
-				break;
+        case 'page':
+        case 'menu':
+          type = 'contentobject';
+          break;
 
-			case '_courseStyle':
-				type = 'course';
-				break;
+        case '_courseStyle':
+          type = 'course';
+          break;
 
-			case 'theme':
-				type = options.schemaType;
-				break;
-		}
+        case 'theme':
+          type = options.schemaType;
+          break;
+      }
 
-		var schema = new Schemas(type);
+      var schema = new Schemas(type);
 
-		// Support ommission of attributes for certain types
-		switch (initialType) {
-			case '_courseStyle':
-				schema = _.pick(schema, 'customStyle');
-				break;
-		}
-		
-		options.model.schema = buildSchema(schema, options, type);
-		options.fieldsets = buildFieldsets(schema, options);
-		alternativeModel = options.alternativeModelToSave;
-		alternativeAttribute = options.alternativeAttributeToSave;
-		currentModel = options.model;
-		var form = new Backbone.Form(options).render();
-		currentForm = form;
-		return form;
+      // Support ommission of attributes for certain types
+      switch (initialType) {
+        case '_courseStyle':
+          schema = _.pick(schema, 'customStyle');
+          break;
+      }
+      
+      options.model.schema = buildSchema(schema, options, type);
+      options.fieldsets = buildFieldsets(schema, options);
+      alternativeModel = options.alternativeModelToSave;
+      alternativeAttribute = options.alternativeAttributeToSave;
+      currentModel = options.model;
+              
+      var form = new Backbone.Form(options).render();
+      currentForm = form;
+      
+      return form;
+    } catch (e) {
+      alert(e.message);
+    }
 
 	}
 
@@ -404,6 +422,6 @@ define(function(require) {
 
 	});*/
 
-	Origin.scaffold = Scaffold;
 
+	Origin.scaffold = Scaffold;
 });

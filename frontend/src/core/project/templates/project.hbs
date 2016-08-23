@@ -25,18 +25,17 @@
     <div class="project-details">
       <div class="project-details-inner">
         <div class="project-detail-title">
-          <h4 class="project-detail-title-inner">{{{title}}}</h4>
+          <h1 class="project-detail-title-inner">{{{title}}}</h1>
         </div>
 
         <div class="project-details-last-updated project-details-row">
           <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
-          <div class="projects-details-value">{{momentFormat updatedAt 'ddd D MMM YYYY'}}</div>
+          <div class="projects-details-value">{{momentFormat updatedAt "Do MMMM YYYY"}}</div>
         </div>
         {{#if tags.length}}
         <div class="project-details-tags project-details-row tags">
-          <div class="projects-details-label">{{t 'app.tags'}}</div>
           <div class="projects-details-tags-button">
-            <button class="btn projects-details-tags-button-show">View tags</button>
+            <button class="btn secondary-hollow projects-details-tags-button-show">View tags</button>
           </div>
           <div class="projects-details-value tag-container">
             <ul class="items tags">
@@ -46,14 +45,7 @@
               </li>
             {{/each}}
             </ul>
-            <button class="btn projects-details-tags-button-hide">Hide tags</button>
-          </div>
-        </div>
-        {{else}}
-        <div class="project-details-tags project-details-row tags">
-          <div class="projects-details-label">{{t 'app.tags'}}</div>
-          <div class="projects-details-value tag-container-no-items">
-            No tags added
+            <button class="btn secondary-hollow projects-details-tags-button-hide">Hide tags</button>
           </div>
         </div>
         {{/if}}

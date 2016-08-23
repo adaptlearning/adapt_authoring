@@ -15,7 +15,6 @@ define(function(require){
   var PluginManagementView = OriginView.extend({
 
     pluginType: "plugin",
-
     pluginCollections: {
       'extension' : ExtensionTypeCollection,
       'component' : ComponentTypeCollection,
@@ -24,8 +23,12 @@ define(function(require){
     },
 
     tagName: "div",
-
     className: "pluginManagement",
+
+    events: {
+      'click #pluginManagementMenu button'     : 'formclick', // @TODO - add support for this
+      'click .refresh-all-plugins'             : 'refreshPluginList'
+    },
 
     initialize: function (options) {
       this.pluginType = options.pluginType;
@@ -42,11 +45,6 @@ define(function(require){
       // @TODO - add controls for these
       this.listenTo(Origin, 'pluginManagement:sort:asc', this.sortAscending);
       this.listenTo(Origin, 'pluginManagement:sort:desc', this.sortDescending);
-    },
-
-    events: {
-      'click #pluginManagementMenu button'     : 'formclick', // @TODO - add support for this
-      'click .refresh-all-plugins'             : 'refreshPluginList'
     },
 
     sortAscending: function() {
@@ -87,6 +85,9 @@ define(function(require){
       _.defer(this.setViewToReady);
 
       this.evaluatePluginTypeCount(pluginTypes);
+
+      var windowHeight = $(window).height() - this.$el.offset().top;
+      this.$el.height(windowHeight);
     },
 
     evaluatePluginTypeCount: function (pluginTypes) {

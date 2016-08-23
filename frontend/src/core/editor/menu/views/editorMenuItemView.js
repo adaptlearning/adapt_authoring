@@ -89,19 +89,42 @@ define(function(require){
         // Only if the current double clicked it is a page item
         if (this.model.get('_type') == 'page') {
           this.gotoPageEditor();
+        } else if (this.model.get('_type') == 'menu') {
+          this.gotoSubMenuEditor();
         }
         this.model.set('clicks', 0);
       }
 
     },
 
+    selectedLevel: function() {
+      $(".editor-menu-layer").each(function() {
+        if($(this).hasClass("selected")){
+            $(this).removeClass("selected");
+        }
+      });
+
+      if($(this.el).hasClass("content-type-menu")) {
+        $(this.el).parent().parent().next().addClass("selected");
+      }
+      else {
+        $(this.el).parent().parent().addClass("selected");
+      }
+      event && event.preventDefault();
+    },
+
     onMenuItemDblClicked: function(event) {
-      event.preventDefault();
+      event && event.preventDefault();
     },
 
     gotoPageEditor: function() {
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'));
     },
+
+
+   gotoSubMenuEditor: function() {
+     Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/menu/' + this.model.get('_id') + '/edit');
+   },
 
     setItemAsSelected: function() {
 
@@ -127,6 +150,8 @@ define(function(require){
       // This event passes out the view to the editorMenuView to add
       // a editorMenuLayerView and setup this.subView
       Origin.trigger('editorView:menuView:updateSelectedItem', this);
+
+      this.selectedLevel();
 
     },
 
@@ -180,6 +205,7 @@ define(function(require){
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
       var menuItemId = this.model.get('_id');
+
       Origin.router.navigate('#/editor/'
         + courseId
         + '/'
@@ -190,9 +216,7 @@ define(function(require){
     },
 
     deleteItemPrompt: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
+      event && event.preventDefault();
 
       this.listenToOnce(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
       this.listenToOnce(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
@@ -221,13 +245,14 @@ define(function(require){
 
     copyMenuItem: function() {
       $('.paste-zone').addClass('show');
+      $('.add-zone').css('visibility','hidden');
       Origin.trigger('editorView:copy', this.model);
     },
 
     copyID: function() {
       Origin.trigger('editorView:copyID', this.model);
     },
-    
+
     deleteItem: function(event) {
       this.stopListening(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
       this.model.set({_isExpanded:false, _isSelected: false});

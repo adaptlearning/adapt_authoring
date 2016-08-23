@@ -12,8 +12,8 @@ define(function(require) {
 
     events: {
       'keydown #login-input-username' : 'clearErrorStyling',
-      'click .login-form-submit'      : 'submitLoginDetails',
-      'keydown #login-input-password' : 'handleEnterKey'
+      'keydown #login-input-password' : 'clearErrorStyling',
+      'click .login-form-submit'      : 'submitLoginDetails'
     },
 
     preRender: function() {
@@ -22,8 +22,9 @@ define(function(require) {
 
     postRender: function() {
       this.setViewToReady();
+      Origin.trigger('login:loaded');
     },
-    
+
     handleEnterKey: function(e) {
       var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
 
@@ -35,7 +36,7 @@ define(function(require) {
 
     clearErrorStyling: function(e) {
       $('#login-input-username').removeClass('input-error');
-      $('#loginErrorMessage').text('');
+      $('#loginError').addClass('display-none');
 
       this.handleEnterKey(e);
     },
@@ -66,7 +67,7 @@ define(function(require) {
       switch (errorCode) {
         case LoginView.ERR_INVALID_CREDENTIALS:
         case LoginView.ERR_MISSING_FIELDS:
-          errorMessage = window.polyglot.t('app.invalidusernameorpassword');        
+          errorMessage = window.polyglot.t('app.invalidusernameorpassword');
           break;
         case LoginView.ERR_ACCOUNT_LOCKED:
           errorMessage = window.polyglot.t('app.accountlockedout');
@@ -82,6 +83,7 @@ define(function(require) {
       $('#login-input-username').addClass('input-error');
       $('#login-input-password').val('');
       $('#loginErrorMessage').text(errorMessage);
+      $('#loginError').removeClass('display-none');
     }
 
   }, {

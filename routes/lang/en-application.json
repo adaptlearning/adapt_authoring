@@ -153,7 +153,7 @@
   "app.validationrequired": "A value is required here",
   "app.validationlength": "At least %{length} characters are required",
   "app.changepassword": "Change password",
-  "app.accountislocked": "This account has been locked because of too many failed login attempts. It can be unlocked by clicking 'Change password' to reset the user's password",
+  "app.accountislocked": "This account has been locked because of too many failed login attempts. You can unlock it by clicking the 'Forgotten your password?' button.",
   "app.undochangepassword": "Cancel",
   "app.validationpasswordmatch": "Passwords do not match",
   "app.passwordindicatorweak": "Weak -- try using numbers and capital letters",

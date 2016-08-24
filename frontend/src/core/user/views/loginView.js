@@ -76,7 +76,7 @@ define(function(require) {
           errorMessage = window.polyglot.t('app.invalidusernameorpassword');
           break;
         case LoginView.ERR_ACCOUNT_LOCKED:
-          errorMessage = window.polyglot.t('app.accountlockedout');
+          errorMessage = window.polyglot.t('app.accountislocked');
           break;
         case LoginView.ERR_TENANT_DISABLED:
           errorMessage = window.polyglot.t('app.tenantnotenabled');

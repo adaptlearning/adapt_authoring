@@ -21,7 +21,7 @@ define(function(require) {
     },
 
     goToLogin: function(e) {
-      e.preventDefault();
+      e && e.preventDefault();
       Origin.router.navigate('#/user/login', {trigger: true});
     },
 

@@ -6,14 +6,13 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
 
   var ForgotPasswordView = OriginView.extend({
-    
     tagName: "div",
-
     className: "forgot-password",
 
     events: {
       'click button.submit' : 'requestResetToken',
       'click button.cancel' : 'goToLogin',
+      'click button.return' : 'goToLogin',
       'keydown .input-username-email' : 'handleKeydown'
     },
 
@@ -27,8 +26,7 @@ define(function(require) {
     },
 
     handleKeydown: function(e) {
-      this.$('.input-username-email').removeClass('input-error');
-      this.$('.validation-message').addClass('display-none');
+      this.$('.forgotError').addClass('display-none');
 
       var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
 
@@ -40,35 +38,25 @@ define(function(require) {
 
     isValid: function() {
       var email = this.$('.input-username-email').val().trim();
-      var valid = Helpers.isValidEmail(email);
-      if (valid) {
-        this.$('.input-username-email').addClass('input-error');
-        this.$('.validation-message').removeClass('display-none');
-      }
-      return valid;
+      return Helpers.isValidEmail(email);
     },
 
     requestResetToken: function(e) {
       e && e.preventDefault();
-      
       var self = this;
 
-      if (self.isValid()) {
+      if (!this.isValid()) {
+        this.$('.input-username-email').addClass('input-error');
+        this.$('.forgotError').removeClass('display-none');
+      } else {
         var email = this.$('.input-username-email').val().trim();
+        $.post('/api/createtoken', { email: email });
 
-        $.post ('/api/createtoken', {email: email},
-          function(data, textStatus, jqXHR) {
-            if (data.success) {
-              self.$('.forgot-container').addClass('display-none');
-              self.$('.forgot-password-success').removeClass('display-none');
-            }
-          }
-          ).fail(function() {
-            self.$('.input-username-email').addClass('input-error');
-          });
+        // don't wait for a response, we want to disguise success/failure
+        self.$('.forgot-container').addClass('display-none');
+        self.$('.forgot-password-success').removeClass('display-none');
       }
     }
-
   }, {
     template: 'forgotPassword'
   });

@@ -41,8 +41,8 @@ define(function(require){
       var self = this;
       // submit form data
       this.$('form.addUser').ajaxSubmit({
-        error: this.onAjaxError,
-        success: this.onAjaxSuccess
+        error: _.bind(this.onAjaxError),
+        success: _.bind(this.onAjaxSuccess, this)
       });
 
       return false;
@@ -53,6 +53,7 @@ define(function(require){
     },
 
     onAjaxSuccess: function(userData, userStatus, userXhr) {
+      var self = this;
       var roleID = $('form.addUser select[name=role]').val();
       // HACK find the default role dynamically
       var defaultRole = '565f304ddca12e4b3702e579';

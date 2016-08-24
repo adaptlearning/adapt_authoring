@@ -13,7 +13,8 @@ define(function(require) {
     events: {
       'keydown #login-input-username' : 'clearErrorStyling',
       'keydown #login-input-password' : 'clearErrorStyling',
-      'click .login-form-submit'      : 'submitLoginDetails'
+      'click .login-form-submit'      : 'submitLoginDetails',
+      'click button.dash'             : 'goToDash'
     },
 
     preRender: function() {
@@ -23,6 +24,11 @@ define(function(require) {
     postRender: function() {
       this.setViewToReady();
       Origin.trigger('login:loaded');
+    },
+
+    goToDash: function(e) {
+      e && e.preventDefault();
+      Origin.router.navigate('#/dashboard', { trigger: true });
     },
 
     handleEnterKey: function(e) {

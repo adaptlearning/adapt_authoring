@@ -1,4 +1,5 @@
 @import '../../../less/sharedStyles.less';
+@import '../../../less/variables.less';
 
 .userManagement {
     overflow-y: scroll;
@@ -29,11 +30,16 @@
         &.me {
             font-weight: bold;
         }
-
         &.inactive {
             .tb-col-inner {
                 color: #BBBBBB;
             }
+        }
+        &.locked {
+            color: @alert-color;
+            // .fa-lock {
+            //     color: rgb(200,0,0);
+            // }
         }
 
         li {
@@ -46,9 +52,6 @@
             padding-left: 3px;
         }
 
-        .fa-lock {
-            color: rgb(200,0,0);
-        }
 
         button {
             font-size: 90%;

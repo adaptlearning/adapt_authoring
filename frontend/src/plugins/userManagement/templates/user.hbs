@@ -67,16 +67,13 @@
     <div class="col-10 col-centered">
       <div class="tb-col-inner">
         {{{failedLoginCount}}}
+        {{#if _isLocked}}
+          <i class="fa fa-lock"></i>
+        {{/if}}
         {{#ifValueEquals failedLoginCount 0}}
-        {{else}}
-            {{!HACK MAX_LOGIN_ATTEMPTS doesn't seem to be set anywhere other than plugins/auth/local:line-30}}
-            {{#ifValueEquals failedLoginCount 3}}
-              <i class="fa fa-lock"></i>
-            {{/ifValueEquals}}
-            {{#unless _isDeleted}}
+        {{else}}{{#unless _isDeleted}}
               <a class="resetLogins input edit-mode"><i class="fa fa-repeat"></i></a>
-            {{/unless}}
-        {{/ifValueEquals}}
+        {{/unless}}{{/ifValueEquals}}
       </div>
     </div>
     <div class="col-15 col-centered">

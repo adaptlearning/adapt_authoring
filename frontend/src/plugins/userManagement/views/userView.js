@@ -36,12 +36,21 @@ define(function(require){
 
     render: function() {
       OriginView.prototype.render.apply(this, arguments);
+      this.applyStyles();
+    },
 
+    applyStyles: function() {
       // disabled user styling
       if (this.model.get('_isDeleted') === true) {
         this.$el.addClass('inactive');
       } else {
         this.$el.removeClass('inactive');
+      }
+      // locked user styling
+      if (this.model.get('_isLocked') === true) {
+        this.$el.addClass('locked');
+      } else {
+        this.$el.removeClass('locked');
       }
 
       if(this.editMode === true) {
@@ -55,12 +64,12 @@ define(function(require){
 
     setEditMode: function() {
       this.editMode = true;
-      this.render();
+      this.applyStyles();
     },
 
     setViewMode: function() {
       this.editMode = false;
-      this.render();
+      this.applyStyles();
     },
 
     // utilities in case the classes change
@@ -190,7 +199,7 @@ define(function(require){
     },
 
     onModelUpdated: function(model, options) {
-      this.render();
+      this.applyStyles();
       // don't save again on server update
       if(!options.status) {
         // console.log(model.get('email') + ':',JSON.stringify(model.changedAttributes(),null,' '));

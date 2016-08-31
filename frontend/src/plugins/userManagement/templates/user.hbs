@@ -11,7 +11,7 @@
 <div class="inner">
   <div class="col-row">
     <div class="col-25">
-      <div class="tb-col-inner">
+      <div class="tb-col-inner no-wrap">
         <span class="read">{{{email}}}</span>
         {{#unless _isDeleted}}
             <a class="edit read edit-mode"><i class="fa fa-pencil-square-o"></i></a>
@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="col-15">
-      <div class="tb-col-inner">
+      <div class="tb-col-inner no-wrap">
         <span class="read">{{tenantName}}</span>
         {{#ifUserNotMe _id}}{{#unless _isDeleted}}
             <a class="edit read edit-mode"><i class="fa fa-pencil-square-o"></i></a>
@@ -41,11 +41,11 @@
       </div>
     </div>
     <div class="col-20">
-      <div class="tb-col-inner">
+      <div class="tb-col-inner no-wrap">
         <div class="read">
           <ul>
           {{#each roleNames}}
-            <li>{{this}}</li>
+            <li class="no-wrap">{{this}}</li>
           {{/each}}
           </ul>
         </div>
@@ -70,38 +70,35 @@
         {{#if _isLocked}}
           <i class="fa fa-lock"></i>
         {{/if}}
-        {{#ifValueEquals failedLoginCount 0}}
-        {{else}}{{#unless _isDeleted}}
-              <a class="resetLogins input edit-mode"><i class="fa fa-repeat"></i></a>
-        {{/unless}}{{/ifValueEquals}}
       </div>
     </div>
     <div class="col-15 col-centered">
-      <div class="tb-col-inner">{{momentFormat lastAccess 'Do MMM YYYY'}}</div>
+      <div class="tb-col-inner">{{momentFormat lastAccess 'DD MMM-YY'}}</div>
     </div>
-    {{#ifUserIsMe _id}}
-      <div class="col-15">
-        <div class="tb-col-inner">
-          <div class="edit-mode">
+    <div class="col-15">
+      <div class="tb-col-inner">
+        <div class="buttons edit-mode">
+          {{#ifUserIsMe _id}}
             {{t 'app.changeadminaccounts'}}
-          </div>
-        </div>
-      </div>
-    {{else}}
-      <div class="col-15">
-        <div class="tb-col-inner">
-          <div class="buttons edit-mode">
+          {{else}}
             {{#if _isDeleted}}
               <button class="btn alert edit-input delete">{{t 'app.deleteuser'}}</button>
               <button class="btn action-primary restore">{{t 'app.restoreuser'}}</button>
             {{else}}
               {{!TODO reset password <button class="btn btn-primary edit-input resetPassword">Reset password<i class="fa fa-envelope"></i></button>}}
-              <button class="btn action-primary changePassword">{{t 'app.resetpassword'}}</button>
+              <button class="btn primary changePassword">{{t 'app.resetpassword'}}</button>
+              {{#if _isLocked}}
+                <button class="btn secondary unlock">{{t 'app.unlockuser'}}</button>
+              {{else}}
+                {{#ifValueEquals failedLoginCount 0}}
+                {{else}}
+                  <button class="btn secondary unlock">{{t 'app.resetlogins'}}</button>
+                {{/ifValueEquals}}
+              {{/if}}
               <button class="btn alert disable">{{t 'app.disableuser'}}</button>
             {{/if}}
-          </div>
+          {{/ifUserIsMe}}
         </div>
       </div>
-    {{/ifUserIsMe}}
-  </div>
+    </div>
 </div>

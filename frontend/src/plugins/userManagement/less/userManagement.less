@@ -1,6 +1,9 @@
 @import '../../../less/sharedStyles.less';
 @import '../../../less/variables.less';
 
+@user-hover-bg-colour: #f3faff;
+@user-hover-borderl-colour: #8ea3af;
+
 .userManagement {
     overflow-y: scroll;
 
@@ -27,6 +30,9 @@
     }
 
     .user-item {
+        cursor: pointer;
+        border: 1px solid white;
+
         &.me {
             font-weight: bold;
         }
@@ -37,14 +43,24 @@
         }
         &.locked {
             color: @alert-color;
-            // .fa-lock {
-            //     color: rgb(200,0,0);
-            // }
+        }
+        &.selected {
+            cursor: default;
+            border: 1px solid #d6f2f9;
+            border-left: 1px solid @user-hover-borderl-colour;
+            background-color: @user-hover-bg-colour;
         }
 
-        li {
-            margin-left: 0;
-            list-style: none;
+        &:hover {
+            border-left: 1px solid @user-hover-borderl-colour;
+            background-color: @user-hover-bg-colour;
+        }
+
+        .tb-col-inner {
+            li {
+                margin-left: 0;
+                list-style: none;
+            }
         }
 
         a {

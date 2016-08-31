@@ -12,23 +12,25 @@ define(function(require){
       if (this.model.get('_id') === Origin.sessionModel.get('id')) className += ' me';
       return className;
     },
-    editMode: false,
 
     events: {
+      'click': 'onClicked',
+
       'click a.edit': 'onEditClicked',
       'click a.save': 'onSaveClicked',
       'click a.cancel': 'onCancelClicked',
 
-      'click a.resetLogins': 'onResetLoginsClicked',
       'click a.saveRoles': 'onSaveRoleClicked',
 
       'click button.changePassword': 'onChangePasswordClicked',
+      'click button.unlock': 'onResetLoginsClicked',
       'click button.disable': 'onDisableClicked',
       'click button.delete': 'onDeleteClicked',
       'click button.restore': 'onRestoreClicked'
     },
 
     preRender: function() {
+      this.listenTo(Origin, 'userManagement:user:reset', this.resetView);
       this.listenTo(this.model, 'change', this.onModelUpdated);
       this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(this, 'remove', this.remove);
@@ -52,13 +54,22 @@ define(function(require){
       } else {
         this.$el.removeClass('locked');
       }
-
-      if(this.editMode === true) {
+      // selected user styling
+      if (this.model.get('_isSelected') === true) {
+        this.$el.addClass('selected');
         this.$('.edit-mode').removeClass('display-none');
         this.$('.write').addClass('display-none');
       } else {
+        this.$el.removeClass('selected');
         this.$('.edit-mode').addClass('display-none');
         this.$('.write').addClass('display-none');
+      }
+    },
+
+    resetView: function() {
+      if(this.model.set('_isSelected')) {
+        this.model.set('_isSelected', false);
+        this.applyStyles();
       }
     },
 
@@ -99,6 +110,14 @@ define(function(require){
       var inputType = $input.attr('type');
       if(inputType === "text" || inputType === "email") {
         $input.val(this.model.get($input.attr('data-modelKey')));
+      }
+    },
+
+    onClicked: function(event) {
+      if(!this.model.get('_isSelected')) {
+        Origin.trigger('userManagement:user:reset');
+        this.model.set('_isSelected', true);
+        this.applyStyles();
       }
     },
 
@@ -199,7 +218,7 @@ define(function(require){
     },
 
     onModelUpdated: function(model, options) {
-      this.applyStyles();
+      this.render();
       // don't save again on server update
       if(!options.status) {
         // console.log(model.get('email') + ':',JSON.stringify(model.changedAttributes(),null,' '));

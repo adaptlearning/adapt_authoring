@@ -84,7 +84,6 @@ define(function(require){
     },
 
     // utilities in case the classes change
-    // TODO go back to eventData obj?
     getColumnFromDiv: function(div) { return $(div).closest('.tb-col-inner'); },
     getInputFromDiv: function(div) { return $('.input', this.getColumnFromDiv(div)); },
 
@@ -162,7 +161,7 @@ define(function(require){
     onResetLoginsClicked: function() {
       var self = this;
       Origin.Notify.confirm({
-        text: 'Reset failed login attempts for <br/><b>' + this.model.get('email') + '</b>?',
+        text: window.polyglot.t('app.confirmresetlogins', { email: this.model.get('email') }),
         callback: function(confirmed) {
           if(confirmed) self.model.set('failedLoginCount', 0);
         }
@@ -173,15 +172,19 @@ define(function(require){
       var self = this;
       Origin.Notify.confirm({
         type: 'input',
-        title: 'Change password',
-        text: 'Enter a new password for<br/><b>' + this.model.get('email') + '</b>',
+        title: window.polyglot.t('app.resetpasswordtitle'),
+        text: window.polyglot.t('app.resetpasswordinstruction', { email: this.model.get('email') }),
         inputType: 'password',
         confirmButtonText: 'Save',
         closeOnConfirm: false,
         callback: function(newPassword) {
           if(newPassword === false) return;
-          else if(newPassword === "") return swal.showInputError("You need to write something!");
-          Helpers.ajax('/api/user/resetpassword', { "email": self.model.get('email'), "password": newPassword }, 'POST', function() {
+          else if(newPassword === "") return swal.showInputError(window.polyglot.t('app.passwordempty'));
+          var postData = {
+            "email": self.model.get('email'),
+            "password": newPassword
+          };
+          Helpers.ajax('/api/user/resetpassword', postData, 'POST', function() {
             swal.close();
             self.model.fetch();
           });
@@ -201,7 +204,7 @@ define(function(require){
       var self = this;
       Origin.Notify.confirm({
         type: 'confirm',
-        text: 'Deleting <br/><b>' + this.model.get('email') + '</b>.<br/><br/> This is a one-way trip. Continue?',
+        text: window.polyglot.t('app.confirmdeleteuser', { email: this.model.get('email') }),
         callback: function(confirmed) {
           if(confirmed) {
             self.model.destroy({

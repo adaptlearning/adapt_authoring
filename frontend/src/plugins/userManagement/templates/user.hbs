@@ -79,24 +79,39 @@
       <div class="tb-col-inner">
         <div class="buttons edit-mode">
           {{#ifUserIsMe _id}}
-            {{t 'app.changeadminaccounts'}}
+            <div class="group">
+              {{t 'app.changeadminaccounts'}}
+            </div>
+          {{/ifUserIsMe}}
+          {{#if _isDeleted}}
           {{else}}
-            {{#if _isDeleted}}
-              <button class="btn alert edit-input delete">{{t 'app.deleteuser'}}</button>
-              <button class="btn action-primary restore">{{t 'app.restoreuser'}}</button>
-            {{else}}
-              {{!TODO reset password <button class="btn btn-primary edit-input resetPassword">Reset password<i class="fa fa-envelope"></i></button>}}
-              <button class="btn primary changePassword">{{t 'app.resetpassword'}}</button>
-              {{#if _isLocked}}
+            <div class="group">
+              <button class="btn primary resetPassword">{{t 'app.resetpassword'}}</button>
+              <button class="btn tertiary changePassword">{{t 'app.changepassword'}}</button>
+            </div>
+            {{#if _isLocked}}
+              <div class="group">
                 <button class="btn secondary unlock">{{t 'app.unlockuser'}}</button>
+              </div>
+            {{else}}
+              {{#ifValueEquals failedLoginCount 0}}
               {{else}}
-                {{#ifValueEquals failedLoginCount 0}}
-                {{else}}
+                <div class="group">
                   <button class="btn secondary unlock">{{t 'app.resetlogins'}}</button>
-                {{/ifValueEquals}}
-              {{/if}}
-              <button class="btn alert disable">{{t 'app.disableuser'}}</button>
+                </div>
+              {{/ifValueEquals}}
             {{/if}}
+          {{/if}}
+          {{#ifUserIsMe _id}}
+          {{else}}
+            <div class="group">
+              {{#if _isDeleted}}
+                <button class="btn action-primary restore">{{t 'app.restoreuser'}}</button>
+                <button class="btn alert edit-input delete">{{t 'app.deleteuser'}}</button>
+              {{else}}
+                <button class="btn alert disable">{{t 'app.disableuser'}}</button>
+              {{/if}}
+            </div>
           {{/ifUserIsMe}}
         </div>
       </div>

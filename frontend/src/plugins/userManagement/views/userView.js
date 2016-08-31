@@ -22,8 +22,11 @@ define(function(require){
 
       'click a.saveRoles': 'onSaveRoleClicked',
 
+      'click button.resetPassword': 'onResetPasswordClicked',
       'click button.changePassword': 'onChangePasswordClicked',
+
       'click button.unlock': 'onResetLoginsClicked',
+
       'click button.disable': 'onDisableClicked',
       'click button.delete': 'onDeleteClicked',
       'click button.restore': 'onRestoreClicked'
@@ -164,6 +167,18 @@ define(function(require){
         text: window.polyglot.t('app.confirmresetlogins', { email: this.model.get('email') }),
         callback: function(confirmed) {
           if(confirmed) self.model.set('failedLoginCount', 0);
+        }
+      });
+    },
+
+    onResetPasswordClicked: function() {
+      var self = this;
+      Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST', function(data) {
+        if(data.success !== true) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.passwordresetfailed')
+          });
         }
       });
     },

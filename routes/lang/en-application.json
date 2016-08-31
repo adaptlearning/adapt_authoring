@@ -257,7 +257,7 @@
   "app.emailadminpasswordresetsubject": "Your Adapt password has been reset",
   "app.emailadminpasswordresetbody": "Your password has been reset.  Your new password is: %{data}",
   "app.emailforgottenpasswordsubject": "Reset Your Adapt Password",
-  "app.emailforgottenpasswordbody": "<p>We've received a request to reset the password for your <a href='%{rootUrl}' target='_blank'>Adapt authoring tool</a> account.</p><p>If you didn't make this request, don't worry! You can safely ignore this email. Otherwise, please click the button below.</p>",
+  "app.emailforgottenpasswordbody": "<p>We've received a request to reset the password for your <a href='%{rootUrl}' target='_blank'>Adapt authoring tool</a> account.</p><p>If you weren't expecting this email, don't worry! You can safely ignore it. Otherwise, please click the button below.</p>",
   "app.edittenant": "Edit Tenant",
   "app.addtenant": "Add Tenant",
   "app.tenant": "Tenant",

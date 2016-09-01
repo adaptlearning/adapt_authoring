@@ -156,7 +156,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
             logger.log('info', '3.1. Ensuring framework build exists');
 
             var args = [];
-            var outputFolder = COURSE_FOLDER.replace(FRAMEWORK_ROOT_FOLDER,'');
+            var outputFolder = COURSE_FOLDER.replace(FRAMEWORK_ROOT_FOLDER + path.sep,'');
 
             // Append the 'build' folder to later versions of the framework
             if (semver.gte(semver.clean(version.adapt_framework), semver.clean('2.0.0'))) {

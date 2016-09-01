@@ -50,6 +50,8 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
   var COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId, courseId);
   var BUILD_FOLDER = path.join(COURSE_FOLDER, Constants.Folders.Build);
 
+  var customPluginName = user._id;
+
   async.series([
       // get an object with all the course data
       function(callback) {
@@ -66,9 +68,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
       },
       //
       function(callback) {
-        var temporaryThemeName = tenantId + '-' + courseId;
-        var temporaryThemeFolder = path.join(SRC_FOLDER, Constants.Folders.Theme, temporaryThemeName);
-
+        var temporaryThemeFolder = path.join(SRC_FOLDER, Constants.Folders.Theme, customPluginName);
         self.applyTheme(tenantId, courseId, outputJson, temporaryThemeFolder, function(err, appliedThemeName) {
           if (err) {
             return callback(err);
@@ -106,9 +106,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         });
       },
       function(callback) {
-        var temporaryThemeName = tenantId + '-' + courseId;
-        var temporaryThemeFolder = path.join(SRC_FOLDER, Constants.Folders.Theme, temporaryThemeName);
-
+        var temporaryThemeFolder = path.join(SRC_FOLDER, Constants.Folders.Theme, customPluginName);
         self.writeCustomStyle(tenantId, courseId, temporaryThemeFolder, function(err) {
           if (err) {
             return callback(err);
@@ -118,9 +116,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         });
       },
       function(callback) {
-        var temporaryMenuName = tenantId + '-' + courseId;
-        var temporaryMenuFolder = path.join(SRC_FOLDER, Constants.Folders.Menu, temporaryMenuName);
-
+        var temporaryMenuFolder = path.join(SRC_FOLDER, Constants.Folders.Menu, customPluginName);
         self.applyMenu(tenantId, courseId, outputJson, temporaryMenuFolder, function(err, appliedMenuName) {
           if (err) {
             return callback(err);

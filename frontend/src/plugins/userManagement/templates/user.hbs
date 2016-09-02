@@ -106,10 +106,10 @@
             <div class="group">
               {{#if _isDeleted}}
                 <button class="btn action-primary restore">{{t 'app.restoreuser'}}</button>
-                <button class="btn alert edit-input delete">{{t 'app.deleteuser'}}</button>
               {{else}}
                 <button class="btn warning disable">{{t 'app.disableuser'}}</button>
               {{/if}}
+              <button class="btn alert edit-input delete">{{t 'app.deleteuser'}}</button>
             </div>
           {{/ifUserNotMe}}
         </div>

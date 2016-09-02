@@ -102,8 +102,7 @@
               {{/ifValueEquals}}
             {{/if}}
           {{/if}}
-          {{#ifUserIsMe _id}}
-          {{else}}
+          {{#ifUserNotMe _id}}
             <div class="group">
               {{#if _isDeleted}}
                 <button class="btn action-primary restore">{{t 'app.restoreuser'}}</button>
@@ -112,7 +111,7 @@
                 <button class="btn alert disable">{{t 'app.disableuser'}}</button>
               {{/if}}
             </div>
-          {{/ifUserIsMe}}
+          {{/ifUserNotMe}}
         </div>
       </div>
     </div>

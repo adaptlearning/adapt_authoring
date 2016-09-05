@@ -1,4 +1,8 @@
 @import '../../../less/sharedStyles.less';
+@import '../../../less/variables.less';
+
+@user-hover-bg-colour: #f3faff;
+@user-hover-borderl-colour: #8ea3af;
 
 .userManagement {
     overflow-y: scroll;
@@ -26,19 +30,45 @@
     }
 
     .user-item {
+        cursor: pointer;
+        border: 1px solid white;
+
         &.me {
             font-weight: bold;
         }
-
         &.inactive {
             .tb-col-inner {
                 color: #BBBBBB;
             }
         }
+        &.locked {
+            color: @alert-color;
+        }
+        &.selected {
+            cursor: default;
+            border: 1px solid #d6f2f9;
+            border-left: 1px solid @user-hover-borderl-colour;
+            background-color: @user-hover-bg-colour;
+        }
 
-        li {
-            margin-left: 0;
-            list-style: none;
+        &:hover {
+            border-left: 1px solid @user-hover-borderl-colour;
+            background-color: @user-hover-bg-colour;
+        }
+
+        .tb-col-inner {
+            li {
+                margin-left: 0;
+                list-style: none;
+            }
+
+            .group {
+                margin-bottom: 10px;
+            }
+
+            span, select, input {
+                display: block;
+            }
         }
 
         a {
@@ -46,9 +76,6 @@
             padding-left: 3px;
         }
 
-        .fa-lock {
-            color: rgb(200,0,0);
-        }
 
         button {
             font-size: 90%;
@@ -60,7 +87,6 @@
         input {
             border-radius: 3px;
             border: 1px solid #dedede;
-            width: 70%;
             padding: 3px;
             margin-right: 4px;
         }

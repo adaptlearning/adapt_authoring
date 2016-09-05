@@ -12,23 +12,28 @@ define(function(require){
       if (this.model.get('_id') === Origin.sessionModel.get('id')) className += ' me';
       return className;
     },
-    editMode: false,
 
     events: {
+      'click': 'onClicked',
+
       'click a.edit': 'onEditClicked',
       'click a.save': 'onSaveClicked',
       'click a.cancel': 'onCancelClicked',
 
-      'click a.resetLogins': 'onResetLoginsClicked',
       'click a.saveRoles': 'onSaveRoleClicked',
 
+      'click button.resetPassword': 'onResetPasswordClicked',
       'click button.changePassword': 'onChangePasswordClicked',
+
+      'click button.unlock': 'onResetLoginsClicked',
+
       'click button.disable': 'onDisableClicked',
       'click button.delete': 'onDeleteClicked',
       'click button.restore': 'onRestoreClicked'
     },
 
     preRender: function() {
+      this.listenTo(Origin, 'userManagement:user:reset', this.resetView);
       this.listenTo(this.model, 'change', this.onModelUpdated);
       this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(this, 'remove', this.remove);
@@ -36,35 +41,52 @@ define(function(require){
 
     render: function() {
       OriginView.prototype.render.apply(this, arguments);
+      this.applyStyles();
+    },
 
+    applyStyles: function() {
       // disabled user styling
       if (this.model.get('_isDeleted') === true) {
         this.$el.addClass('inactive');
       } else {
         this.$el.removeClass('inactive');
       }
-
-      if(this.editMode === true) {
+      // locked user styling
+      if (this.model.get('_isLocked') === true) {
+        this.$el.addClass('locked');
+      } else {
+        this.$el.removeClass('locked');
+      }
+      // selected user styling
+      if (this.model.get('_isSelected') === true) {
+        this.$el.addClass('selected');
         this.$('.edit-mode').removeClass('display-none');
         this.$('.write').addClass('display-none');
       } else {
+        this.$el.removeClass('selected');
         this.$('.edit-mode').addClass('display-none');
         this.$('.write').addClass('display-none');
       }
     },
 
+    resetView: function() {
+      if(this.model.set('_isSelected')) {
+        this.model.set('_isSelected', false);
+        this.applyStyles();
+      }
+    },
+
     setEditMode: function() {
       this.editMode = true;
-      this.render();
+      this.applyStyles();
     },
 
     setViewMode: function() {
       this.editMode = false;
-      this.render();
+      this.applyStyles();
     },
 
     // utilities in case the classes change
-    // TODO go back to eventData obj?
     getColumnFromDiv: function(div) { return $(div).closest('.tb-col-inner'); },
     getInputFromDiv: function(div) { return $('.input', this.getColumnFromDiv(div)); },
 
@@ -90,6 +112,14 @@ define(function(require){
       var inputType = $input.attr('type');
       if(inputType === "text" || inputType === "email") {
         $input.val(this.model.get($input.attr('data-modelKey')));
+      }
+    },
+
+    onClicked: function(event) {
+      if(!this.model.get('_isSelected')) {
+        Origin.trigger('userManagement:user:reset');
+        this.model.set('_isSelected', true);
+        this.applyStyles();
       }
     },
 
@@ -134,9 +164,21 @@ define(function(require){
     onResetLoginsClicked: function() {
       var self = this;
       Origin.Notify.confirm({
-        text: 'Reset failed login attempts for <br/><b>' + this.model.get('email') + '</b>?',
+        text: window.polyglot.t('app.confirmresetlogins', { email: this.model.get('email') }),
         callback: function(confirmed) {
           if(confirmed) self.model.set('failedLoginCount', 0);
+        }
+      });
+    },
+
+    onResetPasswordClicked: function() {
+      var self = this;
+      Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST', function(data) {
+        if(data.success !== true) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: window.polyglot.t('app.passwordresetfailed')
+          });
         }
       });
     },
@@ -145,15 +187,19 @@ define(function(require){
       var self = this;
       Origin.Notify.confirm({
         type: 'input',
-        title: 'Change password',
-        text: 'Enter a new password for<br/><b>' + this.model.get('email') + '</b>',
+        title: window.polyglot.t('app.resetpasswordtitle'),
+        text: window.polyglot.t('app.resetpasswordinstruction', { email: this.model.get('email') }),
         inputType: 'password',
         confirmButtonText: 'Save',
         closeOnConfirm: false,
         callback: function(newPassword) {
           if(newPassword === false) return;
-          else if(newPassword === "") return swal.showInputError("You need to write something!");
-          Helpers.ajax('/api/user/resetpassword', { "email": self.model.get('email'), "password": newPassword }, 'POST', function() {
+          else if(newPassword === "") return swal.showInputError(window.polyglot.t('app.passwordempty'));
+          var postData = {
+            "email": self.model.get('email'),
+            "password": newPassword
+          };
+          Helpers.ajax('/api/user/resetpassword', postData, 'POST', function() {
             swal.close();
             self.model.fetch();
           });
@@ -173,7 +219,7 @@ define(function(require){
       var self = this;
       Origin.Notify.confirm({
         type: 'confirm',
-        text: 'Deleting <br/><b>' + this.model.get('email') + '</b>.<br/><br/> This is a one-way trip. Continue?',
+        text: window.polyglot.t('app.confirmdeleteuser', { email: this.model.get('email') }),
         callback: function(confirmed) {
           if(confirmed) {
             self.model.destroy({

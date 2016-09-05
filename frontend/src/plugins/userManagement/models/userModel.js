@@ -9,6 +9,8 @@ define(function(require) {
       this.on('change:globalData', this.onGlobalDataChanged);
       this.on('change:roles', this.setRoleNames);
       this.on('change:_tenantId', this.setTenantName);
+      this.on('change:failedLoginAttempts', this.setLockStatus);
+      this.setLockStatus();
     },
 
     onGlobalDataChanged: function(model, value, options) {
@@ -40,6 +42,19 @@ define(function(require) {
         tenantName =  model.get('globalData').allTenants.findWhere({ _id:tenantId }).get('name');
       }
       model.set('tenantName', tenantName);
+    },
+
+    setLockStatus: function(model, value, options) {
+      // HACK MAX_LOGIN_ATTEMPTS doesn't seem to be set anywhere other than plugins/auth/local:line-30
+      var MAX_LOGIN_ATTEMPTS = 3;
+      var locked = !!this.get('_isLocked');
+      var fails = this.get('failedLoginCount');
+      if(fails >= MAX_LOGIN_ATTEMPTS && locked === false) {
+        this.set('_isLocked', true);
+      }
+      else if(fails < MAX_LOGIN_ATTEMPTS && locked === true) {
+        this.set('_isLocked', false);
+      }
     }
   });
 

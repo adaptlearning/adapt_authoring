@@ -1,19 +1,14 @@
-<div class="permissions-inner">
-
+<div class="inner">
 	<div class="permissions-icon">
-		<i class="fa fa-space-shuttle"></i>
+		<i class="fa fa-ban"></i>
 	</div>
-
-	<div class="permissions-body">
-		<h1 class="permissions-body-inner">
-			Access Denied
-		</h1>
+	<div class="title">
+		{{t 'app.errorpagenoaccesstitle'}}
 	</div>
-
-	<div class="permissions-body">
-		<div class="permissions-body-inner">
-			Seems you don't have the correct permissions to view this page. Would you like to return to the <a href="#/dashboard">Dashboard?</div>
+	<div class="body">
+		<div class="inner">
+			{{t 'app.errorpagenoaccess'}}
 		</div>
+		<a href="#/dashboard" class="btn primary">{{t 'app.dashboard'}}</a>
 	</div>
-
 </div>

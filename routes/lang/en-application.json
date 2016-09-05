@@ -332,6 +332,8 @@
   "app.errorpaste": "Error during paste",
   "app.errorsaveasset": "An error occurred doing the save",
   "app.errorusernoaccess": "Sorry, the current user doesn't have access to this course",
+  "app.errorpagenoaccesstitle": "Access Denied",
+  "app.errorpagenoaccess": "Sorry, you don't have the correct permissions to view this page. Click the button below to go to the dashboard.",
   "app.copyidtoclipboardsuccess": "Copied %{id} to clipboard",
   "app.copyingidtoclipboarderror": "Error copying %{id} to clipboard",
   "app.grid": "Grid",

@@ -553,7 +553,7 @@ Form.validators = (function() {
     options = _.extend({
       type: 'number',
       message: this.errMessages.number,
-      regexp: /^[0-9]*\.?[0-9]*?$/
+      regexp: /^-?[0-9]*\.?[0-9]*?$/
     }, options);
     
     return validators.regexp(options);
@@ -1454,7 +1454,8 @@ Form.editors.Number = Form.editors.Text.extend({
       newVal = newVal + String.fromCharCode(event.charCode);
     }
 
-    var numeric = /^[0-9]*\.?[0-9]*?$/.test(newVal);
+    // Allow support for negative numbers.
+    var numeric = /^-?[0-9]*\.?[0-9]*?$/.test(newVal);
 
     if (numeric) {
       delayedDetermineChange();

@@ -162,6 +162,9 @@ define(function(require) {
 			_.each(fields, function(field) {
 				var error = field.validate();
 				if (error) {
+					if(field.schema.title) {
+						error.title = field.schema.title;
+					}
 					errors[field.key] = error;
 				}
 			});

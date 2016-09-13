@@ -4,10 +4,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 **IMPORTANT**: For information on how to *correctly* update your installation, consult [INSTALL.md](https://github.com/adaptlearning/adapt_authoring/blob/master/INSTALL.md#updating-the-tool).
 
+## [0.2.2] - 2016-09-13
+
+### Added
+- Support for editing JSON objects, for example, the `_playerOptions` array in the Media component
+
+### Fixed
+- Vagrant issue with preventing updating plugins
+
 ## [0.2.1] - 2016-08-16
 This is a patch release which fixes minor issues with v0.2.0 uncovered by community user testing.
 
-## Added
+### Added
 - LESS sourcemaps
 
 ### Fixed

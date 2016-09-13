@@ -2,7 +2,7 @@
   "apps" : [{
   "name"         : "adapt",
   "script"       : "server.js",
-  "watch"        : ["lib", "plugins", "conf", "routes", "server.js"],
+  "watch"        : ["lib", "conf", "routes", "server.js"],
   "ignore_watch" : ["temp", "data", "node_modules"],
   "watch_options": {
     "followSymLinks": false

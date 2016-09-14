@@ -12,6 +12,7 @@ define(function(require){
       if (this.model.get('_id') === Origin.sessionModel.get('id')) className += ' me';
       return className;
     },
+    isSelected: false,
 
     events: {
       'click': 'onClicked',
@@ -58,7 +59,7 @@ define(function(require){
         this.$el.removeClass('locked');
       }
       // selected user styling
-      if (this.model.get('_isSelected') === true) {
+      if (this.isSelected) {
         this.$el.addClass('selected');
         this.$('.edit-mode').removeClass('display-none');
         this.$('.write').addClass('display-none');
@@ -70,8 +71,8 @@ define(function(require){
     },
 
     resetView: function() {
-      if(this.model.set('_isSelected')) {
-        this.model.set('_isSelected', false);
+      if(this.isSelected) {
+        this.isSelected = false;
         this.applyStyles();
       }
     },
@@ -116,9 +117,9 @@ define(function(require){
     },
 
     onClicked: function(event) {
-      if(!this.model.get('_isSelected')) {
+      if(!this.isSelected) {
         Origin.trigger('userManagement:user:reset');
-        this.model.set('_isSelected', true);
+        this.isSelected = true;
         this.applyStyles();
       }
     },

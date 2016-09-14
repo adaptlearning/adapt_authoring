@@ -338,7 +338,5 @@
   "app.list": "List",
   "app.ascending": "A to Z",
   "app.descending": "Z to A",
-  "app.visitpluginhomepage": "Visit plugin homepage",
-  "app.notauthorisedtitle": "No trespassing",
-  "app.notauthorisedmessage": "You aren't authorised to view this area."
+  "app.visitpluginhomepage": "Visit plugin homepage"
 }

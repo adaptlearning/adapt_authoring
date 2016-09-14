@@ -239,8 +239,7 @@ define(function(require){
     onModelUpdated: function(model, options) {
       this.render();
       // don't save again on server update
-      if(!options.status) {
-        // console.log(model.get('email') + ':',JSON.stringify(model.changedAttributes(),null,' '));
+      if(Object.keys(options).length === 0) {
         this.model.save(model.changedAttributes(), { patch: true });
       }
     }

@@ -17,9 +17,7 @@ define(function(require){
     views: [],
 
     events: {
-      'click button.refresh-all': 'refreshUserViews',
-      'click button.view-mode': 'switchToViewMode',
-      'click button.edit-mode': 'switchToEditMode'
+      'click button.refresh-all': 'refreshUserViews'
     },
 
     initialize: function() {
@@ -42,7 +40,6 @@ define(function(require){
       OriginView.prototype.render.apply(this, arguments);
 
       this.setHeight();
-      this.switchToViewMode();
       this.renderUserViews();
     },
 
@@ -71,26 +68,6 @@ define(function(require){
         this.$('.users').append(uv.$el.addClass('tb-row-' + Helpers.odd(index)));
         this.views.push(uv);
       }, this);
-    },
-
-    switchToViewMode: function(event) {
-      event && event.preventDefault();
-
-      this.model.set('isEditMode', false);
-      this.$('button.view-mode').addClass('display-none');
-      this.$('button.edit-mode').removeClass('display-none');
-
-      _.each(this.views, function(view) { view.setViewMode(); });
-    },
-
-    switchToEditMode: function(event) {
-      event && event.preventDefault();
-
-      this.model.set('isEditMode', true);
-      this.$('button.view-mode').removeClass('display-none');
-      this.$('button.edit-mode').addClass('display-none');
-
-      _.each(this.views, function(view) { view.setEditMode(); });
     },
 
     onDataFetched: function(models, reponse, options) {

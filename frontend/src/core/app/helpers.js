@@ -197,6 +197,14 @@ define(function(require){
           }
         },
 
+        ifMailEnabled: function(block) {
+          if (Origin.constants.useSmtp === true) {
+            return block.fn(this);
+          } else {
+            return block.inverse(this);
+          }
+        },
+
         getAssetFromValue: function(url) {
           var urlSplit = url.split('/')
           var fileName = urlSplit[urlSplit.length - 1];

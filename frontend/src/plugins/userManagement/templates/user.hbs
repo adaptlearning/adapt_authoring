@@ -86,7 +86,9 @@
           {{#if _isDeleted}}
           {{else}}
             <div class="group">
-              <button class="btn primary resetPassword">{{t 'app.resetpassword'}}</button>
+              {{#ifMailEnabled}}
+                <button class="btn primary resetPassword">{{t 'app.resetpassword'}}</button>
+              {{/ifMailEnabled}}
               <button class="btn tertiary changePassword">{{t 'app.changepassword'}}</button>
             </div>
             {{#if _isLocked}}

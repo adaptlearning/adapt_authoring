@@ -10,6 +10,9 @@ define(function(require){
   var UserManagementView = OriginView.extend({
     tagName: 'div',
     className: 'userManagement',
+    settings: {
+      autoRender: false
+    },
     users: new UserCollection(),
     views: [],
 
@@ -36,12 +39,6 @@ define(function(require){
     },
 
     render: function() {
-      // don't want to render before we got da data
-      if(!this.model.get('isReady') === true) {
-        this.listenTo(this.model, 'change:isReady',this.render);
-        return;
-      }
-
       OriginView.prototype.render.apply(this, arguments);
 
       this.setHeight();
@@ -97,7 +94,7 @@ define(function(require){
     },
 
     onDataFetched: function(models, reponse, options) {
-      this.model.set('isReady', true);
+      this.render();
     }
 
   }, {

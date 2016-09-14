@@ -32,10 +32,6 @@ define(function(require){
       this.users.fetch();
     },
 
-    preRender: function() {
-      this.$el.fadeOut(0);
-    },
-
     render: function() {
       OriginView.prototype.render.apply(this, arguments);
 
@@ -49,7 +45,6 @@ define(function(require){
     },
 
     postRender: function() {
-      this.$el.fadeIn(1000);
       this.setViewToReady();
     },
 

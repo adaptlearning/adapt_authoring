@@ -34,6 +34,8 @@
   "app.changeadminaccounts": "Please log in as another admin for full access.",
   "app.failedlogins": "Failed logins",
   "app.lastaccess": "Last access",
+  "app.duplicateuservalueerror": "Couldn't save user data. A user already exists with %{key}: <strong>%{value}</strong>",
+  "app.uservalueerror": "Couldn't save user data.",
   "app.addnewuser": "Add new user",
   "app.adduserformtitle": "New user account details",
   "app.usernameoremail": "E-mail address",

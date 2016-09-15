@@ -35,7 +35,6 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(Origin, 'userManagement:user:reset', this.resetView);
-      this.listenTo(this.model, 'change', this.onModelUpdated);
       this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(this, 'remove', this.remove);
     },
@@ -133,7 +132,7 @@ define(function(require){
       // save if not the same as old value
       var $input = this.getInputFromDiv($column);
       if($input.val() && this.model.get($input.attr('data-modelKey')) !== $input.val()) {
-        this.model.set($input.attr('data-modelKey'), $input.val());
+        this.updateModel($input.attr('data-modelKey'), $input.val());
       }
     },
 
@@ -167,7 +166,7 @@ define(function(require){
       Origin.Notify.confirm({
         text: window.polyglot.t('app.confirmresetlogins', { email: this.model.get('email') }),
         callback: function(confirmed) {
-          if(confirmed) self.model.set('failedLoginCount', 0);
+          if(confirmed) self.updateModel('failedLoginCount', 0);
         }
       });
     },
@@ -176,10 +175,7 @@ define(function(require){
       var self = this;
       Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST', function(data) {
         if(data.success !== true) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: window.polyglot.t('app.passwordresetfailed')
-          });
+          self.onError(window.polyglot.t('app.passwordresetfailed'));
         }
       });
     },
@@ -209,11 +205,11 @@ define(function(require){
     },
 
     onDisableClicked: function() {
-      this.model.set('_isDeleted', true);
+      this.updateModel('_isDeleted', true);
     },
 
     onRestoreClicked: function() {
-      this.model.set('_isDeleted', false);
+      this.updateModel('_isDeleted', false);
     },
 
     onDeleteClicked: function() {
@@ -223,25 +219,35 @@ define(function(require){
         text: window.polyglot.t('app.confirmdeleteuser', { email: this.model.get('email') }),
         callback: function(confirmed) {
           if(confirmed) {
-            self.model.destroy({
-              error: function(error) {
-                Origin.Notify.alert({
-                  type: 'error',
-                  text: error
-                });
-              }
-            });
+            self.model.destroy({ error: self.onError });
           }
         }
       });
     },
 
-    onModelUpdated: function(model, options) {
-      this.render();
-      // don't save again on server update
-      if(Object.keys(options).length === 0) {
-        this.model.save(model.changedAttributes(), { patch: true });
-      }
+    updateModel: function(key, value) {
+      var self = this;
+      this.model.save({ [key]: value }, {
+        patch: true,
+        wait: true,
+        error: function(model, response, options) {
+          var data = { key: key, value: value };
+          switch(response.responseJSON.code) {
+            // duplicate key
+            case 11000:
+              return self.onError(window.polyglot.t('app.duplicateuservalueerror', data));
+            default:
+              return self.onError(window.polyglot.t('app.uservalueerror'));
+          }
+        }
+      });
+    },
+
+    onError: function(error) {
+      Origin.Notify.alert({
+        type: 'error',
+        text: error.message || error
+      });
     }
   }, {
     template: 'user'

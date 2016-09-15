@@ -54,18 +54,19 @@ define(function(require){
     },
 
     renderUserViews: function() {
+      this.views = [];
       this.$('.users').empty();
 
-      var isEditMode = this.model.get('isEditMode');
       this.users.each(function(userModel, index) {
-        userModel.set('globalData', this.model.get('globalData'));
-        var uv = new UserView({ model:userModel });
-        this.$('.users').append(uv.$el.addClass('tb-row-' + Helpers.odd(index)));
-        this.views.push(uv);
+          userModel.set('globalData', this.model.get('globalData'));
+          var uv = new UserView({ model:userModel });
+          this.$('.users').append(uv.$el);
+          this.views.push(uv);
       }, this);
     },
 
     onDataFetched: function(models, reponse, options) {
+      // TODO do something smarter here based on what's changed
       this.render();
     }
 

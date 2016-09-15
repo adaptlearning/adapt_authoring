@@ -173,11 +173,7 @@ define(function(require){
 
     onResetPasswordClicked: function() {
       var self = this;
-      Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST', function(data) {
-        if(data.success !== true) {
-          self.onError(window.polyglot.t('app.passwordresetfailed'));
-        }
-      });
+      Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST');
     },
 
     onChangePasswordClicked: function() {

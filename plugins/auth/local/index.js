@@ -305,15 +305,11 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
 
         app.mailer.send(user.email, subject, body, templateData, function(error) {
           if (error) {
-            logger.log('error', error);
-            res.statusCode = 200;
-            return res.json({success: false});
-          } 
-      
-          logger.log('info', 'Password reset for ' + user.email + ' from ' + user.ipAddress);
+            return res.status(500).send(error.message);
+          }
 
-          res.statusCode = 200;
-          return res.json({success: true});
+          logger.log('info', 'Password reset for ' + user.email + ' from ' + user.ipAddress);
+          return res.status(200).json({success: true});
         });
       });
     } else {

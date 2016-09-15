@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>{{subject}}</title>
+  </head>
+  <body>
+    <div class="logo">{{logoText}}</div>
+    <div class="content">
+      <div class="title">
+        {{subject}}
+      </div>
+      <p>{{greeting}},</p>
+      {{{text}}}
+      <a class="btn" href="{{{templateData.rootUrl}}}#user/reset/{{{templateData.resetToken}}}" target="_blank"">{{templateData.resetLabel}}</a>
+    </div>
+    <div class="footer">
+      {{footer}}
+    </div>
+  </body>
+</html>

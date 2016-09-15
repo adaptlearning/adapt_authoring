@@ -5,14 +5,13 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
 
   var ResetPasswordView = OriginView.extend({
-
     tagName: "div",
-
     className: "reset-password",
 
     events: {
       'click .form-reset-password button' : 'resetPassword',
-      'click button.cancel' : 'goToLogin'
+      'click button.cancel' : 'goToLogin',
+      'click button.return' : 'goToLogin'
     },
 
     preRender: function() {
@@ -25,24 +24,26 @@ define(function(require) {
     },
 
     goToLogin: function(e) {
-      e.preventDefault();
-
-      Origin.router.navigate('#/user/login', {trigger: true});
+      e && e.preventDefault();
+      Origin.router.navigate('#/user/login', { trigger: true });
     },
 
     handleValidationError: function(model, error) {
-      var self = this;
-
-      if (error && _.keys(error).length !== 0) {
-        _.each(error, function(value, key) {
-          self.$('#' + key + 'Error').text(value);
-        });
+      if (!error) {
+        return;
       }
+      var msg = "";
+      _.each(error, function(value, key) {
+        msg += value + '. ';
+      }, this);
+
+      this.$('.resetError .message').text(msg);
+      this.$('.resetError').removeClass('display-none');
     },
 
     verifyToken: function() {
+      // Invalid token entered, take the user to login
       if (!this.model.get('user')) {
-        // Invalid token entered, take the user to login
         Origin.router.navigate('#/user/login', {trigger: true});
       }
     },
@@ -50,30 +51,26 @@ define(function(require) {
     resetPassword: function(event) {
       event.preventDefault();
 
-      var self = this;
+      this.model.set('password', this.$('#password').val());
+      this.model.set('confirmPassword', this.$('#confirmPassword').val());
 
-      self.model.set('password', self.$('#password').val());
-      self.model.set('confirmPassword', self.$('#confirmPassword').val());
-
-      self.model.save({}, {
-        success: function(model, response, options) {
+      this.model.save({}, {
+        success: _.bind(function(model, response, options) {
           if (response.success) {
-            Origin.Notify.alert({
-              type: 'success',
-              text: window.polyglot.t('app.resetpasswordsuccess')
-            });
-            Origin.router.navigate('#/user/login', {trigger: true});
+            this.$('.form-reset-password').addClass('display-none');
+            this.$('.reset-introduction').addClass('display-none');
+
+            this.$('.message .success').removeClass('display-none');
           }
-        },
-        error: function(model, response, options) {
+        },this),
+        error: _.bind(function(model, response, options) {
           Origin.Notify.alert({
             type: 'error',
             text: window.polyglot.t('app.resetpassworderror')
           });
-        }
+        },this)
       });
     }
-
   }, {
     template: 'resetPassword'
   });

@@ -295,8 +295,15 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
         
         var subject = app.polyglot.t('app.emailforgottenpasswordsubject');
         var body = app.polyglot.t('app.emailforgottenpasswordbody', {rootUrl: configuration.getConfig('rootUrl'), data: userToken.token});
+        var templateData = {
+          name: 'passwordReset',
+          user: user,
+          rootUrl: configuration.getConfig('rootUrl'),
+          resetToken: userToken.token,
+          resetLabel: app.polyglot.t('app.resetpassword')
+        }
 
-        app.mailer.send(user.email, subject, body, function(error) {
+        app.mailer.send(user.email, subject, body, templateData, function(error) {
           if (error) {
             logger.log('error', error);
             res.statusCode = 200;

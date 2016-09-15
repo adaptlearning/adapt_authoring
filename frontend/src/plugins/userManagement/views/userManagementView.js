@@ -33,10 +33,19 @@ define(function(require){
     },
 
     render: function() {
-      OriginView.prototype.render.apply(this, arguments);
+      var SELECTED_CLASS = 'selected';
+      var $selected = this.$('.user-item.' + SELECTED_CLASS)[0];
 
+      OriginView.prototype.render.apply(this, arguments);
+      this.$('.users').fadeOut(0);
+
+      this.users.each(this.createUserView, this);
       this.setHeight();
-      this.renderUserViews();
+
+      if($selected) {
+        var selector = $selected.className.replace(SELECTED_CLASS,'');
+        $(document.getElementsByClassName(selector)).addClass(SELECTED_CLASS).click();
+      }
     },
 
     setHeight: function() {
@@ -46,6 +55,7 @@ define(function(require){
 
     postRender: function() {
       this.setViewToReady();
+      this.$('.users').fadeIn(300);
     },
 
     refreshUserViews: function(event) {
@@ -53,20 +63,15 @@ define(function(require){
       this.users.fetch();
     },
 
-    renderUserViews: function() {
-      this.views = [];
-      this.$('.users').empty();
-
-      this.users.each(function(userModel, index) {
-          userModel.set('globalData', this.model.get('globalData'));
-          var uv = new UserView({ model:userModel });
-          this.$('.users').append(uv.$el);
-          this.views.push(uv);
-      }, this);
+    createUserView: function(model) {
+      model.set('globalData', this.model.get('globalData'));
+      var uv = new UserView({ model:model });
+      this.$('.users').append(uv.$el);
+      this.views.push(uv);
+      return uv;
     },
 
     onDataFetched: function(models, reponse, options) {
-      // TODO do something smarter here based on what's changed
       this.render();
     }
 

@@ -5,7 +5,7 @@ define(function(require) {
 
   var UserCollection = Backbone.Collection.extend({
     model: UserModel,
-    url: 'api/user',
+    url: 'api/user'
   });
 
   return UserCollection;

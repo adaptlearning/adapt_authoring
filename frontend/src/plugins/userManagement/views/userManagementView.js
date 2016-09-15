@@ -10,13 +10,14 @@ define(function(require){
   var UserManagementView = OriginView.extend({
     tagName: 'div',
     className: 'userManagement',
+    settings: {
+      autoRender: false
+    },
     users: new UserCollection(),
     views: [],
 
     events: {
-      'click button.refresh-all': 'refreshUserViews',
-      'click button.view-mode': 'switchToViewMode',
-      'click button.edit-mode': 'switchToEditMode'
+      'click button.refresh-all': 'refreshUserViews'
     },
 
     initialize: function() {
@@ -31,21 +32,10 @@ define(function(require){
       this.users.fetch();
     },
 
-    preRender: function() {
-      this.$el.fadeOut(0);
-    },
-
     render: function() {
-      // don't want to render before we got da data
-      if(!this.model.get('isReady') === true) {
-        this.listenTo(this.model, 'change:isReady',this.render);
-        return;
-      }
-
       OriginView.prototype.render.apply(this, arguments);
 
       this.setHeight();
-      this.switchToViewMode();
       this.renderUserViews();
     },
 
@@ -55,7 +45,6 @@ define(function(require){
     },
 
     postRender: function() {
-      this.$el.fadeIn(1000);
       this.setViewToReady();
     },
 
@@ -76,28 +65,8 @@ define(function(require){
       }, this);
     },
 
-    switchToViewMode: function(event) {
-      event && event.preventDefault();
-
-      this.model.set('isEditMode', false);
-      this.$('button.view-mode').addClass('display-none');
-      this.$('button.edit-mode').removeClass('display-none');
-
-      _.each(this.views, function(view) { view.setViewMode(); });
-    },
-
-    switchToEditMode: function(event) {
-      event && event.preventDefault();
-
-      this.model.set('isEditMode', true);
-      this.$('button.view-mode').removeClass('display-none');
-      this.$('button.edit-mode').addClass('display-none');
-
-      _.each(this.views, function(view) { view.setEditMode(); });
-    },
-
     onDataFetched: function(models, reponse, options) {
-      this.model.set('isReady', true);
+      this.render();
     }
 
   }, {

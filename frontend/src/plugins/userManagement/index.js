@@ -15,6 +15,8 @@ define(function(require) {
   };
 
   Origin.on('app:dataReady login:changed', function() {
+    Origin.permissions.addRoute('userManagement', data.featurePermissions);
+
   	if (Origin.permissions.hasPermissions(data.featurePermissions)) {
       data.allRoles.on('sync', onDataFetched);
       data.allRoles.url = 'api/role';
@@ -30,7 +32,9 @@ define(function(require) {
         "icon": "fa-users",
         "callbackEvent": "userManagement:open"
       });
-  	}
+  	} else {
+      isReady = true;
+    }
   });
 
   Origin.on('globalMenu:userManagement:open', function() {
@@ -38,17 +42,6 @@ define(function(require) {
   });
 
   Origin.on('router:userManagement', function(location, subLocation, action) {
-    // unauthorised users can turn back around
-    if (!Origin.permissions.hasPermissions(data.featurePermissions)) {
-      Origin.Notify.alert({
-        type: 'warning',
-        title: window.polyglot.t('app.notauthorisedtitle'),
-        text: window.polyglot.t('app.notauthorisedmessage')
-      });
-      Origin.router.navigate('#/dashboard');
-      return;
-    }
-
     if(isReady) {
       onRoute(location, subLocation, action);
     }

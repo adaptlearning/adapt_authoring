@@ -1,0 +1,18 @@
+<div class="inner">
+  <div class="heading row">
+      <div class="level"><h4>Level</h4></div>
+      <div class="message"><h4>Message</h4></div>
+  </div>
+  <div class="logs">
+    {{#if logsToRender}}
+    {{else}}
+    There are no logs to show.
+    {{/if}}
+    {{#each logsToRender}}
+      <div class="log row {{attributes.level}}">
+          <div class="level">{{attributes.level}}</div>
+          <div class="message">{{attributes.message}}</div>
+      </div>
+    {{/each}}
+  </div>
+</div>

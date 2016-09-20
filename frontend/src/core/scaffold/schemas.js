@@ -16,6 +16,8 @@ define(function(require) {
                 enabledExtensionsKeys.push(value.targetAttribute);
             });
 
+
+
             // Get the schema
             var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
             // Compare the enabledExtensions against the current schemas
@@ -25,6 +27,17 @@ define(function(require) {
                         delete schema._extensions.properties[key];
                     }
                 });
+            }
+
+            // only include settings for used menus
+            var appliedMenus = [ configModel.get('_menu') ]; // TODO we only support one menu right now...
+            _.each(schema.menuSettings.properties, function(value, key) {
+                if (!_.contains(appliedMenus, value.name)) {
+                    delete schema.menuSettings.properties[key];
+                }
+            });
+            if(_.isEmpty(schema.menuSettings.properties)) {
+                delete schema.menuSettings;
             }
 
             if (schemaName == 'course') {

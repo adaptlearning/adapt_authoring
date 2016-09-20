@@ -43,7 +43,7 @@ define(function(require){
       } else {
         $('.form-container > form > div > fieldset').addClass('display-none');
         _.each(this.filters, function(filter) {
-          $('.fieldset-' + Helpers.lowerCase(filter)).removeClass('display-none');
+          $('.fieldset-' + filter).removeClass('display-none');
         });
       }
     },
@@ -202,10 +202,11 @@ define(function(require){
     },
 
     onSaveSuccess: function() {
+      var self = this;
       Origin.trigger('editingOverlay:views:hide');
       Origin.trigger('editor:refreshData', function() {
+        self.remove();
         Backbone.history.history.back();
-        this.remove();
       }, this);
     }
   });

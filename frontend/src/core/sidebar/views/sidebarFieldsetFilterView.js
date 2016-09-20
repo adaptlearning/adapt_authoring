@@ -1,13 +1,10 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
 	var Origin = require('coreJS/app/origin');
 	var Backbone = require('backbone');
 
 	var SidebarFieldsetFilterView = Backbone.View.extend({
-
 		className: 'sidebar-row',
-
 		events: {
 			'click button': 'onFilterClicked'
 		},
@@ -33,15 +30,11 @@ define(function(require) {
 				this.model.set('_isSelected', true);
 				this.$('i').addClass('fa-toggle-on');
 			}
-			
-			Origin.trigger('sidebarFieldsetFilter:filterForm', this.model.get('legend'));
-			
-		}
 
+			Origin.trigger('sidebarFieldsetFilter:filterForm', this.model.get('id'));
+		}
 	}, {
 		template: 'sidebarFieldsetFilter'
 	});
-
 	return SidebarFieldsetFilterView;
-
 });

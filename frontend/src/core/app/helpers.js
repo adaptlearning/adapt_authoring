@@ -42,9 +42,16 @@ define(function(require){
           if (!key) {
             return;
           }
-          // Take in key value and remove all _'s and capitalise
-          var string = key.replace(/_/g, "").toLowerCase();
-          return this.capitalise(string);
+          // remove all _'s
+          var s = key.replace(/_/g, "");
+          // separate camel-cased words
+          var capitalIndex = s.search(/[A-Z]{1}/);
+          while(capitalIndex > 0) {
+            s = s.slice(0,capitalIndex) + ' ' + s.slice(capitalIndex);
+            capitalIndex = s.match(/[A-Z]{1}/);
+          }
+          // capitalise
+          return this.capitalise(s);
         },
 
         formatDate: function(timestamp, noZero) {

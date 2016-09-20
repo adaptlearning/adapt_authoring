@@ -107,6 +107,9 @@
       "required": true,
       "default": 1,
       "editorOnly": true
+    },
+    "menuSettings": {
+      "type": "object"
     }
   }
 }

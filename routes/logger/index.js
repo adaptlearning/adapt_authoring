@@ -42,7 +42,12 @@ function getDb() {
 server.get('/log', function (req, res, next) {
   database.getDatabase(function(error, db) {
     if(error) return res.status(500).json(error.toString());
-    db.retrieve('log', {}, { limit: UI_LOG_LENGTH, jsonOnly: true }, function(error, results) {
+    db.retrieve('log', {}, {
+      jsonOnly: true,
+      operators: {
+        limit: UI_LOG_LENGTH
+      }
+    }, function(error, results) {
       if(error) return res.status(500).json(error.toString());
       return res.json(results);
     });

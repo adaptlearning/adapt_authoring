@@ -123,9 +123,12 @@ function initialize () {
         
         query.$and = andList;
 
-        // Only return courses which have been shared
-        query.$and.push({ _isShared: true });
-        
+        // Only return shared courses not authored by current user
+        query.$and.push({
+          _isShared: true,
+          createdBy: { $ne: usermanager.getCurrentUser()._id }
+        });
+
         options.jsonOnly = true;
         options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
 

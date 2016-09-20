@@ -316,6 +316,7 @@
   "app.errorusernoaccess": "Sorry, the current user doesn't have access to this course",
   "app.copyidtoclipboardsuccess": "Copied %{id} to clipboard",
   "app.copyingidtoclipboarderror": "Error copying %{id} to clipboard",
+  "app.thumb": "Thumb",
   "app.grid": "Grid",
   "app.list": "List",
   "app.ascending": "A to Z",

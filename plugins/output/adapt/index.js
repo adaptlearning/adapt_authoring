@@ -255,7 +255,6 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 
       return next(null, resultObject);
     });
-
 };
 
 AdaptOutput.prototype.export = function (courseId, request, response, next) {

@@ -29,7 +29,8 @@ define(function(require) {
     },
 
     setupCollection: function() {
-      this.collection = new Backbone.Collection(this.model.get('componentTypes'));
+      var availableComponents = _.where(this.model.get('componentTypes'), { _isAvailableInEditor: true });
+      this.collection = new Backbone.Collection(availableComponents);
     },
 
     setupFilters: function() {
@@ -73,37 +74,32 @@ define(function(require) {
 
     renderComponentList: function() {
       Origin.trigger('editorComponentListView:removeSubviews');
-      var componentTypes = this.model.get('componentTypes');
+      // _.each(this.collection, function(componentType) {
+      this.collection.each(function(componentType) {
+        var properties = componentType.get('properties');
+        if (properties && properties.hasOwnProperty('._supportedLayout')) {
+          var supportedLayout = properties.hasOwnProperty('._supportedLayout').enum;
 
-      _.each(componentTypes, function(componentType) {
-
-        var availablePositions = this.availablePositions;
-
-        if (componentType.properties && componentType.properties.hasOwnProperty('._supportedLayout')) {
-          var supportedLayout = componentTypes.properties.hasOwnProperty('._supportedLayout').enum;
-        
           // Prune the available positions
           if (_.indexOf(supportedLayout, 'half-width') == -1) {
-            availablePositions.left = false;
-            availablePositions.right = false;
+            this.availablePositions.left = false;
+            this.availablePositions.right = false;
           }
-          
+
           if (_.indexOf(supportedLayout, 'full-width') == -1) {
-            availablePositions.full = false; 
+            this.availablePositions.full = false;
           }
         }
-        
+
         this.$('.editor-component-list-sidebar-list').append(new EditorComponentListItemView({
-            model: new Backbone.Model(componentType),
-            availablePositions: availablePositions,
+            model: componentType,
+            availablePositions: this.availablePositions,
             _parentId: this.model.get('_parentId'),
             $parentElement: this.$parentElement,
             parentView: this.parentView,
-            searchTerms: componentType.displayName.toLowerCase()
+            searchTerms: componentType.get('displayName').toLowerCase()
           }).$el);
-        
       }, this);
-
     },
 
     onOverlayClicked: function(event) {

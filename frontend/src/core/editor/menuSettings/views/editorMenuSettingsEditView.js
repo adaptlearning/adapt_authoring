@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
@@ -8,14 +7,8 @@ define(function(require) {
   var MenuSettingsView = require('editorMenuSettings/views/editorMenuSettingsView');
 
   var EditorMenuSettingsEditView = EditorOriginView.extend({
-
     tagName: "ul",
-
     className: "editor-menu-settings-edit",
-
-    events: {
-
-    },
 
     preRender: function() {
       this.collection = new MenuSettingsCollection();
@@ -26,28 +19,19 @@ define(function(require) {
       this.listenTo(Origin, 'editorMenuSettingsEditSidebar:views:save', this.saveData);
     },
 
-    postRender: function() {
-    },
-
     addMenuItemView: function() {
       this.renderMenuItemViews();
-      _.defer(this.setViewToReady);
     },
 
     renderMenuItemViews: function() {
-
       this.collection.each(function(menu) {
-
-        var isSelected = false;
-        if (menu.get('name') === this.model.get('_menu')) {
-          isSelected = true;
-        }
-
+        var isSelected = menu.get('name') === this.model.get('_menu');
         menu.set('_isSelected', isSelected);
-        this.$('.menu-settings-list').append(new MenuSettingsView({model: menu}).$el);
-
+        if(isSelected || menu.get('_isAvailableInEditor') === true) {
+          this.$('.menu-settings-list').append(new MenuSettingsView({ model: menu }).$el);
+        }
       }, this);
-
+      this.setViewToReady();
     },
 
     cancel: function(event) {
@@ -66,20 +50,14 @@ define(function(require) {
         return this.onSaveError(null, window.polyglot.t('app.errornomenuselected'));
       }
 
-      var selectedMenuId = selectedMenu.get('_id');
-
-      // Should push to api
-
-      $.post('/api/menu/' + selectedMenuId + '/makeitso/' + this.model.get('_courseId'))
+      $.post('/api/menu/' + selectedMenu.get('_id') + '/makeitso/' + this.model.get('_courseId'))
         .error(this.onSaveError)
         .done(this.onSaveSuccess);
     }
-
   },
   {
     template: "editorMenuSettingsEdit"
   });
 
   return EditorMenuSettingsEditView;
-
 });

@@ -37,16 +37,12 @@ define(function(require) {
     renderThemeViews: function() {
 
       this.collection.each(function(theme) {
-
-        var isSelected = false;
-
-        if (theme.get('name') === this.model.get('_theme')) {
-          isSelected = true;
-        }
+        var isSelected = theme.get('name') == this.model.get('_theme');
 
         theme.set('_isSelected', isSelected);
-        this.$('.theme-list').append(new ThemeItemView({model: theme}).$el);
-
+        if(isSelected || theme.get('_isAvailableInEditor') === true) {
+          this.$('.theme-list').append(new ThemeItemView({ model: theme }).$el);
+        }
       }, this);
 
     },

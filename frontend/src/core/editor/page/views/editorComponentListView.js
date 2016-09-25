@@ -1,15 +1,13 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
+  var _ = require('underscore');
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorComponentListItemView = require('editorPage/views/editorComponentListItemView');
 
   var EditorComponentListView = EditorOriginView.extend({
-
     tagName: "div",
-
     className: "editor-component-list",
 
     events: {
@@ -20,10 +18,13 @@ define(function(require) {
 
     preRender: function(options) {
       $('html').css('overflow-y', 'hidden');
+
       this.listenTo(Origin, 'editorComponentListView:remove', this.remove);
       this.listenTo(Origin, 'window:resize', this.onScreenResize);
+
       this.setupCollection();
       this.setupFilters();
+
       this.$parentElement = options.$parentElement;
       this.parentView = options.parentView;
     },
@@ -34,22 +35,23 @@ define(function(require) {
     },
 
     setupFilters: function() {
-      var layoutOptions = this.model.get('layoutOptions');
-      // Checks the available layouts in the block
       this.availablePositions = {
         left: false,
         right: false,
         full: false
       };
 
-      _.each(layoutOptions, function(layoutOption) {
-        var type = layoutOption.type;
-        if (type === 'left') {
-          this.availablePositions.left = true;
-        } else if (type === 'right') {
-          this.availablePositions.right = true;
-        } else if (type === 'full') {
-          this.availablePositions.full = true;
+      _.each(this.model.get('layoutOptions'), function(layoutOption) {
+        switch(layoutOption.type) {
+          case 'left':
+            this.availablePositions.left = true;
+            break;
+          case 'right':
+            this.availablePositions.right = true;
+            break;
+          case 'full':
+            this.availablePositions.full = true;
+            break;
         }
       }, this);
 
@@ -66,7 +68,7 @@ define(function(require) {
 
     closeView: function() {
       var self = this;
-      this.$el.animate({right:this.$('.editor-component-list-sidebar').width()*-1}, 400,"easeOutQuart", function onAnimOut() {
+      this.$el.animate({ right:this.$('.editor-component-list-sidebar').width() *- 1 }, 400,"easeOutQuart", function onAnimOut() {
         $('html').css('overflow-y', '');
         self.remove();
       });
@@ -124,5 +126,4 @@ define(function(require) {
   });
 
   return EditorComponentListView;
-
 });

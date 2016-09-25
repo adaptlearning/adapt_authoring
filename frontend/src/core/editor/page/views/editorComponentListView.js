@@ -1,15 +1,13 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
+  var _ = require('underscore');
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorComponentListItemView = require('editorPage/views/editorComponentListItemView');
 
   var EditorComponentListView = EditorOriginView.extend({
-
     tagName: "div",
-
     className: "editor-component-list",
 
     events: {
@@ -20,35 +18,40 @@ define(function(require) {
 
     preRender: function(options) {
       $('html').css('overflow-y', 'hidden');
+
       this.listenTo(Origin, 'editorComponentListView:remove', this.remove);
       this.listenTo(Origin, 'window:resize', this.onScreenResize);
+
       this.setupCollection();
       this.setupFilters();
+
       this.$parentElement = options.$parentElement;
       this.parentView = options.parentView;
     },
 
     setupCollection: function() {
-      this.collection = new Backbone.Collection(this.model.get('componentTypes'));
+      var availableComponents = _.where(this.model.get('componentTypes'), { _isAvailableInEditor: true });
+      this.collection = new Backbone.Collection(availableComponents);
     },
 
     setupFilters: function() {
-      var layoutOptions = this.model.get('layoutOptions');
-      // Checks the available layouts in the block
       this.availablePositions = {
         left: false,
         right: false,
         full: false
       };
 
-      _.each(layoutOptions, function(layoutOption) {
-        var type = layoutOption.type;
-        if (type === 'left') {
-          this.availablePositions.left = true;
-        } else if (type === 'right') {
-          this.availablePositions.right = true;
-        } else if (type === 'full') {
-          this.availablePositions.full = true;
+      _.each(this.model.get('layoutOptions'), function(layoutOption) {
+        switch(layoutOption.type) {
+          case 'left':
+            this.availablePositions.left = true;
+            break;
+          case 'right':
+            this.availablePositions.right = true;
+            break;
+          case 'full':
+            this.availablePositions.full = true;
+            break;
         }
       }, this);
 
@@ -65,7 +68,7 @@ define(function(require) {
 
     closeView: function() {
       var self = this;
-      this.$el.animate({right:this.$('.editor-component-list-sidebar').width()*-1}, 400,"easeOutQuart", function onAnimOut() {
+      this.$el.animate({ right:this.$('.editor-component-list-sidebar').width() *- 1 }, 400,"easeOutQuart", function onAnimOut() {
         $('html').css('overflow-y', '');
         self.remove();
       });
@@ -73,37 +76,32 @@ define(function(require) {
 
     renderComponentList: function() {
       Origin.trigger('editorComponentListView:removeSubviews');
-      var componentTypes = this.model.get('componentTypes');
+      // _.each(this.collection, function(componentType) {
+      this.collection.each(function(componentType) {
+        var properties = componentType.get('properties');
+        if (properties && properties.hasOwnProperty('._supportedLayout')) {
+          var supportedLayout = properties.hasOwnProperty('._supportedLayout').enum;
 
-      _.each(componentTypes, function(componentType) {
-
-        var availablePositions = this.availablePositions;
-
-        if (componentType.properties && componentType.properties.hasOwnProperty('._supportedLayout')) {
-          var supportedLayout = componentTypes.properties.hasOwnProperty('._supportedLayout').enum;
-        
           // Prune the available positions
           if (_.indexOf(supportedLayout, 'half-width') == -1) {
-            availablePositions.left = false;
-            availablePositions.right = false;
+            this.availablePositions.left = false;
+            this.availablePositions.right = false;
           }
-          
+
           if (_.indexOf(supportedLayout, 'full-width') == -1) {
-            availablePositions.full = false; 
+            this.availablePositions.full = false;
           }
         }
-        
+
         this.$('.editor-component-list-sidebar-list').append(new EditorComponentListItemView({
-            model: new Backbone.Model(componentType),
-            availablePositions: availablePositions,
+            model: componentType,
+            availablePositions: this.availablePositions,
             _parentId: this.model.get('_parentId'),
             $parentElement: this.$parentElement,
             parentView: this.parentView,
-            searchTerms: componentType.displayName.toLowerCase()
+            searchTerms: componentType.get('displayName').toLowerCase()
           }).$el);
-        
       }, this);
-
     },
 
     onOverlayClicked: function(event) {
@@ -128,5 +126,4 @@ define(function(require) {
   });
 
   return EditorComponentListView;
-
 });

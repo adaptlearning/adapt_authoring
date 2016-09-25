@@ -1,18 +1,15 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
   var Handlebars = require('handlebars');
 
   var MenuSettingsView = OriginView.extend({
-
     tagName: 'li',
 
     className: function() {
       var isSelectedClass = (this.model.get('_isSelected')) ? ' selected' : '';
-
       return 'menu-settings-list-item' + isSelectedClass;
     },
 
@@ -26,15 +23,14 @@ define(function(require){
 
     toggleSelect: function(event) {
       event && event.stopPropagation();
-
       if (!this.model.get('_isSelected')) {
         this.selectMenu();
-      } 
+      }
     },
 
     selectMenu: function() {
       Origin.trigger('editor:menuSettings:selected');
-      
+
       this.$el.addClass('selected');
       this.model.set({_isSelected: true});
     },
@@ -43,12 +39,9 @@ define(function(require){
       this.$el.removeClass('selected');
       this.model.set({_isSelected: false});
     }
-
-
   }, {
     template: 'editorMenuSettingsItem'
   });
 
   return MenuSettingsView;
-
 });

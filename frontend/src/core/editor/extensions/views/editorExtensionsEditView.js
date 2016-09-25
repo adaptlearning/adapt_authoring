@@ -1,15 +1,12 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorConfigModel = require('editorConfig/models/editorConfigModel');
 
   var EditorExtensionsEditView = EditorOriginView.extend({
-
     tagName: "div",
-
     className: "extension-management",
 
     settings: {
@@ -29,25 +26,17 @@ define(function(require) {
     },
 
     setupExtensions: function() {
-
-        // Grab all available extensions
         var availableExtensionsCollection = Origin.editor.data.extensionTypes;
+        var enabledExtensionsCollection = new Backbone.Collection(null, { comparator: 'displayName' });
+        var disabledExtensionsCollection = new Backbone.Collection(null, { comparator: 'displayName' });
 
-        // Get the extensions on the current course
-        var enabledExtensions = Origin.editor.data.config.get('_enabledExtensions');
+        var enabledExtensionNames = _.pluck(Origin.editor.data.config.get('_enabledExtensions'), 'name');
 
-        // Pluck on extension name
-        var enabledExtensionNames = _.pluck(enabledExtensions, 'name');
-        
-        var enabledExtensionsCollection = new Backbone.Collection();
-        var disabledExtensionsCollection = new Backbone.Collection();
-
-        // Go through each collection and see if it's enabled
-        // and push to correct collection
+        // sort into appropriate collection
         availableExtensionsCollection.each(function(extension) {
             if (_.indexOf(enabledExtensionNames, extension.get('name')) > -1) {
                 enabledExtensionsCollection.add(extension);
-            } else {
+            } else if(extension.get('_isAvailableInEditor')) {
                 disabledExtensionsCollection.add(extension);
             }
         });
@@ -66,38 +55,56 @@ define(function(require) {
         this.setViewToReady();
     },
 
+    postData: function(url) {
+        var self = this;
+        $.post(url + this.model.get('_id'), { extensions: this.currentSelectedIds },
+            _.bind(function(result) {
+            if (result.success) {
+                self.refreshData();
+            } else {
+                Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgeneric') });
+            }
+        }, this));
+    },
+
+    refreshData: function() {
+      var self = this;
+      var configModel = new EditorConfigModel({ _courseId: this.model.get('_id') });
+      // Ensure that the latest config model is always up-to-date when entering this screen
+      configModel.fetch({
+        success: function(model, response, options) {
+          Origin.editor.data.config =  model;
+          Origin.trigger('scaffold:updateSchemas', function() {
+            self.setupExtensions();
+          }, this);
+        }
+      });
+    },
+
     onAddExtensionClicked: function(event) {
         this.currentSelectedIds = [$(event.currentTarget).attr('data-id')];
         var extensionName = $(event.currentTarget).attr('data-displayname');
 
         Origin.Notify.confirm({
           title: window.polyglot.t('app.manageextensions'),
-          text: window.polyglot.t('app.confirmapplyextension', {extension: extensionName}),
+          text: window.polyglot.t('app.confirmapplyextension', { extension: extensionName }),
           html: true,
           callback: _.bind(this.onAddExtensionConfirmed, this)
         });
     },
 
     onAddExtensionConfirmed: function(confirmed) {
-        if (confirmed) {
-          Origin.trigger('editorExtensionsEdit:views:add');
+        if(confirmed) {
+            Origin.trigger('editorExtensionsEdit:views:add');
         }
     },
 
     addExtension: function() {
-        var self = this;
-        $.post('/api/extension/enable/' + this.model.get('_id'), {
-                extensions: this.currentSelectedIds
-            }, _.bind(function(result) {
-            if (result.success) {
-                self.refreshData();
-            } else {
-                Origin.Notify.alert({
-                  type: 'error',
-                  text: window.polyglot.t('app.errorgeneric')
-                });
-            }
-        }, this));
+        this.postData('/api/extension/enable/');
+    },
+
+    removeExtension: function() {
+        this.postData('/api/extension/disable/');
     },
 
     onRemoveExtensionClicked: function(event) {
@@ -109,48 +116,13 @@ define(function(require) {
           text: window.polyglot.t('app.confirmdeleteextension'),
           callback: _.bind(this.onRemoveExtensionConfirmed, this)
         });
-
     },
 
     onRemoveExtensionConfirmed: function(confirmed) {
-        if (confirmed) {
+        if(confirmed) {
             Origin.trigger('editorExtensionsEdit:views:remove');
         }
-    },
-
-    refreshData: function() {
-      var self = this;
-
-      var configModel = new EditorConfigModel({_courseId: this.model.get('_id')});
-      // Ensure that the latest config model is always up-to-date when entering this screen
-      configModel.fetch({
-        success: function(model, response, options) {
-          Origin.editor.data.config =  model;
-
-          Origin.trigger('scaffold:updateSchemas', function() {
-            self.setupExtensions();
-          }, this);
-        }
-      });
-    },
-
-    removeExtension: function() {
-        var self = this;
-
-        $.post('/api/extension/disable/' + this.model.get('_id'), {
-                extensions: this.currentSelectedIds
-            }, _.bind(function(result) {
-            if (result.success) {
-                self.refreshData();
-            } else {
-                Origin.Notify.alert({
-                  type: 'error',
-                  text: window.polyglot.t('app.errorgeneric')
-                });
-            }
-        }, this));
     }
-
   },
   {
     template: 'editorExtensionsEdit'

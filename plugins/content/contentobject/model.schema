@@ -110,6 +110,9 @@
     },
     "menuSettings": {
       "type": "object"
+    },
+    "themeSettings": {
+    	"type":"object"
     }
   }
 }

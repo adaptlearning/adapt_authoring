@@ -45,6 +45,19 @@ define(function(require) {
                 }
             }
 
+            if (schema.themeSettings) {
+                // only include settings for used themes
+                var appliedThemes = [ configModel.get('_theme') ]; // TODO we only support one theme right now...
+                _.each(schema.themeSettings.properties, function(value, key) {
+                    if (!_.contains(appliedThemes, value.name)) {
+                        delete schema.themeSettings.properties[key];
+                    }
+                });
+                if(_.isEmpty(schema.themeSettings.properties)) {
+                    delete schema.themeSettings;
+                }
+            }
+
             if (schemaName == 'course') {
                 // Remove unrequired globals from the course
                 if (schema._globals && schema._globals.properties._extensions) {

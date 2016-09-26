@@ -27,6 +27,9 @@ define(function(require) {
                         delete schema._extensions.properties[key];
                     }
                 });
+                if(_.isEmpty(schema._extensions.properties)) {
+                    delete schema._extensions;
+                }
             }
 
             if (schema.menuSettings) {

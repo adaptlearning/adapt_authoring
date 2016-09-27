@@ -56,28 +56,10 @@ define(function(require){
     },
 
     onDeleteConfirmed: function(confirmed) {
-      var self = this;
-
       if (confirmed) {
-        $.ajax({
-          url: '/api/asset/trash/' + self.model.get('_id'),
-          type: 'PUT',
-          success: function() {
-            if (Origin.permissions.hasPermissions(["*"])) {
-              self.model.set({_isDeleted: true});
-            } else {
-              self.model.trigger('destroy', self.model, self.model.collection);
-            }
-            Origin.trigger('assetManagement:assetPreviewView:delete');
-            self.remove();
-          },
-          error: function(data) {
-            Origin.Notify.alert({
-              type: 'error',
-              text: window.polyglot.t('app.errordeleteasset', { message: data.message })
-            });
-          }
-        });
+        this.model.destroy();
+        Origin.trigger('assetManagement:assetPreviewView:delete');
+        this.remove();
       }
     },
 

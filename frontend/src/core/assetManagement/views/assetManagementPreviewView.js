@@ -1,14 +1,11 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
   var Backbone = require('backbone');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
 
   var AssetManagementPreviewView = OriginView.extend({
-
     tagName: 'div',
-
     className: 'asset-management-preview',
 
     events: {
@@ -36,15 +33,16 @@ define(function(require){
 
     selectAsset: function (event) {
       event && event.preventDefault();
-
-      var data = {eventToTrigger: 'assetModal:assetSelected', model: this.model};
-      Origin.trigger('modal:passThrough', data);
+      Origin.trigger('modal:passThrough', {
+        eventToTrigger: 'assetModal:assetSelected',
+        model: this.model
+      });
     },
 
     onEditButtonClicked: function(event) {
       event.preventDefault();
       var assetId = this.model.get('_id');
-      Origin.router.navigate('#/assetManagement/' + assetId + '/edit', {trigger: true});
+      Origin.router.navigate('#/assetManagement/' + assetId + '/edit', { trigger: true });
     },
 
     onDeleteButtonClicked: function(event) {
@@ -84,10 +82,7 @@ define(function(require){
     },
 
     onRestoreButtonClicked: function(event) {
-      event.preventDefault();
-
-      event.preventDefault();
-
+      event && event.preventDefault();
       Origin.Notify.confirm({
         text: window.polyglot.t('app.assetconfirmrestore'),
         callback: _.bind(this.onRestoreConfirmed, this)
@@ -96,7 +91,6 @@ define(function(require){
 
     onRestoreConfirmed: function(confirmed) {
       var self = this;
-
       if (confirmed) {
         $.ajax({
           url: '/api/asset/restore/' + self.model.get('_id'),
@@ -115,11 +109,9 @@ define(function(require){
         });
       }
     }
-
   }, {
     template: 'assetManagementPreview'
   });
 
   return AssetManagementPreviewView;
-
 });

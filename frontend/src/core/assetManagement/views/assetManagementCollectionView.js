@@ -10,12 +10,8 @@ define(function(require){
     var AssetManagementPreview = require('coreJS/assetManagement/views/assetManagementPreviewView');
 
     var AssetCollectionView = OriginView.extend({
-
         tagName: "div",
-
         className: "asset-management-collection",
-
-        events: {},
 
         preRender: function(options) {
             this.sort = { createdAt: -1 };
@@ -44,7 +40,7 @@ define(function(require){
             }
 
             // FIX: Purely and lovingly put in for a rendering issue with chrome.
-            // For when the items being re-rendering after a search return an 
+            // For when the items being re-rendering after a search return an
             // amount of items that means the container is not scrollable
             if (this.assetLimit < this.assetDenominator) {
                 $('.asset-management-assets-container').hide();
@@ -63,7 +59,7 @@ define(function(require){
             $assetContainer.off('scroll');
 
             $assetContainer.on('scroll', _.bind(function() {
-    
+
                 var scrollTop = $assetContainer.scrollTop();
                 var scrollableHeight = $assetContainerInner.height();
                 var containerHeight = $assetContainer.height();
@@ -96,7 +92,7 @@ define(function(require){
 
             if (!Origin.permissions.hasPermissions(["*"])) {
                 this.search = _.extend(this.search, {_isDeleted: false});
-            } 
+            }
 
             this.search = _.extend(this.search, {
                 tags: {
@@ -122,7 +118,7 @@ define(function(require){
                   skip: this.assetLimit,
                   limit: this.assetDenominator,
                   sort: this.sort
-                } 
+                }
               },
               success: _.bind(function() {
                 // On successful collection fetching set lazy render to enabled
@@ -195,11 +191,9 @@ define(function(require){
             this.tags = _.pluck(tags, 'id');
             this.updateCollection(true);
         }
-
     }, {
         template: 'assetManagementCollection'
     });
 
     return AssetCollectionView;
-
 });

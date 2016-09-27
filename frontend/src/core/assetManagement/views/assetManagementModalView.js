@@ -1,85 +1,78 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var Backbone = require('backbone');
+  var Origin = require('coreJS/app/origin');
+  var AssetModel = require('coreJS/assetManagement/models/assetModel');
+  var AssetManagementCollectionView = require('coreJS/assetManagement/views/assetManagementCollectionView');
+  var AssetManagementPreviewView = require('coreJS/assetManagement/views/assetManagementPreviewView');
+  var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
+  var AssetManagementModalFiltersView = require('coreJS/assetManagement/views/assetManagementModalFiltersView');
+  var AssetManagementModelAutofillView = require('coreJS/assetManagement/views/assetManagementModalAutofillView');
 
-	var Backbone = require('backbone');
-	var Origin = require('coreJS/app/origin');
-	var AssetModel = require('coreJS/assetManagement/models/assetModel');
-	var AssetManagementCollectionView = require('coreJS/assetManagement/views/assetManagementCollectionView');
-	var AssetManagementPreviewView = require('coreJS/assetManagement/views/assetManagementPreviewView');
-	var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
-	var AssetManagementModalFiltersView = require('coreJS/assetManagement/views/assetManagementModalFiltersView');
-	var AssetManagementModelAutofillView = require('coreJS/assetManagement/views/assetManagementModalAutofillView');
+  var AssetManagementModalView = AssetManagementView.extend({
+    preRender: function(options) {
+  	  this.options = options;
+  	  AssetManagementView.prototype.preRender.apply(this, arguments);
+    },
 
-	var AssetManagementModalView = AssetManagementView.extend({
+    postRender: function() {
+      this.setupSubViews();
+      this.setupFilterAndSearchView();
+      // TODO enable this for others
+  	  var isImageForGraphic = this.options.assetType === "Asset:image" && Origin.scaffold.getCurrentModel().get('_component') === 'graphic';
+      if (isImageForGraphic) this.setupImageAutofillButton();
 
-		preRender: function(options) {
-			this.options = options;
-			AssetManagementView.prototype.preRender.apply(this, arguments);
-		},
+      this.resizeAssetPanels();
+    },
 
-		postRender: function() {
-	        this.setupSubViews();
-	        this.setupFilterAndSearchView();
-	        if (this.options.assetType === "Asset:image" && Origin.scaffold.getCurrentModel().get('_component') === 'graphic') {
-	        	this.setupImageAutofillButton();
-	        }
-	        this.resizeAssetPanels();
-	    },
+    setupSubViews: function() {
+      // Replace Asset and : so we can have both filtered and all asset types
+      var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
+      // asset type filter
+      if (assetType) {
+        this.search = {
+          assetType: {
+            $in: [ assetType ]
+          }
+        };
+      }
+      // Push collection through to collection view
+      this.$('.asset-management-assets-container-inner').append(new AssetManagementCollectionView({ collection: this.collection, search: this.search }).$el);
+    },
 
-	    setupSubViews: function() {
-	    	this.search = {};
-	    	// Replace Asset and : so we can have both filtered and all asset types
-	    	var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
+    setupFilterAndSearchView: function() {
+      new AssetManagementModalFiltersView(this.options);
+    },
 
-        if (assetType) {
-          var filters = [assetType];
-	    	  this.search.assetType = { $in: filters };
-        }
+    setupImageAutofillButton: function() {
+      new AssetManagementModelAutofillView({ modalView: this });
+    },
 
-		    // Push collection through to collection view
-		    this.$('.asset-management-assets-container-inner').append(new AssetManagementCollectionView({collection: this.collection, search: this.search}).$el);
-		},
+    resizeAssetPanels: function() {
+      var navigationHeight = $('.navigation').outerHeight();
+      var windowHeight = $(window).height();
+      var actualHeight = windowHeight - (navigationHeight);
+      this.$('.asset-management-assets-container').height(actualHeight);
+      this.$('.asset-management-preview-container').height(actualHeight);
+    },
 
-	    setupFilterAndSearchView: function() {
-	    	new AssetManagementModalFiltersView(this.options);
-	    },
+    onAssetClicked: function(model) {
+      this.$('.asset-management-no-preview').hide();
+      this.$('.asset-management-preview-container-inner').html(new AssetManagementPreviewView({ model: model }).$el);
 
-	    setupImageAutofillButton: function() {
-	    	new AssetManagementModelAutofillView({modalView: this});
-	    },
+  	  var assetObject = {
+        assetLink: 'course/assets/' + model.get('filename'),
+        assetId: model.get('_id'),
+        assetFilename: model.get('filename')
+      };
+      this.data = assetObject;
+      Origin.trigger('modal:assetSelected', assetObject);
+  	},
 
-	    resizeAssetPanels: function() {
-	        var navigationHeight = $('.navigation').outerHeight();
-	        var windowHeight = $(window).height();
-	        var actualHeight = windowHeight - (navigationHeight);
-	        this.$('.asset-management-assets-container').height(actualHeight);
-	        this.$('.asset-management-preview-container').height(actualHeight);
-	    },
+    getData: function() {
+      return this.data;
+    }
+  });
 
-	    onAssetClicked: function(model) {
-	        this.$('.asset-management-no-preview').hide();
-	        this.$('.asset-management-preview-container-inner').html(new AssetManagementPreviewView({
-	            model: model
-	        }).$el);
-
-	        var filename = model.get('filename');
-        	var selectedFileAlias = 'course/assets/' + filename;
-        	var assetId = model.get('_id');
-        	var assetObject = {
-        		assetLink: selectedFileAlias,
-        		assetId: assetId,
-        		assetFilename: filename
-        	}
-	        this.data = assetObject;
-          Origin.trigger('modal:assetSelected', assetObject);
-	    },
-
-	    getData: function() {
-	    	return this.data;
-	    }
-
-	});
-
-	return AssetManagementModalView;
-
+  return AssetManagementModalView;
 });

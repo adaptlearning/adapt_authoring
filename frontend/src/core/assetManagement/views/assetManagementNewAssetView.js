@@ -1,27 +1,28 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
+  var _ = require('underscore');
   var Backbone = require('backbone');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
-  var AssetModel = require('coreJS/assetManagement/models/assetModel');
   var TagsInput = require('core/libraries/jquery.tagsinput.min');
 
   var AssetManagementNewAssetView = OriginView.extend({
-
-
     className: 'asset-management-new-asset',
 
     events: {
-      'change .asset-file'          : 'onChangeFile',
+      'change .asset-file': 'onChangeFile'
     },
 
     preRender: function() {
-        this.listenTo(Origin, 'assetManagement:newAsset', this.uploadAsset);
+      this.listenTo(Origin, 'assetManagement:newAsset', this.onNewAsset);
     },
 
     postRender: function() {
-      // tagging
+      this.initTags();
+      this.setViewToReady();
+    },
+
+    initTags: function() {
       this.$('#tags_control').tagsInput({
         autocomplete_url: '/api/autocomplete/tag',
         onAddTag: _.bind(this.onAddTag, this),
@@ -29,15 +30,6 @@ define(function(require){
         'minChars' : 3,
         'maxChars' : 30
       });
-      // Set view to ready
-      this.setViewToReady();
-    },
-
-    onChangeFile: function(event) {
-      var $title = this.$('.asset-title');
-
-      // Default 'title' -- remove C:\fakepath if it is added
-      $title.val(this.$('.asset-file')[0].value.replace("C:\\fakepath\\", ""));
     },
 
     validateInput: function () {
@@ -68,78 +60,112 @@ define(function(require){
       return validated;
     },
 
-    uploadAsset: function() {
-
-      if (!this.validateInput()) {
-        Origin.trigger('sidebar:resetButtons');
-        return false;
-      }
-
-      var title = this.$('.asset-title').val();
-      var description = this.$('.asset-description').val();
-        // If model is new then uploadFile
-        if (this.model.isNew()) {
-          this.uploadFile();
-          // Return false to prevent the page submitting
-          return false;
-        } else {
-          // Else just update the title, description and tags
-          this.model.set({title: title, description: description});
-          this.model.save(null, {
-            error: function(model, response, options) {
-              Origin.Notify.alert({
-                type: 'error',
-                text: window.polyglot.t('app.errorassetupdate')
-              });
-            },
-            success: function(model, response, options) {
-              Origin.router.navigate('#/assetManagement', {trigger:true});
-            }
-          })
-        }
-
-    },
-
     uploadFile: function() {
-      // fix tags
-      var tags = [];
-      _.each(this.model.get('tags'), function (item) {
-        item._id && tags.push(item._id);
-      });
-      this.$('#tags').val(tags);
+      // set tags value
+      this.$('#tags').val(this.getTags());
+      // set workspaces value
+      this.$('#workspaces').val(JSON.stringify(this.getWorkspaces()));
 
-      var self = this;
       this.$('.asset-form').ajaxSubmit({
-
         uploadProgress: function(event, position, total, percentComplete) {
           $(".progress-container").css("visibility", "visible");
           var percentVal = percentComplete + '%';
           $(".progress-bar").css("width", percentVal);
           $('.progress-percent').html(percentVal);
         },
-
-        error: function(xhr, status, error) {
-          Origin.trigger('sidebar:resetButtons');
-          Origin.Notify.alert({
-            type: 'error',
-            text: xhr.responseJSON.message
-          });
-        },
-
-        success: function(data, status, xhr) {
-          Origin.trigger('assets:update');
-
-          self.model.set({_id: data._id});
-          self.model.fetch().done(function (data) {
-            Origin.trigger('assetItemView:preview', self.model);
-          });
-
-          Origin.router.navigate('#/assetManagement', {trigger:true});
-        }
+        error: _.bind(this.onFileUploadError, this),
+        success: _.bind(this.onFileUploadSuccess, this)
       });
 
       // Return false to prevent the page submitting
       return false;
+    },
+
+    getTags: function() {
+      return _.pluck(this.model.get('tags'), '_id');
+    },
+
+    // TODO assumptions made about editor data here...
+    getWorkspaces: function() {
+      var courseId = Origin.location.route1;
+
+      if(!courseId) {
+        return {};
+      }
+
+      var contentTypes = [ 'component', 'block', 'article', 'page' ];
+      var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
+
+      var workspaces = { course: courseId };
+      var id = Origin.location.route3;
+
+      // note we start at the right point in the hierarchy
+      // route2 === content type
+      for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
+        if(!id) return; // something's gone wrong
+
+        workspaces[contentTypes[i]] = id;
+
+        var match = Origin.editor.data[contentCollections[i]].findWhere({ _id: id });
+        id = match.get('_parentId') || false;
+      }
+      return workspaces;
+    },
+
+    onNewAsset: function() {
+      if (!this.validateInput()) {
+        Origin.trigger('sidebar:resetButtons');
+        return false;
+      }
+      // If model is new then uploadFile
+      if (this.model.isNew()) {
+        this.uploadFile();
+        // Return false to prevent the page submitting
+        return false;
+      } else {
+        this.model.set({
+          title: this.$('.asset-title').val(),
+          description: this.$('.asset-description').val()
+        });
+        this.model.save(null, {
+          error: _.bind(this.onNewAssetSaveError, this),
+          success: _.bind(this.onNewAssetSaveSuccess, this)
+        });
+      }
+    },
+
+    onNewAssetSaveSuccess: function() {
+      Origin.router.navigate('#/assetManagement', {trigger:true});
+    },
+
+    onNewAssetSaveError: function() {
+      Origin.Notify.alert({
+        type: 'error',
+        text: window.polyglot.t('app.errorassetupdate')
+      });
+    },
+
+    onFileUploadSuccess: function(data, status, xhr) {
+      Origin.trigger('assets:update');
+      this.model.set({_id: data._id});
+      this.model.fetch().done(function (data) {
+        Origin.trigger('assetItemView:preview', this.model);
+      });
+      Origin.router.navigate('#/assetManagement', { trigger:true });
+    },
+
+    onFileUploadError: function(xhr, status, error) {
+      Origin.trigger('sidebar:resetButtons');
+      Origin.Notify.alert({
+        type: 'error',
+        text: xhr.responseJSON.message
+      });
+    },
+
+    onChangeFile: function(event) {
+      var $title = this.$('.asset-title');
+      // Default 'title' -- remove C:\fakepath if it is added
+      $title.val(this.$('.asset-file')[0].value.replace("C:\\fakepath\\", ""));
     },
 
     onAddTag: function (tag) {
@@ -158,19 +184,12 @@ define(function(require){
     },
 
     onRemoveTag: function (tag) {
-      var tags = [];
-      _.each(this.model.get('tags'), function (item) {
-        if (item.title !== tag) {
-          tags.push(item);
-        }
-      });
-      this.model.set({ tags: tags });
+      var tags = _.filter(this.model.get('tags'), function (item) { return item.title !== tag; });
+      this.model.set('tags', tags);
     }
-
   }, {
     template: 'assetManagementNewAsset'
   });
 
   return AssetManagementNewAssetView;
-
 });

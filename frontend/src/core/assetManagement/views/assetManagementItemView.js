@@ -1,29 +1,26 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
 
   var AssetItemView = OriginView.extend({
-
     tagName: 'div',
-
     className: function() {
-        return 'asset-management-list-item id-' + this.model.get('_id');
+      return 'asset-management-list-item id-' + this.model.get('_id');
     },
 
     events: {
-        'click' : 'onAssetClicked'
+      'click' : 'onAssetClicked'
     },
 
     preRender: function() {
-        this.listenTo(Origin, 'assetManagement:modal:selectItem', this.selectItem);
-        this.listenTo(Origin, 'assetManagement:assetViews:remove', this.remove);
-        this.listenTo(this, 'remove', this.remove);
-        this.listenTo(this.model, 'destroy', this.remove);
-        this.listenTo(this.model, 'change:_isDeleted', this.onReRender);
+      this.listenTo(Origin, 'assetManagement:modal:selectItem', this.selectItem);
+      this.listenTo(Origin, 'assetManagement:assetViews:remove', this.remove);
+      this.listenTo(this, 'remove', this.remove);
+      this.listenTo(this.model, 'destroy', this.remove);
+      this.listenTo(this.model, 'change:_isDeleted', this.onReRender);
     },
 
     onReRender: function() {
@@ -45,19 +42,19 @@ define(function(require){
     },
 
     onAssetClicked: function () {
-        $('.asset-management-list-item').removeClass('selected');
-        this.$el.addClass('selected');
-        this.model.set('_isSelected', true);
-        Origin.trigger('assetManagement:assetItemView:preview', this.model);
+      $('.asset-management-list-item').removeClass('selected');
+      this.$el.addClass('selected');
+      this.model.set('_isSelected', true);
+      Origin.trigger('assetManagement:assetItemView:preview', this.model);
     },
 
     onInview: function() {
-        // Once this asset is inview - change the data-style attribute to the
-        // actual style attribute
-        var $previewImage = this.$('.asset-management-list-item-image');
-        $previewImage.attr('style', $previewImage.attr('data-style'));
-        // Remove inview as it's not needed anymore
-        this.$el.off('inview');
+      // Once this asset is inview - change the data-style attribute to the
+      // actual style attribute
+      var $previewImage = this.$('.asset-management-list-item-image');
+      $previewImage.attr('style', $previewImage.attr('data-style'));
+      // Remove inview as it's not needed anymore
+      this.$el.off('inview');
     },
 
     selectItem: function(modelId) {
@@ -65,11 +62,9 @@ define(function(require){
         this.onAssetClicked();
       }
     }
-
   }, {
     template: 'assetManagementListItem'
   });
 
   return AssetItemView;
-
 });

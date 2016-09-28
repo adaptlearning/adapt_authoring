@@ -223,7 +223,9 @@ define(function(require){
 
     updateModel: function(key, value) {
       var self = this;
-      this.model.save({ [key]: value }, {
+      var toSave = {};
+      toSave[key] = value;
+      this.model.save(toSave, {
         patch: true,
         wait: true,
         error: function(model, response, options) {

@@ -118,6 +118,18 @@ define(function(require){
           }
         },
 
+        getUserNameFromId: function(id) {
+          var user = Origin.users.findWhere({ _id: id });
+          if(!user) return 'undefined';
+
+          var names = [];
+
+          if(user.get('firstName')) names.push(user.get('firstName'));
+          if(user.get('lastName')) names.push(user.get('lastName'));
+
+          return (names.length < 1) ? user.get('email') : names.join(' ');
+        },
+
         selected: function(option, value){
             if (option === value) {
                 return ' selected';

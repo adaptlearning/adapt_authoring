@@ -13,7 +13,8 @@ define(function(require) {
     events: {
       'keydown #login-input-username' : 'clearErrorStyling',
       'keydown #login-input-password' : 'clearErrorStyling',
-      'click .login-form-submit'      : 'submitLoginDetails'
+      'click .login-form-submit'      : 'submitLoginDetails',
+      'click button.dash'             : 'goToDash'
     },
 
     preRender: function() {
@@ -23,6 +24,11 @@ define(function(require) {
     postRender: function() {
       this.setViewToReady();
       Origin.trigger('login:loaded');
+    },
+
+    goToDash: function(e) {
+      e && e.preventDefault();
+      Origin.router.navigate('#/dashboard', { trigger: true });
     },
 
     handleEnterKey: function(e) {
@@ -70,7 +76,7 @@ define(function(require) {
           errorMessage = window.polyglot.t('app.invalidusernameorpassword');
           break;
         case LoginView.ERR_ACCOUNT_LOCKED:
-          errorMessage = window.polyglot.t('app.accountlockedout');
+          errorMessage = window.polyglot.t('app.accountislocked');
           break;
         case LoginView.ERR_TENANT_DISABLED:
           errorMessage = window.polyglot.t('app.tenantnotenabled');

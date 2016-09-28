@@ -1,0 +1,126 @@
+@import '../../../less/sharedStyles.less';
+@import '../../../less/variables.less';
+
+@user-hover-bg-colour: #f3faff;
+@user-hover-borderl-colour: #8ea3af;
+
+.userManagement {
+    overflow-y: scroll;
+
+    .container {
+        .form-container-style;
+        max-width: inherit;
+    }
+
+    .view-buttons {
+        text-align: right;
+        padding-bottom: 20px;
+    }
+    .action-buttons{
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+
+    .tb-row {
+        padding: 10px;
+
+        &.align-right {
+            text-align: right;
+        }
+    }
+
+    .user-item {
+        cursor: pointer;
+        border: 1px solid white;
+
+        &.me {
+            font-weight: bold;
+        }
+        &.inactive {
+            .tb-col-inner {
+                color: #BBBBBB;
+            }
+        }
+        &.locked {
+            color: @alert-color;
+        }
+        &.selected {
+            cursor: default;
+            border: 1px solid #d6f2f9;
+            border-left: 1px solid @user-hover-borderl-colour;
+            background-color: @user-hover-bg-colour;
+        }
+
+        &:hover {
+            border-left: 1px solid @user-hover-borderl-colour;
+            background-color: @user-hover-bg-colour;
+        }
+
+        .tb-col-inner {
+            li {
+                margin-left: 0;
+                list-style: none;
+            }
+
+            .group {
+                margin-bottom: 10px;
+            }
+
+            span, select, input {
+                display: block;
+            }
+        }
+
+        a {
+            cursor: pointer;
+            padding-left: 3px;
+        }
+
+
+        button {
+            font-size: 90%;
+            padding: 5px 7px;
+            margin-bottom: 5px;
+            width: 100%;
+        }
+
+        input {
+            border-radius: 3px;
+            border: 1px solid #dedede;
+            padding: 3px;
+            margin-right: 4px;
+        }
+        select {
+            max-width: 115px;
+
+        }
+    }
+}
+
+.addUser {
+    .inner {
+        .form-container-style;
+
+        padding: 30px;
+
+        li {
+            margin-left: 0;
+            list-style: none;
+        }
+
+        .title {
+            padding-bottom: 30px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        form {
+            .form-group {
+                border: none;
+                .field-error {
+                    padding-bottom: 5px;
+                }
+            }
+        }
+    }
+}

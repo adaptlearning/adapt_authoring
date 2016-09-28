@@ -576,7 +576,7 @@
     },
     "_isShared": {
       "type": "boolean",
-      "default": false,
+      "default": true,
       "editorOnly": true,
       "inputType": {
         "type": "Boolean",

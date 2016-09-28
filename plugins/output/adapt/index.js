@@ -8,6 +8,7 @@ var origin = require('../../../'),
     Constants = require('../../../lib/outputmanager').Constants,
     configuration = require('../../../lib/configuration'),
     filestorage = require('../../../lib/filestorage'),
+    helpers = require('../../../lib/helpers'),
     database = require('../../../lib/database'),
     util = require('util'),
     path = require('path'),
@@ -216,7 +217,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         if (!isPreview) {
           // Now zip the build package
           var filename = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Filenames.Download);
-          var zipName = self.slugify(outputJson['course'].title);
+          var zipName = helpers.slugify(outputJson['course'].title);
           var output = fs.createWriteStream(filename),
             archive = archiver('zip');
 
@@ -255,7 +256,6 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 
       return next(null, resultObject);
     });
-
 };
 
 AdaptOutput.prototype.export = function (courseId, request, response, next) {
@@ -289,7 +289,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
             return callback(new Error('Unexpected results returned for course ' + courseId + ' (' + results.length + ')', self));
           }
 
-          exportName = self.slugify(results[0].title) + '-export-' + timestamp;
+          exportName = helpers.slugify(results[0].title) + '-export-' + timestamp;
           exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, exportName);
           callback();
         });

@@ -1,0 +1,23 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://jsonschema.net",
+  "$ref": "http://localhost/system/trackedObject.schema",
+  "properties": {
+    "message": {
+      "type": "string",
+      "required": true
+    },
+    "timestamp": {
+      "type": "date",
+      "required": true
+    },
+    "level": {
+      "type": "string",
+      "required": true
+    },
+    "meta": {
+      "type": "object"
+    }
+  }
+}

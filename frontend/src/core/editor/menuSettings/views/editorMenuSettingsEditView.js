@@ -1,5 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var _ = require('underscore');
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
@@ -35,15 +36,12 @@ define(function(require) {
     },
 
     cancel: function(event) {
-      event.preventDefault();
+      event && event.preventDefault();
       Origin.trigger('editorSidebarView:removeEditView', this.model);
     },
 
     saveData: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
-
+      event && event.preventDefault();
       var selectedMenu = this.collection.findWhere({_isSelected: true});
 
       if (selectedMenu === undefined) {
@@ -51,8 +49,8 @@ define(function(require) {
       }
 
       $.post('/api/menu/' + selectedMenu.get('_id') + '/makeitso/' + this.model.get('_courseId'))
-        .error(this.onSaveError)
-        .done(this.onSaveSuccess);
+        .error(_.bind(this.onSaveError, this))
+        .done(_.bind(this.onSaveSuccess, this));
     }
   },
   {

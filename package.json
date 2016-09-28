@@ -128,7 +128,8 @@
     "underscore": "~1.5.2",
     "unzip": "0.1.8",
     "validator": "4.2.1",
-    "winston": "1.0.2"
+    "winston": "1.0.2",
+    "winston-mongodb": "^1.6.1"
   },
   "main": "index",
   "engines": {

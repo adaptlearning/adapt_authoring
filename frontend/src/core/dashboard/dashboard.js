@@ -18,12 +18,20 @@ define(function(require) {
       Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
       Origin.options.addItems([
         {
-          title: window.polyglot.t('app.grid'),
+          title: window.polyglot.t('app.thumb'),
           icon: 'th',
+          callbackEvent: 'dashboard:layout:thumb',
+          value: 'thumb',
+          group: 'layout',
+        },
+        {
+          title: window.polyglot.t('app.grid'),
+          icon: 'th-large',
           callbackEvent: 'dashboard:layout:grid',
           value: 'grid',
           group: 'layout',
-        }, {
+        }, 
+        {
           title: window.polyglot.t('app.list'),
           icon: 'list',
           callbackEvent: 'dashboard:layout:list',

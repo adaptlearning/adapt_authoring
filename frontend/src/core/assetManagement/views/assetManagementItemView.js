@@ -12,7 +12,7 @@ define(function(require){
     },
 
     events: {
-      'click' : 'onAssetClicked'
+      'click': 'onAssetClicked'
     },
 
     preRender: function() {

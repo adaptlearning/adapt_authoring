@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
     var Backbone = require('backbone');
     var Handlebars = require('handlebars');
     var Origin = require('coreJS/app/origin');
@@ -52,14 +51,11 @@ define(function(require){
         },
 
         setupLazyScrolling: function() {
-
             var $assetContainer = $('.asset-management-assets-container');
             var $assetContainerInner = $('.asset-management-assets-container-inner');
             // Remove event before attaching
             $assetContainer.off('scroll');
-
             $assetContainer.on('scroll', _.bind(function() {
-
                 var scrollTop = $assetContainer.scrollTop();
                 var scrollableHeight = $assetContainerInner.height();
                 var containerHeight = $assetContainer.height();
@@ -72,7 +68,6 @@ define(function(require){
                         this.lazyRenderCollection();
                     }
                 }
-
             }, this));
         },
 
@@ -94,20 +89,16 @@ define(function(require){
                 this.search = _.extend(this.search, {_isDeleted: false});
             }
 
-            this.search = _.extend(this.search, {
-                tags: {
-                    $all: this.tags
-                }
-            }, {
-                assetType: {
-                    $in: this.filters
-                }
-            });
+            this.search = _.extend(
+              this.search,
+              { tags: { $all: this.tags } },
+              { assetType: { $in: this.filters } }
+            );
 
             // This is set when the fetched amount is equal to the collection length
             // Stops any further fetches and HTTP requests
             if (this.shouldStopFetches) {
-                return;
+              return;
             }
 
             this.collection.fetch({

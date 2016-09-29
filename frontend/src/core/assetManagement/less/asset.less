@@ -1,3 +1,6 @@
+@import '../../../less/animations.less';
+@import '../../../less/buttons.less';
+@import '../../../less/sharedStyles.less';
 @import '../../../less/variables.less';
 
 .asset-management-sidebar-filter-image-icon {
@@ -37,7 +40,46 @@
                    transition: all 0.2s;
                    box-shadow: 0px 0px 3pt 2pt transparent;
                    &:hover {
-                       box-shadow: 0 0 5px 2px #CBE1E6;
+                       .shake-anim();
+                        box-shadow: 0 0 5px 2px #CBE1E6;
+                        .asset-management-list-item-editOverlay {
+                            opacity: 1;
+                        }
+                   }
+
+                   &-editOverlay {
+                        opacity: 0;
+                        transition: opacity 0.5s;
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                        bottom: 10px;
+                        left: 10px;
+                        button {
+                            display: block;
+                            float: right;
+                            clear: both;
+                            margin-bottom: 5px;
+                            padding: 5px 10px;
+                            border-radius: 2px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            &.asset-management-list-item-select {
+                                .primary;
+                            }
+                            &.asset-management-list-item-autofill {
+                                .secondary;
+                            }
+                            .tooltip {
+                                display: none;
+                                margin-right: 5px;
+                            }
+                            &:hover {
+                                .tooltip {
+                                    display: initial;
+                                }
+                            }
+                        }
                    }
 
                    &-icon {
@@ -195,15 +237,14 @@
 }
 
 .asset-management-modal-new-asset {
-    position:fixed;
-    top:40px;
-    left:0px;
-    z-index:5;
-    background-color:#fff;
-    box-shadow:1px 2px 4px 0px #666;
-    &-inner {
-        padding:30px;
-    }
+    position: absolute;
+    width: 450px;
+    top: 52px;
+    left: 0;
+    bottom: 0;
+    z-index: 5;
+    .form-container-style;
+    margin: 10px;
 }
 
 .asset-management-modal-new-asset-close {

@@ -12,6 +12,11 @@ define(function(require){
         tagName: "div",
         className: "asset-management-collection",
 
+        initialize: function(options) {
+          OriginView.prototype.initialize.apply(this, arguments);
+          this.isModal = options.isModal;
+        },
+
         preRender: function(options) {
             this.sort = { createdAt: -1 };
             this.search = (options.search || {});
@@ -127,6 +132,7 @@ define(function(require){
         },
 
         appendAssetItem: function (asset) {
+            asset.set('isModal', this.isModal);
             this.$('.asset-management-collection-inner').append(new AssetItemView({ model: asset }).$el);
         },
 

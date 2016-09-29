@@ -1,0 +1,21 @@
+.shake-anim(@amount: 1.5deg; @duration: 0.2s) {
+  @keyframes shake-keyframes {
+     50% {
+       -webkit-transform: rotate(@amount);
+       -moz-transform: rotate(@amount);
+       -o-transform: rotate(@amount);
+       -ms-transform: rotate(@amount);
+       transform: rotate(@amount);
+     }
+  }
+  animation: shake-keyframes @duration;
+}
+
+.zoom-anim(@amount: 1.01; @duration: 0.2s) {
+  -webkit-transform: scale(@amount);
+  -moz-transform: scale(@amount);
+  -o-transform: scale(@amount);
+  -ms-transform: scale(@amount);
+  transform: scale(@amount);
+  transition-duration: @duration;
+}

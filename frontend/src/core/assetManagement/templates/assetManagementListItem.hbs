@@ -3,8 +3,23 @@
       <i class="fa fa-ban"></i>
   </div>
 {{/if}}
-<div class="asset-management-list-item-inner">
 
+{{#if isModal}}
+<div class="asset-management-list-item-editOverlay">
+  <button class="asset-management-list-item-select">
+    <span class="tooltip">Select</span>
+    <i class="fa fa-check"></i>
+  </button>
+  {{#if canAutofill}}
+  <button class="asset-management-list-item-autofill">
+    <span class="tooltip">Autofill</span>
+    <i class="fa fa-magic"></i>
+  </button>
+  {{/if}}
+</div>
+{{/if}}
+
+<div class="asset-management-list-item-inner">
     <div class="asset-management-list-item-icon">
       <div class="asset-management-list-item-icon-inner">
         {{#ifValueEquals assetType "image"}}

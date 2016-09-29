@@ -141,6 +141,7 @@ define(function(require) {
         onAssetButtonClicked: function(event) {
             event.preventDefault();
             Origin.trigger('modal:open', AssetManagementModalView, {
+                _shouldShowDoneButton: false,
                 collection: new AssetCollection,
                 assetType: this.schema.fieldType,
                 onUpdate: function(data) {

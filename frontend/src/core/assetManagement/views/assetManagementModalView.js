@@ -4,7 +4,7 @@ define(function(require) {
   var AssetManagementCollectionView = require('coreJS/assetManagement/views/assetManagementCollectionView');
   var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
   var AssetManagementModalFiltersView = require('coreJS/assetManagement/views/assetManagementModalFiltersView');
-  var AssetManagementModelAutofillView = require('coreJS/assetManagement/views/assetManagementModalAutofillView');
+  var AssetManagementModalAutofillView = require('coreJS/assetManagement/views/assetManagementModalAutofillView');
 
   var AssetManagementModalView = AssetManagementView.extend({
     preRender: function(options) {
@@ -16,10 +16,6 @@ define(function(require) {
 
     setupSubViews: function() {
       new AssetManagementModalFiltersView(this.options);
-
-      // TODO enable this for other components
-  	  var isImageForGraphic = this.options.assetType === "Asset:image" && Origin.scaffold.getCurrentModel().get('_component') === 'graphic';
-      if (isImageForGraphic) new AssetManagementModelAutofillView({ modalView: this });
 
       // Replace Asset and : so we can have both filtered and all asset types
       var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
@@ -41,9 +37,9 @@ define(function(require) {
 
     showPreview: function(model) {
       AssetManagementView.prototype.showPreview.apply(this, arguments);
-  	  var assetObject = this.setData(model);
+      var assetObject = this.setData(model);
       Origin.trigger('modal:assetSelected', assetObject);
-  	},
+    },
 
     setData: function(model, shouldAutofill) {
       this.data = {

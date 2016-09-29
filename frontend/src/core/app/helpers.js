@@ -119,15 +119,15 @@ define(function(require){
         },
 
         getUserNameFromId: function(id) {
-          var user = Origin.users.findWhere({ _id: id });
-          if(!user) return 'undefined';
+          var user = _.findWhere(Origin.sessionModel.get('users'), { _id:id });
+          if(!user) return '';
 
           var names = [];
 
-          if(user.get('firstName')) names.push(user.get('firstName'));
-          if(user.get('lastName')) names.push(user.get('lastName'));
+          if(user.firstName) names.push(user.firstName);
+          if(user.lastName) names.push(user.lastName);
 
-          return (names.length < 1) ? user.get('email') : names.join(' ');
+          return (names.length < 1) ? user.email : names.join(' ');
         },
 
         selected: function(option, value){

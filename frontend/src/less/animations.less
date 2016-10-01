@@ -11,6 +11,16 @@
   animation: shake-keyframes @duration;
 }
 
+.slideX-anim(@finish: 0; @duration: 0.2s) {
+    -webkit-transform: translateX(@finish);
+    -moz-transform: translateX(@finish);
+    -o-transform: translateX(@finish);
+    -ms-transform: translateX(@finish);
+    transform: translateX(@finish);
+    transition-duration: @duration;
+    transition-timing-function: ease-in;
+}
+
 .zoom-anim(@amount: 1.01; @duration: 0.2s) {
   -webkit-transform: scale(@amount);
   -moz-transform: scale(@amount);

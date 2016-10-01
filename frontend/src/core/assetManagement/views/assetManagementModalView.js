@@ -2,9 +2,8 @@
 define(function(require) {
   var Origin = require('coreJS/app/origin');
   var AssetManagementCollectionView = require('coreJS/assetManagement/views/assetManagementCollectionView');
+  var AssetManagementRefineView = require('coreJS/assetManagement/views/assetManagementRefineView');
   var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
-  var AssetManagementModalFiltersView = require('coreJS/assetManagement/views/assetManagementModalFiltersView');
-  var AssetManagementModalAutofillView = require('coreJS/assetManagement/views/assetManagementModalAutofillView');
 
   var AssetManagementModalView = AssetManagementView.extend({
     preRender: function(options) {
@@ -15,7 +14,7 @@ define(function(require) {
     },
 
     setupSubViews: function() {
-      new AssetManagementModalFiltersView(this.options);
+      this.$('.asset-management-inner').append(new AssetManagementRefineView().$el);
 
       // Replace Asset and : so we can have both filtered and all asset types
       var assetType = this.options.assetType.replace('Asset', '').replace(':', '');

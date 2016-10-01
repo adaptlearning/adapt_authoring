@@ -1,0 +1,33 @@
+@import '../../../less/animations.less';
+@import '../../../less/variables.less';
+
+@background-color: #1e2e36;
+
+.modal .modal-popup .modal-popup-toolbar .modal-popup-toolbar-buttons
+button.refine {
+    float: left;
+    height: 100%;
+    padding-left: 25px;
+    padding-right: 25px;
+    background-color: #1e2e36;
+    color: rgb(52, 190, 224);
+    font-size: 115%;
+    i {
+        font-size: 130%;
+        margin-right: 12px;
+    }
+    &:hover {
+        color: @white;
+    }
+}
+
+.assetManagement-refine {
+    .slideX-anim(-300px);
+    &.show {
+        .slideX-anim(0);
+    }
+    position: absolute;
+    width: 300px;
+    height: 100%;
+    background-color: @background-color;
+}

@@ -21,7 +21,7 @@ define(function(require) {
         render: function() {
             var data = this.options;
             var template = Handlebars.templates['assetManagementModalAutofill'];
-            this.$el.html(template(data)).prependTo('.model-popup-toolbar-buttons');
+            this.$el.html(template(data)).prependTo('.modal-popup-toolbar-buttons');
             return this;
         },
 

@@ -1,4 +1,10 @@
 <div class="asset-preview-details text-centered">
+  <!-- Header -->
+  <div class="asset-preview-details-header">
+    Asset details
+  </div>
+
+  <!-- Preview content -->
   <div class="asset-preview-details-preview">
     {{#ifValueEquals assetType "image"}}
       <img src="api/asset/serve/{{_id}}"/>
@@ -20,41 +26,48 @@
     {{/ifValueEquals}}
   </div>
 
-  <h1 class="asset-preview-title">{{title}}</h1>
-
-  <div class="asset-group">
+  <!-- Details text -->
+  <div class="asset-preview-details-text">
+    <div class="asset-preview-title">{{title}}</div>
+    {{#if description}}
     <div class="asset-preview-description">{{description}}</div>
-  </div>
-
-  <div class="asset-group">
-    <div class="asset-size">{{t 'app.assetsize'}}: {{{bytesToSize size}}}</div>
-    {{#if metadata.duration}}
-      <div class="asset-duration break">{{t 'app.assetduration'}}: {{{formatDuration metadata.duration}}}</div>
     {{/if}}
-    {{#if metadata.height}}
-      <div class="asset-height">{{t 'app.assetdimensions'}}: {{{metadata.width}}} x {{{metadata.height}}}</div>
-    {{/if}}
-    {{#if tags.length}}
-      <div class="asset-tags">{{t 'app.tags'}}: {{{renderTags tags "title"}}}</div>
-    {{/if}}
-  </div>
 
-  <div class="asset-group">
-    <div class="asset-preview-author">Uploaded by: {{getUserNameFromId createdBy}}</div>
-  </div>
-
-  {{#if isSelectable}}
+    <!-- Asset metadata -->
     <div class="asset-group">
-     <a href="#" class="btn primary confirm-select-asset">Select</a>
+      {{#if metadata.duration}}
+        <div class="asset-duration break">{{{formatDuration metadata.duration}}}</div>
+      {{/if}}
+      {{#if metadata.height}}
+        <div class="asset-height">{{{metadata.width}}}px x {{{metadata.height}}}px</div>
+      {{/if}}
+      <div class="asset-size">{{{bytesToSize size}}}</div>
     </div>
-  {{/if}}
-  <div class="asset-preview-edit asset-group">
-    {{#if _isDeleted}}
-      <button class="asset-preview-restore-button btn alert">{{t 'app.restore'}}</button>
-    {{else}}
-      <button class="asset-preview-edit-button btn primary">{{t 'app.edit'}}</button>
-      <button class="asset-preview-delete-button btn alert">{{t 'app.delete'}}</button>
+    {{#if tags.length}}
+    <div class="asset-group">
+      <div class="label">Tags:</div>
+      <div class="asset-tags">
+        {{{renderTags tags "title"}}}
+      </div>
+    </div>
     {{/if}}
+
+    <div class="asset-preview-date">Uploaded on {{momentFormat createdAt "DD/MM/YY"}} <span class="label">by</span> {{getUserNameFromId createdBy}}.</div>
+
+    <!-- Buttons -->
+    {{#if isSelectable}}
+      <div class="asset-group">
+       <a href="#" class="btn primary confirm-select-asset">Select</a>
+      </div>
+    {{/if}}
+    <div class="asset-preview-edit asset-group">
+      {{#if _isDeleted}}
+        <button class="asset-preview-restore-button btn alert">{{t 'app.restore'}}</button>
+      {{else}}
+        <button class="asset-preview-edit-button btn primary">{{t 'app.edit'}}</button>
+        <button class="asset-preview-delete-button btn alert">{{t 'app.delete'}}</button>
+      {{/if}}
+    </div>
   </div>
 
 </div>

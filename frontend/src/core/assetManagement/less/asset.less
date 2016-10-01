@@ -55,29 +55,34 @@
                         right: 10px;
                         bottom: 10px;
                         left: 10px;
-                        button {
+                        .button-container {
                             display: block;
                             float: right;
                             clear: both;
                             margin-bottom: 5px;
-                            padding: 5px 10px;
-                            border-radius: 2px;
                             white-space: nowrap;
                             overflow: hidden;
-                            &.asset-management-list-item-select {
-                                .primary;
-                            }
-                            &.asset-management-list-item-autofill {
-                                .secondary;
-                            }
+
                             .tooltip {
                                 display: none;
-                                margin-right: 5px;
-                            }
-                            &:hover {
-                                .tooltip {
-                                    display: initial;
+                                padding: 5px 10px;
+                                border-radius: 2px;
+                                background-color: rgba(0,0,0,0.6);
+                                color: white;
+                                &.show {
+                                  display: initial;
                                 }
+                            }
+                            button {
+                              margin-left: 3px;
+                              padding: 5px 10px;
+                              border-radius: 2px;
+                              &.asset-management-list-item-select {
+                                .primary;
+                              }
+                              &.asset-management-list-item-autofill {
+                                .secondary;
+                              }
                             }
                         }
                    }
@@ -91,7 +96,7 @@
                        }
                    }
 
-                   &-image {
+                   &-content {
                        width:160px;
                        height:150px;
                        background-position:center;
@@ -151,7 +156,6 @@
            display: none;
            width:25%;
            float:right;
-           text-align:center;
            background-color:#fff;
 
            .asset-management-no-preview {
@@ -160,10 +164,9 @@
            }
 
            &-inner {
-               padding: 30px 15px;
-               color: #9d9d9d;
+               padding: 35px;
 
-               .asset-preview-details-preview {
+               .asset-preview-details {
                    margin-bottom:20px;
 
                    i {
@@ -172,36 +175,54 @@
                    .fa-file-audio-o {
                        margin-bottom:20px;
                    }
-               }
 
-               .asset-preview-title {
-                   color: @primary-color;
-                   word-wrap: break-word;
-               }
-
-               .asset-group {
-                   margin: 15px 0;
-               }
-
-               .asset-tags {
-                   margin-bottom: 30px;
-                   ul.tag-container {
-                       margin: 4px;
+                   &-header {
+                        font-family: @font-title;
+                        font-size: 17px;
+                        font-weight: 600;
+                        line-height: 20px;
+                        padding-bottom: 25px;
+                        color: #000;
                    }
-                   li.tag-item {
-                       margin: 1px 0px 1px 0px;
-                       display: inline-block;
 
-                       span.tag-value {
-                           margin: 5px;
-                           color:#fff;
-                           padding: 3px;
-                           background-color:@primary-color;
+                   &-text {
+                      margin: 20px 5px;
+                       .asset-preview-title {
+                          margin-bottom: 10px;
+                          font-size: 16px;
+                          font-weight: bold;
+                          word-wrap: break-word;
+                       }
+
+                       .asset-group {
+                           margin: 18px 0;
+                           .label {
+                              font-weight: bold;
+                              font-size: 110%;
+                              margin-bottom: 5px;
+                           }
+                       }
+
+                       .asset-tags {
+                           li.tag-item {
+                               display: inline-block;
+                               margin: 0;
+                               span.tag-value {
+                                   display: inline-block;
+                                   margin: 0 5px 5px 0;
+                                   padding: 4px;
+                                   color:#fff;
+                                   background-color:@primary-color;
+                               }
+                           }
+                       }
+
+                       .asset-preview-date {
+                         color: rgb(143,152,169);
                        }
                    }
                }
            }
-
        }
     }
 }

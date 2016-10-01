@@ -14,12 +14,15 @@ define(function(require){
     events: {
       'click': 'onAssetClicked',
       'click button.asset-management-list-item-select': 'onAssetChosen',
-      'click button.asset-management-list-item-autofill': 'onAssetChosen'
+      'click button.asset-management-list-item-autofill': 'onAssetChosen',
+      'mouseover button': 'onButtonOver',
+      'mouseout button': 'onButtonOut'
     },
 
     preRender: function() {
       var isImage = this.model.get('assetType') === "image";
-      var isEditingGraphic =  Origin.scaffold.getCurrentModel().get('_component') === 'graphic';
+      var currentModel = Origin.scaffold.getCurrentModel();
+      var isEditingGraphic = currentModel && currentModel.get('_component') === 'graphic';
       this.model.set('canAutofill', isImage && isEditingGraphic);
 
       this.listenTo(Origin, 'assetManagement:modal:selectItem', this.selectItem);
@@ -67,10 +70,18 @@ define(function(require){
       });
     },
 
+    onButtonOver: function(e) {
+      $(e.currentTarget).siblings('.tooltip').addClass('show');
+    },
+
+    onButtonOut: function(e) {
+      $(e.currentTarget).siblings('.tooltip').removeClass('show');
+    },
+
     onInview: function() {
       // Once this asset is inview - change the data-style attribute to the
       // actual style attribute
-      var $previewImage = this.$('.asset-management-list-item-image');
+      var $previewImage = this.$('.asset-management-list-item-content');
       $previewImage.attr('style', $previewImage.attr('data-style'));
       // Remove inview as it's not needed anymore
       this.$el.off('inview');

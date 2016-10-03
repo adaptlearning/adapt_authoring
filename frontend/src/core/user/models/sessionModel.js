@@ -1,5 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var _ = require('underscore');
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var UserModel = require('./userModel');
@@ -19,44 +20,41 @@ define(function(require) {
     },
 
     initialize: function() {
-      var self = this;
-      this.get('user').on('change:firstName change:lastName change:email', function(model) {
-        var user = _.findWhere(self.get('users'), { _id: model.get('_id') });
-        user && _.extend(user, model.changedAttributes());
-      });
-      this.get('user').fetch();
+      Origin.on('login:changed', _.bind(function() {
+        this.get('user').fetch();
+      }, this));
     },
 
     logout: function () {
-      $.post('/api/logout', function() {
-        self.set(defaults);
+      $.post('/api/logout', _.bind(function() {
+        this.set(this.defaults);
         Origin.trigger('login:changed');
         Origin.router.navigate('#/user/login', { trigger: true });
-      });
+      }, this));
     },
 
     login: function (username, password, shouldPersist) {
-      var self = this;
       $.ajax({
         method: 'post',
         url: '/api/login',
         data: { email:username, password:password, shouldPersist:shouldPersist },
-        success: function (jqXHR, textStatus, errorThrown) {
+        success: _.bind(function (jqXHR, textStatus, errorThrown) {
           if (jqXHR.success) {
-            self.set({
+            this.set({
               id: jqXHR.id,
               tenantId: jqXHR.tenantId,
               email: jqXHR.email,
               isAuthenticated: jqXHR.success,
               permissions: jqXHR.permissions,
-              users: jqXHR.users
+              users: jqXHR.users,
+              user: new UserModel({ _id: jqXHR.id })
             });
             Origin.trigger('login:changed');
             Origin.trigger('schemas:loadData', function() {
               Origin.router.navigate('#/dashboard', { trigger: true });
             });
           }
-        },
+        },this),
         error: function (jqXHR, textStatus, errorThrown) {
           var errorCode = 1;
           if (jqXHR.responseJSON && jqXHR.responseJSON.errorCode) {

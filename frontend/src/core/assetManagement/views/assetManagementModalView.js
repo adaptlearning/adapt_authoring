@@ -27,9 +27,7 @@ define(function(require) {
     },
 
     resizeAssetPanels: function() {
-      var navigationHeight = $('.navigation').outerHeight();
-      var windowHeight = $(window).height();
-      var actualHeight = windowHeight - (navigationHeight);
+      var actualHeight = $('.modal-popup').outerHeight()-$('.modal-popup-toolbar').outerHeight();
       this.$('.asset-management-assets-container').height(actualHeight);
       this.$('.asset-management-preview-container').height(actualHeight);
     },

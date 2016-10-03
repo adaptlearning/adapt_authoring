@@ -18,8 +18,8 @@ define(function(require){
 
     postRender: function() {
         this.setupSubViews();
-        this.resizeAssetPanels();
         _.defer(_.bind(function() {
+          this.resizeAssetPanels();
           this.$el.imageready(this.setViewToReady);
         }, this));
     },

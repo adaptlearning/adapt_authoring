@@ -11,6 +11,8 @@ define(function(require) {
   	  AssetManagementView.prototype.preRender.apply(this, arguments);
 
       this.listenTo(Origin, 'assetManagement:modal:update', this.onAssetUpdate);
+      this.listenTo(Origin, 'assetManagement:refine:apply', this.onRefineApply);
+      this.listenTo(Origin, 'assetManagement:refine:remove', this.onRefineRemove);
     },
 
     setupSubViews: function() {
@@ -20,10 +22,11 @@ define(function(require) {
       var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
       // asset type filter
       if (assetType) {
-        this.search = { assetType: { $in: [ assetType ] } };
+        search = { assetType: { $in: [ assetType ] } };
       }
       // Push collection through to collection view
-      this.$('.asset-management-assets-container-inner').append(new AssetManagementCollectionView({ collection: this.collection, search: this.search, isModal:true }).$el);
+      this.collectionView = new AssetManagementCollectionView({ collection: this.collection, search: search, isModal:true });
+      this.$('.asset-management-assets-container-inner').append(this.collectionView.$el);
     },
 
     resizeAssetPanels: function() {
@@ -55,6 +58,16 @@ define(function(require) {
     onAssetUpdate: function(data) {
       this.setData(data.model, data._shouldAutofill);
       Origin.trigger('modal:onUpdate');
+    },
+
+    onRefineApply: function(filter) {
+      this.collectionView[filter.type] = filter.options;
+      // TODO this basically forces a fetch, and searches on server side. Seems inefficient.
+      Origin.trigger('assetManagement:sidebarFilter:add');
+    },
+
+    onRefineRemove: function(filterName) {
+      console.log('onRefineRemove', filterName);
     }
   });
 

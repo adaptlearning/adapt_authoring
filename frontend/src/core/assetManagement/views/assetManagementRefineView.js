@@ -2,7 +2,9 @@
 define(function(require) {
   var Origin = require('coreJS/app/origin');
   var Backbone = require('backbone');
-  var AssetManagementModalFiltersView = require('coreJS/assetManagement/views/assetManagementModalFiltersView');
+  var AssetManagementSortModule = require('coreJS/assetManagement/views/assetManagementSortModule');
+  var AssetManagementMineModule = require('coreJS/assetManagement/views/assetManagementMineModule');
+  var AssetManagementWorkspaceModule = require('coreJS/assetManagement/views/assetManagementWorkspaceModule');
 
   var AssetManagementRefineView = Backbone.View.extend({
     className: 'assetManagement-refine',
@@ -26,6 +28,7 @@ define(function(require) {
       this.$el.css('top', top);
 
       this.renderToggle();
+      this.renderSubViews();
 
       return this;
     },
@@ -36,13 +39,24 @@ define(function(require) {
       $('button.refine').click(_.bind(this.toggle, this));
     },
 
-    postRender: function() {
-      renderControl(AssetManagementModalFiltersView);
+    renderSubViews: function() {
+      /*
+      - sort
+      - search
+      - workspace
+      tags
+      ? license
+      * reset filters
+      */
+      this.renderControl(AssetManagementSortModule);
+      this.renderControl(AssetManagementMineModule);
+      this.renderControl(AssetManagementWorkspaceModule);
+
+      // renderControl(AssetManagementModalFiltersView);
     },
 
     renderControl: function(className) {
-      console.log(this.options);
-      // this.$('.controls').append(new className(this.options).$el);
+      this.$('.controls').append(new className(this.options).$el);
     },
 
     toggle: function() {

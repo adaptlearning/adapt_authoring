@@ -2,6 +2,7 @@
 @import '../../../less/variables.less';
 
 @background-color: #1e2e36;
+@icon-color: @secondary-color;
 
 .modal .modal-popup .modal-popup-toolbar .modal-popup-toolbar-buttons
 button.refine {
@@ -9,8 +10,8 @@ button.refine {
     height: 100%;
     padding-left: 25px;
     padding-right: 25px;
-    background-color: #1e2e36;
-    color: rgb(52, 190, 224);
+    background-color: @background-color;
+    color: @primary-color;
     font-size: 115%;
     i {
         font-size: 130%;
@@ -21,13 +22,121 @@ button.refine {
     }
 }
 
+@control-border: 1px solid #263c48;
 .assetManagement-refine {
-    .slideX-anim(-300px);
-    &.show {
-        .slideX-anim(0);
+  .slideX-anim(-300px);
+  &.show {
+      .slideX-anim(0);
+  }
+  position: absolute;
+  width: 300px;
+  height: 100%;
+  background-color: @background-color;
+  border-top: @control-border;
+
+  .controls {
+    color: #cfd1cf;
+    > .module {
+      padding: 25px 40px;
+      border-bottom: @control-border;
+      .title {
+        margin-bottom: 12px;
+        font-size: 120%;
+      }
+
+      .input {
+        position: relative;
+        display: block;
+        width: 100%;
+        margin-bottom: 5px;
+
+        input[type=radio],
+        input[type=checkbox] {
+          position: absolute;
+          visibility: hidden;
+        }
+      }
+
+      /*
+      * Radio styling
+      */
+      .radio {
+        .icon {
+          display: inline-block;
+          border: 2px solid #AAAAAA;
+          border-radius: 100%;
+          height: 12px;
+          width: 12px;
+          &::before {
+            display: block;
+            position: absolute;
+            content: '';
+            border-radius: 100%;
+            height: 8px;
+            width: 8px;
+            top: 4px;
+            left: 4px;
+            margin: auto;
+          }
+        }
+
+        label {
+          display: inline-block;
+          position: relative;
+          top: -2px;
+          padding-left: 5px;
+        }
+
+        &:hover {
+          label {
+          	color: #FFFFFF;
+          }
+          .icon {
+            border-color: #FFFFFF;
+          }
+        }
+
+        input[type=radio]:checked {
+          ~ .icon {
+            border-color: @icon-color;
+          }
+          ~ .icon::before {
+            background: @icon-color;
+          }
+          ~ label {
+            color: @icon-color;
+          }
+        }
+      }
+      /*
+      * Checkbox styling
+      */
+      .checkbox {
+        .icon-checked {
+          display: none;
+          margin-right: 5px;
+          color: @secondary-color;
+        }
+        .icon-unchecked {
+          margin-right: 7.5px;
+        }
+        i {
+          font-size: 17px;
+        }
+        label {
+          display: inline-block;
+          position: relative;
+          top: -1px;
+        }
+        input[type=checkbox]:checked {
+          ~ .icon-checked {
+            display: inline-block;
+          }
+          ~ .icon-unchecked {
+            display: none;
+          }
+        }
+      }
     }
-    position: absolute;
-    width: 300px;
-    height: 100%;
-    background-color: @background-color;
+  }
 }

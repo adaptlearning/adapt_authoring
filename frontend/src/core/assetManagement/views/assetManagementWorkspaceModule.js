@@ -21,7 +21,7 @@ define(function(require) {
       var id;
 
       if(type === 'all') {
-        this.applyFilter({
+        return this.applyFilter({
           'workspaces.course':{},
           'workspaces.page':{},
           'workspaces.article':{},

@@ -2,9 +2,9 @@
 define(function(require) {
   var Origin = require('coreJS/app/origin');
   var Backbone = require('backbone');
-  var AssetManagementSummaryModule = require('coreJS/assetManagement/views/assetManagementSummaryModule');
-  var AssetManagementSortModule = require('coreJS/assetManagement/views/assetManagementSortModule');
   var AssetManagementMineModule = require('coreJS/assetManagement/views/assetManagementMineModule');
+  var AssetManagementSortModule = require('coreJS/assetManagement/views/assetManagementSortModule');
+  var AssetManagementSummaryModule = require('coreJS/assetManagement/views/assetManagementSummaryModule');
   var AssetManagementWorkspaceModule = require('coreJS/assetManagement/views/assetManagementWorkspaceModule');
 
   var AssetManagementRefineView = Backbone.View.extend({

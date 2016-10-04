@@ -5,7 +5,8 @@
 @font-color: #cfd1cf;
 @icon-color: @secondary-color;
 @icon-color-hover: @white;
-@control-border: 1px solid #263c48;
+@control-border-color: #263c48;
+@control-border: 1px solid @control-border-color;
 
 .modal .modal-popup .modal-popup-toolbar .modal-popup-toolbar-buttons
 button.refine {
@@ -39,7 +40,7 @@ button.refine {
   .modules {
     color: @font-color;
     > .module {
-      padding: 25px 40px;
+      padding: 20px 35px;
       border-bottom: @control-border;
       .title {
         margin-bottom: 12px;

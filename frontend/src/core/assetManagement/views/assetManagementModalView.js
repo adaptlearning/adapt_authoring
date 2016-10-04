@@ -1,5 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var _ = require('underscore');
   var Origin = require('coreJS/app/origin');
   var AssetManagementCollectionView = require('coreJS/assetManagement/views/assetManagementCollectionView');
   var AssetManagementRefineView = require('coreJS/assetManagement/views/assetManagementRefineView');
@@ -12,12 +13,9 @@ define(function(require) {
 
       this.listenTo(Origin, 'assetManagement:modal:update', this.onAssetUpdate);
       this.listenTo(Origin, 'assetManagement:refine:apply', this.onRefineApply);
-      this.listenTo(Origin, 'assetManagement:refine:remove', this.onRefineRemove);
     },
 
     setupSubViews: function() {
-      this.$('.asset-management-inner').append(new AssetManagementRefineView().$el);
-
       // Replace Asset and : so we can have both filtered and all asset types
       var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
       // asset type filter
@@ -27,6 +25,8 @@ define(function(require) {
       // Push collection through to collection view
       this.collectionView = new AssetManagementCollectionView({ collection: this.collection, search: search, isModal:true });
       this.$('.asset-management-assets-container-inner').append(this.collectionView.$el);
+
+      this.$('.asset-management-inner').append(new AssetManagementRefineView().$el);
     },
 
     resizeAssetPanels: function() {
@@ -60,14 +60,20 @@ define(function(require) {
       Origin.trigger('modal:onUpdate');
     },
 
+    /*
+    * TODO this basically forces a fetch, and searches on server side.
+    * Seems inefficient...
+    */
     onRefineApply: function(filter) {
-      this.collectionView[filter.type] = filter.options;
-      // TODO this basically forces a fetch, and searches on server side. Seems inefficient.
+      switch(filter.type) {
+        case 'search':
+          this.collectionView[filter.type] = _.extend(this.collectionView[filter.type], filter.options);
+          break;
+        case 'sort':
+          this.collectionView[filter.type] = filter.options;
+          break;
+      }
       Origin.trigger('assetManagement:sidebarFilter:add');
-    },
-
-    onRefineRemove: function(filterName) {
-      console.log('onRefineRemove', filterName);
     }
   });
 

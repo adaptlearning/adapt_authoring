@@ -5,18 +5,24 @@ define(function(require) {
 
   var AssetManagementMineModule = AssetManagementRefineModule.extend({
     className: 'module mine',
+    filterType: 'search',
 
     events: {
       'click input': 'onInputClicked'
     },
 
+    resetFilter: function() {
+      this.applyFilter({ createdBy: {} });
+      this.$('input').attr('checked', false);
+    },
+
     onInputClicked: function(e) {
       if(e.currentTarget.checked === true) {
-        this.apply('search', {
+        this.applyFilter({
           createdBy: { $in:[ Origin.sessionModel.attributes.id ] }
         });
       } else {
-        this.apply('search', {});
+        this.resetFilter();
       }
     }
   }, {

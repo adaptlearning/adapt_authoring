@@ -2,6 +2,7 @@
 define(function(require) {
   var Origin = require('coreJS/app/origin');
   var Backbone = require('backbone');
+  var AssetManagementSummaryModule = require('coreJS/assetManagement/views/assetManagementSummaryModule');
   var AssetManagementSortModule = require('coreJS/assetManagement/views/assetManagementSortModule');
   var AssetManagementMineModule = require('coreJS/assetManagement/views/assetManagementMineModule');
   var AssetManagementWorkspaceModule = require('coreJS/assetManagement/views/assetManagementWorkspaceModule');
@@ -40,19 +41,18 @@ define(function(require) {
     },
 
     renderSubViews: function() {
+      this.renderControl(AssetManagementSummaryModule);
+      this.renderControl(AssetManagementSortModule);
+      this.renderControl(AssetManagementWorkspaceModule);
+      this.renderControl(AssetManagementMineModule);
       /*
-      - sort
-      - search
-      - workspace
+      search
+      asset type
       tags
       ? license
-      * reset filters
       */
-      this.renderControl(AssetManagementSortModule);
-      this.renderControl(AssetManagementMineModule);
-      this.renderControl(AssetManagementWorkspaceModule);
 
-      // renderControl(AssetManagementModalFiltersView);
+      Origin.trigger('assetManagement:refine:ready');
     },
 
     renderControl: function(className) {

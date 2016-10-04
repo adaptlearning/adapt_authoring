@@ -126,7 +126,7 @@ define(function(require){
                 }
 
                 this.isCollectionFetching = false;
-                Origin.trigger('assetManagement:assetManagementCollection:fetched');
+                Origin.trigger('assetManagement:assetManagementCollection:fetched', this.collection);
               }, this)
             });
         },

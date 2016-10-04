@@ -2,27 +2,29 @@
 @import '../../../less/variables.less';
 
 @background-color: #1e2e36;
+@font-color: #cfd1cf;
 @icon-color: @secondary-color;
+@icon-color-hover: @white;
+@control-border: 1px solid #263c48;
 
 .modal .modal-popup .modal-popup-toolbar .modal-popup-toolbar-buttons
 button.refine {
-    float: left;
-    height: 100%;
-    padding-left: 25px;
-    padding-right: 25px;
-    background-color: @background-color;
-    color: @primary-color;
-    font-size: 115%;
-    i {
-        font-size: 130%;
-        margin-right: 12px;
-    }
-    &:hover {
-        color: @white;
-    }
+  float: left;
+  height: 100%;
+  padding-left: 25px;
+  padding-right: 25px;
+  background-color: @background-color;
+  color: @primary-color;
+  font-size: 115%;
+  i {
+      font-size: 130%;
+      margin-right: 12px;
+  }
+  &:hover {
+      color: @white;
+  }
 }
 
-@control-border: 1px solid #263c48;
 .assetManagement-refine {
   .slideX-anim(-300px);
   &.show {
@@ -35,7 +37,7 @@ button.refine {
   border-top: @control-border;
 
   .controls {
-    color: #cfd1cf;
+    color: @font-color;
     > .module {
       padding: 25px 40px;
       border-bottom: @control-border;
@@ -54,6 +56,22 @@ button.refine {
         input[type=checkbox] {
           position: absolute;
           visibility: hidden;
+          &:checked {
+            ~ label {
+              color: @icon-color;
+            }
+            ~ .icon {
+              color: @icon-color;
+            }
+          }
+        }
+
+        label {
+          display: inline-block;
+          position: relative;
+          &:hover {
+            color: @icon-color-hover;
+          }
         }
       }
 
@@ -63,7 +81,7 @@ button.refine {
       .radio {
         .icon {
           display: inline-block;
-          border: 2px solid #AAAAAA;
+          border: 2px solid @font-color;
           border-radius: 100%;
           height: 12px;
           width: 12px;
@@ -81,30 +99,16 @@ button.refine {
         }
 
         label {
-          display: inline-block;
-          position: relative;
           top: -2px;
           padding-left: 5px;
-        }
-
-        &:hover {
-          label {
-          	color: #FFFFFF;
-          }
-          .icon {
-            border-color: #FFFFFF;
-          }
         }
 
         input[type=radio]:checked {
           ~ .icon {
             border-color: @icon-color;
-          }
-          ~ .icon::before {
-            background: @icon-color;
-          }
-          ~ label {
-            color: @icon-color;
+            &::before {
+              background: @icon-color;
+            }
           }
         }
       }
@@ -112,28 +116,55 @@ button.refine {
       * Checkbox styling
       */
       .checkbox {
-        .icon-checked {
-          display: none;
-          margin-right: 5px;
-          color: @secondary-color;
-        }
-        .icon-unchecked {
-          margin-right: 7.5px;
-        }
-        i {
-          font-size: 17px;
+        .icon {
+          display: inline-block;
+          .icon-checked {
+            display: none;
+            margin-right: 5px;
+            color: @icon-color;
+          }
+          .icon-unchecked {
+            margin-right: 7.5px;
+          }
+          i {
+            font-size: 17px;
+          }
         }
         label {
-          display: inline-block;
-          position: relative;
           top: -1px;
         }
         input[type=checkbox]:checked {
-          ~ .icon-checked {
-            display: inline-block;
+          ~ .icon {
+            .icon-checked {
+              display: inline-block;
+            }
+            .icon-unchecked {
+              display: none;
+            }
           }
-          ~ .icon-unchecked {
-            display: none;
+        }
+      }
+
+      /*
+      * Specific mpdule styling
+      */
+      /*
+      * Summary styling
+      */
+      &.summary {
+        a {
+          margin-left: 10px;
+          color: @primary-color;
+          &:hover {
+            color: @white;
+          }
+        }
+        .label {
+          display: inline-block;
+          .assetCount {
+            margin: 0 5px;
+            font-size: 120%;
+            font-weight: bold;
           }
         }
       }

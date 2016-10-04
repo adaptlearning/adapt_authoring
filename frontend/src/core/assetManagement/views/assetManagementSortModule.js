@@ -4,9 +4,14 @@ define(function(require) {
 
   var AssetManagementSortModule = AssetManagementRefineModule.extend({
     className: 'module sort',
+    filterType: 'sort',
 
     events: {
       'click .radio input': 'onRadioClicked'
+    },
+
+    resetFilter: function() {
+      this.$('input[id=title]').click();
     },
 
     onRadioClicked: function(e) {
@@ -22,7 +27,7 @@ define(function(require) {
           sort.createdAt = -1;
           break;
       }
-      this.apply('sort', sort);
+      this.applyFilter(sort);
     }
   }, {
     template: 'assetManagementSortModule'

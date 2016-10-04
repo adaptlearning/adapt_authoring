@@ -11,6 +11,7 @@ define(function(require) {
 
       this.listenTo(Origin, 'modal:closed', this.remove);
       this.listenTo(Origin, 'remove:views', this.remove);
+      this.listenTo(Origin, 'assetManagement:refine:reset', this.resetFilter);
 
       this.render();
     },
@@ -18,15 +19,22 @@ define(function(require) {
     render: function() {
       var data = this.options;
       var template = Handlebars.templates[this.constructor.template];
+
       this.$el.html(template(data));
+      this.resetFilter();
+
       return this;
     },
 
-    apply: function(type, options) {
+    applyFilter: function(options) {
       Origin.trigger('assetManagement:refine:apply', {
-        type: type,
+        type: this.filterType,
         options: options
       });
+    },
+
+    resetFilter: function(options) {
+      console.error(this.constructor.template, 'needs to override resetFilter');
     },
 
     toggle: function() {

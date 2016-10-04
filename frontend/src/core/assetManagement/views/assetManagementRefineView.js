@@ -10,6 +10,7 @@ define(function(require) {
   var AssetManagementRefineView = Backbone.View.extend({
     className: 'assetManagement-refine',
     tagName: 'div',
+    modules: [],
 
     initialize: function(options) {
       this.options = options;
@@ -41,10 +42,10 @@ define(function(require) {
     },
 
     renderSubViews: function() {
-      this.renderControl(AssetManagementSummaryModule);
-      this.renderControl(AssetManagementSortModule);
-      this.renderControl(AssetManagementWorkspaceModule);
-      this.renderControl(AssetManagementMineModule);
+      this.renderModule(AssetManagementSummaryModule);
+      this.renderModule(AssetManagementSortModule);
+      this.renderModule(AssetManagementWorkspaceModule);
+      this.renderModule(AssetManagementMineModule);
       /*
       search
       asset type
@@ -52,11 +53,35 @@ define(function(require) {
       ? license
       */
 
+      this.listenTo(Origin, 'assetManagement:refine:reset', this.resetFilters);
+
       Origin.trigger('assetManagement:refine:ready');
     },
 
-    renderControl: function(className) {
-      this.$('.controls').append(new className(this.options).$el);
+    renderModule: function(className) {
+      var moduleView = new className(this.options);
+      this.modules.push(moduleView);
+      this.$('.modules').append(moduleView.$el);
+    },
+
+    /*
+    Need to get latest collection after reset
+    Can't guarantee modules return in order
+    */
+
+    resetFilters: function() {
+      var modulesReset = 0;
+      // bit hacky: make sure all modules have been fetched and triggerevent again
+      this.listenTo(Origin, 'assetManagement:assetManagementCollection:fetched', function(collection){
+        if(++modulesReset === this.modules.length) {
+          this.stopListening(Origin, 'assetManagement:assetManagementCollection:fetched');
+          Origin.trigger('assetManagement:sidebarFilter:add');
+        }
+      });
+
+      for(var i = 0, count = this.modules.length; i < count; i++) {
+        this.modules[i].resetFilter();
+      }
     },
 
     toggle: function() {

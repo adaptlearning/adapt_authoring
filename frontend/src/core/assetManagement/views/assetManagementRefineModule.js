@@ -11,7 +11,6 @@ define(function(require) {
 
       this.listenTo(Origin, 'modal:closed', this.remove);
       this.listenTo(Origin, 'remove:views', this.remove);
-      this.listenTo(Origin, 'assetManagement:refine:reset', this.resetFilter);
 
       this.render();
     },

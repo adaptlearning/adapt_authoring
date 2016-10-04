@@ -148,23 +148,28 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
               }
 
               var userSession = req.session.passport.user;
-  
-              return res.json({
-                success: true,
-                id: user._id,
-                email: user.email,
-                tenantId: user._tenantId,
-                tenantName: userSession.tenant.name,
-                permissions: userPermissions
+
+              // TODO check permissions to get users
+              usermanager.retrieveUsers({}, { populate: { 'roles':'name', '_tenantId':'name' } }, function(error, users) {
+                if(error) {
+                  return next(error);
+                }
+                return res.json({
+                  success: true,
+                  id: user._id,
+                  email: user.email,
+                  tenantId: user._tenantId,
+                  tenantName: userSession.tenant.name,
+                  permissions: userPermissions,
+                  users: users
+                });
               });
-  
             });
-             
           });
         });
       });
     }
-    
+
   })(req, res, next);
 };
 

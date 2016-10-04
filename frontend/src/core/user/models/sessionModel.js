@@ -21,7 +21,7 @@ define(function(require) {
 
     initialize: function() {
       Origin.on('login:changed', _.bind(function() {
-        this.get('user').fetch();
+        if(this.get('user')) this.get('user').fetch();
       }, this));
     },
 
@@ -46,9 +46,9 @@ define(function(require) {
               email: jqXHR.email,
               isAuthenticated: jqXHR.success,
               permissions: jqXHR.permissions,
-              users: jqXHR.users,
-              user: new UserModel({ _id: jqXHR.id })
+              users: jqXHR.users
             });
+            this.get('user').set('_id', jqXHR.id);
             Origin.trigger('login:changed');
             Origin.trigger('schemas:loadData', function() {
               Origin.router.navigate('#/dashboard', { trigger: true });

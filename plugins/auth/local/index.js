@@ -48,7 +48,7 @@ LocalAuth.prototype.verifyUser = function (email, password, done) {
     }
 
     if (!user) {
-      return done(null, false, {message: MESSAGES.INVALID_USERNAME_OR_PASSWORD, 
+      return done(null, false, {message: MESSAGES.INVALID_USERNAME_OR_PASSWORD,
         errorCode: ERROR_CODES.INVALID_USERNAME_OR_PASSWORD});
     }
 
@@ -63,7 +63,7 @@ LocalAuth.prototype.verifyUser = function (email, password, done) {
         if (!valid) {
           // Increment the count of failed attempts
           var failedCount = user.failedLoginCount ? user.failedLoginCount : 0;
-          
+
           failedCount++;
 
           var delta = {
@@ -74,8 +74,8 @@ LocalAuth.prototype.verifyUser = function (email, password, done) {
             if (error) {
               return done(error);
             }
-            
-            return done(null, false, {message: MESSAGES.INVALID_USERNAME_OR_PASSWORD, 
+
+            return done(null, false, {message: MESSAGES.INVALID_USERNAME_OR_PASSWORD,
               errorCode: ERROR_CODES.INVALID_USERNAME_OR_PASSWORD});
           });
         } else {
@@ -126,20 +126,20 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
           if (error) {
             return next(error);
           }
-  
+
           usermanager.logAccess(user, function(error) {
             if (error) {
               return next(error);
             }
-  
-  
+
+
             //Used to get the users permissions
             permissions.getUserPermissions(user._id, function(error, userPermissions) {
               if (error) {
                 return next(error);
               }
               res.statusCode = 200;
-  
+
               if (req.body.shouldPersist && req.body.shouldPersist == 'true') {
                 // Session is persisted for 2 weeks if the user has set 'Remember me'
                 req.session.cookie.maxAge = 14 * 24 * 3600000;
@@ -281,7 +281,7 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
       res.statusCode = 400;
       return res.json({success: false});
     }
-      
+
     if (userRecord) {
       var user = {
         email: req.body.email,
@@ -297,7 +297,7 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
         if (!userToken) {
           return next(new auth.errors.UserGenerateTokenError('In generateResetToken and user object is not set!'));
         }
-        
+
         var subject = app.polyglot.t('app.emailforgottenpasswordsubject');
         var body = app.polyglot.t('app.emailforgottenpasswordbody', {rootUrl: configuration.getConfig('rootUrl'), data: userToken.token});
 
@@ -306,8 +306,8 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
             logger.log('error', error);
             res.statusCode = 200;
             return res.json({success: false});
-          } 
-      
+          }
+
           logger.log('info', 'Password reset for ' + user.email + ' from ' + user.ipAddress);
 
           res.statusCode = 200;
@@ -318,7 +318,7 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
       // Indicate that all is ok even if the user does not exist
       // This is to prevent hacking attempts
       res.statusCode = 200;
-      return res.json({success: true});      
+      return res.json({success: true});
     }
   });
 };

@@ -3,6 +3,7 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var Backbone = require('backbone');
   var AssetManagementMineModule = require('coreJS/assetManagement/views/assetManagementMineModule');
+  var AssetManagementSearchModule = require('coreJS/assetManagement/views/AssetManagementSearchModule');
   var AssetManagementSortModule = require('coreJS/assetManagement/views/assetManagementSortModule');
   var AssetManagementSummaryModule = require('coreJS/assetManagement/views/assetManagementSummaryModule');
   var AssetManagementWorkspaceModule = require('coreJS/assetManagement/views/assetManagementWorkspaceModule');
@@ -43,11 +44,11 @@ define(function(require) {
 
     renderSubViews: function() {
       this.renderModule(AssetManagementSummaryModule);
+      this.renderModule(AssetManagementSearchModule);
       this.renderModule(AssetManagementSortModule);
       this.renderModule(AssetManagementWorkspaceModule);
       this.renderModule(AssetManagementMineModule);
       /*
-      search
       asset type
       tags
       ? license

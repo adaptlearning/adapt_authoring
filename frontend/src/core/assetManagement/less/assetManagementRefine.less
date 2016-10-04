@@ -67,6 +67,19 @@ button.refine {
           }
         }
 
+        input[type=text] {
+          background-color: darken(@background-color, 5%);
+          border-color: @control-border-color;
+          color: @font-color;
+
+          ~ button.clear {
+            position: absolute;
+            top: 2px;
+            right: 5px;
+            color: lighten(@control-border-color, 15%);
+          }
+        }
+
         label {
           display: inline-block;
           position: relative;
@@ -167,6 +180,13 @@ button.refine {
             font-size: 120%;
             font-weight: bold;
           }
+        }
+      }
+
+      &.search {
+        padding: 10px 12px 10px 20px;
+        .input {
+          margin-bottom: 0;
         }
       }
     }

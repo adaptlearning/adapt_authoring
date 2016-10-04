@@ -11,6 +11,14 @@ define(function(require) {
       'click input': 'onInputClicked'
     },
 
+    initialize: function(options) {
+      // used by the template
+      options.workspaces = {
+        page: Origin.location.route3 !== null
+      };
+      AssetManagementRefineModule.prototype.initialize.apply(this, arguments);
+    },
+
     resetFilter: function() {
       this.$('input[id=all]').click();
     },

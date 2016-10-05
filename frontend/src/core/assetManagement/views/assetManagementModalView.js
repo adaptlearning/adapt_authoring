@@ -12,7 +12,6 @@ define(function(require) {
   	  AssetManagementView.prototype.preRender.apply(this, arguments);
 
       this.listenTo(Origin, 'assetManagement:modal:update', this.onAssetUpdate);
-      this.listenTo(Origin, 'assetManagement:refine:apply', this.onRefineApply);
     },
 
     setupSubViews: function() {
@@ -24,8 +23,14 @@ define(function(require) {
       }
       // Push collection through to collection view
       this.collectionView = new AssetManagementCollectionView({ collection: this.collection, search: search, isModal:true });
-      this.$('.asset-management-assets-container-inner').append(this.collectionView.$el);
+      this.$('.asset-management-assets-container-inner').append(this.collectionView.$el)
+        .hide();
 
+      this.listenTo(Origin, 'assetManagement:refine:ready', function() {
+        Origin.trigger('assetManagement:sidebarFilter:add');
+        this.listenTo(Origin, 'assetManagement:refine:apply', this.onRefineApply);
+        this.$('.asset-management-assets-container-inner').fadeIn();
+      });
       this.$('.asset-management-inner').append(new AssetManagementRefineView().$el);
     },
 

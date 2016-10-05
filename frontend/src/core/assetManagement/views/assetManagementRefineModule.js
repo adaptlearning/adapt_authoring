@@ -1,5 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var _ = require('underscore');
   var Origin = require('coreJS/app/origin');
   var Backbone = require('backbone');
 
@@ -12,7 +13,7 @@ define(function(require) {
       this.listenTo(Origin, 'modal:closed', this.remove);
       this.listenTo(Origin, 'remove:views', this.remove);
 
-      this.render();
+      if(this.autoRender !== false) this.render();
     },
 
     render: function() {
@@ -21,6 +22,11 @@ define(function(require) {
 
       this.$el.html(template(data));
       this.resetFilter();
+
+      // HACK for now...
+      _.defer(_.bind(function() {
+        Origin.trigger('assetManagement:refine:moduleReady', this.constructor.template);
+      }, this));
 
       return this;
     },

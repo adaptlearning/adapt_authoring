@@ -2,16 +2,23 @@
 define(function(require) {
   var Origin = require('coreJS/app/origin');
   var Backbone = require('backbone');
-  var AssetManagementMineModule = require('coreJS/assetManagement/views/assetManagementMineModule');
-  var AssetManagementSearchModule = require('coreJS/assetManagement/views/AssetManagementSearchModule');
-  var AssetManagementSortModule = require('coreJS/assetManagement/views/assetManagementSortModule');
-  var AssetManagementSummaryModule = require('coreJS/assetManagement/views/assetManagementSummaryModule');
-  var AssetManagementWorkspaceModule = require('coreJS/assetManagement/views/assetManagementWorkspaceModule');
 
   var AssetManagementRefineView = Backbone.View.extend({
     className: 'assetManagement-refine',
     tagName: 'div',
-    modules: [],
+    /*
+    asset type
+    ? license
+    */
+    modules: {
+      AssetManagementSummaryModule: require('coreJS/assetManagement/views/assetManagementSummaryModule'),
+      AssetManagementSearchModule: require('coreJS/assetManagement/views/AssetManagementSearchModule'),
+      AssetManagementSortModule: require('coreJS/assetManagement/views/assetManagementSortModule'),
+      AssetManagementWorkspaceModule: require('coreJS/assetManagement/views/assetManagementWorkspaceModule'),
+      AssetManagementMineModule: require('coreJS/assetManagement/views/assetManagementMineModule'),
+      AssetManagementTagsModule: require('coreJS/assetManagement/views/assetManagementTagsModule')
+    },
+    modulesLoaded: [],
 
     initialize: function(options) {
       this.options = options;
@@ -43,32 +50,19 @@ define(function(require) {
     },
 
     renderSubViews: function() {
-      this.renderModule(AssetManagementSummaryModule);
-      this.renderModule(AssetManagementSearchModule);
-      this.renderModule(AssetManagementSortModule);
-      this.renderModule(AssetManagementWorkspaceModule);
-      this.renderModule(AssetManagementMineModule);
-      /*
-      asset type
-      tags
-      ? license
-      */
+      this.modulesLoaded = [];
 
-      this.listenTo(Origin, 'assetManagement:refine:reset', this.resetFilters);
-
-      Origin.trigger('assetManagement:refine:ready');
+      this.listenTo(Origin, 'assetManagement:refine:moduleReady', this.onModuleReady);
+      this.renderNextModule();
     },
 
-    renderModule: function(className) {
-      var moduleView = new className(this.options);
-      this.modules.push(moduleView);
+    // ensures same order as this.modules
+    renderNextModule: function() {
+      var next = Object.keys(this.modules)[this.modulesLoaded.length];
+      var moduleView = new this.modules[next](this.options);
+
       this.$('.modules').append(moduleView.$el);
     },
-
-    /*
-    Need to get latest collection after reset
-    Can't guarantee modules return in order
-    */
 
     resetFilters: function() {
       var modulesReset = 0;
@@ -99,6 +93,25 @@ define(function(require) {
 
     inView: function() {
       return this.$el.hasClass('show');
+    },
+
+    onModuleReady: function(moduleName) {
+      console.log(moduleName + '.ready');
+      if(this.modulesLoaded.indexOf(moduleName) < 0) {
+        this.modulesLoaded.push(moduleName);
+      }
+      var allLoaded = this.modulesLoaded.length === Object.keys(this.modules).length;
+      (allLoaded) ? this.onAllModulesReady() : this.renderNextModule();
+    },
+
+    onAllModulesReady: function() {
+      this.stopListening(Origin, 'assetManagement:refine:moduleReady', this.onModuleReady);
+      this.listenTo(Origin, 'assetManagement:refine:reset', this.resetFilters);
+      Origin.trigger('assetManagement:refine:ready');
+    },
+
+    onModalResize: function(newSize) {
+      this.$el.css('height', newSize.height);
     }
   });
 

@@ -88,6 +88,7 @@ define(function(require) {
           console.log('AssetManagementModalView.onRefineApply: unrecognised filter type "' + filter.type + '"');
       }
       Origin.trigger('assetManagement:sidebarFilter:add');
+      this.hidePreview();
     }
   });
 

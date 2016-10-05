@@ -81,8 +81,11 @@ define(function(require) {
           this.collectionView[filter.type] = _.extend(this.collectionView[filter.type], filter.options);
           break;
         case 'sort':
+        case 'tags':
           this.collectionView[filter.type] = filter.options;
           break;
+        default:
+          console.log('AssetManagementModalView.onRefineApply: unrecognised filter type "' + filter.type + '"');
       }
       Origin.trigger('assetManagement:sidebarFilter:add');
     }

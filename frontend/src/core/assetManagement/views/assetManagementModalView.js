@@ -38,6 +38,12 @@ define(function(require) {
       var actualHeight = $('.modal-popup').outerHeight()-$('.modal-popup-toolbar').outerHeight();
       this.$('.asset-management-assets-container').height(actualHeight);
       this.$('.asset-management-preview-container').height(actualHeight);
+
+      // let everyone know the new dimensions
+      Origin.trigger('modal:resize', {
+        width: $('.modal-popup').outerWidth(),
+        height: actualHeight
+      });
     },
 
     showPreview: function(model) {

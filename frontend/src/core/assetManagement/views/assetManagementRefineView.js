@@ -24,6 +24,7 @@ define(function(require) {
       this.options = options;
 
       this.listenTo(Origin, 'modal:closed', this.remove);
+      this.listenTo(Origin, 'modal:resize', this.onModalResize);
       this.listenTo(Origin, 'remove:views', this.remove);
 
       this.render();
@@ -34,7 +35,8 @@ define(function(require) {
       var template = Handlebars.templates['assetManagementRefineView'];
       this.$el.html(template(data));
       // position
-      var top = $('.modal-popup-toolbar').outerHeight();
+      // TODO fix this 1px
+      var top = $('.modal-popup-toolbar').outerHeight()+1;
       this.$el.css('top', top);
 
       this.renderToggle();

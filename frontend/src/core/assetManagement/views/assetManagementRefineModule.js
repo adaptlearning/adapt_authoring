@@ -7,6 +7,10 @@ define(function(require) {
   var AssetManagementRefineModule = Backbone.View.extend({
     tagName: 'div',
 
+    events: {
+      'click .title': 'toggle'
+    },
+
     initialize: function(options) {
       this.options = options;
 
@@ -25,10 +29,16 @@ define(function(require) {
 
       // HACK for now...
       _.defer(_.bind(function() {
+        this.$('.title').click(_.bind(this.toggle,this));
+
+        this.postRender();
         Origin.trigger('assetManagement:refine:moduleReady', this.constructor.template);
       }, this));
 
       return this;
+    },
+
+    postRender: function() {
     },
 
     applyFilter: function(options) {
@@ -43,16 +53,8 @@ define(function(require) {
     },
 
     toggle: function() {
-      this.inView() ? this.hide() : this.show();
-    },
-
-    show: function() {
-      this.$el.addClass('show');
-    },
-
-    hide: function() {
-      this.$el.removeClass('show');
-    },
+      this.$('.inner').toggleClass('hide');
+    }
   });
 
   return AssetManagementRefineModule;

@@ -162,8 +162,11 @@
        }
 
        .asset-management-preview-container {
-           display: none;
-           width:25%;
+           width: 375px;
+           .slideRight-anim(-375px);
+           &.show {
+             .slideRight-anim(0%);
+           }
            float:right;
            background-color:#fff;
            overflow-y: auto;
@@ -270,25 +273,5 @@
 .asset-preview-edit {
     .modal-popup & {
         display:none;
-    }
-}
-
-.asset-management-modal-new-asset {
-    position: absolute;
-    width: 450px;
-    top: 52px;
-    left: 0;
-    bottom: 0;
-    z-index: 5;
-    .form-container-style;
-    margin: 10px;
-}
-
-.asset-management-modal-new-asset-close {
-    position: absolute;
-    top: 0px;
-    right: 0;
-    &:hover {
-        color:#15a4fa;
     }
 }

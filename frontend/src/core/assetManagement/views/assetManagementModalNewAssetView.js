@@ -1,5 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
+  var _ = require('underscore');
   var Backbone = require('backbone');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
@@ -19,6 +20,20 @@ define(function(require){
     preRender: function() {
       AssetManagementNewAssetView.prototype.preRender.apply(this, arguments);
       this.listenTo(Origin, 'assetManagement:modal:newAssetOpened', this.remove);
+    },
+
+    postRender: function() {
+      AssetManagementNewAssetView.prototype.postRender.apply(this, arguments);
+      this.$('form').submit(false);
+      this.$el.addClass('show');
+    },
+
+    remove: function() {
+      this.$el.removeClass('show');
+      // HACK need to wait for the animation to finish
+      window.setTimeout(_.bind(function() {
+        AssetManagementNewAssetView.prototype.remove.apply(this, arguments);
+      }, this), 300);
     },
 
     onNewAssetSaveSuccess: function() {

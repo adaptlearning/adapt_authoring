@@ -1,6 +1,3 @@
-<button class="asset-management-modal-new-asset-close">
-    <i class="fa fa-times"></i>
-</button>
 <div class="asset-management-modal-new-asset-inner inner">
     <!-- Begin upload form -->
     <form class="asset-form forms asset-form" action="/api/asset" method="post">
@@ -43,7 +40,8 @@
             <input type="text" autocomplete="off" class="width-30" id="tags_control" name="tags_control" value="{{pickCSV tags "title"}}" />
         </div>
 
-        <div class="">
+        <div class="buttons">
+          <button class="asset-management-modal-new-asset-close btn alert">Cancel</button>
             <button class="asset-management-modal-new-asset-upload btn secondary">Upload</button>
         </div>
         <input type="hidden" name="tags" id="tags" />

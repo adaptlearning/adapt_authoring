@@ -2,19 +2,30 @@
 define(function(require) {
   var _ = require('underscore');
   var Origin = require('coreJS/app/origin');
+  var AssetModel = require('coreJS/assetManagement/models/assetModel');
   var AssetManagementCollectionView = require('coreJS/assetManagement/views/assetManagementCollectionView');
   var AssetManagementRefineView = require('coreJS/assetManagement/views/assetManagementRefineView');
   var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
+  var AssetManagementModalNewAssetView = require('coreJS/assetManagement/views/assetManagementModalNewAssetView');
 
   var AssetManagementModalView = AssetManagementView.extend({
     preRender: function(options) {
   	  this.options = options;
   	  AssetManagementView.prototype.preRender.apply(this, arguments);
 
+      this.listenTo(Origin, 'assetManagement:assetItemView:preview', this.onPreview);
       this.listenTo(Origin, 'assetManagement:modal:update', this.onAssetUpdate);
+      this.listenTo(Origin, 'assetManagement:refine:ready', this.onRefineReady);
+      this.listenTo(Origin, 'assetManagement:refine:show', this.onRefineShow);
     },
 
     setupSubViews: function() {
+      this.setUpCollectionView();
+      this.setUpNewAssetButton();
+      this.setUpRefineView();
+    },
+
+    setUpCollectionView: function() {
       // Replace Asset and : so we can have both filtered and all asset types
       var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
       // asset type filter
@@ -23,15 +34,18 @@ define(function(require) {
       }
       // Push collection through to collection view
       this.collectionView = new AssetManagementCollectionView({ collection: this.collection, search: search, isModal:true });
-      this.$('.asset-management-assets-container-inner').append(this.collectionView.$el)
-        .hide();
+      this.$('.asset-management-assets-container-inner').append(this.collectionView.$el);
+    },
 
-      this.listenTo(Origin, 'assetManagement:refine:ready', function() {
-        Origin.trigger('assetManagement:sidebarFilter:add');
-        this.listenTo(Origin, 'assetManagement:refine:apply', this.onRefineApply);
-        this.$('.asset-management-assets-container-inner').fadeIn();
-      });
-      this.$('.asset-management-inner').append(new AssetManagementRefineView().$el);
+    setUpRefineView: function() {
+      this.$('.asset-management-assets-container-inner').hide();
+      this.$('.asset-management-inner').prepend(new AssetManagementRefineView().$el);
+    },
+
+    setUpNewAssetButton: function() {
+      var buttonTemplate = Handlebars.templates['assetManagementNewAssetButton'];
+      $('.modal-popup-toolbar-buttons').prepend(buttonTemplate());
+      $('.modal-popup-toolbar-buttons button.add-asset').click(_.bind(this.onNewAssetClicked, this));
     },
 
     resizeAssetPanels: function() {
@@ -69,6 +83,35 @@ define(function(require) {
     onAssetUpdate: function(data) {
       this.setData(data.model, data._shouldAutofill);
       Origin.trigger('modal:onUpdate');
+    },
+
+    onNewAssetClicked: function(e) {
+      event && event.preventDefault();
+      if($('asset-management-modal-new-asset').length === 0) {
+        Origin.trigger('assetManagement:refine:hide');
+        Origin.trigger('assetManagement:assetPreviewView:delete');
+        Origin.trigger('assetManagement:refine:hide');
+        var newAssetView = new AssetManagementModalNewAssetView({model: new AssetModel()});
+        $('.asset-management-inner').append(newAssetView.$el);
+      }
+    },
+
+    onRefineReady: function() {
+      Origin.trigger('assetManagement:sidebarFilter:add');
+      // start listening for filters now we're ready
+      this.listenTo(Origin, 'assetManagement:refine:apply', this.onRefineApply);
+      this.$('.asset-management-assets-container-inner').fadeIn();
+    },
+
+    onRefineShow: function() {
+      // this forces new asset overlay to close
+      Origin.trigger('assetManagement:modal:newAssetOpened');
+      Origin.trigger('assetManagement:assetPreviewView:delete');
+    },
+
+    onPreview: function(data) {
+      Origin.trigger('assetManagement:modal:newAssetOpened');
+      Origin.trigger('assetManagement:refine:hide');
     },
 
     /*

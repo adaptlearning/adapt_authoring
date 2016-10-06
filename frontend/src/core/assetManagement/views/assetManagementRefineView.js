@@ -23,9 +23,12 @@ define(function(require) {
     initialize: function(options) {
       this.options = options;
 
+      this.listenTo(Origin, 'remove:views', this.remove);
+
       this.listenTo(Origin, 'modal:closed', this.remove);
       this.listenTo(Origin, 'modal:resize', this.onModalResize);
-      this.listenTo(Origin, 'remove:views', this.remove);
+
+      this.listenTo(Origin, 'assetManagement:refine:hide', this.hide);
 
       this.render();
     },
@@ -34,10 +37,6 @@ define(function(require) {
       var data = this.options;
       var template = Handlebars.templates['assetManagementRefineView'];
       this.$el.html(template(data));
-      // position
-      // TODO fix this 1px
-      var top = $('.modal-popup-toolbar').outerHeight()+1;
-      this.$el.css('top', top);
 
       this.renderToggle();
       this.renderSubViews();
@@ -48,7 +47,7 @@ define(function(require) {
     renderToggle: function() {
       var toggleTemplate = Handlebars.templates['assetManagementRefineToggle'];
       $('.modal-popup-toolbar-buttons').prepend(toggleTemplate());
-      $('button.refine').click(_.bind(this.toggle, this));
+      $('.modal-popup-toolbar-buttons button.refine').click(_.bind(this.toggle, this));
     },
 
     renderSubViews: function() {
@@ -82,19 +81,13 @@ define(function(require) {
     },
 
     toggle: function() {
-      this.inView() ? this.hide() : this.show();
-    },
-
-    show: function() {
-      this.$el.addClass('show');
+      this.$el.toggleClass('show');
+      Origin.trigger('assetManagement:refine:' + (this.$el.hasClass('show') ? 'show' : 'hide'));
     },
 
     hide: function() {
+      var width = this.$el.width();
       this.$el.removeClass('show');
-    },
-
-    inView: function() {
-      return this.$el.hasClass('show');
     },
 
     onModuleReady: function(moduleName) {

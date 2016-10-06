@@ -11,14 +11,14 @@ define(function(require) {
     ? license
     */
     modules: {
-      AssetManagementSummaryModule: require('coreJS/assetManagement/views/assetManagementSummaryModule'),
-      AssetManagementSearchModule: require('coreJS/assetManagement/views/AssetManagementSearchModule'),
-      AssetManagementSortModule: require('coreJS/assetManagement/views/assetManagementSortModule'),
-      AssetManagementWorkspaceModule: require('coreJS/assetManagement/views/assetManagementWorkspaceModule'),
-      AssetManagementMineModule: require('coreJS/assetManagement/views/assetManagementMineModule'),
-      AssetManagementTagsModule: require('coreJS/assetManagement/views/assetManagementTagsModule')
+      assetManagementSummaryModule: require('coreJS/assetManagement/views/assetManagementSummaryModule'),
+      assetManagementSearchModule: require('coreJS/assetManagement/views/AssetManagementSearchModule'),
+      assetManagementSortModule: require('coreJS/assetManagement/views/assetManagementSortModule'),
+      assetManagementWorkspaceModule: require('coreJS/assetManagement/views/assetManagementWorkspaceModule'),
+      assetManagementMineModule: require('coreJS/assetManagement/views/assetManagementMineModule'),
+      assetManagementTagsModule: require('coreJS/assetManagement/views/assetManagementTagsModule')
     },
-    modulesLoaded: [],
+    modulesLoaded: {},
 
     initialize: function(options) {
       this.options = options;
@@ -51,7 +51,7 @@ define(function(require) {
     },
 
     renderSubViews: function() {
-      this.modulesLoaded = [];
+      this.modulesLoaded = {};
 
       this.listenTo(Origin, 'assetManagement:refine:moduleReady', this.onModuleReady);
       this.renderNextModule();
@@ -59,7 +59,7 @@ define(function(require) {
 
     // ensures same order as this.modules
     renderNextModule: function() {
-      var next = Object.keys(this.modules)[this.modulesLoaded.length];
+      var next = Object.keys(this.modules)[Object.keys(this.modulesLoaded).length];
       var moduleView = new this.modules[next](this.options);
 
       this.$('.modules').append(moduleView.$el);
@@ -67,16 +67,18 @@ define(function(require) {
 
     resetFilters: function() {
       var modulesReset = 0;
-      // bit hacky: make sure all modules have been fetched and triggerevent again
+      var moduleKeys = Object.keys(this.modules);
+      // HACK make sure all modules have been fetched and trigger event
+      // again to make sure we get the final list of unfiltered assets
       this.listenTo(Origin, 'assetManagement:assetManagementCollection:fetched', function(collection){
-        if(++modulesReset === this.modules.length) {
+        if(++modulesReset === moduleKeys.length) {
           this.stopListening(Origin, 'assetManagement:assetManagementCollection:fetched');
           Origin.trigger('assetManagement:sidebarFilter:add');
         }
       });
 
-      for(var i = 0, count = this.modules.length; i < count; i++) {
-        this.modules[i].resetFilter();
+      for(var i = 0, count = moduleKeys.length; i < count; i++) {
+        this.modulesLoaded[moduleKeys[i]].resetFilter();
       }
     },
 
@@ -90,11 +92,11 @@ define(function(require) {
       this.$el.removeClass('show');
     },
 
-    onModuleReady: function(moduleName) {
-      if(this.modulesLoaded.indexOf(moduleName) < 0) {
-        this.modulesLoaded.push(moduleName);
+    onModuleReady: function(moduleName, moduleView) {
+      if(Object.keys(this.modulesLoaded).indexOf(moduleName) < 0) {
+        this.modulesLoaded[moduleName] = moduleView;
       }
-      var allLoaded = this.modulesLoaded.length === Object.keys(this.modules).length;
+      var allLoaded = Object.keys(this.modulesLoaded).length === Object.keys(this.modules).length;
       (allLoaded) ? this.onAllModulesReady() : this.renderNextModule();
     },
 

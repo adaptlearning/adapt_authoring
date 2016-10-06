@@ -32,7 +32,7 @@ define(function(require) {
         this.$('.title').click(_.bind(this.toggle,this));
 
         this.postRender();
-        Origin.trigger('assetManagement:refine:moduleReady', this.constructor.template);
+        Origin.trigger('assetManagement:refine:moduleReady', this.constructor.template, this);
       }, this));
 
       return this;

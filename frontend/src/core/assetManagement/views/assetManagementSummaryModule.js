@@ -29,7 +29,7 @@ define(function(require) {
     },
 
     resetFilter: function() {
-      // doesn't do any filtering...
+      this.applyFilter();
     },
 
     showResetButton: function() {

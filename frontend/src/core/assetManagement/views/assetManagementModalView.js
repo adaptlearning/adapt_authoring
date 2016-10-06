@@ -127,11 +127,8 @@ define(function(require) {
         case 'tags':
           this.collectionView[filter.type] = filter.options;
           break;
-        default:
-          console.log('AssetManagementModalView.onRefineApply: unrecognised filter type "' + filter.type + '"');
       }
       Origin.trigger('assetManagement:sidebarFilter:add');
-      this.hidePreview();
     }
   });
 

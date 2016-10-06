@@ -106,12 +106,11 @@ define(function(require) {
     onRefineShow: function() {
       // this forces new asset overlay to close
       Origin.trigger('assetManagement:modal:newAssetOpened');
-      Origin.trigger('assetManagement:assetPreviewView:delete');
     },
 
     onPreview: function(data) {
+      // this forces new asset overlay to close
       Origin.trigger('assetManagement:modal:newAssetOpened');
-      Origin.trigger('assetManagement:refine:hide');
     },
 
     /*

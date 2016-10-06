@@ -39,10 +39,10 @@ define(function(require){
 
     showPreview: function(model) {
       var $container = this.$('.asset-management-preview-container-inner');
-      this.$('.asset-management-preview-container').addClass('show');
       this.$('.asset-management-no-preview').hide();
       var previewView = new AssetManagementPreviewView({ model: model });
       $container.html(previewView.$el);
+      this.$('.asset-management-preview-container').addClass('show');
     },
 
     hidePreview: function() {

@@ -39,7 +39,6 @@
                    height: 178px;
                    margin-right: 20px;
                    margin-bottom: 20px;
-                   // padding: 4px;
                    float: left;
                    cursor: pointer;
                    background-color: @white;
@@ -171,16 +170,23 @@
            background-color:#fff;
            overflow-y: auto;
 
+           button.close {
+            position: relative;
+            top: 10px;
+            right: 10px;
+            float: right;
+            padding: 0;
+            font-size: 110%;
+           }
+
            .asset-management-no-preview {
                position:relative;
                top:40%;
            }
 
            &-inner {
-               padding: 30px;
-
                .asset-preview-details {
-                   margin-bottom:20px;
+                   padding: 40px 30px;
 
                    i {
                        font-size:56px;
@@ -191,7 +197,7 @@
 
                    &-header {
                         font-family: @font-title;
-                        font-size: 17px;
+                        font-size: 18px;
                         font-weight: 600;
                         line-height: 20px;
                         padding-bottom: 25px;

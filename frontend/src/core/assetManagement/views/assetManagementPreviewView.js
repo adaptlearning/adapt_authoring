@@ -9,6 +9,7 @@ define(function(require){
     className: 'asset-management-preview',
 
     events: {
+      'click button.close' : 'onCloseClicked',
       'click a.confirm-select-asset' : 'selectAsset',
       'click .asset-preview-edit-button': 'onEditButtonClicked',
       'click .asset-preview-delete-button': 'onDeleteButtonClicked',
@@ -90,6 +91,10 @@ define(function(require){
           }
         });
       }
+    },
+
+    onCloseClicked: function() {
+      Origin.trigger('assetManagement:assetPreviewView:delete');
     }
   }, {
     template: 'assetManagementPreview'

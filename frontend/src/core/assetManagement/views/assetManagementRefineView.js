@@ -98,7 +98,6 @@ define(function(require) {
     },
 
     onModuleReady: function(moduleName) {
-      console.log(moduleName + '.ready');
       if(this.modulesLoaded.indexOf(moduleName) < 0) {
         this.modulesLoaded.push(moduleName);
       }

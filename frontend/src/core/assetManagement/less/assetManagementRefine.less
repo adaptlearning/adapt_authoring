@@ -1,5 +1,6 @@
 @import '../../../less/animations.less';
 @import '../../../less/fonts.less';
+@import '../../app/less/helpers.less';
 @import '../../../less/variables.less';
 
 @background-color: #1e2e36;
@@ -46,8 +47,22 @@ button.refine {
       border-bottom: @control-border;
 
       .title {
-        margin-bottom: 12px;
+        .unselectable;
         font-size: 120%;
+        cursor: pointer;
+        &:hover {
+          color: @white;
+        }
+        ~ .inner {
+          margin-top: 12px;
+        }
+      }
+
+      .inner {
+        display: block;
+        &.hide {
+          display: none;
+        }
       }
 
       a.reset {

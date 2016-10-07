@@ -47,7 +47,6 @@
             <div class="courses">
               {{#each projects}}
               <div class="course input checkbox">
-                {{console ../workspaces.course}}
                 <input type="checkbox" id="{{_id}}" {{#ifListContains ../workspaces.course _id}}checked{{/ifListContains}}/>
                 <div class="icon">
                   <i class="icon-checked fa fa-check-square-o"></i>

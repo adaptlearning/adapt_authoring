@@ -14,6 +14,7 @@ define(function(require){
         this.listenTo(Origin, 'window:resize', this.resizeAssetPanels);
         this.listenTo(Origin, 'assetManagement:assetItemView:preview', this.showPreview);
         this.listenTo(Origin, 'assetManagement:assetPreviewView:delete', this.hidePreview);
+        this.listenTo(Origin, 'assetManagement:refine:ready', this.onRefineReady);
     },
 
     postRender: function() {
@@ -25,8 +26,8 @@ define(function(require){
     },
 
     setupSubViews: function() {
-        var collectionView = new AssetManagementCollectionView({ collection: this.collection });
-        this.$('.asset-management-assets-container-inner').append(collectionView.$el);
+        this.collectionView = new AssetManagementCollectionView({ collection: this.collection });
+        this.$('.asset-management-assets-container-inner').append(this.collectionView.$el);
     },
 
     resizeAssetPanels: function() {
@@ -47,6 +48,30 @@ define(function(require){
 
     hidePreview: function() {
       this.$('.asset-management-preview-container').removeClass('show');
+    },
+
+    onRefineReady: function() {
+      // make sure we've got the latest asset list
+      Origin.trigger('assetManagement:sidebarFilter:add');
+      // start listening for filters now we're ready
+      this.listenTo(Origin, 'assetManagement:refine:apply', this.onRefineApply);
+    },
+
+    /*
+    * TODO this basically forces a fetch, and searches on server side.
+    * Seems inefficient...
+    */
+    onRefineApply: function(filter) {
+      switch(filter.type) {
+        case 'search':
+          this.collectionView[filter.type] = _.extend(this.collectionView[filter.type], filter.options);
+          break;
+        case 'sort':
+        case 'tags':
+          this.collectionView[filter.type] = filter.options;
+          break;
+      }
+      Origin.trigger('assetManagement:sidebarFilter:add');
     }
   }, {
     template: 'assetManagement'

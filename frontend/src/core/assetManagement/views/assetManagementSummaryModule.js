@@ -33,11 +33,11 @@ define(function(require) {
     },
 
     showResetButton: function() {
-      this.$('a.reset').css('visibility','visible');
+      this.$('a.reset').removeClass('hide');
     },
 
     hideResetButton: function() {
-      this.$('a.reset').css('visibility','hidden');
+      this.$('a.reset').addClass('hide');
     },
 
     onResetClicked: function(e) {

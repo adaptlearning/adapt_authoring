@@ -37,7 +37,7 @@ define(function(require) {
           'workspaces.component':{}
         });
       }
-      else if(type === course) {
+      else if(type === 'course') {
         id = Origin.editor.data.course.get('_id');
       }
       else {
@@ -47,6 +47,7 @@ define(function(require) {
         // note we start at the right point in the hierarchy
         // route2 === content type
         for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
+          if(i < 0) break;
           if(contentTypes[i] === type) break;
 
           var match = Origin.editor.data[contentCollections[i]].findWhere({ _id:id });

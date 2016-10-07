@@ -15,7 +15,6 @@ define(function(require) {
 
       this.listenTo(Origin, 'assetManagement:assetItemView:preview', this.onPreview);
       this.listenTo(Origin, 'assetManagement:modal:update', this.onAssetUpdate);
-      this.listenTo(Origin, 'assetManagement:refine:ready', this.onRefineReady);
       this.listenTo(Origin, 'assetManagement:refine:show', this.onRefineShow);
     },
 
@@ -97,9 +96,7 @@ define(function(require) {
     },
 
     onRefineReady: function() {
-      Origin.trigger('assetManagement:sidebarFilter:add');
-      // start listening for filters now we're ready
-      this.listenTo(Origin, 'assetManagement:refine:apply', this.onRefineApply);
+      AssetManagementView.prototype.onRefineReady.apply(this, arguments);
       this.$('.asset-management-assets-container-inner').fadeIn();
     },
 
@@ -111,23 +108,6 @@ define(function(require) {
     onPreview: function(data) {
       // this forces new asset overlay to close
       Origin.trigger('assetManagement:modal:newAssetOpened');
-    },
-
-    /*
-    * TODO this basically forces a fetch, and searches on server side.
-    * Seems inefficient...
-    */
-    onRefineApply: function(filter) {
-      switch(filter.type) {
-        case 'search':
-          this.collectionView[filter.type] = _.extend(this.collectionView[filter.type], filter.options);
-          break;
-        case 'sort':
-        case 'tags':
-          this.collectionView[filter.type] = filter.options;
-          break;
-      }
-      Origin.trigger('assetManagement:sidebarFilter:add');
     }
   });
 

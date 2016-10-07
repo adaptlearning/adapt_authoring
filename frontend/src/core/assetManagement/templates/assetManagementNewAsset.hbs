@@ -40,6 +40,25 @@
             <input type="text" autocomplete="off" class="width-30" id="tags_control" name="tags_control" value="{{pickCSV tags "title"}}" />
         </div>
         <input type="hidden" name="tags" id="tags" />
+
+        {{#if projects}}
+        <div class="form-group workspace">
+            <a class="workspaces" href="#"><i class="fa fa-link"></i> link asset to existing courses</a>
+            <div class="courses">
+              {{#each projects}}
+              <div class="course input checkbox">
+                {{console ../workspaces.course}}
+                <input type="checkbox" id="{{_id}}" {{#ifListContains ../workspaces.course _id}}checked{{/ifListContains}}/>
+                <div class="icon">
+                  <i class="icon-checked fa fa-check-square-o"></i>
+                  <i class="icon-unchecked fa fa-square-o"></i>
+                </div>
+                <label for="{{_id}}">{{title}}</label>
+              </div>
+              {{/each}}
+            </div>
+        </div>
+        {{/if}}
     </form>
     <!-- end upload form -->
 </div>

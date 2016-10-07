@@ -110,6 +110,14 @@ define(function(require){
             }
         },
 
+        ifListContains: function(list, query, block) {
+            if(_.contains(list, query)) {
+                return block.fn(this);
+            } else {
+                return block.inverse(this);
+            }
+        },
+
         ifUserIsMe: function(userId, block) {
           if (userId === Origin.sessionModel.get('id')) {
             return block.fn(this);

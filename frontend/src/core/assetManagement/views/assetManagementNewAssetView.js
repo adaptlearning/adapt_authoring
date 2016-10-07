@@ -10,7 +10,8 @@ define(function(require){
     className: 'asset-management-new-asset',
 
     events: {
-      'change .asset-file': 'onChangeFile'
+      'change .asset-file': 'onChangeFile',
+      'click a.workspaces': 'onWorkspacesClicked'
     },
 
     preRender: function() {
@@ -85,13 +86,19 @@ define(function(require){
       return _.pluck(this.model.get('tags'), '_id');
     },
 
-    // TODO assumptions made about editor data here...
     getWorkspaces: function() {
-      var courseId = Origin.location.route1;
+      var selected = this.getSelectedWorkspaces();
+      var generated = this.generateWorkspaces();
+      return _.extend(selected, generated);
+    },
 
-      if(!courseId) {
+    // TODO assumptions made about editor data here...
+    generateWorkspaces: function() {
+      if(Origin.location.module !== 'editor') {
         return {};
       }
+
+      var courseId = Origin.location.route1;
 
       var contentTypes = [ 'component', 'block', 'article', 'page' ];
       var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
@@ -104,12 +111,19 @@ define(function(require){
       for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
         if(!id) return; // something's gone wrong
 
-        workspaces[contentTypes[i]] = id;
+        workspaces[contentTypes[i]] = [id];
 
         var match = Origin.editor.data[contentCollections[i]].findWhere({ _id: id });
         id = match.get('_parentId') || false;
       }
+
       return workspaces;
+    },
+
+    getSelectedWorkspaces: function() {
+      return {
+        course: _.pluck(this.$('.courses input:checked'), 'id')
+      };
     },
 
     onNewAsset: function() {
@@ -125,7 +139,8 @@ define(function(require){
       } else {
         this.model.set({
           title: this.$('.asset-title').val(),
-          description: this.$('.asset-description').val()
+          description: this.$('.asset-description').val(),
+          workspaces: this.getWorkspaces()
         });
         this.model.save(null, {
           error: _.bind(this.onNewAssetSaveError, this),
@@ -186,6 +201,11 @@ define(function(require){
     onRemoveTag: function (tag) {
       var tags = _.filter(this.model.get('tags'), function (item) { return item.title !== tag; });
       this.model.set('tags', tags);
+    },
+
+    onWorkspacesClicked: function(e) {
+      e && e.preventDefault();
+      this.$('.courses').slideToggle(100);
     }
   }, {
     template: 'assetManagementNewAsset'

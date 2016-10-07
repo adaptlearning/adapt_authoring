@@ -7,6 +7,7 @@ define(function(require) {
   var AssetManagementSidebarView = require('coreJS/assetManagement/views/assetManagementSidebarView');
   var AssetManagementNewAssetView = require('coreJS/assetManagement/views/assetManagementNewAssetView');
   var AssetManagementNewAssetSidebarView = require('coreJS/assetManagement/views/assetManagementNewAssetSidebarView');
+  var ProjectCollection = require('coreJS/project/collections/projectCollection');
   var TagsCollection = require('coreJS/tags/collections/tagsCollection');
 
   Origin.on('app:dataReady login:changed', function() {
@@ -60,9 +61,30 @@ define(function(require) {
 
       var data = isNew ? {} : { _id: id };
       var model = new AssetModel(data);
+      var projects = new ProjectCollection();
+      // needed for filtering
+      projects.fetch({
+        success: function() {
+          model.set('projects', filterProjects(projects));
+          if(isNew) loadView();
+          else model.fetch({ success:loadView });
+        }
+      });
 
-      if(isNew) loadView();
-      else model.fetch({ success:loadView });
+      // filters out projects that aren't 'mine' OR shared
+      // @return just the  _ids and titles
+      function filterProjects(projects) {
+        return projects.filter(function(project) {
+          var shared = project.get('_isShared') === true;
+          var mine = project.get('createdBy') === Origin.sessionModel.get('_id');
+          return shared || mine;
+        }).map(function(project) {
+          return {
+            _id: project.get('_id'),
+            title: project.get('title')
+          };
+        });
+      }
 
       function loadView() {
         Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el, {

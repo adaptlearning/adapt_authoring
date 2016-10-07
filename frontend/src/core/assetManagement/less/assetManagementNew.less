@@ -1,3 +1,4 @@
+@import '../../../less/fonts.less';
 @import '../../../less/sharedStyles.less';
 
 .modal .asset-management-new-asset {
@@ -27,6 +28,18 @@
 
 .asset-management-new-asset-inner {
     padding:30px;
+    .courses {
+      display: none;
+      &.show {
+        display: block;
+      }
+      padding: 15px;
+      .course {
+        label {
+          font-size: @font-size;
+        }
+      }
+    }
 }
 
 .progress-container {

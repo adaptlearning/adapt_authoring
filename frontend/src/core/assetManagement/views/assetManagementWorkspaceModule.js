@@ -27,15 +27,16 @@ define(function(require) {
       // TODO this code is very similar to assetManagementNewAssetView...
       var type = e.currentTarget.id;
       var id;
+      var emptyFilter = {
+        'workspaces.course':{},
+        'workspaces.page':{},
+        'workspaces.article':{},
+        'workspaces.block':{},
+        'workspaces.component':{}
+      };
 
       if(type === 'all') {
-        return this.applyFilter({
-          'workspaces.course':{},
-          'workspaces.page':{},
-          'workspaces.article':{},
-          'workspaces.block':{},
-          'workspaces.component':{}
-        });
+        return this.applyFilter(emptyFilter);
       }
       else if(type === 'course') {
         id = Origin.editor.data.course.get('_id');
@@ -54,7 +55,7 @@ define(function(require) {
           id = match.get('_parentId') || false;
         }
       }
-      var search = {};
+      var search = emptyFilter;
       search['workspaces.' + type] = { $in:[id] };
       this.applyFilter(search);
     }

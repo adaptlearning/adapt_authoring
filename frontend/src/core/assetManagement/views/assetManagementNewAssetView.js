@@ -20,20 +20,6 @@ define(function(require){
       'drop label[for=file]': 'onDrop'
     },
 
-    onDrag: function(e) {
-      e && e.preventDefault() && e.stopPropagation();
-      this.$('label[for=file]').addClass('over');
-    },
-
-    onDrop: function(e) {
-      e && e.preventDefault() && e.stopPropagation();
-      this.$('label[for=file]').removeClass('over');
-      if(e.type === 'drop') {
-        var files = e.originalEvent.dataTransfer.files;
-        this.$('input[id=file]').prop('files', files);
-      }
-    },
-
     preRender: function() {
       this.listenTo(Origin, 'assetManagement:newAsset', this.uploadData);
     },
@@ -136,11 +122,6 @@ define(function(require){
       }
       var isNew = this.model.isNew();
 
-      if(_.isEmpty(this.$('input[type=file]').val())) {
-        this.$('input[type=file]').attr('disabled', 'disabled');
-      }
-      this.$('input[id=tags_control]').attr('disabled', 'disabled');
-
       this.$('#tags').val(this.getTags());
       this.$('#workspaces').val(JSON.stringify(this.getWorkspaces()));
 
@@ -221,6 +202,20 @@ define(function(require){
     onWorkspacesClicked: function(e) {
       e && e.preventDefault();
       this.$('.courses').slideToggle(100);
+    },
+
+    onDrag: function(e) {
+      e && e.preventDefault() && e.stopPropagation();
+      this.$('label[for=file]').addClass('over');
+    },
+
+    onDrop: function(e) {
+      e && e.preventDefault() && e.stopPropagation();
+      this.$('label[for=file]').removeClass('over');
+      if(e.type === 'drop') {
+        var files = e.originalEvent.dataTransfer.files;
+        this.$('input[id=file]').prop('files', files);
+      }
     }
   }, {
     template: 'assetManagementNewAsset'

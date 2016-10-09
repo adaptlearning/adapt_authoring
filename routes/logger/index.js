@@ -45,6 +45,7 @@ server.get('/log', function (req, res, next) {
     db.retrieve('log', {}, {
       jsonOnly: true,
       operators: {
+        sort: { timestamp: -1 },
         limit: UI_LOG_LENGTH
       }
     }, function(error, results) {

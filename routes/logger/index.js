@@ -18,9 +18,9 @@ var UI_LOG_LENGTH = 250; // in UI
 function initialise() {
   logger.add(winstonMongo, {
     db: getDb(),
-    collection: COLLECTION_NAME,
-    cappedMax: DB_LOG_LENGTH
+    collection: COLLECTION_NAME
   });
+  trimLogs();
 };
 
 function getDb() {
@@ -31,12 +31,26 @@ function getDb() {
   if(user && pass) {
     dbString += user + ':' + pass + '@';
   }
-
   dbString += configuration.getConfig('dbHost');
   dbString += ':' + configuration.getConfig('dbPort');
   dbString += "/" + configuration.getConfig('dbName');
 
   return dbString;
+};
+
+// Trims DB logs to DB_LOG_LENGTH, removing oldest first
+function trimLogs() {
+  database.getDatabase(function(error, db) {
+    db.retrieve('log', {}, { operators: { sort: { timestamp: 1 } } }, function(error, results) {
+      if(results.length > DB_LOG_LENGTH) {
+        var noToDelete = results.length - DB_LOG_LENGTH;
+        var toDelete = results.slice(0, noToDelete);
+        async.each(toDelete, function(item, done) {
+          db.destroy('log', { _id: item._id }, done);
+        });
+      }
+    });
+  }, configuration.getConfig('masterTenantID'));
 };
 
 server.get('/log', function (req, res, next) {

@@ -42,11 +42,19 @@
     border-color: @control-border-color;
     border-radius: @button-radius;
     color: @font-color;
-    &::-webkit-input-placeholder,
-    &::-moz-placeholder,
-    &:-ms-input-placeholder,
+
+    @placeholder-color: lighten(@control-border-color, 25%);
+    &::-webkit-input-placeholder {
+      color: @placeholder-color;
+    }
     &:-moz-placeholder {
-        color: @font-color;
+      color: @placeholder-color;
+    }
+    &::-moz-placeholder {
+      color: @placeholder-color;
+    }
+    &:-ms-input-placeholder {
+      color: @placeholder-color;
     }
 
     ~ button.clear {
@@ -57,7 +65,7 @@
       padding: 10px;
       width: auto;
       i {
-        color: @control-border-color;
+        color: @placeholder-color;
       }
       &:hover {
         i {

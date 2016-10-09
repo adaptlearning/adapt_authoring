@@ -40,6 +40,7 @@ define(function(require){
 
     postRender: function() {
       this.initTags();
+      this.setHeight();
       this.setViewToReady();
     },
 
@@ -51,6 +52,11 @@ define(function(require){
         'minChars' : 3,
         'maxChars' : 30
       });
+    },
+
+    setHeight: function () {
+      var newHeight = $(window).height()-$('.'+this.className).offset().top;
+      $('.'+this.className).height(newHeight);
     },
 
     validate: function () {

@@ -10,12 +10,32 @@ define(function(require){
     className: 'asset-management-new-asset',
 
     events: {
-      'change .asset-file': 'onChangeFile',
-      'click a.workspaces': 'onWorkspacesClicked'
+      'change .asset-file': 'onFileSelected',
+      'click a.workspaces': 'onWorkspacesClicked',
+
+      'dragenter label[for=file]': 'onDrag',
+      'dragover label[for=file]': 'onDrag',
+      'dragleave label[for=file]': 'onDrop',
+      'dragend label[for=file]': 'onDrop',
+      'drop label[for=file]': 'onDrop'
+    },
+
+    onDrag: function(e) {
+      e && e.preventDefault() && e.stopPropagation();
+      this.$('label[for=file]').addClass('over');
+    },
+
+    onDrop: function(e) {
+      e && e.preventDefault() && e.stopPropagation();
+      this.$('label[for=file]').removeClass('over');
+      if(e.type === 'drop') {
+        var files = e.originalEvent.dataTransfer.files;
+        this.$('input[id=file]').prop('files', files);
+      }
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'assetManagement:newAsset', this.onNewAsset);
+      this.listenTo(Origin, 'assetManagement:newAsset', this.uploadData);
     },
 
     postRender: function() {
@@ -33,12 +53,12 @@ define(function(require){
       });
     },
 
-    validateInput: function () {
-      var reqs = this.$('.required');
-      var uploadFile = this.$('.asset-file');
+    validate: function () {
+      var $uploadFile = this.$('.asset-file');
       var validated = true;
-      var uploadFileErrormsg = $(uploadFile).prev('label').find('span.error');
-      $.each(reqs, function (index, el) {
+      var uploadFileErrormsg = $uploadFile.prev('label').find('span.error');
+      // check required fields
+      $('.required').each(function (index, el) {
         var errormsg = $(el).prev('label').find('span.error');
         if (!$.trim($(el).val())) {
           validated = false;
@@ -49,37 +69,17 @@ define(function(require){
           $(errormsg).text('');
         }
       });
-
-      if (this.model.isNew() && !uploadFile.val()) {
+      // check upload file
+      if (this.model.isNew() && !$uploadFile.val()) {
         validated = false;
-        $(uploadFile).addClass('input-error');
+        $uploadFile.addClass('input-error');
         $(uploadFileErrormsg).text(window.polyglot.t('app.pleaseaddfile'));
       } else {
-        $(uploadFile).removeClass('input-error');
+        $uploadFile.removeClass('input-error');
         $(uploadFileErrormsg).text('');
       }
+
       return validated;
-    },
-
-    uploadFile: function() {
-      // set tags value
-      this.$('#tags').val(this.getTags());
-      // set workspaces value
-      this.$('#workspaces').val(JSON.stringify(this.getWorkspaces()));
-
-      this.$('.asset-form').ajaxSubmit({
-        uploadProgress: function(event, position, total, percentComplete) {
-          $(".progress-container").css("visibility", "visible");
-          var percentVal = percentComplete + '%';
-          $(".progress-bar").css("width", percentVal);
-          $('.progress-percent').html(percentVal);
-        },
-        error: _.bind(this.onFileUploadError, this),
-        success: _.bind(this.onFileUploadSuccess, this)
-      });
-
-      // Return false to prevent the page submitting
-      return false;
     },
 
     getTags: function() {
@@ -98,14 +98,11 @@ define(function(require){
         return {};
       }
 
-      var courseId = Origin.location.route1;
-
       var contentTypes = [ 'component', 'block', 'article', 'page' ];
       var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
 
-      var workspaces = { course: courseId };
+      var workspaces = { course: Origin.location.route1 };
       var id = Origin.location.route3;
-
       // note we start at the right point in the hierarchy
       // route2 === content type
       for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
@@ -126,61 +123,73 @@ define(function(require){
       };
     },
 
-    onNewAsset: function() {
-      if (!this.validateInput()) {
+    uploadData: function() {
+      if (!this.validate()) {
         Origin.trigger('sidebar:resetButtons');
         return false;
       }
-      // If model is new then uploadFile
-      if (this.model.isNew()) {
-        this.uploadFile();
-        // Return false to prevent the page submitting
-        return false;
-      } else {
-        this.model.set({
-          title: this.$('.asset-title').val(),
-          description: this.$('.asset-description').val(),
-          workspaces: this.getWorkspaces()
-        });
-        this.model.save(null, {
-          error: _.bind(this.onNewAssetSaveError, this),
-          success: _.bind(this.onNewAssetSaveSuccess, this)
-        });
+      var isNew = this.model.isNew();
+
+      if(_.isEmpty(this.$('input[type=file]').val())) {
+        this.$('input[type=file]').attr('disabled', 'disabled');
       }
+      this.$('input[id=tags_control]').attr('disabled', 'disabled');
+
+      this.$('#tags').val(this.getTags());
+      this.$('#workspaces').val(JSON.stringify(this.getWorkspaces()));
+
+      this.$('.asset-form').ajaxSubmit({
+        url: '/api/asset/' + (isNew ? '' : this.model.get('_id')),
+        method: (isNew ? 'post' : 'put'),
+        uploadProgress: _.bind(function(event, position, total, percentComplete) {
+          this.$('label[for=file] .label').hide();
+          var $progress = this.$('label[for=file] .progress').removeClass('display-none');
+          $(".value", $progress).html(percentComplete);
+        }, this),
+        error: _.bind(this.onFileUploadError, this),
+        success: _.bind(this.onFileUploadSuccess, this)
+      });
+      // Return false to prevent the page submitting
+      return false;
     },
 
-    onNewAssetSaveSuccess: function() {
-      Origin.router.navigate('#/assetManagement', {trigger:true});
+    onUploadSaveSuccess: function() {
+      Origin.router.navigate('#/assetManagement', { trigger:true });
     },
 
-    onNewAssetSaveError: function() {
+    onUploadSaveError: function() {
       Origin.Notify.alert({
         type: 'error',
         text: window.polyglot.t('app.errorassetupdate')
       });
     },
 
+    onFileSelected: function(event) {
+      // Default 'title' -- remove C:\fakepath if it is added
+      var title = this.$('.asset-file')[0].value.replace("C:\\fakepath\\", "");
+      // change upload button label
+      this.$('label[for=file] .btn-label').html(title);
+      // set title field if empty
+      var $title = this.$('.asset-title');
+      if(_.isEmpty($title.val())) $title.val(title);
+    },
+
     onFileUploadSuccess: function(data, status, xhr) {
+      if(data._id) {
+        this.model.set({ _id: data._id });
+      }
       Origin.trigger('assets:update');
-      this.model.set({_id: data._id});
-      this.model.fetch().done(function (data) {
-        Origin.trigger('assetItemView:preview', this.model);
-      });
       Origin.router.navigate('#/assetManagement', { trigger:true });
     },
 
     onFileUploadError: function(xhr, status, error) {
       Origin.trigger('sidebar:resetButtons');
+      var msg = xhr.responseJSON && xhr.responseJSON.message || xhr.responseText;
       Origin.Notify.alert({
         type: 'error',
-        text: xhr.responseJSON.message
+        title: xhr.statusText,
+        text: msg
       });
-    },
-
-    onChangeFile: function(event) {
-      var $title = this.$('.asset-title');
-      // Default 'title' -- remove C:\fakepath if it is added
-      $title.val(this.$('.asset-file')[0].value.replace("C:\\fakepath\\", ""));
     },
 
     onAddTag: function (tag) {

@@ -29,7 +29,7 @@ define(function(require){
     },
 
     setDefaults: function(options) {
-      this.sort = { createdAt: -1 }; // newest first
+      this.sort = { title: 1 };
       this.search = (options.search || {});
       // TODO is this likely?
       this.filters = (this.search.assetType) ? options.search.assetType.$in : [];

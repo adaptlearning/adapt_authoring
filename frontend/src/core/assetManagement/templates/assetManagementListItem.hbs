@@ -48,7 +48,7 @@
     <!-- Thumbnail -->
     {{#ifValueEquals assetType "image"}}
       {{#if metadata}}
-        <div class="asset-management-list-item-content" data-style="background-image:url(api/asset/thumb/{{_id}})">
+        <div class="asset-management-list-item-content" data-style="background-image:url(api/asset/thumb/{{_id}}{{cacheBuster this}})">
       {{else}}
         <div class="asset-management-list-item-content">
             <i class="fa fa-file-image-o"></i>

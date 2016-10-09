@@ -9,7 +9,7 @@
   <!-- Preview content -->
   <div class="asset-preview-details-preview">
     {{#ifValueEquals assetType "image"}}
-      <img src="api/asset/serve/{{_id}}"/>
+      <img src="api/asset/serve/{{_id}}{{cacheBuster this}}"/>
     {{/ifValueEquals}}
 
     {{#ifValueEquals assetType "video"}}

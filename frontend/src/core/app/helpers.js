@@ -1,10 +1,18 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
+    var _ = require('underscore');
     var Handlebars = require('handlebars');
     var Origin = require('coreJS/app/origin');
     var moment = require('moment');
 
     var helpers = {
+        cacheBuster: function(context, asset) {
+          var lastSession = new Date(_.findWhere(Origin.sessionModel.get('users'), { _id: Origin.sessionModel.get('id') }).lastAccess);
+          var lastUpdated = new Date(context.updatedAt);
+          if(lastSession < lastUpdated) return '?' + new Date().getTime()
+          return '';
+        },
+
         console: function(context) {
           return console.log(JSON.stringify(context));
         },

@@ -1,21 +1,16 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
-  var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
 
   var SharedProjectView = OriginView.extend({
-
     tagName: 'li',
-
     className: 'shared-project-list-item',
 
     events: {
-      'dblclick'                        : 'promptDuplicateProject',
-      'click'                           : 'selectProject',
-      'click a.open-context-course'     : 'openContextMenu'
+      'dblclick': 'promptDuplicateProject',
+      'click': 'selectProject',
+      'click a.open-context-course': 'openContextMenu'
     },
 
     preRender: function() {
@@ -31,15 +26,13 @@ define(function(require){
     },
 
     openContextMenu: function (e) {
-      e.stopPropagation();
-      e.preventDefault();
+      e && e.stopPropagation() && e.preventDefault();
 
       Origin.trigger('contextMenu:open', this, e);
     },
 
     selectProject: function(event) {
       event && event.preventDefault();
-
       this.selectItem();
     },
 
@@ -89,11 +82,9 @@ define(function(require){
         }
       });
     }
-
   }, {
     template: 'sharedProject'
   });
 
   return SharedProjectView;
-
 });

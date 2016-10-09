@@ -1,0 +1,40 @@
+@import 'variables';
+
+input[type=file] {
+  // hide input
+  width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+
+  ~ label {
+    padding: 8px;
+    background-color: fade(@secondary-color, 10%);
+    text-align: center;
+    cursor: default;
+    &.over {
+      background-color: fade(@secondary-color, 20%);
+    }
+    .inner {
+      padding: 20px;
+      border: 2px dashed fade(@secondary-color, 50%);
+      .btn {
+        padding-top: 13px;
+        padding-bottom: 13px;
+        min-width: 150px;
+        cursor: pointer;
+        i {
+          margin-right: 5px;
+        }
+      }
+      .label,
+      .progress {
+        display: block;
+        margin-top: 15px;
+        color: darken(@secondary-color, 3%);
+      }
+    }
+  }
+}

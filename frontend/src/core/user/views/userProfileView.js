@@ -47,8 +47,8 @@ define(function(require){
     },
 
     togglePasswordUI: function(model, showPaswordUI) {
-      var formSelector = 'div.change-password-section .form-group .inner'; 
-      var buttonSelector = '.change-password'; 
+      var formSelector = 'div.change-password-section .form-group .inner';
+      var buttonSelector = '.change-password';
 
       if (showPaswordUI) {
         this.$(formSelector).removeClass('display-none');
@@ -59,7 +59,7 @@ define(function(require){
 
         this.$('#password').val('').removeClass('display-none');
         this.$('#passwordText').val('').addClass('display-none');
-        this.$('.toggle-password i').addClass('fa-eye').removeClass('fa-eye-slash'); 
+        this.$('.toggle-password i').addClass('fa-eye').removeClass('fa-eye-slash');
 
         this.$('.toggle-password').addClass('display-none');
         this.$('#passwordError').html('');
@@ -73,7 +73,7 @@ define(function(require){
 
       this.$('#passwordText').toggleClass('display-none');
       this.$('#password').toggleClass('display-none');
-      this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash'); 
+      this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
     },
 
     indicatePasswordStrength: function(event) {
@@ -113,7 +113,7 @@ define(function(require){
         'firstName': self.$('#firstName').val().trim(),
         'lastName': self.$('#lastName').val().trim()
       };
-      
+
       if (self.model.get('_isNewPassword')) {
         toChange.password = self.$('#password').val();
       } else {
@@ -147,7 +147,7 @@ define(function(require){
     },
 
     onPasswordTextKeyup: function() {
-      
+
     }
   }, {
     template: 'userProfile'

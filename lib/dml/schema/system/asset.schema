@@ -59,6 +59,10 @@
         "ref": "tag"
       },
       "editorOnly": true
+    },
+    "workspaces": {
+      "type": "object",
+      "editorOnly": true
     }
   }
 }

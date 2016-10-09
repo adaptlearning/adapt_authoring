@@ -1,70 +1,65 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
+  var _ = require('underscore');
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
+  var UserModel = require('./userModel');
 
   var SessionModel = Backbone.Model.extend({
-
+    url: "/api/authcheck",
     defaults: {
       isAuthenticated: false,
       id: '',
       tenantId: '',
       email: '',
-      otherLoginLinks: []
+      otherLoginLinks: [],
+      permissions: [],
+      _canRevert: false,
+      user: new UserModel(),
+      users: []
     },
 
-    url: "/api/authcheck",
-
-    initialize: function() {},
+    initialize: function() {
+      Origin.on('login:changed', _.bind(function() {
+        if(this.get('user')) this.get('user').fetch();
+      }, this));
+    },
 
     logout: function () {
-      var self = this;
-
-      $.post(
-        '/api/logout',
-        function() {
-          self.set('isAuthenticated', false);
-          self.set('id', '');
-          self.set('tenantId', '');
-          self.set('email', '');
-          self.set('permissions', []);
-          self.set('_canRevert', false);
-
-          Origin.trigger('login:changed');
-          Origin.router.navigate('#/user/login', {trigger: true});
-      });
+      $.post('/api/logout', _.bind(function() {
+        this.set(this.defaults);
+        Origin.trigger('login:changed');
+        Origin.router.navigate('#/user/login', { trigger: true });
+      }, this));
     },
 
     login: function (username, password, shouldPersist) {
-      var self = this;
-
       $.ajax({
         method: 'post',
         url: '/api/login',
-        data: {email: username, password: password, shouldPersist: shouldPersist},
-        success: function (jqXHR, textStatus, errorThrown) {
+        data: { email:username, password:password, shouldPersist:shouldPersist },
+        success: _.bind(function (jqXHR, textStatus, errorThrown) {
           if (jqXHR.success) {
-            self.set('id', jqXHR.id);
-            self.set('tenantId', jqXHR.tenantId);
-            self.set('email', jqXHR.email);  
-            self.set('isAuthenticated', jqXHR.success);
-            self.set('permissions', jqXHR.permissions);
-
+            this.set({
+              id: jqXHR.id,
+              tenantId: jqXHR.tenantId,
+              email: jqXHR.email,
+              isAuthenticated: jqXHR.success,
+              permissions: jqXHR.permissions,
+              users: jqXHR.users
+            });
+            this.get('user').set('_id', jqXHR.id);
             Origin.trigger('login:changed');
-
             Origin.trigger('schemas:loadData', function() {
-              Origin.router.navigate('#/dashboard', {trigger: true});
+              Origin.router.navigate('#/dashboard', { trigger: true });
             });
           }
-        },
+        },this),
         error: function (jqXHR, textStatus, errorThrown) {
           var errorCode = 1;
-
           if (jqXHR.responseJSON && jqXHR.responseJSON.errorCode) {
             errorCode = jqXHR.responseJSON.errorCode;
           }
-
           Origin.trigger('login:failed', errorCode);
         }
       });
@@ -72,5 +67,4 @@ define(function(require) {
   });
 
   return SessionModel;
-
 });

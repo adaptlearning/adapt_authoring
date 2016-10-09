@@ -1,0 +1,44 @@
+@default-anim-duration-short: 0.2s;
+@default-anim-duration-med: 0.3s;
+@default-anim-duration-long: 1.0s;
+
+.shake-anim(@amount: 1.5deg; @duration: @default-anim-duration-short) {
+  @keyframes shake-keyframes {
+     50% {
+       -webkit-transform: rotate(@amount);
+       -moz-transform: rotate(@amount);
+       -o-transform: rotate(@amount);
+       -ms-transform: rotate(@amount);
+       transform: rotate(@amount);
+     }
+  }
+  animation: shake-keyframes @duration;
+}
+
+.slideDown-anim(@finish: 0; @opacity: 1; @duration: @default-anim-duration-med) {
+  top: @finish;
+  opacity: @opacity;
+  transition-duration: @duration;
+  transition-timing-function: ease-in;
+}
+
+.slideLeft-anim(@finish: 0; @duration: @default-anim-duration-med) {
+  margin-left: @finish;
+  transition-duration: @duration;
+  transition-timing-function: ease-in;
+}
+
+.slideRight-anim(@finish: 0; @duration: @default-anim-duration-med) {
+  margin-right: @finish;
+  transition-duration: @duration;
+  transition-timing-function: ease-in;
+}
+
+.zoom-anim(@amount: 1.01; @duration: @default-anim-duration-short) {
+  -webkit-transform: scale(@amount);
+  -moz-transform: scale(@amount);
+  -o-transform: scale(@amount);
+  -ms-transform: scale(@amount);
+  transform: scale(@amount);
+  transition-duration: @duration;
+}

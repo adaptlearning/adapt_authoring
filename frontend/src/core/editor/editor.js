@@ -158,6 +158,8 @@ define(function(require) {
     Origin.editor.data.course = new EditorCourseModel({_id: route1});
     Origin.editor.data.config = new EditorConfigModel({_courseId: route1});
 
+    // HACK these routes should be extenalised somewhere
+
     Origin.editor.data.contentObjects = new EditorCollection(null, {
       model: EditorContentObjectModel,
       url: '/api/content/contentobject?_courseId=' + route1,
@@ -215,7 +217,7 @@ define(function(require) {
   }
 
   function routeAfterDataIsLoaded(route1, route2, route3, route4) {
-    
+
     if (route2 === 'article' && route4 === 'edit') {
       var articleModel = new EditorArticleModel({_id: route3});
       articleModel.fetch({
@@ -418,11 +420,11 @@ define(function(require) {
 
           contentObjectModel.fetch({
             success: function() {
-              
+
               var form = Origin.scaffold.buildForm({
                 model: contentObjectModel
               });
-              
+
               Origin.trigger('location:title:update', {title: 'Editing menu - ' + contentObjectModel.get('title')});
               Origin.sidebar.addView(new EditorPageEditSidebarView().$el);
               Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel, form: form}).$el);
@@ -450,7 +452,7 @@ define(function(require) {
           });
         }
         break;
-        
+
       case 'page':
 
         // Edit the page item
@@ -481,7 +483,7 @@ define(function(require) {
           Origin.sidebar.addView(new EditorPageSidebarView().$el, {
             "backButtonText": "Back to course structure",
             "backButtonRoute": "/#/editor/" + route1 + "/menu"
-          });   
+          });
         }
         break;
     }

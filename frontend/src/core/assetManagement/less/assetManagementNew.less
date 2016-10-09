@@ -30,7 +30,7 @@
 .asset-management-new-asset {
   overflow-y: scroll;
   .asset-management-new-asset-inner {
-    padding:30px;
+    .form-container-style;
     .courses {
       display: none;
       &.show {
@@ -44,36 +44,4 @@
       }
     }
   }
-}
-
-.progress-container {
-    width:100px;
-    height:15px;
-    border:1px solid black;
-    visibility:hidden;
-    position:relative;
-}
-
-.asset-management-new-asset {
-    .form-container-style;
-
-    .progress-container {
-        position:relative;
-        visibility:hidden;
-        width:76px;
-        height:10px;
-        background-color: white;
-        border:1px solid black;
-        overflow: hidden;
-        border-radius: 8px;
-        margin: 10px 0;
-        .progress-bar {
-            width:0%;
-                background-color: @primary-color;
-            height:100%;
-            .progress-percent {
-                display: none;
-            }
-        }
-    }
 }

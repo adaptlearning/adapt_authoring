@@ -37,7 +37,7 @@ define(function(require) {
       var template = Handlebars.templates['modal'];
       this.$el.html(template(data)).appendTo('body');
       _.defer(_.bind(this.postRender, this));
-      
+
       return this;
     },
 
@@ -93,5 +93,4 @@ define(function(require) {
   });
 
   return ModalView;
-
 });

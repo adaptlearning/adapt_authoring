@@ -1,17 +1,15 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
   var Backbone = require('backbone');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
 
   var AssetManagementPreviewView = OriginView.extend({
-
     tagName: 'div',
-
     className: 'asset-management-preview',
 
     events: {
+      'click button.close' : 'onCloseClicked',
       'click a.confirm-select-asset' : 'selectAsset',
       'click .asset-preview-edit-button': 'onEditButtonClicked',
       'click .asset-preview-delete-button': 'onDeleteButtonClicked',
@@ -36,15 +34,16 @@ define(function(require){
 
     selectAsset: function (event) {
       event && event.preventDefault();
-
-      var data = {eventToTrigger: 'assetModal:assetSelected', model: this.model};
-      Origin.trigger('modal:passThrough', data);
+      Origin.trigger('modal:passThrough', {
+        eventToTrigger: 'assetModal:assetSelected',
+        model: this.model
+      });
     },
 
     onEditButtonClicked: function(event) {
       event.preventDefault();
       var assetId = this.model.get('_id');
-      Origin.router.navigate('#/assetManagement/' + assetId + '/edit', {trigger: true});
+      Origin.router.navigate('#/assetManagement/' + assetId + '/edit', { trigger: true });
     },
 
     onDeleteButtonClicked: function(event) {
@@ -58,36 +57,15 @@ define(function(require){
     },
 
     onDeleteConfirmed: function(confirmed) {
-      var self = this;
-
       if (confirmed) {
-        $.ajax({
-          url: '/api/asset/trash/' + self.model.get('_id'),
-          type: 'PUT',
-          success: function() {
-            if (Origin.permissions.hasPermissions(["*"])) {
-              self.model.set({_isDeleted: true});
-            } else {
-              self.model.trigger('destroy', self.model, self.model.collection);
-            }
-            Origin.trigger('assetManagement:assetPreviewView:delete');
-            self.remove();
-          },
-          error: function(data) {
-            Origin.Notify.alert({
-              type: 'error',
-              text: window.polyglot.t('app.errordeleteasset', { message: data.message })
-            });
-          }
-        });
+        this.model.destroy();
+        Origin.trigger('assetManagement:assetPreviewView:delete');
+        this.remove();
       }
     },
 
     onRestoreButtonClicked: function(event) {
-      event.preventDefault();
-
-      event.preventDefault();
-
+      event && event.preventDefault();
       Origin.Notify.confirm({
         text: window.polyglot.t('app.assetconfirmrestore'),
         callback: _.bind(this.onRestoreConfirmed, this)
@@ -96,7 +74,6 @@ define(function(require){
 
     onRestoreConfirmed: function(confirmed) {
       var self = this;
-
       if (confirmed) {
         $.ajax({
           url: '/api/asset/restore/' + self.model.get('_id'),
@@ -114,12 +91,14 @@ define(function(require){
           }
         });
       }
-    }
+    },
 
+    onCloseClicked: function() {
+      Origin.trigger('assetManagement:assetPreviewView:delete');
+    }
   }, {
     template: 'assetManagementPreview'
   });
 
   return AssetManagementPreviewView;
-
 });

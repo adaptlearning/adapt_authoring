@@ -1,10 +1,12 @@
+@import '../../../less/variables.less';
+
 html {
   overflow-y: hidden;
 }
 
 #app {
-	margin-top:60px;
-	margin-left:250px;
+	margin-top:@navigation-height;
+	margin-left:@sidebar-width;
 }
 
 .app-inner {
@@ -43,7 +45,7 @@ span.error {
   .loading-inner {
     margin-top: 25%;
   }
-  
+
   @loading-icon-size: 8px;
 
   .loading-logo {
@@ -91,10 +93,10 @@ span.error {
   }
 
   @keyframes sk-bouncedelay {
-    0%, 80%, 100% { 
+    0%, 80%, 100% {
       -webkit-transform: scale(0);
       transform: scale(0);
-    } 40% { 
+    } 40% {
       -webkit-transform: scale(1.0);
       transform: scale(1.0);
     }

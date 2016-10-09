@@ -5,23 +5,18 @@ define(function(require){
   var Helpers = require('coreJS/app/helpers');
 
   var EditorOriginView = OriginView.extend({
-
     events: {
-      'click .paste-cancel'   : 'pasteCancel',
+      'click .paste-cancel': 'pasteCancel',
       'click .field-object .legend': 'onFieldObjectClicked'
     },
 
-    onFieldObjectClicked: function(event) {
-      $(event.currentTarget).closest('.field-object').children('.collapsed').first().toggleClass('expanded');
-    },
-
     initialize: function(options) {
-      // Set form on view
       if (options && options.form) {
         this.form = options.form;
         this.filters = [];
       }
       OriginView.prototype.initialize.apply(this, arguments);
+
       this.listenTo(Origin, 'sidebarFieldsetFilter:filterForm', this.filterForm);
       this.listenTo(Origin, 'editorView:pasteCancel', this.hidePasteZones);
     },
@@ -29,12 +24,9 @@ define(function(require){
     filterForm: function(filter) {
       // Check if the tag is already being filtered and remove it
       if (_.contains(this.filters, filter)) {
-          this.filters = _.reject(this.filters, function(filterItem) {
-              return filterItem === filter;
-          });
+        this.filters = _.reject(this.filters, function(filterItem) { return filterItem === filter; });
       } else {
-          // Else add it to array
-          this.filters.push(filter);
+        this.filters.push(filter);
       }
 
       // Now actually filter the form
@@ -56,70 +48,20 @@ define(function(require){
       }
       var that = this;
       this.$('.form-container').append(this.form.el);
-      // Set the delays going to stop jumping pages
-      _.delay(function() {
-        that.setViewToReady();
-      }, 400);
-    },
-
-    onCopy: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
-
-      Origin.trigger('editorView:copy', this.model);
-    },
-
-    onCopyID: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
-
-      Origin.trigger('editorView:copyID', this.model);
-    },
-
-    onCut: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
-
-      Origin.trigger('editorView:cut', this);
-    },
-
-    capitalise: function(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
-    },
-
-    onPaste: function(event) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      Origin.trigger('editorView:paste', this.model.get('_parentId'), $(event.target).data('sort-order'), $(event.target).data('paste-layout'));
-    },
-
-    pasteCancel: function(event) {
-      event.preventDefault();
-
-      Origin.trigger('editorView:pasteCancel', this.model);
-    },
-
-    hidePasteZones: function() {
-      // Purposeful global selector here
-      $('.paste-zone').addClass('display-none');
-      $('.add-control').removeClass('display-none');
-    },
-
-    openContextMenu: function (e) {
-      e.stopPropagation();
-      e.preventDefault();
-
-      Origin.trigger('contextMenu:open', this, e);
+      // the delay's going to stop jumping pages
+      _.delay(function() { that.setViewToReady(); }, 400);
     },
 
     showPasteZones: function (type) {
       $('.paste-zone').addClass('display-none');
       $('.add-control').addClass('display-none');
       type && $('.paste-zone-' + type).removeClass('display-none');
+    },
+
+    hidePasteZones: function() {
+      // Purposeful global selector here
+      $('.paste-zone').addClass('display-none');
+      $('.add-control').removeClass('display-none');
     },
 
     showDropZones: function () {
@@ -146,7 +88,6 @@ define(function(require){
         return;
       }
       var errors = this.form.validate();
-
       // MUST trigger as sidebar needs to know when the form has been resubmitted
       Origin.trigger('editorSidebar:showErrors', errors);
 
@@ -155,7 +96,6 @@ define(function(require){
           window.polyglot.t('app.validationfailedmessage') +
           "<br/><br/>" +
           this.buildErrorMessage(errors, '');
-
         // TODO remove when we've got a better solution
         this.onSaveError(window.polyglot.t('app.validationfailed'), errorText);
 
@@ -187,6 +127,48 @@ define(function(require){
 
     getAttributesToSave: function() {
       return null;
+    },
+
+    capitalise: function(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    },
+
+    /*
+    * Events
+    */
+
+    onFieldObjectClicked: function(e) {
+      $(e.currentTarget).closest('.field-object').children('.collapsed').first().toggleClass('expanded');
+    },
+
+    onCopy: function(e) {
+      e && e.preventDefault();
+      Origin.trigger('editorView:copy', this.model);
+    },
+
+    onCopyID: function(e) {
+      e && e.preventDefault();
+      Origin.trigger('editorView:copyID', this.model);
+    },
+
+    onCut: function(e) {
+      e && e.preventDefault();
+      Origin.trigger('editorView:cut', this);
+    },
+
+    onPaste: function(e) {
+      e && e.preventDefault() && e.stopPropagation();
+      Origin.trigger('editorView:paste', this.model.get('_parentId'), $(e.target).data('sort-order'), $(e.target).data('paste-layout'));
+    },
+
+    pasteCancel: function(e) {
+      e && e.preventDefault();
+      Origin.trigger('editorView:pasteCancel', this.model);
+    },
+
+    openContextMenu: function(e) {
+      e && e.stopPropagation() && e.preventDefault();
+      Origin.trigger('contextMenu:open', this, e);
     },
 
     onSaveError: function(pTitle, pText) {

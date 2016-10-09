@@ -1,3 +1,5 @@
+@import '../../../less/animations.less';
+
 .dashboard {
     overflow-y:scroll;
     ul {
@@ -61,7 +63,7 @@ ul.dashboard-options {
             background-color: rgba(255,255,255,0.8);
             .project-details-inner {
                 padding: 5px;
-                h1 {   
+                h1 {
                     color: #177e97;
                 }
             }
@@ -75,12 +77,16 @@ ul.dashboard-options {
             }
             .project-details {
                 background-color: rgba(0,0,0,0.3);
-                h1 {   
+                h1 {
                     color: #fff;
                 }
             }
         }
     }
+}
+
+.project-list-item, .shared-project-list-item {
+    &:hover { .zoom-anim(); } 
 }
 
 .grid-layout {

@@ -1,184 +1,257 @@
+@import '../../../less/animations.less';
+@import '../../../less/buttons.less';
+@import '../../../less/sharedStyles.less';
 @import '../../../less/variables.less';
-
-.asset-picker-filters {
-    padding: 10px;
-    background-color: lightblue;
-}
-
-.asset-picker-sidebar-filter-button {
-    &.selected {
-        background-color: #F2F2F2;
-    }
-}
 
 .asset-management-sidebar-filter-image-icon {
     float: left;
 }
 
-.asset-management-assets-container {
-    width:75%;
-    float:left;
-    overflow-x:hidden;
-    overflow-y:scroll;
-
-    .asset-management-no-assets {
-        text-align:center;
-        position:relative;
-        top:40%;
-    }
-}
-
-.asset-management-collection-inner {
-    padding-top:30px;
-    padding-left:30px;
-}
-
-.asset-management-preview-container {
-    width:25%;
-    float:right;
-    overflow-x:hidden;
-    text-align:center;
-    background-color:#fff;
-
+.asset-management {
     &-inner {
-        padding: 30px 15px;
-        color: #9d9d9d;
-        .asset-preview-title {
-          padding-bottom: 10px;
-          color: @primary-color;
-        }
-        .asset-preview-description,
-        .asset-size {
-          margin-bottom: 25px;
-        }
-        .asset-tags {
-          margin-bottom: 30px;
-        }
-    }
+        height: auto;
+        overflow: hidden;
+        .asset-management-assets-container {
+            width: auto;
+            overflow-y:scroll;
 
-    .asset-management-no-preview {
-        position:relative;
-        top:40%;
-    }
-}
+           .asset-management-no-assets {
+              text-align: center;
+              position: relative;
+              top: 37%;
+              font-size: 150%;
+              color: #c4e2ef;
+              font-weight: bold;
+              i {
+                display: block;
+                font-size: 70px;
+                margin-bottom: 10px;
+              }
+           }
 
+           .asset-management-collection-inner {
+               padding-top:30px;
+               padding-left:30px;
+               padding-bottom:30px;
+               .asset-management-list-item {
+                   position: relative;
+                   width: 160px;
+                   height: 178px;
+                   margin-right: 20px;
+                   margin-bottom: 20px;
+                   float: left;
+                   cursor: pointer;
+                   background-color: @white;
+                   border: 1px solid #bedee6;
+                   border-radius: 3px;
+                   overflow: hidden;
+                   transition: all 0.2s;
+                   box-shadow: 0px 0px 3pt 2pt transparent;
+                   &:hover {
+                       .shake-anim();
+                        box-shadow: 0 0 5px 2px #CBE1E6;
+                        .asset-management-list-item-editOverlay {
+                            opacity: 1;
+                        }
+                   }
 
-.asset-preview-edit {
-    margin-top:10px;
-}
+                   &-editOverlay {
+                        opacity: 0;
+                        transition: opacity 0.5s;
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                        bottom: 10px;
+                        left: 10px;
+                        .button-container {
+                            display: block;
+                            float: right;
+                            clear: both;
+                            margin-bottom: 5px;
+                            white-space: nowrap;
+                            overflow: hidden;
 
-.asset-management-list-item {
-    position:relative;
-    width:160px;
-    height: 210px;
-    margin-right:30px;
-    margin-bottom:30px;
-    float:left;
-    cursor:pointer;
-    background-color:#fff;
-    border: 1px solid #d6f2f9;
-    border-radius:3px;
-    transition: all 0.3s;
-    box-shadow: 0px 0px 3pt 2pt transparent;
-    &:hover {
-        box-shadow: 0 0 5px 2px #CBE1E6;
-    }
+                            .tooltip {
+                                display: none;
+                                padding: 5px 10px;
+                                border-radius: 2px;
+                                background-color: rgba(0,0,0,0.6);
+                                color: white;
+                                &.show {
+                                  display: initial;
+                                }
+                            }
+                            button {
+                              margin-left: 3px;
+                              padding: 5px 10px;
+                              border-radius: 2px;
+                              &.asset-management-list-item-select {
+                                .primary;
+                              }
+                              &.asset-management-list-item-autofill {
+                                .secondary;
+                              }
+                            }
+                        }
+                   }
 
-    &.selected {
-        background-color: @primary-color;
-        color: @button-primary-text-color;
-    }
+                   &-icon {
+                       display: none;
+                       &-inner {
+                           position: absolute;
+                           padding:10px;
+                           font-size: 20px;
+                       }
+                   }
 
-    &-icon {
-        &-inner {
-            padding:6px;
-        }
-    }
+                   &-content {
+                       width:160px;
+                       height:150px;
+                       background-position:center;
+                       background-size:cover;
+                       background-repeat: no-repeat;
+                       background-color: rgba(52, 190, 224, 0.33);
+                       text-align:center;
+                       i {
+                           padding-top:40px;
+                           color: white;
+                           font-size:60px;
+                       }
+                   }
 
-    &-image {
-        width:160px;
-        height:120px;
-        background-position:center;
-        background-size:cover;
-        background-repeat: no-repeat;
-        background-color: white;
-        text-align:center;
-        border: 1px solid #d6f2f9;
-        border-left: none;
-        border-right: none;
-        i {
-            color:rgb(214, 242, 249);
-            padding-top:35px;
-            font-size:50px;
-        }
-    }
+                   &-details {
+                       transition: background-color 0.2s;
+                       position: absolute;
+                       bottom: 0;
+                       width: 144px;
+                       padding: 5px 8px;
+                       overflow: hidden;
+                       background-color: white;
+                       word-wrap: break-word;
+                       text-align: center;
+                   }
 
-    &-details {
-        word-wrap: break-word;
-        overflow:hidden;
-        width:160px;
-        &-inner {
-            padding:10px;
-        }
-    }
+                   .asset-management-list-item-deleted {
+                       position:absolute;
+                       width:100%;
+                       height:100%;
+                       top:0;
+                       left:0;
+                       text-align: center;
+                       background-color:rgba(255,255,255,0.8);
+                       i {
+                           position: relative;
+                           top: 50%;
+                           margin-top: -36px;
+                           color: #ff5567;
+                           font-size:72px;
+                           line-height:72px;
+                       }
+                   }
 
-    &-title {
-        height:40px;
-        overflow:hidden;
-    }
+                   &.selected {
+                       background-color: @primary-color;
+                       color: @button-primary-text-color;
+                       .asset-management-list-item-details {
+                           background-color: @primary-color;
+                       }
+                   }
+               }
+           }
+       }
 
-    .asset-management-list-item-deleted {
-        position:absolute;
-        width:100%;
-        height:100%;
-        top:0;
-        left:0;
-        text-align: center;
-        background-color:rgba(255,255,255,0.8);
-        i {
+       .asset-management-preview-container {
+           width: 350px;
+           margin-right: -350px;
+           &.show {
+            margin-right: 0%;
+           }
+           float:right;
+           background-color:#fff;
+           overflow-y: auto;
+
+           button.close {
             position: relative;
-            top: 50%;
-            margin-top: -36px;
-            color: #ff5567;
-            font-size:72px;
-            line-height:72px;
-        }
-    }
+            top: 10px;
+            right: 10px;
+            float: right;
+            padding: 0;
+            font-size: 110%;
+           }
 
+           .asset-management-no-preview {
+               position:relative;
+               top:40%;
+           }
+
+           &-inner {
+               .asset-preview-details {
+                   padding: 40px 30px;
+
+                   i {
+                       font-size:56px;
+                   }
+                   .fa-file-audio-o {
+                       margin-bottom:20px;
+                   }
+
+                   &-header {
+                        font-family: @font-title;
+                        font-size: 18px;
+                        font-weight: 600;
+                        line-height: 20px;
+                        padding-bottom: 25px;
+                        color: #000;
+                   }
+
+                   &-preview {
+                     img {
+                       max-height: 350px;
+                     }
+                   }
+
+                   &-text {
+                      margin: 20px 5px;
+                       .asset-preview-title {
+                          margin-bottom: 10px;
+                          font-size: 16px;
+                          font-weight: bold;
+                          word-wrap: break-word;
+                       }
+
+                       .asset-group {
+                           margin: 18px 0;
+                           .label {
+                              font-weight: bold;
+                              font-size: 110%;
+                              margin-bottom: 5px;
+                           }
+                       }
+
+                       .asset-tags {
+                           li.tag-item {
+                               display: inline-block;
+                               margin: 0;
+                               span.tag-value {
+                                   display: inline-block;
+                                   margin: 0 5px 5px 0;
+                                   padding: 4px;
+                                   color:#fff;
+                                   background-color:@primary-color;
+                               }
+                           }
+                       }
+
+                       .asset-preview-date {
+                         color: rgb(143,152,169);
+                       }
+                   }
+               }
+           }
+       }
+    }
 }
 
-
-  ul.tag-container {
-    margin: 4px;
-  }
-
-  li.tag-item {
-    margin: 1px 0px 1px 0px;
-    display: inline-block;
-
-
-    span.tag-value {
-      margin: 5px;
-      color:#fff;
-      padding: 3px;
-      background-color:@primary-color;
-    }
-  }
-
-.asset-preview-details-preview {
-    margin-bottom:20px;
-
-    i {
-        font-size:56px;
-    }
-    .fa-file-audio-o {
-        margin-bottom:20px;
-    }
-}
-
-.asset-preview-title {
-    word-wrap: break-word;
-}
 
 .asset-management-modal-filters {
     float: left;
@@ -206,26 +279,5 @@
 .asset-preview-edit {
     .modal-popup & {
         display:none;
-    }
-}
-
-.asset-management-modal-new-asset {
-    position:fixed;
-    top:40px;
-    left:0px;
-    z-index:5;
-    background-color:#fff;
-    box-shadow:1px 2px 4px 0px #666;
-    &-inner {
-        padding:30px;
-    }
-}
-
-.asset-management-modal-new-asset-close {
-    position: absolute;
-    top: 0px;
-    right: 0;
-    &:hover {
-        color:#15a4fa;
     }
 }

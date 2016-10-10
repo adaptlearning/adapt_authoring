@@ -4,19 +4,11 @@ define(function(require) {
   var SuperToolbarView = require('./views/SuperToolbarView.js');
 
   Origin.on('app:dataReady', function() {
-    var permissions = ["*/*:create","*/*:read","*/*:update","*/*:delete"];
-    if (Origin.permissions.hasPermissions(permissions)) {
+    if (Origin.permissions.hasPermissions(["*/*:create","*/*:read","*/*:update","*/*:delete"])) {
       var toolbar = new SuperToolbarView();
-      $('.app-inner').prepend(toolbar.$el);
-      toolbar.$el.hide();
-
       Origin.on('superToolbar:add', function(buttons) {
         toolbar.setButtons(buttons);
-        toolbar.$el.show();
-      });
-
-      Origin.router.on('route', function() {
-        toolbar.$el.hide();
+        $('.location-title').append(toolbar.$el);
       });
     }
   });

@@ -6,11 +6,24 @@ define(function(require){
     var moment = require('moment');
 
     var helpers = {
-        cacheBuster: function(context, asset) {
+        cacheBuster: function(context) {
           var lastSession = new Date(_.findWhere(Origin.sessionModel.get('users'), { _id: Origin.sessionModel.get('id') }).lastAccess);
           var lastUpdated = new Date(context.updatedAt);
           if(lastSession < lastUpdated) return '?' + new Date().getTime()
           return '';
+        },
+
+        getAssetIcon: function(context) {
+          switch(context.assetType) {
+            case 'image':
+              return 'fa-image-o';
+            case 'video':
+              return 'fa-video-o';
+            case 'audio':
+              return 'fa-audio-o';
+            default:
+              return 'fa-file-o';
+          }
         },
 
         console: function(context) {

@@ -36,7 +36,6 @@ define(function(require){
 
         $btn.html(html);
         $btn.attr('data-event', btnData.event);
-        $btn.click(this.onButtonClicked);
 
         this.$('.buttons > .inner').append($btn);
       }

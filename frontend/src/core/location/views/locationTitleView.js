@@ -24,12 +24,12 @@ define(function(require) {
 		},
 
 		postRender: function() {
-			this.$el.removeClass('display-none');
+			this.$('.location-title-inner').removeClass('display-none');
 			Origin.trigger('location:title:postRender', this);
 		},
 
 		onHideTitle: function() {
-			this.$el.addClass('display-none');
+			this.$('.location-title-inner').addClass('display-none');
 		}
 
 	}, {

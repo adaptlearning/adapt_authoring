@@ -24,15 +24,14 @@ define(function(require) {
     },
 
     onInputClicked: function(e) {
-      // TODO this code is very similar to assetManagementNewAssetView...
       var type = e.currentTarget.id;
       var id;
       var emptyFilter = {
-        'workspaces.course':{},
-        'workspaces.page':{},
-        'workspaces.article':{},
+        'workspaces.component':{},
         'workspaces.block':{},
-        'workspaces.component':{}
+        'workspaces.article':{},
+        'workspaces.contentobject':{},
+        'workspaces.course':{}
       };
 
       if(type === 'all') {
@@ -42,12 +41,11 @@ define(function(require) {
         id = Origin.editor.data.course.get('_id');
       }
       else {
-        var contentTypes = [ 'component', 'block', 'article', 'page' ];
         var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
         var id = Origin.location.route3;
         // note we start at the right point in the hierarchy
         // route2 === content type
-        for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
+        for(var i = _.indexOf(Object.keys(emptyFilter), Origin.location.route2), count = contentTypes.length; i < count; i++) {
           if(i < 0) break;
           if(contentTypes[i] === type) break;
 
@@ -56,7 +54,7 @@ define(function(require) {
         }
       }
       var search = emptyFilter;
-      search['workspaces.' + type] = { $in:[id] };
+      search['workspaces.' + type] = id;
       this.applyFilter(search);
     }
   }, {

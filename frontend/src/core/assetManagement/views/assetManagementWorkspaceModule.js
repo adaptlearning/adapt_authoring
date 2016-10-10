@@ -56,7 +56,7 @@ define(function(require) {
         }
       }
       var search = emptyFilter;
-      search['workspaces.' + type] = { $in:[id] };
+      search['workspaces.' + type] = id;
       this.applyFilter(search);
     }
   }, {

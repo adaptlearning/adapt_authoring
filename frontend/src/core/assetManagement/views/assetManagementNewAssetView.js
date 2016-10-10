@@ -89,11 +89,10 @@ define(function(require){
       if(Origin.location.module !== 'editor') {
         return {};
       }
-
       var contentTypes = [ 'component', 'block', 'article', 'page' ];
       var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
 
-      var workspaces = { course: Origin.location.route1 };
+      var workspaces = { course: [ Origin.location.route1 ] };
       var id = Origin.location.route3;
       // note we start at the right point in the hierarchy
       // route2 === content type

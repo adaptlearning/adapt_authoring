@@ -19,7 +19,9 @@ define(function(require){
     },
 
     preRender: function() {
-        this.setUpAdminTools();
+        if(!this.isModal) {
+          this.setUpAdminTools();
+        }
 
         this.listenTo(Origin, 'window:resize', this.resizeAssetPanels);
         this.listenTo(Origin, 'assetManagement:assetItemView:preview', this.onAssetClicked);

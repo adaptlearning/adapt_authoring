@@ -11,10 +11,25 @@ define(function(require){
     className: 'asset-management',
 
     preRender: function() {
+        this.setUpAdminTools();
+
         this.listenTo(Origin, 'window:resize', this.resizeAssetPanels);
         this.listenTo(Origin, 'assetManagement:assetItemView:preview', this.showPreview);
         this.listenTo(Origin, 'assetManagement:assetPreviewView:delete', this.hidePreview);
         this.listenTo(Origin, 'assetManagement:refine:ready', this.onRefineReady);
+    },
+
+    setUpAdminTools: function() {
+      Origin.trigger('superToolbar:add', [{
+        title: 'Rebuild thumbnails',
+        icon: 'fa-sticky-note-o',
+        event: 'buildthumbs'
+      }]);
+      this.listenTo(Origin, 'superToolbar:buildthumbs', function() {
+        $.post('api/asset/buildthumbs', function(data, textStatus, jqXHR) {
+          Origin.Notify.alert({ type: 'info', text: 'Thumbnails built successfully!' });
+        });
+      });
     },
 
     postRender: function() {

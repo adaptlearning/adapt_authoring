@@ -10,6 +10,7 @@ define(function(require) {
 
   var AssetManagementModalView = AssetManagementView.extend({
     preRender: function(options) {
+      this.isModal = true;
   	  this.options = options;
   	  AssetManagementView.prototype.preRender.apply(this, arguments);
 
@@ -32,7 +33,7 @@ define(function(require) {
         search = { assetType: { $in: [ assetType ] } };
       }
       // Push collection through to collection view
-      this.collectionView = new AssetManagementCollectionView({ collection: this.collection, search: search, isModal:true });
+      this.collectionView = new AssetManagementCollectionView({ collection: this.collection, search: search, isModal:this.isModal });
       this.$('.asset-management-assets-container-inner').append(this.collectionView.$el);
     },
 

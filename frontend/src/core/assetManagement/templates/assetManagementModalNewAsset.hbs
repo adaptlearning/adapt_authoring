@@ -2,22 +2,19 @@
     <!-- Begin upload form -->
     <form class="asset-form forms asset-form" action="/api/asset" method="post">
         <div class="form-group">
+            <input type="file" class="asset-file" name="file" id="file">
             <label for="file">
-                {{t 'app.assetfile'}} <span class="req">*</span>
-                <span class="error"></span>
-            </label>
-            {{#if path}}
-            <div class="asset-management-new-asset-file">
-                File has been uploaded
-            </div>
-            {{else}}
-            <input type="file" class="asset-file" name="file">
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-percent">0%</div>
+              <div class="inner">
+                    <span class="btn secondary">
+                        <i class="fa fa-upload"></i>
+                        <span class="btn-label">
+                          {{#if path}}Change file{{else}}Upload file{{/if}}
+                        </span>
+                    </span>
+                    <span class="label">Drag and drop file here, or click the button.</span>
+                    <span class="progress display-none">Uploaded <span class="value"></span>%</span>
                 </div>
-            </div>
-            {{/if}}
+            </label>
         </div>
         <div class="form-group">
             <label for="title">

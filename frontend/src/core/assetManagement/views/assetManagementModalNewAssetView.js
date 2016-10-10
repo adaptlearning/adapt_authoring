@@ -12,7 +12,15 @@ define(function(require){
     className: 'asset-management-modal-new-asset',
 
     events: {
-      'change .asset-file': 'onChangeFile',
+      'change .asset-file': 'onFileSelected',
+      'click a.workspaces': 'onWorkspacesClicked',
+
+      'dragenter label[for=file]': 'onDrag',
+      'dragover label[for=file]': 'onDrag',
+      'dragleave label[for=file]': 'onDrop',
+      'dragend label[for=file]': 'onDrop',
+      'drop label[for=file]': 'onDrop',
+
       'click .asset-management-modal-new-asset-close': 'remove',
       'click .asset-management-modal-new-asset-upload': 'onNewAsset'
     },
@@ -26,6 +34,9 @@ define(function(require){
       AssetManagementNewAssetView.prototype.postRender.apply(this, arguments);
       this.$('form').submit(false);
       this.$el.addClass('show');
+    },
+
+    setHeight: function () {
     },
 
     remove: function() {

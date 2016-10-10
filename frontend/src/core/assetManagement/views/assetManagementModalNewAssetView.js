@@ -28,6 +28,9 @@ define(function(require){
       this.$el.addClass('show');
     },
 
+    setHeight: function () {
+    },
+
     remove: function() {
       this.$el.removeClass('show');
       // HACK need to wait for the animation to finish

@@ -28,8 +28,8 @@ define(function(require){
 
     setUpAdminTools: function() {
       Origin.trigger('superToolbar:add', [{
-        title: 'Rebuild thumbnails',
-        icon: 'fa-sticky-note-o',
+        title: 'Build thumbs',
+        icon: 'fa-wrench',
         event: 'buildthumbs'
       }]);
       this.listenTo(Origin, 'superToolbar:buildthumbs', function() {
@@ -74,7 +74,7 @@ define(function(require){
     onAssetDeleted: function() {
         this.$('.asset-management-no-preview').show();
     }
-    
+
   }, {
     template: 'assetManagement'
   });

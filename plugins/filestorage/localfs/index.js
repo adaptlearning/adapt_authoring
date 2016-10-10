@@ -356,6 +356,7 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
   if (!configuration.getConfig('useffmpeg')) {
     return next(null, false);
   }
+  fileType = fileType.split('/')[0];
   // also check fileType is supported
   switch(fileType) {
     case 'video':
@@ -368,7 +369,6 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
 
   var self = this;
   var fileFormat = fileType.split('/')[1];
-  fileType = fileType.split('/')[0];
   var thumbExt = ('image' === fileType) ? path.extname(filePath) : '.gif';
   var imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath)) + '_thumb' + thumbExt;
 

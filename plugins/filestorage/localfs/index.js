@@ -356,6 +356,7 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
   if (!configuration.getConfig('useffmpeg')) {
     return next(null, false);
   }
+  var fileFormat = fileType.split('/')[1];
   fileType = fileType.split('/')[0];
   // also check fileType is supported
   switch(fileType) {
@@ -368,7 +369,6 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
   }
 
   var self = this;
-  var fileFormat = fileType.split('/')[1];
   var thumbExt = ('image' === fileType) ? path.extname(filePath) : '.gif';
   var imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath)) + '_thumb' + thumbExt;
 
@@ -377,30 +377,31 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
   if ('video' === fileType) {
     // pixel format for gifs (only needed with ffmpeg older versions eg 1.2)
     ff.outputOptions('-pix_fmt rgb24');
-    // start position 1sec in case of black screen
-    ff.outputOptions('-ss 00:00:01');
     // limit file size to ~300kb
     ff.outputOptions('-fs 300000');
+    // start position 1sec in case of black screen
+    ff.seekInput('00:00:01');
+    // setting speed to ~x20 gives a good overview
+    ff.videoFilters('setpts=0.05*PTS');
     // set output framerate
-    ff.videoFilters('fps=5');
-    // scale thumb to 200px high
-    ff.size('?x200');
+    ff.fps(1.5);
   }
   else if ('gif' === fileFormat) {
     // pixel format for gifs (only needed with ffmpeg older versions eg 1.2)
     ff.outputOptions('-pix_fmt rgb24');
-    // only want 1 image/frame
-    ff.outputOptions('-frames 1');
-    // keep original size
-    ff.size(options.width + 'x' + options.height);
+    // only want 1 output image
+    ff.frames(1);
   }
 
+  // use size from options
+  ff.size(options.width + 'x' + options.height);
+
   // event handling
-  ff.on('error', function (err) {
+  ff.on('error', function(err) {
     logger.log('error', 'Failed to create ' + fileType + ' thumbnail: ' + err.message);
     return next(err, false);
   });
-  ff.on('end', function () {
+  ff.on('end', function() {
     return next(null, self.getRelativePath(imgThumbPath));
   });
 

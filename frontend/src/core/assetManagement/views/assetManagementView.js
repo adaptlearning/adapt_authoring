@@ -11,38 +11,10 @@ define(function(require){
     className: 'asset-management',
 
     preRender: function() {
-        if(!this.isModal) {
-          this.setUpAdminTools();
-        }
         this.listenTo(Origin, 'window:resize', this.resizeAssetPanels);
         this.listenTo(Origin, 'assetManagement:assetItemView:preview', this.showPreview);
         this.listenTo(Origin, 'assetManagement:assetPreviewView:delete', this.hidePreview);
         this.listenTo(Origin, 'assetManagement:refine:ready', this.onRefineReady);
-    },
-
-    setUpAdminTools: function() {
-      Origin.trigger('superToolbar:add', [
-        {
-          title: 'Build thumbs',
-          icon: 'fa-wrench',
-          event: 'buildthumbs'
-        },
-        {
-          title: 'Link workspaces',
-          icon: 'fa-link',
-          event: 'syncworkspaces'
-        }
-      ]);
-      this.listenTo(Origin, 'superToolbar:buildthumbs', function() {
-        $.post('api/asset/buildthumbs', function(data, textStatus, jqXHR) {
-          Origin.Notify.alert({ type: 'info', text: 'Thumbnails built successfully!' });
-        });
-      });
-      this.listenTo(Origin, 'superToolbar:syncworkspaces', function() {
-        $.post('api/asset/syncworkspaces', function(data, textStatus, jqXHR) {
-          Origin.Notify.alert({ type: 'info', text: 'Workspaces set for existing assets.' });
-        });
-      });
     },
 
     postRender: function() {

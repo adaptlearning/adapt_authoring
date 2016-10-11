@@ -3,17 +3,20 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var SuperToolbarView = require('./views/superToolbarView.js');
 
-  Origin.on('app:dataReady login:changed', function() {
-    var toolbar = new SuperToolbarView();
+  Origin.on('superToolbar:add', function(buttons) {
     if (Origin.permissions.hasPermissions(["*/*:create","*/*:read","*/*:update","*/*:delete"])) {
-      Origin.on('superToolbar:add', function(buttons) {
-        toolbar.setButtons(buttons);
-        if($(toolbar.className).length === 0) {
-          $('.location-title').append(toolbar.$el);
-        }
-      });
-    } else {
-      $('.location-title').remove(toolbar.className);
+      remove(); // clean up old instances first
+      // add new
+      var toolbar = new SuperToolbarView();
+      toolbar.setButtons(buttons);
+      $('.location-title').append(toolbar.$el);
     }
+    else remove();
   });
+  // make sure it's not left for non-admins
+  Origin.on('app:dataReady login:changed', remove);
+
+  function remove() {
+    $('.location-title').remove('.superToolbar');
+  };
 });

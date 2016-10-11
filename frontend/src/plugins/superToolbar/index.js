@@ -4,12 +4,16 @@ define(function(require) {
   var SuperToolbarView = require('./views/superToolbarView.js');
 
   Origin.on('app:dataReady login:changed', function() {
+    var toolbar = new SuperToolbarView();
     if (Origin.permissions.hasPermissions(["*/*:create","*/*:read","*/*:update","*/*:delete"])) {
-      var toolbar = new SuperToolbarView();
       Origin.on('superToolbar:add', function(buttons) {
         toolbar.setButtons(buttons);
-        $('.location-title').append(toolbar.$el);
+        if($(toolbar.className).length === 0) {
+          $('.location-title').append(toolbar.$el);
+        }
       });
+    } else {
+      $('.location-title').remove(toolbar.className);
     }
   });
 });

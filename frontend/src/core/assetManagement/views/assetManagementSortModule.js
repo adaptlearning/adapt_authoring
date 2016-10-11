@@ -21,10 +21,10 @@ define(function(require) {
           sort.title = 1;
           break;
         case "uploaded":
-          sort.updatedAt = -1;
+          sort.createdAt = -1;
           break;
         case "edited":
-          sort.createdAt = -1;
+          sort.updatedAt = -1;
           break;
       }
       this.applyFilter(sort);

@@ -86,6 +86,7 @@ define(function(require){
 
     // TODO assumptions made about editor data here...
     generateWorkspaces: function() {
+      // TODO should probably support the config pages here...
       if(Origin.location.module !== 'editor') {
         return {};
       }

@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Origin = require('coreJS/app/origin');
-  var SuperToolbarView = require('./views/SuperToolbarView.js');
+  var SuperToolbarView = require('./views/superToolbarView.js');
 
   Origin.on('app:dataReady login:changed', function() {
     if (Origin.permissions.hasPermissions(["*/*:create","*/*:read","*/*:update","*/*:delete"])) {

@@ -157,7 +157,8 @@ define(function(require){
     },
 
     onPaste: function(e) {
-      e && e.preventDefault() && e.stopPropagation();
+      e && e.preventDefault();
+      e && e.stopPropagation();
       Origin.trigger('editorView:paste', this.model.get('_parentId'), $(e.target).data('sort-order'), $(e.target).data('paste-layout'));
     },
 
@@ -167,7 +168,8 @@ define(function(require){
     },
 
     openContextMenu: function(e) {
-      e && e.stopPropagation() && e.preventDefault();
+      e && e.preventDefault();
+      e && e.stopPropagation();
       Origin.trigger('contextMenu:open', this, e);
     },
 

@@ -22,7 +22,7 @@ define(function(require){
       'drop label[for=file]': 'onDrop',
 
       'click .asset-management-modal-new-asset-close': 'remove',
-      'click .asset-management-modal-new-asset-upload': 'onNewAsset'
+      'click .asset-management-modal-new-asset-upload': 'uploadData'
     },
 
     preRender: function() {

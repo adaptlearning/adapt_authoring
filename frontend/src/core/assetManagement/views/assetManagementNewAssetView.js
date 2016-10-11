@@ -89,7 +89,7 @@ define(function(require){
       if(Origin.location.module !== 'editor') {
         return {};
       }
-      var contentTypes = [ 'component', 'block', 'article', 'page' ];
+      var contentTypes = [ 'component', 'block', 'article', 'contentobject' ];
       var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
 
       var workspaces = { course: [ Origin.location.route1 ] };

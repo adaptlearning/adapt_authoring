@@ -41,11 +41,12 @@ define(function(require) {
         id = Origin.editor.data.course.get('_id');
       }
       else {
+        var contentTypes = [ 'component', 'block', 'article', 'contentobject' ];
         var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
         var id = Origin.location.route3;
         // note we start at the right point in the hierarchy
         // route2 === content type
-        for(var i = _.indexOf(Object.keys(emptyFilter), Origin.location.route2), count = contentTypes.length; i < count; i++) {
+        for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
           if(i < 0) break;
           if(contentTypes[i] === type) break;
 

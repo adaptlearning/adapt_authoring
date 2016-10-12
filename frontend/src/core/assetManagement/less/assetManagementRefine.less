@@ -1,0 +1,328 @@
+@import '../../../less/animations.less';
+@import '../../../less/fonts.less';
+@import '../../app/less/helpers.less';
+@import '../../../less/variables.less';
+
+// @background-color: #1e2e36;
+@background-color: @sidebar-color;
+@icon-color: @secondary-color;
+
+@font-color: @sidebar-text-color;
+@font-color-hover: @icon-color;
+@title-color: @font-color;
+@title-color-hover: @sidebar-item-hover-text-color;
+
+@control-border-color: lighten(@background-color, 10%);
+@control-border: 1px solid @control-border-color;
+
+/*
+* Shared input styles
+* TODO move these somewhere less specific
+*/
+
+.input {
+  position: relative;
+  display: block;
+  width: 100%;
+
+  &.radio input,
+  &.checkbox input {
+    position: absolute;
+    visibility: hidden;
+  }
+
+  @input-text-padding: 10px;
+  @input-text-height: 25px;
+  @input-text-actual-height: @input-text-padding + @input-text-height + @input-text-padding;
+
+  &.text input {
+    height: 25px;
+    padding: @input-text-padding;
+    background-color: darken(@background-color, 3%);
+    border-color: @control-border-color;
+    border-radius: @button-radius;
+    color: @font-color;
+
+    @placeholder-color: lighten(@control-border-color, 25%);
+    &::-webkit-input-placeholder {
+      color: @placeholder-color;
+    }
+    &:-moz-placeholder {
+      color: @placeholder-color;
+    }
+    &::-moz-placeholder {
+      color: @placeholder-color;
+    }
+    &:-ms-input-placeholder {
+      color: @placeholder-color;
+    }
+
+    ~ button.clear {
+      position: absolute;
+      top: 0;
+      right: 10px;
+      height: @input-text-actual-height;
+      padding: 10px;
+      width: auto;
+      i {
+        color: @placeholder-color;
+      }
+      &:hover {
+        i {
+          color: lighten(@control-border-color, 15%);
+        }
+      }
+    }
+  }
+
+  label {
+    display: inline-block !important;
+    position: relative;
+    margin-bottom: 0;
+    .unselectable;
+  }
+}
+
+/*
+* Radio styling
+*/
+.input.radio {
+  .icon {
+    display: inline-block;
+    border: 2px solid @font-color;
+    border-radius: 100%;
+    height: 12px;
+    width: 12px;
+    &::before {
+      display: block;
+      position: absolute;
+      content: '';
+      border-radius: 100%;
+      height: 8px;
+      width: 8px;
+      top: 4px;
+      left: 4px;
+      margin: auto;
+    }
+  }
+
+  label {
+    top: -2px;
+    padding-left: 5px;
+  }
+}
+/*
+* Checkbox styling
+*/
+.input.checkbox {
+  .icon {
+    display: inline-block;
+    .icon-checked {
+      display: none;
+      margin-right: 5px;
+    }
+    .icon-unchecked {
+      margin-right: 7.5px;
+    }
+    i {
+      font-size: 17px;
+    }
+  }
+  label {
+    top: -1px;
+  }
+  input:checked {
+    ~ .icon {
+      .icon-checked {
+        display: inline-block;
+      }
+      .icon-unchecked {
+        display: none;
+      }
+    }
+  }
+}
+
+.modal .modal-popup .modal-popup-toolbar .modal-popup-toolbar-buttons {
+  button.refine {
+    float: left;
+    height: 100%;
+    padding-left: 25px;
+    padding-right: 25px;
+    background-color: @background-color;
+    color: @primary-color;
+    font-size: 115%;
+    i {
+      font-size: 130%;
+      margin-right: 12px;
+    }
+    &:hover {
+      color: @white;
+    }
+  }
+}
+
+.assetManagement-refine {
+  .slideLeft-anim(-300px);
+  &.show {
+      .slideLeft-anim(0);
+  }
+  position: relative;
+  float: left;
+  width: 300px;
+  height: 100%;
+  background-color: @background-color;
+  border-top: @control-border;
+  overflow-y: auto;
+
+  .modules {
+    color: @font-color;
+    > .module {
+      padding: 20px 35px;
+      border-bottom: @control-border;
+
+      .title {
+        .unselectable;
+        display: inline-block;
+        color: @title-color;
+        font-size: @sidebar-input-font-size;
+        cursor: pointer;
+
+        &:hover {
+          color: @title-color-hover;
+        }
+        ~ .inner {
+          margin-top: 12px;
+        }
+      }
+
+      .inner {
+        display: block;
+        font-size: @font-size;
+
+        &.hide {
+          display: none;
+        }
+
+        .icon-checked {
+          color: @icon-color;
+        }
+
+        input {
+          font-size: @sidebar-input-font-size;
+          &:checked {
+            ~ .icon {
+              border-color: @icon-color;
+              &::before {
+                background: @icon-color;
+              }
+            }
+
+            ~ label {
+              color: @icon-color;
+            }
+            ~ .icon {
+              color: @icon-color;
+            }
+          }
+        }
+
+        label:hover {
+          color: @font-color-hover;
+        }
+      }
+
+      a.reset {
+        margin-left: 10px;
+        color: @primary-color;
+        font-size: @font-size;
+        &:hover {
+          color: @white;
+        }
+      }
+
+      /*
+      * Specific module styling
+      */
+      /*
+      * Summary styling
+      */
+      &.summary {
+        padding-right: 20px;
+        padding-bottom: 15px;
+        border: none;
+        .label {
+          display: inline-block;
+          .assetCount {
+            margin: 0 5px;
+            font-size: 120%;
+            font-weight: bold;
+          }
+        }
+        a {
+          margin-left: 15px;
+          &.hide {
+            display: none;
+          }
+        }
+      }
+
+      &.search {
+        padding: 0 12px 15px 20px;
+        .input {
+          margin-bottom: 0;
+          button {
+            right: 10px;
+          }
+        }
+      }
+
+      &.tags {
+        .tag {
+          display: inline-block;
+          margin: 0 6px 6px 0;
+          padding: 3px 5px;
+          border: 1px solid @primary-color;
+          color: @primary-color;
+          cursor: pointer;
+          &:hover {
+            background-color: @primary-color;
+            color: @background-color;
+          }
+          &.selected {
+            background-color: @primary-color;
+            color: @white;
+          }
+        }
+      }
+    }
+  }
+}
+
+.sidebar .assetManagement-refine {
+  width: auto;
+  margin-left: 0;
+  background-color: transparent;
+  border: none;
+  .module {
+    &.summary {
+      padding-top: 0;
+    }
+    &.search {
+      .input {
+        input {
+          // TODO do something dynamic...
+          width: 210px;
+        }
+      }
+    }
+    &.workspace {
+      // TODO stop this rendering at all
+      display: none;
+    }
+    &.tags {
+      border: none;
+      padding-bottom: 5px;
+    }
+  }
+}

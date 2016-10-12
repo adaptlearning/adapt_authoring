@@ -1,3 +1,5 @@
+@import '../../../less/animations.less';
+
 .dashboard {
     overflow-y:scroll;
     ul {
@@ -81,6 +83,10 @@ ul.dashboard-options {
             }
         }
     }
+}
+
+.project-list-item, .shared-project-list-item {
+    &:hover { .zoom-anim(); } 
 }
 
 .grid-layout {

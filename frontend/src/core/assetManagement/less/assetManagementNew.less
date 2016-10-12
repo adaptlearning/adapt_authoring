@@ -1,23 +1,70 @@
-.asset-management-new-asset-inner {
-    padding:30px;
+@import '../../../less/fonts.less';
+@import '../../../less/sharedStyles.less';
+
+.modal .asset-management-new-asset {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  background-color: #fff;
+  border: 1px solid #d6f2f9;
+}
+.asset-management-modal-new-asset {
+  .form-container-style;
+  position: absolute;
+  .slideDown-anim(-20%, 0);
+  &.show {
+    .slideDown-anim(60px, 1);
+  }
+  right: 22px;
+  margin: 0;
+  .inner {
+    padding: 20px;
+    form {
+      label[for=file] {
+        padding: 5px;
+        .inner {
+          padding: 15px;
+          .btn {
+            padding-top: 8px;
+            padding-bottom: 8px;
+            min-width: 100px;
+            font-size: 90%;
+          }
+        }
+        .label {
+          margin-top: 10px;
+          font-size: 90%;
+        }
+      }
+      .form-group {
+        padding-bottom: 5px;
+      }
+    }
+    .buttons {
+      text-align: right;
+      button {
+        margin-left: 10px;
+      }
+    }
+  }
 }
 
-.progress-container {
-    width:100px;
-    height:15px;
-    border:1px solid black;
-    visibility:hidden;
-    position:relative;
-}
-
-.progress-bar {
-    width:0%;
-    background-color:lightgray;
-    height:100%;
-}
-
-.progress-percent {
-	color:black;
-	position:absolute;
-	display:inline-block;
+.asset-management-new-asset {
+  overflow-y: scroll;
+  .asset-management-new-asset-inner {
+    .form-container-style;
+    .courses {
+      display: none;
+      &.show {
+        display: block;
+      }
+      padding: 15px;
+      .course {
+        label {
+          font-size: @font-size;
+        }
+      }
+    }
+  }
 }

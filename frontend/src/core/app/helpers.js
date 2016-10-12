@@ -1,10 +1,31 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
+    var _ = require('underscore');
     var Handlebars = require('handlebars');
     var Origin = require('coreJS/app/origin');
     var moment = require('moment');
 
     var helpers = {
+        cacheBuster: function(context) {
+          var lastSession = new Date(_.findWhere(Origin.sessionModel.get('users'), { _id: Origin.sessionModel.get('id') }).lastAccess);
+          var lastUpdated = new Date(context.updatedAt);
+          if(lastSession < lastUpdated) return '?' + new Date().getTime()
+          return '';
+        },
+
+        getAssetIcon: function(context) {
+          switch(context.assetType) {
+            case 'image':
+              return 'fa-image-o';
+            case 'video':
+              return 'fa-video-o';
+            case 'audio':
+              return 'fa-audio-o';
+            default:
+              return 'fa-file-o';
+          }
+        },
+
         console: function(context) {
           return console.log(JSON.stringify(context));
         },
@@ -110,12 +131,32 @@ define(function(require){
             }
         },
 
+        ifListContains: function(list, query, block) {
+            if(_.contains(list, query)) {
+                return block.fn(this);
+            } else {
+                return block.inverse(this);
+            }
+        },
+
         ifUserIsMe: function(userId, block) {
           if (userId === Origin.sessionModel.get('id')) {
             return block.fn(this);
           } else {
             return block.inverse(this);
           }
+        },
+
+        getUserNameFromId: function(id) {
+          var user = _.findWhere(Origin.sessionModel.get('users'), { _id:id });
+          if(!user) return '';
+
+          var names = [];
+
+          if(user.firstName) names.push(user.firstName);
+          if(user.lastName) names.push(user.lastName);
+
+          return (names.length < 1) ? user.email : names.join(' ');
         },
 
         selected: function(option, value){

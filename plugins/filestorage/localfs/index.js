@@ -37,7 +37,7 @@ LocalFileStorage.prototype.resolvePath = function (relativePath, forceMaster) {
     if (!forceMaster) {
       tenantName = user.tenant ? user.tenant.name : configuration.getConfig('masterTenantName');
     } else {
-      tenantName = configuration.getConfig('masterTenantName');	
+      tenantName = configuration.getConfig('masterTenantName');
     }
 
     // check that the path isn't already absolute
@@ -45,7 +45,7 @@ LocalFileStorage.prototype.resolvePath = function (relativePath, forceMaster) {
     if (0 === relativePath.indexOf(prefix)) {
       return relativePath;
     }
-    
+
     return path.join(prefix, relativePath);
   }
 
@@ -73,7 +73,7 @@ LocalFileStorage.prototype.getRelativePath = function (fullPath) {
       return fullPath.substr(prefix.length);
     }
   }
-  
+
   return fullPath;
 };
 
@@ -133,7 +133,7 @@ LocalFileStorage.prototype.createReadStream = function (filePath, options, callb
     callback = options;
     options = {};
   }
-  
+
   var forceMaster = (options && options.forceMaster)
     ? true
     : false;
@@ -185,7 +185,7 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
   newPath = this.resolvePath(newPath);
   var relativePath = this.getRelativePath(newPath);
   var self = this;
-  
+
   // shuffle params
   if ('function' === typeof options) {
     cb = options;
@@ -211,7 +211,7 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
         mimeType: file.type,
         size: file.size
       };
-      
+
       // create thumbnail?
       async.series([
         function (nextFunc) {
@@ -222,8 +222,8 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
               }
               nextFunc();
             });
-          } 
-          
+          }
+
           return nextFunc();
         },
         function (nextFunc) {
@@ -234,8 +234,8 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
               }
               nextFunc();
             });
-          } 
-          
+          }
+
           return nextFunc();
         },
         function (nextFunc) {
@@ -292,7 +292,7 @@ LocalFileStorage.prototype.getFileStats = function (filePath, callback) {
 
 /**
  * Copies an asset from one tenant to another.
- * 
+ *
  * @param {object} asset - A valid 'asset' record
  * @param {string} sourceTenantName - Source tenant.name
  * @param {string} destinationTenantName - Destination tenant.name
@@ -352,68 +352,60 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
  */
 
 LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, options, next) {
-  var imgThumbPath;
   // early return if we can't create thumbnails
   if (!configuration.getConfig('useffmpeg')) {
     return next(null, false);
   }
+  var fileFormat = fileType.split('/')[1];
+  fileType = fileType.split('/')[0];
+  // also check fileType is supported
+  switch(fileType) {
+    case 'video':
+    case 'image':
+      // these are ok
+      break;
+    default:
+      return next(null,false);
+  }
 
   var self = this;
-  var fileFormat = fileType.split('/')[1];
-  var additionalOptions = [];
-  fileType = fileType.split('/')[0];
-  if ('image' === fileType) {
-    if ('gif' === fileFormat){
-      // pixel format for gif required
-      additionalOptions.push('-pix_fmt rgb24');
-      // number of frames
-      additionalOptions.push('-frames 1');
-    }
-    imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath) + '_thumb' + path.extname(filePath));
-    return new FFMpeg({ source: filePath })
-      .addOptions(additionalOptions)
-      .withSize(options.width + 'x' + options.height)
-      .keepPixelAspect(true)
-      .on('error', function (err) {
-        logger.log('error', 'Failed to create image thumbnail: ' + err.message);
-        return next(err, false);
-      })
-      .on('end', function () {
-        return next(null, self.getRelativePath(imgThumbPath));
-      })
-      .saveToFile(imgThumbPath);
+  var thumbExt = ('image' === fileType) ? path.extname(filePath) : '.gif';
+  var imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath)) + '_thumb' + thumbExt;
 
-  } else if ('video' === fileType) {
+  var ff = new FFMpeg({ source: filePath }).output(imgThumbPath);
 
-    imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath) + '_thumb.gif');
+  if ('video' === fileType) {
     // pixel format for gifs (only needed with ffmpeg older versions eg 1.2)
-    additionalOptions.push('-pix_fmt rgb24');
+    ff.outputOptions('-pix_fmt rgb24');
+    // limit file size to ~300kb
+    ff.outputOptions('-fs 300000');
     // start position 1sec in case of black screen
-    additionalOptions.push('-ss 00:00:01');
-    // frequency of snaps one every five seconds
-    additionalOptions.push('-vf fps=fps=1/5');
-    // number of frames
-    additionalOptions.push('-frames 7');
-    // frame rate
-    additionalOptions.push('-r 7');
-    // set the limit file size in bytes
-    additionalOptions.push('-fs 300000');
-    var pathToDir = path.dirname(filePath);
-    return new FFMpeg({ source : filePath })
-      .addOptions(additionalOptions)
-      .withSize(options.width + 'x' + options.height)
-      .on('error', function (err) {
-        logger.log('error', 'Failed to create video thumbnail: ' + err.message);
-        return next(null, false);
-      })
-      .on('end', function () {
-        return next(null, self.getRelativePath(imgThumbPath));
-      })
-      .saveToFile(imgThumbPath);
-  } 
+    ff.seekInput('00:00:01');
+    // setting speed to ~x20 gives a good overview
+    ff.videoFilters('setpts=0.05*PTS');
+    // set output framerate
+    ff.fps(1.5);
+  }
+  else if ('gif' === fileFormat) {
+    // pixel format for gifs (only needed with ffmpeg older versions eg 1.2)
+    ff.outputOptions('-pix_fmt rgb24');
+    // only want 1 output image
+    ff.frames(1);
+  }
 
-  // can't do thumb
-  return next(null, false);
+  // use size from options
+  ff.size(options.width + 'x' + options.height);
+
+  // event handling
+  ff.on('error', function(err) {
+    logger.log('error', 'Failed to create ' + fileType + ' thumbnail: ' + err.message);
+    return next(err, false);
+  });
+  ff.on('end', function() {
+    return next(null, self.getRelativePath(imgThumbPath));
+  });
+
+  return ff.run();
 };
 
 /**

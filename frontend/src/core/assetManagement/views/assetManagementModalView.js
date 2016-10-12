@@ -1,85 +1,116 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var _ = require('underscore');
+  var Origin = require('coreJS/app/origin');
+  var AssetModel = require('coreJS/assetManagement/models/assetModel');
+  var AssetManagementCollectionView = require('coreJS/assetManagement/views/assetManagementCollectionView');
+  var AssetManagementRefineView = require('coreJS/assetManagement/views/assetManagementRefineView');
+  var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
+  var AssetManagementModalNewAssetView = require('coreJS/assetManagement/views/assetManagementModalNewAssetView');
 
-	var Backbone = require('backbone');
-	var Origin = require('coreJS/app/origin');
-	var AssetModel = require('coreJS/assetManagement/models/assetModel');
-	var AssetManagementCollectionView = require('coreJS/assetManagement/views/assetManagementCollectionView');
-	var AssetManagementPreviewView = require('coreJS/assetManagement/views/assetManagementPreviewView');
-	var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
-	var AssetManagementModalFiltersView = require('coreJS/assetManagement/views/assetManagementModalFiltersView');
-	var AssetManagementModelAutofillView = require('coreJS/assetManagement/views/assetManagementModalAutofillView');
+  var AssetManagementModalView = AssetManagementView.extend({
+    preRender: function(options) {
+      this.isModal = true;
+  	  this.options = options;
+  	  AssetManagementView.prototype.preRender.apply(this, arguments);
 
-	var AssetManagementModalView = AssetManagementView.extend({
+      this.listenTo(Origin, 'assetManagement:assetItemView:preview', this.onPreview);
+      this.listenTo(Origin, 'assetManagement:modal:update', this.onAssetUpdate);
+      this.listenTo(Origin, 'assetManagement:refine:show', this.onRefineShow);
+    },
 
-		preRender: function(options) {
-			this.options = options;
-			AssetManagementView.prototype.preRender.apply(this, arguments);
-		},
+    setupSubViews: function() {
+      this.setUpCollectionView();
+      this.setUpNewAssetButton();
+      this.setUpRefineView();
+    },
 
-		postRender: function() {
-	        this.setupSubViews();
-	        this.setupFilterAndSearchView();
-	        if (this.options.assetType === "Asset:image" && Origin.scaffold.getCurrentModel().get('_component') === 'graphic') {
-	        	this.setupImageAutofillButton();
-	        }
-	        this.resizeAssetPanels();
-	    },
+    setUpCollectionView: function() {
+      // Replace Asset and : so we can have both filtered and all asset types
+      var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
+      // asset type filter
+      if (assetType) {
+        search = { assetType: { $in: [ assetType ] } };
+      }
+      // Push collection through to collection view
+      this.collectionView = new AssetManagementCollectionView({ collection: this.collection, search: search, isModal:this.isModal });
+      this.$('.asset-management-assets-container-inner').append(this.collectionView.$el);
+    },
 
-	    setupSubViews: function() {
-	    	this.search = {};
-	    	// Replace Asset and : so we can have both filtered and all asset types
-	    	var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
+    setUpRefineView: function() {
+      this.$('.asset-management-assets-container-inner').hide();
+      this.$('.asset-management-inner').prepend(new AssetManagementRefineView().$el);
+    },
 
-        if (assetType) {
-          var filters = [assetType];
-	    	  this.search.assetType = { $in: filters };
-        }
+    setUpNewAssetButton: function() {
+      var buttonTemplate = Handlebars.templates['assetManagementNewAssetButton'];
+      $('.modal-popup-toolbar-buttons').prepend(buttonTemplate());
+      $('.modal-popup-toolbar-buttons button.add-asset').click(_.bind(this.onNewAssetClicked, this));
+    },
 
-		    // Push collection through to collection view
-		    this.$('.asset-management-assets-container-inner').append(new AssetManagementCollectionView({collection: this.collection, search: this.search}).$el);
-		},
+    resizeAssetPanels: function() {
+      var actualHeight = $('.modal-popup').outerHeight()-$('.modal-popup-toolbar').outerHeight();
+      this.$('.asset-management-assets-container').height(actualHeight);
+      this.$('.asset-management-preview-container').height(actualHeight);
 
-	    setupFilterAndSearchView: function() {
-	    	new AssetManagementModalFiltersView(this.options);
-	    },
+      // let everyone know the new dimensions
+      Origin.trigger('modal:resize', {
+        width: $('.modal-popup').outerWidth(),
+        height: actualHeight
+      });
+    },
 
-	    setupImageAutofillButton: function() {
-	    	new AssetManagementModelAutofillView({modalView: this});
-	    },
+    showPreview: function(model) {
+      AssetManagementView.prototype.showPreview.apply(this, arguments);
+      var assetObject = this.setData(model);
+      Origin.trigger('modal:assetSelected', assetObject);
+    },
 
-	    resizeAssetPanels: function() {
-	        var navigationHeight = $('.navigation').outerHeight();
-	        var windowHeight = $(window).height();
-	        var actualHeight = windowHeight - (navigationHeight);
-	        this.$('.asset-management-assets-container').height(actualHeight);
-	        this.$('.asset-management-preview-container').height(actualHeight);
-	    },
+    setData: function(model, shouldAutofill) {
+      this.data = {
+        assetLink: 'course/assets/' + model.get('filename'),
+        assetId: model.get('_id'),
+        assetFilename: model.get('filename'),
+        _shouldAutofill: shouldAutofill || false
+      };
+      return this.data;
+    },
 
-	    onAssetClicked: function(model) {
-	        this.$('.asset-management-no-preview').hide();
-	        this.$('.asset-management-preview-container-inner').html(new AssetManagementPreviewView({
-	            model: model
-	        }).$el);
+    getData: function() {
+      return this.data;
+    },
 
-	        var filename = model.get('filename');
-        	var selectedFileAlias = 'course/assets/' + filename;
-        	var assetId = model.get('_id');
-        	var assetObject = {
-        		assetLink: selectedFileAlias,
-        		assetId: assetId,
-        		assetFilename: filename
-        	}
-	        this.data = assetObject;
-          Origin.trigger('modal:assetSelected', assetObject);
-	    },
+    onAssetUpdate: function(data) {
+      this.setData(data.model, data._shouldAutofill);
+      Origin.trigger('modal:onUpdate');
+    },
 
-	    getData: function() {
-	    	return this.data;
-	    }
+    onNewAssetClicked: function(e) {
+      event && event.preventDefault();
+      if($('asset-management-modal-new-asset').length === 0) {
+        Origin.trigger('assetManagement:refine:hide');
+        Origin.trigger('assetManagement:assetPreviewView:delete');
+        Origin.trigger('assetManagement:refine:hide');
+        var newAssetView = new AssetManagementModalNewAssetView({model: new AssetModel()});
+        $('.asset-management-inner').append(newAssetView.$el);
+      }
+    },
 
-	});
+    onRefineReady: function() {
+      AssetManagementView.prototype.onRefineReady.apply(this, arguments);
+      this.$('.asset-management-assets-container-inner').fadeIn();
+    },
 
-	return AssetManagementModalView;
+    onRefineShow: function() {
+      // this forces new asset overlay to close
+      Origin.trigger('assetManagement:modal:newAssetOpened');
+    },
 
+    onPreview: function(data) {
+      // this forces new asset overlay to close
+      Origin.trigger('assetManagement:modal:newAssetOpened');
+    }
+  });
+
+  return AssetManagementModalView;
 });

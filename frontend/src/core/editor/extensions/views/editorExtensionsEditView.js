@@ -56,13 +56,14 @@ define(function(require) {
     },
 
     postData: function(url) {
-        var self = this;
-        $.post(url + this.model.get('_id'), { extensions: this.currentSelectedIds },
-            _.bind(function(result) {
+        $.post(url + this.model.get('_id'), { extensions: this.currentSelectedIds }, _.bind(function(result) {
             if (result.success) {
-                self.refreshData();
+                this.refreshData();
             } else {
-                Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgeneric') });
+                Origin.Notify.alert({
+                  type: 'error',
+                  text: window.polyglot.t('app.errorgeneric')
+                });
             }
         }, this));
     },

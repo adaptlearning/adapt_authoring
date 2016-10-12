@@ -57,6 +57,40 @@ function initialize() {
             
             async.series([
               function(callback){
+                if (contentType !== 'contentobject') {
+                  return callback(null, 'Not processing a content object');
+                }
+                db.retrieve('article', { _courseId: itemForDeletion._courseId, _parentId: itemForDeletion._id }, function(err, articles) {
+                  if (err) {
+                    return callback(err, 'Unable to retrieve child articles of contentobject ' + itemForDeletion._id);
+                  }
+                  var parentIds = [];
+                  if (articles && articles.length !== 0) {
+                    criteria._courseId = itemForDeletion._courseId;
+                    parentIds = _.pluck(articles, '_id');
+                  }
+                  async.each(articles, function(article, cb) {
+                    db.retrieve('block', {_courseId: article._courseId, _parentId: article._id}, function(err, blocks) {
+                      if (err) {
+                        return callback(err, 'Unable to retrieve child blocks of article ' + article._id);
+                      }
+                      if (blocks && blocks.length !== 0) {
+                        parentIds = parentIds.concat(_.pluck(blocks, '_id'));
+                      }
+                      if(parentIds.length > 0) {
+                        criteria.$or = [
+                          { _contentTypeParentId: { $in: parentIds } },
+                          { _contentTypeId: itemForDeletion._id }
+                        ];
+                      } else {
+                        criteria._contentTypeId = itemForDeletion._id;
+                      }
+                      callback(null, 'Child content objects added to criteria object');
+                    });
+                  });
+                });
+              },
+              function(callback){
                 if (contentType !== 'article') {
                   return callback(null, 'Not processing an article');
                 }
@@ -84,12 +118,7 @@ function initialize() {
                   case 'course':
                     criteria._courseId = itemForDeletion._id;
                     break;
-                  case 'contentobject':
-                    criteria._courseId = itemForDeletion._courseId;
-                    criteria._contentType = itemForDeletion._type;
-                    criteria._contentTypeId = itemForDeletion._id;
-                    break;
-                  case 'block':   
+                  case 'block':
                     criteria._courseId = itemForDeletion._courseId;
                     criteria._contentTypeParentId = itemForDeletion._id;
                     criteria._contentType = 'component';

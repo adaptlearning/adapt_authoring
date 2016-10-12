@@ -9,10 +9,15 @@ define(function(require){
   var TagsInput = require('core/libraries/jquery.tagsinput.min');
 
   var PluginManagementUploadView = OriginView.extend({
-
     className: 'pluginManagement-upload-plugin',
 
     events: {
+      'change .plugin-file': 'onFileSelected',
+      'dragenter label[for=file]': 'onDrag',
+      'dragover label[for=file]': 'onDrag',
+      'dragleave label[for=file]': 'onDrop',
+      'dragend label[for=file]': 'onDrop',
+      'drop label[for=file]': 'onDrop'
     },
 
     preRender: function() {
@@ -21,73 +26,96 @@ define(function(require){
     },
 
     postRender: function() {
+      // TODO get rid of this
       _.defer(this.setViewToReady);
     },
 
     uploadFile: function() {
-      var self = this;
-      
       if(this.validate()) {
         $('.loading').show();
         this.$('.plugin-form').ajaxSubmit({
-          error: function(data, status, error) {
-            $('.loading').hide();
-
-            var message = '';
-            if (data) {
-              if (data.responseText) {
-                message = data.responseText;
-              } else if(data.responseJSON && data.responseJSON.error) {
-                message = data.responseJSON.error;
-              }
-            }
-            Origin.Notify.alert({
-              type: 'error',
-              title: window.polyglot.t('app.uploadpluginerror'),
-              text: Helpers.decodeHTML(message)
-            });
-
-            // go back to the upload, maybe handle this in the sidebar?
-            Origin.router.navigate('#/pluginManagement/upload', { trigger: true });
-          },
-          success: function(data, status, xhr) {
-            Origin.trigger('scaffold:updateSchemas', function() {
-              Origin.Notify.alert({
-                type: 'success',
-                text: window.polyglot.t('app.uploadpluginsuccess')
-              });
-
-              $('.loading').hide();
-              var pluginType = data.pluginType ? data.pluginType : '';
-              Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger:true});
-            }, this);
-          }
+          error: _.bind(this.onSubmitError, this),
+          success: _.bind(this.onSubmitSuccess, this)
         });
       }
-
-      // Return false to prevent the page submitting
+      // to prevent the page submitting
       return false;
     },
 
     validate: function() {
-      var file = this.$('form input').val();
-
-      if(_.isEmpty(file)) {
-        this.$('.field-error').removeClass('display-none');
+      if(_.isEmpty(this.$('form input').val())) {
         Origin.trigger('sidebar:resetButtons');
-
+        this.$('label[for=file]').addClass('validation-error');
         return false;
       }
-
-      this.$('.field-error').addClass('display-none');
-
+      this.$('label[for=file]').removeClass('validation-error');
       return true;
-    }
+    },
 
+    /*
+    * Events
+    */
+
+    onDrag: function(e) {
+      e && e.preventDefault();
+      e && e.stopPropagation();
+      this.$('label[for=file]').addClass('over');
+    },
+
+    onDrop: function(e) {
+      e && e.preventDefault();
+      e && e.stopPropagation();
+      this.$('label[for=file]').removeClass('over');
+      if(e.type === 'drop') {
+        var files = e.originalEvent.dataTransfer.files;
+        this.$('input[id=file]').prop('files', files);
+      }
+    },
+
+    onFileSelected: function(event) {
+      // Default 'title' -- remove C:\fakepath if it is added
+      var title = this.$('.plugin-file')[0].value.replace("C:\\fakepath\\", "");
+      // change upload button label
+      this.$('label[for=file] .btn-label').html(title);
+      // set title field if empty
+      var $title = this.$('.asset-title');
+      if(_.isEmpty($title.val())) $title.val(title);
+    },
+
+    onSubmitSuccess: function(data, status, xhr) {
+      Origin.trigger('scaffold:updateSchemas', function() {
+        $('.loading').hide();
+        Origin.Notify.alert({
+          type: 'success',
+          text: window.polyglot.t('app.uploadpluginsuccess')
+        });
+        Origin.router.navigate('#/pluginManagement/' + (data.pluginType || ''), { trigger:true });
+      }, this);
+    },
+
+    onSubmitError: function(data, status, error) {
+      $('.loading').hide();
+
+      var message = '';
+      if (data) {
+        if (data.responseText) {
+          message = data.responseText;
+        }
+        else if(data.responseJSON && data.responseJSON.error) {
+          message = data.responseJSON.error;
+        }
+      }
+      Origin.Notify.alert({
+        type: 'error',
+        title: window.polyglot.t('app.uploadpluginerror'),
+        text: Helpers.decodeHTML(message)
+      });
+      // go back to the upload, maybe handle this in the sidebar?
+      Origin.router.navigate('#/pluginManagement/upload', { trigger: true });
+    }
   }, {
     template: 'pluginManagementUpload'
   });
 
   return PluginManagementUploadView;
-
 });

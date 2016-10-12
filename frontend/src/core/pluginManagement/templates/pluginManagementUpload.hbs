@@ -2,11 +2,19 @@
     <!-- Begin upload form -->
     <form class="plugin-form forms plugin-form" action="/api/upload/contentplugin" method="post">
         <div class="form-group">
-            <label for="file">
-                {{t 'app.pluginfile'}} <span class="req">*</span>
-                <span class="field-error display-none" data-error="">Required</span>
-            </label>
-            <input type="file" class="plugin-file" name="file">
+          <input type="file" class="plugin-file" name="file" id="file">
+          <label for="file">
+            <div class="inner">
+                  <span class="btn secondary">
+                      <i class="fa fa-upload"></i>
+                      <span class="btn-label">
+                        {{#if path}}Change file{{else}}Upload file{{/if}}
+                      </span>
+                  </span>
+                  <span class="label">Drag and drop file here, or click the button.</span>
+                  <span class="progress display-none">Uploaded <span class="value"></span>%</span>
+              </div>
+          </label>
         </div>
 
     </form>

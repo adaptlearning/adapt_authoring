@@ -46,9 +46,7 @@ define(function(require){
     },
 
     validate: function () {
-      var $uploadFile = this.$('.asset-file');
       var validated = true;
-      var uploadFileErrormsg = $uploadFile.prev('label').find('span.error');
       // check required fields
       $('.required').each(function (index, el) {
         var errormsg = $(el).prev('label').find('span.error');
@@ -62,13 +60,12 @@ define(function(require){
         }
       });
       // check upload file
-      if (this.model.isNew() && !$uploadFile.val()) {
+      if(this.model.isNew() && _.isEmpty(this.$('.asset-file').val())) {
+        Origin.trigger('sidebar:resetButtons');
+        this.$('label[for=file]').addClass('validation-error');
         validated = false;
-        $uploadFile.addClass('input-error');
-        $(uploadFileErrormsg).text(window.polyglot.t('app.pleaseaddfile'));
       } else {
-        $uploadFile.removeClass('input-error');
-        $(uploadFileErrormsg).text('');
+        this.$('label[for=file]').removeClass('validation-error');
       }
 
       return validated;
@@ -157,6 +154,7 @@ define(function(require){
       var title = this.$('.asset-file')[0].value.replace("C:\\fakepath\\", "");
       // change upload button label
       this.$('label[for=file] .btn-label').html(title);
+      this.$('label[for=file]').removeClass('validation-error');
       // set title field if empty
       var $title = this.$('.asset-title');
       if(_.isEmpty($title.val())) $title.val(title);

@@ -90,7 +90,8 @@ define(function(require){
       if(Origin.location.module !== 'editor') {
         return {};
       }
-      var contentTypes = [ 'component', 'block', 'article', 'contentobject' ];
+      var contentTypes = [ 'component', 'block', 'article', 'page' ];
+      var contentKeys = [ 'component', 'block', 'article', 'contentobject' ];
       var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
 
       var workspaces = { course: [ Origin.location.route1 ] };
@@ -100,7 +101,7 @@ define(function(require){
       for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
         if(!id) return; // something's gone wrong
 
-        workspaces[contentTypes[i]] = [id];
+        workspaces[contentKeys[i]] = [id];
 
         var match = Origin.editor.data[contentCollections[i]].findWhere({ _id: id });
         id = match.get('_parentId') || false;

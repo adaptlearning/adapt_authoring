@@ -54,8 +54,8 @@ define(function(require){
       this.removeForm();
 
       var selectedTheme = this.getSelectedTheme();
-      var themeHasProperties = selectedTheme && selectedTheme.get('properties') && Object.keys(selectedTheme.get('properties')).length > 0;
-      if(selectedTheme && themeHasProperties) {
+
+      if(this.themeIsEditable(selectedTheme)) {
         this.form = Origin.scaffold.buildForm({
           model: selectedTheme,
           schemaType: selectedTheme.get('theme')
@@ -334,6 +334,18 @@ define(function(require){
       }
       return defaults;
     },
+
+    themeIsEditable: function(theme) {
+      var props = theme && theme.get('properties');
+      if(!props) {
+        return false;
+      }
+      if(Object.keys(props).length === 1 && props.pluginLocations !== undefined) {
+        return false;
+      }
+      return true;
+    },
+
 
     /**
     * Event handling

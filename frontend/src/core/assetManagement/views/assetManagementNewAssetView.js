@@ -169,7 +169,7 @@ define(function(require){
       var title = this.$('.asset-file')[0].value.replace("C:\\fakepath\\", "");
       // change upload button label
       this.$('label[for=file] .btn-label').html(title);
-      this.$('label[for=file]').removeClass('validation-error');
+      this.$('label[for=file]').removeClass('validation-error').addClass('selected');
       // set title field if empty
       var $title = this.$('.asset-title');
       if(_.isEmpty($title.val())) $title.val(title);

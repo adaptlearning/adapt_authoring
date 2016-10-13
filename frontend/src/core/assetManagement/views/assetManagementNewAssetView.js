@@ -87,10 +87,7 @@ define(function(require){
       if(Origin.location.module !== 'editor') {
         return {};
       }
-      var contentTypes = [ 'component', 'block', 'article', 'page' ];
-      var contentKeys = [ 'component', 'block', 'article', 'contentobject' ];
-      var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
-
+      var contentTypes = [ 'component', 'block', 'article', 'page', 'menu' ];
       var workspaces = { course: [ Origin.location.route1 ] };
       var id = Origin.location.route3;
       // note we start at the right point in the hierarchy
@@ -98,9 +95,9 @@ define(function(require){
       for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
         if(!id) return; // something's gone wrong
 
-        workspaces[contentKeys[i]] = [id];
+        workspaces[contentTypes[i]] = [id];
 
-        var match = Origin.editor.data[contentCollections[i]].findWhere({ _id: id });
+        var match = getCollectionforContentType(contentTypes[i]).findWhere({ _id: id });
         id = match.get('_parentId') || false;
       }
 
@@ -111,6 +108,23 @@ define(function(require){
       return {
         course: _.pluck(this.$('.courses input:checked'), 'id')
       };
+    },
+
+    // TODO duplicate assetManagementWorkspaceModule
+    getCollectionforContentType: function(type) {
+      switch(type) {
+        case 'menu':
+        case 'page':
+          return Origin.editor.data.contentObjects;
+        case 'article':
+          return Origin.editor.data.articles;
+        case 'block':
+          return Origin.editor.data.blocks;
+        case 'component':
+          return Origin.editor.data.components;
+        default:
+          return undefined;
+      }
     },
 
     uploadData: function() {

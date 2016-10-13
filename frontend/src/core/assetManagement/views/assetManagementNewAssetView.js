@@ -95,10 +95,11 @@ define(function(require){
       for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
         if(!id) return; // something's gone wrong
 
-        workspaces[contentTypes[i]] = [id];
-
-        var match = getCollectionforContentType(contentTypes[i]).findWhere({ _id: id });
-        id = match.get('_parentId') || false;
+        var match = this.getCollectionforContentType(contentTypes[i]).findWhere({ _id: id });
+        if(match) {
+          workspaces[contentTypes[i]] = [id];
+        }
+        id = match && match.get('_parentId') || false;
       }
 
       return workspaces;

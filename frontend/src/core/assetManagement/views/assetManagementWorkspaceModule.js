@@ -49,7 +49,7 @@ define(function(require) {
         for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
           if(i < 0) break;
           if(contentTypes[i] === type) break;
-          var match = getCollectionforContentType(contentTypes[i]).findWhere({ _id:id });
+          var match = this.getCollectionforContentType(contentTypes[i]).findWhere({ _id:id });
           id = match.get('_parentId') || false;
         }
       }

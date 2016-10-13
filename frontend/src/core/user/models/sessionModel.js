@@ -20,7 +20,7 @@ define(function(require) {
     },
 
     initialize: function() {
-      Origin.on('login:changed', _.bind(function() {
+      Origin.on('app:dataReady login:changed', _.bind(function() {
         if(this.get('user')) this.get('user').fetch();
       }, this));
     },

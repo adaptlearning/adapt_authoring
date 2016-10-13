@@ -6,7 +6,6 @@
       {{t 'app.editprofileinformation'}}
   </div>
   <div class="editing-overlay-panel">
-
     <div class="editing-overlay-panel-content">
         <div class="editing-overlay-panel-content-inner">
             <form class="forms">
@@ -27,12 +26,15 @@
                     <input type="text" class="width-30" id="lastName" value="{{lastName}}" autocomplete="off">
                 </div>
 
+                <!-- 
                 <div class="form-group">
                     <label>{{t 'app.email'}}
+                        <span class="req">*</span>
                         <span id="titleErrorMessage" class="error"></span>
                     </label>
-                    {{email}}
+                    <input type="email" class="width-30" id="email" value="{{email}}" autocomplete="off">
                 </div>
+                -->
 
                 {{#ifValueEquals auth "local"}}
                 <div class="change-password-section">

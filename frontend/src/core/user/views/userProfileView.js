@@ -128,6 +128,7 @@ define(function(require){
         },
         success: function(model, response, options) {
           Backbone.history.history.back();
+          Origin.trigger('user:updated');
           Origin.trigger('editingOverlay:views:hide');
         }
       });

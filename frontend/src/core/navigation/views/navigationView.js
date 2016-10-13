@@ -12,7 +12,6 @@ define(function(require){
 
     initialize: function() {
       this.listenTo(Origin.sessionModel.get('user'), 'change', this.loginChanged);
-      this.render();
     },
 
     events: {

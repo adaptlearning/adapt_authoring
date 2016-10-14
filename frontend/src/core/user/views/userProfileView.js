@@ -119,6 +119,8 @@ define(function(require){
       }
 
       this.model.save(toChange, {
+        method: 'put',
+        url: 'api/user/me',
         error: function(model, response, optinos) {
           Origin.trigger('sidebar:resetButtons');
           Origin.Notify.alert({
@@ -128,7 +130,7 @@ define(function(require){
         },
         success: function(model, response, options) {
           Backbone.history.history.back();
-          Origin.trigger('user:updated');
+          Origin.sessionModel.setCurrentUser();
           Origin.trigger('editingOverlay:views:hide');
         }
       });

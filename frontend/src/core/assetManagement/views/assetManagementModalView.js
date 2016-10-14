@@ -29,9 +29,7 @@ define(function(require) {
       // Replace Asset and : so we can have both filtered and all asset types
       var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
       // asset type filter
-      if (assetType) {
-        search = { assetType: { $in: [ assetType ] } };
-      }
+      var search = (assetType) ? { assetType: { $in: [assetType] } } : {};
       // Push collection through to collection view
       this.collectionView = new AssetManagementCollectionView({ collection: this.collection, search: search, isModal:this.isModal });
       this.$('.asset-management-assets-container-inner').append(this.collectionView.$el);

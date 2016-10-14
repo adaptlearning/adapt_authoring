@@ -7,7 +7,7 @@ define(function(require){
 
     var helpers = {
         cacheBuster: function(context) {
-          var lastSession = new Date(Origin.sessionModel.get('users').findWhere({ _id: Origin.sessionModel.get('id') }).lastAccess);
+          var lastSession = new Date(Origin.sessionModel.get('users').findWhere({ _id: Origin.sessionModel.get('id') }).get('lastAccess'));
           var lastUpdated = new Date(context.updatedAt);
           if(lastSession < lastUpdated) return '?' + new Date().getTime()
           return '';
@@ -153,10 +153,10 @@ define(function(require){
 
           var names = [];
 
-          if(user.firstName) names.push(user.firstName);
-          if(user.lastName) names.push(user.lastName);
+          if(user.get('firstName')) names.push(user.get('firstName'));
+          if(user.get('lastName')) names.push(user.get('lastName'));
 
-          return (names.length < 1) ? user.email : names.join(' ');
+          return (names.length < 1) ? user.get('email') : names.join(' ');
         },
 
         selected: function(option, value){

@@ -5,6 +5,11 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var UserModel = require('./userModel');
 
+  // TODO link to file once user mangagement is merged
+  var UserCollection = Backbone.Collection.extend({
+    url: '/api/user'
+  });
+
   var SessionModel = Backbone.Model.extend({
     url: "/api/authcheck",
     defaults: {
@@ -15,14 +20,34 @@ define(function(require) {
       otherLoginLinks: [],
       permissions: [],
       _canRevert: false,
-      user: new UserModel(),
-      users: []
+      user: null
+    },
+
+    events: {
+      'change:users': this.setCurrentUser
     },
 
     initialize: function() {
-      Origin.on('app:dataReady login:changed user:updated', _.bind(function() {
-        if(this.get('user')) this.get('user').fetch();
-      }, this));
+      new UserCollection().fetch({
+        success: _.bind(function(collection) {
+          this.set('users', collection);
+        }, this)
+      });
+
+      Origin.on('app:dataReady login:changed', _.bind(this.setCurrentUser, this));
+    },
+
+    setCurrentUser: function() {
+      if(this.get('user') && this.get('user').get('_id') === this.get('id')) {
+        this.get('user').fetch({
+          success: function() { Origin.trigger('user:updated'); }
+        });
+      } else {
+        if(this.get('users').length === 0) return; // not ready
+        var user = this.get('users').findWhere({ _id: this.get('id') });
+        this.set('user', user);
+        Origin.trigger('user:updated');
+      }
     },
 
     logout: function () {
@@ -45,10 +70,11 @@ define(function(require) {
               tenantId: jqXHR.tenantId,
               email: jqXHR.email,
               isAuthenticated: jqXHR.success,
-              permissions: jqXHR.permissions,
-              users: jqXHR.users
+              permissions: jqXHR.permissions
             });
-            this.get('user').set('_id', jqXHR.id);
+
+            this.get('users').fetch();
+
             Origin.trigger('login:changed');
             Origin.trigger('schemas:loadData', function() {
               Origin.router.navigate('#/dashboard', { trigger: true });

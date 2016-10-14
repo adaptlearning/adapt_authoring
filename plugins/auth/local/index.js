@@ -160,8 +160,7 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
                   email: user.email,
                   tenantId: user._tenantId,
                   tenantName: userSession.tenant.name,
-                  permissions: userPermissions,
-                  users: users
+                  permissions: userPermissions
                 });
               });
             });

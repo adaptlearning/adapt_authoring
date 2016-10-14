@@ -27,7 +27,7 @@
       <span>{{t 'app.help'}}</span>
     </a>
     <a href="#" class="navigation-item navigation-profile" data-event="user:profile">
-      Signed in as: <span>{{getUserNameFromId id}}</span>
+      Signed in as: <span>{{#if user.attributes.firstName}}{{user.attributes.firstName}} {{user.attributes.lastName}}{{else}}{{user.attributes.email}}{{/if}}</span>
     </a>
     <a href="#" class="navigation-item navigation-user-logout btn white-hollow" data-event="user:logout">
       <span>{{t 'app.logout'}}</span>

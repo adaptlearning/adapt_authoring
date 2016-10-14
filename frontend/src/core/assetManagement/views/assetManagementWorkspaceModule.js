@@ -30,7 +30,8 @@ define(function(require) {
         'workspaces.component':{},
         'workspaces.block':{},
         'workspaces.article':{},
-        'workspaces.contentobject':{},
+        'workspaces.page':{},
+        'workspaces.menu':{},
         'workspaces.course':{}
       };
 
@@ -41,22 +42,37 @@ define(function(require) {
         id = Origin.editor.data.course.get('_id');
       }
       else {
-        var contentTypes = [ 'component', 'block', 'article', 'contentobject' ];
-        var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
+        var contentTypes = [ 'component', 'block', 'article', 'page', 'menu' ];
         var id = Origin.location.route3;
         // note we start at the right point in the hierarchy
         // route2 === content type
         for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
           if(i < 0) break;
           if(contentTypes[i] === type) break;
-
-          var match = Origin.editor.data[contentCollections[i]].findWhere({ _id:id });
+          var match = this.getCollectionforContentType(contentTypes[i]).findWhere({ _id:id });
           id = match.get('_parentId') || false;
         }
       }
       var search = emptyFilter;
       search['workspaces.' + type] = id;
       this.applyFilter(search);
+    },
+
+    // TODO duplicate assetManagementNewAsset
+    getCollectionforContentType: function(type) {
+      switch(type) {
+        case 'menu':
+        case 'page':
+          return Origin.editor.data.contentObjects;
+        case 'article':
+          return Origin.editor.data.articles;
+        case 'block':
+          return Origin.editor.data.blocks;
+        case 'component':
+          return Origin.editor.data.components;
+        default:
+          return undefined;
+      }
     }
   }, {
     template: 'assetManagementWorkspaceModule'

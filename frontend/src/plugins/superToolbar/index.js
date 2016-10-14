@@ -17,6 +17,6 @@ define(function(require) {
   Origin.on('app:dataReady login:changed', remove);
 
   function remove() {
-    $('.location-title').remove('.superToolbar');
+    $('.location-title > .superToolbar').remove();
   };
 });

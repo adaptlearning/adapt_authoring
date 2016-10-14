@@ -1,3 +1,4 @@
+@import 'buttons';
 @import 'variables';
 
 input[type=file] {
@@ -34,6 +35,25 @@ input[type=file] {
         display: block;
         margin-top: 15px;
         color: darken(@secondary-color, 3%);
+      }
+    }
+    /*
+    * File selected
+    */
+    &.selected {
+      background-color: fade(@primary-color, 10%);
+      &.over {
+        background-color: fade(@primary-color, 20%);
+      }
+      .inner {
+        border-color: fade(@primary-color, 50%);
+        .btn {
+          .primary;
+        }
+        .label,
+        .progress {
+          color: darken(@primary-color, 3%);
+        }
       }
     }
     /*

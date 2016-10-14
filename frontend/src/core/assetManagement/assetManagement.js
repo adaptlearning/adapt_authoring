@@ -42,14 +42,22 @@ define(function(require) {
   });
 
   Origin.on('superToolbar:buildthumbs', function() {
-    $.post('api/asset/buildthumbs', function(data, textStatus, jqXHR) {
-      Origin.Notify.alert({ type: 'info', text: 'Thumbnails built successfully!' });
-    });
+    $.post('api/asset/buildthumbs')
+      .done(function(data, textStatus, jqXHR) {
+        Origin.Notify.alert({ type: 'success', text: 'Missing thumbnails have been created.<br/>Please refresh the page to see the changes.' });
+      })
+      .fail(function(data, textStatus, jqXHR) {
+        Origin.Notify.alert({ type: 'error', text: 'Thumbnail build failed.' });
+      });
   });
   Origin.on('superToolbar:syncworkspaces', function() {
-    $.post('api/asset/syncworkspaces', function(data, textStatus, jqXHR) {
-      Origin.Notify.alert({ type: 'info', text: 'Workspaces set for existing assets.' });
-    });
+    $.post('api/asset/syncworkspaces')
+      .done(function(data, textStatus, jqXHR) {
+        Origin.Notify.alert({ type: 'success', text: "Assets have been linked up with any courses they have been used in." });
+      })
+      .fail(function(data, textStatus, jqXHR) {
+        Origin.Notify.alert({ type: 'error', text: 'Failed to set workspaces.' });
+      });
   });
 
   function loadCollectionView() {

@@ -46,9 +46,7 @@ define(function(require){
     },
 
     validate: function () {
-      var $uploadFile = this.$('.asset-file');
       var validated = true;
-      var uploadFileErrormsg = $uploadFile.prev('label').find('span.error');
       // check required fields
       $('.required').each(function (index, el) {
         var errormsg = $(el).prev('label').find('span.error');
@@ -62,13 +60,12 @@ define(function(require){
         }
       });
       // check upload file
-      if (this.model.isNew() && !$uploadFile.val()) {
+      if(this.model.isNew() && _.isEmpty(this.$('.asset-file').val())) {
+        Origin.trigger('sidebar:resetButtons');
+        this.$('label[for=file]').addClass('validation-error');
         validated = false;
-        $uploadFile.addClass('input-error');
-        $(uploadFileErrormsg).text(window.polyglot.t('app.pleaseaddfile'));
       } else {
-        $uploadFile.removeClass('input-error');
-        $(uploadFileErrormsg).text('');
+        this.$('label[for=file]').removeClass('validation-error');
       }
 
       return validated;
@@ -90,10 +87,7 @@ define(function(require){
       if(Origin.location.module !== 'editor') {
         return {};
       }
-      var contentTypes = [ 'component', 'block', 'article', 'page' ];
-      var contentKeys = [ 'component', 'block', 'article', 'contentobject' ];
-      var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
-
+      var contentTypes = [ 'component', 'block', 'article', 'page', 'menu' ];
       var workspaces = { course: [ Origin.location.route1 ] };
       var id = Origin.location.route3;
       // note we start at the right point in the hierarchy
@@ -101,10 +95,11 @@ define(function(require){
       for(var i = _.indexOf(contentTypes, Origin.location.route2), count = contentTypes.length; i < count; i++) {
         if(!id) return; // something's gone wrong
 
-        workspaces[contentKeys[i]] = [id];
-
-        var match = Origin.editor.data[contentCollections[i]].findWhere({ _id: id });
-        id = match.get('_parentId') || false;
+        var match = this.getCollectionforContentType(contentTypes[i]).findWhere({ _id: id });
+        if(match) {
+          workspaces[contentTypes[i]] = [id];
+        }
+        id = match && match.get('_parentId') || false;
       }
 
       return workspaces;
@@ -114,6 +109,23 @@ define(function(require){
       return {
         course: _.pluck(this.$('.courses input:checked'), 'id')
       };
+    },
+
+    // TODO duplicate assetManagementWorkspaceModule
+    getCollectionforContentType: function(type) {
+      switch(type) {
+        case 'menu':
+        case 'page':
+          return Origin.editor.data.contentObjects;
+        case 'article':
+          return Origin.editor.data.articles;
+        case 'block':
+          return Origin.editor.data.blocks;
+        case 'component':
+          return Origin.editor.data.components;
+        default:
+          return undefined;
+      }
     },
 
     uploadData: function() {
@@ -157,6 +169,7 @@ define(function(require){
       var title = this.$('.asset-file')[0].value.replace("C:\\fakepath\\", "");
       // change upload button label
       this.$('label[for=file] .btn-label').html(title);
+      this.$('label[for=file]').removeClass('validation-error').addClass('selected');
       // set title field if empty
       var $title = this.$('.asset-title');
       if(_.isEmpty($title.val())) $title.val(title);

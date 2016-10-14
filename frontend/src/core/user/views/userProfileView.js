@@ -10,10 +10,10 @@ define(function(require){
     className: 'user-profile',
 
     events: {
-      'click a.change-password' : 'togglePassword',
-      'keyup #password'         : 'onPasswordKeyup',
-      'keyup #passwordText'         : 'onPasswordTextKeyup',
-      'click .toggle-password'  : 'togglePasswordView'
+      'keyup #password': 'onPasswordKeyup',
+      'keyup #passwordText': 'onPasswordTextKeyup',
+      'click .toggle-password': 'togglePasswordView',
+      'click a.change-password': 'togglePassword'
     },
 
     preRender: function() {
@@ -22,6 +22,11 @@ define(function(require){
       this.listenTo(this.model, 'change:_isNewPassword', this.togglePasswordUI);
 
       this.model.set('_isNewPassword', false);
+
+      // data hasn't synced yet, do render when we're ready
+      if(this.model.isNew()) {
+        this.listenToOnce(this.model, 'change', this.render);
+      }
     },
 
     postRender: function() {
@@ -30,18 +35,14 @@ define(function(require){
 
     handleValidationError: function(model, error) {
       Origin.trigger('sidebar:resetButtons');
-
       if (error && _.keys(error).length !== 0) {
-        _.each(error, function(value, key) {
-          this.$('#' + key + 'Error').text(value);
-        }, this);
+        _.each(error, function(value, key) { this.$('#' + key + 'Error').text(value); }, this);
         this.$('.error-text').removeClass('display-none');
-        console.log(error);
       }
     },
 
-    togglePassword: function(event) {
-      event && event.preventDefault();
+    togglePassword: function(e) {
+      e && e.preventDefault();
       // convert to bool and invert
       this.model.set('_isNewPassword', !!!this.model.get('_isNewPassword'));
     },
@@ -68,18 +69,17 @@ define(function(require){
       }
     },
 
-    togglePasswordView: function() {
-      event && event.preventDefault();
+    togglePasswordView: function(e) {
+      e && e.preventDefault();
 
       this.$('#passwordText').toggleClass('display-none');
       this.$('#password').toggleClass('display-none');
       this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
     },
 
-    indicatePasswordStrength: function(event) {
+    indicatePasswordStrength: function(e) {
       var password = $('#password').val();
       var $passwordStrength = $('#passwordError');
-
       // Must have capital letter, numbers and lowercase letters
       var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
       // Must have either capitals and lowercase letters or lowercase and numbers
@@ -89,7 +89,7 @@ define(function(require){
 
       if (okRegex.test(password) === false) {
         var classes = 'alert alert-error';
-        var htmlText = window.polyglot.t('app.validationlength', {length: 8});
+        var htmlText = window.polyglot.t('app.validationlength', { length: 8 });
       } else if (strongRegex.test(password)) {
         var classes = 'alert alert-success';
         var htmlText = window.polyglot.t('app.passwordindicatorstrong');
@@ -105,25 +105,22 @@ define(function(require){
     },
 
     saveUser: function() {
-      var self = this;
-
       this.$('.error-text').addClass('display-none');
 
       var toChange = {
         'firstName': self.$('#firstName').val().trim(),
         'lastName': self.$('#lastName').val().trim()
+        // 'email': self.$('#email').val().trim()
       };
-
-      if (self.model.get('_isNewPassword')) {
+      if (this.model.get('_isNewPassword')) {
         toChange.password = self.$('#password').val();
       } else {
-        self.model.unset('password');
+        this.model.unset('password');
       }
 
-      this.model.set(toChange);
-
-      self.model.save({}, {
+      this.model.save(toChange, {
         error: function(model, response, optinos) {
+          Origin.trigger('sidebar:resetButtons');
           Origin.Notify.alert({
             type: 'error',
             text: window.polyglot.t('app.errorgeneric')
@@ -131,12 +128,13 @@ define(function(require){
         },
         success: function(model, response, options) {
           Backbone.history.history.back();
+          Origin.trigger('user:updated');
           Origin.trigger('editingOverlay:views:hide');
         }
       });
     },
 
-    onPasswordKeyup: function() {
+    onPasswordKeyup: function(e) {
       if(this.$('#password').val().length > 0) {
         this.$('#passwordText').val(this.$('#password').val());
         this.indicatePasswordStrength();
@@ -146,8 +144,7 @@ define(function(require){
       }
     },
 
-    onPasswordTextKeyup: function() {
-
+    onPasswordTextKeyup: function(e) {
     }
   }, {
     template: 'userProfile'

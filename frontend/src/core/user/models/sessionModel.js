@@ -28,13 +28,15 @@ define(function(require) {
     },
 
     initialize: function() {
-      new UserCollection().fetch({
-        success: _.bind(function(collection) {
-          this.set('users', collection);
-        }, this)
-      });
-
-      Origin.on('app:dataReady login:changed', _.bind(this.setCurrentUser, this));
+      this.set('users', new UserCollection());
+      Origin.on('origin:initialize login:changed', _.bind(function() {
+        this.get('users').fetch({
+          success: _.bind(function(collection) {
+            this.set('users', collection);
+            this.setCurrentUser();
+          }, this)
+        });
+      }, this));
     },
 
     setCurrentUser: function() {

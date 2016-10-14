@@ -53,7 +53,7 @@ define(function(require) {
   Origin.on('superToolbar:syncworkspaces', function() {
     $.post('api/asset/syncworkspaces')
       .done(function(data, textStatus, jqXHR) {
-        Origin.Notify.alert({ type: 'success', text: "Assets have been linked up with any courses they have been used in." });
+        Origin.Notify.alert({ type: 'success', text: "Assets have been linked with courses they are used in." });
       })
       .fail(function(data, textStatus, jqXHR) {
         Origin.Notify.alert({ type: 'error', text: 'Failed to set workspaces.' });

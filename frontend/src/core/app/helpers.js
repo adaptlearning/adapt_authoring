@@ -7,7 +7,7 @@ define(function(require){
 
     var helpers = {
         cacheBuster: function(context) {
-          var lastSession = new Date(_.findWhere(Origin.sessionModel.get('users'), { _id: Origin.sessionModel.get('id') }).lastAccess);
+          var lastSession = new Date(Origin.sessionModel.get('users').findWhere({ _id: Origin.sessionModel.get('id') }).lastAccess);
           var lastUpdated = new Date(context.updatedAt);
           if(lastSession < lastUpdated) return '?' + new Date().getTime()
           return '';
@@ -148,7 +148,7 @@ define(function(require){
         },
 
         getUserNameFromId: function(id) {
-          var user = _.findWhere(Origin.sessionModel.get('users'), { _id:id });
+          var user = Origin.sessionModel.get('users').findWhere({ _id:id });
           if(!user) return '';
 
           var names = [];

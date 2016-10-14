@@ -22,7 +22,7 @@ define(function(require) {
         "sortOrder": 5
       };
       Origin.globalMenu.addItem(globalMenuObject);
-      Origin.globalTopMenu.addItem(globalMenuObject);
+      
     }
   });
 

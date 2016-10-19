@@ -12,6 +12,7 @@ define(function(require) {
     className: 'sidebar-item',
 
     events: {
+      'click button'                                    : 'onButtonClick',
       'click button.editor-common-sidebar-project'      : 'editProject',
       'click button.editor-common-sidebar-config'       : 'editConfiguration',
       'click button.editor-common-sidebar-extensions'   : 'manageExtensions',
@@ -95,6 +96,18 @@ define(function(require) {
 
     animateViewIn: function() {
         this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
+    },
+
+    /*
+    * TODO need to allow for custom buttons.
+    * Maybe transition to using the following function to listen to all clicks.
+    */
+
+    onButtonClick: function(e) {
+      e && e.preventDefault();
+      var event = $(e.currentTarget).attr('data-event');
+      // TODO should be editorSidebar?
+      Origin.trigger('editorCommon:' + event);
     },
 
     editProject: function() {

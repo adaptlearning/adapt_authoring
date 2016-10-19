@@ -7,10 +7,12 @@ define(function(require){
 
     var helpers = {
         cacheBuster: function(context) {
-          var lastSession = new Date(Origin.sessionModel.get('users').findWhere({ _id: Origin.sessionModel.get('id') }).get('lastAccess'));
+          var currentUser = Origin.sessionModel.get('users').findWhere({ _id: Origin.sessionModel.get('id') });
+          if(!currentUser) return '';
+          
+          var lastSession = new Date(currentUser.get('lastAccess'));
           var lastUpdated = new Date(context.updatedAt);
           if(lastSession < lastUpdated) return '?' + new Date().getTime()
-          return '';
         },
 
         getAssetIcon: function(context) {

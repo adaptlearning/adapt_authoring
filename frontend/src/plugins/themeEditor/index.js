@@ -8,11 +8,9 @@ define(function(require) {
 
   var ROUTE = 'edittheme';
 
-  Origin.on('editorMenuSidebar:postRender', function() {
-    // handle sidebar click
-    $('.sidebar button.editor-common-sidebar-themeeditor').click(function (event) {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/' + ROUTE, { trigger: true });
-    });
+  // Origin.on('editorMenuSidebar:postRender', function() {
+  Origin.on('editorCommon:theme', function() {
+    Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/' + ROUTE, { trigger: true });
   });
 
   Origin.on('router:editor', function(route1, route2, route3, route4) {

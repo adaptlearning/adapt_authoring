@@ -80,21 +80,19 @@ require([
       Origin.router = new Router();
 
       Origin.sessionModel = new SessionModel();
-      Origin.sessionModel.fetch({
-        success: function() {
-          // This callback is called from the schemasModel.js in scaffold as the schemas
-          // need to load before the app loads
-          Origin.trigger('app:userCreated', function() {
-
-              $('#app').before(new NavigationView({model: Origin.sessionModel}).$el);
-              Origin.trigger('app:dataReady');
-              // Defer here is good - give anything tapping in app:dataReady event
-              // time to do their thang!
-              _.defer(function() {
-                  Origin.initialize();
-              });
+      Origin.sessionModel.fetch();
+      Origin.on('sessionModel:initialised', function() {
+        // This callback is called from the schemasModel.js in scaffold as the schemas
+        // need to load before the app loads
+        Origin.trigger('app:userCreated', function() {
+          $('#app').before(new NavigationView({ model: Origin.sessionModel }).$el);
+          Origin.trigger('app:dataReady');
+          // Defer here is good - give anything tapping in app:dataReady event
+          // time to do their thang!
+          _.defer(function() {
+            Origin.initialize();
           });
-        }
+        });
       });
     });
   });

@@ -6,9 +6,7 @@ define(function(require) {
   var UserModel = require('./userModel');
 
   // TODO link to file once user mangagement is merged
-  var UserCollection = Backbone.Collection.extend({
-    url: '/api/user'
-  });
+  var UserCollection = Backbone.Collection.extend({ url: '/api/user' });
 
   var SessionModel = Backbone.Model.extend({
     url: "/api/authcheck",
@@ -23,33 +21,36 @@ define(function(require) {
       user: null
     },
 
-    events: {
-      'change:users': this.setCurrentUser
-    },
+    fetch: function(options) {
+      var self = this;
+      // hijack success callback
+      options = options || {};
+      var successCb = options.success;
+      options.success = function() {
+        // keep existing 'this' scope
+        if(successCb) successCb.call(this);
+        // get users
+        if(self.get('isAuthenticated')){
+          var users = new UserCollection();
+          users.fetch({
+            success: _.bind(function(collection) {
+              self.set('users', users);
+              self.setCurrentUser();
+              Origin.trigger('sessionModel:initialised');
+            }, this)
+          });
+        } else {
+          Origin.trigger('sessionModel:initialised');
+        }
+      };
 
-    initialize: function() {
-      this.set('users', new UserCollection());
-      Origin.on('origin:initialize login:changed', _.bind(function() {
-        this.get('users').fetch({
-          success: _.bind(function(collection) {
-            this.set('users', collection);
-            this.setCurrentUser();
-          }, this)
-        });
-      }, this));
+      Backbone.Model.prototype.fetch.call(this, options);
     },
 
     setCurrentUser: function() {
-      if(this.get('user') && this.get('user').get('_id') === this.get('id')) {
-        this.get('user').fetch({
-          success: function() { Origin.trigger('user:updated'); }
-        });
-      } else {
-        if(this.get('users').length === 0) return; // not ready
-        var user = this.get('users').findWhere({ _id: this.get('id') });
-        this.set('user', user);
-        Origin.trigger('user:updated');
-      }
+      var user = this.get('users').findWhere({ _id: this.get('id') });
+      this.set('user', user);
+      Origin.trigger('user:updated');
     },
 
     logout: function () {
@@ -66,22 +67,23 @@ define(function(require) {
         url: '/api/login',
         data: { email:username, password:password, shouldPersist:shouldPersist },
         success: _.bind(function (jqXHR, textStatus, errorThrown) {
-          if (jqXHR.success) {
-            this.set({
-              id: jqXHR.id,
-              tenantId: jqXHR.tenantId,
-              email: jqXHR.email,
-              isAuthenticated: jqXHR.success,
-              permissions: jqXHR.permissions
-            });
-
-            this.get('users').fetch();
-
-            Origin.trigger('login:changed');
-            Origin.trigger('schemas:loadData', function() {
-              Origin.router.navigate('#/dashboard', { trigger: true });
-            });
-          }
+          this.fetch({
+            success: _.bind(function() {
+              if (jqXHR.success) {
+                this.set({
+                  id: jqXHR.id,
+                  tenantId: jqXHR.tenantId,
+                  email: jqXHR.email,
+                  isAuthenticated: jqXHR.success,
+                  permissions: jqXHR.permissions
+                });
+                Origin.trigger('login:changed');
+                Origin.trigger('schemas:loadData', function() {
+                  Origin.router.navigate('#/dashboard', { trigger: true });
+                });
+              }
+            }, this)
+          });
         },this),
         error: function (jqXHR, textStatus, errorThrown) {
           var errorCode = 1;

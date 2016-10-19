@@ -130,7 +130,8 @@ define(function(require){
         },
         success: function(model, response, options) {
           Backbone.history.history.back();
-          Origin.sessionModel.setCurrentUser();
+          // TODO do this better...
+          Origin.sessionModel.fetch();
           Origin.trigger('editingOverlay:views:hide');
         }
       });

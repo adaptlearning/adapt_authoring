@@ -44,11 +44,25 @@ define(function(require) {
                   success: _.bind(function(collection) {
                     self.set('users', users);
                     Origin.trigger('sessionModel:initialised');
-                  }, this)
+                  }, this),
+                  error: function(data, response) {
+                    Origin.Notify.alert({
+                      type: 'error',
+                      title: response.statusText,
+                      text: "Couldn't fetch users' data.<br/>(" + response.responseJSON.statusCode + ")"
+                    });
+                  }
                 });
               } else {
                 Origin.trigger('sessionModel:initialised');
               }
+            },
+            error: function(data, response) {
+              Origin.Notify.alert({
+                type: 'error',
+                title: response.statusText,
+                text: "Couldn't fetch user's data.<br/>(" + response.responseJSON.statusCode + ")"
+              });
             }
           });
         } else {

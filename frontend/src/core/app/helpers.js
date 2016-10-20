@@ -154,7 +154,6 @@ define(function(require){
             var user = Origin.sessionModel.get('user');
           } else if(Origin.sessionModel.get('users')) {
             var user = Origin.sessionModel.get('users').findWhere({ _id:id });
-            // var user = _.findWhere(Origin.sessionModel.get('users'), { _id:id });
           };
           if(!user) return '';
 

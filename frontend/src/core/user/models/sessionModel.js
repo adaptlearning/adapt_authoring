@@ -38,7 +38,7 @@ define(function(require) {
             success: function() {
               Origin.trigger('user:updated');
               // get users
-              if(Origin.permissions.hasPermissions(self.get('permissions'))){
+              if(Origin.permissions.hasPermissions(["{{tenantid}}/user:read"])){
                 var users = new UserCollection();
                 users.fetch({
                   success: _.bind(function(collection) {

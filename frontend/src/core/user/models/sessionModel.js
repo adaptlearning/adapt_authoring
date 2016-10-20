@@ -29,28 +29,29 @@ define(function(require) {
       options.success = function() {
         // keep existing 'this' scope
         if(successCb) successCb.call(this);
-        // get users
-        if(self.get('isAuthenticated')){
-          var users = new UserCollection();
-          users.fetch({
-            success: _.bind(function(collection) {
-              self.set('users', users);
-              self.setCurrentUser();
+
+        if(!self.get('user')) self.set('user', new UserModel());
+
+        self.get('user').fetch({
+          success: function() {
+            Origin.trigger('user:updated');
+            // get users
+            if(Origin.permissions.hasPermissions(self.get('permissions'))){
+              var users = new UserCollection();
+              users.fetch({
+                success: _.bind(function(collection) {
+                  self.set('users', users);
+                  Origin.trigger('sessionModel:initialised');
+                }, this)
+              });
+            } else {
               Origin.trigger('sessionModel:initialised');
-            }, this)
-          });
-        } else {
-          Origin.trigger('sessionModel:initialised');
-        }
+            }
+          }
+        });
       };
 
       Backbone.Model.prototype.fetch.call(this, options);
-    },
-
-    setCurrentUser: function() {
-      var user = this.get('users').findWhere({ _id: this.get('id') });
-      this.set('user', user);
-      Origin.trigger('user:updated');
     },
 
     logout: function () {

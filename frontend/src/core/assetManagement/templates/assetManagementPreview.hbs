@@ -54,7 +54,7 @@
     </div>
     {{/if}}
 
-    <div class="asset-preview-date">Uploaded on {{momentFormat createdAt "DD/MM/YY"}} <span class="label">by</span> {{getUserNameFromId createdBy}}.</div>
+    <div class="asset-preview-date">Uploaded on {{momentFormat createdAt "DD/MM/YY"}}{{#ifHasPermissions "{{tenantid}}/user:read"}} <span class="label">by</span> {{getUserNameFromId createdBy}}{{/ifHasPermissions}}.</div>
 
     <!-- Buttons -->
     {{#if isSelectable}}
@@ -67,7 +67,9 @@
         <button class="asset-preview-restore-button btn alert">{{t 'app.restore'}}</button>
       {{else}}
         <button class="asset-preview-edit-button btn primary">{{t 'app.edit'}}</button>
+        {{#ifHasPermissions "{{tenantid}}/asset/*:delete"}}
         <button class="asset-preview-delete-button btn alert">{{t 'app.delete'}}</button>
+        {{/ifHasPermissions}}
       {{/if}}
     </div>
   </div>

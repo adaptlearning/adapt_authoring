@@ -137,9 +137,6 @@
   "engines": {
     "node": "4.x"
   },
-  "scripts": {
-    "test": "make test"
-  },
   "devDependencies": {
     "mocha": "~1.13.0",
     "phantom": "^0.6.5",

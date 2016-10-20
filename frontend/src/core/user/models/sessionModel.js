@@ -30,25 +30,30 @@ define(function(require) {
         // keep existing 'this' scope
         if(successCb) successCb.call(this);
 
-        if(!self.get('user')) self.set('user', new UserModel());
-
-        self.get('user').fetch({
-          success: function() {
-            Origin.trigger('user:updated');
-            // get users
-            if(Origin.permissions.hasPermissions(self.get('permissions'))){
-              var users = new UserCollection();
-              users.fetch({
-                success: _.bind(function(collection) {
-                  self.set('users', users);
-                  Origin.trigger('sessionModel:initialised');
-                }, this)
-              });
-            } else {
-              Origin.trigger('sessionModel:initialised');
+        if(!self.get('user') && self.get('id')) {
+          self.set('user', new UserModel({ _id: self.get('id') }));
+        }
+        if(self.get('user')) {
+          self.get('user').fetch({
+            success: function() {
+              Origin.trigger('user:updated');
+              // get users
+              if(Origin.permissions.hasPermissions(self.get('permissions'))){
+                var users = new UserCollection();
+                users.fetch({
+                  success: _.bind(function(collection) {
+                    self.set('users', users);
+                    Origin.trigger('sessionModel:initialised');
+                  }, this)
+                });
+              } else {
+                Origin.trigger('sessionModel:initialised');
+              }
             }
-          }
-        });
+          });
+        } else {
+          Origin.trigger('sessionModel:initialised');
+        }
       };
 
       Backbone.Model.prototype.fetch.call(this, options);

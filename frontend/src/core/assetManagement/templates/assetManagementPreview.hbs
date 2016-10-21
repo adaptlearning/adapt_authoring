@@ -60,18 +60,21 @@
     {{#if isSelectable}}
       <div class="asset-group">
        <a href="#" class="btn primary confirm-select-asset">Select</a>
+       <a href="#" class="btn secondary confirm-autofill-asset">Autofill</a>
       </div>
     {{/if}}
-    <div class="asset-preview-edit asset-group">
-      {{#if _isDeleted}}
-        <button class="asset-preview-restore-button btn alert">{{t 'app.restore'}}</button>
-      {{else}}
-        <button class="asset-preview-edit-button btn primary">{{t 'app.edit'}}</button>
-        {{#ifHasPermissions "{{tenantid}}/asset/*:delete"}}
-        <button class="asset-preview-delete-button btn alert">{{t 'app.delete'}}</button>
-        {{/ifHasPermissions}}
-      {{/if}}
-    </div>
+    {{#if isEditable}}
+      <div class="asset-preview-edit asset-group">
+        {{#if _isDeleted}}
+          <button class="asset-preview-restore-button btn alert">{{t 'app.restore'}}</button>
+        {{else}}
+          <button class="asset-preview-edit-button btn primary">{{t 'app.edit'}}</button>
+          {{#ifHasPermissions "{{tenantid}}/asset/*:delete"}}
+          <button class="asset-preview-delete-button btn alert">{{t 'app.delete'}}</button>
+          {{/ifHasPermissions}}
+        {{/if}}
+      </div>
+    {{/if}}
   </div>
 
 </div>

@@ -56,19 +56,21 @@
                             margin-bottom: 5px;
                             white-space: nowrap;
                             overflow: hidden;
+                            padding: 2px;
+                            background-color: rgba(47, 71, 84,0.5);
+                            border-radius: 3px;
 
                             .tooltip {
                                 display: none;
                                 padding: 5px 10px;
                                 border-radius: 2px;
-                                background-color: rgba(0,0,0,0.6);
+                                background-color: rgba(0,0,0,0.5);
                                 color: white;
                                 &.show {
                                   display: initial;
                                 }
                             }
                             button {
-                              margin-left: 3px;
                               padding: 5px 10px;
                               border-radius: 2px;
                               &.asset-management-list-item-select {
@@ -267,11 +269,5 @@
         &:hover {
             color:#fff;
         }
-    }
-}
-
-.asset-preview-edit {
-    .modal-popup & {
-        display:none;
     }
 }

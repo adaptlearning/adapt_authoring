@@ -11,6 +11,7 @@ define(function(require){
     events: {
       'click button.close' : 'onCloseClicked',
       'click a.confirm-select-asset' : 'selectAsset',
+      'click a.confirm-autofill-asset' : 'selectAsset',
       'click .asset-preview-edit-button': 'onEditButtonClicked',
       'click .asset-preview-delete-button': 'onDeleteButtonClicked',
       'click .asset-preview-restore-button': 'onRestoreButtonClicked'
@@ -32,22 +33,22 @@ define(function(require){
       }
     },
 
-    selectAsset: function (event) {
-      event && event.preventDefault();
-      Origin.trigger('modal:passThrough', {
-        eventToTrigger: 'assetModal:assetSelected',
-        model: this.model
+    selectAsset: function (e) {
+      e && e.preventDefault();
+      Origin.trigger('assetManagement:modal:update', {
+        model: this.model,
+        _shouldAutofill: $(e.currentTarget).hasClass('confirm-autofill-asset')
       });
     },
 
-    onEditButtonClicked: function(event) {
-      event.preventDefault();
+    onEditButtonClicked: function(e) {
+      e && e.preventDefault();
       var assetId = this.model.get('_id');
       Origin.router.navigate('#/assetManagement/' + assetId + '/edit', { trigger: true });
     },
 
-    onDeleteButtonClicked: function(event) {
-      event.preventDefault();
+    onDeleteButtonClicked: function(e) {
+      e && e.preventDefault();
 
       Origin.Notify.confirm({
         type: 'warning',
@@ -64,8 +65,8 @@ define(function(require){
       }
     },
 
-    onRestoreButtonClicked: function(event) {
-      event && event.preventDefault();
+    onRestoreButtonClicked: function(e) {
+      e && e.preventDefault();
       Origin.Notify.confirm({
         text: window.polyglot.t('app.assetconfirmrestore'),
         callback: _.bind(this.onRestoreConfirmed, this)
@@ -93,7 +94,8 @@ define(function(require){
       }
     },
 
-    onCloseClicked: function() {
+    onCloseClicked: function(e) {
+      e && e.preventDefault();
       Origin.trigger('assetManagement:assetPreviewView:delete');
     }
   }, {

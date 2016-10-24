@@ -39,6 +39,11 @@ define(function(require){
     },
 
     showPreview: function(model) {
+      // set data
+      model.set({
+        isEditable: !this.isModal,
+        isSelectable: this.isModal
+      });
       var $container = this.$('.asset-management-preview-container-inner');
       this.$('.asset-management-no-preview').hide();
       var previewView = new AssetManagementPreviewView({ model: model });

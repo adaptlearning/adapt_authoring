@@ -8,13 +8,9 @@
 
     {{!TODO make these permissions a bit more specific?}}
     {{#ifHasPermissions "*/*:create,*/*:read,*/*:update,*/*:delete"}}
-		<div class="sidebar-row">
-			<button class="dashboard-sidebar-import-course">
-				<span class="dashboard-sidebar-import-course-inner">
-					<i class="fa-upload fa"></i>{{t "app.importdashboardbutton"}}
-				</span>
-			</button>
-		</div>
+		<button class="dashboard-sidebar-import-course action-secondary">
+			<span class="dashboard-sidebar-import-course-inner">{{t "app.importdashboardbutton"}}</span>
+		</button>
     {{/ifHasPermissions}}
 
 		<div class="separator"></div>

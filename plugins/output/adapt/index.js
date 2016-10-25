@@ -291,7 +291,7 @@ var ctx;
 * TODO investigate strange error thrown due to inability to map courseasset to an asset id (see ln349)
 */
 
-exports = module.exports = function Import(request, next) {
+AdaptOutput.prototype.import = function(request, next) {
   ctx = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
@@ -744,7 +744,7 @@ var blacklistedProps = [
   '_hasPreview'
 ];
 
-exports = module.exports = function Export(pCourseId, devMode, request, response, pNext) {
+AdaptOutput.prototype.export = function(pCourseId, devMode, request, response, pNext) {
   // store the params
   var currentUser = usermanager.getCurrentUser();
   COURSE_ROOT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.AllCourses, currentUser.tenant._id, pCourseId);

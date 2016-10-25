@@ -171,9 +171,13 @@ define(function(require){
       });
     },
 
-    onResetPasswordClicked: function() {
+    onResetPasswordClicked: function(e) {
       var self = this;
-      Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST');
+      var $btn = $(e.currentTarget);
+      $btn.addClass('submitted');
+      Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST', function() {
+        $btn.removeClass('submitted');
+      });
     },
 
     onChangePasswordClicked: function() {

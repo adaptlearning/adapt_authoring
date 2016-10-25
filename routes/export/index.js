@@ -44,11 +44,11 @@ server.get('/export/:tenant/:course/download.zip', function (req, res, next) {
         if (error) return handleError(error, res);
         var zipName = helpers.slugify(results[0].title,'export') + '.zip';
         res.writeHead(200, {
-            'Content-Type': 'application/zip',
-            'Content-Length': stat.size,
-            'Content-disposition' : 'attachment; filename=' + zipName,
-            'Pragma' : 'no-cache',
-            'Expires' : '0'
+          'Content-Type': 'application/zip',
+          'Content-Length': stat.size,
+          'Content-disposition' : 'attachment; filename=' + zipName,
+          'Pragma' : 'no-cache',
+          'Expires' : '0'
         });
         fs.createReadStream(zipDir).pipe(res);
       });

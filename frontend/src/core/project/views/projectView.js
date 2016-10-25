@@ -148,7 +148,7 @@ define(function(require){
       // aleady processing, don't try again
       if(this.exporting) return;
 
-      $(window).css('cursor', 'progress');
+      this.$el.css('cursor', 'progress');
 
       var courseId = this.model.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
@@ -160,7 +160,7 @@ define(function(require){
          url: '/export/' + tenantId + '/' + courseId + '/false',
          success: function(data, textStatus, jqXHR) {
            self.exporting = false;
-           $(window).css('cursor', 'default');
+           self.$el.css('cursor', 'default');
            // get the zip
            var form = document.createElement('form');
            self.$el.append(form);
@@ -171,7 +171,7 @@ define(function(require){
            var messageText = errorThrown;
            if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) messageText += ':<br/>' + jqXHR.responseJSON.message;
            self.exporting = false;
-           $(window).css('cursor', 'default');
+           this.$el.css('cursor', 'default');
            Origin.Notify.alert({
              type: 'error',
              title: window.polyglot.t('app.exporterrortitle'),

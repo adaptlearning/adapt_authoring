@@ -20,7 +20,7 @@ var IncomingForm = require('formidable').IncomingForm;
 var logger = require('../../../lib/logger');
 var mkdirp = require('mkdirp');
 var ncp = require('ncp').ncp;
-var origin = require('../../../');
+var origin = require('../../../')();
 var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin;
 var path = require('path');
 var rimraf = require('rimraf');
@@ -32,7 +32,6 @@ var version = require('../../../version');
 
 function AdaptOutput() {
 }
-
 util.inherits(AdaptOutput, OutputPlugin);
 
 /**
@@ -40,7 +39,6 @@ util.inherits(AdaptOutput, OutputPlugin);
 * ------------------------------------------------------------------------------
 */
 AdaptOutput.prototype.publish = function(courseId, isPreview, request, response, next) {
-  var app = origin();
   var self = this;
   var user = usermanager.getCurrentUser(),
     tenantId = user.tenant._id,
@@ -182,33 +180,33 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
             logger.log('info', 'grunt server-build:' + buildMode + ' ' + args.join(' '));
 
             child = exec('grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
-                      function(error, stdout, stderr) {
-                        if (error !== null) {
-                          logger.log('error', 'exec error: ' + error);
-                          logger.log('error', 'stdout error: ' + stdout);
-                          resultObject.success = true;
-                          return callback(error, 'Error building framework');
-                        }
+              function(error, stdout, stderr) {
+                if (error !== null) {
+                  logger.log('error', 'exec error: ' + error);
+                  logger.log('error', 'stdout error: ' + stdout);
+                  resultObject.success = true;
+                  return callback(error, 'Error building framework');
+                }
 
-                        if (stdout.length != 0) {
-                          logger.log('info', 'stdout: ' + stdout);
-                          resultObject.success = true;
+                if (stdout.length != 0) {
+                  logger.log('info', 'stdout: ' + stdout);
+                  resultObject.success = true;
 
-                          // Indicate that the course has built successfully
-                          app.emit('previewCreated', tenantId, courseId, outputFolder);
+                  // Indicate that the course has built successfully
+                  origin.emit('previewCreated', tenantId, courseId, outputFolder);
 
-                          return callback(null, 'Framework built OK');
-                        }
+                  return callback(null, 'Framework built OK');
+                }
 
-                        if (stderr.length != 0) {
-                          logger.log('error', 'stderr: ' + stderr);
-                          resultObject.success = false;
-                          return callback(stderr, 'Error (stderr) building framework!');
-                        }
+                if (stderr.length != 0) {
+                  logger.log('error', 'stderr: ' + stderr);
+                  resultObject.success = false;
+                  return callback(stderr, 'Error (stderr) building framework!');
+                }
 
-                        resultObject.success = true;
-                        return callback(null, 'Framework built');
-                      });
+                resultObject.success = true;
+                return callback(null, 'Framework built');
+              });
           } else {
             resultObject.success = true;
             callback(null, 'Framework already built, nothing to do')
@@ -233,7 +231,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
             resultObject.zipName = zipName;
 
             // Indicate that the zip file is ready for download
-            app.emit('zipCreated', tenantId, courseId, filename, zipName);
+            origin.emit('zipCreated', tenantId, courseId, filename, zipName);
 
             callback();
           });
@@ -247,20 +245,16 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
           archive.bulk([
             { expand: true, cwd: path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build), src: ['**/*'] },
           ]).finalize();
-
         } else {
           // No download required -- skip this step
           callback();
         }
       }
     ], function(err) {
-
       if (err) {
         logger.log('error', err);
         return next(err);
       }
-
-
       return next(null, resultObject);
     });
 };
@@ -349,7 +343,7 @@ function prepareImport(zipPath, unzipPath, callback) {
         fse.remove(zipPath, cb);
       },
       loadMetadata: function(cb) {
-        fse.readJson(path.join(unzipPath, ctx.Constants.Filenames.Metadata), function onJsonRead(error, metadata) {
+        fse.readJson(path.join(unzipPath, Constants.Filenames.Metadata), function onJsonRead(error, metadata) {
           if(error) {
             // TODO any other possible errors?
             switch(error.name) {
@@ -501,7 +495,7 @@ function importCourseJson(metadata, importedJson) {
 };
 
 function importAssets(metadata, assetsImported) {
-  var assetsGlob = path.join(metadata.importDir, ctx.Constants.Folders.Assets, '*');
+  var assetsGlob = path.join(metadata.importDir, Constants.Folders.Assets, '*');
   glob(assetsGlob, function (error, assets) {
     if(error) {
       return assetsImported(error);
@@ -613,7 +607,7 @@ function importCourseassets(metadata, courseassetsImported) {
 * NOTE no action taken for plugins which are newer than installed version (just logged)
 */
 function importPlugins(metadata, pluginsImported) {
-  var srcDir = path.join(metadata.importDir, ctx.Constants.Folders.Plugins);
+  var srcDir = path.join(metadata.importDir, Constants.Folders.Plugins);
   async.each(metadata.pluginIncludes, function(pluginData, donePluginIterator) {
     importPlugin(path.join(srcDir, pluginData.name), pluginData.type, donePluginIterator);
   }, pluginsImported);
@@ -623,7 +617,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
   var bowerJson, contentPlugin;
   async.waterfall([
     function readBowerJson(cb) {
-      fse.readJson(path.join(pluginDir, ctx.Constants.Filenames.Bower), cb);
+      fse.readJson(path.join(pluginDir, Constants.Filenames.Bower), cb);
     },
     function getContentPlugin(json, cb) {
       bowerJson = json;
@@ -646,7 +640,6 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
           bowerJson.isLocalPackage = true;
           contentPlugin.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
         } else {
-          console.log(bowerJson.framework);
           logger.log('info', "Can't install " + bowerJson.displayName + ", it requires framework v" + pluginVersion + " (" + version.adapt_framework + " installed)");
           cb();
         }
@@ -749,7 +742,6 @@ AdaptOutput.prototype.export = function(pCourseId, devMode, request, response, p
   var currentUser = usermanager.getCurrentUser();
   COURSE_ROOT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.AllCourses, currentUser.tenant._id, pCourseId);
   EXPORT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Exports, currentUser._id);
-  ctx = this;
   courseId = pCourseId;
   next = pNext;
 
@@ -774,7 +766,7 @@ AdaptOutput.prototype.export = function(pCourseId, devMode, request, response, p
 };
 
 function generateLatestBuild(courseBuilt) {
-  ctx.publish(courseId, true, null, null, courseBuilt);
+  AdaptOutput.publish(courseId, true, null, null, courseBuilt);
 };
 
 /**
@@ -801,14 +793,14 @@ function generateMetadata(generatedMetadata) {
       return generatedMetadata(error);
     }
     metadata = _.reduce(results, function(memo,result){ return _.extend(memo,result); });
-    fse.writeJson(path.join(EXPORT_DIR, ctx.Constants.Filenames.Metadata), metadata, { spaces:0 }, generatedMetadata);
+    fse.writeJson(path.join(EXPORT_DIR, Constants.Filenames.Metadata), metadata, { spaces:0 }, generatedMetadata);
   });
 };
 
 
 // pulls out relevant attributes from package.json
 function getPackageData(frameworkDir, gotPackageJson) {
-  fse.readJson(path.join(frameworkDir, ctx.Constants.Filenames.Package), function onJsonRead(error, packageJson) {
+  fse.readJson(path.join(frameworkDir, Constants.Filenames.Package), function onJsonRead(error, packageJson) {
     gotPackageJson(null, _.pick(packageJson,
       'version'
     ));
@@ -962,7 +954,7 @@ function getPluginMetadata(courseId, gotPluginMetadata) {
 
 // copies relevant files in adapt_framework
 function copyFrameworkFiles(filesCopied) {
-  ctx.generateIncludesForCourse(courseId, function(error, includes) {
+  AdaptOutput.generateIncludesForCourse(courseId, function(error, includes) {
     if(error) {
       return includesGenerated(error);
     }
@@ -1000,7 +992,7 @@ function copyFrameworkFiles(filesCopied) {
 // uses the metadata list to include only relevant plugin files
 function copyCustomPlugins(filesCopied) {
   var src = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Source);
-  var dest = path.join(EXPORT_DIR, ctx.Constants.Folders.Plugins);
+  var dest = path.join(EXPORT_DIR, Constants.Folders.Plugins);
   async.each(metadata.pluginIncludes, function iterator(plugin, cb) {
     var pluginDir = path.join(src, plugin.folder, plugin.name);
     fse.copy(pluginDir, path.join(dest, plugin.name), cb);
@@ -1021,7 +1013,7 @@ function copyCourseFiles(filesCopied) {
 
 // copies used assets directly from the data folder
 function copyAssets(assetsCopied) {
-  var dest = path.join(EXPORT_DIR, ctx.Constants.Folders.Assets);
+  var dest = path.join(EXPORT_DIR, Constants.Folders.Assets);
   fse.ensureDir(dest, function(error) {
     if (error) {
       return filesCopied(error);

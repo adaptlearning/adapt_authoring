@@ -34,12 +34,14 @@ function AdaptOutput() {
 }
 util.inherits(AdaptOutput, OutputPlugin);
 
+var self;
+
 /**
 * FUNCTION: Publish
 * ------------------------------------------------------------------------------
 */
 AdaptOutput.prototype.publish = function(courseId, isPreview, request, response, next) {
-  var self = this;
+  self = this;
   var user = usermanager.getCurrentUser(),
     tenantId = user.tenant._id,
     outputJson = {},
@@ -272,9 +274,6 @@ function ImportError(message, httpStatus) {
 };
 util.inherits(ImportError, Error);
 
-// the 'this' context for AdaptOutput
-var ctx;
-
 /**
 * Course import function
 * Async wrapper for prepareImport and restoreData
@@ -286,7 +285,8 @@ var ctx;
 */
 
 AdaptOutput.prototype.import = function(request, next) {
-  ctx = this;
+  self = this;
+
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
 
@@ -718,14 +718,9 @@ var FRAMEWORK_ROOT_DIR = path.join(configuration.tempDir, configuration.getConfi
 var COURSE_ROOT_DIR;
 var EXPORT_DIR;
 
-// the 'this' context for AdaptOutput
-var ctx;
-
 var courseId;
-
 // the top-level callback
 var next;
-
 // used with _.omit when saving metadata
 var blacklistedProps = [
   '__v',
@@ -738,6 +733,7 @@ var blacklistedProps = [
 ];
 
 AdaptOutput.prototype.export = function(pCourseId, devMode, request, response, pNext) {
+  self = this;
   // store the params
   var currentUser = usermanager.getCurrentUser();
   COURSE_ROOT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.AllCourses, currentUser.tenant._id, pCourseId);
@@ -763,10 +759,11 @@ AdaptOutput.prototype.export = function(pCourseId, devMode, request, response, p
       copyAssets: ['generateMetadata', copyAssets]
     }, zipExport);
   });
+
 };
 
 function generateLatestBuild(courseBuilt) {
-  AdaptOutput.publish(courseId, true, null, null, courseBuilt);
+  self.publish(courseId, true, null, null, courseBuilt);
 };
 
 /**
@@ -801,9 +798,7 @@ function generateMetadata(generatedMetadata) {
 // pulls out relevant attributes from package.json
 function getPackageData(frameworkDir, gotPackageJson) {
   fse.readJson(path.join(frameworkDir, Constants.Filenames.Package), function onJsonRead(error, packageJson) {
-    gotPackageJson(null, _.pick(packageJson,
-      'version'
-    ));
+    gotPackageJson(null, _.pick(packageJson, 'version'));
   });
 };
 
@@ -917,11 +912,8 @@ function getPluginMetadata(courseId, gotPluginMetadata) {
 
   var includes;
   async.waterfall([
-    function getPlugin(cb) {
-      origin.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), cb);
-    },
-    function getIncludes(plugin, cb) {
-      plugin.generateIncludesForCourse(courseId, cb);
+    function getIncludes(cb) {
+      self.generateIncludesForCourse(courseId, cb);
     },
     function getDb(pIncludes, cb) {
       includes = pIncludes;
@@ -954,13 +946,13 @@ function getPluginMetadata(courseId, gotPluginMetadata) {
 
 // copies relevant files in adapt_framework
 function copyFrameworkFiles(filesCopied) {
-  AdaptOutput.generateIncludesForCourse(courseId, function(error, includes) {
+  self.generateIncludesForCourse(courseId, function(error, includes) {
     if(error) {
       return includesGenerated(error);
     }
     // create list of includes
     for(var i = 0, count = includes.length; i < count; i++)
-    includes[i] = '\/' + includes[i] + '(\/|$)';
+      includes[i] = '\/' + includes[i] + '(\/|$)';
 
     var includesRE = new RegExp(includes.join('|'));
     var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);

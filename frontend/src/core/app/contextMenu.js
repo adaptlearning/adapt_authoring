@@ -4,7 +4,7 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
 
   // Public API
-  Origin.contextMenu = {
+  Origin.contextMenu = ContextMenu = {
     addItem: function(type, contextMenuObject) {
       if (contextMenuObject.length > 1) {
         _.each(contextMenuObject, function (object) {
@@ -33,7 +33,7 @@ define(function(require) {
     view = new ContextMenuView({ collection: menuItems });
   };
 
-  function initMenuItems() {
+  function setUpMenuItems() {
     ContextMenu.addItem('article', getDefaultItems());
     ContextMenu.addItem('block', getDefaultItems());
     ContextMenu.addItem('component', getDefaultItems());

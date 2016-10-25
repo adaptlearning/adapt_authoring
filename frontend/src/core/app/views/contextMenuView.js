@@ -136,10 +136,14 @@ define(function(require) {
     onContextMenuItemClicked: function(e) {
       e && e.preventDefault();
 
-      var callbackEvent = this.model.get('callbackEvent');
-      this.model.get('contextView').trigger('contextMenu:' + this.model.get('type') + ':' + callbackEvent);
+      var eventString =
+        'contextMenu' + ':' +
+        this.model.get('type') + ':' +
+        this.model.get('callbackEvent');
 
+      // fire some events
       Origin.trigger('contextMenu:closeContextMenu');
+      this.model.get('contextView').trigger(eventString);
     }
   });
 

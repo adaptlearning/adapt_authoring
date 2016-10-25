@@ -11,7 +11,6 @@ define(function(require) {
 
         events: {
             'click .dashboard-sidebar-add-course'   : 'addCourse',
-            'click .dashboard-sidebar-import-course'   : 'goToCourseImport',
             'click .dashboard-sidebar-my-courses'   : 'gotoMyCourses',
             'click .dashboard-sidebar-shared-courses' : 'gotoSharedCourses',
             'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
@@ -58,10 +57,6 @@ define(function(require) {
 
         addCourse: function() {
             Origin.router.navigate('#/project/new', {trigger:true});
-        },
-
-        goToCourseImport: function() {
-            Origin.router.navigate('#/courseImport', {trigger:true});
         },
 
         gotoMyCourses: function() {

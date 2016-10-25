@@ -316,7 +316,7 @@
   "app.validationfailed": "Validation failed",
   "app.validationfailedmessage": "You need to fix the following before you can save your data:",
   "app.successdefaulttitle": "Success",
-  "app.export": "Export course",
+  "app.export": "Export",
   "app.exportdev": "Export source code",
   "app.exporting": "Exporting course",
   "app.exportcoursetitle": "Exporting course",

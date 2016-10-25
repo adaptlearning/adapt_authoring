@@ -6,13 +6,6 @@
 			<span class="dashboard-sidebar-add-course-inner">{{t 'app.addnewproject'}}</span>
 		</button>
 
-    {{!TODO make these permissions a bit more specific?}}
-    {{#ifHasPermissions "*/*:create,*/*:read,*/*:update,*/*:delete"}}
-		<button class="dashboard-sidebar-import-course action-secondary">
-			<span class="dashboard-sidebar-import-course-inner">{{t "app.importdashboardbutton"}}</span>
-		</button>
-    {{/ifHasPermissions}}
-
 		<div class="separator"></div>
 
     <div class="sidebar-row">

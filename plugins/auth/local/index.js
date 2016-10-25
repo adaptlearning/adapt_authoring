@@ -298,6 +298,7 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
         var templateData = {
           name: 'passwordReset',
           user: user,
+          showButton: true,
           rootUrl: configuration.getConfig('rootUrl'),
           resetToken: userToken.token,
           resetLabel: app.polyglot.t('app.resetpassword')

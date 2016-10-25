@@ -197,8 +197,11 @@ define(function(require){
             "password": newPassword
           };
           Helpers.ajax('/api/user/resetpassword', postData, 'POST', function() {
-            swal.close();
             self.model.fetch();
+            Origin.Notify.alert({
+              type: 'success',
+              text: window.polyglot.t('app.changepasswordtext', { email: self.model.get('email') })
+            });
           });
         }
       });

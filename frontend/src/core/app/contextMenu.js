@@ -26,7 +26,7 @@ define(function(require) {
 
   var init = function() {
     new ContextMenuView({collection: ContextMenuCollection});
-    
+
     // Setup context menu items
     var contextItems = [
       {
@@ -70,15 +70,16 @@ define(function(require) {
     ]);
 
     // Set the section/menu menu options
-    contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "copy"})), 1);		
+    contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "copy"})), 1);
     ContextMenu.addItem('menu', contextItems);
-
+    /*
+    {
+      title: window.polyglot.t('app.editsettings'),
+      className: 'context-menu-item',
+      callbackEvent: 'editSettings'
+    },
+    */
     var courseContextItems = [
-      {
-        title: window.polyglot.t('app.editsettings'),
-        className: 'context-menu-item',
-        callbackEvent: 'editSettings'
-      },
       {
         title: window.polyglot.t('app.editcourse'),
         className: 'context-menu-item',
@@ -95,6 +96,15 @@ define(function(require) {
         callbackEvent: 'delete'
       }
     ];
+
+    var superPerms = ["*/*:create","*/*:read","*/*:update","*/*:delete"];
+    if (Origin.permissions.hasPermissions(superPerms)) {
+      courseContextItems.push({
+        title: window.polyglot.t('app.export'),
+        className: 'context-menu-item',
+        callbackEvent: 'export'
+      });
+    }
 
     ContextMenu.addItem('course', courseContextItems);
 
@@ -113,8 +123,8 @@ define(function(require) {
 
     ContextMenu.addItem('sharedcourse', sharedCourseContextItems);
   }
-  
-  Origin.once('app:dataReady', function() {
+
+  Origin.once('app:dataReady login:changed', function() {
     init();
   });
 

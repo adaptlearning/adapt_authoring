@@ -485,12 +485,14 @@ BowerPlugin.prototype.fetchInstalledPackages = function (plugin, options, next) 
  * adds a new package to the system - fired after bower
  * has installed to the cache
  *
+ * TODO needs to be refactored into multiple funcs
+ *
  * @param {object} plugin - bowerConfig object for a bower plugin type
  * @param {object} packageInfo - the bower package info retrieved during install
  * @param {object} options
  * @param {callback} cb
  */
-function addPackage (plugin, packageInfo, options, cb) {
+BowerPlugin.prototype.addPackage = function(plugin, packageInfo, options, cb) {
   // shuffle params
   if ('function' === typeof options) {
     cb = options;
@@ -558,164 +560,177 @@ function addPackage (plugin, packageInfo, options, cb) {
         return cb(null);
       }
 
-      // @TODO - this should be removed when we move to symlinked plugins :-\
-      if (!options.skipTenantCopy) {
-        // Copy this version of the component to a holding area (used for publishing).
-        // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
-        var destination = path.join(plugin.options.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
-        rimraf(destination, function(err) {
-          if (err) {
-            // can't continue
-            return logger.log('error', err);
-          }
-
-          mkdirp(destination, function (err) {
-            if (err) {
-              return logger.log('error', err);
-            }
-
-            // move from the cache to the versioned dir
-            ncp(packageInfo.canonicalDir, destination, function (err) {
+      async.parallel({
+        copyToTenant: function(copiedToTenant) {
+          // @TODO - this should be removed when we move to symlinked plugins :-\
+          if (!options.skipTenantCopy) {
+            // Copy this version of the component to a holding area (used for publishing).
+            // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
+            var destination = path.join(plugin.options.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
+            rimraf(destination, function(err) {
               if (err) {
-                // don't double call callback
-                return logger.log('error', err);
+                // can't continue
+                logger.log('error', err);
+                return copiedToTenant(err);
               }
 
-              // temporary hack to get stuff moving
-              // copy plugin source to tenant dir
-              var currentUser = usermanager.getCurrentUser();
-              var tenantId = options.tenantId
-                ? options.tenantId
-                : currentUser.tenant._id.toString()
-              var tenantPluginPath = path.join(
-                configuration.tempDir,
-                tenantId,
-                'adapt_framework',
-                'src',
-                plugin.srcLocation,
-                pkgMeta.name
-              );
-
-              // remove older version first
-              rimraf(tenantPluginPath, function (err) {
+              mkdirp(destination, function (err) {
                 if (err) {
-                  return logger.log('error', err);
+                  logger.log('error', err);
+                  return copiedToTenant(err);
                 }
 
-                ncp(packageInfo.canonicalDir, tenantPluginPath, function (err) {
+                // move from the cache to the versioned dir
+                ncp(packageInfo.canonicalDir, destination, function (err) {
                   if (err) {
-                    return logger.log('error', err);
+                    logger.log('error', err);
+                    return copiedToTenant(err);
                   }
 
-                  // done
-                  logger.log('info', 'Successfully copied ' + pkgMeta.name + ' to tenant ' + tenantPluginPath);
+                  // temporary hack to get stuff moving
+                  // copy plugin source to tenant dir
+                  var currentUser = usermanager.getCurrentUser();
+                  var tenantId = options.tenantId
+                  ? options.tenantId
+                  : currentUser.tenant._id.toString()
+                  var tenantPluginPath = path.join(
+                    configuration.tempDir,
+                    tenantId,
+                    'adapt_framework',
+                    'src',
+                    plugin.srcLocation,
+                    pkgMeta.name
+                  );
+
+                  // remove older version first
+                  rimraf(tenantPluginPath, function (err) {
+                    if (err) {
+                      logger.log('error', err);
+                      return copiedToTenant(err);
+                    }
+
+                    ncp(packageInfo.canonicalDir, tenantPluginPath, function (err) {
+                      if (err) {
+                        logger.log('error', err);
+                        return copiedToTenant(err);
+                      }
+
+                      // done
+                      logger.log('info', 'Successfully copied ' + pkgMeta.name + ' to tenant ' + tenantPluginPath);
+                      copiedToTenant();
+                    });
+                  });
                 });
               });
             });
-          });
-        });
-      }
-
-      // build the package information
-      var package = extractPackageInfo(plugin, pkgMeta, schema);
-      // add the package to the modelname collection
-      database.getDatabase(function (err, db) {
-        if (err) {
-          logger.log('error', err);
-          return cb(err);
-        }
-
-        // don't duplicate component.name, component.version
-        db.retrieve(plugin.type, { name: package.name, version: package.version }, function (err, results) {
-          if (err) {
-            logger.log('error', err);
-            return cb(err);
+          } else {
+            copiedToTenant();
           }
-
-          if (results && 0 !== results.length) {
-            // don't add duplicate
-            if (options.strict) {
-              return cb(new PluginPackageError("Can't add plugin: plugin already exists!"));
-            }
-            return cb(null);
-          }
-
-          db.create(plugin.type, package, function (err, newPlugin) {
+        },
+        addToDatabase: function(addedToDb) {
+          // build the package information
+          var package = extractPackageInfo(plugin, pkgMeta, schema);
+          // add the package to the modelname collection
+          database.getDatabase(function (err, db) {
             if (err) {
-              if (options.strict) {
-                return cb(err);
-              }
-
-              logger.log('error', 'Failed to add package: ' + package.name, err);
-              return cb(null);
+              logger.log('error', err);
+              return addedToDb(err);
             }
 
-            logger.log('info', 'Added package: ' + package.name);
-
-            // #509 update content targeted by previous versions of this package
-            logger.log('info', 'searching old package types ... ');
-            db.retrieve(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err, results) {
-
+            // don't duplicate component.name, component.version
+            db.retrieve(plugin.type, { name: package.name, version: package.version }, function (err, results) {
               if (err) {
-                // strictness doesn't matter at this point
-                logger.log('error', 'Failed to retrieve previous packages: ' + err.message, err);
+                logger.log('error', err);
+                return addedToDb(err);
               }
 
-              if (results && results.length) {
-                // found previous versions to update
-                // only update content using the id of the most recent version
-                var oldPlugin = false;
-                results.forEach(function (item) {
-                  if (!oldPlugin) {
-                    oldPlugin = item;
-                  } else if (semver.gt(item.version, oldPlugin.version)) {
-                    oldPlugin = item;
-                  }
-                });
+              if (results && 0 !== results.length) {
+                // don't add duplicate
+                if (options.strict) {
+                  return addedToDb(new PluginPackageError("Can't add plugin: plugin already exists!"));
+                }
+                return addedToDb(null);
+              }
 
-                // Persist the _isAvailableInEditor flag.
-                db.update(plugin.type, {_id: newPlugin._id}, {_isAvailableInEditor: oldPlugin._isAvailableInEditor}, function(err, results) {
+              db.create(plugin.type, package, function (err, newPlugin) {
+                if (err) {
+                  if (options.strict) {
+                    return addedToDb(err);
+                  }
+
+                  logger.log('error', 'Failed to add package: ' + package.name, err);
+                  return addedToDb(null);
+                }
+
+                logger.log('info', 'Added package: ' + package.name);
+
+                // #509 update content targeted by previous versions of this package
+                logger.log('info', 'searching old package types ... ');
+                db.retrieve(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err, results) {
+
                   if (err) {
-                    logger.log('error', err);
-                    return cb(err);
+                    // strictness doesn't matter at this point
+                    logger.log('error', 'Failed to retrieve previous packages: ' + err.message, err);
                   }
-                  
-                  plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
-                    if (err) {
-                      logger.log('error', err);
-                      return cb(err);
-                    }
 
+                  if (results && results.length) {
+                    // found previous versions to update
+                    // only update content using the id of the most recent version
+                    var oldPlugin = false;
+                    results.forEach(function (item) {
+                      if (!oldPlugin) {
+                        oldPlugin = item;
+                      } else if (semver.gt(item.version, oldPlugin.version)) {
+                        oldPlugin = item;
+                      }
+                    });
+
+                    // Persist the _isAvailableInEditor flag.
+                    db.update(plugin.type, {_id: newPlugin._id}, {_isAvailableInEditor: oldPlugin._isAvailableInEditor}, function(err, results) {
+                      if (err) {
+                        logger.log('error', err);
+                        return addedToDb(err);
+                      }
+
+                      plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
+                        if (err) {
+                          logger.log('error', err);
+                          return addedToDb(err);
+                        }
+
+                        // Remove older versions of this plugin
+                        db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
+                          if (err) {
+                            logger.log('error', err);
+                            return addedToDb(err);
+                          }
+
+                          logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
+                          addedToDb(null, newPlugin);
+                        });
+                      });
+                    });
+                  } else {
+                    // nothing to do!
                     // Remove older versions of this plugin
                     db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
                       if (err) {
                         logger.log('error', err);
-                        return cb(err);
+                        return addedToDb(err);
                       }
 
                       logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
-                      return cb(null, newPlugin);
+                      addedToDb(null, newPlugin);
                     });
-                  });
-                });
-              } else {
-                // nothing to do!
-                // Remove older versions of this plugin
-                db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
-                  if (err) {
-                    logger.log('error', err);
-                    return cb(err);
                   }
-
-                  logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
-
-                  return cb(null, newPlugin);
                 });
-              }
+              });
             });
-          });
-        });
-      }, options.tenantId);
+          }, options.tenantId);
+        }
+      }, function doneParallel(error, data) {
+        cb(error, data.addToDatabase);
+      });
     });
   });
 }
@@ -782,7 +797,7 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
                     if (packageInfo[key].pkgMeta.framework) {
                       // If the plugin defines a framework, ensure that it is compatible
                       if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].pkgMeta.framework)) {
-                        addPackage(plugin, packageInfo[key], options, next); 
+                        addPackage(plugin, packageInfo[key], options, next);
                       } else {
                         logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');
                         next();

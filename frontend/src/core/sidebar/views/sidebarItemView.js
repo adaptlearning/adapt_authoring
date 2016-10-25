@@ -21,6 +21,7 @@ define(function(require) {
       'click button.editor-common-sidebar-download'     : 'downloadProject',
       'click button.editor-common-sidebar-preview'      : 'previewProject',
       'click button.editor-common-sidebar-export'       : 'exportProject',
+      'click button.editor-common-sidebar-export-dev'   : 'exportProjectDev',
       'click button.editor-common-sidebar-close'        : 'closeProject'
     },
 
@@ -139,7 +140,11 @@ define(function(require) {
     },
 
     exportProject: function() {
-      Origin.trigger('editorCommon:export');
+      Origin.trigger('editorCommon:export', false);
+    },
+
+    exportProjectDev: function() {
+      Origin.trigger('editorCommon:export', true);
     },
 
     closeProject: function() {

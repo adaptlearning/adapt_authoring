@@ -11,6 +11,7 @@ define(function(require) {
 
         events: {
             'click .dashboard-sidebar-add-course'   : 'addCourse',
+            'click .dashboard-sidebar-import-course'   : 'goToCourseImport',
             'click .dashboard-sidebar-my-courses'   : 'gotoMyCourses',
             'click .dashboard-sidebar-shared-courses' : 'gotoSharedCourses',
             'keyup .dashboard-sidebar-filter-search-input':'filterProjectsByTitle',
@@ -34,7 +35,7 @@ define(function(require) {
                 this.$('.dashboard-sidebar-filter-search-input').addClass('search-highlight')
             }
         },
-        
+
         updateUI: function(userPreferences) {
             if (userPreferences.search) {
                 this.$('.dashboard-sidebar-filter-search-input').val(userPreferences.search);
@@ -57,6 +58,10 @@ define(function(require) {
 
         addCourse: function() {
             Origin.router.navigate('#/project/new', {trigger:true});
+        },
+
+        goToCourseImport: function() {
+            Origin.router.navigate('#/courseImport', {trigger:true});
         },
 
         gotoMyCourses: function() {
@@ -127,7 +132,7 @@ define(function(require) {
         },
 
         filterProjectsByTags: function(tag) {
-            
+
             // Check if the tag is already being filtered and remove it
             if (_.findWhere(this.tags, { id: tag.id } )) {
                 this.tags = _.reject(this.tags, function(tagItem) {
@@ -140,7 +145,7 @@ define(function(require) {
 
             Origin.trigger('dashboard:dashboardSidebarView:filterByTags', this.tags);
         },
-        
+
         addTagToSidebar: function(tag) {
             this.usedTags.push(tag);
 

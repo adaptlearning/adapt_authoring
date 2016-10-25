@@ -87,13 +87,13 @@ define(function(require){
       this.renderCurrentEditorView();
     },
 
-    showExportAnimation: function(show) {
+    showExportAnimation: function(show, $btn) {
       if(show !== false) {
-        $('.editor-common-sidebar-export-inner').addClass('display-none');
-        $('.editor-common-sidebar-exporting').removeClass('display-none');
+        $('.editor-common-sidebar-export-inner', $btn).addClass('display-none');
+        $('.editor-common-sidebar-exporting', $btn).removeClass('display-none');
       } else {
-        $('.editor-common-sidebar-export-inner').removeClass('display-none');
-        $('.editor-common-sidebar-exporting').addClass('display-none');
+        $('.editor-common-sidebar-export-inner', $btn).removeClass('display-none');
+        $('.editor-common-sidebar-exporting', $btn).addClass('display-none');
       }
     },
 
@@ -398,36 +398,36 @@ define(function(require){
       }
     },
 
-    exportProject: function(e) {
-      e && e.preventDefault();
-
+    exportProject: function(devMode) {
       // aleady processing, don't try again
       if(this.exporting) return;
 
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
 
-      this.showExportAnimation();
+      var $btn = devMode == true ? $('button.editor-common-sidebar-export-dev') : $('button.editor-common-sidebar-export');
+
+      this.showExportAnimation(true, $btn);
       this.exporting = true;
 
       var self = this;
       $.ajax({
-         url: '/export/' + tenantId + '/' + courseId,
+         url: '/export/' + tenantId + '/' + courseId + '/' + devMode,
          success: function(data, textStatus, jqXHR) {
-           self.showExportAnimation(false);
+           self.showExportAnimation(false, $btn);
            self.exporting = false;
 
            // get the zip
            var form = document.createElement('form');
            self.$el.append(form);
-           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
+           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
            form.submit();
          },
          error: function(jqXHR, textStatus, errorThrown) {
            var messageText = errorThrown;
            if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) messageText += ':<br/>' + jqXHR.responseJSON.message;
 
-           self.showExportAnimation(false);
+           self.showExportAnimation(false, $btn);
            self.exporting = false;
 
            Origin.Notify.alert({
@@ -437,7 +437,7 @@ define(function(require){
            });
          }
       });
-    },
+    }
   }, {
     template: 'editor'
   });

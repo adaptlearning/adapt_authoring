@@ -32,6 +32,11 @@
           <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
           <div class="projects-details-value">{{momentFormat updatedAt "Do MMMM YYYY"}}</div>
         </div>
+
+          {{#if _isShared}}{{#ifUserIsMe createdBy}}
+          <div class="status-bar shared">SHARED</div>
+          {{/ifUserIsMe}}{{/if}}
+
         {{#if tags.length}}
         <div class="project-details-tags project-details-row tags">
           <div class="projects-details-tags-button">

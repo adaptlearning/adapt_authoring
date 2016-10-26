@@ -42,6 +42,10 @@
                 }
             }
         }
+        .status-bar {
+          color: @primary-color;
+          background-color: white !important;
+        }
     }
     &.listing {
         width: 700px;
@@ -79,6 +83,15 @@
         button {
             margin-top:10px;
         }
+    }
+    .status-bar {
+      position: absolute;
+      bottom: 2px;
+      left: 2px;
+      right: 2px;
+      color: white;
+      font-weight: 600;
+      &.shared { background-color: @secondary-color; }
     }
 }
 

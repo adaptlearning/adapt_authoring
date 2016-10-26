@@ -35,7 +35,7 @@ define(function(require){
       this.on('contextMenu:course:editSettings', this.editProjectSettings);
       this.on('contextMenu:course:edit', this.editProject);
       this.on('contextMenu:course:delete', this.deleteProjectPrompt);
-      this.on('contextMenu:course:duplicate', this.duplicateProject);
+      this.on('contextMenu:course:copy', this.duplicateProject);
       this.on('contextMenu:course:export', this.exportProject);
 
       this.model.set('heroImageURI', this.model.getHeroImageURI());
@@ -171,7 +171,7 @@ define(function(require){
            var messageText = errorThrown;
            if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) messageText += ':<br/>' + jqXHR.responseJSON.message;
            self.exporting = false;
-           this.$el.css('cursor', 'default');
+           self.$el.css('cursor', 'default');
            Origin.Notify.alert({
              type: 'error',
              title: window.polyglot.t('app.exporterrortitle'),

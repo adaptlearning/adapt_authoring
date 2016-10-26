@@ -743,6 +743,7 @@ BowerPlugin.prototype.addPackage = function(plugin, packageInfo, options, cb) {
  * @param {callback} cb
  */
 BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
+  var self = this;
   // shuffle params
   if ('function' === typeof options) {
     cb = options;
@@ -797,13 +798,13 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
                     if (packageInfo[key].pkgMeta.framework) {
                       // If the plugin defines a framework, ensure that it is compatible
                       if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].pkgMeta.framework)) {
-                        addPackage(plugin, packageInfo[key], options, next);
+                        self.addPackage(plugin, packageInfo[key], options, next);
                       } else {
                         logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');
                         next();
                       }
                     } else {
-                      addPackage(plugin, packageInfo[key], options, next);
+                      self.addPackage(plugin, packageInfo[key], options, next);
                     }
                   },
                   cb);
@@ -963,7 +964,7 @@ function handleUploadedPlugin (req, res, next) {
                 return next(error);
               }
 
-              addPackage(contentPlugin.bowerConfig, packageInfo, { strict: true }, function (error, results) {
+              contentPlugin.addPackage(contentPlugin.bowerConfig, packageInfo, { strict: true }, function (error, results) {
                 if (error) {
                   return next(error);
                 }

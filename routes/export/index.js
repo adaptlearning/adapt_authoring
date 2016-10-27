@@ -42,7 +42,8 @@ server.get('/export/:tenant/:course/download.zip', function (req, res, next) {
       }
       fs.stat(zipDir, function(error, stat) {
         if (error) return handleError(error, res);
-        var zipName = helpers.slugify(results[0].title,'export') + '.zip';
+        var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
+        var zipName = helpers.slugify(results[0].title,'export',timestamp) + '.zip';
         res.writeHead(200, {
           'Content-Type': 'application/zip',
           'Content-Length': stat.size,

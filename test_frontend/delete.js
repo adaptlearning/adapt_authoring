@@ -26,17 +26,6 @@ casper.test.begin('Testing deleting a course', 2, function suite(test) {
         this.click(".app-inner > div.dashboard > div > ul > li:nth-child("+num+") > div > div.project-header > div > div > div > a.course-delete.editor-delete-course-element > i");
     });
 
-    // casper.then(function() {
-    // 	this.capture("./test_frontend/img/delete/02-submenu open.png");
-    //     this.wait(1000, function() {
-    // 	   test.assertExists("div.context-menu-item:nth-child(3) > a:nth-child(1) > div:nth-child(1) > h5:nth-child(1)", "Submenu is open");
-    //     });
-    // });
-    // //clicks the delete option
-    // casper.then(function() {
-    //     this.click("div.context-menu-item:nth-child(3) > a:nth-child(1) > div:nth-child(1) > h5:nth-child(1)");
-    // });
-
     casper.then(function() {
       this.wait(2000, function () {
       this.click(".sweet-alert.showSweetAlert.visible > div.sa-button-container > div > button")

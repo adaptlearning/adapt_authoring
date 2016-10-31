@@ -1,5 +1,5 @@
-{"serverPort":"3000", 
-"username":"email@email.com", 
+{"serverPort":"5000",
+"username":"email@email.com",
 "password":"password",
 "createCourseName" : "Name",
 "createCourseDescription" : "This is a description",

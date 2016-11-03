@@ -1,7 +1,7 @@
 // createProject.js
 var loginModule = require("./login");
 //creates a new project
-casper.test.begin('Create Course', 5, function suite(test) {
+casper.test.begin('Create Course', 4, function suite(test) {
     loginModule.login();
     casper.then(function() {
 	    this.wait(500, function() {});
@@ -10,52 +10,35 @@ casper.test.begin('Create Course', 5, function suite(test) {
 
     //checks that the add course button exists, then clicks it
     casper.then(function() {
-        test.assertExists("button[class='btn dashboard-sidebar-add-course']", "Add new course button exists");
+        test.assertExists("button[class='dashboard-sidebar-add-course action-primary']", "Add new course button exists");
         this.wait(1000, function() {
-        	this.capture("./test_frontend/img/create/01-on home page.png");
+          this.capture("./test_frontend/img/create/01-on home page.png");
         });
     });
     casper.then(function() {
-        this.click("button[class='btn dashboard-sidebar-add-course']");
+        this.click("button[class='dashboard-sidebar-add-course action-primary']");
     });
 
-
     casper.then(function() {
-        test.assertExists('input[id="projectDetailTitle"]', "Found the add project page");
+        test.assertExists(".course-edit-inner", "Found the add project page");
         this.wait(1000, function() {
         	this.capture("./test_frontend/img/create/02-create project page.png");
         });
     });
 
-    //testing to see if error message appears when no title is entered
-    casper.then(function() {
-        this.click(".editor-project-edit-sidebar-save");   
-        casper.test.comment("Testing error message when no title is entered");   
-    });
-    casper.then(function() {
-        this.test.assertEval(function() {
-            return __utils__.findOne('#titleErrorMessage').textContent !== '';
-        }, "Error message appeared properly - no title given");
-        //this.test.assertSelectorHasText("#titleErrorMessage", "Please", "Error message appeared properly - no title given");    
-        this.wait(1000, function() {
-            this.capture("./test_frontend/img/create/03-error report working.png");
-        });
-    });
-
     //fills in the form with valid information and submits it
-    casper.then(function() {
-        this.fillSelectors("form.forms", {
-	    'input[id=projectDetailTitle]' : config.createCourseName,
-	    'textarea[id=projectDetailDescription]' : config.createCourseDescription
-		});
-    });
+  casper.then(function() {
+        this.fill("form", {
+	    'title' : config.createCourseName,
+		});});
+
     casper.then(function() {
         this.wait(1000, function() {
         	this.capture("./test_frontend/img/create/04-values filled in.png");
         });
     });
     casper.then(function() {
-        this.click(".editor-project-edit-sidebar-save");      
+        this.click(".editor-project-edit-sidebar-save-inner");
     });
 
     casper.then(function() {
@@ -66,5 +49,5 @@ casper.test.begin('Create Course', 5, function suite(test) {
 
     casper.run(function() {
         test.done();
-    }); 
+    });
 });

@@ -293,6 +293,7 @@
   "app.exportcoursesuccess": "Course exported successfully!",
   "app.infodefaulttitle": "Information",
   "app.errordefaulttitle": "Error",
+  "app.warningdefaulttitle": "Warning",
   "app.confirmdefaulttitle": "Are you sure?",
   "app.confirmdefaultyes": "Yes, I'm sure",
   "app.confirmwait": "Wait",

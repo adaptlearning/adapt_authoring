@@ -8,11 +8,12 @@ define(function(require){
     var helpers = {
         cacheBuster: function(context) {
           var currentUser = Origin.sessionModel.get('user');
-          if(!currentUser) return '';
-
           var lastSession = new Date(currentUser.get('lastAccess'));
           var lastUpdated = new Date(context.updatedAt);
-          if(lastSession < lastUpdated) return '?' + new Date().getTime()
+          // force a reload in the event that user or updatedAt are undefined
+          if(!currentUser || !context.updatedAt || lastSession < lastUpdated) {
+            return '?' + new Date().getTime()
+          }
         },
 
         getAssetIcon: function(mimeType) {
@@ -330,7 +331,6 @@ define(function(require){
           } else {
             return '/api/asset/thumb/' + url;
           }
-
         },
 
         ifAssetIsExternal: function(url, block) {

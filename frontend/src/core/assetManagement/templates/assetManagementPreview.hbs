@@ -19,12 +19,11 @@
     {{/ifValueEquals}}
 
     {{#ifValueEquals assetType "audio"}}
-      <i class="fa fa-file-audio-o"></i>
       <audio src="api/asset/serve/{{_id}}" type="{{mimeType}}" controls="controls" style="width:100%;"></audio>
     {{/ifValueEquals}}
 
     {{#ifValueEquals assetType "other"}}
-      <i class="fa fa-file-o"></i>
+      <i class="fa {{getAssetIcon mimeType}}"></i>
     {{/ifValueEquals}}
   </div>
 

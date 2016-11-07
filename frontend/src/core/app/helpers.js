@@ -15,17 +15,41 @@ define(function(require){
           if(lastSession < lastUpdated) return '?' + new Date().getTime()
         },
 
-        getAssetIcon: function(context) {
-          switch(context.assetType) {
+        getAssetIcon: function(mimeType) {
+          var type = mimeType.split('/')[0];
+          var subType = mimeType.split('/')[1];
+          // catch the easy ones first
+          switch(type) {
             case 'image':
-              return 'fa-image-o';
+              return 'fa fa-file-image-o';
             case 'video':
-              return 'fa-video-o';
+              return 'fa fa-file-video-o';
             case 'audio':
-              return 'fa-audio-o';
-            default:
-              return 'fa-file-o';
+              return 'fa fa-file-audio-o';
           }
+          // catch some common types
+          switch(subType) {
+            case 'pdf':
+              return 'fa fa-file-pdf-o';
+            case 'msword':
+            case 'vnd.openxmlformats-officedocument.wordprocessingml.document':
+              return 'fa fa-file-word-o';
+            case 'vnd.ms-powerpoint':
+            case 'vnd.openxmlformats-officedocument.presentationml.presentation':
+              return 'fa fa-file-powerpoint-o';
+            case 'vnd.ms-excel':
+            case 'vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+              return 'fa fa-file-excel-o';
+            case 'plain':
+            case 'markdown':
+              return 'fa fa-file-text-o';
+            case 'html':
+            case 'javascript':
+            case 'json':
+              return 'fa fa-file-code-o';
+          }
+          // default to standard file icon
+          return 'fa fa-file-o';
         },
 
         console: function(context) {

@@ -16,7 +16,7 @@
   "app.returninguser": "Returning User",
   "app.createnewaccount": "Create a new account - it's free and the button doesn't work",
   "app.createnewaccountbutton": "Create an account",
-  "app.alreadyloggedin": "Looks like you're are already logged in! Click the button below to go to your dashboard. ",
+  "app.alreadyloggedin": "Looks like you are already logged in! Click the button below to go to your dashboard. ",
   "app.usermanagement": "User Management",
   "app.usermanagementtitle": "Manage System Users",
   "app.addusertitle": "Add new user",

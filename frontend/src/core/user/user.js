@@ -8,6 +8,7 @@ define(function(require) {
   var UserProfileModel = require('coreJS/user/models/userProfileModel');
 
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
+  var SetPasswordView = require('coreJS/user/views/setPasswordView');
   var ResetPasswordView = require('coreJS/user/views/resetPasswordView');
   var UserPasswordResetModel = require('coreJS/user/models/userPasswordResetModel');
 
@@ -37,13 +38,17 @@ define(function(require) {
         Origin.trigger('sidebar:sidebarContainer:hide');
         currentView = ForgotPasswordView;
         break;
+      case 'set':
+        Origin.trigger('sidebar:sidebarContainer:hide');
+        currentView = SetPasswordView;
+        break;
       case 'reset':
         Origin.trigger('sidebar:sidebarContainer:hide');
         currentView = ResetPasswordView;
-        break;      
+        break;
       case 'profile':
         settings.authenticate = true;
-        Origin.trigger('location:title:update', {title: window.polyglot.t('app.editprofiletitle')});        
+        Origin.trigger('location:title:update', {title: window.polyglot.t('app.editprofiletitle')});
         currentView = UserProfileView;
         break;
     }
@@ -51,7 +56,7 @@ define(function(require) {
     if (currentView) {
       switch (location) {
         case 'profile':
-          var profile = new UserProfileModel(); 
+          var profile = new UserProfileModel();
           profile.fetch({
             success: function() {
               Origin.sidebar.addView(new UserProfileSidebarView().$el);
@@ -59,16 +64,17 @@ define(function(require) {
             }
           });
           break;
+        case 'set':
         case 'reset':
           var reset = new UserPasswordResetModel({token: subLocation});
           reset.fetch({
             success: function() {
-              Origin.router.createView(currentView, {model: reset}, settings);    
+              Origin.router.createView(currentView, {model: reset}, settings);
             }
           });
           break;
         default:
-          Origin.router.createView(currentView, {model: Origin.sessionModel}, settings);  
+          Origin.router.createView(currentView, {model: Origin.sessionModel}, settings);
       }
     }
   });

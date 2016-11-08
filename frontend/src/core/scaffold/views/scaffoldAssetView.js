@@ -3,7 +3,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var BackboneForms = require('backboneForms');
   var Origin = require('coreJS/app/origin');
-  var Helpers = require('helpers');
+  var Helpers = require('coreJS/app/helpers');
   var AssetManagementModalView = require('coreJS/assetManagement/views/assetManagementModalView');
   var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
   var EditorCourseAssetModel = require('editorCourse/models/editorCourseAssetModel');
@@ -14,18 +14,17 @@ define(function(require) {
     events: {
       // triggered whenever something happens that affects the result of `this.getValue()`
       'change input': function() {
-          this.toggleFieldAvailibility();
-          this.trigger('change', this);
+        this.trigger('change', this);
       },
       // triggered whenever an input becomes the `document.activeElement`
       'focus input': function() {
         // This call automatically sets `this.hasFocus` to `true`
-          this.trigger('focus', this);
+        this.trigger('focus', this);
       },
       // triggered whenever an input stops being the `document.activeElement`
       'blur input': function() {
         // This call automatically sets `this.hasFocus` to `false`
-          this.trigger('blur', this);
+        this.trigger('blur', this);
       },
 
       'click .scaffold-asset-picker': 'onAssetButtonClicked',
@@ -45,6 +44,7 @@ define(function(require) {
     },
 
     render: function() {
+      console.log('ScaffoldAssetView.render:', this.value);
       var assetType = this.schema.fieldType.replace('Asset:', '');
       var data = {
         value: this.value,
@@ -53,17 +53,8 @@ define(function(require) {
 
       this.$el.html(Handlebars.templates[this.constructor.template](data));
       this.setValue(this.value);
-      this.toggleFieldAvailibility();
 
       return this;
-    },
-
-    getValue: function() {
-      return this.value || '';
-    },
-
-    setValue: function(value) {
-      this.value = value;
     },
 
     focus: function() {
@@ -74,21 +65,87 @@ define(function(require) {
       if (this.hasFocus) this.$('input').blur();
     },
 
-    // disables if empty
-    toggleFieldAvailibility: function() {
-      var isEmpty = this.getValue().length === 0;
-      this.$('input').attr('disabled', !isEmpty);
+    showFileUI: function(show) {
+      console.log('showFileUI:', show);
+      if(show === false) {
+        this.$('.scaffold-asset-preview').addClass('display-none');
+        this.$('.scaffold-asset-edit-buttons').addClass('display-none');
+      } else {
+        this.$('.scaffold-asset-preview').removeClass('display-none');
+        this.$('.scaffold-asset-edit-buttons').removeClass('display-none');
+      }
     },
 
-    checkValueHasChanged: function() {
-      if ('heroImage' === this.key){
-        this.saveModel(false, {heroImage: this.getValue()});
-        return;
+    showInputUI: function(show) {
+      if(show === false) {
+        this.$('.scaffold-asset-external-input').addClass('display-none');
+        this.$('.scaffold-asset-picker-buttons').removeClass('display-none');
+      } else {
+        this.$('.scaffold-asset-external-input').removeClass('display-none');
+        this.$('.scaffold-asset-picker-buttons').addClass('display-none');
       }
-      var contentTypeId = Origin.scaffold.getCurrentModel().get('_id');
-      var contentType = Origin.scaffold.getCurrentModel().get('_type');
-      var fieldname = this.getValue() ? this.getValue().replace('course/assets/', '') : '';
-      this.removeCourseAsset(contentTypeId, contentType, fieldname);
+    },
+
+    saveModel: function(shouldResetAssetCollection, attributesToSave) {
+      var isUsingAlternativeModel = false;
+      var isPatch = false;
+
+      var currentModel = Origin.scaffold.getCurrentModel()
+      var alternativeModel = Origin.scaffold.getAlternativeModel();
+      var alternativeAttribute = Origin.scaffold.getAlternativeAttribute();
+
+      attributesToSave = typeof attributesToSave == 'undefined' ? [] : attributesToSave;
+
+      // Check if alternative model should be used
+      if (alternativeModel) {
+        currentModel = alternativeModel;
+        isUsingAlternativeModel = true;
+      }
+
+      // store data state
+      Origin.scaffold.getCurrentForm().commit({ validate: false });
+
+      // Check if alternative attribute should be used
+      if (alternativeAttribute) {
+        attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
+      }
+
+      if (!attributesToSave && !attributesToSave.length) {
+       currentModel.pruneAttributes();
+       currentModel.unset('tags');
+      } else {
+        isPatch = true;
+      }
+
+      currentModel.save(attributesToSave, {
+        patch: isPatch,
+        error: function() {
+          Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorsaveasset') });
+        },
+        success: _.bind(function() {
+          // Sometimes we don't need to reset the courseAssets
+          if (shouldResetAssetCollection) {
+            Origin.editor.data.courseAssets.fetch({
+              reset: true,
+              success: _.bind(this.onSaveSuccess, this)
+            });
+          } else {
+            this.onSaveSuccess();
+          }
+        }, this)
+      })
+    },
+
+    /**
+    * Data handlers
+    */
+
+    getValue: function() {
+      return this.value || '';
+    },
+
+    setValue: function(value) {
+      this.value = value;
     },
 
     findAsset: function (contentTypeId, contentType, fieldname) {
@@ -105,6 +162,7 @@ define(function(require) {
       var asset = Origin.editor.data.courseAssets.findWhere(searchCriteria);
 
       // HACK - Try relaxing the search criteria for historic data
+      // TODO is this still needed?
       if (!asset) {
         asset = Origin.editor.data.courseAssets.findWhere({
           _contentType: contentType,
@@ -151,59 +209,8 @@ define(function(require) {
       }
     },
 
-    saveModel: function(shouldResetAssetCollection, attributesToSave) {
-      var self = this;
-      var isUsingAlternativeModel = false;
-      var isPatch = false;
-
-      var currentModel = Origin.scaffold.getCurrentModel()
-      var alternativeModel = Origin.scaffold.getAlternativeModel();
-      var alternativeAttribute = Origin.scaffold.getAlternativeAttribute();
-
-      attributesToSave = typeof attributesToSave == 'undefined' ? [] : attributesToSave;
-
-      // Check if alternative model should be used
-      if (alternativeModel) {
-        currentModel = alternativeModel;
-        isUsingAlternativeModel = true;
-      }
-
-      // store data state
-      Origin.scaffold.getCurrentForm().commit({ validate: false });
-
-      // Check if alternative attribute should be used
-      if (alternativeAttribute) {
-        attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
-      }
-
-      if (!attributesToSave && !attributesToSave.length) {
-       currentModel.pruneAttributes();
-       currentModel.unset('tags');
-      } else {
-        isPatch = true;
-      }
-
-      currentModel.save(attributesToSave, {
-        patch: isPatch,
-        error: function() {
-          Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorsaveasset') });
-        },
-        success: function() {
-          // Sometimes we don't need to reset the courseAssets
-          if (shouldResetAssetCollection) {
-            Origin.editor.data.courseAssets.fetch({
-              reset: true,
-              success: _.bind(self.onSaveSuccess, self)
-            });
-          } else {
-            this.onSaveSuccess();
-          }
-        }
-      })
-    },
-
     /**
-    * e handlers
+    * event handlers
     */
 
     onAutofill: function(courseAssetObject, value) {
@@ -223,26 +230,48 @@ define(function(require) {
 
     onEditButtonClicked: function(e) {
       e && e.preventDefault();
+      var data = {
+        model: Origin.scaffold.getCurrentModel()
+      };
+      Origin.trigger('modal:open', AssetManagementItemModalView, data, this);
     },
 
     onChangeButtonClicked: function(e) {
       e && e.preventDefault();
+      if(Helpers.isAssetExternal(this.value)) {
+        this.showFileUI(false);
+        this.showInputUI(true);
+      }
+      else {
+        this.onAssetButtonClicked(e);
+      }
     },
 
     onClearButtonClicked: function(e) {
-       e && e.preventDefault();
-
-      if(!isExternal) this.checkValueHasChanged();
-      else this.saveModel(false);
+      e && e.preventDefault();
 
       this.setValue('');
-      this.toggleFieldAvailibility();
+      this.showInputUI();
+
+      if(Helpers.isAssetExternal(this.value)) {
+        this.saveModel(false);
+      }
+      else {
+        if ('heroImage' === this.key){
+          this.saveModel(false, { heroImage: this.getValue() });
+          return;
+        }
+
+        var contentTypeId = Origin.scaffold.getCurrentModel().get('_id');
+        var contentType = Origin.scaffold.getCurrentModel().get('_type');
+        var fieldname = this.getValue() ? this.getValue().replace('course/assets/', '') : '';
+        this.removeCourseAsset(contentTypeId, contentType, fieldname);
+      }
     },
 
     onExternalAssetButtonClicked: function(e) {
       e && e.preventDefault();
-      this.$('.scaffold-asset-external-input').removeClass('display-none');
-      this.$('.scaffold-asset-buttons').addClass('display-none');
+      this.showInputUI();
     },
 
     onExternalAssetSaveClicked: function(e) {
@@ -254,15 +283,13 @@ define(function(require) {
         this.saveModel(false);
       } else {
         // If nothing don't bother saving - instead revert to showing the buttons again
-        this.$('.scaffold-asset-external-input').addClass('display-none');
-        this.$('.scaffold-asset-buttons').removeClass('display-none');
+        this.showInputUI(false);
       }
     },
 
     onExternalAssetCancelClicked: function(e) {
       e && e.preventDefault();
-      this.$('.scaffold-asset-external-input').addClass('display-none');
-      this.$('.scaffold-asset-buttons').removeClass('display-none');
+      this.render();
     },
 
     onSaveSuccess: function() {

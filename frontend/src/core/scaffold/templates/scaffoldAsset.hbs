@@ -1,87 +1,83 @@
-{{#if value}}
 <div class="scaffold-asset-container">
+
+	{{#if this.value}}
 
 	{{! Work out which type it is and display the correct html markup}}
 
 	{{! image }}
 	{{#ifValueEquals type 'image'}}
 		{{#ifAssetIsExternal value}}
-		<img class="scaffold-asset-preview" src="{{value}}"/>
+			<img class="scaffold-asset-preview" src="{{value}}"/>
 		{{else}}
-			{{#ifAssetIsHeroImage value}}
-			<img class="scaffold-asset-preview" src="/api/asset/thumb/{{value}}"/>
-			{{else}}
-	      {{#if thumbnailPath}}
-			  <img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}{{cacheBuster this}}"/>
-			  {{else}}
-	        {{#ifImageIsCourseAsset value}}
-	        <img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}{{cacheBuster this}}"/>
-	        {{else}}
-	        <a class="scaffold-asset-preview" title="{{t 'app.nothumbnailforimage'}}" href="{{getAssetFromValue value}}" target="_blank">
-	          <i class="fa fa-file-image-o fa-large"></i>
-	        </a>
-	        {{/ifImageIsCourseAsset}}
-	      {{/if}}
-	    {{/ifAssetIsHeroImage}}
-		{{/ifAssetIsExternal}}
-	{{/ifValueEquals}}
-
-	{{! other }}
-	{{#ifValueEquals type 'other'}}
-		{{#ifAssetIsExternal value}}
-		<a class="scaffold-asset-preview" href="{{value}}" target="_blank">
-			<i class="fa fa-file-o fa-large"></i>
-			<div>{{value}}</div>
-		</a>
-		{{else}}
-		<a class="scaffold-asset-preview" href="{{getAssetFromValue value}}" target="_blank">
-			<i class="fa fa-file-o fa-large"></i>
-			<div>{{value}}</div>
-		</a>
+      {{#ifImageIsCourseAsset value}}
+	      <img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}{{cacheBuster this}}"/>
+      {{else}}
+	      <a class="scaffold-asset-preview" title="{{t 'app.nothumbnailforimage'}}" href="{{getAssetFromValue value}}" target="_blank">
+	        <i class="fa fa-file-image-o fa-large"></i>
+	      </a>
+      {{/ifImageIsCourseAsset}}
 		{{/ifAssetIsExternal}}
 	{{/ifValueEquals}}
 
 	{{! video }}
 	{{#ifValueEquals type 'video'}}
 		{{#ifAssetIsExternal value}}
-		<a class="scaffold-asset-preview" href="{{value}}" target="_blank">
-			<i class="fa fa-file-movie-o fa-large"></i>
-			<div>{{value}}</div>
-		</a>
+			<a class="scaffold-asset-preview" href="{{value}}" target="_blank">
+				<i class="fa fa-file-movie-o fa-large"></i>
+				<div>{{value}}</div>
+			</a>
 		{{else}}
-		<img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
+			<img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
 		{{/ifAssetIsExternal}}
 	{{/ifValueEquals}}
 
 	{{! audio }}
 	{{#ifValueEquals type 'audio'}}
 		{{#ifAssetIsExternal value}}
-		<a class="scaffold-asset-preview" href="{{value}}" target="_blank">
-			<i class="fa fa-file-audio-o fa-large"></i>
-			<div>{{value}}</div>
-		</a>
+			<a class="scaffold-asset-preview" href="{{value}}" target="_blank">
+				<i class="fa fa-file-audio-o fa-large"></i>
+				<div>{{value}}</div>
+			</a>
 		{{else}}
-		<a class="scaffold-asset-preview" href="{{getAssetFromValue value}}" target="_blank">
-			<i class="fa fa-file-audio-o fa-large"></i>
-			<div>{{value}}</div>
-		</a>
+			<a class="scaffold-asset-preview" href="{{getAssetFromValue value}}" target="_blank">
+				<i class="fa fa-file-audio-o fa-large"></i>
+				<div>{{value}}</div>
+			</a>
 		{{/ifAssetIsExternal}}
 	{{/ifValueEquals}}
 
+	{{! other }}
+	{{#ifValueEquals type 'other'}}
+		{{#ifAssetIsExternal value}}
+			<a class="scaffold-asset-preview" href="{{value}}" target="_blank">
+				<i class="fa fa-file-o fa-large"></i>
+				<div>{{value}}</div>
+			</a>
+		{{else}}
+			<a class="scaffold-asset-preview" href="{{getAssetFromValue value}}" target="_blank">
+				{{! TODO user Helpers.getAssetIcon(mimeType) }}
+				<i class="fa fa-file-o fa-large"></i>
+				<div>{{value}}</div>
+			</a>
+		{{/ifAssetIsExternal}}
+	{{/ifValueEquals}}
+
+
 	{{! buttons }}
 
-	<div class="scaffold-asset-buttons">
+	<div class="scaffold-asset-edit-buttons">
 		{{#ifAssetIsExternal value}}
 		{{else}}
-			<button class="btn secondary scaffold-asset-edit">{{t 'app.editeasset'}}</button>
+			<!-- <button class="btn secondary scaffold-asset-edit">{{t 'app.editeasset'}}</button> -->
 		{{/ifAssetIsExternal}}
 		<button class="btn primary scaffold-asset-change">{{t 'app.changeasset'}}</button>
 		<button class="btn alert scaffold-asset-clear">{{t 'app.removeasset'}}</button>
 	</div>
 
-{{else}}
+	{{/if}}
 
-	{{! show inputs}}
+
+	{{! inputs}}
 
 	<div class="scaffold-asset-external-input display-none">
 		<input type="text" class="scaffold-asset-external-input-field" />
@@ -91,10 +87,12 @@
 		</div>
 	</div>
 
-	<div class="scaffold-asset-buttons">
+	{{#if this.value}}
+	{{else}}
+	<div class="scaffold-asset-picker-buttons">
 		<button class="btn secondary scaffold-asset-picker">{{t 'app.selectasset'}}</button>
 		<button class="btn secondary-hollow scaffold-asset-external">{{t 'app.selectexternalasset'}}</button>
 	</div>
+	{{/if}}
 
 </div>
-{{/if}}

@@ -36,6 +36,16 @@
         </span>
       </button>
     </div>
+    <div class="sidebar-row">
+      <button class="editor-common-sidebar-export-html">
+        <span class="editor-common-sidebar-export-html-inner">
+            <i class="fa fa-files-o primary-color"></i>{{ t 'app.exporthtml'}}
+        </span>
+        <span class="editor-common-sidebar-exporting-html display-none">
+          <i class="fa fa-circle-o-notch fa-spin"></i>{{ t 'app.exportinghtml'}}
+        </span>
+      </button>
+    </div>
     {{/ifHasPermissions}}
 
     <div class="separator" />

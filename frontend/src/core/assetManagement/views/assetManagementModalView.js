@@ -84,7 +84,7 @@ define(function(require) {
     },
 
     onNewAssetClicked: function(e) {
-      event && event.preventDefault();
+      e && e.preventDefault();
       if($('asset-management-modal-new-asset').length === 0) {
         Origin.trigger('assetManagement:refine:hide');
         Origin.trigger('assetManagement:assetPreviewView:delete');

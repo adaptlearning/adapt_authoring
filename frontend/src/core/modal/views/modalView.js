@@ -17,7 +17,8 @@ define(function(require) {
         _shouldShowCancelButton: true,
         _shouldShowDoneButton: true,
         _shouldDisableCancelButton: false,
-        _shouldDisableDoneButton: false
+        _shouldDisableDoneButton: false,
+        _shouldRenderPopup: true
       }
       this.view = options.view;
       this.options = _.extend(defaults, options.options);

@@ -66,11 +66,11 @@
 	{{! buttons }}
 
 	<div class="scaffold-asset-edit-buttons">
+		<button class="btn primary scaffold-asset-change">{{t 'app.changeasset'}}</button>
 		{{#ifAssetIsExternal value}}
 		{{else}}
-			<!-- <button class="btn secondary scaffold-asset-edit">{{t 'app.editeasset'}}</button> -->
+			<button class="btn secondary scaffold-asset-edit">{{t 'app.editeasset'}}</button>
 		{{/ifAssetIsExternal}}
-		<button class="btn primary scaffold-asset-change">{{t 'app.changeasset'}}</button>
 		<button class="btn alert scaffold-asset-clear">{{t 'app.removeasset'}}</button>
 	</div>
 

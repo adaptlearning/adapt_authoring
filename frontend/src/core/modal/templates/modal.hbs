@@ -1,3 +1,4 @@
+{{#if _shouldRenderPopup}}
 <div class="modal-popup">
   <div class="modal-popup-toolbar clearfix">
     {{#if title}}
@@ -32,3 +33,9 @@
     </div>
   </div>
 </div>
+{{else}}
+<div class="modal-popup-content">
+  <div class="modal-popup-content-inner">
+  </div>
+</div>
+{{/if}}

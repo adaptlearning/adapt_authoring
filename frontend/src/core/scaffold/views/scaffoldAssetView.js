@@ -4,9 +4,11 @@ define(function(require) {
   var BackboneForms = require('backboneForms');
   var Origin = require('coreJS/app/origin');
   var Helpers = require('coreJS/app/helpers');
-  var AssetManagementModalView = require('coreJS/assetManagement/views/assetManagementModalView');
+  var AssetModel = require('coreJS/assetManagement/models/assetModel');
   var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
+  var AssetManagementModalView = require('coreJS/assetManagement/views/assetManagementModalView');
   var EditorCourseAssetModel = require('editorCourse/models/editorCourseAssetModel');
+  var ScaffoldEditAssetView = require('coreJS/scaffold/views/scaffoldEditAssetView');
 
   var ScaffoldAssetView = Backbone.Form.editors.Base.extend({
     tagName: 'div',
@@ -39,6 +41,7 @@ define(function(require) {
 
     initialize: function(options) {
       this.listenTo(Origin, 'scaffold:assets:autofill', this.onAutofill);
+      this.listenTo(Origin, 'modal:onUpdate', this.render);
       // Call parent constructor
       Backbone.Form.editors.Base.prototype.initialize.call(this, options);
     },
@@ -230,10 +233,26 @@ define(function(require) {
 
     onEditButtonClicked: function(e) {
       e && e.preventDefault();
-      var data = {
-        model: Origin.scaffold.getCurrentModel()
-      };
-      Origin.trigger('modal:open', AssetManagementItemModalView, data, this);
+      var courseasset = this.findAsset(
+        Origin.scaffold.getCurrentModel().get('_id'),
+        Origin.scaffold.getCurrentModel().get('_type'),
+        this.getValue() ? this.getValue().replace('course/assets/', '') : ''
+      );
+      var self = this;
+      var asset = new AssetModel({ _id: courseasset.get('_assetId') });
+
+      asset.fetch({
+        success: function(model) {
+          Origin.trigger('modal:open', ScaffoldEditAssetView, {
+            _shouldRenderPopup: false,
+            model: model,
+            onUpdate: self.onModalUpdate
+          }, self);
+        },
+        error: function() {
+          Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgeneric') });
+        }
+      });
     },
 
     onChangeButtonClicked: function(e) {

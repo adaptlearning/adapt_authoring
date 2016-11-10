@@ -53,7 +53,26 @@
     </div>
     {{/if}}
 
-    <div class="asset-preview-date">Uploaded on {{momentFormat createdAt "DD/MM/YY"}}{{#ifHasPermissions "{{tenantid}}/user:read"}} <span class="label">by</span> {{getUserNameFromId createdBy}}{{/ifHasPermissions}}.</div>
+    <!-- List of courses asset's used in -->
+    {{#if courses.length}}
+    <div class="asset-group">
+      <div class="label">Used in:</div>
+      <div class="courses">
+        {{#each courses}}
+        <div class="course">{{this}}</div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- Show created date (and user if allowed) -->
+    <div class="asset-preview-date">
+      Uploaded on {{momentFormat createdAt "DD/MM/YY"}}
+      {{#ifHasPermissions "{{tenantid}}/user:read"}}
+        <span class="label">by</span> {{getUserNameFromId createdBy}}
+      {{/ifHasPermissions}}
+      .
+    </div>
 
     <!-- Buttons -->
     {{#if isSelectable}}

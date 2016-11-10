@@ -199,6 +199,7 @@
   "app.assetfile": "File",
   "app.noassetsfound": "No assets found",
   "app.uploadnewasset": "Upload new asset",
+  "app.assetdeleteinstruction": "<b>N.B.</b> To delete this asset, please remove it from all courses it's used in.",
   "app.changefile": "Change file",
   "app.uploadfile": "Upload file",
   "app.uploadfileinstruction": "Drag and drop file here, or click the button.",

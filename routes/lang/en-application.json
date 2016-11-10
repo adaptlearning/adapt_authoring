@@ -57,6 +57,7 @@
   "app.myprojects": "My courses",
   "app.addnewproject": "Add new course",
   "app.sharedprojects": "Shared courses",
+  "app.shared": "Shared",
   "app.noprojectstodisplay": "No courses to display",
   "app.pleaseentervalue": "Please enter a value here",
   "app.pleaseaddfile": "Please choose a file to upload",

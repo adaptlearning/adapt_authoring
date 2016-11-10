@@ -86,12 +86,18 @@
     }
     .status-bar {
       position: absolute;
-      bottom: 2px;
-      left: 2px;
-      right: 2px;
-      color: white;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      color: white !important;
       font-weight: 600;
-      &.shared { background-color: @secondary-color; }
+      &.shared {
+        margin: 2px;
+        text-transform: uppercase;
+        .inner {
+          background-color: @secondary-color;
+        }
+      }
     }
 }
 

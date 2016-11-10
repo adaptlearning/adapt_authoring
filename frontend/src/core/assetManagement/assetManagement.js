@@ -7,8 +7,11 @@ define(function(require) {
   var AssetManagementSidebarView = require('coreJS/assetManagement/views/assetManagementSidebarView');
   var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
   var AssetModel = require('coreJS/assetManagement/models/assetModel');
+  var CourseModel = require('editorCourse/models/editorCourseModel');
+  var CourseAssetModel = require('editorCourse/models/editorCourseAssetModel');
   var ProjectCollection = require('coreJS/project/collections/projectCollection');
   var TagsCollection = require('coreJS/tags/collections/tagsCollection');
+
 
   Origin.on('app:dataReady login:changed', function() {
     Origin.globalMenu.addItem({
@@ -26,18 +29,38 @@ define(function(require) {
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
     Origin.assetManagement = {
-      filterData: {}
+      filterData: {},
     };
+    // TODO do this fetch more neatly later...
+    new (Backbone.Collection.extend({ model: CourseAssetModel, url: '/api/content/courseasset' }))()
+      .fetch({
+        success: function(collection) {
+          Origin.editor.data.courseAssets = collection;
+          onLoaded();
+        }
+      });
+    new (Backbone.Collection.extend({ model: CourseModel, url: '/api/content/course' }))()
+      .fetch({
+        success: function(collection) {
+          Origin.editor.data.courses = collection;
+          onLoaded();
+        }
+      });
 
-    // load the right view...
-    if(!location) {
-      loadCollectionView();
-    }
-    else if(location === 'new') {
-      loadAssetView();
-    }
-    else if(subLocation === 'edit'){
-      loadAssetView(location);
+    function onLoaded() {
+      if(_.isEmpty(Origin.editor.data.courses) || _.isEmpty(Origin.editor.data.courseAssets)) {
+        return;
+      }
+      // load the right view...
+      if(!location) {
+        loadCollectionView();
+      }
+      else if(location === 'new') {
+        loadAssetView();
+      }
+      else if(subLocation === 'edit'){
+        loadAssetView(location);
+      }
     }
   });
 

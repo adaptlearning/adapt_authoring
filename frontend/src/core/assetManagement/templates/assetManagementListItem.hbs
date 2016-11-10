@@ -29,13 +29,13 @@
     <!-- Icon -->
     <div class="asset-management-list-item-icon">
       <div class="asset-management-list-item-icon-inner">
-        <i class="fa {{getAssetIcon}}"></i>
+        <i class="{{getAssetIcon mimeType}}"></i>
       </div>
     </div>
     <!-- Thumbnail -->
     <div class="asset-management-list-item-content" {{#ifValueEquals thumbnailPath "false"}}{{else}} data-style="background-image:url(api/asset/thumb/{{_id}}{{cacheBuster this}})"{{/ifValueEquals}}>
       {{#ifValueEquals thumbnailPath "false"}}
-        <i class="fa {{getAssetIcon}}"></i>
+        <i class="{{getAssetIcon mimeType}}"></i>
       {{/ifValueEquals}}
     </div>
     <!-- Details -->

@@ -8,11 +8,11 @@
                     <span class="btn secondary">
                         <i class="fa fa-upload"></i>
                         <span class="btn-label">
-                          {{#if path}}Change file{{else}}Upload file{{/if}}
+                          {{#if path}}{{t 'app.changefile'}}{{else}}{{t 'app.uploadfile'}}{{/if}}
                         </span>
                     </span>
-                    <span class="label">Drag and drop file here, or click the button.</span>
-                    <span class="progress display-none">Uploaded <span class="value"></span>%</span>
+                    <span class="label">{{t 'app.uploadfileinstruction'}}</span>
+                    <span class="progress display-none">{{t 'app.uploaded'}} <span class="value"></span>%</span>
                 </div>
             </label>
         </div>
@@ -26,10 +26,10 @@
 
         <div class="form-group">
             <label for="description">
-                {{t 'app.assetdescription'}} <span class="req">*</span>
+                {{t 'app.assetdescription'}}
                 <span class="error"></span>
             </label>
-            <textarea class="asset-description required" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>
+            <textarea class="asset-description" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>
         </div>
 
         <div class="form-group tags">
@@ -38,8 +38,10 @@
         </div>
 
         <div class="buttons">
-          <button class="asset-management-modal-new-asset-close btn alert">Cancel</button>
-            <button class="asset-management-modal-new-asset-upload btn secondary">Upload</button>
+          <button class="asset-management-modal-new-asset-close btn alert">{{t 'app.cancel'}}</button>
+            <button class="asset-management-modal-new-asset-upload btn secondary">
+              {{#if _id}}{{t 'app.save'}}{{else}}{{t 'app.upload'}}{{/if}}
+            </button>
         </div>
         <input type="hidden" name="tags" id="tags" />
         <input type="hidden" name="workspaces" id="workspaces" />

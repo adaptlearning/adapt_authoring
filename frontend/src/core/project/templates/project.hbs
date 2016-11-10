@@ -14,12 +14,11 @@
 
       </div>
     </div>
+
     {{#if heroImage}}
-    <div class="project-image" style="background-image: url({{heroImageURI}});">
-    </div>
+      <div class="project-image" style="background-image: url({{heroImageURI}});"></div>
     {{else}}
-    <div class="project-image">
-    </div>
+      <div class="project-image"></div>
     {{/if}}
 
     <div class="project-details">
@@ -32,6 +31,11 @@
           <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
           <div class="projects-details-value">{{momentFormat updatedAt "Do MMMM YYYY"}}</div>
         </div>
+
+          {{#if _isShared}}{{#ifUserIsMe createdBy}}
+          <div class="status-bar shared">SHARED</div>
+          {{/ifUserIsMe}}{{/if}}
+
         {{#if tags.length}}
         <div class="project-details-tags project-details-row tags">
           <div class="projects-details-tags-button">
@@ -49,8 +53,8 @@
           </div>
         </div>
         {{/if}}
+
       </div>
     </div>
-
 
 </div>

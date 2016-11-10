@@ -1,27 +1,38 @@
-.scaffold-asset-preview {
-	display:block;
+.scaffold-asset-container {
 	margin-top: 15px;
-	margin-bottom: 10px;
-	transition:color 0.3s;
-	i {
-		font-size:60px;
-	}
-	&:hover {
-		color:#15a4fa;
-	}
-}
 
-.scaffold-asset-buttons {
-	transition:color 0.3s;
-	i {
-		transition:inherit;
-		color:inherit;
+	.scaffold-asset-preview {
+		display: inline-block;
+		max-height: 200px;
+		margin-right: 10px;
+		transition:color 0.3s;
+		i {
+			font-size:60px;
+		}
 		&:hover {
-			color:inherit;
+			color:#15a4fa;
 		}
 	}
-}
 
-.scaffold-asset-external-input-buttons {
-	margin-top:10px;
+	.scaffold-asset-edit-buttons {
+		display: inline-block;
+		vertical-align: top;
+		transition:color 0.3s;
+		button {
+			display: block;
+			width: 120px;
+			margin-bottom: 10px;
+		}
+		i {
+			transition:inherit;
+			color:inherit;
+			&:hover {
+				color:inherit;
+			}
+		}
+	}
+
+	.scaffold-asset-external-input-buttons {
+		margin-top:10px;
+	}
 }

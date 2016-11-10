@@ -19,6 +19,30 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(this, 'remove', this.remove);
+      this.setCourses();
+    },
+
+    setCourses: function() {
+      var uses = Origin.editor.data.courseAssets.where({ _assetId: this.model.get('_id') });
+      // get course IDs from courseassets
+      var courseIDs = [];
+      for(var i = 0, count = uses.length; i < count; i++) {
+        courseIDs.push(uses[i].get('_courseId'));
+      }
+      // get course models from IDs
+      var courses = [];
+      for(var i = 0, count = courseIDs.length; i < count; i++) {
+        courses = courses.concat(Origin.editor.data.courses.where({ _id: courseIDs[i] }));
+      }
+      // get course names from models
+      var courseNames = [];
+      for(var i = 0, count = courses.length; i < count; i++) {
+        if(_.indexOf(courseNames, courses[i].get('title')) == -1) {
+          courseNames.push(courses[i].get('title'));
+        }
+      }
+      // set on model
+      this.model.set('courses', courseNames);
     },
 
     postRender: function () {

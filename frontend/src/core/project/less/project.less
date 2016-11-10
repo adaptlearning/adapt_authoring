@@ -42,9 +42,13 @@
                 }
             }
         }
+        .status-bar {
+          color: @primary-color;
+          background-color: white !important;
+        }
     }
     &.listing {
-        width: 700px;
+      width: 700px;
     }
 
     img {
@@ -68,7 +72,7 @@
     }
 
     .tag-container-no-items {
-        margin-bottom:12px;
+        margin-bottom:10px;
     }
     .project-details-tags {
         button {
@@ -79,6 +83,15 @@
         button {
             margin-top:10px;
         }
+    }
+    .status-bar {
+      position: absolute;
+      bottom: 2px;
+      left: 2px;
+      right: 2px;
+      color: white;
+      font-weight: 600;
+      &.shared { background-color: @secondary-color; }
     }
 }
 
@@ -167,7 +180,7 @@
 
 .project-details-inner {
     padding:20px;
-    
+
     .project-detail-title {
         margin-bottom:10px;
         display: inline-block;
@@ -187,15 +200,15 @@
             }
         }
     }
-    
+
     .project-details-row {
         font-size:11px;
+        margin-bottom: 10px;
     }
 
     .projects-details-label {
         color:#9d9d9d;
         font-weight:600;
-        margin-bottom:4px;
     }
 }
 

@@ -56,6 +56,9 @@ define(function(require){
       var selectedTheme = this.getSelectedTheme();
 
       if(this.themeIsEditable(selectedTheme)) {
+        this.$('.tile.preset').show();
+        this.$('.buttons-container').show();
+
         this.form = Origin.scaffold.buildForm({
           model: selectedTheme,
           schemaType: selectedTheme.get('theme')
@@ -73,6 +76,9 @@ define(function(require){
 
         var toRestore = Origin.editor.data.course.get('themeSettings') || this.getDefaultThemeSettings();
         this.restoreFormSettings(toRestore);
+      } else {
+        this.$('.tile.preset').hide();
+        this.$('.buttons-container').hide();
       }
     },
 
@@ -336,6 +342,10 @@ define(function(require){
     },
 
     themeIsEditable: function(theme) {
+      // Dirty HACK, remove this when vanilla schema is fixed...
+      if('adapt-contrib-vanilla' === theme.get('name')) {
+        return false;
+      }
       var props = theme && theme.get('properties');
       if(!props) {
         return false;

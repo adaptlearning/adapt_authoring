@@ -8,7 +8,7 @@ define(function(require) {
   var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
   var AssetManagementModalView = require('coreJS/assetManagement/views/assetManagementModalView');
   var EditorCourseAssetModel = require('editorCourse/models/editorCourseAssetModel');
-  var ScaffoldEditAssetView = require('coreJS/scaffold/views/scaffoldEditAssetView');
+  var ScaffoldAssetEditView = require('coreJS/scaffold/views/scaffoldAssetEditView');
 
   var ScaffoldAssetView = Backbone.Form.editors.Base.extend({
     tagName: 'div',
@@ -243,7 +243,7 @@ define(function(require) {
 
       asset.fetch({
         success: function(model) {
-          Origin.trigger('modal:open', ScaffoldEditAssetView, {
+          Origin.trigger('modal:open', ScaffoldAssetEditView, {
             _shouldRenderPopup: false,
             model: model,
             onUpdate: self.onModalUpdate

@@ -28,30 +28,43 @@ define(function(require) {
   });
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
+    // store Origin data
     Origin.assetManagement = {
       filterData: {},
     };
-    // TODO do this fetch more neatly later...
-    new (Backbone.Collection.extend({ model: CourseAssetModel, url: '/api/content/courseasset' }))()
-      .fetch({
-        success: function(collection) {
-          Origin.editor.data.courseAssets = collection;
-          onLoaded();
-        }
-      });
-    new (Backbone.Collection.extend({ model: CourseModel, url: '/api/content/course' }))()
-      .fetch({
-        success: function(collection) {
-          Origin.editor.data.courses = collection;
-          onLoaded();
-        }
-      });
+    // create the empty collections
+    if(_.isEmpty(Origin.editor.data.courses) && _.isEmpty(Origin.editor.data.courseAssets)) {
+      Origin.editor.data.courses = new (Backbone.Collection.extend({
+        model: CourseAssetModel, url: '/api/content/course'
+      }))();
+      Origin.editor.data.courseAssets = new (Backbone.Collection.extend({
+        model: CourseAssetModel, url: '/api/content/courseasset'
+      }))();
+    }
 
-    function onLoaded() {
-      if(_.isEmpty(Origin.editor.data.courses) || _.isEmpty(Origin.editor.data.courseAssets)) {
+    // do a fetch
+    var fetchedCourses = false;
+    var fetchedCourseassets = false;
+    Origin.editor.data.courses.fetch({
+      success: function(collection) {
+        Origin.editor.data.courses = collection;
+        fetchedCourses = true;
+        onCollectionFetched();
+      }
+    });
+    Origin.editor.data.courseAssets.fetch({
+      success: function(collection) {
+        Origin.editor.data.courseAssets = collection;
+        fetchedCourseassets = true;
+        onCollectionFetched();
+      }
+    });
+
+    function onCollectionFetched() {
+      if(fetchedCourses && fetchedCourseassets) {
         return;
       }
-      // load the right view...
+      // we're ready, load the right view...
       if(!location) {
         loadCollectionView();
       }
@@ -88,10 +101,9 @@ define(function(require) {
       success: function(tags) {
         // Sidebar also needs access to collection, so create now. Fetch is done
         // in collectionView (thanks to server-side filtering)
-        var assetCollection = new AssetCollection();
         Origin.trigger('location:title:hide');
-        Origin.sidebar.addView(new AssetManagementSidebarView({ collection: tags }).$el );
-        Origin.router.createView(AssetManagementView, { collection: assetCollection });
+        Origin.sidebar.addView(new AssetManagementSidebarView({ collection: tags }).$el);
+        Origin.router.createView(AssetManagementView, { collection: new AssetCollection() });
         Origin.trigger('assetManagement:loaded');
 
         loadSuperTools();

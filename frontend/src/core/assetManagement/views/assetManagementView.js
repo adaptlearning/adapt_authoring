@@ -9,6 +9,9 @@ define(function(require){
   var AssetManagementView = OriginView.extend({
     tagName: 'div',
     className: 'asset-management',
+    // used to delay event triggering
+    filterTimer: -1,
+    filterTimeout: 750,
 
     preRender: function() {
         this.listenTo(Origin, 'window:resize', this.resizeAssetPanels);
@@ -56,16 +59,10 @@ define(function(require){
     },
 
     onRefineReady: function() {
-      // make sure we've got the latest asset list
-      Origin.trigger('assetManagement:sidebarFilter:add');
       // start listening for filters now we're ready
       this.listenTo(Origin, 'assetManagement:refine:apply', this.onRefineApply);
     },
 
-    /*
-    * TODO this basically forces a fetch, and searches on server side.
-    * Seems inefficient...
-    */
     onRefineApply: function(filter) {
       switch(filter.type) {
         case 'search':
@@ -76,7 +73,15 @@ define(function(require){
           this.collectionView[filter.type] = filter.options;
           break;
       }
-      Origin.trigger('assetManagement:sidebarFilter:add');
+      /*
+      * delay event trigger to allow for filter stacking (less fetches)
+      */
+      if(this.filterTimer) {
+        clearTimeout(this.filterTimer);
+      }
+      this.filterTimer = setTimeout(function() {
+        Origin.trigger('assetManagement:sidebarFilter:add');
+      }, this.filterTimeout);
     }
   }, {
     template: 'assetManagement'

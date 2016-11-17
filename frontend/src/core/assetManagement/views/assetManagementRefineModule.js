@@ -14,8 +14,7 @@ define(function(require) {
     initialize: function(options) {
       this.options = options;
 
-      this.listenTo(Origin, 'modal:closed', this.remove);
-      this.listenTo(Origin, 'remove:views', this.remove);
+      this.listenTo(Origin, 'assetManagement:refine:remove', this.remove);
 
       if(this.autoRender !== false) this.render();
     },

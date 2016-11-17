@@ -25,11 +25,16 @@ define(function(require) {
 
       this.listenTo(Origin, 'remove:views', this.remove);
       this.listenTo(Origin, 'modal:closed', this.remove);
-      this.listenTo(Origin, 'modal:resize', this.onModalResize);
 
+      this.listenTo(Origin, 'modal:resize', this.onModalResize);
       this.listenTo(Origin, 'assetManagement:refine:hide', this.hide);
 
       this.render();
+    },
+
+    remove: function() {
+      Backbone.View.prototype.remove.apply(this, arguments);
+      Origin.trigger('assetManagement:refine:remove');
     },
 
     render: function() {

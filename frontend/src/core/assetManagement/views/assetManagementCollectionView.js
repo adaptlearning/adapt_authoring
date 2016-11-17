@@ -11,6 +11,7 @@ define(function(require){
   var AssetCollectionView = OriginView.extend({
     tagName: "div",
     className: "asset-management-collection",
+    assetPageSize: 32,
 
     initialize: function(options) {
       OriginView.prototype.initialize.apply(this, arguments);
@@ -35,8 +36,8 @@ define(function(require){
       this.filters = (this.search.assetType) ? options.search.assetType.$in : [];
       this.tags = [];
       // Set to minus so we can have more DRY code
-      this.assetLimit = -32;
-      this.assetDenominator = 32;
+      this.assetLimit = this.assetPageSize*-1;
+      this.assetDenominator = this.assetPageSize;
       this.collectionLength = 0;
 
       this.shouldStopFetches = false;

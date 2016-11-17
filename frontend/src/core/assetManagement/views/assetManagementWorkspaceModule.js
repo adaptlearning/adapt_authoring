@@ -4,7 +4,8 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
 
   var AssetManagementWorkspaceModule = AssetManagementRefineModule.extend({
-    className: 'module workspace',
+    className: 'workspace',
+    title: 'Filter by location',
     filterType: 'search',
 
     events: {

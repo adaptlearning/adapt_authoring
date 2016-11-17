@@ -6,7 +6,8 @@ define(function(require) {
   var TagsCollection = require('coreJS/tags/collections/tagsCollection');
 
   var AssetManagementTagsModule = AssetManagementRefineModule.extend({
-    className: 'module tags',
+    className: 'tags',
+    title: 'Filter by tags',
     filterType: 'tags',
     autoRender: false,
 

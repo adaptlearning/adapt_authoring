@@ -4,7 +4,8 @@ define(function(require) {
   var AssetManagementRefineModule = require('coreJS/assetManagement/views/assetManagementRefineModule');
 
   var AssetManagementSummaryModule = AssetManagementRefineModule.extend({
-    className: 'module summary',
+    className: 'summary',
+    renderWrapper: false,
 
     events: {
       'click a.reset': 'onResetClicked'

@@ -5,7 +5,8 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
 
   var AssetManagementSearchModule = AssetManagementRefineModule.extend({
-    className: 'module search',
+    className: 'search',
+    renderWrapper: false,
     filterType: 'search',
     filterDelay: undefined,
 

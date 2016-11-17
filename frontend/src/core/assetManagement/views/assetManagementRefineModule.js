@@ -6,6 +6,11 @@ define(function(require) {
 
   var AssetManagementRefineModule = Backbone.View.extend({
     tagName: 'div',
+    // if true, appends template to .inner of assetManagementRefineModule.hbs
+    renderWrapper: true,
+    // used to set the module's title in the wrapper's hbs
+    // TODO localise
+    title: 'Unset module title',
 
     events: {
       'click .title': 'toggle'
@@ -21,9 +26,20 @@ define(function(require) {
 
     render: function() {
       var data = this.options;
-      var template = Handlebars.templates[this.constructor.template];
+      data.title = this.title;
 
-      this.$el.html(template(data));
+      var inner = Handlebars.templates[this.constructor.template](data);
+
+      if(this.renderWrapper) {
+        var $wrapper = $(Handlebars.templates.assetManagementRefineModule(data));
+        this.$el.html($wrapper);
+        this.$('.inner').html(inner);
+      } else {
+        this.$el.html(inner);
+      }
+      // common classes
+      this.$el.addClass('module hide');
+
       this.resetFilter();
 
       // HACK for now...
@@ -52,7 +68,8 @@ define(function(require) {
     },
 
     toggle: function() {
-      this.$('.inner').toggleClass('hide');
+      // this.$('.inner').toggleClass('hide');
+      this.$el.toggleClass('hide');
     }
   });
 

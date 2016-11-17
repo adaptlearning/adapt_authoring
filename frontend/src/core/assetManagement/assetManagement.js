@@ -33,10 +33,12 @@ define(function(require) {
       filterData: {},
     };
     // create the empty collections
-    if(_.isEmpty(Origin.editor.data.courses) && _.isEmpty(Origin.editor.data.courseAssets)) {
+    if(_.isEmpty(Origin.editor.data.courses)) {
       Origin.editor.data.courses = new (Backbone.Collection.extend({
-        model: CourseAssetModel, url: '/api/content/course'
+        model: CourseModel, url: '/api/content/course'
       }))();
+    }
+    if(_.isEmpty(Origin.editor.data.courseAssets)) {
       Origin.editor.data.courseAssets = new (Backbone.Collection.extend({
         model: CourseAssetModel, url: '/api/content/courseasset'
       }))();

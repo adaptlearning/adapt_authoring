@@ -14,6 +14,7 @@ define(function(require) {
       assetManagementSummaryModule: require('coreJS/assetManagement/views/assetManagementSummaryModule'),
       assetManagementSearchModule: require('coreJS/assetManagement/views/assetManagementSearchModule'),
       assetManagementSortModule: require('coreJS/assetManagement/views/assetManagementSortModule'),
+      assetManagementCourseModule: require('coreJS/assetManagement/views/assetManagementCourseModule'),
       assetManagementWorkspaceModule: require('coreJS/assetManagement/views/assetManagementWorkspaceModule'),
       assetManagementMineModule: require('coreJS/assetManagement/views/assetManagementMineModule'),
       assetManagementTagsModule: require('coreJS/assetManagement/views/assetManagementTagsModule')

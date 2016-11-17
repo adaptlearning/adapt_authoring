@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
   var SidebarFieldsetFilterView = require('coreJS/sidebar/views/sidebarFieldsetFilterView');
@@ -8,7 +7,6 @@ define(function(require) {
   var Helpers = require('coreJS/app/helpers');
 
   var SidebarItemView = OriginView.extend({
-
     className: 'sidebar-item',
 
     events: {
@@ -26,7 +24,6 @@ define(function(require) {
     },
 
     initialize: function(options) {
-
         // Set form on view
         if (options && options.form) {
           this.form = options.form;
@@ -96,20 +93,21 @@ define(function(require) {
     },
 
     animateViewIn: function() {
-        this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
+      this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
     },
-
-    /*
-    * TODO need to allow for custom buttons.
-    * Maybe transition to using the following function to listen to all clicks.
-    */
 
     onButtonClick: function(e) {
       e && e.preventDefault();
-      var event = $(e.currentTarget).attr('data-event');
-      // TODO should be editorSidebar?
-      Origin.trigger('editorCommon:' + event);
+      var dataEvent = $(e.currentTarget).attr('data-event');
+      if(dataEvent) {
+        // TODO should be editorSidebar?
+        Origin.trigger('editorCommon:' + dataEvent);
+      }
     },
+
+    /*
+    * TODO transition the below to use onButtonClick?
+    */
 
     editProject: function() {
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/settings', {trigger: true});
@@ -150,9 +148,7 @@ define(function(require) {
     closeProject: function() {
       Origin.router.navigate('#/dashboard');
     }
-
   });
 
   return SidebarItemView;
-
-})
+});

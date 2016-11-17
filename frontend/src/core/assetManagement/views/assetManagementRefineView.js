@@ -24,7 +24,6 @@ define(function(require) {
       this.options = options;
 
       this.listenTo(Origin, 'remove:views', this.remove);
-
       this.listenTo(Origin, 'modal:closed', this.remove);
       this.listenTo(Origin, 'modal:resize', this.onModalResize);
 
@@ -103,6 +102,7 @@ define(function(require) {
     onAllModulesReady: function() {
       this.stopListening(Origin, 'assetManagement:refine:moduleReady', this.onModuleReady);
       this.listenTo(Origin, 'assetManagement:refine:reset', this.resetFilters);
+
       Origin.trigger('assetManagement:refine:ready');
     },
 

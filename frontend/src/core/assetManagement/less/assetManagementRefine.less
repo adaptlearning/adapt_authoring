@@ -60,7 +60,7 @@
     ~ button.clear {
       position: absolute;
       top: 0;
-      right: 10px;
+      left: 200px;
       height: @input-text-actual-height;
       padding: 10px;
       width: auto;
@@ -170,13 +170,13 @@
 }
 
 .assetManagement-refine {
-  .slideLeft-anim(-300px);
+  .slideLeft-anim(-@sidebar-width);
   &.show {
       .slideLeft-anim(0);
   }
   position: relative;
   float: left;
-  width: 300px;
+  width: @sidebar-width;
   height: 100%;
   background-color: @background-color;
   border-top: @control-border;
@@ -253,7 +253,8 @@
       }
 
       a.reset {
-        margin-left: 10px;
+        width: @sidebar-width;
+        margin: 0;
         color: @primary-color;
         font-size: @font-size;
         &:hover {

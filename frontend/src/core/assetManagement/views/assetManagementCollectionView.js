@@ -11,7 +11,7 @@ define(function(require){
   var AssetCollectionView = OriginView.extend({
     tagName: "div",
     className: "asset-management-collection",
-    assetPageSize: 32,
+    assetPageSize: 64,
 
     initialize: function(options) {
       OriginView.prototype.initialize.apply(this, arguments);

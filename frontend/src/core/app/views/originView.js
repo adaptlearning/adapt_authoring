@@ -1,9 +1,4 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-/*
-* BuilderView - base class for all views
-* License - http://github.com/adaptlearning/adapt_authoring/LICENSE
-* Maintainers - Brian Quinn <brian@learningpool.com>
-*/
 define(function(require){
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');

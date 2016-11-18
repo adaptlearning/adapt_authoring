@@ -1,0 +1,17 @@
+<div class="inner">
+  <div class="logo">
+    <img src="adaptbuilder/css/assets/adapt-learning-logo-outline.png" />
+  </div>
+  <div class="info">
+    <div class="header">
+      <div class="main"><strong>Adapt</strong> authoring tool</div>
+      <div class="sub">Kineo edition</div>
+    </div>
+    {{#each this}}
+      <div class="stat">
+        <div class="heading">{{@key}}</div>
+        <div class="value">{{this}}</div>
+      </div>
+    {{/each}}
+  </div>
+</div>

@@ -24,6 +24,7 @@ define(function(require) {
     },
 
     initialize: function(options) {
+        this.preRender();
         // Set form on view
         if (options && options.form) {
           this.form = options.form;
@@ -40,6 +41,7 @@ define(function(require) {
         }, this));
     },
 
+    preRender: function() {},
     postRender: function() {},
 
     setupView: function() {

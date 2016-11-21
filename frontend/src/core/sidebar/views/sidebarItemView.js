@@ -32,6 +32,8 @@ define(function(require) {
         this.render();
         this.listenTo(Origin, 'sidebar:resetButtons', this.resetButtons);
         this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
+        this.listenTo(Origin, 'key:down', this.onKeyDown);
+        this.listenTo(Origin, 'key:up', this.onKeyUp);
         _.defer(_.bind(function() {
             this.setupView();
             if (this.form) {
@@ -107,6 +109,30 @@ define(function(require) {
       }
     },
 
+    onKeyDown: function(e) {
+      switch(e.keyCode) {
+        case 17:
+        case 91:
+        case 93:
+          this.$('.editor-common-sidebar-preview')
+            .removeClass('action-primary')
+            .addClass('action-warning');
+          this.$('.editor-common-sidebar-preview-inner').text('Force rebuild');
+          this.forceRebuild = true;
+          break;
+        default:
+          // do nothing
+      }
+    },
+
+    onKeyUp: function(e) {
+      this.$('.editor-common-sidebar-preview-inner').text(window.polyglot.t('app.preview'));
+      this.$('.editor-common-sidebar-preview')
+        .removeClass('action-warning')
+        .addClass('action-primary');
+      this.forceRebuild = false;
+    },
+
     /*
     * TODO transition the below to use onButtonClick?
     */
@@ -136,7 +162,7 @@ define(function(require) {
     },
 
     previewProject: function() {
-      Origin.trigger('editorCommon:preview');
+      Origin.trigger('editorCommon:preview', this.forceRebuild);
     },
 
     exportProject: function() {

@@ -41,16 +41,15 @@ var self;
 * ------------------------------------------------------------------------------
 */
 AdaptOutput.prototype.publish = function(courseId, isPreview, request, response, next) {
-  self = this;
-  var user = usermanager.getCurrentUser(),
-    tenantId = user.tenant._id,
-    outputJson = {},
-    isRebuildRequired = false,
-    themeName = '',
-    menuName = Constants.Defaults.MenuName;
-
+  var self = this;
   var resultObject = {};
 
+  var user = usermanager.getCurrentUser();
+  var tenantId = user.tenant._id;
+  var outputJson = {};
+  var isRebuildRequired = false;
+  var themeName = '';
+  var menuName = Constants.Defaults.MenuName;
   var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
 
   async.series([
@@ -101,7 +100,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
             return callback(err);
           }
 
-          isRebuildRequired = exists;
+          isRebuildRequired = exists || request.query.force === 'true';
 
           callback(null);
         });

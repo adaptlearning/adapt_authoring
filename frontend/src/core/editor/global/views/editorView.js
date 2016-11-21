@@ -103,45 +103,6 @@ define(function(require){
       window.open('/preview/' + tenantId + '/' + courseId + '/', 'preview');
     },
 
-    previewProject: function(e) {
-      e && e.preventDefault();
-
-      var self = this;
-
-      if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isPreviewPending) {
-        Origin.editor.isPreviewPending = true;
-        $('.navigation-loading-indicator').removeClass('display-none');
-        $('.editor-common-sidebar-preview-inner').addClass('display-none');
-        $('.editor-common-sidebar-previewing').removeClass('display-none');
-
-        $.ajax({
-          method: 'get',
-          url: '/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId,
-          success: function (jqXHR, textStatus, errorThrown) {
-            if (jqXHR.success) {
-              if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) != 'undefined' && jqXHR.payload.pollUrl != '') {
-                // Ping the remote URL to check if the job has been completed
-                self.updatePreviewProgress(jqXHR.payload.pollUrl);
-              } else {
-                self.launchCoursePreview();
-                self.resetPreviewProgress();
-              }
-            } else {
-              self.resetPreviewProgress();
-              Origin.Notify.alert({
-                type: 'error',
-                text: window.polyglot.t('app.errorgeneratingpreview')
-              });
-            }
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            self.resetPreviewProgress();
-            Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgeneric') });
-          }
-        });
-      }
-    },
-
     updatePreviewProgress: function(url) {
       var self = this;
 
@@ -347,8 +308,45 @@ define(function(require){
       $(e.currentTarget).removeClass('hovering');
     },
 
-    downloadProject: function(e) {
-      e && e.preventDefault();
+    previewProject: function(forceRebuild) {
+      var self = this;
+
+
+      if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isPreviewPending) {
+        Origin.editor.isPreviewPending = true;
+        $('.navigation-loading-indicator').removeClass('display-none');
+        $('.editor-common-sidebar-preview-inner').addClass('display-none');
+        $('.editor-common-sidebar-previewing').removeClass('display-none');
+
+        $.ajax({
+          method: 'get',
+          url: '/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId + '?force=' + (forceRebuild === true),
+          success: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.success) {
+              if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) != 'undefined' && jqXHR.payload.pollUrl != '') {
+                // Ping the remote URL to check if the job has been completed
+                self.updatePreviewProgress(jqXHR.payload.pollUrl);
+              } else {
+                self.launchCoursePreview();
+                self.resetPreviewProgress();
+              }
+            } else {
+              self.resetPreviewProgress();
+              Origin.Notify.alert({
+                type: 'error',
+                text: window.polyglot.t('app.errorgeneratingpreview')
+              });
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            self.resetPreviewProgress();
+            Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgeneric') });
+          }
+        });
+      }
+    },
+
+    downloadProject: function() {
       var self = this;
 
       if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isDownloadPending) {

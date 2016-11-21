@@ -110,6 +110,8 @@ define(function(require) {
     },
 
     onKeyDown: function(e) {
+      window.clearTimeout(this.timeout);
+      this.timeout = -1;
       switch(e.keyCode) {
         case 17:
         case 91:
@@ -119,6 +121,7 @@ define(function(require) {
             .addClass('action-warning');
           this.$('.editor-common-sidebar-preview-inner').text('Force rebuild');
           this.forceRebuild = true;
+          this.timeout = window.setTimeout(_.bind(this.onKeyUp,this), 5000);
           break;
         default:
           // do nothing

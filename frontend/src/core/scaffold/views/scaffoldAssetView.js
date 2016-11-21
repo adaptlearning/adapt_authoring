@@ -47,7 +47,6 @@ define(function(require) {
     },
 
     render: function() {
-      console.log('ScaffoldAssetView.render:', this.value);
       var assetType = this.schema.fieldType.replace('Asset:', '');
       var data = {
         value: this.value,

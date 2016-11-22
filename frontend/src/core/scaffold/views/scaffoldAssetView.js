@@ -232,14 +232,19 @@ define(function(require) {
 
     onEditButtonClicked: function(e) {
       e && e.preventDefault();
-      var courseasset = this.findAsset(
-        Origin.scaffold.getCurrentModel().get('_id'),
-        Origin.scaffold.getCurrentModel().get('_type'),
-        this.getValue() ? this.getValue().replace('course/assets/', '') : ''
-      );
-      var self = this;
-      var asset = new AssetModel({ _id: courseasset.get('_assetId') });
 
+      if('heroImage' === this.key) {
+        var asset = new AssetModel({ _id: this.model.get('heroImage') });
+      } else {
+        var courseasset = this.findAsset(
+          Origin.scaffold.getCurrentModel().get('_id'),
+          Origin.scaffold.getCurrentModel().get('_type'),
+          this.getValue() ? this.getValue().replace('course/assets/', '') : ''
+        );
+        var asset = new AssetModel({ _id: courseasset.get('_assetId') });
+      }
+
+      var self = this;    
       asset.fetch({
         success: function(model) {
           Origin.trigger('modal:open', ScaffoldAssetEditView, {

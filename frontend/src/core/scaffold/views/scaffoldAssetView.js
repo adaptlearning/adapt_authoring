@@ -41,7 +41,7 @@ define(function(require) {
 
     initialize: function(options) {
       this.listenTo(Origin, 'scaffold:assets:autofill', this.onAutofill);
-      this.listenTo(Origin, 'modal:onUpdate', this.render);
+      this.listenTo(Origin, 'scaffold:assets:save', this.onSave);
       // Call parent constructor
       Backbone.Form.editors.Base.prototype.initialize.call(this, options);
     },
@@ -315,9 +315,15 @@ define(function(require) {
       this.render();
     },
 
+    onSave: function(id) {
+      var notThis = id !== this.id;
+      if(notThis) this.render();
+    },
+
     onSaveSuccess: function() {
       this.render();
       this.trigger('change', this);
+      Origin.trigger('scaffold:assets:save', this.id);
     },
 
     onModalUpdate: function(data) {

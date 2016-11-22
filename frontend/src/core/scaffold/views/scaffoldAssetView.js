@@ -335,7 +335,7 @@ define(function(require) {
         this.saveModel(false, { heroImage: data.assetId });
         return;
       }
-      // Setup courseasset
+      // setup courseasset
       var parentId = Origin.scaffold.getCurrentModel().get('_parentId');
       var courseId = Origin.editor.data.course.get('_id');
       var courseAssetObject = {
@@ -345,8 +345,7 @@ define(function(require) {
         fieldname: data.assetFilename,
         assetId: data.assetId
       };
-      // If the data is meant to autofill the rest of the graphic sizes
-      // pass out an event instead - this is currently only used for the graphic component
+      // if autofill, trigger event (only used for the graphic component)
       if (data._shouldAutofill) {
         return Origin.trigger('scaffold:assets:autofill', courseAssetObject, data.assetLink);
       }

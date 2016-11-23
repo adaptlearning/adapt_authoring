@@ -12,7 +12,6 @@ define(function(require) {
   var ProjectCollection = require('coreJS/project/collections/projectCollection');
   var TagsCollection = require('coreJS/tags/collections/tagsCollection');
 
-
   Origin.on('app:dataReady login:changed', function() {
     Origin.globalMenu.addItem({
       "location": "global",
@@ -28,54 +27,16 @@ define(function(require) {
   });
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
-    // store Origin data
-    Origin.assetManagement = {
-      filterData: {},
-    };
-    // create the empty collections
-    if(_.isEmpty(Origin.editor.data.courses)) {
-      Origin.editor.data.courses = new (Backbone.Collection.extend({
-        model: CourseModel, url: '/api/content/course'
-      }))();
-    }
-    if(_.isEmpty(Origin.editor.data.courseAssets)) {
-      Origin.editor.data.courseAssets = new (Backbone.Collection.extend({
-        model: CourseAssetModel, url: '/api/content/courseasset'
-      }))();
-    }
+    Origin.assetManagement = { filterData: {} };
 
-    // do a fetch
-    var fetchedCourses = false;
-    var fetchedCourseassets = false;
-    Origin.editor.data.courses.fetch({
-      success: function(collection) {
-        Origin.editor.data.courses = collection;
-        fetchedCourses = true;
-        onCollectionFetched();
-      }
-    });
-    Origin.editor.data.courseAssets.fetch({
-      success: function(collection) {
-        Origin.editor.data.courseAssets = collection;
-        fetchedCourseassets = true;
-        onCollectionFetched();
-      }
-    });
-
-    function onCollectionFetched() {
-      if(fetchedCourses && fetchedCourseassets) {
-        return;
-      }
-      // we're ready, load the right view...
-      if(!location) {
-        loadCollectionView();
-      }
-      else if(location === 'new') {
-        loadAssetView();
-      }
-      else if(subLocation === 'edit'){
-        loadAssetView(location);
-      }
+    if(!location) {
+      loadCollectionView();
+    }
+    else if(location === 'new') {
+      loadAssetView();
+    }
+    else if(subLocation === 'edit'){
+      loadAssetView(location);
     }
   });
 

@@ -25,17 +25,11 @@ define(function(require){
     setCourses: function() {
       var workspaces = this.model.get('workspaces');
       var uses = workspaces && workspaces.course || [];
-      // get course models from IDs
-      var courses = [];
-      for(var i = 0, count = uses.length; i < count; i++) {
-        courses = courses.concat(Origin.editor.data.courses.where({ _id: uses[i] }));
-      }
-      // get course names from models
       var courseNames = [];
-      for(var i = 0, count = courses.length; i < count; i++) {
-        if(_.indexOf(courseNames, courses[i].get('title')) == -1) {
-          courseNames.push(courses[i].get('title'));
-        }
+      // look up course models and store titles
+      for(var i = 0, count = uses.length; i < count; i++) {
+        var title = Origin.editor.data.courses.findWhere({_id:uses[i]}).get('title');
+        if(_.indexOf(courseNames, title) == -1) courseNames.push(title);
       }
       // set on model
       this.model.set('courses', courseNames);

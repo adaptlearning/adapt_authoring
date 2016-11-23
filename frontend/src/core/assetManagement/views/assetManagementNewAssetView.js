@@ -179,7 +179,7 @@ define(function(require){
       if(data._id) {
         this.model.set({ _id: data._id });
       }
-      Origin.trigger('assets:update');
+      Origin.trigger('assets:update', data);
       Origin.router.navigate('#/assetManagement', { trigger:true });
     },
 

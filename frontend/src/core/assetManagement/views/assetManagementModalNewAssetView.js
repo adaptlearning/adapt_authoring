@@ -56,6 +56,7 @@ define(function(require){
       Origin.once('assetManagement:assetManagementCollection:fetched', function() {
         Origin.trigger('assetManagement:modal:selectItem', data._id);
       })
+      Origin.trigger('assets:update', data);
       Origin.trigger('assetManagement:collection:refresh', true);
       this.remove();
     }

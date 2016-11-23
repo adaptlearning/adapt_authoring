@@ -1,5 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
+  var _ = require('underscore');
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
@@ -25,8 +26,12 @@ define(function(require){
       this.listenTo(Origin, 'assetManagement:assetManagementSidebarView:filterByTags', this.filterByTags);
       this.listenTo(Origin, 'assetManagement:collection:refresh', this.updateCollection);
 
+      this.listenTo(Origin, 'assets:update', this.onAssetUpdated);
+
       this.listenTo(this.collection, 'add', this.appendAssetItem);
       this.listenTo(this.collection, 'sync', this.onCollectionSynced);
+
+      $('.asset-management-message').click(_.bind(this.clickMessage, this));
     },
 
     setDefaults: function(options) {
@@ -142,6 +147,29 @@ define(function(require){
         },
         success: _.bind(this.onCollectionFetched, this)
       });
+    },
+
+    onAssetUpdated: function(data) {
+      this.search = { _id: { $eq: data._id } };
+      this.updateCollection(true);
+      // TODO localise
+      this.showMessage('Only showing uploaded asset. Click to show all.');
+
+      Origin.once('assetManagement:message:close', _.bind(function() {
+        this.search = {};
+        this.updateCollection(true);
+      }, this));
+    },
+
+    clickMessage: function() {
+      Origin.trigger('assetManagement:message:close');
+      this.hideMessage();
+    },
+    showMessage: function(msg) {
+      $('.asset-management-message').text(msg).show();
+    },
+    hideMessage: function() {
+      $('.asset-management-message').hide();
     },
 
     onCollectionSynced: function() {

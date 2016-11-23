@@ -23,16 +23,12 @@ define(function(require){
     },
 
     setCourses: function() {
-      var uses = Origin.editor.data.courseAssets.where({ _assetId: this.model.get('_id') });
-      // get course IDs from courseassets
-      var courseIDs = [];
-      for(var i = 0, count = uses.length; i < count; i++) {
-        courseIDs.push(uses[i].get('_courseId'));
-      }
+      var workspaces = this.model.get('workspaces');
+      var uses = workspaces && workspaces.course || [];
       // get course models from IDs
       var courses = [];
-      for(var i = 0, count = courseIDs.length; i < count; i++) {
-        courses = courses.concat(Origin.editor.data.courses.where({ _id: courseIDs[i] }));
+      for(var i = 0, count = uses.length; i < count; i++) {
+        courses = courses.concat(Origin.editor.data.courses.where({ _id: uses[i] }));
       }
       // get course names from models
       var courseNames = [];

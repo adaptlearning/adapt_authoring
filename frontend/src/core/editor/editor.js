@@ -69,19 +69,53 @@ define(function(require) {
   var ProjectDetailView = require('coreJS/project/views/projectDetailView');
   var ProjectDetailEditSidebarView = require('coreJS/project/views/projectDetailEditSidebarView');
 
-  var dataIsLoaded = false;
+  // exports
+  return {
+    // loads data that's needed elsewhere
+    // TODO refactor this and the below, as code is mostly the same
+    preload: function(callback) {
+      Origin.editor.data.courses = createCollection(EditorCourseModel, '/api/content/course', 'courses');
+      Origin.editor.data.extensionTypes = createCollection(ExtensionModel, '/api/extensiontype', 'extensionTypes');
+      Origin.editor.data.componentTypes = createCollection(EditorComponentTypeModel, '/api/componenttype', 'componentTypes', {
+        comparator: function(model) { return model.get('displayName'); }
+      });
+
+      var loadedData = {
+        courses: false,
+        extensionTypes: false,
+        componentTypes: false
+      };
+
+      for(var i = 0, count = Object.keys(loadedData).length; i < count; i++) {
+        var type = Object.keys(loadedData)[i];
+        Origin.editor.data[type].fetch({
+          success: function(collection) {
+            loadedData[collection._type] = true;
+            if(allDataIsLoaded(loadedData)) return callback();
+          },
+          error: function(model, response, options) {
+            Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgeneric') });
+          }
+        });
+      }
+    }
+  };
+
+  function createCollection(Model, url, type, data) {
+    return new EditorCollection(null, _.extend({ model: Model, url: url, _type: type }, data || {}));
+  }
 
   function allDataIsLoaded(data) {
     return _.every(data, function(item) { return item === true; });
   };
 
+  var dataIsLoaded = false;
+
+
   var loadedDataTemplate = {
     clipboard: false,
     course: false,
     config: false,
-    componentTypes: false,
-    extensionTypes: false,
-    courses: false,
     contentObjects: false,
     articles: false,
     blocks: false,
@@ -111,7 +145,6 @@ define(function(require) {
         }
       });
     });
-
   });
 
   Origin.on('router:editor', function(route1, route2, route3, route4) {
@@ -123,7 +156,7 @@ define(function(require) {
     }
 
     Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(loadedObject) {
-      loadedData[loadedObject] = true;
+      if(loadedData[loadedObject] === false) loadedData[loadedObject] = true;
 
       if (allDataIsLoaded(loadedData)) {
         Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
@@ -141,12 +174,6 @@ define(function(require) {
     Origin.editor.data.config = new EditorConfigModel({ _courseId: route1 });
 
     // HACK these routes should be extenalised somewhere
-
-    Origin.editor.data.courses = new EditorCollection(null, {
-      model: EditorCourseModel,
-      url: '/api/content/course',
-      _type: 'courses'
-    });
 
     Origin.editor.data.contentObjects = new EditorCollection(null, {
       model: EditorContentObjectModel,
@@ -176,23 +203,6 @@ define(function(require) {
       model: EditorClipboardModel,
       url: '/api/content/clipboard?_courseId=' + route1 + '&createdBy=' + Origin.sessionModel.get('id'),
       _type: 'clipboard'
-    });
-
-    // Store the component types
-    Origin.editor.data.componentTypes = new EditorCollection(null, {
-      model : EditorComponentTypeModel,
-      url: '/api/componenttype',
-      _type: 'componentTypes',
-      comparator: function(model) {
-        return model.get('displayName');
-      }
-    });
-
-    // Store the extensions types
-    Origin.editor.data.extensionTypes = new EditorCollection(null, {
-      model : ExtensionModel,
-      url: '/api/extensiontype',
-      _type: 'extensionTypes'
     });
 
     // Store the course assets

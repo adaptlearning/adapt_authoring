@@ -380,15 +380,21 @@ define(function(require) {
 
           Origin.editor.scrollTo = 0;
 
-          Origin.trigger('location:title:update', { title: 'Menu editor' });
-          Origin.router.createView(EditorView, {
-            currentCourseId: route1,
-            currentView: 'menu',
-            currentPageId: (route3 || null)
-          });
-          Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
-            "backButtonText": "Back to courses",
-            "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
+
+          var courseModel = new EditorCourseModel({ _id: route1 });
+          courseModel.fetch({
+            success: function() {
+              Origin.trigger('location:title:update', { title: 'Menu editor - ' + courseModel.get('title') });
+              Origin.router.createView(EditorView, {
+                currentCourseId: route1,
+                currentView: 'menu',
+                currentPageId: (route3 || null)
+              });
+              Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
+                "backButtonText": "Back to courses",
+                "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
+              });
+            }
           });
         }
         break;

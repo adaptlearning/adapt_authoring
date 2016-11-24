@@ -31,6 +31,7 @@ define(function(require) {
   };
   // copies above before each load
   var loadedData;
+  var dataIsPreloaded = false;
   var dataIsLoaded = false;
 
   var currentLocation;
@@ -45,8 +46,7 @@ define(function(require) {
   */
 
   /**
-  * loads data that's needed elsewhere.
-  * exported and called before dataReady
+  * loads data that's needed elsewhere
   */
   function preload() {
     Origin.editor.data.courses = createCollection(EditorCourseModel, '/api/content/course', 'courses');
@@ -55,22 +55,31 @@ define(function(require) {
       comparator: function(model) { return model.get('displayName'); }
     });
 
-    loadedData = {
+    var preloadedData = {
       courses: false,
       extensionTypes: false,
       componentTypes: false
     };
+    var loadedCourses = 0;
 
-    Origin.on('editorCollection:dataLoaded', function(type) {
-      if(loadedData[type] === false) loadedData[type] = true;
-      if(allDataIsLoaded(loadedData)) {
+    Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(type, id) {
+      // HACK because model loaded events fire after the collection event...
+      if(type === 'course') {
+        if(Origin.editor.data.courses.findWhere({ _id: id })) loadedCourses++;
+      }
+      if(preloadedData[type] === false) {
+        preloadedData[type] = true;
+      }
+      if(allDataIsLoaded(preloadedData) && loadedCourses === Origin.editor.data.courses.length) {
+        dataIsPreloaded = true;
         Origin.off('editorCollection:dataLoaded');
-        Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', onEditorDataLoaded);
+        Origin.trigger('editor:dataPreloaded');
       }
     });
   }
 
   function setupEditorData(id) {
+    Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', onEditorDataLoaded);
     // add the following to editor data
     _.extend(Origin.editor.data, {
       course: new EditorCourseModel({ _id:id }),
@@ -95,6 +104,11 @@ define(function(require) {
       id: route3,
       action: route4
     };
+    if(!dataIsPreloaded) {
+      return Origin.once('editor:dataPreloaded', function() {
+        onRoute(currentLocation.course, currentLocation.type, currentLocation.id, currentLocation.action);
+      });
+    }
     // Check if data has already been loaded for this project
     if (dataIsLoaded && Origin.editor.data.course && Origin.editor.data.course.get('_id') === route1) {
       return EditorRouter.route(currentLocation);
@@ -118,7 +132,7 @@ define(function(require) {
     }
   }
 
-  function onEditorDataLoaded(loadedObject) {
+  function onEditorDataLoaded(loadedObject, id) {
     if(loadedData[loadedObject] === false) {
       loadedData[loadedObject] = true;
     }
@@ -148,6 +162,7 @@ define(function(require) {
   }
 
   function allDataIsLoaded(data) {
+    if(!data) return false;
     return _.every(data, function(item) { return item === true; });
   };
 });

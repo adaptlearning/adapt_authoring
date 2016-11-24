@@ -17,9 +17,8 @@ define(function(require) {
       loadedData: function() {
         if (this._siblings) {
           this._type = this._siblings;
-        } 
- 
-        Origin.trigger('editorModel:dataLoaded', this._type);
+        }
+        Origin.trigger('editorModel:dataLoaded', this._type, this.get('_id'));
       },
 
       getChildren: function() {

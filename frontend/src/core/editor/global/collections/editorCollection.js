@@ -8,7 +8,9 @@ define(function(require) {
     initialize : function(models, options){
       this.url = options.url;
       this._type = options._type;
-      this.fetch({ reset: true, success: _.bind(this.loadedData, this) });
+      if(options.autoFetch !== false) {
+        this.fetch({ reset: true, success: _.bind(this.loadedData, this) });
+      }
     },
 
     loadedData: function() {

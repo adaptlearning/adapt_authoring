@@ -31,8 +31,9 @@ define(function(require) {
   };
   // copies above before each load
   var loadedData;
-  var dataIsPreloaded = false;
-  var dataIsLoaded = false;
+
+  var isPreloaded = false;
+  var isLoaded = false;
 
   var currentLocation;
 
@@ -60,26 +61,33 @@ define(function(require) {
       extensionTypes: false,
       componentTypes: false
     };
-    var loadedCourses = 0;
 
-    Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', function(type, id) {
-      // HACK because model loaded events fire after the collection event...
-      if(type === 'course') {
-        if(Origin.editor.data.courses.findWhere({ _id: id })) loadedCourses++;
-      }
-      if(preloadedData[type] === false) {
-        preloadedData[type] = true;
-      }
-      if(allDataIsLoaded(preloadedData) && loadedCourses === Origin.editor.data.courses.length) {
-        dataIsPreloaded = true;
-        Origin.off('editorCollection:dataLoaded');
-        Origin.trigger('editor:dataPreloaded');
-      }
+    loadEditorData(preloadedData, function() {
+      isPreloaded = true;
+      Origin.trigger('editor:dataPreloaded');
     });
   }
 
+  /**
+  * Fetches a group of editor collections (Origin.editor.data)
+  * @param object whose keys are the key found on Origin.editor.data
+  * and is used for progress checking
+  */
+  function loadEditorData(data, callback) {
+    for(var i = 0, count = Object.keys(data).length; i < count; i++) {
+      var key = Object.keys(data)[i];
+      Origin.editor.data[key].fetch({
+        success: function(collection) {
+          data[collection._type] = true;
+          if(allDataIsLoaded(data) && callback) callback();
+        },
+        error: onFetchError
+      });
+    }
+  }
+
   function setupEditorData(id) {
-    Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', onEditorDataLoaded);
+    loadedData = _.clone(loadedDataTemplate);
     // add the following to editor data
     _.extend(Origin.editor.data, {
       course: new EditorCourseModel({ _id:id }),
@@ -90,6 +98,11 @@ define(function(require) {
       components: createCollection(EditorComponentModel, '/api/content/component?_courseId='+id, 'components'),
       clipboard: createCollection(EditorClipboardModel, '/api/content/clipboard?_courseId=' + id + '&createdBy=' + Origin.sessionModel.get('id'), 'clipboard'),
       courseAssets: createCollection(EditorCourseAssetModel, '/api/content/courseasset?_courseId='+id, 'courseAssets')
+    });
+    // load all collections
+    loadEditorData(loadedData, function() {
+      Origin.trigger('editor:dataLoaded');
+      if(currentLocation) EditorRouter.route(currentLocation);
     });
   }
 
@@ -104,21 +117,20 @@ define(function(require) {
       id: route3,
       action: route4
     };
-    if(!dataIsPreloaded) {
-      return Origin.once('editor:dataPreloaded', function() {
+    if (!isPreloaded) {
+      Origin.once('editor:dataPreloaded', function() {
         onRoute(currentLocation.course, currentLocation.type, currentLocation.id, currentLocation.action);
       });
+      return;
     }
     // Check if data has already been loaded for this project
-    if (dataIsLoaded && Origin.editor.data.course && Origin.editor.data.course.get('_id') === route1) {
+    if (isLoaded && Origin.editor.data.course.get('_id') === route1) {
       return EditorRouter.route(currentLocation);
     }
-    loadedData = _.clone(loadedDataTemplate);
     setupEditorData(route1);
   }
 
   function onRefreshData(callback, context) {
-    dataIsLoaded = false;
     loadedData = _.clone(loadedDataTemplate);
 
     _.each(Origin.editor.data, function(object) {
@@ -129,20 +141,6 @@ define(function(require) {
       Origin.once('editor:dataLoaded', function(type) {
         callback.apply(context);
       });
-    }
-  }
-
-  function onEditorDataLoaded(loadedObject, id) {
-    if(loadedData[loadedObject] === false) {
-      loadedData[loadedObject] = true;
-    }
-    if (allDataIsLoaded(loadedData)) {
-      Origin.off('editorCollection:dataLoaded editorModel:dataLoaded');
-      Origin.trigger('editor:dataLoaded');
-      dataIsLoaded = true;
-      if(currentLocation) {
-        EditorRouter.route(currentLocation);
-      }
     }
   }
 
@@ -158,7 +156,12 @@ define(function(require) {
   */
 
   function createCollection(Model, url, type, data) {
-    return new EditorCollection(null, _.extend({ model: Model, url: url, _type: type }, data || {}));
+    return new EditorCollection(null, _.extend({
+      autoFetch: false,
+      model: Model,
+      url: url,
+      _type: type
+    }, data || {}));
   }
 
   function allDataIsLoaded(data) {

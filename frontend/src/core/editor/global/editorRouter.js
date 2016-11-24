@@ -63,7 +63,6 @@ define(function(require) {
 
   function route(location) {
     loc = location
-
     switch (loc.type) {
       case 'article':
         if (loc.action === 'edit') {

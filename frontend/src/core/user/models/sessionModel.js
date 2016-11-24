@@ -44,6 +44,7 @@ define(function(require) {
                   success: _.bind(function(collection) {
                     self.set('users', users);
                     Origin.trigger('sessionModel:initialised');
+                    Origin.trigger('login:newSession');
                   }, this),
                   error: function(data, response) {
                     Origin.Notify.alert({

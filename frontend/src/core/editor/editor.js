@@ -36,6 +36,7 @@ define(function(require) {
   var currentLocation;
 
   // event listeners
+  Origin.on('login:changed login:newSession', preload);
   Origin.on('editor:refreshData', onRefreshData);
   Origin.on('router:editor', onRoute);
 
@@ -47,7 +48,7 @@ define(function(require) {
   * loads data that's needed elsewhere.
   * exported and called before dataReady
   */
-  function preload(callback) {
+  function preload() {
     Origin.editor.data.courses = createCollection(EditorCourseModel, '/api/content/course', 'courses');
     Origin.editor.data.extensionTypes = createCollection(ExtensionModel, '/api/extensiontype', 'extensionTypes');
     Origin.editor.data.componentTypes = createCollection(EditorComponentTypeModel, '/api/componenttype', 'componentTypes', {
@@ -65,7 +66,6 @@ define(function(require) {
       if(allDataIsLoaded(loadedData)) {
         Origin.off('editorCollection:dataLoaded');
         Origin.on('editorCollection:dataLoaded editorModel:dataLoaded', onEditorDataLoaded);
-        return callback();
       }
     });
   }
@@ -150,12 +150,4 @@ define(function(require) {
   function allDataIsLoaded(data) {
     return _.every(data, function(item) { return item === true; });
   };
-
-  /**
-  * Exports
-  */
-  return {
-    preload: preload
-  };
-
 });

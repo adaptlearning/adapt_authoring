@@ -18,8 +18,14 @@ define(function(require) {
   var EditorCourseAssetModel = require('editorCourse/models/editorCourseAssetModel');
   var EditorClipboardModel = require('editorGlobal/models/editorClipboardModel');
 
+  // used to check what's preloaded
+  var globalData = {
+    courses: false,
+    extensionTypes: false,
+    componentTypes: false
+  };
   // used to check what's loaded
-  var loadedDataTemplate = {
+  var courseData = {
     clipboard: false,
     course: false,
     config: false,
@@ -29,8 +35,6 @@ define(function(require) {
     components: false,
     courseAssets: false
   };
-  // copies above before each load
-  var loadedData;
 
   var isPreloaded = false;
   var isLoaded = false;
@@ -40,6 +44,7 @@ define(function(require) {
   // event listeners
   Origin.on('login:changed login:newSession', preload);
   Origin.on('editor:refreshData', onRefreshData);
+  Origin.on('editor:resetData', onResetData);
   Origin.on('router:editor', onRoute);
 
   /**
@@ -50,19 +55,21 @@ define(function(require) {
   * loads data that's needed elsewhere
   */
   function preload() {
-    Origin.editor.data.courses = createCollection(EditorCourseModel, '/api/content/course', 'courses');
-    Origin.editor.data.extensionTypes = createCollection(ExtensionModel, '/api/extensiontype', 'extensionTypes');
-    Origin.editor.data.componentTypes = createCollection(EditorComponentTypeModel, '/api/componenttype', 'componentTypes', {
-      comparator: function(model) { return model.get('displayName'); }
-    });
+    if(!Origin.editor.data.courses) {
+      Origin.editor.data.courses = createCollection(EditorCourseModel, '/api/content/course', 'courses');
+    }
+    if(!Origin.editor.data.extensionTypes) {
+      Origin.editor.data.extensionTypes = createCollection(ExtensionModel, '/api/extensiontype', 'extensionTypes');
+    }
+    if(!Origin.editor.data.componentTypes) {
+      Origin.editor.data.componentTypes = createCollection(EditorComponentTypeModel, '/api/componenttype', 'componentTypes', {
+        comparator: function(model) { return model.get('displayName'); }
+      });
+    }
     // start preload
-    loadEditorData({
-      courses: false,
-      extensionTypes: false,
-      componentTypes: false
-    }, function() {
+    loadEditorData(_.clone(globalData), function() {
       isPreloaded = true;
-      Origin.trigger('editor:dataPreloaded');
+      Origin.trigger('editor:dataPreloaded:');
     });
   }
 
@@ -97,7 +104,7 @@ define(function(require) {
       courseAssets: createCollection(EditorCourseAssetModel, '/api/content/courseasset?_courseId='+id, 'courseAssets')
     });
     // load all collections
-    loadEditorData(_.clone(loadedDataTemplate), function() {
+    loadEditorData(_.clone(courseData), function() {
       Origin.trigger('editor:dataLoaded');
       if(currentLocation) EditorRouter.route(currentLocation);
     });
@@ -128,9 +135,15 @@ define(function(require) {
   }
 
   function onRefreshData(callback, context) {
-    loadEditorData(_.clone(loadedDataTemplate), function() {
+    loadEditorData(_.clone(courseData), function() {
       if(callback) callback.call(context);
     });
+  }
+
+  // deletes course-specific data, and does a fetch on everything else
+  function onResetData() {
+    Origin.editor.data = _.omit(Origin.editor.data, Object.keys(courseData));
+    preload();
   }
 
   function onFetchError(model, response, options) {

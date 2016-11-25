@@ -131,17 +131,9 @@ define(function(require) {
   }
 
   function onRefreshData(callback, context) {
-    loadedData = _.clone(loadedDataTemplate);
-
-    _.each(Origin.editor.data, function(object) {
-      object.fetch({ reset:true, error: onFetchError });
+    loadEditorData(_.clone(loadedDataTemplate), function() {
+      if(callback) callback.call(context);
     });
-
-    if(callback) {
-      Origin.once('editor:dataLoaded', function(type) {
-        callback.apply(context);
-      });
-    }
   }
 
   function onFetchError(model, response, options) {

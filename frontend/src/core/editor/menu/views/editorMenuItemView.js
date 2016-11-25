@@ -257,8 +257,6 @@ define(function(require){
     },
 
     copyMenuItem: function() {
-      $('.paste-zone').addClass('show');
-      $('.add-zone').css('visibility','hidden');
       Origin.trigger('editorView:copy', this.model);
     },
 

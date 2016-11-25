@@ -18,7 +18,7 @@ define(function(require){
       OriginView.prototype.initialize.apply(this, arguments);
 
       this.listenTo(Origin, 'sidebarFieldsetFilter:filterForm', this.filterForm);
-      this.listenTo(Origin, 'editorView:pasteCancel', this.hidePasteZones);
+      this.listenTo(Origin, 'Cancel', this.hidePasteZones);
     },
 
     filterForm: function(filter) {
@@ -28,7 +28,6 @@ define(function(require){
       } else {
         this.filters.push(filter);
       }
-
       // Now actually filter the form
       if (this.filters.length === 0) {
         $('.form-container > form > div > fieldset').removeClass('display-none');
@@ -41,27 +40,24 @@ define(function(require){
     },
 
     postRender: function() {
-      // On post render - pop the form into place
       if (!this.form) {
-        this.setViewToReady();
-        return;
+        return this.setViewToReady();
       }
-      var that = this;
+      // render form
       this.$('.form-container').append(this.form.el);
-      // the delay's going to stop jumping pages
-      _.delay(function() { that.setViewToReady(); }, 400);
+      // delay to stop jumping pages
+      _.delay(this.setViewToReady, 400);
     },
 
     showPasteZones: function (type) {
-      $('.paste-zone').addClass('display-none');
-      $('.add-control').addClass('display-none');
-      type && $('.paste-zone-' + type).removeClass('display-none');
+      $('.paste-zone').removeClass('display-none').addClass('show');
+      $('.add-zone').css('visibility', 'hidden');
     },
 
     hidePasteZones: function() {
       // Purposeful global selector here
-      $('.paste-zone').addClass('display-none');
-      $('.add-control').removeClass('display-none');
+      $('.paste-zone').addClass('display-none').removeClass('show');
+      $('.add-zone').css('visibility', 'visible');
     },
 
     showDropZones: function () {
@@ -93,8 +89,7 @@ define(function(require){
 
       if (errors) {
         var errorText =
-          window.polyglot.t('app.validationfailedmessage') +
-          "<br/><br/>" +
+          window.polyglot.t('app.validationfailedmessage') + "<br/><br/>" +
           this.buildErrorMessage(errors, '');
         // TODO remove when we've got a better solution
         this.onSaveError(window.polyglot.t('app.validationfailed'), errorText);
@@ -174,13 +169,10 @@ define(function(require){
     },
 
     onSaveError: function(pTitle, pText) {
-      var title = _.isString(pTitle) ? pTitle : window.polyglot.t('app.errordefaulttitle');
-      var text = _.isString(pText) ? pText : window.polyglot.t('app.errorsave');
-
       Origin.Notify.alert({
         type: 'error',
-        title: title,
-        text: text
+        title: _.isString(pTitle) ? pTitle : window.polyglot.t('app.errordefaulttitle'),
+        text: _.isString(pText) ? pText : window.polyglot.t('app.errorsave')
       });
       Origin.trigger('sidebar:resetButtons');
     },

@@ -13,12 +13,12 @@ define(function(require){
         'click .editor-paste-zone-paste': 'onPasteElementClicked'
     },
 
-    onPasteElementClicked: function(event) {
-        event && event.preventDefault();
+    onPasteElementClicked: function(e) {
+        e && e.preventDefault();
         var parentId = this.model.get('_parentId');
         var sortOrder = this.model.get('_pasteZoneSortOrder');
         var layout = this.model.get('_pasteZoneLayout');
-        
+
         Origin.trigger('editorView:paste', parentId, sortOrder, layout);
     },
 

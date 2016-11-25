@@ -272,7 +272,7 @@ define(function(require){
           sortOrder: sortOrder,
           courseId: Origin.editor.data.course.get('_id')
         },
-        success: function (jqXHR, textStatus, errorThrown) {
+        success: _.bind(function(jqXHR, textStatus, errorThrown) {
           if (!jqXHR.success) {
             Origin.Notify.alert({
               type: 'error',
@@ -281,14 +281,10 @@ define(function(require){
           } else {
             Origin.editor.clipboardId = null;
             Origin.editor.pasteParentModel = null;
-            Origin.trigger('editor:refreshData', function() {
-              // TODO: HACK - I think this should probably pass a callback in
-              // and return it with the new item - this way the individual views
-              // can handle the new views and models
-              Backbone.history.loadUrl();
-            }, this);
+            // TODO callback to allow views to control what happens next?
+            Origin.trigger('editor:refreshData', this.setupEditor, this);
           }
-        },
+        }, this),
         error: function (jqXHR, textStatus, errorThrown) {
           Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorpaste') });
         }

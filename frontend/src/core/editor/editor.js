@@ -55,14 +55,12 @@ define(function(require) {
     Origin.editor.data.componentTypes = createCollection(EditorComponentTypeModel, '/api/componenttype', 'componentTypes', {
       comparator: function(model) { return model.get('displayName'); }
     });
-
-    var preloadedData = {
+    // start preload
+    loadEditorData({
       courses: false,
       extensionTypes: false,
       componentTypes: false
-    };
-
-    loadEditorData(preloadedData, function() {
+    }, function() {
       isPreloaded = true;
       Origin.trigger('editor:dataPreloaded');
     });
@@ -87,7 +85,6 @@ define(function(require) {
   }
 
   function setupEditorData(id) {
-    loadedData = _.clone(loadedDataTemplate);
     // add the following to editor data
     _.extend(Origin.editor.data, {
       course: new EditorCourseModel({ _id:id }),
@@ -100,7 +97,7 @@ define(function(require) {
       courseAssets: createCollection(EditorCourseAssetModel, '/api/content/courseasset?_courseId='+id, 'courseAssets')
     });
     // load all collections
-    loadEditorData(loadedData, function() {
+    loadEditorData(_.clone(loadedDataTemplate), function() {
       Origin.trigger('editor:dataLoaded');
       if(currentLocation) EditorRouter.route(currentLocation);
     });

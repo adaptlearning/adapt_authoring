@@ -9,13 +9,11 @@ define(function(require) {
   var TagsCollection = require('coreJS/tags/collections/tagsCollection');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
-
     Origin.tap('dashboard', function() {
-    
-      Origin.editor = {};
-      Origin.editor.data = {};
-      
-      Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
+      Origin.trigger('editor:resetData');
+      console.log('dashboard:', Origin.editor.data);
+      // TODO localise
+      Origin.trigger('location:title:update', { title: 'Dashboard - viewing my courses' });
       Origin.options.addItems([
         {
           title: window.polyglot.t('app.thumb'),

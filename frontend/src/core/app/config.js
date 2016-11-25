@@ -37,18 +37,12 @@ require.config({
       moment: 'core/libraries/moment.min'
     },
     shim: {
-      jquery: [
-
-      ],
       backbone: {
-          deps: [
-            'underscore',
-            'jquery'
-          ],
-          exports: 'Backbone'
+        deps: ['underscore','jquery'],
+        exports: 'Backbone'
       },
       underscore: {
-          exports: '_'
+        exports: '_'
       },
       handlebars: {
         exports: 'Handlebars'
@@ -82,6 +76,9 @@ require.config({
         deps: ['jquery'],
         exports: 'scrollTo'
       },
+      colorPicker: {
+        deps: ['jquery'],
+      },
       'jquery-ui': {
         deps: ['jquery'],
         exports: "$"
@@ -97,15 +94,11 @@ require.config({
         deps: ['backboneForms']
       },
       inview: {
-        deps: [
-          'jquery'
-        ],
+        deps: ['jquery'],
         exports: 'inview'
       },
       imageReady: {
-        deps: [
-          'jquery'
-        ],
+        deps: ['jquery'],
         exports: 'imageready'
       },
       ace: {

@@ -107,7 +107,7 @@ define(function(require) {
 			_.each(objectSchema, function(field, key) {
 				setupSchemaFields(field, key, objectSchema, scaffoldObjectSchema);
 			});
-			
+
 		} else if (field.type != 'object' || field.inputType) {
 
 			var validators = [];

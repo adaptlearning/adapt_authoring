@@ -10,18 +10,9 @@ define(function(require){
     className: 'display-none paste-zone',
 
     events: {
-        'click .editor-paste-zone-paste': 'onPasteElementClicked'
+      'click .editor-paste-zone-paste': 'onPaste'
     },
-
-    onPasteElementClicked: function(e) {
-        e && e.preventDefault();
-        var parentId = this.model.get('_parentId');
-        var sortOrder = this.model.get('_pasteZoneSortOrder');
-        var layout = this.model.get('_pasteZoneLayout');
-
-        Origin.trigger('editorView:paste', parentId, sortOrder, layout);
-    },
-
+    
     preRender: function() {
       this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
@@ -80,5 +71,4 @@ define(function(require){
   });
 
   return EditorPasteZone;
-
 });

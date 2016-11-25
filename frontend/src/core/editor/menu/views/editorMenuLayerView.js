@@ -13,8 +13,8 @@ define(function(require) {
       events: {
         'click button.editor-menu-layer-add-page' : 'addPage',
         'click button.editor-menu-layer-add-menu' : 'addMenu',
-        'click .editor-menu-layer-paste'          : 'pasteMenuItem',
-        'click .editor-menu-layer-paste-cancel'   : 'cancelPasteMenuItem'
+        'click .editor-menu-layer-paste'          : 'onPaste',
+        'click .editor-menu-layer-paste-cancel'   : 'pasteCancel'
       },
 
       preRender: function(options) {
@@ -159,17 +159,6 @@ define(function(require) {
         var newMenuItemView = new EditorMenuItemView({ model: model });
         this.$('.editor-menu-layer-inner').append(newMenuItemView.$el.addClass('syncing'));
         return newMenuItemView;
-      },
-
-      pasteMenuItem: function(e) {
-        e && e.preventDefault();
-        this.hidePasteZones();
-        Origin.trigger('editorView:paste');
-      },
-
-      cancelPasteMenuItem: function(e) {
-        e && e.preventDefault();
-        this.hidePasteZones();
       }
     }, {
       template: 'editorMenuLayer'

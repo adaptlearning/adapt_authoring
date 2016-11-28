@@ -207,7 +207,7 @@
   "app.upload": "Upload",
   "app.uploaded": "Uploaded",
   "app.assetfilters": "Filters",
-  "app.selectexternalasset": "Select an External Asset",
+  "app.selectexternalasset": "Use Asset at URL",
   "app.selectasset": "Select an Asset",
   "app.editeasset": "Edit Asset",
   "app.changeasset": "Change Asset",

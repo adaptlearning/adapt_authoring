@@ -1,0 +1,29 @@
+<div class="inner">
+ <div class="title">
+  {{t 'app.addtenantformtitle'}}
+</div>
+<form class="add-Tenant forms" action="/api/tenant" method="post" autocomplete="off">
+  <div class="form-group">
+    <label for="tenantName"> {{t 'app.tenantname'}}
+      <span class="req">*</span>
+      <span id="tenantNameError" class="error"></span>
+    </label>
+    <input type="text" id="tenantName" name="name" value="{{tenantName}}" autocomplete="off">
+  </div>
+
+  <div class="form-group">
+    <label for="tenantDisplayName">{{t 'app.displayname'}}
+      <span class="req">*</span>
+      <span id="tenantDisplayNameError" class="error"></span>
+    </label>
+    <input type="text" id="tenantDisplayName" name="displayName"
+    value="{{tenantDisplayName}}" autocomplete="off">
+  </div>
+
+  <div class="form-group">
+    <label for="isMaster">{{t 'app.ismaster'}}
+    </label>
+    <input type="checkbox" name="isMaster" value="isMaster">
+  </div>
+</form>
+</div>

@@ -320,5 +320,20 @@
   "app.list": "List",
   "app.ascending": "A to Z",
   "app.descending": "Z to A",
-  "app.visitpluginhomepage": "Visit plugin homepage"
+  "app.visitpluginhomepage": "Visit plugin homepage",
+  "app.ismaster":"IsMaster",
+  "app.createdat":"Created On",
+  "app.totaltenantsize":"Total Size",
+  "app.totaldatabasesize":"DB Size",
+  "app.enableTenant": "Enable Tenant",
+  "app.disableTenant":"Disable Tenant",
+  "app.addtenantformtitle":"New Tenant Details",
+  "app.tenantname":"Tenant Name",
+  "app.mastertenantcannotdisable":"You can't disable Master tenant",
+  "app.tenantmanagementtitle": "Tenant Management",
+  "app.addnewtenant":"Add New Tenant",
+  "app.editmodebutton": "Switch to edit mode",
+  "app.viewmodebutton": "Switch to view mode",
+  "app.lastaccess": "Last access",
+  "app.refresh": "Refresh"
 }

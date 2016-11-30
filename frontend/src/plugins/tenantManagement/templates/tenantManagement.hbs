@@ -1,0 +1,39 @@
+<div class="container">
+ <div class="inner">
+  <div class="view-buttons">
+    <button class="btn tertiary-hollow edit-mode">{{t 'app.editmodebutton'}}</button>
+    <button class="btn tertiary-hollow view-mode">{{t 'app.viewmodebutton'}}</button>
+  </div>
+  <div class="tb-heading col-row tb-row">
+    <div class="col-15">
+      <h4 class="tb-col-inner">{{t 'app.tenant'}}</h4>
+    </div>
+    <div class="col-15">
+      <h4 class="tb-col-inner">{{t 'app.displayname'}}</h4>
+    </div>
+    <div class="col-10 col-centered">
+      <h4 class="tb-col-inner">{{t 'app.ismaster'}}</h4>
+    </div>
+    <div class="col-15 col-centered">
+      <h4 class="tb-col-inner">{{t 'app.createdat'}}</h4>
+    </div>
+    <div class="col-15 col-centered">
+      <h4 class="tb-col-inner">{{t 'app.lastaccess'}}</h4>
+    </div>
+    <div class="col-10 col-centered">
+     <h4 class="tb-col-inner">{{t 'app.totaltenantsize'}}<br/>( {{totalOccupiedSpace}} MB)</h4>
+   </div>
+   <div class="col-10 col-centered">
+     <h4 class="tb-col-inner">{{t 'app.totaldatabasesize'}}</h4>
+   </div>
+   <div class="col-10">
+   </div>
+ </div>
+ <ul class="tenants clearfix grid-layout">
+  {{!-- Tenants get rendered in here --}}
+</ul>
+<div class="action-buttons">
+  <button class="btn tertiary-hollow refresh-all">{{t 'app.refresh'}}</button>
+</div>
+</div>
+</div>

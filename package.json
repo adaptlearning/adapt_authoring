@@ -72,6 +72,7 @@
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.13.3",
     "bower": "1.6.5",
+    "du": "^0.1.0",
     "chalk": "^1.0.0",
     "compression": "^1.5.2",
     "connect-mongo": "1.1.0",

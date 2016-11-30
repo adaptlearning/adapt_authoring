@@ -1,0 +1,79 @@
+<div class="inner">
+  <div class="col-row">
+
+    <div class="col-15">
+      <div class="tb-col-inner">
+        <span class="read">{{{name}}}</span>
+        <a class="edit read edit-mode"><i class="fa fa-pencil-square-o"></i></a>
+        <div class="input-container write">
+          <input class="input" type="text" data-modelKey="name" autocomplete="off">
+          <a class="save"><i class="fa fa-check-square-o"></i></a>
+          <a class="cancel"><i class="fa fa-times"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-15">
+      <div class="tb-col-inner">
+        <span class="read">{{{displayName}}}</span>
+        <a class="edit read edit-mode"><i class="fa fa-pencil-square-o"></i></a>
+        <div class="input-container write">
+          <input class="input" type="text" data-modelKey="displayName" autocomplete="off">
+          <a class="save"><i class="fa fa-check-square-o"></i></a>
+          <a class="cancel"><i class="fa fa-times"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-10 col-centered">
+      {{#if isMaster}}
+      <div class="tb-col-inner">True</div>
+      {{else}}
+      <div class="tb-col-inner">False</div>
+      {{/if}}
+    </div>
+
+    <div class="col-15 col-centered">
+      <div class="tb-col-inner">{{{momentFormat createdAt 'Do MMM YYYY'}}}</div>
+    </div>
+
+    <div class="col-15 col-centered">
+      <div class="tb-col-inner">{{{momentFormat updatedAt 'Do MMM YYYY'}}}</div>
+    </div>
+
+    <div class="col-10 col-centered">
+      <div class="tb-col-inner">{{{totalSize}}}</div>
+    </div>
+
+    <div class="col-10 col-centered">
+      <div class="tb-col-inner">{{{databaseSize}}}</div>
+    </div>
+
+    <div class="col-10">
+      <div class="tb-col-inner">
+        <div class="buttons edit-mode">
+          {{#if isMaster}}
+          <div>{{t 'app.mastertenantcannotdisable'}}</div>
+          {{else}}
+          {{#if _isDeleted}}
+          <button id="enable_{{_id}}" class="btn action-primary enableTenant">
+           {{t 'app.enableTenant'}}
+         </button>
+         <button id="disable_{{_id}}" class="btn action-primary disableTenant display-none">
+           {{t 'app.disableTenant'}}
+         </button>
+         {{else}}
+         <button id="enable_{{_id}}" class="btn action-primary enableTenant display-none">
+           {{t 'app.enableTenant'}}
+         </button>
+         <button id="disable_{{_id}}" class="btn action-primary disableTenant">
+           {{t 'app.disableTenant'}}
+         </button>
+         {{/if}}
+         {{/if}}
+       </div>
+     </div>
+   </div>
+
+ </div>
+</div>

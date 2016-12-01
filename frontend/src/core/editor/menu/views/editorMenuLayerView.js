@@ -10,26 +10,26 @@ define(function(require) {
 
   var EditorMenuLayerView = EditorOriginView.extend({
 
-      className: 'editor-menu-layer',
+    className: 'editor-menu-layer',
 
-      events: {
-        'click button.editor-menu-layer-add-page' : 'addPage',
-        'click button.editor-menu-layer-add-menu' : 'addMenu',
-        'click .editor-menu-layer-paste'          : 'pasteMenuItem',
-        'click .editor-menu-layer-paste-cancel'   : 'cancelPasteMenuItem'
-      },
+    events: {
+      'click button.editor-menu-layer-add-page' : 'addPage',
+      'click button.editor-menu-layer-add-menu' : 'addMenu',
+      'click .editor-menu-layer-paste'          : 'pasteMenuItem',
+      'click .editor-menu-layer-paste-cancel'   : 'cancelPasteMenuItem'
+    },
 
-      preRender: function(options) {
-        if (options._parentId) {
-          this._parentId = options._parentId;
-        }
+    preRender: function(options) {
+      if (options._parentId) {
+        this._parentId = options._parentId;
+      }
 
-        this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-        this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
-      },
+      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+      this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
+    },
 
-  		postRender: function() {
-        if (this._parentId) {
+    postRender: function() {
+      if (this._parentId) {
           // Append the parentId value to the container to allow us to move pages, etc.
           this.$el.attr('data-parentId', this._parentId);
         }
@@ -67,7 +67,7 @@ define(function(require) {
        * Adds a new contentObject of a given type
        * @param {String} type Given contentObject type, i.e. 'menu' or 'page'
        */
-      addMenuItem: function(event, type) {
+       addMenuItem: function(event, type) {
         event.preventDefault();
 
         var newMenuItemModel = new EditorContentObjectModel({
@@ -188,6 +188,8 @@ define(function(require) {
 
       pasteMenuItem: function(event) {
         event.preventDefault();
+        //Unbind event to avoid multiple paste of menu
+        $(this.el).off('click', '.editor-menu-layer-paste');
         Origin.trigger('editorView:paste', this._parentId, this.$('.editor-menu-item').length + 1);
         /*_.delay(_.bind(function() {
           Origin.trigger('editorView:menuView:updateSelectedItem', this);
@@ -205,10 +207,10 @@ define(function(require) {
         Origin.trigger('editorView:pasteCancel', target);
       }
 
-  	}, {
-  		template: 'editorMenuLayer'
-  });
+    }, {
+      template: 'editorMenuLayer'
+    });
 
-  return EditorMenuLayerView;
+return EditorMenuLayerView;
 
 });

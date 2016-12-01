@@ -43,6 +43,9 @@ define(function(require) {
 
     submitLoginDetails: function(e) {
       e && e.preventDefault();
+      //To avoid multiple login request.
+      var isLoginInprocess = this.model.get('loginFired');
+      if(isLoginInprocess) return;
 
       var inputUsernameEmail = $.trim(this.$("#login-input-username").val());
       var inputPassword = $.trim(this.$("#login-input-password").val());
@@ -58,6 +61,7 @@ define(function(require) {
 
       var userModel = this.model;
 
+      this.model.set('loginFired',true);
       userModel.login(inputUsernameEmail, inputPassword, shouldPersist);
     },
 
@@ -67,17 +71,17 @@ define(function(require) {
       switch (errorCode) {
         case LoginView.ERR_INVALID_CREDENTIALS:
         case LoginView.ERR_MISSING_FIELDS:
-          errorMessage = window.polyglot.t('app.invalidusernameorpassword');
-          break;
+        errorMessage = window.polyglot.t('app.invalidusernameorpassword');
+        break;
         case LoginView.ERR_ACCOUNT_LOCKED:
-          errorMessage = window.polyglot.t('app.accountlockedout');
-          break;
+        errorMessage = window.polyglot.t('app.accountlockedout');
+        break;
         case LoginView.ERR_TENANT_DISABLED:
-          errorMessage = window.polyglot.t('app.tenantnotenabled');
-          break;
+        errorMessage = window.polyglot.t('app.tenantnotenabled');
+        break;
         case LoginView.ERR_ACCOUNT_INACTIVE:
-          errorMessage = window.polyglot.t('app.accountnotactive');
-          break;
+        errorMessage = window.polyglot.t('app.accountnotactive');
+        break;
       }
 
       $('#login-input-username').addClass('input-error');

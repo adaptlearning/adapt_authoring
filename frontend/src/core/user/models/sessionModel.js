@@ -33,7 +33,7 @@ define(function(require) {
 
           Origin.trigger('login:changed');
           Origin.router.navigate('#/user/login', {trigger: true});
-      });
+        });
     },
 
     login: function (username, password, shouldPersist) {
@@ -47,7 +47,7 @@ define(function(require) {
           if (jqXHR.success) {
             self.set('id', jqXHR.id);
             self.set('tenantId', jqXHR.tenantId);
-            self.set('email', jqXHR.email);  
+            self.set('email', jqXHR.email);
             self.set('isAuthenticated', jqXHR.success);
             self.set('permissions', jqXHR.permissions);
 
@@ -67,6 +67,8 @@ define(function(require) {
 
           Origin.trigger('login:failed', errorCode);
         }
+      }).always(function(){
+        self.set('loginFired',false);
       });
     }
   });

@@ -14,7 +14,7 @@ define(function(require){
     events: {
       'change .asset-file': 'onFileSelected',
       'click a.workspaces': 'onWorkspacesClicked',
-
+      'change #is-restricted': 'onisRestrictedChange',
       'dragenter label[for=file]': 'onDrag',
       'dragover label[for=file]': 'onDrag',
       'dragleave label[for=file]': 'onDrop',

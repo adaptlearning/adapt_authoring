@@ -101,8 +101,7 @@ define(function(require){
             this.search = _.extend(this.search, {
               tags: {
                 $all: this.tags
-              },
-              _isDeleted: false
+              }
             }, {
               assetType: {
                 $in: this.filters

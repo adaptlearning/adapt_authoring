@@ -76,7 +76,7 @@ define(function(require) {
           Origin.trigger('scaffold:updateSchemas', function() {
             this.setupExtensions();
           }, this);
-        }, this);
+        }, this)
       });
     },
 

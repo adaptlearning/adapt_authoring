@@ -27,8 +27,6 @@ define(function(require){
     },
 
     initialize: function() {
-      Origin.trigger('location:title:update', { title: window.polyglot.t('app.themingtitle') });
-
       this.listenTo(this, 'dataReady', this.render);
       this.listenTo(Origin, 'editorThemingSidebar:views:save', this.saveData);
       this.listenTo(Origin, 'editorThemingSidebar:views:savePreset', this.onSavePresetClicked);
@@ -47,6 +45,12 @@ define(function(require){
 
     render: function() {
       EditorOriginView.prototype.render.apply(this, arguments);
+
+      Origin.trigger('location:title:update', {
+        breadcrumbs: ['dashboard','course'],
+        title: window.polyglot.t('app.themingtitle')
+      });
+
       this.renderForm();
     },
 

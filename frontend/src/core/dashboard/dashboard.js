@@ -11,7 +11,10 @@ define(function(require) {
     Origin.tap('dashboard', function() {
       Origin.trigger('editor:resetData');
       // TODO localise
-      Origin.trigger('location:title:update', { title: 'Dashboard - viewing my courses' });
+      Origin.trigger('location:title:update', {
+        breadcrumbs: ['dashboard'],
+        title: window.polyglot.t('app.myprojects')
+      });
       Origin.options.addItems([
         {
           title: window.polyglot.t('app.thumb'),
@@ -78,11 +81,17 @@ define(function(require) {
     // TODO localise these
     switch (options.type) {
       case 'shared':
-        Origin.trigger('location:title:update', {title: 'Dashboard - viewing shared courses'});
+        Origin.trigger('location:title:update', {
+          breadcrumbs: ['dashboard'],
+          title: window.polyglot.t('app.sharedprojects')
+        });
         Origin.router.createView(DashboardView, {collection: new SharedProjectCollection});
         break;
       case 'all':
-        Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
+        Origin.trigger('location:title:update', {
+          breadcrumbs: ['dashboard'],
+          title: window.polyglot.t('app.myprojects')
+        });
         Origin.router.createView(DashboardView, {collection: new MyProjectCollection});
       default:
         break;

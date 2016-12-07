@@ -24,9 +24,18 @@ define(function(require) {
   // });
 
   Origin.on('router:serverLog', function(location, subLocation, action) {
-    Origin.trigger('location:title:update', { title: 'Server Log' });
+    Origin.trigger('location:title:update', {
+      breadcrumbs: [
+        {
+          title: window.polyglot.t('app.systeminfo'),
+          url: '#/systemInfo'
+        },
+        { title: window.polyglot.t('app.serverlog')}
+      ],
+      title: window.polyglot.t('app.serverlog')
+    });
     Origin.sidebar.addView(new ServerLogSidebarView().$el, {
-      backButtonText: "Back to system info",
+      backButtonText: window.polyglot.t('app.backto') + ' ' + window.polyglot.t('app.systeminfo'),
       backButtonRoute: "/#/systemInfo"
     });
     var logs = new LogCollection();

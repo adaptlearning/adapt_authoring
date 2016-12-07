@@ -14,7 +14,7 @@ define(function(require) {
     if (Origin.permissions.hasPermissions(permissions)) {
       Origin.globalMenu.addItem({
         "location": "global",
-        "text": "System Information",
+        "text": window.polyglot.t('app.systeminformation'),
         "icon": "fa-tachometer",
         "callbackEvent": "systemInfo:open"
       });
@@ -22,7 +22,9 @@ define(function(require) {
   });
 
   Origin.on('router:systemInfo', function(location, subLocation, action) {
-    Origin.trigger('location:title:update', { title: 'System Information' });
+    Origin.trigger('location:title:update', {
+      title: window.polyglot.t('app.systeminformation')
+    });
     Origin.sidebar.addView(new SystemInfoSidebarView().$el);
     // fetch data
     $.getJSON('systemInfo', function(data) {

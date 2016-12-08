@@ -7,12 +7,7 @@ define(function(require){
   var Origin = require('coreJS/app/origin');
 
   var EditorComponentPasteZone = EditorPasteZoneView.extend({
-
     className : 'paste-zone paste-zone-component display-none',
-
-    events: {
-        'click .editor-paste-zone-paste': 'onPasteElementClicked'
-    },
 
     preRender: function () {
       this.listenTo(this.model, 'destroy', this.remove);

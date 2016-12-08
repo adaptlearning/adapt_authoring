@@ -41,13 +41,12 @@ define(function(require) {
 
     initialize: function(options) {
       this.listenTo(Origin, 'scaffold:assets:autofill', this.onAutofill);
-      this.listenTo(Origin, 'modal:onUpdate', this.render);
+      this.listenTo(Origin, 'scaffold:assets:save', this.onSave);
       // Call parent constructor
       Backbone.Form.editors.Base.prototype.initialize.call(this, options);
     },
 
     render: function() {
-      console.log('ScaffoldAssetView.render:', this.value);
       var assetType = this.schema.fieldType.replace('Asset:', '');
       var data = {
         value: this.value,
@@ -233,14 +232,19 @@ define(function(require) {
 
     onEditButtonClicked: function(e) {
       e && e.preventDefault();
-      var courseasset = this.findAsset(
-        Origin.scaffold.getCurrentModel().get('_id'),
-        Origin.scaffold.getCurrentModel().get('_type'),
-        this.getValue() ? this.getValue().replace('course/assets/', '') : ''
-      );
-      var self = this;
-      var asset = new AssetModel({ _id: courseasset.get('_assetId') });
 
+      if('heroImage' === this.key) {
+        var asset = new AssetModel({ _id: this.model.get('heroImage') });
+      } else {
+        var courseasset = this.findAsset(
+          Origin.scaffold.getCurrentModel().get('_id'),
+          Origin.scaffold.getCurrentModel().get('_type'),
+          this.getValue() ? this.getValue().replace('course/assets/', '') : ''
+        );
+        var asset = new AssetModel({ _id: courseasset.get('_assetId') });
+      }
+
+      var self = this;    
       asset.fetch({
         success: function(model) {
           Origin.trigger('modal:open', ScaffoldAssetEditView, {
@@ -311,9 +315,15 @@ define(function(require) {
       this.render();
     },
 
+    onSave: function(id) {
+      var notThis = id !== this.id;
+      if(notThis) this.render();
+    },
+
     onSaveSuccess: function() {
       this.render();
       this.trigger('change', this);
+      Origin.trigger('scaffold:assets:save', this.id);
     },
 
     onModalUpdate: function(data) {
@@ -325,7 +335,7 @@ define(function(require) {
         this.saveModel(false, { heroImage: data.assetId });
         return;
       }
-      // Setup courseasset
+      // setup courseasset
       var parentId = Origin.scaffold.getCurrentModel().get('_parentId');
       var courseId = Origin.editor.data.course.get('_id');
       var courseAssetObject = {
@@ -335,8 +345,7 @@ define(function(require) {
         fieldname: data.assetFilename,
         assetId: data.assetId
       };
-      // If the data is meant to autofill the rest of the graphic sizes
-      // pass out an event instead - this is currently only used for the graphic component
+      // if autofill, trigger event (only used for the graphic component)
       if (data._shouldAutofill) {
         return Origin.trigger('scaffold:assets:autofill', courseAssetObject, data.assetLink);
       }

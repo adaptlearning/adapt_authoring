@@ -107,7 +107,7 @@ define(function(require) {
 			_.each(objectSchema, function(field, key) {
 				setupSchemaFields(field, key, objectSchema, scaffoldObjectSchema);
 			});
-			
+
 		} else if (field.type != 'object' || field.inputType) {
 
 			var validators = [];
@@ -341,7 +341,7 @@ define(function(require) {
 	Scaffold.addCustomField = function(fieldName, view, overwrite) {
 		// Check if field already exists
 		if (Backbone.Form.editors[fieldName] && !overwrite) {
-			return console.log("Sorry, the custom field you're trying to add already exists")
+			return console.log("Sorry, the custom field you're trying to add (" + fieldName + ") already exists")
 		} else {
 			Backbone.Form.editors[fieldName] = view;
 		}
@@ -371,7 +371,7 @@ define(function(require) {
 		}
 		// Check if custom template already exists
 		if (customTemplates[templateName] && !overwrite) {
-			return console.log("Sorry, the custom template you're trying to add already exists");
+			return console.log("Sorry, the custom template you're trying to add (" + templateName + ") already exists");
 		} else {
 			customTemplates[templateName] = template;
 		}

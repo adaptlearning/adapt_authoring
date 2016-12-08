@@ -3,6 +3,7 @@
  * Adapt Output plugin
  */
 var _ = require('underscore');
+var adapt2html = require('adapt2html');
 var archiver = require('archiver');
 var assetmanager = require('../../../lib/assetmanager');
 var async = require('async');
@@ -41,14 +42,7 @@ var self;
 * ------------------------------------------------------------------------------
 */
 AdaptOutput.prototype.publish = function(courseId, isPreview, request, response, next) {
-  self = this;
-  var user = usermanager.getCurrentUser(),
-    tenantId = user.tenant._id,
-    outputJson = {},
-    isRebuildRequired = false,
-    themeName = '',
-    menuName = Constants.Defaults.MenuName;
-
+  var self = this;
   var resultObject = {};
 
   // shorthand directories
@@ -58,6 +52,12 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
   var COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId, courseId);
   var BUILD_FOLDER = path.join(COURSE_FOLDER, Constants.Folders.Build);
 
+  var user = usermanager.getCurrentUser();
+  var tenantId = user.tenant._id;
+  var outputJson = {};
+  var isRebuildRequired = false;
+  var themeName = '';
+  var menuName = Constants.Defaults.MenuName;
   var customPluginName = user._id;
 
   async.series([
@@ -108,7 +108,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
             return callback(err);
           }
 
-          isRebuildRequired = exists;
+          isRebuildRequired = exists || request.query.force === 'true';
 
           callback(null);
         });
@@ -1048,6 +1048,85 @@ function zipExport(error) {
 function cleanUpExport(exportError) {
   fse.remove(EXPORT_DIR, function(removeError) {
     next(exportError || removeError);
+  });
+};
+
+/**
+* FUNCTION: Export HTML
+* ------------------------------------------------------------------------------
+*/
+AdaptOutput.prototype.exportHtml = function(courseId, request, response, next) {
+  var user = usermanager.getCurrentUser();
+  var userId = user._id;
+  var folders = Constants.Folders;
+  var exportsDir = path.join(
+    configuration.tempDir,
+    configuration.getConfig('masterTenantID'),
+    folders.Framework,
+    folders.Exports
+  );
+  var destDir = path.join(exportsDir, userId);
+  var destZip = path.join(exportsDir, userId + '.zip');
+  var courseJsonDir;
+  var outputJson = {};
+  var resultObject = {};
+
+  self = this;
+
+  async.series([
+    function(callback) {
+      self.getCourseJSON(user.tenant._id, courseId, function(err, data) {
+        if (err) {
+          return callback(err);
+        }
+
+        outputJson = data;
+        callback(null);
+      });
+    },
+    function(callback) {
+      self.sanitizeCourseJSON(outputJson, function(err, data) {
+        if (err) {
+          return callback(err);
+        }
+
+        outputJson = data;
+        callback(null);
+      });
+    },
+    function(callback) {
+      self.writeCourseJSON(outputJson, destDir, callback);
+    },
+    function(callback) {
+      courseJsonDir = path.join(destDir, outputJson.config._defaultLanguage);
+      adapt2html.main(courseJsonDir, function(err) { callback(err || null); });
+    },
+    function(callback) {
+      var archive = archiver('zip');
+      var output = fse.createWriteStream(destZip);
+
+      archive.on('error', function(err) {
+        logger.log('error', err);
+        callback(err);
+      });
+
+      output.on('close', function() {
+        resultObject.courseTitle = outputJson.course.title;
+        callback(null);
+      });
+
+      archive.pipe(output);
+
+      archive.bulk([
+        { expand: true, cwd: path.join(courseJsonDir, 'adapt2html'), src: ['**/*'] }
+      ]).finalize();
+    }
+  ], function(err) {
+    fse.remove(destDir, function(removeErr) {
+      var error = err || removeErr;
+
+      error ? next(error) : next(null, resultObject);
+    });
   });
 };
 

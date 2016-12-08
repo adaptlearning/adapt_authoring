@@ -18,7 +18,7 @@ define(function(require){
       OriginView.prototype.initialize.apply(this, arguments);
 
       this.listenTo(Origin, 'sidebarFieldsetFilter:filterForm', this.filterForm);
-      this.listenTo(Origin, 'editorView:pasteCancel', this.hidePasteZones);
+      this.listenTo(Origin, 'Cancel', this.hidePasteZones);
     },
 
     filterForm: function(filter) {
@@ -28,7 +28,6 @@ define(function(require){
       } else {
         this.filters.push(filter);
       }
-
       // Now actually filter the form
       if (this.filters.length === 0) {
         $('.form-container > form > div > fieldset').removeClass('display-none');
@@ -41,27 +40,27 @@ define(function(require){
     },
 
     postRender: function() {
-      // On post render - pop the form into place
       if (!this.form) {
-        this.setViewToReady();
-        return;
+        return this.setViewToReady();
       }
-      var that = this;
+      // render form
       this.$('.form-container').append(this.form.el);
-      // the delay's going to stop jumping pages
-      _.delay(function() { that.setViewToReady(); }, 400);
+      // delay to stop jumping pages
+      _.delay(this.setViewToReady, 400);
     },
 
+    // shows all
     showPasteZones: function (type) {
-      $('.paste-zone').addClass('display-none');
-      $('.add-control').addClass('display-none');
-      type && $('.paste-zone-' + type).removeClass('display-none');
+      $('.add-control').addClass('display-none'); // for page editor
+      $('.add-zone').css('visibility', 'hidden');  // for menu editor
+      $('.paste-zone-' + type).removeClass('display-none').addClass('show');
     },
 
+    // hides all
     hidePasteZones: function() {
-      // Purposeful global selector here
-      $('.paste-zone').addClass('display-none');
-      $('.add-control').removeClass('display-none');
+      $('.paste-zone').addClass('display-none').removeClass('show');
+      $('.add-control').removeClass('display-none'); // for page editor
+      $('.add-zone').css('visibility', 'visible'); // for menu editor
     },
 
     showDropZones: function () {
@@ -93,8 +92,7 @@ define(function(require){
 
       if (errors) {
         var errorText =
-          window.polyglot.t('app.validationfailedmessage') +
-          "<br/><br/>" +
+          window.polyglot.t('app.validationfailedmessage') + "<br/><br/>" +
           this.buildErrorMessage(errors, '');
         // TODO remove when we've got a better solution
         this.onSaveError(window.polyglot.t('app.validationfailed'), errorText);
@@ -160,10 +158,12 @@ define(function(require){
       e && e.preventDefault();
       e && e.stopPropagation();
       Origin.trigger('editorView:paste', this.model.get('_parentId'), $(e.target).data('sort-order'), $(e.target).data('paste-layout'));
+      this.hidePasteZones();
     },
 
     pasteCancel: function(e) {
       e && e.preventDefault();
+      this.hidePasteZones();
       Origin.trigger('editorView:pasteCancel', this.model);
     },
 
@@ -174,13 +174,10 @@ define(function(require){
     },
 
     onSaveError: function(pTitle, pText) {
-      var title = _.isString(pTitle) ? pTitle : window.polyglot.t('app.errordefaulttitle');
-      var text = _.isString(pText) ? pText : window.polyglot.t('app.errorsave');
-
       Origin.Notify.alert({
         type: 'error',
-        title: title,
-        text: text
+        title: _.isString(pTitle) ? pTitle : window.polyglot.t('app.errordefaulttitle'),
+        text: _.isString(pText) ? pText : window.polyglot.t('app.errorsave')
       });
       Origin.trigger('sidebar:resetButtons');
     },

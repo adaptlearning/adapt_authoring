@@ -25,6 +25,7 @@ define(function(require){
       autoRender: false
     },
     exporting: false,
+    exportingHtml: false,
     tagName: "div",
     className: "editor-view",
 
@@ -43,14 +44,17 @@ define(function(require){
       this.currentCourse = Origin.editor.data.course;
       this.currentPageId = options.currentPageId;
 
-      this.listenTo(Origin, 'editorView:refreshView', this.setupEditor);
-      this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
-      this.listenTo(Origin, 'editorView:copyID', this.copyIdToClipboard);
-      this.listenTo(Origin, 'editorView:cut', this.cutContent);
-      this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
-      this.listenTo(Origin, 'editorCommon:download', this.downloadProject);
-      this.listenTo(Origin, 'editorCommon:preview', this.previewProject);
-      this.listenTo(Origin, 'editorCommon:export', this.exportProject);
+      this.listenTo(Origin, {
+        'editorView:refreshView': this.setupEditor,
+        'editorView:copy': this.addToClipboard,
+        'editorView:copyID': this.copyIdToClipboard,
+        'editorView:cut': this.cutContent,
+        'editorView:paste': this.pasteFromClipboard,
+        'editorCommon:download': this.downloadProject,
+        'editorCommon:preview': this.previewProject,
+        'editorCommon:export': this.exportProject,
+        'editorCommon:exportHtml': this.exportHtml
+      });
 
       this.render();
       this.setupEditor();
@@ -97,49 +101,17 @@ define(function(require){
       }
     },
 
+    toggleExportHtmlAnimation() {
+      $('.editor-common-sidebar-export-html-inner')
+        .toggleClass("display-none", this.exportingHtml);
+      $('.editor-common-sidebar-exporting-html')
+        .toggleClass("display-none", !this.exportingHtml);
+    },
+
     launchCoursePreview: function() {
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
       window.open('/preview/' + tenantId + '/' + courseId + '/', 'preview');
-    },
-
-    previewProject: function(e) {
-      e && e.preventDefault();
-
-      var self = this;
-
-      if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isPreviewPending) {
-        Origin.editor.isPreviewPending = true;
-        $('.navigation-loading-indicator').removeClass('display-none');
-        $('.editor-common-sidebar-preview-inner').addClass('display-none');
-        $('.editor-common-sidebar-previewing').removeClass('display-none');
-
-        $.ajax({
-          method: 'get',
-          url: '/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId,
-          success: function (jqXHR, textStatus, errorThrown) {
-            if (jqXHR.success) {
-              if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) != 'undefined' && jqXHR.payload.pollUrl != '') {
-                // Ping the remote URL to check if the job has been completed
-                self.updatePreviewProgress(jqXHR.payload.pollUrl);
-              } else {
-                self.launchCoursePreview();
-                self.resetPreviewProgress();
-              }
-            } else {
-              self.resetPreviewProgress();
-              Origin.Notify.alert({
-                type: 'error',
-                text: window.polyglot.t('app.errorgeneratingpreview')
-              });
-            }
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            self.resetPreviewProgress();
-            Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgeneric') });
-          }
-        });
-      }
     },
 
     updatePreviewProgress: function(url) {
@@ -311,7 +283,7 @@ define(function(require){
           sortOrder: sortOrder,
           courseId: Origin.editor.data.course.get('_id')
         },
-        success: function (jqXHR, textStatus, errorThrown) {
+        success: _.bind(function(jqXHR, textStatus, errorThrown) {
           if (!jqXHR.success) {
             Origin.Notify.alert({
               type: 'error',
@@ -320,14 +292,10 @@ define(function(require){
           } else {
             Origin.editor.clipboardId = null;
             Origin.editor.pasteParentModel = null;
-            Origin.trigger('editor:refreshData', function() {
-              // TODO: HACK - I think this should probably pass a callback in
-              // and return it with the new item - this way the individual views
-              // can handle the new views and models
-              Backbone.history.loadUrl();
-            }, this);
+            // TODO callback to allow views to control what happens next?
+            Origin.trigger('editor:refreshData', this.setupEditor, this);
           }
-        },
+        }, this),
         error: function (jqXHR, textStatus, errorThrown) {
           Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorpaste') });
         }
@@ -347,8 +315,45 @@ define(function(require){
       $(e.currentTarget).removeClass('hovering');
     },
 
-    downloadProject: function(e) {
-      e && e.preventDefault();
+    previewProject: function(forceRebuild) {
+      var self = this;
+
+
+      if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isPreviewPending) {
+        Origin.editor.isPreviewPending = true;
+        $('.navigation-loading-indicator').removeClass('display-none');
+        $('.editor-common-sidebar-preview-inner').addClass('display-none');
+        $('.editor-common-sidebar-previewing').removeClass('display-none');
+
+        $.ajax({
+          method: 'get',
+          url: '/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId + '?force=' + (forceRebuild === true),
+          success: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.success) {
+              if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) != 'undefined' && jqXHR.payload.pollUrl != '') {
+                // Ping the remote URL to check if the job has been completed
+                self.updatePreviewProgress(jqXHR.payload.pollUrl);
+              } else {
+                self.launchCoursePreview();
+                self.resetPreviewProgress();
+              }
+            } else {
+              self.resetPreviewProgress();
+              Origin.Notify.alert({
+                type: 'error',
+                text: window.polyglot.t('app.errorgeneratingpreview')
+              });
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            self.resetPreviewProgress();
+            Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgeneric') });
+          }
+        });
+      }
+    },
+
+    downloadProject: function() {
       var self = this;
 
       if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isDownloadPending) {
@@ -436,6 +441,46 @@ define(function(require){
              text: messageText
            });
          }
+      });
+    },
+
+    exportHtml: function() {
+      if (this.exportingHtml) {
+        return;
+      }
+
+      var courseId = Origin.editor.data.course.get('_id');
+      var tenantId = Origin.sessionModel.get('tenantId');
+      var self = this;
+
+      this.exportingHtml = true;
+      self.toggleExportHtmlAnimation();
+
+      $.ajax({
+        url: '/exportHtml/' + tenantId + '/' + courseId,
+        success: function(data) {
+          self.exportingHtml = false;
+          self.toggleExportHtmlAnimation();
+
+          $('<form/>', {
+            action: '/downloadHtml/' + data.courseTitle + '/download.zip'
+          }).submit();
+         },
+        error: function(jqXHR, textStatus, errorThrown) {
+          var responseJSON = jqXHR ? jqXHR.responseJSON : null;
+          var message = responseJSON ? responseJSON.message : null;
+
+          if (message) errorThrown += ':<br>' + message;
+
+          self.exportingHtml = false;
+          self.toggleExportHtmlAnimation();
+
+          Origin.Notify.alert({
+            type: 'error',
+            title: window.polyglot.t('app.exporterrortitle'),
+            text: errorThrown 
+          });
+        }
       });
     }
   }, {

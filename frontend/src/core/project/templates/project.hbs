@@ -1,4 +1,4 @@
-<div class="project-inner clearfix unselectable" data-id="{{_id}}">
+<div class="project-inner clearfix unselectable {{#if _isShared}}shared{{/if}}" data-id="{{_id}}">
 
     <div class="project-header">
       <div class="project-header-inner">
@@ -33,10 +33,12 @@
         </div>
 
           {{#if _isShared}}{{#ifUserIsMe createdBy}}
-          <div class="status-bar shared">SHARED</div>
+          <div class="status-bar shared">
+            <div class="inner">{{t 'app.shared'}}</div>
+          </div>
           {{/ifUserIsMe}}{{/if}}
 
-        {{#if tags.length}}
+        {{#if false}}<!-- tags.length -->
         <div class="project-details-tags project-details-row tags">
           <div class="projects-details-tags-button">
             <button class="btn secondary-hollow projects-details-tags-button-show">View tags</button>

@@ -14,6 +14,7 @@ define(function(require) {
       assetManagementSummaryModule: require('coreJS/assetManagement/views/assetManagementSummaryModule'),
       assetManagementSearchModule: require('coreJS/assetManagement/views/assetManagementSearchModule'),
       assetManagementSortModule: require('coreJS/assetManagement/views/assetManagementSortModule'),
+      assetManagementCourseModule: require('coreJS/assetManagement/views/assetManagementCourseModule'),
       assetManagementWorkspaceModule: require('coreJS/assetManagement/views/assetManagementWorkspaceModule'),
       assetManagementMineModule: require('coreJS/assetManagement/views/assetManagementMineModule'),
       assetManagementTagsModule: require('coreJS/assetManagement/views/assetManagementTagsModule')
@@ -24,13 +25,17 @@ define(function(require) {
       this.options = options;
 
       this.listenTo(Origin, 'remove:views', this.remove);
-
       this.listenTo(Origin, 'modal:closed', this.remove);
-      this.listenTo(Origin, 'modal:resize', this.onModalResize);
 
+      this.listenTo(Origin, 'modal:resize', this.onModalResize);
       this.listenTo(Origin, 'assetManagement:refine:hide', this.hide);
 
       this.render();
+    },
+
+    remove: function() {
+      Backbone.View.prototype.remove.apply(this, arguments);
+      Origin.trigger('assetManagement:refine:remove');
     },
 
     render: function() {
@@ -103,6 +108,7 @@ define(function(require) {
     onAllModulesReady: function() {
       this.stopListening(Origin, 'assetManagement:refine:moduleReady', this.onModuleReady);
       this.listenTo(Origin, 'assetManagement:refine:reset', this.resetFilters);
+
       Origin.trigger('assetManagement:refine:ready');
     },
 

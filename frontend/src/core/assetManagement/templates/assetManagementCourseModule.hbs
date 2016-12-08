@@ -1,0 +1,12 @@
+<div class="radios">
+  {{#each courses}}
+    <div class="checkbox input">
+      <input type="checkbox" name="{{_id}}" id="{{_id}}"/>
+      <div class="icon">
+        <i class="icon-checked fa fa-check-square-o"></i>
+        <i class="icon-unchecked fa fa-square-o"></i>
+      </div>
+      <label for="{{_id}}">{{title}}</label>
+    </div>
+  {{/each}}
+</div>

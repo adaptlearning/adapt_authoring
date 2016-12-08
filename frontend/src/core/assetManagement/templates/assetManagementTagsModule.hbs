@@ -1,13 +1,8 @@
 {{#if tags.length}}
-  <div class="title">
-    Filter by tags
-  </div>
-  <a href="#" class="reset">remove all</a>
-  <div class="inner">
-    <div class="tags">
-      {{#each tags.models}}
-        <div class="tag" id="{{attributes._id}}" title="{{attributes.title}}">{{attributes.title}}</div>
-      {{/each}}
-    </div>
-  </div>
+<a href="#" class="reset">remove all</a>
+<div class="tags">
+  {{#each tags.models}}
+    <div class="tag" id="{{attributes._id}}" title="{{attributes.title}}">{{attributes.title}}</div>
+  {{/each}}
+</div>
 {{/if}}

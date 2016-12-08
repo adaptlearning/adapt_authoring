@@ -1,22 +1,19 @@
-<div class="title">Filter by location</div>
-<div class="inner">
-  <div class="radios">
-    <div class="radio input">
-      <input type="radio" name="workspace" id="all"/>
-      <div class="icon"></div>
-      <label for="all">All</label>
-    </div>
-    <div class="radio input">
-      <input type="radio" name="workspace" id="course"/>
-      <div class="icon"></div>
-      <label for="course">Course</label>
-    </div>
-    {{#if this.workspaces.page}}
-      <div class="radio input">
-        <input type="radio" name="workspace" id="page"/>
-        <div class="icon"></div>
-        <label for="page">Page</label>
-      </div>
-    {{/if}}
+<div class="radios">
+  <div class="radio input">
+    <input type="radio" name="workspace" id="all"/>
+    <div class="icon"></div>
+    <label for="all">All</label>
   </div>
+  <div class="radio input">
+    <input type="radio" name="workspace" id="course"/>
+    <div class="icon"></div>
+    <label for="course">Course</label>
+  </div>
+  {{#if this.workspaces.page}}
+    <div class="radio input">
+      <input type="radio" name="workspace" id="page"/>
+      <div class="icon"></div>
+      <label for="page">Page</label>
+    </div>
+  {{/if}}
 </div>

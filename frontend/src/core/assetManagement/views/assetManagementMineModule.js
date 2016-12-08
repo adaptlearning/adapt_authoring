@@ -4,7 +4,8 @@ define(function(require) {
   var AssetManagementRefineModule = require('coreJS/assetManagement/views/assetManagementRefineModule');
 
   var AssetManagementMineModule = AssetManagementRefineModule.extend({
-    className: 'module mine',
+    className: 'mine',
+    title: 'Filter by owner',
     filterType: 'search',
 
     events: {

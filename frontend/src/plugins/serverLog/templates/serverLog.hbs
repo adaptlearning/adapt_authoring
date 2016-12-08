@@ -1,13 +1,10 @@
 <div class="inner">
   <div class="heading row">
-      <div class="level"><h4>Level</h4></div>
-      <div class="message"><h4>Message</h4></div>
+      <div class="level"><h4>{{t 'app.level'}}</h4></div>
+      <div class="message"><h4>{{t 'app.message'}}</h4></div>
   </div>
   <div class="logs">
-    {{#if logsToRender}}
-    {{else}}
-    There are no logs to show.
-    {{/if}}
+    {{#unless logsToRender}}{{t 'app.nologstoshow'}}{{/unless}}
     {{#each logsToRender}}
       <div class="log row {{attributes.level}}">
           <div class="level">{{attributes.level}}</div>

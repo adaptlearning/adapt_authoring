@@ -68,7 +68,6 @@ require([
     ImageReady,
     MediaElement
 ) {
-
   // Read in the configuration values/constants
   $.getJSON('config/config.json', function(configData) {
     Origin.constants = configData;
@@ -91,9 +90,7 @@ require([
           Origin.trigger('app:dataReady');
           // Defer here is good - give anything tapping in app:dataReady event
           // time to do their thang!
-          _.defer(function() {
-            Origin.initialize();
-          });
+          _.defer(Origin.initialize);
         });
       });
     });

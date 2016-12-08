@@ -4,7 +4,6 @@ define(function(require) {
     var Origin = require('coreJS/app/origin');
 
     var EditorModel = Backbone.Model.extend({
-
       idAttribute: '_id',
       whitelistAttributes: null,
 
@@ -17,17 +16,15 @@ define(function(require) {
       loadedData: function() {
         if (this._siblings) {
           this._type = this._siblings;
-        } 
- 
-        Origin.trigger('editorModel:dataLoaded', this._type);
+        }
+        Origin.trigger('editorModel:dataLoaded', this._type, this.get('_id'));
       },
 
       getChildren: function() {
         if (Origin.editor.data[this._children]) {
           var children = Origin.editor.data[this._children].where({_parentId:this.get("_id")});
           var childrenCollection = new Backbone.Collection(children);
-
-          return childrenCollection;          
+          return childrenCollection;
         } else {
           return null;
         }
@@ -63,22 +60,22 @@ define(function(require) {
 
             var siblings = _.reject(Origin.editor.data[this._siblings].where({
                 _parentId:this.get("_parentId")
-            }), _.bind(function(model){ 
-                return model.get('_id') == this.get('_id'); 
+            }), _.bind(function(model){
+                return model.get('_id') == this.get('_id');
             }, this));
             var siblingsCollection = new Backbone.Collection(siblings);
 
-            
+
             // returns a collection of siblings
             return siblingsCollection;
           }
       },
 
-      setOnChildren: function(key, value, options) {           
+      setOnChildren: function(key, value, options) {
         var args = arguments;
-        
+
         if(!this._children) return;
-        
+
         this.getChildren().each(function(child){
             child.setOnChildren.apply(child, args);
         });
@@ -87,13 +84,13 @@ define(function(require) {
       getPossibleAncestors: function() {
         var map = {
           'contentObjects': {
-            'ancestorType': 'page' 
+            'ancestorType': 'page'
           },
           'articles' : {
             'ancestorType' : 'article'
           },
           'blocks' : {
-            'ancestorType' : 'block'            
+            'ancestorType' : 'block'
           }
         };
         ancestors = Origin.editor.data[this._parent].where({_type: map[this._parent].ancestorType});
@@ -128,12 +125,12 @@ define(function(require) {
         if (children) {
           _.each(children.models, function(child) {
             serializedJson += child.serialize();
-          });  
+          });
         }
 
         return serializedJson;
       }
-      
+
     });
 
     return EditorModel;

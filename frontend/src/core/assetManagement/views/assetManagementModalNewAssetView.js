@@ -14,7 +14,7 @@ define(function(require){
     events: {
       'change .asset-file': 'onFileSelected',
       'click a.workspaces': 'onWorkspacesClicked',
-
+      'change #is-restricted': 'onisRestrictedChange',
       'dragenter label[for=file]': 'onDrag',
       'dragover label[for=file]': 'onDrag',
       'dragleave label[for=file]': 'onDrop',
@@ -56,6 +56,7 @@ define(function(require){
       Origin.once('assetManagement:assetManagementCollection:fetched', function() {
         Origin.trigger('assetManagement:modal:selectItem', data._id);
       })
+      Origin.trigger('assets:update', data);
       Origin.trigger('assetManagement:collection:refresh', true);
       this.remove();
     }

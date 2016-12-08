@@ -23,7 +23,7 @@
     {{/ifValueEquals}}
 
     {{#ifValueEquals assetType "other"}}
-      <i class="fa {{getAssetIcon mimeType}}"></i>
+      <i class="fa-5x {{getAssetIcon mimeType}}"></i>
     {{/ifValueEquals}}
   </div>
 
@@ -43,6 +43,12 @@
         <div class="asset-height">{{{metadata.width}}}px x {{{metadata.height}}}px</div>
       {{/if}}
       <div class="asset-size">{{{bytesToSize size}}}</div>
+      {{#if isRestricted}}
+      <div class="asset-restricted">
+        <i class="fa fa-copyright"></i>
+        <span>{{t 'app.assetrestricted'}}</span>
+      </div>
+      {{/if}}
     </div>
     {{#if tags.length}}
     <div class="asset-group">
@@ -71,7 +77,6 @@
       {{#ifHasPermissions "{{tenantid}}/user:read"}}
         <span class="label">by</span> {{getUserNameFromId createdBy}}
       {{/ifHasPermissions}}
-      .
     </div>
 
     <!-- Buttons -->

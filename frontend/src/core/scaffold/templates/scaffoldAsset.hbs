@@ -9,13 +9,11 @@
 		{{#ifAssetIsExternal value}}
 			<img class="scaffold-asset-preview" src="{{value}}"/>
 		{{else}}
-      {{#ifImageIsCourseAsset value}}
-	      <img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}{{cacheBuster this}}"/>
-      {{else}}
-	      <a class="scaffold-asset-preview" title="{{t 'app.nothumbnailforimage'}}" href="{{getAssetFromValue value}}" target="_blank">
-	        <i class="fa fa-file-image-o fa-large"></i>
-	      </a>
-      {{/ifImageIsCourseAsset}}
+			{{#ifValueEquals thumbnailPath "false"}}
+				<i class="{{getAssetIcon mimeType}}"></i>
+			{{else}}
+				<img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}{{cacheBuster this}}"/>
+			{{/ifValueEquals}}
 		{{/ifAssetIsExternal}}
 	{{/ifValueEquals}}
 

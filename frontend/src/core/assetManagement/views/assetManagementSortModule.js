@@ -3,7 +3,8 @@ define(function(require) {
   var AssetManagementRefineModule = require('coreJS/assetManagement/views/assetManagementRefineModule');
 
   var AssetManagementSortModule = AssetManagementRefineModule.extend({
-    className: 'module sort',
+    className: 'sort',
+    title: 'Sort by',
     filterType: 'sort',
 
     events: {

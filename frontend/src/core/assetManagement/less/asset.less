@@ -15,6 +15,15 @@
             width: auto;
             overflow-y:scroll;
 
+            .asset-management-message {
+              display: none;
+              .secondary;
+              cursor: pointer;
+              padding: 5px;
+              text-align: center;
+              font-size: 14px;
+            }
+
            .asset-management-collection-inner {
                padding-top:30px;
                padding-left:30px;
@@ -179,9 +188,6 @@
                .asset-preview-details {
                    padding: 40px 30px;
 
-                   i {
-                       font-size:56px;
-                   }
                    .fa-file-audio-o {
                        margin-bottom:20px;
                    }
@@ -217,6 +223,11 @@
                               font-size: 110%;
                               margin-bottom: 5px;
                            }
+                       }
+
+                       .asset-restricted {
+                         font-weight: bold;
+                         color: @alert-color;
                        }
 
                        .asset-tags {

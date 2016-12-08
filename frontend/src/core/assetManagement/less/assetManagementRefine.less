@@ -60,7 +60,7 @@
     ~ button.clear {
       position: absolute;
       top: 0;
-      right: 10px;
+      left: 200px;
       height: @input-text-actual-height;
       padding: 10px;
       width: auto;
@@ -116,7 +116,7 @@
 */
 .input.checkbox {
   .icon {
-    display: inline-block;
+    position: absolute;
     .icon-checked {
       display: none;
       margin-right: 5px;
@@ -129,7 +129,8 @@
     }
   }
   label {
-    top: -1px;
+    top: -2px;
+    margin-left: 25px;
   }
   input:checked {
     ~ .icon {
@@ -143,33 +144,39 @@
   }
 }
 
-.modal .modal-popup .modal-popup-toolbar .modal-popup-toolbar-buttons {
-  button.refine {
-    float: left;
-    height: 100%;
-    padding-left: 25px;
-    padding-right: 25px;
-    background-color: @background-color;
-    color: @primary-color;
-    font-size: 115%;
-    i {
-      font-size: 130%;
-      margin-right: 12px;
+.modal .modal-popup {
+  .modal-popup-toolbar .modal-popup-toolbar-buttons {
+    button.refine {
+      float: left;
+      height: 100%;
+      padding-left: 25px;
+      padding-right: 25px;
+      background-color: @background-color;
+      color: @primary-color;
+      font-size: 115%;
+      i {
+        font-size: 130%;
+        margin-right: 12px;
+      }
+      &:hover {
+        color: @white;
+      }
     }
-    &:hover {
-      color: @white;
-    }
+  }
+  .course.module {
+    // TODO stop this rendering at all
+    display: none;
   }
 }
 
 .assetManagement-refine {
-  .slideLeft-anim(-300px);
+  .slideLeft-anim(-@sidebar-width);
   &.show {
       .slideLeft-anim(0);
   }
   position: relative;
   float: left;
-  width: 300px;
+  width: @sidebar-width;
   height: 100%;
   background-color: @background-color;
   border-top: @control-border;
@@ -178,7 +185,17 @@
   .modules {
     color: @font-color;
     > .module {
-      padding: 20px 35px;
+      &.hide {
+        // icon
+        .fa-plus { display: inline-block !important; }
+        .fa-minus { display: none !important; }
+
+        .inner {
+          display: none;
+        }
+      }
+
+      padding: 20px 25px;
       border-bottom: @control-border;
 
       .title {
@@ -191,18 +208,21 @@
         &:hover {
           color: @title-color-hover;
         }
-        ~ .inner {
-          margin-top: 12px;
+
+        i {
+          margin-right: 10px;
+          color: @secondary-color;
+          &.fa-plus { display: none; }
+          &.fa-minus { display: inline-block; }
         }
       }
 
       .inner {
         display: block;
+        // done to avoid odd spacing when hidden
+        margin: 20px 0;
+        padding-left: 10px;
         font-size: @font-size;
-
-        &.hide {
-          display: none;
-        }
 
         .icon-checked {
           color: @icon-color;
@@ -233,7 +253,8 @@
       }
 
       a.reset {
-        margin-left: 10px;
+        width: @sidebar-width;
+        margin: 0;
         color: @primary-color;
         font-size: @font-size;
         &:hover {
@@ -296,6 +317,12 @@
             background-color: @primary-color;
             color: @white;
           }
+        }
+        a.reset {
+          position: absolute;
+          margin-top: -33px;
+          margin-left: 140px;
+          font-size: 90%;
         }
       }
     }

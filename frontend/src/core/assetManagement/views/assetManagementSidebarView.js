@@ -11,8 +11,7 @@ define(function(require) {
 
     render: function() {
       SidebarItemView.prototype.render.apply(this, arguments);
-      var refineView = new AssetManagementRefineView();
-      this.$el.append(refineView.$el);
+      this.$el.append(new AssetManagementRefineView().$el);
     },
 
     onAddNewAssetClicked: function() {

@@ -12,7 +12,6 @@ define(function(require) {
   var ProjectCollection = require('coreJS/project/collections/projectCollection');
   var TagsCollection = require('coreJS/tags/collections/tagsCollection');
 
-
   Origin.on('app:dataReady login:changed', function() {
     Origin.globalMenu.addItem({
       "location": "global",
@@ -28,39 +27,16 @@ define(function(require) {
   });
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
-    Origin.assetManagement = {
-      filterData: {},
-    };
-    // TODO do this fetch more neatly later...
-    new (Backbone.Collection.extend({ model: CourseAssetModel, url: '/api/content/courseasset' }))()
-      .fetch({
-        success: function(collection) {
-          Origin.editor.data.courseAssets = collection;
-          onLoaded();
-        }
-      });
-    new (Backbone.Collection.extend({ model: CourseModel, url: '/api/content/course' }))()
-      .fetch({
-        success: function(collection) {
-          Origin.editor.data.courses = collection;
-          onLoaded();
-        }
-      });
+    Origin.assetManagement = { filterData: {} };
 
-    function onLoaded() {
-      if(_.isEmpty(Origin.editor.data.courses) || _.isEmpty(Origin.editor.data.courseAssets)) {
-        return;
-      }
-      // load the right view...
-      if(!location) {
-        loadCollectionView();
-      }
-      else if(location === 'new') {
-        loadAssetView();
-      }
-      else if(subLocation === 'edit'){
-        loadAssetView(location);
-      }
+    if(!location) {
+      loadCollectionView();
+    }
+    else if(location === 'new') {
+      loadAssetView();
+    }
+    else if(subLocation === 'edit'){
+      loadAssetView(location);
     }
   });
 
@@ -88,10 +64,9 @@ define(function(require) {
       success: function(tags) {
         // Sidebar also needs access to collection, so create now. Fetch is done
         // in collectionView (thanks to server-side filtering)
-        var assetCollection = new AssetCollection();
         Origin.trigger('location:title:hide');
-        Origin.sidebar.addView(new AssetManagementSidebarView({ collection: tags }).$el );
-        Origin.router.createView(AssetManagementView, { collection: assetCollection });
+        Origin.sidebar.addView(new AssetManagementSidebarView({ collection: tags }).$el);
+        Origin.router.createView(AssetManagementView, { collection: new AssetCollection() });
         Origin.trigger('assetManagement:loaded');
 
         loadSuperTools();

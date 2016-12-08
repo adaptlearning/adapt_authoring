@@ -46,22 +46,39 @@ function getServerData(cb) {
     if (stderr.length !== 0) return cb(stderr);
     if (stdout.length === 0) return cb(null, {});
 
-    var elements = stdout.match(/\* (.+)/)[1].match(/\S+/g);
-    var commit = elements[1];
-    var remoteInfo = elements[2].substr(1,elements[2].length-2).split('/');
-    var remote = remoteInfo[0];
-    var branch = remoteInfo[1]; // use the remote branch name in case local is different
+    var data = {};
+
+    // just pull out the latest for the current branch
+    var statusInfo = stdout.match(/\* (.+)/)[1];
+
+    var localBranch = statusInfo.match(/^(\S+)\s+/)[1];
+    statusInfo = statusInfo.replace(localBranch,'');
+
+    var commit = statusInfo.match(/^\s*(\S+)/)[1];
+    statusInfo = statusInfo.replace(commit,'');
+
+    var trackingBranchMatch = statusInfo.match(/^\s*(\[\S+\])/);
+    var trackingBranch = trackingBranchMatch && trackingBranchMatch[1].slice(1,-1);
+    statusInfo = statusInfo.replace(trackingBranch,'');
+
+    var message = statusInfo.match(/^\s*(.+)/)[1];
+
+    data['Origin Version'] = commit;
+    data['Origin Branch'] = trackingBranch || localBranch + ' (untracked)';
+
+    if(!trackingBranch) {
+      return cb(null, data);
+    }
+
     // get the remote
     child = exec("git remote get-url " + remote, function(error, stdout, stderr) {
       if(error) return cb(error);
       if (stderr.length != 0) return cb(stderr);
       if (stdout.length === 0) return cb(null, {});
 
-      cb(null, {
-        'Origin Version': commit,
-        'Origin Branch': branch,
-        'Origin Repository': stdout.replace('\n','')
-      });
+      data['Origin Repository'] = stdout.replace('\n','');
+
+      cb(null, data);
     });
 
   });

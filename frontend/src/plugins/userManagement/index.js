@@ -30,6 +30,7 @@ define(function(require) {
         "location": "global",
         "text": "User Management",
         "icon": "fa-users",
+        "sortOrder": 3,
         "callbackEvent": "userManagement:open"
       });
   	} else {

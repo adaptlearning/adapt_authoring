@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
@@ -8,14 +7,8 @@ define(function(require) {
   var ThemeItemView = require('editorTheme/views/editorThemeItemView');
 
   var EditorThemeCollectionView = EditorOriginView.extend({
-
     tagName: "ul",
-
     className: "editor-theme-edit",
-
-    events: {
-
-    },
 
     preRender: function() {
       this.collection = new ThemeCollection();
@@ -26,29 +19,20 @@ define(function(require) {
       this.listenTo(Origin, 'editorThemeEditSidebar:views:save', this.saveData);
     },
 
-    postRender: function() {
-    },
-
     addThemeViews: function() {
       this.renderThemeViews();
-      _.defer(this.setViewToReady);
     },
 
     renderThemeViews: function() {
-
       this.collection.each(function(theme) {
-
-        var isSelected = false;
-
-        if (theme.get('name') === this.model.get('_theme')) {
-          isSelected = true;
-        }
+        var isSelected = theme.get('name') == this.model.get('_theme');
 
         theme.set('_isSelected', isSelected);
-        this.$('.theme-list').append(new ThemeItemView({model: theme}).$el);
-
+        if(isSelected || theme.get('_isAvailableInEditor') === true) {
+          this.$('.theme-list').append(new ThemeItemView({ model: theme }).$el);
+        }
       }, this);
-
+      this.setViewToReady();
     },
 
     cancel: function(event) {
@@ -57,28 +41,20 @@ define(function(require) {
     },
 
     saveData: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
+      event && event.preventDefault();
 
-      var selectedTheme = this.collection.findWhere({_isSelected: true});
+      var selectedTheme = this.collection.findWhere({ _isSelected: true });
 
       if (selectedTheme === undefined) {
+        Origin.trigger('sidebar:resetButtons');
         Origin.Notify.alert({
           type: 'error',
           text: window.polyglot.t('app.errornothemeselected')
         });
-        
-        Origin.trigger('sidebar:resetButtons');
-        
         return;
       }
 
-      var selectedThemeId = selectedTheme.get('_id');
-
-      // Should push to api
-
-      $.post('/api/theme/' + selectedThemeId + '/makeitso/' + this.model.get('_courseId'))
+      $.post('/api/theme/' + selectedTheme.get('_id') + '/makeitso/' + this.model.get('_courseId'))
         .error(function() {
           Origin.Notify.alert({
             type: 'error',
@@ -86,16 +62,12 @@ define(function(require) {
           });
         })
         .done(_.bind(function() {
-
           Origin.trigger('editingOverlay:views:hide');
-
           Origin.trigger('editor:refreshData', function() {
             Backbone.history.history.back();
             this.remove();
           }, this);
-
         }, this));
-
     }
   },
   {
@@ -103,5 +75,4 @@ define(function(require) {
   });
 
   return EditorThemeCollectionView;
-
 });

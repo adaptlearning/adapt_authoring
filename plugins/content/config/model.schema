@@ -125,7 +125,7 @@
           "type": "string",
           "required": true,
           "default": "easeOutQuart",
-          "title": "Hide Easing",
+          "title": "Show Easing",
           "inputType": {
             "type": "Select",
             "options": [

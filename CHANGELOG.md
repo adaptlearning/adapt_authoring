@@ -4,6 +4,28 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 **IMPORTANT**: For information on how to *correctly* update your installation, consult [INSTALL.md](https://github.com/adaptlearning/adapt_authoring/blob/master/INSTALL.md#updating-the-tool).
 
+## [0.2.2] - 2016-09-13
+
+### Added
+- Support for editing JSON objects, for example, the `_playerOptions` array in the Media component
+
+### Fixed
+- Vagrant issue with preventing updating plugins
+
+## [0.2.1] - 2016-08-16
+This is a patch release which fixes minor issues with v0.2.0 uncovered by community user testing.
+
+### Added
+- LESS sourcemaps
+
+### Fixed
+- Block drop-zone padding
+- Export button now hidden again for all non-admin users
+- Auto-scrolling while dragging on menu editor and page editor screens
+- Styling of scaffold list items
+- LESS imports now working
+- reset.less now loaded before *everything*
+
 ## [0.2.0] - 2016-07-27
 This version introduces a new look and feel to the user interface of the authoring tool, and closely matches the new theme of the Adapt community site introduced at the beginning of the year. 
 
@@ -241,6 +263,7 @@ If upgrading from a previous version, please add the following keys to your conf
 - Session cookie security issues
 
 
+[0.2.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.7...v0.2.0
 [0.1.7]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.5...v0.1.6

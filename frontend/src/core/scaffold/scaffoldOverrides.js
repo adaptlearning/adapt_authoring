@@ -140,7 +140,7 @@ define(function(require) {
 	}
 
 	Backbone.Form.editors.TextArea.prototype.getValue = function() {
-		return this.editor.getData();
+		return this.editor.getData().replace(/[\t\n]/g, '');
 	}
   
   Backbone.Form.editors.TextArea.prototype.remove = function() {
@@ -162,6 +162,9 @@ define(function(require) {
 			_.each(fields, function(field) {
 				var error = field.validate();
 				if (error) {
+					if(field.schema.title) {
+						error.title = field.schema.title;
+					}
 					errors[field.key] = error;
 				}
 			});

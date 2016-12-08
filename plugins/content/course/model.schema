@@ -138,7 +138,7 @@
           "title": "Accessibility",
           "required": true,
           "properties": {
-            "_accessibilityToggleTextOn": {
+            "accessibilityToggleTextOn": {
               "type": "string",
               "title": "Toggle on label",
               "default": "Turn accessibility on?",
@@ -148,7 +148,7 @@
                 "required"
               ]
             },
-            "_accessibilityToggleTextOff": {
+            "accessibilityToggleTextOff": {
               "type": "string",
               "title": "Toggle off label",
               "default": "Turn accessibility off?",

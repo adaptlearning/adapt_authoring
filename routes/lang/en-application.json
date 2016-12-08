@@ -277,6 +277,7 @@
   "app.databaseuser": "Database User",
   "app.databasepass": "Database Password",
   "app.databaseport": "Database Port",
+  "app.emaillogosubtext": "by Kineo",
   "app.emailadminpasswordresetsubject": "Your Adapt password has been reset",
   "app.emailadminpasswordresetbody": "Your password has been reset.  Your new password is: %{data}",
   "app.emailforgottenpasswordsubject": "Password reset",

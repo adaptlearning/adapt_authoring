@@ -19,7 +19,7 @@ define(function(require) {
 
         // These are the only attributes which should be permitted on a save
         whitelistAttributes: ['_id', '_courseId',  '_parentId', '_layoutOptions', 
-            '_type', '_sortOrder', '_classes', '_isOptional', 'body', 'displayTitle', 
+            '_type', '_sortOrder', '_classes', '_isOptional', '_isAvailable', 'body', 'displayTitle', 
             'title', '_extensions']
 
 	});

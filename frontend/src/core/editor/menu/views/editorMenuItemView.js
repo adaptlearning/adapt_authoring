@@ -10,10 +10,13 @@ define(function(require){
 
     className: "editor-menu-item",
 
+    autoScrollTimer: false,
+
     events: {
         'click .editor-menu-item-inner'       : 'onMenuItemClicked',
         'click a.open-context-contentObject'  : 'openContextMenu',
-        'click a.contentObject-delete'        : 'deleteItemPrompt'
+        'click a.contentObject-delete'        : 'deleteItemPrompt',
+        'mousedown .handle'                   : 'enableDrag'
     },
 
     preRender: function() {
@@ -22,11 +25,21 @@ define(function(require){
     },
 
     postRender: function() {
+      // setup drag
+      this.$el.closest('.editor-menu').on('mousemove', _.bind(this.handleDrag, this));
+
       // Check if the current item is expanded and update the next menuLayerView
       // This can end up being recursive if an item is selected inside a few menu items
       if (this.model.get('_isExpanded')) {
         Origin.trigger('editorView:menuView:updateSelectedItem', this);
       }
+    },
+
+    remove: function() {
+      this.$el.closest('.editor-menu-layer').off('mousemove');
+
+      // Call original remove
+      EditorOriginView.prototype.remove.apply(this, arguments);
     },
 
     setupEvents: function() {
@@ -272,6 +285,45 @@ define(function(require){
     cancelDeleteItem: function() {
       this.stopListening(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
       this.model.set({_isSelected: true});
+    },
+
+    enableDrag: function(event) {
+      this.model.set('_isDragging', true);
+    },
+
+    handleDrag: function(event) {
+      window.clearInterval(this.autoScrollTimer);
+      this.autoScrollTimer = false;
+
+      if(!this.model.get('_isDragging')) {
+        return;
+      }
+
+      var $currentLayer = $(".editor-menu-layer[data-over='true'] > .editor-menu-layer-inner");
+
+      if(!$currentLayer.length) {
+        return;
+      }
+
+      this.autoScrollTimer = window.setInterval(function() {
+        var SCROLL_THRESHOLD = $currentLayer.height()*0.2;
+        var SCROLL_INCREMENT = 4;
+
+        var offsetTop = $currentLayer.offset().top;
+        var clientY = event.clientY;
+        var scrollAmount;
+
+        if (clientY < (offsetTop+SCROLL_THRESHOLD)) {
+          scrollAmount = -SCROLL_INCREMENT;
+        }
+        else if (clientY > (($currentLayer.height()+offsetTop) - SCROLL_THRESHOLD)) {
+          scrollAmount = SCROLL_INCREMENT;
+        }
+
+        if(scrollAmount) {
+          $currentLayer.scrollTop($currentLayer.scrollTop()+scrollAmount);
+        }
+      }, 10);
     }
 
   }, {

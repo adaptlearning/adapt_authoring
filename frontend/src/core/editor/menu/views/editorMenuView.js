@@ -168,6 +168,7 @@ define(function(require){
     setupDragDrop: function() {
       var view = this;
       $(".editor-menu-layer-inner").sortable({
+        containment: '.editor-menu',
         appendTo: '.editor-menu',
         items: '.editor-menu-item',
         handle: '.handle',
@@ -182,11 +183,18 @@ define(function(require){
 
           // Find the model
           var currentModel = Origin.editor.data.contentObjects.findWhere({_id: id});
-          
+
           // Save just the new attributes and patch them
           currentModel.save({_sortOrder: sortOrder, _parentId: parentId}, {patch: true});
+
+          currentModel.set('_isDragging', false);
+
         },
         over: function(event, ui) {
+          $(event.target).closest('.editor-menu-layer').attr('data-over', true);
+        },
+        out: function(event, ui) {
+          $(event.target).closest('.editor-menu-layer').attr('data-over', false);
         },
         receive: function(event, ui) {
           if (ui.item.hasClass('content-type-menu')) {

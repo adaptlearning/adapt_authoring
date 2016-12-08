@@ -108,7 +108,7 @@ define(function(require) {
 				setupSchemaFields(field, key, objectSchema, scaffoldObjectSchema);
 			});
 			
-		} else if (field.type != 'object') {
+		} else if (field.type != 'object' || field.inputType) {
 
 			var validators = [];
 			// Go through each validator checking whether this is a default

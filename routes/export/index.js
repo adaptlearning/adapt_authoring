@@ -92,6 +92,74 @@ server.get('/export/:tenant/:course/:devMode', function (req, res, next) {
   });
 });
 
+server.get('/exportHtml/:tenant/:course', function(req, res) {
+  var user = usermanager.getCurrentUser();
+  var tenantId = req.params.tenant;
+  var courseId = req.params.course;
+
+  helpers.hasCoursePermission('', user._id, tenantId, {
+    _id: courseId
+  }, function(err, hasPermission) {
+    if (err || !hasPermission) {
+      return handleError(err || new ExportPermissionError(), res);
+    }
+
+    if (!user || user.tenant._id !== tenantId) {
+      return res.status(401).json({
+        success: false,
+        message: app.polyglot.t('app.errorusernoaccess')
+      });
+    }
+
+    var outputPluginName = configuration.getConfig('outputPlugin');
+
+    app.outputmanager.getOutputPlugin(outputPluginName, function(err, plugin) {
+      if (err) {
+        return handleError(err, res);
+      }
+
+      plugin.exportHtml(courseId, req, res, function(err, result) {
+        return err ? handleError(err, res) : res.status(200).json({
+          success: true,
+          message: app.polyglot.t('app.exportcoursesuccess'),
+          courseTitle: result.courseTitle
+        });
+      });
+    });
+  });
+});
+
+server.get('/downloadHtml/:courseTitle/download.zip', function (req, res) {
+  var folders = Constants.Folders;
+  var zipPath = path.join(
+    configuration.tempDir,
+    configuration.getConfig('masterTenantID'),
+    folders.Framework,
+    folders.Exports,
+    usermanager.getCurrentUser()._id + '.zip'
+  );
+  var courseTitle = req.params.courseTitle;
+  var isoDate = new Date().toISOString();
+  var timestamp = isoDate.replace('T', '-').replace(/:/g, '').substr(0, 17);
+  var zipName = helpers.slugify('adapt2html', courseTitle, timestamp) + '.zip';
+
+  fs.stat(zipPath, function(err, stat) {
+    if (err) {
+      return handleError(err, res);
+    }
+
+    res.writeHead(200, {
+      'Content-Type': 'application/zip',
+      'Content-Length': stat.size,
+      'Content-disposition': 'attachment; filename=' + zipName,
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
+
+    fs.createReadStream(zipPath).pipe(res);
+  });
+});
+
 function handleError(error, res) {
   logger.log('error', error);
   res.status(500).json({

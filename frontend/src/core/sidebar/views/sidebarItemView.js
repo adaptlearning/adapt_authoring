@@ -20,6 +20,7 @@ define(function(require) {
       'click button.editor-common-sidebar-preview'      : 'previewProject',
       'click button.editor-common-sidebar-export'       : 'exportProject',
       'click button.editor-common-sidebar-export-dev'   : 'exportProjectDev',
+      'click button.editor-common-sidebar-export-html'  : 'exportProjectHtml',
       'click button.editor-common-sidebar-close'        : 'closeProject'
     },
 
@@ -174,6 +175,10 @@ define(function(require) {
 
     exportProjectDev: function() {
       Origin.trigger('editorCommon:export', true);
+    },
+
+    exportProjectHtml: function() {
+      Origin.trigger('editorCommon:exportHtml');
     },
 
     closeProject: function() {

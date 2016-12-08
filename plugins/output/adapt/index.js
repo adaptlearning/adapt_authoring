@@ -45,13 +45,6 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
   var self = this;
   var resultObject = {};
 
-  // shorthand directories
-  var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
-  var SRC_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source);
-  var COURSES_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses);
-  var COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId, courseId);
-  var BUILD_FOLDER = path.join(COURSE_FOLDER, Constants.Folders.Build);
-
   var user = usermanager.getCurrentUser();
   var tenantId = user.tenant._id;
   var outputJson = {};
@@ -59,6 +52,13 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
   var themeName = '';
   var menuName = Constants.Defaults.MenuName;
   var customPluginName = user._id;
+
+  // shorthand directories
+  var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+  var SRC_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source);
+  var COURSES_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses);
+  var COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId, courseId);
+  var BUILD_FOLDER = path.join(COURSE_FOLDER, Constants.Folders.Build);
 
   async.series([
       // get an object with all the course data

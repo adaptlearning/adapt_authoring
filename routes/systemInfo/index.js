@@ -1,5 +1,6 @@
 // NPM includes
 var _ = require('underscore');
+var async = require('async');
 var exec = require('child_process').exec;
 var fs = require('fs-extra');
 var path = require('path');

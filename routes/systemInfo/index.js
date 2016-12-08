@@ -58,17 +58,23 @@ function getServerData(cb) {
     statusInfo = statusInfo.replace(commit,'');
 
     var trackingBranchMatch = statusInfo.match(/^\s*(\[\S+\])/);
-    var trackingBranch = trackingBranchMatch && trackingBranchMatch[1].slice(1,-1);
-    statusInfo = statusInfo.replace(trackingBranch,'');
-
-    var message = statusInfo.match(/^\s*(.+)/)[1];
+    var message = statusInfo.match(/^\s*(.+)/)[1]; // not used
 
     data['Origin Version'] = commit;
-    data['Origin Branch'] = trackingBranch || localBranch + ' (untracked)';
 
-    if(!trackingBranch) {
+    if(!trackingBranchMatch) {
+      data['Origin Branch'] = localBranch + ' (untracked)';
       return cb(null, data);
     }
+
+    var trackingBranch =  trackingBranchMatch[1].slice(1,-1);
+    statusInfo = statusInfo.replace(trackingBranchMatch[1],'');
+
+    remoteParts = trackingBranchMatch[1].slice(1,-1).split('/');
+
+    var remote = remoteParts.splice(0,1);
+
+    data['Origin Branch'] = remoteParts.join('/');
 
     // get the remote
     child = exec("git remote get-url " + remote, function(error, stdout, stderr) {

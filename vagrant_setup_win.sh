@@ -5,7 +5,10 @@
 cd /vagrant/
 
 # copy the authoring_tool into the VM box
-cp -r * /home/vagrant/
+# this will create the following /home/vagrant/vagrant
+cp -r /vagrant /home/vagrant
+# move back into right location
+mv /home/vagrant/vagrant/{.,}* /home/vagrant
 
 # need this ppa for ffmpeg on trusty tahr
 add-apt-repository ppa:mc3man/trusty-media

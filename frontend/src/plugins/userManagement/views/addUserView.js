@@ -3,15 +3,32 @@ define(function(require){
   var Helpers = require('coreJS/app/helpers');
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
+  var UserCollection = require('../collections/userCollection.js');
 
   var AddUserView = OriginView.extend({
     tagName: 'div',
     className: 'addUser',
     createdUserId: false,
+    settings: {
+      autoRender: false
+    },
+    users: new UserCollection(),
 
-    preRender: function() {
+    initialize: function() {
+      OriginView.prototype.initialize.apply(this, arguments);
+
       Origin.trigger('location:title:update', { title: window.polyglot.t('app.addusertitle') });
+      this.initData();
+    },
+
+    initData: function() {
       this.listenTo(Origin, 'userManagement:saveUser', this.saveNewUser);
+      this.listenTo(this.users, 'sync', this.onUsersFetched);
+      this.users.fetch();
+    },
+
+    render:function(){
+      OriginView.prototype.render.apply(this, arguments);
     },
 
     postRender: function() {
@@ -91,10 +108,34 @@ define(function(require){
         title: "Couldn't add user",
         text: data.responseText || error
       });
+    },
+
+    isCurrentUserTenantAdmin:function(){
+     var currentUserId = Origin.sessionModel.get('id');
+     var isTenantadmin = false;
+
+     this.currentUser = _.find(this.users.models, function(user) {
+      return user.get('_id') === currentUserId;
+    });
+
+     if(this.currentUser){
+      //ASSUMPTION:user always have one and only role
+      var currentUserRole = this.currentUser.get('roles')[0];
+      if(currentUserRole.name === 'Tenant Admin'){
+        isTenantadmin = this.currentUser;
+        this.model.set('tenantAdmin',isTenantadmin);
+      }
     }
-  }, {
-    template: 'addUser'
-  });
+  },
+
+  onUsersFetched:function(models, reponse, options){
+    this.isCurrentUserTenantAdmin();
+    this.render();
+  }
+
+}, {
+  template: 'addUser'
+});
 
   return AddUserView;
 });

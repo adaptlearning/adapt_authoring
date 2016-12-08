@@ -64,6 +64,11 @@ define(function(require){
     },
 
     createUserView: function(model) {
+      if (!this.isCurrentUserSuperadmin) {
+        if (model.get('_tenantId')._id !== this.currentUser.get('_tenantId')._id) {
+          return true;
+        }
+      }
       model.set('globalData', this.model.get('globalData'));
       var uv = new UserView({ model:model });
       this.$('.users').append(uv.$el);
@@ -71,13 +76,36 @@ define(function(require){
       return uv;
     },
 
-    onDataFetched: function(models, reponse, options) {
-      this.render();
-    }
+    setCurrentUsersRole:function(){
+      var self = this;
+      var currentUserId = Origin.sessionModel.get('id');
+      this.isCurrentUserTenantadmin = false;
+      this.isCurrentUserSuperadmin = false;
 
-  }, {
-    template: 'userManagement'
-  });
+      this.currentUser = _.find(this.users.models, function(user) {
+        return user.get('_id') === currentUserId;
+      });
+
+      if(this.currentUser){
+        //ASSUMPTION:user always have one and only role
+        var currentUserRole = this.currentUser.get('roles')[0];
+        if(currentUserRole.name === 'Tenant Admin'){
+         this.isCurrentUserTenantadmin = this.currentUser;
+       }
+       else if(currentUserRole.name === 'Super Admin'){
+         this.isCurrentUserSuperadmin = this.currentUser;
+       }
+     }
+   },
+
+   onDataFetched: function(models, reponse, options) {
+    this.setCurrentUsersRole();
+    this.render();
+  }
+
+}, {
+  template: 'userManagement'
+});
 
   return UserManagementView;
 });

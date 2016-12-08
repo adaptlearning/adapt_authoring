@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
   var Helpers = require('coreJS/app/helpers');
@@ -70,12 +69,12 @@ define(function(require){
 
       Origin.trigger('editorView:copy', this.model);
     },
-    
+
     onCopyID: function(event) {
       if (event) {
         event.preventDefault();
       }
-      
+
       Origin.trigger('editorView:copyID', this.model);
     },
 
@@ -140,10 +139,76 @@ define(function(require){
       // Show the links within the dropzone again, incase copy is initiated
       $('.paste-zone a').removeClass('display-none');
       this.$el.parent().children('.drop-only').addClass('display-none')
-    }
+    },
 
+    save: function() {
+      if(!this.form) {
+        return;
+      }
+      var errors = this.form.validate();
+
+      // MUST trigger as sidebar needs to know when the form has been resubmitted
+      Origin.trigger('editorSidebar:showErrors', errors);
+
+      if (errors) {
+        var errorText =
+          window.polyglot.t('app.validationfailedmessage') +
+          "<br/><br/>" +
+          this.buildErrorMessage(errors, '');
+
+        // TODO remove when we've got a better solution
+        this.onSaveError(window.polyglot.t('app.validationfailed'), errorText);
+
+        return;
+      }
+
+      this.form.commit();
+      this.model.pruneAttributes();
+
+      var self = this;
+      var attrs = this.getAttributesToSave();
+      this.model.save(attrs, {
+        patch: (attrs) ? true : false,
+        error: _.bind(this.onSaveError, self),
+        success: _.bind(this.onSaveSuccess, self)
+      });
+    },
+
+    buildErrorMessage: function(errorObjs, message) {
+      _.each(errorObjs, function(item, key) {
+        if(item.hasOwnProperty('message')) {
+          message += '<span class="key">' + (item.title || key) + '</span>: ' + item.message + '<br/>';
+        } else if(_.isObject(item)) { // recurse
+          message = this.buildErrorMessage(item, message);
+        }
+      }, this);
+      return message;
+    },
+
+    getAttributesToSave: function() {
+      return null;
+    },
+
+    onSaveError: function(pTitle, pText) {
+      var title = _.isString(pTitle) ? pTitle : window.polyglot.t('app.errordefaulttitle');
+      var text = _.isString(pText) ? pText : window.polyglot.t('app.errorsave');
+
+      Origin.Notify.alert({
+        type: 'error',
+        title: title,
+        text: text
+      });
+      Origin.trigger('sidebar:resetButtons');
+    },
+
+    onSaveSuccess: function() {
+      Origin.trigger('editingOverlay:views:hide');
+      Origin.trigger('editor:refreshData', function() {
+        Backbone.history.history.back();
+        this.remove();
+      }, this);
+    }
   });
 
   return EditorOriginView;
-
 });

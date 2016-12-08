@@ -25,6 +25,7 @@ define(function(require){
       autoRender: false
     },
     exporting: false,
+    exportingHtml: false,
     tagName: "div",
     className: "editor-view",
 
@@ -43,14 +44,17 @@ define(function(require){
       this.currentCourse = Origin.editor.data.course;
       this.currentPageId = options.currentPageId;
 
-      this.listenTo(Origin, 'editorView:refreshView', this.setupEditor);
-      this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
-      this.listenTo(Origin, 'editorView:copyID', this.copyIdToClipboard);
-      this.listenTo(Origin, 'editorView:cut', this.cutContent);
-      this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
-      this.listenTo(Origin, 'editorCommon:download', this.downloadProject);
-      this.listenTo(Origin, 'editorCommon:preview', this.previewProject);
-      this.listenTo(Origin, 'editorCommon:export', this.exportProject);
+      this.listenTo(Origin, {
+        'editorView:refreshView': this.setupEditor,
+        'editorView:copy': this.addToClipboard,
+        'editorView:copyID': this.copyIdToClipboard,
+        'editorView:cut': this.cutContent,
+        'editorView:paste': this.pasteFromClipboard,
+        'editorCommon:download': this.downloadProject,
+        'editorCommon:preview': this.previewProject,
+        'editorCommon:export': this.exportProject,
+        'editorCommon:exportHtml': this.exportHtml
+      });
 
       this.render();
       this.setupEditor();
@@ -95,6 +99,13 @@ define(function(require){
         $('.editor-common-sidebar-export-inner', $btn).removeClass('display-none');
         $('.editor-common-sidebar-exporting', $btn).addClass('display-none');
       }
+    },
+
+    toggleExportHtmlAnimation() {
+      $('.editor-common-sidebar-export-html-inner')
+        .toggleClass("display-none", this.exportingHtml);
+      $('.editor-common-sidebar-exporting-html')
+        .toggleClass("display-none", !this.exportingHtml);
     },
 
     launchCoursePreview: function() {
@@ -430,6 +441,46 @@ define(function(require){
              text: messageText
            });
          }
+      });
+    },
+
+    exportHtml: function() {
+      if (this.exportingHtml) {
+        return;
+      }
+
+      var courseId = Origin.editor.data.course.get('_id');
+      var tenantId = Origin.sessionModel.get('tenantId');
+      var self = this;
+
+      this.exportingHtml = true;
+      self.toggleExportHtmlAnimation();
+
+      $.ajax({
+        url: '/exportHtml/' + tenantId + '/' + courseId,
+        success: function(data) {
+          self.exportingHtml = false;
+          self.toggleExportHtmlAnimation();
+
+          $('<form/>', {
+            action: '/downloadHtml/' + data.courseTitle + '/download.zip'
+          }).submit();
+         },
+        error: function(jqXHR, textStatus, errorThrown) {
+          var responseJSON = jqXHR ? jqXHR.responseJSON : null;
+          var message = responseJSON ? responseJSON.message : null;
+
+          if (message) errorThrown += ':<br>' + message;
+
+          self.exportingHtml = false;
+          self.toggleExportHtmlAnimation();
+
+          Origin.Notify.alert({
+            type: 'error',
+            title: window.polyglot.t('app.exporterrortitle'),
+            text: errorThrown 
+          });
+        }
       });
     }
   }, {

@@ -41,6 +41,10 @@
       "type": "boolean",
       "default": "false"
     },
+    "isRestricted": {
+      "type": "boolean",
+      "default": "false"
+    },
     "mimeType": {
       "type": "string"
     },

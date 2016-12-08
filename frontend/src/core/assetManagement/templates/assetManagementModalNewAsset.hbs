@@ -32,6 +32,18 @@
             <textarea class="asset-description" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>
         </div>
 
+        <div class="form-group">
+            <div class="input checkbox">
+                <input type="checkbox" id="is-restricted"{{#if isRestricted}} checked{{/if}}>
+                <div class="icon">
+                  <i class="icon-checked fa fa-check-square-o"></i>
+                  <i class="icon-unchecked fa fa-square-o"></i>
+                </div>
+                <label for="is-restricted">{{t 'app.assetrestricted'}}</label>
+            </div>
+        </div>
+        <input type="hidden" name="isRestricted" id="is-restricted-hidden" value="{{#if isRestricted}}true{{else}}false{{/if}}">
+
         <div class="form-group tags">
             <label for="tags_control">{{t 'app.tags'}}</label>
             <input type="text" autocomplete="off" class="width-30" id="tags_control" name="tags_control" value="{{pickCSV tags "title"}}" />

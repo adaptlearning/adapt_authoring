@@ -12,7 +12,7 @@ define(function(require){
     events: {
       'change .asset-file': 'onFileSelected',
       'click a.workspaces': 'onWorkspacesClicked',
-
+      'change #is-restricted': 'onisRestrictedChange',
       'dragenter label[for=file]': 'onDrag',
       'dragover label[for=file]': 'onDrag',
       'dragleave label[for=file]': 'onDrop',
@@ -216,6 +216,10 @@ define(function(require){
     onWorkspacesClicked: function(e) {
       e && e.preventDefault();
       this.$('.courses').slideToggle(100);
+    },
+
+    onisRestrictedChange: function(event) {
+      this.$('#is-restricted-hidden').val(event.currentTarget.checked);
     },
 
     onDrag: function(e) {

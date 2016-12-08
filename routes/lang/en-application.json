@@ -366,5 +366,12 @@
   "app.list": "List",
   "app.ascending": "A to Z",
   "app.descending": "Z to A",
-  "app.visitpluginhomepage": "Visit plugin homepage"
+  "app.visitpluginhomepage": "Visit plugin homepage",
+  "app.systeminformation": "System Information",
+  "app.utilities": "Utilities",
+  "app.serverlog": "Server Log",
+  "app.level": "Level",
+  "app.message": "Message",
+  "app.nologstoshow": "There are no logs to show.",
+  "app.backtosysteminformation": "Back to system info"
 }

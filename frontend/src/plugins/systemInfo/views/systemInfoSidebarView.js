@@ -10,7 +10,7 @@ define(function(require) {
     preRender: function() {
       this.model = new Backbone.Model({
         button: {
-          label: 'Server Log',
+          label: window.polyglot.t('app.serverlog'),
           className: 'sidebar-button-serverLog'
         }
       });

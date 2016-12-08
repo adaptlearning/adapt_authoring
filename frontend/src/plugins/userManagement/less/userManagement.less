@@ -4,7 +4,8 @@
 @user-hover-bg-colour: #f3faff;
 @user-hover-borderl-colour: #8ea3af;
 
-.userManagement {
+.userManagement,
+.addMultipleUsers {
     overflow-y: scroll;
 
     .container {
@@ -94,10 +95,18 @@
             max-width: 115px;
 
         }
+
+        button.resetPassword {
+          &.submitted {
+            background-color: #2995a8;
+            border-color: #2995a8;
+          }
+        }
     }
 }
 
-.addUser {
+.addUser,
+.addMultipleUsers {
     .inner {
         .form-container-style;
 
@@ -123,4 +132,32 @@
             }
         }
     }
+}
+
+.addMultipleUsers {
+  .addUser {
+    display: block;
+    margin-top: 13px;
+    margin-bottom: 20px;
+    color: @secondary-color;
+    font-size: 105%;
+    font-weight: bold;
+    text-align: center;
+  }
+  .user-item {
+    margin: 10px 0;
+    &:hover {
+      border-color: white;
+      background-color: transparent;
+    }
+    select {
+      max-width: 90%;
+    }
+    button.remove {
+      padding: 0;
+      font-size: 120%;
+      color: @alert-color;
+      text-align: left;
+    }
+  }
 }

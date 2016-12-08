@@ -6,14 +6,17 @@
     <title>{{subject}}</title>
   </head>
   <body>
-    <div class="logo">{{logoText}}</div>
+    <div class="logo">
+      <div class="logo-main">{{logoText}}</div>
+      <div class="logo-sub">{{logoSubtext}}</div>
+    </div>
     <div class="content">
       <div class="title">
         {{subject}}
       </div>
-      <p>{{greeting}},</p>
+      <p>{{greeting}}</p>
       {{{text}}}
-      <a class="btn" href="{{{templateData.rootUrl}}}#user/reset/{{{templateData.resetToken}}}" target="_blank"">{{templateData.resetLabel}}</a>
+      <a class="btn" href="{{{templateData.rootUrl}}}#user/{{{templateData.type}}}/{{{templateData.token}}}" target="_blank"">{{templateData.buttonLabel}}</a>
     </div>
     <div class="footer">
       {{footer}}

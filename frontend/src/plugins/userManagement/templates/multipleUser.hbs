@@ -1,0 +1,36 @@
+<div class="col-row">
+<div class="col-40">
+  <div class="tb-col-inner">
+    <div class="input-container write">
+      <input class="input" type="email" data-modelKey="email" autocomplete="off">
+    </div>
+  </div>
+</div>
+<div class="col-25">
+  <div class="tb-col-inner">
+    <select class="input" data-modelKey="_tenantId">
+      {{#each tenants.models}}
+      {{!NOTE this won't do if we introduce multiple tenants)}}
+        <option value="{{{this.attributes._id}}}"{{#ifValueEquals ../tenant this.attributes._id }} selected{{/ifValueEquals}}>{{{this.attributes.displayName}}}</option>
+      {{/each}}
+    </select>
+  </div>
+</div>
+<div class="col-25">
+  <div class="tb-col-inner">
+    <select class="input" data-modelKey="roles">
+      {{#each roles.models}}
+      {{!NOTE this won't do if we introduce multiple roles)}}
+      <option value="{{{this.attributes._id}}}"{{#ifValueEquals ../role this.attributes._id}} selected{{/ifValueEquals}}>{{{this.attributes.name}}}</option>
+      {{/each}}
+    </select>
+  </div>
+</div>
+<div class="col-10">
+  {{#if isFirst}}
+  {{else}}
+  <div class="tb-col-inner">
+    <button class="remove"><i class="fa fa-times-circle-o"></i></button>
+  </div>
+  {{/if}}
+</div>

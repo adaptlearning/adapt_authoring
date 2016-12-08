@@ -36,3 +36,29 @@
   text-overflow: ellipsis;
   width: 90%;
 }
+
+// hides sidebars, nav bars etc, and displays blue bg
+// e.g. login screen
+.no-ui {
+  max-width: 450px;
+  margin: 0 auto;
+  color: #fff;
+  background: url(assets/login_bg.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+  button.small {
+      font-size: 16px;
+      margin: 0 auto;
+      display: block;
+      width: 200px;
+      margin-top: 20px;
+      height: 80%;
+  }
+
+  .sidebar, .navigation, .location-title { display: none; }
+  #app { margin-left: 0px; }
+  a { color: #fff; }
+}

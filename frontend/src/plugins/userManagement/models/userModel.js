@@ -36,6 +36,9 @@ define(function(require) {
     // pull the human-readable tenant name from the list of all tenants
     setTenantName: function(model, value, options) {
       var tenantId = model.get('_tenantId');
+      if(!tenantId) {
+        return;
+      }
       var tenantName;
       if(typeof tenantId === 'object') {
         tenantName = tenantId.name;

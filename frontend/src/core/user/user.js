@@ -3,6 +3,7 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var ForgotPasswordView = require('coreJS/user/views/forgotPasswordView');
   var LoginView = require('coreJS/user/views/loginView');
+  var SetPasswordView = require('coreJS/user/views/setPasswordView');
   var ResetPasswordView = require('coreJS/user/views/resetPasswordView');
   var UserPasswordResetModel = require('coreJS/user/models/userPasswordResetModel');
   var UserProfileSidebarView = require('coreJS/user/views/userProfileSidebarView');
@@ -34,6 +35,10 @@ define(function(require) {
         Origin.trigger('sidebar:sidebarContainer:hide');
         currentView = ForgotPasswordView;
         break;
+      case 'set':
+        Origin.trigger('sidebar:sidebarContainer:hide');
+        currentView = SetPasswordView;
+        break;
       case 'reset':
         Origin.trigger('sidebar:sidebarContainer:hide');
         currentView = ResetPasswordView;
@@ -51,6 +56,7 @@ define(function(require) {
           Origin.sidebar.addView(new UserProfileSidebarView().$el);
           Origin.router.createView(currentView, { model: Origin.sessionModel.get('user') }, settings);
           break;
+        case 'set':
         case 'reset':
           var reset = new UserPasswordResetModel({ token: subLocation });
           reset.fetch({

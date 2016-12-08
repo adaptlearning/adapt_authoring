@@ -303,8 +303,9 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
           name: 'passwordReset',
           user: user,
           rootUrl: configuration.getConfig('rootUrl'),
-          resetToken: userToken.token,
-          resetLabel: app.polyglot.t('app.resetpassword')
+          token: userToken.token,
+          type: 'reset',
+          buttonLabel: app.polyglot.t('app.resetpassword')
         }
 
         app.mailer.send(user.email, subject, body, templateData, function(error) {

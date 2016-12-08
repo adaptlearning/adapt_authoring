@@ -5,6 +5,8 @@ define(function(require) {
   var UserManagementSidebarView = require('./views/userManagementSidebarView.js');
   var AddUserView = require('./views/addUserView.js');
   var AddUserSidebarView = require('./views/addUserSidebarView.js');
+  var AddMultipleUsersView = require('./views/addMultipleUsersView.js');
+  var AddMultipleUsersSidebarView = require('./views/addMultipleUsersSidebarView.js');
   var CustomHelpers = require('./helpers.js');
 
   var isReady = false;
@@ -62,6 +64,10 @@ define(function(require) {
     else if('addUser' === location) {
       mainView = AddUserView;
       sidebarView = AddUserSidebarView;
+    }
+    else if('addMultipleUsers' === location) {
+      mainView = AddMultipleUsersView;
+      sidebarView = AddMultipleUsersSidebarView;
     }
 
     Origin.router.createView(mainView, { model: new Backbone.Model({ globalData: data }) });

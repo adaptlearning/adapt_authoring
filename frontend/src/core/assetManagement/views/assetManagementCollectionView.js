@@ -12,7 +12,7 @@ define(function(require){
   var AssetCollectionView = OriginView.extend({
     tagName: "div",
     className: "asset-management-collection",
-    assetPageSize: 64,
+    assetPageSize: 1,
 
     initialize: function(options) {
       OriginView.prototype.initialize.apply(this, arguments);
@@ -40,12 +40,24 @@ define(function(require){
       // TODO is this likely?
       this.filters = (this.search.assetType) ? options.search.assetType.$in : [];
       this.tags = [];
-      // Set to minus so we can have more DRY code
-      this.assetLimit = this.assetPageSize*-1;
-      this.assetDenominator = this.assetPageSize;
+
       this.collectionLength = 0;
 
       this.shouldStopFetches = false;
+    },
+
+    setPageSize: function(options) {
+      // work out how many assets we can fit from the size of the only rendered asset
+      var $el = this.$('.asset-management-list-item').first();
+      var $container = $('.asset-management');
+      // always round down, as tiles will be pushed to next row
+      var horizontalItems = Math.floor($container.width()/$el.outerWidth(true));
+      // always round up, as rows could be half onscreen
+      var verticalItems = Math.ceil($container.height()/$el.outerHeight(true));
+      this.assetPageSize = horizontalItems*verticalItems;
+      // Set to minus so we can have more DRY code
+      this.assetLimit = this.assetPageSize*-1;
+      this.assetDenominator = this.assetPageSize;
     },
 
     preRender: function(options) {
@@ -186,6 +198,9 @@ define(function(require){
     },
 
     onCollectionFetched: function() {
+      if(this.assetPageSize === 1) {
+        return this.setPageSize();
+      }
       // On successful collection fetching set lazy render to enabled
       if (this.collectionLength === this.collection.length) {
         this.shouldStopFetches = true;

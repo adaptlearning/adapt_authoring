@@ -51,27 +51,21 @@ function getServerData(cb) {
     // just pull out the latest for the current branch
     var statusInfo = stdout.match(/\* (.+)/)[1];
 
-    var localBranch = statusInfo.match(/^(\S+)\s+/)[1];
+    var localBranch = statusInfo.match(/(\S+)\s+/)[1];
     statusInfo = statusInfo.replace(localBranch,'');
 
-    var commit = statusInfo.match(/^\s*(\S+)/)[1];
+    var commit = statusInfo.match(/(\S+)/)[1];
     statusInfo = statusInfo.replace(commit,'');
-
-    var trackingBranchMatch = statusInfo.match(/^\s*(\[\S+\])/);
-    var message = statusInfo.match(/^\s*(.+)/)[1]; // not used
 
     data['Origin Version'] = commit;
 
+    var trackingBranchMatch = statusInfo.match(/\[(\S+):.+\]/);
     if(!trackingBranchMatch) {
       data['Origin Branch'] = localBranch + ' (untracked)';
       return cb(null, data);
     }
 
-    var trackingBranch =  trackingBranchMatch[1].slice(1,-1);
-    statusInfo = statusInfo.replace(trackingBranchMatch[1],'');
-
-    remoteParts = trackingBranchMatch[1].slice(1,-1).split('/');
-
+    var remoteParts = trackingBranchMatch[1].split('/');
     var remote = remoteParts.splice(0,1);
 
     data['Origin Branch'] = remoteParts.join('/');

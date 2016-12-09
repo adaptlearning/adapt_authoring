@@ -59,7 +59,7 @@ function getServerData(cb) {
 
     data['Origin Version'] = commit;
 
-    var trackingBranchMatch = statusInfo.match(/\[(\S+):.+\]/);
+    var trackingBranchMatch = statusInfo.match(/\[(\S+)(:.+)?\]/);
     if(!trackingBranchMatch) {
       data['Origin Branch'] = localBranch + ' (untracked)';
       return cb(null, data);

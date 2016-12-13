@@ -10,6 +10,17 @@
     <div class="editing-overlay-panel-content">
         <div class="editing-overlay-panel-content-inner">
             <form class="forms">
+                
+                {{#if rolesAsName}}
+                <div class="form-group">
+                    <label>{{t 'app.role'}}</label>
+                    <dl>
+                    {{#each rolesAsName}}
+                        <dt>{{this}}</dt>
+                    {{/each}}
+                    </dl>
+                </div>
+                {{/if}}
 
                 <div class="form-group">
                     <label for="firstName">{{t 'app.firstname'}}

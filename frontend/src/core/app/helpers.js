@@ -197,6 +197,14 @@ define(function(require){
           }
         },
 
+        ifMailEnabled: function(block) {
+          if (Origin.constants.useSmtp === true) {
+            return block.fn(this);
+          } else {
+            return block.inverse(this);
+          }
+        },
+
         getAssetFromValue: function(url) {
           var urlSplit = url.split('/')
           var fileName = urlSplit[urlSplit.length - 1];
@@ -348,8 +356,16 @@ define(function(require){
         if (isConfirmed) {
           Origin.trigger('editor:courseValidation');
         }
-      }
+      },
 
+      isValidEmail: function(value) {
+        var regEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (value.length === 0 || !regEx.test(value)) {
+          return false;
+        } else {
+          return true;
+        }
+      }
     };
 
     for(var name in helpers) {

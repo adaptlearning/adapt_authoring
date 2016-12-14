@@ -647,15 +647,12 @@ BowerPlugin.prototype.addPackage = function(plugin, packageInfo, options, cb) {
             }, function (err, results) {
               if (err) {
                 logger.log('error', err);
-
                 return addedToDb(err);
               }
 
-              var error = 'Plugin already exists with identical ‘' + packageType +
-                '’ value';
-
-              if (results && results[0].name !== packageName) {
-                return addedToDb(options.strict ? new PluginPackageError(error) : null);
+              if (results && results.length > 0 && results[0].name !== packageName) {
+                var msg = 'Plugin already exists with identical ‘' + packageType + '’ value';
+                return addedToDb(options.strict ? new PluginPackageError(msg) : null);
               }
 
               // don't duplicate component.name, component.version

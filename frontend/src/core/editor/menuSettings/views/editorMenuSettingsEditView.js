@@ -22,18 +22,17 @@ define(function(require) {
 
     addMenuItemView: function() {
       this.renderMenuItemViews();
-      _.defer(this.setViewToReady);
     },
 
     renderMenuItemViews: function() {
       this.collection.each(function(menu) {
-        var isSelected = false;
-        if (menu.get('name') === this.model.get('_menu')) {
-          isSelected = true;
-        }
+        var isSelected = menu.get('name') === this.model.get('_menu');
         menu.set('_isSelected', isSelected);
-        this.$('.menu-settings-list').append(new MenuSettingsView({model: menu}).$el);
+        if(isSelected || menu.get('_isAvailableInEditor') === true) {
+          this.$('.menu-settings-list').append(new MenuSettingsView({ model: menu }).$el);
+        }
       }, this);
+      this.setViewToReady();
     },
 
     cancel: function(event) {
@@ -49,8 +48,7 @@ define(function(require) {
         return this.onSaveError(null, window.polyglot.t('app.errornomenuselected'));
       }
 
-      var selectedMenuId = selectedMenu.get('_id');
-      $.post('/api/menu/' + selectedMenuId + '/makeitso/' + this.model.get('_courseId'))
+      $.post('/api/menu/' + selectedMenu.get('_id') + '/makeitso/' + this.model.get('_courseId'))
         .error(_.bind(this.onSaveError, this))
         .done(_.bind(this.onSaveSuccess, this));
     }

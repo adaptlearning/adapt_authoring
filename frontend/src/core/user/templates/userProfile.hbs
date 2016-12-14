@@ -1,13 +1,15 @@
-<div class="course-edit">
+<div class="profile-inner">
   <div class="error-text display-none">
       {{t 'app.fixerrors'}}
   </div>
-  <div class="intro-text">
-      {{t 'app.editprofileinformation'}}
-  </div>
-  <div class="editing-overlay-panel">
-    <div class="editing-overlay-panel-content">
+  <div class="editing-overlay-panel form-container-style">
+
+    <div class="editing-overlay-panel-content inner">
+        <div class="intro-text">
+          {{t 'app.editprofileinformation'}}
+        </div>
         <div class="editing-overlay-panel-content-inner">
+
             <form class="forms">
 
                 <div class="form-group">
@@ -26,7 +28,7 @@
                     <input type="text" class="width-30" id="lastName" value="{{lastName}}" autocomplete="off">
                 </div>
 
-                <!-- 
+                <!--
                 <div class="form-group">
                     <label>{{t 'app.email'}}
                         <span class="req">*</span>
@@ -53,6 +55,7 @@
                     </div>
                 </div>
                 {{/ifValueEquals}}
+                
             </form>
         </div>
     </div>

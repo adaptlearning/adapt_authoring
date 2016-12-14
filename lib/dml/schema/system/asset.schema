@@ -13,7 +13,8 @@
       "required": "true"
     },
     "description": {
-      "type": "string"
+      "type": "string",
+      "required": "false"
     },
     "path": {
       "type": "string",

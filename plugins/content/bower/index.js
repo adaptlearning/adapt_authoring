@@ -637,103 +637,125 @@ BowerPlugin.prototype.addPackage = function(plugin, packageInfo, options, cb) {
               return addedToDb(err);
             }
 
-            // don't duplicate component.name, component.version
-            db.retrieve(plugin.type, { name: package.name, version: package.version }, function (err, results) {
+            var pluginType = plugin.type;
+            var packageType = plugin.packageType;
+            var packageName = package.name;
+
+            // check if plugin exists with identical package type value
+            db.retrieve(pluginType, {
+              [packageType]: package[packageType]
+            }, function (err, results) {
               if (err) {
                 logger.log('error', err);
+
                 return addedToDb(err);
               }
 
-              if (results && 0 !== results.length) {
-                // don't add duplicate
-                if (options.strict) {
-                  return addedToDb(new PluginPackageError("Can't add plugin: plugin already exists!"));
-                }
-                return addedToDb(null);
+              var error = 'Plugin already exists with identical ‘' + packageType +
+                '’ value';
+
+              if (results && results[0].name !== packageName) {
+                return addedToDb(options.strict ? new PluginPackageError(error) : null);
               }
 
-              db.create(plugin.type, package, function (err, newPlugin) {
+              // don't duplicate component.name, component.version
+              db.retrieve(pluginType, { name: packageName, version: package.version }, function (err, results) {
                 if (err) {
-                  if (options.strict) {
-                    return addedToDb(err);
-                  }
+                  logger.log('error', err);
+                  return addedToDb(err);
+                }
 
-                  logger.log('error', 'Failed to add package: ' + package.name, err);
+                if (results && 0 !== results.length) {
+                  // don't add duplicate
+                  if (options.strict) {
+                    return addedToDb(new PluginPackageError("Can't add plugin: plugin already exists!"));
+                  }
                   return addedToDb(null);
                 }
 
-                logger.log('info', 'Added package: ' + package.name);
-
-                // #509 update content targeted by previous versions of this package
-                logger.log('info', 'searching old package types ... ');
-                db.retrieve(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err, results) {
-
+                db.create(pluginType, package, function (err, newPlugin) {
                   if (err) {
-                    // strictness doesn't matter at this point
-                    logger.log('error', 'Failed to retrieve previous packages: ' + err.message, err);
+                    if (options.strict) {
+                      return addedToDb(err);
+                    }
+
+                    logger.log('error', 'Failed to add package: ' + packageName, err);
+                    return addedToDb(null);
                   }
 
-                  if (results && results.length) {
-                    // found previous versions to update
-                    // only update content using the id of the most recent version
-                    var oldPlugin = false;
-                    results.forEach(function (item) {
-                      if (!oldPlugin) {
-                        oldPlugin = item;
-                      } else if (semver.gt(item.version, oldPlugin.version)) {
-                        oldPlugin = item;
-                      }
-                    });
+                  logger.log('info', 'Added package: ' + packageName);
 
-                    // Persist the _isAvailableInEditor flag.
-                    db.update(plugin.type, {_id: newPlugin._id}, {_isAvailableInEditor: oldPlugin._isAvailableInEditor}, function(err, results) {
-                      if (err) {
-                        logger.log('error', err);
-                        return addedToDb(err);
-                      }
+                  // #509 update content targeted by previous versions of this package
+                  logger.log('info', 'searching old package types ... ');
+                  db.retrieve(pluginType, { name: packageName, version: { $ne: newPlugin.version } }, function (err, results) {
 
-                      plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
+                    if (err) {
+                      // strictness doesn't matter at this point
+                      logger.log('error', 'Failed to retrieve previous packages: ' + err.message, err);
+                    }
+
+                    if (results && results.length) {
+                      // found previous versions to update
+                      // only update content using the id of the most recent version
+                      var oldPlugin = false;
+                      results.forEach(function (item) {
+                        if (!oldPlugin) {
+                          oldPlugin = item;
+                        } else if (semver.gt(item.version, oldPlugin.version)) {
+                          oldPlugin = item;
+                        }
+                      });
+
+                      // Persist the _isAvailableInEditor flag.
+                      db.update(pluginType, {_id: newPlugin._id}, {_isAvailableInEditor: oldPlugin._isAvailableInEditor}, function(err, results) {
                         if (err) {
                           logger.log('error', err);
                           return addedToDb(err);
                         }
 
-                        // Remove older versions of this plugin
-                        db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
+                        plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
                           if (err) {
                             logger.log('error', err);
                             return addedToDb(err);
                           }
 
-                          logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
-                          addedToDb(null, newPlugin);
+                          // Remove older versions of this plugin
+                          db.destroy(pluginType, { name: packageName, version: { $ne: newPlugin.version } }, function (err) {
+                            if (err) {
+                              logger.log('error', err);
+                              return addedToDb(err);
+                            }
+
+                            logger.log('info', 'Successfully removed versions of ' + packageName + '(' + pluginType + ') older than ' + newPlugin.version);
+                            addedToDb(null, newPlugin);
+                          });
                         });
                       });
-                    });
-                  } else {
-                    // nothing to do!
-                    // Remove older versions of this plugin
-                    db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
-                      if (err) {
-                        logger.log('error', err);
-                        return addedToDb(err);
-                      }
+                    } else {
+                      // nothing to do!
+                      // Remove older versions of this plugin
+                      db.destroy(pluginType, { name: packageName, version: { $ne: newPlugin.version } }, function (err) {
+                        if (err) {
+                          logger.log('error', err);
+                          return addedToDb(err);
+                        }
 
-                      logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
-                      addedToDb(null, newPlugin);
-                    });
-                  }
+                        logger.log('info', 'Successfully removed versions of ' + packageName + '(' + pluginType + ') older than ' + newPlugin.version);
+                        addedToDb(null, newPlugin);
+                      });
+                    }
+                  });
                 });
               });
-            });
-          }, options.tenantId);
+            }, options.tenantId);
+          });
         }
       }, function doneParallel(error, data) {
         cb(error, data.addToDatabase);
       });
     });
   });
-}
+};
 
 /**
  * this function uses bower to search and install new adapt framework

@@ -133,7 +133,7 @@
     "underscore": "~1.8.3",
     "unzip": "0.1.8",
     "validator": "4.2.1",
-    "winston": "1.0.2",
+    "winston": "*",
     "winston-mongodb": "^1.6.1"
   },
   "main": "index",

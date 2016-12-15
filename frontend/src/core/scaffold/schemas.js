@@ -16,6 +16,8 @@ define(function(require) {
                 enabledExtensionsKeys.push(value.targetAttribute);
             });
 
+
+
             // Get the schema
             var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
             // Compare the enabledExtensions against the current schemas
@@ -25,6 +27,35 @@ define(function(require) {
                         delete schema._extensions.properties[key];
                     }
                 });
+                if(_.isEmpty(schema._extensions.properties)) {
+                    delete schema._extensions;
+                }
+            }
+
+            if (schema.menuSettings) {
+                // only include settings for used menus
+                var appliedMenus = [ configModel.get('_menu') ]; // TODO we only support one menu right now...
+                _.each(schema.menuSettings.properties, function(value, key) {
+                    if (!_.contains(appliedMenus, value.name)) {
+                        delete schema.menuSettings.properties[key];
+                    }
+                });
+                if(_.isEmpty(schema.menuSettings.properties)) {
+                    delete schema.menuSettings;
+                }
+            }
+
+            if (schema.themeSettings) {
+                // only include settings for used themes
+                var appliedThemes = [ configModel.get('_theme') ]; // TODO we only support one theme right now...
+                _.each(schema.themeSettings.properties, function(value, key) {
+                    if (!_.contains(appliedThemes, value.name)) {
+                        delete schema.themeSettings.properties[key];
+                    }
+                });
+                if(_.isEmpty(schema.themeSettings.properties)) {
+                    delete schema.themeSettings;
+                }
             }
 
             if (schemaName == 'course') {
@@ -74,6 +105,10 @@ define(function(require) {
             delete schema._extensions;
             // Remove globals as these are appended to the course model
             delete schema.globals;
+
+            if(!schema.themeSettings.properties) delete schema.themeSettings;
+            if(!schema.menuSettings.properties) delete schema.menuSettings;
+            
             return schema;
         }
     };

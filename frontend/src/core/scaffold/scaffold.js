@@ -75,7 +75,7 @@ define(function(require) {
 						subSchema: field.items.properties,
             confirmDelete: window.polyglot.t('app.confirmdelete'),
 						fieldType: 'List'
-					}
+					};
 				}
 
 			} else {
@@ -97,7 +97,7 @@ define(function(require) {
 						itemType:field.items.inputType,
 						subSchema: field.items,
 						fieldType: field.items.inputType
-					}
+					};
 				}
 			}
 
@@ -107,7 +107,7 @@ define(function(require) {
 			_.each(objectSchema, function(field, key) {
 				setupSchemaFields(field, key, objectSchema, scaffoldObjectSchema);
 			});
-			
+
 		} else if (field.type != 'object' || field.inputType) {
 
 			var validators = [];
@@ -129,7 +129,7 @@ define(function(require) {
                 console.log('No validator of that sort - please register: "' + validator + '" by using Origin.scaffold.addCustomValidator(name, validatorMethod)');
               }
               // If match is found - add the method
-              validators.push(customValidator.validatorMethod);  
+              validators.push(customValidator.validatorMethod);
             }
 					}
 				}
@@ -156,7 +156,7 @@ define(function(require) {
 			scaffoldSchema[key] = {
 				type: 'Object',
 				subSchema: field.properties
-			}
+			};
 
 			var objectSchema = (schema[key].properties || schema[key].subSchema);
 			var scaffoldObjectSchema = scaffoldSchema[key].subSchema;
@@ -169,7 +169,7 @@ define(function(require) {
 
 		if (field.title) {
 			scaffoldSchema[key].title = field.title;
-			
+
 		} else if (field.type === 'object' || field.type === 'array') {
 			scaffoldSchema[key].title = '';
 			scaffoldSchema[key].legend = field.legend;
@@ -209,20 +209,24 @@ define(function(require) {
 		// Setup default fieldsets
 		var fieldsets = {
 			general: {
+				id: 'general',
 				legend: 'General',
 				fields: []
 			},
 			// ::TODO
 			// I want to remove this please
 			properties: {
+				id: 'properties',
 				legend: 'Properties',
 				fields: []
-			}, 
+			},
 			settings :{
+				id: 'settings',
 				legend: 'Settings',
 				fields: []
 			},
 			extensions: {
+				id: 'extensions',
 				legend: 'Extensions',
 				fields: ['_extensions']
 			}
@@ -243,12 +247,12 @@ define(function(require) {
 				// If value is an object - should give it some rights
 				// and add it as a field set - but not _extensions
 				if (fieldsets[key]) {
-
 					fieldsets[key].fields.push(key);
 
 				} else {
 
 					fieldsets[key] = {
+						id: key,
 						legend: Helpers.keyToTitleString(key),
 						fields: [key]
 					};
@@ -267,7 +271,7 @@ define(function(require) {
 		if (!schema._extensions) {
 			delete fieldsets.extensions;
 		}
-		
+
 		// Delete empty field sets
 		if (fieldsets.settings.fields.length === 0) {
 			delete fieldsets.settings;
@@ -317,16 +321,16 @@ define(function(require) {
           schema = _.pick(schema, 'customStyle');
           break;
       }
-      
+
       options.model.schema = buildSchema(schema, options, type);
       options.fieldsets = buildFieldsets(schema, options);
       alternativeModel = options.alternativeModelToSave;
       alternativeAttribute = options.alternativeAttributeToSave;
       currentModel = options.model;
-              
+
       var form = new Backbone.Form(options).render();
       currentForm = form;
-      
+
       return form;
     } catch (e) {
       alert(e.message);
@@ -337,7 +341,7 @@ define(function(require) {
 	Scaffold.addCustomField = function(fieldName, view, overwrite) {
 		// Check if field already exists
 		if (Backbone.Form.editors[fieldName] && !overwrite) {
-			return console.log("Sorry, the custom field you're trying to add already exists")
+			return console.log("Sorry, the custom field you're trying to add (" + fieldName + ") already exists")
 		} else {
 			Backbone.Form.editors[fieldName] = view;
 		}
@@ -367,7 +371,7 @@ define(function(require) {
 		}
 		// Check if custom template already exists
 		if (customTemplates[templateName] && !overwrite) {
-			return console.log("Sorry, the custom template you're trying to add already exists");
+			return console.log("Sorry, the custom template you're trying to add (" + templateName + ") already exists");
 		} else {
 			customTemplates[templateName] = template;
 		}

@@ -5,10 +5,24 @@
       </h3>
   </div>
   <div class="sidebar-row">
+    <button class="showAll display-none">
+      <i class="fa fa-ban"></i>
+      {{t 'app.showalltitle'}}
+    </button>
+  </div>
+  <div class="sidebar-row">
     <button class="sidebar-fieldset-filter" data-type="info">
       <span class="sidebar-fieldset-filter-inner">
         <i class="fa fa-toggle-off fa-toggle-on"></i>
         {{t 'app.infodefaulttitle'}}
+      </span>
+    </button>
+  </div>
+  <div class="sidebar-row">
+    <button class="sidebar-fieldset-filter" data-type="warn">
+      <span class="sidebar-fieldset-filter-inner">
+        <i class="fa fa-toggle-off fa-toggle-on"></i>
+        {{t 'app.warningdefaulttitle'}}
       </span>
     </button>
   </div>

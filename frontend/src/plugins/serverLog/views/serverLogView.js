@@ -12,11 +12,11 @@ define(function(require){
     preRender: function() {
       this.listenTo(this.model, 'change:appliedFilters', this.filter);
 
-      this.model.set('appliedFilters', ['info','error']);
-      this.model.set('logsToRender', this.model.get('logs').models);
+      this.filterReset();
 
       this.listenTo(Origin, 'serverLog:filter:on', this.filterOn);
       this.listenTo(Origin, 'serverLog:filter:off', this.filterOff);
+      this.listenTo(Origin, 'serverLog:filter:reset', this.filterReset);
     },
 
     postRender: function() {
@@ -30,6 +30,11 @@ define(function(require){
     setHeight: function() {
       var newHeight = $(window).height()-$('.' + this.className).offset().top;
       $('.' + this.className).height(newHeight);
+    },
+
+    filterReset: function() {
+      this.model.set('appliedFilters', ['info','warn','error']);
+      this.model.set('logsToRender', this.model.get('logs').models);
     },
 
     filterOn: function(filterType) {

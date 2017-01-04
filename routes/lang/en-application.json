@@ -384,6 +384,7 @@
   "app.infodefaulttitle": "Information",
   "app.errordefaulttitle": "Error",
   "app.warningdefaulttitle": "Warning",
+  "app.showalltitle": "Show all",
   "app.confirmdefaulttitle": "Are you sure?",
   "app.confirmdefaultyes": "Yes, I'm sure",
   "app.confirmwait": "Wait",

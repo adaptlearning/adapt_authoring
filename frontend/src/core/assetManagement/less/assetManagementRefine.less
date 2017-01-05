@@ -252,16 +252,6 @@
         }
       }
 
-      a.reset {
-        width: @sidebar-width;
-        margin: 0;
-        color: @primary-color;
-        font-size: @font-size;
-        &:hover {
-          color: @white;
-        }
-      }
-
       /*
       * Specific module styling
       */
@@ -269,6 +259,16 @@
       * Summary styling
       */
       &.summary {
+        a.reset {
+          width: @sidebar-width;
+          margin: 0;
+          color: @primary-color;
+          font-size: @font-size;
+          &:hover {
+            color: @white;
+          }
+        }
+
         text-align: center;
         padding-right: 20px;
         // padding-bottom: 15px;
@@ -319,9 +319,9 @@
           }
         }
         a.reset {
-          position: absolute;
-          margin-top: -33px;
-          margin-left: 140px;
+          display: block;
+          margin-top: -10px;
+          margin-bottom: 15px;
           font-size: 90%;
         }
       }

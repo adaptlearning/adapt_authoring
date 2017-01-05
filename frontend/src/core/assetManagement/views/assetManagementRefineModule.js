@@ -9,14 +9,17 @@ define(function(require) {
     // if true, appends template to .inner of assetManagementRefineModule.hbs
     renderWrapper: true,
     // used to set the module's title in the wrapper's hbs
-    // TODO localise
-    title: 'Unset module title',
+    // set in initialize
+    title: false,
 
     events: {
       'click .title': 'toggle'
     },
 
     initialize: function(options) {
+      if(!this.title) {
+        this.title = window.polyglot.t('app.unsetmoduletitle');
+      }
       this.options = options;
 
       this.listenTo(Origin, 'assetManagement:refine:remove', this.remove);
@@ -68,7 +71,6 @@ define(function(require) {
     },
 
     toggle: function() {
-      // this.$('.inner').toggleClass('hide');
       this.$el.toggleClass('hide');
     }
   });

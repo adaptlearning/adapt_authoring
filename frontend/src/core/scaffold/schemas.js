@@ -105,10 +105,10 @@ define(function(require) {
             delete schema._extensions;
             // Remove globals as these are appended to the course model
             delete schema.globals;
+            // assumption that no menu or theme applied, so don't show settings
+            delete schema.themeSettings;
+            delete schema.menuSettings;
 
-            if(!schema.themeSettings.properties) delete schema.themeSettings;
-            if(!schema.menuSettings.properties) delete schema.menuSettings;
-            
             return schema;
         }
     };

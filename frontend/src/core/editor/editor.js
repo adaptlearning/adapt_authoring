@@ -55,6 +55,10 @@ define(function(require) {
   * loads data that's needed elsewhere
   */
   function preload() {
+    // no point continuing if not logged in
+    if(!Origin.sessionModel.get('isAuthenticated')) {
+      return;
+    }
     if(!Origin.editor.data.courses) {
       Origin.editor.data.courses = createCollection(EditorCourseModel, '/api/content/course', 'courses');
     }

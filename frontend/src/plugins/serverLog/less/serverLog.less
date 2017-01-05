@@ -1,3 +1,5 @@
+@import '../../../less/variables.less';
+
 body.module-serverLog {
   /**
   * Main window
@@ -47,10 +49,14 @@ body.module-serverLog {
     button.showAll {
       text-align: center;
       font-size: 95%;
+      color: @primary-color;
       padding-top: 0;
       padding-bottom: 5px;
       i {
         margin-right: 3px;
+      }
+      &:hover {
+        color: @white;
       }
     }
   }

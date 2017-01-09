@@ -162,6 +162,10 @@ module.exports = function(grunt) {
         routes: {
           files: ['routes/**/*.*'],
           tasks: ['handlebars']
+        },
+        lang: {
+          files: ['routes/lang/*.json'],
+          tasks: ['merge-json']
         }
       },
       casperjs: {

@@ -29,7 +29,15 @@ define(function(require) {
     });
     Origin.sidebar.addView(new ServerLogSidebarView().$el, {
       backButtonText: window.polyglot.t('app.backtosysteminformation'),
-      backButtonRoute: "/#/systemInfo"
+      backButtonRoute: "/#/systemInfo",
+      breadcrumbs: [
+        {
+          title: window.polyglot.t('app.systeminfo'),
+          url: '#/systemInfo'
+        },
+        { title: window.polyglot.t('app.serverlog')}
+      ],
+      title: window.polyglot.t('app.serverlog')
     });
     var logs = new LogCollection();
     logs.fetch({

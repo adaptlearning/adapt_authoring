@@ -26,7 +26,7 @@ define(function(require) {
     },
 
     redirectToLogin: function() {
-       this.navigate('#/user/login', {trigger: true});
+      this.navigate('#/user/login', {trigger: true});
     },
 
     createView: function(View, viewOptions, settings) {

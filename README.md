@@ -1,4 +1,4 @@
-# Kineo Adapt Authoring Tool
+# Kineo Adapt Authoring Tool &nbsp;&nbsp;&nbsp;&nbsp;![Travis CI build status](https://travis-ci.org/cgkineo/adapt_authoring.svg?branch=production)
 
 This is a fork of the open-source Adapt authoring tool, and is used by Kineo as a pre-release testing base for features prior to pushing to the open-source repository.
 

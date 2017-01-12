@@ -143,7 +143,6 @@ define(function(require) {
     if(loc.type !== 'menu') crumbs.push('course');
     if(loc.action === 'edit') {
       var page = getNearestPage(model);
-      console.log(page.attributes);
       crumbs.push({
         title: window.polyglot.t('app.editorpage'),
         url: '#/editor/' + page.get('_courseId') + '/page/' + page.get('_id')

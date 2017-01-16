@@ -84,6 +84,8 @@ define(function(require) {
 
 		openPopup(_.extend(defaults, data));
 
+		$('.sweet-alert > .sa-button-container button').blur();
+
 		// forces the user to wait before the confirm button can be clicked
 		if(data.destructive === true) {
 			var setWaitText = function(n) {

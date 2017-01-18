@@ -7,7 +7,7 @@ var FileStorage = require('../../../lib/filestorage').FileStorage,
     configuration = require('../../../lib/configuration'),
     usermanager = require('../../../lib/usermanager'),
     util = require('util'),
-    fs = require('fs'),
+    fs = require('fs-extra'),
     path = require('path'),
     mkdirp = require('mkdirp'),
     async = require('async'),
@@ -99,7 +99,7 @@ LocalFileStorage.prototype.getFileContents = function (filePath, callback) {
  */
 
 LocalFileStorage.prototype.putFileContents = function (filePath, options, buffer, callback) {
-  fs.writeFile(this.resolvePath(filePath), buffer, options, callback);
+  fs.outputFile(this.resolvePath(filePath), buffer, options, callback);
 };
 
 /**

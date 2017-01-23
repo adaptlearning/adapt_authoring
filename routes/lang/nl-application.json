@@ -320,9 +320,5 @@
   "app.list": "Lijst",
   "app.ascending": "A naar Z",
   "app.descending": "Z naar A",
-  "app.visitpluginhomepage": "Bezoek plugin homepage",
-  "app.resetpasswordsuccess": "Uw wachtwoord is met success reset.",
-  "app.resetpassworderror": "Uw wachtwoord kon niet gereset worden.",
-  "app.selectasset": "Selecteer Asset",
-  "app.confirmnewpassword": "Nieuw wachtwoord (nogmaals)"
+  "app.visitpluginhomepage": "Bezoek plugin homepage"
 }

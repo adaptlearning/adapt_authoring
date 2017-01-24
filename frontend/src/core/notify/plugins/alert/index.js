@@ -18,6 +18,7 @@ define(function(require) {
 				defaults.title = window.polyglot.t('app.confirmdefaulttitle');
 				break;
 			case 'warning':
+				defaults.title = window.polyglot.t('app.warningdefaulttitle');
 				break;
 			case 'input':
 				break;
@@ -89,9 +90,9 @@ define(function(require) {
 		if(data.destructive === true) {
 			var setWaitText = function(n) {
 				$('.sweet-alert button.confirm').html(
-					'<span class="wait-text">' + 
-					window.polyglot.t('app.confirmwait') + 
-					'</span> ' + 
+					'<span class="wait-text">' +
+					window.polyglot.t('app.confirmwait') +
+					'</span> ' +
 					n
 				);
 			};
@@ -101,7 +102,7 @@ define(function(require) {
 
 			$('.sweet-alert').addClass('destructive');
 			$('.sweet-alert button.confirm').attr('disabled', true);
-			
+
 			setWaitText(count);
 
 			clearInterval(interval);

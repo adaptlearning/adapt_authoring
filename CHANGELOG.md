@@ -4,6 +4,36 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 **IMPORTANT**: For information on how to *correctly* update your installation, consult [INSTALL.md](https://github.com/adaptlearning/adapt_authoring/blob/master/INSTALL.md#updating-the-tool).
 
+## [0.3.0] - 2017-01-24
+
+### Added
+- User management
+  - Can add users
+  - Can edit existing users (email, password, tenant, role, unlock locked accounts)
+  - Can disable/restore users
+  - Can delete users
+- Add option to disable automatic switching-on of accessibility on touch devices
+- Mailer now supports HTML templated emails
+- User's roles now displayed on their profile page
+
+### Changed
+- Asset description is no longer a required field
+- Updated config.json with up-to-date values
+- Permissions page styled to match UI refresh
+- Travis CI configuration updated:
+  - Added Node.js version 4, 5 and 6
+  - git, mongodb and adapt versions logged to console
+  - Removed caching for `node_modules` directory
+  - Removed `on_start` from notifications as Travis WebLint shows as deprecated
+
+### Fixed
+- Block alignment in page editor 
+- Password reset emails now work as intended
+- The 'enabled' checkbox in Plugin Management now hides plugins from editor
+- Removed tab/newline chars from CKEditor output to fix tabbing in published courses
+- Menu picker selected colouring
+- Notify content is now scrollable, rather than being rendered off screen
+
 ## [0.2.2] - 2016-09-13
 
 ### Added
@@ -262,7 +292,8 @@ If upgrading from a previous version, please add the following keys to your conf
 - Loading screen of death
 - Session cookie security issues
 
-
+[0.3.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.2...v0.3.0
+[0.2.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.7...v0.2.0
 [0.1.7]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.6...v0.1.7

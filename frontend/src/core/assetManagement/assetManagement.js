@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Origin = require('coreJS/app/origin');
   var AssetModel = require('coreJS/assetManagement/models/assetModel');
   var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
@@ -15,7 +14,6 @@ define(function(require) {
     Origin.assetManagement.filterData = {};
 
     if (!location) {
-
         var tagsCollection = new TagsCollection();
 
         tagsCollection.fetch({
@@ -32,36 +30,21 @@ define(function(require) {
           error: function() {
             console.log('Error occured getting the tags collection - try refreshing your page');
           }
-        })
-        
-        
-        
+        });
     } else if (location=== 'new') {
         Origin.trigger('location:title:update', {title: 'New Asset'});
-        Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el, {
-            "backButtonText": "Back to assets",
-            "backButtonRoute": "/#/assetManagement"
-        });
+        Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
         Origin.router.createView(AssetManagementNewAssetView, { model: new AssetModel });
     } else if (subLocation === 'edit') {
-
-      var Asset = new AssetModel({
-        _id: location
-      }); 
+      var Asset = new AssetModel({ _id: location });
       // Fetch existing asset model
       Asset.fetch({
         success: function() {
           Origin.trigger('location:title:update', {title: 'Edit Asset'});
-          Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el, {
-              "backButtonText": "Back to assets",
-              "backButtonRoute": "/#/assetManagement"
-          });
-          Origin.router.createView(AssetManagementNewAssetView, { 
-            model: Asset
-          });
+          Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
+          Origin.router.createView(AssetManagementNewAssetView, { model: Asset });
         }
-      })
-      
+      });
     }
   });
 
@@ -80,5 +63,4 @@ define(function(require) {
   Origin.on('app:dataReady login:changed', function() {
     Origin.globalMenu.addItem(globalMenuObject);
   });
-
 });

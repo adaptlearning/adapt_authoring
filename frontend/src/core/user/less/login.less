@@ -1,7 +1,11 @@
 @import '../../../less/variables.less';
 
 .module-user {
-	&.location-login, &.location-forgot {
+	&.location-login,
+    &.location-forgot,
+    &.location-reset {
+        max-width: 450px;
+        margin: 0 auto;
         color: #fff;
         background: url(assets/login_bg.jpg) no-repeat center center fixed;
         -webkit-background-size: cover;
@@ -17,39 +21,48 @@
         a {
             color: #fff;
         }
+
+        button.small {
+            font-size: 16px;
+            margin: 0 auto;
+            display: block;
+            width: 200px;
+            margin-top: 20px;
+            height: 80%;
+        }
 	}
 
     .login-logo {
-        margin: 60px 146px;
+        img {
+            margin: 0 auto;
+            display: block;
+        }
     }
 
     .login-title {
-        margin: 0 153px;
+        text-align: center;
         font-size: 32px;
+        margin-top: 60px;
+        margin-bottom: 40px;
     }
 
     #loginError {
-				width: 400px;
-				text-align: center;
-		    background-color: rgba(0,0,0,0.2);
-				border-radius: 4px;
-				margin: 5px 0;
-		    padding: 10px;
-				i.fa {
-					color: @alert-color;
-					font-size: 110%;
-					margin-right: 5px;
-				}
-				#loginErrorMessage {
-					font-size: 110%;
-	        color:white;
-					position: static;
-				}
-    }
-
-    .login {
-        max-width: 450px;
-        margin: 0 auto;
+        width: 425px;
+        text-align: center;
+        background-color: rgba(0,0,0,0.2);
+        border-radius: 4px;
+        margin: 5px 0;
+        padding: 10px;
+        i.fa {
+            color: @alert-color;
+            font-size: 110%;
+            margin-right: 5px;
+        }
+        #loginErrorMessage {
+            font-size: 110%;
+            color:white;
+            position: static;
+        }
     }
 
     .login-fields, .forgot-password-form {
@@ -74,12 +87,12 @@
         }
 
         .input-username-email, .login-input-password, .login-input-username {
-            width: 380px;
+            width: 405px;
         }
 
         button {
             margin-bottom: 5px;
-            width: 420px;
+            width: 445px;
             height: 65px;
             font-size: 20px;
         }
@@ -108,11 +121,5 @@
             color: white;
             text-decoration: none;
         }
-    }
-
-
-    .login-already-logged-in {
-        text-align: center;
-
     }
 }

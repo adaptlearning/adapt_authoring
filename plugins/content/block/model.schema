@@ -59,6 +59,41 @@
       "title": "Is this available?",
       "help": "If set to 'false' this will not be displayed"
     },
+    "_onScreen": {
+      "type": "object",
+      "title": "",
+      "properties": {
+        "_isEnabled": {
+          "type": "bool",
+          "default": "false",
+          "isSetting": true,
+          "inputType": {"type": "Boolean", "options": [true, false]},
+          "validators": [],
+          "title": "Enable",
+          "help": "If set to 'true', a CSS-Class will be added once the Element is scrolled into view."
+        },
+        "_classes": {
+          "type": "string",
+          "default": "",
+          "isSetting": true,
+          "required": false,
+          "inputType": "Text",
+          "validators": [],
+          "title": "Classes",
+          "help": "The CSS-Class that is added to the Element."
+        },
+        "_percentInviewVertical": {
+          "type": "number",
+          "required": false,
+          "default": 50,
+          "isSetting": true,
+          "title": "Percent in view",
+          "inputType": "Number",
+          "validators": ["number"],
+          "help": "Percent of the Element in View."
+        }
+      }
+    },
     "_extensions": {
       "type":"object"
     }

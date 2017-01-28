@@ -294,7 +294,7 @@ function contentCreationHook (contentType, data, cb) {
 
 function toggleExtensions (courseId, action, extensions, cb) {
   if (!extensions || 'object' !== typeof extensions) {
-    return cb(error);
+    return cb(new Error('Incorrect parameters passed'));
   }
 
   var user = usermanager.getCurrentUser();
@@ -509,6 +509,8 @@ function initialize () {
       });
     });
   });
+  // HACK surface this properly somewhere
+  app.contentmanager.toggleExtensions = toggleExtensions;
 
   // add content creation hooks for each viable content type
   ['contentobject', 'article', 'block', 'component'].forEach(function (contentType) {

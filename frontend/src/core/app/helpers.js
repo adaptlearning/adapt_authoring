@@ -60,7 +60,7 @@ define(function(require){
           if (typeof date == 'undefined') {
             return '-';
           }
-          
+
           return moment(date).format(format);
         },
         formatDuration: function(duration) {
@@ -128,6 +128,11 @@ define(function(require){
         },
         stripHtml: function(html) {
             return new Handlebars.SafeString(html);
+        },
+        escapeText: function(text) {
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(text));
+            return div.innerHTML;
         },
         bytesToSize: function(bytes) {
             if (bytes == 0) return '0 B';
@@ -210,11 +215,11 @@ define(function(require){
           var fileName = urlSplit[urlSplit.length - 1];
           // Get courseAsset model
           var courseAsset = Origin.editor.data.courseAssets.findWhere({_fieldName: fileName});
-          
+
           if (courseAsset) {
             var courseAssetId = courseAsset.get('_assetId');
 
-            return '/api/asset/serve/' + courseAssetId;  
+            return '/api/asset/serve/' + courseAssetId;
           } else {
             return '';
           }
@@ -261,59 +266,55 @@ define(function(require){
         },
 
         copyStringToClipboard: function(data) {
-                 
+
           var textArea = document.createElement("textarea");
-          
+
           textArea.value = data;
 
           // Place in top-left corner of screen regardless of scroll position.
           textArea.style.position = 'fixed';
           textArea.style.top = 0;
           textArea.style.left = 0;
-    
+
           // Ensure it has a small width and height. Setting to 1px / 1em
           // doesn't work as this gives a negative w/h on some browsers.
           textArea.style.width = '2em';
           textArea.style.height = '2em';
-    
+
           // We don't need padding, reducing the size if it does flash render.
           textArea.style.padding = 0;
-    
+
           // Clean up any borders.
           textArea.style.border = 'none';
           textArea.style.outline = 'none';
           textArea.style.boxShadow = 'none';
-    
+
           // Avoid flash of white box if rendered for any reason.
           textArea.style.background = 'transparent';
-    
+
           document.body.appendChild(textArea);
-    
+
           textArea.select();
-    
+
           var success = document.execCommand('copy');
 
           document.body.removeChild(textArea);
-          
+
           return success;
         },
-        
+
         validateCourseContent: function(currentCourse) {
           // Let's do a standard check for at least one child object
           var containsAtLeastOneChild = true;
-
           var alerts = [];
 
           function iterateOverChildren(model) {
             // Return the function if no children - on components
             if(!model._children) return;
-
             var currentChildren = model.getChildren();
-
             // Do validate across each item
             if (currentChildren.length == 0) {
               containsAtLeastOneChild = false;
-
               alerts.push(
                 "There seems to be a "
                 + model.get('_type')
@@ -322,7 +323,6 @@ define(function(require){
                 + "' with no "
                 + model._children
               );
-
               return;
             } else {
               // Go over each child and call validation again
@@ -330,9 +330,7 @@ define(function(require){
                 iterateOverChildren(childModel);
               });
             }
-
           }
-
           iterateOverChildren(currentCourse);
 
           if(alerts.length > 0) {

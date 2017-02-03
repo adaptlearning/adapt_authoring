@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
   var SidebarFieldsetFilterView = require('coreJS/sidebar/views/sidebarFieldsetFilterView');
@@ -8,10 +7,10 @@ define(function(require) {
   var Helpers = require('coreJS/app/helpers');
 
   var SidebarItemView = OriginView.extend({
-
     className: 'sidebar-item',
 
     events: {
+      'click button'                                    : 'onButtonClick',
       'click button.editor-common-sidebar-project'      : 'editProject',
       'click button.editor-common-sidebar-config'       : 'editConfiguration',
       'click button.editor-common-sidebar-extensions'   : 'manageExtensions',
@@ -24,7 +23,7 @@ define(function(require) {
     },
 
     initialize: function(options) {
-
+        this.preRender();
         // Set form on view
         if (options && options.form) {
           this.form = options.form;
@@ -41,6 +40,7 @@ define(function(require) {
         }, this));
     },
 
+    preRender: function() {},
     postRender: function() {},
 
     setupView: function() {
@@ -94,8 +94,21 @@ define(function(require) {
     },
 
     animateViewIn: function() {
-        this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
+      this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
     },
+
+    onButtonClick: function(e) {
+      e && e.preventDefault();
+      var dataEvent = $(e.currentTarget).attr('data-event');
+      if(dataEvent) {
+        // TODO should be editorSidebar?
+        Origin.trigger('editorCommon:' + dataEvent);
+      }
+    },
+
+    /*
+    * TODO transition the below to use onButtonClick?
+    */
 
     editProject: function() {
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/settings', {trigger: true});
@@ -132,9 +145,7 @@ define(function(require) {
     closeProject: function() {
       Origin.router.navigate('#/dashboard');
     }
-
   });
 
   return SidebarItemView;
-
-})
+});

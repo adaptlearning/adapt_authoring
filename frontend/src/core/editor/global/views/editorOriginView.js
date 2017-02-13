@@ -157,7 +157,7 @@ define(function(require){
     onPaste: function(e) {
       e && e.preventDefault();
       e && e.stopPropagation();
-      Origin.trigger('editorView:paste', this.model.get('_parentId'), $(e.target).data('sort-order'), $(e.target).data('paste-layout'));
+      Origin.trigger('editorView:paste', this.model && this.model.get('_parentId') || undefined, $(e.target).data('sort-order'), $(e.target).data('paste-layout'));
       this.hidePasteZones();
     },
 

@@ -3,8 +3,8 @@
  * Adapt Output plugin
  */
 var _ = require('underscore');
+var archive = require('archiver')('zip');
 var async = require('async');
-var archiver = require('archiver');
 var exec = require('child_process').exec;
 var fs = require('fs-extra');
 var mkdirp = require('mkdirp');
@@ -217,11 +217,11 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
       },
       function(callback) {
         if (!isPreview) {
-          var output = fs.createWriteStream(filename);
-          var archive = archiver('zip');
           // Now zip the build package
           var filename = path.join(COURSE_FOLDER, Constants.Filenames.Download);
-          var zipName = self.slugify(outputJson['course'].title);
+          var zipName = helpers.slugify(outputJson['course'].title);
+
+          var output = fs.createWriteStream(filename);
 
           output.on('close', function() {
             resultObject.filename = filename;
@@ -290,7 +290,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
             return callback(new Error('Unexpected results returned for course ' + courseId + ' (' + results.length + ')', self));
           }
 
-          exportName = self.slugify(results[0].title) + '-export-' + timestamp;
+          exportName = helpers.slugify(results[0].title) + '-export-' + timestamp;
           exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, exportName);
           callback();
         });
@@ -341,7 +341,6 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
       });
     },
     function zipFiles(callback) {
-      var archive = archiver('zip');
       var output = fs.createWriteStream(exportDir +  '.zip');
 
       archive.on('error', callback);

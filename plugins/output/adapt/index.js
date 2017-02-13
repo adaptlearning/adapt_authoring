@@ -2,29 +2,30 @@
 /**
  * Adapt Output plugin
  */
+var _ = require('underscore');
+var async = require('async');
+var archiver = require('archiver');
+var exec = require('child_process').exec;
+var fs = require('fs-extra');
+var mkdirp = require('mkdirp');
+var ncp = require('ncp').ncp;
+var path = require('path');
+var rimraf = require('rimraf');
+var semver = require('semver');
+var util = require('util');
 
-var origin = require('../../../'),
-    OutputPlugin = require('../../../lib/outputmanager').OutputPlugin,
-    Constants = require('../../../lib/outputmanager').Constants,
-    configuration = require('../../../lib/configuration'),
-    filestorage = require('../../../lib/filestorage'),
-    database = require('../../../lib/database'),
-    util = require('util'),
-    path = require('path'),
-    fs = require('fs'),
-    fse = require('fs-extra'),
-    async = require('async'),
-    archiver = require('archiver'),
-    _ = require('underscore'),
-    ncp = require('ncp').ncp,
-    rimraf = require('rimraf'),
-    mkdirp = require('mkdirp'),
-    usermanager = require('../../../lib/usermanager'),
-    assetmanager = require('../../../lib/assetmanager'),
-    exec = require('child_process').exec,
-    semver = require('semver'),
-    version = require('../../../version'),
-    logger = require('../../../lib/logger');
+var assetmanager = require('../../../lib/assetmanager');
+var database = require('../../../lib/database');
+var configuration = require('../../../lib/configuration');
+var Constants = require('../../../lib/outputmanager').Constants;
+var filestorage = require('../../../lib/filestorage');
+var helpers = require('../../../lib/helpers');
+var logger = require('../../../lib/logger');
+var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin;
+var usermanager = require('../../../lib/usermanager');
+var version = require('../../../version');
+
+var origin = require('../../../');
 
 function AdaptOutput() {
 }
@@ -34,12 +35,12 @@ util.inherits(AdaptOutput, OutputPlugin);
 AdaptOutput.prototype.publish = function(courseId, isPreview, request, response, next) {
   var app = origin();
   var self = this;
-  var user = usermanager.getCurrentUser(),
-    tenantId = user.tenant._id,
-    outputJson = {},
-    isRebuildRequired = false,
-    themeName = '',
-    menuName = Constants.Defaults.MenuName;
+  var user = usermanager.getCurrentUser();
+  var tenantId = user.tenant._id;
+  var outputJson = {};
+  var isRebuildRequired = false;
+  var themeName = '';
+  var menuName = Constants.Defaults.MenuName;
 
   var resultObject = {};
 
@@ -216,11 +217,11 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
       },
       function(callback) {
         if (!isPreview) {
+          var output = fs.createWriteStream(filename);
+          var archive = archiver('zip');
           // Now zip the build package
           var filename = path.join(COURSE_FOLDER, Constants.Filenames.Download);
           var zipName = self.slugify(outputJson['course'].title);
-          var output = fs.createWriteStream(filename),
-            archive = archiver('zip');
 
           output.on('close', function() {
             resultObject.filename = filename;
@@ -309,7 +310,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
         var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
         var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
 
-        fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
+        fs.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
           filter: function(filePath) {
             var posixFilePath = filePath.replace(/\\/g, '/');
 
@@ -330,11 +331,11 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
           }
           var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
           var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
-          fse.ensureDir(dest, function (error) {
+          fs.ensureDir(dest, function (error) {
             if(error) {
               return callback(error);
             }
-            fse.copy(source, dest, callback);
+            fs.copy(source, dest, callback);
           });
         });
       });
@@ -349,7 +350,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
       archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
     },
     function cleanUp(callback) {
-      fse.remove(exportDir, function (error) {
+      fs.remove(exportDir, function (error) {
         callback(error, { zipName: exportName + '.zip' });
       });
     }

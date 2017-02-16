@@ -144,7 +144,7 @@ BowerPlugin.prototype.initialize.call(new Menu(), bowerConfig);
               return res.json({success: true});
             });
           });
-        }, configuration.getConfig('dbName'));        
+        }, configuration.getConfig('dbName'));
       });
     });
   });

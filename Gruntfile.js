@@ -7,7 +7,7 @@ module.exports = function(grunt) {
       pkg: grunt.file.readJSON('package.json'),
       "merge-json": {
         en: {
-            src: ['routes/lang/en-application.json','frontend/src/plugins/**/lang/en.json'],
+            src: ['routes/lang/en-application.json','frontend/src/**/lang/en.json'],
             dest: 'routes/lang/en.json',
         }
       },
@@ -162,6 +162,10 @@ module.exports = function(grunt) {
         routes: {
           files: ['routes/**/*.*'],
           tasks: ['handlebars']
+        },
+        lang: {
+          files: ['routes/lang/*.json'],
+          tasks: ['merge-json']
         }
       },
       casperjs: {
@@ -340,8 +344,8 @@ module.exports = function(grunt) {
       }
     });
 
-    grunt.registerTask('default',['requirePlugins', 'less:dev', 'handlebars', 'watch']);
-    grunt.registerTask('test',['mochaTest']);
+    grunt.registerTask('default', ['merge-json', 'requirePlugins', 'less:dev', 'handlebars', 'watch']);
+    grunt.registerTask('test', ['mochaTest']);
     grunt.registerTask('test-ui', ['casperjs']);
 
 };

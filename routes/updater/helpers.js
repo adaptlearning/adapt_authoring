@@ -33,7 +33,8 @@ var exports = module.exports = {
     );
   },
   getPackageVersion(repoDir, cb) {
-    var packagePath = path.join(repoDir, OutputConstants.Filenames.Package);
+    // TODO maybe use a contant for package.json
+    var packagePath = path.join(repoDir, 'package.json');
     fs.readJson(packagePath, function(error, packageObj) {
       cb(error, packageObj.version);
     });

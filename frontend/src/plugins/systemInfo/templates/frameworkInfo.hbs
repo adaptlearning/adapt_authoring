@@ -1,0 +1,26 @@
+<div class="inner">
+  <h1>{{t "app.frameworkversion"}}</h1>
+  <div class="status">
+    <div class="stat">
+      <div class="label">{{t "app.current"}}:</div>
+      <div class="value">{{ installed }}</div>
+    </div>
+    {{#if latest}}{{#if isUpdateAvailable}}
+      <div class="stat">
+        <div class="label">{{t "app.latest"}}:</div>
+        <div class="value">{{ latest }}</div>
+      </div>
+    {{/if}}{{/if}}
+    <button class="btn {{#if isUpdateAvailable}}primary{{else}}secondary{{/if}}" {{#if latest}}{{#if isUpdateAvailable}}{{else}}disabled{{/if}}{{/if}}>
+      {{#if latest}}
+        {{#if isUpdateAvailable}}
+          {{t "app.updateplugin"}}
+        {{else}}
+          {{t "app.uptodate"}}
+        {{/if}}
+      {{else}}
+        {{t "app.updatecheck"}}
+      {{/if}}
+    </button>
+  </div>
+</div>

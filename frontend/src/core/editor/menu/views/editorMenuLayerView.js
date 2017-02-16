@@ -1,7 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
-	var Origin = require('coreJS/app/origin');
+  var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
   var EditorArticleModel = require('editorPage/models/editorArticleModel');
@@ -9,7 +8,6 @@ define(function(require) {
   var EditorMenuItemView = require('editorMenu/views/editorMenuItemView');
 
   var EditorMenuLayerView = EditorOriginView.extend({
-
       className: 'editor-menu-layer',
 
       events: {
@@ -23,12 +21,11 @@ define(function(require) {
         if (options._parentId) {
           this._parentId = options._parentId;
         }
-
         this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
         this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
       },
 
-  		postRender: function() {
+      postRender: function() {
         if (this._parentId) {
           // Append the parentId value to the container to allow us to move pages, etc.
           this.$el.attr('data-parentId', this._parentId);
@@ -40,10 +37,7 @@ define(function(require) {
         var data = this.data ? this.data : false;
         var template = Handlebars.templates[this.constructor.template];
         this.$el.html(template(data));
-        _.defer(_.bind(function() {
-          this.postRender();
-        }, this));
-
+        _.defer(_.bind(this.postRender, this));
         return this;
       },
 
@@ -77,10 +71,7 @@ define(function(require) {
           displayTitle: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
           body: '',
           linkText: window.polyglot.t('app.view'),
-          graphic: {
-            alt: '',
-            src: ''
-          },
+          graphic: { alt: '', src: '' },
           _type: type
         });
 
@@ -90,9 +81,7 @@ define(function(require) {
         // Save the model
         newMenuItemModel.save(null, {
           error: function(error) {
-            // If there's an error show the menu item fading out
-            // and show an unobtrusive pop notification
-            var timeOut = 3000;
+            // If there's an error show the menu item fading out and alert
             newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
 
             Origin.Notify.alert({
@@ -100,10 +89,7 @@ define(function(require) {
               text: window.polyglot.t('app.errormenueditorbody'),
             });
 
-            _.delay(function() {
-              newMenuItemView.remove();
-            }, timeOut);
-
+            _.delay(newMenuItemView.remove, 3000);
           },
           success: _.bind(function(model) {
             Origin.editor.data.contentObjects.add(model);
@@ -116,15 +102,12 @@ define(function(require) {
             } else {
               newMenuItemView.$el.removeClass('syncing').addClass('synced');
             }
-
             this.setHeight();
-
           }, this)
         });
       },
 
       addNewPageArticleAndBlock: function(model, newMenuItemView) {
-
         var typeToAdd;
         var newChildModel;
         var newChildTitle;
@@ -152,17 +135,12 @@ define(function(require) {
           _courseId: Origin.editor.data.course.get('_id')
         }, {
           error: function() {
-            var timeOut = 3000;
             newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
-
             Origin.Notify.alert({
               type: 'error',
               text: window.polyglot.t('app.errormenueditorbody'),
             });
-
-            _.delay(function() {
-              newMenuItemView.remove();
-            }, timeOut);
+            _.delay(newMenuItemView.remove, 3000);
           },
           success: _.bind(function(model, response, options) {
             // Add this new element to the collect
@@ -173,15 +151,12 @@ define(function(require) {
             } else {
               newMenuItemView.$el.removeClass('syncing').addClass('synced');
             }
-
           }, this)
         });
       },
 
       addMenuItemView: function(model) {
-        var newMenuItemView = new EditorMenuItemView({
-          model: model
-        });
+        var newMenuItemView = new EditorMenuItemView({ model: model });
         this.$('.editor-menu-layer-inner').append(newMenuItemView.$el.addClass('syncing'));
         return newMenuItemView;
       },
@@ -204,11 +179,9 @@ define(function(require) {
         });
         Origin.trigger('editorView:pasteCancel', target);
       }
-
-  	}, {
-  		template: 'editorMenuLayer'
+    }, {
+      template: 'editorMenuLayer'
   });
 
   return EditorMenuLayerView;
-
 });

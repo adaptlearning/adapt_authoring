@@ -34,11 +34,11 @@ define(function(require) {
 
       // sort into appropriate collection
       availableExtensionsCollection.each(function(extension) {
-        if (_.indexOf(enabledExtensionNames, extension.get('name')) > -1) {
-          enabledExtensionsCollection.add(extension);
-        } else if(extension.get('_isAvailableInEditor')) {
-          disabledExtensionsCollection.add(extension);
-        }
+          if (_.indexOf(enabledExtensionNames, extension.get('name')) > -1) {
+              enabledExtensionsCollection.add(extension);
+          } else if(extension.get('_isAvailableInEditor')) {
+              disabledExtensionsCollection.add(extension);
+          }
       });
 
       // Set collections on model render for render

@@ -36,14 +36,12 @@ define(function(require){
       this.listenTo(Origin, 'pageView:itemRendered', this.evaluateChildStatus);
 
       var captureScroll = function() {
-        $(window).scroll(function() {
-          if (window.scrollY !== 0) {
-            Origin.editor.scrollTo = window.scrollY;
-          }
+        this.$el.scroll(function() {
+            Origin.editor.scrollTo = this.scrollTop;
         });
       };
 
-      _.delay(captureScroll, 2000);
+      _.delay(_.bind(captureScroll, this), 2000);
     },
 
     resize: function() {
@@ -55,7 +53,7 @@ define(function(require){
 
     persistScrollPosition: function() {
       if (Origin.editor.scrollTo) {
-        $.scrollTo(Origin.editor.scrollTo);
+        this.$el.scrollTo(Origin.editor.scrollTo);
       }
     },
 

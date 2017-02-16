@@ -1,4 +1,4 @@
-<div class="project-inner clearfix unselectable" data-id="{{_id}}">
+<div class="project-inner clearfix unselectable {{#if _isShared}}shared{{/if}}" data-id="{{_id}}">
 
     <div class="project-header">
       <div class="project-header-inner">
@@ -14,12 +14,11 @@
 
       </div>
     </div>
+
     {{#if heroImage}}
-    <div class="project-image" style="background-image: url({{heroImageURI}});">
-    </div>
+      <div class="project-image" style="background-image: url({{heroImageURI}});"></div>
     {{else}}
-    <div class="project-image">
-    </div>
+      <div class="project-image"></div>
     {{/if}}
 
     <div class="project-details">
@@ -49,8 +48,8 @@
           </div>
         </div>
         {{/if}}
+
       </div>
     </div>
-
 
 </div>

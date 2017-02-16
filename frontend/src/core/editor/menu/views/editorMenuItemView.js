@@ -73,6 +73,7 @@ define(function(require){
     },
 
     onMenuItemClicked: function(event) {
+      event && event.preventDefault();
       // TODO - Fix this to the view not the model
       // Boo - jQuery doesn't allow dblclick and single click on the same element
       // time for a timer timing clicks against time delay
@@ -123,7 +124,6 @@ define(function(require){
       else {
         $(this.el).parent().parent().addClass("selected");
       }
-      event && event.preventDefault();
     },
 
     onMenuItemDblClicked: function(event) {
@@ -257,8 +257,6 @@ define(function(require){
     },
 
     copyMenuItem: function() {
-      $('.paste-zone').addClass('show');
-      $('.add-zone').css('visibility','hidden');
       Origin.trigger('editorView:copy', this.model);
     },
 

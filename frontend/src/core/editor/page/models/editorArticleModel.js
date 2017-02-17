@@ -9,8 +9,9 @@ define(function(require) {
     _children: 'blocks',
 
     initialize: function(options) {
-      // TODO intentional?
+      // TODO intentional override?
     }
+  });
 
-    return EditorArticleModel;
+  return EditorArticleModel;
 });

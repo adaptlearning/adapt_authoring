@@ -1,31 +1,20 @@
 define(function(require) {
   var Origin = require('core/origin');
 
-  var helpers = {
+  var Helpers = {
     /**
     * set the page title based on location
     * accepts backbone model, or object like so { title: '' }
     */
-    setPageTitle: function(model, shouldAddEditingPrefix) {
-      var type = Origin.location.route2 || Origin.location.route1;
-      var action = Origin.location.route4;
-      var titleKey;
-      switch(type) {
-        case 'page':
-          if(action === 'edit') {
-            titleKey = 'editor' + type + 'settings';
-            break;
-          }
-        default:
-          titleKey = 'editor' + type;
-      }
-      var langString = Origin.l10n.t('app.' + titleKey);
-      var modelTitle = model && model.get && model.get('title') || model.title;
-
-      var title = modelTitle || langString;
-      if(shouldAddEditingPrefix === true) title = addEditingPrefix(title, type);
-
-      Origin.trigger('location:title:update', { title: title });
+    setPageTitle: function(model) {
+      var data = {
+        model: model || {},
+        langString: Origin.l10n.t('app.' + getLangKey())
+      };
+      Origin.trigger('location:title:update', {
+        breadcrumbs: generateBreadcrumbs(data),
+        title: getTitleForModel(data)
+      });
     }
   }
 
@@ -33,12 +22,65 @@ define(function(require) {
   * Private functons
   */
 
-  function addEditingPrefix(string, type) {
-    return Origin.l10n.t('app.editing', {
-      text: string,
-      type: Origin.l10n.t('app.' + type)
-    });
+  function getType() {
+    return Origin.location.route2 || Origin.location.route1;
   }
 
-  return helpers;
+  function getAction() {
+    return Origin.location.route4;
+  }
+
+  function generateBreadcrumbs(data) {
+    var type = getType();
+    var action = getAction();
+    var crumbs = ['dashboard'];
+
+    if(type !== 'menu') {
+      crumbs.push('course');
+    }
+    if(action === 'edit') {
+      var page = getNearestPage(data.model);
+      crumbs.push({
+        title: Origin.l10n.t('app.editorpage'),
+        url: '#/editor/' + page.get('_courseId') + '/page/' + page.get('_id')
+      });
+    }
+    crumbs.push({ title: data.langString });
+    return crumbs;
+  }
+
+  function getTitleForModel(data) {
+    var type = getType();
+    var modelTitle = data.model.title || data.model.get && data.model.get('title');
+    return modelTitle || data.langString;
+  }
+
+  function getLangKey() {
+    var type = getType();
+    var action = getAction();
+    switch(type) {
+      case 'page':
+        if(action === 'edit') return 'editor'+type+'settings';
+      default:
+        return 'editor'+type;
+    }
+  }
+
+  function getNearestPage(model) {
+    var map = {
+      'component': 'components',
+      'block': 'blocks',
+      'article': 'articles',
+      'page': 'contentObjects'
+    };
+    var mapKeys = Object.keys(map);
+    while(model.get('_type') !== 'page') {
+      var parentType = mapKeys[_.indexOf(mapKeys, model.get('_type')) + 1];
+      var parentCollection = Origin.editor.data[map[parentType]];
+      model = parentCollection.findWhere({ _id: model.get('_parentId') });
+    }
+    return model;
+  }
+
+  return Helpers;
 });

@@ -145,6 +145,8 @@
   "app.themesettings": "Theme settings",
   "app.themepicker": "Theme picker",
   "app.themepreviewalt": "Preview image",
+  "app.editcoursesettings": "Edit Course Settings",
+  "app.themecustomisation": "Theme customisation",
   "app.lastupdated": "UPDATED",
   "app.recent": "Recent",
   "app.assettitle": "Asset title",
@@ -308,5 +310,12 @@
   "app.page": "page",
   "app.article": "article",
   "app.block": "block",
-  "app.component": "component"
+  "app.component": "component",
+  "app.editorsettings": "Project settings",
+  "app.editorconfig": "Configuration settings",
+  "app.editorselecttheme": "Theme picker",
+  "app.editormenusettings": "Menu picker",
+  "app.editorextensions": "Manage extensions",
+  "app.editorpage": "Page editor",
+  "app.editormenu": "Menu editor"
 }

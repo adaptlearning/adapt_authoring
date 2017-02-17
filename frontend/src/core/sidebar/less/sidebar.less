@@ -50,10 +50,22 @@
           margin: 0 @margin @padding @margin;
           padding: @padding;
           width: @sidebar-width - @total;
+          height: 25px;
           font-size: @sidebar-input-font-size;
+          border-radius: @button-radius;
+          border-color: @sidebar-input-color;
+          background: @sidebar-input-color;
+          color: @sidebar-input-text-color;
+          text-align: left;
         }
-        button.clear {
-          right: 18px;
+        button.sidebar-filter-clear {
+          position: absolute;
+          top: 14px;
+          right: 35px;
+          width: 12px;
+          padding: 0;
+          background: none;
+          color: @sidebar-input-text-color;
         }
       }
     }

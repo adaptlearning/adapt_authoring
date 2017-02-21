@@ -357,8 +357,14 @@ define(function(require){
       if(!props) {
         return false;
       }
-      if(Object.keys(props).length === 1 && props.pluginLocations !== undefined) {
-        return false;
+      if(Object.keys(props).length === 1) {
+        if(props.hasOwnProperty('pluginLocations')) {
+          return false;
+        }
+        // HACK for old themes
+        if(props.hasOwnProperty('_screenSize')) {
+          return false;
+        }
       }
       return true;
     },

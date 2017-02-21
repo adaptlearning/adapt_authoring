@@ -14,7 +14,7 @@ define(function(require) {
             _.each(enabledExtensions, function(value, key) {
                 enabledExtensionsKeys.push(value.targetAttribute);
             });
-            var schema = Origin.schemas.get(schemaName);
+            var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
             if(!schema) {
               throw new Error('No schema found for \'' + schemaName + '\'');
             }

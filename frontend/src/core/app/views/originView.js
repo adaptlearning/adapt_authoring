@@ -1,16 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-/*
-* BuilderView - base class for all views
-* License - http://github.com/adaptlearning/adapt_authoring/LICENSE
-* Maintainers - Brian Quinn <brian@learningpool.com>
-*/
 define(function(require){
-
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
 
   var OriginView = Backbone.View.extend({
-
     settings: {
       autoRender: true,
       preferencesKey: ''
@@ -83,11 +76,8 @@ define(function(require){
     },
 
     remove: function() {
-    
-     
       // If a view has a form - remove it when removing parent view
       if (this.form) {
-
         // remove ckeditor instances
         this.form.$( "textarea" ).each(function () {
           var editor = CKEDITOR.instances[this.id];
@@ -95,22 +85,16 @@ define(function(require){
             // check editor is still in the dom (otherwise throws exception)
             if (editor && editor.window.getFrame()){
               editor.destroy(true);
-            } 
+            }
           } catch (e) {
           }
         });
-
         this.form.remove();
-      } 
-        // Call original remove
+      }
+      // Call original remove
       Backbone.View.prototype.remove.apply(this, arguments);
-     
-     
-
     }
-
   });
 
   return OriginView;
-
 });

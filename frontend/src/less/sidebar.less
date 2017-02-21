@@ -3,6 +3,8 @@
 
 // Used for editing the color of buttons in the sdiebar
 
+@button-side-padding: 25px;
+
 .sidebar {
     background-color:@sidebar-color;
     color:@sidebar-text-color;
@@ -16,8 +18,8 @@
     button {
         &[class^="action-"],
         &[class*=" action-"] {
-            margin: 5px 25px;
-            width: 200px;
+            margin: 5px @button-side-padding;
+            width: @sidebar-width - @button-side-padding * 2;
             height: 50px;
             border-width: 1px;
             border-style: solid;

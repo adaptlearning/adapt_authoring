@@ -34,7 +34,7 @@ define(function(require) {
                 this.$('.dashboard-sidebar-filter-search-input').addClass('search-highlight')
             }
         },
-        
+
         updateUI: function(userPreferences) {
             if (userPreferences.search) {
                 this.$('.dashboard-sidebar-filter-search-input').val(userPreferences.search);
@@ -127,7 +127,7 @@ define(function(require) {
         },
 
         filterProjectsByTags: function(tag) {
-            
+
             // Check if the tag is already being filtered and remove it
             if (_.findWhere(this.tags, { id: tag.id } )) {
                 this.tags = _.reject(this.tags, function(tagItem) {
@@ -140,7 +140,7 @@ define(function(require) {
 
             Origin.trigger('dashboard:dashboardSidebarView:filterByTags', this.tags);
         },
-        
+
         addTagToSidebar: function(tag) {
             this.usedTags.push(tag);
 

@@ -5,6 +5,7 @@ define(function(require) {
 	var BackboneForms = require('backboneForms');
 	var BackboneFormsLists = require('backboneFormsLists');
 	var Handlebars = require('handlebars');
+	var Origin = require('coreJS/app/origin');
 
 	// Setup templates
 	Backbone.Form.prototype.constructor.template = _.template('\
@@ -100,49 +101,62 @@ define(function(require) {
 	}
 
 	Backbone.Form.editors.TextArea.prototype.render = function() {
-
 	    // Place value
 	    this.setValue(this.value);
 	    _.defer(_.bind(function() {
 	    	// Initialize the editor
 	    	var textarea = this.$el[0];
 	    	this.editor = CKEDITOR.replace(textarea, {
-	    		toolbar: [
-            { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'ShowBlocks' ] },
-            { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-            { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
-            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv' ] },
-            {name: 'direction', items: ['BidiLtr', 'BidiRtl']},
-            '/',
-            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
-            { name: 'styles', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-            { name: 'links', items: [ 'Link', 'Unlink' ] },
-            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
-            { name: 'insert', items: [ 'SpecialChar', 'Table' ] },
-            { name: 'tools', items: [  ] },
-            { name: 'others', items: [ '-' ] }
-          ],
+	    		toolbar: getCKToolbarFeatures(),
           extraAllowedContent: 'span(*)',
           disableNativeSpellChecker: false
         });
-
 	    }, this));
 
 	    return this;
+	}
+
+	function getCKToolbarFeatures() {
+		var features = [];
+		// limit code view to admins
+		// TODO make this less hard-coded
+		var isAdmin = Origin.permissions.hasPermissions(["*/*:create","*/*:read","*/*:update","*/*:delete"]);
+		if(isAdmin) {
+			features.push({ name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'ShowBlocks' ] });
+		} else {
+			features.push({ name: 'document', groups: [ 'doctools' ], items: [ 'ShowBlocks' ] });
+		}
+
+		features.push(
+			{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+			{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
+			{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv' ] },
+			{name: 'direction', items: ['BidiLtr', 'BidiRtl']},
+			'/',
+			{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
+			{ name: 'styles', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+			{ name: 'links', items: [ 'Link', 'Unlink' ] },
+			{ name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+			{ name: 'insert', items: [ 'SpecialChar', 'Table' ] },
+			{ name: 'tools', items: [  ] },
+			{ name: 'others', items: [ '-' ] }
+		);
+
+		return features;
 	}
 
 	Backbone.Form.editors.TextArea.prototype.setValue = function(value) {
 		if (!value && typeof this.schema.default !== 'undefined') {
       value = this.schema.default;
     }
-    
+
     this.$el.val(value);
 	}
 
 	Backbone.Form.editors.TextArea.prototype.getValue = function() {
 		return this.editor.getData().replace(/[\t\n]/g, '');
 	}
-  
+
   Backbone.Form.editors.TextArea.prototype.remove = function() {
     this.editor.removeAllListeners();
     CKEDITOR.remove(this.editor);

@@ -1,24 +1,15 @@
 @import '../../../less/variables.less';
+
 .sidebar {
     position:fixed;
     top:0;
     left:0px;
-    width:250px;
+    width:@sidebar-width;
     height:100%;
     overflow-y:auto;
     overflow-x:hidden;
     a {
         text-decoration: none;
-    }
-    .sidebar-filter-clear {
-        display:inline;
-        position: absolute;
-        left: 205px;
-        top: 25px;
-        width: 0px;
-        padding: 0;
-        background: none;
-        color: @sidebar-input-text-color;
     }
 
     .sidebar-item-container {
@@ -50,9 +41,15 @@
           color: white !important;
         }
       }
-      .sidebar-row-input input {
-          margin: 10px 25px;
-          width: 180px;
+      @margin: 25px;
+      @padding: 10px;
+      @total: @margin + @margin + @padding + @padding;
+
+      .sidebar-row-input {
+        input {
+          margin: 0 @margin @padding @margin;
+          padding: @padding;
+          width: @sidebar-width - @total;
           height: 25px;
           font-size: @sidebar-input-font-size;
           border-radius: @button-radius;
@@ -60,6 +57,16 @@
           background: @sidebar-input-color;
           color: @sidebar-input-text-color;
           text-align: left;
+        }
+        button.sidebar-filter-clear {
+          position: absolute;
+          top: 14px;
+          right: 35px;
+          width: 12px;
+          padding: 0;
+          background: none;
+          color: @sidebar-input-text-color;
+        }
       }
     }
 }

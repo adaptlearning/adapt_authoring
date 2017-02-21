@@ -1,41 +1,27 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-/*
-* ContextMenu
-* Maintainers - Kevin Corry <kevinc@learningpool.com>
-*/
 define(function(require) {
-
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
 
+  /**
+  * ContextMenuView
+  */
+
   var ContextMenuView = Backbone.View.extend({
-
     className: 'context-menu',
-
     contextView : {},
+
+    events: {
+      'click .context-menu-close':'onCloseContextMenu'
+    },
 
     initialize: function() {
       this._isVisible = false;
-      this.listenTo(Origin, 'contextMenu:open', function(view, e) {
-        this.contextView = view;
-        var type = view.model.get('_type');
-
-        if (type == 'course') {
-          if (!view.model.isEditable()) {
-            type = 'sharedcourse';
-          }
-        }
-
-        this.onOpenContextMenu(type, e);
-      });
+      this.listenTo(Origin, 'contextMenu:open', this.onOpenContextMenu);
       this.listenTo(Origin, 'contextMenu:closeContextMenu', this.onCloseContextMenu);
       this.listenTo(Origin, 'remove', this.onCloseContextMenu);
       this.listenTo(Origin, 'remove:views', this.onCloseContextMenu);
       this.render();
-    },
-
-    events: {
-      'click .context-menu-close':'onCloseContextMenu'
     },
 
     render: function() {
@@ -44,23 +30,23 @@ define(function(require) {
       return this;
     },
 
-    onCloseContextMenu: function(event) {
-      event && event.preventDefault();
-
-      this._isVisible = false;
-      this.hideContextMenu();
+    renderItems: function() {
+      Origin.trigger('contextMenu:empty');
+      this.emptyContextMenu();
+      var contextView = this.contextView;
+      var filtered = this.collection.where({ type:this.type });
+      _.each(filtered, function(item) {
+        item.set('contextView', contextView);
+        new ContextMenuItemView({ model: item });
+      });
     },
 
-    onOpenContextMenu: function(type, e) {
-      this.type = type;
+    listenToBodyClick: function() {
+      $('html').one('click', _.bind(this.onCloseContextMenu, this));
+    },
 
-      if (this._isVisible) {
-        this._isVisible = false;
-        this.hideContextMenu();
-      }
-
-      this._isVisible = true;
-      this.showContextMenu(true, e);
+    unlistenToBodyClick: function() {
+      $('html').off('click');
     },
 
     showContextMenu: function(emptyContextMenu, e) {
@@ -70,63 +56,74 @@ define(function(require) {
         Origin.trigger('contextMenu:openedItemView');
       }
 
-      var newCSS = {
+      this.$el.css({
         position: 'absolute',
         left: $(e.currentTarget).offset().left + $(e.currentTarget).width() + 10,
         top: $(e.currentTarget).offset().top-($(e.currentTarget).height()/2)
-      };
+      })
+      .removeClass('display-none');
 
-      this.$el.css(newCSS).removeClass('display-none');
-
-      this.addBodyEvent();
+      this.listenToBodyClick();
 
       Origin.trigger('contextMenu:opened');
+    },
+
+    hideContextMenu: function() {
+      this.$el.addClass('display-none');
+      this.unlistenToBodyClick();
+      Origin.trigger('contextMenu:closed');
     },
 
     emptyContextMenu: function() {
       this.$('.context-menu-holder').empty();
     },
 
-    renderItems: function() {
-      Origin.trigger('contextMenu:empty');
-      this.emptyContextMenu();
-      var contextView = this.contextView;
-      var filtered = this.collection.where({type:this.type});
-      _.each(filtered, function(item) {
-        item.set('contextView', contextView);
-        new ContextMenuItemView({model: item});
-      });
+    /**
+    * Events
+    */
+
+    onOpenContextMenu: function(view, e) {
+      this.contextView = view;
+
+      var type = view.model.get('_type');
+
+      if (type == 'course' && !view.model.isEditable()) {
+        type = 'sharedcourse';
+      }
+      this.type = type;
+
+      // toggle
+      if (this._isVisible) {
+        this._isVisible = false;
+        this.hideContextMenu();
+      } else {
+        this._isVisible = true;
+        this.showContextMenu(true, e);
+      }
     },
 
-    hideContextMenu: function() {
-      this.$el.addClass('display-none');
-      this.removeBodyEvent();
-      Origin.trigger('contextMenu:closed');
-    },
-
-    addBodyEvent: function() {
-      $('html').one('click', _.bind(function() {
-        this.onCloseContextMenu();
-      }, this));
-    },
-
-    removeBodyEvent: function() {
-      $('html').off('click');
+    onCloseContextMenu: function(e) {
+      e && e.preventDefault();
+      this._isVisible = false;
+      this.hideContextMenu();
     }
 
   });
 
-  var ContextMenuItemView = Backbone.View.extend({
+  /**
+  * ContextMenuItemView
+  */
 
+  var ContextMenuItemView = Backbone.View.extend({
     className: 'context-menu-item',
+
+    events: {
+      'click .context-menu-item-open': 'onContextMenuItemClicked'
+    },
 
     initialize: function() {
       this.listenTo(Origin, 'contextMenu:empty', this.remove);
       this.render();
-    },
-
-    events: {
-      'click .context-menu-item-open': 'onContextMenuItemClicked'
     },
 
     render: function() {
@@ -136,17 +133,19 @@ define(function(require) {
       return this;
     },
 
-    onContextMenuItemClicked: function(event) {
-      event.preventDefault();
+    onContextMenuItemClicked: function(e) {
+      e && e.preventDefault();
 
-      var callbackEvent = this.model.get('callbackEvent');
-      this.model.get('contextView').trigger('contextMenu:' + this.model.get('type') + ':' + callbackEvent);
+      var eventString =
+        'contextMenu' + ':' +
+        this.model.get('type') + ':' +
+        this.model.get('callbackEvent');
 
+      // fire some events
       Origin.trigger('contextMenu:closeContextMenu');
+      this.model.get('contextView').trigger(eventString);
     }
-
   });
 
   return ContextMenuView;
-
 });

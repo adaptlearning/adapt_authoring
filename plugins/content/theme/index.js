@@ -1,29 +1,17 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-/**
- * Theme content plugin
- *
- */
+var util = require('util');
 
-var origin = require('../../../'),
-    contentmanager = require('../../../lib/contentmanager'),
-    rest = require('../../../lib/rest'),
-    BowerPlugin = require('../bower'),
-    ContentPlugin = contentmanager.ContentPlugin,
-    ContentTypeError = contentmanager.errors.ContentTypeError,
-    configuration = require('../../../lib/configuration'),
-    usermanager = require('../../../lib/usermanager'),
-    database = require('../../../lib/database'),
-    logger = require('../../../lib/logger'),
-    defaultOptions = require('./defaults.json'),
-    bower = require('bower'),
-    rimraf = require('rimraf'),
-    async = require('async'),
-    fs = require('fs'),
-    ncp = require('ncp').ncp,
-    mkdirp = require('mkdirp'),
-    _ = require('underscore'),
-    util = require('util'),
-    path = require('path');
+var BowerPlugin = require('../bower');
+var configuration = require('../../../lib/configuration');
+var contentmanager = require('../../../lib/contentmanager');
+var ContentPlugin = contentmanager.ContentPlugin;
+var database = require('../../../lib/database');
+var logger = require('../../../lib/logger');
+var origin = require('../../../');
+var rest = require('../../../lib/rest');
+var usermanager = require('../../../lib/usermanager');
+
+var defaultOptions = require('./defaults.json');
 
 var bowerConfig = {
   type: 'themetype',
@@ -167,16 +155,17 @@ function initialize () {
                   res.statusCode = 404;
                   return res.json({ success: false, message: 'theme not found' });
                 }
-
-                // Update the course config object
-                app.contentmanager.update('config', { _courseId: courseId }, { _courseId: courseId, _theme: results[0].name }, function (err) {
+                // Update the course config object: add theme, remove old preset
+                // HACK requires _courseId for permissions
+                app.contentmanager.update('config', { _courseId: courseId }, { _courseId: courseId, _theme: results[0].name, _themepreset: "" }, function (err) {
                   if (err) {
                     return next(err);
                   }
 
                   // As the theme has changed, lose any previously set theme settings
                   // These will not apply to the new theme
-                  app.contentmanager.update('course', { _id: courseId }, { themeSettings: null }, function (err) {
+                  // HACK requires _courseId for permissions
+                  app.contentmanager.update('course', { _id: courseId }, { _courseId: courseId, themeSettings: null }, function (err) {
                     if (err) {
                       return next(err);
                     }
@@ -196,10 +185,10 @@ function initialize () {
 
                     res.statusCode = 200;
                     return res.json({success: true});
-                  });  
+                  });
                 });
               });
-            }, configuration.getConfig('dbName'));            
+            }, configuration.getConfig('dbName'));
           }
         });
       });

@@ -1,12 +1,16 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
+/**
+ * Adapt Output plugin
+ */
+
 var origin = require('../../../');
 var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin;
 var Constants = require('../../../lib/outputmanager').Constants;
 var configuration = require('../../../lib/configuration');
 var filestorage = require('../../../lib/filestorage');
 var database = require('../../../lib/database');
-var util = require('util');
-var path = require('path');
+var util = require('util')
+var path = require('path')
 var fs = require('fs');
 var fse = require('fs-extra');
 var async = require('async');
@@ -254,130 +258,30 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 
 };
 
-util.inherits(ImportError, Error);
-
 /**
 * Course import function
 */
 AdaptOutput.prototype.import = require('./import');
 
+AdaptOutput.prototype.export = function (courseId, request, response, next) {
+  var self = this;
+  var tenantId = usermanager.getCurrentUser().tenant._id;
+  var userId = usermanager.getCurrentUser()._id;
+  var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
 
-/**
-* FUNCTION: Export
-* TODO need implementation notes
-*      - metadata structure
-*      - devMode param
-* ------------------------------------------------------------------------------
-*/
+  var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+  var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
 
-/**
-* Global vars
-* For access by the other funcs
-*/
+  // set in getCourseName
+  var exportName;
+  var exportDir;
 
-// directories
-var FRAMEWORK_ROOT_DIR = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
-var COURSE_ROOT_DIR;
-var EXPORT_DIR;
-
-var courseId;
-// the top-level callback
-var next;
-// used with _.omit when saving metadata
-var blacklistedProps = [
-  '__v',
-  '_isDeleted',
-  'createdAt',
-  'createdBy',
-  'updatedAt',
-  'updatedBy',
-  '_hasPreview'
-];
-
-AdaptOutput.prototype.export = function(pCourseId, devMode, request, response, pNext) {
-  self = this;
-  // store the params
-  var currentUser = usermanager.getCurrentUser();
-  COURSE_ROOT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.AllCourses, currentUser.tenant._id, pCourseId);
-  EXPORT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Exports, currentUser._id);
-  courseId = pCourseId;
-  next = pNext;
-
-  // create the EXPORT_DIR if it isn't there
-  fse.ensureDir(EXPORT_DIR, function(error) {
-    if(error) {
-      return next(error);
-    }
-    // export tasks vary based on type of export
-    async.auto(devMode === 'true' ? {
-      // dev export
-      generateLatestBuild: generateLatestBuild,
-      copyFrameworkFiles: ['generateLatestBuild', copyFrameworkFiles],
-      copyCourseFiles: ['generateLatestBuild', copyCourseFiles]
-    } : {
-      // standard export
-      generateMetadata: generateMetadata,
-      copyCustomPlugins: ['generateMetadata', copyCustomPlugins],
-      copyAssets: ['generateMetadata', copyAssets]
-    }, zipExport);
-  });
-
-};
-
-function generateLatestBuild(courseBuilt) {
-  self.publish(courseId, true, null, null, courseBuilt);
-};
-
-/**
-* Metadata functions
-*/
-
-// creates metadata.json file
-function generateMetadata(generatedMetadata) {
-  async.parallel([
-    function(callback) {
-      getPackageData(FRAMEWORK_ROOT_DIR, callback);
+  async.waterfall([
+    function publishCourse(callback) {
+      self.publish(courseId, true, request, response, callback);
     },
-    function(callback) {
-      getCourseMetdata(courseId, callback);
-    },
-    function(callback) {
-      getAssetMetadata(courseId, callback);
-    },
-    function(callback) {
-      getPluginMetadata(courseId, callback);
-    },
-  ], function(error, results) {
-    if(error) {
-      return generatedMetadata(error);
-    }
-    metadata = _.reduce(results, function(memo,result){ return _.extend(memo,result); });
-    fse.writeJson(path.join(EXPORT_DIR, Constants.Filenames.Metadata), metadata, { spaces:0 }, generatedMetadata);
-  });
-};
-
-
-// pulls out relevant attributes from package.json
-function getPackageData(frameworkDir, gotPackageJson) {
-  fse.readJson(path.join(frameworkDir, Constants.Filenames.Package), function onJsonRead(error, packageJson) {
-    gotPackageJson(null, _.pick(packageJson, 'version'));
-  });
-};
-
-// rips all course data from the DB
-function getCourseMetdata(courseId, gotCourseMetadata) {
-  database.getDatabase(function(error, db) {
-    if (error) {
-      return callback(error);
-    }
-    // metadata structure
-    var metadata = {
-      course: {}
-    };
-
-    async.each(Object.keys(Constants.CourseCollections), function iterator(collectionType, doneIterator) {
-      var criteria = collectionType === 'course' ? { _id: courseId } : { _courseId: courseId };
-      db.retrieve(collectionType, criteria, {operators: { sort: { _sortOrder: 1}}}, function dbRetrieved(error, results) {
+    function getCourseName(results, callback) {
+      database.getDatabase(function (error, db) {
         if (error) {
           return callback(err);
         }

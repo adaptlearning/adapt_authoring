@@ -84,6 +84,13 @@ define(function(require){
     Origin.trigger('key:down', event);
   });
 
+  $(document).on('keyup', function(event) {
+    if ($(event.target).is('input, textarea')) {
+      return;
+    }
+    Origin.trigger('key:up', event);
+  });
+
   return Origin;
 
 });

@@ -13,7 +13,7 @@ define(function(require){
     Origin.tap('initialize', function() {
       initialize();
     });
-    
+
   });
 
   function initialize() {
@@ -32,7 +32,7 @@ define(function(require){
     } else {
 
       var count = 0;
-      // Goes through each plugin registered using Origin.registerPluginTap 
+      // Goes through each plugin registered using Origin.registerPluginTap
       // and that have the same location
       function callPlugin() {
         currentLocationPlugins[count].pluginMethod.call(null, function() {
@@ -46,7 +46,7 @@ define(function(require){
       }
 
       callPlugin();
-      
+
     }
   }
 

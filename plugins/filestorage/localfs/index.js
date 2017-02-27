@@ -3,18 +3,19 @@
  * Local LocalFileStorage module
  */
 
-var FileStorage = require('../../../lib/filestorage').FileStorage,
-    configuration = require('../../../lib/configuration'),
-    usermanager = require('../../../lib/usermanager'),
-    util = require('util'),
-    fs = require('fs'),
-    path = require('path'),
-    mkdirp = require('mkdirp'),
-    async = require('async'),
-    probe = require('node-ffprobe'),
-    logger = require('../../../lib/logger'),
-    ncp = require('ncp').ncp,
-    FFMpeg = require('fluent-ffmpeg');
+var async = require('async');
+var util = require('util');
+var FFMpeg = require('fluent-ffmpeg');
+var fs = require('fs');
+var mkdirp = require('mkdirp');
+var ncp = require('ncp').ncp;
+var path = require('path');
+var probe = require('node-ffprobe');
+
+var configuration = require('../../../lib/configuration');
+var FileStorage = require('../../../lib/filestorage').FileStorage;
+var logger = require('../../../lib/logger');
+var usermanager = require('../../../lib/usermanager');
 
 function LocalFileStorage() {
   this.dataRoot = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'));
@@ -37,7 +38,7 @@ LocalFileStorage.prototype.resolvePath = function (relativePath, forceMaster) {
     if (!forceMaster) {
       tenantName = user.tenant ? user.tenant.name : configuration.getConfig('masterTenantName');
     } else {
-      tenantName = configuration.getConfig('masterTenantName');	
+      tenantName = configuration.getConfig('masterTenantName');
     }
 
     // check that the path isn't already absolute
@@ -45,7 +46,7 @@ LocalFileStorage.prototype.resolvePath = function (relativePath, forceMaster) {
     if (0 === relativePath.indexOf(prefix)) {
       return relativePath;
     }
-    
+
     return path.join(prefix, relativePath);
   }
 
@@ -73,7 +74,7 @@ LocalFileStorage.prototype.getRelativePath = function (fullPath) {
       return fullPath.substr(prefix.length);
     }
   }
-  
+
   return fullPath;
 };
 
@@ -133,7 +134,7 @@ LocalFileStorage.prototype.createReadStream = function (filePath, options, callb
     callback = options;
     options = {};
   }
-  
+
   var forceMaster = (options && options.forceMaster)
     ? true
     : false;
@@ -185,7 +186,7 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
   newPath = this.resolvePath(newPath);
   var relativePath = this.getRelativePath(newPath);
   var self = this;
-  
+
   // shuffle params
   if ('function' === typeof options) {
     cb = options;
@@ -211,7 +212,7 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
         mimeType: file.type,
         size: file.size
       };
-      
+
       // create thumbnail?
       async.series([
         function (nextFunc) {
@@ -222,8 +223,8 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
               }
               nextFunc();
             });
-          } 
-          
+          }
+
           return nextFunc();
         },
         function (nextFunc) {
@@ -234,8 +235,8 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
               }
               nextFunc();
             });
-          } 
-          
+          }
+
           return nextFunc();
         },
         function (nextFunc) {
@@ -292,7 +293,7 @@ LocalFileStorage.prototype.getFileStats = function (filePath, callback) {
 
 /**
  * Copies an asset from one tenant to another.
- * 
+ *
  * @param {object} asset - A valid 'asset' record
  * @param {string} sourceTenantName - Source tenant.name
  * @param {string} destinationTenantName - Destination tenant.name
@@ -410,7 +411,7 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
         return next(null, self.getRelativePath(imgThumbPath));
       })
       .saveToFile(imgThumbPath);
-  } 
+  }
 
   // can't do thumb
   return next(null, false);

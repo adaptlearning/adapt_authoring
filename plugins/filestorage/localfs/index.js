@@ -3,18 +3,19 @@
  * Local LocalFileStorage module
  */
 
-var FileStorage = require('../../../lib/filestorage').FileStorage,
-    configuration = require('../../../lib/configuration'),
-    usermanager = require('../../../lib/usermanager'),
-    util = require('util'),
-    fs = require('fs'),
-    path = require('path'),
-    mkdirp = require('mkdirp'),
-    async = require('async'),
-    probe = require('node-ffprobe'),
-    logger = require('../../../lib/logger'),
-    ncp = require('ncp').ncp,
-    FFMpeg = require('fluent-ffmpeg');
+var async = require('async');
+var util = require('util');
+var FFMpeg = require('fluent-ffmpeg');
+var fs = require('fs');
+var mkdirp = require('mkdirp');
+var ncp = require('ncp').ncp;
+var path = require('path');
+var probe = require('node-ffprobe');
+
+var configuration = require('../../../lib/configuration');
+var FileStorage = require('../../../lib/filestorage').FileStorage;
+var logger = require('../../../lib/logger');
+var usermanager = require('../../../lib/usermanager');
 
 function LocalFileStorage() {
   this.dataRoot = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'));

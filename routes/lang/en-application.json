@@ -352,5 +352,11 @@
   "app.visitpluginhomepage": "Visit plugin homepage",
   "app.greeting": "Hi",
   "app.emaillogotext": "ADAPT",
-  "app.emailfooter": "Sent by Adapt Learning."
+  "app.emailfooter": "Sent by Adapt Learning.",
+  "app.courseImportTitle": "Import Course",
+  "app.importsidebarbutton": "Import",
+  "app.importinstruction": "Select course zip for import",
+  "app.importvalidationerror": "This isn't a zip file!",
+  "app.importerrortitle": "Course import failed",
+  "app.importcoursesuccess": "Course imported successfully!"
 }

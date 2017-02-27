@@ -1,21 +1,16 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
-  var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
-  var Helpers = require('coreJS/app/helpers');
   var EditorModel = require('editorGlobal/models/editorModel');
+  var Helpers = require('coreJS/app/helpers');
+  var Origin = require('coreJS/app/origin');
 
   var ProjectModel = EditorModel.extend({
-
     idAttribute: '_id',
-
     urlRoot: '/api/content/course',
-
     defaults: {
-        'tags': [],
-        _type: 'course',
-        customStyle: ''
+      'tags': [],
+      _type: 'course',
+      customStyle: ''
     },
 
     initialize : function(options) {
@@ -40,5 +35,4 @@ define(function(require) {
   });
 
   return ProjectModel;
-
 });

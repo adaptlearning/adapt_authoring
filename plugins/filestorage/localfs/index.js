@@ -5,7 +5,7 @@
 
 var async = require('async');
 var util = require('util');
-var FFMpeg = require('fluent-ffmpeg');
+var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 var ncp = require('ncp').ncp;
@@ -367,7 +367,7 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
   var thumbExt = ('image' === fileType) ? path.extname(filePath) : '.gif';
   var imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath)) + '_thumb' + thumbExt;
 
-  var ff = new FFMpeg({ source: filePath }).output(imgThumbPath);
+  var ff = new ffmpeg({ source: filePath }).output(imgThumbPath);
 
   if ('video' === fileType) {
     // pixel format for gifs (only needed with ffmpeg older versions eg 1.2)

@@ -2,7 +2,7 @@
 define(function(require) {
 
     var Backbone = require('backbone');
-    var BackboneForms = require('backboneForms');
+    var BackboneForms = require('backbone-forms');
     var Origin = require('coreJS/app/origin');
     var jQuery = require('jquery');
     var TagsInput = require('core/libraries/jquery.tagsinput.min');

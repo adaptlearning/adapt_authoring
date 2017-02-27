@@ -3,8 +3,8 @@ define(function(require) {
 
 	var Origin = require('coreJS/app/origin');
   var _ = require('underscore');
-	var BackboneForms = require('backboneForms');
-	var BackboneFormsLists = require('backboneFormsLists');
+	var BackboneForms = require('backbone-forms');
+	var BackboneFormsLists = require('backbone-forms-lists');
 	var ScaffoldItemsModalView = require('coreJS/scaffold/views/scaffoldItemsModalView');
 	var ScaffoldImageView = require('coreJS/scaffold/views/scaffoldAssetView');
 	var ScaffoldBooleanView = require('coreJS/scaffold/views/scaffoldBooleanView');

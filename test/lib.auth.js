@@ -8,6 +8,7 @@ describe('auth', function() {
   var app = origin();
   var helper = {
     passwordPlain: 'this is my password',
+    passwordRetypePlain: 'this is my password',
     passwordCipher: '',
     email: 'auth@foo.bar',
     userId: '',
@@ -76,7 +77,8 @@ describe('auth', function() {
       .set('Accept', 'application/json')
       .send({
         'email': helper.email,
-        'password': helper.passwordPlain
+        'password': helper.passwordPlain,
+        'retypePassword': helper.passwordRetypePlain
       })
       .expect(200)
       .expect('Content-Type', /json/)

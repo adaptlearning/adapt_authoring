@@ -202,17 +202,13 @@ define(function(require) {
 
   function handleBlockAddRoute() {
     var containingBlock = Origin.editor.data.blocks.findWhere({_id: loc.id});
-
-    var layoutOptions = containingBlock.get('layoutOptions');
-
     var componentSelectModel = new Backbone.Model({
       title: window.polyglot.t('app.addcomponent'),
       body: window.polyglot.t('app.pleaseselectcomponent'),
       _parentId: loc.id,
       componentTypes: Origin.editor.data.componentTypes.toJSON(),
-      layoutOptions: layoutOptions
+      layoutOptions: containingBlock.get('layoutOptions')
     });
-
     Origin.sidebar.addView(new EditorComponentListSidebarView({ model: componentSelectModel }).$el);
     Origin.editingOverlay.addView(new EditorComponentListView({ model: componentSelectModel }).$el);
   }

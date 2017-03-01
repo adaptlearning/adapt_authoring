@@ -174,6 +174,10 @@ define(function(require) {
     return model;
   }
 
+  function getConfigModel() {
+    return new EditorConfigModel({ _courseId: loc.course });
+  }
+
   /*
   TODO look at refactoring this
   Common tasks:
@@ -251,7 +255,7 @@ define(function(require) {
   }
 
   function handleConfigRoute() {
-    var configModel = new EditorConfigModel({_courseId: loc.course});
+    var configModel = getConfigModel();
     configModel.fetch({
       success: function() {
         var form = Origin.scaffold.buildForm({ model: configModel });
@@ -263,7 +267,7 @@ define(function(require) {
   }
 
   function handleThemeSelectRoute() {
-    var configModel = new EditorConfigModel({ _courseId: loc.course });
+    var configModel = getConfigModel();
     configModel.fetch({
       success: function() {
         updatePageTitle(configModel);
@@ -299,7 +303,7 @@ define(function(require) {
   }
 
   function handleMenuSettingsRoute() {
-    var configModel = new EditorConfigModel({_courseId: loc.course});
+    var configModel = getConfigModel();
     configModel.fetch({
       success: function() {
         var backButtonRoute = "/#/editor/" + loc.course + "/menu";

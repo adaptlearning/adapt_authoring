@@ -173,7 +173,6 @@ define(function(require) {
   }
 
   /*
-  TODO localise all labels
   TODO look at refactoring this
   Common tasks:
     Model
@@ -267,10 +266,10 @@ define(function(require) {
       success: function() {
         updatePageTitle(configModel);
         var backButtonRoute = "/#/editor/" + loc.course + "/menu";
-        var backButtonText = "Back to menu";
+        var backButtonText = window.polyglot.t('app.backtomenu');
         if (Origin.previousLocation.route2 === "page") {
           backButtonRoute = "/#/editor/" + loc.course + "/page/" + Origin.previousLocation.route3;
-          backButtonText = "Back to page";
+          backButtonText = window.polyglot.t('app.backtopage');
         }
         Origin.sidebar.addView(new EditorThemeCollectionSidebarView().$el, {
           "backButtonText": backButtonText,
@@ -284,10 +283,10 @@ define(function(require) {
   function handleExtensionsRoute() {
     updatePageTitle({ title: window.polyglot.t('app.editorextensionstitle') });
     var backButtonRoute = "/#/editor/" + loc.course + "/menu";
-    var backButtonText = "Back to menu";
+    var backButtonText = window.polyglot.t('app.backtomenu');
     if (Origin.previousLocation.route2 === "page") {
       backButtonRoute = "/#/editor/" + loc.course + "/page/" + Origin.previousLocation.route3;
-      backButtonText = "Back to page";
+      backButtonText = window.polyglot.t('app.backtopage');
     }
     Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el, {
       "backButtonText": backButtonText,
@@ -302,10 +301,10 @@ define(function(require) {
     configModel.fetch({
       success: function() {
         var backButtonRoute = "/#/editor/" + loc.course + "/menu";
-        var backButtonText = "Back to menu";
+        var backButtonText = window.polyglot.t('app.backtomenu');
         if (Origin.previousLocation.route2 === "page") {
           backButtonRoute = "/#/editor/" + loc.course + "/page/" + Origin.previousLocation.route3;
-          backButtonText = "Back to page";
+          backButtonText = window.polyglot.t('app.backtopage');
         }
         updatePageTitle({ title: window.polyglot.t('app.editormenusettingstitle') });
         Origin.sidebar.addView(new EditorMenuSettingsEditSidebarView().$el, {
@@ -327,7 +326,7 @@ define(function(require) {
       success: function() {
         updatePageTitle(courseModel);
         Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
-          "backButtonText": "Back to courses",
+          "backButtonText": window.polyglot.t('app.backtocourses'),
           "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
         });
         Origin.router.createView(EditorView, {
@@ -357,7 +356,7 @@ define(function(require) {
       success: function() {
         updatePageTitle(contentObjectModel);
         Origin.sidebar.addView(new EditorPageSidebarView().$el, {
-          "backButtonText": "Back to course structure",
+          "backButtonText": window.polyglot.t('app.backtocoursestructure'),
           "backButtonRoute": "/#/editor/" + loc.course + "/menu"
         });
         Origin.router.createView(EditorView, {

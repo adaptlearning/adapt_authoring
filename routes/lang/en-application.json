@@ -352,5 +352,9 @@
   "app.visitpluginhomepage": "Visit plugin homepage",
   "app.greeting": "Hi",
   "app.emaillogotext": "ADAPT",
-  "app.emailfooter": "Sent by Adapt Learning."
+  "app.emailfooter": "Sent by Adapt Learning.",
+  "app.backtocourses": "Back to courses",
+  "app.backtocoursestructure": "Back to course structure",
+  "app.backtomenu": "Back to menu",
+  "app.backtopage": "Back to page"
 }

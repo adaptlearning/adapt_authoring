@@ -7,7 +7,7 @@ var FileStorage = require('../../../lib/filestorage').FileStorage,
     configuration = require('../../../lib/configuration'),
     usermanager = require('../../../lib/usermanager'),
     util = require('util'),
-    fs = require('fs'),
+    fs = require('fs-extra'),
     path = require('path'),
     mkdirp = require('mkdirp'),
     async = require('async'),
@@ -92,14 +92,14 @@ LocalFileStorage.prototype.getFileContents = function (filePath, callback) {
  * Puts the given contents to a file
  *
  * @param {string} filePath - the path to the file
- * @param {string} options - see {@link http://nodejs.org/api/fs.html#fs_fs_writefile_filename_data_options_callback |Nodejs fs}
+ * @param {string} options - see {@link http://nodejs.org/api/fs.html#fs_fs_writefile_filename_data_options_callback | Nodejs fs}
  * @param {Buffer} buffer - the contents to write to the file
  * @param {function} callback - function of the form function(error, written, buffer)
  * see {@link http://nodejs.org/docs/latest/api/fs.html#fs_fs_write_fd_buffer_offset_length_position_callback | Nodejs fs module }
  */
 
 LocalFileStorage.prototype.putFileContents = function (filePath, options, buffer, callback) {
-  fs.writeFile(this.resolvePath(filePath), buffer, options, callback);
+  fs.outputFile(this.resolvePath(filePath), buffer, options, callback);
 };
 
 /**

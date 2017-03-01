@@ -201,8 +201,6 @@ define(function(require) {
   }
 
   function handleBlockAddRoute() {
-    // If adding a new component
-    // Find block so we can get layout options
     var containingBlock = Origin.editor.data.blocks.findWhere({_id: loc.id});
 
     var layoutOptions = containingBlock.get('layoutOptions');
@@ -232,7 +230,6 @@ define(function(require) {
   }
 
   function handleComponentRoute() {
-    // Display editing a component
     var componentModel = new EditorComponentModel({_id: loc.id});
     componentModel.fetch({
       success: function() {

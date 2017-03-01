@@ -234,10 +234,6 @@ define(function(require) {
     componentModel.fetch({
       success: function() {
         var form = Origin.scaffold.buildForm({ model: componentModel });
-        var componentType = _.find(Origin.editor.data.componentTypes.models, function(componentTypeModel) {
-          return componentTypeModel.get('_id') == componentModel.get('_componentType');
-        });
-        var componentDisplayName = (componentType) ? componentType.get('displayName').toLowerCase() : '';
         updatePageTitle(componentModel);
         Origin.sidebar.addView(new EditorComponentEditSidebarView({ model: componentModel, form: form }).$el);
         Origin.editingOverlay.addView(new EditorComponentEditView({ model: componentModel, form: form }).$el);

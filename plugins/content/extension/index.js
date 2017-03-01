@@ -256,17 +256,18 @@ function contentCreationHook (contentType, data, cb) {
           logger.log('error', 'could not load extensions: ' + error.message);
           return callback(null);
         }
-    
-        // _extensions is undefined at this point
-        contentData._extensions = {};
-        extensions.forEach(function (extensionItem) {
+
+        // create _extensions if we need it
+        if(!contentData._extensions) contentData._extensions = {};
+        extensions.forEach(function(extensionItem) {
           if (extensionItem.properties.hasOwnProperty('pluginLocations') && extensionItem.properties.pluginLocations.properties[contentType]) {
             var schema = extensionItem.properties.pluginLocations.properties[contentType].properties; // yeesh
             var generatedObject = helpers.schemaToObject(schema, extensionItem.name, extensionItem.version, contentType);
-            contentData._extensions = _.extend(contentData._extensions, generatedObject);  
-          }          
+            // keep any existing values in place
+            contentData._extensions = _.defaults(contentData._extensions, generatedObject);
+          }
         });
-    
+
         // assign back to passed args
         data[0] = contentData;
         callback(null);

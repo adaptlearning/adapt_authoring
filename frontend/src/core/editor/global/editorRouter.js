@@ -254,8 +254,8 @@ define(function(require) {
       success: function() {
         var form = Origin.scaffold.buildForm({ model: project });
         updatePageTitle({ title: window.polyglot.t('app.editorsettingstitle') });
-        Origin.editingOverlay.addView(new ProjectDetailView({ model: project, form: form }).$el);
         Origin.sidebar.addView(new ProjectDetailEditSidebarView({ form: form }).$el);
+        Origin.editingOverlay.addView(new ProjectDetailView({ model: project, form: form }).$el);
       }
     });
   }
@@ -274,15 +274,15 @@ define(function(require) {
 
   function handleThemeSelectRoute() {
     var configModel = new EditorConfigModel({ _courseId: loc.course });
-    var backButtonRoute = "/#/editor/" + loc.course + "/menu";
-    var backButtonText = "Back to menu";
-    if (Origin.previousLocation.route2 === "page") {
-      backButtonRoute = "/#/editor/" + loc.course + "/page/" + Origin.previousLocation.route3;
-      backButtonText = "Back to page";
-    }
     configModel.fetch({
       success: function() {
         updatePageTitle(configModel);
+        var backButtonRoute = "/#/editor/" + loc.course + "/menu";
+        var backButtonText = "Back to menu";
+        if (Origin.previousLocation.route2 === "page") {
+          backButtonRoute = "/#/editor/" + loc.course + "/page/" + Origin.previousLocation.route3;
+          backButtonText = "Back to page";
+        }
         Origin.sidebar.addView(new EditorThemeCollectionSidebarView().$el, {
           "backButtonText": backButtonText,
           "backButtonRoute": backButtonRoute
@@ -293,18 +293,18 @@ define(function(require) {
   }
 
   function handleExtensionsRoute() {
-    var extensionsModel = new Backbone.Model({ _id: loc.course });
+    updatePageTitle({ title: window.polyglot.t('app.editorextensionstitle') });
     var backButtonRoute = "/#/editor/" + loc.course + "/menu";
     var backButtonText = "Back to menu";
     if (Origin.previousLocation.route2 === "page") {
       backButtonRoute = "/#/editor/" + loc.course + "/page/" + Origin.previousLocation.route3;
       backButtonText = "Back to page";
     }
-    updatePageTitle({ title: window.polyglot.t('app.editorextensionstitle') });
     Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el, {
       "backButtonText": backButtonText,
       "backButtonRoute": backButtonRoute
     });
+    var extensionsModel = new Backbone.Model({ _id: loc.course });
     Origin.editingOverlay.addView(new EditorExtensionsEditView({ model: extensionsModel }).$el);
   }
 
@@ -337,14 +337,14 @@ define(function(require) {
     courseModel.fetch({
       success: function() {
         updatePageTitle(courseModel);
+        Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
+          "backButtonText": "Back to courses",
+          "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
+        });
         Origin.router.createView(EditorView, {
           currentCourseId: loc.course,
           currentView: 'menu',
           currentPageId: (loc.id || null)
-        });
-        Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
-          "backButtonText": "Back to courses",
-          "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
         });
       }
     });
@@ -367,14 +367,14 @@ define(function(require) {
     contentObjectModel.fetch({
       success: function() {
         updatePageTitle(contentObjectModel);
+        Origin.sidebar.addView(new EditorPageSidebarView().$el, {
+          "backButtonText": "Back to course structure",
+          "backButtonRoute": "/#/editor/" + loc.course + "/menu"
+        });
         Origin.router.createView(EditorView, {
           currentCourseId: loc.course,
           currentView: 'page',
           currentPageId: (loc.id || null)
-        });
-        Origin.sidebar.addView(new EditorPageSidebarView().$el, {
-          "backButtonText": "Back to course structure",
-          "backButtonRoute": "/#/editor/" + loc.course + "/menu"
         });
       }
     });

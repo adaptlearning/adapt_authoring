@@ -215,56 +215,56 @@ define(function(require) {
 
   function handleBlockAddRoute() {
     var containingBlock = Origin.editor.data.blocks.findWhere({ _id: loc.id });
-    var componentSelectModel = new Backbone.Model({
+    var model = new Backbone.Model({
       title: window.polyglot.t('app.addcomponent'),
       body: window.polyglot.t('app.pleaseselectcomponent'),
       _parentId: loc.id,
       componentTypes: Origin.editor.data.componentTypes.toJSON(),
       layoutOptions: containingBlock.get('layoutOptions')
     });
-    Origin.sidebar.addView(new EditorComponentListSidebarView({ model: componentSelectModel }).$el);
-    Origin.editingOverlay.addView(new EditorComponentListView({ model: componentSelectModel }).$el);
+    Origin.sidebar.addView(new EditorComponentListSidebarView({ model: model }).$el);
+    Origin.editingOverlay.addView(new EditorComponentListView({ model: model }).$el);
   }
 
   function handleBlockEditRoute() {
     fetchModel(new EditorBlockModel({ _id: loc.id }), function(model) {
-      var form = Origin.scaffold.buildForm({ model: blockModel });
-      updatePageTitle(blockModel);
-      Origin.sidebar.addView(new EditorBlockEditSidebarView({ model: blockModel, form: form }).$el);
-      Origin.editingOverlay.addView(new EditorBlockEditView({ model: blockModel, form: form }).$el);
+      var form = Origin.scaffold.buildForm({ model: model });
+      updatePageTitle(model);
+      Origin.sidebar.addView(new EditorBlockEditSidebarView({ model: model, form: form }).$el);
+      Origin.editingOverlay.addView(new EditorBlockEditView({ model: model, form: form }).$el);
     });
   }
 
   function handleComponentRoute() {
     fetchModel(new EditorComponentModel({ _id: loc.id }), function(model) {
-      var form = Origin.scaffold.buildForm({ model: componentModel });
-      updatePageTitle(componentModel);
-      Origin.sidebar.addView(new EditorComponentEditSidebarView({ model: componentModel, form: form }).$el);
-      Origin.editingOverlay.addView(new EditorComponentEditView({ model: componentModel, form: form }).$el);
+      var form = Origin.scaffold.buildForm({ model: model });
+      updatePageTitle(model);
+      Origin.sidebar.addView(new EditorComponentEditSidebarView({ model: model, form: form }).$el);
+      Origin.editingOverlay.addView(new EditorComponentEditView({ model: model, form: form }).$el);
     });
   }
 
   function handleSettingsRoute() {
     fetchModel(new ProjectModel({ _id: loc.course }), function(model) {
-      var form = Origin.scaffold.buildForm({ model: project });
+      var form = Origin.scaffold.buildForm({ model: model });
       updatePageTitle({ title: window.polyglot.t('app.editorsettingstitle') });
       Origin.sidebar.addView(new ProjectDetailEditSidebarView({ form: form }).$el);
-      Origin.editingOverlay.addView(new ProjectDetailView({ model: project, form: form }).$el);
+      Origin.editingOverlay.addView(new ProjectDetailView({ model: model, form: form }).$el);
     });
   }
 
   function handleConfigRoute() {
     fetchModel(getConfigModel(), function(model) {
-      var form = Origin.scaffold.buildForm({ model: configModel });
+      var form = Origin.scaffold.buildForm({ model: model });
       updatePageTitle({ title: window.polyglot.t('app.editorconfigtitle') });
       Origin.sidebar.addView(new EditorConfigEditSidebarView({ form: form }).$el);
-      Origin.editingOverlay.addView(new EditorConfigEditView({ model: configModel, form: form }).$el);
+      Origin.editingOverlay.addView(new EditorConfigEditView({ model: model, form: form }).$el);
     });
   }
 
   function handleThemeSelectRoute() {
     fetchModel(getConfigModel(), function(model) {
-      updatePageTitle(configModel);
+      updatePageTitle(model);
       var backButtonRoute = "/#/editor/" + loc.course + "/menu";
       var backButtonText = window.polyglot.t('app.backtomenu');
       if (Origin.previousLocation.route2 === "page") {
@@ -275,7 +275,7 @@ define(function(require) {
         "backButtonText": backButtonText,
         "backButtonRoute": backButtonRoute
       });
-      Origin.editingOverlay.addView(new EditorThemeCollectionView({ model: configModel }).$el);
+      Origin.editingOverlay.addView(new EditorThemeCollectionView({ model: model }).$el);
     });
   }
 
@@ -291,8 +291,8 @@ define(function(require) {
       "backButtonText": backButtonText,
       "backButtonRoute": backButtonRoute
     });
-    var extensionsModel = new Backbone.Model({ _id: loc.course });
-    Origin.editingOverlay.addView(new EditorExtensionsEditView({ model: extensionsModel }).$el);
+    var model = new Backbone.Model({ _id: loc.course });
+    Origin.editingOverlay.addView(new EditorExtensionsEditView({ model: model }).$el);
   }
 
   function handleMenuSettingsRoute() {
@@ -308,7 +308,7 @@ define(function(require) {
         "backButtonText": backButtonText,
         "backButtonRoute": backButtonRoute
       });
-      Origin.editingOverlay.addView(new EditorMenuSettingsEditView({ model: configModel }).$el);
+      Origin.editingOverlay.addView(new EditorMenuSettingsEditView({ model: model }).$el);
     });
   }
 
@@ -318,7 +318,7 @@ define(function(require) {
     Origin.editor.scrollTo = 0;
 
     fetchModel(new EditorCourseModel({ _id: loc.course }), function(model) {
-      updatePageTitle(courseModel);
+      updatePageTitle(model);
       Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
         "backButtonText": window.polyglot.t('app.backtocourses'),
         "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
@@ -333,16 +333,16 @@ define(function(require) {
 
   function handleMenuEditRoute() {
     fetchModel(new EditorContentObjectModel({ _id: loc.id }), function(model) {
-      var form = Origin.scaffold.buildForm({ model: contentObjectModel });
-      updatePageTitle(contentObjectModel);
+      var form = Origin.scaffold.buildForm({ model: model });
+      updatePageTitle(model);
       Origin.sidebar.addView(new EditorPageEditSidebarView().$el);
-      Origin.editingOverlay.addView(new EditorPageEditView({ model: contentObjectModel, form: form }).$el);
+      Origin.editingOverlay.addView(new EditorPageEditView({ model: model, form: form }).$el);
     });
   }
 
   function handlePageRoute() {
     fetchModel(new EditorContentObjectModel({ _id: loc.id }), function(model) {
-      updatePageTitle(contentObjectModel);
+      updatePageTitle(model);
       Origin.sidebar.addView(new EditorPageSidebarView().$el, {
         "backButtonText": window.polyglot.t('app.backtocoursestructure'),
         "backButtonRoute": "/#/editor/" + loc.course + "/menu"
@@ -357,10 +357,10 @@ define(function(require) {
 
   function handlePageEditRoute() {
     fetchModel(new EditorContentObjectModel({ _id: loc.id }), function(model) {
-      var form = Origin.scaffold.buildForm({ model: contentObjectModel });
-      updatePageTitle(contentObjectModel);
+      var form = Origin.scaffold.buildForm({ model: model });
+      updatePageTitle(model);
       Origin.sidebar.addView(new EditorPageEditSidebarView({ form: form }).$el);
-      Origin.editingOverlay.addView(new EditorPageEditView({ model: contentObjectModel, form: form }).$el);
+      Origin.editingOverlay.addView(new EditorPageEditView({ model: model, form: form }).$el);
     });
   }
 

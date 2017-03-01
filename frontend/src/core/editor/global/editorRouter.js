@@ -121,11 +121,13 @@ define(function(require) {
     }
   }
 
-  // set the page title based on location
-  // accepts backbone model, or object like so { title: '' }
+  /*
+  * Set the page title based on location.
+  * Accepts backbone model, or object like so { title: '' }
+  */
   function updatePageTitle(model) {
     var titleKey;
-
+    // get titleKey from location
     switch(loc.type) {
       case 'page':
         if(loc.action === 'edit') {

@@ -243,8 +243,8 @@ define(function(require) {
   }
 
   function handleSettingsRoute() {
-    var project = new ProjectModel({_id: loc.course});
-    project.fetch({
+    var projectModel = new ProjectModel({ _id: loc.course });
+    projectModel.fetch({
       success: function() {
         var form = Origin.scaffold.buildForm({ model: project });
         updatePageTitle({ title: window.polyglot.t('app.editorsettingstitle') });

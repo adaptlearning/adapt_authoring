@@ -50,7 +50,6 @@ define(function(require) {
   }
 
   function onDashboardLoaded(options) {
-    console.log('onDashboardLoaded', options);
     switch (options.type) {
       case 'shared':
         Origin.trigger('location:title:update', {

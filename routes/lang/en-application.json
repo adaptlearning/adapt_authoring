@@ -356,11 +356,19 @@
   "app.assetmanagement": "Asset Management",
   "app.dashboard": "Dashboard",
   "app.tagfetcherror": "An error occured getting the tags collection. Please try refreshing your page.",
+  "app.editormenu": "Course structure",
+  "app.editorpage": "Page structure",
+  "app.editorpagesettings": "Page settings",
+  "app.editorarticle": "Article settings",
+  "app.editorblock": "Block settings",
+  "app.editorcomponent": "Component settings",
   "app.editorsettings": "Project settings",
+  "app.editorsettingstitle": "Adjust course attributes",
   "app.editorconfig": "Configuration settings",
-  "app.editorselecttheme": "Theme picker",
+  "app.editorconfigtitle": "Configure your course",
   "app.editormenusettings": "Menu picker",
+  "app.editormenusettingstitle": "Select a menu for your course",
   "app.editorextensions": "Manage extensions",
-  "app.editorpage": "Page editor",
-  "app.editormenu": "Menu editor"
+  "app.editorextensionstitle": "Manage course extensions",
+  "app.editorselecttheme": "Theme picker"
 }

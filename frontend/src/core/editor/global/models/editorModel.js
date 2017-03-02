@@ -22,12 +22,11 @@ define(function(require) {
 
     getChildren: function() {
       if (Origin.editor.data[this._children]) {
-        var children = Origin.editor.data[this._children].where({ _parentId:this.get("_id") });
+        var children = Origin.editor.data[this._children].where({ _parentId:this.get('_id') });
         var childrenCollection = new Backbone.Collection(children);
         return childrenCollection;
-      } else {
-        return null;
       }
+      return null;
     },
 
     getParent: function() {
@@ -46,16 +45,15 @@ define(function(require) {
       }
 
       return parent;
-
     },
 
     getSiblings: function(returnMyself) {
       if (returnMyself) {
-        var siblings = Origin.editor.data[this._siblings].where({ _parentId: this.get("_parentId") });
+        var siblings = Origin.editor.data[this._siblings].where({ _parentId: this.get('_parentId') });
         return new Backbone.Collection(siblings);
       }
       var siblings = _.reject(Origin.editor.data[this._siblings].where({
-        _parentId:this.get("_parentId")
+        _parentId: this.get('_parentId')
       }), _.bind(function(model){
         return model.get('_id') == this.get('_id');
       }, this));
@@ -76,8 +74,8 @@ define(function(require) {
     getPossibleAncestors: function() {
       var map = {
         'contentObjects': { 'ancestorType': 'page' },
-        'articles' : { 'ancestorType': 'article' },
-        'blocks' : { 'ancestorType': 'block' }
+        'articles': { 'ancestorType': 'article' },
+        'blocks': { 'ancestorType': 'block' }
       };
       ancestors = Origin.editor.data[this._parent].where({ _type: map[this._parent].ancestorType });
       return new Backbone.Collection(ancestors);

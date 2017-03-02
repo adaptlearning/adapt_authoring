@@ -5,7 +5,7 @@ define(function(require) {
   var EditorBlockModel = EditorModel.extend({
     urlRoot: '/api/content/block',
     _parent: 'articles',
-  	_siblings:'blocks',
+    _siblings:'blocks',
     _children: 'components',
     // Block specific properties
     layoutOptions:  null,

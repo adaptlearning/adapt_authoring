@@ -22,7 +22,7 @@ define(function(require) {
 
     getChildren: function() {
       if (Origin.editor.data[this._children]) {
-        var children = Origin.editor.data[this._children].where({_parentId:this.get("_id")});
+        var children = Origin.editor.data[this._children].where({ _parentId:this.get("_id") });
         var childrenCollection = new Backbone.Collection(children);
         return childrenCollection;
       } else {
@@ -39,10 +39,10 @@ define(function(require) {
         if (currentParentId === Origin.editor.data.course.get('_id')) {
           parent = Origin.editor.data.course;
         } else {
-          parent = Origin.editor.data.contentObjects.findWhere({_id: currentParentId});
+          parent = Origin.editor.data.contentObjects.findWhere({ _id: currentParentId });
         }
       } else if (currentType != 'course'){
-        parent = Origin.editor.data[this._parent].findWhere({_id: currentParentId});
+        parent = Origin.editor.data[this._parent].findWhere({ _id: currentParentId });
       }
 
       return parent;

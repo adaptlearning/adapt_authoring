@@ -1,6 +1,6 @@
 {
-  "app.productname": "Adapt authoring tool",
-  "app.welcomeblurb": "Welcome to the Adapt authoring tool",
+  "app.productname": "SPS@Columbia Learning Object Manager",
+  "app.welcomeblurb": "Welcome to the SPS@Columbia authoring tool",
   "app.loading": "Loading",
   "app.rememberme": "Remember me",
   "app.ok": "OK",
@@ -22,7 +22,6 @@
   "app.addusertitle": "Add new user",
   "app.disableuser": "Disable user",
   "app.deleteuser": "Delete user",
-  "app.confirmdeleteuser": "'Deleting <br/><b>%{email}</b>.<br/><br/> This is a one-way trip. Continue?'",
   "app.unlockuser": "Unlock user",
   "app.restoreuser": "Restore user",
   "app.resetlogins": "Reset logins",

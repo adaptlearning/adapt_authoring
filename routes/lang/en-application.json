@@ -92,7 +92,7 @@
   "app.forgotpasswordsuccess": "Your request is being processed. If the details you provided match our records, you will receive further instructions via email.",
   "app.returnto": "Return to",
   "app.deleteproject": "Delete project",
-  "app.deletesharedproject": "Delete <i>shared</i> project",
+  "app.deletesharedproject": "Delete shared project",
   "app.confirmdelete": "Are you sure you want to remove this?",
   "app.confirmdeleteproject": "Are you sure you want to delete this project?",
   "app.confirmdeleteprojectwarning": "<b>IMPORTANT</b>: This will delete all the content in the project",

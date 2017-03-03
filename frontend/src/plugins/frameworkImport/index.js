@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Origin = require('coreJS/app/origin');
-  var CourseImportView = require('./views/courseImportView.js');
-  var CourseImportSidebarView = require('./views/courseImportSidebarView.js');
+  var FrameworkImportView = require('./views/frameworkImportView.js');
+  var FrameworkImportSidebarView = require('./views/frameworkImportSidebarView.js');
 
 // TODO - isReady and permissions
   var isReady = true;
@@ -11,26 +11,26 @@ define(function(require) {
   };
 
   Origin.on('app:dataReady login:changed', function() {
-    Origin.permissions.addRoute('courseImport', data.featurePermissions);
+    Origin.permissions.addRoute('frameworkImport', data.featurePermissions);
 
   	if (Origin.permissions.hasPermissions(data.featurePermissions)) {
   		Origin.globalMenu.addItem({
         "location": "global",
-        "text": window.polyglot.t('app.courseimportmenu'),
+        "text": window.polyglot.t('app.frameworkimportmenu'),
         "icon": "fa-upload",
         "sortOrder": 5,
-        "callbackEvent": "courseImport:open"
+        "callbackEvent": "frameworkImport:open"
       });
   	} else {
       isReady = true;
     }
   });
 
-  Origin.on('globalMenu:courseImport:open', function() {
-    Origin.router.navigate('#/courseImport', {trigger: true});
+  Origin.on('globalMenu:frameworkImport:open', function() {
+    Origin.router.navigate('#/frameworkImport', {trigger: true});
   });
 
-  Origin.on('router:courseImport', function(location, subLocation, action) {
+  Origin.on('router:frameworkImport', function(location, subLocation, action) {
 
     onRoute(location, subLocation, action);
 
@@ -38,8 +38,8 @@ define(function(require) {
 
   var onRoute = function(location, subLocation, action) {
     var mainView, sidebarView;
-    mainView = CourseImportView;
-    sidebarView = CourseImportSidebarView;
+    mainView = FrameworkImportView;
+    sidebarView = FrameworkImportSidebarView;
 
     Origin.router.createView(mainView, { model: new Backbone.Model({ globalData: data }) });
     Origin.sidebar.addView(new sidebarView().$el);

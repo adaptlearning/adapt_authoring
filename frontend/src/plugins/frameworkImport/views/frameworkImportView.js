@@ -5,14 +5,14 @@ define(function(require){
   var OriginView = require('coreJS/app/views/originView');
   var TagsInput = require('core/libraries/jquery.tagsinput.min');
 
-  var CourseImportView = OriginView.extend({
+  var FrameworkImportView = OriginView.extend({
     tagName: 'div',
-    className: 'courseImport',
+    className: 'frameworkImport',
     createdCourseId: false,
 
     preRender: function() {
-      Origin.trigger('location:title:update', { title: window.polyglot.t('app.courseimporttitle') });
-      this.listenTo(Origin, 'courseImport:uploadCourse', this.uploadCourse);
+      Origin.trigger('location:title:update', { title: window.polyglot.t('app.frameworkimporttitle') });
+      this.listenTo(Origin, 'frameworkImport:uploadCourse', this.uploadCourse);
     },
 
     postRender: function() {
@@ -67,7 +67,7 @@ define(function(require){
       this.$('#tags').val(tags);
 
       // submit form data
-      this.$('form.courseImport').ajaxSubmit({
+      this.$('form.frameworkImport').ajaxSubmit({
 
         uploadProgress: function(event, position, total, percentComplete) {
           $(".progress-container").css("visibility", "visible");
@@ -136,8 +136,8 @@ define(function(require){
       this.model.set({ tags: tags });
     }
   }, {
-    template: 'courseImport'
+    template: 'frameworkImport'
   });
 
-  return CourseImportView;
+  return FrameworkImportView;
 });

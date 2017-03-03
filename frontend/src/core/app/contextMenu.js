@@ -26,7 +26,7 @@ define(function(require) {
 
   var init = function() {
     new ContextMenuView({collection: ContextMenuCollection});
-    
+
     // Setup context menu items
     var contextItems = [
       {
@@ -70,7 +70,7 @@ define(function(require) {
     ]);
 
     // Set the section/menu menu options
-    contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "copy"})), 1);		
+    contextItems.splice(_.indexOf(contextItems, _.findWhere(contextItems, { callbackEvent : "copy"})), 1);
     ContextMenu.addItem('menu', contextItems);
 
     var courseContextItems = [
@@ -93,6 +93,11 @@ define(function(require) {
         title: window.polyglot.t('app.delete'),
         className: 'context-menu-item',
         callbackEvent: 'delete'
+      },
+      {
+        title: window.polyglot.t('app.export'),
+        className: 'context-menu-item',
+        callbackEvent: 'export'
       }
     ];
 
@@ -113,7 +118,7 @@ define(function(require) {
 
     ContextMenu.addItem('sharedcourse', sharedCourseContextItems);
   }
-  
+
   Origin.once('app:dataReady', function() {
     init();
   });

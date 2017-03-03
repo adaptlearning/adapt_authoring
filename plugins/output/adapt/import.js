@@ -167,7 +167,10 @@ function Import(req, done) {
           db.retrieve('componenttype', {}, { jsonOnly: true }, function(error, results) {
             if(error) return cb(error);
             async.each(results, function(component, cb2) {
+
               componentMap[component.component] = component._id;
+              logger.log('info', component.component)
+              logger.log('info', component._id)
               cb2();
             }, cb);
           });
@@ -243,6 +246,10 @@ function Import(req, done) {
   function createContentItem(type, originalData, courseId, done) {
     // data needs to be transformed a bit first
     var data = _.extend({}, originalData);
+logger.log('info', '########################');
+logger.log('info', type);
+
+
     delete data._id;
     delete data._trackingId;
     delete data._latestTrackingId;

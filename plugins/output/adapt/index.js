@@ -3,7 +3,7 @@
  * Adapt Output plugin
  */
 
-var origin = require('../../../');
+var origin = require('../../../')();
 var OutputPlugin = require('../../../lib/outputmanager').OutputPlugin;
 var Constants = require('../../../lib/outputmanager').Constants;
 var configuration = require('../../../lib/configuration');
@@ -15,6 +15,7 @@ var fs = require('fs');
 var fse = require('fs-extra');
 var async = require('async');
 var archiver = require('archiver');
+var helpers = require('../../../lib/helpers');
 var _ = require('underscore');
 var ncp = require('ncp').ncp;
 var rimraf = require('rimraf');
@@ -32,7 +33,6 @@ function AdaptOutput() {
 util.inherits(AdaptOutput, OutputPlugin);
 
 AdaptOutput.prototype.publish = function(courseId, isPreview, request, response, next) {
-  var app = origin();
   var self = this;
   var user = usermanager.getCurrentUser();
   var tenantId = user.tenant._id;
@@ -189,7 +189,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
                           resultObject.success = true;
 
                           // Indicate that the course has built successfully
-                          app.emit('previewCreated', tenantId, courseId, outputFolder);
+                          origin.emit('previewCreated', tenantId, courseId, outputFolder);
 
                           return callback(null, 'Framework built OK');
                         }
@@ -218,7 +218,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         if (!isPreview) {
           // Now zip the build package
           var filename = path.join(COURSE_FOLDER, Constants.Filenames.Download);
-          var zipName = self.slugify(outputJson['course'].title);
+          var zipName = helpers.slugify(outputJson['course'].title);
           var output = fs.createWriteStream(filename),
             archive = archiver('zip');
 
@@ -227,7 +227,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
             resultObject.zipName = zipName;
 
             // Indicate that the zip file is ready for download
-            app.emit('zipCreated', tenantId, courseId, filename, zipName);
+            origin.emit('zipCreated', tenantId, courseId, filename, zipName);
 
             callback();
           });
@@ -263,104 +263,435 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 */
 AdaptOutput.prototype.import = require('./import');
 
-AdaptOutput.prototype.export = function (courseId, request, response, next) {
-  var self = this;
-  var tenantId = usermanager.getCurrentUser().tenant._id;
-  var userId = usermanager.getCurrentUser()._id;
-  var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
+/**
+* FUNCTION: Export
+* TODO need implementation notes
+*      - metadata structure
+*      - devMode param
+* ------------------------------------------------------------------------------
+*/
 
-  var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
-  var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
+/**
+* Global vars
+* For access by the other funcs
+*/
 
-  // set in getCourseName
-  var exportName;
-  var exportDir;
+// directories
+var FRAMEWORK_ROOT_DIR = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+var COURSE_ROOT_DIR;
+var EXPORT_DIR;
+
+var courseId;
+// the top-level callback
+var next;
+// used with _.omit when saving metadata
+var blacklistedProps = [
+  '__v',
+  '_isDeleted',
+  'createdAt',
+  'createdBy',
+  'updatedAt',
+  'updatedBy',
+  '_hasPreview'
+];
+
+AdaptOutput.prototype.export = function(pCourseId, devMode, request, response, pNext) {
+  self = this;
+  // store the params
+  var currentUser = usermanager.getCurrentUser();
+  COURSE_ROOT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.AllCourses, currentUser.tenant._id, pCourseId);
+  EXPORT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Exports, currentUser._id);
+  courseId = pCourseId;
+  next = pNext;
+
+  // create the EXPORT_DIR if it isn't there
+  fse.ensureDir(EXPORT_DIR, function(error) {
+    if(error) {
+      return next(error);
+    }
+    // export tasks vary based on type of export
+    async.auto(devMode === 'true' ? {
+      // dev export
+      generateLatestBuild: generateLatestBuild,
+      copyFrameworkFiles: ['generateLatestBuild', copyFrameworkFiles],
+      copyCourseFiles: ['generateLatestBuild', copyCourseFiles]
+    } : {
+      // standard export
+      generateMetadata: generateMetadata,
+      copyCustomPlugins: ['generateMetadata', copyCustomPlugins],
+      copyAssets: ['copyCustomPlugins', copyAssets]
+    }, zipExport);
+  });
+
+};
+
+function generateLatestBuild(courseBuilt) {
+  self.publish(courseId, true, null, null, courseBuilt);
+};
+
+/**
+* Metadata functions
+*/
+
+// creates metadata.json file
+function generateMetadata(generatedMetadata) {
+  async.waterfall([
+    function(callback) {
+      getPackageData(FRAMEWORK_ROOT_DIR, callback);
+    },
+    function(metadata, callback) {
+      getCourseMetdata(courseId, metadata, callback);
+    },
+    function(metadata, callback) {
+      getAssetMetadata(courseId, metadata, callback);
+    },
+    function(metadata, callback) {
+      getPluginMetadata(courseId, metadata, callback);
+    },
+    function(metadata, callback) {
+      getTagsMetadata(metadata, callback);
+    }
+  ], function(error, results) {
+    if(error) {
+      return generatedMetadata(error);
+    }
+
+    //metadata = _.reduce(results, function(memo,result){ return _.extend(memo,result); });
+    metadata = results;
+    fse.writeJson(path.join(EXPORT_DIR, Constants.Filenames.Metadata), metadata, { spaces:0 }, generatedMetadata);
+  });
+};
+
+
+
+
+// pulls out relevant attributes from package.json
+function getPackageData(frameworkDir, gotPackageJson) {
+  fse.readJson(path.join(frameworkDir, Constants.Filenames.Package), function onJsonRead(error, packageJson) {
+    gotPackageJson(null, _.pick(packageJson, 'version'));
+  });
+};
+
+// rips all course data from the DB
+function getCourseMetdata(courseId, metadata, gotCourseMetadata) {
+  database.getDatabase(function(error, db) {
+    if (error) {
+      return callback(error);
+    }
+    // coursedata structure
+    var coursedata = {
+      course: {},
+      courseTagMap: []
+    };
+
+    async.each(Object.keys(Constants.CourseCollections), function iterator(collectionType, doneIterator) {
+      var criteria = collectionType === 'course' ? { _id: courseId } : { _courseId: courseId };
+      db.retrieve(collectionType, criteria, {operators: { sort: { _sortOrder: 1}}}, function dbRetrieved(error, results) {
+        if (error) {
+          gotCourseMetadata(doneIterator);
+        }
+        // only store the _doc values
+        var toSave = _.pluck(results,'_doc');
+        // store data, remove blacklisted properties
+        // TODO make sure we're only saving what we need
+        _.each(toSave, function(item, index) { toSave[index] = _.omit(item, blacklistedProps); });
+        coursedata.course[collectionType] = toSave;
+        // move tag is so tag list van be generated later
+        _.each(toSave, function(item, index) {
+          if (item.tags) {
+            _.each(item.tags, function(tagId) {
+              coursedata.courseTagMap.push(tagId);
+            })
+          }
+        });
+        doneIterator();
+      });
+    }, function doneEach(error) {
+      metadata = _.extend(metadata, coursedata);
+      gotCourseMetadata(error, metadata);
+    });
+  }, usermanager.getCurrentUser().tenant._id);
+};
+
+function getAssetMetadata(courseId, metadata, gotAssetMetadata) {
+  // assetdata structure
+  var assetdata = {
+    assets: {},
+    courseassets: [],
+    assetTagMap: []
+  };
+  origin.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
+    plugin.retrieve({ _courseId:courseId }, function(error, results) {
+      if(error) {
+        return gotAssetMetadata(error);
+      }
+
+      async.each(results, function iterator(courseasset, doneIterator) {
+        origin.assetmanager.retrieveAsset({ _id:courseasset._assetId }, function(error, matchedAssets) {
+          if(error) {
+            return doneIterator(error);
+          }
+          if(!matchedAssets) {
+            return doneIterator(new Error('No asset found with id: ' + courseasset._assetId));
+          }
+          if(matchedAssets.length > 1) {
+            logger.log('info',"export.getAssetMetadata: multiple assets found with id", courseasset._assetId, "using first result");
+          }
+          var asset = matchedAssets[0];
+
+          // would _.pick, but need to map some keys
+          // TODO not ideal
+          if(!assetdata.assets[asset.filename]) {
+            assetdata.assets[asset.filename] = {
+              "oldId": asset._id,
+              "title": asset.title,
+              "description": asset.description,
+              "type": asset.mimeType,
+              "size": asset.size,
+              "tags": []
+            };
+
+            _.each(asset.tags, function iterator(tag) {
+              if (tag._id) {
+                assetdata.assets[asset.filename].tags.push(tag._id);
+                assetdata.assetTagMap.push(tag._id);
+              }
+            });
+          }
+
+          // store the courseasset, omitting the blacklistedProps + _id
+          var toOmit = blacklistedProps.concat([ "_id" ]);
+          var courseassetData = _.omit(courseasset._doc, toOmit);
+          assetdata.courseassets.push(courseassetData);
+
+          doneIterator();
+        });
+      }, function doneEach(error) {
+        metadata = _.extend(metadata, assetdata);
+        gotAssetMetadata(error, metadata);
+      });
+    });
+  });
+};
+
+/**
+* Generates:
+* - A map for component types
+* - List of plugins to include (i.e. plugins that have been manually updated,
+*   or are completely custom)
+*/
+function getPluginMetadata(courseId, metadata, gotPluginMetadata) {
+  /*
+  * HACK there's got to be a way to get this info dynamically
+  * We need:
+  * - Content plugin name to see if it's already installed (so need plugin type)
+  * - Plugin folder name to find plugin code (so need the plugin folder name -- maybe do this with a glob/search?)
+  * (See Import.importPlugins for context)
+  * For now, add map to plugindata
+  */
+  var plugindata = {
+    pluginTypes: [
+      { type: 'component', folder: 'components' },
+      { type: 'extension', folder: 'extensions' },
+      { type: 'menu',      folder: 'menu'       },
+      { type: 'theme',     folder: 'theme'      }
+    ],
+    pluginIncludes: []
+  };
+
+  var includes;
+  async.waterfall([
+    function getIncludes(cb) {
+      self.generateIncludesForCourse(courseId, cb);
+    },
+    function getDb(pIncludes, cb) {
+      includes = pIncludes;
+      database.getDatabase(cb);
+    },
+    function generateIncludes(db, cb) {
+      async.each(plugindata.pluginTypes, function iterator(pluginType, doneIterator) {
+        db.retrieve(pluginType.type + 'type', { "isLocalPackage": true, "_isDeleted": false }, function gotTypeDoc(error, results) {
+          if(error) {
+            return cb(error);
+          }
+          async.each(results, function iterator(result, doneIterator2) {
+            if(_.indexOf(includes, result.name) !== -1) {
+              var thisPluginType = _.clone(pluginType);
+              var data = _.extend(thisPluginType, { name: result.name });
+              plugindata.pluginIncludes.push(data);
+            }
+            doneIterator2();
+          }, doneIterator);
+        });
+      }, cb);
+    }
+  ], function doneWaterfall(error) {
+    metadata = _.extend(metadata, plugindata);
+    gotPluginMetadata(error, metadata);
+  });
+};
+
+
+/**
+* Generates:
+* - A map for component types
+* - List of plugins to include (i.e. plugins that have been manually updated,
+*   or are completely custom)
+*/
+function getTagsMetadata(metadata, gotTagsMetadata) {
+  var tagdata = {
+    tags: []
+  };
+  var tagMap = [];
 
   async.waterfall([
-    function publishCourse(callback) {
-      self.publish(courseId, true, request, response, callback);
+    function getDb(cb) {
+      database.getDatabase(cb);
     },
-    function getCourseName(results, callback) {
-      database.getDatabase(function (error, db) {
-        if (error) {
-          return callback(err);
-        }
-
-        db.retrieve('course', { _id: courseId }, { jsonOnly: true }, function (error, results) {
-          if (error) {
-            return callback(error);
-          }
-          if(!results || results.length > 1) {
-            return callback(new Error('Unexpected results returned for course ' + courseId + ' (' + results.length + ')', self));
-          }
-
-          exportName = self.slugify(results[0].title) + '-export-' + timestamp;
-          exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, exportName);
-          callback();
-        });
-      });
-    },
-    function copyFiles(callback) {
-      self.generateIncludesForCourse(courseId, function(error, includes) {
+    function getTagsJson(db, cb) {
+      if (!metadata.courseTagMap && !metadata.assetTagMap) {
+        logger.log('error', 'No tags');
+      } else {
+        tagMap = _.union(metadata.courseTagMap, metadata.assetTagMap);
+      }
+      db.retrieve('tag', { "_tenantId": usermanager.getCurrentUser().tenant._id, "_isDeleted": false }, function gotTag(error, results) {
         if(error) {
-          return callback(error);
+          cb(error);
         }
-
-        for(var i = 0, count = includes.length; i < count; i++)
-          includes[i] = '\/' + includes[i] + '(\/|$)';
-
-        // regular expressions
-        var includesRE = new RegExp(includes.join('|'));
-        var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
-        var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
-
-        fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
-          filter: function(filePath) {
-            var posixFilePath = filePath.replace(/\\/g, '/');
-
-            var isIncluded = posixFilePath.search(includesRE) > -1;
-            var isExcluded = posixFilePath.search(excludesRE) > -1;
-            var isPlugin = posixFilePath.search(pluginsRE) > -1;
-
-            // exclude any matches to excludesRE
-            if(isExcluded) return false;
-            // exclude any plugins not in includes
-            else if(isPlugin) return isIncluded;
-            // include everything else
-            else return true;
+        async.each(results, function iterator(result, doneIterator) {
+          if(_.find(tagMap, result._id)) {
+            var data = ({ oldId: result._id, title: result.title });
+            tagdata.tags.push(data);
           }
-        }, function done(error) {
-          if (error) {
-            return callback(error);
-          }
-          var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
-          var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
-          fse.ensureDir(dest, function (error) {
-            if(error) {
-              return callback(error);
-            }
-            fse.copy(source, dest, callback);
-          });
-        });
-      });
-    },
-    function zipFiles(callback) {
-      var archive = archiver('zip');
-      var output = fs.createWriteStream(exportDir +  '.zip');
-
-      archive.on('error', callback);
-      output.on('close', callback);
-      archive.pipe(output);
-      archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
-    },
-    function cleanUp(callback) {
-      fse.remove(exportDir, function (error) {
-        callback(error, { zipName: exportName + '.zip' });
+          doneIterator();
+        }, cb);
       });
     }
-  ],
-  next);
+  ], function doneWaterfall(error) {
+    var tagMapTypes = [ 'courseTagMap', 'assetTagMap' ];
+    metadata = _.omit(metadata, tagMapTypes);
+    metadata = _.extend(metadata, tagdata);
+
+    gotTagsMetadata(error, metadata);
+  });
 };
+
+/**
+* Copy functions
+*/
+
+// copies relevant files in adapt_framework
+function copyFrameworkFiles(filesCopied) {
+  self.generateIncludesForCourse(courseId, function(error, includes) {
+    if(error) {
+      return includesGenerated(error);
+    }
+    // create list of includes
+    for(var i = 0, count = includes.length; i < count; i++)
+      includes[i] = '\/' + includes[i] + '(\/|$)';
+
+    var includesRE = new RegExp(includes.join('|'));
+    var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
+    var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
+
+    fse.copy(FRAMEWORK_ROOT_DIR, EXPORT_DIR, {
+      filter: function(filePath) {
+        var posixFilePath = filePath.replace(/\\/g, '/');
+        var isIncluded = posixFilePath.search(includesRE) > -1;
+        var isExcluded = posixFilePath.search(excludesRE) > -1;
+        var isPlugin = posixFilePath.search(pluginsRE) > -1;
+
+        // exclude any matches to excludesRE
+        if(isExcluded) return false;
+        // exclude any plugins not in includes
+        else if(isPlugin) return isIncluded;
+        // include everything else
+        else return true;
+      }
+    }, function doneCopy(error) {
+      if (error) {
+        return filesCopied(error);
+      }
+      copyCourseFiles(filesCopied);
+    });
+  });
+};
+
+// uses the metadata list to include only relevant plugin files
+function copyCustomPlugins(filesCopied) {
+  var src = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Source);
+  var dest = path.join(EXPORT_DIR, Constants.Folders.Plugins);
+  _.each(metadata.pluginIncludes, function iterator(plugin) {
+    var pluginDir = path.join(src, plugin.folder, plugin.name);
+    fse.copy(pluginDir, path.join(dest, plugin.name), function(err) {
+      if (err) {
+        logger.log('error', err);
+      }
+    });
+  });
+  filesCopied();
+};
+
+// copies everything in the course folder
+function copyCourseFiles(filesCopied) {
+  var source = path.join(COURSE_ROOT_DIR, Constants.Folders.Build, Constants.Folders.Course);
+  var dest = path.join(EXPORT_DIR, Constants.Folders.Source, Constants.Folders.Course);
+  fse.ensureDir(dest, function(error) {
+    if (error) {
+      return filesCopied(error);
+    }
+    fse.copy(source, dest, filesCopied);
+  });
+};
+
+// copies used assets directly from the data folder
+function copyAssets(assetsCopied) {
+  var dest = path.join(EXPORT_DIR, Constants.Folders.Assets);
+  fse.ensureDir(dest, function(error) {
+    if (error) {
+      return assetsCopied(error);
+    }
+    async.each(Object.keys(metadata.assets), function iterator(assetKey, doneIterator) {
+      var oldId = metadata.assets[assetKey].oldId;
+      origin.assetmanager.retrieveAsset({ _id:oldId }, function(error, results) {
+        if(error) {
+          return doneIterator(error);
+        }
+        filestorage.getStorage(results[0].repository, function gotStorage(error, storage) {
+          var srcPath = storage.resolvePath(results[0].path);
+          var destPath = path.join(dest, assetKey);
+          fse.copy(srcPath, destPath, doneIterator);
+        });
+      });
+    }, assetsCopied);
+  });
+};
+
+/**
+* post-processing
+*/
+
+function zipExport(error) {
+  if(error) {
+    return next(error);
+  }
+  var archive = archiver('zip');
+  var output = fse.createWriteStream(EXPORT_DIR +  '.zip');
+  archive.on('error', cleanUpExport);
+  output.on('close', cleanUpExport);
+  archive.pipe(output);
+  archive.bulk([
+    { expand: true, cwd: EXPORT_DIR, src: ['**/*'] },
+  ]).finalize();
+};
+
+// remove the EXPORT_DIR, if there is one
+function cleanUpExport(exportError) {
+  fse.remove(EXPORT_DIR, function(removeError) {
+    next(exportError || removeError);
+  });
+};
+
 
 /**
  * Module exports

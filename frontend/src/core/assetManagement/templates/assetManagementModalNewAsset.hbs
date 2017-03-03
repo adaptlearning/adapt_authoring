@@ -11,7 +11,7 @@
             </label>
             {{#if path}}
             <div class="asset-management-new-asset-file">
-                File has been uploaded
+                {{t 'app.fileuploaded'}}
             </div>
             {{else}}
             <input type="file" class="asset-file" name="file">
@@ -44,7 +44,7 @@
         </div>
 
         <div class="">
-            <button class="asset-management-modal-new-asset-upload btn secondary">Upload</button>
+            <button class="asset-management-modal-new-asset-upload btn secondary">{{t 'app.upload'}}</button>
         </div>
         <input type="hidden" name="tags" id="tags" />
     </form>

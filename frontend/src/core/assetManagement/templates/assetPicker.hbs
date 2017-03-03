@@ -1,6 +1,6 @@
 <div class="asset-picker-filters">
     {{!-- inline search field with close button --}}
-    <label for="asset-picker-filter-search">Filter</label>
+    <label for="asset-picker-filter-search">{{t 'app.filter'}}</label>
     <input type="text" name="asset-picker-filter-search" class="asset-management-sidebar-filter-search" placeholder="{{t 'app.searchtitleordescription'}}"/>
     <button class="sidebar-inline-input-button asset-picker-sidebar-filter-clear-search">
         <i class="fa fa-times"></i>
@@ -33,12 +33,12 @@
 
 <div class="asset-management-inner">
     <div class="asset-management-assets-container">
-        <div class="asset-management-no-assets">Currently you have no assets uploaded</div>
+        <div class="asset-management-no-assets">{{t 'app.noassetsfound'}}</div>
         <div class="asset-management-assets-container-inner">
         </div>
     </div>
     <div class="asset-management-preview-container">
-        <div class="asset-management-no-preview">Select an asset to see a preview here</div>
+        <div class="asset-management-no-preview">{{t 'app.assetpreviewinstruction'}}</div>
         <div class="asset-management-preview-container-inner">
         </div>
     </div>

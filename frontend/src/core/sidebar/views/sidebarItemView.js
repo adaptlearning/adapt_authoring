@@ -32,6 +32,8 @@ define(function(require) {
         this.render();
         this.listenTo(Origin, 'sidebar:resetButtons', this.resetButtons);
         this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
+        this.listenTo(Origin, 'key:down', this.onKeyDown);
+        this.listenTo(Origin, 'key:up', this.onKeyUp);
         _.defer(_.bind(function() {
             this.setupView();
             if (this.form) {
@@ -95,6 +97,34 @@ define(function(require) {
 
     animateViewIn: function() {
         this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
+      this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
+    },
+
+    onKeyDown: function(e) {
+      window.clearTimeout(this.timeout);
+      this.timeout = -1;
+      switch(e.keyCode) {
+        case 17:
+        case 91:
+        case 93:
+          this.$('.editor-common-sidebar-preview')
+            .removeClass('action-primary')
+            .addClass('action-warning');
+          this.$('.editor-common-sidebar-preview-inner').text('Force rebuild');
+          this.forceRebuild = true;
+          this.timeout = window.setTimeout(_.bind(this.onKeyUp,this), 5000);
+          break;
+        default:
+          // do nothing
+      }
+    },
+
+    onKeyUp: function(e) {
+      this.$('.editor-common-sidebar-preview-inner').text(window.polyglot.t('app.preview'));
+      this.$('.editor-common-sidebar-preview')
+        .removeClass('action-warning')
+        .addClass('action-primary');
+      this.forceRebuild = false;
     },
 
     editProject: function() {

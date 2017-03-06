@@ -90,11 +90,11 @@ require.config({
         deps: ['jquery'],
         exports: "$"
       },
-      backboneForms: {
+      'backbone-forms': {
         deps: ['backbone']
       },
-      backboneFormsLists: {
-        deps: ['backboneForms']
+      'backbone-forms-lists': {
+        deps: ['backbone-forms']
       },
       inview: {
         deps: [

@@ -15,7 +15,7 @@ define(function(require) {
   var ScaffoldCodeEditorView = require('coreJS/scaffold/views/scaffoldCodeEditorView');
 	var ScaffoldTextAreaView = require('coreJS/scaffold/views/scaffoldTextAreaView');
 	var Schemas = require('coreJS/scaffold/schemas');
-	var Overrides = require('coreJS/scaffold/scaffoldOverrides');
+	var Overrides = require('coreJS/scaffold/backboneFormsOverrides');
 	var Helpers = require('coreJS/app/helpers');
 	var ActiveItemsModal = 0;
 	var isOverlayActive = false;

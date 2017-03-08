@@ -212,6 +212,7 @@ define(function(require) {
           text: window.polyglot.t('app.errorgeneric')
         });
       }
+    });
   }
 
   function setUpBasicEditorPage(model, sidebarClass, editorClass, pageTitleData) {

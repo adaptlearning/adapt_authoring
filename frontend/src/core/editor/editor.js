@@ -42,7 +42,7 @@ define(function(require) {
   var currentLocation;
 
   // event listeners
-  Origin.on('login:changed login:newSession', preload);
+  Origin.on('app:dataReady login:changed', preload);
   Origin.on('editor:refreshData', onRefreshData);
   Origin.on('editor:resetData', onResetData);
   Origin.on('router:editor', onRoute);
@@ -73,7 +73,7 @@ define(function(require) {
     // start preload
     loadEditorData(_.clone(globalData), function() {
       isPreloaded = true;
-      Origin.trigger('editor:dataPreloaded:');
+      Origin.trigger('editor:dataPreloaded');
     });
   }
 

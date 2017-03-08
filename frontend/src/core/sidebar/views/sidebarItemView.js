@@ -96,7 +96,6 @@ define(function(require) {
     },
 
     animateViewIn: function() {
-        this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
       this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
     },
 

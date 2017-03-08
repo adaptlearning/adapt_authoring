@@ -6,9 +6,9 @@ define(function(require) {
 
   var Router = Backbone.Router.extend({
     routes: {
-      "": "handleIndex",
-      "_=_": "handleIndex",
-      ":module(/*route1)(/*route2)(/*route3)(/*route4)": "handleRoute"
+      '': 'handleIndex',
+      '_=_': 'handleIndex',
+      ':module(/*route1)(/*route2)(/*route3)(/*route4)': 'handleRoute'
     },
 
     initialize: function() {

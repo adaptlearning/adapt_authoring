@@ -40,6 +40,7 @@ define(function(require) {
     ContextMenu.addItem('page', getDefaultItems());
     ContextMenu.addItem('menu', getDefaultItems(['copy']));
     ContextMenu.addItem('page-min', getDefaultItems(['copy','delete']));
+    ContextMenu.addItem('course', getDefaultItems(['copyID']));
     ContextMenu.addItem('sharedcourse', [
       {
         title: window.polyglot.t('app.duplicate'),
@@ -52,16 +53,6 @@ define(function(require) {
         callbackEvent: 'preview'
       }
     ]);
-    var courseItems = getDefaultItems(['copyID']);
-    var superPerms = ["*/*:create","*/*:read","*/*:update","*/*:delete"];
-    if (Origin.permissions.hasPermissions(superPerms)) {
-      courseItems.push({
-        title: window.polyglot.t('app.export'),
-        className: 'context-menu-item',
-        callbackEvent: 'export'
-      });
-    }
-    ContextMenu.addItem('course', courseItems);
   };
 
   /*

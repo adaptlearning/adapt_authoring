@@ -50,14 +50,7 @@ define(function(require) {
   var EditorMenuSettingsEditSidebarView = require('editorMenuSettings/views/editorMenuSettingsEditSidebarView');
 
   /**
-  * Current location
-  * Has the structure:
-  * {
-  *   course: course ID
-  *   type: content type (e.g. block)
-  *   id: content ID
-  *   action: page action (e.g. edit)
-  * }
+  * Main routing function
   */
   var loc;
 
@@ -158,6 +151,9 @@ define(function(require) {
     });
   }
 
+  /**
+  * Finds the parent page
+  */
   getNearestPage = function(model) {
     var map = {
       'component': 'components',
@@ -174,6 +170,9 @@ define(function(require) {
     return model;
   }
 
+  /**
+  * Calculates back button label/href based on location
+  */
   function getBackButtonData() {
     switch(loc.type) {
       case 'selecttheme':
@@ -215,6 +214,9 @@ define(function(require) {
     });
   }
 
+  /**
+  * Handles Initialising and rendering of editor pages
+  */
   function setUpBasicEditorPage(model, sidebarClass, editorClass, pageTitleData) {
     updatePageTitle(pageTitleData || model);
     var viewData = {
@@ -226,19 +228,8 @@ define(function(require) {
     Origin.sidebar.addView(new sidebarClass(_.extend(viewData, backButtonData)).$el);
   }
 
-  /*
-  TODO look at refactoring this
-  Common tasks:
-    Model
-    Model.fetch
-      Update title(title)
-      Create form(model)
-      Sidebar(form, back button)
-      View(model, form)
-
-    Move the following into helpers:
-    var project = new ProjectModel({_id: loc.course});
-    var configModel = new EditorConfigModel({_courseId: loc.course});
+  /**
+  * Individual route handlers
   */
 
   function handleArticleEditRoute() {

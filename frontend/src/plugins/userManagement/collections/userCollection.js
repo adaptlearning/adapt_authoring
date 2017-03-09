@@ -5,7 +5,9 @@ define(function(require) {
 
   var UserCollection = Backbone.Collection.extend({
     model: UserModel,
-    comparator: 'email',
+    comparator: function(model) {
+      return model.get('email').toLowerCase();
+    },
     url: 'api/user'
   });
 

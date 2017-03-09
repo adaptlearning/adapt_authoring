@@ -56,20 +56,18 @@ define(function(require) {
 
   function route(location) {
     loc = location
+    // shortcuts
+    var isAdd = loc.action === 'add';
+    var isEdit = loc.action === 'edit';
+
     switch (loc.type) {
       case 'article':
-        if (loc.action === 'edit') {
-          handleArticleEditRoute();
-        }
+        if(isEdit) handleArticleEditRoute();
         break;
 
       case 'block':
-        if (loc.action === 'add') {
-          handleBlockAddRoute();
-        }
-        if (loc.action === 'edit') {
-          handleBlockEditRoute();
-        }
+        if(isAdd) handleBlockAddRoute();
+        if(isEdit) handleBlockEditRoute();
         break;
 
       case 'component':
@@ -97,19 +95,13 @@ define(function(require) {
         break;
 
       case 'menu':
-        if(loc.action === 'edit') {
-          handleMenuEditRoute();
-        } else {
-          handleMenuRoute();
-        }
+        if(isEdit) handleMenuEditRoute();
+        else handleMenuRoute();
         break;
 
       case 'page':
-        if(loc.action === 'edit') {
-          handlePageEditRoute();
-        } else {
-          handlePageRoute();
-        }
+        if(isEdit) handlePageEditRoute();
+        else handlePageRoute();
         break;
     }
   }
@@ -126,7 +118,9 @@ define(function(require) {
     var langString = window.polyglot.t('app.' + titleKey);
 
     var crumbs = ['dashboard'];
-    if(loc.type !== 'menu') crumbs.push('course');
+    if(loc.type !== 'menu') {
+      crumbs.push('course');
+    }
     if(loc.action === 'edit') {
       var page = getNearestPage(model);
       crumbs.push({

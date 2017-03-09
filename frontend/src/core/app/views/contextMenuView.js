@@ -17,10 +17,12 @@ define(function(require) {
 
     initialize: function() {
       this._isVisible = false;
-      this.listenTo(Origin, 'contextMenu:open', this.onOpenContextMenu);
-      this.listenTo(Origin, 'contextMenu:closeContextMenu', this.onCloseContextMenu);
-      this.listenTo(Origin, 'remove', this.onCloseContextMenu);
-      this.listenTo(Origin, 'remove:views', this.onCloseContextMenu);
+      this.listenTo(Origin, {
+        'contextMenu:open': this.onOpenContextMenu,
+        'contextMenu:closeContextMenu': this.onCloseContextMenu,
+        'remove': this.onCloseContextMenu,
+        'remove:views': this.onCloseContextMenu,
+      });
       this.render();
     },
 

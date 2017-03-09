@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
   var SidebarFieldsetFilterView = require('coreJS/sidebar/views/sidebarFieldsetFilterView');
@@ -8,10 +7,10 @@ define(function(require) {
   var Helpers = require('coreJS/app/helpers');
 
   var SidebarItemView = OriginView.extend({
-
     className: 'sidebar-item',
 
     events: {
+      'click button'                                    : 'onButtonClick',
       'click button.editor-common-sidebar-project'      : 'editProject',
       'click button.editor-common-sidebar-config'       : 'editConfiguration',
       'click button.editor-common-sidebar-extensions'   : 'manageExtensions',
@@ -20,11 +19,13 @@ define(function(require) {
       'click button.editor-common-sidebar-download'     : 'downloadProject',
       'click button.editor-common-sidebar-preview'      : 'previewProject',
       'click button.editor-common-sidebar-export'       : 'exportProject',
+      'click button.editor-common-sidebar-export-dev'   : 'exportProjectDev',
+      'click button.editor-common-sidebar-export-html'  : 'exportProjectHtml',
       'click button.editor-common-sidebar-close'        : 'closeProject'
     },
 
     initialize: function(options) {
-
+        this.preRender();
         // Set form on view
         if (options && options.form) {
           this.form = options.form;
@@ -32,6 +33,8 @@ define(function(require) {
         this.render();
         this.listenTo(Origin, 'sidebar:resetButtons', this.resetButtons);
         this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
+        this.listenTo(Origin, 'key:down', this.onKeyDown);
+        this.listenTo(Origin, 'key:up', this.onKeyUp);
         _.defer(_.bind(function() {
             this.setupView();
             if (this.form) {
@@ -41,6 +44,7 @@ define(function(require) {
         }, this));
     },
 
+    preRender: function() {},
     postRender: function() {},
 
     setupView: function() {
@@ -94,8 +98,48 @@ define(function(require) {
     },
 
     animateViewIn: function() {
-        this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
+      this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
     },
+
+    onButtonClick: function(e) {
+      e && e.preventDefault();
+      var dataEvent = $(e.currentTarget).attr('data-event');
+      if(dataEvent) {
+        // TODO should be editorSidebar?
+        Origin.trigger('editorCommon:' + dataEvent);
+      }
+    },
+
+    onKeyDown: function(e) {
+      window.clearTimeout(this.timeout);
+      this.timeout = -1;
+      switch(e.keyCode) {
+        case 17:
+        case 91:
+        case 93:
+          this.$('.editor-common-sidebar-preview')
+            .removeClass('action-primary')
+            .addClass('action-warning');
+          this.$('.editor-common-sidebar-preview-inner').text('Force rebuild');
+          this.forceRebuild = true;
+          this.timeout = window.setTimeout(_.bind(this.onKeyUp,this), 5000);
+          break;
+        default:
+          // do nothing
+      }
+    },
+
+    onKeyUp: function(e) {
+      this.$('.editor-common-sidebar-preview-inner').text(window.polyglot.t('app.preview'));
+      this.$('.editor-common-sidebar-preview')
+        .removeClass('action-warning')
+        .addClass('action-primary');
+      this.forceRebuild = false;
+    },
+
+    /*
+    * TODO transition the below to use onButtonClick?
+    */
 
     editProject: function() {
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/settings', {trigger: true});
@@ -122,19 +166,25 @@ define(function(require) {
     },
 
     previewProject: function() {
-      Origin.trigger('editorCommon:preview');
+      Origin.trigger('editorCommon:preview', this.forceRebuild);
     },
 
     exportProject: function() {
-      Origin.trigger('editorCommon:export');
+      Origin.trigger('editorCommon:export', false);
+    },
+
+    exportProjectDev: function() {
+      Origin.trigger('editorCommon:export', true);
+    },
+
+    exportProjectHtml: function() {
+      Origin.trigger('editorCommon:exportHtml');
     },
 
     closeProject: function() {
       Origin.router.navigate('#/dashboard');
     }
-
   });
 
   return SidebarItemView;
-
-})
+});

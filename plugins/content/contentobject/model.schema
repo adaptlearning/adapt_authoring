@@ -102,6 +102,9 @@
     "_extensions": {
       "type": "object"
     },
+    "themeSettings": {
+    	"type":"object"
+    },
     "_sortOrder": {
       "type": "number",
       "required": true,

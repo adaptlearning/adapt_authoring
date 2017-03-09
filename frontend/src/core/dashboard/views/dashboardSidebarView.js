@@ -46,7 +46,7 @@ define(function(require) {
     },
 
     addCourse: function() {
-      Origin.router.navigate('#/project/new', { trigger:true });
+      Origin.router.navigate('#/project/new', { trigger: true });
     },
 
     gotoMyCourses: function() {

@@ -19,9 +19,7 @@ define(function(require) {
       this._isVisible = false;
       this.listenTo(Origin, {
         'contextMenu:open': this.onOpenContextMenu,
-        'contextMenu:closeContextMenu': this.onCloseContextMenu,
-        'remove': this.onCloseContextMenu,
-        'remove:views': this.onCloseContextMenu,
+        'contextMenu:closeContextMenu remove remove:views': this.onCloseContextMenu
       });
       this.render();
     },

@@ -119,18 +119,9 @@ define(function(require) {
   * Accepts backbone model, or object like so { title: '' }
   */
   function updatePageTitle(model) {
-    var titleKey;
-    // get titleKey from location
-    switch(loc.type) {
-      case 'page':
-        if(loc.action === 'edit') {
-          titleKey = 'editor' + loc.type + 'settings';
-          break;
-        }
-        // else fall to default
-      default:
-        titleKey = 'editor' + loc.type;
-    }
+    var titleKey = (loc.type === 'page' && loc.action === 'edit') ?
+      'editor' + loc.type + 'settings' :
+      'editor' + loc.type;
     var modelTitle = model && model.get && model.get('title');
     var langString = window.polyglot.t('app.' + titleKey);
 

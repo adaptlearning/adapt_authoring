@@ -38,12 +38,12 @@ define(function(require){
     selectItem: function() {
       Origin.trigger('dashboard:projectView:itemSelected');
       this.$el.addClass('selected');
-      this.model.set({ _isSelected:true });
+      this.model.set({ _isSelected: true });
     },
 
     deselectItem: function() {
       this.$el.removeClass('selected');
-      this.model.set({ _isSelected:false });
+      this.model.set({ _isSelected: false });
     },
 
     preview: function() {
@@ -70,7 +70,7 @@ define(function(require){
         url: this.model.getDuplicateURI(),
         type: 'GET',
         success: function (data) {
-          Origin.router.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
+          Origin.router.navigate('/editor/' + data.newCourseId + '/settings', { trigger: true });
         },
         error: function() {
           Origin.Notify.alert({

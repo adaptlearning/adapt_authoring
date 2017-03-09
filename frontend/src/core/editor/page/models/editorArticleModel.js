@@ -4,8 +4,8 @@ define(function(require) {
 
   var EditorArticleModel = EditorModel.extend({
     urlRoot: '/api/content/article',
-    _parent:'contentObjects',
-    _siblings:'articles',
+    _parent: 'contentObjects',
+    _siblings: 'articles',
     _children: 'blocks',
 
     initialize: function(options) {

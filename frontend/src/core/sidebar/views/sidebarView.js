@@ -1,71 +1,65 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var Origin = require('coreJS/app/origin');
+  var OriginView = require('coreJS/app/views/originView');
+  var SidebarFilterView = require('coreJS/sidebar/views/sidebarFilterView');
 
-	var Origin = require('coreJS/app/origin');
-	var OriginView = require('coreJS/app/views/originView');
-    var SidebarFilterView = require('coreJS/sidebar/views/sidebarFilterView');
+  var Sidebar = OriginView.extend({
+    className: 'sidebar',
 
-	var Sidebar = OriginView.extend({
+    preRender: function() {
+      this.listenTo(Origin, {
+        'sidebar:sidebarContainer:update': this.updateViews,
+        'sidebar:sidebarFilter:add': this.addFilterView,
+        'sidebar:sidebarContainer:hide': this.hideSidebar
+      });
+    },
 
-		className: 'sidebar',
+    updateViews: function($element, options) {
+      this.hideSidebar();
 
-		initialize: function() {
-			this.render();
-			this.listenTo(Origin, 'sidebar:sidebarContainer:update', this.updateViews);
-			this.listenTo(Origin, 'sidebar:sidebarFilter:add', this.addFilterView);
-			this.listenTo(Origin, 'sidebar:sidebarContainer:hide', this.hideSidebar);				
-		},
+      var options = (options || {});
 
-		updateViews: function($element, options) {
-			$('html').removeClass('sidebar-hide');
+      var hasBackButton = options.backButtonText && options.backButtonRoute;
+      if(hasBackButton) this.addBackButton(options);
+      else this.removeBackButton();
+      // APPEND new view to sidebar so we can animate the current view out
+      this.$('.sidebar-item-container').append($element);
+    },
 
-			// Check if options exists
-			var options = (options || {});
+    hideSidebar: function() {
+      $('html').addClass('sidebar-hide');
+    },
 
-			// If backButton option setup backButton
-			if (options.backButtonText && options.backButtonRoute) {
-				this.setupBackButtonRoute(options);
-			} else {
-				this.removeBackButtonRoute();
-			}
+    animateBreadcrumb: function(options, callback) {
+      var self = this;
+      this.$('.sidebar-breadcrumb').velocity(options, function() {
+        Origin.trigger('sidebar:views:animateIn');
+        if(callback) callback.call(this);
+      });
+    },
 
-			// Append new view into sidebar
-			// Append is better here so we can animate the current view out
-			this.$('.sidebar-item-container').append($element);
+    addBackButton: function(options) {
+      var template = Handlebars.templates['sidebarBreadcrumb'];
+      this.$('.sidebar-breadcrumb').html(template(options));
+      _.defer(function() {
+        this.animateBreadcrumb({ 'top': '0px', 'opacity': 1 });
+      });
+    },
 
-		},
+    removeBackButton: function() {
+      this.animateBreadcrumb({ 'top': '-40px', 'opacity': 0 }, function() {
+        this.empty();
+      });
+    },
 
-		hideSidebar: function() {
-			$('html').addClass('sidebar-hide');
-		},
+    addFilterView: function(options) {
+      Origin.trigger('sidebar:sidebarFilter:remove');
+      $('body').append(new SidebarFilterView(options).$el);
+    }
+  }, {
+    template: 'sidebar'
+  });
 
-		setupBackButtonRoute: function(options) {
-			// If breadcrumb, render template and animate in
-			var template = Handlebars.templates['sidebarBreadcrumb'];
-			this.$('.sidebar-breadcrumb').html(template(options));
-			_.defer(function() {
-				this.$('.sidebar-breadcrumb').velocity({'top': '0px', 'opacity': 1}, function() {
-					Origin.trigger('sidebar:views:animateIn');
-				});
-			});
-		},
-
-		removeBackButtonRoute: function() {
-			// If breadcrumb needs removing, animate out and trigger animateIn for the new view
-			this.$('.sidebar-breadcrumb').velocity({'top': '-40px', 'opacity': 0}, function() {
-				this.empty();
-				Origin.trigger('sidebar:views:animateIn');
-			});
-		},
-
-		addFilterView: function(options) {
-			Origin.trigger('sidebar:sidebarFilter:remove');
-			$('body').append(new SidebarFilterView(options).$el);
-		}
-	}, {
-		template: 'sidebar'
-	});
-
-	return Sidebar;
-
+  return Sidebar;
 });

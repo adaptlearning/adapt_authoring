@@ -59,7 +59,7 @@ define(function(require){
         preferences[key] = value;
         // Store in localStorage
         Origin.sessionModel.set(this.settings.preferencesKey, preferences);
-        
+
       }
     },
 
@@ -83,8 +83,8 @@ define(function(require){
     },
 
     remove: function() {
-    
-     
+
+
       // If a view has a form - remove it when removing parent view
       if (this.form) {
 
@@ -95,17 +95,17 @@ define(function(require){
             // check editor is still in the dom (otherwise throws exception)
             if (editor && editor.window.getFrame()){
               editor.destroy(true);
-            } 
+            }
           } catch (e) {
           }
         });
 
         this.form.remove();
-      } 
+      }
         // Call original remove
       Backbone.View.prototype.remove.apply(this, arguments);
-     
-     
+
+
 
     }
 

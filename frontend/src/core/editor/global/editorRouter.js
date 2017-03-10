@@ -163,16 +163,17 @@ define(function(require) {
       case 'selecttheme':
       case 'extensions':
       case 'menusettings':
-        var backButtonRoute = "/#/editor/" + loc.course + "/menu";
+        var backButtonRoute = '/#/editor/' + loc.course + '/menu';
         var backButtonText = window.polyglot.t('app.backtomenu');
-        if (Origin.previousLocation.route2 === "page") {
-          backButtonRoute = "/#/editor/" + loc.course + "/page/" + Origin.previousLocation.route3;
+        // FIXME need to figure this out without a previousLocation
+        if (Origin.previousLocation.route2 === 'page') {
+          backButtonRoute = '/#/editor/' + loc.course + '/page/' + Origin.previousLocation.route3;
           backButtonText = window.polyglot.t('app.backtopage');
         }
         return {
           backButtonText: backButtonText,
           backButtonRoute: backButtonRoute
-        }
+        };
       case 'menu':
         return {
           backButtonText: window.polyglot.t('app.backtocourses'),
@@ -206,11 +207,22 @@ define(function(require) {
     updatePageTitle(pageTitleData || model);
     var viewData = {
       model: model,
-      form: Origin.scaffold.buildForm({ model: model })
+      form: getFormForModel(model)
     };
     Origin.editingOverlay.addView(new editorClass(viewData).$el);
-    var backButtonData = getBackButtonData();
-    Origin.sidebar.addView(new sidebarClass(_.extend(viewData, backButtonData)).$el);
+    Origin.sidebar.addView(new sidebarClass(viewData).$el, getBackButtonData());
+  }
+
+  function getFormForModel(model) {
+    switch(loc.type) {
+      case 'selecttheme':
+      case 'extensions':
+      case 'menusettings':
+        // these have no form data
+        break;
+      default:
+        return Origin.scaffold.buildForm({ model: model });
+    }
   }
 
   /**
@@ -289,8 +301,8 @@ define(function(require) {
     fetchModel(new EditorCourseModel({ _id: loc.course }), function(model) {
       updatePageTitle(model);
       Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
-        "backButtonText": window.polyglot.t('app.backtocourses'),
-        "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
+        backButtonText: window.polyglot.t('app.backtocourses'),
+        backButtonRoute: Origin.dashboardRoute || '/#/dashboard'
       });
       Origin.router.createView(EditorView, {
         currentCourseId: loc.course,
@@ -310,8 +322,8 @@ define(function(require) {
     fetchModel(new EditorContentObjectModel({ _id: loc.id }), function(model) {
       updatePageTitle(model);
       Origin.sidebar.addView(new EditorPageSidebarView().$el, {
-        "backButtonText": window.polyglot.t('app.backtocoursestructure'),
-        "backButtonRoute": "/#/editor/" + loc.course + "/menu"
+        backButtonText: window.polyglot.t('app.backtocoursestructure'),
+        backButtonRoute: '/#/editor/' + loc.course + '/menu'
       });
       Origin.router.createView(EditorView, {
         currentCourseId: loc.course,

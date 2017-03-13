@@ -1,0 +1,37 @@
+@import '../../../less/fonts';
+@import '../../../less/variables';
+
+.location-title {
+  font-family: @font-title;
+  background-color:@location-background-color;
+  border-bottom: 1px solid fade(@primary-color, 20%);
+
+  &-inner {
+    font-size: 20px;
+  	font-weight:600;
+    padding:25px;
+    color:@location-title;
+
+    .breadcrumbs {
+      font-size: 80%;
+      font-weight: 300;
+      opacity: 0.5;
+      margin-bottom: 7px;
+      .item {
+        display: inline-block;
+        a {
+          text-decoration: none;
+          color: @secondary-color;
+          &:hover {
+            color: darken(@secondary-color,15%);
+          }
+        }
+      }
+      .separator {
+        display: inline-block;
+        margin: 0 5px;
+        opacity: 0.35;
+      }
+    }
+  }
+}

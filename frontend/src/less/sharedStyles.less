@@ -1,4 +1,26 @@
 
+.display-none {
+  display:none !important;
+}
+
+.visibility-hidden {
+  visibility:hidden !important;
+}
+
+.unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+.no-scroll {
+  overflow:hidden;
+}
+
 // Page-style form background
 .form-container-style {
     max-width: 800px;
@@ -7,7 +29,27 @@
     background-color: #fff;
     > .inner {
       padding: 30px;
+      form {
+        .form-group {
+          padding-bottom: 0;
+          border-bottom: none;
+        }
+      }
     }
+}
+
+.nothing-to-show {
+   text-align: center;
+   position: relative;
+   margin-top: 20%;
+   font-size: 150%;
+   color: #c4e2ef;
+   font-weight: bold;
+   i {
+     display: block;
+     font-size: 70px;
+     margin-bottom: 10px;
+   }
 }
 
 .no-wrap {
@@ -15,4 +57,30 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 90%;
+}
+
+// hides sidebars, nav bars etc, and displays blue bg
+// e.g. login screen
+.no-ui {
+  max-width: 450px;
+  margin: 0 auto;
+  color: #fff;
+  background: url(assets/login_bg.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+  button.small {
+      font-size: 16px;
+      margin: 0 auto;
+      display: block;
+      width: 200px;
+      margin-top: 20px;
+      height: 80%;
+  }
+
+  .sidebar, .navigation, .location-title { display: none; }
+  #app { margin-left: 0px; }
+  a { color: #fff; }
 }

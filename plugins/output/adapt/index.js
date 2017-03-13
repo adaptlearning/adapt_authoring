@@ -100,7 +100,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
             return callback(err);
           }
 
-          isRebuildRequired = exists;
+          isRebuildRequired = exists || request.query.force === 'true';
 
           callback(null);
         });

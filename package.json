@@ -1,8 +1,8 @@
 {
-  "name": "adapt-origin",
-  "version": "0.2.1",
+  "name": "adapt_authoring",
+  "version": "0.3.1",
   "license": "GPL-3.0",
-  "description": "Adapt framework authoring tool core application",
+  "description": "A server-based user interface for authoring eLearning courses using the Adapt Framework.",
   "keywords": [
     "adapt",
     "authoring",
@@ -30,12 +30,12 @@
       "email": "dan@sinensis.co.uk"
     },
     {
-      "name": "Daryl Hedley",
-      "email": "darylhedley@hotmail.com"
-    },
-    {
       "name": "Dennis Heaney",
       "email": "dennis@learningpool.com"
+    },
+    {
+      "name": "Daryl Hedley",
+      "email": "darylhedley@hotmail.com"
     },
     {
       "name": "Ryan Lafferty",
@@ -58,13 +58,28 @@
       "email": "brian@learningpool.com"
     },
     {
+      "name": "Thomas Berger",
+      "email": "thomas.berger@learnchamp.com"
+    },
+    {
+      "name": "Tom Greenfield",
+      "email": "tom.greenfield@kineo.com"
+    },
+    {
       "name": "Thomas Taylor",
-      "email": "hello@taylortom.co.uk"
+      "email": "hello@tomtaylor.name"
     }
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/adaptlearning/adapt_authoring.git"
+  },
+  "main": "index",
+  "engines": {
+    "node": "4.x"
+  },
+  "scripts": {
+    "test": "make test"
   },
   "dependencies": {
     "archiver": "~0.16.0",
@@ -131,13 +146,6 @@
     "unzip": "0.1.8",
     "validator": "4.2.1",
     "winston": "1.0.2"
-  },
-  "main": "index",
-  "engines": {
-    "node": "4.x"
-  },
-  "scripts": {
-    "test": "make test"
   },
   "devDependencies": {
     "mocha": "~1.13.0",

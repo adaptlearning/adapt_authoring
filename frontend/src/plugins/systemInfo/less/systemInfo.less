@@ -1,0 +1,116 @@
+@import '../../../less/sharedStyles.less';
+
+#app .systemInfo {
+  .form-container-style;
+
+  padding: 40px 30px;
+  overflow: hidden;
+
+  .inner {
+    padding: 0;
+  }
+  .logo {
+    width: 22%;
+    float: left;
+    padding-top: 10px;
+    text-align: center;
+  }
+  .info {
+    width: 77%;
+    float: right;
+
+    .header {
+      margin-bottom: 20px;
+      .main {
+        font-size: 175%;
+      }
+      .sub {
+        font-size: 120%;
+      }
+    }
+
+    .container > div {
+      margin-bottom: 25px;
+    }
+  }
+}
+
+.sidebar .systemInfo {
+  .sidebar-row-heading {
+    margin-top: 35px;
+    margin-bottom: 15px;
+    font-size: 125%;
+    text-align: center;
+  }
+}
+
+/**
+* Containers
+*/
+
+.frameworkInfo,
+.serverInfo {
+  h1 {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .status {
+    border-left: 1px solid #ccc;
+    padding-left: 10px;
+    margin-left: 5px;
+    .stat {
+      .label, .value { display: inline-block; }
+      .label {
+        font-weight: bold;
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .btn {
+    margin-top: 10px;
+    padding: 5px 7px;
+  }
+
+  /**
+  * Button animations
+  */
+
+  @anim-dura: 0.5s;
+  @anim-iter: infinite;
+  @anim-dire: alternate;
+
+  .btn.animate {
+    &.primary {
+      -webkit-animation: primaryPulse @anim-dura @anim-iter @anim-dire;
+    	-moz-animation:    primaryPulse @anim-dura @anim-iter @anim-dire;
+    	-ms-animation:     primaryPulse @anim-dura @anim-iter @anim-dire;
+    	-o-animation:      primaryPulse @anim-dura @anim-iter @anim-dire;
+    	animation:         primaryPulse @anim-dura @anim-iter @anim-dire;
+    }
+    &.secondary {
+      -webkit-animation: secondaryPulse @anim-dura @anim-iter @anim-dire;
+    	-moz-animation:    secondaryPulse @anim-dura @anim-iter @anim-dire;
+    	-ms-animation:     secondaryPulse @anim-dura @anim-iter @anim-dire;
+    	-o-animation:      secondaryPulse @anim-dura @anim-iter @anim-dire;
+    	animation:         secondaryPulse @anim-dura @anim-iter @anim-dire;
+    }
+  }
+}
+
+.colourPulse(@colour) {
+	from { background-color: @colour; }
+	to   { background-color: darken(@colour, 7%); }
+}
+
+@-webkit-keyframes primaryPulse { .colourPulse(@primary-color); }
+@-moz-keyframes    primaryPulse { .colourPulse(@primary-color); }
+@-ms-keyframes     primaryPulse { .colourPulse(@primary-color); }
+@-o-keyframes      primaryPulse { .colourPulse(@primary-color); }
+@keyframes         primaryPulse { .colourPulse(@primary-color); }
+
+@-webkit-keyframes secondaryPulse { .colourPulse(@secondary-color); }
+@-moz-keyframes    secondaryPulse { .colourPulse(@secondary-color); }
+@-ms-keyframes     secondaryPulse { .colourPulse(@secondary-color); }
+@-o-keyframes      secondaryPulse { .colourPulse(@secondary-color); }
+@keyframes         secondaryPulse { .colourPulse(@secondary-color); }

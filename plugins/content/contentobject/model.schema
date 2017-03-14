@@ -110,7 +110,7 @@
           "inputType": {"type": "Boolean", "options": [true, false]},
           "validators": [],
           "title": "Enable",
-          "help": "If set to 'true', a CSS-Class will be added once the Element is scrolled into view."
+          "help": "If set to 'true', a CSS-Class will be added once the element is scrolled into view."
         },
         "_classes": {
           "type": "string",
@@ -120,7 +120,7 @@
           "inputType": "Text",
           "validators": [],
           "title": "Classes",
-          "help": "The CSS-Class that is added to the Element."
+          "help": "The CSS-Class that is added to the element."
         },
         "_percentInviewVertical": {
           "type": "number",
@@ -130,7 +130,7 @@
           "title": "Percent in view",
           "inputType": "Number",
           "validators": ["number"],
-          "help": "Percent of the Element in View."
+          "help": "Percent of the element in view."
         }
       }
     },

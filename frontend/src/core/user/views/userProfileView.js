@@ -52,7 +52,7 @@ define(function(require){
 
       if (showPaswordUI) {
         this.$(formSelector).removeClass('display-none');
-        this.$(buttonSelector).text(window.polyglot.t('app.undochangepassword'));
+        this.$(buttonSelector).text(window.polyglot.t('app.cancel'));
       } else {
         this.$(buttonSelector).text(window.polyglot.t('app.changepassword'));
         this.$(formSelector).addClass('display-none');

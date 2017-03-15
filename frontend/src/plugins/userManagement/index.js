@@ -30,8 +30,9 @@ define(function(require) {
 
   		Origin.globalMenu.addItem({
         "location": "global",
-        "text": "User Management",
+        "text": window.polyglot.t('app.usermanagement'),
         "icon": "fa-users",
+        "sortOrder": 3,
         "callbackEvent": "userManagement:open"
       });
   	} else {

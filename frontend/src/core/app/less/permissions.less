@@ -1,19 +1,30 @@
+@import '../../../less/sharedStyles.less';
+@import '../../../less/variables.less';
+
 .permissions {
+	.form-container-style;
 	text-align:center;
-	&-inner {
-		padding:30px;
+	top: 20px;
+	position: relative;
+
+	> .inner {
+		padding: 40px;
+
+		.permissions-icon i {
+			font-size:56px;
+			color:@alert-color;
+		}
+
+		.title {
+			margin: 20px 0;
+			font-size: 16px;
+			font-weight: 600;
+		}
+
+		.body {
+			.inner {
+				margin-bottom: 20px;
+			}
+		}
 	}
-
-	h1 {
-		font-size:21px;
-	}
-}
-
-.permissions-icon i {
-	font-size:56px;
-	color:#ff5567;
-}
-
-.permissions-title {
-	margin-top:20px;
 }

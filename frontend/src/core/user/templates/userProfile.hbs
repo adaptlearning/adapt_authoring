@@ -10,6 +10,17 @@
     <div class="editing-overlay-panel-content">
         <div class="editing-overlay-panel-content-inner">
             <form class="forms">
+                
+                {{#if rolesAsName}}
+                <div class="form-group">
+                    <label>{{t 'app.role'}}</label>
+                    <dl>
+                    {{#each rolesAsName}}
+                        <dt>{{this}}</dt>
+                    {{/each}}
+                    </dl>
+                </div>
+                {{/if}}
 
                 <div class="form-group">
                     <label for="firstName">{{t 'app.firstname'}}
@@ -38,7 +49,7 @@
                 <div class="change-password-section">
                     <div class="form-group">
                         <div class="inner display-none">
-                            <label for="password">New password
+                            <label for="password">{{t 'app.newpassword'}}
                                 <span class="req">*</span>
                                 <span id="passwordError" class="error feedback"></span>
                             </label>

@@ -1,30 +1,25 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var Backbone = require('backbone');
+  var BackboneForms = require('backboneForms');
+  var Origin = require('coreJS/app/origin');
 
-    var Backbone = require('backbone');
-    var BackboneForms = require('backboneForms');
-    var Origin = require('coreJS/app/origin');
+  var TextAreaBlankView = Backbone.Form.editors.TextArea.extend({
+    render: function() {
+      // Place value
+      this.setValue(this.value);
+      return this;
+    },
 
-    var TextAreaBlankView = Backbone.Form.editors.TextArea.extend({
+    getValue: function() {
+      return this.$el.val();
+    }
+  });
 
-        render: function() {
-            // Place value
-            this.setValue(this.value);
-            return this;
-        },
+  Origin.on('app:dataReady', function() {
+    // Add Image editor to the list of editors
+    Origin.scaffold.addCustomField('TextArea:blank', TextAreaBlankView);
+  });
 
-        getValue: function() {
-            return this.$el.val();
-        }
-
-    });
-
-    Origin.on('app:dataReady', function() {
-        // Add Image editor to the list of editors
-        Origin.scaffold.addCustomField('TextArea:blank', TextAreaBlankView);
-    })
-    
-
-    return TextAreaBlankView;
-
-})
+  return TextAreaBlankView;
+});

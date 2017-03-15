@@ -107,7 +107,6 @@
   "app.confirmdeleteblockwarning": "<b>IMPORTANT</b>: This will remove any components inside this block.",
   "app.confirmdeletecomponent": "Are you sure you want to delete this component?",
   "app.confirmdeletecomponentwarning": "<b>IMPORTANT</b>: This will remove any formatting and information from this component.",
-  "app.confirmapplyextension": "Are you sure you want to apply %{extension}?",
   "app.confirmdeleteextension": "<b>IMPORTANT</b>: This will remove any configuration that may have been made to properties of this extension. Are you sure you want to remove this extension?",
   "app.deleteextension": "Delete extension",
   "app.deleteitempage": "Delete page",

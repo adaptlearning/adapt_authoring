@@ -82,20 +82,8 @@ define(function(require) {
 
     onAddExtensionClicked: function(event) {
       this.currentSelectedIds = [$(event.currentTarget).attr('data-id')];
-      var extensionName = $(event.currentTarget).attr('data-displayname');
 
-      Origin.Notify.confirm({
-        title: window.polyglot.t('app.manageextensions'),
-        text: window.polyglot.t('app.confirmapplyextension', { extension: extensionName }),
-        html: true,
-        callback: _.bind(this.onAddExtensionConfirmed, this)
-      });
-    },
-
-    onAddExtensionConfirmed: function(confirmed) {
-      if(confirmed) {
-        Origin.trigger('editorExtensionsEdit:views:add');
-      }
+      Origin.trigger('editorExtensionsEdit:views:add');
     },
 
     addExtension: function() {

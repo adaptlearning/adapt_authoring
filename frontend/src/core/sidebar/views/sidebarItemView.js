@@ -109,7 +109,7 @@ define(function(require) {
           this.$('.editor-common-sidebar-preview')
             .removeClass('action-primary')
             .addClass('action-warning');
-          this.$('.editor-common-sidebar-preview-inner').text('Force rebuild');
+          this.$('.editor-common-sidebar-preview-inner').text(window.polyglot.t('app.forcerebuild'));
           this.forceRebuild = true;
           this.timeout = window.setTimeout(_.bind(this.onKeyUp,this), 5000);
           break;

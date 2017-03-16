@@ -118,9 +118,11 @@ define(function(require) {
     var langString = window.polyglot.t('app.' + titleKey);
 
     var crumbs = ['dashboard'];
+    // menu editor
     if(loc.type !== 'menu') {
       crumbs.push('course');
     }
+    // page editor
     if(loc.action === 'edit') {
       var page = getNearestPage(model);
       crumbs.push({
@@ -128,6 +130,7 @@ define(function(require) {
         url: '#/editor/' + page.get('_courseId') + '/page/' + page.get('_id')
       });
     }
+    // this page type title
     crumbs.push({ title: langString });
 
     Origin.trigger('location:title:update', {

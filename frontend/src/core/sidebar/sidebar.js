@@ -12,7 +12,7 @@ define(function(require) {
   Origin.sidebar = {
     addView: function($el, options) {
       Origin.trigger('sidebar:views:remove');
-      // verify $el is a DOM element
+
       if (_.isElement($el[0]) !== true) {
         return console.log('Sidebar: Can only add elements to the sidebar view');
       }

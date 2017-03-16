@@ -115,7 +115,7 @@ define(function(require) {
   }
 
   /**
-  * Event handleSettingsRoute
+  * Event handling
   */
 
   function onRoute(route1, route2, route3, route4) {

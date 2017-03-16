@@ -52,7 +52,7 @@ define(function(require) {
     setupFieldsetFilters: function() {
       var fieldsets = this.form.options.fieldsets;
       if (fieldsets.length > 0) {
-        this.$('.sidebar-item-inner').append(Handlebars.templates['sidebarDivide']({title: 'Filters'}));
+        this.$('.sidebar-item-inner').append(Handlebars.templates['sidebarDivide']({ title: window.polyglot.t('app.filters') }));
       }
       _.each(fieldsets, function(fieldset) {
         this.$('.sidebar-item-inner').append(new SidebarFieldsetFilterView({model: new Backbone.Model(fieldset)}).$el);

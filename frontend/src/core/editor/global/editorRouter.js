@@ -111,9 +111,11 @@ define(function(require) {
   * Accepts backbone model, or object like so { title: '' }
   */
   function updatePageTitle(model) {
-    var titleKey = (loc.type === 'page' && loc.action === 'edit') ?
-      'editor' + loc.type + 'settings' :
-      'editor' + loc.type;
+    var isEdit = loc.action === 'edit';
+
+    var titleKey = 'editor' + loc.type;
+    if(loc.type === 'page' && isEdit) titleKey += 'settings';
+
     var modelTitle = model && model.get && model.get('title');
     var langString = window.polyglot.t('app.' + titleKey);
 
@@ -123,7 +125,7 @@ define(function(require) {
       crumbs.push('course');
     }
     // page editor
-    if(loc.action === 'edit') {
+    if(isEdit) {
       var page = getNearestPage(model);
       crumbs.push({
         title: window.polyglot.t('app.editorpage'),

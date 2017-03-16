@@ -1,46 +1,42 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
+  var Backbone = require('backbone');
+  var Helpers = require('coreJS/app/helpers');
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
   var SidebarFieldsetFilterView = require('coreJS/sidebar/views/sidebarFieldsetFilterView');
-  var Backbone = require('backbone');
-  var Helpers = require('coreJS/app/helpers');
 
   var SidebarItemView = OriginView.extend({
-
     className: 'sidebar-item',
-
     events: {
-      'click button.editor-common-sidebar-project'      : 'editProject',
-      'click button.editor-common-sidebar-config'       : 'editConfiguration',
-      'click button.editor-common-sidebar-extensions'   : 'manageExtensions',
-      'click button.editor-common-sidebar-menusettings' : 'editMenu',
-      'click button.editor-common-sidebar-select-theme' : 'selectTheme',
-      'click button.editor-common-sidebar-download'     : 'downloadProject',
-      'click button.editor-common-sidebar-preview'      : 'previewProject',
-      'click button.editor-common-sidebar-export'       : 'exportProject',
-      'click button.editor-common-sidebar-close'        : 'closeProject'
+      'click button.editor-common-sidebar-project': 'editProject',
+      'click button.editor-common-sidebar-config': 'editConfiguration',
+      'click button.editor-common-sidebar-extensions': 'manageExtensions',
+      'click button.editor-common-sidebar-menusettings': 'editMenu',
+      'click button.editor-common-sidebar-select-theme': 'selectTheme',
+      'click button.editor-common-sidebar-download': 'downloadProject',
+      'click button.editor-common-sidebar-preview': 'previewProject',
+      'click button.editor-common-sidebar-export': 'exportProject',
+      'click button.editor-common-sidebar-close': 'closeProject'
     },
 
     initialize: function(options) {
-
-        // Set form on view
-        if (options && options.form) {
-          this.form = options.form;
+      // Set form on view
+      if (options && options.form) {
+        this.form = options.form;
+      }
+      this.render();
+      this.listenTo(Origin, 'sidebar:resetButtons', this.resetButtons);
+      this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
+      this.listenTo(Origin, 'key:down', this.onKeyDown);
+      this.listenTo(Origin, 'key:up', this.onKeyUp);
+      _.defer(_.bind(function() {
+        this.setupView();
+        if (this.form) {
+          this.setupFieldsetFilters();
+          this.listenTo(Origin, 'editorSidebar:showErrors', this.onShowErrors);
         }
-        this.render();
-        this.listenTo(Origin, 'sidebar:resetButtons', this.resetButtons);
-        this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
-        this.listenTo(Origin, 'key:down', this.onKeyDown);
-        this.listenTo(Origin, 'key:up', this.onKeyUp);
-        _.defer(_.bind(function() {
-            this.setupView();
-            if (this.form) {
-              this.setupFieldsetFilters();
-              this.listenTo(Origin, 'editorSidebar:showErrors', this.onShowErrors);
-            }
-        }, this));
+      }, this));
     },
 
     postRender: function() {},
@@ -55,7 +51,7 @@ define(function(require) {
         this.$('.sidebar-item-inner').append(Handlebars.templates['sidebarDivide']({ title: window.polyglot.t('app.filters') }));
       }
       _.each(fieldsets, function(fieldset) {
-        this.$('.sidebar-item-inner').append(new SidebarFieldsetFilterView({model: new Backbone.Model(fieldset)}).$el);
+        this.$('.sidebar-item-inner').append(new SidebarFieldsetFilterView({ model: new Backbone.Model(fieldset) }).$el);
       }, this);
     },
 
@@ -83,7 +79,7 @@ define(function(require) {
 
     updateButton: function(buttonClass, updateText) {
       this.$(buttonClass)
-        .append(Handlebars.templates['sidebarUpdateButton']({updateText: updateText}))
+        .append(Handlebars.templates['sidebarUpdateButton']({ updateText: updateText }))
         .addClass('sidebar-updating')
         .attr('disabled', true)
         .find('span').eq(0).addClass('display-none');
@@ -124,23 +120,23 @@ define(function(require) {
     },
 
     editProject: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/settings', {trigger: true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/settings', { trigger: true });
     },
 
     editConfiguration: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/config', {trigger: true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/config', { trigger: true });
     },
 
     selectTheme: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/selecttheme', {trigger: true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/selecttheme', { trigger: true });
     },
 
     editMenu: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/menusettings', {trigger: true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/menusettings', { trigger: true });
     },
 
     manageExtensions: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/extensions', {trigger: true});
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/extensions', { trigger: true });
     },
 
     downloadProject: function() {
@@ -158,9 +154,7 @@ define(function(require) {
     closeProject: function() {
       Origin.router.navigate('#/dashboard');
     }
-
   });
 
   return SidebarItemView;
-
-})
+});

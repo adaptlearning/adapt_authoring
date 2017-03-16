@@ -14,7 +14,7 @@ define(function(require) {
       Origin.trigger('sidebar:views:remove');
 
       if (_.isElement($el[0]) !== true) {
-        return console.log('Sidebar: Can only add elements to the sidebar view');
+        return console.log('Sidebar: Can only add DOM elements to the view');
       }
       Origin.trigger('sidebar:sidebarContainer:update', $el, options);
     }

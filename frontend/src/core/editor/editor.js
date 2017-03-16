@@ -100,12 +100,12 @@ define(function(require) {
     _.extend(Origin.editor.data, {
       course: new EditorCourseModel({ _id:id }),
       config: new EditorConfigModel({ _courseId:id }),
-      contentObjects: createCollection(EditorContentObjectModel, '/api/content/contentobject?_courseId='+id, 'contentObjects'),
-      articles: createCollection(EditorArticleModel, '/api/content/article?_courseId='+id, 'articles'),
-      blocks: createCollection(EditorBlockModel, '/api/content/block?_courseId='+id, 'blocks'),
-      components: createCollection(EditorComponentModel, '/api/content/component?_courseId='+id, 'components'),
+      contentObjects: createCollection(EditorContentObjectModel, '/api/content/contentobject?_courseId=' + id, 'contentObjects'),
+      articles: createCollection(EditorArticleModel, '/api/content/article?_courseId=' + id, 'articles'),
+      blocks: createCollection(EditorBlockModel, '/api/content/block?_courseId=' + id, 'blocks'),
+      components: createCollection(EditorComponentModel, '/api/content/component?_courseId=' + id, 'components'),
       clipboard: createCollection(EditorClipboardModel, '/api/content/clipboard?_courseId=' + id + '&createdBy=' + Origin.sessionModel.get('id'), 'clipboard'),
-      courseAssets: createCollection(EditorCourseAssetModel, '/api/content/courseasset?_courseId='+id, 'courseAssets')
+      courseAssets: createCollection(EditorCourseAssetModel, '/api/content/courseasset?_courseId=' + id, 'courseAssets')
     });
     // load all collections
     loadEditorData(_.clone(courseData), function() {

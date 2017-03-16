@@ -21,6 +21,7 @@ define(function(require) {
         },
 
         postRender: function() {
+            SidebarItemView.prototype.postRender.apply(this, arguments);
             this.listenTo(Origin, 'sidebarFilter:filterByTags', this.filterProjectsByTags);
             this.listenTo(Origin, 'sidebarFilter:addTagToSidebar', this.addTagToSidebar);
             this.listenTo(Origin, 'sidebar:update:ui', this.updateUI);

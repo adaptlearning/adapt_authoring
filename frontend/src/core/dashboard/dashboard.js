@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Origin = require('coreJS/app/origin');
   var DashboardView = require('coreJS/dashboard/views/dashboardView');
   var DashboardSidebarView = require('coreJS/dashboard/views/dashboardSidebarView');
@@ -20,7 +19,8 @@ define(function(require) {
           callbackEvent: 'dashboard:layout:grid',
           value: 'grid',
           group: 'layout',
-        }, {
+        },
+        {
           title: window.polyglot.t('app.list'),
           icon: 'list',
           callbackEvent: 'dashboard:layout:list',
@@ -33,13 +33,15 @@ define(function(require) {
           callbackEvent: 'dashboard:sort:asc',
           value: 'asc',
           group: 'sort'
-        }, {
+        },
+        {
           title: window.polyglot.t('app.descending'),
           icon: 'sort-alpha-desc',
           callbackEvent: 'dashboard:sort:desc',
           value: 'desc',
           group: 'sort'
-        }, {
+        },
+        {
           title: window.polyglot.t('app.recent'),
           icon: 'edit',
           callbackEvent: 'dashboard:sort:updated',
@@ -52,7 +54,7 @@ define(function(require) {
 
       tagsCollection.fetch({
         success: function() {
-          Origin.sidebar.addView(new DashboardSidebarView({collection:tagsCollection}).$el);
+          Origin.sidebar.addView(new DashboardSidebarView({ collection: tagsCollection }).$el);
           var dashboardType = location || 'all';
           Origin.trigger('dashboard:loaded', { type: dashboardType });
         },
@@ -60,11 +62,8 @@ define(function(require) {
           console.log('Error occured getting the tags collection - try refreshing your page');
         }
       });
-
     });
-
   });
-  
   Origin.on('dashboard:loaded', function (options) {
     switch (options.type) {
       case 'shared':
@@ -80,21 +79,16 @@ define(function(require) {
   });
 
   Origin.on('globalMenu:dashboard:open', function() {
-
-    Origin.router.navigate('#/dashboard', {trigger: true});
-
+    Origin.router.navigate('#/dashboard', { trigger: true });
   });
-
-  var globalMenuObject = {
-    "location": "global",
-    "text": "Dashboard",
-    "icon": "fa-home",
-    "callbackEvent": "dashboard:open",
-    "sortOrder": 1
-  };
 
   Origin.on('app:dataReady login:changed', function() {
-    Origin.globalMenu.addItem(globalMenuObject);
+    Origin.globalMenu.addItem({
+      "location": "global",
+      "text": window.polyglot.t('app.dashboard'),
+      "icon": "fa-home",
+      "callbackEvent": "dashboard:open",
+      "sortOrder": 1
+    });
   });
-
 });

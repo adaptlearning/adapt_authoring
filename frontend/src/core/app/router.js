@@ -1,16 +1,14 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var PermissionsView = require('coreJS/app/views/permissionsView');
 
   var Router = Backbone.Router.extend({
-
     routes: {
-      ""                                      : "handleIndex",
-      "_=_"                                   : "handleIndex",  
-      ":module(/*route1)(/*route2)(/*route3)(/*route4)" : "handleRoute"
+      '': 'handleIndex',
+      '_=_': 'handleIndex',
+      ':module(/*route1)(/*route2)(/*route3)(/*route4)': 'handleRoute'
     },
 
     initialize: function() {
@@ -28,11 +26,10 @@ define(function(require) {
     },
 
     redirectToLogin: function() {
-       this.navigate('#/user/login', {trigger: true});
+      this.navigate('#/user/login', { trigger: true });
     },
 
     createView: function(View, viewOptions, settings) {
-
       var viewOptions = (viewOptions || {});
       var settings = (settings || {});
       var currentView;
@@ -46,17 +43,15 @@ define(function(require) {
           return this.redirectToLogin();
         }
       }
-
       $('.app-inner').append(currentView.$el);
-
     },
 
     handleIndex: function() {
       // Show loading on any route
       this.showLoading();
-      // console.log('in handleIndex');
+
       if (this.isUserAuthenticated()) {
-        this.navigate('#/dashboard', {trigger: true});
+        this.navigate('#/dashboard', { trigger: true });
       } else {
         return this.redirectToLogin();
       }
@@ -65,11 +60,9 @@ define(function(require) {
     // Persist any dashboard routing for 'Back to courses' link
     evaluateDashboardRoute: function() {
       if (Origin.location && Origin.location.module == 'dashboard') {
-
         var suffix = Origin.location.route1
           ? '/' + Origin.location.route1
           : '';
-
         Origin.dashboardRoute = '/#/dashboard' + suffix;
       }
     },
@@ -79,14 +72,12 @@ define(function(require) {
       this.showLoading();
       // Remove views
       this.removeViews();
-
       // Check this user has permissions
       if (!Origin.permissions.checkRoute(Backbone.history.fragment)) {
         Origin.trigger('sidebar:sidebarContainer:hide');
         Origin.trigger('location:title:hide');
         return $('.app-inner').append(new PermissionsView().$el);
       }
-
       // Verify the user is authenticated
       if (!this.isUserAuthenticated()  && (module !== 'user' && route1 !== 'login')) {
         Origin.Notify.alert({
@@ -97,17 +88,14 @@ define(function(require) {
       }
 
       var routeArguments = arguments;
-
       // Set previous location object
       Origin.previousLocation = Origin.location;
       this.evaluateDashboardRoute();
-
       // Set location object
       Origin.location = {};
       _.each(this.locationKeys, function(locationKey, index) {
         Origin.location[locationKey] = routeArguments[index];
       });
-
       // Trigger location change
       Origin.trigger('location:change', Origin.location);
 
@@ -116,7 +104,6 @@ define(function(require) {
         locationClass += ' location-' + Origin.location.route1
       }
       $('body').removeClass().addClass(locationClass);
-
       // Trigger router event
       Origin.trigger('router:' + module, route1, route2, route3, route4);
     },
@@ -139,11 +126,8 @@ define(function(require) {
       _.delay(_.bind(function() {
         this.$loading.addClass('display-none').removeClass('cover-top-bar');
       }, this), 300);
-
     }
-
   });
 
   return Router;
-
 });

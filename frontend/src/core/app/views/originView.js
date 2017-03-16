@@ -1,16 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-/*
-* BuilderView - base class for all views
-* License - http://github.com/adaptlearning/adapt_authoring/LICENSE
-* Maintainers - Brian Quinn <brian@learningpool.com>
-*/
 define(function(require){
-
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
 
   var OriginView = Backbone.View.extend({
-
     settings: {
       autoRender: true,
       preferencesKey: ''
@@ -27,7 +20,9 @@ define(function(require){
       this.listenTo(Origin, 'remove:views', this.remove);
     },
 
-    preRender: function() {},
+    preRender: function() {
+
+    },
 
     render: function() {
       var data = this.model ? this.model.toJSON() : null;
@@ -43,9 +38,13 @@ define(function(require){
       return this;
     },
 
-    postRender: function() {},
+    postRender: function() {
 
-    onReady: function() {},
+    },
+
+    onReady: function() {
+
+    },
 
     setViewToReady: function() {
       Origin.trigger('router:hideLoading');
@@ -53,13 +52,11 @@ define(function(require){
 
     setUserPreference: function(key, value) {
       if (this.settings.preferencesKey && typeof(Storage) !== "undefined") {
-        // Get preferences for this view
         var preferences = (Origin.sessionModel.get(this.settings.preferencesKey) || {});
-        // Set key and value
+        // persist data
         preferences[key] = value;
-        // Store in localStorage
         Origin.sessionModel.set(this.settings.preferencesKey, preferences);
-        
+
       }
     },
 
@@ -83,34 +80,24 @@ define(function(require){
     },
 
     remove: function() {
-    
-     
-      // If a view has a form - remove it when removing parent view
       if (this.form) {
-
         // remove ckeditor instances
         this.form.$( "textarea" ).each(function () {
           var editor = CKEDITOR.instances[this.id];
           try {
             // check editor is still in the dom (otherwise throws exception)
-            if (editor && editor.window.getFrame()){
+            if (editor && editor.window.getFrame()) {
               editor.destroy(true);
-            } 
+            }
           } catch (e) {
+            // do nothing
           }
         });
-
         this.form.remove();
-      } 
-        // Call original remove
+      }
       Backbone.View.prototype.remove.apply(this, arguments);
-     
-     
-
     }
-
   });
 
   return OriginView;
-
 });

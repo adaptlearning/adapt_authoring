@@ -1,21 +1,16 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
-  var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
 
   var SharedProjectView = OriginView.extend({
-
     tagName: 'li',
-
     className: 'shared-project-list-item',
 
     events: {
-      'dblclick'                        : 'promptDuplicateProject',
-      'click'                           : 'selectProject',
-      'click a.open-context-course'     : 'openContextMenu'
+      'dblclick': 'promptDuplicateProject',
+      'click': 'selectProject',
+      'click a.open-context-course': 'openContextMenu'
     },
 
     preRender: function() {
@@ -30,28 +25,25 @@ define(function(require){
       this.model.set('heroImageURI', this.model.getHeroImageURI());
     },
 
-    openContextMenu: function (e) {
-      e.stopPropagation();
-      e.preventDefault();
-
+    openContextMenu: function(e) {
+      e && e.stopPropagation() && e.preventDefault();
       Origin.trigger('contextMenu:open', this, e);
     },
 
-    selectProject: function(event) {
-      event && event.preventDefault();
-
+    selectProject: function(e) {
+      e && e.preventDefault();
       this.selectItem();
     },
 
     selectItem: function() {
       Origin.trigger('dashboard:projectView:itemSelected');
       this.$el.addClass('selected');
-      this.model.set({_isSelected:true});
+      this.model.set({ _isSelected: true });
     },
 
     deselectItem: function() {
       this.$el.removeClass('selected');
-      this.model.set({_isSelected:false});
+      this.model.set({ _isSelected: false });
     },
 
     preview: function() {
@@ -63,7 +55,6 @@ define(function(require){
 
     promptDuplicateProject: function() {
       var self = this;
-
       Origin.Notify.confirm({
         text: window.polyglot.t('app.confirmduplicate'),
         callback: function(confirmed) {
@@ -79,7 +70,7 @@ define(function(require){
         url: this.model.getDuplicateURI(),
         type: 'GET',
         success: function (data) {
-          Origin.router.navigate('/editor/' + data.newCourseId + '/settings', {trigger: true});
+          Origin.router.navigate('/editor/' + data.newCourseId + '/settings', { trigger: true });
         },
         error: function() {
           Origin.Notify.alert({
@@ -89,11 +80,9 @@ define(function(require){
         }
       });
     }
-
   }, {
     template: 'sharedProject'
   });
 
   return SharedProjectView;
-
 });

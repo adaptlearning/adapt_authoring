@@ -1,19 +1,23 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
   var _ = require('underscore');
   var Backbone = require('backbone');
 
-  var Origin = {};
+  var Origin = {
+    location: {},
+    editor: {
+      data: {}
+    }
+  };
+
+  var pluginTaps = [];
 
   _.extend(Origin, Backbone.Events);
 
   Origin.initialize = _.once(function() {
-
     Origin.tap('initialize', function() {
       initialize();
     });
-    
   });
 
   function initialize() {
@@ -30,33 +34,21 @@ define(function(require){
     if (currentLocationPluginsLength === 0) {
       callback();
     } else {
-
       var count = 0;
-      // Goes through each plugin registered using Origin.registerPluginTap 
+      // Goes through each plugin registered using Origin.registerPluginTap
       // and that have the same location
       function callPlugin() {
         currentLocationPlugins[count].pluginMethod.call(null, function() {
-          count ++;
-          if (count === currentLocationPluginsLength) {
+          if (++count === currentLocationPluginsLength) {
             callback();
           } else {
             callPlugin();
           }
         });
       }
-
       callPlugin();
-      
     }
   }
-
-  Origin.editor = {};
-
-  Origin.editor.data = {};
-
-  Origin.location = {};
-
-  var pluginTaps = [];
 
   // Register a plugin to tap into a certain location before the location loads
   Origin.registerPluginTap = function(location, pluginMethod) {
@@ -85,5 +77,4 @@ define(function(require){
   });
 
   return Origin;
-
 });

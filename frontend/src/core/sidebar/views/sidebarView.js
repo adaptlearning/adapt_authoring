@@ -20,12 +20,16 @@ define(function(require) {
       });
     },
 
+    showSidebar: function() {
+      $('html').removeClass('sidebar-hide');
+    },
+
     hideSidebar: function() {
       $('html').addClass('sidebar-hide');
     },
 
     updateViews: function($element, options) {
-      this.hideSidebar();
+      this.showSidebar();
 
       var options = options || {};
       var hasBackButton = !_.isEmpty(options.backButtonText) && !_.isEmpty(options.backButtonRoute);

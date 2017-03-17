@@ -29,22 +29,32 @@ define(function(require) {
       var name = this.$("#tenantName").val();
       var displayName = this.$("#tenantDisplayName").val();
       if (!name) {
-        alert("Name required" + name);
+        Origin.Notify.alert({
+          type: 'error',
+          title: "Please enter valid tenant name"
+        });
         return;
       }
       if (!displayName) {
-        alert("Display Name Required" + displayName);
+        Origin.Notify.alert({
+          type: 'error',
+          title: window.polyglot.t('app.addvalidtenantname')
+        });
         return;
       }
       this.$('form.add-Tenant').ajaxSubmit({
         error: function(e) {
-          alert("Unable to add Tenant");
+          Origin.Notify.alert({
+            type: 'error',
+            title: "",
+            text: window.polyglot.t('app.errorcannotaddtenant')
+          });
         },
         success: function(t) {
           Origin.Notify.alert({
             type: 'success',
-            title: "New Tenant",
-            text: "Tenant added successfully!",
+            title: window.polyglot.t('app.newtenant'),
+            text:  window.polyglot.t('app.addtenantsuccess'),
             callback: function() {
               self.goBack();
             }

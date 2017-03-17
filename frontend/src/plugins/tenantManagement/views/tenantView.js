@@ -88,7 +88,7 @@ define(function(require) {
       this.enableFieldEdit($column);
       var $input = this.getInputFromDiv($column);
       var inputType = $input.attr('type');
-      if (inputType === "text" || inputType === "email") {
+      if (inputType === 'text' || inputType === 'email') {
         $input.val(this.model.get($input.attr('data-modelKey')));
       }
     },
@@ -115,25 +115,28 @@ define(function(require) {
       var self = this;
       Origin.Notify.confirm({
         type: 'confirm',
-        text: 'Disable Tenant<br/><b>' + this.model.get('name') +
-        '</b>.<br/><br/> Are you sure?',
+        text: window.polyglot.t('app.disabletenantconfirm') + ' ' + this.model.get('name'),
         callback: function(confirmed) {
           if (confirmed) {
-            $.ajax({
-              url: 'api/tenant/' + self.model.get("_id"),
-              type: 'DELETE',
-              success: function(result) {
-                var disableId = event.currentTarget.id;
-                var enableId = 'enable_' + disableId.split('_')[1];
-                $("#" + disableId).addClass('display-none');
-                $("#" + enableId).removeClass('display-none');
-                Origin.Notify.alert({
-                  type:'success',
-                  text:'Tenant disabled!'
-                });
-              }
-            });
+            self.disableTenant(event);
           }
+        }
+      });
+    },
+
+    disableTenant: function(event) {
+      $.ajax({
+        url: 'api/tenant/' + this.model.get("_id"),
+        type: 'DELETE',
+        success: function(result) {
+          var disableId = event.currentTarget.id;
+          var enableId = 'enable_' + disableId.split('_')[1];
+          $('#' + disableId).addClass('display-none');
+          $('#' + enableId).removeClass('display-none');
+          Origin.Notify.alert({
+            type: 'success',
+            text: window.polyglot.t('app.disabletenantsuccess')
+          });
         }
       });
     },
@@ -142,26 +145,29 @@ define(function(require) {
       var self = this;
       Origin.Notify.confirm({
         type: 'confirm',
-        text: 'Enable Tenant<br/><b>' + this.model.get('name') +
-        '</b>.<br/><br/> Are you sure?',
+        text: window.polyglot.t('app.enabletenantconfirm') + ' ' + this.model.get('name'),
         callback: function(confirmed) {
           if (confirmed) {
-            $.ajax({
-              url: 'api/tenant/' + self.model.get("_id"),
-              type: 'PUT',
-              data: { '_isDeleted': false },
-              success: function(result) {
-                var enableId = event.currentTarget.id;
-                var disableId = 'disable_' + enableId.split('_')[1];
-                $("#" + enableId).addClass('display-none');
-                $("#" + disableId).removeClass('display-none');
-                Origin.Notify.alert({
-                  type:'success',
-                  text:'Tenant enabled!'
-                });
-              }
-            });
+            self.enableTenant(event);
           }
+        }
+      });
+    },
+
+    enableTenant: function(event) {
+      $.ajax({
+        url: 'api/tenant/' + this.model.get("_id"),
+        type: 'PUT',
+        data: { '_isDeleted': false },
+        success: function(result) {
+          var enableId = event.currentTarget.id;
+          var disableId = 'disable_' + enableId.split('_')[1];
+          $('#' + enableId).addClass('display-none');
+          $('#' + disableId).removeClass('display-none');
+          Origin.Notify.alert({
+            type: 'success',
+            text: window.polyglot.t('app.disabletenantsuccess')
+          });
         }
       });
     }
@@ -170,5 +176,5 @@ define(function(require) {
     template: 'tenant'
   });
 
-return TenantView;
+  return TenantView;
 });

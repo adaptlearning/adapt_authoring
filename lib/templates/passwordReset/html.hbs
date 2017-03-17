@@ -13,7 +13,9 @@
       </div>
       <p>{{greeting}},</p>
       {{{text}}}
-      <a class="btn" href="{{{templateData.rootUrl}}}#user/reset/{{{templateData.resetToken}}}" target="_blank"">{{templateData.resetLabel}}</a>
+      {{#if templateData.showButton}}
+      <a class="btn" href="{{{templateData.rootUrl}}}#user/reset/{{{templateData.resetToken}}}" target="_blank">{{templateData.resetLabel}}</a>
+      {{/if}}
     </div>
     <div class="footer">
       {{footer}}

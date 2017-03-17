@@ -57,6 +57,12 @@ form {
 	}
 }
 
+.field-object {
+	.legend {
+		cursor: pointer;
+	}
+}
+
 .field {
 	padding:18px 30px;
 	&-object {
@@ -75,14 +81,15 @@ form {
 }
 
 .list-item {
-	border: 1px solid #ccc;
-	border-radius: 3px;
-	padding: 8px;
-	background-color: #e9f0fa;
-	margin-bottom: 8px;
-	cursor:pointer;
-	width:80%;
+	border: 1px solid #aaa;
+	border-radius: 2px;
+	padding: 15px;
+	margin-bottom: 10px;
+	cursor: pointer;
 	word-wrap: break-word;
+	&:hover {
+		border-color: #696969;
+	}
 	span {
 		display:inline-block;
 		float:left;
@@ -90,6 +97,8 @@ form {
 	}
 	button {
 		float:right;
+		padding: 1px 8px;
+		font-size: 140%;
 	}
 }
 

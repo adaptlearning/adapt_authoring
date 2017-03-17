@@ -14,7 +14,7 @@
     },
     "description": {
       "type": "string",
-      "required": "true"
+      "required": "false"
     },
     "path": {
       "type": "string",

@@ -462,7 +462,7 @@ define(function(require) {
                 model: contentObjectModel
               });
               Origin.trigger('location:title:update', {title: 'Editing page - ' + contentObjectModel.get('title')});
-              Origin.sidebar.addView(new EditorPageEditSidebarView().$el);
+              Origin.sidebar.addView(new EditorPageEditSidebarView({form: form}).$el);
               Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel, form: form}).$el);
             }
           });

@@ -16,6 +16,7 @@
       "required": true,
       "default": "New Course Title",
       "inputType": "Text",
+      "translatable": true,
       "validators": [
         "required"
       ]
@@ -26,13 +27,23 @@
       "default": "New Course Title",
       "inputType": "DisplayTitle",
       "validators": [],
-      "help": "This is the title that will be displayed on the main menu"
+      "help": "This is the title that will be displayed on the main menu",
+      "translatable": true
+    },
+    "description": {
+      "type": "string",
+      "required": false,
+      "default": "",
+      "inputType": "Text",
+      "validators": [],
+      "translatable": true
     },
     "body": {
       "type": "string",
       "default": "",
       "inputType": "TextArea",
-      "validators": []
+      "validators": [],
+      "translatable": true
     },
     "_extensions": {
       "type": "object"
@@ -144,6 +155,7 @@
               "default": "Turn accessibility on?",
               "inputType": "Text",
               "required": true,
+              "translatable": true,
               "validators": [
                 "required"
               ]
@@ -152,6 +164,18 @@
               "type": "string",
               "title": "Toggle off label",
               "default": "Turn accessibility off?",
+              "inputType": "Text",
+              "required": true,
+              "translatable": true,
+              "validators": [
+                "required"
+              ]
+            },
+            "skipNavigationText": {
+              "type": "string",
+              "title": "Skip navigation label",
+              "translatable": true,
+              "default": "Skip navigation",
               "inputType": "Text",
               "required": true,
               "validators": [
@@ -168,6 +192,7 @@
                   "default": "Usage instructions. Use swipe left for next. Use swipe right for previous. Use a double tab to select. Use a two finger slide up to go to the top of the page.",
                   "inputType": "Text",
                   "required": true,
+                  "translatable": true,
                   "validators": [
                     "required"
                   ]
@@ -178,6 +203,7 @@
                   "default": "Usage instructions. Use tab for next. Use shift tab for previous. Use enter to select. Use escape to go to the top of the page.",
                   "inputType": "Text",
                   "required": true,
+                  "translatable": true,
                   "validators": [
                     "required"
                   ]
@@ -188,6 +214,7 @@
                   "default": "Usage instructions for touchscreens. Use swipe left for next. Use swipe right for previous. Use a double tab to select. Use a two finger slide up to go to the top of the page. Usage instructions for keyboard access. Use left for next. Use right for previous. Use up and down together to select.",
                   "inputType": "Text",
                   "required": true,
+                  "translatable": true,
                   "validators": [
                     "required"
                   ]
@@ -203,6 +230,15 @@
                   "title": "",
                   "default": "Course navigation bar",
                   "inputType": "Text",
+                  "required": true,
+                  "translatable": true
+                },
+                "skipNavigation": {
+                  "type": "string",
+                  "translatable": true,
+                  "title": "",
+                  "default": "Skip navigation",
+                  "inputType": "Text",
                   "required": true
                 },
                 "menuLoaded": {
@@ -210,168 +246,192 @@
                   "title": "",
                   "default": "Menu loaded",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "menu": {
                   "type": "string",
                   "title": "",
                   "default": "Menu",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "menuItem": {
                   "type": "string",
                   "title": "",
                   "default": "Menu item",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "menuViewButton": {
                   "type": "string",
                   "title": "",
                   "default": "Select here to enter",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "page": {
                   "type": "string",
                   "title": "",
                   "default": "Page",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "pageLoaded": {
                   "type": "string",
                   "title": "",
                   "default": "Page loaded",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "previous": {
                   "type": "string",
                   "title": "",
                   "default": "Back",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "navigationBack": {
                   "type": "string",
                   "title": "",
                   "default": "Navigate back",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "navigationDrawer": {
                   "type": "string",
                   "title": "",
                   "default": "Open course resources and search",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "closeResources": {
                   "type": "string",
                   "title": "",
                   "default": "Close resources",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "drawerBack": {
                   "type": "string",
                   "title": "",
                   "default": "Back to drawer",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "drawer": {
                   "type": "string",
                   "title": "",
                   "default": "Side drawer",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "closePopup": {
                   "type": "string",
                   "title": "",
                   "default": "Close popup",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "next": {
                   "type": "string",
                   "title": "",
                   "default": "Next",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "done": {
                   "type": "string",
                   "title": "",
                   "default": "Done",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "complete": {
                   "type": "string",
                   "title": "",
                   "default": "Complete",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "incomplete": {
                   "type": "string",
                   "title": "",
                   "default": "Incomplete",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "correct": {
                   "type": "string",
                   "title": "",
                   "default": "Correct",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "locked": {
                   "type": "string",
                   "title": "",
                   "default": "Locked",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "accessibilityToggleButton": {
                   "type": "string",
                   "title": "",
                   "default": "By selecting this button you can set whether accessibility is turned on or off",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "feedbackPopUp": {
                   "type": "string",
                   "title": "",
                   "default": "Popup opened",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "visited": {
                   "type": "string",
                   "title": "",
                   "default": "Visited",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "menuBack": {
                   "type": "string",
                   "title": "",
                   "default": "Back to menu",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 },
                 "menuIndicatorHeading": {
                   "type": "string",
                   "title": "",
                   "default": "Menu item heading ",
                   "inputType": "Text",
-                  "required": true
+                  "required": true,
+                  "translatable": true
                 }
               }
             }
@@ -394,6 +454,7 @@
               "default": "Submit",
               "inputType": "Text",
               "required": true,
+              "translatable": true,
               "validators": [
                 "required"
               ]
@@ -404,6 +465,7 @@
               "default": "Submit",
               "inputType": "Text",
               "required": true,
+              "translatable": true,
               "validators": [
                 "required"
               ]
@@ -419,6 +481,7 @@
               "default": "Reset",
               "inputType": "Text",
               "required": true,
+              "translatable": true,
               "validators": [
                 "required"
               ]
@@ -429,6 +492,7 @@
               "default": "Reset",
               "inputType": "Text",
               "required": true,
+              "translatable": true,
               "validators": [
                 "required"
               ]
@@ -444,6 +508,7 @@
               "default": "Show correct answer",
               "inputType": "Text",
               "required": true,
+              "translatable": true,
               "validators": [
                 "required"
               ]
@@ -454,6 +519,7 @@
               "default": "Show correct answer",
               "inputType": "Text",
               "required": true,
+              "translatable": true,
               "validators": [
                 "required"
               ]
@@ -469,6 +535,7 @@
               "default": "Hide correct answer",
               "inputType": "Text",
               "required": true,
+              "translatable": true,
               "validators": [
                 "required"
               ]
@@ -479,6 +546,7 @@
               "default": "Hide correct answer",
               "inputType": "Text",
               "required": true,
+              "translatable": true,
               "validators": [
                 "required"
               ]
@@ -494,6 +562,7 @@
               "default": "Show feedback",
               "inputType": "Text",
               "required": true,
+              "translatable": true,
               "validators": [
                 "required"
               ]
@@ -504,6 +573,7 @@
               "default": "Show feedback",
               "inputType": "Text",
               "required": true,
+              "translatable": true,
               "validators": [
                 "required"
               ]
@@ -516,6 +586,7 @@
           "default": "remaining attempts",
           "inputType": "Text",
           "required": true,
+          "translatable": true,
           "validators": [
             "required"
           ]
@@ -526,6 +597,7 @@
           "default": "final attempt",
           "inputType": "Text",
           "required": true,
+          "translatable": true,
           "validators": [
             "required"
           ]
@@ -536,6 +608,7 @@
           "default": "This button is disabled at the moment",
           "inputType": "Text",
           "required": true,
+          "translatable": true,
           "validators": [
             "required"
           ]

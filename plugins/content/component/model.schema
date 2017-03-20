@@ -62,7 +62,8 @@
       "required":true,
       "default": "New Component Title",
       "inputType":"Text",
-      "validators": ["required"]
+      "validators": ["required"],
+      "translatable": true
     },
     "displayTitle": {
       "type":"string",
@@ -70,13 +71,15 @@
       "default": "New Component Title",
       "inputType":"DisplayTitle",
       "validators": [],
-      "help": "When viewing a component - this is the title that will be displayed"
+      "help": "When viewing a component - this is the title that will be displayed",
+      "translatable": true
     },
     "body":{
       "type":"string",
       "default" : "",
       "inputType":"TextArea",
-      "validators": []
+      "validators": [],
+      "translatable": true
     },
     "_extensions": {
       "type":"object"

@@ -209,21 +209,21 @@ define(function(require) {
 		// Setup default fieldsets
 		var fieldsets = {
 			general: {
-				legend: 'General',
+				legend: window.polyglot.t('app.general'),
 				fields: []
 			},
 			// ::TODO
 			// I want to remove this please
 			properties: {
-				legend: 'Properties',
+				legend: window.polyglot.t('app.properties'),
 				fields: []
 			}, 
 			settings :{
-				legend: 'Settings',
+				legend: window.polyglot.t('app.settings'),
 				fields: []
 			},
 			extensions: {
-				legend: 'Extensions',
+				legend: window.polyglot.t('app.extensions'),
 				fields: ['_extensions']
 			}
 		};

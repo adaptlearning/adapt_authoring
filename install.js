@@ -295,9 +295,9 @@ var steps = [
                 masterTenant = tenant;
                 console.log("Tenant " + tenant.name + " was created. Now saving configuration, please wait ...");
                 // save master tenant name to config
-                configuration.setConfig('masterTenantName', tenant.name);
-                configuration.setConfig('masterTenantID', tenant._id);
-                saveConfig(configuration.getConfig(), cb);
+                app.configuration.setConfig('masterTenantName', tenant.name);
+                app.configuration.setConfig('masterTenantID', tenant._id);
+                saveConfig(app.configuration.getConfig(), cb);
               }
             );
           };

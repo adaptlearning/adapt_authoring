@@ -21,13 +21,13 @@
 {{else}}
 <div class="navigation-right">
 {{/if}}
-  {{#if _canRevert}}<button class="revert-loginas btn">Log back in as {{_revertLogin.email}}</button>{{/if}}
+  {{#if _canRevert}}<button class="revert-loginas btn">{{t 'app.logbackinas'}} {{_revertLogin.email}}</button>{{/if}}
     {{#if isAuthenticated}}
     <a href="#" class="navigation-item navigation-help" data-event="help">
       <span>{{t 'app.help'}}</span>
     </a>
     <a href="#" class="navigation-item navigation-profile" data-event="user:profile">
-      Signed in as: <span>{{email}}</span>
+      {{t 'app.loggedinas'}}: <span>{{email}}</span>
     </a>
     <a href="#" class="navigation-item navigation-user-logout btn white-hollow" data-event="user:logout">
       <span>{{t 'app.logout'}}</span>

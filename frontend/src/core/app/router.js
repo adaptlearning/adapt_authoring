@@ -29,23 +29,6 @@ define(function(require) {
       this.navigate('#/user/login', { trigger: true });
     },
 
-    createView: function(View, viewOptions, settings) {
-      var viewOptions = (viewOptions || {});
-      var settings = (settings || {});
-      var currentView;
-
-      if (this.isUserAuthenticated()) {
-        currentView = new View(viewOptions);
-      } else {
-        if (settings.authenticate === false) {
-          currentView = new View(viewOptions);
-        } else {
-          return this.redirectToLogin();
-        }
-      }
-      $('.app-inner').append(currentView.$el);
-    },
-
     handleIndex: function() {
       // Show loading on any route
       this.showLoading();

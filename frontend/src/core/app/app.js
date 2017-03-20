@@ -6,6 +6,7 @@ require([
     'coreJS/app/origin',
     'coreJS/app/router',
     'coreJS/app/permissions',
+    'coreJS/app/contentPane',
     'coreJS/user/user',
     'coreJS/project/project',
     'coreJS/dashboard/dashboard',
@@ -42,6 +43,7 @@ require([
     Origin,
     Router,
     Permissions,
+    ContentPane,
     User,
     Project,
     Dashboard,
@@ -96,10 +98,10 @@ require([
                   Origin.initialize();
               });
           });
-          
+
         }
       });
     });
   });
-  
+
 });

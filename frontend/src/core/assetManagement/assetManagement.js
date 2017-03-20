@@ -24,7 +24,7 @@ define(function(require) {
             // Mainly due to serverside filtering
             Origin.trigger('location:title:hide');
             Origin.sidebar.addView(new AssetManagementSidebarView({collection: tagsCollection}).$el);
-            Origin.router.createView(AssetManagementView, {collection: assetCollection});
+            Origin.contentPane.addView(AssetManagementView, {collection: assetCollection});
             Origin.trigger('assetManagement:loaded');
           },
           error: function() {
@@ -34,7 +34,7 @@ define(function(require) {
     } else if (location=== 'new') {
         Origin.trigger('location:title:update', {title: 'New Asset'});
         Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
-        Origin.router.createView(AssetManagementNewAssetView, { model: new AssetModel });
+        Origin.contentPane.addView(AssetManagementNewAssetView, { model: new AssetModel });
     } else if (subLocation === 'edit') {
       var Asset = new AssetModel({ _id: location });
       // Fetch existing asset model
@@ -42,7 +42,7 @@ define(function(require) {
         success: function() {
           Origin.trigger('location:title:update', {title: 'Edit Asset'});
           Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
-          Origin.router.createView(AssetManagementNewAssetView, { model: Asset });
+          Origin.contentPane.addView(AssetManagementNewAssetView, { model: Asset });
         }
       });
     }

@@ -13,10 +13,10 @@ define(function(require) {
     }
 
     if ('upload' === location) {
-      Origin.router.createView(PluginManagementUploadView);
+      Origin.contentPane.addView(PluginManagementUploadView);
       Origin.sidebar.addView(new PluginManagementUploadSidebarView().$el, {});
     } else {
-      Origin.router.createView(PluginManagementView, { pluginType: location });
+      Origin.contentPane.addView(PluginManagementView, { pluginType: location });
       Origin.sidebar.addView(new PluginManagementSidebarView().$el);
     }
   });

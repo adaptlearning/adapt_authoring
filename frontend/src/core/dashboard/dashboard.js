@@ -12,7 +12,7 @@ define(function(require) {
     Origin.tap('dashboard', function() {
       Origin.editor = {};
       Origin.editor.data = {};
-      
+
       Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
       Origin.options.addItems([
         {
@@ -66,15 +66,16 @@ define(function(require) {
       });
     });
   });
+
   Origin.on('dashboard:loaded', function (options) {
     switch (options.type) {
       case 'shared':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing shared courses'});
-        Origin.router.createView(DashboardView, {collection: new SharedProjectCollection});
+        Origin.contentPane.addView(DashboardView, {collection: new SharedProjectCollection});
         break;
       case 'all':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
-        Origin.router.createView(DashboardView, {collection: new MyProjectCollection});
+        Origin.contentPane.addView(DashboardView, {collection: new MyProjectCollection});
       default:
         break;
     }

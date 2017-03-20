@@ -248,6 +248,7 @@
   "app.uploadpluginerror": "Plugin upload failed",
   "app.uploadedbyuser": "Uploaded By User",
   "app.pluginfile": "Plugin File",
+  "app.noplugintypes": "No plugin types to display",
   "app.menupicker": "Menu picker",
   "app.menumanagement": "Manage Available Menus",
   "app.uploadnewtheme": "Upload new theme",

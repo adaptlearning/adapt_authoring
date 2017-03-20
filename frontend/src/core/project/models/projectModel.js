@@ -20,7 +20,7 @@ define(function(require) {
       if(Helpers.isAssetExternal(this.get('heroImage'))) {
         return this.get('heroImage');
       } else {
-        return '/api/asset/serve/' + this.get('heroImage');
+        return '/api/asset/thumb/' + this.get('heroImage');
       }
     },
 
@@ -31,7 +31,6 @@ define(function(require) {
     getDuplicateURI: function () {
       return '/api/duplicatecourse/' + this.get('_id');
     }
-
   });
 
   return ProjectModel;

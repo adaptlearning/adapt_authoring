@@ -16,14 +16,13 @@ define(function(require) {
     animDuration: 300,
 
     initialize: function() {
-      this.listenTo(Origin, {
-        'contentPane:show': this.show,
-        'contentPane:hide': this.hide,
-        'remove:views': this.removeView
-      });
-      $(window).on('resize', _.bind(this.resize, this));
-
+      this.listenToEvents();
       this.render();
+    },
+
+    listenToEvents: function() {
+      this.listenTo(Origin, 'remove:views', this.removeView );
+      $(window).on('resize', _.bind(this.resize, this));
     },
 
     render: function() {
@@ -58,16 +57,6 @@ define(function(require) {
         this.animDuration,
         cb ? _.bind(cb, this) : undefined
       );
-    },
-
-    show: function(element) {
-      console.log('contentPaneView.show');
-      this.animateIn();
-    },
-
-    hide: function() {
-      console.log('contentPaneView.hide');
-      this.animateOut();
     },
 
     resize: function() {

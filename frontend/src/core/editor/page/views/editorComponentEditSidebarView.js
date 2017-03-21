@@ -23,7 +23,6 @@ define(function(require) {
       var currentCourseId = Origin.editor.data.course.get('_id');
       var currentPageId = this.model.getParent().getParent().getParent().get('_id');
       Origin.router.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
-      Origin.trigger('editingOverlay:views:hide');
     }
 
   }, {

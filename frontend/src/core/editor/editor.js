@@ -225,7 +225,7 @@ define(function(require) {
           });
           Origin.trigger('location:title:update', {title: 'Editing article - ' + articleModel.get('title')});
           Origin.sidebar.addView(new EditorArticleEditSidebarView({model: articleModel, form: form}).$el);
-          Origin.editingOverlay.addView(new EditorArticleEditView({model: articleModel, form: form}).$el);
+          Origin.contentPane.setView(EditorArticleEditView, { model: articleModel, form: form });
         }
       });
       return;
@@ -240,7 +240,7 @@ define(function(require) {
           });
           Origin.trigger('location:title:update', {title: 'Editing block - ' + blockModel.get('title')});
           Origin.sidebar.addView(new EditorBlockEditSidebarView({model: blockModel, form: form}).$el);
-          Origin.editingOverlay.addView(new EditorBlockEditView({model: blockModel, form: form}).$el);
+          Origin.contentPane.setView(EditorBlockEditView, { model: blockModel, form: form });
         }
       });
       return;
@@ -264,9 +264,7 @@ define(function(require) {
       Origin.sidebar.addView(new EditorComponentListSidebarView({
         model: componentSelectModel
       }).$el);
-      Origin.editingOverlay.addView(new EditorComponentListView({
-        model: componentSelectModel
-      }).$el);
+      Origin.contentPane.setView(EditorComponentListView, { model: componentSelectModel });
 
       return;
     }
@@ -288,7 +286,7 @@ define(function(require) {
 
           Origin.trigger('location:title:update', {title: 'Editing ' + componentDisplayName + ' component - ' + componentModel.get('title')});
           Origin.sidebar.addView(new EditorComponentEditSidebarView({model: componentModel, form:form}).$el);
-          Origin.editingOverlay.addView(new EditorComponentEditView({model: componentModel, form:form}).$el);
+          Origin.contentPane.setView(EditorComponentEditView, { model: componentModel, form: form });
         }
       });
       return;
@@ -305,7 +303,7 @@ define(function(require) {
             });
 
             Origin.trigger('location:title:update', {title: 'Edit course'});
-            Origin.editingOverlay.addView(new ProjectDetailView({model: project, form: form}).$el);
+            Origin.contentPane.setView(ProjectDetailView, { model: project, form: form });
             Origin.sidebar.addView(new ProjectDetailEditSidebarView({form: form}).$el);
           }
         });
@@ -326,7 +324,7 @@ define(function(require) {
 
             Origin.trigger('location:title:update', {title: 'Edit configuration'});
             Origin.sidebar.addView(new EditorConfigEditSidebarView({form: form}).$el);
-            Origin.editingOverlay.addView(new EditorConfigEditView({model: configModel, form: form}).$el);
+            Origin.contentPane.setView(EditorConfigEditView, { model: configModel, form: form });
           }
         });
 
@@ -352,7 +350,7 @@ define(function(require) {
           success: function() {
             Origin.trigger('location:title:update', {title: 'Select theme'});
             Origin.sidebar.addView(new EditorThemeCollectionSidebarView().$el, optionsObject);
-            Origin.editingOverlay.addView(new EditorThemeCollectionView({model: configModel}).$el);
+            Origin.contentPane.setView(EditorThemeCollectionView, { model: configModel });
           }
         });
 
@@ -380,7 +378,7 @@ define(function(require) {
         };
 
         Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el, optionsObject);
-        Origin.editingOverlay.addView(new EditorExtensionsEditView({model: extensionsModel}).$el);
+        Origin.contentPane.setView(EditorExtensionsEditView, { model: extensionsModel });
 
         break;
 
@@ -405,7 +403,7 @@ define(function(require) {
 
             Origin.trigger('location:title:update', {title: 'Select menu'});
             Origin.sidebar.addView(new EditorMenuSettingsEditSidebarView().$el, optionsObject);
-            Origin.editingOverlay.addView(new EditorMenuSettingsEditView({model: configModel}).$el);
+            Origin.contentPane.setView(EditorMenuSettingsEditView, { model: configModel });
           }
         });
         break;
@@ -425,7 +423,7 @@ define(function(require) {
 
               Origin.trigger('location:title:update', {title: 'Editing menu - ' + contentObjectModel.get('title')});
               Origin.sidebar.addView(new EditorPageEditSidebarView().$el);
-              Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel, form: form}).$el);
+              Origin.contentPane.setView(EditorPageEditView, { model: contentObjectModel, form: form });
             }
           });
         } else {
@@ -463,7 +461,7 @@ define(function(require) {
               });
               Origin.trigger('location:title:update', {title: 'Editing page - ' + contentObjectModel.get('title')});
               Origin.sidebar.addView(new EditorPageEditSidebarView({form: form}).$el);
-              Origin.editingOverlay.addView(new EditorPageEditView({model: contentObjectModel, form: form}).$el);
+              Origin.contentPane.setView(EditorPageEditView, { model: contentObjectModel, form: form });
             }
           });
         } else {

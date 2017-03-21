@@ -21,7 +21,6 @@ define(function(require) {
     cancel: function(event) {
         event.preventDefault();
         Backbone.history.history.back();
-        Origin.trigger('editingOverlay:views:hide');
     }
 
   }, {

@@ -202,7 +202,6 @@ define(function(require){
     },
 
     onSaveSuccess: function() {
-      Origin.trigger('editingOverlay:views:hide');
       Origin.trigger('editor:refreshData', function() {
         Backbone.history.history.back();
         this.remove();

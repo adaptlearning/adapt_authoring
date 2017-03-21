@@ -18,7 +18,8 @@ define(function(require) {
     initialize: function() {
       this.listenTo(Origin, {
         'contentPane:show': this.show,
-        'contentPane:hide': this.hide
+        'contentPane:hide': this.hide,
+        'remove:views': this.removeView
       });
       $(window).on('resize', _.bind(this.resize, this));
 
@@ -36,14 +37,18 @@ define(function(require) {
       if(!view.$el || !view.$el[0] || !_.isElement(view.$el[0])) {
         console.log('ContentPaneView.setView: expects a Backbone.View instance, received', view);
       }
-      this.removeView();
+      if(this.$('.contentPane-inner').html() !== '') {
+        this.removeView();
+      }
       this.$('.contentPane-inner').html(view.$el);
+      Origin.trigger('contentPane:changed');
       this.animateIn(_.bind(this.resize, this));
     },
 
     removeView: function(cb) {
       this.$('.contentPane-inner').empty();
       if(cb) cb.apply(this);
+      Origin.trigger('contentPane:emptied');
     },
 
     animateIn: function(cb) {

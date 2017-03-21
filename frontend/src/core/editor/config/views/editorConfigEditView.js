@@ -9,8 +9,10 @@ define(function(require) {
     className: "config-edit",
 
     preRender: function() {
-      this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
-      this.listenTo(Origin, 'editorConfigEditSidebar:views:save', this.save);
+      this.listenTo(Origin, {
+        'editorSidebarView:removeEditView': this.remove,
+        'editorConfigEditSidebar:views:save': this.save
+      });
     },
 
     getAttributesToSave: function() {
@@ -23,8 +25,7 @@ define(function(require) {
         _courseId: this.model.get('_courseId')
       });
     }
-  },
-  {
+  }, {
     template: 'editorConfigEdit'
   });
 

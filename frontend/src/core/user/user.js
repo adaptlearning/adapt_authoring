@@ -55,7 +55,7 @@ define(function(require) {
           profile.fetch({
             success: function() {
               Origin.sidebar.addView(new UserProfileSidebarView().$el);
-              Origin.contentPane.addView(currentView, { model: profile });
+              Origin.contentPane.setView(currentView, { model: profile });
             }
           });
           break;
@@ -63,12 +63,12 @@ define(function(require) {
           var reset = new UserPasswordResetModel({token: subLocation});
           reset.fetch({
             success: function() {
-              Origin.contentPane.addView(currentView, { model: reset });
+              Origin.contentPane.setView(currentView, { model: reset });
             }
           });
           break;
         default:
-          Origin.contentPane.addView(currentView, { model: Origin.sessionModel });
+          Origin.contentPane.setView(currentView, { model: Origin.sessionModel });
       }
     }
   });

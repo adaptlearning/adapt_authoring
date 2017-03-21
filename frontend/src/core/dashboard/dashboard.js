@@ -71,11 +71,11 @@ define(function(require) {
     switch (options.type) {
       case 'shared':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing shared courses'});
-        Origin.contentPane.addView(DashboardView, {collection: new SharedProjectCollection});
+        Origin.contentPane.setView(DashboardView, {collection: new SharedProjectCollection});
         break;
       case 'all':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
-        Origin.contentPane.addView(DashboardView, {collection: new MyProjectCollection});
+        Origin.contentPane.setView(DashboardView, {collection: new MyProjectCollection});
       default:
         break;
     }

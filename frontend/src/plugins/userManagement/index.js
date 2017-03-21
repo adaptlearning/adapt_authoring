@@ -65,7 +65,7 @@ define(function(require) {
       sidebarView = AddUserSidebarView;
     }
 
-    Origin.contentPane.addView(mainView, { model: new Backbone.Model({ globalData: data }) });
+    Origin.contentPane.setView(mainView, { model: new Backbone.Model({ globalData: data }) });
     Origin.sidebar.addView(new sidebarView().$el);
   };
 

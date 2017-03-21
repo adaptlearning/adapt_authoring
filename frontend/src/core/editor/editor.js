@@ -437,7 +437,7 @@ define(function(require) {
 
           Origin.editor.scrollTo = 0;
           // Create Editor menu view
-          Origin.contentPane.addView(EditorView, {
+          Origin.contentPane.setView(EditorView, {
             currentCourseId: route1,
             currentView: 'menu',
             currentPageId: (route3 || null)
@@ -472,7 +472,7 @@ define(function(require) {
 
           // Create Editor page view
           // Origin.editor.scrollTo = 0;
-          Origin.contentPane.addView(EditorView, {
+          Origin.contentPane.setView(EditorView, {
             currentCourseId: route1,
             currentView: 'page',
             currentPageId: (route3 || null)

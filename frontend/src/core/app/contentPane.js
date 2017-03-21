@@ -6,8 +6,8 @@ define(function(require) {
   var contentPaneView;
 
   Origin.contentPane = {
-    addView: function(View, options) {
-      contentPaneView.setView(new View(options));
+    setView: function(ViewClass, options) {
+      contentPaneView.setView(new ViewClass(options));
     }
   };
 

@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
@@ -8,10 +7,8 @@ define(function(require) {
   var ThemeView = require('editorTheme/views/editorThemeView');
 
   var EditorThemeEditView = EditorOriginView.extend({
-
-    tagName: "ul",
-
     className: "editor-theme-edit",
+    tagName: "ul",
 
     events: {
 
@@ -35,20 +32,14 @@ define(function(require) {
     },
 
     renderThemeViews: function() {
-
       this.collection.each(function(theme) {
-
         var isSelected = false;
-
         if (theme.get('_id') === this.model.get('_theme')) {
           isSelected = true;
         }
-
         theme.set('_isSelected', isSelected);
         this.$('.theme-list').append(new ThemeView({model: theme}).$el);
-
       }, this);
-
     },
 
     cancel: function(event) {
@@ -68,7 +59,7 @@ define(function(require) {
             type: 'error',
             text: window.polyglot.t('app.errornothemeselected')
           });
-        
+
         Origin.trigger('sidebar:resetButtons');
         return;
       }
@@ -91,13 +82,10 @@ define(function(require) {
           }, this);
 
         }, this));
-
     }
-  },
-  {
+  }, {
     template: 'editorThemeEdit'
   });
 
   return EditorThemeEditView;
-
 });

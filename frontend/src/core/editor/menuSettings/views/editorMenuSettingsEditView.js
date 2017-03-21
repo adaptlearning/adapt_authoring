@@ -43,19 +43,14 @@ define(function(require) {
       if (event) {
         event.preventDefault();
       }
-
-      var selectedMenu = this.collection.findWhere({_isSelected: true});
-
-      if (selectedMenu === undefined) {
+      if(this.collection.findWhere({ _isSelected: true }) === undefined) {
         return this.onSaveError(null, window.polyglot.t('app.errornomenuselected'));
       }
-
       $.post('/api/menu/' + selectedMenu.get('_id') + '/makeitso/' + this.model.get('_courseId'))
         .error(this.onSaveError)
         .done(this.onSaveSuccess);
     }
-  },
-  {
+  }, {
     template: "editorMenuSettingsEdit"
   });
 

@@ -5,7 +5,6 @@
  * - Sort out error handling
  */
 define(function(require){
-
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
@@ -23,22 +22,19 @@ define(function(require){
   var ExtensionModel = require('editorExtensions/models/extensionModel');
 
   var EditorView = EditorOriginView.extend({
+    className: "editor-view",
+    tagName: "div",
 
     settings: {
       autoRender: false
     },
-
     exporting: false,
 
-    tagName: "div",
-
-    className: "editor-view",
-
     events: {
-      "click a.page-add-link"   : "addNewPage",
-      "click a.load-page"       : "loadPage",
-      "mouseover div.editable"  : "onEditableHoverOver",
-      "mouseout div.editable"   : "onEditableHoverOut"
+      "click a.page-add-link": "addNewPage",
+      "click a.load-page": "loadPage",
+      "mouseover div.editable": "onEditableHoverOver",
+      "mouseout div.editable": "onEditableHoverOut"
     },
 
     preRender: function(options) {
@@ -49,14 +45,16 @@ define(function(require){
       this.currentCourse = Origin.editor.data.course;
       this.currentPageId = options.currentPageId;
 
-      this.listenTo(Origin, 'editorView:refreshView', this.setupEditor);
-      this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
-      this.listenTo(Origin, 'editorView:copyID', this.copyIdToClipboard);
-      this.listenTo(Origin, 'editorView:cut', this.cutContent);
-      this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
-      this.listenTo(Origin, 'editorCommon:download', this.downloadProject);
-      this.listenTo(Origin, 'editorCommon:preview', this.previewProject);
-      this.listenTo(Origin, 'editorCommon:export', this.exportProject);
+      this.listenTo(Origin, {
+        'editorView:refreshView': this.setupEditor,
+        'editorView:copy': this.addToClipboard,
+        'editorView:copyID': this.copyIdToClipboard,
+        'editorView:cut': this.cutContent,
+        'editorView:paste': this.pasteFromClipboard,
+        'editorCommon:download': this.downloadProject,
+        'editorCommon:preview': this.previewProject,
+        'editorCommon:export': this.exportProject
+      });
 
       this.render();
       this.setupEditor();
@@ -66,21 +64,15 @@ define(function(require){
 
     },
 
-    onEditableHoverOver: function(e) {
-      e.stopPropagation();
-      $(e.currentTarget).addClass('hovering');
-    },
 
-    onEditableHoverOut: function(e) {
-      $(e.currentTarget).removeClass('hovering');
-    },
 
     setupEditor: function() {
       this.renderCurrentEditorView();
     },
 
-    downloadProject: function(event) {
-      event && event.preventDefault();
+    downloadProject: function(e) {
+      e && e.preventDefault();
+
       var self = this;
 
       if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isDownloadPending) {
@@ -91,7 +83,7 @@ define(function(require){
           // Report progress for 45 seconds
           $('.editor-common-sidebar-downloading').animate({ width: '100%' }, 45000);
         }
-        
+
         var courseId = Origin.editor.data.course.get('_id');
         var tenantId = Origin.sessionModel.get('tenantId');
 
@@ -113,7 +105,7 @@ define(function(require){
               }
             } else {
               self.resetDownloadProgress();
-            
+
               Origin.Notify.alert({
                 type: 'error',
                 text: window.polyglot.t('app.errorgeneric')
@@ -122,7 +114,7 @@ define(function(require){
           },
           error: function (jqXHR, textStatus, errorThrown) {
             self.resetDownloadProgress();
-            
+
             Origin.Notify.alert({
               type: 'error',
               text: window.polyglot.t('app.errorgeneric')
@@ -134,8 +126,8 @@ define(function(require){
       }
     },
 
-    exportProject: function(event) {
-      event && event.preventDefault();
+    exportProject: function(e) {
+      e && e.preventDefault();
 
       // aleady processing, don't try again
       if(this.exporting) return;
@@ -192,8 +184,8 @@ define(function(require){
       window.open('/preview/' + tenantId + '/' + courseId + '/', 'preview');
     },
 
-    previewProject: function(event) {
-      event && event.preventDefault();
+    previewProject: function(e) {
+      e && e.preventDefault();
 
       var self = this;
 
@@ -238,65 +230,41 @@ define(function(require){
       var self = this;
 
       var pollUrl = function() {
-        $.ajax({
-          method: 'get',
-          url: url,
-          success: function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.progress == "100") {
-              clearInterval(pollId);
-              self.launchCoursePreview();
-              self.resetPreviewProgress();
-            } else {
-               $('.navigation-loading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
-            }
-          },
-          error: function(jqXHR, textStatus, errorThrown) {
-            clearInterval(pollId);
-            self.resetPreviewProgress();
-            
-            Origin.Notify.alert({
-              type: 'error',
-              text: errorThrown
-            });
+        $.get(url, function(jqXHR, textStatus, errorThrown) {
+          if (jqXHR.progress < "100") {
+            $('.navigation-loading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
+            return;
           }
+          clearInterval(pollId);
+          self.launchCoursePreview();
+          self.resetPreviewProgress();
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          clearInterval(pollId);
+          self.resetPreviewProgress();
+          Origin.Notify.alert({ type: 'error', text: errorThrown });
         });
       }
 
       // Check for updated progress every 3 seconds
       var pollId = setInterval(pollUrl, 3000);
     },
-    
+
     updateDownloadProgress: function(url) {
-      var self = this;
-
-      var pollUrl = function() {
-        $.ajax({
-          method: 'get',
-          url: url,
-          success: function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.progress == "100") {
-              clearInterval(pollId);
-
-              self.resetDownloadProgress();
-            } else {
-               $('.editor-common-sidebar-downloading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
-            }
-          },
-          error: function(jqXHR, textStatus, errorThrown) {
-            clearInterval(pollId);
-            
-            self.resetDownloadProgress();
-            
-            Origin.Notify.alert({
-              type: 'error',
-              text: errorThrown
-            });
-          }
-        });
-      }
-
       // Check for updated progress every 3 seconds
-      var pollId = setInterval(pollUrl, 3000);
+      var pollId = setInterval(_.bind(function pollURL() {
+        $.get(url, function(jqXHR, textStatus, errorThrown) {
+          if (jqXHR.progress < "100") {
+            $('.editor-common-sidebar-downloading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
+            return;
+          }
+          clearInterval(pollId);
+          this.resetDownloadProgress();
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          clearInterval(pollId);
+          this.resetDownloadProgress();
+          Origin.Notify.alert({ type: 'error', text: errorThrown });
+        });
+      }, this), 3000);
     },
 
     resetPreviewProgress: function() {
@@ -306,51 +274,34 @@ define(function(require){
       $('.navigation-loading-indicator').addClass('display-none');
       Origin.editor.isPreviewPending = false;
     },
-    
+
     resetDownloadProgress: function() {
       $('.editor-common-sidebar-downloading-progress').css('width', 0).stop();
       $('.editor-common-sidebar-download-inner').removeClass('display-none');
       $('.editor-common-sidebar-downloading').addClass('display-none');
-      Origin.editor.isDownloadPending = false;  
+      Origin.editor.isDownloadPending = false;
     },
 
-    /*
-      Archive off the clipboard
-    */
     addToClipboard: function(model) {
-      _.defer(_.bind(function() {
-        _.invoke(Origin.editor.data.clipboard.models, 'destroy')
-      }, this));
+      _.defer(_.bind(function() { _.invoke(Origin.editor.data.clipboard.models, 'destroy') }, this));
 
-      var self = this;
-      var copiedObjectType = model.get('_type');
+      var postData = {
+        objectId: model.get('_id'),
+        courseId: Origin.editor.data.course.get('_id'),
+        referenceType: model._siblings
+      };
 
-      $.ajax({
-        method: 'post',
-        url: '/api/content/clipboard/copy',
-        data: {
-          objectId: model.get('_id'),
-          courseId: Origin.editor.data.course.get('_id'),
-          referenceType: model._siblings
-        },
-        success: function (jqXHR, textStatus, errorThrown) {
+      $.post('/api/content/clipboard/copy', postData, _.bind(function(jqXHR, textStatus, errorThrown) {
           if (!jqXHR.success) {
-            Origin.Notify.alert({
-              type: 'error',
-              text: jqXHR.message
-            });
-          } else {
-            Origin.editor.clipboardId = jqXHR.clipboardId;
-            Origin.editor.pasteParentModel = model.getParent();
-            self.showPasteZones(copiedObjectType);
+            Origin.Notify.alert({ type: 'error', text: jqXHR.message });
+            return;
           }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: window.polyglot.t('app.errorcopy')
-          });
-        }
+          Origin.editor.clipboardId = jqXHR.clipboardId;
+          Origin.editor.pasteParentModel = model.getParent();
+          this.showPasteZones(model.get('_type'));
+        }, this)).fail(function (jqXHR, textStatus, errorThrown) {
+          Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorcopy') });
+        });
       });
     },
 
@@ -360,55 +311,37 @@ define(function(require){
       if (helpers.copyStringToClipboard(id)) {
         Origin.Notify.alert({
           type: 'success',
-          text: window.polyglot.t('app.copyidtoclipboardsuccess', {id: id})
+          text: window.polyglot.t('app.copyidtoclipboardsuccess', { id: id })
         });
       } else {
         Origin.Notify.alert({
           type: 'warning',
-          text: window.polyglot.t('app.app.copyidtoclipboarderror', {id: id})
+          text: window.polyglot.t('app.app.copyidtoclipboarderror', { id: id })
         });
       }
     },
 
     pasteFromClipboard: function(parentId, sortOrder, layout) {
-      $.ajax({
-        method: 'post',
-        url: '/api/content/clipboard/paste',
-        data: {
-          id: Origin.editor.clipboardId,
-          parentId: parentId,
-          layout: layout,
-          sortOrder: sortOrder,
-          courseId: Origin.editor.data.course.get('_id')
-        },
-        success: function (jqXHR, textStatus, errorThrown) {
-          if (!jqXHR.success) {
-            Origin.Notify.alert({
-              type: 'error',
-              text: jqXHR.message
-            });
-          } else {
-            Origin.editor.clipboardId = null;
-            Origin.editor.pasteParentModel = null;
-            Origin.trigger('editor:refreshData', function() {
-              // TODO: HACK - I think this should probably pass a callback in
-              // and return it with the new item - this way the individual views
-              // can handle the new views and models
-              Backbone.history.loadUrl();
-            }, this);
-          }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: window.polyglot.t('app.errorpaste')
-          });
+      $.post('/api/content/clipboard/paste', function(jqXHR, textStatus, errorThrown) {
+        if (!jqXHR.success) {
+          Origin.Notify.alert({ type: 'error', text: jqXHR.message });
+          return;
         }
+        Origin.editor.clipboardId = null;
+        Origin.editor.pasteParentModel = null;
+        Origin.trigger('editor:refreshData', function() {
+          // TODO: HACK - I think this should probably pass a callback in
+          // and return it with the new item - this way the individual views
+          // can handle the new views and models
+          Backbone.history.loadUrl();
+        }, this);
+      }, this).fail(function(jqXHR, textStatus, errorThrown) {
+        Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorpaste') });
       });
     },
 
     createModel: function (type) {
-      var model = false;
+      var model;
       switch (type) {
         case 'contentObjects':
           model = new EditorContentObjectModel();
@@ -429,32 +362,29 @@ define(function(require){
     renderCurrentEditorView: function() {
       Origin.trigger('editorView:removeSubViews');
 
-      switch (this.currentView) {
-        case 'menu':
-          this.renderEditorMenu();
-          break;
-        case 'page':
-          this.renderEditorPage();
-          break;
+      if(this.currentView === 'menu') {
+        this.renderEditorMenu();
+      } else if(this.currentView === 'page') {
+        this.renderEditorPage();
       }
 
       Origin.trigger('editorSidebarView:addOverviewView');
     },
 
     renderEditorMenu: function() {
-      this.$('.editor-inner').html(new EditorMenuView({
-        model: Origin.editor.data.course
-      }).$el);
+      var view = new EditorMenuView({ model: Origin.editor.data.course });
+      this.$('.editor-inner').html(view.$el);
     },
 
     renderEditorPage: function() {
-      this.$('.editor-inner').html(new EditorPageView({
-        model: Origin.editor.data.contentObjects.findWhere({_id: this.currentPageId}),
-      }).$el);
+      var view = new EditorPageView({
+        model: Origin.editor.data.contentObjects.findWhere({ _id: this.currentPageId })
+      });
+      this.$('.editor-inner').html(view.$el);
     },
 
     cutContent: function(view) {
-      var type = this.capitalise(view.model.get('_type'));
+      var type = helpers.capitalise(view.model.get('_type'));
       var collectionType = view.model._siblings;
 
       this.addToClipboard(view.model);
@@ -468,10 +398,21 @@ define(function(require){
       });
     }
 
+    /**
+    * Event handling
+    */
+
+    onEditableHoverOver: function(e) {
+      e && e.stopPropagation();
+      $(e.currentTarget).addClass('hovering');
+    },
+
+    onEditableHoverOut: function(e) {
+      $(e.currentTarget).removeClass('hovering');
+    }
   }, {
     template: 'editor'
   });
 
   return EditorView;
-
 });

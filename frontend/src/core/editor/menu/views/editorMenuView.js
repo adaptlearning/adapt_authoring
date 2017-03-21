@@ -1,33 +1,29 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
   var EditorMenuLayerView = require('editorMenu/views/editorMenuLayerView');
   var EditorMenuItemView = require('editorMenu/views/editorMenuItemView');
-  
-  var EditorMenuView = EditorOriginView.extend({
 
+  var EditorMenuView = EditorOriginView.extend({
+    className: "editor-menu",
     tagName: "div",
 
-    className: "editor-menu",
-
     preRender: function() {
-      this.listenTo(Origin, 'editorView:menuView:updateSelectedItem', this.updateSelectedItem);
-      this.listenTo(Origin, 'window:resize', this.setupHorizontalScroll);
+      this.listenTo(Origin, {
+        'editorView:menuView:updateSelectedItem': this.updateSelectedItem,
+        Origin, 'window:resize': this.setupHorizontalScroll
+      });
     },
 
     postRender: function() {
       this.setupMenuViews();
-      _.defer(this.setViewToReady);  
+      _.defer(this.setViewToReady);
     },
 
-    /**
-     * Renders a menu layer for each child of the contentObject, and each item within
-     */
+    // Renders a menu layer for each child of the contentObject, and each item within
     setupMenuViews: function() {
-
       // If there's no currentContentObjectId
       if (!Origin.editor.currentContentObjectId) {
         this.addMenuLayerView(this);
@@ -35,17 +31,15 @@ define(function(require){
         this.addMenuLayerView(this);
         this.preserveCurrentMenuState();
       }
-      
     },
 
     /**
      * Recursive function which shows the expanded children for a given context model
-     * @param {Model} A given contextObject model 
+     * @param {Model} A given contextObject model
      */
     addMenuLayerView: function(view) {
       // Render menu layer view
       var menuLayer = this.renderMenuLayerView(view, false);
-
       // Add children views of current model
       view.model.getChildren().each(function(contentObject) {
         menuLayer.append(new EditorMenuItemView({
@@ -62,7 +56,7 @@ define(function(require){
     },
 
     /**
-     * Presever the current menu state by finding the current element 
+     * Presever the current menu state by finding the current element
      * then setting it's parent recursively to _isExpanded
      */
 
@@ -78,31 +72,25 @@ define(function(require){
     /**
      * Appemds a menu item layer for a given ID to the editor
      * @param {String} parentId Unique identifier of the parent
-     * @param {Boolean} isCourseObject Flag to indicate if this is at the root level 
+     * @param {Boolean} isCourseObject Flag to indicate if this is at the root level
      */
     renderMenuLayerView: function(view) {
       // Get the current views _id to store as the _parentId
       var parentId = view.model.get('_id');
-
       // Create MenuLayerView
       var menuLayerView = new EditorMenuLayerView({_parentId: parentId});
-
       // Set subview on layerView so this can be removed
       view.subView = menuLayerView;
-
       // Render and append the view
       $('.editor-menu-inner').append(menuLayerView.$el);
-      
       // Return the container ready to render menuItemView's
       return menuLayerView.$('.editor-menu-layer-inner');
     },
 
     updateSelectedItem: function(view) {
-
       // This is triggered when an item is clicked
       // Store this id and fake navigate to bookmark current users position
       this.storeSelectedItem(view);
-
       // If this item is a menu item let's render a MenuItemLayerView
       if (view.model.get('_type') === 'menu') {
         this.addMenuLayerView(view);
@@ -120,39 +108,35 @@ define(function(require){
       var selectedItemId = view.model.get('_id');
       // Store the ID of the currently selected contentObject
       Origin.editor.currentContentObjectId = selectedItemId;
-
       // Reset the address bar to allow persistance of the 'Back' button
       Origin.router.navigate('#editor/' + Origin.editor.data.course.id + '/menu/' + selectedItemId);
     },
 
     /**
-     * Recursive function which shows any children for a given contentObject and sets 
+     * Recursive function which shows any children for a given contentObject and sets
      * the UI element to 'expanded'
-     * @param {Model} selectedItem A given contextObject model 
+     * @param {Model} selectedItem A given contextObject model
      */
     setParentElementToSelected: function(selectedItem) {
-
       if (selectedItem.get('_parentId') === Origin.editor.data.course.get('_id')) {
         return;
       }
-
       var parentModel = Origin.editor.data.contentObjects.findWhere({
         _id: selectedItem.get('_parentId')
       });
-      
       parentModel.set('_isExpanded', true);
-      
+
       this.setParentElementToSelected(parentModel);
     },
 
     setupHorizontalScroll: function(windowWidth, windowHeight) {
-        var $menuLayers = this.$('.editor-menu-layer');
-        var $menuView = this.$el;
-        var $menuControls = this.$('.editor-menu-layer-controls');
-        // Get item width
-        var itemWidth = $menuLayers.first().outerWidth(true);
-        // Set menu holder to width by items length
-        $('.editor-menu-inner').width(itemWidth * $menuLayers.length);
+      var $menuLayers = this.$('.editor-menu-layer');
+      var $menuView = this.$el;
+      var $menuControls = this.$('.editor-menu-layer-controls');
+      // Get item width
+      var itemWidth = $menuLayers.first().outerWidth(true);
+      // Set menu holder to width by items length
+      $('.editor-menu-inner').width(itemWidth * $menuLayers.length);
     },
 
     scrollToElement: function() {
@@ -180,13 +164,10 @@ define(function(require){
           var id = $('.editor-menu-item-inner', $draggedElement).attr('data-id');
           var sortOrder = $draggedElement.index() + 1;
           var parentId = $draggedElement.closest('.editor-menu-layer').attr('data-parentId');
-
           // Find the model
           var currentModel = Origin.editor.data.contentObjects.findWhere({_id: id});
-
           // Save just the new attributes and patch them
-          currentModel.save({_sortOrder: sortOrder, _parentId: parentId}, {patch: true});
-
+          currentModel.save({ _sortOrder: sortOrder, _parentId: parentId }, { patch: true });
           currentModel.set('_isDragging', false);
 
         },
@@ -204,11 +185,9 @@ define(function(require){
         }
       });
     }
-
   }, {
     template: 'editorMenu'
   });
 
   return EditorMenuView;
-
 });

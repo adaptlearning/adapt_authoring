@@ -1,25 +1,22 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
 
   var ThemeItemView = OriginView.extend({
-    
+    tagName: 'li',
+
     settings: {
       autoRender: true
     },
 
-    tagName: 'li',
-
     className: function() {
       var isSelectedClass = (this.model.get('_isSelected')) ? ' selected' : '';
-
       return 'theme-list-item' + isSelectedClass;
     },
 
     events: {
-      'click' : 'toggleSelect'
+      'click': 'toggleSelect'
     },
 
     preRender: function() {
@@ -31,15 +28,11 @@ define(function(require){
 
     toggleSelect: function(event) {
       event && event.stopPropagation();
-
-      if (!this.model.get('_isSelected')) {
-        this.selectItem();
-      } 
+      if (!this.model.get('_isSelected')) this.selectItem();
     },
 
     selectItem: function() {
       Origin.trigger('editor:theme:selected');
-      
       this.$el.addClass('selected');
       this.model.set({_isSelected: true});
     },
@@ -48,11 +41,9 @@ define(function(require){
       this.$el.removeClass('selected');
       this.model.set({_isSelected: false});
     }
-    
   }, {
     template: 'editorThemeItem'
   });
 
   return ThemeItemView;
-
 });

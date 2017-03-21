@@ -1,22 +1,19 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('editorGlobal/views/editorOriginView');
 
   var EditorMenuItemView = EditorOriginView.extend({
-
-    tagName: "div",
-
     className: "editor-menu-item",
+    tagName: "div",
 
     autoScrollTimer: false,
 
     events: {
-        'click .editor-menu-item-inner'       : 'onMenuItemClicked',
-        'click a.open-context-contentObject'  : 'openContextMenu',
-        'click a.contentObject-delete'        : 'deleteItemPrompt',
-        'mousedown .handle'                   : 'enableDrag'
+      'click .editor-menu-item-inner': 'onMenuItemClicked',
+      'click a.open-context-contentObject': 'openContextMenu',
+      'click a.contentObject-delete': 'deleteItemPrompt',
+      'mousedown .handle': 'enableDrag'
     },
 
     preRender: function() {
@@ -27,7 +24,6 @@ define(function(require){
     postRender: function() {
       // setup drag
       this.$el.closest('.editor-menu').on('mousemove', _.bind(this.handleDrag, this));
-
       // Check if the current item is expanded and update the next menuLayerView
       // This can end up being recursive if an item is selected inside a few menu items
       if (this.model.get('_isExpanded')) {
@@ -89,15 +85,8 @@ define(function(require){
       this.setItemAsSelected();
 
       if(currentClicks === 1) {
-
-        timer = setTimeout(_.bind(function() {
-
-          this.model.set('clicks', 0);
-
-        }, this), delay);
-
+        timer = setTimeout(_.bind(function() { this.model.set('clicks', 0); }, this), delay);
       } else if (currentClicks === 2) {
-
         clearTimeout(timer);
         // Only if the current double clicked it is a page item
         if (this.model.get('_type') == 'page') {
@@ -107,16 +96,14 @@ define(function(require){
         }
         this.model.set('clicks', 0);
       }
-
     },
 
     selectedLevel: function() {
       $(".editor-menu-layer").each(function() {
         if($(this).hasClass("selected")){
-            $(this).removeClass("selected");
+          $(this).removeClass("selected");
         }
       });
-
       if($(this.el).hasClass("content-type-menu")) {
         $(this.el).parent().parent().next().addClass("selected");
       }
@@ -134,13 +121,11 @@ define(function(require){
       Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'));
     },
 
-
-   gotoSubMenuEditor: function() {
-     Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/menu/' + this.model.get('_id') + '/edit');
-   },
+    gotoSubMenuEditor: function() {
+      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/menu/' + this.model.get('_id') + '/edit');
+    },
 
     setItemAsSelected: function() {
-
       // If this item is already selected please do nothing
       // because sometimes nothing is quite compelling
       if (this.model.get('_isSelected')) return;
@@ -156,16 +141,15 @@ define(function(require){
         this.setParentSelectedState();
       }
 
-      this.model.set({'_isExpanded' : (isMenuType ? true : false)});
+      this.model.set({ '_isExpanded' : (isMenuType ? true : false) });
 
-      this.model.set({'_isSelected': true});
+      this.model.set({ '_isSelected': true });
 
       // This event passes out the view to the editorMenuView to add
       // a editorMenuLayerView and setup this.subView
       Origin.trigger('editorView:menuView:updateSelectedItem', this);
 
       this.selectedLevel();
-
     },
 
     setParentSelectedState: function() {
@@ -206,12 +190,10 @@ define(function(require){
         }
         this.$el.removeClass('expanded');
       }
-
       // If this item is not meant to be expanded - remove subView
       if (!isExpanded && isMenuType && this.subView) {
         this.subView.remove();
       }
-
     },
 
     editMenuItem: function() {
@@ -325,11 +307,9 @@ define(function(require){
         }
       }, 10);
     }
-
   }, {
     template: 'editorMenuItem'
   });
 
   return EditorMenuItemView;
-
 });

@@ -20,7 +20,7 @@ define(function(require){
       'click a.add-article'      : 'addArticle',
       'click a.page-edit-button' : 'openContextMenu',
       'dblclick .page-detail'    : 'loadPageEdit',
-      'click .paste-cancel'      : 'pasteCancel'
+      'click .paste-cancel'      : 'onPasteCancel'
     },
 
     childrenCount: 0,

@@ -14,7 +14,7 @@ define(function(require){
     },
 
     events: {
-      'click' : 'toggleSelect'
+      'click': 'toggleSelect'
     },
 
     preRender: function() {
@@ -30,7 +30,6 @@ define(function(require){
 
     selectMenu: function() {
       Origin.trigger('editor:menuSettings:selected');
-
       this.$el.addClass('selected');
       this.model.set({_isSelected: true});
     },

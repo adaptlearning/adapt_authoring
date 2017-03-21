@@ -7,7 +7,7 @@ define(function(require) {
 
   Origin.contentPane = {
     addView: function(View, options) {
-      contentPaneView.addView(new View(options));
+      contentPaneView.setView(new View(options));
     }
   };
 

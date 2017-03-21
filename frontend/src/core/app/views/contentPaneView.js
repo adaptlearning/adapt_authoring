@@ -33,9 +33,9 @@ define(function(require) {
     },
 
     // expects a backbone view
-    addView: function(view) {
+    setView: function(view) {
       if(!view.$el || !view.$el[0] || !_.isElement(view.$el[0])) {
-        console.log('ContentPaneView.addView: expects a Backbone.View instance, received', view);
+        console.log('ContentPaneView.setView: expects a Backbone.View instance, received', view);
       }
       this.removeView(_.bind(function() {
         console.log('contentPaneView.addView:', view.constructor.template);

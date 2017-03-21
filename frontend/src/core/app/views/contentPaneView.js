@@ -16,12 +16,11 @@ define(function(require) {
     animDuration: 300,
 
     initialize: function() {
-      $(window).on("resize", _.bind(this.resize, this));
-
       this.listenTo(Origin, {
         'contentPane:show': this.show,
         'contentPane:hide': this.hide
       });
+      $(window).on('resize', _.bind(this.resize, this));
 
       this.render();
     },

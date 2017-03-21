@@ -19,8 +19,8 @@ define(function(require) {
       $(window).on("resize", _.bind(this.resize, this));
 
       this.listenTo(Origin, {
-        'contentPane:views:show': this.show,
-        'contentPane:views:hide': this.hide
+        'contentPane:show': this.show,
+        'contentPane:hide': this.hide
       });
 
       this.render();

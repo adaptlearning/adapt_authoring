@@ -22,6 +22,7 @@ define(function(require) {
 
     listenToEvents: function() {
       this.listenTo(Origin, 'remove:views', this.removeView );
+      this.$el.scroll(_.bind(this.onScroll, this));
       $(window).on('resize', _.bind(this.resize, this));
     },
 
@@ -62,6 +63,10 @@ define(function(require) {
     resize: function() {
       var windowHeight = $(window).height();
       this.$el.height(windowHeight - this.$el.offset().top);
+    },
+
+    onScroll: function(e) {
+      Origin.trigger('contentPane:scroll', this.$el.scrollTop());
     }
   }, {
     template: 'contentPane'

@@ -40,17 +40,11 @@ define(function(require){
       this.$('.users').fadeOut(0);
 
       this.users.each(this.createUserView, this);
-      this.setHeight();
 
       if($selected) {
         var selector = $selected.className.replace(SELECTED_CLASS,'');
         $(document.getElementsByClassName(selector)).addClass(SELECTED_CLASS).click();
       }
-    },
-
-    setHeight: function() {
-      var newHeight = $(window).height()-$('.'+this.className).offset().top;
-      $('.'+this.className).height(newHeight);
     },
 
     postRender: function() {
@@ -74,7 +68,7 @@ define(function(require){
     onDataFetched: function(models, reponse, options) {
       this.render();
     }
-
+    
   }, {
     template: 'userManagement'
   });

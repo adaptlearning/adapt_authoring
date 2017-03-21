@@ -32,18 +32,7 @@ define(function(require){
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorView:moveArticle:' + this.model.get('_id'), this.render);
       this.listenTo(Origin, 'editorView:cutArticle:' + this.model.get('_id'), this.onCutArticle);
-      this.listenTo(Origin, 'editingOverlay:views:hide', this.persistScrollPosition);
       this.listenTo(Origin, 'pageView:itemRendered', this.evaluateChildStatus);
-
-      var captureScroll = function() {
-        $(window).scroll(function() {
-          if (window.scrollY !== 0) {
-            Origin.editor.scrollTo = window.scrollY;
-          }
-        });
-      };
-
-      _.delay(captureScroll, 2000);
     },
 
     resize: function() {
@@ -51,12 +40,6 @@ define(function(require){
         var windowHeight = $(window).height();
         this.$el.height(windowHeight - this.$el.offset().top);
       }, this));
-    },
-
-    persistScrollPosition: function() {
-      if (Origin.editor.scrollTo) {
-        $.scrollTo(Origin.editor.scrollTo);
-      }
     },
 
     setupChildCount: function() {
@@ -182,18 +165,18 @@ define(function(require){
        Origin.router.navigate(route);
     },
 
-    // TODO fragile HACK, refactor context menu code to allow what I want to do later... 
+    // TODO fragile HACK, refactor context menu code to allow what I want to do later...
     openContextMenu: function(event) {
       if(!event) return console.log('Error: needs a current target to attach the menu to...');
-      
+
       event.preventDefault();
       event.stopPropagation();
- 
+
       var fakeView = new Backbone.View({
-        model: new Backbone.Model({ _type: 'page-min' }) 
+        model: new Backbone.Model({ _type: 'page-min' })
       });
 
-      
+
       this.listenTo(fakeView, {
         'contextMenu:page-min:edit': this.loadPageEdit,
         'contextMenu:page-min:copyID': this.onCopyID

@@ -37,29 +37,23 @@ define(function(require) {
       if(!view.$el || !view.$el[0] || !_.isElement(view.$el[0])) {
         console.log('ContentPaneView.setView: expects a Backbone.View instance, received', view);
       }
-      this.removeView(_.bind(function() {
-        console.log('contentPaneView.addView:', view.constructor.template);
-        this.$('.contentPane-inner').html(view.$el);
-        this.animateIn(_.bind(this.resize, this));
-      }, this));
+      this.removeView();
+      this.$('.contentPane-inner').html(view.$el);
+      this.animateIn(_.bind(this.resize, this));
     },
 
     removeView: function(cb) {
-      console.log('contentPaneView.removeView:');
-      this.animateOut(_.bind(function() {
-        this.$('.contentPane-inner').empty();
-        if(cb) cb.apply(this);
-      }, this));
+      this.$('.contentPane-inner').empty();
+      if(cb) cb.apply(this);
     },
 
     animateIn: function(cb) {
       this.$el.css(this.hiddenCSS);
-      this.$el.velocity(this.visibleCSS, this.animDuration, cb ? _.bind(cb, this) : undefined);
-    },
-
-    animateOut: function(cb) {
-      this.$el.css(this.visibleCSS);
-      this.$el.velocity(this.hiddenCSS, this.animDuration, cb ? _.bind(cb, this) : undefined);
+      this.$el.velocity(
+        this.visibleCSS,
+        this.animDuration,
+        cb ? _.bind(cb, this) : undefined
+      );
     },
 
     show: function(element) {

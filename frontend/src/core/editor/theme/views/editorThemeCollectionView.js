@@ -7,8 +7,8 @@ define(function(require) {
   var ThemeItemView = require('editorTheme/views/editorThemeItemView');
 
   var EditorThemeCollectionView = EditorOriginView.extend({
-    tagName: "ul",
     className: "editor-theme-edit",
+    tagName: "ul",
 
     preRender: function() {
       this.collection = new ThemeCollection();
@@ -68,8 +68,7 @@ define(function(require) {
           }, this);
         }, this));
     }
-  },
-  {
+  }, {
     template: 'editorThemeCollection'
   });
 

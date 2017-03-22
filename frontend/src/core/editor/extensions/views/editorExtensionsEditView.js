@@ -2,12 +2,12 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
-  var EditorOriginView = require('editorGlobal/views/editorOriginView');
-  var EditorConfigModel = require('editorConfig/models/editorConfigModel');
+  var EditorOriginView = require('../../global/views/editorOriginView');
+  var EditorConfigModel = require('../../config/models/editorConfigModel');
 
   var EditorExtensionsEditView = EditorOriginView.extend({
-    tagName: "div",
     className: "extension-management",
+    tagName: "div",
 
     settings: {
       autoRender: false
@@ -42,8 +42,8 @@ define(function(require) {
         }
       });
       this.model.set({
-        enabledExtensions: enabledExtensionsCollection.toJSON()),
-        availableExtensions: disabledExtensionsCollection.toJSON())
+        enabledExtensions: enabledExtensionsCollection.toJSON(),
+        availableExtensions: disabledExtensionsCollection.toJSON()
       });
     },
 

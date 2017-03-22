@@ -2,11 +2,11 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
-  var EditorOriginView = require('editorGlobal/views/editorOriginView');
+  var EditorOriginView = require('../../global/views/editorOriginView');
 
   var EditorConfigEditView = EditorOriginView.extend({
-    tagName: "div",
     className: "config-edit",
+    tagName: "div",
 
     preRender: function() {
       this.listenTo(Origin, {

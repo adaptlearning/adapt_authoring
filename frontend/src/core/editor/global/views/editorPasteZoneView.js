@@ -2,9 +2,9 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Helpers = require('coreJS/app/helpers');
-  var EditorOriginView = require('editorGlobal/views/editorOriginView');
   var Origin = require('coreJS/app/origin');
+  var Helpers = require('coreJS/app/helpers');
+  var EditorOriginView = require('./editorOriginView');
 
   var EditorPasteZone = EditorOriginView.extend({
     className: 'display-none paste-zone',

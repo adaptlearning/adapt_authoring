@@ -2,16 +2,16 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
-  var EditorOriginView = require('editorGlobal/views/editorOriginView');
-  var ThemeCollection = require('editorTheme/collections/editorThemeCollection');
-  var ThemeView = require('editorTheme/views/editorThemeView');
+
+  var EditorOriginView = require('../../global/views/editorOriginView');
+  var ThemeCollection = require('../collections/editorThemeCollection');
+  var ThemeView = require('./editorThemeView');
 
   var EditorThemeEditView = EditorOriginView.extend({
     className: "editor-theme-edit",
     tagName: "ul",
 
     events: {
-
     },
 
     preRender: function() {
@@ -43,14 +43,12 @@ define(function(require) {
     },
 
     cancel: function(event) {
-      event.preventDefault();
+      event && event.preventDefault();
       Origin.trigger('editorSidebarView:removeEditView', this.model);
     },
 
     saveData: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
+      event && event.preventDefault();
 
       var selectedTheme = this.collection.findWhere({_isSelected: true});
 

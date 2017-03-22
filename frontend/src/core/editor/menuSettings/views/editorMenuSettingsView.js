@@ -1,9 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
+  var Handlebars = require('handlebars');
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
-  var Handlebars = require('handlebars');
 
   var MenuSettingsView = OriginView.extend({
     tagName: 'li',

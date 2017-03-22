@@ -1,5 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /*
+ * I think this exists to add extra functionality to the menu/page structure pages
  * TODO This needs a tidy:
  * - Remove commented lines
  * - Sort out error handling
@@ -9,17 +10,15 @@ define(function(require){
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
   var helpers = require('coreJS/app/helpers');
-  var EditorOriginView = require('editorGlobal/views/editorOriginView');
-  var EditorMenuView = require('editorMenu/views/editorMenuView');
-  var EditorPageView = require('editorPage/views/editorPageView');
-  var EditorModel = require('editorGlobal/models/editorModel');
-  var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
-  var EditorArticleModel = require('editorPage/models/editorArticleModel');
-  var EditorBlockModel = require('editorPage/models/editorBlockModel');
-  var EditorComponentModel = require('editorPage/models/editorComponentModel');
-  var EditorClipboardModel = require('editorGlobal/models/editorClipboardModel');
-  var EditorComponentTypeModel = require('editorPage/models/editorComponentTypeModel');
-  var ExtensionModel = require('editorExtensions/models/extensionModel');
+
+  var EditorOriginView = require('./editorOriginView');
+  var EditorMenuView = require('../contentObject/views/editorMenuView');
+  var EditorPageView = require('../contentObject/views/editorPageView');
+
+  var EditorContentObjectModel = require('../contentObject/models/editorContentObjectModel');
+  var EditorArticleModel = require('../article/models/editorArticleModel');
+  var EditorBlockModel = require('../block/models/editorBlockModel');
+  var EditorComponentModel = require('../component/models/editorComponentModel');
 
   var EditorView = EditorOriginView.extend({
     className: "editor-view",
@@ -63,8 +62,6 @@ define(function(require){
     postRender: function() {
 
     },
-
-
 
     setupEditor: function() {
       this.renderCurrentEditorView();
@@ -292,16 +289,14 @@ define(function(require){
       };
 
       $.post('/api/content/clipboard/copy', postData, _.bind(function(jqXHR, textStatus, errorThrown) {
-          if (!jqXHR.success) {
-            Origin.Notify.alert({ type: 'error', text: jqXHR.message });
-            return;
-          }
-          Origin.editor.clipboardId = jqXHR.clipboardId;
-          Origin.editor.pasteParentModel = model.getParent();
-          this.showPasteZones(model.get('_type'));
-        }, this)).fail(function (jqXHR, textStatus, errorThrown) {
-          Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorcopy') });
-        });
+        if (!jqXHR.success) {
+          return Origin.Notify.alert({ type: 'error', text: jqXHR.message });
+        }
+        Origin.editor.clipboardId = jqXHR.clipboardId;
+        Origin.editor.pasteParentModel = model.getParent();
+        this.showPasteZones(model.get('_type'));
+      }, this)).fail(function (jqXHR, textStatus, errorThrown) {
+        Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorcopy') });
       });
     },
 
@@ -396,7 +391,7 @@ define(function(require){
       _.defer(function () {
         Origin.trigger('editorView:cut' + type + ':' + view.model.get('_parentId'), view);
       });
-    }
+    },
 
     /**
     * Event handling

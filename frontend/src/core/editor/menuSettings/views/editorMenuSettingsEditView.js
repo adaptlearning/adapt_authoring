@@ -2,13 +2,13 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
-  var EditorOriginView = require('editorGlobal/views/editorOriginView');
-  var MenuSettingsCollection = require('editorMenuSettings/collections/editorMenuSettingsCollection');
-  var MenuSettingsView = require('editorMenuSettings/views/editorMenuSettingsView');
+  var EditorOriginView = require('../../global/views/editorOriginView');
+  var MenuSettingsCollection = require('../collections/editorMenuSettingsCollection');
+  var MenuSettingsView = require('./editorMenuSettingsView');
 
   var EditorMenuSettingsEditView = EditorOriginView.extend({
-    tagName: "ul",
     className: "editor-menu-settings-edit",
+    tagName: "ul",
 
     preRender: function() {
       this.collection = new MenuSettingsCollection();
@@ -35,14 +35,13 @@ define(function(require) {
     },
 
     cancel: function(event) {
-      event.preventDefault();
+      event && event.preventDefault();
       Origin.trigger('editorSidebarView:removeEditView', this.model);
     },
 
     saveData: function(event) {
-      if (event) {
-        event.preventDefault();
-      }
+      event && event.preventDefault();
+
       if(this.collection.findWhere({ _isSelected: true }) === undefined) {
         return this.onSaveError(null, window.polyglot.t('app.errornomenuselected'));
       }

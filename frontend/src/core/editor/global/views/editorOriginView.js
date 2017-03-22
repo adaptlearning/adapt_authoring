@@ -30,7 +30,7 @@ define(function(require){
       }
       this.$('.form-container').append(this.form.el);
       // Set the delays going to stop jumping pages
-      _.delay(_.bind(this.setViewToReady, this, 400);
+      _.delay(_.bind(this.setViewToReady, this, 400));
     },
 
     filterForm: function(filter) {
@@ -115,8 +115,8 @@ define(function(require){
       var attrs = this.getAttributesToSave();
       this.model.save(attrs, {
         patch: (attrs) ? true : false,
-        success: _.bind(this.onSaveSuccess, this)
-        error: _.bind(this.onSaveError, this),
+        success: _.bind(this.onSaveSuccess, this),
+        error: _.bind(this.onSaveError, this)
       });
     },
 

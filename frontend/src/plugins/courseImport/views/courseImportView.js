@@ -16,14 +16,6 @@ define(function(require){
     },
 
     postRender: function() {
-      // tagging
-      this.$('#tags_control').tagsInput({
-        autocomplete_url: '/api/autocomplete/tag',
-        onAddTag: _.bind(this.onAddTag, this),
-        onRemoveTag: _.bind(this.onRemoveTag, this),
-        'minChars' : 3,
-        'maxChars' : 30
-      });
       this.setViewToReady();
     },
 
@@ -59,12 +51,6 @@ define(function(require){
       if(!this.isValid()) {
         return;
       }
-
-      var tags = [];
-      _.each(this.model.get('tags'), function (item) {
-        item._id && tags.push(item._id);
-      });
-      this.$('#tags').val(tags);
 
       // submit form data
       this.$('form.courseImport').ajaxSubmit({
@@ -109,31 +95,6 @@ define(function(require){
         title: window.polyglot.t('app.importerrortitle'),
         text: data.responseText || error
       });
-    },
-
-    onAddTag: function (tag) {
-      var model = this.model;
-      $.ajax({
-        url: '/api/content/tag',
-        method: 'POST',
-        data: { title: tag }
-      }).done(function (data) {
-        if (data && data._id) {
-          var tags = model.get('tags') || [];
-          tags.push({ _id: data._id, title: data.title });
-          model.set({ tags: tags });
-        }
-      });
-    },
-
-    onRemoveTag: function (tag) {
-      var tags = [];
-      _.each(this.model.get('tags'), function (item) {
-        if (item.title !== tag) {
-          tags.push(item);
-        }
-      });
-      this.model.set({ tags: tags });
     }
   }, {
     template: 'courseImport'

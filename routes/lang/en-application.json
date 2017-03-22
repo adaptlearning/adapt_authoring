@@ -361,7 +361,7 @@
   "app.importvalidationerror": "This isn't a zip file!",
   "app.importerrortitle": "Course import failed",
   "app.importcoursesuccess": "Course imported successfully!",
-  "app.frameworkimportmenu": "Framework Import",
+  "app.frameworkimportmenu": "Source Import",
   "app.frameworkimporttitle": "Import Framework Course",
   "app.importframeworkinstruction": "Select a framework zip for import. Tags will be added to the course and all new assets."
 }

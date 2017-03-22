@@ -259,9 +259,16 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 };
 
 /**
+* Source (framework) import function
+*/
+AdaptOutput.prototype.importsource = require('./importsource');
+
+
+/**
 * Course import function
 */
 AdaptOutput.prototype.import = require('./import');
+
 
 /**
 * FUNCTION: Export

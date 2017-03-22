@@ -3,7 +3,7 @@ define(function(require) {
   var Origin = require('origin');
   var Helpers = require('../global/helpers');
 
-  var EditorConfigModel = require('./models/editorConfigModel');
+  var EditorConfigModel = require('../config/models/editorConfigModel');
   var EditorThemeCollectionView = require('./views/editorThemeCollectionView');
   var EditorThemeCollectionSidebarView = require('./views/editorThemeCollectionSidebarView');
 

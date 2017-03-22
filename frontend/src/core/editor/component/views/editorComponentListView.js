@@ -4,7 +4,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
   var EditorOriginView = require('../../global/views/editorOriginView');
-  var EditorComponentListItemView = require('./views/editorComponentListItemView');
+  var EditorComponentListItemView = require('./editorComponentListItemView');
 
   var EditorComponentListView = EditorOriginView.extend({
     className: "editor-component-list",

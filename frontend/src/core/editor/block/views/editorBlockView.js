@@ -3,11 +3,11 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
-  var EditorOriginView = require('../global/views/editorOriginView');
-  var EditorComponentModel = require('../component/models/editorComponentModel');
-  var EditorComponentView = require('../component/views/editorComponentView');
-  var EditorComponentPasteZoneView = require('../component/views/editorComponentPasteZoneView');
-  var EditorComponentListView = require('../component/views/editorComponentListView');
+  var EditorOriginView = require('../../global/views/editorOriginView');
+  var EditorComponentModel = require('../../component/models/editorComponentModel');
+  var EditorComponentView = require('../../component/views/editorComponentView');
+  var EditorComponentPasteZoneView = require('../../component/views/editorComponentPasteZoneView');
+  var EditorComponentListView = require('../../component/views/editorComponentListView');
 
   var EditorBlockView = EditorOriginView.extend({
     className: 'block editable block-draggable',

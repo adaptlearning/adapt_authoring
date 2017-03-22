@@ -12,13 +12,13 @@ define(function(require){
   var helpers = require('coreJS/app/helpers');
 
   var EditorOriginView = require('./editorOriginView');
-  var EditorMenuView = require('../contentObject/views/editorMenuView');
-  var EditorPageView = require('../contentObject/views/editorPageView');
+  var EditorMenuView = require('../../contentObject/views/editorMenuView');
+  var EditorPageView = require('../../contentObject/views/editorPageView');
 
-  var EditorContentObjectModel = require('../contentObject/models/editorContentObjectModel');
-  var EditorArticleModel = require('../article/models/editorArticleModel');
-  var EditorBlockModel = require('../block/models/editorBlockModel');
-  var EditorComponentModel = require('../component/models/editorComponentModel');
+  var EditorContentObjectModel = require('../../contentObject/models/editorContentObjectModel');
+  var EditorArticleModel = require('../../article/models/editorArticleModel');
+  var EditorBlockModel = require('../../block/models/editorBlockModel');
+  var EditorComponentModel = require('../../component/models/editorComponentModel');
 
   var EditorView = EditorOriginView.extend({
     className: "editor-view",

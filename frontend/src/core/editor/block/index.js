@@ -4,9 +4,9 @@ define(function(require) {
   var Origin = require('coreJS/app/origin');
   var Helpers = require('../global/helpers');
 
-  var EditorBlockModel = require('./models/editorBlockModel');
-  var EditorBlockEditView = require('./views/editorBlock');
+  var EditorBlockEditView = require('./views/editorBlockEditView');
   var EditorBlockEditSidebarView = require('./views/editorBlockEditSidebarView');
+  var EditorBlockModel = require('./models/editorBlockModel');
 
   Origin.on('router:editor', function(route1, route2, route3, route4) {
     if(route2 !== 'block' || route4 !== 'edit') {

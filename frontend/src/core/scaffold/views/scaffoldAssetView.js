@@ -6,8 +6,8 @@ define(function(require) {
     var Origin = require('coreJS/app/origin');
     var AssetManagementModalView = require('coreJS/assetManagement/views/assetManagementModalView');
     var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
-    var EditorCourseAssetModel = require('editorCourse/models/editorCourseAssetModel');
-    
+    var EditorCourseAssetModel = require('coreJS/editor/course/models/editorCourseAssetModel');
+
     var ScaffoldAssetView = Backbone.Form.editors.Base.extend({
 
         tagName: 'div',
@@ -45,7 +45,7 @@ define(function(require) {
             this.listenTo(Origin, 'scaffold:assets:autofill', this.onAutofill);
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-            
+
         },
 
         onAutofill: function(courseAssetObject, value) {
@@ -158,7 +158,7 @@ define(function(require) {
                         var fieldname = data.assetFilename;
                         var assetId = data.assetId;
 
-                        
+
                         var courseAssetObject = {
                             contentTypeId: contentTypeId,
                             contentType: contentType,
@@ -187,7 +187,7 @@ define(function(require) {
         },
 
         onClearButtonClicked: function(event) {
-            event.preventDefault();            
+            event.preventDefault();
             this.checkValueHasChanged();
             this.setValue('');
             this.toggleFieldAvailibility();
@@ -238,7 +238,7 @@ define(function(require) {
                         type: 'error',
                         text: window.polyglot.t('app.errorsaveasset')
                     });
-                }, 
+                },
                 success: function() {
                     self.saveModel(true);
                 }
@@ -270,11 +270,11 @@ define(function(require) {
             var alternativeModel = Origin.scaffold.getAlternativeModel();
             var alternativeAttribute = Origin.scaffold.getAlternativeAttribute();
             var isPatch = false;
-            
-            attributesToSave = typeof attributesToSave == 'undefined' 
+
+            attributesToSave = typeof attributesToSave == 'undefined'
               ? []
               : attributesToSave;
-              
+
             // Check if alternative model should be used
             if (alternativeModel) {
                 currentModel = alternativeModel;
@@ -287,8 +287,8 @@ define(function(require) {
             // Check if alternative attribute should be used
             if (alternativeAttribute) {
                 attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
-            } 
-            
+            }
+
             if (!attributesToSave && !attributesToSave.length) {
                currentModel.pruneAttributes();
                currentModel.unset('tags');
@@ -305,12 +305,12 @@ define(function(require) {
                     });
                 },
                 success: function() {
-                    
+
                     // Sometimes we don't need to reset the courseAssets
                     if (shouldResetAssetCollection) {
 
                         Origin.editor.data.courseAssets.fetch({
-                            reset:true, 
+                            reset:true,
                             success: function() {
                                 that.render();
                                 that.trigger('change', that);
@@ -337,7 +337,7 @@ define(function(require) {
         Origin.scaffold.addCustomField('Asset:other', ScaffoldAssetView);
         Origin.scaffold.addCustomField('Asset', ScaffoldAssetView);
     })
-    
+
 
     return ScaffoldAssetView;
 

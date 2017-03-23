@@ -3,10 +3,10 @@ define(function(require) {
 
     var Backbone = require('backbone');
     var BackboneForms = require('backboneForms');
-    var Origin = require('coreJS/app/origin');
-    var AssetManagementModalView = require('coreJS/assetManagement/views/assetManagementModalView');
-    var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
-    var EditorCourseAssetModel = require('coreJS/editor/course/models/editorCourseAssetModel');
+    var Origin = require('core/app/origin');
+    var AssetManagementModalView = require('core/assetManagement/views/assetManagementModalView');
+    var AssetCollection = require('core/assetManagement/collections/assetCollection');
+    var CourseAssetModel = require('core/app/models/courseAssetModel');
 
     var ScaffoldAssetView = Backbone.Form.editors.Base.extend({
 
@@ -224,7 +224,7 @@ define(function(require) {
         createCourseAsset: function (courseAssetObject) {
             var self = this;
 
-            var courseAsset = new EditorCourseAssetModel();
+            var courseAsset = new CourseAssetModel();
             courseAsset.save({
                 _courseId : Origin.editor.data.course.get('_id'),
                 _contentType : courseAssetObject.contentType,

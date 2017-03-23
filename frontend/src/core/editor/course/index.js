@@ -3,7 +3,7 @@ define(function(require) {
   var Origin = require('core/app/origin');
   var EditorData = require('../global/editorDataLoader');
 
-  var EditorCourseModel = require('./models/editorCourseModel');
+  var CourseModel = require('core/app/models/courseModel');
   var EditorCourseEditView = require('./views/editorCourseEditView');
   var EditorCourseEditSidebarView = require('./views/editorCourseEditSidebarView');
 
@@ -19,7 +19,7 @@ define(function(require) {
 
   function renderCourseEdit() {
     console.log(Origin.location.module);
-    (new EditorCourseModel({ _id: Origin.location.route1 })).fetch({
+    (new CourseModel({ _id: Origin.location.route1 })).fetch({
       success: function(model) {
         var form = Origin.scaffold.buildForm({ model: model });
         Origin.trigger('location:title:update', { title: window.polyglot.t('app.editcourse') });
@@ -30,7 +30,7 @@ define(function(require) {
   }
 
   function createNewCourse() {
-    var model = new EditorCourseModel({
+    var model = new CourseModel({
       title: window.polyglot.t('app.placeholdernewcourse'),
       displayTitle: window.polyglot.t('app.placeholdernewcourse')
     });

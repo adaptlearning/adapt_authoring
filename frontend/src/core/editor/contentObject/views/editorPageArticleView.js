@@ -2,15 +2,14 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('coreJS/app/origin');
+  var Origin = require('core/app/origin');
 
-  var EditorBlockModel = require('../../block/models/editorBlockModel');
-  var EditorBlockView = require('../../block/views/editorBlockView');
-  var EditorModel = require('../../global/models/editorModel');
+  var BlockModel = require('core/app/models/blockModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
+  var EditorPageBlockView = require('./editorPageBlockView');
   var EditorPasteZoneView = require('../../global/views/editorPasteZoneView');
 
-  var EditorArticleView = EditorOriginView.extend({
+  var EditorPageArticleView = EditorOriginView.extend({
     className: 'article editable article-draggable',
     tagName: 'div',
 
@@ -64,7 +63,7 @@ define(function(require){
       this.$('.article-blocks').empty();
 
       // Insert the 'pre' paste zone for blocks
-      var prePasteBlock = new EditorBlockModel();
+      var prePasteBlock = new BlockModel();
       prePasteBlock.set('_parentId', this.model.get('_id'));
       prePasteBlock.set('_type', 'block');
       prePasteBlock.set('_pasteZoneSortOrder', 1);
@@ -76,7 +75,7 @@ define(function(require){
     },
 
     addBlockView: function(blockModel, scrollIntoView) {
-      var newBlockView = new EditorBlockView({model: blockModel});
+      var newBlockView = new EditorPageBlockView({model: blockModel});
       var sortOrder = blockModel.get('_sortOrder');
 
       // Add syncing class
@@ -119,7 +118,7 @@ define(function(require){
           pasteZoneRenderOrder: 3
       }];
 
-      var newPageBlockModel = new EditorBlockModel({
+      var newPageBlockModel = new BlockModel({
         title: window.polyglot.t('app.placeholdernewblock'),
         displayTitle: window.polyglot.t('app.placeholdernewblock'),
         body: '',
@@ -172,16 +171,11 @@ define(function(require){
     },
 
     loadArticleEdit: function (event) {
+      console.log('loadArticleEdit');
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
-      var Id = this.model.get('_id');
-      Origin.router.navigate('#/editor/'
-        + courseId
-        + '/'
-        + type
-        + '/'
-        + Id
-        + '/edit', {trigger: true});
+      var id = this.model.get('_id');
+      Origin.router.navigate('#/editor/' + courseId + '/' + type + '/' + id + '/edit', { trigger: true });
     },
 
     setupDragDrop: function() {
@@ -248,8 +242,8 @@ define(function(require){
       });
     }
   }, {
-    template: 'editorArticle'
+    template: 'editorPageArticle'
   });
 
-  return EditorArticleView;
+  return EditorPageArticleView;
 });

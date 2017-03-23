@@ -1,10 +1,10 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
-  var EditorCourseModel = require('coreJS/editor/course/models/editorCourseModel');
+  var CourseModel = require('core/app/models/courseModel');
 
   var ProjectCollection = Backbone.Collection.extend({
-    model: EditorCourseModel,
+    model: CourseModel,
     url: 'api/content/course'
   });
 

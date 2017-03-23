@@ -3,17 +3,17 @@ define(function(require) {
   var _ = require('underscore');
   var Origin = require('core/app/origin');
 
-  var EditorArticleModel = require('../article/models/editorArticleModel');
-  var EditorBlockModel = require('../block/models/editorBlockModel');
-  var EditorClipboardModel = require('../global/models/editorClipboardModel');
+  var ArticleModel = require('core/app/models/articleModel');
+  var BlockModel = require('core/app/models/blockModel');
+  var ClipboardModel = require('core/app/models/clipboardModel');
+  var ComponentModel = require('core/app/models/componentModel');
+  var ComponentTypeModel = require('core/app/models/componentTypeModel');
+  var ContentObjectModel = require('core/app/models/contentObjectModel');
+  var ConfigModel = require('core/app/models/configModel');
+  var CourseAssetModel = require('core/app/models/courseAssetModel');
+  var CourseModel = require('core/app/models/courseModel');
   var EditorCollection = require('../global/collections/editorCollection');
-  var EditorComponentModel = require('../component/models/editorComponentModel');
-  var EditorComponentTypeModel = require('../component/models/editorComponentTypeModel');
-  var EditorContentObjectModel = require('../contentObject/models/editorContentObjectModel');
-  var EditorConfigModel = require('../config/models/editorConfigModel');
-  var EditorCourseAssetModel = require('../course/models/editorCourseAssetModel');
-  var EditorCourseModel = require('../course/models/editorCourseModel');
-  var ExtensionModel = require('../extensions/models/extensionModel');
+  var ExtensionModel = require('core/app/models/extensionModel');
 
   var isPreloaded = false;
   var isLoaded = false;
@@ -50,13 +50,13 @@ define(function(require) {
       if(!Origin.editor.data) Origin.editor.data = {};
 
       if(!Origin.editor.data.courses) {
-        Origin.editor.data.courses = createCollection(EditorCourseModel, '/api/content/course', 'courses');
+        Origin.editor.data.courses = createCollection(CourseModel, '/api/content/course', 'courses');
       }
       if(!Origin.editor.data.extensionTypes) {
         Origin.editor.data.extensionTypes = createCollection(ExtensionModel, '/api/extensiontype', 'extensionTypes');
       }
       if(!Origin.editor.data.componentTypes) {
-        Origin.editor.data.componentTypes = createCollection(EditorComponentTypeModel, '/api/componenttype', 'componentTypes', {
+        Origin.editor.data.componentTypes = createCollection(ComponentTypeModel, '/api/componenttype', 'componentTypes', {
           comparator: function(model) { return model.get('displayName'); }
         });
       }
@@ -102,7 +102,6 @@ define(function(require) {
     * Makes sure all data has been loaded and calls callback
     */
     waitForLoad: function(callback) {
-      console.log('waitForLoad', Origin.location.route1);
       if(!isPreloaded) {
         Origin.once('editor:dataPreloaded', function(){
           if(isLoadComplete()) return callback.apply(this);
@@ -141,14 +140,14 @@ define(function(require) {
   function setUpEditorData(id, callback) {
     // add the following to editor data
     _.extend(Origin.editor.data, {
-      course: new EditorCourseModel({ _id:id }),
-      config: new EditorConfigModel({ _courseId:id }),
-      contentObjects: createCollection(EditorContentObjectModel, '/api/content/contentobject?_courseId='+id, 'contentObjects'),
-      articles: createCollection(EditorArticleModel, '/api/content/article?_courseId='+id, 'articles'),
-      blocks: createCollection(EditorBlockModel, '/api/content/block?_courseId='+id, 'blocks'),
-      components: createCollection(EditorComponentModel, '/api/content/component?_courseId='+id, 'components'),
-      clipboard: createCollection(EditorClipboardModel, '/api/content/clipboard?_courseId=' + id + '&createdBy=' + Origin.sessionModel.get('id'), 'clipboard'),
-      courseAssets: createCollection(EditorCourseAssetModel, '/api/content/courseasset?_courseId='+id, 'courseAssets')
+      course: new CourseModel({ _id:id }),
+      config: new ConfigModel({ _courseId:id }),
+      contentObjects: createCollection(ContentObjectModel, '/api/content/contentobject?_courseId='+id, 'contentObjects'),
+      articles: createCollection(ArticleModel, '/api/content/article?_courseId='+id, 'articles'),
+      blocks: createCollection(BlockModel, '/api/content/block?_courseId='+id, 'blocks'),
+      components: createCollection(ComponentModel, '/api/content/component?_courseId='+id, 'components'),
+      clipboard: createCollection(ClipboardModel, '/api/content/clipboard?_courseId=' + id + '&createdBy=' + Origin.sessionModel.get('id'), 'clipboard'),
+      courseAssets: createCollection(CourseAssetModel, '/api/content/courseasset?_courseId='+id, 'courseAssets')
     });
     // load all collections
     loadEditorData(_.clone(courseData), function() {

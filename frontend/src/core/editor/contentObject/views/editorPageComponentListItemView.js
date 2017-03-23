@@ -1,12 +1,13 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
-  var EditorOriginView = require('../../global/views/editorOriginView');
-  var EditorComponentModel = require('../models/editorComponentModel');
-  var EditorComponentView = require('./editorComponentView');
+  var Origin = require('core/app/origin');
 
-  var EditorComponentListItemView = EditorOriginView.extend({
+  var ComponentModel = require('core/app/models/componentModel');
+  var EditorOriginView = require('../../global/views/editorOriginView');
+  var EditorPageComponentView = require('./editorPageComponentView');
+
+  var EditorPageComponentListItemView = EditorOriginView.extend({
     className: 'editor-component-list-item',
     tagName: 'div',
 
@@ -68,7 +69,7 @@ define(function(require) {
         return type.get('name') == componentName;
       });
 
-      var newComponentModel = new EditorComponentModel({
+      var newComponentModel = new ComponentModel({
         title: window.polyglot.t('app.placeholdernewcomponent'),
         displayTitle: window.polyglot.t('app.placeholdernewcomponent'),
         body: '',
@@ -82,7 +83,7 @@ define(function(require) {
         version: componentType.get('version')
       });
 
-      var newComponentView = new EditorComponentView({ model: newComponentModel }).$el.addClass('syncing');
+      var newComponentView = new EditorPageComponentView({ model: newComponentModel }).$el.addClass('syncing');
 
       this.$parentElement
         .find('.page-components')
@@ -105,8 +106,8 @@ define(function(require) {
       });
     }
   }, {
-    template: 'editorComponentListItem'
+    template: 'editorPageComponentListItem'
   });
 
-  return EditorComponentListItemView;
+  return EditorPageComponentListItemView;
 });

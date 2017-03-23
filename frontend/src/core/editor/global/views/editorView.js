@@ -15,10 +15,10 @@ define(function(require){
   var EditorMenuView = require('../../contentObject/views/editorMenuView');
   var EditorPageView = require('../../contentObject/views/editorPageView');
 
-  var EditorContentObjectModel = require('../../contentObject/models/editorContentObjectModel');
-  var EditorArticleModel = require('../../article/models/editorArticleModel');
-  var EditorBlockModel = require('../../block/models/editorBlockModel');
-  var EditorComponentModel = require('../../component/models/editorComponentModel');
+  var ContentObjectModel = require('core/app/models/contentObjectModel');
+  var ArticleModel = require('core/app/models/articleModel');
+  var BlockModel = require('core/app/models/blockModel');
+  var ComponentModel = require('core/app/models/componentModel');
 
   var EditorView = EditorOriginView.extend({
     className: "editor-view",
@@ -339,16 +339,16 @@ define(function(require){
       var model;
       switch (type) {
         case 'contentObjects':
-          model = new EditorContentObjectModel();
+          model = new ContentObjectModel();
           break;
         case 'articles':
-          model = new EditorArticleModel();
+          model = new ArticleModel();
           break;
         case 'blocks':
-          model = new EditorBlockModel();
+          model = new BlockModel();
           break;
         case 'components':
-          model = new EditorComponentModel();
+          model = new ComponentModel();
           break;
       }
       return model;

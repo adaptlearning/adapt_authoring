@@ -22,7 +22,7 @@ define(function(require){
     },
 
     toggleSelect: function(event) {
-      event && event.stopPropagation();
+      e && e.stopPropagation();
       if (!this.model.get('_isSelected')) {
         this.selectMenu();
       }

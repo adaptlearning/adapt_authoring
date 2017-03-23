@@ -6,8 +6,10 @@ define(function(require) {
   var Origin = require('core/app/origin');
   var EditorData = require('../global/editorDataLoader');
 
-  var EditorContentObjectModel = require('./models/editorContentObjectModel');
+  var ContentObjectModel = require('core/app/models/contentObjectModel');
   var EditorMenuSidebarView = require('./views/editorMenuSidebarView');
+  var EditorPageComponentListView = require('./views/editorPageComponentListView');
+  var EditorPageComponentListSidebarView = require('./views/editorPageComponentListSidebarView');
   var EditorPageEditView = require('./views/editorPageEditView');
   var EditorPageEditSidebarView = require('./views/editorPageEditSidebarView');
   var EditorPageSidebarView = require('./views/editorPageSidebarView');
@@ -15,10 +17,10 @@ define(function(require) {
 
   Origin.on('router:editor', function(route1, route2, route3, route4) {
     EditorData.waitForLoad(function() {
-      var isPageEdit = route2 === 'page' && route4 === "edit";
-      var isMenuEdit = route2 === 'menu' && route4 === "edit";
+      var isCOEdit = (route2 === 'page' || route2 === 'menu') && route4 === "edit";
+      var isBlockAdd = route2 === 'block' && route4 === 'add';
 
-      if((route2 === 'page' || route2 === 'menu') && route4 === "edit") {
+      if(isCOEdit) {
         renderContentObjectEdit();
       }
       else if(route2 === 'page') {
@@ -27,16 +29,23 @@ define(function(require) {
       else if(route2 === 'menu') {
         renderMenuStructure();
       }
+      else if(isBlockAdd) {
+        /**
+        * Odd one, but block -> add, so we're actually adding a component
+        * We're handling here because it comes from a page
+        */
+        handleNewComponent();
+      }
     });
   });
 
   function renderContentObjectEdit() {
-    (new EditorContentObjectModel({ _id: Origin.location.route3 })).fetch({
+    (new ContentObjectModel({ _id: Origin.location.route3 })).fetch({
       success: function(model) {
         var form = Origin.scaffold.buildForm({ model: model });
         // TODO this should be properly localised
         var type = Origin.location.route2;
-        Origin.trigger('location:title:update', { title: 'Editing ' + type + ' - ' + contentObjectModel.get('title') });
+        Origin.trigger('location:title:update', { title: 'Editing ' + type + ' - ' + model.get('title') });
         Origin.sidebar.addView(new EditorPageEditSidebarView({ form: form }).$el);
         Origin.contentPane.setView(EditorPageEditView, { model: model, form: form });
       }
@@ -72,5 +81,19 @@ define(function(require) {
       currentView: 'menu',
       currentPageId: (Origin.location.route3 || null)
     });
+  }
+
+  function handleNewComponent() {
+    var containingBlock = Origin.editor.data.blocks.findWhere({ _id: Origin.location.route3 });
+    var layoutOptions = containingBlock.get('layoutOptions');
+    var componentsModel = new Backbone.Model({
+      title: window.polyglot.t('app.addcomponent'),
+      body: window.polyglot.t('app.pleaseselectcomponent'),
+      _parentId: route3,
+      componentTypes: Origin.editor.data.componentTypes.toJSON(),
+      layoutOptions: layoutOptions
+    });
+    Origin.sidebar.addView(new EditorPageComponentListSidebarView({ model: componentsModel }).$el);
+    Origin.contentPane.setView(EditorPageComponentListView, { model: componentsModel });
   }
 });

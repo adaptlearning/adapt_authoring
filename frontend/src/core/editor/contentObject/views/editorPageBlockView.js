@@ -2,14 +2,15 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('coreJS/app/origin');
-  var EditorOriginView = require('../../global/views/editorOriginView');
-  var EditorComponentModel = require('../../component/models/editorComponentModel');
-  var EditorComponentView = require('../../component/views/editorComponentView');
-  var EditorComponentPasteZoneView = require('../../component/views/editorComponentPasteZoneView');
-  var EditorComponentListView = require('../../component/views/editorComponentListView');
+  var Origin = require('core/app/origin');
 
-  var EditorBlockView = EditorOriginView.extend({
+  var ComponentModel = require('core/app/models/componentModel');
+  var EditorOriginView = require('../../global/views/editorOriginView');
+  var EditorPageComponentView = require('./editorPageComponentView');
+  var EditorPageComponentPasteZoneView = require('./editorPageComponentPasteZoneView');
+  var EditorPageComponentListView = require('./editorPageComponentListView');
+
+  var EditorPageBlockView = EditorOriginView.extend({
     className: 'block editable block-draggable',
     tagName: 'div',
 
@@ -232,7 +233,7 @@ define(function(require){
 
       // Add component elements
       this.model.getChildren().each(function(component) {
-        this.$('.page-components').append(new EditorComponentView({model: component}).$el);
+        this.$('.page-components').append(new EditorPageComponentView({ model: component }).$el);
       }, this);
 
       if (!addPasteZonesFirst) {
@@ -253,10 +254,11 @@ define(function(require){
     },
 
     loadBlockEdit: function (event) {
+      console.log('loadBlockEdit');
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
-      var Id = this.model.get('_id');
-      Origin.router.navigate('#/editor/' + courseId + '/' + type + '/' + Id + '/edit', { trigger: true });
+      var id = this.model.get('_id');
+      Origin.router.navigate('#/editor/' + courseId + '/' + type + '/' + id + '/edit', { trigger: true });
     },
 
     showComponentList: function(event) {
@@ -273,7 +275,7 @@ define(function(require){
         layoutOptions: layoutOptions
       });
 
-      $('body').append(new EditorComponentListView({
+      $('body').append(new EditorPageComponentListView({
         model: componentSelectModel,
         $parentElement: this.$el,
         parentView: this
@@ -293,21 +295,21 @@ define(function(require){
       });
 
       _.each(this.sortArrayByKey(dragLayouts, 'pasteZoneRenderOrder'), function(layout) {
-        var pasteComponent = new EditorComponentModel();
+        var pasteComponent = new ComponentModel();
         pasteComponent.set('_parentId', this.model.get('_id'));
         pasteComponent.set('_type', 'component');
         pasteComponent.set('_pasteZoneLayout', layout.type);
-        var $pasteEl = new EditorComponentPasteZoneView({model: pasteComponent}).$el;
+        var $pasteEl = new EditorPageComponentPasteZoneView({ model: pasteComponent }).$el;
         $pasteEl.addClass('drop-only');
         this.$('.page-components').append($pasteEl);
       }, this);
 
       _.each(this.sortArrayByKey(layouts, 'pasteZoneRenderOrder'), function(layout) {
-        var pasteComponent = new EditorComponentModel();
+        var pasteComponent = new ComponentModel();
         pasteComponent.set('_parentId', this.model.get('_id'));
         pasteComponent.set('_type', 'component');
         pasteComponent.set('_pasteZoneLayout', layout.type);
-        this.$('.page-components').append(new EditorComponentPasteZoneView({model: pasteComponent}).$el);
+        this.$('.page-components').append(new EditorPageComponentPasteZoneView({ model: pasteComponent }).$el);
       }, this);
     },
 
@@ -324,9 +326,9 @@ define(function(require){
       this.$('.add-control').toggleClass('display-none', layoutOptions.length === 0);
     }
   }, {
-    template: 'editorBlock'
+    template: 'editorPageBlock'
   });
 
-  return EditorBlockView;
+  return EditorPageBlockView;
 
 });

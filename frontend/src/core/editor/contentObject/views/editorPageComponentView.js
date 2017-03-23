@@ -2,11 +2,10 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('coreJS/app/origin');
+  var Origin = require('core/app/origin');
   var EditorOriginView = require('../../global/views/editorOriginView');
-  var EditorComponentModel = require('../models/editorComponentModel');
 
-  var EditorComponentView = EditorOriginView.extend({
+  var EditorPageComponentView = EditorOriginView.extend({
     className: 'component editable component-draggable',
     tagName: 'div',
 
@@ -66,16 +65,11 @@ define(function(require){
     },
 
     loadComponentEdit: function () {
+      console.log('loadComponentEdit');
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
-      var Id = this.model.get('_id');
-      Origin.router.navigate('#/editor/'
-        + courseId
-        + '/'
-        + type
-        + '/'
-        + Id
-        + '/edit', {trigger: true});
+      var id = this.model.get('_id');
+      Origin.router.navigate('#/editor/' + courseId + '/' + type + '/' + id + '/edit', { trigger: true });
     },
 
     setupDragDrop: function() {
@@ -252,8 +246,8 @@ define(function(require){
       });
     }
   }, {
-    template: 'editorComponent'
+    template: 'editorPageComponent'
   });
 
-  return EditorComponentView;
+  return EditorPageComponentView;
 });

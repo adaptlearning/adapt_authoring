@@ -1,11 +1,12 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
-  var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
-  var EditorComponentModel = require('../models/editorComponentModel');
+  var Origin = require('core/app/origin');
 
-  var EditorComponentListSidebarView = SidebarItemView.extend({
+  var ComponentModel = require('core/app/models/componentModel');
+  var SidebarItemView = require('core/sidebar/views/sidebarItemView');
+
+  var EditorPageComponentListSidebarView = SidebarItemView.extend({
     events: {
       'click .editor-component-list-sidebar-save': 'onSaveClicked',
       'click .editor-component-list-sidebar-save-edit': 'onSaveAndEditClicked',
@@ -25,7 +26,7 @@ define(function(require) {
       }, this);
 
       var _this = this;
-      var newComponentModel = new EditorComponentModel();
+      var newComponentModel = new ComponentModel();
 
       newComponentModel.save({
         title: window.polyglot.t('app.placeholdernewcomponent'),
@@ -67,7 +68,7 @@ define(function(require) {
       }, this);
 
       var _this = this;
-      var newComponentModel = new EditorComponentModel();
+      var newComponentModel = new ComponentModel();
 
       newComponentModel.save({
         title: window.polyglot.t('app.placeholdernewcomponent'),
@@ -112,8 +113,8 @@ define(function(require) {
       Origin.router.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
     }
   }, {
-    template: 'editorComponentListSidebar'
+    template: 'editorPageComponentListSidebar'
   });
 
-  return EditorComponentListSidebarView;
+  return EditorPageComponentListSidebarView;
 });

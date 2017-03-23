@@ -3,16 +3,16 @@ define(function(require) {
   var Origin = require('core/app/origin');
   var EditorData = require('../global/editorDataLoader');
 
+  var ConfigModel = require('core/app/models/configModel');
   var EditorConfigEditView = require('./views/editorConfigEditView');
   var EditorConfigEditSidebarView = require('./views/editorConfigEditSidebarView');
-  var EditorConfigModel = require('./models/editorConfigModel');
 
   Origin.on('router:editor', function(route1, route2, route3, route4) {
     EditorData.waitForLoad(function() {
       if(route2 !== 'config') {
         return;
       }
-      (new EditorConfigModel({ _courseId: route1 })).fetch({
+      (new ConfigModel({ _courseId: route1 })).fetch({
         success: function(model) {
           var form = Origin.scaffold.buildForm({ model: model });
           Origin.trigger('location:title:update', { title: 'Edit configuration' });

@@ -3,7 +3,7 @@ define(function(require) {
   var Origin = require('core/app/origin');
   var EditorData = require('../global/editorDataLoader');
 
-  var EditorConfigModel = require('../config/models/editorConfigModel');
+  var ConfigModel = require('core/app/models/configModel');
   var EditorThemeCollectionView = require('./views/editorThemeCollectionView');
   var EditorThemeCollectionSidebarView = require('./views/editorThemeCollectionSidebarView');
 
@@ -12,7 +12,7 @@ define(function(require) {
       if(route2 !== 'selecttheme') {
         return;
       }
-      (new EditorConfigModel({ _courseId: route1 })).fetch({
+      (new ConfigModel({ _courseId: route1 })).fetch({
         success: function(model) {
           Origin.trigger('location:title:update', { title: 'Select theme' });
 

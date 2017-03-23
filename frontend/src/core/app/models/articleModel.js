@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var EditorModel = require('../../global/models/editorModel');
+  var ContentModel = require('./contentModel');
 
-  var EditorArticleModel = EditorModel.extend({
+  var ArticleModel = ContentModel.extend({
     urlRoot: '/api/content/article',
     _parent: 'contentObjects',
     _siblings: 'articles',
@@ -13,5 +13,5 @@ define(function(require) {
     }
   });
 
-  return EditorArticleModel;
+  return ArticleModel;
 });

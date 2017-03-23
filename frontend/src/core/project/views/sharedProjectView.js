@@ -26,7 +26,10 @@ define(function(require){
     },
 
     openContextMenu: function(e) {
-      e && e.stopPropagation() && e.preventDefault();
+      if(e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
       Origin.trigger('contextMenu:open', this, e);
     },
 

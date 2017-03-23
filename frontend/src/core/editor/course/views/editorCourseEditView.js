@@ -1,8 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
-  var EditorConfigModel = require('../../config/models/editorConfigModel');
+  var Origin = require('core/app/origin');
+
+  var ConfigModel = require('core/app/models/configModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
 
   var EditorCourseEditView = EditorOriginView.extend({
@@ -19,7 +20,7 @@ define(function(require) {
         this.model.set('tags', []);
       } else {
         // Ensure that the latest config model is always up-to-date when entering this screen
-        Origin.editor.data.config = new EditorConfigModel({_courseId: this.model.get('_id')});
+        Origin.editor.data.config = new ConfigModel({_courseId: this.model.get('_id')});
       }
 
       // This next line is important for a proper PATCH request on saveProject()

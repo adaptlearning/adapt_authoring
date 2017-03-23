@@ -2,10 +2,10 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('coreJS/app/origin');
+  var Origin = require('core/app/origin');
   var EditorPasteZoneView = require('../../global/views/editorPasteZoneView');
 
-  var EditorComponentPasteZone = EditorPasteZoneView.extend({
+  var EditorPageComponentPasteZone = EditorPasteZoneView.extend({
     className : 'paste-zone paste-zone-component display-none',
 
     events: {
@@ -64,8 +64,8 @@ define(function(require){
       });
     }
   }, {
-    template: 'editorComponentPasteZone'
+    template: 'editorPageComponentPasteZone'
   });
 
-  return EditorComponentPasteZone;
+  return EditorPageComponentPasteZone;
 });

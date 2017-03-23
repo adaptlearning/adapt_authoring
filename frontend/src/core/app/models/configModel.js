@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var EditorModel = require('../../global/models/editorModel');
+  var ContentModel = require('./contentModel');
 
-  var EditorConfigModel = EditorModel.extend({
+  var ConfigModel = ContentModel.extend({
     _type: 'config',
     _parent: 'course',
     _siblings: '',
@@ -25,5 +25,5 @@ define(function(require) {
     }
   });
 
-  return EditorConfigModel;
+  return ConfigModel;
 });

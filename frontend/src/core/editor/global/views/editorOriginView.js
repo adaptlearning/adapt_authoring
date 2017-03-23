@@ -140,7 +140,10 @@ define(function(require){
     */
 
     openContextMenu: function (e) {
-      e && e.stopPropagation() && e.preventDefault();
+      if(e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
       Origin.trigger('contextMenu:open', this, e);
     },
 
@@ -168,7 +171,10 @@ define(function(require){
     },
 
     onPaste: function(e) {
-      e && e.preventDefault() && e.stopPropagation();
+      if(e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
       Origin.trigger('editorView:paste', this.model.get('_parentId'), $(event.target).data('sort-order'), $(event.target).data('paste-layout'));
     },
 

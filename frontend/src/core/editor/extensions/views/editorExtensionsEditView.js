@@ -3,8 +3,8 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('core/app/origin');
 
+  var ConfigModel = require('core/app/models/configModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
-  var EditorConfigModel = require('../../config/models/editorConfigModel');
 
   var EditorExtensionsEditView = EditorOriginView.extend({
     className: "extension-management",
@@ -63,7 +63,7 @@ define(function(require) {
 
     refreshData: function() {
       // ensure that the config model is up-to-date when entering this screen
-      (new EditorConfigModel({ _courseId: this.model.get('_id') })).fetch({
+      (new ConfigModel({ _courseId: this.model.get('_id') })).fetch({
         success: _.bind(function(model, response, options) {
           Origin.editor.data.config =  model;
           Origin.trigger('scaffold:updateSchemas', this.setupExtensions, this);

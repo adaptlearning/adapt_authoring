@@ -1,38 +1,38 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var EditorModel = require('../../global/models/editorModel');
+  var ContentModel = require('./contentModel');
 
-  var EditorComponentModel = EditorModel.extend({
-    urlRoot: '/api/content/component',
-    _parent: 'blocks',
-    _siblings: 'components',
-    _children: false,
+  var BlockModel = ContentModel.extend({
+    urlRoot: '/api/content/block',
+    _parent: 'articles',
+    _siblings: 'blocks',
+    _children: 'components',
+    // Block specific properties
+    layoutOptions:  null,
+    dragLayoutOptions: null,
     // These are the only attributes which should be permitted on a save
     // TODO look into this...
     whitelistAttributes: [
       '_id',
-      '_componentType',
       '_courseId',
-      '_layout',
       '_parentId',
+      '_layoutOptions',
       '_type',
-      'properties',
-      '_component',
-      '_extensions',
+      '_sortOrder',
       '_classes',
       '_isOptional',
       '_isAvailable',
       'body',
       'displayTitle',
       'title',
-      'version',
+      '_extensions',
       'themeSettings'
     ],
 
     initialize: function() {
-      // TODO intentional override?
+      // TODO interntional override?
     }
   });
 
-  return EditorComponentModel;
+  return BlockModel;
 });

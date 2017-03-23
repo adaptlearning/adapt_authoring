@@ -1,10 +1,10 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var EditorModel = require('../../global/models/editorModel');
+  var ContentModel = require('./contentModel');
 
-  var EditorClipboardModel = EditorModel.extend({
+  var ClipboardModel = ContentModel.extend({
     urlRoot: '/api/content/clipboard',
   });
 
-  return EditorClipboardModel;
+  return ClipboardModel;
 });

@@ -2,11 +2,11 @@
 define(function(require) {
   var _ = require('underscore');
   var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
+  var Origin = require('core/app/origin');
   var EditorOriginView = require('../../global/views/editorOriginView');
-  var EditorComponentListItemView = require('./editorComponentListItemView');
+  var EditorPageComponentListItemView = require('./editorPageComponentListItemView');
 
-  var EditorComponentListView = EditorOriginView.extend({
+  var EditorPageComponentListView = EditorOriginView.extend({
     className: "editor-component-list",
     tagName: "div",
 
@@ -95,7 +95,7 @@ define(function(require) {
           }
         }
 
-        this.$('.editor-component-list-sidebar-list').append(new EditorComponentListItemView({
+        this.$('.editor-component-list-sidebar-list').append(new EditorPageComponentListItemView({
             model: componentType,
             availablePositions: this.availablePositions,
             _parentId: this.model.get('_parentId'),
@@ -123,8 +123,8 @@ define(function(require) {
       this.$('.editor-component-list-sidebar-list').height(windowHeight - this.headerHeight);
     }
   }, {
-    template: 'editorComponentList'
+    template: 'editorPageComponentList'
   });
 
-  return EditorComponentListView;
+  return EditorPageComponentListView;
 });

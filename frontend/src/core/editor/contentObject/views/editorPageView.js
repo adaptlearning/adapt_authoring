@@ -4,10 +4,10 @@ define(function(require){
   var Handlebars = require('handlebars');
   var Origin = require('core/app/origin');
 
-  var EditorArticleView = require('../../article/views/editorArticleView');
-  var EditorArticleModel = require('../../article/models/editorArticleModel');
-  var EditorModel = require('../../global/models/editorModel');
+  var ArticleModel = require('core/app/models/articleModel');
+  var ContentModel = require('core/app/models/contentModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
+  var EditorPageArticleView = require('./editorPageArticleView');
   var EditorPasteZoneView = require('../../global/views/editorPasteZoneView');
 
   var EditorPageView = EditorOriginView.extend({
@@ -64,11 +64,6 @@ define(function(require){
 
     evaluateChildStatus: function() {
       this.childrenRenderedCount++;
-
-      if (this.childrenCount == this.childrenRenderedCount) {
-        // All child controls of the page have been rendered so persist the scroll position
-        this.persistScrollPosition();
-      }
     },
 
     postRender: function() {
@@ -86,7 +81,7 @@ define(function(require){
       Origin.trigger('editorPageView:removePageSubViews');
 
       // Insert the 'pre' paste zone for articles
-      var prePasteArticle = new EditorArticleModel();
+      var prePasteArticle = new ArticleModel();
       prePasteArticle.set('_parentId', this.model.get('_id'));
       prePasteArticle.set('_type', 'article');
       prePasteArticle.set('_pasteZoneSortOrder', 1);
@@ -100,7 +95,7 @@ define(function(require){
     },
 
     addArticleView: function(articleModel, scrollIntoView, addNewBlock) {
-      var newArticleView = new EditorArticleView({model: articleModel}),
+      var newArticleView = new EditorPageArticleView({model: articleModel}),
         sortOrder = articleModel.get('_sortOrder');
 
         // Add syncing class
@@ -129,7 +124,7 @@ define(function(require){
       event && event.preventDefault();
 
       var _this = this;
-      var newPageArticleModel = new EditorArticleModel({
+      var newPageArticleModel = new ArticleModel({
         title: window.polyglot.t('app.placeholdernewarticle'),
         displayTitle: window.polyglot.t('app.placeholdernewarticle'),
         body: '',
@@ -157,8 +152,9 @@ define(function(require){
 
     loadPageEdit: function(event) {
       event && event.preventDefault();
-       var route = '#/editor/' + this.model.get('_courseId') + '/page/' + this.model.get('_id') + '/edit';
-       Origin.router.navigate(route);
+      var courseId = this.model.get('_courseId');
+      var id = this.model.get('_id');
+       Origin.router.navigate('#/editor/' + courseId + '/page/' + id + '/edit');
     },
 
     // TODO fragile HACK, refactor context menu code to allow what I want to do later...

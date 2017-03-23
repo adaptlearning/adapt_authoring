@@ -1,9 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Origin = require('coreJS/app/origin');
-	var EditorArticleModel = require('../../article/models/editorArticleModel');
-	var EditorBlockModel = require('../../block/models/editorBlockModel');
-	var EditorContentObjectModel = require('../models/editorContentObjectModel');
+  var Origin = require('core/app/origin');
+	var ArticleModel = require('core/app/models/articleModel');
+	var BlockModel = require('core/app/models/blockModel');
+	var ContentObjectModel = require('core/app/models/contentObjectModel');
 	var EditorMenuItemView = require('./editorMenuItemView');
   var EditorOriginView = require('../../global/views/editorOriginView');
 
@@ -64,7 +64,7 @@ define(function(require) {
     addMenuItem: function(event, type) {
       event.preventDefault();
 
-      var newMenuItemModel = new EditorContentObjectModel({
+      var newMenuItemModel = new ContentObjectModel({
         _parentId: this._parentId,
         _courseId: Origin.editor.data.course.get('_id'),
         title: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
@@ -115,11 +115,11 @@ define(function(require) {
         this.pageView = newMenuItemView;
         typeToAdd = 'article';
         newChildTitle = window.polyglot.t('app.placeholdernewarticle');
-        var newChildModel = new EditorArticleModel();
+        var newChildModel = new ArticleModel();
       } else {
         typeToAdd = 'block';
         newChildTitle = window.polyglot.t('app.placeholdernewblock');
-        var newChildModel = new EditorBlockModel();
+        var newChildModel = new BlockModel();
       }
 
       newChildModel.save({
@@ -165,7 +165,7 @@ define(function(require) {
       event.preventDefault();
       $('.add-zone').css('visibility','visible');
       var parentId = this._parentId;
-      var target = new EditorContentObjectModel({
+      var target = new ContentObjectModel({
         _parentId: parentId,
         _courseId: Origin.editor.data.course.get('_id')
       });

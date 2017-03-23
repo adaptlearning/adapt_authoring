@@ -8,8 +8,8 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('coreJS/app/origin');
-  var helpers = require('coreJS/app/helpers');
+  var Origin = require('core/app/origin');
+  var helpers = require('core/app/helpers');
 
   var EditorOriginView = require('./editorOriginView');
   var EditorMenuView = require('../../contentObject/views/editorMenuView');

@@ -2,10 +2,9 @@
 define(function(require) {
 
   var Backbone = require('backbone');
-  var ComponentTypeModel = require('coreJS/pluginManagement/models/componentTypeModel');
+  var ComponentTypeModel = require('core/pluginManagement/models/componentTypeModel');
 
   var ComponentTypeCollection = Backbone.Collection.extend({
-
     model: ComponentTypeModel,
 
     url: function (options) {

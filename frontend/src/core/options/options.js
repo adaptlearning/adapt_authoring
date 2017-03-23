@@ -3,8 +3,8 @@
 
 define(function(require) {
 
-	var Origin = require('coreJS/app/origin');
-	var OptionsView = require('coreJS/options/views/optionsView');
+	var Origin = require('core/app/origin');
+	var OptionsView = require('core/options/views/optionsView');
 
 	var Options = {};
 

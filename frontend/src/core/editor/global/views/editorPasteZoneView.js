@@ -2,8 +2,8 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('coreJS/app/origin');
-  var Helpers = require('coreJS/app/helpers');
+  var Origin = require('core/app/origin');
+  var Helpers = require('core/app/helpers');
   var EditorOriginView = require('./editorOriginView');
 
   var EditorPasteZone = EditorOriginView.extend({

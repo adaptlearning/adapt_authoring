@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
-    var Origin = require('coreJS/app/origin');
-    var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
+    var Origin = require('core/app/origin');
+    var SidebarItemView = require('core/sidebar/views/sidebarItemView');
 
     var AssetManagementNewAssetSidebarView = SidebarItemView.extend({
 

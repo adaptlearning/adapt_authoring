@@ -3,11 +3,11 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
-  var ProjectView = require('coreJS/project/views/projectView');
-  var SharedProjectView = require('coreJS/project/views/sharedProjectView');
-  var ProjectCollection = require('coreJS/project/collections/projectCollection');
+  var Origin = require('core/app/origin');
+  var OriginView = require('core/app/views/originView');
+  var ProjectView = require('core/project/views/projectView');
+  var SharedProjectView = require('core/project/views/sharedProjectView');
+  var ProjectCollection = require('core/project/collections/projectCollection');
 
   var DashboardView = OriginView.extend({
 

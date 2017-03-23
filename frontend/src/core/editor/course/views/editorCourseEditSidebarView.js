@@ -21,7 +21,7 @@ define(function(require) {
       Backbone.history.history.back();
     }
   }, {
-    template: 'editorCourseEditSidebarView'
+    template: 'editorCourseEditSidebar'
   });
 
   return EditorCourseEditSidebarView;

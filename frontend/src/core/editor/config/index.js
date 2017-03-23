@@ -17,7 +17,7 @@ define(function(require) {
           var form = Origin.scaffold.buildForm({ model: model });
           Origin.trigger('location:title:update', { title: 'Edit configuration' });
           Origin.sidebar.addView(new EditorConfigEditSidebarView({ form: form }).$el);
-          Origin.contentPane.setView(EditorConfigEditView, { model: configModel, form: form });
+          Origin.contentPane.setView(EditorConfigEditView, { model: model, form: form });
         }
       });
     });

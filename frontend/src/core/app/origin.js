@@ -4,10 +4,7 @@ define(function(require){
   var Backbone = require('backbone');
 
   var Origin = {
-    location: {},
-    editor: {
-      data: {}
-    }
+    location: {}
   };
 
   var pluginTaps = [];

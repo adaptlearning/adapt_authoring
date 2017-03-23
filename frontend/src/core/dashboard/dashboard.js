@@ -10,9 +10,6 @@ define(function(require) {
   Origin.on('router:dashboard', function(location, subLocation, action) {
 
     Origin.tap('dashboard', function() {
-      Origin.editor = {};
-      Origin.editor.data = {};
-
       Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
       Origin.options.addItems([
         {

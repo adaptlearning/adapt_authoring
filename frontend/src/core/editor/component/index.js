@@ -2,7 +2,7 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('coreJS/app/origin');
-  var Helpers = require('../global/helpers');
+  var EditorData = require('../global/editorDataLoader');
 
   var EditorComponentEditView = require('./views/editorComponentEditView');
   var EditorComponentEditSidebarView = require('./views/editorComponentEditSidebarView');
@@ -11,12 +11,14 @@ define(function(require) {
   var EditorComponentListSidebarView = require('./views/editorComponentListSidebarView');
 
   Origin.on('router:editor', function(route1, route2, route3, route4) {
-    if(route2 === 'block' && route4 === 'add') {
-      // block->add, so we're actually adding a component
-      handleNewComponent();
-    } else if (route2 === 'component') {
-      handleEditComponent();
-    }
+    EditorData.waitForLoad(function() {
+      if(route2 === 'block' && route4 === 'add') {
+        // block->add, so we're actually adding a component
+        handleNewComponent();
+      } else if (route2 === 'component') {
+        handleEditComponent();
+      }
+    });
   });
 
   function handleNewComponent() {

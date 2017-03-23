@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Origin = require('coreJS/app/origin');
-  var Helpers = require('../global/helpers');
+  var EditorData = require('../global/editorDataLoader');
 
   var EditorContentObjectModel = require('./models/editorContentObjectModel');
   var EditorMenuSidebarView = require('./views/editorMenuSidebarView');
@@ -11,27 +11,29 @@ define(function(require) {
   var EditorView = require('../global/views/editorView');
 
   Origin.on('router:editor', function(route1, route2, route3, route4) {
-    var isPageEdit = route2 === 'page' && route4 === "edit";
-    var isMenuEdit = route2 === 'menu' && route4 === "edit";
+    EditorData.waitForLoad(function() {
+      var isPageEdit = route2 === 'page' && route4 === "edit";
+      var isMenuEdit = route2 === 'menu' && route4 === "edit";
 
-    if((route2 === 'page' || route2 === 'menu') && route4 === "edit") {
-      renderContentObjectEdit();
-    }
-    else if(route2 === 'page') {
-      renderPageStructure();
-    }
-    else if(route2 === 'menu') {
-      renderMenuStructure();
-    }
+      if((route2 === 'page' || route2 === 'menu') && route4 === "edit") {
+        renderContentObjectEdit();
+      }
+      else if(route2 === 'page') {
+        renderPageStructure();
+      }
+      else if(route2 === 'menu') {
+        renderMenuStructure();
+      }
+    });
   });
 
   function renderContentObjectEdit() {
     (new EditorContentObjectModel({ _id: Origin.location.route3 })).fetch({
       success: function(model) {
         var form = Origin.scaffold.buildForm({ model: model });
-        // TODO this is from menu
-        // Origin.trigger('location:title:update', { title: 'Editing menu - ' + contentObjectModel.get('title') });
-        Origin.trigger('location:title:update', { title: 'Editing page - ' + contentObjectModel.get('title') });
+        // TODO this should be properly localised
+        var type = Origin.location.route2;
+        Origin.trigger('location:title:update', { title: 'Editing ' + type + ' - ' + contentObjectModel.get('title') });
         Origin.sidebar.addView(new EditorPageEditSidebarView({ form: form }).$el);
         Origin.contentPane.setView(EditorPageEditView, { model: model, form: form });
       }

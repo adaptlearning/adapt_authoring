@@ -2,7 +2,7 @@
 define(function(require) {
   var Origin = require('core/app/origin');
   var EditorData = require('./global/editorDataLoader');
-  // load in the submodules
+  // load the submodules
   require([
     './article/index',
     './block/index',
@@ -12,7 +12,7 @@ define(function(require) {
     './course/index',
     './extensions/index',
     './menuSettings/index',
-    './theme/index'
+    './selectTheme/index'
   ]);
   // loads editor data
   Origin.on('app:dataReady login:changed', EditorData.preload);

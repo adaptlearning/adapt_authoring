@@ -8,8 +8,9 @@ define(function(require) {
   var EditorMenuSettingsEditSidebarView = require('./views/editorMenuSettingsEditSidebarView');
 
   Origin.on('router:editor', function(route1, route2, route3, route4) {
+    console.log(Origin.location);
     EditorData.waitForLoad(function() {
-      if(route2 !== 'menuSettings') {
+      if(route2 !== 'menusettings') {
         return;
       }
       (new EditorConfigModel({ _courseId: route1 })).fetch({

@@ -14,20 +14,21 @@ var usermanager = require('../../../lib/usermanager');
 var semver = require('semver');
 var version = require('../../../version');
 var glob = require('glob');
-var filestorage = require('../../../lib/filestorage');
 var Constants = require('../../../lib/outputmanager').Constants;
-var crypto = require('crypto');
 var util = require('util');
+var helpers = require('./helpers');
 
 // TODO integrate with sockets API to show progress
 
 function Import(req, done) {
-  self = this;
 
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
-
+  var unzipFolder = tenantId + '_unzipped';
+  var courseRoot = path.join(COURSE_ROOT_FOLDER, unzipFolder);
   var cleanupDirs = [];
+  var metadata = {};
+  var form = new IncomingForm();
 
 
   /**
@@ -41,33 +42,51 @@ function Import(req, done) {
   };
   util.inherits(ImportError, Error);
 
+  form.parse(req, function (error, fields, files) {
 
-  async.waterfall([
-    function courseFolderExists(cb) {
-      fs.ensureDir(COURSE_ROOT_FOLDER, cb);
-    },
-    function parseForm(data, cb) {
-      var form = IncomingForm();
-      form.uploadDir = COURSE_ROOT_FOLDER;
-      form.parse(req, cb);
-    },
-    function doPreparation(fields, files, cb) {
-      if(!files.file || !files.file.path) {
-        return cb(new ImportError('File upload failed.'));
+    if (error) return next(error);
+    /**
+    * Main process
+    * All functions delgated below for readability
+    */
+    async.series([
+      function extractFiles(cb) {
+        if(!files.file || !files.file.path) {
+          return cb(new ImportError('File upload failed.'));
+        }
+        var zipPath = files.file.path;
+        cleanupDirs.push(zipPath,courseRoot);
+        helpers.unzip(zipPath, courseRoot, cb);
+      },
+      function doPreparation(cb) {
+        prepareImport(cb);
+      },
+      function asyncPlugins(cb) {
+        importPlugins(cb);
+      },
+      function asyncTagsJson(cb) {
+        importTagsJson(cb);
+      },
+      function asyncCourseJson(cb) {
+        importCourseJson(cb);
+      },
+      function asyncAssets(cb) {
+        importAssets(cb);
+      },
+      function asyncCourseAssets(cb) {
+        importCourseassets(cb);
+      },
+      function doneImport(cb) {
+        cleanUpImport(cleanupDirs, cb);
       }
-      var zipPath = files.file.path;
-      var unzipPath = zipPath + '_unzipped';
-      cleanupDirs.push(zipPath,unzipPath);
-      prepareImport(zipPath, unzipPath, cb);
-    },
-    function doRestoration(pMetadata, cb) {
-      restoreData(pMetadata, function(error) {
-        cb(error, pMetadata);
-      });
-    }
-  ], function doneWaterfall(error, metadata) {
-    cleanUpImport(cleanupDirs, function(cleanupError) {
-      done(error || cleanupError);
+    ], function(error, results) {
+      if (error) {
+        // TODO might need to run cleanUpImport as well.
+        removeImport(function ImportRemoved(removalError) {
+          done(removalError || error);
+        });
+      }
+      done(error);
     });
   });
 
@@ -77,57 +96,40 @@ function Import(req, done) {
   * 2. Validates the import's metadata
   * 3. Checks compatibility of import with this AT instance
   */
-  function prepareImport(zipPath, unzipPath, callback) {
-    // TODO -  refactor using unzip instead
-    var decompress = require('decompress');
-    var d = new decompress()
-      .src(zipPath)
-      .dest(unzipPath)
-      .use(decompress.zip({ strip: 0 }));
-    d.run(function onUnzipped(error, files) {
-      // TODO some zips give no file permissions...see: https://github.com/kevva/decompress/issues/24
-      if(error) {
-        return callback(error);
-      }
-      async.auto({
-        removeZip: function(cb) {
-          fs.remove(zipPath, cb);
-        },
-        loadMetadata: function(cb) {
-          fs.readJson(path.join(unzipPath, Constants.Filenames.Metadata), function onJsonRead(error, metadata) {
-            if(error) {
-              // TODO any other possible errors?
-              switch(error.name) {
-                case 'SyntaxError':
-                  return cb(new ImportError('Import contains invalid metadata, please check the archive.', 400));
-                default:
-                  return cb(new ImportError('Unable to load metadata. Please check archive is a valid import package.', 400));
-              }
+  function prepareImport(callback) {
+    async.auto({
+      loadMetadata: function(cb) {
+        fs.readJson(path.join(courseRoot, Constants.Filenames.Metadata), function onJsonRead(error, metadataJson) {
+          if(error) {
+            // TODO any other possible errors?
+            switch(error.name) {
+              case 'SyntaxError':
+                return cb(new ImportError('Import contains invalid metadata, please check the archive.', 400));
+              default:
+                return cb(new ImportError('Unable to load metadata. Please check archive is a valid import package.', 400));
             }
-            // store this for later
-            metadata.importDir = unzipPath;
-            // make sure everything's in the right order for processing
-            sortMetadata(metadata, cb);
-          });
-        },
-        checkVersionCompatibility: ['loadMetadata', function(cb, data) {
-          var metadata = data.loadMetadata;
-          var installedVersion = semver.clean(version.adapt_framework);
-          var importVersion = semver.clean(metadata.version);
+          }
+          metadata = metadataJson;
+          // make sure everything's in the right order for processing
+          sortMetadata(cb);
+        });
+      },
+      checkVersionCompatibility: ['loadMetadata', function(cb) {
+        var installedVersion = semver.clean(version.adapt_framework);
+        var importVersion = semver.clean(metadata.version);
 
-          if(!importVersion) {
-            return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
-          }
-          // check the import's within the major version number
-          if(semver.satisfies(importVersion,semver.major(installedVersion).toString())) {
-            cb();
-          } else {
-            cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
-          }
-        }]
-      }, function doneAuto(error, data) {
-        callback(error, data && data.loadMetadata);
-      });
+        if(!importVersion) {
+          return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
+        }
+        // check the import's within the major version number
+        if(semver.satisfies(importVersion,semver.major(installedVersion).toString())) {
+          cb();
+        } else {
+          cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
+        }
+      }]
+    }, function doneAuto(error, data) {
+      callback(error);
     });
   };
 
@@ -135,7 +137,7 @@ function Import(req, done) {
   * Sorts in-place the metadata ABCs to make sure processing can happen
   * (only needed for content objects currently)
   */
-  function sortMetadata(metadata, callback) {
+  function sortMetadata(callback) {
     async.forEachOf(metadata.course, function iterator(item, type, cb) {
       switch(type) {
         case 'contentobject':
@@ -148,7 +150,7 @@ function Import(req, done) {
       }
       cb();
     }, function(error) {
-      callback(error, metadata);
+      callback(error);
     });
   };
 
@@ -168,42 +170,12 @@ function Import(req, done) {
     return sorted;
   };
 
-  /*
-  * Async wrapper for delegate functions
-  */
-  function restoreData(metadata, callback) {
-    async.auto({
-      importPlugins: function(cb) {
-        importPlugins(metadata, cb);
-      },
-      importTagsJson: ['importPlugins', function(cb) {
-        importTagsJson(metadata, cb);
-      }],
-      importCourseJson: ['importTagsJson', function(cb) {
-        importCourseJson(metadata, cb);
-      }],
-      importAssets: ['importCourseJson', function(cb) {
-        importAssets(metadata, cb);
-      }],
-      importCourseassets: ['importAssets', function(cb) {
-        importCourseassets(metadata, cb);
-      }]
-    }, function doneAuto(error) {
-      if(error) {
-        return removeImport(metadata, function ImportRemoved(removalError) {
-          callback(removalError || error);
-        });
-      }
-      callback(error);
-    });
-  };
-
   /**
   * Adds tags to the DB
   * Checks for a similar tag first (tag title). if similar found, map that
   * to the imported course.
   */
-  function importTagsJson(metadata, importedTags) {
+  function importTagsJson(cb) {
     var userId = usermanager.getCurrentUser()._id;
     // init the id map
     metadata.idMap = {};
@@ -211,7 +183,7 @@ function Import(req, done) {
     origin.contentmanager.getContentPlugin('tag', function gotTagsPlugin(error, plugin) {
       if(error) {
         logger.log('error', error)
-        return importedTags(error);
+        return cb(error);
       }
       async.eachSeries(metadata.tags, function itemIterator(tagJson, doneItemIterator) {
         if (tagJson !== undefined) {
@@ -227,11 +199,11 @@ function Import(req, done) {
         } else {
           doneItemIterator();
         }
-      }, importedTags);
+      }, cb);
     });
   };
 
-  function importCourseJson(metadata, importedJson) {
+  function importCourseJson(cb) {
     var userId = usermanager.getCurrentUser()._id;
     var oldCourseId = metadata.course.course[0]._id;
     var newCourseId;
@@ -282,14 +254,14 @@ function Import(req, done) {
           });
         }, doneTypeIterator);
       });
-    }, importedJson);
+    }, cb);
   };
 
-  function importAssets(metadata, assetsImported) {
-    var assetsGlob = path.join(metadata.importDir, Constants.Folders.Assets, '*');
+  function importAssets(cb) {
+    var assetsGlob = path.join(courseRoot, Constants.Folders.Assets, '*');
     glob(assetsGlob, function (error, assets) {
       if(error) {
-        return assetsImported(error);
+        return cb(error);
       }
       var repository = configuration.getConfig('filestorage') || 'localfs';
       /**
@@ -312,88 +284,13 @@ function Import(req, done) {
         if(!fileMeta) {
           return doneAsset(new ImportError('No metadata found for asset: ' + assetName));
         }
-        importAsset(fileMeta, metadata, doneAsset);
-      }, assetsImported);
+        helpers.importAsset(fileMeta, metadata, doneAsset);
+      }, cb);
     });
   };
 
-  /**
-  * Adds asset to the DB
-  * Checks for a similar asset first (filename & size). if similar found, map that
-  * to the import course.
-  * TODO adapted from assetmanager.postAsset (...don't duplicate...)
-  */
-  function importAsset(fileMetadata, metadata, assetImported) {
-    var search = {
-      filename: fileMetadata.filename,
-      size: fileMetadata.size
-    };
-    origin.assetmanager.retrieveAsset(search, function gotAsset(error, results) {
-      if(results.length > 0) {
-        logger.log('debug', fileMetadata.filename + ': similar file found in DB, not importing');
-        metadata.idMap[fileMetadata.oldId] = results[0]._id;
-        return assetImported();
-      }
 
-      var date = new Date();
-      var hash = crypto.createHash('sha1');
-      var rs = fs.createReadStream(fileMetadata.path);
-
-      rs.on('data', function onReadData(pData) {
-        hash.update(pData, 'utf8');
-      });
-      rs.on('close', function onReadClose() {
-        var filehash = hash.digest('hex');
-        // TODO get rid of hard-coded assets
-        var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
-        var filepath = path.join(directory, filehash) + path.extname(fileMetadata.filename);
-        var fileOptions = {
-          createMetadata: true,
-          createThumbnail: true,
-          thumbnailOptions: {
-            width: '?',
-            height: '200'
-          }
-        };
-        filestorage.getStorage(fileMetadata.repository, function gotStorage(error, storage) {
-          if (error) {
-            return assetImported(error);
-          }
-          // the repository should move the file to a suitable location
-          storage.processFileUpload(fileMetadata, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
-            if (error) {
-              return assetImported(error);
-            }
-            // It's better not to set thumbnailPath if it's not set.
-            if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
-            var asset = _.extend(fileMetadata, storedFile);
-
-            _.each(asset.tags, function iterator(tag, index) {
-              if (metadata.idMap[tag]) {
-                asset.tags[index] = metadata.idMap[tag];
-              } else {
-                asset.tags.splice(index, 1);
-              }
-            });
-            // Create the asset record
-            origin.assetmanager.createAsset(asset, function onAssetCreated(createError, assetRec) {
-              if (createError) {
-                storage.deleteFile(storedFile.path, assetImported);
-                return;
-              }
-              // store that asset was imported (used in cleanup if error)
-              metadata.assets[assetRec.filename].wasImported = true;
-              // add entry to the map
-              metadata.idMap[fileMetadata.oldId] = assetRec._id;
-              assetImported();
-            });
-          });
-        });
-      });
-    });
-  };
-
-  function importCourseassets(metadata, courseassetsImported) {
+  function importCourseassets(cb) {
     origin.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
       async.each(metadata.courseassets, function(courseasset, createdCourseasset) {
         courseasset._courseId = metadata.idMap[courseasset._courseId];
@@ -407,7 +304,7 @@ function Import(req, done) {
         } else {
           createdCourseasset();
         }
-      }, courseassetsImported);
+      }, cb);
     });
   };
 
@@ -415,59 +312,17 @@ function Import(req, done) {
   * Installs any plugins which aren't already in the system.
   * NOTE no action taken for plugins which are newer than installed version (just logged)
   */
-  function importPlugins(metadata, pluginsImported) {
-    var srcDir = path.join(metadata.importDir, Constants.Folders.Plugins);
+  function importPlugins(cb) {
+    var srcDir = path.join(courseRoot, Constants.Folders.Plugins);
     async.each(metadata.pluginIncludes, function(pluginData, donePluginIterator) {
-      importPlugin(path.join(srcDir, pluginData.name), pluginData.type, donePluginIterator);
-    }, pluginsImported);
-  };
-
-  function importPlugin(pluginDir, pluginType, pluginImported) {
-    var bowerJson, contentPlugin;
-    async.waterfall([
-      function readBowerJson(cb) {
-        fs.readJson(path.join(pluginDir, Constants.Filenames.Bower), cb);
-      },
-      function getContentPlugin(json, cb) {
-        bowerJson = json;
-        origin.contentmanager.getContentPlugin(pluginType, cb);
-      },
-      function getDB(plugin, cb) {
-        contentPlugin = plugin;
-        database.getDatabase(cb);
-      },
-      function retrievePluginDoc(db, cb) {
-        db.retrieve(contentPlugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, cb);
-      },
-      function addPlugin(records, cb) {
-        if(records.length === 0) {
-          var serverVersion = semver.clean(version.adapt_framework);
-          var pluginRange = semver.validRange(bowerJson.framework);
-          // check the plugin's compatible with the framework
-          if(semver.satisfies(serverVersion, pluginRange)) {
-            logger.log('info', 'Installing', pluginType, "'" + bowerJson.displayName + "'");
-            bowerJson.isLocalPackage = true;
-            contentPlugin.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
-          } else {
-            logger.log('info', "Can't install " + bowerJson.displayName + ", it requires framework v" + pluginVersion + " (" + version.adapt_framework + " installed)");
-            cb();
-          }
-        } else {
-          var serverPlugin = records[0];
-          // TODO what do we do with newer versions of plugins? (could affect other courses if we install new version)
-          if(semver.gt(bowerJson.version,serverPlugin.version)) {
-            logger.log('info', 'Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + '), but not installing');
-          }
-          cb();
-        }
-      }
-    ], pluginImported);
+      helpers.importPlugin(path.join(srcDir, pluginData.name), pluginData.type, donePluginIterator);
+    }, cb);
   };
 
   /*
   * Completely removes an imported course (i.e. course data, assets, plugins)
   */
-  function removeImport(metadata, doneRemove) {
+  function removeImport(doneRemove) {
     // if there's no idMap, there's no course to delete
     var idsMapped = metadata.idMap !== undefined;
     var newCourseId = metadata.idMap && metadata.idMap[metadata.course.course[0]._id];

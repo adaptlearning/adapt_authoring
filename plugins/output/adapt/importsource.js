@@ -5,12 +5,13 @@ var async = require('async');
 var fs = require("fs-extra");
 var path = require("path");
 var IncomingForm = require('formidable').IncomingForm;
-var mkdirp = require("mkdirp");
-var yauzl = require("yauzl");
 
 var database = require("../../../lib/database");
 var logger = require("../../../lib/logger");
 var outputmanager = require("../../../lib/outputmanager");
+var Constants = require('../../../lib/outputmanager').Constants;
+var usermanager = require('../../../lib/usermanager');
+var helpers = require('./helpers');
 
 // TODO integrate with sockets API to show progress
 
@@ -25,9 +26,11 @@ function ImportSource(req, done) {
   var componentMap = {};
   var extensionMap = {};
   var extensionLocations = {};
-
+  var tenantId = usermanager.getCurrentUser().tenant._id;
+  var unzipFolder = tenantId + '_unzipped';
+  var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
   var form = new IncomingForm();
-  var courseRoot = path.join('/', app.configuration.getConfig('root'), outputmanager.Constants.Folders.Temp, 'import_test', 'src', 'course', 'en');
+  var courseRoot = path.join(COURSE_ROOT_FOLDER, unzipFolder);
   var courseId;
 
 
@@ -45,7 +48,7 @@ function ImportSource(req, done) {
     async.series([
       function asyncUnzip(cb) {
         // socket unzipping files
-        unzip(files.file.path, function(error) {
+        helpers.unzip(files.file.path, courseRoot, function(error) {
           if(error) return cb(error);
           // socket files unzipped
           cb();
@@ -89,50 +92,7 @@ function ImportSource(req, done) {
     ], done);
   });
 
-  /**
-  * Delegate functions
-  */
-  function unzip(filePath, done) {
-    var root = path.join(app.configuration.getConfig('root'), outputmanager.Constants.Folders.Temp, 'import_test');
-    // unzip package
-    yauzl.open(filePath, { lazyEntries: true }, function(error, zipfile) {
-      if (error) {
-        return next(error);
-      }
-      zipfile.readEntry();
-      zipfile.on("entry", function(entry) {
-        var dest = path.join(root,entry.fileName);
 
-        if (/\/$/.test(entry.fileName)) {
-          // directory file names end with '/'
-          mkdirp(dest, function(err) {
-            if (error) {
-              return next(error);
-            }
-            zipfile.readEntry();
-          });
-        } else {
-          // file entry
-          zipfile.openReadStream(entry, function(err, readStream) {
-            if (error) {
-              return next(error);
-            }
-            // ensure parent directory exists
-            mkdirp(path.dirname(dest), function(err) {
-              if (error) {
-                return next(error);
-              }
-              readStream.pipe(fs.createWriteStream(dest));
-              readStream.on("end", function() {
-                zipfile.readEntry();
-              });
-            });
-          });
-        }
-      });
-      zipfile.once('end', done);
-    });
-  }
 
   /**
   * Checks course for any potential incompatibilities
@@ -200,11 +160,9 @@ function ImportSource(req, done) {
   * Creates the course content
   */
   function importContent(done) {
-    // TODO put this somewhere else
-    var courseRoot = path.join('/', app.configuration.getConfig('root'), outputmanager.Constants.Folders.Temp, 'import_test', 'src', 'course');
     async.series([
       function createCourse(cb) {
-        fs.readJson(path.join(courseRoot, 'en', 'course.json'), function(error, courseJson) {
+        fs.readJson(path.join(courseRoot, 'src', 'course', 'en', 'course.json'), function(error, courseJson) {
           if(error) return cb(error);
           courseJson = _.extend(courseJson, { _isShared: false }); // TODO remove this later
           createContentItem('course', courseJson, '', function(error, courseRec) {
@@ -215,7 +173,7 @@ function ImportSource(req, done) {
         });
       },
       function createCourse(cb) {
-        fs.readJson(path.join(courseRoot, 'config.json'), function(error, configJson) {
+        fs.readJson(path.join(courseRoot, 'src', 'course', 'config.json'), function(error, configJson) {
           if(error) return cb(error);
           createContentItem('config', configJson, courseId, cb);
         });
@@ -225,7 +183,7 @@ function ImportSource(req, done) {
          app.contentmanager.toggleExtensions(courseId.toString(), 'enable', _.values(extensionMap), cb);
       },
       function createContent(cb) {
-        var contentRoot = path.join(courseRoot, 'en');
+        var contentRoot = path.join(courseRoot, 'src', 'course', 'en');
         async.eachSeries(Object.keys(contentMap), function(type, cb2) {
           app.contentmanager.getContentPlugin(type, function(error, plugin) {
             if(error) return cb2(error);

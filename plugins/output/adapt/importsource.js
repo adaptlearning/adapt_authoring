@@ -22,6 +22,16 @@ function ImportSource(req, done) {
     'block': 'blocks',
     'component': 'components'
   };
+  // TODO - move this to outputmanager.Constants see ./index.js line 492
+  var plugindata = {
+    pluginTypes: [
+      { type: 'component', folder: 'components' },
+      { type: 'extension', folder: 'extensions' },
+      { type: 'menu',      folder: 'menu'       },
+      { type: 'theme',     folder: 'theme'      }
+    ],
+    pluginIncludes: []
+  };
   var idMap = {};
   var componentMap = {};
   var extensionMap = {};
@@ -109,6 +119,8 @@ function ImportSource(req, done) {
   * Imports assets to the library
   */
   function addAssets(done) {
+    // Do we need to include arbitary folders in src/course/en folder?
+    // Or just look in src/course/en/assets?
     // TODO add assets
     logger.log('warn', 'addAssets needs to be implemented');
     done();
@@ -118,9 +130,37 @@ function ImportSource(req, done) {
   * Installs any custom plugins
   */
   function installPlugins(done) {
-    // TODO install custom plugins
-    logger.log('warn', 'installPlugins needs to be implemented');
-    done();
+    async.series([
+      function mapPluginIncludes(cb) {
+        async.each(plugindata.pluginTypes, function iterator(pluginType, doneMapIterator) {
+
+          var srcDir = path.join(courseRoot, 'src', pluginType.folder);
+          fs.readdir(srcDir, function (err, files) {
+              if (err) {
+                done(err);
+              }
+
+              files.map(function (file) {
+                return path.join(srcDir, file);
+              }).filter(function (file) {
+                return fs.statSync(file).isDirectory();
+              }).forEach(function (file) {
+                var thisPluginType = _.clone(pluginType);
+                var data = _.extend(thisPluginType, { location: file });
+                plugindata.pluginIncludes.push(data);
+              });
+          });
+          doneMapIterator();
+        }, cb);
+      },
+      function importPlugins(cb) {
+        async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
+          helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
+        }, cb);
+      },
+    ], function(error, results) {
+      done(error);
+    });
   }
 
   /**

@@ -163,7 +163,7 @@ define(function(require) {
 
     cancelPasteMenuItem: function(event) {
       event.preventDefault();
-      $('.add-zone').css('visibility','visible');
+      this.hidePasteZones();
       var parentId = this._parentId;
       var target = new ContentObjectModel({
         _parentId: parentId,

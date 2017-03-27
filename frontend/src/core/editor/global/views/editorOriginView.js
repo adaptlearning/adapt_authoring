@@ -51,18 +51,20 @@ define(function(require){
       }
     },
 
-    showPasteZones: function (type) {
+    showPasteZones: function(type) {
       $('.paste-zone').addClass('display-none');
       $('.add-control').addClass('display-none');
-      if(type) $('.paste-zone-' + type).removeClass('display-none');
+      if(type) $('.paste-zone-' + type).removeClass('display-none').addClass('show');
     },
 
     hidePasteZones: function() {
-      $('.paste-zone').addClass('display-none');
+      $('.paste-zone').removeClass('show');
+      // FIXME timeout for animation
+      setTimeout(function() { $('.paste-zone').addClass('display-none'); }, 300);
       $('.add-control').removeClass('display-none');
     },
 
-    showDropZones: function () {
+    showDropZones: function() {
       $('.paste-zone').addClass('display-none');
       $('.add-control').addClass('display-none');
       $('.paste-zone-'+ this.model.get('_type') + ' a').addClass('display-none');
@@ -175,6 +177,7 @@ define(function(require){
         e.stopPropagation();
         e.preventDefault();
       }
+      console.log(this.mode.attributes);
       Origin.trigger('editorView:paste', this.model.get('_parentId'), $(event.target).data('sort-order'), $(event.target).data('paste-layout'));
     },
 

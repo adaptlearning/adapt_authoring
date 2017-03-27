@@ -27,9 +27,7 @@ define(function(require){
 
     preRender: function() {
       this.listenToEvents();
-
       this.model.set('componentTypes', Origin.editor.data.componentTypes.toJSON());
-
       this.evaluateComponents(this.render);
     },
 
@@ -61,59 +59,30 @@ define(function(require){
       }, this));
     },
 
-    evaluateComponents: function(callback) {
-      var layoutOptions = [{
-        type: 'left',
-        name: 'app.layoutleft',
-        pasteZoneRenderOrder: 2
-      },{
-        type: 'full',
-        name: 'app.layoutfull',
-        pasteZoneRenderOrder: 1
-      },{
-        type: 'right',
-        name: 'app.layoutright',
-        pasteZoneRenderOrder: 3
-      }];
-
-      this.model.getChildren().each(function(component) {
-         switch (component.get('_layout')) {
-          case 'full':
-            layoutOptions = null;
-            break;
-          case 'left':
-            layoutOptions.splice(_.indexOf(layoutOptions, _.findWhere(layoutOptions, { type : "full"})), 1);
-            layoutOptions.splice(_.indexOf(layoutOptions, _.findWhere(layoutOptions, { type : "left"})), 1);
-            break;
-          case 'right':
-            layoutOptions.splice(_.indexOf(layoutOptions, _.findWhere(layoutOptions, { type : "full"})), 1);
-            layoutOptions.splice(_.indexOf(layoutOptions, _.findWhere(layoutOptions, { type : "right"})), 1);
-            break;
-        }
-      }, this);
-
-      var dragLayoutOptions = [];
+    getAvailableLayouts: function() {
+      var layoutOptions = {
+        full: { type: 'full', name: 'app.layoutfull', pasteZoneRenderOrder: 1 },
+        left: { type: 'left', name: 'app.layoutleft', pasteZoneRenderOrder: 2 },
+        right: { type: 'right', name: 'app.layoutright', pasteZoneRenderOrder: 3 }
+      };
       var components = this.model.getChildren();
+      if (components.length === 0) {
+        return [layoutOptions.full,layoutOptions.left,layoutOptions.right];
+      }
       if (components.length === 1) {
-        switch (components.at(0).get('_layout')) {
-          case 'full':
-            dragLayoutOptions.push({type: 'left', name: 'app.layoutleft'});
-            dragLayoutOptions.push({type: 'right', name: 'app.layoutright'});
-            break;
-          case 'left':
-            dragLayoutOptions.push({type: 'full', name: 'app.layoutfull'});
-            break;
-          case 'right':
-            dragLayoutOptions.push({type: 'full', name: 'app.layoutfull'});
-            break;
-        }
+        var layout = components.at(0).get('_layout');
+        if(layout === 'left') return [layoutOptions.right];
+        if(layout === 'right') return [layoutOptions.left];
       }
+      return [];
+    },
 
-      this.model.set({"layoutOptions": layoutOptions, "dragLayoutOptions": dragLayoutOptions});
-
-      if (callback) {
-        callback.apply(this);
-      }
+    evaluateComponents: function(callback) {
+      this.model.set({
+        layoutOptions: this.getAvailableLayouts(),
+        dragLayoutOptions: this.getAvailableLayouts()
+      });
+      if(callback) callback.apply(this);
     },
 
     deleteBlockPrompt: function(event) {

@@ -1,13 +1,10 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
 
   var NavigationView = OriginView.extend({
-
     tagName: 'nav',
-
     className: 'navigation',
 
     initialize: function() {
@@ -38,7 +35,7 @@ define(function(require){
       $.ajax({
         method: 'post',
         url: '/api/loginas',
-        data: {email: _revertLogin.email},
+        data: { email: _revertLogin.email },
         success: function (jqXHR, textStatus, errorThrown) {
           sessionModel.set('_canRevert', false);
           sessionModel.set('id', jqXHR.id);
@@ -65,11 +62,9 @@ define(function(require){
       event.stopPropagation();
       Origin.trigger('navigation:' + $(event.currentTarget).attr('data-event'));
     }
-
   }, {
     template: 'navigation'
   });
 
   return NavigationView;
-
 });

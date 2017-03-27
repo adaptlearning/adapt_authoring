@@ -2,15 +2,14 @@
 /**
  * Local LocalFileStorage module
  */
-
 var async = require('async');
-var util = require('util');
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 var ncp = require('ncp').ncp;
 var path = require('path');
 var probe = require('node-ffprobe');
+var util = require('util');
 
 var configuration = require('../../../lib/configuration');
 var FileStorage = require('../../../lib/filestorage').FileStorage;
@@ -38,7 +37,7 @@ LocalFileStorage.prototype.resolvePath = function (relativePath, forceMaster) {
     if (!forceMaster) {
       tenantName = user.tenant ? user.tenant.name : configuration.getConfig('masterTenantName');
     } else {
-      tenantName = configuration.getConfig('masterTenantName');	
+      tenantName = configuration.getConfig('masterTenantName');
     }
 
     // check that the path isn't already absolute
@@ -46,7 +45,7 @@ LocalFileStorage.prototype.resolvePath = function (relativePath, forceMaster) {
     if (0 === relativePath.indexOf(prefix)) {
       return relativePath;
     }
-    
+
     return path.join(prefix, relativePath);
   }
 
@@ -74,7 +73,7 @@ LocalFileStorage.prototype.getRelativePath = function (fullPath) {
       return fullPath.substr(prefix.length);
     }
   }
-  
+
   return fullPath;
 };
 
@@ -93,14 +92,14 @@ LocalFileStorage.prototype.getFileContents = function (filePath, callback) {
  * Puts the given contents to a file
  *
  * @param {string} filePath - the path to the file
- * @param {string} options - see {@link http://nodejs.org/api/fs.html#fs_fs_writefile_filename_data_options_callback |Nodejs fs}
+ * @param {string} options - see {@link http://nodejs.org/api/fs.html#fs_fs_writefile_filename_data_options_callback | Nodejs fs}
  * @param {Buffer} buffer - the contents to write to the file
  * @param {function} callback - function of the form function(error, written, buffer)
  * see {@link http://nodejs.org/docs/latest/api/fs.html#fs_fs_write_fd_buffer_offset_length_position_callback | Nodejs fs module }
  */
 
 LocalFileStorage.prototype.putFileContents = function (filePath, options, buffer, callback) {
-  fs.writeFile(this.resolvePath(filePath), buffer, options, callback);
+  fs.outputFile(this.resolvePath(filePath), buffer, options, callback);
 };
 
 /**
@@ -134,7 +133,7 @@ LocalFileStorage.prototype.createReadStream = function (filePath, options, callb
     callback = options;
     options = {};
   }
-  
+
   var forceMaster = (options && options.forceMaster)
     ? true
     : false;
@@ -186,7 +185,7 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
   newPath = this.resolvePath(newPath);
   var relativePath = this.getRelativePath(newPath);
   var self = this;
-  
+
   // shuffle params
   if ('function' === typeof options) {
     cb = options;
@@ -212,7 +211,7 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
         mimeType: file.type,
         size: file.size
       };
-      
+
       // create thumbnail?
       async.series([
         function (nextFunc) {
@@ -223,8 +222,8 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
               }
               nextFunc();
             });
-          } 
-          
+          }
+
           return nextFunc();
         },
         function (nextFunc) {
@@ -235,8 +234,8 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
               }
               nextFunc();
             });
-          } 
-          
+          }
+
           return nextFunc();
         },
         function (nextFunc) {
@@ -293,7 +292,7 @@ LocalFileStorage.prototype.getFileStats = function (filePath, callback) {
 
 /**
  * Copies an asset from one tenant to another.
- * 
+ *
  * @param {object} asset - A valid 'asset' record
  * @param {string} sourceTenantName - Source tenant.name
  * @param {string} destinationTenantName - Destination tenant.name

@@ -5,7 +5,7 @@ var prompt = require('prompt'),
     path = require('path'),
     rimraf = require('rimraf'),
     exec = require('child_process').exec,
-    builder = require('./lib/application'),
+    origin = require('./lib/application'),
     frameworkHelper = require('./lib/frameworkhelper'),
     auth = require('./lib/auth'),
     database = require('./lib/database'),
@@ -25,7 +25,7 @@ prompt.delimiter = '';
 // get available db drivers and auth plugins
 var drivers = database.getAvailableDriversSync();
 var auths = auth.getAvailableAuthPluginsSync();
-var app = builder();
+var app = origin();
 var masterTenant = false;
 var superUser = false;
 
@@ -295,9 +295,9 @@ var steps = [
                 masterTenant = tenant;
                 console.log("Tenant " + tenant.name + " was created. Now saving configuration, please wait ...");
                 // save master tenant name to config
-                configuration.setConfig('masterTenantName', tenant.name);
-                configuration.setConfig('masterTenantID', tenant._id);
-                saveConfig(configuration.getConfig(), cb);
+                app.configuration.setConfig('masterTenantName', tenant.name);
+                app.configuration.setConfig('masterTenantID', tenant._id);
+                saveConfig(app.configuration.getConfig(), cb);
               }
             );
           };

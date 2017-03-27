@@ -97,7 +97,7 @@ define(function(require) {
 
     onKeyDown: function(e) {
       // 17: ctrl, 91: left cmd
-      if(e.keyCode !== 17 || e.keyCode !== 91) {
+      if(e.keyCode !== 17 && e.keyCode !== 91) {
         return;
       }
       this.forceRebuild = true;

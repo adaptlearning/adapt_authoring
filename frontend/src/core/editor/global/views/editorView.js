@@ -287,17 +287,17 @@ define(function(require){
         courseId: Origin.editor.data.course.get('_id'),
         referenceType: model._siblings
       };
-
-      $.post('/api/content/clipboard/copy', postData, _.bind(function(jqXHR, textStatus, errorThrown) {
-        if (!jqXHR.success) {
-          return Origin.Notify.alert({ type: 'error', text: jqXHR.message });
-        }
+      $.post('/api/content/clipboard/copy', postData, _.bind(function(jqXHR) {
         Origin.editor.clipboardId = jqXHR.clipboardId;
         Origin.editor.pasteParentModel = model.getParent();
         this.showPasteZones(model.get('_type'));
-      }, this)).fail(function (jqXHR, textStatus, errorThrown) {
-        Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorcopy') });
-      });
+      }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
+        Origin.Notify.alert({
+          type: 'error',
+          text: window.polyglot.t('app.errorcopy') + (jqXHR.message ? '\n\n' + jqXHR.message : '')
+        });
+        this.hidePasteZones();
+      }, this));
     },
 
     copyIdToClipboard: function(model) {
@@ -317,21 +317,21 @@ define(function(require){
     },
 
     pasteFromClipboard: function(parentId, sortOrder, layout) {
-      $.post('/api/content/clipboard/paste', function(jqXHR, textStatus, errorThrown) {
-        if (!jqXHR.success) {
-          Origin.Notify.alert({ type: 'error', text: jqXHR.message });
-          return;
-        }
+      $.post('/api/content/clipboard/paste', function(jqXHR) {
         Origin.editor.clipboardId = null;
         Origin.editor.pasteParentModel = null;
         Origin.trigger('editor:refreshData', function() {
-          // TODO: HACK - I think this should probably pass a callback in
-          // and return it with the new item - this way the individual views
-          // can handle the new views and models
+          /**
+          * FIXME views should handle rendering the new data,
+          * we shouldn't need to refresh the whole page
+          */
           Backbone.history.loadUrl();
         }, this);
-      }, this).fail(function(jqXHR, textStatus, errorThrown) {
-        Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorpaste') });
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        Origin.Notify.alert({
+          type: 'error',
+          text: window.polyglot.t('app.errorpaste') + (jqXHR.message ? '\n\n' + jqXHR.message : '')
+        });
       });
     },
 

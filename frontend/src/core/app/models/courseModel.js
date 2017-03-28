@@ -15,9 +15,8 @@ define(function(require) {
     getHeroImageURI: function () {
       if(Helpers.isAssetExternal(this.get('heroImage'))) {
         return this.get('heroImage');
-      } else {
-        return '/api/asset/thumb/' + this.get('heroImage');
       }
+      return '/api/asset/thumb/' + this.get('heroImage');
     },
 
     isEditable: function () {

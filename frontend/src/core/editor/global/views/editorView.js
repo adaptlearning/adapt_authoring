@@ -1,9 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /*
- * I think this exists to add extra functionality to the menu/page structure pages
- * TODO This needs a tidy:
- * - Remove commented lines
- * - Sort out error handling
+ * TODO I think this exists to add extra functionality to the menu/page structure pages
  */
 define(function(require){
   var Backbone = require('backbone');

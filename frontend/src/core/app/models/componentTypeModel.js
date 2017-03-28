@@ -7,6 +7,10 @@ define(function(require) {
     urlRoot: '/api/componenttype',
     _parent: 'blocks',
 
+    comparator: function(model) {
+      return model.get('displayName');
+    },
+
     initialize: function() {
       // TODO intentional override?
     }

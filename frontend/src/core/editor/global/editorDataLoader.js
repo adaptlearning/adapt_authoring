@@ -15,86 +15,88 @@ define(function(require) {
   var EditorCollection = require('../global/collections/editorCollection');
   var ExtensionModel = require('core/app/models/extensionModel');
 
-  var isPreloaded = false;
-  var isLoaded = false;
   // used to check what's preloaded
   var globalData = {
     courses: false,
-    extensionTypes: false,
-    componentTypes: false
+    extensiontypes: false,
+    componenttypes: false
   };
   // used to check what's loaded
   var courseData = {
-    clipboard: false,
+    clipboards: false,
     course: false,
     config: false,
     contentObjects: false,
     articles: false,
     blocks: false,
     components: false,
-    courseAssets: false
+    courseassets: false
   };
 
+  // Public API
   var preloader = {
     /**
-    * Loads Origin.editor.data
+    * Loads course-specific data
     */
-    preload: function() {
-      console.log('EditorData.preload');
-      // no point continuing if not logged in
+    loadGlobalData: function() {
       if(!Origin.sessionModel.get('isAuthenticated')) {
+        // no point continuing if not logged in
         return;
       }
-      // make sure the Origin objects exist
-      if(!Origin.editor) Origin.editor = {};
-      if(!Origin.editor.data) Origin.editor.data = {};
-
+      ensureEditorData();
+      resetLoadStatus(globalData);
+      // create the global collections
       if(!Origin.editor.data.courses) {
-        Origin.editor.data.courses = createCollection(CourseModel, '/api/content/course', 'courses');
+        Origin.editor.data.courses = createCollection(CourseModel);
       }
-      if(!Origin.editor.data.extensionTypes) {
-        Origin.editor.data.extensionTypes = createCollection(ExtensionModel, '/api/extensiontype', 'extensionTypes');
+      if(!Origin.editor.data.extensiontypes) {
+        Origin.editor.data.extensiontypes = createCollection(ExtensionModel);
       }
-      if(!Origin.editor.data.componentTypes) {
-        Origin.editor.data.componentTypes = createCollection(ComponentTypeModel, '/api/componenttype', 'componentTypes', {
-          comparator: function(model) { return model.get('displayName'); }
-        });
+      if(!Origin.editor.data.componenttypes) {
+        Origin.editor.data.componenttypes = createCollection(ComponentTypeModel);
       }
       // start preload
-      loadEditorData(_.clone(globalData), function() {
-        isPreloaded = true;
-        console.log('preloaded');
+      fetchEditorData(globalData, function() {
         Origin.trigger('editor:dataPreloaded');
       });
     },
     /**
     * Loads course-specific data
     */
-    load: function(callback) {
-      // if(!Origin.location.route1)
-      console.log('EditorData.load', Origin.location.route1);
-      // FIXME this is bad, put here as need to reference callback
-      var onDataLoad = function() {
-        isLoaded = true;
-        Origin.trigger('editor:dataLoaded');
-        if(typeof callback === 'function') callback.call(this);
-      };
-      if(!isLoaded || Origin.editor.data.course.get('_id') !== Origin.location.route1) {
-        isLoaded = false;
-        console.log('set up');
-        setUpEditorData(Origin.location.route1, onDataLoad);
-      } else {
-        console.log('refresh');
-        isLoaded = false;
-        loadEditorData(_.clone(courseData), onDataLoad);
+    loadCourseData: function() {
+      if(!preloader.hasLoadedGlobalData()) {
+        return Origin.on('editor:dataPreloaded', preloader.loadCourseData);
       }
+      if(!Origin.sessionModel.get('isAuthenticated')) {
+        // no point continuing if not logged in
+        return;
+      }
+      resetLoadStatus(courseData);
+      var ed = Origin.editor.data;
+      var courseId = Origin.location.route1;
+      var isAlreadyLoaded = preloader.hasLoadedCourseData() || (ed.course && ed.course.get('_id') === courseId);
+      // if data's already been initialised, we can just fetch the latest
+      if(!isAlreadyLoaded) {
+        _.extend(Origin.editor.data, {
+          course: new CourseModel({ _id: courseId }),
+          config: new ConfigModel({ _courseId: courseId }),
+          contentObjects: createCollection(ContentObjectModel),
+          articles: createCollection(ArticleModel),
+          blocks: createCollection(BlockModel),
+          components: createCollection(ComponentModel),
+          clipboards: createCollection(ClipboardModel, '&createdBy=' + Origin.sessionModel.get('id')),
+          courseassets: createCollection(CourseAssetModel)
+        });
+      }
+      // fetch all collections
+      fetchEditorData(courseData, function() {
+        Origin.trigger('editor:dataLoaded');
+      });
     },
     /**
     * Deletes course-specific data, and does a fetch on everything else
     */
     reset: function() {
-      console.log('EditorData.reset');
-      isPreloaded = false;
       Origin.editor.data = _.omit(Origin.editor.data, Object.keys(courseData));
       preloader.preload();
     },
@@ -102,29 +104,67 @@ define(function(require) {
     * Makes sure all data has been loaded and calls callback
     */
     waitForLoad: function(callback) {
-      if(!isPreloaded) {
+      // console.trace('waitForLoad:', preloader.hasLoadedGlobalData(), preloader.hasLoadedCourseData(), preloader.hasLoadedData());
+      if(!preloader.hasLoadedGlobalData()) {
+        // console.log('- listening to preloader');
         Origin.once('editor:dataPreloaded', function(){
-          if(isLoadComplete()) return callback.apply(this);
+          if(preloader.hasLoadedData()) return callback.apply(this);
         });
       }
-      if(!isLoaded) {
+      if(!preloader.hasLoadedCourseData()) {
+        // console.log('- listening to loader');
         Origin.once('editor:dataLoaded', function(){
-          if(isLoadComplete()) return callback.apply(this);
+          if(preloader.hasLoadedData()) return callback.apply(this);
         });
       }
-    }
+    },
+    /**
+    * Uses the below checks to test loading status
+    */
+    hasLoadedData: function() {
+      return preloader.hasLoadedGlobalData() && preloader.hasLoadedCourseData();
+    },
+    /**
+    * Trivial check for editor global data (see globalData above)
+    */
+    hasLoadedGlobalData: function() {
+      return isAllDataLoaded(globalData);
+    },
+    /**
+    * Trivial check for editor course data (see courseData above)
+    */
+    hasLoadedCourseData: function() {
+      return isAllDataLoaded(courseData);
+    },
   };
 
   /**
   * Functions
   */
 
+  function isAllDataLoaded(data) {
+    if(!data) return false;
+    return _.every(data, function(value, key) { return value; });
+  }
+
+  function resetLoadStatus(data) {
+    _.every(data, function(value, key) { data[key] = false; });
+  }
+
+  /**
+  * Makes sure the Origin editor objects exist
+  */
+  function ensureEditorData() {
+    if(!Origin.editor) Origin.editor = {};
+    if(!Origin.editor.data) Origin.editor.data = {};
+  }
+
   /**
   * Fetches a group of editor collections (Origin.editor.data)
   * @param object whose keys are the key found on Origin.editor.data
   * and is used for progress checking
   */
-  function loadEditorData(data, callback) {
+  function fetchEditorData(data, callback) {
     for(var i = 0, count = Object.keys(data).length; i < count; i++) {
       var key = Object.keys(data)[i];
       Origin.editor.data[key].fetch({
@@ -137,40 +177,30 @@ define(function(require) {
     }
   }
 
-  function setUpEditorData(id, callback) {
-    // add the following to editor data
-    _.extend(Origin.editor.data, {
-      course: new CourseModel({ _id:id }),
-      config: new ConfigModel({ _courseId:id }),
-      contentObjects: createCollection(ContentObjectModel, '/api/content/contentobject?_courseId='+id, 'contentObjects'),
-      articles: createCollection(ArticleModel, '/api/content/article?_courseId='+id, 'articles'),
-      blocks: createCollection(BlockModel, '/api/content/block?_courseId='+id, 'blocks'),
-      components: createCollection(ComponentModel, '/api/content/component?_courseId='+id, 'components'),
-      clipboard: createCollection(ClipboardModel, '/api/content/clipboard?_courseId=' + id + '&createdBy=' + Origin.sessionModel.get('id'), 'clipboard'),
-      courseAssets: createCollection(CourseAssetModel, '/api/content/courseasset?_courseId='+id, 'courseAssets')
-    });
-    // load all collections
-    loadEditorData(_.clone(courseData), function() {
-      callback.apply(this);
-    });
-  }
-
-  function createCollection(Model, url, type, data) {
-    return new EditorCollection(null, _.extend({
+  /**
+  * Returns a new EditorCollection from the passed model
+  * Deduces URL from the Model's prototype data
+  */
+  function createCollection(Model, query) {
+    var courseId = Origin.location.route1;
+    var url = Model.prototype.urlRoot;
+    var siblings = Model.prototype._siblings;
+    /**
+    * FIXME for non course-specific data without a model._type.
+    * Adding siblings will break the below check...
+    */
+    var inferredType = url.split('/').slice(-1) + 's';
+    // FIXME not the best check for course-specific collections
+    if(siblings !== undefined) {
+      if(!courseId) throw new Error('No Editor.data.course specified, cannot load ' + url);
+      url += '?_courseId=' + courseId + (query || '');
+    }
+    return new EditorCollection(null, {
       autoFetch: false,
       model: Model,
       url: url,
-      _type: type
-    }, data || {}));
-  }
-
-  function isAllDataLoaded(data) {
-    if(!data) return false;
-    return _.every(data, function(item) { return item === true; });
-  }
-
-  function isLoadComplete() {
-    return isPreloaded && isLoaded;
+      _type: siblings || inferredType
+    });
   }
 
   /**

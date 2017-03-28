@@ -6,14 +6,12 @@ define(function(require) {
     className: 'contentPane',
 
     visibleCSS: {
-      left: 0,
       opacity: 1
     },
     hiddenCSS: {
-      left: '10%',
       opacity: 0
     },
-    animDuration: 300,
+    animDuration: 500,
 
     initialize: function() {
       this.listenToEvents();

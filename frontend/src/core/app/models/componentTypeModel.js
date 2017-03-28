@@ -6,8 +6,6 @@ define(function(require) {
     idAttribute: '_id',
     urlRoot: '/api/componenttype',
     _parent: 'blocks',
-    _siblings:'componenttypes',
-    _children: null,
 
     initialize: function() {
       // TODO intentional override?

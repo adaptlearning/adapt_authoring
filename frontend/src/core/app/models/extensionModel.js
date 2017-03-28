@@ -6,10 +6,7 @@ define(function(require) {
     urlRoot: '/api/extensiontype',
     idAttribute: '_id',
     _type: 'extension',
-    _parent: null,
-    _siblings: null,
-    _children: null,
-
+    
     initialize: function(){
     }
   });

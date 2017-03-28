@@ -5,8 +5,6 @@ define(function(require) {
   var ConfigModel = ContentModel.extend({
     _type: 'config',
     _parent: 'course',
-    _siblings: '',
-    _children: '',
 
     sync: function(method, model, options) {
       options = options || {};

@@ -7,7 +7,6 @@ define(function(require) {
   var CourseModel = ContentModel.extend({
     urlRoot: '/api/content/course',
     _type: 'course',
-    _siblings: '',
     _children: 'contentObjects',
 
     initialize : function(options) {

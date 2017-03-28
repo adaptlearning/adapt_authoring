@@ -6,7 +6,6 @@ define(function(require) {
     urlRoot: '/api/content/component',
     _parent: 'blocks',
     _siblings: 'components',
-    _children: false,
     // These are the only attributes which should be permitted on a save
     // TODO look into this...
     whitelistAttributes: [

@@ -1,44 +1,36 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /*
- * TODO This needs a tidy:
- * - Remove commented lines
- * - Sort out error handling
+ * TODO I think this exists to add extra functionality to the menu/page structure pages
  */
 define(function(require){
-
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('coreJS/app/origin');
-  var helpers = require('coreJS/app/helpers');
-  var EditorOriginView = require('editorGlobal/views/editorOriginView');
-  var EditorMenuView = require('editorMenu/views/editorMenuView');
-  var EditorPageView = require('editorPage/views/editorPageView');
-  var EditorModel = require('editorGlobal/models/editorModel');
-  var EditorContentObjectModel = require('editorMenu/models/editorContentObjectModel');
-  var EditorArticleModel = require('editorPage/models/editorArticleModel');
-  var EditorBlockModel = require('editorPage/models/editorBlockModel');
-  var EditorComponentModel = require('editorPage/models/editorComponentModel');
-  var EditorClipboardModel = require('editorGlobal/models/editorClipboardModel');
-  var EditorComponentTypeModel = require('editorPage/models/editorComponentTypeModel');
-  var ExtensionModel = require('editorExtensions/models/extensionModel');
+  var Origin = require('core/app/origin');
+  var helpers = require('core/app/helpers');
+
+  var EditorOriginView = require('./editorOriginView');
+  var EditorMenuView = require('../../contentObject/views/editorMenuView');
+  var EditorPageView = require('../../contentObject/views/editorPageView');
+
+  var ContentObjectModel = require('core/app/models/contentObjectModel');
+  var ArticleModel = require('core/app/models/articleModel');
+  var BlockModel = require('core/app/models/blockModel');
+  var ComponentModel = require('core/app/models/componentModel');
 
   var EditorView = EditorOriginView.extend({
+    className: "editor-view",
+    tagName: "div",
 
     settings: {
       autoRender: false
     },
-
     exporting: false,
 
-    tagName: "div",
-
-    className: "editor-view",
-
     events: {
-      "click a.page-add-link"   : "addNewPage",
-      "click a.load-page"       : "loadPage",
-      "mouseover div.editable"  : "onEditableHoverOver",
-      "mouseout div.editable"   : "onEditableHoverOut"
+      "click a.page-add-link": "addNewPage",
+      "click a.load-page": "loadPage",
+      "mouseover div.editable": "onEditableHoverOver",
+      "mouseout div.editable": "onEditableHoverOut"
     },
 
     preRender: function(options) {
@@ -49,14 +41,16 @@ define(function(require){
       this.currentCourse = Origin.editor.data.course;
       this.currentPageId = options.currentPageId;
 
-      this.listenTo(Origin, 'editorView:refreshView', this.setupEditor);
-      this.listenTo(Origin, 'editorView:copy', this.addToClipboard);
-      this.listenTo(Origin, 'editorView:copyID', this.copyIdToClipboard);
-      this.listenTo(Origin, 'editorView:cut', this.cutContent);
-      this.listenTo(Origin, 'editorView:paste', this.pasteFromClipboard);
-      this.listenTo(Origin, 'editorCommon:download', this.downloadProject);
-      this.listenTo(Origin, 'editorCommon:preview', this.previewProject);
-      this.listenTo(Origin, 'editorCommon:export', this.exportProject);
+      this.listenTo(Origin, {
+        'editorView:refreshView': this.setupEditor,
+        'editorView:copy': this.addToClipboard,
+        'editorView:copyID': this.copyIdToClipboard,
+        'editorView:cut': this.cutContent,
+        'editorView:paste': this.pasteFromClipboard,
+        'editorCommon:download': this.downloadProject,
+        'editorCommon:preview': this.previewProject,
+        'editorCommon:export': this.exportProject
+      });
 
       this.render();
       this.setupEditor();
@@ -66,21 +60,13 @@ define(function(require){
 
     },
 
-    onEditableHoverOver: function(e) {
-      e.stopPropagation();
-      $(e.currentTarget).addClass('hovering');
-    },
-
-    onEditableHoverOut: function(e) {
-      $(e.currentTarget).removeClass('hovering');
-    },
-
     setupEditor: function() {
       this.renderCurrentEditorView();
     },
 
-    downloadProject: function(event) {
-      event && event.preventDefault();
+    downloadProject: function(e) {
+      e && e.preventDefault();
+
       var self = this;
 
       if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isDownloadPending) {
@@ -91,7 +77,7 @@ define(function(require){
           // Report progress for 45 seconds
           $('.editor-common-sidebar-downloading').animate({ width: '100%' }, 45000);
         }
-        
+
         var courseId = Origin.editor.data.course.get('_id');
         var tenantId = Origin.sessionModel.get('tenantId');
 
@@ -113,7 +99,7 @@ define(function(require){
               }
             } else {
               self.resetDownloadProgress();
-            
+
               Origin.Notify.alert({
                 type: 'error',
                 text: window.polyglot.t('app.errorgeneric')
@@ -122,7 +108,7 @@ define(function(require){
           },
           error: function (jqXHR, textStatus, errorThrown) {
             self.resetDownloadProgress();
-            
+
             Origin.Notify.alert({
               type: 'error',
               text: window.polyglot.t('app.errorgeneric')
@@ -134,8 +120,8 @@ define(function(require){
       }
     },
 
-    exportProject: function(event) {
-      event && event.preventDefault();
+    exportProject: function(e) {
+      e && e.preventDefault();
 
       // aleady processing, don't try again
       if(this.exporting) return;
@@ -192,8 +178,8 @@ define(function(require){
       window.open('/preview/' + tenantId + '/' + courseId + '/', 'preview');
     },
 
-    previewProject: function(event) {
-      event && event.preventDefault();
+    previewProject: function(e) {
+      e && e.preventDefault();
 
       var self = this;
 
@@ -238,65 +224,41 @@ define(function(require){
       var self = this;
 
       var pollUrl = function() {
-        $.ajax({
-          method: 'get',
-          url: url,
-          success: function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.progress == "100") {
-              clearInterval(pollId);
-              self.launchCoursePreview();
-              self.resetPreviewProgress();
-            } else {
-               $('.navigation-loading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
-            }
-          },
-          error: function(jqXHR, textStatus, errorThrown) {
-            clearInterval(pollId);
-            self.resetPreviewProgress();
-            
-            Origin.Notify.alert({
-              type: 'error',
-              text: errorThrown
-            });
+        $.get(url, function(jqXHR, textStatus, errorThrown) {
+          if (jqXHR.progress < "100") {
+            $('.navigation-loading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
+            return;
           }
+          clearInterval(pollId);
+          self.launchCoursePreview();
+          self.resetPreviewProgress();
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          clearInterval(pollId);
+          self.resetPreviewProgress();
+          Origin.Notify.alert({ type: 'error', text: errorThrown });
         });
       }
 
       // Check for updated progress every 3 seconds
       var pollId = setInterval(pollUrl, 3000);
     },
-    
+
     updateDownloadProgress: function(url) {
-      var self = this;
-
-      var pollUrl = function() {
-        $.ajax({
-          method: 'get',
-          url: url,
-          success: function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.progress == "100") {
-              clearInterval(pollId);
-
-              self.resetDownloadProgress();
-            } else {
-               $('.editor-common-sidebar-downloading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
-            }
-          },
-          error: function(jqXHR, textStatus, errorThrown) {
-            clearInterval(pollId);
-            
-            self.resetDownloadProgress();
-            
-            Origin.Notify.alert({
-              type: 'error',
-              text: errorThrown
-            });
-          }
-        });
-      }
-
       // Check for updated progress every 3 seconds
-      var pollId = setInterval(pollUrl, 3000);
+      var pollId = setInterval(_.bind(function pollURL() {
+        $.get(url, function(jqXHR, textStatus, errorThrown) {
+          if (jqXHR.progress < "100") {
+            $('.editor-common-sidebar-downloading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
+            return;
+          }
+          clearInterval(pollId);
+          this.resetDownloadProgress();
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          clearInterval(pollId);
+          this.resetDownloadProgress();
+          Origin.Notify.alert({ type: 'error', text: errorThrown });
+        });
+      }, this), 3000);
     },
 
     resetPreviewProgress: function() {
@@ -306,52 +268,33 @@ define(function(require){
       $('.navigation-loading-indicator').addClass('display-none');
       Origin.editor.isPreviewPending = false;
     },
-    
+
     resetDownloadProgress: function() {
       $('.editor-common-sidebar-downloading-progress').css('width', 0).stop();
       $('.editor-common-sidebar-download-inner').removeClass('display-none');
       $('.editor-common-sidebar-downloading').addClass('display-none');
-      Origin.editor.isDownloadPending = false;  
+      Origin.editor.isDownloadPending = false;
     },
 
-    /*
-      Archive off the clipboard
-    */
     addToClipboard: function(model) {
-      _.defer(_.bind(function() {
-        _.invoke(Origin.editor.data.clipboard.models, 'destroy')
+      _.defer(_.bind(function() { _.invoke(Origin.editor.data.clipboards.models, 'destroy') }, this));
+
+      var postData = {
+        objectId: model.get('_id'),
+        courseId: Origin.editor.data.course.get('_id'),
+        referenceType: model._siblings
+      };
+      $.post('/api/content/clipboard/copy', postData, _.bind(function(jqXHR) {
+        Origin.editor.clipboardId = jqXHR.clipboardId;
+        Origin.editor.pasteParentModel = model.getParent();
+        this.showPasteZones(model.get('_type'));
+      }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
+        Origin.Notify.alert({
+          type: 'error',
+          text: window.polyglot.t('app.errorcopy') + (jqXHR.message ? '\n\n' + jqXHR.message : '')
+        });
+        this.hidePasteZones();
       }, this));
-
-      var self = this;
-      var copiedObjectType = model.get('_type');
-
-      $.ajax({
-        method: 'post',
-        url: '/api/content/clipboard/copy',
-        data: {
-          objectId: model.get('_id'),
-          courseId: Origin.editor.data.course.get('_id'),
-          referenceType: model._siblings
-        },
-        success: function (jqXHR, textStatus, errorThrown) {
-          if (!jqXHR.success) {
-            Origin.Notify.alert({
-              type: 'error',
-              text: jqXHR.message
-            });
-          } else {
-            Origin.editor.clipboardId = jqXHR.clipboardId;
-            Origin.editor.pasteParentModel = model.getParent();
-            self.showPasteZones(copiedObjectType);
-          }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: window.polyglot.t('app.errorcopy')
-          });
-        }
-      });
     },
 
     copyIdToClipboard: function(model) {
@@ -360,67 +303,49 @@ define(function(require){
       if (helpers.copyStringToClipboard(id)) {
         Origin.Notify.alert({
           type: 'success',
-          text: window.polyglot.t('app.copyidtoclipboardsuccess', {id: id})
+          text: window.polyglot.t('app.copyidtoclipboardsuccess', { id: id })
         });
       } else {
         Origin.Notify.alert({
           type: 'warning',
-          text: window.polyglot.t('app.app.copyidtoclipboarderror', {id: id})
+          text: window.polyglot.t('app.app.copyidtoclipboarderror', { id: id })
         });
       }
     },
 
     pasteFromClipboard: function(parentId, sortOrder, layout) {
-      $.ajax({
-        method: 'post',
-        url: '/api/content/clipboard/paste',
-        data: {
-          id: Origin.editor.clipboardId,
-          parentId: parentId,
-          layout: layout,
-          sortOrder: sortOrder,
-          courseId: Origin.editor.data.course.get('_id')
-        },
-        success: function (jqXHR, textStatus, errorThrown) {
-          if (!jqXHR.success) {
-            Origin.Notify.alert({
-              type: 'error',
-              text: jqXHR.message
-            });
-          } else {
-            Origin.editor.clipboardId = null;
-            Origin.editor.pasteParentModel = null;
-            Origin.trigger('editor:refreshData', function() {
-              // TODO: HACK - I think this should probably pass a callback in
-              // and return it with the new item - this way the individual views
-              // can handle the new views and models
-              Backbone.history.loadUrl();
-            }, this);
-          }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: window.polyglot.t('app.errorpaste')
-          });
-        }
+      $.post('/api/content/clipboard/paste', function(jqXHR) {
+        Origin.editor.clipboardId = null;
+        Origin.editor.pasteParentModel = null;
+        Origin.trigger('editor:refreshData', function() {
+          /**
+          * FIXME views should handle rendering the new data,
+          * we shouldn't need to refresh the whole page
+          */
+          Backbone.history.loadUrl();
+        }, this);
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        Origin.Notify.alert({
+          type: 'error',
+          text: window.polyglot.t('app.errorpaste') + (jqXHR.message ? '\n\n' + jqXHR.message : '')
+        });
       });
     },
 
     createModel: function (type) {
-      var model = false;
+      var model;
       switch (type) {
         case 'contentObjects':
-          model = new EditorContentObjectModel();
+          model = new ContentObjectModel();
           break;
         case 'articles':
-          model = new EditorArticleModel();
+          model = new ArticleModel();
           break;
         case 'blocks':
-          model = new EditorBlockModel();
+          model = new BlockModel();
           break;
         case 'components':
-          model = new EditorComponentModel();
+          model = new ComponentModel();
           break;
       }
       return model;
@@ -429,32 +354,29 @@ define(function(require){
     renderCurrentEditorView: function() {
       Origin.trigger('editorView:removeSubViews');
 
-      switch (this.currentView) {
-        case 'menu':
-          this.renderEditorMenu();
-          break;
-        case 'page':
-          this.renderEditorPage();
-          break;
+      if(this.currentView === 'menu') {
+        this.renderEditorMenu();
+      } else if(this.currentView === 'page') {
+        this.renderEditorPage();
       }
 
       Origin.trigger('editorSidebarView:addOverviewView');
     },
 
     renderEditorMenu: function() {
-      this.$('.editor-inner').html(new EditorMenuView({
-        model: Origin.editor.data.course
-      }).$el);
+      var view = new EditorMenuView({ model: Origin.editor.data.course });
+      this.$('.editor-inner').html(view.$el);
     },
 
     renderEditorPage: function() {
-      this.$('.editor-inner').html(new EditorPageView({
-        model: Origin.editor.data.contentObjects.findWhere({_id: this.currentPageId}),
-      }).$el);
+      var view = new EditorPageView({
+        model: Origin.editor.data.contentObjects.findWhere({ _id: this.currentPageId })
+      });
+      this.$('.editor-inner').html(view.$el);
     },
 
     cutContent: function(view) {
-      var type = this.capitalise(view.model.get('_type'));
+      var type = helpers.capitalise(view.model.get('_type'));
       var collectionType = view.model._siblings;
 
       this.addToClipboard(view.model);
@@ -466,12 +388,23 @@ define(function(require){
       _.defer(function () {
         Origin.trigger('editorView:cut' + type + ':' + view.model.get('_parentId'), view);
       });
-    }
+    },
 
+    /**
+    * Event handling
+    */
+
+    onEditableHoverOver: function(e) {
+      e && e.stopPropagation();
+      $(e.currentTarget).addClass('hovering');
+    },
+
+    onEditableHoverOut: function(e) {
+      $(e.currentTarget).removeClass('hovering');
+    }
   }, {
     template: 'editor'
   });
 
   return EditorView;
-
 });

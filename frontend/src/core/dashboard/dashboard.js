@@ -1,18 +1,15 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Origin = require('coreJS/app/origin');
-  var DashboardView = require('coreJS/dashboard/views/dashboardView');
-  var DashboardSidebarView = require('coreJS/dashboard/views/dashboardSidebarView');
-  var MyProjectCollection = require('coreJS/project/collections/myProjectCollection');
-  var SharedProjectCollection = require('coreJS/project/collections/sharedProjectCollection');
-  var TagsCollection = require('coreJS/tags/collections/tagsCollection');
+  var Origin = require('core/app/origin');
+  var DashboardView = require('core/dashboard/views/dashboardView');
+  var DashboardSidebarView = require('core/dashboard/views/dashboardSidebarView');
+  var MyProjectCollection = require('core/project/collections/myProjectCollection');
+  var SharedProjectCollection = require('core/project/collections/sharedProjectCollection');
+  var TagsCollection = require('core/tags/collections/tagsCollection');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
 
     Origin.tap('dashboard', function() {
-      Origin.editor = {};
-      Origin.editor.data = {};
-      
       Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
       Origin.options.addItems([
         {
@@ -66,15 +63,16 @@ define(function(require) {
       });
     });
   });
+
   Origin.on('dashboard:loaded', function (options) {
     switch (options.type) {
       case 'shared':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing shared courses'});
-        Origin.router.createView(DashboardView, {collection: new SharedProjectCollection});
+        Origin.contentPane.setView(DashboardView, {collection: new SharedProjectCollection});
         break;
       case 'all':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
-        Origin.router.createView(DashboardView, {collection: new MyProjectCollection});
+        Origin.contentPane.setView(DashboardView, {collection: new MyProjectCollection});
       default:
         break;
     }

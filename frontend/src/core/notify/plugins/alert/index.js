@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 	var _ = require('underscore');
-	var Origin = require('coreJS/app/origin');
+	var Origin = require('core/app/origin');
 	var SweetAlert = require('sweetalert');
 
 	function getSettings(data) {

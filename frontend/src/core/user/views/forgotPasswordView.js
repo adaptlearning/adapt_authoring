@@ -1,9 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
-  var Helpers = require('coreJS/app/helpers');
-  var OriginView = require('coreJS/app/views/originView');
-  var Origin = require('coreJS/app/origin');
+  var Helpers = require('core/app/helpers');
+  var OriginView = require('core/app/views/originView');
+  var Origin = require('core/app/origin');
 
   var ForgotPasswordView = OriginView.extend({
     tagName: "div",

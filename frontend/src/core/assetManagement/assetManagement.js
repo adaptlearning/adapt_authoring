@@ -1,13 +1,13 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Origin = require('coreJS/app/origin');
-  var AssetModel = require('coreJS/assetManagement/models/assetModel');
-  var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');
-  var AssetManagementView = require('coreJS/assetManagement/views/assetManagementView');
-  var AssetManagementSidebarView = require('coreJS/assetManagement/views/assetManagementSidebarView');
-  var AssetManagementNewAssetView = require('coreJS/assetManagement/views/assetManagementNewAssetView');
-  var AssetManagementNewAssetSidebarView = require('coreJS/assetManagement/views/assetManagementNewAssetSidebarView');
-  var TagsCollection = require('coreJS/tags/collections/tagsCollection');
+  var Origin = require('core/app/origin');
+  var AssetModel = require('core/assetManagement/models/assetModel');
+  var AssetCollection = require('core/assetManagement/collections/assetCollection');
+  var AssetManagementView = require('core/assetManagement/views/assetManagementView');
+  var AssetManagementSidebarView = require('core/assetManagement/views/assetManagementSidebarView');
+  var AssetManagementNewAssetView = require('core/assetManagement/views/assetManagementNewAssetView');
+  var AssetManagementNewAssetSidebarView = require('core/assetManagement/views/assetManagementNewAssetSidebarView');
+  var TagsCollection = require('core/tags/collections/tagsCollection');
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
     Origin.assetManagement = {};
@@ -24,7 +24,7 @@ define(function(require) {
             // Mainly due to serverside filtering
             Origin.trigger('location:title:hide');
             Origin.sidebar.addView(new AssetManagementSidebarView({collection: tagsCollection}).$el);
-            Origin.router.createView(AssetManagementView, {collection: assetCollection});
+            Origin.contentPane.setView(AssetManagementView, {collection: assetCollection});
             Origin.trigger('assetManagement:loaded');
           },
           error: function() {
@@ -34,7 +34,7 @@ define(function(require) {
     } else if (location=== 'new') {
         Origin.trigger('location:title:update', {title: 'New Asset'});
         Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
-        Origin.router.createView(AssetManagementNewAssetView, { model: new AssetModel });
+        Origin.contentPane.setView(AssetManagementNewAssetView, { model: new AssetModel });
     } else if (subLocation === 'edit') {
       var Asset = new AssetModel({ _id: location });
       // Fetch existing asset model
@@ -42,7 +42,7 @@ define(function(require) {
         success: function() {
           Origin.trigger('location:title:update', {title: 'Edit Asset'});
           Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
-          Origin.router.createView(AssetManagementNewAssetView, { model: Asset });
+          Origin.contentPane.setView(AssetManagementNewAssetView, { model: Asset });
         }
       });
     }

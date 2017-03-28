@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
-	var Origin = require('coreJS/app/origin');
-	var TypeAheadView = require('coreJS/filters/views/typeAheadView');
+	var Origin = require('core/app/origin');
+	var TypeAheadView = require('core/filters/views/typeAheadView');
 
 	var Filters = {};
 

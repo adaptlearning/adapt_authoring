@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
-  var PermissionsView = require('coreJS/app/views/permissionsView');
+  var Origin = require('core/app/origin');
+  var PermissionsView = require('core/app/views/permissionsView');
 
   var Router = Backbone.Router.extend({
     routes: {
@@ -27,23 +27,6 @@ define(function(require) {
 
     redirectToLogin: function() {
       this.navigate('#/user/login', { trigger: true });
-    },
-
-    createView: function(View, viewOptions, settings) {
-      var viewOptions = (viewOptions || {});
-      var settings = (settings || {});
-      var currentView;
-
-      if (this.isUserAuthenticated()) {
-        currentView = new View(viewOptions);
-      } else {
-        if (settings.authenticate === false) {
-          currentView = new View(viewOptions);
-        } else {
-          return this.redirectToLogin();
-        }
-      }
-      $('.app-inner').append(currentView.$el);
     },
 
     handleIndex: function() {

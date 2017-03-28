@@ -1,9 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
   var Handlebars = require('handlebars');
+  var Backbone = require('backbone');
+  var Origin = require('core/app/origin');
+  var OriginView = require('core/app/views/originView');
 
   var MenuSettingsView = OriginView.extend({
     tagName: 'li',
@@ -14,7 +14,7 @@ define(function(require){
     },
 
     events: {
-      'click' : 'toggleSelect'
+      'click': 'toggleSelect'
     },
 
     preRender: function() {
@@ -22,7 +22,7 @@ define(function(require){
     },
 
     toggleSelect: function(event) {
-      event && event.stopPropagation();
+      e && e.stopPropagation();
       if (!this.model.get('_isSelected')) {
         this.selectMenu();
       }
@@ -30,7 +30,6 @@ define(function(require){
 
     selectMenu: function() {
       Origin.trigger('editor:menuSettings:selected');
-
       this.$el.addClass('selected');
       this.model.set({_isSelected: true});
     },

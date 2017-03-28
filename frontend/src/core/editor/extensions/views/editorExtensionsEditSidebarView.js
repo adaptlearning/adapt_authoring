@@ -1,14 +1,12 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-    
-    var Origin = require('coreJS/app/origin');
-    var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
-    var Backbone = require('backbone');
+  var Backbone = require('backbone');
+  var Origin = require('core/app/origin');
+  var SidebarItemView = require('core/sidebar/views/sidebarItemView');
 
-    var EditorExtensionsEditSidebarView = SidebarItemView.extend({}, {
-        template: 'editorExtensionsEditSidebar'
-    });
+  var EditorExtensionsEditSidebarView = SidebarItemView.extend({}, {
+    template: 'editorExtensionsEditSidebar'
+  });
 
-    return EditorExtensionsEditSidebarView;
-
+  return EditorExtensionsEditSidebarView;
 });

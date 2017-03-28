@@ -2,8 +2,8 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var OriginView = require('coreJS/app/views/originView');
-  var Origin = require('coreJS/app/origin');
+  var OriginView = require('core/app/views/originView');
+  var Origin = require('core/app/origin');
 
   var UserProfileView = OriginView.extend({
     tagName: 'div',
@@ -131,7 +131,6 @@ define(function(require){
         },
         success: function(model, response, options) {
           Backbone.history.history.back();
-          Origin.trigger('editingOverlay:views:hide');
         }
       });
     },

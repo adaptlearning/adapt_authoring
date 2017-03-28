@@ -1,22 +1,22 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
-	var Origin = require('coreJS/app/origin');
+	var Origin = require('core/app/origin');
   var _ = require('underscore');
 	var BackboneForms = require('backboneForms');
 	var BackboneFormsLists = require('backboneFormsLists');
-	var ScaffoldItemsModalView = require('coreJS/scaffold/views/scaffoldItemsModalView');
-	var ScaffoldImageView = require('coreJS/scaffold/views/scaffoldAssetView');
-	var ScaffoldBooleanView = require('coreJS/scaffold/views/scaffoldBooleanView');
-	var ScaffoldTagsView = require('coreJS/scaffold/views/scaffoldTagsView');
-	var ScaffoldQuestionButtonView = require('coreJS/scaffold/views/scaffoldQuestionButtonView');
-	var ScaffoldColorPickerView = require('coreJS/scaffold/views/scaffoldColorPickerView');
-	var ScaffoldDisplayTitleView = require('coreJS/scaffold/views/scaffoldDisplayTitleView');
-  var ScaffoldCodeEditorView = require('coreJS/scaffold/views/scaffoldCodeEditorView');
-	var ScaffoldTextAreaView = require('coreJS/scaffold/views/scaffoldTextAreaView');
-	var Schemas = require('coreJS/scaffold/schemas');
-	var Overrides = require('coreJS/scaffold/scaffoldOverrides');
-	var Helpers = require('coreJS/app/helpers');
+	var ScaffoldItemsModalView = require('core/scaffold/views/scaffoldItemsModalView');
+	var ScaffoldImageView = require('core/scaffold/views/scaffoldAssetView');
+	var ScaffoldBooleanView = require('core/scaffold/views/scaffoldBooleanView');
+	var ScaffoldTagsView = require('core/scaffold/views/scaffoldTagsView');
+	var ScaffoldQuestionButtonView = require('core/scaffold/views/scaffoldQuestionButtonView');
+	var ScaffoldColorPickerView = require('core/scaffold/views/scaffoldColorPickerView');
+	var ScaffoldDisplayTitleView = require('core/scaffold/views/scaffoldDisplayTitleView');
+  var ScaffoldCodeEditorView = require('core/scaffold/views/scaffoldCodeEditorView');
+	var ScaffoldTextAreaView = require('core/scaffold/views/scaffoldTextAreaView');
+	var Schemas = require('core/scaffold/schemas');
+	var Overrides = require('core/scaffold/scaffoldOverrides');
+	var Helpers = require('core/app/helpers');
 	var ActiveItemsModal = 0;
 	var isOverlayActive = false;
 

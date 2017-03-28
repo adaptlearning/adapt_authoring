@@ -65,7 +65,7 @@ define(function(require) {
       Origin.trigger('editorComponentListView:remove');
 
       var componentName = this.model.get('name');
-      var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
+      var componentType = _.find(Origin.editor.data.componenttypes.models, function(type){
         return type.get('name') == componentName;
       });
 

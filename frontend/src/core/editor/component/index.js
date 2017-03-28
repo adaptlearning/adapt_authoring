@@ -28,7 +28,7 @@ define(function(require) {
   }
 
   function getComponentDisplayName(model) {
-    var componentType = _.find(Origin.editor.data.componentTypes.models, function(m) {
+    var componentType = _.find(Origin.editor.data.componenttypes.models, function(m) {
       return m.get('_id') === model.get('_componentType');
     });
     return (componentType) ? componentType.get('displayName').toLowerCase() : '';

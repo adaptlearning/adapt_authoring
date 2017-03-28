@@ -90,7 +90,7 @@ define(function(require) {
       title: window.polyglot.t('app.addcomponent'),
       body: window.polyglot.t('app.pleaseselectcomponent'),
       _parentId: route3,
-      componentTypes: Origin.editor.data.componentTypes.toJSON(),
+      componentTypes: Origin.editor.data.componenttypes.toJSON(),
       layoutOptions: layoutOptions
     });
     Origin.sidebar.addView(new EditorPageComponentListSidebarView({ model: componentsModel }).$el);

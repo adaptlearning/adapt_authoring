@@ -211,11 +211,11 @@ define(function(require) {
             } else {
                 searchCriteria._contentTypeParentId = Origin.editor.data.course.get('_id');
             }
-            var asset = Origin.editor.data.courseAssets.findWhere(searchCriteria);
+            var asset = Origin.editor.data.courseassets.findWhere(searchCriteria);
 
             if (!asset) {
                 // HACK - Try relaxing the search criteria for historic data
-                asset = Origin.editor.data.courseAssets.findWhere({_contentType: contentType, _fieldName: fieldname});
+                asset = Origin.editor.data.courseassets.findWhere({_contentType: contentType, _fieldName: fieldname});
             }
 
             return asset ? asset : false;
@@ -306,10 +306,10 @@ define(function(require) {
                 },
                 success: function() {
 
-                    // Sometimes we don't need to reset the courseAssets
+                    // Sometimes we don't need to reset the courseassets
                     if (shouldResetAssetCollection) {
 
-                        Origin.editor.data.courseAssets.fetch({
+                        Origin.editor.data.courseassets.fetch({
                             reset:true,
                             success: function() {
                                 that.render();

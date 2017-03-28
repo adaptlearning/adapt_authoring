@@ -280,7 +280,7 @@ define(function(require){
     },
 
     addToClipboard: function(model) {
-      _.defer(_.bind(function() { _.invoke(Origin.editor.data.clipboard.models, 'destroy') }, this));
+      _.defer(_.bind(function() { _.invoke(Origin.editor.data.clipboards.models, 'destroy') }, this));
 
       var postData = {
         objectId: model.get('_id'),

@@ -21,7 +21,7 @@ define(function(require) {
         return;
       }
 
-      var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
+      var componentType = _.find(Origin.editor.data.componenttypes.models, function(type){
         return type.get('name') == this.model.get('component');
       }, this);
 
@@ -63,7 +63,7 @@ define(function(require) {
         return;
       }
 
-      var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
+      var componentType = _.find(Origin.editor.data.componenttypes.models, function(type){
         return type.get('name') == this.model.get('component');
       }, this);
 

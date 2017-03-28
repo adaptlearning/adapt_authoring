@@ -30,7 +30,7 @@ define(function(require) {
     },
 
     setupExtensions: function() {
-      var availableExtensionsCollection = Origin.editor.data.extensionTypes;
+      var availableExtensionsCollection = Origin.editor.data.extensiontypes;
       var enabledExtensionsCollection = new Backbone.Collection(null, { comparator: 'displayName' });
       var disabledExtensionsCollection = new Backbone.Collection(null, { comparator: 'displayName' });
       var enabledExtensionNames = _.pluck(Origin.editor.data.config.get('_enabledExtensions'), 'name');

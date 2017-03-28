@@ -27,7 +27,7 @@ define(function(require){
 
     preRender: function() {
       this.listenToEvents();
-      this.model.set('componentTypes', Origin.editor.data.componentTypes.toJSON());
+      this.model.set('componentTypes', Origin.editor.data.componenttypes.toJSON());
       this.evaluateComponents(this.render);
     },
 
@@ -240,7 +240,7 @@ define(function(require){
         title: window.polyglot.t('app.addcomponent'),
         body: window.polyglot.t('app.pleaseselectcomponent'),
         _parentId: this.model.get('_id'),
-        componentTypes: Origin.editor.data.componentTypes.toJSON(),
+        componentTypes: Origin.editor.data.componenttypes.toJSON(),
         layoutOptions: layoutOptions
       });
 

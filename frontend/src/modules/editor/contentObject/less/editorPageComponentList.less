@@ -1,3 +1,5 @@
+@import 'variables';
+
 .editor-component-list {
 	.click-capture {
 		width: 100vw;
@@ -8,10 +10,6 @@
 	top:0px;
 	// to avoid flicker when first rendered
 	right:-100vw;
-	/*
-	left:0px;
-	width:100%;
-	*/
 	height:100%;
 	z-index:500;
 
@@ -38,7 +36,7 @@
 	&-sidebar-header {
     border-bottom: 1px solid #CCCCCC;
 	}
-	
+
 	&-sidebar-title-inner {
 		padding:20px 20px 0px;
 		font-weight: 700;
@@ -142,7 +140,7 @@
 	}
 
 	&:hover {
-		background-color:#f3fcfe;
+		background-color: @ui-content-color;
 	}
 
 	&-inner {
@@ -154,18 +152,16 @@
 	&-display-name {
 		font-weight:600;
 	}
-	
+
 	&-version, &-name {
 		margin-top:6px;
 		font-size:11px;
 	}
 
 	&-overlay {
-		//position:absolute;
 		top:0;
 		width:100%;
 		height:100%;
-		//background-color:rgba(156, 171, 196, 0.8);
 	}
 
 	&-overlay-inner {
@@ -205,10 +201,10 @@
 		&.adapt-contrib- {
 			&assessmentResults {
 				background-image: url("assets/component-icons/assessment.png");
-			}		 
+			}
 			&blank {
 				background-image: url("assets/component-icons/blank.png");
-			}			
+			}
 			&accordion {
 				background-image: url("assets/component-icons/accordion.png");
 			}

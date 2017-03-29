@@ -42,7 +42,7 @@ define(function(require) {
         event.stopPropagation();
         event.preventDefault();
       }
-      Origin.trigger('contextMenu:open', this, e);
+      Origin.trigger('contextMenu:open', this, event);
     },
 
     editProjectSettings: function(event) {

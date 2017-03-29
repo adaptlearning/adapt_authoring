@@ -1,5 +1,12 @@
+@import 'variables';
+
 html {
   overflow-y: hidden;
+}
+
+body {
+  background-color:@ui-content-color;
+  color:@sidebar-color;
 }
 
 #app {
@@ -12,7 +19,7 @@ html {
 }
 
 span.error {
-  color: red;
+  color: @alert-color;
 }
 
 // Loading overlay styling
@@ -28,7 +35,8 @@ span.error {
   text-align: center;
   opacity:1;
   transition: opacity 0.3s;
-  background-color:#F3FCFE;
+  background-color: @ui-content-color;
+
   &.fade-out {
     opacity: 0;
   }
@@ -43,7 +51,7 @@ span.error {
   .loading-inner {
     margin-top: 25%;
   }
-  
+
   @loading-icon-size: 8px;
 
   .loading-logo {
@@ -91,10 +99,10 @@ span.error {
   }
 
   @keyframes sk-bouncedelay {
-    0%, 80%, 100% { 
+    0%, 80%, 100% {
       -webkit-transform: scale(0);
       transform: scale(0);
-    } 40% { 
+    } 40% {
       -webkit-transform: scale(1.0);
       transform: scale(1.0);
     }

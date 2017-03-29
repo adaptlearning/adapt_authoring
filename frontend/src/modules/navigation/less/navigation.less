@@ -1,3 +1,7 @@
+@import 'variables';
+@import 'fonts';
+@import 'sharedStyles';
+
 .navigation {
   position:fixed;
   top:0px;
@@ -5,6 +9,14 @@
   width:100%;
   height:60px;
   z-index:500;
+  background:url("assets/top-bar-1080.jpg");
+  @media (min-width: 1920px) {
+    background:url("assets/top-bar-2560.jpg");
+  }
+  background-position: right;
+  border-bottom:1px solid rgba(0,0,0,0.15);
+  font-size: 15px;
+  font-family: @font-title;
 }
 
 .navigation-inner {
@@ -18,6 +30,7 @@
   text-decoration:none;
   margin:0px;
   padding:0px 20px;
+  color:@navigation-text-color;
   .navigation-left & {
     float:left;
   }
@@ -26,6 +39,9 @@
 .navigation-left {
 	width:50%;
 	float:left;
+  .navigation-product-name {
+    .no-select;
+  }
 }
 
 .navigation-right {
@@ -33,79 +49,21 @@
   padding-right: 20px;
 	float:right;
 	text-align:right;
+
+  .navigation-user-logout {
+    padding: 0px 25px;
+  }
+  
+  a {
+    &:hover {
+    text-decoration: underline;
+      &.navigation-user-logout {
+        text-decoration: none;
+      }
+    }
+  }
 }
 
 .navigation-loginas-background {
   background:#aa3141;
-}
-
-#global-menu-icon {
-  width: 30px;
-  position: relative;
-  -webkit-transform: rotate(0deg);
-  -moz-transform: rotate(0deg);
-  -o-transform: rotate(0deg);
-  transform: rotate(0deg);
-  -webkit-transition: .5s ease-in-out;
-  -moz-transition: .5s ease-in-out;
-  -o-transition: .5s ease-in-out;
-  transition: .5s ease-in-out;
-  cursor: pointer;
-}
-
-#global-menu-icon span {
-  display: block;
-  position: absolute;
-  height: 2px;
-  width: 22px;
-  background: #fff;
-  border-radius: 5px;
-  -webkit-transform-origin: left center;
-  -moz-transform-origin: left center;
-  -o-transform-origin: left center;
-  transform-origin: left center;
-  -webkit-transition: .25s ease-in-out;
-  -moz-transition: .25s ease-in-out;
-  -o-transition: .25s ease-in-out;
-  transition: .25s ease-in-out;
-}
-
-#global-menu-icon.open span{
-  height: 12px;
-  width: 12px;
-  -webkit-transform: rotate(45deg);
-  -moz-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
-  transform: rotate(45deg);
-  border-radius: 0;
-}
-
-#global-menu-icon span:nth-child(1) {
-  top: 12px;
-  left: 10px;
-}
-
-#global-menu-icon span:nth-child(2) {
-  top: 19px;
-  left: 10px;
-}
-
-#global-menu-icon span:nth-child(3) {
-  top: 26px;
-  left: 10px;
-}
-
-#global-menu-icon.open span:nth-child(1) {
-  top: 6px;
-  left: 15px;
-}
-
-#global-menu-icon.open span:nth-child(2) {
-  top: 14px;
-  left: 23px;
-}
-
-#global-menu-icon.open span:nth-child(3) {
-  top: 14px;
-  left: 7px;
 }

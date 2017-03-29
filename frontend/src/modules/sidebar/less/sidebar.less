@@ -1,159 +1,215 @@
 @import 'variables';
+
 .sidebar {
-    position:fixed;
-    top:0;
-    left:0px;
-    width:250px;
+  position:fixed;
+  top:0;
+  left:0px;
+  width:250px;
+  height:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background-color:@sidebar-color;
+  color:@sidebar-text-color;
+  
+  button {
+    &[class^="action-"],
+    &[class*=" action-"] {
+      margin: 5px 25px;
+      width: 200px;
+      height: 50px;
+      border-width: 1px;
+      border-style: solid;
+      border-radius:@button-radius;
+      font-size: 15px;
+      text-align: center;
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  a {
+    color:@sidebar-text-color;
+    text-decoration: none;
+    transition:all 0.3s;
+    &:hover,
+    &:focus {
+      color:darken(@sidebar-text-color, 10%);
+    }
+  }
+  .sidebar-filter-clear {
+    display:inline;
+    position: absolute;
+    left: 205px;
+    top: 25px;
+    width: 0px;
+    padding: 0;
+    background: none;
+    color: @sidebar-input-text-color;
+  }
+
+  .sidebar-item-container {
+    position: relative;
     height:100%;
-    overflow-y:auto;
-    overflow-x:hidden;
-    a {
-        text-decoration: none;
-    }
-    .sidebar-filter-clear {
-        display:inline;
-        position: absolute;
-        left: 205px;
-        top: 25px;
-        width: 0px;
-        padding: 0;
-        background: none;
-        color: @sidebar-input-text-color;
-    }
+  }
 
-    .sidebar-item-container {
-        position: relative;
-        height:100%;
+  .sidebar-hide {
+    #app {
+      margin-left: 0px;
     }
-
-    .sidebar-hide {
-        #app {
-            margin-left: 0px;
-        }
-
-        .sidebar {
-            display: none;
-        }
+    .sidebar {
+      display: none;
     }
+  }
 
-    .separator {
-        margin-top: 20px;
+  .separator {
+    margin-top: 20px;
+  }
+
+  .sidebar-row, .sidebar-breadcrumb {
+    button, a {
+      margin: 0;
+      color:@sidebar-text-color;
+      transition:all 0.3s;
+      &:hover {
+        color:@sidebar-item-hover-text-color;
+      }
     }
+  }
 
-    .sidebar-row {
-      .error {
-        position: inherit;
-        top: inherit;
-        left: inherit;
+  .sidebar-row {
+    .error {
+      position: inherit;
+      top: inherit;
+      left: inherit;
+      color: white !important;
+      i {
         color: white !important;
-        i {
-          color: white !important;
-        }
-      }
-      .sidebar-row-input input {
-          margin: 10px 25px;
-          width: 180px;
-          height: 25px;
-          font-size: @sidebar-input-font-size;
-          border-radius: @button-radius;
-          border-color: @sidebar-input-color;
-          background: @sidebar-input-color;
-          color: @sidebar-input-text-color;
-          text-align: left;
       }
     }
+    .sidebar-row-input input {
+      margin: 10px 25px;
+      width: 180px;
+      height: 25px;
+      font-size: @sidebar-input-font-size;
+      border-radius: @button-radius;
+      border-color: @sidebar-input-color;
+      background: @sidebar-input-color;
+      color: @sidebar-input-text-color;
+      text-align: left;
+    }
+  }
 }
 
 .sidebar-inner {
-    padding: 61px 0 25px 0;
+  padding: 61px 0 25px 0;
 }
 
 .sidebar-breadcrumb {
-    position:relative;
-    top: -40px;
+  position:relative;
+  top: -40px;
 }
 
 .sidebar-breadcrumb-inner {
-    display:block;
-    padding:30px 30px;
-    font-size: @sidebar-input-font-size;
-    i {
-        color: @secondary-color;
-        margin-right:8px;
-    }
+  display:block;
+  padding:30px 30px;
+  font-size: @sidebar-input-font-size;
+  i {
+    color: @secondary-color;
+    margin-right:8px;
+  }
+}
+
+.sidebar-progress {
+  z-index: 1;
+  width: 0px;
+  height:100%;
+  position: absolute;
+  background: darken(@secondary-color, 10%);
+  left: 0px;
+  top: 0px;
+  opacity: 0.3;
 }
 
 .sidebar-item {
-    position:relative;
-    left:10%;
-    opacity:0;
-    label {
-        display:block;
-        margin-bottom:4px;
-    }
+  position:relative;
+  left:10%;
+  opacity:0;
+  label {
+    display:block;
+    margin-bottom:4px;
+  }
 }
 
 .sidebar-row, select.sidebar-row {
-    display:block;
-    position: relative;
-    button {
-        font-size: @sidebar-input-font-size;
-        background:none;
-        border:none;
-        width:100%;
-        padding:18px 30px;
-        text-align:left;
+  display:block;
+  position: relative;
+  button {
+    font-size: @sidebar-input-font-size;
+    background:none;
+    border:none;
+    width:100%;
+    padding:18px 30px;
+    text-align:left;
 
-        i {
-            margin-right:8px;
+    i {
+      margin-right:8px;
 
-            &.fa-toggle-off, .fa-toggle-on {
-                float: right;
-                color:@secondary-color;
-                font-size: 20px;
-            }
-
-            &.fa-chevron-right, &.primary-color {
-                color:@secondary-color;
-            }
-            &.fa-times {
-                color:@sidebar-input-text-color;
-            }
-        }
-
+      &.fa-toggle-off,
+      .fa-toggle-on {
+        float: right;
+        color:@secondary-color;
+        font-size: 20px;
+      }
+      &.fa-chevron-right,
+      &.primary-color {
+        color:@secondary-color;
+      }
+      &.fa-times {
+        color:@sidebar-input-text-color;
+      }
     }
+  }
 }
 
 .sidebar-item-title {
-    text-align:center;
+  background-color:@sidebar-color;
+  color:@sidebar-title-text-color;
+  text-align:center;
 }
 
 .sidebar-item-title-inner {
-    padding:30px 20px;
-    font-size: @sidebar-input-font-size;
-    font-weight: 200;
+  padding:30px 20px;
+  font-size: @sidebar-input-font-size;
+  font-weight: 200;
 }
 
 .sidebar-divide {
-    text-align:center;
-    i {
-        margin-right:4px;
-    }
+  background-color:@sidebar-color;
+  text-align:center;
+
+  h3 {
+    font-size:13px;
+    font-weight:600;
+  }
+  i {
+    margin-right:4px;
+  }
 }
 
 .sidebar-divide-inner {
-    padding:20px;
+  padding:20px;
 }
 
 .sidebar-fieldset-filter.error {
-    @alert-color:#de6262;
-    background: @alert-color;
-    color:#fff;
-    &:hover {
-        background: darken(@alert-color, 10%);
-    }
+  @alert-color:#de6262;
+  background: @alert-color;
+  color:#fff;
+  &:hover {
+    background: darken(@alert-color, 10%);
+  }
 }
 
 button.sidebar-tag {
-    padding: 14px 15px 14px 30px;
+  padding: 14px 15px 14px 30px;
 }

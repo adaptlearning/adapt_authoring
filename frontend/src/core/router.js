@@ -12,12 +12,6 @@ define(function(require) {
     },
 
     initialize: function() {
-      // Setup listeners for the loading screen
-      Origin.on('router:hideLoading', this.hideLoading, this);
-      Origin.on('router:showLoading', this.showLoading, this);
-      // Store loading element
-      this.$loading = $('.loading');
-
       this.locationKeys = ['module', 'route1', 'route2', 'route3', 'route4'];
     },
 
@@ -31,7 +25,7 @@ define(function(require) {
 
     handleIndex: function() {
       // Show loading on any route
-      this.showLoading();
+      Origin.trigger('origin:showLoading');
 
       if (this.isUserAuthenticated()) {
         this.navigate('#/dashboard', { trigger: true });
@@ -52,9 +46,9 @@ define(function(require) {
 
     handleRoute: function(module, route1, route2, route3, route4) {
       // Show loading on any route
-      this.showLoading();
+      Origin.trigger('origin:showLoading');
       // Remove views
-      this.removeViews();
+      Origin.removeViews();
       // Check this user has permissions
       if (!Origin.permissions.checkRoute(Backbone.history.fragment)) {
         Origin.trigger('sidebar:sidebarContainer:hide');
@@ -89,26 +83,6 @@ define(function(require) {
       $('body').removeClass().addClass(locationClass);
       // Trigger router event
       Origin.trigger('router:' + module, route1, route2, route3, route4);
-    },
-
-    removeViews: function() {
-      Origin.trigger('remove:views');
-    },
-
-    showLoading: function(shouldHideTopBar) {
-      // Sometimes you might want to disable the top bar too
-      if (shouldHideTopBar) {
-        this.$loading.removeClass('display-none fade-out').addClass('cover-top-bar');
-      } else {
-        this.$loading.removeClass('display-none fade-out');
-      }
-    },
-
-    hideLoading: function() {
-      this.$loading.addClass('fade-out');
-      _.delay(_.bind(function() {
-        this.$loading.addClass('display-none').removeClass('cover-top-bar');
-      }, this), 300);
     }
   });
 

@@ -31,7 +31,7 @@ define(function(require){
     },
 
     setViewToReady: function() {
-      Origin.trigger('router:hideLoading');
+      Origin.trigger('origin:hideLoading');
     }
 
   }, {

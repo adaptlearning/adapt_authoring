@@ -33,8 +33,7 @@ define(function(require){
       });
     },
     /**
-    * Sets up a loading system for plugins to tap into the location
-    * and load their data before everything else kicks off
+    * Makes sure all 'tapped' plugin functions are executed before continuing
     */
     tap: function(location, callback) {
       var currentLocationPlugins = _.where(pluginTaps, {location: location});
@@ -42,7 +41,6 @@ define(function(require){
       if (currentLocationPluginsLength === 0) {
         return callback();
       }
-      // iterates through matching currentLocationPlugins calling the funcs
       var count = 0;
       function callPlugin() {
         currentLocationPlugins[count].pluginMethod.call(null, function() {

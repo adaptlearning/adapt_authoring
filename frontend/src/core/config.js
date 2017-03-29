@@ -1,7 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 require.config({
   paths: {
-    // third-party libs
     ace: 'libraries/ace',
     backbone: 'libraries/backbone',
     backboneForms:'libraries/backbone-forms',

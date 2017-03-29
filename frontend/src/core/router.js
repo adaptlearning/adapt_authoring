@@ -13,6 +13,18 @@ define(function(require) {
 
     initialize: function() {
       this.locationKeys = ['module', 'route1', 'route2', 'route3', 'route4'];
+      this.resetLocation();
+    },
+
+    setLocation: function(routeArgs) {
+      this.resetLocation();
+      _.each(this.locationKeys, function(key, index) {
+        Origin.location[key] = routeArgs[index];
+      });
+    },
+
+    resetLocation: function() {
+      Origin.location = {};
     },
 
     isUserAuthenticated: function() {
@@ -68,11 +80,7 @@ define(function(require) {
       // Set previous location object
       Origin.previousLocation = Origin.location;
       this.evaluateDashboardRoute();
-      // Set location object
-      Origin.location = {};
-      _.each(this.locationKeys, function(locationKey, index) {
-        Origin.location[locationKey] = routeArguments[index];
-      });
+      this.setLocation(routeArguments);
       // Trigger location change
       Origin.trigger('location:change', Origin.location);
 

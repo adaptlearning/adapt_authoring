@@ -3,10 +3,10 @@ define(function(require) {
 
     var Backbone = require('backbone');
     var BackboneForms = require('backboneForms');
-    var Origin = require('core/app/origin');
-    var AssetManagementModalView = require('core/assetManagement/views/assetManagementModalView');
-    var AssetCollection = require('core/assetManagement/collections/assetCollection');
-    var CourseAssetModel = require('core/app/models/courseAssetModel');
+    var Origin = require('core/origin');
+    var AssetManagementModalView = require('modules/assetManagement/views/assetManagementModalView');
+    var AssetCollection = require('modules/assetManagement/collections/assetCollection');
+    var CourseAssetModel = require('core/models/courseAssetModel');
 
     var ScaffoldAssetView = Backbone.Form.editors.Base.extend({
 

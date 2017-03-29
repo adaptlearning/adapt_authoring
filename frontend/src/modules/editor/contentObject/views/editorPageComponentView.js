@@ -2,7 +2,7 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('core/app/origin');
+  var Origin = require('core/origin');
   var EditorOriginView = require('../../global/views/editorOriginView');
 
   var EditorPageComponentView = EditorOriginView.extend({

@@ -1,19 +1,19 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var _ = require('underscore');
-  var Origin = require('core/app/origin');
+  var Origin = require('core/origin');
 
-  var ArticleModel = require('core/app/models/articleModel');
-  var BlockModel = require('core/app/models/blockModel');
-  var ClipboardModel = require('core/app/models/clipboardModel');
-  var ComponentModel = require('core/app/models/componentModel');
-  var ComponentTypeModel = require('core/app/models/componentTypeModel');
-  var ContentObjectModel = require('core/app/models/contentObjectModel');
-  var ConfigModel = require('core/app/models/configModel');
-  var CourseAssetModel = require('core/app/models/courseAssetModel');
-  var CourseModel = require('core/app/models/courseModel');
+  var ArticleModel = require('core/models/articleModel');
+  var BlockModel = require('core/models/blockModel');
+  var ClipboardModel = require('core/models/clipboardModel');
+  var ComponentModel = require('core/models/componentModel');
+  var ComponentTypeModel = require('core/models/componentTypeModel');
+  var ContentObjectModel = require('core/models/contentObjectModel');
+  var ConfigModel = require('core/models/configModel');
+  var CourseAssetModel = require('core/models/courseAssetModel');
+  var CourseModel = require('core/models/courseModel');
   var EditorCollection = require('../global/collections/editorCollection');
-  var ExtensionModel = require('core/app/models/extensionModel');
+  var ExtensionModel = require('core/models/extensionModel');
 
   // used to check what's preloaded
   var globalData = {

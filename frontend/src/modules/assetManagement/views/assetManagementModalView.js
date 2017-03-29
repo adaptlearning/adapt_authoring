@@ -2,13 +2,13 @@
 define(function(require) {
 
 	var Backbone = require('backbone');
-	var Origin = require('core/app/origin');
-	var AssetModel = require('core/assetManagement/models/assetModel');
-	var AssetManagementCollectionView = require('core/assetManagement/views/assetManagementCollectionView');
-	var AssetManagementPreviewView = require('core/assetManagement/views/assetManagementPreviewView');
-	var AssetManagementView = require('core/assetManagement/views/assetManagementView');
-	var AssetManagementModalFiltersView = require('core/assetManagement/views/assetManagementModalFiltersView');
-	var AssetManagementModelAutofillView = require('core/assetManagement/views/assetManagementModalAutofillView');
+	var Origin = require('core/origin');
+	var AssetModel = require('../models/assetModel');
+	var AssetManagementCollectionView = require('./assetManagementCollectionView');
+	var AssetManagementPreviewView = require('./assetManagementPreviewView');
+	var AssetManagementView = require('./assetManagementView');
+	var AssetManagementModalFiltersView = require('./assetManagementModalFiltersView');
+	var AssetManagementModelAutofillView = require('./assetManagementModalAutofillView');
 
 	var AssetManagementModalView = AssetManagementView.extend({
 

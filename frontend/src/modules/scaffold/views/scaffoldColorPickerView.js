@@ -3,7 +3,7 @@ define(function(require) {
 
     var Backbone = require('backbone');
     var BackboneForms = require('backboneForms');
-    var Origin = require('core/app/origin');
+    var Origin = require('core/origin');
     var ColorPicker = require('colorPicker');
 
     var ScaffoldColorPickerView = Backbone.Form.editors.Text.extend({

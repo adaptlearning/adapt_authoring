@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-    var Origin = require('core/app/origin');
-    var SchemasModel = require('core/scaffold/models/schemasModel');
+    var Origin = require('core/origin');
+    var SchemasModel = require('./models/schemasModel');
 
     var Schemas = function(schemaName) {
         var configModel = Origin.editor.data.config;

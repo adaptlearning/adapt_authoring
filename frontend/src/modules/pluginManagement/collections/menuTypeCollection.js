@@ -2,7 +2,7 @@
 define(function(require) {
 
   var Backbone = require('backbone');
-  var MenuTypeModel = require('core/pluginManagement/models/menuTypeModel');
+  var MenuTypeModel = require('../models/menuTypeModel');
 
   var MenuTypeCollection = Backbone.Collection.extend({
 

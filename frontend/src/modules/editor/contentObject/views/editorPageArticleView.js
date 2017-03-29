@@ -2,9 +2,9 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('core/app/origin');
+  var Origin = require('core/origin');
 
-  var BlockModel = require('core/app/models/blockModel');
+  var BlockModel = require('core/models/blockModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
   var EditorPageBlockView = require('./editorPageBlockView');
   var EditorPasteZoneView = require('../../global/views/editorPasteZoneView');

@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Origin = require('core/app/origin');
-  var Helpers = require('core/app/helpers');
+  var Origin = require('core/origin');
+  var Helpers = require('core/helpers');
   var ContentModel = require('./contentModel');
 
   var CourseModel = ContentModel.extend({

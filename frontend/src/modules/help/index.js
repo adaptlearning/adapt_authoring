@@ -1,5 +1,5 @@
 define(function(require) {
-  var Origin = require('core/app/origin');
+  var Origin = require('core/origin');
 
   Origin.on('navigation:help', function() {
     openWikiLink(getLink());

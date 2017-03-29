@@ -3,15 +3,15 @@ define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
 
-  var Helpers = require('core/app/helpers');
-  var Origin = require('core/app/origin');
-  var OriginView = require('core/app/views/originView');
+  var Helpers = require('core/helpers');
+  var Origin = require('core/origin');
+  var OriginView = require('core/views/originView');
 
-  var PluginTypeView = require('core/pluginManagement/views/pluginTypeView');
-  var ExtensionTypeCollection = require('core/pluginManagement/collections/extensionTypeCollection');
-  var ThemeTypeCollection = require('core/pluginManagement/collections/themeTypeCollection');
-  var ComponentTypeCollection = require('core/pluginManagement/collections/componentTypeCollection');
-  var MenuTypeCollection = require('core/pluginManagement/collections/menuTypeCollection');
+  var PluginTypeView = require('./pluginTypeView');
+  var ExtensionTypeCollection = require('../collections/extensionTypeCollection');
+  var ThemeTypeCollection = require('../collections/themeTypeCollection');
+  var ComponentTypeCollection = require('../collections/componentTypeCollection');
+  var MenuTypeCollection = require('../collections/menuTypeCollection');
 
   var PluginManagementView = OriginView.extend({
     pluginType: "plugin",

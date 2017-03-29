@@ -3,10 +3,10 @@ define(function(require) {
 
     var Backbone = require('backbone');
     var BackboneForms = require('backboneForms');
-    var Origin = require('core/app/origin');
+    var Origin = require('core/origin');
     var jQuery = require('jquery');
-    var TagsInput = require('core/libraries/jquery.tagsinput.min');
-    var Helpers = require('core/app/helpers');
+    var TagsInput = require('libraries/jquery.tagsinput.min');
+    var Helpers = require('core/helpers');
 
     var ScaffoldTagsView = Backbone.Form.editors.Base.extend({
 
@@ -37,7 +37,7 @@ define(function(require) {
             this.options = options;
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-            
+
         },
 
         render: function() {
@@ -48,10 +48,10 @@ define(function(require) {
                     onAddTag: _.bind(this.onAddTag, this),
                     onRemoveTag: _.bind(this.onRemoveTag, this),
                     'minChars' : 3,
-                    'maxChars' : 30 
+                    'maxChars' : 30
                 });
             }, this), 500)
-            
+
             return this;
         },
 
@@ -110,9 +110,9 @@ define(function(require) {
 
     Origin.on('app:dataReady', function() {
         // Add Image editor to the list of editors
-        Origin.scaffold.addCustomField('Tags', ScaffoldTagsView)  
+        Origin.scaffold.addCustomField('Tags', ScaffoldTagsView)
     })
-    
+
 
     return ScaffoldTagsView;
 

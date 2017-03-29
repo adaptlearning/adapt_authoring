@@ -2,7 +2,7 @@
 define(function(require) {
 
 	var Handlebars = require('handlebars');
-	var Origin = require('core/app/origin');
+	var Origin = require('core/origin');
 	var operations = ["create", "read", "update", "delete"];
 	var separators = ["/", ":"];
 

@@ -2,8 +2,8 @@
 define(function(require){
   var Handlebars = require('handlebars');
   var Backbone = require('backbone');
-  var Origin = require('core/app/origin');
-  var OriginView = require('core/app/views/originView');
+  var Origin = require('core/origin');
+  var OriginView = require('core/views/originView');
 
   var MenuSettingsView = OriginView.extend({
     tagName: 'li',

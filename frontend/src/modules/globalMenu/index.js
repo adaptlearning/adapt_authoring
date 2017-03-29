@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
-    var Origin = require('core/app/origin');
-    var GlobalMenuView = require('core/globalMenu/views/globalMenuView');
+    var Origin = require('core/origin');
+    var GlobalMenuView = require('./views/globalMenuView');
 
     // Create GlobalMenu object
     var GlobalMenu = {};
@@ -27,7 +27,7 @@ define(function(require) {
             // Push item to GlobalMenuStore
             GlobalMenuStore.add(itemObject);
         }
-        
+
     }
 
     // Method for adding a sub item to the global menu
@@ -78,7 +78,7 @@ define(function(require) {
     });
 
     // if login as another user reset the collection as per that user's permissions
-    Origin.on('login:loginas', function() {  
+    Origin.on('login:loginas', function() {
         GlobalMenuStore.remove(GlobalMenuStore.models);
     });
 

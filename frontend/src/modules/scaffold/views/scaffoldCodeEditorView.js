@@ -3,7 +3,7 @@ define(function(require) {
 
     var Backbone = require('backbone');
     var BackboneForms = require('backboneForms');
-    var Origin = require('core/app/origin');
+    var Origin = require('core/origin');
 
     var ScaffoldCodeEditorView =  Backbone.Form.editors.Base.extend({
 
@@ -16,7 +16,7 @@ define(function(require) {
         initialize: function(options) {
             // Call parent constructor
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
-            
+
             // Check which mode the code editor should be in
             var fieldType = options.schema.fieldType;
             var mode = fieldType.mode;
@@ -27,19 +27,19 @@ define(function(require) {
             }
 
             var schemaParts = fieldType.split(':');
-            
+
             if (schemaParts.length == 1) {
               this.mode = 'text';
             } else {
               this.mode = schemaParts[1];
             }
         },
-        
+
         render: function() {
             this.setValue(this.value);
 
             _.defer(_.bind(function() {
-                window.ace.config.set("basePath", "./adaptbuilder/js/ace");
+                window.ace.config.set("basePath", "./build/js/ace");
                 this.editor = window.ace.edit(this.$el[0]);
 
                 var session = this.editor.getSession();
@@ -50,7 +50,7 @@ define(function(require) {
                 session.on('changeAnnotation', _.bind(this.onChangeAnnotation, this));
                 this.editor.setValue(this.value);
             }, this));
-            
+
             return this;
         },
 
@@ -117,7 +117,7 @@ define(function(require) {
         Origin.scaffold.addCustomField('CodeEditor:less', ScaffoldCodeEditorView);
         Origin.scaffold.addCustomField('CodeEditor', ScaffoldCodeEditorView);
     })
-    
+
 
     return ScaffoldCodeEditorView;
 

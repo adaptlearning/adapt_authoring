@@ -2,7 +2,7 @@
 define(function(require) {
 
   var Backbone = require('backbone');
-  var ExtensionTypeModel = require('core/pluginManagement/models/extensionTypeModel');
+  var ExtensionTypeModel = require('../models/extensionTypeModel');
 
   var ExtensionTypeCollection = Backbone.Collection.extend({
 

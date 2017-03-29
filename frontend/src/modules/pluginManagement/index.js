@@ -1,11 +1,11 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
-  var Origin = require('core/app/origin');
-  var PluginManagementView = require('core/pluginManagement/views/pluginManagementView');
-  var PluginManagementUploadView = require('core/pluginManagement/views/pluginManagementUploadView');
-  var PluginManagementSidebarView = require('core/pluginManagement/views/pluginManagementSidebarView');
-  var PluginManagementUploadSidebarView = require('core/pluginManagement/views/pluginManagementUploadSidebarView');
+  var Origin = require('core/origin');
+  var PluginManagementView = require('./views/pluginManagementView');
+  var PluginManagementUploadView = require('./views/pluginManagementUploadView');
+  var PluginManagementSidebarView = require('./views/pluginManagementSidebarView');
+  var PluginManagementUploadSidebarView = require('./views/pluginManagementUploadSidebarView');
 
   Origin.on('router:pluginManagement', function(location, subLocation, action) {
     if (!location) {

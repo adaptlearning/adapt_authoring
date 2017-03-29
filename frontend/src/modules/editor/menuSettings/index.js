@@ -1,9 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Origin = require('core/app/origin');
+  var Origin = require('core/origin');
   var EditorData = require('../global/editorDataLoader');
 
-  var ConfigModel = require('core/app/models/configModel');
+  var ConfigModel = require('core/models/configModel');
   var EditorMenuSettingsEditView = require('./views/editorMenuSettingsEditView');
   var EditorMenuSettingsEditSidebarView = require('./views/editorMenuSettingsEditSidebarView');
 

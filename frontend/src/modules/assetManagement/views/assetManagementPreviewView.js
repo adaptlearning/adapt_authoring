@@ -2,8 +2,8 @@
 define(function(require){
 
   var Backbone = require('backbone');
-  var OriginView = require('core/app/views/originView');
-  var Origin = require('core/app/origin');
+  var OriginView = require('core/views/originView');
+  var Origin = require('core/origin');
 
   var AssetManagementPreviewView = OriginView.extend({
 
@@ -28,7 +28,7 @@ define(function(require){
         mejs.plugins.silverlight[0].types.push('video/x-ms-wmv');
         mejs.plugins.silverlight[0].types.push('audio/x-ms-wma');
         var mediaElement = this.$('audio, video').mediaelementplayer({
-          pluginPath:'adaptbuilder/css/assets/',
+          pluginPath:'css/assets/',
           features: ['playpause','progress','current','duration']
         });
       }

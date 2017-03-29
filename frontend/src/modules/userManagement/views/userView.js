@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var OriginView = require('core/app/views/originView');
-  var Origin = require('core/app/origin');
-  var Helpers = require('../helpers.js');
+  var OriginView = require('core/views/originView');
+  var Origin = require('core/origin');
+  var Helpers = require('../helpers');
 
   var UserView = OriginView.extend({
     tagName: 'div',

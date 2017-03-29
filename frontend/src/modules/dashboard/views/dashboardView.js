@@ -3,11 +3,11 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('core/app/origin');
-  var OriginView = require('core/app/views/originView');
-  var ProjectView = require('core/project/views/projectView');
-  var SharedProjectView = require('core/project/views/sharedProjectView');
-  var ProjectCollection = require('core/project/collections/projectCollection');
+  var Origin = require('core/origin');
+  var OriginView = require('core/views/originView');
+  var ProjectView = require('modules/project/views/projectView');
+  var SharedProjectView = require('modules/project/views/sharedProjectView');
+  var ProjectCollection = require('modules/project/collections/projectCollection');
 
   var DashboardView = OriginView.extend({
 
@@ -56,7 +56,7 @@ define(function(require){
 
       this.collectionLength = 0;
       this.shouldStopFetches = false;
-      
+
     },
 
     resizeDashboard: function() {
@@ -118,7 +118,7 @@ define(function(require){
     },
 
     sortDescending: function(shouldRenderProjects) {
-      
+
       this.sort = {
         title: -1
       }
@@ -235,7 +235,7 @@ define(function(require){
             skip: this.courseLimit,
             limit: this.courseDenominator,
             sort: this.sort
-          } 
+          }
         },
         success: _.bind(function(data) {
 

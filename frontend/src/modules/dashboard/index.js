@@ -1,11 +1,11 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Origin = require('core/app/origin');
-  var DashboardView = require('core/dashboard/views/dashboardView');
-  var DashboardSidebarView = require('core/dashboard/views/dashboardSidebarView');
-  var MyProjectCollection = require('core/project/collections/myProjectCollection');
-  var SharedProjectCollection = require('core/project/collections/sharedProjectCollection');
-  var TagsCollection = require('core/tags/collections/tagsCollection');
+  var Origin = require('core/origin');
+  var DashboardView = require('./views/dashboardView');
+  var DashboardSidebarView = require('./views/dashboardSidebarView');
+  var MyProjectCollection = require('modules/project/collections/myProjectCollection');
+  var SharedProjectCollection = require('modules/project/collections/sharedProjectCollection');
+  var TagsCollection = require('core/collections/tagsCollection');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
 

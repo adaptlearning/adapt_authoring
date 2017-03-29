@@ -1,9 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
-	var Origin = require('core/app/origin');
-	var OriginView = require('core/app/views/originView');
-    var SidebarFilterView = require('core/sidebar/views/sidebarFilterView');
+	var Origin = require('core/origin');
+	var OriginView = require('core/views/originView');
+    var SidebarFilterView = require('./sidebarFilterView');
 
 	var Sidebar = OriginView.extend({
 
@@ -13,7 +13,7 @@ define(function(require) {
 			this.render();
 			this.listenTo(Origin, 'sidebar:sidebarContainer:update', this.updateViews);
 			this.listenTo(Origin, 'sidebar:sidebarFilter:add', this.addFilterView);
-			this.listenTo(Origin, 'sidebar:sidebarContainer:hide', this.hideSidebar);				
+			this.listenTo(Origin, 'sidebar:sidebarContainer:hide', this.hideSidebar);
 		},
 
 		updateViews: function($element, options) {

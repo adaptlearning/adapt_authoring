@@ -3,11 +3,11 @@ define(function(require){
 
     var Backbone = require('backbone');
     var Handlebars = require('handlebars');
-    var Origin = require('core/app/origin');
-    var OriginView = require('core/app/views/originView');
-    var AssetItemView = require('core/assetManagement/views/assetManagementItemView');
-    var AssetModel = require('core/assetManagement/models/assetModel');
-    var AssetManagementPreview = require('core/assetManagement/views/assetManagementPreviewView');
+    var Origin = require('core/origin');
+    var OriginView = require('core/views/originView');
+    var AssetItemView = require('./assetManagementItemView');
+    var AssetModel = require('../models/assetModel');
+    var AssetManagementPreview = require('./assetManagementPreviewView');
 
     var AssetCollectionView = OriginView.extend({
 
@@ -44,7 +44,7 @@ define(function(require){
             }
 
             // FIX: Purely and lovingly put in for a rendering issue with chrome.
-            // For when the items being re-rendering after a search return an 
+            // For when the items being re-rendering after a search return an
             // amount of items that means the container is not scrollable
             if (this.assetLimit < this.assetDenominator) {
                 $('.asset-management-assets-container').hide();
@@ -63,7 +63,7 @@ define(function(require){
             $assetContainer.off('scroll');
 
             $assetContainer.on('scroll', _.bind(function() {
-    
+
                 var scrollTop = $assetContainer.scrollTop();
                 var scrollableHeight = $assetContainerInner.height();
                 var containerHeight = $assetContainer.height();
@@ -96,7 +96,7 @@ define(function(require){
 
             if (!Origin.permissions.hasPermissions(["*"])) {
                 this.search = _.extend(this.search, {_isDeleted: false});
-            } 
+            }
 
             this.search = _.extend(this.search, {
                 tags: {
@@ -122,7 +122,7 @@ define(function(require){
                   skip: this.assetLimit,
                   limit: this.assetDenominator,
                   sort: this.sort
-                } 
+                }
               },
               success: _.bind(function() {
                 // On successful collection fetching set lazy render to enabled

@@ -2,7 +2,7 @@
 define(function(require) {
   var _ = require('underscore');
   var Backbone = require('backbone');
-  var Origin = require('core/app/origin');
+  var Origin = require('core/origin');
   var EditorOriginView = require('../../global/views/editorOriginView');
   var EditorPageComponentListItemView = require('./editorPageComponentListItemView');
 

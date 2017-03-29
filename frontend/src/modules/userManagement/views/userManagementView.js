@@ -1,11 +1,11 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var Origin = require('core/app/origin');
-  var OriginView = require('core/app/views/originView');
-  var Helpers = require('core/app/helpers');
-  var UserCollection = require('../collections/userCollection.js');
-  var UserModel = require('../models/userModel.js');
-  var UserView = require('../views/userView.js');
+  var Origin = require('core/origin');
+  var OriginView = require('core/views/originView');
+  var Helpers = require('core/helpers');
+  var UserCollection = require('../collections/userCollection');
+  var UserModel = require('../models/userModel');
+  var UserView = require('../views/userView');
 
   var UserManagementView = OriginView.extend({
     tagName: 'div',
@@ -68,7 +68,7 @@ define(function(require){
     onDataFetched: function(models, reponse, options) {
       this.render();
     }
-    
+
   }, {
     template: 'userManagement'
   });

@@ -1,13 +1,13 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Origin = require('core/app/origin');
-  var AssetModel = require('core/assetManagement/models/assetModel');
-  var AssetCollection = require('core/assetManagement/collections/assetCollection');
-  var AssetManagementView = require('core/assetManagement/views/assetManagementView');
-  var AssetManagementSidebarView = require('core/assetManagement/views/assetManagementSidebarView');
-  var AssetManagementNewAssetView = require('core/assetManagement/views/assetManagementNewAssetView');
-  var AssetManagementNewAssetSidebarView = require('core/assetManagement/views/assetManagementNewAssetSidebarView');
-  var TagsCollection = require('core/tags/collections/tagsCollection');
+  var Origin = require('core/origin');
+  var AssetModel = require('./models/assetModel');
+  var AssetCollection = require('./collections/assetCollection');
+  var AssetManagementView = require('./views/assetManagementView');
+  var AssetManagementSidebarView = require('./views/assetManagementSidebarView');
+  var AssetManagementNewAssetView = require('./views/assetManagementNewAssetView');
+  var AssetManagementNewAssetSidebarView = require('./views/assetManagementNewAssetSidebarView');
+  var TagsCollection = require('core/collections/tagsCollection');
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
     Origin.assetManagement = {};

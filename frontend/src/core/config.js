@@ -2,31 +2,28 @@
 require.config({
   paths: {
     // third-party libs
-    ace: 'core/libraries/ace',
-    backbone: 'core/libraries/backbone',
-    backboneForms:'core/libraries/backbone-forms',
-    backboneFormsLists:'core/libraries/backbone-forms-lists',
-    colorPicker: 'core/libraries/colorPicker/js/colorpicker',
-    handlebars: 'core/libraries/handlebars',
-    imageReady: 'core/libraries/imageReady',
-    inview: 'core/libraries/inview',
-    jquery: 'core/libraries/jquery',
-    'jquery-form' : 'core/libraries/jquery.form',
-    'jquery-ui': 'core/libraries/jquery-ui.min',
-    jsoneditor: 'core/libraries/jquery.jsoneditor.min',
-    mediaelement : 'core/libraries/mediaelement-and-player',
-    modernizr: 'core/libraries/modernizr',
-    moment: 'core/libraries/moment.min',
-    pikaday: 'core/libraries/pikaday/js/pikaday',
-    polyglot: 'core/libraries/polyglot.min',
-    scrollTo: 'core/libraries/scrollTo',
-    sweetalert: 'core/libraries/sweetalert.min',
-    tags: 'core/libraries/jquery.tagsinput.min',
-    typeahead: 'core/libraries/typeahead',
-    underscore: 'core/libraries/underscore',
-    velocity: 'core/libraries/velocity',
-    // internal aliases
-    templates: 'templates/templates'
+    ace: 'libraries/ace',
+    backbone: 'libraries/backbone',
+    backboneForms:'libraries/backbone-forms',
+    backboneFormsLists:'libraries/backbone-forms-lists',
+    colorPicker: 'libraries/colorPicker/js/colorpicker',
+    handlebars: 'libraries/handlebars',
+    imageReady: 'libraries/imageReady',
+    inview: 'libraries/inview',
+    jquery: 'libraries/jquery',
+    jqueryForm : 'libraries/jquery.form',
+    jqueryUI: 'libraries/jquery-ui.min',
+    jsoneditor: 'libraries/jquery.jsoneditor.min',
+    mediaelement : 'libraries/mediaelement-and-player',
+    modernizr: 'libraries/modernizr',
+    moment: 'libraries/moment.min',
+    pikaday: 'libraries/pikaday/js/pikaday',
+    polyglot: 'libraries/polyglot.min',
+    scrollTo: 'libraries/scrollTo',
+    sweetalert: 'libraries/sweetalert.min',
+    typeahead: 'libraries/typeahead',
+    underscore: 'libraries/underscore',
+    velocity: 'libraries/velocity'
   },
   shim: {
     // third-party
@@ -99,7 +96,7 @@ require.config({
       exports: 'velocity'
     },
     // internal
-    templates: {
+    'templates/templates': {
       deps:['handlebars']
     }
   }

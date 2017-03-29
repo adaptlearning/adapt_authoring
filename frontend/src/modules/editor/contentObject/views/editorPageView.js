@@ -2,10 +2,10 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var Origin = require('core/app/origin');
+  var Origin = require('core/origin');
 
-  var ArticleModel = require('core/app/models/articleModel');
-  var ContentModel = require('core/app/models/contentModel');
+  var ArticleModel = require('core/models/articleModel');
+  var ContentModel = require('core/models/contentModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
   var EditorPageArticleView = require('./editorPageArticleView');
   var EditorPasteZoneView = require('../../global/views/editorPasteZoneView');

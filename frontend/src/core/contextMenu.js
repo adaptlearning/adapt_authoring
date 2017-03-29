@@ -6,9 +6,9 @@
 */
 define(function(require) {
 
-  var ContextMenuView = require('core/app/views/contextMenuView');
+  var ContextMenuView = require('core/views/contextMenuView');
   var ContextMenuCollection = new Backbone.Collection();
-  var Origin = require('core/app/origin');
+  var Origin = require('core/origin');
 
   var ContextMenu = {};
 

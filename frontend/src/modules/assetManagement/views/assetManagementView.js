@@ -3,11 +3,11 @@ define(function(require){
 
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
-  var OriginView = require('core/app/views/originView');
-  var Origin = require('core/app/origin');
-  var AssetModel = require('core/assetManagement/models/assetModel');
-  var AssetManagementCollectionView = require('core/assetManagement/views/assetManagementCollectionView');
-  var AssetManagementPreviewView = require('core/assetManagement/views/assetManagementPreviewView');
+  var OriginView = require('core/views/originView');
+  var Origin = require('core/origin');
+  var AssetModel = require('../models/assetModel');
+  var AssetManagementCollectionView = require('./assetManagementCollectionView');
+  var AssetManagementPreviewView = require('./assetManagementPreviewView');
 
   var AssetManagementView = OriginView.extend({
 
@@ -59,7 +59,7 @@ define(function(require){
     onAssetDeleted: function() {
         this.$('.asset-management-no-preview').show();
     }
-    
+
   }, {
     template: 'assetManagement'
   });

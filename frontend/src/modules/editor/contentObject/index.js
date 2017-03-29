@@ -3,10 +3,10 @@ define(function(require) {
   /**
   * This module handles both sections/menus and pages.
   */
-  var Origin = require('core/app/origin');
+  var Origin = require('core/origin');
   var EditorData = require('../global/editorDataLoader');
 
-  var ContentObjectModel = require('core/app/models/contentObjectModel');
+  var ContentObjectModel = require('core/models/contentObjectModel');
   var EditorMenuSidebarView = require('./views/editorMenuSidebarView');
   var EditorPageComponentListView = require('./views/editorPageComponentListView');
   var EditorPageComponentListSidebarView = require('./views/editorPageComponentListSidebarView');

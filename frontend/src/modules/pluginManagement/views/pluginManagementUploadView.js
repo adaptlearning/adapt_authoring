@@ -2,11 +2,11 @@
 define(function(require){
   var _ = require('underscore');
   var Backbone = require('backbone');
-  var Helpers = require('core/app/helpers');
-  var OriginView = require('core/app/views/originView');
-  var Origin = require('core/app/origin');
-  var AssetModel = require('core/assetManagement/models/assetModel');
-  var TagsInput = require('core/libraries/jquery.tagsinput.min');
+  var Helpers = require('core/helpers');
+  var OriginView = require('core/views/originView');
+  var Origin = require('core/origin');
+  var AssetModel = require('modules/assetManagement/models/assetModel');
+  var TagsInput = require('libraries/jquery.tagsinput.min');
 
   var PluginManagementUploadView = OriginView.extend({
 
@@ -26,7 +26,7 @@ define(function(require){
 
     uploadFile: function() {
       var self = this;
-      
+
       if(this.validate()) {
         $('.loading').show();
         this.$('.plugin-form').ajaxSubmit({

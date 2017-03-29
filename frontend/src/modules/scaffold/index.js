@@ -284,13 +284,14 @@ define(function(require) {
 
 	Scaffold.buildForm = function(options) {
     try {
-
-      // This shouldn't need to check whether this is not set
-      // _type:'config' should be set on the model
-      var type = options.model.get('_type') || options.schemaType || 'config';
+      var type = options.model.get('_type') || options.schemaType || options.model._type;
       var initialType = type;
 
       switch (type) {
+				case 'component':
+          type = 'config';
+          break;
+
         case 'component':
           type = options.model.get('_component');
           break;

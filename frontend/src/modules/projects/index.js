@@ -1,10 +1,10 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Origin = require('core/origin');
-  var DashboardView = require('./views/dashboardView');
-  var DashboardSidebarView = require('./views/dashboardSidebarView');
-  var MyProjectCollection = require('modules/project/collections/myProjectCollection');
-  var SharedProjectCollection = require('modules/project/collections/sharedProjectCollection');
+  var ProjectsView = require('./views/projectsView');
+  var ProjectsSidebarView = require('./views/projectsSidebarView');
+  var MyProjectCollection = require('./collections/myProjectCollection');
+  var SharedProjectCollection = require('./collections/sharedProjectCollection');
   var TagsCollection = require('core/collections/tagsCollection');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
@@ -53,9 +53,8 @@ define(function(require) {
 
       tagsCollection.fetch({
         success: function() {
-          Origin.sidebar.addView(new DashboardSidebarView({ collection: tagsCollection }).$el);
-          var dashboardType = location || 'all';
-          Origin.trigger('dashboard:loaded', { type: dashboardType });
+          Origin.sidebar.addView(new ProjectsSidebarView({ collection: tagsCollection }).$el);
+          Origin.trigger('dashboard:loaded', { type: location || 'all' });
         },
         error: function() {
           console.log('Error occured getting the tags collection - try refreshing your page');
@@ -68,11 +67,11 @@ define(function(require) {
     switch (options.type) {
       case 'shared':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing shared courses'});
-        Origin.contentPane.setView(DashboardView, {collection: new SharedProjectCollection});
+        Origin.contentPane.setView(ProjectsView, { collection: new SharedProjectCollection });
         break;
       case 'all':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
-        Origin.contentPane.setView(DashboardView, {collection: new MyProjectCollection});
+        Origin.contentPane.setView(ProjectsView, { collection: new MyProjectCollection });
       default:
         break;
     }

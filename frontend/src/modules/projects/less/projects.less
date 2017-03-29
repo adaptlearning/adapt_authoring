@@ -1,41 +1,44 @@
-.dashboard {
-    ul {
-        list-style-type: none;
-    }
-    li {
-        margin-bottom:30px;
-    }
+@default-project-bg: url(/css/assets/origami-project.jpg);
+
+.projects {
+  ul {
+    list-style-type: none;
+  }
+  li {
+    margin-bottom:30px;
+  }
 }
 
-.dashboard-options-container {
-    height: 30px;
+.projects-options-container {
+  height: 30px;
 }
 
-ul.dashboard-options {
-    float: right;
+ul.projects-options {
+  float: right;
+  color: #333C4E;
+  padding-right: 20px;
+  padding-top: 14px;
+
+  a {
+    text-decoration: none;
     color: #333C4E;
-    padding-right: 20px;
-    padding-top: 14px;
-
-    a {
-        text-decoration: none;
-        color: #333C4E;
-        &:hover {
-            color: #15a4fa;
-        }
+    &:hover {
+      color: #15a4fa;
     }
+  }
 
-    li {
-        float: left;
-    }
+  li {
+    float: left;
+  }
 }
 
-.dashboard-inner {
-    padding:30px 30px 0px 0px;
+.projects-inner {
+  padding: 30px 30px 0px 0px;
 }
 
 .grid-layout {
-    .project-list-item, .shared-project-list-item {
+    .project-list-item,
+    .shared-project-list-item {
         margin-left: 25px;
         min-width: 200px;
         min-height: 341px;
@@ -45,7 +48,7 @@ ul.dashboard-options {
         .project-image {
             width:100%;
             height:150px;
-            background-image:url(/images/origami-project.jpg);
+            background-image: @default-project-bg;
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
@@ -71,7 +74,9 @@ ul.dashboard-options {
 
 .list-layout {
     margin-left:30px;
-    .project-list-item, .shared-project-list-item {
+
+    .project-list-item,
+    .shared-project-list-item {
         margin-left:0px;
         width:100%;
         .project-settings {
@@ -80,7 +85,7 @@ ul.dashboard-options {
         .project-image {
             width:40%;
             height:222px;
-            background-image:url(/images/origami-project.jpg);
+            background-image: @default-project-bg;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -106,21 +111,21 @@ ul.dashboard-options {
     }
 }
 
-.dashboard-sidebar-filter-input {
+.projects-sidebar-filter-input {
     width:168px;
 }
 
-.dashboard-sidebar-filter-clear {
+.projects-sidebar-filter-clear {
     padding:6px;
 }
 
-#dashboard-tags_tagsinput {
+#projects-tags_tagsinput {
     display:inline-block;
     padding:4px;
     border:none;
 }
 
-.dashboard-no-projects {
+.projects-no-projects {
     text-align:center;
 }
 

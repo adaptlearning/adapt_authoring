@@ -3,20 +3,20 @@ define(function(require) {
   var Origin = require('core/origin');
   var SidebarItemView = require('modules/sidebar/views/sidebarItemView');
 
-  var DashboardSidebarView = SidebarItemView.extend({
+  var ProjectsSidebarView = SidebarItemView.extend({
     settings: {
       autoRender: true
     },
 
     events: {
-      'click .dashboard-sidebar-add-course': 'addCourse',
-      'click .dashboard-sidebar-my-courses': 'gotoMyCourses',
-      'click .dashboard-sidebar-shared-courses': 'gotoSharedCourses',
+      'click .projects-sidebar-add-course': 'addCourse',
+      'click .projects-sidebar-my-courses': 'gotoMyCourses',
+      'click .projects-sidebar-shared-courses': 'gotoSharedCourses',
       'click .sidebar-filter-clear': 'clearFilterInput',
-      'click .dashboard-sidebar-tag': 'onFilterButtonClicked',
-      'click .dashboard-sidebar-add-tag': 'onAddTagClicked',
-      'click .dashboard-sidebar-row-filter': 'onFilterRemovedClicked',
-      'keyup .dashboard-sidebar-filter-search-input': 'filterProjectsByTitle'
+      'click .projects-sidebar-tag': 'onFilterButtonClicked',
+      'click .projects-sidebar-add-tag': 'onAddTagClicked',
+      'click .projects-sidebar-row-filter': 'onFilterRemovedClicked',
+      'keyup .projects-sidebar-filter-search-input': 'filterProjectsByTitle'
     },
 
     postRender: function() {
@@ -28,15 +28,15 @@ define(function(require) {
     },
 
     highlightSearchBox: function(){
-      this.$('.dashboard-sidebar-filter-search-input').removeClass('search-highlight');
-      if (this.$('.dashboard-sidebar-filter-search-input').val()) {
-        this.$('.dashboard-sidebar-filter-search-input').addClass('search-highlight');
+      this.$('.projects-sidebar-filter-search-input').removeClass('search-highlight');
+      if (this.$('.projects-sidebar-filter-search-input').val()) {
+        this.$('.projects-sidebar-filter-search-input').addClass('search-highlight');
       }
     },
 
     updateUI: function(userPreferences) {
       if (userPreferences.search) {
-        this.$('.dashboard-sidebar-filter-search-input').val(userPreferences.search);
+        this.$('.projects-sidebar-filter-search-input').val(userPreferences.search);
       }
       this.highlightSearchBox();
       if (userPreferences.tags) {
@@ -69,7 +69,7 @@ define(function(require) {
       event && event.preventDefault();
 
       var $currentTarget = $(event.currentTarget);
-      $currentTarget.prev('.dashboard-sidebar-filter-input').val('').trigger('keyup', [true]);
+      $currentTarget.prev('.projects-sidebar-filter-input').val('').trigger('keyup', [true]);
       this.highlightSearchBox();
     },
 
@@ -128,11 +128,11 @@ define(function(require) {
       var template = Handlebars.templates['sidebarRowFilter'];
       var data = {
         rowClasses: 'sidebar-row-filter',
-        buttonClasses:'dashboard-sidebar-row-filter',
+        buttonClasses:'projects-sidebar-row-filter',
         tag: tag
       };
 
-      this.$('.dashboard-sidebar-add-tag').parent().after(template(data));
+      this.$('.projects-sidebar-add-tag').parent().after(template(data));
     },
 
     onFilterRemovedClicked: function(event) {
@@ -150,8 +150,8 @@ define(function(require) {
       $(event.currentTarget).parent().remove();
     }
   }, {
-    template: 'dashboardSidebar'
+    template: 'projectsSidebar'
   });
 
-  return DashboardSidebarView;
+  return ProjectsSidebarView;
 });

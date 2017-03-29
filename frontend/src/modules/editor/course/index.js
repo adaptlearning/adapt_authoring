@@ -18,7 +18,6 @@ define(function(require) {
   });
 
   function renderCourseEdit() {
-    console.log(Origin.location.module);
     (new CourseModel({ _id: Origin.location.route1 })).fetch({
       success: function(model) {
         var form = Origin.scaffold.buildForm({ model: model });

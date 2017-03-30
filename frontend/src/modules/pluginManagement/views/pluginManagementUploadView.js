@@ -16,7 +16,7 @@ define(function(require){
     },
 
     preRender: function() {
-      Origin.trigger('location:title:update', {title: window.polyglot.t('app.uploadplugin')});
+      Origin.trigger('location:title:update', {title: Origin.l10n.t('app.uploadplugin')});
       this.listenTo(Origin, 'pluginManagement:uploadPlugin', this.uploadFile);
     },
 
@@ -43,7 +43,7 @@ define(function(require){
             }
             Origin.Notify.alert({
               type: 'error',
-              title: window.polyglot.t('app.uploadpluginerror'),
+              title: Origin.l10n.t('app.uploadpluginerror'),
               text: Helpers.decodeHTML(message)
             });
 
@@ -54,7 +54,7 @@ define(function(require){
             Origin.trigger('scaffold:updateSchemas', function() {
               Origin.Notify.alert({
                 type: 'success',
-                text: window.polyglot.t('app.uploadpluginsuccess')
+                text: Origin.l10n.t('app.uploadpluginsuccess')
               });
 
               $('.loading').hide();

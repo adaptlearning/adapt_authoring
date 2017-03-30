@@ -52,9 +52,9 @@ define(function(require){
 
       if (showPaswordUI) {
         this.$(formSelector).removeClass('display-none');
-        this.$(buttonSelector).text(window.polyglot.t('app.undochangepassword'));
+        this.$(buttonSelector).text(Origin.l10n.t('app.undochangepassword'));
       } else {
-        this.$(buttonSelector).text(window.polyglot.t('app.changepassword'));
+        this.$(buttonSelector).text(Origin.l10n.t('app.changepassword'));
         this.$(formSelector).addClass('display-none');
 
         this.$('#password').val('').removeClass('display-none');
@@ -89,16 +89,16 @@ define(function(require){
 
       if (okRegex.test(password) === false) {
         var classes = 'alert alert-error';
-        var htmlText = window.polyglot.t('app.validationlength', {length: 8});
+        var htmlText = Origin.l10n.t('app.validationlength', {length: 8});
       } else if (strongRegex.test(password)) {
         var classes = 'alert alert-success';
-        var htmlText = window.polyglot.t('app.passwordindicatorstrong');
+        var htmlText = Origin.l10n.t('app.passwordindicatorstrong');
       } else if (mediumRegex.test(password)) {
         var classes = 'alert alert-info';
-        var htmlText = window.polyglot.t('app.passwordindicatormedium');
+        var htmlText = Origin.l10n.t('app.passwordindicatormedium');
       } else {
         var classes = 'alert alert-info';
-        var htmlText = window.polyglot.t('app.passwordindicatorweak');
+        var htmlText = Origin.l10n.t('app.passwordindicatorweak');
       }
 
       $passwordStrength.removeClass().addClass(classes).html(htmlText);
@@ -126,7 +126,7 @@ define(function(require){
         error: function(model, response, optinos) {
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.errorgeneric')
+            text: Origin.l10n.t('app.errorgeneric')
           });
         },
         success: function(model, response, options) {

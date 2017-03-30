@@ -55,7 +55,7 @@ define(function(require) {
     postData: function(url) {
       $.post(url + this.model.get('_id'), { extensions: this.currentSelectedIds }, _.bind(function(result) {
         if(!result.success) {
-          return Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgeneric') });
+          return Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
         }
         this.refreshData();
       }, this));
@@ -88,8 +88,8 @@ define(function(require) {
       var extensionName = $(event.currentTarget).attr('data-displayname');
 
       Origin.Notify.confirm({
-        title: window.polyglot.t('app.manageextensions'),
-        text: window.polyglot.t('app.confirmapplyextension', { extension: extensionName }),
+        title: Origin.l10n.t('app.manageextensions'),
+        text: Origin.l10n.t('app.confirmapplyextension', { extension: extensionName }),
         html: true,
         callback: _.bind(this.onAddExtensionConfirmed, this)
       });
@@ -104,8 +104,8 @@ define(function(require) {
 
       Origin.Notify.confirm({
         type: 'warning',
-        title: window.polyglot.t('app.deleteextension'),
-        text: window.polyglot.t('app.confirmdeleteextension'),
+        title: Origin.l10n.t('app.deleteextension'),
+        text: Origin.l10n.t('app.confirmdeleteextension'),
         callback: _.bind(this.onRemoveExtensionConfirmed, this)
       });
     },

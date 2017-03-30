@@ -164,7 +164,7 @@ define(function(require){
     onResetLoginsClicked: function() {
       var self = this;
       Origin.Notify.confirm({
-        text: window.polyglot.t('app.confirmresetlogins', { email: this.model.get('email') }),
+        text: Origin.l10n.t('app.confirmresetlogins', { email: this.model.get('email') }),
         callback: function(confirmed) {
           if(confirmed) self.updateModel('failedLoginCount', 0);
         }
@@ -184,14 +184,14 @@ define(function(require){
       var self = this;
       Origin.Notify.confirm({
         type: 'input',
-        title: window.polyglot.t('app.resetpasswordtitle'),
-        text: window.polyglot.t('app.resetpasswordinstruction', { email: this.model.get('email') }),
+        title: Origin.l10n.t('app.resetpasswordtitle'),
+        text: Origin.l10n.t('app.resetpasswordinstruction', { email: this.model.get('email') }),
         inputType: 'password',
         confirmButtonText: 'Save',
         closeOnConfirm: false,
         callback: function(newPassword) {
           if(newPassword === false) return;
-          else if(newPassword === "") return swal.showInputError(window.polyglot.t('app.passwordempty'));
+          else if(newPassword === "") return swal.showInputError(Origin.l10n.t('app.passwordempty'));
           var postData = {
             "email": self.model.get('email'),
             "password": newPassword
@@ -200,7 +200,7 @@ define(function(require){
             self.model.fetch();
             Origin.Notify.alert({
               type: 'success',
-              text: window.polyglot.t('app.changepasswordtext', { email: self.model.get('email') })
+              text: Origin.l10n.t('app.changepasswordtext', { email: self.model.get('email') })
             });
           });
         }
@@ -219,7 +219,7 @@ define(function(require){
       var self = this;
       Origin.Notify.confirm({
         type: 'confirm',
-        text: window.polyglot.t('app.confirmdeleteuser', { email: this.model.get('email') }),
+        text: Origin.l10n.t('app.confirmdeleteuser', { email: this.model.get('email') }),
         callback: function(confirmed) {
           if(confirmed) {
             self.model.destroy({ error: self.onError });
@@ -240,9 +240,9 @@ define(function(require){
           switch(response.responseJSON.code) {
             // duplicate key
             case 11000:
-              return self.onError(window.polyglot.t('app.duplicateuservalueerror', data));
+              return self.onError(Origin.l10n.t('app.duplicateuservalueerror', data));
             default:
-              return self.onError(window.polyglot.t('app.uservalueerror'));
+              return self.onError(Origin.l10n.t('app.uservalueerror'));
           }
         }
       });

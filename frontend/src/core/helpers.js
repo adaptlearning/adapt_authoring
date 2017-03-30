@@ -124,7 +124,7 @@ define(function(require){
             for (var placeholder in options.hash) {
               options[placeholder] = options.hash[placeholder];
             }
-            return (window.polyglot != undefined ? window.polyglot.t(str, options) : str);
+            return Origin.l10n.t(str, options);
         },
         stripHtml: function(html) {
             return new Handlebars.SafeString(html);
@@ -343,7 +343,7 @@ define(function(require){
 
             Origin.Notify.alert({
               type: 'error',
-              title: window.polyglot.t('app.validationfailed'),
+              title: Origin.l10n.t('app.validationfailed'),
               text: errorMessage,
               callback: _.bind(this.validateCourseConfirm, this)
             });

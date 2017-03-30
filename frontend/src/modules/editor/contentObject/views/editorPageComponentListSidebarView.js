@@ -15,7 +15,7 @@ define(function(require) {
 
     onSaveClicked: function(event) {
       event && event.preventDefault();
-      this.updateButton('.editor-component-list-sidebar-save', window.polyglot.t('app.saving'));
+      this.updateButton('.editor-component-list-sidebar-save', Origin.l10n.t('app.saving'));
 
       if(!this.model.get('component') || !this.model.get('layout')) {
         return;
@@ -29,7 +29,7 @@ define(function(require) {
       var newComponentModel = new ComponentModel();
 
       newComponentModel.save({
-        title: window.polyglot.t('app.placeholdernewcomponent'),
+        title: Origin.l10n.t('app.placeholdernewcomponent'),
         displayTitle: '',
         body: '',
         _parentId: this.model.get('_parentId'),
@@ -44,7 +44,7 @@ define(function(require) {
         error: function() {
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.erroraddingcomponent')
+            text: Origin.l10n.t('app.erroraddingcomponent')
           });
         },
         success: function() {
@@ -57,7 +57,7 @@ define(function(require) {
 
     onSaveAndEditClicked: function(event) {
       event && event.preventDefault();
-      this.updateButton('.editor-component-list-sidebar-save-edit', window.polyglot.t('app.saving'));
+      this.updateButton('.editor-component-list-sidebar-save-edit', Origin.l10n.t('app.saving'));
 
       if(!this.model.get('component') || !this.model.get('layout')) {
         return;
@@ -71,7 +71,7 @@ define(function(require) {
       var newComponentModel = new ComponentModel();
 
       newComponentModel.save({
-        title: window.polyglot.t('app.placeholdernewcomponent'),
+        title: Origin.l10n.t('app.placeholdernewcomponent'),
         displayTitle: '',
         body: '',
         _parentId: this.model.get('_parentId'),
@@ -86,7 +86,7 @@ define(function(require) {
         error: function() {
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.erroraddingcomponent')
+            text: Origin.l10n.t('app.erroraddingcomponent')
           });
         },
         success: function(data) {

@@ -37,16 +37,16 @@ define(function(require){
         return false;
       }
 
-      btn.html(window.polyglot.t('app.checking'));
+      btn.html(Origin.l10n.t('app.checking'));
       $.ajax({
         'method': 'GET',
         'url': this.model.urlRoot + '/checkversion/' + this.model.get('_id')
       }).done(function (data) {
         if (data.isUpdateable) {
-          btn.removeClass('plugin-update-check').addClass('plugin-update-confirm').html(window.polyglot.t('app.updateplugin'));
+          btn.removeClass('plugin-update-check').addClass('plugin-update-confirm').html(Origin.l10n.t('app.updateplugin'));
         } else {
           btn.addClass('disabled');
-          btn.html(window.polyglot.t('app.uptodate'));
+          btn.html(Origin.l10n.t('app.uptodate'));
         }
       });
 
@@ -61,7 +61,7 @@ define(function(require){
         return false;
       }
 
-      btn.html(window.polyglot.t('app.updating'));
+      btn.html(Origin.l10n.t('app.updating'));
       btn.addClass('disabled');
 
       // hit the update endpoint
@@ -75,10 +75,10 @@ define(function(require){
         if (_.contains(data.targets), that.model.get('_id')) {
           // Refresh the schemas
           Origin.trigger('scaffold:updateSchemas', function() {
-            btn.html(window.polyglot.t('app.uptodate'));
+            btn.html(Origin.l10n.t('app.uptodate'));
           }, this);
         } else {
-          btn.html(window.polyglot.t('app.updatefailed'));
+          btn.html(Origin.l10n.t('app.updatefailed'));
         }
       });
 

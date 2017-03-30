@@ -40,7 +40,7 @@ define(function(require){
     },
 
     preRender: function() {
-      Origin.trigger('location:title:update', { title: window.polyglot.t('app.' + this.pluginType + 'management') });
+      Origin.trigger('location:title:update', { title: Origin.l10n.t('app.' + this.pluginType + 'management') });
       this.initialiseCollection();
     },
 
@@ -66,7 +66,7 @@ define(function(require){
 
     evaluatePluginTypeCount: function(pluginTypes) {
       if(pluginTypes.length === 0) {
-        this.$('.pluginManagement-plugins').append(window.polyglot.t('app.noplugintypes'));
+        this.$('.pluginManagement-plugins').append(Origin.l10n.t('app.noplugintypes'));
       }
     },
 
@@ -80,7 +80,7 @@ define(function(require){
         return false;
       }
 
-      $btn.addClass('disabled').html(window.polyglot.t('app.updating'));
+      $btn.addClass('disabled').html(Origin.l10n.t('app.updating'));
 
       $.get(this.collection.url() + '&refreshplugins=1', function (data) {
         Origin.trigger('scaffold:updateSchemas', function() {

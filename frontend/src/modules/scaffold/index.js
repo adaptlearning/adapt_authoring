@@ -73,7 +73,7 @@ define(function(require) {
 						type:  (Backbone.Form.editors[field.items.inputType]) ? field.items.inputType : 'List',
 						itemType: 'Object',
 						subSchema: field.items.properties,
-            confirmDelete: window.polyglot.t('app.confirmdelete'),
+            confirmDelete: Origin.l10n.t('app.confirmdelete'),
 						fieldType: 'List'
 					}
 				}

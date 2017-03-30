@@ -20,7 +20,7 @@ define(function(require) {
           titleKey = 'editor' + type;
       }
       var modelTitle = model && model.get && model.get('title');
-      var langString = window.polyglot.t('app.' + titleKey);
+      var langString = Origin.l10n.t('app.' + titleKey);
 
       Origin.trigger('location:title:update', { title: modelTitle || langString });
     },

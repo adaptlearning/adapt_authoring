@@ -14,7 +14,7 @@ define(function(require) {
 
     save: function(event) {
         event.preventDefault();
-        this.updateButton('.user-profile-edit-sidebar-save', window.polyglot.t('app.saving'));
+        this.updateButton('.user-profile-edit-sidebar-save', Origin.l10n.t('app.saving'));
         Origin.trigger('userProfileSidebar:views:save');
     },
 

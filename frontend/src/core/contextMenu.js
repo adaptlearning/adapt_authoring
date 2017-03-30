@@ -30,22 +30,22 @@ define(function(require) {
     // Setup context menu items
     var contextItems = [
       {
-        title: window.polyglot.t('app.edit'),
+        title: Origin.l10n.t('app.edit'),
         className: 'context-menu-item',
         callbackEvent: "edit"
       },
       {
-        title: window.polyglot.t('app.copy'),
+        title: Origin.l10n.t('app.copy'),
         className: 'context-menu-item',
         callbackEvent: "copy"
       },
       {
-        title: window.polyglot.t('app.copyidtoclipboard'),
+        title: Origin.l10n.t('app.copyidtoclipboard'),
         className: 'context-menu-item',
         callbackEvent: "copyID"
       },
       {
-        title: window.polyglot.t('app.delete'),
+        title: Origin.l10n.t('app.delete'),
         className: 'context-menu-item',
         callbackEvent: "delete"
       }
@@ -58,12 +58,12 @@ define(function(require) {
 
     ContextMenu.addItem('page-min', [
       {
-        title: window.polyglot.t('app.edit'),
+        title: Origin.l10n.t('app.edit'),
         className: 'context-menu-item',
         callbackEvent: "edit"
       },
       {
-        title: window.polyglot.t('app.copyidtoclipboard'),
+        title: Origin.l10n.t('app.copyidtoclipboard'),
         className: 'context-menu-item',
         callbackEvent: "copyID"
       }
@@ -75,22 +75,22 @@ define(function(require) {
 
     var courseContextItems = [
       {
-        title: window.polyglot.t('app.editsettings'),
+        title: Origin.l10n.t('app.editsettings'),
         className: 'context-menu-item',
         callbackEvent: 'editSettings'
       },
       {
-        title: window.polyglot.t('app.editcourse'),
+        title: Origin.l10n.t('app.editcourse'),
         className: 'context-menu-item',
         callbackEvent: 'edit'
       },
       {
-        title: window.polyglot.t('app.copy'),
+        title: Origin.l10n.t('app.copy'),
         className: 'context-menu-item',
         callbackEvent: 'duplicate'
       },
       {
-        title: window.polyglot.t('app.delete'),
+        title: Origin.l10n.t('app.delete'),
         className: 'context-menu-item',
         callbackEvent: 'delete'
       }
@@ -100,12 +100,12 @@ define(function(require) {
 
     var sharedCourseContextItems = [
       {
-        title: window.polyglot.t('app.duplicate'),
+        title: Origin.l10n.t('app.duplicate'),
         className: 'context-menu-item',
         callbackEvent: 'duplicate'
       },
       {
-        title: window.polyglot.t('app.preview'),
+        title: Origin.l10n.t('app.preview'),
         className: 'context-menu-item',
         callbackEvent: 'preview'
       }

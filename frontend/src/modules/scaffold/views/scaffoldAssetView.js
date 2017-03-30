@@ -236,7 +236,7 @@ define(function(require) {
                 error: function(error) {
                     Origin.Notify.alert({
                         type: 'error',
-                        text: window.polyglot.t('app.errorsaveasset')
+                        text: Origin.l10n.t('app.errorsaveasset')
                     });
                 },
                 success: function() {
@@ -301,7 +301,7 @@ define(function(require) {
                 error: function() {
                     Origin.Notify.alert({
                         type: 'error',
-                        text: window.polyglot.t('app.errorsaveasset')
+                        text: Origin.l10n.t('app.errorsaveasset')
                     });
                 },
                 success: function() {

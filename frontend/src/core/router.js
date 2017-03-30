@@ -71,7 +71,7 @@ define(function(require) {
       if (!this.isUserAuthenticated()  && (module !== 'user' && route1 !== 'login')) {
         Origin.Notify.alert({
           type: 'error',
-          text: window.polyglot.t('app.errorsessionexpired')
+          text: Origin.l10n.t('app.errorsessionexpired')
         });
         return this.redirectToLogin();
       }

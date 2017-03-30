@@ -12,7 +12,7 @@ define(function(require) {
 
     save: function(event) {
       event && event.preventDefault();
-      this.updateButton('.editor-project-edit-sidebar-save', window.polyglot.t('app.saving'));
+      this.updateButton('.editor-project-edit-sidebar-save', Origin.l10n.t('app.saving'));
       Origin.trigger('projectEditSidebar:views:save');
     },
 

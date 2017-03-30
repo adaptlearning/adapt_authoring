@@ -58,7 +58,6 @@ define(function(require) {
 
     handleRoute: function(module, route1, route2, route3, route4) {
       // Show loading on any route
-      Origin.trigger('origin:showLoading');
       // Remove views
       Origin.removeViews();
       // Check this user has permissions

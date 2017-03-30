@@ -10,7 +10,7 @@ define(function(require){
     createdUserId: false,
 
     preRender: function() {
-      Origin.trigger('location:title:update', { title: window.polyglot.t('app.addusertitle') });
+      Origin.trigger('location:title:update', { title: Origin.l10n.t('app.addusertitle') });
       this.listenTo(Origin, 'userManagement:saveUser', this.saveNewUser);
     },
 
@@ -27,8 +27,8 @@ define(function(require){
         this.$('.field-error').removeClass('display-none');
         Origin.Notify.alert({
           type: 'error',
-          title: window.polyglot.t('app.validationfailed'),
-          text: window.polyglot.t('app.invalidusernameoremail')
+          title: Origin.l10n.t('app.validationfailed'),
+          text: Origin.l10n.t('app.invalidusernameoremail')
         });
       }
       return valid;

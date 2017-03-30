@@ -43,8 +43,8 @@ define(function(require){
 
       Origin.Notify.confirm({
         type: 'warning',
-        title: window.polyglot.t('app.deletecomponent'),
-        text: window.polyglot.t('app.confirmdeletecomponent') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletecomponentwarning'),
+        title: Origin.l10n.t('app.deletecomponent'),
+        text: Origin.l10n.t('app.confirmdeletecomponent') + '<br />' + '<br />' + Origin.l10n.t('app.confirmdeletecomponentwarning'),
         callback: _.bind(this.deleteComponentConfirm, this)
       });
     },

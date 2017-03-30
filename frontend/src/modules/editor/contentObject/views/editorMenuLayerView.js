@@ -67,10 +67,10 @@ define(function(require) {
       var newMenuItemModel = new ContentObjectModel({
         _parentId: this._parentId,
         _courseId: Origin.editor.data.course.get('_id'),
-        title: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
-        displayTitle: (type == 'page'? window.polyglot.t('app.placeholdernewpage') : window.polyglot.t('app.placeholdernewmenu')),
+        title: (type == 'page'? Origin.l10n.t('app.placeholdernewpage') : Origin.l10n.t('app.placeholdernewmenu')),
+        displayTitle: (type == 'page'? Origin.l10n.t('app.placeholdernewpage') : Origin.l10n.t('app.placeholdernewmenu')),
         body: '',
-        linkText: window.polyglot.t('app.view'),
+        linkText: Origin.l10n.t('app.view'),
         graphic: { alt: '', src: '' },
         _type: type
       });
@@ -83,7 +83,7 @@ define(function(require) {
           newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.errormenueditorbody'),
+            text: Origin.l10n.t('app.errormenueditorbody'),
           });
           _.delay(newMenuItemView.remove, 3000);
         },
@@ -114,11 +114,11 @@ define(function(require) {
         this.pageModel = model;
         this.pageView = newMenuItemView;
         typeToAdd = 'article';
-        newChildTitle = window.polyglot.t('app.placeholdernewarticle');
+        newChildTitle = Origin.l10n.t('app.placeholdernewarticle');
         var newChildModel = new ArticleModel();
       } else {
         typeToAdd = 'block';
-        newChildTitle = window.polyglot.t('app.placeholdernewblock');
+        newChildTitle = Origin.l10n.t('app.placeholdernewblock');
         var newChildModel = new BlockModel();
       }
 
@@ -133,7 +133,7 @@ define(function(require) {
           newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.errormenueditorbody'),
+            text: Origin.l10n.t('app.errormenueditorbody'),
           });
           _.delay(newMenuItemView.remove, 3000);
         },

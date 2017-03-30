@@ -125,8 +125,8 @@ define(function(require){
 
       var _this = this;
       var newPageArticleModel = new ArticleModel({
-        title: window.polyglot.t('app.placeholdernewarticle'),
-        displayTitle: window.polyglot.t('app.placeholdernewarticle'),
+        title: Origin.l10n.t('app.placeholdernewarticle'),
+        displayTitle: Origin.l10n.t('app.placeholdernewarticle'),
         body: '',
         _parentId: _this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
@@ -139,7 +139,7 @@ define(function(require){
         error: function() {
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.erroraddingarticle')
+            text: Origin.l10n.t('app.erroraddingarticle')
           });
         },
         success: function(model, response, options) {

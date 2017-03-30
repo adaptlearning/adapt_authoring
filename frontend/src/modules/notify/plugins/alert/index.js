@@ -15,21 +15,21 @@ define(function(require) {
 		switch(data.type) {
 			case 'confirm':
 				data.type = null;
-				defaults.title = window.polyglot.t('app.confirmdefaulttitle');
+				defaults.title = Origin.l10n.t('app.confirmdefaulttitle');
 				break;
 			case 'warning':
-				defaults.title = window.polyglot.t('app.warningdefaulttitle');
+				defaults.title = Origin.l10n.t('app.warningdefaulttitle');
 				break;
 			case 'input':
 				break;
 			case 'success':
-				defaults.title = window.polyglot.t('app.successdefaulttitle');
+				defaults.title = Origin.l10n.t('app.successdefaulttitle');
         break;
 			case 'info':
-				defaults.title = window.polyglot.t('app.infodefaulttitle');
+				defaults.title = Origin.l10n.t('app.infodefaulttitle');
         break;
 			case 'error':
-				defaults.title = window.polyglot.t('app.errordefaulttitle');
+				defaults.title = Origin.l10n.t('app.errordefaulttitle');
 				break;
 			default:
 				if (data.type) {
@@ -78,8 +78,8 @@ define(function(require) {
 		var defaults = {
 			type: data.type || 'confirm',
 			showCancelButton: true,
-			confirmButtonText: window.polyglot.t('app.confirmdefaultyes'),
-			cancelButtonText: window.polyglot.t('app.no')
+			confirmButtonText: Origin.l10n.t('app.confirmdefaultyes'),
+			cancelButtonText: Origin.l10n.t('app.no')
 		};
 
 		openPopup(_.extend(defaults, data));
@@ -91,7 +91,7 @@ define(function(require) {
 			var setWaitText = function(n) {
 				$('.sweet-alert button.confirm').html(
 					'<span class="wait-text">' +
-					window.polyglot.t('app.confirmwait') +
+					Origin.l10n.t('app.confirmwait') +
 					'</span> ' +
 					n
 				);
@@ -108,7 +108,7 @@ define(function(require) {
 			clearInterval(interval);
 			interval = setInterval(function() {
 				if(--count > 0) {
-					$('.sweet-alert button.confirm').html('<span class="wait-text">' + window.polyglot.t('app.confirmwait') + '</span> ' + count);
+					$('.sweet-alert button.confirm').html('<span class="wait-text">' + Origin.l10n.t('app.confirmwait') + '</span> ' + count);
 				} else {
 					clearInterval(interval);
 					$('.sweet-alert button.confirm').text(oldLabel);

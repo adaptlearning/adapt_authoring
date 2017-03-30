@@ -14,19 +14,19 @@ define(function(require) {
       var validationErrors = {};
 
       if (!attributes.firstName) {
-        validationErrors.firstName = window.polyglot.t('app.validationrequired');
+        validationErrors.firstName = Origin.l10n.t('app.validationrequired');
       }
 
       if (!attributes.lastName) {
-        validationErrors.lastName = window.polyglot.t('app.validationrequired');
+        validationErrors.lastName = Origin.l10n.t('app.validationrequired');
       }
 
       if (attributes._isNewPassword) {
         if (!attributes.password) {
-          validationErrors.password = window.polyglot.t('app.validationrequired');
+          validationErrors.password = Origin.l10n.t('app.validationrequired');
         } else {
           if (attributes.password.length < 8) {
-            validationErrors.password = window.polyglot.t('app.validationlength', {length: 8});
+            validationErrors.password = Origin.l10n.t('app.validationlength', {length: 8});
           }
         }
       }

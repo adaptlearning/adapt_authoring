@@ -55,19 +55,17 @@
       'modules/navigation/views/navigationView'
     ], function(Origin, Router, SessionModel, NavigationView) {
         Origin.router = new Router();
-
         Origin.sessionModel = new SessionModel();
         Origin.sessionModel.fetch({
           success: function(data) {
-            // need schemas before the app loads
+            // need the schemas before the app loads
             Origin.trigger('schemas:loadData', function() {
-              // TODO move this to the navigation modules folder
-              $('#app').before(new NavigationView({ model: Origin.sessionModel }).$el);
               Origin.trigger('app:dataReady');
               // _.defer to give anything tapping into app:dataReady event time to execute
               _.defer(Origin.initialize);
             });
-          }
+          },
+          error: console.error
         });
     });
   }

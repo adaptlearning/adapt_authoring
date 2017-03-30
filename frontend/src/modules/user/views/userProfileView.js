@@ -36,7 +36,6 @@ define(function(require){
           this.$('#' + key + 'Error').text(value);
         }, this);
         this.$('.error-text').removeClass('display-none');
-        console.log(error);
       }
     },
 
@@ -47,19 +46,19 @@ define(function(require){
     },
 
     togglePasswordUI: function(model, showPaswordUI) {
-      var formSelector = 'div.change-password-section .form-group .inner'; 
-      var buttonSelector = '.change-password'; 
+      var formSelector = 'div.change-password-section .form-group .inner';
+      var buttonSelector = '.change-password';
 
       if (showPaswordUI) {
         this.$(formSelector).removeClass('display-none');
-        this.$(buttonSelector).text(window.polyglot.t('app.cancel'));
+        this.$(buttonSelector).text(Origin.l10n.t('app.cancel'));
       } else {
-        this.$(buttonSelector).text(window.polyglot.t('app.changepassword'));
+        this.$(buttonSelector).text(Origin.l10n.t('app.changepassword'));
         this.$(formSelector).addClass('display-none');
 
         this.$('#password').val('').removeClass('display-none');
         this.$('#passwordText').val('').addClass('display-none');
-        this.$('.toggle-password i').addClass('fa-eye').removeClass('fa-eye-slash'); 
+        this.$('.toggle-password i').addClass('fa-eye').removeClass('fa-eye-slash');
 
         this.$('.toggle-password').addClass('display-none');
         this.$('#passwordError').html('');
@@ -73,7 +72,7 @@ define(function(require){
 
       this.$('#passwordText').toggleClass('display-none');
       this.$('#password').toggleClass('display-none');
-      this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash'); 
+      this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
     },
 
     indicatePasswordStrength: function(event) {
@@ -89,16 +88,16 @@ define(function(require){
 
       if (okRegex.test(password) === false) {
         var classes = 'alert alert-error';
-        var htmlText = window.polyglot.t('app.validationlength', {length: 8});
+        var htmlText = Origin.l10n.t('app.validationlength', {length: 8});
       } else if (strongRegex.test(password)) {
         var classes = 'alert alert-success';
-        var htmlText = window.polyglot.t('app.passwordindicatorstrong');
+        var htmlText = Origin.l10n.t('app.passwordindicatorstrong');
       } else if (mediumRegex.test(password)) {
         var classes = 'alert alert-info';
-        var htmlText = window.polyglot.t('app.passwordindicatormedium');
+        var htmlText = Origin.l10n.t('app.passwordindicatormedium');
       } else {
         var classes = 'alert alert-info';
-        var htmlText = window.polyglot.t('app.passwordindicatorweak');
+        var htmlText = Origin.l10n.t('app.passwordindicatorweak');
       }
 
       $passwordStrength.removeClass().addClass(classes).html(htmlText);
@@ -113,7 +112,7 @@ define(function(require){
         'firstName': self.$('#firstName').val().trim(),
         'lastName': self.$('#lastName').val().trim()
       };
-      
+
       if (self.model.get('_isNewPassword')) {
         toChange.password = self.$('#password').val();
       } else {
@@ -126,7 +125,7 @@ define(function(require){
         error: function(model, response, optinos) {
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.errorgeneric')
+            text: Origin.l10n.t('app.errorgeneric')
           });
         },
         success: function(model, response, options) {
@@ -146,7 +145,7 @@ define(function(require){
     },
 
     onPasswordTextKeyup: function() {
-      
+
     }
   }, {
     template: 'userProfile'

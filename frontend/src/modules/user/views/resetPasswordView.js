@@ -66,7 +66,7 @@ define(function(require) {
         error: _.bind(function(model, response, options) {
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.resetpassworderror')
+            text: Origin.l10n.t('app.resetpassworderror')
           });
         },this)
       });

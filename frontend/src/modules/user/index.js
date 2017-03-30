@@ -43,7 +43,7 @@ define(function(require) {
         break;
       case 'profile':
         settings.authenticate = true;
-        Origin.trigger('location:title:update', {title: window.polyglot.t('app.editprofiletitle')});
+        Origin.trigger('location:title:update', {title: Origin.l10n.t('app.editprofiletitle')});
         currentView = UserProfileView;
         break;
     }

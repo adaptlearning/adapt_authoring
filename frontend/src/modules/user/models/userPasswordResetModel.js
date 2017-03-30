@@ -20,18 +20,18 @@ define(function(require) {
       var validationErrors = {};
 
       if (!attributes.password) {
-        validationErrors.password = window.polyglot.t('app.validationrequired');
+        validationErrors.password = Origin.l10n.t('app.validationrequired');
       } else {
         if (attributes.password.length < 8) {
-          validationErrors.password = window.polyglot.t('app.validationlength', {length: 8});
+          validationErrors.password = Origin.l10n.t('app.validationlength', {length: 8});
         }
       }
 
       if (!attributes.confirmPassword) {
-        validationErrors.confirmPassword = window.polyglot.t('app.validationrequired');
+        validationErrors.confirmPassword = Origin.l10n.t('app.validationrequired');
       } else {
         if (attributes.password !== attributes.confirmPassword) {
-          validationErrors.confirmPassword = window.polyglot.t('app.validationpasswordmatch');
+          validationErrors.confirmPassword = Origin.l10n.t('app.validationpasswordmatch');
         }
       }
       
@@ -57,7 +57,7 @@ define(function(require) {
         error: function (jqXHR, textStatus, errorThrown) {
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.errorgeneric')
+            text: Origin.l10n.t('app.errorgeneric')
           });
         }
       });

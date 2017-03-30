@@ -10,7 +10,7 @@ define(function(require) {
     },
 
     onSaveNewAssetClicked: function() {
-      this.updateButton('.asset-management-new-sidebar-save-button', window.polyglot.t('app.saving'));
+      this.updateButton('.asset-management-new-sidebar-save-button', Origin.l10n.t('app.saving'));
       Origin.trigger('assetManagement:newAsset');
     },
 

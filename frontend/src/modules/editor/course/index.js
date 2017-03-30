@@ -21,7 +21,7 @@ define(function(require) {
     (new CourseModel({ _id: Origin.location.route1 })).fetch({
       success: function(model) {
         var form = Origin.scaffold.buildForm({ model: model });
-        Origin.trigger('location:title:update', { title: window.polyglot.t('app.editcourse') });
+        Origin.trigger('location:title:update', { title: Origin.l10n.t('app.editcourse') });
         Origin.contentPane.setView(EditorCourseEditView, { model: model, form: form });
         Origin.sidebar.addView(new EditorCourseEditSidebarView({ form: form }).$el);
       }
@@ -30,11 +30,11 @@ define(function(require) {
 
   function createNewCourse() {
     var model = new CourseModel({
-      title: window.polyglot.t('app.placeholdernewcourse'),
-      displayTitle: window.polyglot.t('app.placeholdernewcourse')
+      title: Origin.l10n.t('app.placeholdernewcourse'),
+      displayTitle: Origin.l10n.t('app.placeholdernewcourse')
     });
     var form = Origin.scaffold.buildForm({ model: model });
-    Origin.trigger('location:title:update', { title: window.polyglot.t('app.addnewproject') });
+    Origin.trigger('location:title:update', { title: Origin.l10n.t('app.addnewproject') });
     Origin.contentPane.setView(EditorCourseEditView, { model: model, form: form });
     Origin.sidebar.addView(new EditorCourseEditSidebarView({ form: form }).$el);
   }

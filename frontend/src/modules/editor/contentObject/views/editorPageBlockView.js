@@ -90,8 +90,8 @@ define(function(require){
 
       Origin.Notify.confirm({
         type: 'warning',
-        title: window.polyglot.t('app.deleteblock'),
-        text: window.polyglot.t('app.confirmdeleteblock') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeleteblockwarning'),
+        title: Origin.l10n.t('app.deleteblock'),
+        text: Origin.l10n.t('app.confirmdeleteblock') + '<br />' + '<br />' + Origin.l10n.t('app.confirmdeleteblockwarning'),
         callback: _.bind(this.deleteBlockConfirm, this)
       });
     },
@@ -106,7 +106,7 @@ define(function(require){
       this.model.destroy({
         success: _.bind(this.remove, this),
         error: function(model, response) {
-          Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgeneric') });
+          Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
         }
       });
     },
@@ -236,8 +236,8 @@ define(function(require){
       var layoutOptions = this.model.get('layoutOptions');
 
       var componentSelectModel = new Backbone.Model({
-        title: window.polyglot.t('app.addcomponent'),
-        body: window.polyglot.t('app.pleaseselectcomponent'),
+        title: Origin.l10n.t('app.addcomponent'),
+        body: Origin.l10n.t('app.pleaseselectcomponent'),
         _parentId: this.model.get('_id'),
         componentTypes: Origin.editor.data.componenttypes.toJSON(),
         layoutOptions: layoutOptions

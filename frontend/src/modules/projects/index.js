@@ -13,35 +13,35 @@ define(function(require) {
       Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
       Origin.options.addItems([
         {
-          title: window.polyglot.t('app.grid'),
+          title: Origin.l10n.t('app.grid'),
           icon: 'th',
           callbackEvent: 'dashboard:layout:grid',
           value: 'grid',
           group: 'layout',
         },
         {
-          title: window.polyglot.t('app.list'),
+          title: Origin.l10n.t('app.list'),
           icon: 'list',
           callbackEvent: 'dashboard:layout:list',
           value: 'list',
           group: 'layout'
         },
         {
-          title: window.polyglot.t('app.ascending'),
+          title: Origin.l10n.t('app.ascending'),
           icon: 'sort-alpha-asc',
           callbackEvent: 'dashboard:sort:asc',
           value: 'asc',
           group: 'sort'
         },
         {
-          title: window.polyglot.t('app.descending'),
+          title: Origin.l10n.t('app.descending'),
           icon: 'sort-alpha-desc',
           callbackEvent: 'dashboard:sort:desc',
           value: 'desc',
           group: 'sort'
         },
         {
-          title: window.polyglot.t('app.recent'),
+          title: Origin.l10n.t('app.recent'),
           icon: 'edit',
           callbackEvent: 'dashboard:sort:updated',
           value: 'updated',
@@ -84,7 +84,7 @@ define(function(require) {
     Origin.router.setHomeRoute('dashboard');
     Origin.globalMenu.addItem({
       "location": "global",
-      "text": window.polyglot.t('app.dashboard'),
+      "text": Origin.l10n.t('app.dashboard'),
       "icon": "fa-home",
       "callbackEvent": "dashboard:open",
       "sortOrder": 1

@@ -28,7 +28,7 @@ define(function(require) {
 
   		Origin.globalMenu.addItem({
         "location": "global",
-        "text": window.polyglot.t('app.usermanagement'),
+        "text": Origin.l10n.t('app.usermanagement'),
         "icon": "fa-users",
         "sortOrder": 3,
         "callbackEvent": "userManagement:open"

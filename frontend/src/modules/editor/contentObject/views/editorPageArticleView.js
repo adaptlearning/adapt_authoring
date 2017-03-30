@@ -119,8 +119,8 @@ define(function(require){
       }];
 
       var newPageBlockModel = new BlockModel({
-        title: window.polyglot.t('app.placeholdernewblock'),
-        displayTitle: window.polyglot.t('app.placeholdernewblock'),
+        title: Origin.l10n.t('app.placeholdernewblock'),
+        displayTitle: Origin.l10n.t('app.placeholdernewblock'),
         body: '',
         _parentId: self.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
@@ -130,7 +130,7 @@ define(function(require){
 
       newPageBlockModel.save(null, {
         error: function() {
-          Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.erroraddingblock') });
+          Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.erroraddingblock') });
         },
         success: function(model, response, options) {
           var newBlockView = self.addBlockView(model, true);
@@ -146,8 +146,8 @@ define(function(require){
 
       Origin.Notify.confirm({
         type: 'warning',
-        title: window.polyglot.t('app.deletearticle'),
-        text: window.polyglot.t('app.confirmdeletearticle') + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletearticlewarning'),
+        title: Origin.l10n.t('app.deletearticle'),
+        text: Origin.l10n.t('app.confirmdeletearticle') + '<br />' + '<br />' + Origin.l10n.t('app.confirmdeletearticlewarning'),
         callback: _.bind(this.deleteArticleConfirm, this)
       });
 
@@ -165,7 +165,7 @@ define(function(require){
       this.model.destroy({
         success: _.bind(this.remove, this),
         error: function(error) {
-          Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgeneric') });
+          Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
         }
       });
     },

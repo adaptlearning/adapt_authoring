@@ -51,7 +51,7 @@ define(function(require){
         failure: function (err) {
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.errorlogginginas')
+            text: Origin.l10n.t('app.errorlogginginas')
           });
         }
       });

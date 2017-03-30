@@ -70,8 +70,8 @@ define(function(require) {
       });
 
       var newComponentModel = new ComponentModel({
-        title: window.polyglot.t('app.placeholdernewcomponent'),
-        displayTitle: window.polyglot.t('app.placeholdernewcomponent'),
+        title: Origin.l10n.t('app.placeholdernewcomponent'),
+        displayTitle: Origin.l10n.t('app.placeholdernewcomponent'),
         body: '',
         _parentId: this._parentId,
         _courseId: Origin.editor.data.course.get('_id'),
@@ -92,7 +92,7 @@ define(function(require) {
       newComponentModel.save(null, {
         error: function() {
           $('html').css('overflow-y', '');
-          Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.erroraddingcomponent') });
+          Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.erroraddingcomponent') });
         },
         success: _.bind(function() {
           Origin.editor.data.components.add(newComponentModel);

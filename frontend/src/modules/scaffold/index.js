@@ -73,7 +73,7 @@ define(function(require) {
 						type:  (Backbone.Form.editors[field.items.inputType]) ? field.items.inputType : 'List',
 						itemType: 'Object',
 						subSchema: field.items.properties,
-            confirmDelete: window.polyglot.t('app.confirmdelete'),
+            confirmDelete: Origin.l10n.t('app.confirmdelete'),
 						fieldType: 'List'
 					}
 				}
@@ -209,21 +209,21 @@ define(function(require) {
 		// Setup default fieldsets
 		var fieldsets = {
 			general: {
-				legend: window.polyglot.t('app.general'),
+				legend: Origin.l10n.t('app.general'),
 				fields: []
 			},
 			// ::TODO
 			// I want to remove this please
 			properties: {
-				legend: window.polyglot.t('app.properties'),
+				legend: Origin.l10n.t('app.properties'),
 				fields: []
 			},
 			settings :{
-				legend: window.polyglot.t('app.settings'),
+				legend: Origin.l10n.t('app.settings'),
 				fields: []
 			},
 			extensions: {
-				legend: window.polyglot.t('app.extensions'),
+				legend: Origin.l10n.t('app.extensions'),
 				fields: ['_extensions']
 			}
 		};

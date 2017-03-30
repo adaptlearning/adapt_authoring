@@ -55,7 +55,7 @@ define(function(require) {
   Origin.on('app:dataReady login:changed', function() {
     Origin.globalMenu.addItem({
       "location": "global",
-      "text": window.polyglot.t('app.assetmanagement'),
+      "text": Origin.l10n.t('app.assetmanagement'),
       "icon": "fa-file-image-o",
       "callbackEvent": "assetManagement:open",
       "sortOrder": 2

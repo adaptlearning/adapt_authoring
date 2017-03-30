@@ -209,8 +209,8 @@ define(function(require){
 
       Origin.Notify.confirm({
         type: 'warning',
-        title: window.polyglot.t('app.deleteitem'+ this.model.get('_type')),
-        text: window.polyglot.t('app.confirmdelete' + this.model.get('_type')) + '<br />' + '<br />' + window.polyglot.t('app.confirmdeletewarning' + this.model.get('_type')),
+        title: Origin.l10n.t('app.deleteitem'+ this.model.get('_type')),
+        text: Origin.l10n.t('app.confirmdelete' + this.model.get('_type')) + '<br />' + '<br />' + Origin.l10n.t('app.confirmdeletewarning' + this.model.get('_type')),
         callback: function(isConfirmed) {
           self.onConfirmRemovePopup(isConfirmed);
         }

@@ -20,7 +20,7 @@ define(function(require) {
           callback.call();
         },
         error: function() {
-          Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorgettingschemas') });
+          Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgettingschemas') });
         }
       });
     }

@@ -59,7 +59,7 @@ define(function(require){
     promptDuplicateProject: function() {
       var self = this;
       Origin.Notify.confirm({
-        text: window.polyglot.t('app.confirmduplicate'),
+        text: Origin.l10n.t('app.confirmduplicate'),
         callback: function(confirmed) {
           if (confirmed) {
             self.duplicateProject();
@@ -78,7 +78,7 @@ define(function(require){
         error: function() {
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.errorduplication')
+            text: Origin.l10n.t('app.errorduplication')
           });
         }
       });

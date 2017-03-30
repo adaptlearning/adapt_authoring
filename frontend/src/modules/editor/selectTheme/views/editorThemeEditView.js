@@ -55,7 +55,7 @@ define(function(require) {
       if (selectedTheme === undefined) {
         Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.errornothemeselected')
+            text: Origin.l10n.t('app.errornothemeselected')
           });
 
         Origin.trigger('sidebar:resetButtons');
@@ -70,7 +70,7 @@ define(function(require) {
         .error(function() {
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.errorsave')
+            text: Origin.l10n.t('app.errorsave')
           });
         })
         .done(_.bind(function() {

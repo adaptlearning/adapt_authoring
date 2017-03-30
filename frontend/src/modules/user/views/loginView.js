@@ -73,16 +73,16 @@ define(function(require) {
       switch (errorCode) {
         case LoginView.ERR_INVALID_CREDENTIALS:
         case LoginView.ERR_MISSING_FIELDS:
-          errorMessage = window.polyglot.t('app.invalidusernameorpassword');
+          errorMessage = Origin.l10n.t('app.invalidusernameorpassword');
           break;
         case LoginView.ERR_ACCOUNT_LOCKED:
-          errorMessage = window.polyglot.t('app.accountislocked');
+          errorMessage = Origin.l10n.t('app.accountislocked');
           break;
         case LoginView.ERR_TENANT_DISABLED:
-          errorMessage = window.polyglot.t('app.tenantnotenabled');
+          errorMessage = Origin.l10n.t('app.tenantnotenabled');
           break;
         case LoginView.ERR_ACCOUNT_INACTIVE:
-          errorMessage = window.polyglot.t('app.accountnotactive');
+          errorMessage = Origin.l10n.t('app.accountnotactive');
           break;
       }
 

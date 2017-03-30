@@ -50,7 +50,7 @@ define(function(require) {
         Origin.trigger('sidebar:resetButtons');
         Origin.Notify.alert({
           type: 'error',
-          text: window.polyglot.t('app.errornothemeselected')
+          text: Origin.l10n.t('app.errornothemeselected')
         });
         return;
       }
@@ -59,7 +59,7 @@ define(function(require) {
         .error(function() {
           Origin.Notify.alert({
             type: 'error',
-            text: window.polyglot.t('app.errorsave')
+            text: Origin.l10n.t('app.errorsave')
           });
         })
         .done(_.bind(function() {

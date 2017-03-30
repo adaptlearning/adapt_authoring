@@ -87,8 +87,8 @@ define(function(require) {
     var containingBlock = Origin.editor.data.blocks.findWhere({ _id: Origin.location.route3 });
     var layoutOptions = containingBlock.get('layoutOptions');
     var componentsModel = new Backbone.Model({
-      title: window.polyglot.t('app.addcomponent'),
-      body: window.polyglot.t('app.pleaseselectcomponent'),
+      title: Origin.l10n.t('app.addcomponent'),
+      body: Origin.l10n.t('app.pleaseselectcomponent'),
       _parentId: route3,
       componentTypes: Origin.editor.data.componenttypes.toJSON(),
       layoutOptions: layoutOptions

@@ -212,7 +212,7 @@ define(function(require) {
   function onFetchError(model, response, options) {
     Origin.Notify.alert({
       type: 'error',
-      text: window.polyglot.t('app.errorgeneric')
+      text: Origin.l10n.t('app.errorgeneric')
     });
   }
 

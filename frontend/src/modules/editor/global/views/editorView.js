@@ -102,7 +102,7 @@ define(function(require){
 
               Origin.Notify.alert({
                 type: 'error',
-                text: window.polyglot.t('app.errorgeneric')
+                text: Origin.l10n.t('app.errorgeneric')
               });
             }
           },
@@ -111,7 +111,7 @@ define(function(require){
 
             Origin.Notify.alert({
               type: 'error',
-              text: window.polyglot.t('app.errorgeneric')
+              text: Origin.l10n.t('app.errorgeneric')
             });
           }
         });
@@ -154,7 +154,7 @@ define(function(require){
 
            Origin.Notify.alert({
              type: 'error',
-             title: window.polyglot.t('app.exporterrortitle'),
+             title: Origin.l10n.t('app.exporterrortitle'),
              text: messageText
            });
          }
@@ -205,7 +205,7 @@ define(function(require){
               self.resetPreviewProgress();
               Origin.Notify.alert({
                 type: 'error',
-                text: window.polyglot.t('app.errorgeneratingpreview')
+                text: Origin.l10n.t('app.errorgeneratingpreview')
               });
             }
           },
@@ -213,7 +213,7 @@ define(function(require){
             self.resetPreviewProgress();
             Origin.Notify.alert({
               type: 'error',
-              text: window.polyglot.t('app.errorgeneric')
+              text: Origin.l10n.t('app.errorgeneric')
             });
           }
         });
@@ -291,7 +291,7 @@ define(function(require){
       }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
         Origin.Notify.alert({
           type: 'error',
-          text: window.polyglot.t('app.errorcopy') + (jqXHR.message ? '\n\n' + jqXHR.message : '')
+          text: Origin.l10n.t('app.errorcopy') + (jqXHR.message ? '\n\n' + jqXHR.message : '')
         });
         this.hidePasteZones();
       }, this));
@@ -303,12 +303,12 @@ define(function(require){
       if (helpers.copyStringToClipboard(id)) {
         Origin.Notify.alert({
           type: 'success',
-          text: window.polyglot.t('app.copyidtoclipboardsuccess', { id: id })
+          text: Origin.l10n.t('app.copyidtoclipboardsuccess', { id: id })
         });
       } else {
         Origin.Notify.alert({
           type: 'warning',
-          text: window.polyglot.t('app.app.copyidtoclipboarderror', { id: id })
+          text: Origin.l10n.t('app.app.copyidtoclipboarderror', { id: id })
         });
       }
     },
@@ -327,7 +327,7 @@ define(function(require){
       }).fail(function(jqXHR, textStatus, errorThrown) {
         Origin.Notify.alert({
           type: 'error',
-          text: window.polyglot.t('app.errorpaste') + (jqXHR.message ? '\n\n' + jqXHR.message : '')
+          text: Origin.l10n.t('app.errorpaste') + (jqXHR.message ? '\n\n' + jqXHR.message : '')
         });
       });
     },

@@ -35,7 +35,7 @@
         {{#if tags.length}}
         <div class="project-details-tags project-details-row tags">
           <div class="projects-details-tags-button">
-            <button class="btn secondary-hollow projects-details-tags-button-show">View tags</button>
+            <button class="btn secondary-hollow projects-details-tags-button-show">{{t 'app.viewtags'}}</button>
           </div>
           <div class="projects-details-value tag-container">
             <ul class="items tags">
@@ -45,7 +45,7 @@
               </li>
             {{/each}}
             </ul>
-            <button class="btn secondary-hollow projects-details-tags-button-hide">Hide tags</button>
+            <button class="btn secondary-hollow projects-details-tags-button-hide">{{t 'app.hidetags'}}</button>
           </div>
         </div>
         {{/if}}

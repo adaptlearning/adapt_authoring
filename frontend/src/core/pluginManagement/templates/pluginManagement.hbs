@@ -2,36 +2,36 @@
     <div class="pluginType-headings tb-heading col-row tb-row">
 
         <div class="pluginType-heading pluginType-heading-title col-20">
-            <h4 class="pluginType-heading-title-inner tb-col-inner">Name</h4>
+            <h4 class="pluginType-heading-title-inner tb-col-inner">{{t 'app.name'}}</h4>
         </div>
 
         <div class="pluginType-heading pluginType-heading-description col-40">
-            <h4 class="pluginType-heading-description-inner tb-col-inner">Description</h4>
+            <h4 class="pluginType-heading-description-inner tb-col-inner">{{t 'app.description'}}</h4>
         </div>
 
         <div class="pluginType-heading pluginType-heading-version col-10 col-centered">
-            <h4 class="pluginType-heading-version-inner tb-col-inner">Version</h4>
+            <h4 class="pluginType-heading-version-inner tb-col-inner">{{t 'app.version'}}</h4>
         </div>
 
         <div class="pluginType-heading pluginType-heading-enabled col-10 col-centered">
-            <h4 class="pluginType-heading-action-inner tb-col-inner">Enabled</h4>
+            <h4 class="pluginType-heading-action-inner tb-col-inner">{{t 'app.enabled'}}</h4>
         </div>
 
         <div class="pluginType-heading pluginType-heading-action col-10 col-centered">
-            <h4 class="pluginType-heading-action-inner tb-col-inner">Action</h4>
+            <h4 class="pluginType-heading-action-inner tb-col-inner">{{t 'app.action'}}</h4>
         </div>
 
     </div>
     <ul class="pluginManagement-plugins clearfix grid-layout">
     {{!-- Plugins get render in here --}}
         <div class="pluginManagement-loading">
-            Loading...
+            {{t 'app.loading'}}
         </div>
     </ul>
 
     <div class="pluginType-bulk-actions tb-row">
         <div class="pluginType-action-buttons">
-            <button class="btn tertiary-hollow refresh-all-plugins">Refresh All</button>
+            <button class="btn tertiary-hollow refresh-all-plugins">{{t 'app.refresh'}}</button>
         </div>
     </div>
 </div>

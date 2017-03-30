@@ -52,7 +52,7 @@ define(function(require){
 
       if (showPaswordUI) {
         this.$(formSelector).removeClass('display-none');
-        this.$(buttonSelector).text(Origin.l10n.t('app.undochangepassword'));
+        this.$(buttonSelector).text(Origin.l10n.t('app.cancel'));
       } else {
         this.$(buttonSelector).text(Origin.l10n.t('app.changepassword'));
         this.$(formSelector).addClass('display-none');

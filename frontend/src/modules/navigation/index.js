@@ -1,3 +1,5 @@
-define(function(require) {
-  console.log('TODO set up to load navigation view');
+define(['core/origin', './views/navigationView'], function(Origin, NavigationView) {
+  Origin.once('app:dataReady', function() {
+    $('#app').before(new NavigationView({ model: Origin.sessionModel }).$el);
+  });
 });

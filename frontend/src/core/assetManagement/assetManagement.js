@@ -52,15 +52,13 @@ define(function(require) {
     Origin.router.navigate('#/assetManagement', {trigger: true});
   });
 
-  var globalMenuObject = {
-    "location": "global",
-    "text": "Asset Management",
-    "icon": "fa-file-image-o",
-    "callbackEvent": "assetManagement:open",
-    "sortOrder": 2
-  };
-
   Origin.on('app:dataReady login:changed', function() {
-    Origin.globalMenu.addItem(globalMenuObject);
+    Origin.globalMenu.addItem({
+      "location": "global",
+      "text": window.polyglot.t('app.assetmanagement'),
+      "icon": "fa-file-image-o",
+      "callbackEvent": "assetManagement:open",
+      "sortOrder": 2
+    });
   });
 });

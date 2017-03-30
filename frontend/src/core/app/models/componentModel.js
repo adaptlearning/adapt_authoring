@@ -25,7 +25,8 @@ define(function(require) {
       'displayTitle',
       'title',
       'version',
-      'themeSettings'
+      'themeSettings',
+      '_onScreen'
     ],
 
     initialize: function() {

@@ -1,14 +1,8 @@
 <div class="page-inner">
   <div class="page-detail">
     <h4 class="page-name title">
-      <a href="#" class="page-edit-button" title="{{t 'app.clicktoedit'}}">
-        <i class="fa fa-cog fa-fw"></i>
-      </a>
-      {{#if displayTitle}}
-        {{displayTitle}}
-      {{else}}
-        {{title}}
-      {{/if}}
+      <a href="#" class="page-edit-button" title="{{t 'app.clicktoedit'}}"><i class="fa fa-cog fa-fw"></i></a>
+      {{#if displayTitle}}{{displayTitle}}{{else}}{{title}}{{/if}}
     </h4>
     <div class="page-body">{{body}}</div>
   </div>

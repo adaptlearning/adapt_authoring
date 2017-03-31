@@ -25,6 +25,8 @@ span.error {
 // Loading overlay styling
 // =======================
 
+@loading-icon-size: 8px;
+
 .loading {
   width: 100vw;
   height: 100vh;
@@ -43,28 +45,16 @@ span.error {
   &.cover-top-bar {
     position:fixed;
     z-index:50000;
-    .loading-inner {
-      margin-top:41px;
-    }
   }
 
   .loading-inner {
     margin-top: 25%;
   }
 
-  @loading-icon-size: 8px;
-
   .loading-logo {
     margin-bottom: @loading-icon-size;
     img {
       height: 50px;
-    }
-  }
-
-  .loading-text {
-    h3 {
-      font-size: 16px;
-      font-weight: 500;
     }
   }
 

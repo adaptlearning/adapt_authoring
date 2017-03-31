@@ -73,7 +73,7 @@ define(function(require){
         url: this.model.getDuplicateURI(),
         type: 'GET',
         success: function (data) {
-          Origin.router.navigate('/editor/' + data.newCourseId + '/settings', { trigger: true });
+          Origin.router.navigateTo('editor/' + data.newCourseId + '/settings');
         },
         error: function() {
           Origin.Notify.alert({

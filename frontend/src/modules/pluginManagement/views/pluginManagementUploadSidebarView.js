@@ -17,7 +17,7 @@ define(function(require) {
         },
 
         onCancelButtonClicked: function() {
-            Origin.router.navigate('#/pluginManagement', {trigger: true});
+            Origin.router.navigateTo('pluginManagement');
         }
 
     }, {

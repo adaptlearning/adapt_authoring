@@ -25,7 +25,7 @@ define(function(require) {
 
     goToLogin: function(e) {
       e && e.preventDefault();
-      Origin.router.navigate('#/user/login', { trigger: true });
+      Origin.router.navigateToLogin();
     },
 
     handleValidationError: function(model, error) {
@@ -44,7 +44,7 @@ define(function(require) {
     verifyToken: function() {
       // Invalid token entered, take the user to login
       if (!this.model.get('user')) {
-        Origin.router.navigate('#/user/login', {trigger: true});
+        Origin.router.navigateToLogin();
       }
     },
 

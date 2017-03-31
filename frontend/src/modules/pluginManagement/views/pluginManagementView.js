@@ -84,7 +84,7 @@ define(function(require){
 
       $.get(this.collection.url() + '&refreshplugins=1', function (data) {
         Origin.trigger('scaffold:updateSchemas', function() {
-          Origin.router.navigate('#/pluginManagement/' + pluginType, { trigger: true });
+          Origin.router.navigateTo('pluginManagement/' + pluginType);
         }, this);
       });
 

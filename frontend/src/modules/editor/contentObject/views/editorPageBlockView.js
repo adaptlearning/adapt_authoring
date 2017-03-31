@@ -223,11 +223,10 @@ define(function(require){
     },
 
     loadBlockEdit: function (event) {
-      console.log('loadBlockEdit');
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
       var id = this.model.get('_id');
-      Origin.router.navigate('#/editor/' + courseId + '/' + type + '/' + id + '/edit', { trigger: true });
+      Origin.router.navigateTo('editor/' + courseId + '/' + type + '/' + id + '/edit');
     },
 
     showComponentList: function(event) {

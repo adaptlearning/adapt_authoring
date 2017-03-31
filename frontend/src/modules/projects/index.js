@@ -78,10 +78,10 @@ define(function(require) {
   });
 
   Origin.on('globalMenu:dashboard:open', function() {
-    Origin.router.navigate('#/dashboard', { trigger: true });
+    Origin.router.navigateTo('dashboard');
   });
-
   Origin.on('app:dataReady login:changed', function() {
+    Origin.router.setHomeRoute('dashboard');
     Origin.globalMenu.addItem({
       "location": "global",
       "text": window.polyglot.t('app.dashboard'),

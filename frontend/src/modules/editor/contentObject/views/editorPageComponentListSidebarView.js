@@ -91,12 +91,8 @@ define(function(require) {
         },
         success: function(data) {
           Origin.trigger('editor:refreshData', function() {
-            Origin.router.navigate('#/editor/'
-            + Origin.editor.data.course.get('_id')
-            + '/component/'
-            + data.get('_id'));
+            Origin.router.navigateTo('editor/' + Origin.editor.data.course.get('_id') + '/component/' + data.get('_id'));
           }, this);
-
         }
       });
     },
@@ -110,7 +106,7 @@ define(function(require) {
       var currentPage = currentBlock.getParent().getParent();
       var currentPageId = currentPage.get('_id');
 
-      Origin.router.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
+      Origin.router.navigateTo('editor/' + currentCourseId + '/page/' + currentPageId);
     }
   }, {
     template: 'editorPageComponentListSidebar'

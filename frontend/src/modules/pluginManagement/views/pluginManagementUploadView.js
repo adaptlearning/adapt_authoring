@@ -48,7 +48,7 @@ define(function(require){
             });
 
             // go back to the upload, maybe handle this in the sidebar?
-            Origin.router.navigate('#/pluginManagement/upload', { trigger: true });
+            Origin.router.navigateTo('pluginManagement/upload');
           },
           success: function(data, status, xhr) {
             Origin.trigger('scaffold:updateSchemas', function() {
@@ -59,7 +59,7 @@ define(function(require){
 
               $('.loading').hide();
               var pluginType = data.pluginType ? data.pluginType : '';
-              Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger:true});
+              Origin.router.navigateTo('pluginManagement/' + pluginType);
             }, this);
           }
         });

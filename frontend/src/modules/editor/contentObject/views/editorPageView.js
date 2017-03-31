@@ -154,7 +154,7 @@ define(function(require){
       event && event.preventDefault();
       var courseId = this.model.get('_courseId');
       var id = this.model.get('_id');
-       Origin.router.navigate('#/editor/' + courseId + '/page/' + id + '/edit');
+       Origin.router.navigateTo('editor/' + courseId + '/page/' + id + '/edit');
     },
 
     // TODO fragile HACK, refactor context menu code to allow what I want to do later...

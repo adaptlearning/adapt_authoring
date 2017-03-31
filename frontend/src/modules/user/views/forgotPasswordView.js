@@ -22,7 +22,7 @@ define(function(require) {
 
     goToLogin: function(e) {
       e && e.preventDefault();
-      Origin.router.navigate('#/user/login', {trigger: true});
+      Origin.router.navigateToLogin();
     },
 
     handleKeydown: function(e) {

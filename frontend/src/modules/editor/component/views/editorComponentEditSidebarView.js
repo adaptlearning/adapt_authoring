@@ -20,7 +20,7 @@ define(function(require) {
       event.preventDefault();
       var currentCourseId = Origin.editor.data.course.get('_id');
       var currentPageId = this.model.getParent().getParent().getParent().get('_id');
-      Origin.router.navigate('#/editor/' + currentCourseId + '/page/' + currentPageId);
+      Origin.router.navigateTo('editor/' + currentCourseId + '/page/' + currentPageId);
     }
   }, {
     template: 'editorComponentEditSidebar'

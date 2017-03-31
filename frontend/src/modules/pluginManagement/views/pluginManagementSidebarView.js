@@ -11,12 +11,11 @@ define(function(require) {
       'click .pluginManagement-sidebar-themes'	: 'onManageThemesClicked',
       'click .pluginManagement-sidebar-components'	: 'onManageComponentsClicked',
       'click .pluginManagement-sidebar-menus'  : 'onManageMenusClicked',
-      'click .pluginManagement-sidebar-getPlugins'  : 'onGetPluginsClicked',
-      'click .pluginManagement-sidebar-dashboard'	: 'returnToDashboard'
+      'click .pluginManagement-sidebar-getPlugins'  : 'onGetPluginsClicked'
     },
 
     onAddNewPluginClicked: function () {
-      Origin.router.navigate('#/pluginManagement/upload', { trigger: true });
+      Origin.router.navigateTo('pluginManagement/upload');
     },
 
     onManageExtensionsClicked: function () {
@@ -36,21 +35,15 @@ define(function(require) {
     },
 
     onGetPluginsClicked: function () {
-        var win = window.open("https://www.adaptlearning.org/index.php/plugin-browser/", '_blank');
+      window.open("https://www.adaptlearning.org/index.php/plugin-browser/", '_blank');
     },
 
     managePluginType: function (pluginType) {
-      Origin.router.navigate('#/pluginManagement/' + pluginType, {trigger: false});
-    },
-
-    returnToDashboard: function() {
-      Origin.router.navigate('#/dashboard', {trigger:true});
-    },
-
+      Origin.router.navigateTo('pluginManagement/' + pluginType);
+    }
   }, {
     template: 'pluginManagementSidebar'
   });
 
   return PluginManagementSidebarView;
-
 });

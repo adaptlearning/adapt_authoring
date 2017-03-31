@@ -14,7 +14,7 @@ define(function(require) {
       'keydown #login-input-username' : 'clearErrorStyling',
       'keydown #login-input-password' : 'clearErrorStyling',
       'click .login-form-submit'      : 'submitLoginDetails',
-      'click button.dash'             : 'goToDash'
+      'click button.dash'             : 'goHome'
     },
 
     preRender: function() {
@@ -26,9 +26,9 @@ define(function(require) {
       Origin.trigger('login:loaded');
     },
 
-    goToDash: function(e) {
+    goHome: function(e) {
       e && e.preventDefault();
-      Origin.router.navigate('#/dashboard', { trigger: true });
+      Origin.router.navigateToHome();
     },
 
     handleEnterKey: function(e) {

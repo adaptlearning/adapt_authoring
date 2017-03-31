@@ -47,12 +47,12 @@ define(function(require) {
 
     editProjectSettings: function(event) {
       event && event.preventDefault();
-      Origin.router.navigate('#/editor/' + this.model.get('_id') + '/settings', { trigger: true });
+      Origin.router.navigateTo('editor/' + this.model.get('_id') + '/settings');
     },
 
     editProject: function(event) {
       event && event.preventDefault();
-      Origin.router.navigate('#/editor/' + this.model.get('_id') + '/menu', { trigger: true });
+      Origin.router.navigateTo('editor/' + this.model.get('_id') + '/menu');
     },
 
     selectProject: function(event) {
@@ -113,7 +113,7 @@ define(function(require) {
       $.ajax({
         url: this.model.getDuplicateURI(),
         success: function (data) {
-          Origin.router.navigate('/editor/' + data.newCourseId + '/settings', { trigger: true });
+          Origin.router.navigateTo('editor/' + data.newCourseId + '/settings');
         },
         error: function() {
           Origin.Notify.alert({ type: 'error', text: window.polyglot.t('app.errorduplication') });

@@ -22,7 +22,7 @@ define(function(require) {
   });
 
   Origin.on('globalMenu:pluginManagement:open', function() {
-    Origin.router.navigate('#/pluginManagement', {trigger: true});
+    Origin.router.navigateTo('pluginManagement');
   });
 
   var globalMenuObject = {

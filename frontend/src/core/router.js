@@ -1,10 +1,12 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var _ = require('underscore');
   var Backbone = require('backbone');
   var Origin = require('core/origin');
   var PermissionsView = require('core/views/permissionsView');
 
   var Router = Backbone.Router.extend({
+    homeRoute: '',
     routes: {
       '': 'handleIndex',
       '_=_': 'handleIndex',
@@ -26,13 +28,52 @@ define(function(require) {
     resetLocation: function() {
       Origin.location = {};
     },
+    /**
+    * Allows modules/plugins to set a custom home route
+    */
+    setHomeRoute: function(url) {
+      this.homeRoute = url;
+    },
 
     isUserAuthenticated: function() {
       return Origin.sessionModel.get('isAuthenticated') ? true : false;
     },
 
-    redirectToLogin: function() {
-      this.navigate('#/user/login', { trigger: true });
+    // Persist any dashboard routing for 'Back to courses' link
+    // FIXME this shouldn't be here, or work like this...
+    evaluateDashboardRoute: function() {
+      var loc = Origin.location;
+      if (loc && loc.module == 'dashboard') {
+        var suffix = loc.route1 ? '/' + loc.route1 : '';
+        Origin.dashboardRoute = '/#/dashboard' + suffix;
+      }
+    },
+
+    /**
+    * Routing
+    */
+
+    navigateTo: function(route, options) {
+      var prefix = '#/'
+      if(route.slice(0,2) !== prefix) {
+        route = prefix + route;
+      }
+      // use the global object in case we don't have a valid 'this' reference
+      Origin.router.navigate(route, _.defaults(options || {}, { trigger: true }));
+    },
+
+    navigateToLogin: function() {
+      // use the global object in case we don't have a valid 'this' reference
+      Origin.router.navigateTo('user/login');
+    },
+
+    navigateToHome: function() {
+      // use the global object in case we don't have a valid 'this' reference
+      if(!this.homeRoute) {
+        console.log('Router.navigateToHome: cannot load homepage, homeRoute not set');
+        return;
+      }
+      Origin.router.navigateTo(this.homeRoute);
     },
 
     handleIndex: function() {
@@ -40,19 +81,9 @@ define(function(require) {
       Origin.trigger('origin:showLoading');
 
       if (this.isUserAuthenticated()) {
-        this.navigate('#/dashboard', { trigger: true });
+        return this.navigateToHome();
       } else {
-        return this.redirectToLogin();
-      }
-    },
-
-    // Persist any dashboard routing for 'Back to courses' link
-    evaluateDashboardRoute: function() {
-      if (Origin.location && Origin.location.module == 'dashboard') {
-        var suffix = Origin.location.route1
-          ? '/' + Origin.location.route1
-          : '';
-        Origin.dashboardRoute = '/#/dashboard' + suffix;
+        return this.navigateToLogin();
       }
     },
 
@@ -73,7 +104,7 @@ define(function(require) {
           type: 'error',
           text: window.polyglot.t('app.errorsessionexpired')
         });
-        return this.redirectToLogin();
+        return this.navigateToLogin();
       }
 
       var routeArguments = arguments;

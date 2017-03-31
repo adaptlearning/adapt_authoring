@@ -49,7 +49,7 @@ define(function(require) {
   });
 
   Origin.on('globalMenu:assetManagement:open', function() {
-    Origin.router.navigate('#/assetManagement', {trigger: true});
+    Origin.router.navigateTo('assetManagement');
   });
 
   Origin.on('app:dataReady login:changed', function() {

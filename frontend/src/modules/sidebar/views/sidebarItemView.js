@@ -97,24 +97,28 @@ define(function(require) {
         this.$el.velocity({'left': '0%', 'opacity': 1}, "easeOutQuad");
     },
 
+    navigateToEditorPage: function(page) {
+      Origin.router.navigateTo('editor/' + Origin.editor.data.course.get('_id') + '/' + page);
+    },
+
     editProject: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/settings', {trigger: true});
+      this.navigateToEditorPage('settings');
     },
 
     editConfiguration: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/config', {trigger: true});
+      this.navigateToEditorPage('config');
     },
 
     selectTheme: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/selecttheme', {trigger: true});
+      this.navigateToEditorPage('selecttheme');
     },
 
     editMenu: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/menusettings', {trigger: true});
+      this.navigateToEditorPage('menusettings');
     },
 
     manageExtensions: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/extensions', {trigger: true});
+      this.navigateToEditorPage('extensions');
     },
 
     downloadProject: function() {
@@ -130,7 +134,7 @@ define(function(require) {
     },
 
     closeProject: function() {
-      Origin.router.navigate('#/dashboard');
+      Origin.router.navigateTo('dashboard');
     }
 
   });

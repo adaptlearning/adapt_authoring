@@ -118,11 +118,11 @@ define(function(require){
     },
 
     gotoPageEditor: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'));
+      Origin.router.navigateTo('editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'));
     },
 
     gotoSubMenuEditor: function() {
-      Origin.router.navigate('#/editor/' + Origin.editor.data.course.get('_id') + '/menu/' + this.model.get('_id') + '/edit');
+      Origin.router.navigateTo('editor/' + Origin.editor.data.course.get('_id') + '/menu/' + this.model.get('_id') + '/edit');
     },
 
     setItemAsSelected: function() {
@@ -196,14 +196,7 @@ define(function(require){
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
       var menuItemId = this.model.get('_id');
-
-      Origin.router.navigate('#/editor/'
-        + courseId
-        + '/'
-        + type
-        + '/'
-        + menuItemId
-        + '/edit', {trigger: true});
+      Origin.router.navigateTo('editor/' + courseId + '/' + type + '/' + menuItemId + '/edit');
     },
 
     deleteItemPrompt: function(event) {
@@ -251,7 +244,7 @@ define(function(require){
       // We also need to navigate to the parent element - but if it's the courseId let's
       // navigate up to the menu
       var parentId = (this.model.get('_parentId') === Origin.editor.data.course.id) ? '' : '/' + this.model.get('_parentId');
-      Origin.router.navigate('#editor/' + Origin.editor.data.course.id + '/menu' + parentId);
+      Origin.router.navigateTo('editor/' + Origin.editor.data.course.id + '/menu' + parentId);
 
       if (this.model.destroy()) {
         this.remove();

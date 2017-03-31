@@ -12,11 +12,11 @@ define(function(require) {
   var UserPasswordResetModel = require('./models/userPasswordResetModel');
 
   Origin.on('navigation:user:logout', function() {
-    Origin.router.navigate('#/user/logout');
+    Origin.router.navigateTo('user/logout');
   });
 
   Origin.on('navigation:user:profile', function() {
-    Origin.router.navigate('#/user/profile');
+    Origin.router.navigateTo('user/profile');
   });
 
   Origin.on('router:user', function(location, subLocation, action) {

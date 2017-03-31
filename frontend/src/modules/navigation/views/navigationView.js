@@ -46,7 +46,7 @@ define(function(require){
           delete sessionModel._revertLogin;
           Origin.trigger('login:changed');
           Origin.trigger('globalMenu:refresh');
-          Origin.router.navigate('#/dashboard', {trigger: true});
+          Origin.router.navigateToHome();
         },
         failure: function (err) {
           Origin.Notify.alert({

@@ -34,10 +34,8 @@ define(function(require) {
           validationErrors.confirmPassword = window.polyglot.t('app.validationpasswordmatch');
         }
       }
-
-      return _.isEmpty(validationErrors)
-        ? null
-        : validationErrors;
+      
+      return _.isEmpty(validationErrors) ? null : validationErrors;
     },
 
     resetPassword: function () {
@@ -53,7 +51,7 @@ define(function(require) {
         },
         success: function (jqXHR, textStatus, errorThrown) {
           if (jqXHR.success) {
-            Origin.router.navigate('#/dashboard', {trigger: true});
+            Origin.router.navigateToHome();
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {

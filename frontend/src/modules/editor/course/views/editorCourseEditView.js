@@ -45,7 +45,7 @@ define(function(require) {
 
     onSaveSuccess: function(model, response, options) {
       if (this.isNew) {
-        return Origin.router.navigate('#/editor/' + response._id + '/menu', {trigger: true});
+        return Origin.router.navigateTo('editor/' + response._id + '/menu');
       } else {
         EditorOriginView.prototype.onSaveSuccess.apply(this, arguments);
       }

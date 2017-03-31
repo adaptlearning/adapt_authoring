@@ -93,7 +93,7 @@ define(function(require){
               });
             },
             success: function(model, response, options) {
-              Origin.router.navigate('#/assetManagement', {trigger:true});
+              Origin.router.navigateTo('assetManagement');
             }
           })
         }
@@ -134,7 +134,7 @@ define(function(require){
             Origin.trigger('assetItemView:preview', self.model);
           });
 
-          Origin.router.navigate('#/assetManagement', {trigger:true});
+          Origin.router.navigateTo('assetManagement');
         }
       });
 

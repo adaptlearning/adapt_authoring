@@ -39,7 +39,7 @@ define(function(require) {
   });
 
   Origin.on('globalMenu:userManagement:open', function() {
-    Origin.router.navigate('#/userManagement', {trigger: true});
+    Origin.router.navigateTo('userManagement');
   });
 
   Origin.on('router:userManagement', function(location, subLocation, action) {

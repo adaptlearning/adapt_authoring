@@ -108,7 +108,7 @@ define(function(require){
       // Store the ID of the currently selected contentObject
       Origin.editor.currentContentObjectId = selectedItemId;
       // Reset the address bar to allow persistance of the 'Back' button
-      Origin.router.navigate('#editor/' + Origin.editor.data.course.id + '/menu/' + selectedItemId);
+      Origin.router.navigateTo('editor/' + Origin.editor.data.course.id + '/menu/' + selectedItemId);
     },
 
     /**

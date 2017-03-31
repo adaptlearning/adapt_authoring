@@ -18,11 +18,24 @@ define(function(require) {
       this.resetLocation();
     },
 
-    setLocation: function(routeArgs) {
+    updateLocation: function(routeArgs) {
+      // save the previous location
+      Origin.previousLocation = Origin.location;
+
+      this.evaluateDashboardRoute();
+
       this.resetLocation();
       _.each(this.locationKeys, function(key, index) {
         Origin.location[key] = routeArgs[index];
       });
+
+      var mod = routeArgs[0];
+      var route1 = routeArgs[1];
+      $('body')
+        .removeClass()
+        .addClass('module-' + mod + ((route1) ? ' location-' + route1 : ''));
+
+      Origin.trigger('location:change', Origin.location);
     },
 
     resetLocation: function() {
@@ -39,6 +52,29 @@ define(function(require) {
       return Origin.sessionModel.get('isAuthenticated') ? true : false;
     },
 
+    /**
+    * Checks user permissions for route
+    */
+    verifyRoute: function(module, route1) {
+      // Check this user has permissions
+      if (!Origin.permissions.checkRoute(Backbone.history.fragment)) {
+        Origin.trigger('sidebar:sidebarContainer:hide');
+        Origin.trigger('location:title:hide');
+        $('.app-inner').append(new PermissionsView().$el);
+        return false;
+      }
+      // FIXME routes shouldn't be hard-coded
+      if(!this.isUserAuthenticated()  && (module !== 'user' && route1 !== 'login')) {
+        Origin.Notify.alert({
+          type: 'error',
+          text: window.polyglot.t('app.errorsessionexpired'),
+          callback: _.bind(this.navigateToLogin, this)
+        });
+        return false;
+      }
+      return true;
+    },
+
     // Persist any dashboard routing for 'Back to courses' link
     // FIXME this shouldn't be here, or work like this...
     evaluateDashboardRoute: function() {
@@ -53,74 +89,44 @@ define(function(require) {
     * Routing
     */
 
+    navigateBack: function() {
+      Backbone.history.history.back();
+    },
+
     navigateTo: function(route, options) {
-      var prefix = '#/'
+      var prefix = '#/';
       if(route.slice(0,2) !== prefix) {
         route = prefix + route;
       }
-      // use the global object in case we don't have a valid 'this' reference
+      // use Origin.router.navigate in case we don't have a valid 'this' reference
       Origin.router.navigate(route, _.defaults(options || {}, { trigger: true }));
     },
 
     navigateToLogin: function() {
-      // use the global object in case we don't have a valid 'this' reference
+      // use Origin.router.navigate in case we don't have a valid 'this' reference
       Origin.router.navigateTo('user/login');
     },
 
     navigateToHome: function() {
-      // use the global object in case we don't have a valid 'this' reference
       if(!this.homeRoute) {
         console.log('Router.navigateToHome: cannot load homepage, homeRoute not set');
         return;
       }
+      // use Origin.router.navigate in case we don't have a valid 'this' reference
       Origin.router.navigateTo(this.homeRoute);
     },
 
     handleIndex: function() {
-      // Show loading on any route
       Origin.trigger('origin:showLoading');
-
-      if (this.isUserAuthenticated()) {
-        return this.navigateToHome();
-      } else {
-        return this.navigateToLogin();
-      }
+      this.isUserAuthenticated() ? this.navigateToHome() : this.navigateToLogin();
     },
 
     handleRoute: function(module, route1, route2, route3, route4) {
-      // Show loading on any route
-      Origin.trigger('origin:showLoading');
-      // Remove views
       Origin.removeViews();
-      // Check this user has permissions
-      if (!Origin.permissions.checkRoute(Backbone.history.fragment)) {
-        Origin.trigger('sidebar:sidebarContainer:hide');
-        Origin.trigger('location:title:hide');
-        return $('.app-inner').append(new PermissionsView().$el);
+      if(!this.verifyRoute(module, route1)) {
+        return;
       }
-      // Verify the user is authenticated
-      if (!this.isUserAuthenticated()  && (module !== 'user' && route1 !== 'login')) {
-        Origin.Notify.alert({
-          type: 'error',
-          text: window.polyglot.t('app.errorsessionexpired')
-        });
-        return this.navigateToLogin();
-      }
-
-      var routeArguments = arguments;
-      // Set previous location object
-      Origin.previousLocation = Origin.location;
-      this.evaluateDashboardRoute();
-      this.setLocation(routeArguments);
-      // Trigger location change
-      Origin.trigger('location:change', Origin.location);
-
-      var locationClass = 'module-' + Origin.location.module;
-      if (Origin.location.route1) {
-        locationClass += ' location-' + Origin.location.route1
-      }
-      $('body').removeClass().addClass(locationClass);
-      // Trigger router event
+      this.updateLocation(arguments);
       Origin.trigger('router:' + module, route1, route2, route3, route4);
     }
   });

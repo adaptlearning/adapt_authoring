@@ -177,7 +177,6 @@ define(function(require){
         e.stopPropagation();
         e.preventDefault();
       }
-      console.log(this.mode.attributes);
       Origin.trigger('editorView:paste', this.model.get('_parentId'), $(event.target).data('sort-order'), $(event.target).data('paste-layout'));
     },
 
@@ -186,19 +185,19 @@ define(function(require){
       Origin.trigger('editorView:pasteCancel', this.model);
     },
 
+    onSaveSuccess: function() {
+      Origin.trigger('editor:refreshData', _.bind(function() {
+        Backbone.history.history.back();
+        this.remove();
+      }, this));
+    },
+
     onSaveError: function(pTitle, pText) {
       var title = _.isString(pTitle) ? pTitle : window.polyglot.t('app.errordefaulttitle');
       var text = _.isString(pText) ? pText : window.polyglot.t('app.errorsave');
       Origin.Notify.alert({ type: 'error', title: title, text: text });
 
       Origin.trigger('sidebar:resetButtons');
-    },
-
-    onSaveSuccess: function() {
-      Origin.trigger('editor:refreshData', function() {
-        Backbone.history.history.back();
-        this.remove();
-      }, this);
     }
   });
 

@@ -62,8 +62,9 @@ define(function(require) {
     },
     /**
     * Loads course-specific data
+    * Accepts callback for editor:refreshData
     */
-    loadCourseData: function() {
+    loadCourseData: function(callback) {
       if(!preloader.hasLoadedGlobalData()) {
         return Origin.on('editor:dataPreloaded', preloader.loadCourseData);
       }
@@ -90,6 +91,7 @@ define(function(require) {
       }
       // fetch all collections
       fetchEditorData(courseData, function() {
+        if(callback) callback.apply(Origin.editor.data);
         Origin.trigger('editor:dataLoaded');
       });
     },

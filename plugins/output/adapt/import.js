@@ -15,7 +15,6 @@ var semver = require('semver');
 var version = require('../../../version');
 var glob = require('glob');
 var Constants = require('../../../lib/outputmanager').Constants;
-var util = require('util');
 var helpers = require('./helpers');
 
 // TODO integrate with sockets API to show progress
@@ -36,12 +35,6 @@ function Import(req, done) {
   * ------------------------------------------------------------------------------
   */
 
-  function ImportError(message, httpStatus) {
-    this.message = message || "Course import failed";
-    this.httpStatus = httpStatus || 500;
-  };
-  util.inherits(ImportError, Error);
-
   form.parse(req, function (error, fields, files) {
 
     if (error) return next(error);
@@ -52,7 +45,7 @@ function Import(req, done) {
     async.series([
       function extractFiles(cb) {
         if(!files.file || !files.file.path) {
-          return cb(new ImportError('File upload failed.'));
+          return cb(new helpers.ImportError('File upload failed.'));
         }
         var zipPath = files.file.path;
         cleanupDirs.push(zipPath,courseRoot);
@@ -104,9 +97,9 @@ function Import(req, done) {
             // TODO any other possible errors?
             switch(error.name) {
               case 'SyntaxError':
-                return cb(new ImportError('Import contains invalid metadata, please check the archive.', 400));
+                return cb(new helpers.ImportError('Import contains invalid metadata, please check the archive.', 400));
               default:
-                return cb(new ImportError('Unable to load metadata. Please check archive is a valid import package.', 400));
+                return cb(new helpers.ImportError('Unable to load metadata. Please check archive is a valid import package.', 400));
             }
           }
           metadata = metadataJson;
@@ -115,18 +108,7 @@ function Import(req, done) {
         });
       },
       checkVersionCompatibility: ['loadMetadata', function(cb) {
-        var installedVersion = semver.clean(version.adapt_framework);
-        var importVersion = semver.clean(metadata.version);
-
-        if(!importVersion) {
-          return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
-        }
-        // check the import's within the major version number
-        if(semver.satisfies(importVersion,semver.major(installedVersion).toString())) {
-          cb();
-        } else {
-          cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
-        }
+        helpers.checkFrameworkVersion(metadata, cb);
       }]
     }, function doneAuto(error, data) {
       callback(error);
@@ -282,7 +264,7 @@ function Import(req, done) {
           createdBy: origin.usermanager.getCurrentUser()._id
         });
         if(!fileMeta) {
-          return doneAsset(new ImportError('No metadata found for asset: ' + assetName));
+          return doneAsset(new helpers.ImportError('No metadata found for asset: ' + assetName));
         }
         helpers.importAsset(fileMeta, metadata, doneAsset);
       }, cb);

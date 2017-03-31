@@ -11,6 +11,7 @@ var semver = require('semver');
 var version = require('../../../version');
 var crypto = require('crypto');
 var filestorage = require('../../../lib/filestorage');
+var util = require('util');
 
 // possible shared functions include:
 // addAssets
@@ -192,8 +193,36 @@ function importAsset(fileMetadata, metadata, assetImported) {
 };
 
 
+
+/**
+* @param {object} versionMetaData
+* @param {callback} cb
+*/
+function checkFrameworkVersion(versionMetaData, cb) {
+  var installedVersion = semver.clean(version.adapt_framework);
+  var importVersion = semver.clean(versionMetaData.version);
+
+  if(!importVersion) {
+    return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
+  }
+  // check the import's within the major version number
+  if(semver.satisfies(importVersion,semver.major(installedVersion).toString())) {
+    cb();
+  } else {
+    cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
+  }
+};
+
+function ImportError(message, httpStatus) {
+  this.message = message || "Course import failed";
+  this.httpStatus = httpStatus || 500;
+};
+util.inherits(ImportError, Error);
+
 exports = module.exports = {
   unzip: unzip,
   importPlugin: importPlugin,
-  importAsset: importAsset
+  importAsset: importAsset,
+  checkFrameworkVersion: checkFrameworkVersion,
+  ImportError: ImportError
 };

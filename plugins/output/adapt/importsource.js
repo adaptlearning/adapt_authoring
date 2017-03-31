@@ -8,10 +8,13 @@ var IncomingForm = require('formidable').IncomingForm;
 
 var database = require("../../../lib/database");
 var logger = require("../../../lib/logger");
-var outputmanager = require("../../../lib/outputmanager");
 var Constants = require('../../../lib/outputmanager').Constants;
-var usermanager = require('../../../lib/usermanager');
 var helpers = require('./helpers');
+var mime = require('mime');
+var glob = require('glob');
+var crypto = require('crypto');
+var filestorage = require('../../../lib/filestorage');
+var version = require('../../../version');
 
 // TODO integrate with sockets API to show progress
 
@@ -36,11 +39,11 @@ function ImportSource(req, done) {
   var componentMap = {};
   var extensionMap = {};
   var extensionLocations = {};
-  var tenantId = usermanager.getCurrentUser().tenant._id;
+  var tenantId = app.usermanager.getCurrentUser().tenant._id;
   var unzipFolder = tenantId + '_unzipped';
-  var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
+  var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, unzipFolder);
+  var courseRoot = path.join(COURSE_ROOT_FOLDER, 'src', 'course', 'en' );
   var form = new IncomingForm();
-  var courseRoot = path.join(COURSE_ROOT_FOLDER, unzipFolder);
   var courseId;
 
 
@@ -49,7 +52,6 @@ function ImportSource(req, done) {
     if (error) return next(error);
 
     var formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
-    logger.log('info', formTags);
 
     /**
     * Main process
@@ -58,7 +60,7 @@ function ImportSource(req, done) {
     async.series([
       function asyncUnzip(cb) {
         // socket unzipping files
-        helpers.unzip(files.file.path, courseRoot, function(error) {
+        helpers.unzip(files.file.path, COURSE_ROOT_FOLDER, function(error) {
           if(error) return cb(error);
           // socket files unzipped
           cb();
@@ -82,7 +84,7 @@ function ImportSource(req, done) {
       },
       function asyncAddAssets(cb) {
         // socket importing assets
-        addAssets(function(error) {
+        addAssets(formTags, function(error) {
           if(error) return cb(error);
           // socket assets imported
           cb();
@@ -108,22 +110,75 @@ function ImportSource(req, done) {
   * Checks course for any potential incompatibilities
   */
   function validateCoursePackage(done) {
-    // TODO check everything's as expected
     // - Check framework version compatibility
     // - check we have all relevant json files using contentMap
-    logger.log('warn', 'validateCoursePackage needs to be implemented');
-    done();
+    async.auto({
+      checkFramework: function(cb) {
+        fs.readJson(path.join(COURSE_ROOT_FOLDER, 'package.json'), function(error, versionJson) {
+          if(error) {
+            logger.log('error', error)
+            return cb(error);
+          }
+          helpers.checkFrameworkVersion(versionJson, cb);
+        });
+      },
+      checkContentJson: ['checkFramework', function(cb) {
+        async.eachSeries(Object.keys(contentMap), function(type, cb2) {
+          fs.readJson(path.join(courseRoot, contentMap[type] + '.json'), function(error, contentJson) {
+            if(error) {
+              logger.log('error', error)
+              return cb2(error);
+            }
+            cb2();
+            // TODO Question - do we need to validate any further?
+          });
+        }, cb);
+      }]
+    }, function doneAuto(error, data) {
+      done(error);
+    });
   }
 
   /**
   * Imports assets to the library
   */
-  function addAssets(done) {
-    // Do we need to include arbitary folders in src/course/en folder?
-    // Or just look in src/course/en/assets?
-    // TODO add assets
-    logger.log('warn', 'addAssets needs to be implemented');
-    done();
+  function addAssets(assetTags, done) {
+    // TODO - need to deal with asset location path in a less hacky way. Also include other languages/folders
+    var assetsGlob = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course, 'en', Constants.Folders.Assets, '*');
+    glob(assetsGlob, function (error, assets) {
+      if(error) {
+        return cb(error);
+      }
+      var repository = configuration.getConfig('filestorage') || 'localfs';
+      async.eachSeries(assets, function iterator(assetPath, doneAsset) {
+        if (error) {
+          return doneAsset(error);
+        }
+        var assetName = path.basename(assetPath);
+        var assetExt = path.extname(assetPath);
+        var assetId = path.basename(assetPath, assetExt);
+        var fileStat = fs.statSync(assetPath);
+
+        // TODO - this is a complete hack to test import
+        var fileMeta = {
+          oldId: assetId,
+          title: assetName,
+          type: mime.lookup(assetName),
+          size: fileStat["size"],
+          filename: assetName,
+          description: assetName,
+          path: assetPath,
+          tags: assetTags,
+          repository: repository,
+          createdBy: app.usermanager.getCurrentUser()._id
+        };
+
+        if(!fileMeta) {
+          return doneAsset(new helpers.ImportError('No metadata found for asset: ' + assetName));
+        }
+        importSourceAsset(fileMeta, idMap, doneAsset);
+      }, done);
+    });
   }
 
   /**
@@ -134,12 +189,11 @@ function ImportSource(req, done) {
       function mapPluginIncludes(cb) {
         async.each(plugindata.pluginTypes, function iterator(pluginType, doneMapIterator) {
 
-          var srcDir = path.join(courseRoot, 'src', pluginType.folder);
+          var srcDir = path.join(COURSE_ROOT_FOLDER, 'src', pluginType.folder);
           fs.readdir(srcDir, function (err, files) {
               if (err) {
                 done(err);
               }
-
               files.map(function (file) {
                 return path.join(srcDir, file);
               }).filter(function (file) {
@@ -202,7 +256,7 @@ function ImportSource(req, done) {
   function importContent(done) {
     async.series([
       function createCourse(cb) {
-        fs.readJson(path.join(courseRoot, 'src', 'course', 'en', 'course.json'), function(error, courseJson) {
+        fs.readJson(path.join(courseRoot, 'course.json'), function(error, courseJson) {
           if(error) return cb(error);
           courseJson = _.extend(courseJson, { _isShared: false }); // TODO remove this later
           createContentItem('course', courseJson, '', function(error, courseRec) {
@@ -213,7 +267,7 @@ function ImportSource(req, done) {
         });
       },
       function createCourse(cb) {
-        fs.readJson(path.join(courseRoot, 'src', 'course', 'config.json'), function(error, configJson) {
+        fs.readJson(path.join(COURSE_ROOT_FOLDER, 'src', 'course', 'config.json'), function(error, configJson) {
           if(error) return cb(error);
           createContentItem('config', configJson, courseId, cb);
         });
@@ -223,11 +277,10 @@ function ImportSource(req, done) {
          app.contentmanager.toggleExtensions(courseId.toString(), 'enable', _.values(extensionMap), cb);
       },
       function createContent(cb) {
-        var contentRoot = path.join(courseRoot, 'src', 'course', 'en');
         async.eachSeries(Object.keys(contentMap), function(type, cb2) {
           app.contentmanager.getContentPlugin(type, function(error, plugin) {
             if(error) return cb2(error);
-            fs.readJson(path.join(contentRoot, contentMap[type] + '.json'), function(error, contentJson) {
+            fs.readJson(path.join(courseRoot, contentMap[type] + '.json'), function(error, contentJson) {
               if(error) return cb2(error);
               // assume we're using arrays
               async.eachSeries(contentJson, function(item, cb3) {
@@ -289,6 +342,78 @@ function ImportSource(req, done) {
     });
   }
 }
+
+
+/**
+* Adds asset to the DB
+* Checks for a similar asset first (filename & size). if similar found, map that
+* to the import course.
+* TODO don't duplicate, similar to helpers.importAsset and assetmanager.postAsset
+* @param {object} fileMetadata
+* @param {object} idMap
+* @param {callback} assetImported
+*/
+function importSourceAsset(fileMetadata, idMap, assetImported) {
+  var search = {
+    filename: fileMetadata.filename,
+    size: fileMetadata.size
+  };
+  app.assetmanager.retrieveAsset(search, function gotAsset(error, results) {
+    if(results.length > 0) {
+      logger.log('debug', fileMetadata.filename + ': similar file found in DB, not importing');
+      idMap[fileMetadata.oldId] = results[0]._id;
+      return assetImported();
+    }
+
+    var date = new Date();
+    var hash = crypto.createHash('sha1');
+    var rs = fs.createReadStream(fileMetadata.path);
+
+    rs.on('data', function onReadData(pData) {
+      hash.update(pData, 'utf8');
+    });
+    rs.on('close', function onReadClose() {
+      var filehash = hash.digest('hex');
+      // TODO get rid of hard-coded assets
+      var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
+      var filepath = path.join(directory, filehash) + path.extname(fileMetadata.filename);
+      var fileOptions = {
+        createMetadata: true,
+        createThumbnail: true,
+        thumbnailOptions: {
+          width: '?',
+          height: '200'
+        }
+      };
+      filestorage.getStorage(fileMetadata.repository, function gotStorage(error, storage) {
+        if (error) {
+          return assetImported(error);
+        }
+        // the repository should move the file to a suitable location
+        storage.processFileUpload(fileMetadata, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
+          if (error) {
+            return assetImported(error);
+          }
+          // It's better not to set thumbnailPath if it's not set.
+          if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
+          var asset = _.extend(fileMetadata, storedFile);
+
+          // Create the asset record
+          app.assetmanager.createAsset(asset, function onAssetCreated(createError, assetRec) {
+            if (createError) {
+              logger.log('error', createError)
+              storage.deleteFile(storedFile.path, assetImported);
+              return;
+            }
+            // TODO - add flag so we can clean up if fail.
+            idMap[fileMetadata.oldId] = assetRec._id;
+            assetImported();
+          });
+        });
+      });
+    });
+  });
+};
 
 /**
  * Module exports

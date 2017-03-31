@@ -187,7 +187,7 @@ define(function(require){
 
     onSaveSuccess: function() {
       Origin.trigger('editor:refreshData', _.bind(function() {
-        Backbone.history.history.back();
+        Origin.router.navigateBack();
         this.remove();
       }, this));
     },

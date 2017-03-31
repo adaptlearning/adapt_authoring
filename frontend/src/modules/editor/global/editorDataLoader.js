@@ -91,7 +91,7 @@ define(function(require) {
       }
       // fetch all collections
       fetchEditorData(courseData, function() {
-        if(callback) callback.apply(Origin.editor.data);
+        if(_.isFunction(callback)) callback.apply(Origin.editor.data);
         Origin.trigger('editor:dataLoaded');
       });
     },

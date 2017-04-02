@@ -13,6 +13,9 @@ define(function(require) {
     },
 
     initialize: function() {
+      this.listenTo(Origin, {
+        'origin:initialize': this.onOriginInitialize
+      });
       this.locationKeys = ['module', 'route1', 'route2', 'route3', 'route4'];
       this.resetLocation();
     },
@@ -140,6 +143,16 @@ define(function(require) {
       }
       this.updateLocation(arguments);
       Origin.trigger('router:' + module, route1, route2, route3, route4);
+    },
+
+    /**
+    * Event handling
+    */
+
+    onOriginInitialize: function() {
+      Backbone.history.start();
+    },
+
     }
   });
 

@@ -23,8 +23,7 @@
       'core/router',
       'core/permissions',
       'core/l10n',
-      'core/constants',
-      'core/contentPane'
+      'core/constants'
     ], function(Templates, Origin, Router) {
       origin = Origin;
       origin.router = new Router();

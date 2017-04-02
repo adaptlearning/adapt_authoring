@@ -3,7 +3,6 @@ define(function(require) {
   var _ = require('underscore');
   var Backbone = require('backbone');
   var Origin = require('core/origin');
-  var PermissionsView = require('core/views/permissionsView');
 
   var Router = Backbone.Router.extend({
     homeRoute: '',
@@ -57,22 +56,35 @@ define(function(require) {
     */
     verifyRoute: function(module, route1) {
       // Check this user has permissions
-      if (!Origin.permissions.checkRoute(Backbone.history.fragment)) {
-        Origin.trigger('sidebar:sidebarContainer:hide');
-        Origin.trigger('location:title:hide');
-        $('.app-inner').append(new PermissionsView().$el);
+      if(!Origin.permissions.checkRoute(Backbone.history.fragment)) {
+        this.blockUserAccess();
         return false;
       }
       // FIXME routes shouldn't be hard-coded
       if(!this.isUserAuthenticated()  && (module !== 'user' && route1 !== 'login')) {
-        Origin.Notify.alert({
-          type: 'error',
-          text: Origin.l10n.t('app.errorsessionexpired'),
-          callback: _.bind(this.navigateToLogin, this)
-        });
+        this.blockUserAccess(Origin.l10n.t('app.errorsessionexpired'), true);
         return false;
       }
       return true;
+    },
+
+    /**
+    * Boots user to the login screen with an error message
+    */
+    blockUserAccess: function(message, hideUI) {
+      if(hideUI) {
+        $('body').addClass('no-ui');
+        Origin.trigger('remove:views');
+      }
+      var cb = hideUI ? Origin.router.navigateToLogin : Origin.router.navigateToHome;
+
+      Origin.Notify.alert({
+        type: 'error',
+        title: Origin.l10n.t('app.errorpagenoaccesstitle'),
+        text: message || Origin.l10n.t('app.errorpagenoaccess'),
+        confirmButtonText: Origin.l10n.t('app.ok'),
+        callback: cb
+      });
     },
 
     // Persist any dashboard routing for 'Back to courses' link

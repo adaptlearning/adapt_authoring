@@ -40,9 +40,8 @@ define(function(require) {
 				}
 				data.type = null;
 		}
-
 		// combine settings, overwriting defaults with param
-		return _.extend(defaults, data);
+		return _.defaults(data, defaults);
 	};
 
 	function openPopup(data) {
@@ -122,7 +121,6 @@ define(function(require) {
 	var init = function() {
 		Origin.Notify.register('alert', Alert);
 		Origin.Notify.register('confirm', Confirm);
-
 		// shortcuts to override window methods
 		window.alert = alert = Alert;
 		window.confirm = confirm = Confirm;

@@ -9,7 +9,7 @@ define(function(require){
   var $loading;
 
   var Origin = _.extend({}, Backbone.Events, {
-    debug: true,
+    debug: false,
     /**
     * Performs the necessary set-up steps
     */

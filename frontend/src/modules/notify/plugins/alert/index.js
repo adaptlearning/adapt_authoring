@@ -33,7 +33,7 @@ define(function(require) {
 				break;
 			default:
 				if (data.type) {
-					Origin.	Notify.console({
+					Origin.Notify.console({
 						type: 'error',
 						text: '"' + data.type + '" is not a valid alert type'
 					});

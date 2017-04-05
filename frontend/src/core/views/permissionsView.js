@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require){
-
-  var Backbone = require('backbone');
-  var Origin = require('core/origin');
+// define(function(require) {
+define(['require', 'backbone', 'core/origin'], function(require, Backbone, Origin) {
+  // var Backbone = require('backbone');
+  // var Origin = require('core/origin');
 
   var PermissionsView = Backbone.View.extend({
 

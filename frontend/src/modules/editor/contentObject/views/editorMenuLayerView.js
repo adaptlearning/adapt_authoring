@@ -67,8 +67,8 @@ define(function(require) {
       var newMenuItemModel = new ContentObjectModel({
         _parentId: this._parentId,
         _courseId: Origin.editor.data.course.get('_id'),
-        title: (type == 'page'? Origin.l10n.t('app.placeholdernewpage') : Origin.l10n.t('app.placeholdernewmenu')),
-        displayTitle: (type == 'page'? Origin.l10n.t('app.placeholdernewpage') : Origin.l10n.t('app.placeholdernewmenu')),
+        title: (type == 'page' ? Origin.l10n.t('app.placeholdernewpage') : Origin.l10n.t('app.placeholdernewmenu')),
+        displayTitle: (type == 'page' ? Origin.l10n.t('app.placeholdernewpage') : Origin.l10n.t('app.placeholdernewmenu')),
         body: '',
         linkText: Origin.l10n.t('app.view'),
         graphic: { alt: '', src: '' },
@@ -91,13 +91,12 @@ define(function(require) {
           Origin.editor.data.contentObjects.add(model);
           // Force setting the data-id attribute as this is required for drag-drop sorting
           newMenuItemView.$el.children('.editor-menu-item-inner').attr('data-id', model.get('_id'));
-
-          if (type == 'page') {
+          if (type === 'page') {
             // HACK -- This should be removed and placed on the server-side
-            return this.addNewPageArticleAndBlock(model, newMenuItemView);
-          } else {
-            newMenuItemView.$el.removeClass('syncing').addClass('synced');
+            this.addNewPageArticleAndBlock(model, newMenuItemView);
+            return;
           }
+          newMenuItemView.$el.removeClass('syncing').addClass('synced');
           this.setHeight();
         }, this)
       });

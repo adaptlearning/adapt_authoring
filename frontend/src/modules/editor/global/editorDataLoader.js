@@ -107,6 +107,9 @@ define(function(require) {
     */
     waitForLoad: function(callback) {
       // console.trace('waitForLoad:', preloader.hasLoadedGlobalData(), preloader.hasLoadedCourseData(), preloader.hasLoadedData());
+      if(preloader.hasLoadedData()) {
+        return callback.apply(this);
+      }
       if(!preloader.hasLoadedGlobalData()) {
         // console.log('- listening to preloader');
         Origin.once('editor:dataPreloaded', function(){

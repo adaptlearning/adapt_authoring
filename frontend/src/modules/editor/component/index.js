@@ -9,14 +9,8 @@ define(function(require) {
   var EditorComponentEditView = require('./views/editorComponentEditView');
   var EditorComponentEditSidebarView = require('./views/editorComponentEditSidebarView');
 
-  Origin.on('router:editor', function(route1, route2, route3, route4) {
-    EditorData.waitForLoad(function() {
-      if (route2 === 'component') handleEditComponent();
-    });
-  });
-
-  function handleEditComponent() {
-    (new ComponentModel({ _id: Origin.location.route3 })).fetch({
+  Origin.on('editor:component', function(data) {
+    (new ComponentModel({ _id: data.id })).fetch({
       success: function(model) {
         var form = Origin.scaffold.buildForm({ model: model });
         var displayName = getComponentDisplayName(model);
@@ -25,7 +19,7 @@ define(function(require) {
         Origin.contentPane.setView(EditorComponentEditView, { model: model, form: form });
       }
     });
-  }
+  });
 
   function getComponentDisplayName(model) {
     var componentType = _.find(Origin.editor.data.componenttypes.models, function(m) {

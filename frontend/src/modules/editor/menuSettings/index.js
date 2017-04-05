@@ -7,28 +7,24 @@ define(function(require) {
   var EditorMenuSettingsEditView = require('./views/editorMenuSettingsEditView');
   var EditorMenuSettingsEditSidebarView = require('./views/editorMenuSettingsEditSidebarView');
 
-  Origin.on('router:editor', function(route1, route2, route3, route4) {
-    EditorData.waitForLoad(function() {
-      if(route2 !== 'menusettings') {
-        return;
-      }
-      (new ConfigModel({ _courseId: route1 })).fetch({
-        success: function(model) {
-          Origin.trigger('location:title:update', {title: 'Select menu'});
+  Origin.on('editor:menusettings', function(data) {
+    var route1 = Origin.location.route1;
+    (new ConfigModel({ _courseId: route1 })).fetch({
+      success: function(model) {
+        Origin.trigger('location:title:update', {title: 'Select menu'});
 
-          var backButtonRoute = "/#/editor/" + route1 + "/menu";
-          var backButtonText = "Back to menu";
-          if (Origin.previousLocation.route2 === "page") {
-            backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
-            backButtonText = "Back to page";
-          }
-          Origin.sidebar.addView(new EditorMenuSettingsEditSidebarView().$el, {
-            "backButtonText": backButtonText,
-            "backButtonRoute": backButtonRoute
-          });
-          Origin.contentPane.setView(EditorMenuSettingsEditView, { model: model });
+        var backButtonRoute = "/#/editor/" + route1 + "/menu";
+        var backButtonText = "Back to menu";
+        if (data.type === "page") {
+          backButtonRoute = "/#/editor/" + route1 + "/page/" + data.id;
+          backButtonText = "Back to page";
         }
-      });
+        Origin.sidebar.addView(new EditorMenuSettingsEditSidebarView().$el, {
+          "backButtonText": backButtonText,
+          "backButtonRoute": backButtonRoute
+        });
+        Origin.contentPane.setView(EditorMenuSettingsEditView, { model: model });
+      }
     });
   });
 });

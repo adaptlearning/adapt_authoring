@@ -9,17 +9,16 @@ define(function(require) {
   var EditorBlockEditView = require('./views/editorBlockEditView');
   var EditorBlockEditSidebarView = require('./views/editorBlockEditSidebarView');
 
-  Origin.on('router:editor', function(route1, route2, route3, route4) {
-    EditorData.waitForLoad(function() {
-      if(route2 === 'block' && route4 === 'edit') {
-        (new BlockModel({ _id: route3 })).fetch({
-          success: function(model) {
-            var form = Origin.scaffold.buildForm({ model: model });
-            Helpers.setPageTitle(model);
-            Origin.sidebar.addView(new EditorBlockEditSidebarView({ model: model, form: form }).$el);
-            Origin.contentPane.setView(EditorBlockEditView, { model: model, form: form });
-          }
-        });
+  Origin.on('editor:block', function(data) {
+    if(data.action !== 'edit') {
+      return;
+    }
+    (new BlockModel({ _id: data.id })).fetch({
+      success: function(model) {
+        var form = Origin.scaffold.buildForm({ model: model });
+        Helpers.setPageTitle(model);
+        Origin.sidebar.addView(new EditorBlockEditSidebarView({ model: model, form: form }).$el);
+        Origin.contentPane.setView(EditorBlockEditView, { model: model, form: form });
       }
     });
   });

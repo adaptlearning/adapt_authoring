@@ -2,66 +2,83 @@
 define(function(require){
   var _ = require('underscore');
   var Backbone = require('backbone');
+  var SessionModel = require('modules/user/models/sessionModel');
 
-  var pluginTaps = [];
+  var initialized = false;
+  var eventTaps = [];
   var $loading;
 
-  var Origin = {
+  var Origin = _.extend({}, Backbone.Events, {
+    debug: true,
+    /**
+    * Performs the necessary set-up steps
+    */
     initialize: _.once(function() {
-      // set up loading asap
-      $loading = $('.loading');
-      hideLoading();
-      // let other code know we're about to initialise
-      Origin.tap('initialize', function() {
-        Origin.trigger('origin:initialize');
-        Backbone.history.start();
-        // Setup listeners for the loading screen
-        Origin.on('origin:hideLoading', hideLoading, this);
-        Origin.on('origin:showLoading', showLoading, this);
-        // abstracted window events to prevent keep adding/removing in views
-        $(window).on('resize', onResize);
-        $(document).on('keydown', onKeyDown);
+      (new SessionModel()).fetch({
+        success: function(model) {
+          Origin.sessionModel = model;
+          // need the schemas before the app loads
+          Origin.trigger('schemas:loadData', function() {
+            Origin.trigger('origin:dataReady');
+            initLoading();
+            initialized = true;
+            Origin.trigger('origin:initialize');
+          });
+        },
+        error: console.error
       });
+      listenToWindowEvents();
     }),
     /**
-    * Register a plugin to tap into a certain location before it loads
+    * Whether the Origin object has loaded
     */
-    registerPluginTap: function(location, pluginMethod) {
-      pluginTaps.push({
-        location: location,
-        pluginMethod: pluginMethod
+    hasInitialized: function() {
+      return initialized;
+    },
+    /**
+    * Override to allow for tapping and debug logging
+    * TODO this is probably very inefficient, look into this
+    */
+    trigger: function(eventName, data) {
+      var args = arguments;
+      callTaps(eventName, function() {
+        if(Origin.debug){
+          console.log('Origin.trigger:', eventName, (data ? data : ''));
+        }
+        Backbone.Events.trigger.apply(Origin, args);
       });
     },
     /**
-    * Makes sure all 'tapped' plugin functions are executed before continuing
+    * Register a function to tap into a certain event before it fires
     */
-    tap: function(location, callback) {
-      var currentLocationPlugins = _.where(pluginTaps, {location: location});
-      var currentLocationPluginsLength = currentLocationPlugins.length;
-      if (currentLocationPluginsLength === 0) {
-        return callback();
-      }
-      var count = 0;
-      function callPlugin() {
-        currentLocationPlugins[count].pluginMethod.call(null, function() {
-          var doneAll = ++count === currentLocationPluginsLength;
-          doneAll ? callback() : callPlugin();
-        });
-      }
-      callPlugin();
+    tap: function(event, callback) {
+      eventTaps.push({ event: event, callback: callback });
     },
     /**
-    * Tells
+    * Tells views to clean themselves up
     */
     removeViews: function() {
       Origin.trigger('remove:views');
     }
-  };
-  _.extend(Origin, Backbone.Events);
+  });
 
   /**
   * Private functions
   */
+
+  function initLoading() {
+    $loading = $('.loading');
+    hideLoading();
+
+    Origin.on('origin:hideLoading', hideLoading, Origin);
+    Origin.on('origin:showLoading', showLoading, Origin);
+  }
+
+  // abstracted window events
+  function listenToWindowEvents() {
+    $(document).on('keydown', onKeyDown);
+    $(window).on('resize', onResize);
+  }
 
   function showLoading(shouldHideTopBar) {
     $loading
@@ -77,6 +94,24 @@ define(function(require){
         .removeClass('cover-top-bar');
     }, this), 300);
   }
+
+  /**
+  * Calls all 'tapped' functions before continuing
+  */
+  function callTaps(event, callback) {
+    var taps = _.where(eventTaps, { event: event });
+    // recurse
+    function callTap() {
+      var tap = taps.pop();
+      if(!tap) return callback();
+      tap.callback.call(Origin, callTap);
+    }
+    callTap();
+  }
+
+  /**
+  * Event handling
+  */
 
   function onKeyDown(event) {
     if($(event.target).is('input, textarea')) return;

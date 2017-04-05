@@ -108,12 +108,12 @@ define(function(require) {
     },
 
     navigateToHome: function() {
-      if(!this.homeRoute) {
-        console.log('Router.navigateToHome: cannot load homepage, homeRoute not set');
+      if(!Origin.router.homeRoute) {
+        console.trace('Router.navigateToHome: cannot load homepage, homeRoute not set');
         return;
       }
       // use Origin.router.navigate in case we don't have a valid 'this' reference
-      Origin.router.navigateTo(this.homeRoute);
+      Origin.router.navigateTo(Origin.router.homeRoute);
     },
 
     handleIndex: function() {

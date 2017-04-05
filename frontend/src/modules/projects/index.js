@@ -80,7 +80,8 @@ define(function(require) {
   Origin.on('globalMenu:dashboard:open', function() {
     Origin.router.navigateTo('dashboard');
   });
-  Origin.on('app:dataReady login:changed', function() {
+
+  Origin.on('origin:dataReady login:changed', function() {
     Origin.router.setHomeRoute('dashboard');
     Origin.globalMenu.addItem({
       "location": "global",

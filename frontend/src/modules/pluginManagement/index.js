@@ -33,7 +33,7 @@ define(function(require) {
     "sortOrder": 3
   };
 
-  Origin.on('app:dataReady login:changed', function() {
+  Origin.on('origin:dataReady login:changed', function() {
     var permissions = ["{{tenantid}}/extensiontype/*:update"];
     Origin.permissions.addRoute('pluginManagement', permissions);
     if (Origin.permissions.hasPermissions(permissions)) {

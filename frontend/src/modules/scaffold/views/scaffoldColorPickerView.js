@@ -73,7 +73,7 @@ define(function(require) {
         template: "scaffoldColorPicker"
     });
 
-    Origin.on('app:dataReady', function() {
+    Origin.on('origin:dataReady', function() {
         Origin.scaffold.addCustomField('ColorPicker', ScaffoldColorPickerView);
     })
     

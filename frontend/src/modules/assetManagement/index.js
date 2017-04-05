@@ -52,7 +52,7 @@ define(function(require) {
     Origin.router.navigateTo('assetManagement');
   });
 
-  Origin.on('app:dataReady login:changed', function() {
+  Origin.on('origin:dataReady login:changed', function() {
     Origin.globalMenu.addItem({
       "location": "global",
       "text": Origin.l10n.t('app.assetmanagement'),

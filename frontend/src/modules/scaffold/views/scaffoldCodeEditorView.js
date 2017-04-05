@@ -110,7 +110,7 @@ define(function(require) {
       template: 'scaffoldCodeEditor'
     });
 
-    Origin.on('app:dataReady', function() {
+    Origin.on('origin:dataReady', function() {
         // Add code editor to the list of editors
         // Anything after "CodeEditor:" can correspond to the ACE editor mode types
         Origin.scaffold.addCustomField('CodeEditor:javascript', ScaffoldCodeEditorView);

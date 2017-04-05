@@ -14,7 +14,7 @@ define(function(require) {
     allTenants: new Backbone.Collection()
   };
 
-  Origin.on('app:dataReady login:changed', function() {
+  Origin.on('origin:dataReady login:changed', function() {
     Origin.permissions.addRoute('userManagement', data.featurePermissions);
 
   	if (Origin.permissions.hasPermissions(data.featurePermissions)) {

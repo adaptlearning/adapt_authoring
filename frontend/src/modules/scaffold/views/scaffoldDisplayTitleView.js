@@ -148,7 +148,7 @@ define(function(require) {
         template: 'scaffoldDisplayTitle'
     });
 
-    Origin.on('app:dataReady', function() {
+    Origin.on('origin:dataReady', function() {
         // Add Image editor to the list of editors
         Origin.scaffold.addCustomField('DisplayTitle', ScaffoldDisplayTitleView)  
     })

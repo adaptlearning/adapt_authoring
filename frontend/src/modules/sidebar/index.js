@@ -21,7 +21,7 @@ define(function(require) {
     }
 
     // Append sidebar to body
-    Origin.once('app:dataReady', function() {
+    Origin.once('origin:dataReady', function() {
         $('body').append(new SidebarContainerView().$el);
     });
 

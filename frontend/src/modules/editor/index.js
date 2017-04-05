@@ -15,7 +15,7 @@ define(function(require) {
     './selectTheme/index'
   ]);
   // loads editor data
-  Origin.on('app:dataReady login:changed', EditorData.loadGlobalData);
+  Origin.on('origin:dataReady login:changed', EditorData.loadGlobalData);
   Origin.on('router:editor editor:refreshData', EditorData.loadCourseData);
   Origin.on('editor:resetData', EditorData.reset);
 });

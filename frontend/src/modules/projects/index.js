@@ -8,58 +8,55 @@ define(function(require) {
   var TagsCollection = require('core/collections/tagsCollection');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
+    Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
+    Origin.options.addItems([
+      {
+        title: Origin.l10n.t('app.grid'),
+        icon: 'th',
+        callbackEvent: 'dashboard:layout:grid',
+        value: 'grid',
+        group: 'layout',
+      },
+      {
+        title: Origin.l10n.t('app.list'),
+        icon: 'list',
+        callbackEvent: 'dashboard:layout:list',
+        value: 'list',
+        group: 'layout'
+      },
+      {
+        title: Origin.l10n.t('app.ascending'),
+        icon: 'sort-alpha-asc',
+        callbackEvent: 'dashboard:sort:asc',
+        value: 'asc',
+        group: 'sort'
+      },
+      {
+        title: Origin.l10n.t('app.descending'),
+        icon: 'sort-alpha-desc',
+        callbackEvent: 'dashboard:sort:desc',
+        value: 'desc',
+        group: 'sort'
+      },
+      {
+        title: Origin.l10n.t('app.recent'),
+        icon: 'edit',
+        callbackEvent: 'dashboard:sort:updated',
+        value: 'updated',
+        group: 'sort'
+      }
+    ]);
 
-    Origin.tap('dashboard', function() {
-      Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
-      Origin.options.addItems([
-        {
-          title: Origin.l10n.t('app.grid'),
-          icon: 'th',
-          callbackEvent: 'dashboard:layout:grid',
-          value: 'grid',
-          group: 'layout',
-        },
-        {
-          title: Origin.l10n.t('app.list'),
-          icon: 'list',
-          callbackEvent: 'dashboard:layout:list',
-          value: 'list',
-          group: 'layout'
-        },
-        {
-          title: Origin.l10n.t('app.ascending'),
-          icon: 'sort-alpha-asc',
-          callbackEvent: 'dashboard:sort:asc',
-          value: 'asc',
-          group: 'sort'
-        },
-        {
-          title: Origin.l10n.t('app.descending'),
-          icon: 'sort-alpha-desc',
-          callbackEvent: 'dashboard:sort:desc',
-          value: 'desc',
-          group: 'sort'
-        },
-        {
-          title: Origin.l10n.t('app.recent'),
-          icon: 'edit',
-          callbackEvent: 'dashboard:sort:updated',
-          value: 'updated',
-          group: 'sort'
-        }
-      ]);
+    var tagsCollection = new TagsCollection();
 
-      var tagsCollection = new TagsCollection();
-
-      tagsCollection.fetch({
-        success: function() {
-          Origin.sidebar.addView(new ProjectsSidebarView({ collection: tagsCollection }).$el);
-          Origin.trigger('dashboard:loaded', { type: location || 'all' });
-        },
-        error: function() {
-          console.log('Error occured getting the tags collection - try refreshing your page');
-        }
-      });
+    tagsCollection.fetch({
+      success: function() {
+        Origin.sidebar.addView(new ProjectsSidebarView({ collection: tagsCollection }).$el);
+        Origin.trigger('dashboard:loaded', { type: location || 'all' });
+      },
+      error: function() {
+        console.log('Error occured getting the tags collection - try refreshing your page');
+      }
     });
   });
 

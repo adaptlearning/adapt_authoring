@@ -11,7 +11,7 @@ define(function(require) {
     }
   };
 
-  Origin.on('app:dataReady', function() {
+  Origin.on('origin:dataReady', function() {
     contentPaneView = new ContentPaneView();
     $('.app-inner').append(contentPaneView.$el);
   });

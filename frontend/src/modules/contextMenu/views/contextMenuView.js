@@ -31,10 +31,8 @@ define(function(require) {
       this.$('.context-menu-holder').empty();
       Origin.trigger('contextMenu:empty');
 
-      var contextView = this.contextView;
-
       _.each(this.collection.where({ type: this.type }), function(item) {
-        item.set('contextView', contextView);
+        item.set('contextView', this.contextView);
         new ContextMenuItemView({ model: item });
       });
     },
@@ -85,5 +83,6 @@ define(function(require) {
       $('html').off('click');
     }
   });
+  
   return ContextMenuView;
 });

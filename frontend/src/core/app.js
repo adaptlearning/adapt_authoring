@@ -24,7 +24,6 @@
       'core/permissions',
       'core/l10n',
       'core/constants',
-      'core/contextMenu',
       'core/contentPane'
     ], function(Templates, Origin, Router) {
       origin = Origin;

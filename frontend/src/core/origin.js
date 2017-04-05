@@ -78,6 +78,7 @@ define(function(require){
   function listenToWindowEvents() {
     $(document).on('keydown', onKeyDown);
     $(window).on('resize', onResize);
+    $(window).on('blur focus', onFocusBlur);
   }
 
   function showLoading(shouldHideTopBar) {
@@ -123,6 +124,16 @@ define(function(require){
     var windowWidth = $window.width();
     var windowHeight = $window.height();
     Origin.trigger('window:resize', windowWidth, windowHeight);
+  }
+
+  function onFocusBlur(event) {
+    var $win = $('window');
+    var prevType = $win.data("prevType");
+    // prevent double-firing
+    if(prevType === event.type) return;
+    // send out Origin events
+    var eventName = (event.type === 'focus') ? 'active' : 'inactive';
+    Origin.trigger('window:' + eventName, event);
   }
 
   return Origin;

@@ -39,6 +39,7 @@ function ImportSource(req, done) {
   var componentMap = {};
   var extensionMap = {};
   var extensionLocations = {};
+  var enabledExtensions = {};
   var tenantId = app.usermanager.getCurrentUser().tenant._id;
   var unzipFolder = tenantId + '_unzipped';
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, unzipFolder);
@@ -95,7 +96,7 @@ function ImportSource(req, done) {
       },
       function asyncImportContent(cb) {
         // socket importing course content
-        importContent(function(error) {
+        importContent(formTags, function(error) {
           if(error) return cb(error);
           // socket course content imported successfully
           cb();
@@ -159,7 +160,7 @@ function ImportSource(req, done) {
         var assetId = path.basename(assetPath, assetExt);
         var fileStat = fs.statSync(assetPath);
 
-        // TODO - this is a complete hack to test import
+        // TODO - description is required and should be something more meaningful
         var fileMeta = {
           oldId: assetId,
           title: assetName,
@@ -253,12 +254,12 @@ function ImportSource(req, done) {
   /**
   * Creates the course content
   */
-  function importContent(done) {
+  function importContent(formTags, done) {
     async.series([
       function createCourse(cb) {
         fs.readJson(path.join(courseRoot, 'course.json'), function(error, courseJson) {
           if(error) return cb(error);
-          courseJson = _.extend(courseJson, { _isShared: false }); // TODO remove this later
+          courseJson = _.extend(courseJson, { _isShared: false, tags: formTags }); // TODO remove this later
           createContentItem('course', courseJson, '', function(error, courseRec) {
             if(error) return cb(error);
             courseId = idMap[courseJson._id] = courseRec._id;
@@ -274,7 +275,20 @@ function ImportSource(req, done) {
       },
       function enableExtensions(cb) {
         // TODO this function should be surfaced properly somewhere
-         app.contentmanager.toggleExtensions(courseId.toString(), 'enable', _.values(extensionMap), cb);
+        async.eachSeries(plugindata.pluginIncludes, function(pluginData, doneItemIterator) {
+          if (pluginData.type == 'extension') {
+            fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, extensionJson) {
+              if(error) return cb(error);
+              enabledExtensions[extensionJson.extension] = extensionMap[extensionJson.extension];
+              doneItemIterator();
+            });
+          } else {
+            doneItemIterator();
+          }
+        }, function(error) {
+          if(error) return cb(error);
+          app.contentmanager.toggleExtensions(courseId.toString(), 'enable', _.values(enabledExtensions), cb);
+        });
       },
       function createContent(cb) {
         async.eachSeries(Object.keys(contentMap), function(type, cb2) {

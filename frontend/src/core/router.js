@@ -151,8 +151,6 @@ define(function(require) {
 
     onOriginInitialize: function() {
       Backbone.history.start();
-    },
-
     }
   });
 

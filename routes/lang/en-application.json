@@ -311,7 +311,8 @@
   "app.validationfailed": "Validation failed",
   "app.validationfailedmessage": "You need to fix the following before you can save your data:",
   "app.successdefaulttitle": "Success",
-  "app.export": "Export source code",
+  "app.export": "Export",
+  "app.exportdev": "Export source code",
   "app.exporting": "Exporting source code",
   "app.exportcoursetitle": "Exporting course",
   "app.exporterrortitle": "Course export failed",
@@ -352,5 +353,15 @@
   "app.visitpluginhomepage": "Visit plugin homepage",
   "app.greeting": "Hi",
   "app.emaillogotext": "ADAPT",
-  "app.emailfooter": "Sent by Adapt Learning."
+  "app.emailfooter": "Sent by Adapt Learning.",
+  "app.courseimportmenu": "Course Import",
+  "app.courseimporttitle": "Import Course",
+  "app.importsidebarbutton": "Import",
+  "app.importinstruction": "Select course zip for import. Tags will be added to the course and all new assets.",
+  "app.importvalidationerror": "This isn't a zip file!",
+  "app.importerrortitle": "Course import failed",
+  "app.importcoursesuccess": "Course imported successfully!",
+  "app.frameworkimportmenu": "Source Import",
+  "app.frameworkimporttitle": "Import Framework Course",
+  "app.importframeworkinstruction": "Select a framework zip for import. Tags will be added to the course and all new assets."
 }

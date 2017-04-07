@@ -151,8 +151,8 @@ define(function(require){
       }, this);
 
       var supportedLayout = componentType.get("properties")._supportedLayout;
-      var isFullSupported = _.indexOf(supportedLayout.enum, "full-width") > -1;
-      var isHalfSupported = _.indexOf(supportedLayout.enum, "half-width") > -1;
+      var isFullWidthSupported = _.indexOf(supportedLayout.enum, "full-width") > -1;
+      var isHalfWidthSupported = _.indexOf(supportedLayout.enum, "half-width") > -1;
 
       var movePositions = {
         left: false,
@@ -160,9 +160,9 @@ define(function(require){
         full: false
       };
 
-      if (isHalfSupported) {
+      if (isHalfWidthSupported) {
         var siblings = this.model.getSiblings();
-        var showFull = !siblings.length && isFullSupported;
+        var showFull = !siblings.length && isFullWidthSupported;
         var type = this.model.get('_layout');
 
         switch (type) {

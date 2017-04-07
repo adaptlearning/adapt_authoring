@@ -82,11 +82,7 @@ define(function(require) {
         var properties = componentType.get('properties');
         if (properties && properties.hasOwnProperty('_supportedLayout')) {
           var supportedLayout = properties._supportedLayout.enum;
-          var availablePositions = {
-            left: true,
-            right: true,
-            full: true
-          };
+          var availablePositions = _.clone(this.availablePositions);
 
           // Prune the available positions
           if (_.indexOf(supportedLayout, 'half-width') == -1) {

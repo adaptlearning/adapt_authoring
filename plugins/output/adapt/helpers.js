@@ -26,7 +26,7 @@ function unzip(filePath, unzipPath, done) {
   // unzip package
   yauzl.open(filePath, { lazyEntries: true }, function(error, zipfile) {
     if (error) {
-      return next(error);
+      return done(error);
     }
     zipfile.readEntry();
     zipfile.on("entry", function(entry) {
@@ -35,7 +35,7 @@ function unzip(filePath, unzipPath, done) {
         // directory file names end with '/'
         fs.ensureDir(dest, function(err) {
           if (error) {
-            return next(error);
+            return done(error);
           }
           zipfile.readEntry();
         });
@@ -43,12 +43,12 @@ function unzip(filePath, unzipPath, done) {
         // file entry
         zipfile.openReadStream(entry, function(err, readStream) {
           if (error) {
-            return next(error);
+            return done(error);
           }
           // ensure parent directory exists
           fs.ensureDir(path.dirname(dest), function(err) {
             if (error) {
-              return next(error);
+              return done(error);
             }
             readStream.pipe(fs.createWriteStream(dest));
             readStream.on("end", function() {
@@ -213,16 +213,42 @@ function checkFrameworkVersion(versionMetaData, cb) {
   }
 };
 
+// TODO move this to lib/outputmanager
 function ImportError(message, httpStatus) {
   this.message = message || "Course import failed";
   this.httpStatus = httpStatus || 500;
 };
 util.inherits(ImportError, Error);
 
+
+/**
+* Recursively sorts list to ensure parents come before children
+*/
+function sortContentObjects(list, parentId, sorted) {
+  // remove parent
+  var parentIndex = _.findIndex(list, { _id: parentId });
+  if(parentIndex > -1) list.splice(_.findIndex(list, { _id: parentId }), 1);
+  // recursively store children
+  var thisChildren = _.where(list, { _parentId: parentId });
+  _.each(thisChildren, function(child, index) {
+    sorted.push(child);
+    sortContentObjects(list, child._id, sorted);
+  });
+  return sorted;
+};
+
+
+// deletes passed list of dirs/files
+function cleanUpImport(dirs, doneCleanUp) {
+  async.each(dirs, fs.remove, doneCleanUp);
+};
+
 exports = module.exports = {
   unzip: unzip,
   importPlugin: importPlugin,
   importAsset: importAsset,
   checkFrameworkVersion: checkFrameworkVersion,
-  ImportError: ImportError
+  ImportError: ImportError,
+  sortContentObjects: sortContentObjects,
+  cleanUpImport: cleanUpImport
 };

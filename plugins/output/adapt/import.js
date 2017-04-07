@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 var _ = require('underscore');
-var archiver = require('archiver');
 var async = require('async');
 var fs = require("fs-extra");
 var path = require("path");
@@ -9,10 +8,7 @@ var IncomingForm = require('formidable').IncomingForm;
 var origin = require('../../../')();
 var database = require("../../../lib/database");
 var logger = require("../../../lib/logger");
-var outputmanager = require("../../../lib/outputmanager");
 var usermanager = require('../../../lib/usermanager');
-var semver = require('semver');
-var version = require('../../../version');
 var glob = require('glob');
 var Constants = require('../../../lib/outputmanager').Constants;
 var helpers = require('./helpers');
@@ -70,7 +66,7 @@ function Import(req, done) {
         importCourseassets(cb);
       },
       function doneImport(cb) {
-        cleanUpImport(cleanupDirs, cb);
+        helpers.cleanUpImport(cleanupDirs, cb);
       }
     ], function(error, results) {
       if (error) {
@@ -124,7 +120,7 @@ function Import(req, done) {
       switch(type) {
         case 'contentobject':
           var groups = _.groupBy(item, '_type');
-          var sortedSections = sortContentObjects(groups.menu, metadata.course.course[0]._id, []);
+          var sortedSections = helpers.sortContentObjects(groups.menu, metadata.course.course[0]._id, []);
           metadata.course[type] = sortedSections.concat(groups.page);
           break;
         default:
@@ -136,21 +132,6 @@ function Import(req, done) {
     });
   };
 
-  /**
-  * Recursively sorts list to ensure parents come before children
-  */
-  function sortContentObjects(list, parentId, sorted) {
-    // remove parent
-    var parentIndex = _.findIndex(list, { _id: parentId });
-    if(parentIndex > -1) list.splice(_.findIndex(list, { _id: parentId }), 1);
-    // recursively store children
-    var thisChildren = _.where(list, { _parentId: parentId });
-    _.each(thisChildren, function(child, index) {
-      sorted.push(child);
-      sortContentObjects(list, child._id, sorted);
-    });
-    return sorted;
-  };
 
   /**
   * Adds tags to the DB
@@ -331,18 +312,13 @@ function Import(req, done) {
           origin.assetmanager.destroyAsset(metadata.idMap[asset.oldId], assetDeleted);
         }, cb);
       },
-      // TODO - Need to check if plugin has been installed with this import
+      // TODO - Need to check if plugin has been installed with this import before removing
       /* function deletePlugins(cb) {
         async.each(metadata.pluginIncludes, function(pluginData, donePluginIterator) {
           origin.bowermanager.destroyPlugin(pluginData.type, pluginData.name, donePluginIterator);
         }, cb);
       } */
     ], doneRemove);
-  };
-
-  // deletes passed list of dirs/files
-  function cleanUpImport(dirs, doneCleanUp) {
-    async.each(dirs, fs.remove, doneCleanUp);
   };
 
 }

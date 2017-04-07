@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 var _ = require('underscore');
-var archiver = require('archiver');
 var async = require('async');
 var fs = require("fs-extra");
 var path = require("path");
@@ -14,7 +13,6 @@ var mime = require('mime');
 var glob = require('glob');
 var crypto = require('crypto');
 var filestorage = require('../../../lib/filestorage');
-var version = require('../../../version');
 
 // TODO integrate with sockets API to show progress
 
@@ -45,7 +43,9 @@ function ImportSource(req, done) {
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, unzipFolder);
   var courseRoot = path.join(COURSE_ROOT_FOLDER, 'src', 'course', 'en' );
   var form = new IncomingForm();
+  var origCourseId;
   var courseId;
+  var cleanupDirs = [];
 
 
   form.parse(req, function (error, fields, files) {
@@ -64,6 +64,8 @@ function ImportSource(req, done) {
         helpers.unzip(files.file.path, COURSE_ROOT_FOLDER, function(error) {
           if(error) return cb(error);
           // socket files unzipped
+          var zipPath = files.file.path;
+          cleanupDirs.push(zipPath,COURSE_ROOT_FOLDER);
           cb();
         });
       },
@@ -101,6 +103,9 @@ function ImportSource(req, done) {
           // socket course content imported successfully
           cb();
         });
+      },
+      function cleanUpTasks(cb) {
+        helpers.cleanUpImport(cleanupDirs, cb);
       }
     ], done);
   });
@@ -262,7 +267,8 @@ function ImportSource(req, done) {
           courseJson = _.extend(courseJson, { _isShared: false, tags: formTags }); // TODO remove this later
           createContentItem('course', courseJson, '', function(error, courseRec) {
             if(error) return cb(error);
-            courseId = idMap[courseJson._id] = courseRec._id;
+            origCourseId = courseJson._id;
+            courseId = idMap[origCourseId] = courseRec._id;
             cb();
           });
         });
@@ -296,6 +302,15 @@ function ImportSource(req, done) {
             if(error) return cb2(error);
             fs.readJson(path.join(courseRoot, contentMap[type] + '.json'), function(error, contentJson) {
               if(error) return cb2(error);
+
+              // TODO - contenoObjects could do with sorting by parentId not just menu/page
+              // Sorts in-place the content objects to make sure processing can happen
+              if (type == 'contentobject') {
+                var groups = _.groupBy(contentJson, '_type');
+                var sortedSections = helpers.sortContentObjects(groups.menu, origCourseId, []);
+                contentJson = sortedSections.concat(groups.page);
+              }
+
               // assume we're using arrays
               async.eachSeries(contentJson, function(item, cb3) {
                 createContentItem(type, item, courseId, function(error, contentRec) {

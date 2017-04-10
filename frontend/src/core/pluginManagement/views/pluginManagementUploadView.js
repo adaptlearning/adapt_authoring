@@ -2,10 +2,10 @@
 define(function(require){
   var _ = require('underscore');
   var Backbone = require('backbone');
-  var Helpers = require('coreJS/app/helpers');
-  var OriginView = require('coreJS/app/views/originView');
-  var Origin = require('coreJS/app/origin');
-  var AssetModel = require('coreJS/assetManagement/models/assetModel');
+  var Helpers = require('core/app/helpers');
+  var OriginView = require('core/app/views/originView');
+  var Origin = require('core/app/origin');
+  var AssetModel = require('core/assetManagement/models/assetModel');
   var TagsInput = require('core/libraries/jquery.tagsinput.min');
 
   var PluginManagementUploadView = OriginView.extend({

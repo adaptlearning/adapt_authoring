@@ -2,7 +2,7 @@
 define(function(require) {
 
   var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
+  var Origin = require('core/app/origin');
   var _ = require('underscore');
 
   var UserProfileModel = Backbone.Model.extend({

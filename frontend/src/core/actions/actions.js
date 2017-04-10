@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
-	var Origin = require('coreJS/app/origin');
-	var ActionsView = require('coreJS/actions/views/actionsView');
+	var Origin = require('core/app/origin');
+	var ActionsView = require('core/actions/views/actionsView');
 
 	var Actions = {};
 

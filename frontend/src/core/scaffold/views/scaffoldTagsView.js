@@ -3,10 +3,10 @@ define(function(require) {
 
     var Backbone = require('backbone');
     var BackboneForms = require('backboneForms');
-    var Origin = require('coreJS/app/origin');
+    var Origin = require('core/app/origin');
     var jQuery = require('jquery');
     var TagsInput = require('core/libraries/jquery.tagsinput.min');
-    var Helpers = require('coreJS/app/helpers');
+    var Helpers = require('core/app/helpers');
 
     var ScaffoldTagsView = Backbone.Form.editors.Base.extend({
 

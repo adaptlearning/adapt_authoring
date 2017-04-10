@@ -217,6 +217,7 @@
   "app.uploadedbyuser": "Uploaded By User",
   "app.checkforupdates": "Check for updates",
   "app.pluginfile": "Plugin File",
+  "app.noplugintypes": "No plugin types to display",
   "app.menupicker": "Menu picker",
   "app.menumanagement": "Manage Available Menus",
   "app.tenantmanagement": "Tenant Management",

@@ -2,7 +2,7 @@
 define(function(require) {
 
   var Backbone = require('backbone');
-  var ThemeTypeModel = require('coreJS/pluginManagement/models/themeTypeModel');
+  var ThemeTypeModel = require('core/pluginManagement/models/themeTypeModel');
 
   var ThemeTypeCollection = Backbone.Collection.extend({
 

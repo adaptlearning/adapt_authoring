@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
     var Handlebars = require('handlebars');
-    var Origin = require('coreJS/app/origin');
+    var Origin = require('core/app/origin');
     var moment = require('moment');
 
     var helpers = {
@@ -209,8 +209,8 @@ define(function(require){
           var urlSplit = url.split('/')
           var fileName = urlSplit[urlSplit.length - 1];
           // Get courseAsset model
-          var courseAsset = Origin.editor.data.courseAssets.findWhere({_fieldName: fileName});
-          
+          var courseAsset = Origin.editor.data.courseassets.findWhere({_fieldName: fileName});
+
           if (courseAsset) {
             var courseAssetId = courseAsset.get('_assetId');
 
@@ -233,7 +233,7 @@ define(function(require){
           var urlSplit = url.split('/')
           var fileName = urlSplit[urlSplit.length - 1];
           // Get courseAsset model
-          var courseAsset = Origin.editor.data.courseAssets.findWhere({_fieldName: fileName});
+          var courseAsset = Origin.editor.data.courseassets.findWhere({_fieldName: fileName});
           if (courseAsset) {
             var courseAssetId = courseAsset.get('_assetId');
             return '/api/asset/thumb/' + courseAssetId;

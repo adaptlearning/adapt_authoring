@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var OriginView = require('coreJS/app/views/originView');
-  var Origin = require('coreJS/app/origin');
+  var OriginView = require('core/app/views/originView');
+  var Origin = require('core/app/origin');
 
   var SharedProjectView = OriginView.extend({
     tagName: 'li',
@@ -26,7 +26,10 @@ define(function(require){
     },
 
     openContextMenu: function(e) {
-      e && e.stopPropagation() && e.preventDefault();
+      if(e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
       Origin.trigger('contextMenu:open', this, e);
     },
 

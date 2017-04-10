@@ -9,7 +9,6 @@ require.config({
       handlebars: 'core/libraries/handlebars',
       inview: 'core/libraries/inview',
       imageReady: 'core/libraries/imageReady',
-      coreJS: 'core',
       templates: 'templates/templates',
       polyglot: 'core/libraries/polyglot.min',
       sweetalert: 'core/libraries/sweetalert.min',

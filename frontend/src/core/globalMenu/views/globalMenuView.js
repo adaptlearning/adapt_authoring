@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
     
-    var Origin = require('coreJS/app/origin');
-    var GlobalMenuItemView = require('coreJS/globalMenu/views/globalMenuItemView');
+    var Origin = require('core/app/origin');
+    var GlobalMenuItemView = require('core/globalMenu/views/globalMenuItemView');
 
     var GlobalMenuView = Backbone.View.extend({
 

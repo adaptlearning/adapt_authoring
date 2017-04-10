@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
-    var Origin = require('coreJS/app/origin');
-    var GlobalMenuView = require('coreJS/globalMenu/views/globalMenuView');
+    var Origin = require('core/app/origin');
+    var GlobalMenuView = require('core/globalMenu/views/globalMenuView');
 
     // Create GlobalMenu object
     var GlobalMenu = {};

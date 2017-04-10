@@ -1,11 +1,11 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
 
-  var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
-  var SidebarFieldsetFilterView = require('coreJS/sidebar/views/sidebarFieldsetFilterView');
+  var Origin = require('core/app/origin');
+  var OriginView = require('core/app/views/originView');
+  var SidebarFieldsetFilterView = require('core/sidebar/views/sidebarFieldsetFilterView');
   var Backbone = require('backbone');
-  var Helpers = require('coreJS/app/helpers');
+  var Helpers = require('core/app/helpers');
 
   var SidebarItemView = OriginView.extend({
 

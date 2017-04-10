@@ -2,7 +2,7 @@
 define(function(require) {
   var Backbone = require('backbone');
   var BackboneForms = require('backboneForms');
-  var Origin = require('coreJS/app/origin');
+  var Origin = require('core/app/origin');
 
   var TextAreaBlankView = Backbone.Form.editors.TextArea.extend({
     render: function() {

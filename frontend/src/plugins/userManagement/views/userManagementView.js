@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
-  var Helpers = require('coreJS/app/helpers');
+  var Origin = require('core/app/origin');
+  var OriginView = require('core/app/views/originView');
+  var Helpers = require('core/app/helpers');
   var UserCollection = require('../collections/userCollection.js');
   var UserModel = require('../models/userModel.js');
   var UserView = require('../views/userView.js');
@@ -40,17 +40,11 @@ define(function(require){
       this.$('.users').fadeOut(0);
 
       this.users.each(this.createUserView, this);
-      this.setHeight();
 
       if($selected) {
         var selector = $selected.className.replace(SELECTED_CLASS,'');
         $(document.getElementsByClassName(selector)).addClass(SELECTED_CLASS).click();
       }
-    },
-
-    setHeight: function() {
-      var newHeight = $(window).height()-$('.'+this.className).offset().top;
-      $('.'+this.className).height(newHeight);
     },
 
     postRender: function() {
@@ -74,7 +68,7 @@ define(function(require){
     onDataFetched: function(models, reponse, options) {
       this.render();
     }
-
+    
   }, {
     template: 'userManagement'
   });

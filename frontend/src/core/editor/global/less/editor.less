@@ -1,36 +1,29 @@
-.hovering {
-    >.editor-item-settings {
-        opacity:1;
-        top:0;
-    }
-}
-
 .editor-view {
 
   .editor-container {
-    position:relative;
+    position: relative;
     width: 100%;
     height: 100%;
   }
 
   .editor-panel {
-    float:right;
-    width:10%;
+    float: right;
+    width: 10%;
   }
 
   .editor {
-    float:left;
-    width:90%;
-    height:100%;
+    float: left;
+    width: 90%;
+    height: 100%;
     background-color: lightgrey;
   }
 
   .paste-zone {
-    margin:30px;
+    margin: 30px;
     height: 50px;
 
     &-inner {
-        padding:20px 30px;
+      padding: 20px 30px;
     }
 
     &-component-left {
@@ -44,11 +37,11 @@
     }
 
     &-component {
-        margin:0px;
+      margin: 0px;
     }
 
     &-component-full {
-        margin-bottom:20px;
+      margin-bottom: 20px;
     }
 
   }
@@ -93,10 +86,6 @@
     }
   }
 
-  .open-context-icon {
-    // color: #fff;
-  }
-
   .drag-helper {
     color: #DEDEDE;
     border: 1px solid #C9C9C9;
@@ -106,7 +95,6 @@
     cursor: move;
     min-width: 100px;
   }
-
 }
 
 .editor-item-settings {
@@ -119,23 +107,20 @@
     background-color: transparent;
     transition: all 0.3s;
 
+    a {
+      text-decoration: none;
+    }
+
     &:hover {
       cursor: move;
     }
 
     &-inner {
-        padding:6px;
+      padding: 6px;
     }
 
-    a {
-        text-decoration: none;
-        color:#000;
-        &:hover {
-            color:darken(#fff, 10%);
-        }
-    }
     .editor-delete-page-element {
-        float:right;
+      float: right;
     }
 }
 
@@ -149,8 +134,6 @@ i.asset-clear {
   cursor: pointer;
 }
 
-.sweet-alert {
-  .key {
-    font-weight: bold;
-  }
+.sweet-alert .key {
+  font-weight: bold;
 }

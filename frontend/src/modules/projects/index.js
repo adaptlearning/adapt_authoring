@@ -52,6 +52,7 @@ define(function(require) {
       case 'all':
         Origin.trigger('location:title:update', { title: Origin.l10n.t('app.myprojects') });
         Origin.contentPane.setView(ProjectsView, { collection: new MyProjectCollection() });
+        break;
       case 'shared':
         Origin.trigger('location:title:update', { title: Origin.l10n.t('app.sharedprojects') });
         Origin.contentPane.setView(ProjectsView, { collection: new SharedProjectCollection() });

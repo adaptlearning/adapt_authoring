@@ -2,12 +2,13 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
+  var Helpers = require('../global/helpers');
 
   var EditorExtensionsEditView = require('./views/editorExtensionsEditView');
   var EditorExtensionsEditSidebarView = require('./views/editorExtensionsEditSidebarView');
 
   Origin.on('editor:extensions', function(data) {
-    Origin.trigger('location:title:update', { title: 'Manage extensions' });
+    Helpers.setPageTitle({ title: Origin.l10n.t('app.editorextensionstitle') });
     var route1 = Origin.location.route1;
     // Check whether the user came from the page editor or menu editor
     var backButtonRoute = "/#/editor/" + route1 + "/menu";

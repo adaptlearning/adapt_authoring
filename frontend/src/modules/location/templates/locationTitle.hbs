@@ -1,26 +1,26 @@
 <div class="location-title-inner">
-	{{#if breadcrumbs}}
-		<div class="breadcrumbs">
-			{{#each breadcrumbs}}
-				<div class="item">
-					{{#ifLastElement @index ../breadcrumbs}}
-						{{title}}
-					{{else}}
-						{{#if url}}
-							<a href="{{url}}">{{title}}</a>
-						{{else}}
-							{{title}}
-						{{/if}}
-					{{/ifLastElement}}
-				</div>
-				{{#ifLastElement @index ../breadcrumbs}}
-				{{else}}
-					<div class="separator unselecable">&gt;</div>
-				{{/ifLastElement}}
-			{{/each}}
-		</div>
-	{{/if}}
-	<div class="title">
-		{{title}}
-	</div>
+  {{#if breadcrumbs}}
+    <div class="breadcrumbs">
+    {{#each breadcrumbs}}
+      <div class="item">
+        {{#if @last}}
+          {{title}}
+        {{else}}
+          {{#if url}}
+            <a href="{{url}}">{{title}}</a>
+          {{else}}
+            {{title}}
+          {{/if}}
+        {{/if}}
+      </div>
+      {{#if @last}}
+      {{else}}
+        <div class="separator unselecable">&gt;</div>
+      {{/if}}
+    {{/each}}
+    </div>
+  {{/if}}
+  <div class="title">
+    {{title}}
+  </div>
 </div>

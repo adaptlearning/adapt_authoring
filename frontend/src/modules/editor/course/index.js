@@ -1,6 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Origin = require('core/origin');
+  var Helpers = require('../global/helpers');
 
   var CourseModel = require('core/models/courseModel');
   var EditorCourseEditView = require('./views/editorCourseEditView');
@@ -14,8 +15,8 @@ define(function(require) {
   function renderCourseEdit() {
     (new CourseModel({ _id: Origin.location.route1 })).fetch({
       success: function(model) {
+        Helpers.setPageTitle(model);
         var form = Origin.scaffold.buildForm({ model: model });
-        Origin.trigger('location:title:update', { title: Origin.l10n.t('app.editcourse') });
         Origin.contentPane.setView(EditorCourseEditView, { model: model, form: form });
         Origin.sidebar.addView(new EditorCourseEditSidebarView({ form: form }).$el);
       }
@@ -27,8 +28,8 @@ define(function(require) {
       title: Origin.l10n.t('app.placeholdernewcourse'),
       displayTitle: Origin.l10n.t('app.placeholdernewcourse')
     });
+    Helpers.setPageTitle(model);
     var form = Origin.scaffold.buildForm({ model: model });
-    Origin.trigger('location:title:update', { title: Origin.l10n.t('app.addnewproject') });
     Origin.contentPane.setView(EditorCourseEditView, { model: model, form: form });
     Origin.sidebar.addView(new EditorCourseEditSidebarView({ form: form }).$el);
   }

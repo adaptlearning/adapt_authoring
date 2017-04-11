@@ -4,6 +4,7 @@ define(function(require) {
   * This module handles both sections/menus and pages.
   */
   var Origin = require('core/origin');
+  var Helpers = require('../global/helpers');
 
   var ContentObjectModel = require('core/models/contentObjectModel');
   var EditorMenuSidebarView = require('./views/editorMenuSidebarView');
@@ -39,10 +40,10 @@ define(function(require) {
   function renderContentObjectEdit(data) {
     (new ContentObjectModel({ _id: data.id })).fetch({
       success: function(model) {
+        Helpers.setPageTitle(model);
         var form = Origin.scaffold.buildForm({ model: model });
         // TODO this should be properly localised
         var type = Origin.location.route2;
-        Origin.trigger('location:title:update', { title: 'Editing ' + type + ' - ' + model.get('title') });
         Origin.sidebar.addView(new EditorPageEditSidebarView({ form: form }).$el);
         Origin.contentPane.setView(EditorPageEditView, { model: model, form: form });
       }
@@ -50,7 +51,7 @@ define(function(require) {
   }
 
   function renderPageStructure(data) {
-    Origin.trigger('location:title:update', { title: 'Page editor' });
+    Helpers.setPageTitle({ title: 'Page editor' });
 
     Origin.sidebar.addView(new EditorPageSidebarView().$el, {
       "backButtonText": "Back to course structure",
@@ -64,7 +65,7 @@ define(function(require) {
   }
 
   function renderMenuStructure(data) {
-    Origin.trigger('location:title:update', { title: 'Menu editor' });
+    Helpers.setPageTitle({ title: 'Menu editor' });
 
     Origin.editor.currentContentObjectId = data.id;
     Origin.editor.scrollTo = 0;

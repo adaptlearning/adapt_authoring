@@ -1,7 +1,7 @@
 define(function(require) {
   var Origin = require('core/origin');
 
-  var helpers = {
+  var Helpers = {
     /**
     * set the page title based on location
     * accepts backbone model, or object like so { title: '' }
@@ -22,7 +22,21 @@ define(function(require) {
       var modelTitle = model && model.get && model.get('title');
       var langString = Origin.l10n.t('app.' + titleKey);
 
-      Origin.trigger('location:title:update', { title: modelTitle || langString });
+      var crumbs = ['dashboard'];
+      if(type !== 'menu') crumbs.push('course');
+      if(action === 'edit') {
+        var page = Helpers.getNearestPage(model);
+        crumbs.push({
+          title: Origin.l10n.t('app.editorpage'),
+          url: '#/editor/' + page.get('_courseId') + '/page/' + page.get('_id')
+        });
+      }
+      crumbs.push({ title: langString });
+
+      Origin.trigger('location:title:update', {
+        breadcrumbs: crumbs,
+        title: modelTitle || langString
+      });
     },
 
     getNearestPage: function(model) {
@@ -42,5 +56,5 @@ define(function(require) {
     }
   }
 
-  return helpers;
+  return Helpers;
 });

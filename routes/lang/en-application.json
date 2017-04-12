@@ -61,6 +61,7 @@
   "app.continue": "Continue",
   "app.cancel": "Cancel",
   "app.confirmduplicate": "Are you sure you want to duplicate this course so you can edit it locally?",
+  "app.backtoprojects": "Back to courses",
   "app.myprojects": "My courses",
   "app.addnewproject": "Add new course",
   "app.myprojects": "My courses",
@@ -285,11 +286,12 @@
   "app.assetmanagement": "Asset Management",
   "app.tagfetcherror": "An error occured getting the tags collection. Please try refreshing your page.",
   "app.editormenu": "Course structure",
+  "app.backtomenu": "Back to course structure",
   "app.editorpage": "Page structure",
-  "app.editorpagesettings": "Page settings",
-  "app.editorarticle": "Article settings",
-  "app.editorblock": "Block settings",
-  "app.editorcomponent": "Component settings",
+  "app.editorpageedit": "Page settings",
+  "app.editorarticleedit": "Article settings",
+  "app.editorblockedit": "Block settings",
+  "app.editorcomponentedit": "Component settings",
   "app.editorsettings": "Project settings",
   "app.editorsettingstitle": "Adjust course attributes",
   "app.editorconfig": "Configuration settings",
@@ -298,5 +300,6 @@
   "app.editormenusettingstitle": "Select a menu for your course",
   "app.editorextensions": "Manage extensions",
   "app.editorextensionstitle": "Manage course extensions",
-  "app.editorselecttheme": "Theme picker"
+  "app.editorselecttheme": "Theme picker",
+  "app.editing": "Editing %{text}"
 }

@@ -25,7 +25,7 @@ define(function(require) {
     */
     render: function(data) {
       this.processBreadcrumbData(data);
-      console.log(data);
+
       var template = Handlebars.templates[this.constructor.template];
       this.$el.html(template(data));
       _.defer(_.bind(this.postRender, this));

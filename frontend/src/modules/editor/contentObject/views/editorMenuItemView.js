@@ -8,6 +8,8 @@ define(function(require){
     tagName: "div",
 
     autoScrollTimer: false,
+    clickTimer,
+    clickTimerActive: false,
 
     events: {
       'click .editor-menu-item-inner': 'onMenuItemClicked',
@@ -17,104 +19,74 @@ define(function(require){
     },
 
     preRender: function() {
-      this.setupEvents();
       this.setupClasses();
     },
 
     postRender: function() {
-      // setup drag
-      this.$el.closest('.editor-menu').on('mousemove', _.bind(this.handleDrag, this));
+      this.setupEvents();
       // Check if the current item is expanded and update the next menuLayerView
       // This can end up being recursive if an item is selected inside a few menu items
-      if (this.model.get('_isExpanded')) {
+      if(this.model.get('_isExpanded')) {
         Origin.trigger('editorView:menuView:updateSelectedItem', this);
       }
     },
 
     remove: function() {
       this.$el.closest('.editor-menu-layer').off('mousemove');
-
-      // Call original remove
       EditorOriginView.prototype.remove.apply(this, arguments);
     },
 
     setupEvents: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-      this.listenTo(this.model, 'change:_isExpanded', this.onExpandedChange);
-      this.listenTo(this.model, 'change:_isSelected', this.onSelectedChange);
 
+      this.listenTo(this.model, {
+        'change:_isExpanded': this.onExpandedChange,
+        'change:_isSelected': this.onSelectedChange
+      });
       // Handle the context menu clicks
-      this.on('contextMenu:menu:edit', this.editMenuItem);
-      this.on('contextMenu:menu:copy', this.copyMenuItem);
-      this.on('contextMenu:menu:copyID', this.copyID);
-      this.on('contextMenu:menu:delete', this.deleteItemPrompt);
+      this.on({
+        'contextMenu:menu:edit': this.editMenuItem,
+        'contextMenu:menu:copy': this.copyMenuItem,
+        'contextMenu:menu:copyID': this.copyID,
+        'contextMenu:menu:delete': this.deleteItemPrompt
+      });
 
-      this.on('contextMenu:page:edit', this.editMenuItem);
-      this.on('contextMenu:page:copy', this.copyMenuItem);
-      this.on('contextMenu:page:copyID', this.copyID);
-      this.on('contextMenu:page:delete', this.deleteItemPrompt);
+      this.$el.closest('.editor-menu').on('mousemove', _.bind(this.handleDrag, this));
     },
 
     setupClasses: function() {
       var classString = '';
-      if (this.model.get('_isSelected')) {
-        classString += 'selected ';
-      }
-      if (this.model.get('_isExpanded')) {
-        classString += 'expanded ';
-      }
+      if (this.model.get('_isSelected')) classString += 'selected ';
+      if(this.model.get('_isExpanded')) classString += 'expanded ';
       classString += ('content-type-'+this.model.get('_type'));
-
       this.$el.addClass(classString);
     },
 
     onMenuItemClicked: function(event) {
-      // TODO - Fix this to the view not the model
-      // Boo - jQuery doesn't allow dblclick and single click on the same element
-      // time for a timer timing clicks against time delay
-      var delay = 300;
-      var timer = null;
-      // Needing to store this on the model as global variables
-      // cause an issue that double click loses scope
-      var clicks = this.model.get('clicks');
-      this.model.set('clicks', clicks ? clicks : 0);
-
-      var currentClicks = this.model.get('clicks') + 1;
-      this.model.set('clicks', currentClicks);
-      // No matter what type of click - select the item straight away
+      event && event.preventDefault();
+      // select item regardless of single/double click
       this.setItemAsSelected();
-
-      if(currentClicks === 1) {
-        timer = setTimeout(_.bind(function() { this.model.set('clicks', 0); }, this), delay);
-      } else if (currentClicks === 2) {
-        clearTimeout(timer);
-        // Only if the current double clicked it is a page item
-        if (this.model.get('_type') == 'page') {
-          this.gotoPageEditor();
-        } else if (this.model.get('_type') == 'menu') {
-          this.gotoSubMenuEditor();
-        }
-        this.model.set('clicks', 0);
+      // handle double-click
+      if(this.clickTimerActive) {
+        return this.onMenuItemDoubleClicked(event);
       }
+      this.clickTimerActive = true;
+      // jQuery doesn't allow dblclick and click on the same element, so have to do it ourselves
+      this.clickTimer = window.setTimeout(_.bind(function() {
+        this.clickTimerActive = false;
+        window.clearTimeout(this.clickTimer);
+      }, this), 300);
     },
 
-    selectedLevel: function() {
-      $(".editor-menu-layer").each(function() {
-        if($(this).hasClass("selected")){
-          $(this).removeClass("selected");
-        }
-      });
-      if($(this.el).hasClass("content-type-menu")) {
-        $(this.el).parent().parent().next().addClass("selected");
-      }
-      else {
-        $(this.el).parent().parent().addClass("selected");
-      }
+    onMenuItemDoubleClicked: function(event) {
       event && event.preventDefault();
-    },
-
-    onMenuItemDblClicked: function(event) {
-      event && event.preventDefault();
+      var type = this.model.get('_type');
+      if(type === 'page') {
+        this.gotoPageEditor();
+      }
+      else if(type === 'menu') {
+        this.gotoSubMenuEditor();
+      }
     },
 
     gotoPageEditor: function() {
@@ -126,30 +98,20 @@ define(function(require){
     },
 
     setItemAsSelected: function() {
-      // If this item is already selected please do nothing
-      // because sometimes nothing is quite compelling
-      if (this.model.get('_isSelected')) return;
-      // When item is clicked check whether this a menu item or not
-      var isMenuType = (this.model.get('_type') === 'menu');
-
-      // If this view is already expanded - reset to no be expanded
-      // this will trigger the events to remove child views
-      if (this.model.get('_isExpanded')) {
-        this.model.set({'_isExpanded' : false});
-      } else {
+      if(this.model.get('_isSelected')) {
+        return;
+      }
+      if(!this.model.get('_isExpanded')) {
         this.setSiblingsSelectedState();
         this.setParentSelectedState();
       }
-
-      this.model.set({ '_isExpanded' : (isMenuType ? true : false) });
-
-      this.model.set({ '_isSelected': true });
-
+      this.model.set({
+        _isExpanded: this.model.get('_type') === 'menu',
+        _isSelected: true
+      });
       // This event passes out the view to the editorMenuView to add
       // a editorMenuLayerView and setup this.subView
       Origin.trigger('editorView:menuView:updateSelectedItem', this);
-
-      this.selectedLevel();
     },
 
     setParentSelectedState: function() {
@@ -158,7 +120,7 @@ define(function(require){
 
     setSiblingsSelectedState: function() {
       this.model.getSiblings().each(function(sibling) {
-        sibling.set({'_isSelected': false, '_isExpanded': false});
+        sibling.set({ _isSelected: false, _isExpanded: false });
       });
     },
 
@@ -169,21 +131,17 @@ define(function(require){
     },
 
     onSelectedChange: function(model, isSelected) {
-      // This is used to toggle between _isSelected on the model
-      this.$el.toggleClass('selected', !isSelected);
+      this.$el.toggleClass('selected', isSelected);
     },
 
     onExpandedChange: function(model, isExpanded) {
       var isMenuType = (this.model.get('_type') === 'menu');
-      if (isExpanded) {
-        //Origin.trigger('editorView:menuView:updateSelectedItem', this);
+      if(isExpanded) {
         this.$el.addClass('expanded');
       } else {
         // If not expanded unselect and unexpand child - this will work
         // recursively as _isExpanded will keep getting set
-        if (isMenuType) {
-          this.setChildrenSelectedState();
-        }
+        if(isMenuType) this.setChildrenSelectedState();
         this.$el.removeClass('expanded');
       }
       // If this item is not meant to be expanded - remove subView
@@ -215,7 +173,6 @@ define(function(require){
           self.onConfirmRemovePopup(isConfirmed);
         }
       });
-
     },
 
     onConfirmRemovePopup: function(isConfirmed) {
@@ -237,23 +194,21 @@ define(function(require){
 
     deleteItem: function(event) {
       this.stopListening(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
-      this.model.set({_isExpanded:false, _isSelected: false});
+      this.model.set({ _isExpanded: false, _isSelected: false });
       // When deleting an item - the parent needs to be selected
-      this.model.getParent().set({_isSelected:true, _isExpanded: true});
+      this.model.getParent().set({ _isSelected:true, _isExpanded: true });
 
       // We also need to navigate to the parent element - but if it's the courseId let's
       // navigate up to the menu
       var parentId = (this.model.get('_parentId') === Origin.editor.data.course.id) ? '' : '/' + this.model.get('_parentId');
       Origin.router.navigateTo('editor/' + Origin.editor.data.course.id + '/menu' + parentId);
 
-      if (this.model.destroy()) {
-        this.remove();
-      }
+      if(this.model.destroy()) this.remove();
     },
 
     cancelDeleteItem: function() {
       this.stopListening(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
-      this.model.set({_isSelected: true});
+      this.model.set({ _isSelected: true });
     },
 
     enableDrag: function(event) {

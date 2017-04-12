@@ -18,18 +18,17 @@ define(function(require) {
     },
 
     preRender: function(options) {
-      if (options._parentId) {
-        this._parentId = options._parentId;
-      }
-      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-      this.listenTo(Origin, 'editorMenuView:removeMenuViews', this.remove);
+      if(options._parentId) this._parentId = options._parentId;
+
+      this.listenTo(Origin, {
+        'editorView:removeSubViews': this.remove,
+        'editorMenuView:removeMenuViews': this.remove
+      });
     },
 
     postRender: function() {
-      if (this._parentId) {
-        // Append the parentId value to the container to allow us to move pages, etc.
-        this.$el.attr('data-parentId', this._parentId);
-      }
+      // Append the parentId value to the container to allow us to move pages, etc.
+      if(this._parentId) this.$el.attr('data-parentId', this._parentId);
       this.setHeight();
     },
 
@@ -62,7 +61,7 @@ define(function(require) {
      * @param {String} type Given contentObject type, i.e. 'menu' or 'page'
      */
     addMenuItem: function(event, type) {
-      event.preventDefault();
+      event && event.preventDefault();
 
       var newMenuItemModel = new ContentObjectModel({
         _parentId: this._parentId,
@@ -76,10 +75,9 @@ define(function(require) {
       });
       // Instantly add the view for UI purposes
       var newMenuItemView = this.addMenuItemView(newMenuItemModel);
-      // Save the model
       newMenuItemModel.save(null, {
         error: function(error) {
-          // If there's an error show the menu item fading out and alert
+          // fade out menu item and alert
           newMenuItemView.$el.removeClass('syncing').addClass('not-synced');
           Origin.Notify.alert({
             type: 'error',
@@ -156,12 +154,12 @@ define(function(require) {
     },
 
     pasteMenuItem: function(event) {
-      event.preventDefault();
+      event && event.preventDefault();
       Origin.trigger('editorView:paste', this._parentId, this.$('.editor-menu-item').length + 1);
     },
 
     cancelPasteMenuItem: function(event) {
-      event.preventDefault();
+      event && event.preventDefault();
       this.hidePasteZones();
       var parentId = this._parentId;
       var target = new ContentObjectModel({

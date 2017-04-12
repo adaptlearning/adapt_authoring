@@ -1,14 +1,13 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Origin = require('core/origin');
   var LoginView = require('./views/loginView');
   var UserProfileView = require('./views/userProfileView');
   var UserProfileSidebarView = require('./views/userProfileSidebarView');
   var UserProfileModel = require('./models/userProfileModel');
-
   var ForgotPasswordView = require('./views/forgotPasswordView');
   var ResetPasswordView = require('./views/resetPasswordView');
+  var SetPasswordView = require('coreJS/user/views/setPasswordView');
   var UserPasswordResetModel = require('./models/userPasswordResetModel');
 
   Origin.on('navigation:user:logout', function() {
@@ -37,6 +36,10 @@ define(function(require) {
         Origin.trigger('sidebar:sidebarContainer:hide');
         currentView = ForgotPasswordView;
         break;
+      case 'set':
+        Origin.trigger('sidebar:sidebarContainer:hide');
+        currentView = SetPasswordView;
+        break;
       case 'reset':
         Origin.trigger('sidebar:sidebarContainer:hide');
         currentView = ResetPasswordView;
@@ -59,16 +62,17 @@ define(function(require) {
             }
           });
           break;
+        case 'set':
         case 'reset':
           var reset = new UserPasswordResetModel({token: subLocation});
           reset.fetch({
             success: function() {
-              Origin.contentPane.setView(currentView, { model: reset });
+              Origin.contentPane.setView(currentView, { model: reset }, settings);
             }
           });
           break;
         default:
-          Origin.contentPane.setView(currentView, { model: Origin.sessionModel });
+          Origin.contentPane.setView(currentView, { model: Origin.sessionModel }, settings);
       }
     }
   });

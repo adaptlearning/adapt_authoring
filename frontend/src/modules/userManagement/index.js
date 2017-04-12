@@ -1,10 +1,13 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+<<<<<<< HEAD:frontend/src/modules/userManagement/index.js
   var Origin = require('core/origin');
   var UserManagementView = require('./views/userManagementView');
   var UserManagementSidebarView = require('./views/userManagementSidebarView');
   var AddUserView = require('./views/addUserView');
   var AddUserSidebarView = require('./views/addUserSidebarView');
+  var AddMultipleUsersView = require('./views/addMultipleUsersView.js');
+  var AddMultipleUsersSidebarView = require('./views/addMultipleUsersSidebarView.js');
   var CustomHelpers = require('./helpers');
 
   var isReady = false;
@@ -63,6 +66,10 @@ define(function(require) {
     else if('addUser' === location) {
       mainView = AddUserView;
       sidebarView = AddUserSidebarView;
+    }
+    else if('addMultipleUsers' === location) {
+      mainView = AddMultipleUsersView;
+      sidebarView = AddMultipleUsersSidebarView;
     }
 
     Origin.contentPane.setView(mainView, { model: new Backbone.Model({ globalData: data }) });

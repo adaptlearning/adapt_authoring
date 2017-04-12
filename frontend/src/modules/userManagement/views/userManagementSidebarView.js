@@ -5,12 +5,18 @@ define(function(require) {
 
   var UserManagementSidebarView = SidebarItemView.extend({
     events: {
-      'click button.add': 'addUser'
+      'click button.add': 'addUser',
+      'click button.addMultiple': 'addMultipleUsers'
     },
 
-    addUser: function(event) {
-      event && event.preventDefault();
+    addUser: function(e) {
+      e && e.preventDefault();
       Origin.router.navigate('#/userManagement/addUser', { trigger: true });
+    },
+
+    addMultipleUsers: function(e) {
+      e && e.preventDefault();
+      Origin.router.navigate('#/userManagement/addMultipleUsers', { trigger: true });
     }
   }, {
     template: 'userManagementSidebar'

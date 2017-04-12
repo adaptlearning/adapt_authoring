@@ -26,10 +26,12 @@ define(function(require){
     preRender: function() {
       this.setupChildCount();
 
-      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
+      this.listenTo(Origin, {
+        'editorView:removeSubViews': this.remove,
+        'pageView:itemRendered': this.evaluateChildStatus
+      });
       this.listenTo(Origin, 'editorView:moveArticle:' + this.model.get('_id'), this.render);
       this.listenTo(Origin, 'editorView:cutArticle:' + this.model.get('_id'), this.onCutArticle);
-      this.listenTo(Origin, 'pageView:itemRendered', this.evaluateChildStatus);
     },
 
     resize: function() {
@@ -79,30 +81,25 @@ define(function(require){
     addArticleViews: function() {
       this.$('.page-articles').empty();
       Origin.trigger('editorPageView:removePageSubViews');
-
       // Insert the 'pre' paste zone for articles
       var prePasteArticle = new ArticleModel();
-      prePasteArticle.set('_parentId', this.model.get('_id'));
-      prePasteArticle.set('_type', 'article');
-      prePasteArticle.set('_pasteZoneSortOrder', 1);
-
-      this.$('.page-articles').append(new EditorPasteZoneView({model: prePasteArticle}).$el);
-
+      prePasteArticle.set({
+        _parentId: this.model.get('_id'),
+        _type: 'article',
+        _pasteZoneSortOrder: 1
+      });
+      this.$('.page-articles').append(new EditorPasteZoneView({ model: prePasteArticle }).$el);
       // Iterate over each article and add it to the page
-      this.model.getChildren().each(function(article) {
-        this.addArticleView(article);
-      }, this);
+      this.model.getChildren().each(this.addArticleView, this);
     },
 
     addArticleView: function(articleModel, scrollIntoView, addNewBlock) {
-      var newArticleView = new EditorPageArticleView({model: articleModel}),
-        sortOrder = articleModel.get('_sortOrder');
-
-        // Add syncing class
+      var newArticleView = new EditorPageArticleView({ model: articleModel });
+      var sortOrder = articleModel.get('_sortOrder');
+      // Add syncing class
       if (articleModel.isNew()) {
         newArticleView.$el.addClass('syncing');
       }
-
       scrollIntoView = scrollIntoView || false;
 
       this.$('.page-articles').append(newArticleView.$el);
@@ -110,10 +107,8 @@ define(function(require){
       if (scrollIntoView) {
         $.scrollTo(newArticleView.$el, 200);
       }
-
       // Increment the 'sortOrder' property
       articleModel.set('_pasteZoneSortOrder', sortOrder++);
-
       // Post-article paste zone - sort order of placeholder will be one greater
       this.$('.page-articles').append(new EditorPasteZoneView({model: articleModel}).$el);
       // Return the article view so syncing can be shown
@@ -160,20 +155,14 @@ define(function(require){
     // TODO fragile HACK, refactor context menu code to allow what I want to do later...
     openContextMenu: function(event) {
       if(!event) return console.log('Error: needs a current target to attach the menu to...');
+      event.preventDefault() && event.stopPropagation();
 
-      event.preventDefault();
-      event.stopPropagation();
-
-      var fakeView = new Backbone.View({
-        model: new Backbone.Model({ _type: 'page-min' })
-      });
-
+      var fakeView = new Backbone.View({ model: new Backbone.Model({ _type: 'page-min' }) });
 
       this.listenTo(fakeView, {
         'contextMenu:page-min:edit': this.loadPageEdit,
         'contextMenu:page-min:copyID': this.onCopyID
       });
-
       Origin.trigger('contextMenu:open', fakeView, event);
     },
 

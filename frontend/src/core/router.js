@@ -13,9 +13,7 @@ define(function(require) {
     },
 
     initialize: function() {
-      this.listenTo(Origin, {
-        'origin:initialize': this.onOriginInitialize
-      });
+      this.listenTo(Origin, 'origin:initialize', this.onOriginInitialize);
       this.locationKeys = ['module', 'route1', 'route2', 'route3', 'route4'];
       this.resetLocation();
     },
@@ -104,17 +102,27 @@ define(function(require) {
     * Routing
     */
 
+    formatRoute: function(route) {
+      /**
+      * We remove leading slashes as they force trigger:true regardless of the
+      * options passed to Backbone.Router.navigate
+      * See https://github.com/jashkenas/backbone/issues/786
+      */
+      if(route[0] === '/') return route.slice(1);
+      return route;
+    },
+
+    persistRoute: function(route) {
+      Origin.router.navigate(this.formatRoute(route));
+    },
+
     navigateBack: function() {
       Backbone.history.history.back();
     },
 
-    navigateTo: function(route, options) {
-      var prefix = '#/';
-      if(route.slice(0,2) !== prefix) {
-        route = prefix + route;
-      }
+    navigateTo: function(route) {
       // use Origin.router.navigate in case we don't have a valid 'this' reference
-      Origin.router.navigate(route, _.defaults(options || {}, { trigger: true }));
+      Origin.router.navigate(this.formatRoute(route), { trigger: true });
     },
 
     navigateToLogin: function() {

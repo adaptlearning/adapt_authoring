@@ -13,7 +13,7 @@ define(function(require){
     className: 'article editable article-draggable',
     tagName: 'div',
 
-    events: _.extend(EditorOriginView.prototype.events, {
+    events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.add-block': 'addBlock',
       'click a.article-delete': 'deleteArticlePrompt',
       'click a.open-context-article': 'openContextMenu',

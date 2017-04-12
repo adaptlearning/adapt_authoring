@@ -16,12 +16,12 @@ define(function(require){
     childrenCount: 0,
     childrenRenderedCount: 0,
 
-    events: {
+    events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.add-article': 'addArticle',
       'click a.page-edit-button': 'openContextMenu',
       'dblclick .page-detail': 'loadPageEdit',
       'click .paste-cancel': 'onPasteCancel'
-    },
+    }),
 
     preRender: function() {
       this.setupChildCount();

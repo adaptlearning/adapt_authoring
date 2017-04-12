@@ -9,7 +9,7 @@ define(function(require){
     className: 'component editable component-draggable',
     tagName: 'div',
 
-    events: _.extend(EditorOriginView.prototype.events, {
+    events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.component-delete': 'deleteComponentPrompt',
       'click a.component-move': 'evaluateMove',
       'click a.open-context-component': 'openContextMenu',
@@ -64,7 +64,7 @@ define(function(require){
       }
     },
 
-    loadComponentEdit: function () {
+    loadComponentEdit: function(event) {
       var courseId = Origin.editor.data.course.get('_id');
       var type = this.model.get('_type');
       var id = this.model.get('_id');

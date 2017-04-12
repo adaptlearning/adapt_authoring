@@ -18,7 +18,7 @@ define(function(require){
       autoRender: false
     },
 
-    events: _.extend(EditorOriginView.prototype.events, {
+    events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.block-delete': 'deleteBlockPrompt',
       'click a.add-component': 'showComponentList',
       'click a.open-context-block': 'openContextMenu',

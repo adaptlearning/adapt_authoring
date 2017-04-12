@@ -2,7 +2,7 @@
 define(function(require){
   var OriginView = require('core/views/originView');
 
-  var MultipleUserView = OriginView.extend({
+  var UsersView = OriginView.extend({
     className: 'user-item',
 
     events: {
@@ -22,8 +22,8 @@ define(function(require){
       this.trigger('remove', this);
     }
   }, {
-    template: 'multipleUser'
+    template: 'users'
   });
 
-  return MultipleUserView;
+  return UsersView;
 });

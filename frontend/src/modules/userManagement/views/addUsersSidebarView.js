@@ -3,13 +3,13 @@ define(function(require) {
   var Origin = require('core/origin');
   var SidebarItemView = require('modules/sidebar/views/sidebarItemView');
 
-  var AddMultipleUsersSidebarView = SidebarItemView.extend({
+  var AddUsersSidebarView = SidebarItemView.extend({
     events: {
-      'click button.save': 'saveUser',
+      'click button.save': 'saveUsers',
       'click button.cancel': 'goBack'
     },
 
-    saveUser: function(e) {
+    saveUsers: function(e) {
       e && e.preventDefault();
       this.updateButton('button.save', Origin.l10n.t('app.saving'));
       Origin.trigger('userManagement:saveUsers');
@@ -17,10 +17,10 @@ define(function(require) {
 
     goBack: function(e) {
       e && e.preventDefault();
-      Origin.router.navigate('#/userManagement', { trigger: true });
+      Origin.router.navigateTo('userManagement');
     }
   }, {
-    template: 'addMultipleUsersSidebar'
+    template: 'addUsersSidebar'
   });
-  return AddMultipleUsersSidebarView;
+  return AddUsersSidebarView;
 });

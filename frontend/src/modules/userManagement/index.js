@@ -3,10 +3,8 @@ define(function(require) {
   var Origin = require('core/origin');
   var UserManagementView = require('./views/userManagementView');
   var UserManagementSidebarView = require('./views/userManagementSidebarView');
-  var AddUserView = require('./views/addUserView');
-  var AddUserSidebarView = require('./views/addUserSidebarView');
-  var AddMultipleUsersView = require('./views/addMultipleUsersView');
-  var AddMultipleUsersSidebarView = require('./views/addMultipleUsersSidebarView');
+  var AddUsersView = require('./views/addUsersView');
+  var AddUsersSidebarView = require('./views/addUsersSidebarView');
   var CustomHelpers = require('./helpers');
 
   var isReady = false;
@@ -56,19 +54,16 @@ define(function(require) {
   });
 
   var onRoute = function(location, subLocation, action) {
+    console.log(arguments);
     var mainView, sidebarView;
 
     if(!location) {
       mainView = UserManagementView;
       sidebarView = UserManagementSidebarView;
     }
-    else if('addUser' === location) {
-      mainView = AddUserView;
-      sidebarView = AddUserSidebarView;
-    }
-    else if('addMultipleUsers' === location) {
-      mainView = AddMultipleUsersView;
-      sidebarView = AddMultipleUsersSidebarView;
+    else if(location === 'add') {
+      mainView = AddUsersView;
+      sidebarView = AddUsersSidebarView;
     }
 
     Origin.contentPane.setView(mainView, { model: new Backbone.Model({ globalData: data }) });

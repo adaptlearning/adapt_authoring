@@ -5,11 +5,11 @@ define(function(require){
   var Helpers = require('core/helpers');
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
-  var MultipleUserView = require('./multipleUserView');
+  var UsersView = require('./usersView');
 
-  var AddMultipleUsersView = OriginView.extend({
+  var AddUsersView = OriginView.extend({
     tagName: 'div',
-    className: 'addMultipleUsers',
+    className: 'addUsers',
 
     events: {
       'click .addUser': 'onAddUserClicked',
@@ -26,7 +26,7 @@ define(function(require){
     },
 
     goBack: function() {
-      Origin.router.navigate('#/userManagement', { trigger:true });
+      Origin.router.navigateTo('userManagement');
     },
 
     /**
@@ -90,15 +90,24 @@ define(function(require){
     createUsers: function(users, callback) {
       var self = this;
       var newUsers = [];
+      var brokenUsers = [];
       var errors = [];
       // create users
       for(var i = 0, count = users.length; i < count; i++) {
         this.createUser(users[i], function(error, user) {
-          if(error) errors.push(error);
-          else newUsers.push(user);
+          if(error) {
+            if(user) brokenUsers.push(user);
+            errors.push(error);
+          }
+          else {
+            newUsers.push(user);
+          }
           // not set roles for new users
           if((newUsers.length + errors.length) === users.length) {
-            callback((errors.length > 0) ? errors : null, newUsers);
+            if(errors.length > 0) {
+              return callback(errors, brokenUsers);
+            }
+            callback(null, newUsers);
           }
         });
       }
@@ -107,7 +116,7 @@ define(function(require){
     createUser: function(user, callback) {
       $.post('api/user', user)
         .always(function(data, textStatus, jqXHR) {
-          if(data.status && data.status !== 200) {
+          if(jqXHR.status !== 200) {
             return callback(new Error("Couldn't add " + user.email + ", (" + data.responseText + ")"), user);
           }
           callback(null, data);
@@ -143,7 +152,7 @@ define(function(require){
       // unassign the default role
       $.post('/api/role/' + defaultRole + '/unassign/' + user._id)
         .always(function(data, textStatus, jqXHR) {
-          if(data.status && data.status !== 200) {
+          if(data && data.status !== 200) {
             return callback(new Error("Couldn't unassign default role for " + user.email + ", (" + data.responseText + ")"), user);
           }
           callback(null, user);
@@ -208,7 +217,13 @@ define(function(require){
         callback: function(confirmed) {
           if(confirmed) {
             self.createUsers(userData, function(createErrors, newUsers) {
+              if(createErrors) {
+                return self.onErrors(createErrors, newUsers);
+              }
               self.setAllUserRoles(newUsers, function(roleErrors, roleUsers) {
+                if(roleErrors) {
+                  return self.onErrors(roleErrors);
+                }
                 var newUserIds = _.pluck(newUsers, 'email');
                 var failedUsers = _.filter(userData, function(item) { return !_.contains(newUserIds, item.email) });
                 var createdUsers = _.difference(newUsers, roleUsers);
@@ -245,22 +260,28 @@ define(function(require){
       return false;
     },
 
-    onErrors: function(type, errors) {
-      console.log('onErrors:', type, errors);
-      // TODO delete partially created users (mind the error isn't DuplicateUserError)
+    onErrors: function(errors, usersToRemove) {
+      if(false /*usersToRemove.length*/) {
+        for(var i = 0, count = usersToRemove.length; i < count; i++) {
+          // FIXME find a better way to do this...
+          var isDuplicate = errors[i].message && errors[i].message.indexOf('DuplicateUserError') !== -1;
+          if(!isDuplicate) {
+            // FIXME delete user
+          }
+        }
+      }
       var msg = '';
       for(var i = 0, count = errors.length; i < count; i++) {
         msg += errors[i] + '<br/>';
       }
       Origin.trigger('sidebar:resetButtons');
-      Origin.Notify.alert({
-        type: type,
-        text: msg
-      });
+      Origin.Notify.alert({ type: 'error', text: msg });
+
+      this.render();
     }
   }, {
-    template: 'addMultipleUsers'
+    template: 'addUsers'
   });
 
-  return AddMultipleUsersView;
+  return AddUsersView;
 });

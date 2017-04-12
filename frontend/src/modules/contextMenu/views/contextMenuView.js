@@ -34,7 +34,7 @@ define(function(require) {
       _.each(this.collection.where({ type: this.type }), function(item) {
         item.set('contextView', this.contextView);
         new ContextMenuItemView({ model: item });
-      });
+      }, this);
     },
 
     toggleMenu: function(view, e) {
@@ -83,6 +83,6 @@ define(function(require) {
       $('html').off('click');
     }
   });
-  
+
   return ContextMenuView;
 });

@@ -23,7 +23,6 @@ define(function(require) {
   });
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
-    Origin.trigger('location:title:update', { title: 'Dashboard - viewing my courses' });
     // not pretty, but condensed for brevity
     Origin.options.addItems([
       { title: Origin.l10n.t('app.grid'),       icon: 'th',              value: 'grid',    group: 'layout', callbackEvent: 'dashboard:layout:grid'  },
@@ -48,13 +47,14 @@ define(function(require) {
   });
 
   Origin.on('dashboard:loaded', function (options) {
+    var crumbs = ['dashboard'];
     switch (options.type) {
       case 'all':
-        Origin.trigger('location:title:update', { title: Origin.l10n.t('app.myprojects') });
+        Origin.trigger('location:title:update', { title: Origin.l10n.t('app.myprojects'), breadcrumbs: crumbs });
         Origin.contentPane.setView(ProjectsView, { collection: new MyProjectCollection() });
         break;
       case 'shared':
-        Origin.trigger('location:title:update', { title: Origin.l10n.t('app.sharedprojects') });
+        Origin.trigger('location:title:update', { title: Origin.l10n.t('app.sharedprojects'), breadcrumbs: crumbs });
         Origin.contentPane.setView(ProjectsView, { collection: new SharedProjectCollection() });
         break;
       default:

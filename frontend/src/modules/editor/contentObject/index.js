@@ -40,7 +40,7 @@ define(function(require) {
   function renderContentObjectEdit(data) {
     (new ContentObjectModel({ _id: data.id })).fetch({
       success: function(model) {
-        Helpers.setPageTitle(model);
+        Helpers.setPageTitle(model, true);
         var form = Origin.scaffold.buildForm({ model: model });
         // TODO this should be properly localised
         var type = Origin.location.route2;
@@ -51,27 +51,28 @@ define(function(require) {
   }
 
   function renderPageStructure(data) {
-    Helpers.setPageTitle({ title: 'Page editor' });
+    var pageModel = Origin.editor.data.contentObjects.findWhere({ _id: data.id });
+    Helpers.setPageTitle(pageModel, true);
 
     Origin.sidebar.addView(new EditorPageSidebarView().$el, {
-      "backButtonText": "Back to course structure",
+      "backButtonText": Origin.l10n.t('app.backtomenu'),
       "backButtonRoute": "/#/editor/" + Origin.location.route1 + "/menu"
     });
     Origin.contentPane.setView(EditorView, {
       currentCourseId: Origin.location.route1,
       currentView: 'page',
-      currentPageId: (data.id || null)
+      currentPageId: data.id
     });
   }
 
   function renderMenuStructure(data) {
-    Helpers.setPageTitle({ title: 'Menu editor' });
+    Helpers.setPageTitle(Origin.editor.data.course, true);
 
     Origin.editor.currentContentObjectId = data.id;
     Origin.editor.scrollTo = 0;
 
     Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
-      "backButtonText": "Back to courses",
+      "backButtonText": Origin.l10n.t('app.backtoprojects'),
       "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
     });
     Origin.contentPane.setView(EditorView, {

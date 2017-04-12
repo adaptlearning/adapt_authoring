@@ -12,9 +12,9 @@ define(function(require) {
   Origin.on('editor:component', function(data) {
     (new ComponentModel({ _id: data.id })).fetch({
       success: function(model) {
+        Helpers.setPageTitle(model);
         var form = Origin.scaffold.buildForm({ model: model });
         var displayName = getComponentDisplayName(model);
-        Helpers.setPageTitle(model);
         Origin.sidebar.addView(new EditorComponentEditSidebarView({ model: model, form:form }).$el);
         Origin.contentPane.setView(EditorComponentEditView, { model: model, form: form });
       }

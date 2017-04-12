@@ -13,8 +13,8 @@ define(function(require) {
     }
     (new ArticleModel({ _id: data.id })).fetch({
       success: function(model) {
-        var form = Origin.scaffold.buildForm({ model: model });
         Helpers.setPageTitle(model);
+        var form = Origin.scaffold.buildForm({ model: model });
         Origin.sidebar.addView(new EditorArticleEditSidebarView({ model: model, form: form }).$el);
         Origin.contentPane.setView(EditorArticleEditView, { model: model, form: form });
       }

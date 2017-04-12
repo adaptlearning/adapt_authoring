@@ -2,10 +2,10 @@
 define(function(require){
   var _ = require('underscore');
   var Backbone = require('backbone');
-  var Helpers = require('coreJS/app/helpers');
-  var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
-  var MultipleUserView = require('./multipleUserView.js');
+  var Helpers = require('core/helpers');
+  var Origin = require('core/origin');
+  var OriginView = require('core/views/originView');
+  var MultipleUserView = require('./multipleUserView');
 
   var AddMultipleUsersView = OriginView.extend({
     tagName: 'div',
@@ -34,7 +34,7 @@ define(function(require){
     */
 
     preRender: function() {
-      Origin.trigger('location:title:update', { title: window.polyglot.t('app.adduserstitle') });
+      Origin.trigger('location:title:update', { title: Origin.l10n.t('app.adduserstitle') });
       this.listenTo(Origin, 'userManagement:saveUsers', this.onSaveUsers);
     },
 
@@ -80,8 +80,8 @@ define(function(require){
       Origin.trigger('sidebar:resetButtons');
       Origin.Notify.alert({
         type: 'error',
-        title: window.polyglot.t('app.validationfailed'),
-        text: window.polyglot.t('app.invalidemail', { emails: this.getEmailsFromUsers(invalidUsers) })
+        title: Origin.l10n.t('app.validationfailed'),
+        text: Origin.l10n.t('app.invalidemail', { emails: this.getEmailsFromUsers(invalidUsers) })
       });
 
       return false;
@@ -175,7 +175,7 @@ define(function(require){
       var emails = '';
       for(var i = 0, count = users.length; i < count; i++) {
         if(users[i].email === "") {
-          emails += '<em><b>[ ' + window.polyglot.t('app.blankemail') + ' ]</em></b><br/>';
+          emails += '<em><b>[ ' + Origin.l10n.t('app.blankemail') + ' ]</em></b><br/>';
         } else {
           emails += '<b>' + users[i].email + '</b><br/>';
         }
@@ -204,7 +204,7 @@ define(function(require){
       if(!this.validate(userData)) return;
 
       Origin.Notify.confirm({
-        text: window.polyglot.t('app.addmultipleusersconfirm', { emails: this.getEmailsFromUsers(userData) }),
+        text: Origin.l10n.t('app.addmultipleusersconfirm', { emails: this.getEmailsFromUsers(userData) }),
         callback: function(confirmed) {
           if(confirmed) {
             self.createUsers(userData, function(createErrors, newUsers) {

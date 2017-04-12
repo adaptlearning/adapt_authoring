@@ -11,7 +11,7 @@ define(function(require) {
 
     saveUser: function(e) {
       e && e.preventDefault();
-      this.updateButton('button.save', window.polyglot.t('app.saving'));
+      this.updateButton('button.save', Origin.l10n.t('app.saving'));
       Origin.trigger('userManagement:saveUser');
     },
 

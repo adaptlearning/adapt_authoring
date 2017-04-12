@@ -45,6 +45,7 @@
   "app.logout": "Log out",
   "app.signin": "Sign in",
   "app.help": "Help",
+  "app.usernameoremail": "Email address",
   "app.invalidusernameoremail": "Invalid email address",
   "app.invalidusernameorpassword": "Invalid email address or password",
   "app.dashboard": "Dashboard",

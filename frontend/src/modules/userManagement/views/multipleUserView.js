@@ -1,6 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var OriginView = require('coreJS/app/views/originView');
+  var OriginView = require('core/views/originView');
 
   var MultipleUserView = OriginView.extend({
     className: 'user-item',

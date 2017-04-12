@@ -7,7 +7,7 @@ define(function(require) {
   var UserProfileModel = require('./models/userProfileModel');
   var ForgotPasswordView = require('./views/forgotPasswordView');
   var ResetPasswordView = require('./views/resetPasswordView');
-  var SetPasswordView = require('coreJS/user/views/setPasswordView');
+  var SetPasswordView = require('./views/setPasswordView');
   var UserPasswordResetModel = require('./models/userPasswordResetModel');
 
   Origin.on('navigation:user:logout', function() {

@@ -2,9 +2,10 @@
 define(function(require) {
   var ResetPasswordView = require('./resetPasswordView');
 
-  var SetPasswordView = ResetPasswordView.extend(
-    { className: "reset-password" },
-    { template: 'setPassword' }
-  );
+  var SetPasswordView = ResetPasswordView.extend({
+    className: "reset-password"
+  }, {
+    template: 'setPassword'
+  });
   return SetPasswordView;
 });

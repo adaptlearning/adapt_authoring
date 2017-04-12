@@ -4,7 +4,7 @@ define(function(require) {
   var SidebarItemView = require('modules/sidebar/views/sidebarItemView');
 
   var EditorPageSidebarView = SidebarItemView.extend({
-    // If adding 'events', extend from the base view
+    // if adding 'events', extend from the base view
   }, {
     template: 'editorPageSidebar'
   });

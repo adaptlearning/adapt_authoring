@@ -180,9 +180,7 @@ define(function(require) {
 
                     }
                 },
-                onCancel: function(data) {
-                    // console.log('cancelled', data);
-                }
+                onCancel: function(data) {}
             }, this);
         },
 

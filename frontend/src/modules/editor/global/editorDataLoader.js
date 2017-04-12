@@ -106,18 +106,15 @@ define(function(require) {
     * Makes sure all data has been loaded and calls callback
     */
     waitForLoad: function(callback) {
-      // console.trace('waitForLoad:', preloader.hasLoadedGlobalData(), preloader.hasLoadedCourseData(), preloader.hasLoadedData());
       if(preloader.hasLoadedData()) {
         return callback.apply(this);
       }
       if(!preloader.hasLoadedGlobalData()) {
-        // console.log('- listening to preloader');
         Origin.once('editor:dataPreloaded', function(){
           if(preloader.hasLoadedData()) return callback.apply(this);
         });
       }
       if(!preloader.hasLoadedCourseData()) {
-        // console.log('- listening to loader');
         Origin.once('editor:dataLoaded', function(){
           if(preloader.hasLoadedData()) return callback.apply(this);
         });

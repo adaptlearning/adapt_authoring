@@ -24,8 +24,6 @@ define(function(require) {
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
     Origin.trigger('editor:resetData');
-
-    Origin.trigger('location:title:update', { title: 'Dashboard - viewing my courses' });
     // not pretty, but condensed for brevity
     Origin.options.addItems([
       { title: Origin.l10n.t('app.grid'),       icon: 'th',              value: 'grid',    group: 'layout', callbackEvent: 'dashboard:layout:grid'  },

@@ -15,8 +15,8 @@ define(function(require) {
     }
     (new BlockModel({ _id: data.id })).fetch({
       success: function(model) {
+        Helpers.setPageTitle(model);
         var form = Origin.scaffold.buildForm({ model: model });
-        Helpers.setPageTitle(model, true);
         Origin.sidebar.addView(new EditorBlockEditSidebarView({ model: model, form: form }).$el);
         Origin.contentPane.setView(EditorBlockEditView, { model: model, form: form });
       }

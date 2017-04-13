@@ -54,7 +54,7 @@ define(function(require){
           role: lastUser.roles[0]
         });
       }
-      var muv = new MultipleUserView({ model: model });
+      var muv = new UsersView({ model: model });
       this.listenTo(muv, 'remove', this.onUserViewRemoved);
 
       this.$('.users').append(muv.$el);

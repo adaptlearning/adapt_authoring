@@ -237,6 +237,8 @@
   "app.emailforgottenpasswordbody": "<p>We've received a request to reset the password for your <a href='%{rootUrl}' target='_blank'>Adapt authoring tool</a> account.</p><p>If you weren't expecting this email, don't worry! You can safely ignore it. Otherwise, please click the button below.</p>",
   "app.emailsetpasswordsubject": "Set Your Adapt Password",
   "app.emailsetpasswordbody": "<p>We've set you up with a shiny new account for the authoring tool at <a href='%{rootUrl}' target='_blank'>%{rootUrl}</a>.</p><p>Before you can use it though, you need to set a password. To do this, click the button below and follow the prompts.</p>",
+  "app.mailersendtoerror": "Can't send email to '%{email}', not a valid email address",
+  "app.mailersendfromerror": "Can't send email from '%{email}', not a valid email address",
   "app.setpassword": "Set password",
   "app.edittenant": "Edit Tenant",
   "app.addtenant": "Add Tenant",
@@ -290,5 +292,6 @@
   "app.visitpluginhomepage": "Visit plugin homepage",
   "app.greeting": "Hi",
   "app.emaillogotext": "ADAPT",
-  "app.emailfooter": "Sent by Adapt Learning."
+  "app.emaillogosubtext": "by Kineo",
+  "app.emailfooter": "Sent by Kineo."
 }

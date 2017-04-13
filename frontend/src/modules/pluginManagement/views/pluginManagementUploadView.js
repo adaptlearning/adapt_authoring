@@ -2,18 +2,14 @@
 define(function(require){
   var _ = require('underscore');
   var Helpers = require('core/helpers');
-  var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
+  var OriginView = require('core/views/originView');
 
   var PluginManagementUploadView = OriginView.extend({
-
     className: 'pluginManagement-upload-plugin',
 
-    events: {
-    },
-
     preRender: function() {
-      Origin.trigger('location:title:update', {title: Origin.l10n.t('app.uploadplugin')});
+      Origin.trigger('location:title:update', { title: Origin.l10n.t('app.uploadplugin') });
       this.listenTo(Origin, 'pluginManagement:uploadPlugin', this.uploadFile);
     },
 
@@ -22,69 +18,58 @@ define(function(require){
     },
 
     uploadFile: function() {
-      var self = this;
-
       if(this.validate()) {
         $('.loading').show();
         this.$('.plugin-form').ajaxSubmit({
-          error: function(data, status, error) {
-            $('.loading').hide();
-
-            var message = '';
-            if (data) {
-              if (data.responseText) {
-                message = data.responseText;
-              } else if(data.responseJSON && data.responseJSON.error) {
-                message = data.responseJSON.error;
-              }
-            }
-            Origin.Notify.alert({
-              type: 'error',
-              title: Origin.l10n.t('app.uploadpluginerror'),
-              text: Helpers.decodeHTML(message)
-            });
-
-            // go back to the upload, maybe handle this in the sidebar?
-            Origin.router.navigateTo('pluginManagement/upload');
-          },
-          success: function(data, status, xhr) {
-            Origin.trigger('scaffold:updateSchemas', function() {
-              Origin.Notify.alert({
-                type: 'success',
-                text: Origin.l10n.t('app.uploadpluginsuccess')
-              });
-
-              $('.loading').hide();
-              var pluginType = data.pluginType ? data.pluginType : '';
-              Origin.router.navigateTo('pluginManagement/' + pluginType);
-            }, this);
-          }
+          success: this.onUploadSuccess,
+          error: this.onUploadError
         });
       }
-
       // Return false to prevent the page submitting
       return false;
     },
 
     validate: function() {
-      var file = this.$('form input').val();
-
-      if(_.isEmpty(file)) {
+      if(_.isEmpty(this.$('form input').val())) {
         this.$('.field-error').removeClass('display-none');
         Origin.trigger('sidebar:resetButtons');
-
         return false;
       }
-
       this.$('.field-error').addClass('display-none');
-
       return true;
-    }
+    },
 
+    onUploadSuccess: function() {
+      Origin.trigger('scaffold:updateSchemas', function() {
+        Origin.Notify.alert({ type: 'success', text: Origin.l10n.t('app.uploadpluginsuccess') });
+
+        $('.loading').hide();
+
+        Origin.router.navigateTo('pluginManagement/' + (data.pluginType || ''));
+      }, this);
+    },
+
+    onUploadError: function(data) {
+      $('.loading').hide();
+
+      var message = '';
+      var hasText = data && data.responseText;
+      var hasError = data && data.responseJSON && data.responseJSON.error;
+
+      if(hasText) message = data.responseText;
+      else if(hasError) message = data.responseJSON.error;
+
+      Origin.Notify.alert({
+        type: 'error',
+        title: Origin.l10n.t('app.uploadpluginerror'),
+        text: Helpers.decodeHTML(message)
+      });
+
+      Origin.router.navigateTo('pluginManagement/upload');
+    },
   }, {
     template: 'pluginManagementUpload'
   });
 
   return PluginManagementUploadView;
-
 });

@@ -4,11 +4,13 @@
       <h4 class="pluginType-title-inner tb-col-inner">{{{displayName}}}</h4>
     </div>
     <div class="pluginType-description col-40">
-      <div class="pluginType-description-inner tb-col-inner">{{{description}}}</div>
+      <div class="pluginType-description-inner tb-col-inner">
+        {{{description}}}
+      </div>
       {{#if homepage}}
-      <a href="{{homepage}}" class="pluginType-homepage tb-col-inner" target="_blank">
-        <span>{{t 'app.visitpluginhomepage'}}</span>
-      </a>
+        <a href="{{homepage}}" class="pluginType-homepage tb-col-inner" target="_blank">
+          <span>{{t 'app.visitpluginhomepage'}}</span>
+        </a>
       {{/if}}
     </div>
     <div class="pluginType-version col-10 col-centered">
@@ -20,9 +22,9 @@
     <div class="pluginType-update col-10 col-centered">
       <div class="pluginType-update-inner tb-col-inner">
         {{#if isLocalPackage}}
-        <em class="info">({{t 'app.uploadedbyuser'}})</em>
+          <em class="info">({{t 'app.uploadedbyuser'}})</em>
         {{else}}
-        <button class="plugin-update-check btn secondary">{{t 'app.checkforupdates'}}</button>
+          <button class="plugin-update-check btn secondary">{{t 'app.checkforupdates'}}</button>
         {{/if}}
       </div>
     </div>

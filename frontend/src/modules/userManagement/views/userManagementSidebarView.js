@@ -5,12 +5,12 @@ define(function(require) {
 
   var UserManagementSidebarView = SidebarItemView.extend({
     events: {
-      'click button.add': 'addUser'
+      'click button.addUsers': 'addUsers'
     },
 
-    addUser: function(event) {
-      event && event.preventDefault();
-      Origin.router.navigate('#/userManagement/addUser', { trigger: true });
+    addUsers: function(e) {
+      e && e.preventDefault();
+      Origin.router.navigateTo('userManagement/add');
     }
   }, {
     template: 'userManagementSidebar'

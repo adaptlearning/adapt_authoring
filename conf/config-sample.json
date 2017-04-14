@@ -14,6 +14,7 @@
   "dbPort": 27017,
   "useSmtp": false,
   "smtpService": "",
+  "smtpConnectionUrl": "",
   "smtpUsername": "",
   "smtpPassword": "",
   "fromAddress": "",

@@ -88,12 +88,8 @@ define(function(require) {
 		// forces the user to wait before the confirm button can be clicked
 		if(data.destructive === true) {
 			var setWaitText = function(n) {
-				$('.sweet-alert button.confirm').html(
-					'<span class="wait-text">' +
-					Origin.l10n.t('app.confirmwait') +
-					'</span> ' +
-					n
-				);
+				var msg = Origin.l10n.t('app.confirmwait');
+				$('.sweet-alert button.confirm').html('<span class="wait-text">' + msg + '</span> ' + n);
 			};
 
 			var count = DISABLE_TIME_SECS;

@@ -8,7 +8,7 @@ define(function(require){
     tagName: "div",
 
     autoScrollTimer: false,
-    clickTimer,
+    clickTimer: undefined,
     clickTimerActive: false,
 
     events: {

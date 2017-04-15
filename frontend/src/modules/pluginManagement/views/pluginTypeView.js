@@ -1,15 +1,20 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
+
+  var Backbone = require('backbone');
+  var Handlebars = require('handlebars');
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
 
   var PluginTypeView = OriginView.extend({
-    className: 'pluginType-item tb-row',
+
     tagName: 'div',
 
+    className: 'pluginType-item tb-row',
+
     events: {
-      'change .pluginType-enabled': 'toggleEnabled',
-      'click .plugin-update-check': 'checkForUpdates',
+      'change .pluginType-enabled':   'toggleEnabled',
+      'click .plugin-update-check':   'checkForUpdates',
       'click .plugin-update-confirm': 'updatePlugin'
     },
 
@@ -19,55 +24,71 @@ define(function(require){
     },
 
     toggleEnabled: function () {
-      this.model.save({
-        _isAvailableInEditor: this.$('.pluginType-enabled').is(':checked')
-      }, { patch: true });
+      // api call to disable/enable item
+      // NB: disable this functionality until we come up with a plan for courses
+      // that added plugins that were subsequently disabled
+      this.model.save({_isAvailableInEditor: this.$('.pluginType-enabled').is(':checked')}, {patch: true});
     },
 
     checkForUpdates: function (event) {
-      event && event.preventDefault();
+      event.preventDefault();
+      var btn = this.$('.plugin-update-check');
+      if (btn.hasClass('disabled')) {
+        return false;
+      }
 
-      var $btn = this.$('.plugin-update-check');
-
-      if($btn.hasClass('disabled')) return false;
-
-      $btn.html(Origin.l10n.t('app.checking'));
-
-      $.get(this.model.urlRoot + '/checkversion/' + this.model.get('_id'), function(data) {
-        if(!data.isUpdateable) {
-          $btn.addClass('disabled').html(Origin.l10n.t('app.uptodate'));
-          return;
+      btn.html(Origin.l10n.t('app.checking'));
+      $.ajax({
+        'method': 'GET',
+        'url': this.model.urlRoot + '/checkversion/' + this.model.get('_id')
+      }).done(function (data) {
+        if (data.isUpdateable) {
+          btn.removeClass('plugin-update-check').addClass('plugin-update-confirm').html(Origin.l10n.t('app.updateplugin'));
+        } else {
+          btn.addClass('disabled');
+          btn.html(Origin.l10n.t('app.uptodate'));
         }
-        $btn.removeClass('plugin-update-check').addClass('plugin-update-confirm').html(Origin.l10n.t('app.updateplugin'));
       });
 
       return false;
     },
 
     updatePlugin: function (event) {
-      event && event.preventDefault();
+      event.preventDefault();
+      var that = this;
+      var btn = this.$('.plugin-update-confirm');
+      if (btn.hasClass('disabled')) {
+        return false;
+      }
 
-      var $btn = this.$('.plugin-update-confirm');
+      btn.html(Origin.l10n.t('app.updating'));
+      btn.addClass('disabled');
 
-      if($btn.hasClass('disabled')) return false;
-
-      $btn.addClass('disabled').html(Origin.l10n.t('app.updating'));
-
-      $.post(this.model.urlRoot + '/update', { 'targets': [this.model.get('_id')] }, _.bind(function (data) {
-        if(!_.contains(data.targets), this.model.get('_id')) {
-          $btn.html(Origin.l10n.t('app.updatefailed'));
-          return;
+      // hit the update endpoint
+      $.ajax({
+        'method': 'POST',
+        'url': this.model.urlRoot + '/update',
+        'data': {
+          'targets': [this.model.get('_id')]
         }
-        Origin.trigger('scaffold:updateSchemas', function() {
-          $btn.html(Origin.l10n.t('app.uptodate'));
-        }, this);
-      }, this));
+      }).done(function (data) {
+        if (_.contains(data.targets), that.model.get('_id')) {
+          // Refresh the schemas
+          Origin.trigger('scaffold:updateSchemas', function() {
+            btn.html(Origin.l10n.t('app.uptodate'));
+          }, this);
+        } else {
+          btn.html(Origin.l10n.t('app.updatefailed'));
+        }
+      });
 
       return false;
     }
+
   }, {
     template: 'pluginType'
   });
 
   return PluginTypeView;
+
 });

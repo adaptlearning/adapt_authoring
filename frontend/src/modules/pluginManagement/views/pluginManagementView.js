@@ -1,5 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
+  var Backbone = require('backbone');
+  var Handlebars = require('handlebars');
+
   var Helpers = require('core/helpers');
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
@@ -11,9 +14,6 @@ define(function(require){
   var MenuTypeCollection = require('../collections/menuTypeCollection');
 
   var PluginManagementView = OriginView.extend({
-    className: "pluginManagement",
-    tagName: "div",
-
     pluginType: "plugin",
     pluginCollections: {
       'extension' : ExtensionTypeCollection,
@@ -21,12 +21,14 @@ define(function(require){
       'theme' : ThemeTypeCollection,
       'menu': MenuTypeCollection
     },
+    tagName: "div",
+    className: "pluginManagement",
 
     events: {
       'click .refresh-all-plugins': 'refreshPluginList'
     },
 
-    initialize: function(options) {
+    initialize: function (options) {
       this.pluginType = options.pluginType;
       return OriginView.prototype.initialize.apply(this, arguments);
     },
@@ -74,7 +76,9 @@ define(function(require){
       var pluginType = this.pluginType;
       var $btn = this.$('.refresh-all-plugins');
 
-      if ($btn.hasClass('disabled')) return false;
+      if ($btn.hasClass('disabled')) {
+        return false;
+      }
 
       $btn.addClass('disabled').html(Origin.l10n.t('app.updating'));
 

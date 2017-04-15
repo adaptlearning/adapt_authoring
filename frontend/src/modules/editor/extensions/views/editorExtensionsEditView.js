@@ -9,7 +9,7 @@ define(function(require) {
   var EditorExtensionsEditView = EditorOriginView.extend({
     className: "extension-management",
     tagName: "div",
-    // TODO do we need to turn this off?
+
     settings: {
       autoRender: false
     },
@@ -21,14 +21,9 @@ define(function(require) {
 
     preRender: function() {
       this.currentSelectedIds = [];
-
-      this.listenTo(Origin, {
-        'editorExtensionsEdit:views:add': this.addExtension,
-        'editorExtensionsEdit:views:remove': this.removeExtension
-      });
-
+      this.listenTo(Origin, 'editorExtensionsEdit:views:add', this.addExtension);
+      this.listenTo(Origin, 'editorExtensionsEdit:views:remove', this.removeExtension);
       this.setupExtensions();
-
       this.render();
       // TODO is defer a good idea?
       _.defer(_.bind(this.postRender, this));
@@ -36,25 +31,20 @@ define(function(require) {
 
     setupExtensions: function() {
       var availableExtensionsCollection = Origin.editor.data.extensiontypes;
-      // TODO why use collections?
-      // var enabledExtensionsCollection = new Backbone.Collection(null, { comparator: 'displayName' });
-      // var disabledExtensionsCollection = new Backbone.Collection(null, { comparator: 'displayName' });
-      var enabledExtensionsCollection = [];
-      var disabledExtensionsCollection = [];
+      var enabledExtensionsCollection = new Backbone.Collection(null, { comparator: 'displayName' });
+      var disabledExtensionsCollection = new Backbone.Collection(null, { comparator: 'displayName' });
       var enabledExtensionNames = _.pluck(Origin.editor.data.config.get('_enabledExtensions'), 'name');
-
+      // sort into appropriate collection
       availableExtensionsCollection.each(function(extension) {
         if(_.indexOf(enabledExtensionNames, extension.get('name')) > -1) {
-          enabledExtensionsCollection.push(extension);
+          enabledExtensionsCollection.add(extension);
         } else if(extension.get('_isAvailableInEditor')) {
-          disabledExtensionsCollection.push(extension);
+          disabledExtensionsCollection.add(extension);
         }
       });
       this.model.set({
-        // enabledExtensions: enabledExtensionsCollection.toJSON(),
-        // availableExtensions: disabledExtensionsCollection.toJSON()
-        enabledExtensions: enabledExtensionsCollection,
-        availableExtensions: disabledExtensionsCollection
+        enabledExtensions: enabledExtensionsCollection.toJSON(),
+        availableExtensions: disabledExtensionsCollection.toJSON()
       });
     },
 

@@ -1,12 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
   var _ = require('underscore');
-  var Backbone = require('backbone');
   var Helpers = require('core/helpers');
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
-  var AssetModel = require('modules/assetManagement/models/assetModel');
-  var TagsInput = require('libraries/jquery.tagsinput.min');
 
   var PluginManagementUploadView = OriginView.extend({
 

@@ -48,7 +48,7 @@ define(function(require){
     },
 
     goBack: function() {
-      Origin.router.navigate('#/userManagement', { trigger:true });
+      Origin.router.navigateTo('userManagement');
     },
 
     onFormSubmitSuccess: function(userData, userStatus, userXhr) {

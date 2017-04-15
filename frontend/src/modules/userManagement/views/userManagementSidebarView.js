@@ -10,7 +10,7 @@ define(function(require) {
 
     addUser: function(event) {
       event && event.preventDefault();
-      Origin.router.navigate('#/userManagement/addUser', { trigger: true });
+      Origin.router.navigateTo('userManagement/addUser');
     }
   }, {
     template: 'userManagementSidebar'

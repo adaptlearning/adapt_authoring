@@ -195,6 +195,7 @@ define(function(require) {
 
         onExternalClearButtonClicked: function(event) {
             event.preventDefault();
+            this.checkValueHasChanged();
             this.setValue('');
             this.saveModel(false);
             this.toggleFieldAvailibility();

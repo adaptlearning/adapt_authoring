@@ -21,7 +21,7 @@ define(function(require) {
 
   // component add is just a page overlay view, so handling it here
   Origin.on('editor:block', function(data) {
-    if(data.action === 'add') {
+    if(data.action !== 'add') {
       return;
     }
     var containingBlock = Origin.editor.data.blocks.findWhere({ _id: Origin.location.route3 });
@@ -29,7 +29,7 @@ define(function(require) {
     var componentsModel = new Backbone.Model({
       title: Origin.l10n.t('app.addcomponent'),
       body: Origin.l10n.t('app.pleaseselectcomponent'),
-      _parentId: route3,
+      _parentId: Origin.location.route3,
       componentTypes: Origin.editor.data.componenttypes.toJSON(),
       layoutOptions: layoutOptions
     });

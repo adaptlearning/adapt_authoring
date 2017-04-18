@@ -22,20 +22,11 @@ module.exports = function(grunt) {
             src: [
               'frontend/src/core/**/assets/**',
               'frontend/src/modules/**/assets/**',
-              'frontend/src/plugins/**/assets/**'
+              'frontend/src/plugins/**/assets/**',
+              'frontend/src/libraries/**/assets/**'
             ],
             dest: 'frontend/build/css/assets/',
             filter: 'isFile'
-          },
-          {
-            expand: true,
-            cwd: 'frontend/src/core/libraries/tinymce/',
-            src: [
-              'plugins/**/*',
-              'skins/**/*',
-              'themes/**/*'
-            ],
-            dest: 'frontend/build/js/'
           },
           {
             expand: true,
@@ -53,7 +44,8 @@ module.exports = function(grunt) {
           src: [
             'frontend/src/core/**/*.less',
             'frontend/src/modules/**/*.less',
-            'frontend/src/plugins/**/*.less'
+            'frontend/src/plugins/**/*.less',
+            'frontend/src/libraries/**/*.less'
           ],
           paths: 'frontend/src/core/less',
           generateSourceMaps: true,
@@ -70,7 +62,8 @@ module.exports = function(grunt) {
             'frontend/src/core/**/*.less',
             'frontend/src/less/**/*.less',
             'frontend/src/modules/**/*.less',
-            'frontend/src/plugins/**/*.less'
+            'frontend/src/plugins/**/*.less',
+            'frontend/src/libraries/**/*.less'
           ],
           paths: 'frontend/src/core/less',
           generateSourceMaps: false,

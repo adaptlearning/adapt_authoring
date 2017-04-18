@@ -13,18 +13,10 @@ define(function(require) {
     (new ComponentModel({ _id: data.id })).fetch({
       success: function(model) {
         var form = Origin.scaffold.buildForm({ model: model });
-        var displayName = getComponentDisplayName(model);
         Helpers.setPageTitle(model);
-        Origin.sidebar.addView(new EditorComponentEditSidebarView({ model: model, form:form }).$el);
+        Origin.sidebar.addView(new EditorComponentEditSidebarView({ model: model, form: form }).$el);
         Origin.contentPane.setView(EditorComponentEditView, { model: model, form: form });
       }
     });
   });
-
-  function getComponentDisplayName(model) {
-    var componentType = _.find(Origin.editor.data.componenttypes.models, function(m) {
-      return m.get('_id') === model.get('_componentType');
-    });
-    return (componentType) ? componentType.get('displayName').toLowerCase() : '';
-  }
 });

@@ -22,7 +22,6 @@ define(function(require) {
         // Ensure that the latest config model is always up-to-date when entering this screen
         Origin.editor.data.config = new ConfigModel({_courseId: this.model.get('_id')});
       }
-
       // This next line is important for a proper PATCH request on saveProject()
       this.originalAttributes = _.clone(this.model.attributes);
     },

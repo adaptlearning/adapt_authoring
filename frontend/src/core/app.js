@@ -54,7 +54,11 @@
   loadLibraries(function() {
     loadCore(function() {
       loadAddOns(function() {
-        origin.initialize();
+        // start session
+        // FIXME required here to avoid errors
+        require(['modules/user/models/sessionModel'], function(SessionModel) {
+          origin.startSession(new SessionModel());
+        });
       });
     });
   });

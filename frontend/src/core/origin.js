@@ -1,9 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require){
-  var _ = require('underscore');
-  var Backbone = require('backbone');
-  var SessionModel = require('modules/user/models/sessionModel');
-
+define(['require', 'underscore', 'backbone'], function(require, _, Backbone){
   var initialized = false;
   var eventTaps = [];
   var $loading;
@@ -14,21 +10,27 @@ define(function(require){
     * Performs the necessary set-up steps
     */
     initialize: _.once(function() {
-      (new SessionModel()).fetch({
-        success: function(model) {
-          Origin.sessionModel = model;
-          // need the schemas before the app loads
-          Origin.trigger('schemas:loadData', function() {
-            Origin.trigger('origin:dataReady');
-            initLoading();
-            initialized = true;
-            Origin.trigger('origin:initialize');
-          });
+      listenToWindowEvents();
+      Origin.trigger('schemas:loadData', function() {
+        Origin.trigger('origin:dataReady');
+        initLoading();
+        initialized = true;
+        Origin.trigger('origin:initialize');
+      });
+    }),
+    /**
+    * Saves session on the Origin object
+    */
+    startSession: function(session) {
+      Origin.sessionModel = session;
+      session.fetch({
+        success: function() {
+          Origin.trigger('origin:sessionStarted');
+          Origin.initialize();
         },
         error: console.error
       });
-      listenToWindowEvents();
-    }),
+    },
     /**
     * Whether the Origin object has loaded
     */

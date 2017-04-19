@@ -3,6 +3,7 @@ define(function(require) {
   var Backbone = require('backbone');
 
   var UserModel = Backbone.Model.extend({
+    url: 'api/user',
     idAttribute: '_id',
 
     initialize: function() {

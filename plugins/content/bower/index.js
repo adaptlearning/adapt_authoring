@@ -897,11 +897,11 @@ function handleUploadedPlugin (req, res, next) {
         fs.readdir(outputPath, function (err, directoryList) {
 
           async.some(directoryList, function(directory, asyncCallback) {
-            var bowerPath = path.join(outputPath, directory, 'bower.json');
+            var bowerPath = path.join(outputPath, 'bower.json');
 
             fs.exists(bowerPath, function(exists) {
               if (exists) {
-                canonicalDir = path.join(outputPath, directory);
+                canonicalDir = outputPath;
                 try {
                   packageJson = require(bowerPath);
                 } catch (error) {

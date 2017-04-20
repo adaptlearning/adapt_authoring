@@ -9,7 +9,6 @@ define(function(require) {
 
   Origin.sidebar = {
     addView: function($el, options) {
-      console.log('addView');
       // Trigger to remove current views
       Origin.trigger('sidebar:views:remove');
       // Check if element is a view element

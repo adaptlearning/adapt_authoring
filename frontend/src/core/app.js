@@ -8,6 +8,7 @@
       'imageReady',
       'inview',
       'jqueryForm',
+      'jqueryTagsInput',
       'jqueryUI',
       'mediaelement',
       'scrollTo',

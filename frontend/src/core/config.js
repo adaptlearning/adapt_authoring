@@ -11,8 +11,8 @@ require.config({
     inview: 'libraries/inview',
     jquery: 'libraries/jquery',
     jqueryForm : 'libraries/jquery.form',
+    jqueryTagsInput: 'libraries/jquery.tagsinput.min',
     jqueryUI: 'libraries/jquery-ui.min',
-    jsoneditor: 'libraries/jquery.jsoneditor.min',
     mediaelement : 'libraries/mediaelement-and-player',
     modernizr: 'libraries/modernizr',
     moment: 'libraries/moment.min',
@@ -53,17 +53,17 @@ require.config({
       deps: ['jquery'],
       exports: 'inview'
     },
-    'jquery-form': {
+    jqueryForm: {
       deps: ['jquery'],
       exports: "$"
     },
-    'jquery-ui': {
+    jqueryTagsInput: {
       deps: ['jquery'],
       exports: "$"
     },
-    jsoneditor: {
+    jqueryUI: {
       deps: ['jquery'],
-      exports: 'JsonEditor'
+      exports: "$"
     },
     mediaelement: {
       deps: ['jquery'],
@@ -82,10 +82,6 @@ require.config({
     sweetalert: {
       deps: ['jquery'],
       exports: 'sweetAlert'
-    },
-    tags: {
-      deps: ['jquery'],
-      exports: "$"
     },
     underscore: {
       exports: '_'

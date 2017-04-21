@@ -3,8 +3,8 @@ require.config({
   paths: {
     ace: 'libraries/ace',
     backbone: 'libraries/backbone',
-    backboneForms:'libraries/backbone-forms',
-    backboneFormsLists:'libraries/backbone-forms-lists',
+    backboneForms: 'libraries/backbone-forms',
+    backboneFormsLists: 'libraries/backbone-forms-lists',
     colorPicker: 'libraries/colorPicker/js/colorpicker',
     handlebars: 'libraries/handlebars',
     imageReady: 'libraries/imageReady',

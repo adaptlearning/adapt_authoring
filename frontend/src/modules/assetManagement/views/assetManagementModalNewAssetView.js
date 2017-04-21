@@ -1,26 +1,22 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-
-  var Backbone = require('backbone');
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
-  var AssetModel = require('../models/assetModel');
-  var TagsInput = require('libraries/jquery.tagsinput.min');
 
   var AssetManagementNewAssetView = OriginView.extend({
-
-
     className: 'asset-management-modal-new-asset',
 
     events: {
-      'change .asset-file'          : 'onChangeFile',
+      'change .asset-file': 'onChangeFile',
       'click .asset-management-modal-new-asset-close': 'onCloseClicked',
       'click .asset-management-modal-new-asset-upload': 'onUploadClicked'
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'assetManagement:modal:newAssetOpened', this.remove);
-      this.listenTo(Origin, 'assetManagement:newAsset', this.uploadAsset);
+      this.listenTo(Origin, {
+        'assetManagement:modal:newAssetOpened': this.remove,
+        'assetManagement:newAsset': this.uploadAsset
+      });
     },
 
     onCloseClicked: function(event) {
@@ -35,7 +31,6 @@ define(function(require){
 
     postRender: function() {
       // tagging
-
       this.$('#tags_control').tagsInput({
         autocomplete_url: '/api/autocomplete/tag',
         onAddTag: _.bind(this.onAddTag, this),
@@ -49,44 +44,44 @@ define(function(require){
 
     onChangeFile: function(event) {
       var $title = this.$('.asset-title');
-
       // Default 'title' -- remove C:\fakepath if it is added
       $title.val(this.$('.asset-file')[0].value.replace("C:\\fakepath\\", ""));
     },
 
     validateInput: function () {
-      var reqs = this.$('.required');
-      var uploadFile = this.$('.asset-file');
+      var $uploadFile = this.$('.asset-file');
       var validated = true;
-      var uploadFileErrormsg = $(uploadFile).prev('label').find('span.error');
-      $.each(reqs, function (index, el) {
-        var errormsg = $(el).prev('label').find('span.error');
+      var $uploadFileErrormsg = $uploadFile.prev('label').find('span.error');
+
+      $.each(this.$('.required'), function (index, el) {
+        console.log(el.val, el);
+        var $errormsg = $(el).prev('label').find('span.error');
         if (!$.trim($(el).val())) {
           validated = false;
           $(el).addClass('input-error');
-          $(errormsg).text(Origin.l10n.t('app.pleaseentervalue'));
+          $errormsg.text(Origin.l10n.t('app.pleaseentervalue'));
         } else {
           $(el).removeClass('input-error');
-          $(errormsg).text('');
+          $errormsg.text('');
         }
       });
-      if (!uploadFile.val()) {
+
+      if(!$uploadFile.val()) {
         validated = false;
-        $(uploadFile).addClass('input-error');
-        $(uploadFileErrormsg).text(Origin.l10n.t('app.pleaseaddfile'));
+        $uploadFile.addClass('input-error');
+        $uploadFileErrormsg.text(Origin.l10n.t('app.pleaseaddfile'));
       } else {
-        $(uploadFile).removeClass('input-error');
-        $(uploadFileErrormsg).text('');
+        $uploadFile.removeClass('input-error');
+        $uploadFileErrormsg.text('');
       }
+
       return validated;
     },
 
     uploadAsset: function() {
-
       if (!this.validateInput()) {
         return false;
       }
-
       var title = this.$('.asset-title').val();
       var description = this.$('.asset-description').val();
         // If model is new then uploadFile
@@ -123,21 +118,18 @@ define(function(require){
 
       var self = this;
       this.$('.asset-form').ajaxSubmit({
-
         uploadProgress: function(event, position, total, percentComplete) {
           $(".progress-container").css("visibility", "visible");
           var percentVal = percentComplete + '%';
           $(".progress-bar").css("width", percentVal);
           $('.progress-percent').html(percentVal);
         },
-
         error: function(xhr, status, error) {
           Origin.Notify.alert({
             type: 'error',
             text: xhr.responseJSON.message
           });
         },
-
         success: function(data, status, xhr) {
           Origin.once('assetManagement:assetManagementCollection:fetched', function() {
             Origin.trigger('assetManagement:modal:selectItem', data._id);
@@ -175,11 +167,9 @@ define(function(require){
       });
       this.model.set({ tags: tags });
     }
-
   }, {
     template: 'assetManagementModalNewAsset'
   });
 
   return AssetManagementNewAssetView;
-
 });

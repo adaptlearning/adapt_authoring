@@ -38,6 +38,46 @@
             <textarea class="asset-description required" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>
         </div>
 
+        <div class="form-group">
+            <label for="attribution">
+                {{t 'app.assetattribution'}}
+                <span class="error"></span>
+            </label>
+            <input type="text" class="asset-attribution" name="attribution" placeholder="{{t 'app.assetattribution'}}">{{ attribution }}</input>
+        </div>
+
+        <div class="form-group">
+            <label for="source">
+                {{t 'app.assetsource'}}
+                <span class="error"></span>
+            </label>
+            <input type="text" class="asset-source" name="source" placeholder="{{t 'app.assetsource'}}">{{ source }}</input>
+        </div>
+
+        <div class="form-group">
+            <label for="licence">
+                {{t 'app.assetlicence'}}
+                <span class="error"></span>
+            </label>
+            <select class="asset-licence" name="licence" >
+                <option value=""></option>
+                <option value="CC0">CC0</option>
+                <option value="CC-BY">CC-BY</option>
+                <option value="CC-BY-SA">CC-BY-SA</option>
+                <option value="CC-BY-NC">CC-BY-NC</option>
+                <option value="CC-BY-NC-SA">CC-BY-NC-SA</option>
+                <option value="CC-BY-ND">CC-BY-ND</option>
+                <option value="CC-BY-ND">CC-BY-NC-ND</option>
+                <option value="All rights reserved">All rights reserved</option>
+                <option value="Shutterstock standard licence">Shutterstock standard licence</option>
+            </select>
+            <script>
+            $( document ).ready(function() {
+               $('.asset-licence').val('{{ licence }}');
+            });
+            </script>
+        </div>
+
         <div class="form-group tags">
             <label for="tags_control">{{t 'app.tags'}}</label>
             <input type="text" autocomplete="off" class="width-30" id="tags_control" name="tags_control" value="{{pickCSV tags "title"}}" />

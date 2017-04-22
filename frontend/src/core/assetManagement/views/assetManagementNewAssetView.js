@@ -77,6 +77,9 @@ define(function(require){
 
       var title = this.$('.asset-title').val();
       var description = this.$('.asset-description').val();
+      var attribution = this.$('.asset-attribution').val();
+      var source = this.$('.asset-source').val();
+      var licence = this.$('.asset-licence').val();
         // If model is new then uploadFile
         if (this.model.isNew()) {
           this.uploadFile();
@@ -84,7 +87,7 @@ define(function(require){
           return false;
         } else {
           // Else just update the title, description and tags
-          this.model.set({title: title, description: description});
+          this.model.set({title: title, description: description, attribution: attribution, source: source, licence: licence});
           this.model.save(null, {
             error: function(model, response, options) {
               Origin.Notify.alert({

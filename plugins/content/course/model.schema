@@ -158,6 +158,17 @@
                 "required"
               ]
             },
+            "skipNavigationText": {
+              "type": "string",
+              "title": "Skip navigation label",
+              "translatable": true,
+              "default": "Skip navigation",
+              "inputType": "Text",
+              "required": true,
+              "validators": [
+                "required"
+              ]
+            },
             "_accessibilityInstructions": {
               "type": "object",
               "title": "Accessibility instructions",
@@ -202,6 +213,14 @@
                   "type": "string",
                   "title": "",
                   "default": "Course navigation bar",
+                  "inputType": "Text",
+                  "required": true
+                },
+                "skipNavigation": {
+                  "type": "string",
+                  "translatable": true,
+                  "title": "",
+                  "default": "Skip navigation",
                   "inputType": "Text",
                   "required": true
                 },

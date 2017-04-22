@@ -1,15 +1,14 @@
 ## Introduction
 * The Adapt authoring tool is a node app that provides a user interface for the Adapt framework.
 * This version of instructions contains only the essential details. [A more detailed set of installation instructions is also available.](https://github.com/adaptlearning/adapt_authoring/wiki/Install-on-Server) If you need assistance troubleshooting, consult the Adapt community's <a href="https://community.adaptlearning.org/mod/forum/view.php?id=4" target="_blank">Technical Discussion Forum</a>.
-* As an alternative to this manual installation, the Adapt authoring tool may be installed on VirtualBox with Vagrant. Please reference [Install with Vagrant](https://github.com/adaptlearning/adapt_authoring/wiki/Install-with-Vagrant).
 
 ### Navigation
 - [Installing Manually](#to-install-manually)
 - [Updating the tool](#updating-the-tool)
 
-##To Install Manually
+## To Install Manually
 
-###1. Install Prerequisites
+### 1. Install Prerequisites
 
 Install the following before proceeding:
 * [Git](http://git-scm.com/downloads)
@@ -27,16 +26,16 @@ The following are optional:
 > + Windows users should run these commands in Git Bash if Git was installed using default settings. Otherwise, run the command prompt window as Administrator.
 > + Mac and Linux users may need to prefix the commands with `sudo` or give yourself elevated permissions on the */usr/local directory* as documented [here](http://foohack.com/2010/08/intro-to-npm/#what_no_sudo).
 
-###2. Clone the Adapt_Authoring Project
+### 2. Clone the Adapt_Authoring Project
 
 `git clone https://github.com/adaptlearning/adapt_authoring.git`
 
 
-###3. Install Dependencies
+### 3. Install Dependencies
 Navigate to the folder where you cloned adapt_authoring and run the following command:
 `npm install`
 
-###4. Run the Install Script
+### 4. Run the Install Script
 
 The final portion of the install script will help you configure the authoring tool. Most configuration questions will appear with a default answer already in place. And most times you can just accept the default values by pressing the Enter key. **The only input you are required to provide are an email address and password for the super user account.** (The questions about the super user account is not the same as the SMTP service or the master tenant.) The super user's email address and password will be used to login to the authoring tool.
 >**Notes:**
@@ -52,7 +51,7 @@ If the script succeeds, you'll receive the following message:
 And you'll be instructed to
 `Run the command 'node server' (or 'foreman start' if using heroku toolbelt) to start your instance.`
 
-###5. Run the Application
+### 5. Run the Application
 1. Verify MongoDB service is running.
 
 2. Run the following command.

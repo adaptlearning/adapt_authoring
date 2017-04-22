@@ -25,7 +25,12 @@ define(function(require) {
       if (licence) {
         output += " <span class='assetLicence'>[" + licence + "]</span>";
       }
+      // All graphics except hot-graphic
       $('.component-edit .field-graphic .field-attribution input').val(output);
+
+      // Hot graphic is different! 
+      $('.component-edit .field-main-hotgraphic .field-attribution input').val(output);
+
     }
 
     function onAssetFetchError() {

@@ -171,7 +171,7 @@ module.exports = function(grunt) {
       },
       compile: {
         options: {
-          baseUrl: 'frontend/src/',
+          baseUrl: 'frontend/src',
           name: 'core/app',
           mainConfigFile: "frontend/src/core/config.js",
           out: "frontend/build/js/origin.js",
@@ -285,7 +285,7 @@ module.exports = function(grunt) {
       requirePaths += relativePath + '/index' + splitter;
     });
 
-    var defineStatement = "define(['" + requirePaths +"]);";
+    var defineStatement = "define('" + this.target + "',['" + requirePaths +"]);";
     grunt.file.write(this.data.dest, defineStatement);
   });
 

@@ -20,19 +20,19 @@ define(function(require) {
     },
 
     preRender: function() {
-      this.listenTo(this, 'remove', this.remove);
-
+      this.listenTo(this, {
+        'remove': this.remove,
+        'contextMenu:course:editSettings': this.editProjectSettings,
+        'contextMenu:course:edit': this.editProject,
+        'contextMenu:course:delete': this.deleteProjectPrompt,
+        'contextMenu:course:copy': this.duplicateProject
+      });
       this.listenTo(Origin, {
         'dashboard:dashboardView:removeSubViews': this.remove,
         'dashboard:projectView:itemSelected': this.deselectItem,
         'dashboard:dashboardView:deselectItem': this.deselectItem
       });
       this.listenTo(Origin, 'editorView:deleteProject:' + this.model.get('_id'), this.deleteProject);
-
-      this.on('contextMenu:course:editSettings', this.editProjectSettings);
-      this.on('contextMenu:course:edit', this.editProject);
-      this.on('contextMenu:course:delete', this.deleteProjectPrompt);
-      this.on('contextMenu:course:duplicate', this.duplicateProject);
 
       this.model.set('heroImageURI', this.model.getHeroImageURI());
     },
@@ -63,12 +63,12 @@ define(function(require) {
     selectItem: function() {
       Origin.trigger('dashboard:projectView:itemSelected');
       this.$el.addClass('selected');
-      this.model.set({_isSelected:true});
+      this.model.set({ _isSelected: true });
     },
 
     deselectItem: function() {
       this.$el.removeClass('selected');
-      this.model.set({_isSelected:false});
+      this.model.set({ _isSelected: false });
     },
 
     deleteProjectPrompt: function(event) {

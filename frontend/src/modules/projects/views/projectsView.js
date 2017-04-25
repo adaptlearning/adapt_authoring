@@ -205,15 +205,14 @@ define(function(require){
       }
     },
 
-    highlight: function(text){
-      regExpEscape = function(str){
-        var specials = /[.*+?|()\[\]{}\\$^]/g; // .*+?|()[]{}\$^
-        return str.replace(specials, "\\$&");
-      };
-      var userPreferences =this.getUserPreferences()
-      var search = userPreferences.search || '';
-      var regex = new RegExp( regExpEscape(search), "gi");
-      return text.replace(regex, function(term) {return '<span class="highlighted">'+ term+ '</span>'});
+    highlight: function(text) {
+      var search  = this.getUserPreferences().search || '';
+      // replace special characters: .*+?|()[]{}\$^
+      search.replace(/[.*+?|()\[\]{}\\$^]/g, "\\$&");
+      // add the span
+      return text.replace(new RegExp(search, "gi"), function(term) {
+        return '<span class="highlighted">' + term + '</span>';
+      });
     },
 
     addTag: function(filterType) {

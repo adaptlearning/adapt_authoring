@@ -35,26 +35,21 @@ define(function(require) {
     },
 
     setupExtensions: function() {
-      var availableExtensionsCollection = Origin.editor.data.extensiontypes;
-      // TODO why use collections?
-      // var enabledExtensionsCollection = new Backbone.Collection(null, { comparator: 'displayName' });
-      // var disabledExtensionsCollection = new Backbone.Collection(null, { comparator: 'displayName' });
-      var enabledExtensionsCollection = [];
-      var disabledExtensionsCollection = [];
       var enabledExtensionNames = _.pluck(Origin.editor.data.config.get('_enabledExtensions'), 'name');
+      var enabledExtensions = [];
+      var disabledExtensions = [];
 
-      availableExtensionsCollection.each(function(extension) {
-        if(_.indexOf(enabledExtensionNames, extension.get('name')) > -1) {
-          enabledExtensionsCollection.push(extension);
-        } else if(extension.get('_isAvailableInEditor')) {
-          disabledExtensionsCollection.push(extension);
+      Origin.editor.data.extensiontypes.each(function(model) {
+        var extension = model.toJSON();
+        if(_.indexOf(enabledExtensionNames, extension.name) > -1) {
+          enabledExtensions.push(extension);
+        } else if(extension._isAvailableInEditor) {
+          disabledExtensions.push(extension);
         }
       });
       this.model.set({
-        // enabledExtensions: enabledExtensionsCollection.toJSON(),
-        // availableExtensions: disabledExtensionsCollection.toJSON()
-        enabledExtensions: enabledExtensionsCollection,
-        availableExtensions: disabledExtensionsCollection
+        enabledExtensions: enabledExtensions,
+        availableExtensions: disabledExtensions
       });
     },
 

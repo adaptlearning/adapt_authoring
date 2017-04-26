@@ -192,7 +192,7 @@ define(['jquery', 'underscore', 'backbone', 'backboneForms'], function($, _, Bac
       if (!confirmMsg) return confirmCallback(true);
 
       window.confirm({
-        title: window.polyglot.t('app.confirmdelete'),
+        title: Origin.l10n.t('app.confirmdelete'),
         text: confirmMsg,
         type: "warning",
         callback: confirmCallback

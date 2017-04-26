@@ -45,10 +45,8 @@ define(function(require){
     renderPluginTypeViews: function(collection) {
       this.$('.pluginManagement-plugins').empty();
 
-      var pluginTypes = collection.models;
-
-      _.each(pluginTypes, this.renderPluginTypeView, this);
-      this.evaluatePluginTypeCount(pluginTypes);
+      this.collection.each(this.renderPluginTypeView);
+      this.evaluatePluginTypeCount(this.collection);
 
       this.setViewToReady();
     },

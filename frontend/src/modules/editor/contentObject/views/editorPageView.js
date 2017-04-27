@@ -157,7 +157,8 @@ define(function(require){
       if(!event) return console.log('Error: needs a current target to attach the menu to...');
       event.preventDefault() && event.stopPropagation();
 
-      var fakeView = new Backbone.View({ model: new Backbone.Model({ _type: 'page-min' }) });
+      var fakeModel = new Backbone.Model({ _id: this.model.get('_id'), _type: 'page-min' });
+      var fakeView = new Backbone.View({ model: fakeModel });
 
       this.listenTo(fakeView, {
         'contextMenu:page-min:edit': this.loadPageEdit,

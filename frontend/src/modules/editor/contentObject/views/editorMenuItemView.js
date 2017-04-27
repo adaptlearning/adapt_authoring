@@ -44,12 +44,10 @@ define(function(require){
         'change:_isSelected': this.onSelectedChange
       });
       // Handle the context menu clicks
-      this.on({
-        'contextMenu:menu:edit': this.editMenuItem,
-        'contextMenu:menu:copy': this.copyMenuItem,
-        'contextMenu:menu:copyID': this.copyID,
-        'contextMenu:menu:delete': this.deleteItemPrompt
-      });
+      this.on('contextMenu:' + this.model.get('_type') + ':edit', this.editMenuItem);
+      this.on('contextMenu:' + this.model.get('_type') + ':copy', this.copyMenuItem);
+      this.on('contextMenu:' + this.model.get('_type') + ':copyID', this.copyID);
+      this.on('contextMenu:' + this.model.get('_type') + ':delete', this.deleteItemPrompt);
 
       this.$el.closest('.editor-menu').on('mousemove', _.bind(this.handleDrag, this));
     },

@@ -8,10 +8,6 @@ define(function(require) {
     className: 'context-menu',
     contextView : {},
 
-    events: {
-      'click .context-menu-close':'onCloseContextMenu'
-    },
-
     initialize: function() {
       this._isVisible = false;
       this.listenTo(Origin, {
@@ -38,11 +34,15 @@ define(function(require) {
     },
 
     toggleMenu: function(view, e) {
-      if(this._isVisible) {
-        return this.hideMenu();
+      var isSameModel = view && (view.model.get('_id')) === (this.contextView.model && this.contextView.model.get('_id'))
+      var isSameType = view && (view.model.get('_type')) === (this.contextView.model && this.contextView.model.get('_type'))
+      // new view, update the menu items
+      if(!isSameModel || !isSameType) {
+        this.setMenu(view, $(e.currentTarget));
+        return this.showMenu();
       }
-      this.setMenu(view, $(e.currentTarget));
-      this.showMenu();
+
+      (this._isVisible) ? this.hideMenu() : this.showMenu();
     },
 
     setMenu: function(view, $parent) {
@@ -64,24 +64,14 @@ define(function(require) {
     showMenu: function() {
       this.$el.removeClass('display-none');
       this._isVisible = true;
-      this.addBodyEvent();
       Origin.trigger('contextMenu:opened');
     },
 
     hideMenu: function() {
       this.$el.addClass('display-none');
       this._isVisible = false;
-      this.removeBodyEvent();
       Origin.trigger('contextMenu:closed');
     },
-
-    addBodyEvent: function() {
-      $('html').one('click', _.bind(this.hideMenu, this));
-    },
-
-    removeBodyEvent: function() {
-      $('html').off('click');
-    }
   });
 
   return ContextMenuView;

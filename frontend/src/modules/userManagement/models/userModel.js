@@ -3,7 +3,7 @@ define(function(require) {
   var Backbone = require('backbone');
 
   var UserModel = Backbone.Model.extend({
-    rootUrl: 'api/user',
+    url: 'api/user',
     idAttribute: '_id',
 
     initialize: function() {
@@ -13,6 +13,12 @@ define(function(require) {
       this.on('change:failedLoginCount', this.setLockStatus);
 
       this.setLockStatus();
+    },
+
+    destroy: function(options) {
+      // HACK because we can't define a rootUrl and url
+      _.extend(options, { url: this.url + '/' + this.get('_id') })
+      Backbone.Model.prototype.destroy.apply(this, arguments);
     },
 
     onGlobalDataChanged: function(model, value, options) {

@@ -15,6 +15,9 @@ define(function(require) {
   var EditorCollection = require('../global/collections/editorCollection');
   var ExtensionModel = require('core/models/extensionModel');
 
+  var loadingGlobalData = false;
+  var loadingCourseData = false;
+
   // used to check what's preloaded
   var globalData = {
     courses: false,
@@ -39,10 +42,10 @@ define(function(require) {
     * Loads course-specific data
     */
     loadGlobalData: function() {
-      if(!Origin.sessionModel.get('isAuthenticated')) {
-        // no point continuing if not logged in
+      if(!Origin.sessionModel.get('isAuthenticated') || loadingGlobalData) {
         return;
       }
+      loadingGlobalData = true;
       ensureEditorData();
       resetLoadStatus(globalData);
       // create the global collections
@@ -57,6 +60,7 @@ define(function(require) {
       }
       // start preload
       fetchEditorData(globalData, function() {
+        loadingGlobalData = false;
         Origin.trigger('editor:dataPreloaded');
       });
     },
@@ -65,13 +69,19 @@ define(function(require) {
     * Accepts callback for editor:refreshData
     */
     loadCourseData: function(callback) {
-      if(!preloader.hasLoadedGlobalData()) {
-        return Origin.on('editor:dataPreloaded', preloader.loadCourseData);
-      }
       if(!Origin.sessionModel.get('isAuthenticated')) {
         // no point continuing if not logged in
         return;
       }
+      if(loadingCourseData) {
+        return;
+      }
+      if(!preloader.hasLoadedGlobalData()) {
+        return Origin.on('editor:dataPreloaded', function() {
+          preloader.loadCourseData(callback);
+        });
+      }
+      loadingCourseData = true;
       resetLoadStatus(courseData);
       var ed = Origin.editor.data;
       var courseId = Origin.location.route1;
@@ -92,6 +102,7 @@ define(function(require) {
       // fetch all collections
       fetchEditorData(courseData, function() {
         if(_.isFunction(callback)) callback.apply(Origin.editor.data);
+        loadingCourseData = false;
         Origin.trigger('editor:dataLoaded');
       });
     },
@@ -106,18 +117,21 @@ define(function(require) {
     * Makes sure all data has been loaded and calls callback
     */
     waitForLoad: function(callback) {
-      if(preloader.hasLoadedData()) {
-        return callback.apply(this);
+      var done = function() {
+        if(preloader.hasLoadedData()) {
+          Origin.off('editor:dataPreloaded', done);
+          Origin.off('editor:Loaded', done);
+          callback.apply(this);
+        }
       }
+      // in case we've already loaded
+      done();
+
       if(!preloader.hasLoadedGlobalData()) {
-        Origin.once('editor:dataPreloaded', function(){
-          if(preloader.hasLoadedData()) return callback.apply(this);
-        });
+        Origin.on('editor:dataPreloaded', done);
       }
       if(!preloader.hasLoadedCourseData()) {
-        Origin.once('editor:dataLoaded', function(){
-          if(preloader.hasLoadedData()) return callback.apply(this);
-        });
+        Origin.on('editor:dataLoaded', done);
       }
     },
     /**
@@ -150,7 +164,7 @@ define(function(require) {
   }
 
   function resetLoadStatus(data) {
-    _.every(data, function(value, key) { data[key] = false; });
+    _.each(data, function(value, key) { data[key] = false; });
   }
 
   /**

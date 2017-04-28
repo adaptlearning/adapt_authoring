@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
   var Origin = require('coreJS/app/origin');
   var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
 
@@ -7,12 +7,12 @@ define(function(require) {
       'click button.add': 'addTenant'
     },
 
-    addTenant: function(event) {
+    addTenant: function (event) {
       event && event.preventDefault();
       Origin.router.navigate('#/tenantManagement/addTenant');
     }
   }, {
-    template: 'tenantManagementSidebar'
-  });
+      template: 'tenantManagementSidebar'
+    });
   return TenantManagementSidebarView;
 });

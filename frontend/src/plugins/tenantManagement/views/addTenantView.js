@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
   var Origin = require("coreJS/app/origin");
   var Helpers = require("coreJS/app/helpers");
@@ -9,66 +9,69 @@ define(function(require) {
     className: 'addTenant',
     events: {},
 
-    preRender: function() {
+    preRender: function () {
       Origin.trigger('location:title:update', { title: window.polyglot.t('app.addnewtenant') });
       this.listenTo(Origin, 'tenantManagement:saveTenant', this.saveNewTenant);
     },
 
-    postRender: function() {
+    postRender: function () {
       this.setHeight();
       this.setViewToReady();
     },
 
-    setHeight: function() {
+    setHeight: function () {
       var newHeight = $(window).height() - $('div.' + this.className).offset().top - $(".sidebar-item-container").height();
       $('div.' + this.className).height(newHeight);
     },
 
-    saveNewTenant: function(event) {
+    saveNewTenant: function (event) {
       var self = this;
       var name = this.$("#tenantName").val();
       var displayName = this.$("#tenantDisplayName").val();
       if (!name) {
-        Origin.Notify.alert({
-          type: 'error',
-          title: "Please enter valid tenant name"
-        });
+        self.showErrorMessage(window.polyglot.t('app.addvalidtenantname'));
         return;
       }
       if (!displayName) {
-        Origin.Notify.alert({
-          type: 'error',
-          title: window.polyglot.t('app.addvalidtenantname')
-        });
+        self.showErrorMessage(window.polyglot.t('app.addvalidtenantdisplayname'));
         return;
       }
       this.$('form.add-Tenant').ajaxSubmit({
-        error: function(e) {
-          Origin.Notify.alert({
-            type: 'error',
-            title: "",
-            text: window.polyglot.t('app.errorcannotaddtenant')
-          });
+        error: function (e) {
+          self.showErrorMessage(window.polyglot.t('app.errorcannotaddtenant'));
         },
-        success: function(t) {
-          Origin.Notify.alert({
-            type: 'success',
-            title: window.polyglot.t('app.newtenant'),
-            text:  window.polyglot.t('app.addtenantsuccess'),
-            callback: function() {
-              self.goBack();
-            }
-          });
+        success: function (t) {
+          self.showSuccessMessage('app.newtenant', 'app.addtenantsuccess');
         }
       });
     },
-    goBack: function() {
+
+    goBack: function () {
       Origin.router.navigate('#/tenantManagement', { trigger: true });
+    },
+
+    showErrorMessage: function (message) {
+      Origin.Notify.alert({
+        type: 'error',
+        title: message
+      });
+    },
+
+    showSuccessMessage: function (titleMessage, textMessage) {
+      var self = this;
+      Origin.Notify.alert({
+        type: 'success',
+        title: window.polyglot.t(titleMessage),
+        text: window.polyglot.t(textMessage),
+        callback: function () {
+          self.goBack();
+        }
+      });
     }
 
   }, {
-    template: 'addTenant'
-  });
+      template: 'addTenant'
+    });
 
   return AddTenantView;
 });

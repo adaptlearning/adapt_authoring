@@ -1,16 +1,17 @@
-define(function(require) {
+define(function (require) {
   var OriginView = require('coreJS/app/views/originView');
   var Origin = require('coreJS/app/origin');
 
   var TenantView = OriginView.extend({
     tagName: 'div',
-    className: function() {
+    className: function () {
       var className = 'tenant-item tb-row' + ' ' + this.model.get('_id');
       return className;
     },
-    editMode: false,
+    isSelected: false,
 
     events: {
+      'click': 'onClicked',
       'click a.edit': 'onEditClicked',
       'click a.save': 'onSaveClicked',
       'click a.cancel': 'onCancelClicked',
@@ -19,66 +20,71 @@ define(function(require) {
       'click button.enableTenant': 'onEnableClicked'
     },
 
-    preRender: function() {
-      this.listenTo(this.model, 'change', this.onModelUpdated);
+    preRender: function () {
+      this.listenTo(Origin, 'tenantManagement:tenant:reset', this.resetView);
       this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(this, 'remove', this.remove);
     },
 
-    render: function() {
+    render: function () {
       OriginView.prototype.render.apply(this, arguments);
+      this.applyStyles();
+    },
 
+    applyStyles: function () {
       if (this.model.get('_isDeleted') === true) {
         this.$el.addClass('inactive');
       } else {
         this.$el.removeClass('inactive');
       }
 
-      if (this.editMode === true) {
+      if (this.isSelected) {
+        this.$el.addClass('selected');
         this.$('.edit-mode').removeClass('display-none');
         this.$('.write').addClass('display-none');
       } else {
+        this.$el.removeClass('selected');
         this.$('.edit-mode').addClass('display-none');
         this.$('.write').addClass('display-none');
       }
     },
 
-    setEditMode: function() {
-      this.editMode = true;
-      this.render();
-    },
-
-    setViewMode: function() {
-      this.editMode = false;
-      this.render();
-    },
-
-    onModelUpdated: function(model, options) {
-      this.render();
-      if (!options.status) {
-        this.model.save(model.changedAttributes(), { patch: true });
+    resetView: function () {
+      if (this.isSelected) {
+        this.isSelected = false;
+        this.applyStyles();
       }
     },
 
-    getColumnFromDiv: function(div) {
+    setEditMode: function () {
+      this.editMode = true;
+      this.applyStyles();
+    },
+
+    setViewMode: function () {
+      this.editMode = false;
+      this.applyStyles();
+    },
+
+    getColumnFromDiv: function (div) {
       return $(div).closest('.tb-col-inner');
     },
 
-    getInputFromDiv: function(div) {
+    getInputFromDiv: function (div) {
       return $('.input', this.getColumnFromDiv(div));
     },
 
-    disableFieldEdit: function(div) {
+    disableFieldEdit: function (div) {
       $('.read', div).removeClass('display-none');
       $('.write', div).addClass('display-none');
     },
 
-    enableFieldEdit: function(div) {
+    enableFieldEdit: function (div) {
       $('.read', div).addClass('display-none');
       $('.write', div).removeClass('display-none').children('input').focus();
     },
 
-    onEditClicked: function(event) {
+    onEditClicked: function (event) {
       event && event.preventDefault();
 
       var $column = this.getColumnFromDiv(event.currentTarget);
@@ -93,7 +99,15 @@ define(function(require) {
       }
     },
 
-    onSaveClicked: function(event) {
+    onClicked: function (event) {
+      if (!this.isSelected) {
+        Origin.trigger('tenantManagement:tenant:reset');
+        this.isSelected = true;
+        this.applyStyles();
+      }
+    },
+
+    onSaveClicked: function (event) {
       event && event.preventDefault();
 
       var $column = this.getColumnFromDiv(event.currentTarget);
@@ -102,21 +116,21 @@ define(function(require) {
       // save if not the same as old value
       var $input = this.getInputFromDiv($column);
       if ($input.val() && this.model.get($input.attr('data-modelKey')) !== $input.val()) {
-        this.model.set($input.attr('data-modelKey'), $input.val());
+        this.updateModel($input.attr('data-modelKey'), $input.val());
       }
     },
 
-    onCancelClicked: function(event) {
+    onCancelClicked: function (event) {
       event && event.preventDefault();
       this.disableFieldEdit(this.getColumnFromDiv(event.currentTarget));
     },
 
-    onDisableTenantClicked: function(event) {
+    onDisableTenantClicked: function (event) {
       var self = this;
       Origin.Notify.confirm({
         type: 'confirm',
         text: window.polyglot.t('app.disabletenantconfirm') + ' ' + this.model.get('name'),
-        callback: function(confirmed) {
+        callback: function (confirmed) {
           if (confirmed) {
             self.disableTenant(event);
           }
@@ -124,29 +138,16 @@ define(function(require) {
       });
     },
 
-    disableTenant: function(event) {
-      $.ajax({
-        url: 'api/tenant/' + this.model.get("_id"),
-        type: 'DELETE',
-        success: function(result) {
-          var disableId = event.currentTarget.id;
-          var enableId = 'enable_' + disableId.split('_')[1];
-          $('#' + disableId).addClass('display-none');
-          $('#' + enableId).removeClass('display-none');
-          Origin.Notify.alert({
-            type: 'success',
-            text: window.polyglot.t('app.disabletenantsuccess')
-          });
-        }
-      });
+    disableTenant: function (event) {
+      this.updateModel('_isDeleted', true);
     },
 
-    onEnableClicked: function(event) {
+    onEnableClicked: function (event) {
       var self = this;
       Origin.Notify.confirm({
         type: 'confirm',
         text: window.polyglot.t('app.enabletenantconfirm') + ' ' + this.model.get('name'),
-        callback: function(confirmed) {
+        callback: function (confirmed) {
           if (confirmed) {
             self.enableTenant(event);
           }
@@ -154,27 +155,36 @@ define(function(require) {
       });
     },
 
-    enableTenant: function(event) {
-      $.ajax({
-        url: 'api/tenant/' + this.model.get("_id"),
-        type: 'PUT',
-        data: { '_isDeleted': false },
-        success: function(result) {
-          var enableId = event.currentTarget.id;
-          var disableId = 'disable_' + enableId.split('_')[1];
-          $('#' + enableId).addClass('display-none');
-          $('#' + disableId).removeClass('display-none');
-          Origin.Notify.alert({
-            type: 'success',
-            text: window.polyglot.t('app.disabletenantsuccess')
-          });
+    enableTenant: function (event) {
+      this.updateModel('_isDeleted', false);
+    },
+
+    updateModel: function (key, value) {
+      var self = this;
+      var toSave = {};
+      toSave[key] = value;
+      this.model.save(toSave, {
+        patch: true,
+        wait: true,
+        success: function () {
+          Origin.trigger('tenantManagement:tenant:reset');
+        },
+        error: function (err) {
+          return self.onError(window.polyglot.t('app.updatetenanterror'));
         }
+      });
+    },
+
+    onError: function (error) {
+      Origin.Notify.alert({
+        type: 'error',
+        text: error.message || error
       });
     }
 
   }, {
-    template: 'tenant'
-  });
+      template: 'tenant'
+    });
 
   return TenantView;
 });

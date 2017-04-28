@@ -1,5 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function (require) {
   var Origin = require('coreJS/app/origin');
   var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
 
@@ -9,17 +9,17 @@ define(function(require) {
       'click button.cancel': 'goBack'
     },
 
-    saveUser: function(event) {
+    saveUser: function (event) {
       event && event.preventDefault();
       Origin.trigger('tenantManagement:saveTenant');
     },
 
-    goBack: function(event) {
+    goBack: function (event) {
       event && event.preventDefault();
       Origin.router.navigate('#/tenantManagement', { trigger: true });
     }
   }, {
-    template: 'addTenantSidebar'
-  });
+      template: 'addTenantSidebar'
+    });
   return AddTenantSidebarView;
 });

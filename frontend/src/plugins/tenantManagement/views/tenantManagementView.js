@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
   var tenantCollection = require('../collections/tenantCollection.js');
@@ -6,137 +6,89 @@ define(function(require) {
   var Helpers = require('coreJS/app/helpers');
 
   var TenantManagementView = OriginView.extend({
-
     tagName: 'div',
-
     className: 'tenantManagement',
+    settings: {
+      autoRender: false
+    },
     tenants: new tenantCollection(),
     views: [],
     events: {
       'click button.refresh-all': 'refreshTenantViews',
-      'click button.view-mode': 'switchToViewMode',
-      'click button.edit-mode': 'switchToEditMode'
     },
-    initialize: function() {
+    initialize: function () {
       OriginView.prototype.initialize.apply(this, arguments);
       Origin.trigger('location:title:update', { title: window.polyglot.t('app.tenantmanagement') });
       this.initData();
     },
 
-    initData: function() {
-      this.totalSpace = 0;
+    initData: function () {
       this.listenTo(this.tenants, 'sync', this.onTenantsFetched);
       this.tenants.fetch();
     },
 
-    preRender: function() {
-      this.$el.fadeOut(0);
-    },
-
-    render: function() {
-      if (!this.model.get('isReady') === true) {
-        this.listenTo(this.model, 'change:isReady', this.render);
-        return;
-      }
+    render: function () {
+      var SELECTED_CLASS = 'selected';
+      var $selected = this.$('.tenant-item.' + SELECTED_CLASS)[0];
 
       OriginView.prototype.render.apply(this, arguments);
+      this.$('.tenants').fadeOut(0);
 
-      this.setHeight();
       this.switchToViewMode();
       this.renderTenantViews();
+      this.setHeight();
     },
 
-    setHeight: function() {
+    setHeight: function () {
       var newHeight = $(window).height() - $('.' + this.className).offset().top - $(".sidebar-item-container").height();
       $('.' + this.className).height(newHeight);
     },
 
-    postRender: function() {
+    postRender: function () {
       this.setViewToReady();
+      this.$('.tenants').fadeIn(300);
     },
 
-    refreshTenantViews: function(event) {
+    refreshTenantViews: function (event) {
       event && event.preventDefault();
       this.tenants.fetch();
     },
 
-    renderTenantViews: function() {
+    renderTenantViews: function () {
       this.$('.tenants').empty();
 
       var isEditMode = this.model.get('isEditMode');
-      this.tenants.each(function(tenantModel, index) {
+      this.tenants.each(function (tenantModel, index) {
 
         tenantModel.set('globalData', this.model.get('globalData'));
-        var uv = new TenantView({ model: tenantModel });
-        this.$('.tenants').append(uv.$el.addClass('tb-row-' + Helpers.odd(index)));
-        this.views.push(uv);
-
+        var tv = new TenantView({ model: tenantModel });
+        this.$('.tenants').append(tv.$el.addClass('tb-row-' + Helpers.odd(index)));
+        this.views.push(tv);
+        return tv;
       }, this);
     },
 
-    switchToViewMode: function(event) {
+    switchToViewMode: function (event) {
       event && event.preventDefault();
 
       this.model.set('isEditMode', false);
-      this.$('button.view-mode').addClass('display-none');
-      this.$('button.edit-mode').removeClass('display-none');
-
-      _.each(this.views, function(view) { view.setViewMode(); });
+      _.each(this.views, function (view) { view.setViewMode(); });
     },
 
-    switchToEditMode: function(event) {
+    switchToEditMode: function (event) {
       event && event.preventDefault();
 
       this.model.set('isEditMode', true);
-      this.$('button.view-mode').removeClass('display-none');
-      this.$('button.edit-mode').addClass('display-none');
-
-      _.each(this.views, function(view) { view.setEditMode(); });
+      _.each(this.views, function (view) { view.setEditMode(); });
     },
 
-    onTenantsFetched: function(models, reponse, options) {
+    onTenantsFetched: function (models, reponse, options) {
       var self = this;
-      this.addTenantSpaceDetails(function() {
-        self.model.set('isReady', true);
-      });
-    },
-
-    addTenantSpaceDetails: function(callback) {
-      var self = this;
-      var tenants = this.tenants.models;
-      var totalOccupiedSpace = 0;
-      $.ajax({
-        url: '/space',
-        method: 'GET',
-        success: function(spaceList) {
-          spaceList.forEach(function(space, index) {
-            var tenant = _.where(tenants,{id:space.tenant})[0];
-            if(tenant){
-             var totalSize = self.convertByteToMb(space.totalSize);
-             tenant.set('totalSize', totalSize + " MB");
-             tenant.set('diskSize', self.convertByteToMb(space.diskSize) + " MB");
-             tenant.set('databaseSize', space.databaseSize + " BYTES");
-             totalOccupiedSpace += totalSize;
-           }
-           if(index===spaceList.length-1){
-             self.model.set('totalOccupiedSpace',totalOccupiedSpace);
-             callback();
-           }
-         });
-        },
-        error: function(e) {
-          console.log("Unable to fetch spaces of tenants");
-        }
-      });
-    },
-
-    convertByteToMb: function(bytes) {
-      var mb = bytes / (1024 * 1024);
-      return Math.round(mb);
+      this.render();
     }
 
   }, {
-    template: 'tenantManagement'
-  });
+      template: 'tenantManagement'
+    });
   return TenantManagementView;
 });

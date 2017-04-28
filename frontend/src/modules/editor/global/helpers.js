@@ -6,8 +6,8 @@ define(function(require) {
     * set the page title based on location
     * accepts backbone model, or object like so { title: '' }
     */
-    setPageTitle: function(model) {
-      var type = Origin.location.route2;
+    setPageTitle: function(model, shouldAddEditingPrefix) {
+      var type = Origin.location.route2 || Origin.location.route1;
       var action = Origin.location.route4;
       var titleKey;
       switch(type) {
@@ -19,24 +19,13 @@ define(function(require) {
         default:
           titleKey = 'editor' + type;
       }
-      var modelTitle = model && model.get && model.get('title');
       var langString = Origin.l10n.t('app.' + titleKey);
+      var modelTitle = model && model.get && model.get('title') || model.title;
 
-      Origin.trigger('location:title:update', { title: modelTitle || langString });
-    },
+      var crumbs = ['dashboard'];
 
-    getNearestPage: function(model) {
-      var map = {
-        'component': 'components',
-        'block': 'blocks',
-        'article': 'articles',
-        'page': 'contentObjects'
-      };
-      var mapKeys = Object.keys(map);
-      while(model.get('_type') !== 'page') {
-        var parentType = mapKeys[_.indexOf(mapKeys, model.get('_type')) + 1];
-        var parentCollection = Origin.editor.data[map[parentType]];
-        model = parentCollection.findWhere({ _id: model.get('_parentId') });
+      if(type !== 'menu' && type !== 'new') { // new  === new course
+        crumbs.push('course');
       }
       return model;
     }

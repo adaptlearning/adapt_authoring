@@ -27,6 +27,7 @@ define(function(require) {
       title: Origin.l10n.t('app.placeholdernewcourse'),
       displayTitle: Origin.l10n.t('app.placeholdernewcourse')
     });
+    Helpers.setPageTitle({ title: Origin.l10n.t('app.editornewcoursetitle') });
     var form = Origin.scaffold.buildForm({ model: model });
     Origin.trigger('location:title:update', { title: Origin.l10n.t('app.addnewproject') });
     Origin.contentPane.setView(EditorCourseEditView, { model: model, form: form });

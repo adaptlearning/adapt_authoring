@@ -120,7 +120,7 @@ define(function(require) {
       var done = function() {
         if(preloader.hasLoadedData()) {
           Origin.off('editor:dataPreloaded', done);
-          Origin.off('editor:Loaded', done);
+          Origin.off('editor:dataLoaded', done);
           callback.apply(this);
         }
       }

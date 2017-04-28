@@ -15,9 +15,11 @@ define(function(require) {
             _.each(enabledExtensions, function(value, key) {
                 enabledExtensionsKeys.push(value.targetAttribute);
             });
-
             // Get the schema
             var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
+            if(!schema) {
+              throw new Error('No schema found for \'' + schemaName + '\'');
+            }
             // Compare the enabledExtensions against the current schemas
             if (schema._extensions) {
                 _.each(schema._extensions.properties, function(value, key) {

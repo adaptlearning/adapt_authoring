@@ -10,8 +10,6 @@
 /frontend/src/plugins/plugins.js
 /frontend/src/templates/templates.js
 
-/frontend/src/libraries/ckeditor
-
 /node_modules/
 /nbproject/
 /master/
@@ -39,4 +37,3 @@ version.json
 .vagrant
 .env
 .project
-*.iml

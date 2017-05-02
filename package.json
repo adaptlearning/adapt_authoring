@@ -113,7 +113,6 @@
     "grunt-merge-json": "^0.9.5",
     "grunt-mocha-test": "~0.7.0",
     "grunt-open": "~0.2.2",
-    "grunt-requirejs-bundle": "~0.0.7",
     "handlebars": "^4.0.5",
     "handlebars-form-helpers": "0.1.3",
     "hbs": "2.4.0",

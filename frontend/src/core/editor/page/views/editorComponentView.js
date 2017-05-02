@@ -29,7 +29,7 @@ define(function(require){
 
       this.on('contextMenu:component:edit', this.loadComponentEdit);
       this.on('contextMenu:component:copy', this.onCopy);
-      this.on('contextMenu:component:copyID', this.onCopyID),
+      this.on('contextMenu:component:copyID', this.onCopyID);
       this.on('contextMenu:component:cut', this.onCut);
       this.on('contextMenu:component:delete', this.deleteComponentPrompt);
     },
@@ -145,28 +145,40 @@ define(function(require){
     },
 
     evaluateLayout: function() {
+
+      var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
+        return type.get('component') == this.model.get('_component');
+      }, this);
+
+      var supportedLayout = componentType.get("properties")._supportedLayout;
+      var isFullWidthSupported = _.indexOf(supportedLayout.enum, "full-width") > -1;
+      var isHalfWidthSupported = _.indexOf(supportedLayout.enum, "half-width") > -1;
+
       var movePositions = {
         left: false,
         right: false,
         full: false
       };
 
-      var siblings = this.model.getSiblings();
-      var showFull = !siblings.length;
-      var type = this.model.get('_layout');
-      switch (type) {
-        case 'left':
-          movePositions.right = true;
-          movePositions.full = showFull;
-          break;
-        case 'right':
-          movePositions.left = true;
-          movePositions.full = showFull;
-          break;
-        case 'full':
-          movePositions.left = true;
-          movePositions.right = true;
-          break
+      if (isHalfWidthSupported) {
+        var siblings = this.model.getSiblings();
+        var showFull = !siblings.length && isFullWidthSupported;
+        var type = this.model.get('_layout');
+
+        switch (type) {
+          case 'left':
+            movePositions.right = true;
+            movePositions.full = showFull;
+            break;
+          case 'right':
+            movePositions.left = true;
+            movePositions.full = showFull;
+            break;
+          case 'full':
+            movePositions.left = true;
+            movePositions.right = true;
+            break
+        }
       }
 
       this.model.set('_movePositions', movePositions);

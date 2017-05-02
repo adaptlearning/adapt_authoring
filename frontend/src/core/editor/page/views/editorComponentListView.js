@@ -77,30 +77,32 @@ define(function(require) {
     renderComponentList: function() {
       Origin.trigger('editorComponentListView:removeSubviews');
       // _.each(this.collection, function(componentType) {
+
       this.collection.each(function(componentType) {
         var properties = componentType.get('properties');
-        if (properties && properties.hasOwnProperty('._supportedLayout')) {
-          var supportedLayout = properties.hasOwnProperty('._supportedLayout').enum;
+        if (properties && properties.hasOwnProperty('_supportedLayout')) {
+          var supportedLayout = properties._supportedLayout.enum;
+          var availablePositions = _.clone(this.availablePositions);
 
           // Prune the available positions
           if (_.indexOf(supportedLayout, 'half-width') == -1) {
-            this.availablePositions.left = false;
-            this.availablePositions.right = false;
+            availablePositions.left = false;
+            availablePositions.right = false;
           }
 
           if (_.indexOf(supportedLayout, 'full-width') == -1) {
-            this.availablePositions.full = false;
+            availablePositions.full = false;
           }
         }
 
         this.$('.editor-component-list-sidebar-list').append(new EditorComponentListItemView({
-            model: componentType,
-            availablePositions: this.availablePositions,
-            _parentId: this.model.get('_parentId'),
-            $parentElement: this.$parentElement,
-            parentView: this.parentView,
-            searchTerms: componentType.get('displayName').toLowerCase()
-          }).$el);
+          model: componentType,
+          availablePositions: availablePositions,
+          _parentId: this.model.get('_parentId'),
+          $parentElement: this.$parentElement,
+          parentView: this.parentView,
+          searchTerms: componentType.get('displayName').toLowerCase()
+        }).$el);
       }, this);
     },
 

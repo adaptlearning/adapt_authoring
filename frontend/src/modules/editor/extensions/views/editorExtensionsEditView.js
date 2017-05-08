@@ -26,10 +26,11 @@ define(function(require) {
         'editorExtensionsEdit:views:add': this.addExtension,
         'editorExtensionsEdit:views:remove': this.removeExtension
       });
+      // assumption: extensions are always switched between enabled and available
+      this.listenTo(this.model, 'change:enabledExtensions', this.render);
 
       this.setupExtensions();
 
-      this.render();
       // TODO is defer a good idea?
       _.defer(_.bind(this.postRender, this));
     },
@@ -68,9 +69,11 @@ define(function(require) {
 
     refreshData: function() {
       // ensure that the config model is up-to-date when entering this screen
-      (new ConfigModel({ _courseId: this.model.get('_id') })).fetch({
+      if(!Origin.editor.data.config) {
+        return console.log('Missing the config model');
+      }
+      Origin.editor.data.config.fetch({
         success: _.bind(function(model, response, options) {
-          Origin.editor.data.config =  model;
           Origin.trigger('scaffold:updateSchemas', this.setupExtensions, this);
         }, this)
       });

@@ -42,7 +42,9 @@ define(function(require) {
     saveData: function(event) {
       event && event.preventDefault();
 
-      if(this.collection.findWhere({ _isSelected: true }) === undefined) {
+      var selectedMenu = this.collection.findWhere({ _isSelected: true });
+
+      if(selectedMenu === undefined) {
         return this.onSaveError(null, Origin.l10n.t('app.errornomenuselected'));
       }
       $.post('/api/menu/' + selectedMenu.get('_id') + '/makeitso/' + this.model.get('_courseId'))

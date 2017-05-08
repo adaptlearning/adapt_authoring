@@ -101,7 +101,7 @@ define(function(require) {
       }
       // fetch all collections
       fetchEditorData(courseData, function() {
-        if(_.isFunction(callback)) callback.apply(Origin.editor.data);
+        if(_.isFunction(callback)) callback();
         loadingCourseData = false;
         Origin.trigger('editor:dataLoaded');
       });

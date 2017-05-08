@@ -44,13 +44,11 @@ define(function(require) {
 
   Origin.on('router:userManagement', function(location, subLocation, action) {
     if(isReady) {
+      return onRoute(location, subLocation, action);
+    }
+    Origin.once('userManagement:dataReady', function() {
       onRoute(location, subLocation, action);
-    }
-    else {
-      Origin.on('userManagement:dataReady', function() {
-        onRoute(location, subLocation, action);
-      });
-    }
+    });
   });
 
   var onRoute = function(location, subLocation, action) {

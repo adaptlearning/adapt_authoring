@@ -21,7 +21,7 @@ define(function(require){
       this.listenTo(Origin, 'editor:menuSettings:selected', this.deselectMenu);
     },
 
-    toggleSelect: function(event) {
+    toggleSelect: function(e) {
       e && e.stopPropagation();
       if (!this.model.get('_isSelected')) {
         this.selectMenu();

@@ -33,7 +33,7 @@ define(function(require) {
 
     setupCollection: function() {
       var availableComponents = _.where(this.model.get('componentTypes'), { _isAvailableInEditor: true });
-      this.collection = new Backbone.Collection(availableComponents);
+      this.collection = new Backbone.Collection(availableComponents, { comparator: 'displayName' });
     },
 
     setupFilters: function() {

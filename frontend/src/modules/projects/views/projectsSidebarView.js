@@ -100,7 +100,7 @@ define(function(require) {
       }, this);
 
       Origin.trigger('sidebar:sidebarFilter:add', {
-        title: Origin.l10n.t('app.filterbytag'),
+        title: Origin.l10n.t('app.filterbytags'),
         items: availableTags
       });
     },

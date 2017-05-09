@@ -360,8 +360,5 @@
   "app.importinstruction": "Import a course from an authoring tool export. Please note that (framework) source code exports cannot be used.",
   "app.importvalidationerror": "This isn't a zip file!",
   "app.importerrortitle": "Course import failed",
-  "app.importcoursesuccess": "Course imported successfully!",
-  "app.frameworkimportmenu": "Source Import",
-  "app.frameworkimporttitle": "Import Framework Course",
-  "app.importframeworkinstruction": "Select a framework zip for import. Tags will be added to the course and all new assets."
+  "app.importcoursesuccess": "Course imported successfully!"
 }

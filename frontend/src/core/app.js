@@ -22,6 +22,7 @@
       'templates/templates',
       'core/origin',
       'core/router',
+      'core/helpers',
       'core/permissions',
       'core/l10n',
       'core/constants'

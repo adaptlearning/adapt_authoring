@@ -254,11 +254,6 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 
 };
 
-/**
-* Source (framework) import function
-*/
-AdaptOutput.prototype.importsource = require('./importsource');
-
 
 /**
 * Course import function
@@ -363,9 +358,6 @@ function generateMetadata(generatedMetadata) {
     fs.writeJson(path.join(EXPORT_DIR, Constants.Filenames.Metadata), metadata, { spaces:0 }, generatedMetadata);
   });
 };
-
-
-
 
 // pulls out relevant attributes from package.json
 function getPackageData(frameworkDir, gotPackageJson) {

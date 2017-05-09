@@ -312,15 +312,9 @@ function Import(req, done) {
           origin.assetmanager.destroyAsset(metadata.idMap[asset.oldId], assetDeleted);
         }, cb);
       },
-      // TODO - Need to check if plugin has been installed with this import before removing
-      /* function deletePlugins(cb) {
-        async.each(metadata.pluginIncludes, function(pluginData, donePluginIterator) {
-          origin.bowermanager.destroyPlugin(pluginData.type, pluginData.name, donePluginIterator);
-        }, cb);
-      } */
+      // TODO - would be good to clean up plugins
     ], doneRemove);
   };
-
 }
 
 /**

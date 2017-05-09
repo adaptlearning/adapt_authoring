@@ -357,7 +357,7 @@
   "app.courseimportmenu": "Course Import",
   "app.courseimporttitle": "Import Course",
   "app.importsidebarbutton": "Import",
-  "app.importinstruction": "Select course zip for import. Tags will be added to the course and all new assets.",
+  "app.importinstruction": "Import a course from an authoring tool export. Please note that (framework) source code exports cannot be used.",
   "app.importvalidationerror": "This isn't a zip file!",
   "app.importerrortitle": "Course import failed",
   "app.importcoursesuccess": "Course imported successfully!",

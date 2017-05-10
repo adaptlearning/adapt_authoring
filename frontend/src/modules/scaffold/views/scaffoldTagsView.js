@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
     var Backbone = require('backbone');
+    var BackboneForms = require('backboneForms');
     var Origin = require('core/origin');
     var Helpers = require('core/helpers');
 

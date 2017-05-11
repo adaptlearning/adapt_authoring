@@ -104,7 +104,10 @@ define(function(require){
           view.offsetTopFromWindow = view.$el.offset().top - $(window).scrollTop();
           // This is in the helper method because the height needs to be
           // manipulated before the drag start method due to adding drop zones
-          view.showDropZones();
+          // Passing the supported layout as a parameter allows the method to
+          // determine which drop zones should be displayed
+          var supportedLayout = view.getSupportedLayout();
+          view.showDropZones(supportedLayout);
           $(this).attr('data-component-id', view.model.get('_id'));
           $(this).attr('data-block-id', view.model.get('_parentId'));
           return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
@@ -144,15 +147,23 @@ define(function(require){
       });
     },
 
-    evaluateLayout: function() {
-
+    getSupportedLayout: function() {
       var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
-        return type.get('component') == this.model.get('_component');
+        return type.get('component') === this.model.get('_component');
       }, this);
 
-      var supportedLayout = componentType.get("properties")._supportedLayout;
-      var isFullWidthSupported = _.indexOf(supportedLayout.enum, "full-width") > -1;
-      var isHalfWidthSupported = _.indexOf(supportedLayout.enum, "half-width") > -1;
+      var supportedLayout = componentType.get('properties')._supportedLayout;
+
+      return {
+        full: _.indexOf(supportedLayout.enum, 'full-width') > -1,
+        half: _.indexOf(supportedLayout.enum, 'half-width') > -1
+      }
+    },
+
+    evaluateLayout: function() {
+      var supportedLayout = this.getSupportedLayout();
+      var isFullWidthSupported = supportedLayout.full;
+      var isHalfWidthSupported = supportedLayout.half;
 
       var movePositions = {
         left: false,

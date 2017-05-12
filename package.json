@@ -84,6 +84,7 @@
     "fluent-ffmpeg": "~2.x",
     "formidable": "1.0.17",
     "fs-extra": "^0.16.3",
+    "glob": "^7.0.3",
     "grunt": "~0.4.1",
     "grunt-bower-requirejs": "~0.7.1",
     "grunt-casperjs": "2.x",
@@ -130,7 +131,8 @@
     "underscore": "~1.8.3",
     "unzip": "0.1.8",
     "validator": "4.2.1",
-    "winston": "1.0.2"
+    "winston": "1.0.2",
+    "yauzl": "2.8.0"
   },
   "main": "index",
   "engines": {

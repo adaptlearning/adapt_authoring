@@ -50,8 +50,8 @@ define(function(require) {
         return this.onSaveError(null, Origin.l10n.t('app.errornomenuselected'));
       }
       $.post('/api/menu/' + selectedMenu.get('_id') + '/makeitso/' + this.model.get('_courseId'))
-        .error(this.onSaveError)
-        .done(this.onSaveSuccess);
+        .error(_.bind(this.onSaveError, this))
+        .done(_.bind(this.onSaveSuccess, this));
     }
   }, {
     template: "editorMenuSettingsEdit"

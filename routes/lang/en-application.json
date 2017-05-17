@@ -296,7 +296,7 @@
   "app.updatetenanterror":"Tenant update fail!",
   "app.newtenant":"New Tenant",
   "app.lastaccess": "Last access",
-  "app.refresh": "Refresh"
+  "app.refresh": "Refresh",
   "app.greeting": "Hi",
   "app.emaillogotext": "ADAPT",
   "app.emailfooter": "Sent by Adapt Learning."

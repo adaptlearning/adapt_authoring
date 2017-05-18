@@ -2,7 +2,7 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
-  
+
   var EditorOriginView = require('../../global/views/editorOriginView');
   var ThemeCollection = require('../collections/editorThemeCollection');
   var ThemeItemView = require('./editorThemeItemView');
@@ -56,18 +56,22 @@ define(function(require) {
       }
 
       $.post('/api/theme/' + selectedTheme.get('_id') + '/makeitso/' + this.model.get('_courseId'))
-        .error(function() {
-          Origin.Notify.alert({
-            type: 'error',
-            text: Origin.l10n.t('app.errorsave')
-          });
-        })
-        .done(_.bind(function() {
-          Origin.trigger('editor:refreshData', function() {
-            Backbone.history.history.back();
-            this.remove();
-          }, this);
-        }, this));
+        .error(_.bind(this.onSaveError, this))
+        .done(_.bind(this.onSaveSuccess, this));
+    },
+
+    onSaveSuccess: function() {
+      Origin.trigger('editor:refreshData', _.bind(function() {
+        Backbone.history.history.back();
+        this.remove();
+      }, this));
+    },
+
+    onSaveError: function() {
+      Origin.Notify.alert({
+        type: 'error',
+        text: Origin.l10n.t('app.errorsave')
+      });
     }
   }, {
     template: 'editorThemeCollection'

@@ -1,6 +1,6 @@
 @import 'colours';
 
-@sidebar-input-font-size:15px;
+@sidebar-input-font-size: 110%;
 
 .sidebar {
   position:fixed;
@@ -89,17 +89,6 @@
         color: white !important;
       }
     }
-    .sidebar-row-input input {
-      margin: 10px 25px;
-      width: 180px;
-      height: 25px;
-      font-size: @sidebar-input-font-size;
-      border-radius: @button-radius;
-      border-color: @sidebar-input-color;
-      background: @sidebar-input-color;
-      color: @sidebar-input-text-color;
-      text-align: left;
-    }
   }
 }
 
@@ -170,6 +159,43 @@
       &.fa-times {
         color:@sidebar-input-text-color;
       }
+    }
+  }
+}
+
+.sidebar-row-input {
+  margin: 10px 25px;
+}
+
+.sidebar input[type="text"] {
+  height: 25px;
+  background: @sidebar-input-color;
+  border-color: @sidebar-input-border-color;
+  color: @sidebar-input-text-color;
+  font-size: @sidebar-input-font-size;
+
+  &::-webkit-input-placeholder {
+    color: @sidebar-input-placeholder-color;
+  }
+  &:-moz-placeholder {
+    color: @sidebar-input-placeholder-color;
+  }
+  &::-moz-placeholder {
+    color: @sidebar-input-placeholder-color;
+  }
+  &:-ms-input-placeholder {
+    color: @sidebar-input-placeholder-color;
+  }
+
+  ~ button {
+    top: 25%;
+    i {
+      color: @sidebar-input-button-color;
+      margin-right: 0;
+      font-size: @font-size;
+    }
+    &:hover i {
+      color: lighten(@sidebar-input-border-color, 15%);
     }
   }
 }

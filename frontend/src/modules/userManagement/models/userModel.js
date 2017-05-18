@@ -15,9 +15,13 @@ define(function(require) {
       this.setLockStatus();
     },
 
+    // HACK(s) because we can't define a rootUrl and url
+    save: function(attributes, options) {
+      _.extend(options, { url: this.url + '/' + this.get('_id') });
+      Backbone.Model.prototype.save.apply(this, arguments);
+    },
     destroy: function(options) {
-      // HACK because we can't define a rootUrl and url
-      _.extend(options, { url: this.url + '/' + this.get('_id') })
+      _.extend(options, { url: this.url + '/' + this.get('_id') });
       Backbone.Model.prototype.destroy.apply(this, arguments);
     },
 

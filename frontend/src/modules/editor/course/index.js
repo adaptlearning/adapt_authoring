@@ -5,6 +5,7 @@ define(function(require) {
   var CourseModel = require('core/models/courseModel');
   var EditorCourseEditView = require('./views/editorCourseEditView');
   var EditorCourseEditSidebarView = require('./views/editorCourseEditSidebarView');
+  var Helpers = require('../global/helpers');
 
   Origin.on('router:project', function(route1, route2, route3, route4) {
     if(route1 === 'new') createNewCourse();

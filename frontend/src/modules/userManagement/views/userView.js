@@ -237,22 +237,31 @@ define(function(require){
         wait: true,
         error: function(model, response, options) {
           var data = { key: key, value: value };
-          switch(response.responseJSON.code) {
+          var errorCode = response.responseJSON && response.responseJSON.code;
+          var errorMessage = response.responseText;
+          switch(errorCode) {
             // duplicate key
             case 11000:
               return self.onError(Origin.l10n.t('app.duplicateuservalueerror', data));
             default:
-              return self.onError(Origin.l10n.t('app.uservalueerror'));
+              return self.onError(Origin.l10n.t('app.uservalueerror') + ' (' + errorMessage + ')');
           }
         }
       });
     },
 
     onError: function(error) {
-      Origin.Notify.alert({
-        type: 'error',
-        text: error.message || error
-      });
+      /**
+      * HACK setTimeout to make sure the alert opens.
+      * If we've come straight from a confirm, sweetalert will still be cleaning
+      * up, and won't show.
+      */
+      setTimeout(function() {
+        Origin.Notify.alert({
+          type: 'error',
+          text: error.message || error
+        });
+      }, 100);
     }
   }, {
     template: 'user'

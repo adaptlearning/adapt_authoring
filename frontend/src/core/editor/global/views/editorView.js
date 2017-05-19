@@ -222,6 +222,7 @@ define(function(require){
                 type: 'error',
                 text: window.polyglot.t('app.errorgeneratingpreview')
               });
+              previewWindow.close()
             }
           },
           error: function (jqXHR, textStatus, errorThrown) {
@@ -230,6 +231,7 @@ define(function(require){
               type: 'error',
               text: window.polyglot.t('app.errorgeneric')
             });
+            previewWindow.close()
           }
         });
       }
@@ -255,6 +257,7 @@ define(function(require){
             clearInterval(pollId);
             self.resetPreviewProgress();
             
+            previewWindow.close()
             Origin.Notify.alert({
               type: 'error',
               text: errorThrown

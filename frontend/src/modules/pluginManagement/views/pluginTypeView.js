@@ -53,13 +53,21 @@ define(function(require){
 
       $btn.addClass('disabled').html(Origin.l10n.t('app.updating'));
 
-      $.post(this.model.urlRoot + '/update', { 'targets': [this.model.get('_id')] }, _.bind(function (data) {
-        if(!_.contains(data.targets), this.model.get('_id')) {
+      var self = this;
+
+      $.post(this.model.urlRoot + '/update', { 'targets': [this.model.get('_id')] }, _.bind(function(data) {
+        if(!_.contains(data.upgraded, this.model.get('_id'))) {
           $btn.html(Origin.l10n.t('app.updatefailed'));
           return;
         }
         Origin.trigger('scaffold:updateSchemas', function() {
           $btn.html(Origin.l10n.t('app.uptodate'));
+          self.model.collection.fetch({
+            success: function() {
+              self.render();
+            },
+            error: console.log
+          });
         }, this);
       }, this));
 

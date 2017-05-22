@@ -53,7 +53,7 @@ define(function(require){
 
     renderPluginTypeView: function(pluginType, index) {
       var cssClass = 'tb-row-' + Helpers.odd(index);
-      if (pluginType.get('_isAvailableInEditor') == false) {
+      if (pluginType.get('_isAvailableInEditor') === false) {
         cssClass += ' row-disabled';
       }
       var view = new PluginTypeView({ model: pluginType });
@@ -68,21 +68,21 @@ define(function(require){
 
     refreshPluginList: function (e) {
       e && e.preventDefault();
-
-      var pluginType = this.pluginType;
+      var self = this;
       var $btn = this.$('.refresh-all-plugins');
 
       if ($btn.hasClass('disabled')) return false;
 
-      $btn.addClass('disabled').html(Origin.l10n.t('app.updating'));
+      $btn.addClass('disabled');
 
-      $.get(this.collection.url() + '&refreshplugins=1', function (data) {
-        Origin.trigger('scaffold:updateSchemas', function() {
-          Origin.router.navigateTo('pluginManagement/' + pluginType);
-        }, this);
+      this.collection.fetch({
+        success: function() {
+          Origin.trigger('scaffold:updateSchemas', function() {
+            self.renderPluginTypeViews(self.collection);
+          }, this);
+        },
+        error: console.log
       });
-
-      return false;
     }
   }, {
     template: 'pluginManagement'

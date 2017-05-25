@@ -49,6 +49,10 @@ define(function(require){
 
       this.collectionLength = 0;
       this.shouldStopFetches = false;
+
+      // set relevant filters as selected
+      $("a[data-callback='dashboard:layout:grid']").addClass('selected');
+      $("a[data-callback='dashboard:sort:asc']").addClass('selected');
     },
 
     resizeDashboard: function() {

@@ -71,7 +71,7 @@ define(function(require) {
       if (Origin.permissions.hasPermissions(data.featurePermissions) && model.length > 0 && model[0].get('isMaster') == true) {
         var globalMenuObject = {
           "location": "global",
-          "text": "Tenant Management",
+          "text":  window.polyglot.t('app.tenantmanagement'),
           "icon": "fa-users",
           "callbackEvent": "tenantManagement:open",
           "sortOrder": 5

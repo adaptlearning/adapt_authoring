@@ -32,21 +32,11 @@ define(function (require) {
     },
 
     applyStyles: function () {
-      if (this.model.get('_isDeleted') === true) {
-        this.$el.addClass('inactive');
-      } else {
-        this.$el.removeClass('inactive');
-      }
+      this.$el.toggleClass('inactive', this.model.get('_isDeleted') === true)
+        .toggleClass('selected', this.isSelected);
 
-      if (this.isSelected) {
-        this.$el.addClass('selected');
-        this.$('.edit-mode').removeClass('display-none');
-        this.$('.write').addClass('display-none');
-      } else {
-        this.$el.removeClass('selected');
-        this.$('.edit-mode').addClass('display-none');
-        this.$('.write').addClass('display-none');
-      }
+      this.$('.edit-mode').toggleClass('display-none', !this.isSelected);
+      this.$('.write').addClass('display-none');
     },
 
     resetView: function () {
@@ -181,7 +171,6 @@ define(function (require) {
         text: error.message || error
       });
     }
-
   }, {
       template: 'tenant'
     });

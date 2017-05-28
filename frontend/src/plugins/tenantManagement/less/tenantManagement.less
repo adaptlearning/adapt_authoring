@@ -1,6 +1,8 @@
 @import '../../../less/sharedStyles.less';
+@tenant-hover-bg-colour: #f3faff;
+@tenant-hover-borderl-colour: #8ea3af;
 .tenantManagement {
-    height: auto !important;
+    overflow-y: scroll;
     .container {
         .form-container-style;
         max-width: inherit;
@@ -20,6 +22,8 @@
         }
     }
     .tenant-item {
+        cursor: pointer;
+        border: 1px solid white;
         &.me {
             font-weight: bold;
         }
@@ -28,6 +32,23 @@
                 color: #BBBBBB;
             }
         }
+
+        &.selected {
+            cursor: default;
+            border: 1px solid #d6f2f9;
+            border-left: 1px solid @user-hover-borderl-colour;
+            background-color: @user-hover-bg-colour;
+        }
+
+        &:hover {
+            border-left: 1px solid @user-hover-borderl-colour;
+            background-color: @user-hover-bg-colour;
+        }
+
+
+
+
+
         li {
             margin-left: 0;
             list-style: none;
@@ -55,12 +76,11 @@
         select {
             max-width: 115px;
         }
-
-        .enableTenant{
+        .enableTenant {
             background-color: #80cbc4;
         }
-        .disableTenant{
-            background-color:#ff6e40;
+        .disableTenant {
+            background-color: #ff6e40;
         }
     }
 }

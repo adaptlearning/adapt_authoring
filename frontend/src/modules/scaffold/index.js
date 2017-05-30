@@ -288,10 +288,6 @@ define(function(require) {
       var initialType = type;
 
       switch (type) {
-				case 'component':
-          type = 'config';
-          break;
-
         case 'component':
           type = options.model.get('_component');
           break;

@@ -33,18 +33,25 @@ define(function(require){
     },
 
     render: function() {
-      var SELECTED_CLASS = 'selected';
-      var $selected = this.$('.user-item.' + SELECTED_CLASS)[0];
+      var selectedId;
+      // remove the old views
+      if(this.views.length) {
+        for(var i = 0, count = this.views.length; i < count; i++) {
+          var view = this.views[i];
+          if(view.isSelected) selectedId = view.model.get('_id');
+          view.remove();
+        }
+        this.views = [];
+      }
 
       OriginView.prototype.render.apply(this, arguments);
-      this.$('.users').fadeOut(0);
 
-      this.users.each(this.createUserView, this);
-
-      if($selected) {
-        var selector = $selected.className.replace(SELECTED_CLASS,'');
-        $(document.getElementsByClassName(selector)).addClass(SELECTED_CLASS).click();
-      }
+      this.users.each(function(user) {
+        var view = this.createUserView(user);
+        if(user.get('_id') === selectedId) {
+          view.$el.addClass('selected').click();
+        }
+      }, this);
     },
 
     postRender: function() {

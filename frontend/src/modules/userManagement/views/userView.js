@@ -46,19 +46,19 @@ define(function(require){
 
     applyStyles: function() {
       // disabled user styling
-      if (this.model.get('_isDeleted') === true) {
+      if(this.model.get('_isDeleted') === true) {
         this.$el.addClass('inactive');
       } else {
         this.$el.removeClass('inactive');
       }
       // locked user styling
-      if (this.model.get('_isLocked') === true) {
+      if(this.model.get('_isLocked') === true) {
         this.$el.addClass('locked');
       } else {
         this.$el.removeClass('locked');
       }
       // selected user styling
-      if (this.isSelected) {
+      if(this.isSelected) {
         this.$el.addClass('selected');
         this.$('.edit-mode').removeClass('display-none');
         this.$('.write').addClass('display-none');
@@ -172,7 +172,6 @@ define(function(require){
     },
 
     onResetPasswordClicked: function(e) {
-      var self = this;
       var $btn = $(e.currentTarget);
       $btn.addClass('submitted');
       Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST', function() {

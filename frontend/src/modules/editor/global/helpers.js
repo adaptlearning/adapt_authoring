@@ -22,13 +22,22 @@ define(function(require) {
       var langString = Origin.l10n.t('app.' + titleKey);
       var modelTitle = model && model.get && model.get('title') || model.title;
 
-      var crumbs = ['dashboard'];
+      var title = modelTitle || langString;
+      if(shouldAddEditingPrefix === true) title = addEditingPrefix(title, type);
 
-      if(type !== 'menu' && type !== 'new') { // new  === new course
-        crumbs.push('course');
-      }
-      return model;
+      Origin.trigger('location:title:update', { title: title });
     }
+  }
+
+  /**
+  * Private functons
+  */
+
+  function addEditingPrefix(string, type) {
+    return Origin.l10n.t('app.editing', {
+      text: string,
+      type: Origin.l10n.t('app.' + type)
+    });
   }
 
   return helpers;

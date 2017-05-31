@@ -290,9 +290,9 @@
   "app.backtomenu": "Back to course structure",
   "app.editorpage": "Page structure",
   "app.editorpageedit": "Page settings",
-  "app.editorarticleedit": "Article settings",
-  "app.editorblockedit": "Block settings",
-  "app.editorcomponentedit": "Component settings",
+  "app.editorarticle": "Article settings",
+  "app.editorblock": "Block settings",
+  "app.editorcomponent": "Component settings",
   "app.editorsettings": "Project settings",
   "app.editorsettingstitle": "Adjust course attributes",
   "app.editorconfig": "Configuration settings",
@@ -301,5 +301,10 @@
   "app.editormenusettingstitle": "Select a menu for your course",
   "app.editorextensions": "Manage extensions",
   "app.editorextensionstitle": "Manage course extensions",
-  "app.editing": "Editing %{text}"
+  "app.editing": "Editing %{type}: %{text}",
+  "app.menu": "menu",
+  "app.page": "page",
+  "app.article": "article",
+  "app.block": "block",
+  "app.component": "component"
 }

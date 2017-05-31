@@ -12,6 +12,7 @@ define(function(require) {
   var EditorPageEditSidebarView = require('./views/editorPageEditSidebarView');
   var EditorPageSidebarView = require('./views/editorPageSidebarView');
   var EditorView = require('../global/views/editorView');
+  var Helpers = require('../global/helpers');
 
   Origin.on('editor:contentObject', function(data) {
     if(data.action === 'edit') renderContentObjectEdit(data);
@@ -39,10 +40,8 @@ define(function(require) {
   function renderContentObjectEdit(data) {
     (new ContentObjectModel({ _id: data.id })).fetch({
       success: function(model) {
+        Helpers.setPageTitle(model, true);
         var form = Origin.scaffold.buildForm({ model: model });
-        // TODO this should be properly localised
-        var type = Origin.location.route2;
-        Origin.trigger('location:title:update', { title: 'Editing ' + type + ' - ' + model.get('title') });
         Origin.sidebar.addView(new EditorPageEditSidebarView({ form: form }).$el);
         Origin.contentPane.setView(EditorPageEditView, { model: model, form: form });
       }

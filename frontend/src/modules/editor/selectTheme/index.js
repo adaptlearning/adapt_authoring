@@ -17,7 +17,7 @@ define(function(require) {
         var backButtonText = "Back to menu";
 
         if (Origin.previousLocation.route2 === "page") {
-          backButtonRoute = "/#/editor/" + route1 + "/page/" + data.id;
+          backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
           backButtonText = "Back to page";
         }
 

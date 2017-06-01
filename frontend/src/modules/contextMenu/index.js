@@ -53,7 +53,7 @@ define(function(require) {
         callbackEvent: 'preview'
       }
     ]);
-    var courseItems = getDefaultItems(['copyID']);
+    var courseItems = getDefaultItems();
     var superPerms = ["*/*:create","*/*:read","*/*:update","*/*:delete"];
     if (Origin.permissions.hasPermissions(superPerms)) {
       courseItems.push({

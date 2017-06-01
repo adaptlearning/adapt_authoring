@@ -5,6 +5,7 @@ define(function(require) {
   var Handlebars = require('handlebars');
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
+  var Helpers = require('core/helpers');
 
   var ProjectView = OriginView.extend({
     className: 'project-list-item',
@@ -25,7 +26,8 @@ define(function(require) {
         'contextMenu:course:editSettings': this.editProjectSettings,
         'contextMenu:course:edit': this.editProject,
         'contextMenu:course:delete': this.deleteProjectPrompt,
-        'contextMenu:course:copy': this.duplicateProject
+        'contextMenu:course:copy': this.duplicateProject,
+        'contextMenu:course:copyID': this.copyIdToClipboard
       });
       this.listenTo(Origin, {
         'dashboard:dashboardView:removeSubViews': this.remove,
@@ -119,6 +121,15 @@ define(function(require) {
           Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorduplication') });
         }
       });
+    },
+
+    copyIdToClipboard: function() {
+      var id = this.model.get('_id');
+      if(Helpers.copyStringToClipboard(id)) {
+        Origin.Notify.alert({ type: 'success', text: Origin.l10n.t('app.copyidtoclipboardsuccess', { id: id }) });
+        return;
+      }
+      Origin.Notify.alert({ type: 'warning', text: Origin.l10n.t('app.app.copyidtoclipboarderror', { id: id }) });
     },
 
     onProjectShowTagsButtonClicked: function(event) {

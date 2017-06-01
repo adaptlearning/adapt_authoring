@@ -53,9 +53,6 @@ define(function(require){
 
     renderPluginTypeView: function(pluginType, index) {
       var cssClass = 'tb-row-' + Helpers.odd(index);
-      if (pluginType.get('_isAvailableInEditor') === false) {
-        cssClass += ' row-disabled';
-      }
       var view = new PluginTypeView({ model: pluginType });
       this.$('.pluginManagement-plugins').append(view.$el.addClass(cssClass));
     },

@@ -85,6 +85,8 @@ define(function(require) {
 
 		$('.sweet-alert > .sa-button-container button').blur();
 
+		clearInterval(interval);
+
 		// forces the user to wait before the confirm button can be clicked
 		if(data.destructive === true) {
 			var setWaitText = function(n) {
@@ -104,7 +106,6 @@ define(function(require) {
 
 			setWaitText(count);
 
-			clearInterval(interval);
 			interval = setInterval(function() {
 				if(--count > 0) {
 					$('.sweet-alert button.confirm').html('<span class="wait-text">' + Origin.l10n.t('app.confirmwait') + '</span> ' + count);

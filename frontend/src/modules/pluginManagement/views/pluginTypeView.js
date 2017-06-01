@@ -16,6 +16,7 @@ define(function(require){
     preRender: function () {
       this.listenTo(this, 'remove', this.remove);
       this.listenTo(this.model, 'destroy', this.remove);
+      this.listenTo(this.model, 'sync', this.render);
     },
 
     toggleEnabled: function () {
@@ -29,13 +30,13 @@ define(function(require){
 
       var $btn = this.$('.plugin-update-check');
 
-      if($btn.hasClass('disabled')) return false;
+      if($btn.is(':disabled')) return false;
 
       $btn.html(Origin.l10n.t('app.checking'));
 
       $.get(this.model.urlRoot + '/checkversion/' + this.model.get('_id'), function(data) {
         if(!data.isUpdateable) {
-          $btn.addClass('disabled').html(Origin.l10n.t('app.uptodate'));
+          $btn.attr('disabled', true).html(Origin.l10n.t('app.uptodate'));
           return;
         }
         $btn.removeClass('plugin-update-check').addClass('plugin-update-confirm').html(Origin.l10n.t('app.updateplugin'));
@@ -46,14 +47,11 @@ define(function(require){
 
     updatePlugin: function (event) {
       event && event.preventDefault();
-
       var $btn = this.$('.plugin-update-confirm');
 
-      if($btn.hasClass('disabled')) return false;
+      if($btn.is(':disabled')) return false;
 
-      $btn.addClass('disabled').html(Origin.l10n.t('app.updating'));
-
-      var self = this;
+      $btn.attr('disabled', true).html(Origin.l10n.t('app.updating'));
 
       $.post(this.model.urlRoot + '/update', { 'targets': [this.model.get('_id')] }, _.bind(function(data) {
         if(!_.contains(data.upgraded, this.model.get('_id'))) {
@@ -62,12 +60,7 @@ define(function(require){
         }
         Origin.trigger('scaffold:updateSchemas', function() {
           $btn.html(Origin.l10n.t('app.uptodate'));
-          self.model.collection.fetch({
-            success: function() {
-              self.render();
-            },
-            error: console.log
-          });
+          this.model.fetch();
         }, this);
       }, this));
 

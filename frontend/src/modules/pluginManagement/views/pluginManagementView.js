@@ -33,7 +33,7 @@ define(function(require){
 
     initialiseCollection: function() {
       this.collection = new (this.pluginCollections[this.pluginType])();
-      this.listenTo(this.collection, 'sync', this.renderPluginTypeViews);
+      this.listenToOnce(this.collection, 'sync', this.renderPluginTypeViews);
       this.collection.fetch();
     },
 
@@ -66,21 +66,20 @@ define(function(require){
       }
     },
 
-    refreshPluginList: function (e) {
+    refreshPluginList: function(e) {
       e && e.preventDefault();
-      var self = this;
-      var $btn = this.$('.refresh-all-plugins');
+      var $btn = $(e.currentTarget);
 
-      if ($btn.hasClass('disabled')) return false;
+      if($btn.is(':disabled')) return false;
 
-      $btn.addClass('disabled');
+      $btn.attr('disabled', true);
 
       this.collection.fetch({
-        success: function() {
+        success: _.bind(function() {
           Origin.trigger('scaffold:updateSchemas', function() {
-            self.renderPluginTypeViews(self.collection);
+            this.renderPluginTypeViews(this.collection);
           }, this);
-        },
+        }, this),
         error: console.log
       });
     }

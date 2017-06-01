@@ -14,6 +14,7 @@ define(function(require) {
         'contextMenu:open': this.toggleMenu,
         'contextMenu:closeContextMenu remove remove:views': this.hideMenu
       });
+      $('html').click(_.bind(this.hideMenu, this));
       this.render();
     },
 

@@ -34,14 +34,14 @@ define(function(require) {
     },
 
     toggleMenu: function(view, e) {
-      var isSameModel = view && (view.model.get('_id')) === (this.contextView.model && this.contextView.model.get('_id'))
-      var isSameType = view && (view.model.get('_type')) === (this.contextView.model && this.contextView.model.get('_type'))
+      var isSameType = view && (view.model.get('_type')) === (this.contextView.model && this.contextView.model.get('_type'));
+      var isSameModel = view && (view.model.get('_id')) === (this.contextView.model && this.contextView.model.get('_id'));
+      var isSameView = view.cid === this.contextView.cid; // to make sure we don't break listeners
       // new view, update the menu items
-      if(!isSameModel || !isSameType) {
+      if(!isSameType || !isSameModel || !isSameView) {
         this.setMenu(view, $(e.currentTarget));
         return this.showMenu();
       }
-
       (this._isVisible) ? this.hideMenu() : this.showMenu();
     },
 

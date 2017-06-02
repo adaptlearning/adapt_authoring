@@ -1,5 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require){
+define(function (require) {
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
   var Helpers = require('coreJS/app/helpers');
@@ -20,19 +20,19 @@ define(function(require){
       'click button.refresh-all': 'refreshUserViews'
     },
 
-    initialize: function() {
+    initialize: function () {
       OriginView.prototype.initialize.apply(this, arguments);
 
       Origin.trigger('location:title:update', { title: window.polyglot.t('app.usermanagementtitle') });
       this.initData();
     },
 
-    initData: function() {
+    initData: function () {
       this.listenTo(this.users, 'sync', this.onDataFetched);
-      this.users.fetch();
+      this.fetchUsers();
     },
 
-    render: function() {
+    render: function () {
       var SELECTED_CLASS = 'selected';
       var $selected = this.$('.user-item.' + SELECTED_CLASS)[0];
 
@@ -42,42 +42,50 @@ define(function(require){
       this.users.each(this.createUserView, this);
       this.setHeight();
 
-      if($selected) {
-        var selector = $selected.className.replace(SELECTED_CLASS,'');
+      if ($selected) {
+        var selector = $selected.className.replace(SELECTED_CLASS, '');
         $(document.getElementsByClassName(selector)).addClass(SELECTED_CLASS).click();
       }
     },
 
-    setHeight: function() {
-      var newHeight = $(window).height()-$('.'+this.className).offset().top;
-      $('.'+this.className).height(newHeight);
+    setHeight: function () {
+      var newHeight = $(window).height() - $('.' + this.className).offset().top;
+      $('.' + this.className).height(newHeight);
     },
 
-    postRender: function() {
+    postRender: function () {
       this.setViewToReady();
       this.$('.users').fadeIn(300);
     },
 
-    refreshUserViews: function(event) {
-      event && event.preventDefault();
-      this.users.fetch();
+    fetchUsers: function () {
+      if (this.model.get('globalData').hasSuperAdminPermissions) {
+        this.users.fetch();
+      } else if (this.model.get('globalData').hasTenantAdminPermissions) {
+        this.users.fetch({ data: $.param({ _tenantId: Origin.sessionModel.get('tenantId') }) });
+      }
     },
 
-    createUserView: function(model) {
+    refreshUserViews: function (event) {
+      event && event.preventDefault();
+      this.fetchUsers();
+    },
+
+    createUserView: function (model) {
       model.set('globalData', this.model.get('globalData'));
-      var uv = new UserView({ model:model });
+      var uv = new UserView({ model: model });
       this.$('.users').append(uv.$el);
       this.views.push(uv);
       return uv;
     },
 
-    onDataFetched: function(models, reponse, options) {
+    onDataFetched: function (models, reponse, options) {
       this.render();
     }
 
   }, {
-    template: 'userManagement'
-  });
+      template: 'userManagement'
+    });
 
   return UserManagementView;
 });

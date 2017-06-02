@@ -8,7 +8,7 @@ define(function(require) {
     comparator: function(model) {
       return model.get('email').toLowerCase();
     },
-    url: 'api/user'
+    url: 'api/user/tenant'
   });
 
   return UserCollection;

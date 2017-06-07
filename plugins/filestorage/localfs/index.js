@@ -401,7 +401,7 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
 };
 
 function isThumbnailTypeSupported(type) {
-  switch(fileType) {
+  switch(type) {
     case 'video':
     case 'image':
       return true;

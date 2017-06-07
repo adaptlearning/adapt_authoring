@@ -60,12 +60,14 @@ define(function(require) {
     },
 
     setLockStatus: function(model, value, options) {
-      // HACK MAX_LOGIN_ATTEMPTS doesn't seem to be set anywhere other than plugins/auth/local:line-30
-      var MAX_LOGIN_ATTEMPTS = 3;
-      var newLocked = this.get('failedLoginCount') >= MAX_LOGIN_ATTEMPTS;
+      var newLocked = this.get('failedLoginCount') >= Origin.constants.maxLoginAttempts;
       if(newLocked !== this.get('_isLocked')) {
         this.set('_isLocked', newLocked);
       }
+    },
+
+    applyURLToOptions: function(options) {
+      return _.extend(options, { url: this.url + '/' + this.get('_id') });
     }
   });
 

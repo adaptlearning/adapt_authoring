@@ -27,8 +27,6 @@ var ERROR_CODES = {
   ACCOUNT_INACTIVE: 5
 };
 
-var MAX_LOGIN_ATTEMPTS = 3;
-
 function LocalAuth() {
   this.strategy = new LocalStrategy({ usernameField: 'email' }, this.verifyUser);
   passport.use(this.strategy);
@@ -54,7 +52,7 @@ LocalAuth.prototype.verifyUser = function (email, password, done) {
       });
     }
 
-    if (user.failedLoginCount < MAX_LOGIN_ATTEMPTS) {
+    if (user.failedLoginCount < configuration.getConfig('maxLoginAttempts')) {
       // Validate the user's password
       auth.validatePassword(password, user.password, function (error, valid) {
         if (error) {

@@ -1,6 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
+  var Origin = require('core/origin');
 
   var UserModel = Backbone.Model.extend({
     url: 'api/user',
@@ -16,12 +17,16 @@ define(function(require) {
     },
 
     // HACK(s) because we can't define a rootUrl and url
+    fetch: function(options) {
+      this.applyURLToOptions(options);
+      Backbone.Model.prototype.fetch.apply(this, arguments);
+    },
     save: function(attributes, options) {
-      _.extend(options, { url: this.url + '/' + this.get('_id') });
+      this.applyURLToOptions(options);
       Backbone.Model.prototype.save.apply(this, arguments);
     },
     destroy: function(options) {
-      _.extend(options, { url: this.url + '/' + this.get('_id') });
+      this.applyURLToOptions(options);
       Backbone.Model.prototype.destroy.apply(this, arguments);
     },
 
@@ -32,6 +37,9 @@ define(function(require) {
 
     // pull the human-readable role names from the list of all roles
     setRoleNames: function(model, value, options) {
+      if(!model.get('globalData')) {
+        return;
+      }
       var roleNames;
       if(typeof value === 'object') { // array
         roleNames = value.map(function(role, index) {

@@ -196,9 +196,8 @@ define(function(require){
       event && event.preventDefault();
 
       var self = this;
-      var previewWindow = window.open('/loading', 'preview');
-
       if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isPreviewPending) {
+        var previewWindow = window.open('/loading', 'preview');
         Origin.editor.isPreviewPending = true;
         $('.navigation-loading-indicator').removeClass('display-none');
         $('.editor-common-sidebar-preview-inner').addClass('display-none');

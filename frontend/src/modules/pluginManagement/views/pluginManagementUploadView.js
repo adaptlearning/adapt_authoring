@@ -43,6 +43,7 @@ define(function(require){
       Origin.trigger('scaffold:updateSchemas', function() {
         Origin.Notify.alert({ type: 'success', text: Origin.l10n.t('app.uploadpluginsuccess') });
 
+        Origin.trigger('sidebar:resetButtons');
         $('.loading').hide();
 
         Origin.router.navigateTo('pluginManagement/' + (data.pluginType || ''));
@@ -50,6 +51,7 @@ define(function(require){
     },
 
     onUploadError: function(data) {
+      Origin.trigger('sidebar:resetButtons');
       $('.loading').hide();
 
       var message = '';

@@ -314,7 +314,14 @@ define(function(require){
     },
 
     pasteFromClipboard: function(parentId, sortOrder, layout) {
-      $.post('/api/content/clipboard/paste', function(jqXHR) {
+      var data = {
+        id: Origin.editor.clipboardId,
+        parentId: parentId,
+        layout: layout,
+        sortOrder: sortOrder,
+        courseId: Origin.editor.data.course.get('_id')
+      };
+      $.post('/api/content/clipboard/paste', data, function(jqXHR) {
         Origin.editor.clipboardId = null;
         Origin.editor.pasteParentModel = null;
         Origin.trigger('editor:refreshData', function() {

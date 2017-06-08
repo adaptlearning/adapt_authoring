@@ -4,8 +4,12 @@ define(function(require) {
   var Origin = require('core/origin');
 
   var UserModel = Backbone.Model.extend({
-    url: 'api/user',
     idAttribute: '_id',
+
+    url: function() {
+      var root = 'api/user';
+      return root + ((this.isNew()) ? '' : '/' + this.id);
+    },
 
     initialize: function() {
       this.on('change:globalData', this.onGlobalDataChanged);
@@ -14,20 +18,6 @@ define(function(require) {
       this.on('change:failedLoginCount', this.setLockStatus);
 
       this.setLockStatus();
-    },
-
-    // HACK(s) because we can't define a rootUrl and url
-    fetch: function(options) {
-      this.applyURLToOptions(options);
-      Backbone.Model.prototype.fetch.apply(this, arguments);
-    },
-    save: function(attributes, options) {
-      this.applyURLToOptions(options);
-      Backbone.Model.prototype.save.apply(this, arguments);
-    },
-    destroy: function(options) {
-      this.applyURLToOptions(options);
-      Backbone.Model.prototype.destroy.apply(this, arguments);
     },
 
     onGlobalDataChanged: function(model, value, options) {
@@ -72,10 +62,6 @@ define(function(require) {
       if(newLocked !== this.get('_isLocked')) {
         this.set('_isLocked', newLocked);
       }
-    },
-
-    applyURLToOptions: function(options) {
-      return _.extend(options, { url: this.url + '/' + this.get('_id') });
     }
   });
 

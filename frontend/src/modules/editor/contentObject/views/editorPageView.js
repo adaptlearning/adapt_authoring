@@ -82,8 +82,7 @@ define(function(require){
       this.$('.page-articles').empty();
       Origin.trigger('editorPageView:removePageSubViews');
       // Insert the 'pre' paste zone for articles
-      var prePasteArticle = new ArticleModel();
-      prePasteArticle.set({
+      var prePasteArticle = new ArticleModel({
         _parentId: this.model.get('_id'),
         _type: 'article',
         _pasteZoneSortOrder: 1

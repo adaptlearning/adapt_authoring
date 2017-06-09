@@ -6,7 +6,7 @@ define(function(require){
   var Helpers = require('core/helpers');
   var EditorOriginView = require('./editorOriginView');
 
-  var EditorPasteZone = EditorOriginView.extend({
+  var EditorPasteZoneView = EditorOriginView.extend({
     className: 'display-none paste-zone',
 
     events: {
@@ -44,45 +44,32 @@ define(function(require){
 
     onDrop: function(e, ui) {
       var type = this.model.get('_type');
-      var parentId = this.model.get('_parentId');
       var $component = $(ui.draggable);
       var contentId = $component.attr('data-' + type + '-id');
+      var parentId = this.model.get('_parentId');
       var droppedOnId = $component.attr('data-' + this.model.get('_parent') + '-id');
-      var sortOrder = $(this).find('.paste-' + type).attr('data-sort-order');
-      var newData = {
-        _sortOrder: sortOrder,
-        _parentId: parentId
-      };
       $.ajax({
+        url: '/api/content/' + type + '/' + contentId,
         type: 'PUT',
-        url:'/api/content/' + type + '/' + contentId,
-        data: newData,
-        success: this.onSaveSuccess,
-        error: this.onSaveError
-      });
-    },
-
-    onSaveSuccess: function(jqXHR, textStatus, errorThrown) {
-      var contentCollection = Origin.editor.data[view.model._siblings];
-      contentCollection.fetch().done(function() {
-        // Re-render the move-from content item
-        Origin.trigger('editorView:move' + Helpers.capitalise(type) + ':' + droppedOnId);
-        // Re-render the move-to content item if needed
-        if (droppedOnId !== parentId) {
-          Origin.trigger('editorView:move' + Helpers.capitalise(type) + ':' + parentId);
+        data: {
+          _parentId: parentId,
+          _sortOrder: $('.paste-' + type, this.$el).attr('data-sort-order')
+        },
+        success: _.bind(function() {
+          // fetch collection for the pasted type, and send motification
+          Origin.editor.data[this.model._siblings].fetch().done(function() {
+            var itemId = (droppedOnId === parentId) ? droppedOnId : parentId;
+            Origin.trigger('editorView:move' + Helpers.capitalise(type) + ':' + itemId);
+          });
+        }, this),
+        error: function(jqXHR) {
+          Origin.Notify.alert({ type: 'error', text: jqXHR.responseJSON.message });
         }
-      });
-    },
-
-    onSaveError: function(jqXHR) {
-      Origin.Notify.alert({
-        type: 'error',
-        text: jqXHR.responseJSON.message
       });
     }
   }, {
     template: 'editorPasteZone'
   });
 
-  return EditorPasteZone;
+  return EditorPasteZoneView;
 });

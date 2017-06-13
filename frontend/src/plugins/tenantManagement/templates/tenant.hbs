@@ -3,7 +3,7 @@
 
     <div class="col-15">
       <div class="tb-col-inner">
-        <span class="read">{{{name}}}</span>
+        <span class="read">{{name}}</span>
         <a class="edit read edit-mode"><i class="fa fa-pencil-square-o"></i></a>
         <div class="input-container write">
           <input class="input" type="text" data-modelKey="name" autocomplete="off">
@@ -15,7 +15,7 @@
 
     <div class="col-15">
       <div class="tb-col-inner">
-        <span class="read">{{{displayName}}}</span>
+        <span class="read">{{displayName}}</span>
         <a class="edit read edit-mode"><i class="fa fa-pencil-square-o"></i></a>
         <div class="input-container write">
           <input class="input" type="text" data-modelKey="displayName" autocomplete="off">
@@ -26,11 +26,11 @@
     </div>
 
     <div class="col-20 col-centered">
-      <div class="tb-col-inner">{{{momentFormat createdAt 'Do MMM YYYY'}}}</div>
+      <div class="tb-col-inner">{{momentFormat createdAt 'Do MMM YYYY'}}</div>
     </div>
 
     <div class="col-20 col-centered">
-      <div class="tb-col-inner">{{{momentFormat updatedAt 'Do MMM YYYY'}}}</div>
+      <div class="tb-col-inner">{{momentFormat updatedAt 'Do MMM YYYY'}}</div>
     </div>
 
     <div class="col-15">

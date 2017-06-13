@@ -62,7 +62,7 @@ define(function (require) {
       if (this.model.get('globalData').hasSuperAdminPermissions) {
         this.users.fetch();
       } else if (this.model.get('globalData').hasTenantAdminPermissions) {
-        this.users.fetch({ data: $.param({ _tenantId: Origin.sessionModel.get('tenantId') }) });
+        this.users.fetch({ url: 'api/user/tenant', data: $.param({ _tenantId: Origin.sessionModel.get('tenantId') }) });
       }
     },
 

@@ -24,6 +24,7 @@
   "app.changepasswordtext": "Password updated for<br/><b>%{email}</b>",
   "app.passwordempty": "You need to write something!",
   "app.changeadminaccounts": "Please log in as another admin for full access.",
+  "app.changesuperadminaccounts": "You can not edit super admin",
   "app.failedlogins": "Failed logins",
   "app.lastaccess": "Last access",
   "app.duplicateuservalueerror": "Couldn't save user data. A user already exists with %{key}: <strong>%{value}</strong>",

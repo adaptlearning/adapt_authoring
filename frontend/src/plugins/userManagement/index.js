@@ -86,20 +86,10 @@ define(function(require) {
   }
 
   var onDataFetched = function() {
-    //TODO:There must be a better way to do this
-    if(!data.hasSuperAdminPermissions && data.allRoles.length > 0){
-      filterRoles(data.allRoles);
-    }
     // ASSUMPTION we always have roles and tenants
     if(data.allRoles.length > 0 && data.allTenants.length > 0) {
       isReady = true;
       Origin.trigger('userManagement:dataReady');
     }
-  };
-
-  var filterRoles = function(roles){
-    if(roles.findWhere({name:'Super Admin'})){
-      roles.findWhere({name:'Super Admin'}).destroy();
-    }   
   };
 });

@@ -207,4 +207,38 @@ define(function(require) {
 	    return _.isEmpty(errors) ? null : errors;
 	}
 
+	(function() {
+		var proxied = Backbone.Form.editors.Number.prototype.initialize;
+		
+		Backbone.Form.editors.Number.prototype.initialize = function(options) {
+			proxied.apply(this, arguments);
+
+			if (this.schema) {
+				var step = parseFloat((this.schema.step || (this.schema.editorAttrs && this.schema.editorAttrs.step) || 1));
+				if (!_.isNaN(step) && _.isNumber(step)) {
+					this.$el.attr('step', step);
+				} else {
+					this.$el.attr('step', 'any');
+				}
+
+				if (this.schema.validators) {
+					var rangeValidator = _.findWhere(this.schema.validators, { type: 'range' });
+					if (!rangeValidator) {
+						return;
+					}
+
+					var min = parseInt(rangeValidator.min);
+					if (!_.isNaN(min) && _.isNumber(min)) {
+						this.$el.attr('min', min);
+					}
+
+					var max = parseInt(rangeValidator.max);
+					if (!_.isNaN(max) && _.isNumber(max)) {
+						this.$el.attr('max', max);
+					}
+				}
+			}
+		};
+	}());
+
 });

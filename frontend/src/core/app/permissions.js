@@ -5,6 +5,7 @@ define(function(require) {
 	var Origin = require('coreJS/app/origin');
 	var operations = ["create", "read", "update", "delete"];
 	var separators = ["/", ":"];
+	var PermissionsView = require('coreJS/app/views/permissionsView');
 
 	var routes = [];
 
@@ -98,7 +99,7 @@ define(function(require) {
 			_.each(sessionModelPermissions, function(permission) {
 				// Find out if theres any {{tenantid}}/*:delete
 				var splitPermission = splitString(permission)
-				
+
 				if (splitPermission[1].charAt(0) === '*') {
 					var permission = splitPermission[splitPermission.length - 1];
 					if(permission == 'delete'){
@@ -144,6 +145,12 @@ define(function(require) {
 				return false;
 			}
 
+		},
+
+		showNoPermissionPage: function() {
+			Origin.trigger('sidebar:sidebarContainer:hide');
+			Origin.trigger('location:title:hide');
+			return $('.app-inner').empty().append(new PermissionsView().$el);
 		}
 	};
 

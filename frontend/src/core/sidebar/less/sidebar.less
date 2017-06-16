@@ -1,4 +1,14 @@
 @import '../../../less/variables.less';
+.sidebar-hide {
+    #app {
+        margin-left: 0px;
+    }
+
+    .sidebar {
+        display: none;
+    }
+}
+
 .sidebar {
     position:fixed;
     top:0;
@@ -24,16 +34,6 @@
     .sidebar-item-container {
         position: relative;
         height:100%;
-    }
-
-    .sidebar-hide {
-        #app {
-            margin-left: 0px;
-        }
-
-        .sidebar {
-            display: none;
-        }
     }
 
     .separator {

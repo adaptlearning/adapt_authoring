@@ -149,8 +149,15 @@ define(function(require) {
 			if (_.isObject(field.inputType)) {
 				fieldObject = _.extend(fieldObject, field.inputType);
 			}
+
 			scaffoldSchema[key] = fieldObject;
 
+			var editorAttrs = field.editorAttrs;
+
+			if (editorAttrs) {
+				scaffoldSchema[key].editorAttrs = editorAttrs;
+			}
+			
 		} else {
 
 			scaffoldSchema[key] = {

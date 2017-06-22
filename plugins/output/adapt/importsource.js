@@ -15,6 +15,7 @@ var crypto = require('crypto');
 var filestorage = require('../../../lib/filestorage');
 
 // TODO integrate with sockets API to show progress
+// TODO add assets to clean up routine if import fails
 
 function ImportSource(req, done) {
   var contentMap = {
@@ -33,9 +34,12 @@ function ImportSource(req, done) {
     ],
     pluginIncludes: []
   };
-  var idMap = {};
-  var componentMap = {};
-  var extensionMap = {};
+  var metadata = {
+    idMap: {},
+    componentMap: {},
+    extensionMap: {},
+    assetNameMap: {}
+  };
   var extensionLocations = {};
   var enabledExtensions = {};
   var tenantId = app.usermanager.getCurrentUser().tenant._id;
@@ -45,8 +49,10 @@ function ImportSource(req, done) {
   var form = new IncomingForm();
   var origCourseId;
   var courseId;
+  var configId;
   var cleanupDirs = [];
-
+  var assetFields = [];
+  var PATH_REXEX = new RegExp(/(course\/)((\w)*\/)*(\w)*.[a-zA-Z0-9]+/, 'gi');
 
   form.parse(req, function (error, fields, files) {
 
@@ -182,7 +188,7 @@ function ImportSource(req, done) {
         if(!fileMeta) {
           return doneAsset(new helpers.ImportError('No metadata found for asset: ' + assetName));
         }
-        importSourceAsset(fileMeta, idMap, doneAsset);
+        helpers.importAsset(fileMeta, metadata, doneAsset);
       }, done);
     });
   }
@@ -210,6 +216,7 @@ function ImportSource(req, done) {
                 plugindata.pluginIncludes.push(data);
               });
           });
+
           doneMapIterator();
         }, cb);
       },
@@ -235,7 +242,7 @@ function ImportSource(req, done) {
             if(error) return cb(error);
             async.each(results, function(component, cb2) {
 
-              componentMap[component.component] = component._id;
+              metadata.componentMap[component.component] = component._id;
               cb2();
             }, cb);
           });
@@ -244,7 +251,13 @@ function ImportSource(req, done) {
           db.retrieve('extensiontype', {}, { jsonOnly: true }, function(error, results) {
             if(error) return cb(error);
             async.each(results, function(extension, cb2) {
-              extensionMap[extension.extension] = extension._id;
+              metadata.extensionMap[extension.extension] = {
+                "targetAttribute": extension.targetAttribute,
+                "version": extension.version,
+                "name": extension.name,
+                "_id": extension._id
+              };
+
               if(extension.properties.pluginLocations) {
                 extensionLocations[extension.targetAttribute] = extension.properties.pluginLocations;
               }
@@ -264,28 +277,24 @@ function ImportSource(req, done) {
       function createCourse(cb) {
         fs.readJson(path.join(courseRoot, 'course.json'), function(error, courseJson) {
           if(error) return cb(error);
-          courseJson = _.extend(courseJson, { _isShared: false, tags: formTags }); // TODO remove this later
+          courseJson = _.extend(courseJson, { tags: formTags });
           createContentItem('course', courseJson, '', function(error, courseRec) {
             if(error) return cb(error);
             origCourseId = courseJson._id;
-            courseId = idMap[origCourseId] = courseRec._id;
+            courseId = metadata.idMap[origCourseId] = courseRec._id;
             cb();
           });
         });
       },
-      function createCourse(cb) {
-        fs.readJson(path.join(COURSE_ROOT_FOLDER, 'src', 'course', 'config.json'), function(error, configJson) {
-          if(error) return cb(error);
-          createContentItem('config', configJson, courseId, cb);
-        });
-      },
       function enableExtensions(cb) {
         // TODO this function should be surfaced properly somewhere
+        // TODO - This overwrites the course and config extension data.
+        var includeExtensions = {};
         async.eachSeries(plugindata.pluginIncludes, function(pluginData, doneItemIterator) {
           if (pluginData.type == 'extension') {
             fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, extensionJson) {
               if(error) return cb(error);
-              enabledExtensions[extensionJson.extension] = extensionMap[extensionJson.extension];
+              includeExtensions[extensionJson.extension] = metadata.extensionMap[extensionJson.extension];
               doneItemIterator();
             });
           } else {
@@ -293,7 +302,22 @@ function ImportSource(req, done) {
           }
         }, function(error) {
           if(error) return cb(error);
-          app.contentmanager.toggleExtensions(courseId.toString(), 'enable', _.values(enabledExtensions), cb);
+
+          enabledExtensions = {
+            "_enabledExtensions": includeExtensions
+          };
+          cb();
+        });
+      },
+      function createConfig(cb) {
+        fs.readJson(path.join(COURSE_ROOT_FOLDER, 'src', 'course', 'config.json'), function(error, configJson) {
+          if(error) return cb(error);
+          var updatedConfigJson = _.extend(configJson, enabledExtensions);
+          createContentItem('config', updatedConfigJson, courseId, function(error, configRec) {
+            if(error) return cb(error);
+            configId = configRec._id;
+            cb();
+          });
         });
       },
       function createContent(cb) {
@@ -303,7 +327,7 @@ function ImportSource(req, done) {
             fs.readJson(path.join(courseRoot, contentMap[type] + '.json'), function(error, contentJson) {
               if(error) return cb2(error);
 
-              // TODO - contenoObjects could do with sorting by parentId not just menu/page
+              // TODO - contentObjects could do with sorting by parentId not just menu/page
               // Sorts in-place the content objects to make sure processing can happen
               if (type == 'contentobject') {
                 var groups = _.groupBy(contentJson, '_type');
@@ -315,7 +339,11 @@ function ImportSource(req, done) {
               async.eachSeries(contentJson, function(item, cb3) {
                 createContentItem(type, item, courseId, function(error, contentRec) {
                   if(error) return cb3(error);
-                  idMap[item._id] = contentRec._id;
+                  if (contentRec && contentRec._id) {
+                    metadata.idMap[item._id] = contentRec._id;
+                  } else {
+                    logger.log('error', 'Failed to create map for '+ item._id);
+                  }
                   cb3();
                 });
               }, cb2);
@@ -327,36 +355,79 @@ function ImportSource(req, done) {
   }
 
   // TODO update any ids in custom attributes
-  // TODO create assets
   function createContentItem(type, originalData, courseId, done) {
     // data needs to be transformed a bit first
     var data = _.extend({}, originalData);
 
-    delete data._id;
-    delete data._trackingId;
-    delete data._latestTrackingId;
-    data.createdBy = app.usermanager.getCurrentUser()._id;
-    if(!_.isEmpty(courseId)) data._courseId = courseId;
-    if(data._component) {
-      data._componentType = componentMap[data._component];
-    }
-    if(data._parentId) {
-      if(idMap[data._parentId]) {
-        data._parentId = idMap[data._parentId];
-      } else {
-        logger.log('warn', 'Cannot update ' + originalData._id + '._parentId, ' +  originalData._parentId + ' not found in idMap');
-      }
-    }
-    // define the custom properties and _extensions
-    database.getDatabase(function(error, db) {
-      var genericPropKeys = Object.keys(db.getModel(type).schema.paths);
-      var customProps = _.pick(data, _.difference(Object.keys(data), genericPropKeys));
-      var extensions = _.pick(customProps, _.intersection(Object.keys(customProps),Object.keys(extensionLocations)));
-      customProps = _.omit(customProps, Object.keys(extensions));
-      data.properties = customProps
-      data._extensions = extensions;
-      data = _.omit(data, Object.keys(customProps));
-      // now we're ready to creat the content
+    // organise functions in series, mainly for readability
+    async.series([
+        function prepareData(cb) {
+          // basic prep of data
+          delete data._id;
+          delete data._trackingId;
+          delete data._latestTrackingId;
+          data.createdBy = app.usermanager.getCurrentUser()._id;
+          if(!_.isEmpty(courseId)) data._courseId = courseId;
+          if(data._component) {
+            data._componentType = metadata.componentMap[data._component];
+          }
+          if(data._parentId) {
+            if(metadata.idMap[data._parentId]) {
+              data._parentId = metadata.idMap[data._parentId];
+            } else {
+              logger.log('warn', 'Cannot update ' + originalData._id + '._parentId, ' +  originalData._parentId + ' not found in idMap');
+            }
+          }
+
+          // define the custom properties and _extensions
+          database.getDatabase(function(error, db) {
+            if(error) return cb(error);
+            var genericPropKeys = Object.keys(db.getModel(type).schema.paths);
+            var customProps = _.pick(data, _.difference(Object.keys(data), genericPropKeys));
+            var extensions = _.pick(customProps, _.intersection(Object.keys(customProps),Object.keys(extensionLocations)));
+            customProps = _.omit(customProps, Object.keys(extensions));
+            data.properties = customProps
+            data._extensions = extensions;
+            data = _.omit(data, Object.keys(customProps));
+            cb();
+          });
+        },
+        function updateAssetData(cb) {
+          // TODO -- Strip lang folder. This global replace is intended as a temporary solution
+          var replaceRegex = new RegExp(/(course\/)((\w){2}\/)/, 'gi');
+          var newAssetPath = "course/";
+
+          var traverse = require('traverse');
+          // TODO - remove traverse and replace with string replace similar to https://github.com/adaptlearning/adapt_authoring/blob/master/lib/outputmanager.js#L764
+          traverse(data).forEach(function (value) {
+            if (!_.isString(value)) return;
+            var isPath = value.match(PATH_REXEX);
+
+            if (!isPath) return;
+            var dirName = path.dirname(value);
+            var newDirName = dirName.replace(replaceRegex, newAssetPath);
+            var fileExt = path.extname(value);
+            var fileName = path.basename(value, fileExt);
+
+            if (dirName && fileName && fileExt) {
+              try {
+                var fileId = metadata.idMap[fileName];
+                var newFileName = metadata.assetNameMap[fileId];
+                if (newFileName) {
+                  this.update(path.join(newDirName, newFileName));
+                }
+              } catch (e) {
+                logger.log('error', e);
+                return;
+              }
+            }
+          });
+          cb();
+        }
+    ], function(error, results) {
+      if(error) return done(error);
+
+      // now we're ready to create the content
       app.contentmanager.getContentPlugin(type, function(error, plugin) {
         if(error) return done(error);
         plugin.create(data, function(error, record) {
@@ -364,85 +435,101 @@ function ImportSource(req, done) {
             logger.log('warn', 'Failed to import ' + type + ' ' + (originalData._id || '') + ' ' + error);
             return done(); // TODO collect failures, maybe try again
           }
-          logger.log('debug', 'imported ' + type + ' ' + (originalData._id || '') + ' successfully');
-          done(null, record);
-        });
-      });
-    });
-  }
-}
-
-
-/**
-* Adds asset to the DB
-* Checks for a similar asset first (filename & size). if similar found, map that
-* to the import course.
-* TODO don't duplicate, similar to helpers.importAsset and assetmanager.postAsset
-* @param {object} fileMetadata
-* @param {object} idMap
-* @param {callback} assetImported
-*/
-function importSourceAsset(fileMetadata, idMap, assetImported) {
-  var search = {
-    filename: fileMetadata.filename,
-    size: fileMetadata.size
-  };
-  app.assetmanager.retrieveAsset(search, function gotAsset(error, results) {
-    if(results.length > 0) {
-      logger.log('debug', fileMetadata.filename + ': similar file found in DB, not importing');
-      idMap[fileMetadata.oldId] = results[0]._id;
-      return assetImported();
-    }
-
-    var date = new Date();
-    var hash = crypto.createHash('sha1');
-    var rs = fs.createReadStream(fileMetadata.path);
-
-    rs.on('data', function onReadData(pData) {
-      hash.update(pData, 'utf8');
-    });
-    rs.on('close', function onReadClose() {
-      var filehash = hash.digest('hex');
-      // TODO get rid of hard-coded assets
-      var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
-      var filepath = path.join(directory, filehash) + path.extname(fileMetadata.filename);
-      var fileOptions = {
-        createMetadata: true,
-        createThumbnail: true,
-        thumbnailOptions: {
-          width: '?',
-          height: '200'
-        }
-      };
-      filestorage.getStorage(fileMetadata.repository, function gotStorage(error, storage) {
-        if (error) {
-          return assetImported(error);
-        }
-        // the repository should move the file to a suitable location
-        storage.processFileUpload(fileMetadata, filepath, fileOptions, function onFileUploadProcessed(error, storedFile) {
-          if (error) {
-            return assetImported(error);
-          }
-          // It's better not to set thumbnailPath if it's not set.
-          if (storedFile.thumbnailPath) storedFile.thumbnailPath = storedFile.thumbnailPath;
-          var asset = _.extend(fileMetadata, storedFile);
-
-          // Create the asset record
-          app.assetmanager.createAsset(asset, function onAssetCreated(createError, assetRec) {
-            if (createError) {
-              logger.log('error', createError)
-              storage.deleteFile(storedFile.path, assetImported);
-              return;
-            }
-            // TODO - add flag so we can clean up if fail.
-            idMap[fileMetadata.oldId] = assetRec._id;
-            assetImported();
+           //logger.log('info', 'imported ' + type + ' ' + (originalData._id || '') + ' successfully');
+          // Create a courseAssets record if needed
+          createCourseAssets(type, record, function(error){
+            if(error) return done(error, record);
+            done(null, record);
           });
         });
       });
     });
-  });
-};
+  }
+
+  /**
+  * Adds courseasset record
+  * to the contentTypeId, courseId and userId.
+  * @param {type} type
+  * @param {object} contentData
+  * @param {callback} cb
+  */
+  function createCourseAssets(type, contentData, cb) {
+    var courseAssetsArray;
+    var assetData = {};
+    var componentPlugin;
+    var extensionPlugins;
+    // courseassets values change depending on what content type they are for
+    switch(type) {
+      case 'course':
+        assetData = {
+            _courseId : contentData._id,
+            _contentType : type,
+            _contentTypeId : contentData._id,
+            _contentTypeParentId: contentData._id
+        };
+        break;
+      case 'article', 'block', 'config':
+        assetData = {
+            _courseId : contentData._courseId,
+            _contentType : type,
+            _contentTypeId : contentData._componentType,
+            _contentTypeParentId: contentData._parentId
+        };
+        break;
+      default:
+        assetData = {
+            _courseId : contentData._courseId,
+            _contentType : type,
+            _contentTypeId : contentData._id,
+            _contentTypeParentId: contentData._parentId
+        };
+        break;
+    }
+
+    var contentDataString = JSON.stringify(contentData);
+    var assetArray = contentDataString.match(PATH_REXEX);
+
+    // search through object values for file paths
+    async.each(assetArray, function(data, callback) {
+      delete assetData._assetId;
+      if (!_.isString(data)) callback();
+
+      var assetBaseName = path.basename(data);
+      // get asset _id from lookup of the key of metadata.assetNameMap mapped to assetBaseName
+      _.findKey(metadata.assetNameMap, function(value, key) {
+        if (value === assetBaseName) {
+          var assetId = key;
+          var search = {
+            _id: assetId
+          };
+          app.assetmanager.retrieveAsset(search, function gotAsset(error, results) {
+            if (error) {
+              logger.log('error', error);
+            }
+
+            assetData._assetId = assetId;
+            assetData.createdBy = app.usermanager.getCurrentUser();
+
+            if (results.length > 0) {
+              assetData._fieldName = _.pluck(results, 'filename');
+            } else {
+              assetData._fieldName = assetBaseName;
+            }
+            app.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
+              if(error) return cb(error);
+              plugin.create(assetData, function(error, assetRecord) {
+                if(error) {
+                  logger.log('warn', 'Failed to create courseasset ' + type + ' ' + (assetRecord || '') + ' ' + error);
+                  //TODO collect failures, maybe try again
+                }
+              });
+            });
+          });
+        }
+      });
+    }, cb(null, contentData));
+  }
+}
 
 /**
  * Module exports

@@ -1,19 +1,22 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-var prompt = require('prompt'),
-    async = require('async'),
-    fs = require('fs'),
-    path = require('path'),
-    rimraf = require('rimraf'),
-    exec = require('child_process').exec,
-    builder = require('./lib/application'),
-    frameworkHelper = require('./lib/frameworkhelper'),
-    auth = require('./lib/auth'),
-    database = require('./lib/database'),
-    helpers = require('./lib/helpers'),
-    localAuth = require('./plugins/auth/local'),
-    logger = require('./lib/logger'),
-    optimist = require('optimist'),
-    util = require('util');
+var prompt = require('prompt');
+var async = require('async');
+var fs = require('fs');
+var path = require('path');
+var rimraf = require('rimraf');
+var exec = require('child_process').exec;
+var builder = require('./lib/application');
+var frameworkHelper = require('./lib/frameworkhelper');
+var auth = require('./lib/auth');
+var database = require('./lib/database');
+var helpers = require('./lib/helpers');
+var localAuth = require('./plugins/auth/local');
+var logger = require('./lib/logger');
+var optimist = require('optimist');
+var util = require('util');
+var _ = require('underscore');
+var ncp = require('ncp').ncp;
+var versionFile = JSON.parse(fs.readFileSync('version.json'), {encoding: 'utf8'});
 
 // set overrides from command line arguments
 prompt.override = optimist.argv;
@@ -31,7 +34,7 @@ var superUser = false;
 
 var isVagrant = function () {
   if (process.argv.length > 2) {
-        return true;
+    return true;
   }
 
   return false;
@@ -152,6 +155,30 @@ var configItems = [
     description: "Sender email address",
     default: ''
   },
+  {
+    name: 'rootUrl',
+    type: 'string',
+    description: "The url this instance is accessed by",
+    default: 'http://localhost:5000/'
+  },
+  {
+    name: 'authoringToolRepository',
+    type: 'string',
+    description: "Authoring Tool Repository",
+    default: 'https://github.com/adaptlearning/adapt_authoring.git'
+  },
+  {
+    name: 'frameworkRepository',
+    type: 'string',
+    description: "Framework Repository",
+    default: 'https://github.com/adaptlearning/adapt_framework.git'
+  },
+  {
+    name: 'frameworkRevision',
+    type: 'string',
+    description: "Framework revision to install (branchName || tags/tagName)",
+    default: 'tags/' + versionFile.adapt_framework
+  },
   // {
   //   name: 'outputPlugin',
   //   type: 'string',
@@ -202,46 +229,69 @@ userConfig = [
  * 4. create admin account
  * 5. TODO install plugins
  */
+
+var configResults;
 var steps = [
-  // install the framework
-  function installFramework (next) {
-    // AB-277 always remove framework folder on install
-    rimraf(path.resolve(__dirname, 'adapt_framework'), function () {
-      // now clone the framework
-      frameworkHelper.cloneFramework(function (err) {
-        if (err) {
-      	  console.log('ERROR: ', err);
-          return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
-        }
 
-        // Remove the default course
-        rimraf(path.resolve(__dirname, 'adapt_framework', 'src', 'course'), function(err) {
-          if (err) {
-            console.log('ERROR: ', err);
-            return exitInstall(1, 'Framework install error -- unable to remove default course.');
-          }
-
-          return next();
-        });
-      });
-     });
+  function configureEnvironment(next) {
+    if (isVagrant()) {
+      console.log('Now setting configuration items.');
+    } else {
+      console.log('Now set configuration items. Just press ENTER to accept the default value (in brackets).');
+    }
+    prompt.get(configItems, function(err, results) {
+      configResults = results;
+      if (err) {
+        console.error('ERROR: ', err);
+        return exitInstall(1, 'Could not save configuration items.');
+      }
+      saveConfig(configResults, next);
+    });
   },
 
-   function configureEnvironment(next) {
-     if (isVagrant()) {
-       console.log('Now setting configuration items.');
-     } else {
-       console.log('Now set configuration items. Just press ENTER to accept the default value (in brackets).');
-     }
-     prompt.get(configItems, function (err, results) {
-       if (err) {
-         console.log('ERROR: ', err);
-         return exitInstall(1, 'Could not save configuration items.');
-       }
+  // install the framework
+  function installFramework(next) {
+    // AB-277 always remove framework folder on install
+    rimraf(path.resolve(__dirname, 'adapt_framework'), function() {
+      // now clone the framework
+      frameworkHelper.cloneFramework(function(err) {
+          if (err) {
+            console.error('ERROR: ', err);
+            return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
+          }
 
-       saveConfig(results, next);
-     });
-   },
+          // Remove the default course
+          rimraf(path.resolve(__dirname, 'adapt_framework', 'src', 'course'), function(err) {
+            if (err) {
+              console.error('ERROR: ', err);
+              return exitInstall(1, 'Framework install error -- unable to remove default course.');
+            }
+
+            fs.readFile(path.resolve(__dirname, 'adapt_framework','package.json'), function(error, data) {
+              if (error) {
+                console.error('ERROR: ' + error);
+                return callback(error);
+              }
+
+              var packageFile = JSON.parse(data);
+              versionFile.adapt_framework = 'v' + packageFile.version;
+              fs.writeFile('version.json', JSON.stringify(versionFile, null, 4), function(err) {
+                if(err) {
+                  console.error('ERROR: ' + err);
+                  return next(err);
+                }
+
+                console.log("Version file updated\n");
+                return next();
+
+              });
+            });
+          });
+        },
+        configResults.frameworkRepository,
+        configResults.frameworkRevision);
+    });
+  },
   // configure tenant
   function configureTenant (next) {
     console.log("Checking configuration, please wait a moment ... ");
@@ -258,13 +308,13 @@ var steps = [
       }
       prompt.get(tenantConfig, function (err, result) {
         if (err) {
-          console.log('ERROR: ', err);
+          console.error('ERROR: ', err);
           return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
         }
         // check if the tenant name already exists
         app.tenantmanager.retrieveTenant({ name: result.name }, function (err, tenant) {
           if (err) {
-            console.log('ERROR: ', err);
+            console.error('ERROR: ', err);
             return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
           }
 
@@ -288,7 +338,7 @@ var steps = [
               },
               function (err, tenant) {
                 if (err || !tenant) {
-                  console.log('ERROR: ', err);
+                  console.error('ERROR: ', err);
                   return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
                 }
 
@@ -317,13 +367,18 @@ var steps = [
             // deal with duplicate tenant. permanently.
             console.log("Tenant already exists. It will be deleted.");
             return prompt.get({ name: "confirm", description: "Continue? (Y/n)", default: "Y" }, function (err, result) {
-              if (err || !/(Y|y)[es]*/.test(result.confirm)) {
+              if(err){
+                console.error('ERROR: ' + err);
+              }
+
+              if (!/(Y|y)[es]*/.test(result.confirm)) {
                 return exitInstall(1, 'Exiting install ... ');
               }
 
               // buh-leted
               _deleteCollections(function (err) {
                 if (err) {
+                  console.error('ERROR: ' + err);
                   return next(err);
                 }
 
@@ -340,10 +395,11 @@ var steps = [
   },
   // install content plugins
   function installContentPlugins (next) {
+    console.log('Installing framework plugins');
     // Interrogate the adapt.json file from the adapt_framework folder and install the latest versions of the core plugins
-     fs.readFile(path.join(process.cwd(), 'temp', app.configuration.getConfig('masterTenantID').toString(), 'adapt_framework', 'adapt.json'), function (err, data) {
+    fs.readFile(path.join(process.cwd(), 'adapt_framework', 'adapt.json'), function (err, data) {
       if (err) {
-        console.log('ERROR: ' + err);
+        console.error('ERROR: ' + err);
         return next(err);
       }
 
@@ -360,6 +416,20 @@ var steps = [
       }, next);
     });
   },
+  // Create tenants copy of framework
+  function copyFramework (next) {
+    var source = path.join(process.cwd(), 'adapt_framework' );
+    var destination = path.join(process.cwd(), 'temp', app.configuration.getConfig('masterTenantID').toString(), 'adapt_framework' );
+
+    ncp(source, destination, function (err) {
+      if (err) {
+        console.error(err);
+        return next(err)
+      }
+      return next();
+    });
+
+  },
   // configure the super awesome user
   function createSuperUser (next) {
     if (isVagrant()) {
@@ -370,7 +440,7 @@ var steps = [
 
     prompt.get(userConfig, function (err, result) {
       if (err) {
-        console.log('ERROR: ', err);
+        console.error('ERROR: ', err);
         return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
       }
 
@@ -379,7 +449,7 @@ var steps = [
       // ruthlessly remove any existing users (we're already nuclear if we've deleted the existing tenant)
       app.usermanager.deleteUser({ email: userEmail }, function (err, userRec) {
         if (err) {
-          console.log('ERROR: ', err);
+          console.error('ERROR: ', err);
           return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
         }
 
@@ -390,7 +460,7 @@ var steps = [
             _tenantId: masterTenant._id
           }, function (err, user) {
             if (err) {
-              console.log('ERROR: ', err);
+              console.error('ERROR: ', err);
               return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
             }
 
@@ -398,7 +468,7 @@ var steps = [
             // grant super permissions!
             helpers.grantSuperPermissions(user._id, function (err) {
               if (err) {
-                console.log('ERROR: ', err);
+                console.error('ERROR: ', err);
                 return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
               }
 
@@ -414,7 +484,7 @@ var steps = [
     console.log('Compiling the ' + app.polyglot.t('app.productname') + ' web application, please wait a moment ... ');
     var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function (err) {
       if (err) {
-        console.log('ERROR: ', err);
+        console.error('ERROR: ', err);
         console.log('grunt build:prod command failed. Is the grunt-cli module installed? You can install using ' + 'npm install -g grunt grunt-cli');
         console.log('Install will continue. Try running ' + 'grunt build:prod' + ' after installation completes.');
         return next();
@@ -426,7 +496,7 @@ var steps = [
 
     // pipe through any output from grunt
     proc.stdout.on('data', console.log);
-    proc.stderr.on('data', console.log);
+    proc.stderr.on('data', console.error);
   },
   // all done
   function finalize (next) {
@@ -460,7 +530,7 @@ prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }
   // run steps
   async.series(steps, function (err, results) {
     if (err) {
-      console.log('ERROR: ', err);
+      console.error('ERROR: ', err);
       return exitInstall(1, 'Install was unsuccessful. Please check the console output.');
     }
 
@@ -479,25 +549,34 @@ prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }
  */
 
 function saveConfig (configItems, next) {
+  //pass by reference so as not to delete frameworkRevision
+  var config = _.clone(configItems);
   var env = [];
-  Object.keys(configItems).forEach(function (key) {
-    env.push(key + "=" + configItems[key]);
+
+  Object.keys(config).forEach(function (key) {
+    env.push(key + "=" + config[key]);
   });
 
   // write the env file!
   if (0 === fs.writeSync(fs.openSync('.env', 'w'), env.join("\n"))) {
-    console.log('ERROR: Failed to write .env file. Do you have write permissions for the current directory?');
+    console.error('ERROR: Failed to write .env file. Do you have write permissions for the current directory?');
     process.exit(1, 'Install Failed.');
   }
 
   // Defaulting these config settings until there are actual options.
-  configItems.outputPlugin = 'adapt';
-  configItems.dbType = 'mongoose';
-  configItems.auth = 'local';
+  config.outputPlugin = 'adapt';
+  config.dbType = 'mongoose';
+  config.auth = 'local';
+  config.root = process.cwd();
+  delete config.frameworkRevision;
+
+  if(config.smtpService !== ''){
+    config.useSmtp = true;
+  }
 
   // write the config.json file!
-  if (0 === fs.writeSync(fs.openSync(path.join('conf', 'config.json'), 'w'), JSON.stringify(configItems))) {
-    console.log('ERROR: Failed to write conf/config.json file. Do you have write permissions for the directory?');
+  if (0 === fs.writeSync(fs.openSync(path.join('conf', 'config.json'), 'w'), JSON.stringify(config))) {
+    console.error('ERROR: Failed to write conf/config.json file. Do you have write permissions for the directory?');
     process.exit(1, 'Install Failed.');
   }
   return next();

@@ -22,13 +22,16 @@ var isVagrant = function () {
 // GLOBALS
 var app = builder();
 var installedBuilderVersion = '';
-var latestBuilderTag = '';
+var latestBuilderTag = null;
 var installedFrameworkVersion = '';
-var latestFrameworkTag = '';
+var latestFrameworkTag = null;
 var shouldUpdateBuilder = false;
 var shouldUpdateFramework = false;
 var versionFile = JSON.parse(fs.readFileSync('version.json'), {encoding: 'utf8'});
-var configFile = JSON.parse(fs.readFileSync('conf/config.json'), {encoding: 'utf8'});
+var configFile = JSON.parse(fs.readFileSync(path.join('conf','config.json')), {encoding: 'utf8'});
+var upgradeOptions = {
+  automatic: true
+};
 
 var steps = [
   function(callback) {
@@ -40,88 +43,119 @@ var steps = [
       installedFrameworkVersion = versionFile.adapt_framework;
     }
 
+    if(typeof configFile.authoringToolRepository === 'undefined'){
+      configFile.authoringToolRepository = 'https://github.com/adaptlearning/adapt_authoring.git';
+    }
+
+    if(typeof configFile.frameworkRepository === 'undefined'){
+      configFile.frameworkRepository = 'https://github.com/adaptlearning/adapt_framework.git';
+    }
+
     console.log('Currently installed versions:\n- ' + app.polyglot.t('app.productname') + ': ' + installedBuilderVersion + '\n- Adapt Framework: ' + installedFrameworkVersion);
     callback();
 
   },
   function(callback) {
+    if (upgradeOptions.automatic) {
+      async.series([function(callback) {
 
-    console.log('Checking for ' + app.polyglot.t('app.productname') + ' upgrades...');
-    // Check the latest version of the project
-    request({
-      headers: {
-        'User-Agent' : DEFAULT_USER_AGENT
-      },
-      uri: 'https://api.github.com/repos/adaptlearning/adapt_authoring/tags',
-      method: 'GET'
-    }, function (error, response, body) {
+          if (configFile.frameworkRepository !== 'https://github.com/adaptlearning/adapt_framework.git') {
+            exitUpgrade(1, 'You are using a custom framework repository, you must use manual upgrade and specify a git tag or branch.')
+          };
 
-      if (!error && response.statusCode == 200) {
-        var tagInfo = JSON.parse(body);
+          console.log('Checking for ' + app.polyglot.t('app.productname') + ' upgrades...');
+          // Check the latest version of the project
+          request({
+            headers: {
+              'User-Agent': DEFAULT_USER_AGENT
+            },
+            uri: 'https://api.github.com/repos/adaptlearning/adapt_authoring/tags',
+            method: 'GET'
+          }, function(error, response, body) {
 
-        if (tagInfo) {
-          latestBuilderTag = tagInfo[0].name;
-        }
+            if (!error && response.statusCode == 200) {
+              var tagInfo = JSON.parse(body);
 
-        callback();
-      }
+              if (tagInfo) {
+                latestBuilderTag = tagInfo[0].name;
+              }
 
-    });
+              callback();
+            }
 
-  },
-  function(callback) {
+          });
 
-    console.log('Checking for Adapt Framework upgrades...');
-    // Check the latest version of the framework
-    request({
-      headers: {
-        'User-Agent' : DEFAULT_USER_AGENT
-      },
-      uri: 'https://api.github.com/repos/adaptlearning/adapt_framework/tags',
-      method: 'GET'
-    }, function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var tagInfo = JSON.parse(body);
+        },
+          function(callback) {
+            console.log('Checking for Adapt Framework upgrades...');
+            // Check the latest version of the framework
+            request({
+              headers: {
+                'User-Agent': DEFAULT_USER_AGENT
+              },
+              uri: 'https://api.github.com/repos/adaptlearning/adapt_framework/tags',
+              method: 'GET'
+            }, function(error, response, body) {
+              if (!error && response.statusCode == 200) {
+                var tagInfo = JSON.parse(body);
 
-        if (tagInfo) {
-          latestFrameworkTag = tagInfo[0].name;
-        }
+                if (tagInfo) {
+                  latestFrameworkTag = tagInfo[0].name;
+                }
 
-        callback();
-      }
-    });
+                callback();
+              }
+            });
 
-  },
-  function(callback) {
-    // Check what needs upgrading
-    if (latestBuilderTag != installedBuilderVersion) {
+          },
+          function(callback) {
+            // Check what needs upgrading
+            if (latestBuilderTag != installedBuilderVersion) {
+              shouldUpdateBuilder = true;
+              console.log('Update for ' + app.polyglot.t('app.productname') + ' is available: ' + latestBuilderTag);
+            }
+
+            if (latestFrameworkTag != installedFrameworkVersion) {
+              shouldUpdateFramework = true;
+              console.log('Update for Adapt Framework is available: ' + latestFrameworkTag);
+            }
+
+            // If neither of the Builder or Framework need updating then quit the upgrading process
+            if (!shouldUpdateFramework && !shouldUpdateBuilder) {
+              console.log('No updates available at this time\n');
+              process.exit(0);
+            }
+
+            callback();
+
+          }],
+        function(err, results) {
+          if (err){
+            console.error('ERROR:', err);
+            return callback(err)
+          }
+          return callback();
+        })
+    } else {
       shouldUpdateBuilder = true;
-      console.log('Update for ' + app.polyglot.t('app.productname') + ' is available: ' + latestBuilderTag);
-    }
-
-    if (latestFrameworkTag != installedFrameworkVersion) {
       shouldUpdateFramework = true;
-      console.log('Update for Adapt Framework is available: ' + latestFrameworkTag);
+      latestBuilderTag = upgradeOptions.authoringToolGitTag;
+      latestFrameworkTag = upgradeOptions.frameworkGitTag;
+      return callback();
     }
 
-    // If neither of the Builder or Framework need updating then quit the upgrading process
-    if (!shouldUpdateFramework && !shouldUpdateBuilder) {
-      console.log('No updates available at this time\n');
-      process.exit(0);
-    }
-
-    callback();
-
-  }, function(callback) {
+  },
+  function(callback) {
     // Upgrade Builder if we need to
     if (shouldUpdateBuilder) {
 
-      upgradeBuilder(latestBuilderTag, function(err) {
+      upgradeBuilder(latestBuilderTag, function(err, data) {
         if (err) {
+          console.error('ERROR:', err);
           return callback(err);
         }
 
-        versionFile.adapt_authoring = latestBuilderTag;
+        versionFile.adapt_authoring = data.version;
         callback();
 
       });
@@ -135,12 +169,13 @@ var steps = [
     // Upgrade Framework if we need to
     if (shouldUpdateFramework) {
 
-      upgradeFramework(latestFrameworkTag, function(err) {
+      upgradeFramework(latestFrameworkTag, function(err, data) {
         if (err) {
+          console.error('ERROR:', err);
           return callback(err);
         }
 
-        versionFile.adapt_framework = latestFrameworkTag;
+        versionFile.adapt_framework = data.version;
         callback();
 
       });
@@ -153,12 +188,13 @@ var steps = [
 
     // After upgrading let's update the version.json to the latest version
     fs.writeFile('version.json', JSON.stringify(versionFile, null, 4), function(err) {
-        if(err) {
-          callback(err);
-        } else {
-          console.log("Version file updated\n");
-          callback();
-        }
+      if(err) {
+        console.error('ERROR:', err);
+        callback(err);
+      } else {
+        console.log("Version file updated\n");
+        callback();
+      }
     });
 
   }, function(callback) {
@@ -175,18 +211,17 @@ var steps = [
         var plugins = Object.keys(json.dependencies);
 
         async.eachSeries(plugins, function(plugin, pluginCallback) {
-          app.bowermanager.installPlugin(plugin, json.dependencies[plugin], function(err) {
-            if (err) {
-              return pluginCallback(err);
-            }
 
-            pluginCallback();
-          });
+          if(json.dependencies[plugin] === '*') {
+            app.bowermanager.installLatestCompatibleVersion(plugin, pluginCallback);
+          } else {
+            app.bowermanager.installPlugin(plugin, json.dependencies[plugin], pluginCallback);
+          }
 
         }, function(err) {
           if (err) {
-            console.log(err);
-            return callback(err);
+            console.error('ERROR:', err);
+            return callback(err)
           }
 
           callback();
@@ -195,10 +230,6 @@ var steps = [
     } else {
       callback();
     }
-  },
-   function(callback) {
-    // Left empty for any upgrade scripts - just remember to call the callback when done.
-    callback();
   }
 ];
 
@@ -220,18 +251,55 @@ app.on('serverStarted', function () {
       return exitUpgrade();
     }
 
-    // run steps
-    async.series(steps, function (err, results) {
+    prompt.get({properties: {updateAutomatically: {description: 'Update automatically', type: 'string', default: 'Y'}}}, function (err, result) {
+      if (result['updateAutomatically'] === 'Y' || result['updateAutomatically'] === 'y') {
+        // run steps
+        async.series(steps, function (err, results) {
 
-      if (err) {
-        console.log('ERROR: ', err);
-        return exitUpgrade(1, 'Upgrade was unsuccessful. Please check the console output.');
+          if (err) {
+            console.error('ERROR: ', err);
+            return exitUpgrade(1, 'Upgrade was unsuccessful. Please check the console output.');
+          }
+
+          console.log(' ');
+
+          exitUpgrade(0, 'Great work! Your ' + app.polyglot.t('app.productname') + ' is now updated.');
+        });
+      } else {
+        upgradeOptions.automatic = false;
+        var promptSchema = {
+          properties: {
+            authoringToolGitTag: {
+              type: 'string',
+              required: true,
+              description: 'Authoring Tool git revision (enter branch name or tag as tags/[tagname])'
+            },
+            frameworkGitTag: {
+              type: 'string',
+              required: true,
+              description: 'Framework git git revision (enter branch name or tag as tags/[tagname])'
+            }
+          }
+        };
+
+        prompt.get(promptSchema, function (err, result) {
+          upgradeOptions['authoringToolGitTag'] = result.authoringToolGitTag;
+          upgradeOptions['frameworkGitTag'] = result.frameworkGitTag;
+
+          async.series(steps, function(err, results) {
+
+            if (err) {
+              console.error('ERROR: ', err);
+              return exitUpgrade(1, 'Upgrade was unsuccessful. Please check the console output.');
+            }
+
+            console.log(' ');
+
+            exitUpgrade(0, 'Great work! Your ' + app.polyglot.t('app.productname') + ' is now updated.');
+          });
+        });
       }
-
-      console.log(' ');
-
-      exitUpgrade(0, 'Great work! Your ' + app.polyglot.t('app.productname') + ' is now updated.');
-    });
+    })
   });
 });
 
@@ -239,7 +307,7 @@ app.on('serverStarted', function () {
 function upgradeBuilder(tagName, callback) {
 
   console.log('Upgrading the ' + app.polyglot.t('app.productname') + '...please hold on!');
-  var child = exec('git fetch origin', {
+  var child = exec('git remote set-url origin ' + configFile.authoringToolRepository + ' && git fetch origin', {
     stdio: [0, 'pipe', 'pipe']
   });
 
@@ -247,16 +315,21 @@ function upgradeBuilder(tagName, callback) {
     console.log(err);
   });
   child.stderr.on('data', function(err) {
-    console.log(err);
+    console.error('ERROR: ', err);
   });
 
   child.on('exit', function (error, stdout, stderr) {
     if (error) {
-      return console.log('ERROR: ' + error);
+      console.error('ERROR: ' + error);
+      return callback(error);
     }
 
-    console.log("Fetch from GitHub was successful.");
+    console.log("Fetch from git was successful.");
     console.log("Pulling latest changes...");
+
+    if(!tagName.includes('tags')){
+      tagName = 'origin/' + tagName
+    }
 
     var secondChild = exec('git reset --hard ' + tagName, {
       stdio: [0, 'pipe', 'pipe']
@@ -267,12 +340,13 @@ function upgradeBuilder(tagName, callback) {
     });
 
     secondChild.stderr.on('data', function(err) {
-      console.log(err);
+      console.error('ERROR: ', err);
     });
 
     secondChild.on('exit', function (error, stdout, stderr) {
       if (error) {
-        return console.log('ERROR: ' + error);
+        console.error('ERROR: ' + error);
+        return callback(err);
       }
 
       console.log("Installing " + app.polyglot.t('app.productname') + " dependencies.\n");
@@ -286,12 +360,13 @@ function upgradeBuilder(tagName, callback) {
       });
 
       thirdChild.stderr.on('data', function(err) {
-        console.log(err);
+        console.error('ERROR: ' + err);
       });
 
       thirdChild.on('exit', function (error, stdout, stderr) {
         if (error) {
-          return console.log('ERROR: ' + error);
+          console.error('ERROR: ' + error);
+          return callback(error)
         }
         console.log("Dependencies installed.\n");
 
@@ -306,18 +381,28 @@ function upgradeBuilder(tagName, callback) {
         });
 
         fourthChild.stderr.on('data', function(err) {
-          console.log(err);
+          console.error('ERROR: ' + err);
         });
 
         fourthChild.on('exit', function (error, stdout, stderr) {
           if (error) {
-            return console.log('ERROR: ' + error);
+            console.error('ERROR: ' + error);
+            return callback(err)
           }
 
           console.log("front-end built.\n");
 
           console.log(app.polyglot.t('app.productname') + " has been updated.\n");
-          callback();
+          fs.readFile('package.json', function(error, data) {
+            if (error) {
+              console.error('ERROR: ' + error);
+              return callback(err)
+            }
+
+            var packageFile = JSON.parse(data);
+
+            return callback(null, {version: 'v' + packageFile.version});
+          });
         });
       });
     });
@@ -327,9 +412,9 @@ function upgradeBuilder(tagName, callback) {
 // This upgrades the Framework
 function upgradeFramework(tagName, callback) {
   console.log('Upgrading the Adapt Framework...please hold on!');
-
-  var child = exec('git fetch origin', {
-    cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
+  var cwd = path.resolve('temp', configFile.masterTenantID, 'adapt_framework');
+  var child = exec('git remote set-url origin ' + configFile.frameworkRepository + ' && git fetch origin', {
+    cwd: cwd,
     stdio: [0, 'pipe', 'pipe']
   });
 
@@ -338,19 +423,24 @@ function upgradeFramework(tagName, callback) {
   });
 
   child.stderr.on('data', function(err) {
-    console.log(err);
+    console.error(err);
   });
 
   child.on('exit', function (error, stdout, stderr) {
     if (error) {
-      return console.log('ERROR: ' + error);
+      console.error('ERROR: ' + error);
+      return callback(error);
     }
 
-    console.log("Fetch from GitHub was successful.");
+    console.log("Fetch from Git was successful.");
     console.log("Pulling latest changes...");
 
+    if(!tagName.includes('tags')){
+      tagName = 'origin/' + tagName
+    }
+
     var secondChild = exec('git reset --hard ' + tagName + ' && npm install', {
-      cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
+      cwd: cwd,
       stdio: [0, 'pipe', 'pipe']
     });
 
@@ -359,22 +449,32 @@ function upgradeFramework(tagName, callback) {
     });
 
     secondChild.stderr.on('data', function(err) {
-      console.log(err);
+      console.error(err);
     });
 
     secondChild.on('exit', function (error, stdout, stderr) {
       if (error) {
-        return console.log('ERROR: ' + error);
+        console.error('ERROR: ' + error);
+        return callback(error);
       }
 
       console.log("Framework has been updated.\n");
 
-      rimraf(configFile.root + '/temp/' + configFile.masterTenantID + '/adapt_framework/src/course', function(err) {
+      rimraf(path.resolve(configFile.root, 'temp', configFile.masterTenantID, 'adapt_framework', 'src', 'course'), function(err) {
         if (err) {
-            console.log(err);
+          console.log(err);
         }
 
-        callback();
+        fs.readFile(path.resolve(configFile.root, 'temp', configFile.masterTenantID, 'adapt_framework', 'package.json'), function(error, data) {
+          if (error) {
+            console.error('ERROR: ' + error);
+            return callback(error);
+          }
+
+          var packageFile = JSON.parse(data);
+
+          return callback(null, {version: 'v' + packageFile.version});
+        });
       });
 
     });

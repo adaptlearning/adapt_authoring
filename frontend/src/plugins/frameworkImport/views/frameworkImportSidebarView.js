@@ -11,6 +11,7 @@ define(function(require) {
 
     importCourse: function(event) {
       event && event.preventDefault();
+      this.updateButton('.framework-import-sidebar-save-button', window.polyglot.t('app.importing'));
       Origin.trigger('frameworkImport:uploadCourse');
     },
 

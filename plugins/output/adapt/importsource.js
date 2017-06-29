@@ -32,7 +32,9 @@ function ImportSource(req, done) {
       { type: 'menu',      folder: 'menu'       },
       { type: 'theme',     folder: 'theme'      }
     ],
-    pluginIncludes: []
+    pluginIncludes: [],
+    theme: [],
+    menu: []
   };
   var metadata = {
     idMap: {},
@@ -45,6 +47,7 @@ function ImportSource(req, done) {
   var tenantId = app.usermanager.getCurrentUser().tenant._id;
   var unzipFolder = tenantId + '_unzipped';
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, unzipFolder);
+  // TODO - This should not be hard coded, needs to deal with other lang folders
   var courseRoot = path.join(COURSE_ROOT_FOLDER, 'src', 'course', 'en' );
   var form = new IncomingForm();
   var origCourseId;
@@ -215,9 +218,8 @@ function ImportSource(req, done) {
                 var data = _.extend(thisPluginType, { location: file });
                 plugindata.pluginIncludes.push(data);
               });
+              doneMapIterator();
           });
-
-          doneMapIterator();
         }, cb);
       },
       function importPlugins(cb) {
@@ -288,17 +290,35 @@ function ImportSource(req, done) {
       },
       function enableExtensions(cb) {
         // TODO this function should be surfaced properly somewhere
-        // TODO - This overwrites the course and config extension data.
         var includeExtensions = {};
         async.eachSeries(plugindata.pluginIncludes, function(pluginData, doneItemIterator) {
-          if (pluginData.type == 'extension') {
-            fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, extensionJson) {
-              if(error) return cb(error);
-              includeExtensions[extensionJson.extension] = metadata.extensionMap[extensionJson.extension];
+          switch(pluginData.type) {
+            case 'extension':
+              fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, extensionJson) {
+                if(error) return cb(error);
+                includeExtensions[extensionJson.extension] = metadata.extensionMap[extensionJson.extension];
+                doneItemIterator();
+              });
+              break;
+            case 'theme':
+              // add the theme value to config JSON
+              fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, themeJson) {
+                if(error) return cb(error);
+                plugindata.theme.push({ _theme: themeJson.name});
+                doneItemIterator();
+              });
+              break;
+            case 'menu':
+              // add the theme value to config JSON
+              fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, menuJson) {
+                if(error) return cb(error);
+                plugindata.menu.push({ _menu: menuJson.name});
+                doneItemIterator();
+              });
+              break;
+            default:
               doneItemIterator();
-            });
-          } else {
-            doneItemIterator();
+              break;
           }
         }, function(error) {
           if(error) return cb(error);
@@ -312,7 +332,8 @@ function ImportSource(req, done) {
       function createConfig(cb) {
         fs.readJson(path.join(COURSE_ROOT_FOLDER, 'src', 'course', 'config.json'), function(error, configJson) {
           if(error) return cb(error);
-          var updatedConfigJson = _.extend(configJson, enabledExtensions);
+          // at the moment AT can only deal with one theme or menu
+          var updatedConfigJson = _.extend(configJson, enabledExtensions, plugindata.theme[0], plugindata.menu[0]);
           createContentItem('config', updatedConfigJson, courseId, function(error, configRec) {
             if(error) return cb(error);
             configId = configRec._id;
@@ -327,7 +348,6 @@ function ImportSource(req, done) {
             fs.readJson(path.join(courseRoot, contentMap[type] + '.json'), function(error, contentJson) {
               if(error) return cb2(error);
 
-              // TODO - contentObjects could do with sorting by parentId not just menu/page
               // Sorts in-place the content objects to make sure processing can happen
               if (type == 'contentobject') {
                 var groups = _.groupBy(contentJson, '_type');
@@ -435,7 +455,6 @@ function ImportSource(req, done) {
             logger.log('warn', 'Failed to import ' + type + ' ' + (originalData._id || '') + ' ' + error);
             return done(); // TODO collect failures, maybe try again
           }
-           //logger.log('info', 'imported ' + type + ' ' + (originalData._id || '') + ' successfully');
           // Create a courseAssets record if needed
           createCourseAssets(type, record, function(error){
             if(error) return done(error, record);

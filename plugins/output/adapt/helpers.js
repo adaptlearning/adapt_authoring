@@ -64,7 +64,7 @@ function unzip(filePath, unzipPath, done) {
 
 
 /**
-* import a simgle plugin
+* import a single plugin
 * @param {string} pluginDir
 * @param {string} pluginType
 * @param {callback} pluginImported
@@ -124,19 +124,16 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
 */
 function importAsset(fileMetadata, metadata, assetImported) {
   // metadata could be idMap or entire import data
-  // var mapData = metadata.idMap ? metadata.idMap : metadata;
-  // TODO - possible declare hash here and search on title: fileMetadata.title.
-  // filename could be the original human readable name filename,
-  // but filename if still human readable format and  will not match to the converted id.
   var search = {
     title: fileMetadata.title,
     size: fileMetadata.size
   };
   origin.assetmanager.retrieveAsset(search, function gotAsset(error, results) {
     if(results.length > 0) {
-      logger.log('info', fileMetadata.filename + ': similar file found in DB, not importing');
       metadata.idMap[fileMetadata.oldId] = results[0]._id;
-      metadata.assetNameMap[results[0]._id] = results[0].filename;
+      if (metadata.assetNameMap) {
+        metadata.assetNameMap[results[0]._id] = results[0].filename;
+      }
       return assetImported();
     }
 
@@ -179,8 +176,6 @@ function importAsset(fileMetadata, metadata, assetImported) {
           _.each(asset.tags, function iterator(tag, index) {
             if (metadata.idMap[tag]) {
               asset.tags[index] = metadata.idMap[tag];
-            } else {
-              asset.tags.splice(index, 1);
             }
           });
           // Create the asset record
@@ -195,9 +190,9 @@ function importAsset(fileMetadata, metadata, assetImported) {
             }
             // add entry to the map
             metadata.idMap[fileMetadata.oldId] = assetRec._id;
-            logger.log('info', 'helpers asset id: ' + assetRec._id);
-            logger.log('info', 'helpers asset filename: ' + assetRec.filename);
-            metadata.assetNameMap[assetRec._id] = assetRec.filename;
+            if (metadata.assetNameMap) {
+              metadata.assetNameMap[assetRec._id] = assetRec.filename;
+            }
             assetImported();
           });
         });
@@ -257,46 +252,6 @@ function cleanUpImport(dirs, doneCleanUp) {
   async.each(dirs, fs.remove, doneCleanUp);
 };
 
-/**
-* Recursively search an object from an array of keys
-* to the contentTypeId, courseId and userId.
-* @param {object} obj
-* @param {object} is
-* @param {string} value
-*/
-function searchJSON(obj,is, value) {
-
-    if (typeof is == 'string')
-        return searchJSON(obj,is.split('.'), value);
-    else if (is.length==1 && value!==undefined)
-        return obj[is[0]] = value;
-    else if (is.length==0)
-        return obj;
-    else
-        return searchJSON(obj[is[0]],is.slice(1), value);
-};
-
-/**
-* flattens an object, nested keys are prefixed with parent key
-* @param {object} obj
-* @param {object} result
-* @param {string} prefix
-*/
-flatten = function(obj, result, prefix) {
-    if (!obj) {
-      return result;
-    } else if(typeof obj === 'object') {
-        _.each(obj, function(value, key) {
-            flatten(value, result, prefix ? prefix + '.' + key : key);
-        });
-    } else {
-        result[prefix] = obj;
-    }
-    return result;
-};
-
-
-
 exports = module.exports = {
   unzip: unzip,
   importPlugin: importPlugin,
@@ -304,6 +259,5 @@ exports = module.exports = {
   checkFrameworkVersion: checkFrameworkVersion,
   ImportError: ImportError,
   sortContentObjects: sortContentObjects,
-  cleanUpImport: cleanUpImport,
-  searchJSON: searchJSON
+  cleanUpImport: cleanUpImport
 };

@@ -18,7 +18,7 @@ define(function(require) {
         "location": "global",
         "text": window.polyglot.t('app.frameworkimportmenu'),
         "icon": "fa-upload",
-        "sortOrder": 5,
+        "sortOrder": 6,
         "callbackEvent": "frameworkImport:open"
       });
   	} else {

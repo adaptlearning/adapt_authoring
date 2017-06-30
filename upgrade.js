@@ -27,19 +27,28 @@ var installedFrameworkVersion = '';
 var latestFrameworkTag = null;
 var shouldUpdateBuilder = false;
 var shouldUpdateFramework = false;
-var versionFile = JSON.parse(fs.readFileSync('version.json'), {encoding: 'utf8'});
 var configFile = JSON.parse(fs.readFileSync(path.join('conf','config.json')), {encoding: 'utf8'});
 var upgradeOptions = {
   automatic: true
 };
+
+try{
+  var versionFile = JSON.parse(fs.readFileSync('version.json'), {encoding: 'utf8'});
+}
+catch (err) {
+  versionFile = {}
+}
 
 var steps = [
   function(callback) {
 
     console.log('Checking versions');
 
-    if (versionFile) {
+    if (typeof versionFile.adapt_authoring !== 'undefined') {
       installedBuilderVersion = versionFile.adapt_authoring;
+    }
+
+    if (typeof versionFile.adapt_framework !== 'undefined') {
       installedFrameworkVersion = versionFile.adapt_framework;
     }
 
@@ -155,7 +164,7 @@ var steps = [
           return callback(err);
         }
 
-        versionFile.adapt_authoring = data.version;
+        versionFile.adapt_authoring = 'v' + data.version;
         callback();
 
       });
@@ -175,7 +184,7 @@ var steps = [
           return callback(err);
         }
 
-        versionFile.adapt_framework = data.version;
+        versionFile.adapt_framework = 'v' + data.version;
         callback();
 
       });
@@ -277,7 +286,7 @@ app.on('serverStarted', function () {
             frameworkGitTag: {
               type: 'string',
               required: true,
-              description: 'Framework git git revision (enter branch name or tag as tags/[tagname])'
+              description: 'Framework git revision (enter branch name or tag as tags/[tagname])'
             }
           }
         };

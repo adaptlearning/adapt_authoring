@@ -16,7 +16,13 @@ var optimist = require('optimist');
 var util = require('util');
 var _ = require('underscore');
 var ncp = require('ncp').ncp;
-var versionFile = JSON.parse(fs.readFileSync('version.json'), {encoding: 'utf8'});
+
+try{
+  var versionFile = JSON.parse(fs.readFileSync('version.json'), {encoding: 'utf8'});
+}
+catch (err) {
+  versionFile = {}
+}
 
 // set overrides from command line arguments
 prompt.override = optimist.argv;
@@ -273,17 +279,28 @@ var steps = [
                 return callback(error);
               }
 
-              var packageFile = JSON.parse(data);
-              versionFile.adapt_framework = 'v' + packageFile.version;
-              fs.writeFile('version.json', JSON.stringify(versionFile, null, 4), function(err) {
-                if(err) {
-                  console.error('ERROR: ' + err);
-                  return next(err);
+              var framework_package_file = JSON.parse(data);
+              fs.readFile(path.resolve(__dirname,'package.json'), function(error, data) {
+                if (error) {
+                  console.error('ERROR: ' + error);
+                  return callback(error);
                 }
 
-                console.log("Version file updated\n");
-                return next();
+                var at_package_file = JSON.parse(data);
 
+                versionFile.adapt_framework = 'v' + framework_package_file.version;
+                versionFile.adapt_authoring = 'v' + at_package_file.version;
+
+                fs.writeFile('version.json', JSON.stringify(versionFile, null, 4), function(err) {
+                  if(err) {
+                    console.error('ERROR: ' + err);
+                    return next(err);
+                  }
+
+                  console.log("Version file updated\n");
+                  return next();
+
+                });
               });
             });
           });

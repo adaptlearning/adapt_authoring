@@ -32,13 +32,6 @@ var upgradeOptions = {
   automatic: true
 };
 
-try{
-  var versionFile = JSON.parse(fs.readFileSync('version.json'), {encoding: 'utf8'});
-}
-catch (err) {
-  versionFile = {}
-}
-
 var steps = [
   function(callback) {
 
@@ -81,8 +74,12 @@ var steps = [
             uri: 'https://api.github.com/repos/adaptlearning/adapt_authoring/tags',
             method: 'GET'
           }, function(error, response, body) {
+            if (error) {
+              console.error('ERROR: ', error);
+              return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
+            }
 
-            if (!error && response.statusCode == 200) {
+            if (response.statusCode === 200) {
               var tagInfo = JSON.parse(body);
 
               if (tagInfo) {
@@ -90,6 +87,9 @@ var steps = [
               }
 
               callback();
+            } else {
+              console.error('ERROR: ', 'GitubAPI did not respond with a 200 status code');
+              return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
             }
 
           });
@@ -105,7 +105,12 @@ var steps = [
               uri: 'https://api.github.com/repos/adaptlearning/adapt_framework/tags',
               method: 'GET'
             }, function(error, response, body) {
-              if (!error && response.statusCode == 200) {
+              if (error) {
+                console.log('ERROR: ' + error);
+                return next(error);
+              }
+
+              if (response.statusCode === 200) {
                 var tagInfo = JSON.parse(body);
 
                 if (tagInfo) {
@@ -113,6 +118,9 @@ var steps = [
                 }
 
                 callback();
+              } else {
+                console.error('ERROR: ', 'GitubAPI did not respond with a 200 status code');
+                return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
               }
             });
 
@@ -158,13 +166,18 @@ var steps = [
     // Upgrade Builder if we need to
     if (shouldUpdateBuilder) {
 
-      upgradeBuilder(latestBuilderTag, function(err, data) {
+      var isTag = true;
+      if(!latestBuilderTag.includes('tags') && !upgradeOptions.automatic){
+        isTag = false
+      }
+
+      upgradeBuilder(latestBuilderTag, isTag, function(err, data) {
         if (err) {
           console.error('ERROR:', err);
           return callback(err);
         }
 
-        versionFile.adapt_authoring = 'v' + data.version;
+        versionFile.adapt_authoring = data.version;
         callback();
 
       });
@@ -178,13 +191,18 @@ var steps = [
     // Upgrade Framework if we need to
     if (shouldUpdateFramework) {
 
-      upgradeFramework(latestFrameworkTag, function(err, data) {
+      var isTag = true;
+      if(!latestFrameworkTag.includes('tags') && !upgradeOptions.automatic){
+        isTag = false
+      }
+
+      upgradeFramework(latestFrameworkTag, isTag, function(err, data) {
         if (err) {
           console.error('ERROR:', err);
           return callback(err);
         }
 
-        versionFile.adapt_framework = 'v' + data.version;
+        versionFile.adapt_framework = data.version;
         callback();
 
       });
@@ -241,6 +259,16 @@ var steps = [
     }
   }
 ];
+
+var versionFile = {};
+
+try{
+  versionFile = JSON.parse(fs.readFileSync('version.json'), {encoding: 'utf8'});
+}
+catch (err) {
+  console.log('Version.json not found will generate');
+  fs.writeFileSync('version.json', JSON.stringify({}, null, 4));
+}
 
 app.run({skipVersionCheck: true, skipStartLog: true});
 
@@ -313,7 +341,7 @@ app.on('serverStarted', function () {
 });
 
 // This upgrades the Builder
-function upgradeBuilder(tagName, callback) {
+function upgradeBuilder(tagName, isTag, callback) {
 
   console.log('Upgrading the ' + app.polyglot.t('app.productname') + '...please hold on!');
   var child = exec('git remote set-url origin ' + configFile.authoringToolRepository + ' && git fetch origin', {
@@ -336,8 +364,10 @@ function upgradeBuilder(tagName, callback) {
     console.log("Fetch from git was successful.");
     console.log("Pulling latest changes...");
 
-    if(!tagName.includes('tags')){
-      tagName = 'origin/' + tagName
+    if(isTag){
+      tagName = 'tags/' + tagName;
+    } else {
+      tagName = 'origin/' + tagName;
     }
 
     var secondChild = exec('git reset --hard ' + tagName, {
@@ -419,7 +449,7 @@ function upgradeBuilder(tagName, callback) {
 }
 
 // This upgrades the Framework
-function upgradeFramework(tagName, callback) {
+function upgradeFramework(tagName, isTag, callback) {
   console.log('Upgrading the Adapt Framework...please hold on!');
   var cwd = path.resolve('temp', configFile.masterTenantID, 'adapt_framework');
   var child = exec('git remote set-url origin ' + configFile.frameworkRepository + ' && git fetch origin', {
@@ -444,8 +474,10 @@ function upgradeFramework(tagName, callback) {
     console.log("Fetch from Git was successful.");
     console.log("Pulling latest changes...");
 
-    if(!tagName.includes('tags')){
-      tagName = 'origin/' + tagName
+    if(isTag){
+      tagName = 'tags/' + tagName;
+    } else {
+      tagName = 'origin/' + tagName;
     }
 
     var secondChild = exec('git reset --hard ' + tagName + ' && npm install', {

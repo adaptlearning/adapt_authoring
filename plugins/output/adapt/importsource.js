@@ -49,6 +49,7 @@ function ImportSource(req, done) {
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, unzipFolder);
   // TODO - This should not be hard coded, needs to deal with other lang folders
   var courseRoot = path.join(COURSE_ROOT_FOLDER, 'src', 'course', 'en' );
+
   var form = new IncomingForm();
   var origCourseId;
   var courseId;
@@ -120,7 +121,6 @@ function ImportSource(req, done) {
   });
 
 
-
   /**
   * Checks course for any potential incompatibilities
   */
@@ -145,7 +145,6 @@ function ImportSource(req, done) {
               return cb2(error);
             }
             cb2();
-            // TODO Question - do we need to validate any further?
           });
         }, cb);
       }]
@@ -207,7 +206,7 @@ function ImportSource(req, done) {
           var srcDir = path.join(COURSE_ROOT_FOLDER, 'src', pluginType.folder);
           fs.readdir(srcDir, function (err, files) {
               if (err) {
-                done(err);
+                return done(err);
               }
               files.map(function (file) {
                 return path.join(srcDir, file);
@@ -243,7 +242,6 @@ function ImportSource(req, done) {
           db.retrieve('componenttype', {}, { jsonOnly: true }, function(error, results) {
             if(error) return cb(error);
             async.each(results, function(component, cb2) {
-
               metadata.componentMap[component.component] = component._id;
               cb2();
             }, cb);
@@ -374,7 +372,6 @@ function ImportSource(req, done) {
     ], done);
   }
 
-  // TODO update any ids in custom attributes
   function createContentItem(type, originalData, courseId, done) {
     // data needs to be transformed a bit first
     var data = _.extend({}, originalData);
@@ -511,7 +508,7 @@ function ImportSource(req, done) {
     // search through object values for file paths
     async.each(assetArray, function(data, callback) {
       delete assetData._assetId;
-      if (!_.isString(data)) callback();
+      if (!_.isString(data)) return callback();
 
       var assetBaseName = path.basename(data);
       // get asset _id from lookup of the key of metadata.assetNameMap mapped to assetBaseName

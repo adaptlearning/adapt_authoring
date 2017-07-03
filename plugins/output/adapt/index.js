@@ -558,7 +558,7 @@ function getTagsMetadata(metadata, gotTagsMetadata) {
       }
       db.retrieve('tag', { "_tenantId": usermanager.getCurrentUser().tenant._id, "_isDeleted": false }, function gotTag(error, results) {
         if(error) {
-          cb(error);
+          return cb(error);
         }
         async.each(results, function iterator(result, doneIterator) {
           if(_.find(tagMap, result._id)) {

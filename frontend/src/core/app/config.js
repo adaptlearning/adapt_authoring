@@ -13,8 +13,8 @@ require.config({
       templates: 'templates/templates',
       polyglot: 'core/libraries/polyglot.min',
       sweetalert: 'core/libraries/sweetalert.min',
-      backboneForms:'core/libraries/backbone-forms',
-      backboneFormsLists:'core/libraries/backbone-forms-lists',
+      'backbone-forms': 'core/libraries/backbone-forms',
+      'backbone-forms-lists': 'core/libraries/backbone-forms-lists',
       jsoneditor: 'core/libraries/jquery.jsoneditor.min',
       'jquery-ui': 'core/libraries/jquery-ui.min',
       'jquery-form' : 'core/libraries/jquery.form',
@@ -90,11 +90,11 @@ require.config({
         deps: ['jquery'],
         exports: "$"
       },
-      backboneForms: {
+      'backbone-forms': {
         deps: ['backbone']
       },
-      backboneFormsLists: {
-        deps: ['backboneForms']
+      'backbone-forms-lists': {
+        deps: ['backbone-forms']
       },
       inview: {
         deps: [

@@ -3,8 +3,8 @@ define(function(require) {
 
 	var Origin = require('coreJS/app/origin');
   var _ = require('underscore');
-	var BackboneForms = require('backboneForms');
-	var BackboneFormsLists = require('backboneFormsLists');
+	var BackboneForms = require('backbone-forms');
+	var BackboneFormsLists = require('backbone-forms-lists');
 	var ScaffoldItemsModalView = require('coreJS/scaffold/views/scaffoldItemsModalView');
 	var ScaffoldImageView = require('coreJS/scaffold/views/scaffoldAssetView');
 	var ScaffoldBooleanView = require('coreJS/scaffold/views/scaffoldBooleanView');
@@ -15,7 +15,7 @@ define(function(require) {
   var ScaffoldCodeEditorView = require('coreJS/scaffold/views/scaffoldCodeEditorView');
 	var ScaffoldTextAreaView = require('coreJS/scaffold/views/scaffoldTextAreaView');
 	var Schemas = require('coreJS/scaffold/schemas');
-	var Overrides = require('coreJS/scaffold/scaffoldOverrides');
+	var Overrides = require('coreJS/scaffold/backboneFormsOverrides');
 	var Helpers = require('coreJS/app/helpers');
 	var ActiveItemsModal = 0;
 	var isOverlayActive = false;

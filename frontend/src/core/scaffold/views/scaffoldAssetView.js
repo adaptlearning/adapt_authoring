@@ -2,7 +2,7 @@
 define(function(require) {
 
     var Backbone = require('backbone');
-    var BackboneForms = require('backboneForms');
+    var BackboneForms = require('backbone-forms');
     var Origin = require('coreJS/app/origin');
     var AssetManagementModalView = require('coreJS/assetManagement/views/assetManagementModalView');
     var AssetCollection = require('coreJS/assetManagement/collections/assetCollection');

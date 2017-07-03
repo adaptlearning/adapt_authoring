@@ -3,8 +3,8 @@ require.config({
   paths: {
     ace: 'libraries/ace',
     backbone: 'libraries/backbone',
-    backboneForms: 'libraries/backbone-forms',
-    backboneFormsLists: 'libraries/backbone-forms-lists',
+    'backbone-forms': 'libraries/backbone-forms',
+    'backbone-forms-lists': 'libraries/backbone-forms-lists',
     colorPicker: 'libraries/colorPicker/js/colorpicker',
     handlebars: 'libraries/handlebars',
     imageReady: 'libraries/imageReady',
@@ -33,11 +33,11 @@ require.config({
       deps: ['underscore','jquery'],
       exports: 'Backbone'
     },
-    backboneForms: {
+    'backbone-forms': {
       deps: ['backbone']
     },
-    backboneFormsLists: {
-      deps: ['backboneForms']
+    'backbone-forms-lists': {
+      deps: ['backbone-forms']
     },
     colorPicker: {
       deps: ['jquery'],

@@ -2,9 +2,10 @@
 define(function(require) {
 
 	var Backbone = require('backbone');
-	var BackboneForms = require('backboneForms');
-	var BackboneFormsLists = require('backboneFormsLists');
+	var BackboneForms = require('backbone-forms');
+	var BackboneFormsLists = require('backbone-forms-lists');
 	var Handlebars = require('handlebars');
+	var templateSettings = Backbone.Form.templateSettings;
 
 	// Setup templates
 	Backbone.Form.prototype.constructor.template = _.template('\
@@ -14,12 +15,26 @@ define(function(require) {
 	        <button class="btn btn-primary" type="submit"><%= submitButton %></button>\
 	      <% } %>\
 	    </form>\
-	  ', 
-	  null, 
-	  Backbone.Form.constructor.templateSettings);
+	', null, templateSettings);
 	Backbone.Form.Fieldset.prototype.template = Handlebars.templates['fieldset'];
 	Backbone.Form.Field.prototype.template = Handlebars.templates['field'];
 	Backbone.Form.NestedField.prototype.template = Handlebars.templates['field'];
+	Backbone.Form.editors.List.prototype.constructor.template = _.template('\
+		<div>\
+			<div data-items></div>\
+			<button class="btn primary" type="button" data-action="add">\
+				<%= addLabel %>\
+			</button>\
+		</div>\
+	', null, templateSettings)
+	Backbone.Form.editors.List.Item.prototype.constructor.template = _.template('\
+		<div>\
+			<span data-editor></span>\
+			<button class="btn warning" type="button" data-action="remove">\
+				&times;\
+			</button>\
+		</div>\
+	', null, templateSettings);
 
 	// Overwrites
 	Backbone.Form.Field.prototype.templateData = function() {
@@ -87,6 +102,15 @@ define(function(require) {
         }
 		this.value = value;
 	}
+
+	var textInitialize = Backbone.Form.editors.Text.prototype.initialize;
+
+	Backbone.Form.editors.Text.prototype.initialize = function(options) {
+		textInitialize.call(this, options);
+
+		// HACK to disable auto-completion
+		this.$el.attr('autocomplete', 'off');
+	};
 
 	Backbone.Form.editors.Text.prototype.setValue = function(value) {
 		var schemaDefault = this.schema.default;
@@ -206,5 +230,36 @@ define(function(require) {
 
 	    return _.isEmpty(errors) ? null : errors;
 	}
+
+	Backbone.Form.editors.Number.prototype.onKeyPress = function(event) {
+		var self = this,
+			delayedDetermineChange = function() {
+				setTimeout(function() {
+				self.determineChange();
+			}, 0);
+		};
+
+		//Allow backspace
+		if (event.charCode === 0) {
+			delayedDetermineChange();
+			return;
+		}
+
+		//Get the whole new value so that we can prevent things like double decimals points etc.
+		var newVal = this.$el.val()
+		if( event.charCode != undefined ) {
+			newVal = newVal + String.fromCharCode(event.charCode);
+		}
+
+		// Allow support for negative numbers.
+		var numeric = /^-?[0-9]*\.?[0-9]*?$/.test(newVal);
+
+		if (numeric) {
+			delayedDetermineChange();
+		}
+		else {
+			event.preventDefault();
+		}
+	};
 
 });

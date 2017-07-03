@@ -2,7 +2,7 @@
 define(function(require) {
 
     var Backbone = require('backbone');
-    var BackboneForms = require('backboneForms');
+    var BackboneForms = require('backbone-forms');
     var Origin = require('core/origin');
 
     var ScaffoldDisplayTitleView = Backbone.Form.editors.Text.extend({

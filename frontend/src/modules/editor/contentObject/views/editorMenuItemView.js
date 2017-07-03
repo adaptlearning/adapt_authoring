@@ -198,7 +198,9 @@ define(function(require){
 
       // We also need to navigate to the parent element - but if it's the courseId let's
       // navigate up to the menu
-      var parentId = (this.model.get('_parentId') === Origin.editor.data.course.id) ? '' : '/' + this.model.get('_parentId');
+      var type = this.model.get('_type');
+      var isTopLevel = (type === 'page' || type === 'menu');
+      var parentId = isTopLevel ? '' : '/' + this.model.get('_parentId');
       Origin.router.navigateTo('editor/' + Origin.editor.data.course.id + '/menu' + parentId);
 
       if(this.model.destroy()) this.remove();

@@ -14,8 +14,8 @@ define(function(require) {
 	        <button class="btn btn-primary" type="submit"><%= submitButton %></button>\
 	      <% } %>\
 	    </form>\
-	  ', 
-	  null, 
+	  ',
+	  null,
 	  Backbone.Form.constructor.templateSettings);
 	Backbone.Form.Fieldset.prototype.template = Handlebars.templates['fieldset'];
 	Backbone.Form.Field.prototype.template = Handlebars.templates['field'];
@@ -50,7 +50,7 @@ define(function(require) {
 		//Pretty print the object keys and values
 		var parts = [];
 		_.each(this.nestedSchema, function(schema, key) {
-			
+
 			var desc = schema.title ? schema.title : createTitle(key),
 			val = value[key];
 
@@ -135,14 +135,14 @@ define(function(require) {
 		if (!value && typeof this.schema.default !== 'undefined') {
       value = this.schema.default;
     }
-    
+
     this.$el.val(value);
 	}
 
 	Backbone.Form.editors.TextArea.prototype.getValue = function() {
 		return this.editor.getData().replace(/[\t\n]/g, '');
 	}
-  
+
   Backbone.Form.editors.TextArea.prototype.remove = function() {
     this.editor.removeAllListeners();
     CKEDITOR.remove(this.editor);
@@ -206,4 +206,5 @@ define(function(require) {
 
 	    return _.isEmpty(errors) ? null : errors;
 	}
+
 });

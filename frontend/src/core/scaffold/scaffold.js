@@ -107,7 +107,7 @@ define(function(require) {
 			_.each(objectSchema, function(field, key) {
 				setupSchemaFields(field, key, objectSchema, scaffoldObjectSchema);
 			});
-			
+
 		} else if (field.type != 'object' || field.inputType) {
 
 			var validators = [];
@@ -129,7 +129,7 @@ define(function(require) {
                 console.log('No validator of that sort - please register: "' + validator + '" by using Origin.scaffold.addCustomValidator(name, validatorMethod)');
               }
               // If match is found - add the method
-              validators.push(customValidator.validatorMethod);  
+              validators.push(customValidator.validatorMethod);
             }
 					}
 				}
@@ -152,12 +152,6 @@ define(function(require) {
 
 			scaffoldSchema[key] = fieldObject;
 
-			var editorAttrs = field.editorAttrs;
-
-			if (editorAttrs) {
-				scaffoldSchema[key].editorAttrs = editorAttrs;
-			}
-			
 		} else {
 
 			scaffoldSchema[key] = {
@@ -174,9 +168,14 @@ define(function(require) {
 
 		}
 
+    var editorAttrs = field.editorAttrs;
+    if (editorAttrs) {
+      scaffoldSchema[key].editorAttrs = editorAttrs;
+    }
+
 		if (field.title) {
 			scaffoldSchema[key].title = field.title;
-			
+
 		} else if (field.type === 'object' || field.type === 'array') {
 			scaffoldSchema[key].title = '';
 			scaffoldSchema[key].legend = field.legend;
@@ -224,7 +223,7 @@ define(function(require) {
 			properties: {
 				legend: 'Properties',
 				fields: []
-			}, 
+			},
 			settings :{
 				legend: 'Settings',
 				fields: []
@@ -274,7 +273,7 @@ define(function(require) {
 		if (!schema._extensions) {
 			delete fieldsets.extensions;
 		}
-		
+
 		// Delete empty field sets
 		if (fieldsets.settings.fields.length === 0) {
 			delete fieldsets.settings;
@@ -324,16 +323,16 @@ define(function(require) {
           schema = _.pick(schema, 'customStyle');
           break;
       }
-      
+
       options.model.schema = buildSchema(schema, options, type);
       options.fieldsets = buildFieldsets(schema, options);
       alternativeModel = options.alternativeModelToSave;
       alternativeAttribute = options.alternativeAttributeToSave;
       currentModel = options.model;
-              
+
       var form = new Backbone.Form(options).render();
       currentForm = form;
-      
+
       return form;
     } catch (e) {
       alert(e.message);

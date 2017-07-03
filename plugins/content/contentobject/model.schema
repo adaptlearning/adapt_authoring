@@ -9,7 +9,8 @@
       "required":true,
       "default": "New Menu/Page Title",
       "inputType":"Text",
-      "validators": ["required"]
+      "validators": ["required"],
+      "translatable": true
     },
     "displayTitle": {
       "type":"string",
@@ -17,13 +18,22 @@
       "default": "New Menu/Page Title",
       "inputType":"DisplayTitle",
       "validators": [],
-      "help": "When viewing a menu/page - this is the title that will be displayed on the menu/page"
+      "help": "When viewing a menu/page - this is the title that will be displayed on the menu/page",
+      "translatable": true
+    },
+    "pageBody":{
+      "type":"string",
+      "default" : "",
+      "inputType":"TextArea",
+      "validators": [],
+      "translatable": true
     },
     "body":{
       "type":"string",
       "default" : "",
       "inputType":"TextArea",
-      "validators": []
+      "validators": [],
+      "translatable": true
     },
     "_graphic": {
       "type": "object",
@@ -35,7 +45,8 @@
           "default": "",
           "inputType": "Text",
           "validators": [],
-          "help": "This is the alternative text that is displayed when the image is not visible. This is also used by screen readers."
+          "help": "This is the alternative text that is displayed when the image is not visible. This is also used by screen readers.",
+          "translatable": true
         },
         "src": {
           "type": "string",
@@ -53,7 +64,8 @@
       "title": "Button link text",
       "default": "View",
       "inputType": "Text",
-      "validators" : ["required"]
+      "validators" : ["required"],
+      "translatable": true
     },
     "duration": {
       "type": "string",
@@ -62,7 +74,8 @@
       "default": "",
       "inputType": "Text",
       "validators" : [""],
-      "help": "Indicate how long this page or section should take to complete"
+      "help": "Indicate how long this page or section should take to complete",
+      "translatable": true
     },
     "_lockedBy": {
       "type": "array",

@@ -17,7 +17,8 @@
       "required":true,
       "default": "New Block Title",
       "inputType":"Text",
-      "validators": ["required"]
+      "validators": ["required"],
+      "translatable": true
     },
     "displayTitle": {
       "type":"string",
@@ -25,13 +26,15 @@
       "default": "New Block Title",
       "inputType":"DisplayTitle",
       "validators": [],
-      "help": "When viewing an block - this is the title that will be displayed on the page"
+      "help": "When viewing an block - this is the title that will be displayed on the page",
+      "translatable": true
     },
     "body":{
       "type":"string",
       "default" : "",
       "inputType":"TextArea",
-      "validators": []
+      "validators": [],
+      "translatable": true
     },
     "_classes": {
       "type":"string",

@@ -194,7 +194,7 @@ define(function(require){
       this.stopListening(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
       this.model.set({ _isExpanded: false, _isSelected: false });
       // When deleting an item - the parent needs to be selected
-      this.model.getParent().set({ _isSelected:true, _isExpanded: true });
+      this.model.getParent().set({ _isSelected: true, _isExpanded: true });
 
       // We also need to navigate to the parent element - but if it's the courseId let's
       // navigate up to the menu

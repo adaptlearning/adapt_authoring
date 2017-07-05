@@ -8,16 +8,17 @@ define(function(require) {
   function getLink() {
     switch (Origin.location.module) {
       case 'dashboard':
-        var isShared = Origin.location.route1 === 'shared';
-        return '' + (isShared) ? 'shared-courses' : 'the-dashboard';
+        return 'The-Dashboard';
       case 'project':
         return 'Creating-a-Course#course-details';
       case 'editor':
         return getEditorLink();
       case 'pluginManagement':
-        return 'Plugin-Manager';
+        return 'Plugin-Management';
       case 'assetManagement':
-        return 'Asset-Manager';
+        return 'Asset-Management';
+      case 'userManagement':
+        return 'User-Management';
     }
   }
 
@@ -53,6 +54,6 @@ define(function(require) {
 
   function openWikiLink(page) {
     var WIKI_URL = 'https://github.com/adaptlearning/adapt_authoring/wiki/';
-    window.open(WIKI_URL + page || '');
+    window.open(WIKI_URL + (page || ''));
   }
 });

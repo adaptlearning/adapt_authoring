@@ -130,7 +130,7 @@ define(function(require){
     setupDragDrop: function() {
       var view = this;
       var autoScrollTimer = false;
-      var $container = $('.page');
+      var $container = $('.contentPane');
 
       this.$el.draggable({
         opacity: 0.8,
@@ -142,7 +142,7 @@ define(function(require){
           left: 0
         },
         appendTo:'.editor-view',
-        containment: '.editor-view',
+        containment: '.app-inner',
         helper: function (e) {
           // Store the offset to stop the page jumping during the start of drag
           // because of the drop zones changing the scroll position on the page
@@ -168,16 +168,17 @@ define(function(require){
           var clientY = event.originalEvent.clientY;
           var scrollAmount;
 
-          if (clientY < (offsetTop+SCROLL_THRESHOLD)) {
+
+          if(clientY < (offsetTop + SCROLL_THRESHOLD)) {
             scrollAmount = -SCROLL_INCREMENT;
           }
-          else if (clientY > (($container.height()+offsetTop) - SCROLL_THRESHOLD)) {
+          else if(clientY > (($container.height() + offsetTop) - SCROLL_THRESHOLD)) {
             scrollAmount = SCROLL_INCREMENT;
           }
 
           if(scrollAmount) {
             autoScrollTimer = window.setInterval(function() {
-              $container.scrollTop($container.scrollTop()+scrollAmount);
+              $container.scrollTop($container.scrollTop() + scrollAmount);
             }, 10);
           }
         },

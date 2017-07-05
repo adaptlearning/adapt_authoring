@@ -180,7 +180,7 @@ define(function(require){
     setupDragDrop: function() {
       var view = this;
       var autoScrollTimer = false;
-      var $container = $('.page');
+      var $container = $('.contentPane');
 
       this.$el.draggable({
         scroll: true,
@@ -193,7 +193,7 @@ define(function(require){
           left: 0
         },
         appendTo:'.editor-view',
-        containment: '.editor-view',
+        containment: '.app-inner',
         helper: function (e) {
           // Store the offset to stop the page jumping during the start of drag
           // because of the drop zones changing the scroll position on the page

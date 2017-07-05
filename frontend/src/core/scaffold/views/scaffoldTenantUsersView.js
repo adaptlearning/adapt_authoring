@@ -20,6 +20,7 @@ define(function(require) {
      * @param {Mixed} options
      */
     setOptions: function(options) {
+      var self = this;
       options.fetch({
         url: 'api/user/tenant',
         data: $.param({

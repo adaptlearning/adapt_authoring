@@ -575,6 +575,15 @@
       "help": "Add tags to your course by entering one or more words, separated with a comma (,)",
       "editorOnly": true
     },
+    "createdBy": {
+      "help": "The project owner is the only user that can delete the course",
+      "type": "objectid",
+      "validators": [],
+      "title": "Project Owner",
+      "editorOnly": true,
+      "ref": "user",
+      "inputType": "TenantUsers"
+    },
     "_classes": {
       "type": "string",
       "default": "",

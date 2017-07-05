@@ -60,6 +60,11 @@ define(function(require) {
 
             }
 
+            // only tenant admins should be able to change course owners
+            if (!(schemaName === 'course' && Origin.permissions.hasTenantAdminPermission())) {
+                delete schema.createdBy;
+            }
+
             // trim off any empty fieldsets
             _.each(schema, function(value, key) {
                 if(value.hasOwnProperty('properties') && _.isEmpty(value.properties)) {
@@ -74,6 +79,7 @@ define(function(require) {
             delete schema._extensions;
             // Remove globals as these are appended to the course model
             delete schema.globals;
+            delete schema.createdBy; // new courses shouldn't have the option to change owner
             return schema;
         }
     };

@@ -8,6 +8,7 @@ define(function(require) {
 	var ScaffoldItemsModalView = require('coreJS/scaffold/views/scaffoldItemsModalView');
 	var ScaffoldImageView = require('coreJS/scaffold/views/scaffoldAssetView');
 	var ScaffoldBooleanView = require('coreJS/scaffold/views/scaffoldBooleanView');
+	var ScaffoldTenantUsersView = require('coreJS/scaffold/views/scaffoldTenantUsersView');
 	var ScaffoldTagsView = require('coreJS/scaffold/views/scaffoldTagsView');
 	var ScaffoldQuestionButtonView = require('coreJS/scaffold/views/scaffoldQuestionButtonView');
 	var ScaffoldColorPickerView = require('coreJS/scaffold/views/scaffoldColorPickerView');

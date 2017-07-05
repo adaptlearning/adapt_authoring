@@ -30,7 +30,12 @@ define(function(require) {
     },
 
     isEditable: function () {
-      return this.get('_isShared') || this.get('createdBy') == Origin.sessionModel.get('id')
+      var hasTenantAdminPermission = false;
+      if (Origin.permissions.hasTenantAdminPermission()) {
+        hasTenantAdminPermission = Origin.sessionModel.get('tenantId') === this.get('_tenantId');
+      }
+
+      return this.get('_isShared') || this.get('createdBy') == Origin.sessionModel.get('id') || hasTenantAdminPermission;
     },
 
     getDuplicateURI: function () {

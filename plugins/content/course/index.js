@@ -140,6 +140,56 @@ function initialize () {
       });
     });
 
+    // Tenant Courses
+    rest.get('/my-tenant/course', function (req, res, next) {
+      var options = _.keys(req.body).length
+      ? req.body
+      : req.query;
+      var search = options.search || {};
+      var self = this;
+      var orList = [];
+      var andList = [];
+
+      // convert searches to regex
+      async.each(
+        Object.keys(search),
+        function (key, nextKey) {
+          var exp = {};
+          // convert strings to regex for likey goodness
+          if ('string' === typeof search[key]) {
+            exp[key] = new RegExp(search[key], 'i');
+            orList.push(exp);
+          } else {
+            exp[key] = search[key];
+            andList.push(exp);
+          }
+          nextKey();
+      }, function () {
+        var query = {};
+        if (orList.length) {
+          query.$or = orList;
+        }
+
+        query.$and = andList;
+
+        // Only return courses which have the same tenant id as the user
+        var tenantId = app.usermanager.getCurrentUser().tenant._id;
+        query.$and.push({ _tenantId: tenantId });
+
+        options.jsonOnly = true;
+        options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
+
+        new CourseContent().retrieve(query, options, function (err, results) {
+          if (err) {
+            res.statusCode = 500;
+            return res.json(err);
+          }
+
+          return res.json(results);
+        });
+      });
+    });
+
     /**
      * API Endpoint to duplicate a course
      *

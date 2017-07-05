@@ -8,16 +8,20 @@ define(function(require) {
   var PluginManagementUploadSidebarView = require('coreJS/pluginManagement/views/pluginManagementUploadSidebarView');
 
   Origin.on('router:pluginManagement', function(location, subLocation, action) {
-    if (!location) {
-      location = 'extension';
-    }
+    if (Origin.permissions.hasSuperPermissions()) {
+      if (!location) {
+        location = 'extension';
+      }
 
-    if ('upload' === location) {
-      Origin.router.createView(PluginManagementUploadView);
-      Origin.sidebar.addView(new PluginManagementUploadSidebarView().$el, {});
+      if ('upload' === location) {
+        Origin.router.createView(PluginManagementUploadView);
+        Origin.sidebar.addView(new PluginManagementUploadSidebarView().$el, {});
+      } else {
+        Origin.router.createView(PluginManagementView, { pluginType: location });
+        Origin.sidebar.addView(new PluginManagementSidebarView().$el);
+      }
     } else {
-      Origin.router.createView(PluginManagementView, { pluginType: location });
-      Origin.sidebar.addView(new PluginManagementSidebarView().$el);
+      Origin.permissions.showNoPermissionPage();
     }
   });
 
@@ -34,9 +38,7 @@ define(function(require) {
   };
 
   Origin.on('app:dataReady login:changed', function() {
-    var permissions = ["{{tenantid}}/extensiontype/*:update"];
-    Origin.permissions.addRoute('pluginManagement', permissions);
-    if (Origin.permissions.hasPermissions(permissions)) {
+    if (Origin.permissions.hasSuperPermissions()) {
       Origin.globalMenu.addItem(globalMenuObject);
     }
   });

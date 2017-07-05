@@ -38,7 +38,7 @@ define(function (require) {
       }
       this.$('form.add-Tenant').ajaxSubmit({
         error: function (e) {
-          self.showErrorMessage(window.polyglot.t('app.errorcannotaddtenant'));
+          self.showErrorMessage(e.responseText);
         },
         success: function (t) {
           self.showSuccessMessage('app.newtenant', 'app.addtenantsuccess');

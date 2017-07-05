@@ -48,7 +48,7 @@ function ImportSource(req, done) {
   var unzipFolder = tenantId + '_unzipped';
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, unzipFolder);
   // TODO - This should not be hard coded, needs to deal with other lang folders
-  var courseRoot = path.join(COURSE_ROOT_FOLDER, 'src', 'course', 'en' );
+  var courseRoot = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course, 'en' );
 
   var form = new IncomingForm();
   var origCourseId;
@@ -203,7 +203,7 @@ function ImportSource(req, done) {
       function mapPluginIncludes(cb) {
         async.each(plugindata.pluginTypes, function iterator(pluginType, doneMapIterator) {
 
-          var srcDir = path.join(COURSE_ROOT_FOLDER, 'src', pluginType.folder);
+          var srcDir = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, pluginType.folder);
           fs.readdir(srcDir, function (err, files) {
               if (err) {
                 return done(err);
@@ -328,7 +328,7 @@ function ImportSource(req, done) {
         });
       },
       function createConfig(cb) {
-        fs.readJson(path.join(COURSE_ROOT_FOLDER, 'src', 'course', 'config.json'), function(error, configJson) {
+        fs.readJson(path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course, 'config.json'), function(error, configJson) {
           if(error) return cb(error);
           // at the moment AT can only deal with one theme or menu
           var updatedConfigJson = _.extend(configJson, enabledExtensions, plugindata.theme[0], plugindata.menu[0]);
@@ -412,7 +412,7 @@ function ImportSource(req, done) {
         function updateAssetData(cb) {
           // TODO -- Strip lang folder. This global replace is intended as a temporary solution
           var replaceRegex = new RegExp(/(course\/)((\w){2}\/)/, 'gi');
-          var newAssetPath = "course/";
+          var newAssetPath = Constants.Folders.Course + path.sep;
 
           var traverse = require('traverse');
           // TODO - remove traverse and replace with string replace similar to https://github.com/adaptlearning/adapt_authoring/blob/master/lib/outputmanager.js#L764

@@ -28,7 +28,8 @@ define(function(require){
     preRender: function() {
       this.listenToEvents();
       this.model.set('componentTypes', Origin.editor.data.componenttypes.toJSON());
-      this.evaluateComponents(this.render);
+      // seems odd calling re-render here, but it does what we want
+      this.reRender();
     },
 
     listenToEvents: function() {
@@ -60,6 +61,10 @@ define(function(require){
         this.trigger('blockView:postRender');
         Origin.trigger('pageView:itemRendered');
       }, this));
+    },
+
+    reRender: function() {
+      this.evaluateComponents(this.render);
     },
 
     getAvailableLayouts: function() {
@@ -115,11 +120,7 @@ define(function(require){
     },
 
     handleRemovedComponent: function() {
-      this.evaluateComponents(this.render);
-    },
-
-    reRender: function() {
-      this.evaluateComponents(this.render);
+      this.reRender();
     },
 
     onCutComponent: function(view) {
@@ -127,7 +128,7 @@ define(function(require){
         view.showPasteZones();
       });
 
-      this.evaluateComponents(this.render);
+      this.reRender();
     },
 
     setupDragDrop: function() {
@@ -170,7 +171,6 @@ define(function(require){
           var offsetTop = $container.offset().top;
           var clientY = event.originalEvent.clientY;
           var scrollAmount;
-
 
           if(clientY < (offsetTop + SCROLL_THRESHOLD)) {
             scrollAmount = -SCROLL_INCREMENT;

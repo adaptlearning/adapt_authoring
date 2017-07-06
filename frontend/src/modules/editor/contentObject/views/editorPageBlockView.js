@@ -32,13 +32,16 @@ define(function(require){
     },
 
     listenToEvents: function() {
-      this.listenTo(Origin, 'editorView:removeSubViews editorPageView:removePageSubViews', this.remove);
+      var id = this.model.get('_id');
 
-      this.listenTo(Origin, 'editorView:removeComponent:' + this.model.get('_id'), this.handleRemovedComponent);
-      this.listenTo(Origin, 'editorView:moveComponent:' + this.model.get('_id'), this.reRender);
-      this.listenTo(Origin, 'editorView:cutComponent:' + this.model.get('_id'), this.onCutComponent);
-      this.listenTo(Origin, 'editorView:addComponent:' + this.model.get('_id'), this.addComponent);
-      this.listenTo(Origin, 'editorView:deleteBlock:' + this.model.get('_id'), this.deleteBlock);
+      this.listenTo(Origin, {
+        'editorView:removeSubViews editorPageView:removePageSubViews': this.remove,
+        ['editorView:removeComponent:' + id]: this.handleRemovedComponent,
+        ['editorView:moveComponent:' + id]: this.reRender,
+        ['editorView:cutComponent:' + id]: this.onCutComponent,
+        ['editorView:addComponent:' + id]: this.addComponent,
+        ['editorView:deleteBlock:' + id]: this.deleteBlock
+      });
 
       this.listenTo(this, {
         'contextMenu:block:edit': this.loadBlockEdit,

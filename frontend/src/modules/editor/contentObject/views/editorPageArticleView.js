@@ -35,7 +35,6 @@ define(function(require){
 
     listenToEvents: function() {
       this.listenTo(Origin, 'editorView:removeSubViews editorPageView:removePageSubViews', this.remove);
-      this.listenTo(this.model, 'sync', this.setupModelEvents);
 
       if (!this.model.isNew()) {
         this.listenTo(Origin, 'editorView:moveBlock:' + this.model.get('_id'), this.render);

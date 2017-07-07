@@ -85,6 +85,7 @@ define(function(require){
     },
 
     onAjaxError: function(data, status, error) {
+      Origin.trigger('sidebar:resetButtons');
       // We may have a partially created course, make sure it's gone
       if(this.createdCourseId) {
         // TODO - add route for course destroy

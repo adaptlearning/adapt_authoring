@@ -72,7 +72,7 @@ function Import(req, done) {
       if (error) {
         // TODO might need to run cleanUpImport as well.
         removeImport(function ImportRemoved(removalError) {
-          done(removalError || error);
+          return done(removalError || error);
         });
       }
       done(error);
@@ -311,7 +311,7 @@ function Import(req, done) {
         async.each(importedAssets, function deleteAsset(asset, assetDeleted) {
           origin.assetmanager.destroyAsset(metadata.idMap[asset.oldId], assetDeleted);
         }, cb);
-      },
+      }
       // TODO - Need to check if plugin has been installed with this import before removing
       /* function deletePlugins(cb) {
         async.each(metadata.pluginIncludes, function(pluginData, donePluginIterator) {

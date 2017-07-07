@@ -48,7 +48,9 @@ function ImportSource(req, done) {
   var unzipFolder = tenantId + '_unzipped';
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, unzipFolder);
   // TODO - This should not be hard coded, needs to deal with other lang folders
-  var courseRoot = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course, 'en' );
+  var COURSE_LANG;
+  var COURSE_JSON_PATH = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course);
+  var courseRoot = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course);
 
   var form = new IncomingForm();
   var origCourseId;
@@ -77,6 +79,24 @@ function ImportSource(req, done) {
           var zipPath = files.file.path;
           cleanupDirs.push(zipPath,COURSE_ROOT_FOLDER);
           cb();
+        });
+      },
+      function findLanguages(cb) {
+        // socket import setup
+        var courseLangs = [];
+        fs.readdir(COURSE_JSON_PATH, function (error, files) {
+            if (error) {
+              return cb(error);
+            }
+            files.map(function (file) {
+              return path.join(COURSE_JSON_PATH, file);
+            }).filter(function (file) {
+              return fs.statSync(file).isDirectory();
+            }).forEach(function (file) {
+              courseLangs.push(path.basename(file));
+            });
+            COURSE_LANG = courseLangs[0] ? courseLangs[0] : 'en';
+            cb();
         });
       },
       function asyncValidate(cb) {
@@ -139,7 +159,7 @@ function ImportSource(req, done) {
       },
       checkContentJson: ['checkFramework', function(cb) {
         async.eachSeries(Object.keys(contentMap), function(type, cb2) {
-          fs.readJson(path.join(courseRoot, contentMap[type] + '.json'), function(error, contentJson) {
+          fs.readJson(path.join(COURSE_JSON_PATH, COURSE_LANG, contentMap[type] + '.json'), function(error, contentJson) {
             if(error) {
               logger.log('error', error)
               return cb2(error);
@@ -158,7 +178,7 @@ function ImportSource(req, done) {
   */
   function addAssets(assetTags, done) {
     // TODO - need to deal with asset location path in a less hacky way. Also include other languages/folders
-    var assetsGlob = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course, 'en', Constants.Folders.Assets, '*');
+    var assetsGlob = path.join(COURSE_JSON_PATH, COURSE_LANG, Constants.Folders.Assets, '*');
     glob(assetsGlob, function (error, assets) {
       if(error) {
         return cb(error);
@@ -275,7 +295,7 @@ function ImportSource(req, done) {
   function importContent(formTags, done) {
     async.series([
       function createCourse(cb) {
-        fs.readJson(path.join(courseRoot, 'course.json'), function(error, courseJson) {
+        fs.readJson(path.join(COURSE_JSON_PATH, COURSE_LANG, 'course.json'), function(error, courseJson) {
           if(error) return cb(error);
           courseJson = _.extend(courseJson, { tags: formTags });
           createContentItem('course', courseJson, '', function(error, courseRec) {
@@ -328,10 +348,10 @@ function ImportSource(req, done) {
         });
       },
       function createConfig(cb) {
-        fs.readJson(path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course, 'config.json'), function(error, configJson) {
+        fs.readJson(path.join(COURSE_JSON_PATH, 'config.json'), function(error, configJson) {
           if(error) return cb(error);
           // at the moment AT can only deal with one theme or menu
-          var updatedConfigJson = _.extend(configJson, enabledExtensions, plugindata.theme[0], plugindata.menu[0]);
+          var updatedConfigJson = _.extend(configJson, enabledExtensions, plugindata.theme[0], plugindata.menu[0], { "_defaultLanguage" : COURSE_LANG });
           createContentItem('config', updatedConfigJson, courseId, function(error, configRec) {
             if(error) return cb(error);
             configId = configRec._id;
@@ -343,7 +363,7 @@ function ImportSource(req, done) {
         async.eachSeries(Object.keys(contentMap), function(type, cb2) {
           app.contentmanager.getContentPlugin(type, function(error, plugin) {
             if(error) return cb2(error);
-            fs.readJson(path.join(courseRoot, contentMap[type] + '.json'), function(error, contentJson) {
+            fs.readJson(path.join(COURSE_JSON_PATH, COURSE_LANG, contentMap[type] + '.json'), function(error, contentJson) {
               if(error) return cb2(error);
 
               // Sorts in-place the content objects to make sure processing can happen

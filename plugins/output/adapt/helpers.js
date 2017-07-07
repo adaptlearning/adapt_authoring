@@ -74,7 +74,13 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
 
   async.waterfall([
     function readBowerJson(cb) {
-      fs.readJson(path.join(pluginDir, Constants.Filenames.Bower), cb);
+      fs.stat(path.join(pluginDir, Constants.Filenames.Bower), function(error, stats) {
+        if (error) {
+            logger.log('error', error)
+            return pluginImported();
+        }
+        fs.readJson(path.join(pluginDir, Constants.Filenames.Bower), cb);
+      });
     },
     function getContentPlugin(json, cb) {
       bowerJson = json;

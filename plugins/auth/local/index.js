@@ -182,7 +182,7 @@ LocalAuth.prototype.registerUser = function (req, res, next) {
     retypePassword: req.body.retypePassword
   };
 
-  this.internalRegisterUser(user, function (error, user) {
+  this.internalRegisterUser(false, user, function (error, user) {
     if (error) {
       return next(error);
     }
@@ -195,13 +195,19 @@ LocalAuth.prototype.registerUser = function (req, res, next) {
 
 };
 
-LocalAuth.prototype.internalRegisterUser = function (user, cb) {
-  if (!user.email || !user.password || !user.retypePassword) {
+LocalAuth.prototype.internalRegisterUser = function(retypePasswordRequired, user, cb) {
+  if (!user.email || !user.password) {
     return cb(new auth.errors.UserRegistrationError('email, password and retyped password are required!'));
   }
 
-  if (user.password !== user.retypePassword) {
-    return cb(new auth.errors.UserRegistrationError('password and retyped password must match!'))
+  if (retypePasswordRequired) {
+    if (!user.retypePassword) {
+      return cb(new auth.errors.UserRegistrationError('email, password and retyped password are required!'));
+    }
+
+    if (user.password !== user.retypePassword) {
+      return cb(new auth.errors.UserRegistrationError('password and retyped password must match!'))
+    }
   }
 
   // create user with hashed password

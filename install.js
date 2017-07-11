@@ -392,7 +392,7 @@ var steps = [
         }
 
         // add a new user using default auth plugin
-        new localAuth().internalRegisterUser({
+        new localAuth().internalRegisterUser(true, {
             email: userEmail,
             password: userPassword,
             retypePassword: userRetypePassword,

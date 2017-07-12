@@ -58,8 +58,13 @@ define(function(require){
         success: _.bind(function() {
           // fetch collection for the pasted type, and send motification
           Origin.editor.data[this.model._siblings].fetch().done(function() {
+            var eventPrefix = 'editorView:move' + Helpers.capitalise(type) + ':';
             var itemId = (droppedOnId === parentId) ? droppedOnId : parentId;
-            Origin.trigger('editorView:move' + Helpers.capitalise(type) + ':' + itemId);
+            // notify the old parent that the child's gone
+            if(itemId !== droppedOnId) {
+              Origin.trigger(eventPrefix + droppedOnId);
+            }
+            Origin.trigger(eventPrefix + itemId);
           });
         }, this),
         error: function(jqXHR) {

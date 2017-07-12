@@ -108,13 +108,14 @@ function initialize() {
                   // Formulate the block search criteria.
                   if (blocks && blocks.length !== 0) {
                     criteria._courseId = itemForDeletion._courseId;
-                    // find any assets directly associated with the article
-                    criteria._contentTypeId = itemForDeletion._id;
                     // find any assets associated with the blocks as parent
                     var parentArray = _.pluck(blocks, '_id');
-                    // find any assets associated with the article as parent
+
                     parentArray.push(itemForDeletion._id);
-                    criteria._contentTypeParentId  = { $in: parentArray };
+                    criteria.$or = [
+                      { _contentTypeParentId: { $in: parentArray } },
+                      { _contentTypeId: itemForDeletion._id }
+                    ];
                   }
                   callback(null, 'Blocks added to criteria object');
                 });

@@ -22,7 +22,7 @@ define(function(require) {
 
     getChildren: function() {
       if (Origin.editor.data[this._children]) {
-        var children = Origin.editor.data[this._children].where({ _parentId:this.get('_id') });
+        var children = Origin.editor.data[this._children].where({ _parentId: this.get('_id') });
         var childrenCollection = new Backbone.Collection(children);
         return childrenCollection;
       }

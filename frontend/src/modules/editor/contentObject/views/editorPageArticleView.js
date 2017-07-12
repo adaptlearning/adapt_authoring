@@ -37,9 +37,12 @@ define(function(require){
       this.listenTo(Origin, 'editorView:removeSubViews editorPageView:removePageSubViews', this.remove);
 
       if (!this.model.isNew()) {
-        this.listenTo(Origin, 'editorView:moveBlock:' + this.model.get('_id'), this.render);
-        this.listenTo(Origin, 'editorView:cutBlock:' + this.model.get('_id'), this.onCutBlock);
-        this.listenTo(Origin, 'editorView:deleteArticle:' + this.model.get('_id'), this.deletePageArticle);
+        var id = this.model.get('_id');
+        this.listenTo(Origin, {
+          ['editorView:moveBlock:' + id]: this.render,
+          ['editorView:cutBlock:' + id]: this.onCutBlock,
+          ['editorView:deleteArticle:' + id]: this.deletePageArticle
+        });
       }
 
       this.listenTo(this, {
@@ -60,15 +63,15 @@ define(function(require){
 
     addBlockViews: function() {
       this.$('.article-blocks').empty();
-
       // Insert the 'pre' paste zone for blocks
-      var prePasteBlock = new BlockModel();
-      prePasteBlock.set('_parentId', this.model.get('_id'));
-      prePasteBlock.set('_type', 'block');
-      prePasteBlock.set('_pasteZoneSortOrder', 1);
-
-      this.$('.article-blocks').append(new EditorPasteZoneView({model: prePasteBlock}).$el);
-
+      var view = new EditorPasteZoneView({
+        model: new BlockModel({
+          _parentId: this.model.get('_id'),
+          _type: 'block',
+          _pasteZoneSortOrder: 1
+        })
+      });
+      this.$('.article-blocks').append(view.$el);
       // Iterate over each block and add it to the article
       this.model.getChildren().each(this.addBlockView, this);
     },

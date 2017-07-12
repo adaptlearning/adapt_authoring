@@ -65,7 +65,7 @@ define(function(require) {
             // trim off any empty fieldsets
             _.each(schema, function(value, key) {
                 if(value.hasOwnProperty('properties') && _.isEmpty(value.properties)) {
-                delete schema[key];
+                  delete schema[key];
                 }
             });
 

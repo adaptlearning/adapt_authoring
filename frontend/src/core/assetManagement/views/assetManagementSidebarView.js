@@ -8,6 +8,7 @@ define(function(require) {
 
         events: {
             'click .asset-management-sidebar-new': 'onAddNewAssetClicked',
+            'click .asset-management-sidebar-upload': 'onUploadAssetsClicked',
             'click .asset-management-sidebar-filter-button': 'onFilterButtonClicked',
             'click .sidebar-filter-clear': 'onClearSearchClicked',
             'keyup .asset-management-sidebar-filter-search': 'onSearchKeyup',
@@ -24,6 +25,10 @@ define(function(require) {
 
         onAddNewAssetClicked: function() {
             Origin.router.navigate('#/assetManagement/new', { trigger: true });
+        },
+
+        onUploadAssetsClicked: function() {
+            Origin.router.navigate('#/assetManagement/upload', { trigger: true });
         },
 
         onFilterButtonClicked: function(event) {

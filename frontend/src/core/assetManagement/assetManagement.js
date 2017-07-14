@@ -7,6 +7,8 @@ define(function(require) {
   var AssetManagementSidebarView = require('coreJS/assetManagement/views/assetManagementSidebarView');
   var AssetManagementNewAssetView = require('coreJS/assetManagement/views/assetManagementNewAssetView');
   var AssetManagementNewAssetSidebarView = require('coreJS/assetManagement/views/assetManagementNewAssetSidebarView');
+  var AssetManagementUploadAssetsView = require('coreJS/assetManagement/views/assetManagementUploadAssetsView');
+  var AssetManagementUploadAssetsSidebarView = require('coreJS/assetManagement/views/assetManagementUploadAssetsSidebarView');
   var TagsCollection = require('coreJS/tags/collections/tagsCollection');
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
@@ -14,9 +16,9 @@ define(function(require) {
     Origin.assetManagement.filterData = {};
 
     if (!location) {
-        var tagsCollection = new TagsCollection();
+      var tagsCollection = new TagsCollection();
 
-        tagsCollection.fetch({
+      tagsCollection.fetch({
           success: function() {
             // Load asset collection before so sidebarView has access to it
             var assetCollection = new AssetCollection();
@@ -31,10 +33,14 @@ define(function(require) {
             console.log('Error occured getting the tags collection - try refreshing your page');
           }
         });
-    } else if (location=== 'new') {
-        Origin.trigger('location:title:update', {title: 'New Asset'});
-        Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
-        Origin.router.createView(AssetManagementNewAssetView, { model: new AssetModel });
+    } else if (location === 'new') {
+      Origin.trigger('location:title:update', {title: 'New Asset'});
+      Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
+      Origin.router.createView(AssetManagementNewAssetView, { model: new AssetModel });
+    } else if (location === 'upload') {
+      Origin.trigger('location:title:update', {title: 'Upload Assets'});
+      Origin.sidebar.addView(new AssetManagementUploadAssetsSidebarView().$el);
+      Origin.router.createView(AssetManagementUploadAssetsView, { model: new AssetModel });
     } else if (subLocation === 'edit') {
       var Asset = new AssetModel({ _id: location });
       // Fetch existing asset model
@@ -54,11 +60,11 @@ define(function(require) {
 
   Origin.on('app:dataReady login:changed', function() {
     Origin.globalMenu.addItem({
-      "location": "global",
-      "text": window.polyglot.t('app.assetmanagement'),
-      "icon": "fa-file-image-o",
-      "callbackEvent": "assetManagement:open",
-      "sortOrder": 2
+      location: 'global',
+      text: window.polyglot.t('app.assetmanagement'),
+      icon: 'fa-file-image-o',
+      callbackEvent: 'assetManagement:open',
+      sortOrder: 2
     });
   });
 });

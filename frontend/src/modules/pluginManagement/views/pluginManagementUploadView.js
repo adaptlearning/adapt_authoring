@@ -39,7 +39,7 @@ define(function(require){
       return true;
     },
 
-    onUploadSuccess: function() {
+    onUploadSuccess: function(data) {
       Origin.trigger('scaffold:updateSchemas', function() {
         Origin.Notify.alert({ type: 'success', text: Origin.l10n.t('app.uploadpluginsuccess') });
 

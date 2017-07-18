@@ -93,11 +93,6 @@ define(function(require) {
         title: window.polyglot.t('app.delete'),
         className: 'context-menu-item',
         callbackEvent: 'delete'
-      },
-      {
-        title: window.polyglot.t('app.export'),
-        className: 'context-menu-item',
-        callbackEvent: 'export'
       }
     ];
 

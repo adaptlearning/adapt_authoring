@@ -57,6 +57,7 @@ define(function(require){
       this.listenTo(Origin, 'editorCommon:download', this.downloadProject);
       this.listenTo(Origin, 'editorCommon:preview', this.previewProject);
       this.listenTo(Origin, 'editorCommon:export', this.exportProject);
+      this.listenTo(Origin, 'editorCommon:backup', this.downloadBackup);
 
       this.render();
       this.setupEditor();
@@ -175,6 +176,57 @@ define(function(require){
            });
          }
       });
+    },
+
+    downloadBackup: function() {
+      // aleady processing, don't try again
+      if(this.exporting) return;
+
+      this.$el.css('cursor', 'progress');
+
+      var courseId = Origin.editor.data.course.get('_id');
+      var tenantId = Origin.sessionModel.get('tenantId');
+      var $btn = $('button.editor-common-sidebar-backup');
+      this.showBackupAnimation(true, $btn);
+      this.exporting = true;
+
+      var self = this;
+      $.ajax({
+         url: '/export/' + tenantId + '/' + courseId + '/false',
+         success: function(data, textStatus, jqXHR) {
+           self.exporting = false;
+           self.showBackupAnimation(false, $btn);
+
+           // get the zip
+           var form = document.createElement('form');
+           self.$el.append(form);
+           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
+           form.submit();
+         },
+         error: function(jqXHR, textStatus, errorThrown) {
+           var messageText = errorThrown;
+           if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) messageText += ':<br/>' + jqXHR.responseJSON.message;
+
+           self.showBackupAnimation(false, $btn);
+           self.exporting = false;
+
+           Origin.Notify.alert({
+             type: 'error',
+             title: window.polyglot.t('app.exporterrortitle'),
+             text: messageText
+           });
+         }
+      });
+    },
+
+    showBackupAnimation: function(show, $btn) {
+      if(show !== false) {
+        $('.editor-common-sidebar-backup-inner', $btn).addClass('display-none');
+        $('.editor-common-sidebar-backingup', $btn).removeClass('display-none');
+      } else {
+        $('.editor-common-sidebar-backup-inner', $btn).removeClass('display-none');
+        $('.editor-common-sidebar-backingup', $btn).addClass('display-none');
+      }
     },
 
     showExportAnimation: function(show, $btn) {

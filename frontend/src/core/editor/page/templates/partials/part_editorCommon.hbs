@@ -36,6 +36,16 @@
             </span>
         </button>
     </div>
+    <div class="sidebar-row">
+        <button class="editor-common-sidebar-backup">
+            <span class="editor-common-sidebar-backup-inner">
+                <i class="fa fa-clone primary-color"/>{{ t 'app.downloadbackup'}}
+            </span>
+            <span class="editor-common-sidebar-backingup display-none">
+                <i class="fa fa-circle-o-notch fa-spin primary-color"></i>{{ t 'app.exporting'}}
+            </span>
+        </button>
+    </div>
     {{/ifHasPermissions}}
 
     <div class="separator" />

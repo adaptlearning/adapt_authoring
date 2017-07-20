@@ -103,22 +103,11 @@ define(function(require) {
         },
 
         error: function(data, status, error) {
-          $('.loading').hide();
           Origin.trigger('sidebar:resetButtons');
-          var message = '';
-          if (data) {
-            if (data.responseText) {
-              message = data.responseText;
-            } else if (data.responseJSON && data.responseJSON.error) {
-              message = data.responseJSON.error;
-            }
-          }
-
           Origin.Notify.alert({
             type: 'error',
-            text: Helpers.decodeHTML(message)
+            text: data.responseJSON.message
           });
-          Origin.router.navigate('#/assetManagement/upload', { trigger: true });
         },
 
         success: function(data, status, xhr) {

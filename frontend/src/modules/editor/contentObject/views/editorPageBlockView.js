@@ -34,15 +34,14 @@ define(function(require){
 
     listenToEvents: function() {
       var id = this.model.get('_id');
-
-      this.listenTo(Origin, {
-        'editorView:removeSubViews editorPageView:removePageSubViews': this.remove,
-        ['editorView:removeComponent:' + id]: this.handleRemovedComponent,
-        ['editorView:moveComponent:' + id]: this.reRender,
-        ['editorView:cutComponent:' + id]: this.onCutComponent,
-        ['editorView:addComponent:' + id]: this.addComponent,
-        ['editorView:deleteBlock:' + id]: this.deleteBlock
-      });
+      var events = {};
+      events['editorView:removeSubViews editorPageView:removePageSubViews'] = this.remove;
+      events['editorView:removeComponent:' + id] = this.handleRemovedComponent;
+      events['editorView:moveComponent:' + id] = this.reRender;
+      events['editorView:cutComponent:' + id] = this.onCutComponent;
+      events['editorView:addComponent:' + id] = this.addComponent;
+      events['editorView:deleteBlock:' + id] = this.deleteBlock;
+      this.listenTo(Origin, events);
 
       this.listenTo(this, {
         'contextMenu:block:edit': this.loadBlockEdit,

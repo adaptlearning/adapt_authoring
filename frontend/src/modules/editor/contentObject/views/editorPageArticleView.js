@@ -38,11 +38,11 @@ define(function(require){
 
       if (!this.model.isNew()) {
         var id = this.model.get('_id');
-        this.listenTo(Origin, {
-          ['editorView:moveBlock:' + id]: this.render,
-          ['editorView:cutBlock:' + id]: this.onCutBlock,
-          ['editorView:deleteArticle:' + id]: this.deletePageArticle
-        });
+        var events = {};
+        events['editorView:moveBlock:' + id] = this.render;
+        events['editorView:cutBlock:' + id] = this.onCutBlock;
+        events['editorView:deleteArticle:' + id] = this.deletePageArticle;
+        this.listenTo(Origin, events);
       }
 
       this.listenTo(this, {

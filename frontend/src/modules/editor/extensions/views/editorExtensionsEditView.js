@@ -74,6 +74,10 @@ define(function(require) {
       }
       Origin.editor.data.config.fetch({
         success: _.bind(function(model, response, options) {
+          if(!response._enabledExtensions) {
+            // backbone won't do this for us...
+            model.unset('_enabledExtensions');
+          }
           Origin.trigger('scaffold:updateSchemas', this.setupExtensions, this);
         }, this)
       });

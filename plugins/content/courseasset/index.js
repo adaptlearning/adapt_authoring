@@ -66,6 +66,8 @@ function initialize() {
                   if (articles && articles.length !== 0) {
                     criteria._courseId = itemForDeletion._courseId;
                     parentIds = _.pluck(articles, '_id');
+                    // add the contentObject id as parent for assets on articles
+                    parentIds.push(itemForDeletion._id);
                   }
                   async.each(articles, function(article, cb) {
                     db.retrieve('block', {_courseId: article._courseId, _parentId: article._id}, function(err, blocks) {
@@ -83,8 +85,14 @@ function initialize() {
                       } else {
                         criteria._contentTypeId = itemForDeletion._id;
                       }
-                      callback(null, 'Child content objects added to criteria object');
+                      cb();
                     });
+                  }, function(error) {
+                    if (error) {
+                      callback(error);
+                    } else {
+                      callback(null, 'Child content objects added to criteria object');
+                    }
                   });
                 });
               },
@@ -99,9 +107,15 @@ function initialize() {
                   }
                   // Formulate the block search criteria.
                   if (blocks && blocks.length !== 0) {
-                    // We have enough information to start removing course assets.
-                    criteria._contentTypeParentId  = { $in: [_.pluck(blocks, '_id')] };
                     criteria._courseId = itemForDeletion._courseId;
+                    // find any assets associated with the blocks as parent
+                    var parentArray = _.pluck(blocks, '_id');
+
+                    parentArray.push(itemForDeletion._id);
+                    criteria.$or = [
+                      { _contentTypeParentId: { $in: parentArray } },
+                      { _contentTypeId: itemForDeletion._id }
+                    ];
                   }
                   callback(null, 'Blocks added to criteria object');
                 });
@@ -115,8 +129,11 @@ function initialize() {
                     break;
                   case 'block':
                     criteria._courseId = itemForDeletion._courseId;
-                    criteria._contentTypeParentId = itemForDeletion._id;
-                    criteria._contentType = 'component';
+                    // Find assets directly associated with the block or with block as parent
+                    criteria.$or = [
+                      { _contentTypeId: itemForDeletion._id },
+                      { _contentTypeParentId: itemForDeletion._id }
+                    ]
                     break;
                   case 'component':
                     criteria._courseId = itemForDeletion._courseId;

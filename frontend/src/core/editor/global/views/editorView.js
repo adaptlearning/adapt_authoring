@@ -185,19 +185,19 @@ define(function(require){
       }
     },
 
-    launchCoursePreview: function() {
+    updateCoursePreview: function(previewWindow) {
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
 
-      window.open('/preview/' + tenantId + '/' + courseId + '/', 'preview');
+      previewWindow.location.href = '/preview/' + tenantId + '/' + courseId + '/';
     },
 
     previewProject: function(event) {
       event && event.preventDefault();
 
       var self = this;
-
       if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isPreviewPending) {
+        var previewWindow = window.open('/loading', 'preview');
         Origin.editor.isPreviewPending = true;
         $('.navigation-loading-indicator').removeClass('display-none');
         $('.editor-common-sidebar-preview-inner').addClass('display-none');
@@ -210,9 +210,9 @@ define(function(require){
             if (jqXHR.success) {
               if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) != 'undefined' && jqXHR.payload.pollUrl != '') {
                 // Ping the remote URL to check if the job has been completed
-                self.updatePreviewProgress(jqXHR.payload.pollUrl);
+                self.updatePreviewProgress(jqXHR.payload.pollUrl, previewWindow);
               } else {
-                self.launchCoursePreview();
+                self.updateCoursePreview(previewWindow);
                 self.resetPreviewProgress();
               }
             } else {
@@ -221,6 +221,7 @@ define(function(require){
                 type: 'error',
                 text: window.polyglot.t('app.errorgeneratingpreview')
               });
+              previewWindow.close();
             }
           },
           error: function (jqXHR, textStatus, errorThrown) {
@@ -229,12 +230,13 @@ define(function(require){
               type: 'error',
               text: window.polyglot.t('app.errorgeneric')
             });
+            previewWindow.close();
           }
         });
       }
     },
 
-    updatePreviewProgress: function(url) {
+    updatePreviewProgress: function(url, previewWindow) {
       var self = this;
 
       var pollUrl = function() {
@@ -244,7 +246,7 @@ define(function(require){
           success: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.progress == "100") {
               clearInterval(pollId);
-              self.launchCoursePreview();
+              self.updateCoursePreview(previewWindow);
               self.resetPreviewProgress();
             } else {
                $('.navigation-loading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
@@ -254,6 +256,7 @@ define(function(require){
             clearInterval(pollId);
             self.resetPreviewProgress();
             
+            previewWindow.close();
             Origin.Notify.alert({
               type: 'error',
               text: errorThrown

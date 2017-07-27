@@ -34,7 +34,7 @@ define(function(require){
      * @param {Model} A given contextObject model
      */
     addMenuLayerView: function(view) {
-      var menuLayer = this.renderMenuLayerView(view, false);
+      var menuLayer = this.renderMenuLayerView(view);
       // Add children views of current model
       view.model.getChildren().each(function(contentObject) {
         menuLayer.append(new EditorMenuItemView({ model: contentObject }).$el);
@@ -51,7 +51,6 @@ define(function(require){
     /**
      * Appemds a menu item layer for a given ID to the editor
      * @param {String} parentId Unique identifier of the parent
-     * @param {Boolean} isCourseObject Flag to indicate if this is at the root level
      */
     renderMenuLayerView: function(view) {
       // Get the current views _id to store as the _parentId

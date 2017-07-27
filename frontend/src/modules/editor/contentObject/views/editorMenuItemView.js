@@ -99,7 +99,11 @@ define(function(require){
       if(this.model.get('_isSelected')) {
         return;
       }
-      if(!this.model.get('_isExpanded')) {
+      if(this.model.get('_isExpanded')) {
+        // bit odd, but we need to remove and child views before we continue
+        this.model.set('_isExpanded', false);
+      }
+      else {
         this.setSiblingsSelectedState();
         this.setParentSelectedState();
       }
@@ -136,16 +140,13 @@ define(function(require){
       var isMenuType = (this.model.get('_type') === 'menu');
       if(isExpanded) {
         this.$el.addClass('expanded');
-      } else {
-        // If not expanded unselect and unexpand child - this will work
-        // recursively as _isExpanded will keep getting set
-        if(isMenuType) this.setChildrenSelectedState();
-        this.$el.removeClass('expanded');
+        return;
       }
-      // If this item is not meant to be expanded - remove subView
-      if (!isExpanded && isMenuType && this.subView) {
-        this.subView.remove();
+      if(isMenuType) {
+        this.setChildrenSelectedState();
+        if (this.subView) this.subView.remove();
       }
+      this.$el.removeClass('expanded');
     },
 
     editMenuItem: function() {

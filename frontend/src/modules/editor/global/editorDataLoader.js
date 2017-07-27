@@ -111,7 +111,7 @@ define(function(require) {
     */
     reset: function() {
       Origin.editor.data = _.omit(Origin.editor.data, Object.keys(courseData));
-      preloader.preload();
+      preloader.loadGlobalData();
     },
     /**
     * Makes sure all data has been loaded and calls callback

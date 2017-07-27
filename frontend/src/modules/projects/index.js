@@ -8,6 +8,8 @@ define(function(require) {
   var TagsCollection = require('core/collections/tagsCollection');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
+    Origin.trigger('editor:resetData');
+
     Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
     Origin.options.addItems([
       {

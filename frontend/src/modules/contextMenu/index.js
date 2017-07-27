@@ -53,16 +53,7 @@ define(function(require) {
         callbackEvent: 'preview'
       }
     ]);
-    var courseItems = getDefaultItems();
-    var superPerms = ["*/*:create","*/*:read","*/*:update","*/*:delete"];
-    if (Origin.permissions.hasPermissions(superPerms)) {
-      courseItems.push({
-        title: Origin.l10n.t('app.export'),
-        className: 'context-menu-item',
-        callbackEvent: 'export'
-      });
-    }
-    ContextMenu.addItem('course', courseItems);
+    ContextMenu.addItem('course', getDefaultItems());
   };
 
   /*

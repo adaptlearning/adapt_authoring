@@ -204,10 +204,10 @@ LocalAuth.prototype.internalRegisterUser = function(retypePasswordRequired, user
     if (user.password !== user.retypePassword) {
       return cb(new auth.errors.UserRegistrationError('password and retyped password must match!'));
     }
-  } else {
-    if (!user.email || !user.password) {
-      return cb(new auth.errors.UserRegistrationError('email and password are required!'));
-    }
+  }
+
+  if (!user.email || !user.password) {
+    return cb(new auth.errors.UserRegistrationError('email and password are required!'));
   }
 
   // create user with hashed password

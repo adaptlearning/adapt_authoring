@@ -1,5 +1,5 @@
 {
-  "type":"object",
+  "type": "object",
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "http://jsonschema.net",
   "$ref": "http://localhost/system/content.schema",
@@ -13,61 +13,64 @@
         "editorOnly": true
     },
     "title": {
-      "type":"string",
-      "required":true,
+      "type": "string",
+      "required": true,
       "default": "New Block Title",
-      "inputType":"Text",
-      "validators": ["required"]
+      "inputType": "Text",
+      "validators": ["required"],
+      "translatable": true
     },
     "displayTitle": {
-      "type":"string",
-      "required":false,
+      "type": "string",
+      "required": false,
       "default": "New Block Title",
-      "inputType":"DisplayTitle",
+      "inputType": "DisplayTitle",
       "validators": [],
-      "help": "When viewing an block - this is the title that will be displayed on the page"
+      "help": "When viewing an block - this is the title that will be displayed on the page",
+      "translatable": true
     },
     "body":{
-      "type":"string",
+      "type": "string",
       "default" : "",
-      "inputType":"TextArea",
-      "validators": []
+      "inputType": "TextArea",
+      "validators": [],
+      "translatable": true
     },
     "_classes": {
-      "type":"string",
-      "default":"",
+      "type": "string",
+      "default": "",
       "isSetting": true,
-      "inputType":"Text",
+      "inputType": "Text",
       "validators": [],
       "title": "Classes"
     },
     "_isOptional": {
-      "type": "bool",
-      "default": "false",
+      "type": "boolean",
+      "default": false,
       "isSetting": true,
-      "inputType": {"type": "Boolean", "options": [true, false]},
+      "inputType": "Checkbox",
       "validators": [],
       "title": "Is this optional?",
-      "help": "If set to 'true' this block, and components within it, do not have to be completed"
+      "help": "An optional block does not have to be completed, nor do any of the components contained within it."
     },
-     "_isAvailable": {
-      "type": "bool",
-      "default": "true",
+    "_isAvailable": {
+      "type": "boolean",
+      "default": true,
       "isSetting": true,
-      "inputType": {"type": "Boolean", "options": [true, false]},
+      "inputType": "Checkbox",
       "validators": [],
       "title": "Is this available?",
-      "help": "If set to 'false' this will not be displayed"
+      "help": "Controls whether this block and its contents are available in the course or not."
     },
     "_onScreen": {
       "type": "object",
       "title": "",
       "properties": {
         "_isEnabled": {
-          "type": "bool",
-          "default": "false",
+          "type": "boolean",
+          "default": false,
           "isSetting": true,
-          "inputType": {"type": "Boolean", "options": [true, false]},
+          "inputType": "Checkbox",
           "validators": [],
           "title": "Enable",
           "help": "If enabled, the CSS class(es) specified in the Classes field will be added to the block element when it is within the browser's viewport."
@@ -95,7 +98,7 @@
       }
     },
     "_extensions": {
-      "type":"object"
+      "type": "object"
     }
   }
 }

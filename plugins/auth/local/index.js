@@ -159,10 +159,11 @@ LocalAuth.prototype.disavow = function (req, res, next) {
 };
 
 LocalAuth.prototype.registerUser = function (req, res, next) {
-  // presently, all we need is email and password
+  // presently, all we need is email, password and retyped password
   var user = {
     email: req.body.email,
-    password: req.body.password
+    password: req.body.password,
+    retypePassword: req.body.retypePassword
   };
 
   this.internalRegisterUser(user, function (error, user) {
@@ -179,8 +180,12 @@ LocalAuth.prototype.registerUser = function (req, res, next) {
 };
 
 LocalAuth.prototype.internalRegisterUser = function (user, cb) {
-  if (!user.email || !user.password) {
-    return cb(new auth.errors.UserRegistrationError('email and password are required!'));
+  if (!user.email || !user.password || !user.retypePassword) {
+    return cb(new auth.errors.UserRegistrationError('email, password and retyped password are required!'));
+  }
+
+  if (user.password !== user.retypePassword) {
+    return cb(new auth.errors.UserRegistrationError('password and retyped password must match!'))
   }
 
   // create user with hashed password

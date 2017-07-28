@@ -16,6 +16,18 @@
       "type": "string",
       "required": "false"
     },
+    "source": {
+      "type": "string",
+      "required": "false"
+    },
+    "licence": {
+      "type": "string",
+      "required": "false"
+    },
+    "attribution": {
+      "type": "string",
+      "required": "false"
+    },
     "path": {
       "type": "string",
       "required": "true"

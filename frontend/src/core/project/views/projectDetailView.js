@@ -100,7 +100,12 @@ define(function(require) {
               blockModel.save({
                 _courseId: model.get('_id'),
                 _parentId: articleModel.get('_id'),
-                _type: 'block'
+                _type: 'block',
+                layoutOptions: [
+                  {type: 'left', name: 'app.layoutleft', pasteZoneRenderOrder: 2},
+                  {type: 'full', name: 'app.layoutfull', pasteZoneRenderOrder: 1},
+                  {type: 'right', name: 'app.layoutright', pasteZoneRenderOrder: 3}
+                ]
               }, {
                 error: _.bind(self.onSaveError, self),
                 success: function() {

@@ -20,7 +20,7 @@ define(function(require) {
 	Backbone.Form.Field.prototype.template = Handlebars.templates['field'];
 	Backbone.Form.NestedField.prototype.template = Handlebars.templates['field'];
 	Backbone.Form.editors.List.prototype.constructor.template = _.template('\
-		<div>\
+		<div class="list-items">\
 			<div data-items></div>\
 			<button class="btn primary" type="button" data-action="add">\
 				<%= addLabel %>\
@@ -28,7 +28,7 @@ define(function(require) {
 		</div>\
 	', null, templateSettings)
 	Backbone.Form.editors.List.Item.prototype.constructor.template = _.template('\
-		<div>\
+		<div class="list-item clearfix">\
 			<span data-editor></span>\
 			<button class="btn warning" type="button" data-action="remove">\
 				&times;\

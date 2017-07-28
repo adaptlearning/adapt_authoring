@@ -1,0 +1,27 @@
+<div class="editor-item-settings handle">
+  <div class="editor-item-settings-inner">
+    <a href="#" class="open-context-icon open-context-{{_type}}" title="{{t 'app.clicktoedit'}}">
+      <i class="fa fa-cog fa-fw"></i>
+    </a>
+    <a href="#" class="{{_type}}-delete editor-delete-page-element" title="{{ t 'app.clicktodelete'}}">
+      <i class="fa fa-trash-o"></i>
+    </a>
+    {{#if _movePositions}}
+      {{#if _movePositions.left}}
+      <a href="#" class="{{_type}}-move {{_type}}-move-left editor-move-page-element" title="{{ t 'app.layoutleft'}}">
+        <i class="fa fa-long-arrow-left"></i>
+      </a>
+      {{/if}}
+      {{#if _movePositions.right}}
+      <a href="#" class="{{_type}}-move {{_type}}-move-right editor-move-page-element" title="{{ t 'app.layoutright'}}">
+        <i class="fa fa-long-arrow-right"></i>
+      </a>
+      {{/if}}
+      {{#if _movePositions.full}}
+      <a href="#" class="{{_type}}-move {{_type}}-move-full editor-move-page-element" title="{{ t 'app.layoutfull'}}">
+        <i class="fa fa-arrows-h"></i>
+      </a>
+      {{/if}}
+    {{/if}}
+  </div>
+</div>

@@ -1,0 +1,40 @@
+// Page-style form background
+.form-container-style {
+  max-width: 800px;
+  margin: 20px;
+  border: 1px solid #d6f2f9;
+  background-color: #fff;
+  > .inner {
+    padding: 30px;
+    form .form-group {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+  }
+}
+
+.no-wrap {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 90%;
+}
+
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+.no-ui {
+  background: url(assets/login_bg.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  .sidebar, .navigation, .location-title {
+    display: none;
+  }
+}

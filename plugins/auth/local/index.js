@@ -27,8 +27,6 @@ var ERROR_CODES = {
   ACCOUNT_INACTIVE: 5
 };
 
-var MAX_LOGIN_ATTEMPTS = 3;
-
 function LocalAuth() {
   this.strategy = new LocalStrategy({ usernameField: 'email' }, this.verifyUser);
   passport.use(this.strategy);
@@ -54,7 +52,7 @@ LocalAuth.prototype.verifyUser = function (email, password, done) {
       });
     }
 
-    if (user.failedLoginCount < MAX_LOGIN_ATTEMPTS) {
+    if (user.failedLoginCount < configuration.getConfig('maxLoginAttempts')) {
       // Validate the user's password
       auth.validatePassword(password, user.password, function (error, valid) {
         if (error) {
@@ -108,68 +106,49 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
     if (error) {
       return next(error);
     }
-
-    if (!user) {
-      // Check if a valid email was used
-      res.statusCode = 401;
-      return res.json({ success: false, errorCode: info.errorCode});
-    } else {
-      // check user is not deleted
-      if (user._isDeleted) {
-        res.statusCode = 401;
-        return res.json({ success: false, errorCode: ERROR_CODES.ACCOUNT_INACTIVE });
+    if(!user) {
+      return res.status(401).json({ errorCode: info.errorCode});
+    }
+    // check user is not deleted
+    if (user._isDeleted) {
+      return res.status(401).json({ errorCode: ERROR_CODES.ACCOUNT_INACTIVE });
+    }
+    // check tenant is enabled
+    self.isTenantEnabled(user, function (err, isEnabled) {
+      if (!isEnabled) {
+        return res.status(401).json({ errorCode: ERROR_CODES.TENANT_DISABLED });
       }
-
-      // check tenant is enabled
-      self.isTenantEnabled(user, function (err, isEnabled) {
-        if (!isEnabled) {
-          // don't allow login
-          res.statusCode = 401;
-          return res.json({ success: false, errorCode: ERROR_CODES.TENANT_DISABLED });
+      // Store the login details
+      req.logIn(user, function (error) {
+        if (error) {
+          return next(error);
         }
-
-        // Store the login details
-        req.logIn(user, function (error) {
+        usermanager.logAccess(user, function(error) {
           if (error) {
             return next(error);
           }
-
-          usermanager.logAccess(user, function(error) {
+          //Used to get the users permissions
+          permissions.getUserPermissions(user._id, function(error, userPermissions) {
             if (error) {
               return next(error);
             }
-
-
-            //Used to get the users permissions
-            permissions.getUserPermissions(user._id, function(error, userPermissions) {
-              if (error) {
-                return next(error);
-              }
-              res.statusCode = 200;
-
-              if (req.body.shouldPersist && req.body.shouldPersist == 'true') {
-                // Session is persisted for 2 weeks if the user has set 'Remember me'
-                req.session.cookie.maxAge = 14 * 24 * 3600000;
-              } else {
-                req.session.cookie.expires = false;
-              }
-
-              var userSession = req.session.passport.user;
-
-              return res.json({
-                success: true,
-                id: user._id,
-                email: user.email,
-                tenantId: user._tenantId,
-                tenantName: userSession.tenant.name,
-                permissions: userPermissions
-              });
+            if (req.body.shouldPersist && req.body.shouldPersist == 'true') {
+              // Session is persisted for 2 weeks if the user has set 'Remember me'
+              req.session.cookie.maxAge = 14 * 24 * 3600000;
+            } else {
+              req.session.cookie.expires = false;
+            }
+            return res.status(200).json({
+              id: user._id,
+              email: user.email,
+              tenantId: user._tenantId,
+              tenantName: req.session.passport.user.tenant.name,
+              permissions: userPermissions
             });
           });
         });
       });
-    }
-
+    });
   })(req, res, next);
 };
 

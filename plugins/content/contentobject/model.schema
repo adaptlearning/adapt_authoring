@@ -87,7 +87,7 @@
         ]
       },
       "title": "Menu lock type",
-      "help": "Defines which (if any) locking mechanism will be used. For menu items only.",
+      "help": "Defines which (if any) locking mechanism will be used. To be used only on submenus.",
       "validators": []
     },
     "_classes": {

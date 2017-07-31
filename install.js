@@ -5,7 +5,7 @@ var prompt = require('prompt'),
     path = require('path'),
     rimraf = require('rimraf'),
     exec = require('child_process').exec,
-    builder = require('./lib/application'),
+    origin = require('./lib/application'),
     frameworkHelper = require('./lib/frameworkhelper'),
     auth = require('./lib/auth'),
     database = require('./lib/database'),
@@ -25,7 +25,7 @@ prompt.delimiter = '';
 // get available db drivers and auth plugins
 var drivers = database.getAvailableDriversSync();
 var auths = auth.getAvailableAuthPluginsSync();
-var app = builder();
+var app = origin();
 var masterTenant = false;
 var superUser = false;
 

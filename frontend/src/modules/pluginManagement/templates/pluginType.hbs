@@ -1,0 +1,32 @@
+<div class="pluginType-inner {{#if _isAvailableInEditor}}{{else}}row-disabled{{/if}}">
+  <div class="pluginType-description col-row">
+    <div class="pluginType-title col-20">
+      <h4 class="pluginType-title-inner tb-col-inner">{{{displayName}}}</h4>
+    </div>
+    <div class="pluginType-description col-40">
+      <div class="pluginType-description-inner tb-col-inner">
+        {{{description}}}
+      </div>
+      {{#if homepage}}
+        <a href="{{homepage}}" class="pluginType-homepage tb-col-inner" target="_blank">
+          <span>{{t 'app.visitpluginhomepage'}}</span>
+        </a>
+      {{/if}}
+    </div>
+    <div class="pluginType-version col-10 col-centered">
+      <span class="pluginType-version-number tb-col-inner">{{version}}</span>
+    </div>
+    <div class="pluginType-active col-10 col-centered">
+      <input class="pluginType-enabled" type="checkbox" {{#if _isAvailableInEditor}} checked {{/if}}/>
+    </div>
+    <div class="pluginType-update col-10 col-centered">
+      <div class="pluginType-update-inner tb-col-inner">
+        {{#if isLocalPackage}}
+          <em class="info">({{t 'app.uploadedbyuser'}})</em>
+        {{else}}
+          <button class="plugin-update-check btn">{{t 'app.checkforupdates'}}</button>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

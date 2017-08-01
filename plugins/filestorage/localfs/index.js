@@ -265,7 +265,7 @@ LocalFileStorage.prototype.createDirectory = function (filePath, callback) {
  */
 
 LocalFileStorage.prototype.removeDirectory = function (filePath, callback) {
-  fs.rmdir(this.resolvePath(filePath), callback);
+  fs.remove(this.resolvePath(filePath), callback);
 };
 
 /**

@@ -4,7 +4,7 @@
  */
 var async = require('async');
 var ffmpeg = require('fluent-ffmpeg');
-var fs = require('fs');
+var fs = require('fs-extra');
 var mkdirp = require('mkdirp');
 var ncp = require('ncp').ncp;
 var path = require('path');

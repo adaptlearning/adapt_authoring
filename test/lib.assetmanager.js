@@ -125,39 +125,6 @@ it('should allow requests to restore a soft-deleted asset', function(done) {
     });
 });
 
-it('should allow requests to hard-delete an asset', function(done) {
-  // might as well remove them all while we're here
-  async.each(assetIds, deleteAsset, done);
-});
-
-it('should allow requests to rebuild asset thumbnails', function(done) {
-  agent
-    .post('/api/asset/buildthumbs')
-    .expect(200)
-    .expect('Content-Type', /json/)
-    .end(function(error, res) {
-      should.not.exist(error);
-      should.exist(res.body);
-      should.exist(res.body.success);
-      res.body.success.should.be.true;
-      done();
-    });
-});
-
-it('should allow requests to store workspace data', function(done) {
-  agent
-    .post('/api/asset/syncworkspaces')
-    .expect(200)
-    .expect('Content-Type', /json/)
-    .end(function(error, res) {
-      should.not.exist(error);
-      should.exist(res.body);
-      should.exist(res.body.success);
-      res.body.success.should.be.true;
-      done();
-    });
-});
-
 function postAsset(assetData, cb) {
   if(typeof assetData === 'function') {
     cb = assetData;

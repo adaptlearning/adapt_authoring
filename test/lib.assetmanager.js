@@ -44,6 +44,7 @@ it('should allow requests to retrieve an asset', function(done) {
     });
 });
 
+// TODO no hard-delete yet, so the below will fail when run 2+ times
 it('should allow requests to query assets', function(done) {
   // create lots of assets for us to query
   async.each([

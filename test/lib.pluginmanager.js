@@ -36,7 +36,7 @@ it('should verify if a plugin is of a particular type and validate it', function
   pm.getPlugin(testData.type, testData.name, function(error, pluginInfo) {
     should.not.exist(error);
     var pluginTypes = pm.getPluginTypes();
-    pluginTypes.should.include(pluginInfo.type);
+    pluginTypes.should.containEql(pluginInfo.type);
   });
 });
 

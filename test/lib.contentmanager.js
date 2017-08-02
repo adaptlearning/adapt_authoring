@@ -23,7 +23,7 @@ before(function(done) {
     .set('Accept', 'application/json')
     .send({
       email: testData.testUser.email,
-      password: testData.testUser.plainPassword
+      password: testData.testUser.newpassword
     })
     .expect(200)
     .expect('Content-Type', /json/)
@@ -179,6 +179,7 @@ it('should accept requests to retrieve only desired content attributes', functio
       res.body.length.should.be.above(0);
       var bodyKeys = Object.keys(res.body[0]);
       bodyKeys.length.should.equal(1);
+      console.log(bodyKeys);
       bodyKeys.should.containEql('title');
       done();
     });

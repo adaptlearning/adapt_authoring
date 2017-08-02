@@ -166,7 +166,7 @@ it('should accept requests to reset a user\'s password', function(done) {
     .set('Accept', 'application/json')
     .send({
       'user': helper.userId,
-      'password': 'newpassword',
+      'password': testData.testUser.newpassword,
       'token': testData.auth.token
     })
     .expect(200)

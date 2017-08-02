@@ -18,63 +18,55 @@ var app = origin();
 before(function(done) {
   this.timeout(600000);
 
-  async.series(
-    [
-      function(callback) {
-        var MongoClient = mongodb.MongoClient;
-        var connStr = 'mongodb://' + testConfig.dbHost + ':' + testConfig.dbPort + '/' + testConfig.dbName;
-        MongoClient.connect(connStr, function(err, db) {
-          if(err){
-            return callback(err)
+  async.series([
+    function dumpOldDb(cb) {
+      var MongoClient = mongodb.MongoClient;
+      var connStr = 'mongodb://' + testConfig.dbHost + ':' + testConfig.dbPort + '/' + testConfig.dbName;
+      MongoClient.connect(connStr, function(error, db) {
+        if(error){
+          return cb(error);
+        }
+        db.dropDatabase(function(error, result) {
+          if(error){
+            return cb(error);
           }
-
-          db.dropDatabase(function(err, result) {
-            if(err){
-              return callback(err)
-            }
-
-            db.close();
-            return callback()
-          });
+          db.close();
+          return cb();
         });
-      },
-      function(callback) {
-        // only show warnings and errors
-        logger.level('console','warn');
-        // bootstrapping!
-        app.use({ configFile: path.join('test', 'testConfig.json') });
-        // add some test entities ...
-        app.on('serverStarted', function(server) {
-          createTestTenant(testData.testTenant, function(error, tenant) {
+      });
+    },
+    function removeData(cb) {
+      fs.remove(testConfig.dataRoot, cb);
+    },
+    function initApp(cb) {
+      // only show warnings and errors
+      logger.level('console','warn');
+      // bootstrapping!
+      app.use({ configFile: path.join('test', 'testConfig.json') });
+      // add some test entities ...
+      app.on('serverStarted', function(server) {
+        createTestTenant(testData.testTenant, function(error, tenant) {
+          if(error) {
+            return cb(error);
+          }
+          testData.testTenant = tenant;
+          testData.testUser._tenantId = tenant._id;
+
+          app.configuration.setConfig('masterTenantID', tenant._id);
+          app.configuration.setConfig('masterTenantName', tenant.name);
+
+          createTestUser(testData.testUser, function(error, user) {
             if(error) {
-              return callback(error);
+              return cb(error);
             }
-            testData.testTenant = tenant;
-            testData.testUser._tenantId = tenant._id;
-
-            app.configuration.setConfig('masterTenantID', tenant._id);
-            app.configuration.setConfig('masterTenantName', tenant.name);
-
-            createTestUser(testData.testUser, function(error, user) {
-              if(error) {
-                return callback(error);
-              }
-              testData.testUser._id = user._id;
-              app.rolemanager.assignRoleByName('Super Admin', user._id, callback);
-            });
+            testData.testUser._id = user._id;
+            app.rolemanager.assignRoleByName('Super Admin', user._id, cb);
           });
         });
-        app.run();
-      }
-    ],
-    function(err, data) {
-      if(err){
-        return done(err)
-      }
-
-      return done()
+      });
+      app.run();
     }
-  );
+  ], done);
 });
 
 after(function(done) {
@@ -94,11 +86,7 @@ after(function(done) {
           app.rolemanager.destroyRole(role._id, cb2);
         }, cb);
       });
-    },
-    function removeData(cb) {
-      var dataDir = path.join(app.configuration.getConfig('root'), app.configuration.getConfig('dataRoot'));
-      fs.remove(dataDir, cb);
-    },
+    }
   ], done);
 });
 

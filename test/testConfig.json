@@ -5,7 +5,7 @@
   "dbType": "mongoose",
   "dbHost": "localhost",
   "dbPort": 27017,
-  "dbName": "adapt-tenant-unit-test",
+  "dbName": "adapt-tenant-mocha",
   "dataRoot": "testDataRoot",
   "sessionSecret": "your-session-secret",
   "smtpService": "none",

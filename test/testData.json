@@ -7,7 +7,7 @@
     "_isDeleted": false
   },
   "testTenant": {
-    "name": "adapt-tenant-unit-test",
+    "name": "adapt-tenant-mocha",
     "displayName": "Test Tenant",
     "isMaster": true
   },

@@ -11,6 +11,13 @@
     "displayName": "Test Tenant",
     "isMaster": true
   },
+  "assetmanager": {
+    "asset": {
+      "title": "Temporary Asset",
+      "description": "This is just a temp file",
+      "repo": "localfs"
+    }
+  },
   "auth": {
     "passwordPlain": "this is my password",
     "email": "auth@foo.bar",
@@ -42,7 +49,7 @@
   "tenantmanager": {
     "name": "unit-test-tenant",
     "displayName": "UnitTestTenant",
-    "isMaster": true,
+    "isMaster": false,
     "newDisplayName": "UnitTestTenant2"
   },
   "usermanager": {

@@ -6,7 +6,9 @@ var should = require('should');
 var origin = require('../');
 var assetmanager = require('../lib/assetmanager');
 
-var testData = require('./testData.json');
+var testUser = require('./testData.json').testUser;
+var testData = require('./testData.json').assetmanager;
+
 var app = origin();
 
 var agent = {};
@@ -19,8 +21,8 @@ before(function(done) {
     .post('/api/login')
     .set('Accept', 'application/json')
     .send({
-      email: testData.testUser.email,
-      password: testData.testUser.plainPassword
+      email: testUser.email,
+      password: testUser.plainPassword
     })
     .expect(200)
     .expect('Content-Type', /json/)
@@ -40,31 +42,25 @@ it('should allow requests to retrieve an asset', function(done) {
       should.not.exist(error);
       should.exist(res.body);
       res.body.title.should.equal('Temporary Asset');
+      testData.asset = res.body;
       done();
     });
 });
 
-// TODO no hard-delete yet, so the below will fail when run 2+ times
 it('should allow requests to query assets', function(done) {
-  // create lots of assets for us to query
-  async.each([
-    { title: 'yourasset.php' },
-    { title: 'herasset.txt' },
-    { title: 'hisasset.txt' }
-  ], postAsset, function(error) {
-    should.not.exist(error);
-    agent
-      .get('/api/asset/query')
-      .send({ search: { title: '\.txt$' } })
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function(error, res) {
-        should.not.exist(error);
-        should.exist(res.body);
-        res.body.length.should.equal(2, 'Expected 2 results, got ' + res.body.length);
-        done();
-      });
-  });
+  // test by file extension to be a bit more generic
+  var fileExtension = testData.asset.filename.split('.').pop();
+  agent
+    .get('/api/asset/query')
+    .send({ search: { filename: `\.${fileExtension}$` } })
+    .expect(200)
+    .expect('Content-Type', /json/)
+    .end(function(error, res) {
+      should.not.exist(error);
+      should.exist(res.body);
+      res.body.length.should.equal(1, 'Expected 1 result, got ' + res.body.length);
+      done();
+    });
 });
 
 it('should allow requests to serve an asset', function(done) {
@@ -126,17 +122,13 @@ it('should allow requests to restore a soft-deleted asset', function(done) {
     });
 });
 
-function postAsset(assetData, cb) {
-  if(typeof assetData === 'function') {
-    cb = assetData;
-    assetData = {};
-  }
+function postAsset(cb) {
   agent
     .post('/api/asset')
-    .field('title', assetData.title || 'Temporary Asset')
-    .field('description', assetData.description || 'A temporary asset')
-    .field('repository', assetData.repo || 'localfs')
-    .attach('file', assetData.file || __filename)
+    .field('title', testData.asset.title)
+    .field('description', testData.asset.description)
+    .field('repository', testData.asset.repo)
+    .attach('file', __filename)
     .expect(200)
     .expect('Content-Type', /json/)
     .end(function(error, res) {

@@ -215,8 +215,8 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
           // Now zip the build package
           var filename = path.join(COURSE_FOLDER, Constants.Filenames.Download);
           var zipName = helpers.slugify(outputJson['course'].title);
-          var output = fs.createWriteStream(filename),
-            archive = archiver('zip');
+          var output = fs.createWriteStream(filename);
+          var archive = archiver('zip');
 
           output.on('close', function() {
             resultObject.filename = filename;
@@ -234,9 +234,8 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 
           archive.pipe(output);
 
-          archive.bulk([
-            { expand: true, cwd: path.join(BUILD_FOLDER), src: ['**/*'] },
-          ]).finalize();
+          archive.glob('**/*', { cwd: path.join(BUILD_FOLDER) });
+          archive.finalize();
 
         } else {
           // No download required -- skip this step
@@ -679,12 +678,20 @@ function zipExport(error) {
   }
   var archive = archiver('zip');
   var output = fs.createWriteStream(EXPORT_DIR +  '.zip');
-  archive.on('error', cleanUpExport);
+
   output.on('close', cleanUpExport);
+
+  archive.on('warning', function(err) {
+      logger.log('warn', err);
+  });
+  archive.on('error', function(error){
+    logger.log('error', error);
+    cleanUpExport();
+  });
   archive.pipe(output);
-  archive.bulk([
-    { expand: true, cwd: EXPORT_DIR, src: ['**/*'] },
-  ]).finalize();
+  archive.glob('**/*', { cwd: path.join(EXPORT_DIR) });
+  archive.finalize();
+
 };
 
 // remove the EXPORT_DIR, if there is one

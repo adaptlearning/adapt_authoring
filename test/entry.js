@@ -1,6 +1,7 @@
 var async = require('async');
 var fs = require('fs-extra');
 var path = require('path');
+var mongodb = require('mongodb');
 
 var origin = require('../');
 var auth = require('../lib/auth');
@@ -10,35 +11,70 @@ var usermanager = require('../lib/usermanager');
 var tenantmanager = require('../lib/tenantmanager');
 
 var testData = require('./testData.json');
+var testConfig = require('./testConfig.json');
 
 var app = origin();
 
 before(function(done) {
-  // this initialization appears to take a little longer
   this.timeout(600000);
-  // only show warnings and errors
-  logger.level('console','warn');
-  // bootstrapping!
-  app.use({ configFile: path.join('test', 'testConfig.json') });
-  // add some test entities ...
-  app.on('serverStarted', function(server) {
-    createTestTenant(testData.testTenant, function(error, tenant) {
-      if(error) return done(error);
-      testData.testTenant = tenant;
-      testData.testUser._tenantId = tenant._id;
 
-      app.configuration.setConfig('masterTenantID', tenant._id);
-      app.configuration.setConfig('masterTenantName', tenant.name);
+  async.series(
+    [
+      function(callback) {
+        var MongoClient = mongodb.MongoClient;
+        var connStr = 'mongodb://' + testConfig.dbHost + ':' + testConfig.dbPort + '/' + testConfig.dbName;
+        MongoClient.connect(connStr, function(err, db) {
+          if(err){
+            return callback(err)
+          }
 
-      createTestUser(testData.testUser, function(error, user) {
-        if(error) return done(error);
-        testData.testUser._id = user._id;
-        app.rolemanager.assignRoleByName('Super Admin', user._id, done);
-      });
-    });
-  });
-  // start server
-  app.run();
+          db.dropDatabase(function(err, result) {
+            if(err){
+              return callback(err)
+            }
+
+            db.close();
+            return callback()
+          });
+        });
+      },
+      function(callback) {
+        // only show warnings and errors
+        logger.level('console','warn');
+        // bootstrapping!
+        app.use({ configFile: path.join('test', 'testConfig.json') });
+        // add some test entities ...
+        app.on('serverStarted', function(server) {
+          createTestTenant(testData.testTenant, function(error, tenant) {
+            if(error) {
+              return callback(error);
+            }
+            testData.testTenant = tenant;
+            testData.testUser._tenantId = tenant._id;
+
+            app.configuration.setConfig('masterTenantID', tenant._id);
+            app.configuration.setConfig('masterTenantName', tenant.name);
+
+            createTestUser(testData.testUser, function(error, user) {
+              if(error) {
+                return callback(error);
+              }
+              testData.testUser._id = user._id;
+              app.rolemanager.assignRoleByName('Super Admin', user._id, callback);
+            });
+          });
+        });
+        app.run();
+      }
+    ],
+    function(err, data) {
+      if(err){
+        return done(err)
+      }
+
+      return done()
+    }
+  );
 });
 
 after(function(done) {

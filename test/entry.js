@@ -39,8 +39,8 @@ before(function(done) {
       fs.remove(testConfig.dataRoot, cb);
     },
     function initApp(cb) {
-      // only show warnings and errors
-      logger.level('console','warn');
+      // only show errors
+      logger.level('console','error');
       // bootstrapping!
       app.use({ configFile: path.join('test', 'testConfig.json') });
       // add some test entities ...

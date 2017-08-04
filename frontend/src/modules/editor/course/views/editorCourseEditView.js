@@ -1,10 +1,15 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Backbone = require('backbone');
   var Origin = require('core/origin');
 
   var ConfigModel = require('core/models/configModel');
+  var ContentObjectModel = require('core/models/contentObjectModel');
+  var ArticleModel = require('core/models/articleModel');
+  var BlockModel = require('core/models/blockModel');
+  var ComponentModel = require('core/models/componentModel');
+  var ComponentTypeModel = require('core/models/componentTypeModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
+  var EditorCollection = require('../../global/collections/editorCollection');
 
   var EditorCourseEditView = EditorOriginView.extend({
     className: "course-edit",
@@ -44,7 +49,7 @@ define(function(require) {
 
     onSaveSuccess: function(model, response, options) {
       if (this.isNew) {
-        return Origin.router.navigateTo('editor/' + response._id + '/menu');
+        this.populateNewCourse(model, response, options);
       } else {
         EditorOriginView.prototype.onSaveSuccess.apply(this, arguments);
       }
@@ -58,7 +63,84 @@ define(function(require) {
 
       var messageText = typeof response.responseJSON == 'object' && response.responseJSON.message;
       EditorOriginView.prototype.onSaveError.call(this, null, messageText);
+    },
+
+    /**
+     * When a new course is created it gets populated with a page, article, block and blank component
+     * so that it can be previewed immediately.
+     * @param model
+     * @param response
+     * @param options
+     */
+    populateNewCourse: function(model, response, options) {
+      var self = this;
+
+      var contentObjectModel = new ContentObjectModel();
+      contentObjectModel.save({
+        title: 'Page Title',
+        displayTitle: 'Page Title',
+        _type: 'page',
+        _courseId: model.get('_id'),
+        _parentId: model.get('_id')
+      },{
+        error: _.bind(this.onSaveError, self),
+        success: function() {
+          var articleModel = new ArticleModel();
+          articleModel.save({
+            _courseId: model.get('_id'),
+            _parentId: contentObjectModel.get('_id'),
+            _type: 'article'
+          }, {
+            error: _.bind(self.onSaveError, self),
+            success: function() {
+              var blockModel = new BlockModel();
+              blockModel.save({
+                _courseId: model.get('_id'),
+                _parentId: articleModel.get('_id'),
+                _type: 'block',
+                layoutOptions: [
+                  {type: 'left', name: 'app.layoutleft', pasteZoneRenderOrder: 2},
+                  {type: 'full', name: 'app.layoutfull', pasteZoneRenderOrder: 1},
+                  {type: 'right', name: 'app.layoutright', pasteZoneRenderOrder: 3}
+                ]
+              }, {
+                error: _.bind(self.onSaveError, self),
+                success: function() {
+                  // Store the component types
+                  var componentTypes = new EditorCollection(null, {
+                    model: ComponentTypeModel,
+                    url: '/api/componenttype',
+                    _type: 'componentTypes'
+                  });
+
+                  componentTypes.fetch({
+                    error: _.bind(self.onSaveError, self),
+                    success: function() {
+                      var componentModel = new ComponentModel();
+                      componentModel.save({
+                        _courseId: model.get('_id'),
+                        _parentId: blockModel.get('_id'),
+                        body: Origin.l10n.t('app.projectcontentbody'),
+                        _type: 'component',
+                        _component: 'text',
+                        _componentType: componentTypes.findWhere({component: 'text'}).attributes._id,
+                        _layout: 'full'
+                      }, {
+                        error: _.bind(self.onSaveError, self),
+                        success: function() {
+                          Origin.router.navigate('#/editor/' + response._id + '/menu', {trigger: true});
+                        }
+                      });
+                    }
+                  });
+                }
+              })
+            }
+          })
+        }
+      });
     }
+
   }, {
     template: 'editorCourseEdit'
   });

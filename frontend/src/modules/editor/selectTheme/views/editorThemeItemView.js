@@ -25,13 +25,12 @@ define(function(require){
 
     postRender: function() {
       var previewUrl = '/api/theme/preview/' + this.model.attributes.name + '/' + this.model.attributes.version;
-      var $previewLoc = this.$el.find('.theme-preview');
+      var $previewLoc = this.$('.theme-preview');
 
       $.ajax(previewUrl, {
         statusCode: {
-          // if a preview image is found
           200: function() {
-            $previewLoc.prepend('<img src="' + previewUrl + '"alt="Preview image"' + '/>');
+            $previewLoc.prepend($('<img/>', { src: previewUrl, alt: Origin.l10n.t('app.themepreviewalt') }));
           }
         }
       });

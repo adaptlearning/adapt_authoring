@@ -140,6 +140,7 @@
   "app.fixerrors": "Please fix the below errors before continuing.",
   "app.manageextensions": "Manage extensions",
   "app.projectsettings": "Project settings",
+  "app.projectcontentbody": "This is a text component",
   "app.configurationsettings": "Configuration settings",
   "app.themesettings": "Theme settings",
   "app.themepicker": "Theme picker",

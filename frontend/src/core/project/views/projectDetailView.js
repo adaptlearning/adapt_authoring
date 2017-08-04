@@ -123,7 +123,7 @@ define(function(require) {
                       componentModel.save({
                         _courseId: model.get('_id'),
                         _parentId: blockModel.get('_id'),
-                        body: 'This is a text component',
+                        body: window.polyglot.t('app.projectcontentbody'),
                         _type: 'component',
                         _component: 'text',
                         _componentType: componentTypes.findWhere({component: 'text'}).attributes._id,

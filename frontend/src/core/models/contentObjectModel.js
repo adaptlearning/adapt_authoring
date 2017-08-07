@@ -12,12 +12,7 @@ define(function(require) {
     defaults: {
       _isSelected: false,
       _isExpanded: false
-    },
-
-    initialize: function() {
-
-    },
-
+    }
   });
 
   return ContentObjectModel;

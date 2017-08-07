@@ -77,8 +77,8 @@ define(function(require) {
 
       var contentObjectModel = new ContentObjectModel();
       contentObjectModel.save({
-        title: 'Page Title',
-        displayTitle: 'Page Title',
+        title: Origin.l10n.t('app.placeholdernewpage'),
+        displayTitle: Origin.l10n.t('app.placeholdernewpage'),
         _type: 'page',
         _courseId: model.get('_id'),
         _parentId: model.get('_id')

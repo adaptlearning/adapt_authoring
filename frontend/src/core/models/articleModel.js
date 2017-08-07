@@ -6,11 +6,7 @@ define(function(require) {
     urlRoot: '/api/content/article',
     _parent: 'contentObjects',
     _siblings: 'articles',
-    _children: 'blocks',
-
-    initialize: function(options) {
-      // TODO intentional override?
-    }
+    _children: 'blocks'
   });
 
   return ArticleModel;

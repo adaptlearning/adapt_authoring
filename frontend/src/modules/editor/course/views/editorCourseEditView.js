@@ -49,7 +49,7 @@ define(function(require) {
 
     onSaveSuccess: function(model, response, options) {
       if (this.isNew) {
-        this.populateNewCourse(model, response, options);
+        this.populateNewCourse(model);
       } else {
         EditorOriginView.prototype.onSaveSuccess.apply(this, arguments);
       }
@@ -66,78 +66,83 @@ define(function(require) {
     },
 
     /**
-     * When a new course is created it gets populated with a page, article, block and blank component
+     * When a new course is created it gets populated with a page, article, block and text component
      * so that it can be previewed immediately.
      * @param model
-     * @param response
-     * @param options
      */
-    populateNewCourse: function(model, response, options) {
-      var self = this;
+    populateNewCourse: function(model) {
+      this.createGenericPage(model);
+    },
 
-      var contentObjectModel = new ContentObjectModel();
-      contentObjectModel.save({
+    createGenericPage: function(courseModel) {
+      var contentObjectModel = new ContentObjectModel({
         title: Origin.l10n.t('app.placeholdernewpage'),
         displayTitle: Origin.l10n.t('app.placeholdernewpage'),
         _type: 'page',
-        _courseId: model.get('_id'),
-        _parentId: model.get('_id')
-      },{
-        error: _.bind(this.onSaveError, self),
-        success: function() {
-          var articleModel = new ArticleModel();
-          articleModel.save({
-            _courseId: model.get('_id'),
-            _parentId: contentObjectModel.get('_id'),
-            _type: 'article'
-          }, {
-            error: _.bind(self.onSaveError, self),
-            success: function() {
-              var blockModel = new BlockModel();
-              blockModel.save({
-                _courseId: model.get('_id'),
-                _parentId: articleModel.get('_id'),
-                _type: 'block',
-                layoutOptions: [
-                  {type: 'left', name: 'app.layoutleft', pasteZoneRenderOrder: 2},
-                  {type: 'full', name: 'app.layoutfull', pasteZoneRenderOrder: 1},
-                  {type: 'right', name: 'app.layoutright', pasteZoneRenderOrder: 3}
-                ]
-              }, {
-                error: _.bind(self.onSaveError, self),
-                success: function() {
-                  // Store the component types
-                  var componentTypes = new EditorCollection(null, {
-                    model: ComponentTypeModel,
-                    url: '/api/componenttype',
-                    _type: 'componentTypes'
-                  });
+        _courseId: courseModel.get('_id'),
+        _parentId: courseModel.get('_id')
+      });
+      contentObjectModel.save(null, {
+        error: _.bind(this.onSaveError, this),
+        success: _.bind(this.createGenericArticle, this)
+      });
+    },
 
-                  componentTypes.fetch({
-                    error: _.bind(self.onSaveError, self),
-                    success: function() {
-                      var componentModel = new ComponentModel();
-                      componentModel.save({
-                        _courseId: model.get('_id'),
-                        _parentId: blockModel.get('_id'),
-                        body: Origin.l10n.t('app.projectcontentbody'),
-                        _type: 'component',
-                        _component: 'text',
-                        _componentType: componentTypes.findWhere({component: 'text'}).attributes._id,
-                        _layout: 'full'
-                      }, {
-                        error: _.bind(self.onSaveError, self),
-                        success: function() {
-                          Origin.router.navigate('#/editor/' + response._id + '/menu', {trigger: true});
-                        }
-                      });
-                    }
-                  });
-                }
-              })
+    createGenericArticle: function(pageModel) {
+      var articleModel = new ArticleModel({
+        _courseId: pageModel.get('_courseId'),
+        _parentId: pageModel.get('_id'),
+        _type: 'article'
+      });
+      articleModel.save(null, {
+        error: _.bind(this.onSaveError, this),
+        success: _.bind(this.createGenericBlock, this)
+      });
+    },
+
+    createGenericBlock: function(articleModel) {
+      var blockModel = new BlockModel({
+        _courseId: articleModel.get('_courseId'),
+        _parentId: articleModel.get('_id'),
+        _type: 'block',
+        layoutOptions: [
+          { type: 'left', name: 'app.layoutleft', pasteZoneRenderOrder: 2 },
+          { type: 'full', name: 'app.layoutfull', pasteZoneRenderOrder: 1 },
+          { type: 'right', name: 'app.layoutright', pasteZoneRenderOrder: 3 }
+        ]
+      });
+      blockModel.save(null, {
+        error: _.bind(this.onSaveError, this),
+        success: _.bind(this.createGenericComponent, this)
+      });
+    },
+
+    createGenericComponent: function(blockModel) {
+      // Store the component types
+      var componentTypes = new EditorCollection(null, {
+        model: ComponentTypeModel,
+        url: '/api/componenttype',
+        _type: 'componentTypes'
+      });
+      componentTypes.fetch({
+        error: _.bind(this.onSaveError, this),
+        success: _.bind(function() {
+          var componentModel = new ComponentModel({
+            _courseId: blockModel.get('_courseId'),
+            _parentId: blockModel.get('_id'),
+            body: Origin.l10n.t('app.projectcontentbody'),
+            _type: 'component',
+            _component: 'text',
+            _componentType: componentTypes.findWhere({ component: 'text' }).attributes._id,
+            _layout: 'full'
+          });
+          componentModel.save(null, {
+            error: _.bind(this.onSaveError, this),
+            success: function() {
+              Origin.router.navigateTo('/editor/' + componentModel.get('_courseId') + '/menu');
             }
-          })
-        }
+          });
+        }, this)
       });
     }
 

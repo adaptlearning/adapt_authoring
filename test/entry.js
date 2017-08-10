@@ -21,25 +21,7 @@ before(function(done) {
   this.timeout(EXTENDED_TIMEOUT);
 
   async.series([
-    function dumpOldDb(cb) {
-      var MongoClient = mongodb.MongoClient;
-      var connStr = 'mongodb://' + testConfig.dbHost + ':' + testConfig.dbPort + '/' + testConfig.dbName;
-      MongoClient.connect(connStr, function(error, db) {
-        if(error){
-          return cb(error);
-        }
-        db.dropDatabase(function(error, result) {
-          if(error){
-            return cb(error);
-          }
-          db.close();
-          return cb();
-        });
-      });
-    },
-    function removeData(cb) {
-      fs.remove(testConfig.dataRoot, cb);
-    },
+    removeTestData,
     function initApp(cb) {
       // only show errors
       logger.level('console','error');
@@ -90,7 +72,8 @@ after(function(done) {
           app.rolemanager.destroyRole(role._id, cb2);
         }, cb);
       });
-    }
+    },
+    removeTestData
   ], done);
 });
 
@@ -114,6 +97,26 @@ function createTestUser (userDetails, cb) {
       return cb(error, user);
     });
   });
+}
+
+function removeTestData(done) {
+  async.parallel([
+    function dumpOldDb(cb) {
+      var MongoClient = mongodb.MongoClient;
+      var connStr = 'mongodb://' + testConfig.dbHost + ':' + testConfig.dbPort + '/' + testConfig.dbName;
+      MongoClient.connect(connStr, function(error, db) {
+        if(error) return cb(error);
+        db.dropDatabase(function(error, result) {
+          if(error) return cb(error);
+          db.close();
+          return cb();
+        });
+      });
+    },
+    function removeData(cb) {
+      fs.remove(testConfig.dataRoot, cb);
+    }
+  ], done);
 }
 
 // Assumes any .js file in this folder is a test script

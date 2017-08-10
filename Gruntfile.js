@@ -201,17 +201,9 @@ module.exports = function(grunt) {
       files: ['./test_frontend/*.js', '!./test_frontend/login.js']
     },
     mochaTest: {
-      test: {
-        options: {
-          reporter: 'dot',
-          timeout: 3500,
-          require: ['should'],
-          ui: 'bdd',
-          globals: ['app']
-        },
-        src: [
-          'test/*.js'
-        ]
+      src: ['test/*.js'],
+      options: {
+        reporter: 'spec'
       }
     },
     open: {

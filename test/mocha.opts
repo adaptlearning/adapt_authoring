@@ -1,4 +1,0 @@
---require should
---ui bdd
---timeout 3500
---globals app

@@ -148,7 +148,7 @@ function initialize () {
         }
       ],function(err, img) {
         if(err){
-          res.sendStatus(404);
+          res.sendStatus(204);
           return res;
         }
         res.writeHead(200, {'Content-Type': 'image/jpg' });

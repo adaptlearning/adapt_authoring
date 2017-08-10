@@ -357,7 +357,6 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.registerTask('test', ['mochaTest', 'casperjs']);
   grunt.registerTask('default', ['merge-json', 'requireBundle', 'less:dev', 'handlebars', 'watch']);
-  grunt.registerTask('test', ['mochaTest']);
-  grunt.registerTask('test-ui', ['casperjs']);
 };

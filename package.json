@@ -79,7 +79,7 @@
     "node": "4.x"
   },
   "scripts": {
-    "test": "make test"
+    "test": "grunt test"
   },
   "dependencies": {
     "archiver": "~0.16.0",

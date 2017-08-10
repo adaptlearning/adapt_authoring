@@ -15,8 +15,10 @@ var testConfig = require('./testConfig.json');
 
 var app = origin();
 
+var EXTENDED_TIMEOUT = 60000;
+
 before(function(done) {
-  this.timeout(600000);
+  this.timeout(EXTENDED_TIMEOUT);
 
   async.series([
     function dumpOldDb(cb) {
@@ -70,6 +72,8 @@ before(function(done) {
 });
 
 after(function(done) {
+  this.timeout(EXTENDED_TIMEOUT);
+
   async.parallel([
     function removePolicies(cb) {
       permissions.clearPolicies(testData.testUser._id, cb);

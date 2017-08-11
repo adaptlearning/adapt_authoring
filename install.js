@@ -5,7 +5,7 @@ var prompt = require('prompt'),
     path = require('path'),
     rimraf = require('rimraf'),
     exec = require('child_process').exec,
-    builder = require('./lib/application'),
+    origin = require('./lib/application'),
     frameworkHelper = require('./lib/frameworkhelper'),
     auth = require('./lib/auth'),
     database = require('./lib/database'),
@@ -25,7 +25,7 @@ prompt.delimiter = '';
 // get available db drivers and auth plugins
 var drivers = database.getAvailableDriversSync();
 var auths = auth.getAvailableAuthPluginsSync();
-var app = builder();
+var app = origin();
 var masterTenant = false;
 var superUser = false;
 
@@ -190,6 +190,13 @@ userConfig = [
     description: "Password",
     hidden: true,
     required: true
+  },
+  {
+    name: 'retypePassword',
+    type: 'string',
+    description: "Retype Password",
+    hidden: true,
+    required: true
   }
 ];
 
@@ -295,9 +302,9 @@ var steps = [
                 masterTenant = tenant;
                 console.log("Tenant " + tenant.name + " was created. Now saving configuration, please wait ...");
                 // save master tenant name to config
-                configuration.setConfig('masterTenantName', tenant.name);
-                configuration.setConfig('masterTenantID', tenant._id);
-                saveConfig(configuration.getConfig(), cb);
+                app.configuration.setConfig('masterTenantName', tenant.name);
+                app.configuration.setConfig('masterTenantID', tenant._id);
+                saveConfig(app.configuration.getConfig(), cb);
               }
             );
           };
@@ -376,6 +383,7 @@ var steps = [
 
       var userEmail = result.email;
       var userPassword = result.password;
+      var userRetypePassword = result.retypePassword;
       // ruthlessly remove any existing users (we're already nuclear if we've deleted the existing tenant)
       app.usermanager.deleteUser({ email: userEmail }, function (err, userRec) {
         if (err) {
@@ -384,9 +392,10 @@ var steps = [
         }
 
         // add a new user using default auth plugin
-        new localAuth().internalRegisterUser({
+        new localAuth().internalRegisterUser(true, {
             email: userEmail,
             password: userPassword,
+            retypePassword: userRetypePassword,
             _tenantId: masterTenant._id
           }, function (err, user) {
             if (err) {

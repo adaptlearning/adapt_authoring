@@ -679,7 +679,7 @@ function addPackage (plugin, packageInfo, options, cb) {
                     logger.log('error', err);
                     return cb(err);
                   }
-                  
+
                   plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
                     if (err) {
                       logger.log('error', err);
@@ -782,7 +782,7 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
                     if (packageInfo[key].pkgMeta.framework) {
                       // If the plugin defines a framework, ensure that it is compatible
                       if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].pkgMeta.framework)) {
-                        addPackage(plugin, packageInfo[key], options, next); 
+                        addPackage(plugin, packageInfo[key], options, next);
                       } else {
                         logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');
                         next();
@@ -808,52 +808,51 @@ function checkIfHigherVersionExists (package, options, cb) {
     cb = options;
     options = {};
   }
-
   var packageName = package.name;
+  // note we populate options with defaults
+  bower.commands.info(packageName, null, _.extend(_.clone(defaultOptions), options))
+    .on('end', function(info) {
+      // if we get here, we know the package exists...
+      var latestPkg = info.latest;
+      // see bowermanager.js:117
+      var pluginType = latestPkg.hasOwnProperty('component') ? 'component' : latestPkg.hasOwnProperty('extension') ? 'extension' : latestPkg.hasOwnProperty('menu') ? 'menu' : latestPkg.hasOwnProperty('theme') ? 'theme' : '';
+      // FIXME got to be a better way to do ln820-834
+      app.contentmanager.getContentPlugin(pluginType, function(error, plugin) {
+        if(error) {
+          logger.log('error', error);
+          return cb(error);
+        }
+        origin().db.retrieve(plugin.getPluginType(), { name: packageName }, {}, function(error, results) {
+          if(error) {
+            logger.log('error', error);
+            return cb(error);
+          }
+          if(results.length !== 1) {
+            logger.log('error', `Unexpected number of ${packageName}s found (${results.length})`);
+            return cb(error);
+          }
+          var installedVersion = results[0].version;
+          var latestVersionIsNewer = semver.gt(latestPkg.version, installedVersion);
+          var satisfiesFrameworkReq = semver.satisfies(semver.clean(version.adapt_framework), latestPkg.framework);
 
-  options = _.extend(
-    _.clone(defaultOptions),
-    options
-  );
-
-  // Query bower to verify that the specified plugin exists.
-  bower.commands.search(packageName, options)
+          if(!latestVersionIsNewer) {
+            logger.log('info', `Already using the latest version of ${packageName} (${latestPkg.version})`);
+            return cb(null, false);
+          }
+          if(!satisfiesFrameworkReq) {
+            // TODO recursively check old versions; we may be several releases behind
+            logger.log('warn', `A later version of ${packageName} is available but is not supported by the installed version of the Adapt framework (${version.adapt_framework})`);
+            return cb(null, false);
+          }
+          logger.log('info', `A new version of ${packageName} is available (${latestPkg.version})`);
+          cb(null, true);
+        });
+      });
+    })
     .on('error', function(err) {
       logger.log('error', err);
       return cb(null, false);
-    })
-    .on('end', function (results) {
-      if (!results || results.length == 0) {
-        logger.log('warn', 'Plugin ' + packageName + ' not found!');
-        return cb('Plugin ' + packageName + ' not found!');
-      }
-
-      bower.commands.install([packageName], null, options) // Removed #develop tag
-      .on('end', function (info) {
-        // if info is empty, it means there is no higher version of the plugin available
-        if (Object.getOwnPropertyNames(info).length == 0 || !info[packageName].pkgMeta) {
-          return cb(null, false);
-        }
-
-        // Semver check that the plugin is compatibile with the installed version of the framework
-        if (info[packageName].pkgMeta.framework) {
-            // Check which version of the framework we're running
-            if (semver.satisfies(semver.clean(version.adapt_framework), info[packageName].pkgMeta.framework)) {
-              return cb(null, true);
-            } else {
-              logger.log('warn', 'A later version of ' + packageName + ' is available but is not supported by the installed version of the Adapt framework');
-              return cb(null, false);
-            }
-        } else {
-          return cb(null, true);
-        }
-      })
-      .on('error', function(err) {
-        logger.log('error', err);
-        return cb(null, false);
-      });
     });
-
 }
 
 /**

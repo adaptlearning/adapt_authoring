@@ -1,0 +1,134 @@
+@import 'colours';
+
+.module-user {
+  &.location-login,
+  &.location-forgot,
+  &.location-reset {
+    .no-ui;
+
+    max-width: 450px;
+    margin: 0 auto;
+    color: #fff;
+
+    #app {
+      margin-left: 0px;
+    }
+
+    a {
+      color: #fff;
+    }
+
+    button.small {
+      font-size: 16px;
+      margin: 0 auto;
+      display: block;
+      width: 200px;
+      margin-top: 20px;
+      height: 80%;
+    }
+  }
+
+  .login-logo {
+    height: 123px;
+    background-image: url('assets/adapt-learning-logo-white.png');
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .login-title {
+    text-align: center;
+    font-size: 32px;
+    margin-top: 60px;
+    margin-bottom: 40px;
+  }
+
+  #loginError {
+    width: 425px;
+    text-align: center;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 4px;
+    margin: 5px 0;
+    padding: 10px;
+
+    i.fa {
+      color: @alert-color;
+      font-size: 110%;
+      margin-right: 5px;
+    }
+
+    #loginErrorMessage {
+      font-size: 110%;
+      color:white;
+      position: static;
+    }
+  }
+
+  .login-fields, .forgot-password-form {
+    margin: 20px 0 20px 0;
+    position: relative;
+
+    .login-input-username,
+    .login-input-password,
+    .input-username-email {
+      font-size: 20px;
+      border-radius: 4px;
+      border: 0;
+      padding: 11px 20px;
+      background-color: fade(#fff, 40%);
+      color: white;
+      margin-bottom: 5px;
+      height: 40px;
+    }
+
+    input::-webkit-input-placeholder {
+      color: white;
+    }
+    input:-moz-placeholder {
+      color: white;
+    }
+    input::-moz-placeholder {
+      color: white;
+    }
+    input:-ms-input-placeholder {
+      color: white;
+    }
+
+    .input-username-email,
+    .login-input-password,
+    .login-input-username {
+      width: 405px;
+    }
+
+    button {
+      margin-bottom: 5px;
+      width: 445px;
+      height: 65px;
+      font-size: 20px;
+    }
+  }
+
+  .login-remember-me {
+    float: left;
+    font-size: 15px;
+    margin-left: 40px;
+  }
+
+  .remember-me-label {
+    padding-left: 10px;
+    display: inline;
+  }
+
+  .remember-me-checkbox {
+    vertical-align: middle;
+  }
+
+  .login-forgot-password {
+    float: right;
+    margin-right: 80px;
+    a {
+      font-size: 15px;
+      color: white;
+      text-decoration: none;
+    }
+  }
+}

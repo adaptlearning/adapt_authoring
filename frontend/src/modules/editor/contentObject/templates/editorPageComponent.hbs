@@ -1,0 +1,11 @@
+{{>part_editorItemSidebar}}
+
+<div class="component-inner">
+  <div class="component-detail unselectable">
+    {{#if _componentTypeDisplayName}}
+      <div class="component-type">{{_componentTypeDisplayName}}</div>
+    {{/if}}
+    <h4 class="component-title">{{#if displayTitle}}{{{displayTitle}}}{{else}}{{title}}{{/if}}</h4>
+    <div class="component-body">{{{body}}}</div>
+  </div>
+</div>

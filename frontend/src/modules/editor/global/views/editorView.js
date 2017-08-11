@@ -171,19 +171,19 @@ define(function(require){
       }
     },
 
-    launchCoursePreview: function() {
+    updateCoursePreview: function(previewWindow) {
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
 
-      window.open('/preview/' + tenantId + '/' + courseId + '/', 'preview');
+      previewWindow.location.href = '/preview/' + tenantId + '/' + courseId + '/';
     },
 
     previewProject: function(e) {
       e && e.preventDefault();
 
       var self = this;
-
       if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isPreviewPending) {
+        var previewWindow = window.open('/loading', 'preview');
         Origin.editor.isPreviewPending = true;
         $('.navigation-loading-indicator').removeClass('display-none');
         $('.editor-common-sidebar-preview-inner').addClass('display-none');
@@ -196,9 +196,9 @@ define(function(require){
             if (jqXHR.success) {
               if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) != 'undefined' && jqXHR.payload.pollUrl != '') {
                 // Ping the remote URL to check if the job has been completed
-                self.updatePreviewProgress(jqXHR.payload.pollUrl);
+                self.updatePreviewProgress(jqXHR.payload.pollUrl, previewWindow);
               } else {
-                self.launchCoursePreview();
+                self.updateCoursePreview(previewWindow);
                 self.resetPreviewProgress();
               }
             } else {
@@ -207,6 +207,7 @@ define(function(require){
                 type: 'error',
                 text: Origin.l10n.t('app.errorgeneratingpreview')
               });
+              previewWindow.close();
             }
           },
           error: function (jqXHR, textStatus, errorThrown) {
@@ -215,12 +216,13 @@ define(function(require){
               type: 'error',
               text: Origin.l10n.t('app.errorgeneric')
             });
+            previewWindow.close();
           }
         });
       }
     },
 
-    updatePreviewProgress: function(url) {
+    updatePreviewProgress: function(url, previewWindow) {
       var self = this;
 
       var pollUrl = function() {
@@ -230,15 +232,15 @@ define(function(require){
             return;
           }
           clearInterval(pollId);
-          self.launchCoursePreview();
+          self.updateCoursePreview(previewWindow);
           self.resetPreviewProgress();
         }).fail(function(jqXHR, textStatus, errorThrown) {
           clearInterval(pollId);
           self.resetPreviewProgress();
           Origin.Notify.alert({ type: 'error', text: errorThrown });
+          previewWindow.close();
         });
       }
-
       // Check for updated progress every 3 seconds
       var pollId = setInterval(pollUrl, 3000);
     },

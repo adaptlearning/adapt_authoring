@@ -3,13 +3,13 @@
  * Local LocalFileStorage module
  */
 var async = require('async');
-var util = require('util');
-var FFMpeg = require('fluent-ffmpeg');
-var fs = require('fs');
+var ffmpeg = require('fluent-ffmpeg');
+var fs = require('fs-extra');
 var mkdirp = require('mkdirp');
 var ncp = require('ncp').ncp;
 var path = require('path');
 var probe = require('node-ffprobe');
+var util = require('util');
 
 var configuration = require('../../../lib/configuration');
 var FileStorage = require('../../../lib/filestorage').FileStorage;
@@ -265,7 +265,7 @@ LocalFileStorage.prototype.createDirectory = function (filePath, callback) {
  */
 
 LocalFileStorage.prototype.removeDirectory = function (filePath, callback) {
-  fs.rmdir(this.resolvePath(filePath), callback);
+  fs.remove(this.resolvePath(filePath), callback);
 };
 
 /**
@@ -352,69 +352,64 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
  */
 
 LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, options, next) {
-  var imgThumbPath;
   // early return if we can't create thumbnails
   if (!configuration.getConfig('useffmpeg')) {
     return next(null, false);
   }
-
-  var self = this;
   var fileFormat = fileType.split('/')[1];
-  var additionalOptions = [];
   fileType = fileType.split('/')[0];
-  if ('image' === fileType) {
-    if ('gif' === fileFormat){
-      // pixel format for gif required
-      additionalOptions.push('-pix_fmt rgb24');
-      // number of frames
-      additionalOptions.push('-frames 1');
-    }
-    imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath) + '_thumb' + path.extname(filePath));
-    return new FFMpeg({ source: filePath })
-      .addOptions(additionalOptions)
-      .withSize(options.width + 'x' + options.height)
-      .keepPixelAspect(true)
-      .on('error', function (err) {
-        logger.log('error', 'Failed to create image thumbnail: ' + err.message);
-        return next(err, false);
-      })
-      .on('end', function () {
-        return next(null, self.getRelativePath(imgThumbPath));
-      })
-      .saveToFile(imgThumbPath);
-
-  } else if ('video' === fileType) {
-
-    imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath) + '_thumb.gif');
-    // pixel format for gifs (only needed with ffmpeg older versions eg 1.2)
-    additionalOptions.push('-pix_fmt rgb24');
-    // start position 1sec in case of black screen
-    additionalOptions.push('-ss 00:00:01');
-    // frequency of snaps one every five seconds
-    additionalOptions.push('-vf fps=fps=1/5');
-    // number of frames
-    additionalOptions.push('-frames 7');
-    // frame rate
-    additionalOptions.push('-r 7');
-    // set the limit file size in bytes
-    additionalOptions.push('-fs 300000');
-    var pathToDir = path.dirname(filePath);
-    return new FFMpeg({ source : filePath })
-      .addOptions(additionalOptions)
-      .withSize(options.width + 'x' + options.height)
-      .on('error', function (err) {
-        logger.log('error', 'Failed to create video thumbnail: ' + err.message);
-        return next(null, false);
-      })
-      .on('end', function () {
-        return next(null, self.getRelativePath(imgThumbPath));
-      })
-      .saveToFile(imgThumbPath);
+  // also check fileType is supported
+  if(!isThumbnailTypeSupported(fileType)) {
+    return next(null, false);
   }
+  var self = this;
+  var thumbExt = ('image' === fileType) ? path.extname(filePath) : '.gif';
+  var imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath)) + '_thumb' + thumbExt;
 
-  // can't do thumb
-  return next(null, false);
+  var ff = new ffmpeg({ source: filePath }).output(imgThumbPath);
+
+  if ('video' === fileType) {
+    // pixel format for gifs (only needed with ffmpeg older versions eg 1.2)
+    ff.outputOptions('-pix_fmt rgb24');
+    // limit file size to ~300kb
+    ff.outputOptions('-fs 300000');
+    // start position 1sec in case of black screen
+    ff.seekInput('00:00:01');
+    // setting speed to ~x20 gives a good overview
+    ff.videoFilters('setpts=0.05*PTS');
+    // set output framerate
+    ff.fps(1.5);
+  }
+  else if ('gif' === fileFormat) {
+    // pixel format for gifs (only needed with ffmpeg older versions eg 1.2)
+    ff.outputOptions('-pix_fmt rgb24');
+    // only want 1 output image
+    ff.frames(1);
+  }
+  // use size from options
+  ff.size(options.width + 'x' + options.height);
+  // event handling
+  ff.on('error', function(err) {
+    logger.log('error', 'Failed to create ' + fileType + ' thumbnail: ' + err.message);
+    return next(err, false);
+  });
+  ff.on('end', function() {
+    return next(null, self.getRelativePath(imgThumbPath));
+  });
+
+  return ff.run();
 };
+
+function isThumbnailTypeSupported(type) {
+  switch(type) {
+    case 'video':
+    case 'image':
+      return true;
+      break;
+    default:
+      return false;
+  }
+}
 
 /**
  * inspects a file using ffprobe and sets metadata

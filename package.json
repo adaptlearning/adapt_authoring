@@ -1,17 +1,20 @@
 {
   "name": "adapt_authoring",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "license": "GPL-3.0",
   "description": "A server-based user interface for authoring eLearning courses using the Adapt Framework.",
   "keywords": [
     "adapt",
-    "authoring",
-    "builder"
+    "authoring"
   ],
   "contributors": [
     {
       "name": "Ryan Adams",
       "email": "ryana@learningpool.com"
+    },
+    {
+      "name": "Thomas Berger",
+      "email": "thomas.berger@learnchamp.com"
     },
     {
       "name": "Kevin Corry",
@@ -30,6 +33,10 @@
       "email": "dan@sinensis.co.uk"
     },
     {
+      "name": "Tom Greenfield",
+      "email": "tom.greenfield@kineo.com"
+    },
+    {
       "name": "Dennis Heaney",
       "email": "dennis@learningpool.com"
     },
@@ -46,6 +53,10 @@
       "email": "sven.laux@kineo.com"
     },
     {
+      "name": "Louise McMahon",
+      "email": "louise.mcmahon@canstudios.com"
+    },
+    {
       "name": "Rob Moore",
       "email": "rob@learningpool.com"
     },
@@ -58,16 +69,12 @@
       "email": "brian@learningpool.com"
     },
     {
-      "name": "Thomas Berger",
-      "email": "thomas.berger@learnchamp.com"
-    },
-    {
-      "name": "Tom Greenfield",
-      "email": "tom.greenfield@kineo.com"
-    },
-    {
       "name": "Thomas Taylor",
       "email": "hello@tomtaylor.name"
+    },
+    {
+      "name": "Nicola Willis",
+      "email": "nicola.willis@canstudios.com"
     }
   ],
   "repository": {
@@ -79,7 +86,7 @@
     "node": "4.x"
   },
   "scripts": {
-    "test": "make test"
+    "test": "grunt test"
   },
   "dependencies": {
     "archiver": "~0.16.0",
@@ -147,9 +154,10 @@
     "winston": "1.0.2"
   },
   "devDependencies": {
-    "mocha": "~1.13.0",
+    "mocha": "3",
+    "mongodb": "^2.2.30",
     "phantom": "^0.6.5",
-    "should": "~1.3.0",
+    "should": "~11.2.1",
     "supertest": "~0.8.1"
   }
 }

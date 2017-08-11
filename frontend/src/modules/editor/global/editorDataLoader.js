@@ -107,11 +107,10 @@ define(function(require) {
       });
     },
     /**
-    * Deletes course-specific data, and does a fetch on everything else
+    * Deletes course-specific data
     */
     reset: function() {
       Origin.editor.data = _.omit(Origin.editor.data, Object.keys(courseData));
-      preloader.loadGlobalData();
     },
     /**
     * Makes sure all data has been loaded and calls callback

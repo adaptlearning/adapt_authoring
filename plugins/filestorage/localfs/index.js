@@ -4,7 +4,7 @@
  */
 var async = require('async');
 var ffmpeg = require('fluent-ffmpeg');
-var fs = require('fs');
+var fs = require('fs-extra');
 var mkdirp = require('mkdirp');
 var ncp = require('ncp').ncp;
 var path = require('path');
@@ -265,7 +265,7 @@ LocalFileStorage.prototype.createDirectory = function (filePath, callback) {
  */
 
 LocalFileStorage.prototype.removeDirectory = function (filePath, callback) {
-  fs.rmdir(this.resolvePath(filePath), callback);
+  fs.remove(this.resolvePath(filePath), callback);
 };
 
 /**

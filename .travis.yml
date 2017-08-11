@@ -33,6 +33,7 @@ before_install:
   - mongod --version
   - npm install -g adapt-cli
   - adapt --version
+  - npm install -g grunt-cli
 
 install:
   - npm config set spin false

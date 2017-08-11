@@ -201,17 +201,10 @@ module.exports = function(grunt) {
       files: ['./test_frontend/*.js', '!./test_frontend/login.js']
     },
     mochaTest: {
-      test: {
-        options: {
-          reporter: 'dot',
-          timeout: 3500,
-          require: ['should'],
-          ui: 'bdd',
-          globals: ['app']
-        },
-        src: [
-          'test/*.js'
-        ]
+      src: ['test/*.js'],
+      options: {
+        reporter: 'spec',
+        timeout: 3500
       }
     },
     open: {
@@ -357,7 +350,6 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.registerTask('test', ['mochaTest'/*, 'casperjs'*/]);
   grunt.registerTask('default', ['merge-json', 'requireBundle', 'less:dev', 'handlebars', 'watch']);
-  grunt.registerTask('test', ['mochaTest']);
-  grunt.registerTask('test-ui', ['casperjs']);
 };

@@ -1,0 +1,30 @@
+<div class="sidebar-filter-inner">
+    <div class="sidebar-filter-toolbar">
+        <div class="sidebar-filter-toolbar-inner clearfix">
+            <div class="sidebar-filter-toolbar-title">
+                {{t 'app.filterbytags'}}
+            </div>
+            <div class="sidebar-filter-toolbar-subtitle">
+                {{t 'app.pleaseselectcomponent'}}:
+            </div>
+            <div class="sidebar-filter-toolbar-close">
+                <button class="fa fa-times"></button>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-filter-search">
+        <input type="text" placeholder="Filter Tags" class="sidebar-filter-search-input" />
+        <i class="fa fa-search"></i>
+    </div>
+    <div class="sidebar-filter-items">
+        <div class="sidebar-filter-items-inner">
+            {{#each items}}
+            <button class="sidebar-filter-item" data-title="{{title}}" data-id="{{_id}}">
+                <div class="sidebar-filter-item-inner">
+                    {{title}}
+                </div>
+            </button>
+            {{/each}}
+        </div>
+    </div>
+</div>

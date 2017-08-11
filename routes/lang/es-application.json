@@ -99,7 +99,6 @@
   "app.confirmdeleteblockwarning": "IMPORTANTE: Esto eliminará todos los componentes dentro de este bloque.",
   "app.confirmdeletecomponent": "¿Está seguro que desea eliminar este componente?",
   "app.confirmdeletecomponentwarning": "IMPORTANTE: Esto eliminará todos los formatos e informacion dentro de este componente.",
-  "app.confirmapplyextension": "¿Está seguro que desea aplicar %{extension}?",
   "app.confirmdeleteextension": "IMPORTANTE: Esto eliminará toda la configuración que haya sido aplicada a las propiedades de esta extensión. ¿Está seguro que desea eliminar esta extensión?",
   "app.deleteitempage": "Eliminar página",
   "app.deleteitemmenu": "Eliminar sección",

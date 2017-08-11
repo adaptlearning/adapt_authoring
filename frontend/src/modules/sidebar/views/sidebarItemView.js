@@ -148,7 +148,7 @@ define(function(require) {
     },
 
     previewProject: function() {
-      Origin.trigger('editorCommon:preview');
+      Origin.trigger('editorCommon:preview', this.forceRebuild);
     },
 
     exportProject: function() {

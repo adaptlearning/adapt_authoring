@@ -178,9 +178,7 @@ define(function(require){
       previewWindow.location.href = '/preview/' + tenantId + '/' + courseId + '/';
     },
 
-    previewProject: function(e) {
-      e && e.preventDefault();
-
+    previewProject: function(forceRebuild) {
       var self = this;
       if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isPreviewPending) {
         var previewWindow = window.open('/loading', 'preview');
@@ -191,7 +189,7 @@ define(function(require){
 
         $.ajax({
           method: 'get',
-          url: '/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId,
+          url: '/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId + '?force=' + (forceRebuild === true),
           success: function (jqXHR, textStatus, errorThrown) {
             if (jqXHR.success) {
               if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) != 'undefined' && jqXHR.payload.pollUrl != '') {

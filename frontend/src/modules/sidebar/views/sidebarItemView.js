@@ -108,11 +108,11 @@ define(function(require) {
       this.$('.editor-common-sidebar-preview')
         .removeClass('action-primary')
         .addClass('action-warning');
-      this.$('.editor-common-sidebar-preview-inner').text(window.polyglot.t('app.forcerebuild'));
+      this.$('.editor-common-sidebar-preview-inner').text(Origin.l10n.t('app.forcerebuild'));
     },
 
     onKeyUp: function(e) {
-      this.$('.editor-common-sidebar-preview-inner').text(window.polyglot.t('app.preview'));
+      this.$('.editor-common-sidebar-preview-inner').text(Origin.l10n.t('app.preview'));
       this.$('.editor-common-sidebar-preview')
         .removeClass('action-warning')
         .addClass('action-primary');

@@ -26,10 +26,12 @@ define(function(require) {
         this.form = options.form;
       }
       this.render();
-      this.listenTo(Origin, 'sidebar:resetButtons', this.resetButtons);
-      this.listenTo(Origin, 'sidebar:views:animateIn', this.animateViewIn);
-      this.listenTo(Origin, 'key:down', this.onKeyDown);
-      this.listenTo(Origin, 'key:up', this.onKeyUp);
+      this.listenTo(Origin, {
+        'sidebar:resetButtons': this.resetButtons,
+        'sidebar:views:animateIn': this.animateViewIn,
+        'key:down': this.onKeyDown,
+        'key:up': this.onKeyUp
+      });
       _.defer(_.bind(function() {
         this.setupView();
         if (this.form) {

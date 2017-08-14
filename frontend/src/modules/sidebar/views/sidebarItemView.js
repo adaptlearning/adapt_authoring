@@ -42,7 +42,7 @@ define(function(require) {
     postRender: function() {},
 
     setupView: function() {
-        this.listenTo(Origin, 'sidebar:views:remove', this.remove);
+      this.listenTo(Origin, 'sidebar:views:remove', this.remove);
     },
 
     setupFieldsetFilters: function() {

@@ -78,10 +78,14 @@ define(['require', 'underscore', 'backbone'], function(require, _, Backbone){
 
   // abstracted window events
   function listenToWindowEvents() {
-    $(document).on('keydown', onKeyDown);
-    $(document).on('keyup', onKeyUp);
-    $(window).on('resize', onResize);
-    $(window).on('blur focus', onFocusBlur);
+    $(document).on({
+      keydown: onKeyDown,
+      keyup: onKeyUp
+    });
+    $(window).on({
+      resize: onResize,
+      'focus blur':  onFocusBlur
+    });
   }
 
   function showLoading(shouldHideTopBar) {

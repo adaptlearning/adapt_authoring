@@ -15,7 +15,7 @@ var testConfig = require('./testConfig.json');
 
 var app = origin();
 
-var EXTENDED_TIMEOUT = 60000;
+var EXTENDED_TIMEOUT = 600000;
 
 before(function(done) {
   this.timeout(EXTENDED_TIMEOUT);

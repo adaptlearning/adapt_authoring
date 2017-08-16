@@ -55,6 +55,7 @@
       'modules/assetManagement/index',
       'modules/contentPane/index',
       'modules/contextMenu/index',
+      'modules/courseImport/index',
       'modules/editor/index',
       'modules/filters/index',
       'modules/globalMenu/index',

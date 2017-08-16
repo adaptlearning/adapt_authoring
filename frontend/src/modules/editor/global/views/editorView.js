@@ -73,11 +73,6 @@ define(function(require){
         $('.editor-common-sidebar-download-inner').addClass('display-none');
         $('.editor-common-sidebar-downloading').removeClass('display-none');
 
-        if (Origin.constants.outputPlugin == 'adapt') {
-          // Report progress for 45 seconds
-          $('.editor-common-sidebar-downloading').animate({ width: '100%' }, 45000);
-        }
-
         var courseId = Origin.editor.data.course.get('_id');
         var tenantId = Origin.sessionModel.get('tenantId');
 
@@ -228,7 +223,6 @@ define(function(require){
       var pollUrl = function() {
         $.get(url, function(jqXHR, textStatus, errorThrown) {
           if (jqXHR.progress < "100") {
-            $('.navigation-loading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
             return;
           }
           clearInterval(pollId);
@@ -250,7 +244,6 @@ define(function(require){
       var pollId = setInterval(_.bind(function pollURL() {
         $.get(url, function(jqXHR, textStatus, errorThrown) {
           if (jqXHR.progress < "100") {
-            $('.editor-common-sidebar-downloading-progress').animate({ width: jqXHR.progress + '%' }, 1000);
             return;
           }
           clearInterval(pollId);
@@ -264,7 +257,6 @@ define(function(require){
     },
 
     resetPreviewProgress: function() {
-      $('.navigation-loading-progress').css('width', 0).stop();
       $('.editor-common-sidebar-preview-inner').removeClass('display-none');
       $('.editor-common-sidebar-previewing').addClass('display-none');
       $('.navigation-loading-indicator').addClass('display-none');
@@ -272,7 +264,6 @@ define(function(require){
     },
 
     resetDownloadProgress: function() {
-      $('.editor-common-sidebar-downloading-progress').css('width', 0).stop();
       $('.editor-common-sidebar-download-inner').removeClass('display-none');
       $('.editor-common-sidebar-downloading').addClass('display-none');
       Origin.editor.isDownloadPending = false;

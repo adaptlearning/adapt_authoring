@@ -35,7 +35,7 @@ define(function(require) {
     mainView = CourseImportView;
     sidebarView = CourseImportSidebarView;
 
-    Origin.router.createView(mainView, { model: new Backbone.Model({ globalData: data }) });
+    Origin.contentPane.setView(mainView, { model: new Backbone.Model({ globalData: data }) });
     Origin.sidebar.addView(new sidebarView().$el);
   });
 });

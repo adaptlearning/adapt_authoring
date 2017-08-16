@@ -157,7 +157,7 @@ define(function(require) {
           self.$el.css('cursor', 'default');
           Origin.Notify.alert({
             type: 'error',
-            title: window.polyglot.t('app.exporterrortitle'),
+            title: Origin.l10n.t('app.exporterrortitle'),
             text: messageText
           });
         }

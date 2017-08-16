@@ -2,7 +2,7 @@
 /*
  * TODO I think this exists to add extra functionality to the menu/page structure pages
  */
-define(function(require){
+define(function(require) {
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
   var Origin = require('core/origin');
@@ -73,14 +73,6 @@ define(function(require){
         $('.editor-common-sidebar-download-inner').addClass('display-none');
         $('.editor-common-sidebar-downloading').removeClass('display-none');
 
-<<<<<<< HEAD:frontend/src/core/editor/global/views/editorView.js
-        if (Origin.constants.outputPlugin == 'adapt') {
-          // Report progress for 45 seconds
-          $('.editor-common-sidebar-downloading').animate({ width: '100%' }, 45000);
-        }
-
-=======
->>>>>>> develop:frontend/src/modules/editor/global/views/editorView.js
         var courseId = Origin.editor.data.course.get('_id');
         var tenantId = Origin.sessionModel.get('tenantId');
 

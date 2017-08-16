@@ -28,7 +28,8 @@ function AdaptOutput() {
 
 util.inherits(AdaptOutput, OutputPlugin);
 
-AdaptOutput.prototype.publish = function(courseId, isPreview, request, response, next) {
+AdaptOutput.prototype.publish = function(courseId, mode, request, response, next) {
+  var app = origin();
   var self = this;
   var user = usermanager.getCurrentUser();
   var tenantId = user.tenant._id;
@@ -79,7 +80,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         });
       },
       function(callback) {
-        self.sanitizeCourseJSON(outputJson, function(err, data) {
+        self.sanitizeCourseJSON(mode, outputJson, function(err, data) {
           if (err) {
             return callback(err);
           }
@@ -211,7 +212,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         });
       },
       function(callback) {
-        if (!isPreview) {
+        if (mode !== Constants.Modes.preview) {
           // Now zip the build package
           var filename = path.join(COURSE_FOLDER, Constants.Filenames.Download);
           var zipName = helpers.slugify(outputJson['course'].title);
@@ -253,7 +254,6 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
     });
 
 };
-
 
 /**
 * Course import function
@@ -308,6 +308,7 @@ AdaptOutput.prototype.export = function(pCourseId, devMode, request, response, p
       return next(error);
     }
     // export tasks vary based on type of export
+    // TODO merge these two
     async.auto(devMode === 'true' ? {
       // dev export
       generateLatestBuild: generateLatestBuild,
@@ -324,7 +325,7 @@ AdaptOutput.prototype.export = function(pCourseId, devMode, request, response, p
 };
 
 function generateLatestBuild(courseBuilt) {
-  self.publish(courseId, true, null, null, courseBuilt);
+  self.publish(courseId, Constants.Modes.Export, null, null, courseBuilt);
 };
 
 /**
@@ -353,7 +354,6 @@ function generateMetadata(generatedMetadata) {
     if(error) {
       return generatedMetadata(error);
     }
-
     metadata = results;
     fs.writeJson(path.join(EXPORT_DIR, Constants.Filenames.Metadata), metadata, { spaces:0 }, generatedMetadata);
   });

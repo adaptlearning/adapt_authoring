@@ -1,0 +1,93 @@
+<div class="sidebar-item-inner">
+
+{{!--     <div class="sidebar-row sidebar-item-title">
+        <h2 class="sidebar-item-title-inner">
+            Asset Management
+        </h2>
+    </div> --}}
+
+    <div class="separator"></div>
+
+    <button class="asset-management-sidebar-new action-primary">
+        <span class="asset-management-sidebar-new-inner">
+            {{t 'app.uploadnewasset'}}
+        </span>
+    </button>
+
+    <div class="separator"></div>
+
+    {{!-- ASSET FILTERS --}}
+
+    <div class="sidebar-row sidebar-divide">
+        <h3 class="sidebar-divide-inner">
+            <i class="fa fa-filter"></i>{{t 'app.assetfilters'}}
+        </h3>
+    </div>
+
+    {{!-- inline search field with close button --}}
+    <div class="sidebar-row">
+        <div class="sidebar-row-input">
+            <input type="text" class="asset-management-sidebar-filter-search" placeholder="{{t 'app.searchbyname'}}"/>
+            <button class="sidebar-filter-clear">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="asset-management-sidebar-filter-image sidebar-tag asset-management-sidebar-filter-button" data-filter-type="image">
+            <span class="asset-management-sidebar-filter-image-inner">
+                <i class="fa fa-toggle-off"></i>{{t 'app.filetypeimage' }}
+            </span>
+            <span class="asset-management-sidebar-filter-image-icon">
+                <i class="fa fa-image"></i>
+            </span>
+        </button>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="asset-management-sidebar-filter-audio sidebar-tag asset-management-sidebar-filter-button" data-filter-type="audio">
+            <span class="asset-management-sidebar-filter-audio-inner">
+                <i class="fa fa-toggle-off"></i>{{t 'app.filetypeaudio' }}
+            </span>
+            <span class="asset-management-sidebar-filter-image-icon">
+                <i class="fa fa-file-audio-o"></i>
+            </span>
+        </button>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="asset-management-sidebar-filter-video sidebar-tag asset-management-sidebar-filter-button" data-filter-type="video">
+            <span class="asset-management-sidebar-filter-video-inner">
+                <i class="fa fa-toggle-off"></i>{{t 'app.filetypevideo' }}
+            </span>
+            <span class="asset-management-sidebar-filter-image-icon">
+                <i class="fa fa-file-video-o"></i>
+            </span>
+        </button>
+    </div>
+
+    <div class="sidebar-row">
+        <button class="asset-management-sidebar-filter-other sidebar-tag asset-management-sidebar-filter-button" data-filter-type="other">
+            <span class="asset-management-sidebar-filter-other-inner">
+                <i class="fa fa-toggle-off"></i>{{t 'app.filetypeother' }}
+            </span>
+            <span class="asset-management-sidebar-filter-image-icon">
+                <i class="fa fa-file-o"></i>
+            </span>
+        </button>
+    </div>
+
+    <div class="sidebar-row sidebar-divide">
+        <h3 class="sidebar-divide-inner">
+            <i class="fa fa-tags"></i>{{t 'app.tags'}}
+        </h3>
+    </div>
+
+        <button class="asset-management-sidebar-add-tag sidebar-filter-button sidebar-tag action-secondary">
+            <span class="dashboard-sidebar-add-tag-inner">
+                {{t 'app.searchbytag' }}
+            </span>
+        </button>
+
+</div>

@@ -1,0 +1,26 @@
+@import 'sharedStyles';
+@import 'colours';
+
+.asset-management-new-asset {
+    .form-container-style;
+
+    .progress-container {
+        position:relative;
+        visibility:hidden;
+        width:76px;
+        height:10px;
+        background-color: white;
+        border:1px solid black;
+        overflow: hidden;
+        border-radius: 8px;
+        margin: 10px 0;
+        .progress-bar {
+            width:0%;
+                background-color: @primary-color;
+            height:100%;
+            .progress-percent {
+                display: none;
+            }
+        }
+    }
+}

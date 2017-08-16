@@ -1,55 +1,37 @@
-var mongoose = require('mongoose'),
-    should = require('should'),
-    origin = require('../');
+var mongoose = require('mongoose');
+var should = require('should');
 
-describe('database', function() {
+var testData = require('./testData.json').database;
+var origin = require('../');
 
-  before(function(){
-    var app = origin();
-    var db = app.db;
-    db.addModel('foo', { properties: { email: {  type: 'string' } }  });
+var app = origin();
+
+before(function() {
+  app.db.addModel(testData.model, { properties: { email: {  type: 'string' } }  });
+});
+
+it('should be able to insert new objects', function(done) {
+  app.db.create(testData.model, { email: testData.email }, done);
+});
+
+it('should be able to retrieve stored objects', function(done) {
+  app.db.retrieve(testData.model, { email: testData.email }, done);
+});
+
+it('should be able to update stored objects', function(done) {
+  app.db.retrieve(testData.model, { email: testData.email }, function(error, results) {
+    should.not.exist(error);
+    results.length.should.be.above(0, 'Expected result was not retrieved');
+    var obj = results[0];
+    app.db.update(testData.model, { _id: obj._id }, { email: testData.altEmail }, done);
   });
+});
 
-  it ('should allow me to insert a new object', function(done) {
-    var app = origin();
-    var db = app.db;
-    db.create('foo', { email: "foo@bar.com" }, done);
+it('should be able to delete stored objects', function(done) {
+  app.db.retrieve(testData.model, { email: testData.altEmail }, function(error, results) {
+    should.not.exist(error);
+    results.length.should.be.above(0, 'Expected result was not retrieved');
+    var obj = results[0];
+    app.db.destroy(testData.model, { _id: obj._id }, done);
   });
-
-  it ('should allow me to retrieve that object', function(done) {
-    var app = origin();
-    var db = app.db;
-    db.retrieve('foo', { email: "foo@bar.com" }, done);
-  });
-
-  it ('should allow me to update an object', function(done) {
-    var app = origin();
-    var db = app.db;
-    db.retrieve('foo', { email: "foo@bar.com" }, function (error, results) {
-      if (error) {
-        done(error);
-      } else if (results && results.length) {
-        var obj = results[0];
-        db.update('foo', { _id: obj._id }, { email: "bar@foo.com" }, done);
-      } else {
-        done(new Error('Expected result was not retrieved'));
-      }
-    });
-  });
-
-  it ('should allow me to delete an object', function(done) {
-    var app = origin();
-    var db = app.db;
-    db.retrieve('foo', { email: "bar@foo.com" }, function (error, results) {
-      if (error) {
-        done(error);
-      } else if (results && results.length) {
-        var obj = results[0];
-        db.destroy('foo', { _id: obj._id }, done);
-      } else {
-        done(new Error('Expected result was not retrieved'));
-      }
-    });
-  });
-
 });

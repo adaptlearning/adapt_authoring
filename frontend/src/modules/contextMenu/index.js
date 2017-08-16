@@ -53,7 +53,7 @@ define(function(require) {
         callbackEvent: 'preview'
       }
     ]);
-    ContextMenu.addItem('course', getDefaultItems().push({
+    ContextMenu.addItem('course', getDefaultItems().concat({
       title: Origin.l10n.t('app.export'),
       className: 'context-menu-item',
       callbackEvent: 'export'

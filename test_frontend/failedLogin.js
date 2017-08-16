@@ -1,11 +1,15 @@
 //opens page
+var fs = require('fs');
+configFile = fs.read('./test_frontend/config.json');
+config = JSON.parse(configFile);
+
 casper.test.begin('Failing login test (no values)', 2, function suite(test) {
-    casper.start("http://localhost:3000", function() {
+    casper.start("http://localhost:" + config.serverPort, function() {
         this.evaluate(function() {
           document.querySelector('body').style.backgroundColor = "white";
         });
         this.wait(1000, function(){});
-        this.test.assertTitle("Adapt Origin", "Adapt login page title is the one expected");
+        this.test.assertTitle("Adapt authoring tool", "Adapt login page title is the one expected");
     }).viewport(1366,768);
 
     //screenshot of the homepage before anything is entered
@@ -27,7 +31,7 @@ casper.test.begin('Failing login test (no values)', 2, function suite(test) {
 
     //test output if the error message is there
     casper.then(function() {
-        //this.test.assertSelectorDoesntHaveText("#loginErrorMessage", "");    
+        //this.test.assertSelectorDoesntHaveText("#loginErrorMessage", "");
         this.test.assertEval(function() {
             return __utils__.findOne('#loginErrorMessage').textContent !== '';
         }, "Error message appeared properly - no information provided");
@@ -35,16 +39,16 @@ casper.test.begin('Failing login test (no values)', 2, function suite(test) {
 
     casper.run(function() {
         test.done();
-    }); 
+    });
 });
 
 casper.test.begin('Failing login test (wrong values)', 2, function suite(test) {
-    casper.start("http://localhost:3000", function() {
+  casper.start("http://localhost:" + config.serverPort, function() {
         this.evaluate(function() {
           document.querySelector('body').style.backgroundColor = "white";
         });
         this.wait(1000, function(){});
-        this.test.assertTitle("Adapt Origin", "Adapt login page title is the one expected");
+    this.test.assertTitle("Adapt authoring tool", "Adapt login page title is the one expected");
     }).viewport(1366,768);
 
     //screenshot of the homepage before anything is entered
@@ -54,7 +58,7 @@ casper.test.begin('Failing login test (wrong values)', 2, function suite(test) {
 
     //fill in the form with incorrect information
     casper.then(function() {
-        this.fillSelectors("form.forms", {
+        this.fillSelectors("form.login-form", {
         'input[id=login-input-username]' : 'this is incorrect information',
         'input[id=login-input-password]' : 'pass'
         });
@@ -73,7 +77,7 @@ casper.test.begin('Failing login test (wrong values)', 2, function suite(test) {
         this.wait(1000, function() {
             this.test.assertEval(function() {
                 return __utils__.findOne('#loginErrorMessage').textContent !== '';
-            }, "Error message appeared properly - wrong information");   
+            }, "Error message appeared properly - wrong information");
         });
     });
 
@@ -85,5 +89,5 @@ casper.test.begin('Failing login test (wrong values)', 2, function suite(test) {
 
     casper.run(function() {
         test.done();
-    }); 
+    });
 });

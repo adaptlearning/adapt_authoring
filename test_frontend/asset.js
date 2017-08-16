@@ -6,7 +6,7 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
 
     casper.then(function() {
 	    this.wait(500, function() {});
-	    test.assertExists("a[class='project-layout-list']", "Menu is there");
+	    test.assertExists("div.options");
     });
 
 
@@ -42,10 +42,7 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
         casper.evaluate(function() {
             document.querySelector('input[name="search"]').setAttribute("value","no results");
         });
-        
-    });
-    casper.then(function() {
-        this.click("button[type=submit]");
+
     });
     casper.then(function() {
         this.wait(1000, function() {
@@ -56,7 +53,7 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
     //checks for an error message being displayed on the page
     casper.then(function() {
         this.wait(1000, function() {
-            test.assertSelectorHasText('.unit-40', 'No assets found');
+            test.assertExists('.asset-management-no-assets', 'No assets found');
         });
     });
 
@@ -66,12 +63,12 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
 
     casper.then(function() {
     	casper.test.comment("Testing uploading");
-    	test.assertExists(".asset-nav-tabs > ul:nth-child(1) > li:nth-child(2) > a:nth-child(1)", "Able to upload a new file");
+    	test.assertExists('.asset-management-sidebar-new-inner', "Upload button exists on the page");
     });
 
     //clicks on the "Upload new asset" tab
     casper.then(function() {
-    	this.click(".asset-nav-tabs > ul:nth-child(1) > li:nth-child(2) > a:nth-child(1)");
+      this.click('.asset-management-sidebar-new-inner');
     });
 
     casper.then(function() {
@@ -79,14 +76,14 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
 	});
 
     //fill in the form
-	casper.then(function() {
+    casper.then(function() {
     	this.fill("form.asset-form", {
     	'file' : config.assetPath
 		});
-	});
+    });
 
     casper.then(function() {
-        this.fill("form.asset-form", {
+        this.fill(".asset-form", {
         'title' : 'testing',
         'description' : 'description'
         }, true);
@@ -99,11 +96,6 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
     //submits the image
 	casper.then(function() {
 		this.click("button[type=submit]");
-    });
-
-    //clicks the "Filters" tab
-    casper.then(function() {
-       this.click(".asset-nav-tabs > ul:nth-child(1) > li:nth-child(1) > a:nth-child(1)") 
     });
 
     casper.then(function() {
@@ -119,13 +111,6 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
         casper.evaluate(function() {
             document.querySelector('input[name="search"]').setAttribute("value", "testing");
         });
-        
-    });
-
-    casper.then(function() {
-        this.wait(1000, function() {
-            this.click("button[type=submit]");
-        });
     });
 
     casper.then(function() {
@@ -136,10 +121,10 @@ casper.test.begin('Test Asset Manager', 7, function suite(test) {
 
     //checks to make sure the error text isn't on the page
     casper.then(function() {
-        test.assertSelectorDoesntHaveText('.unit-40', 'No assets found');
+        test.assertExists('.asset-management-no-assets.display-none', 'Asset found');
     });
 
     casper.run(function() {
         test.done();
-    }); 	
+    });
 });

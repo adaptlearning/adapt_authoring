@@ -1,17 +1,19 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 var _ = require('underscore');
-var origin = require('../../../')();
-var yauzl = require("yauzl");
-var fs = require("fs-extra");
+var async = require('async');
+var Constants = require('../../../lib/outputmanager').Constants;
+var crypto = require('crypto');
 var database = require("../../../lib/database");
+var filestorage = require('../../../lib/filestorage');
+var fs = require("fs-extra");
 var logger = require("../../../lib/logger");
 var path = require("path");
-var Constants = require('../../../lib/outputmanager').Constants;
 var semver = require('semver');
-var version = require('../../../version');
-var crypto = require('crypto');
-var filestorage = require('../../../lib/filestorage');
 var util = require('util');
+var version = require('../../../version');
+var yauzl = require("yauzl");
+
+var origin = require('../../../')();
 
 // possible shared functions include:
 // addAssets

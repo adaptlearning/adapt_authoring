@@ -5,18 +5,19 @@ var fs = require("fs-extra");
 var path = require("path");
 var IncomingForm = require('formidable').IncomingForm;
 
-var origin = require('../../../')();
+var configuration = require('../../../lib/configuration');
+var Constants = require('../../../lib/outputmanager').Constants;
 var database = require("../../../lib/database");
+var glob = require('glob');
+var helpers = require('./helpers');
 var logger = require("../../../lib/logger");
 var usermanager = require('../../../lib/usermanager');
-var glob = require('glob');
-var Constants = require('../../../lib/outputmanager').Constants;
-var helpers = require('./helpers');
+
+var origin = require('../../../')();
 
 // TODO integrate with sockets API to show progress
 
 function Import(req, done) {
-
   var tenantId = usermanager.getCurrentUser().tenant._id;
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId);
   var unzipFolder = tenantId + '_unzipped';
@@ -24,7 +25,6 @@ function Import(req, done) {
   var cleanupDirs = [];
   var metadata = {};
   var form = new IncomingForm();
-
 
   /**
   * FUNCTION: Import

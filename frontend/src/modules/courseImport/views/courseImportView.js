@@ -3,7 +3,7 @@ define(function(require){
   var Helpers = require('core/helpers');
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
-  var TagsInput = require('libraries/jquery.tagsinput.min');
+  var TagsInput = require('jqueryTagsInput');
 
   var CourseImportView = OriginView.extend({
     tagName: 'div',
@@ -35,7 +35,6 @@ define(function(require){
           $(errormsg).text('');
         }
       });
-
       if (this.model.isNew() && !uploadFile.val()) {
         validated = false;
         $(uploadFile).addClass('input-error');
@@ -51,17 +50,14 @@ define(function(require){
       if(!this.isValid()) {
         return;
       }
-
       // submit form data
       this.$('form.courseImport').ajaxSubmit({
-
         uploadProgress: function(event, position, total, percentComplete) {
           $(".progress-container").css("visibility", "visible");
           var percentVal = percentComplete + '%';
           $(".progress-bar").css("width", percentVal);
           $('.progress-percent').html(percentVal);
         },
-
         error: _.bind(this.onAjaxError, this),
         success: _.bind(this.onFormSubmitSuccess, this)
       });

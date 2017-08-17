@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Origin = require('coreJS/app/origin');
-  var SidebarItemView = require('coreJS/sidebar/views/sidebarItemView');
+  var Origin = require('core/origin');
+  var SidebarItemView = require('modules/sidebar/views/sidebarItemView');
 
   var FrameworkImportSidebarView = SidebarItemView.extend({
     events: {
@@ -11,13 +11,13 @@ define(function(require) {
 
     importCourse: function(event) {
       event && event.preventDefault();
-      this.updateButton('.framework-import-sidebar-save-button', window.polyglot.t('app.importing'));
+      this.updateButton('.framework-import-sidebar-save-button', Origin.l10n.t('app.importing'));
       Origin.trigger('frameworkImport:uploadCourse');
     },
 
     goBack: function(event) {
       event && event.preventDefault();
-      Origin.router.navigate('#/dashboard', { trigger: true });
+      Origin.router.navigateToHome();
     }
   }, {
     template: 'frameworkImportSidebar'

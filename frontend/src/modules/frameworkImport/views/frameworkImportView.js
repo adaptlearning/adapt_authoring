@@ -1,9 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var Helpers = require('coreJS/app/helpers');
-  var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
-  var TagsInput = require('core/libraries/jquery.tagsinput.min');
+  var Helpers = require('core/helpers');
+  var Origin = require('core/origin');
+  var OriginView = require('core/views/originView');
+  var TagsInput = require('jqueryTagsInput');
 
   var FrameworkImportView = OriginView.extend({
     tagName: 'div',
@@ -11,7 +11,7 @@ define(function(require){
     createdCourseId: false,
 
     preRender: function() {
-      Origin.trigger('location:title:update', { title: window.polyglot.t('app.frameworkimporttitle') });
+      Origin.trigger('location:title:update', { title: Origin.l10n.t('app.frameworkimporttitle') });
       this.listenTo(Origin, 'frameworkImport:uploadCourse', this.uploadCourse);
     },
 
@@ -37,7 +37,7 @@ define(function(require){
         if (!$.trim($(el).val())) {
           validated = false;
           $(el).addClass('input-error');
-          $(errormsg).text(window.polyglot.t('app.pleaseentervalue'));
+          $(errormsg).text(Origin.l10n.t('app.pleaseentervalue'));
         } else {
           $(el).removeClass('input-error');
           $(errormsg).text('');
@@ -47,7 +47,7 @@ define(function(require){
       if (this.model.isNew() && !uploadFile.val()) {
         validated = false;
         $(uploadFile).addClass('input-error');
-        $(uploadFileErrormsg).text(window.polyglot.t('app.pleaseaddfile'));
+        $(uploadFileErrormsg).text(Origin.l10n.t('app.pleaseaddfile'));
       } else {
         $(uploadFile).removeClass('input-error');
         $(uploadFileErrormsg).text('');
@@ -84,14 +84,12 @@ define(function(require){
     },
 
     goBack: function() {
-      Origin.router.navigate('#/dashboard', { trigger:true });
+      Origin.router.navigateToHome();
     },
 
     onFormSubmitSuccess: function(importData, impoprtStatus, importXhr) {
       this.createdCourseId = importData._id;
-
-      var self = this;
-      Origin.router.navigate('#/dashboard', { trigger:true });
+      Origin.router.navigateToHome();
     },
 
     onAjaxSuccess: function() {
@@ -107,7 +105,7 @@ define(function(require){
       }
       Origin.Notify.alert({
         type: 'error',
-        title: window.polyglot.t('app.importerrortitle'),
+        title: Origin.l10n.t('app.importerrortitle'),
         text: data.responseText || error
       });
     },

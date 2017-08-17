@@ -54,7 +54,7 @@ define(function(require) {
       }
     ]);
     ContextMenu.addItem('course', getDefaultItems().concat({
-      title: Origin.l10n.t('app.export'),
+      title: Origin.l10n.t('app.downloadbackup'),
       className: 'context-menu-item',
       callbackEvent: 'export'
     }));

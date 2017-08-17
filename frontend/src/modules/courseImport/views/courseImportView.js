@@ -3,7 +3,7 @@ define(function(require){
   var Helpers = require('core/helpers');
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
-  var TagsInput = require('libraries/jquery.tagsinput.min');
+  var TagsInput = require('jqueryTagsInput');
 
   var CourseImportView = OriginView.extend({
     tagName: 'div',
@@ -70,14 +70,12 @@ define(function(require){
     },
 
     goBack: function() {
-      Origin.router.navigate('#/dashboard', { trigger:true });
+      Origin.router.navigateToHome();
     },
 
     onFormSubmitSuccess: function(importData, impoprtStatus, importXhr) {
       this.createdCourseId = importData._id;
-
-      var self = this;
-      Origin.router.navigate('#/dashboard', { trigger:true });
+      Origin.router.navigateToHome();
     },
 
     onAjaxSuccess: function() {

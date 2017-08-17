@@ -13,17 +13,17 @@ define(function(require) {
   Origin.on('origin:dataReady login:changed', function() {
     Origin.permissions.addRoute('courseImport', data.featurePermissions);
 
-  	if (Origin.permissions.hasPermissions(data.featurePermissions)) {
-  		Origin.globalMenu.addItem({
-        "location": "global",
-        "text": Origin.l10n.t('app.courseimportmenu'),
-        "icon": "fa-upload",
-        "sortOrder": 5,
-        "callbackEvent": "courseImport:open"
-      });
-  	} else {
+  	if(!Origin.permissions.hasPermissions(data.featurePermissions)) {
       isReady = true;
+      return;
     }
+		Origin.globalMenu.addItem({
+      "location": "global",
+      "text": Origin.l10n.t('app.courseimportmenu'),
+      "icon": "fa-upload",
+      "sortOrder": 5,
+      "callbackEvent": "courseImport:open"
+    });
   });
 
   Origin.on('globalMenu:courseImport:open', function() {
@@ -31,11 +31,7 @@ define(function(require) {
   });
 
   Origin.on('router:courseImport', function(location, subLocation, action) {
-    var mainView, sidebarView;
-    mainView = CourseImportView;
-    sidebarView = CourseImportSidebarView;
-
-    Origin.router.createView(mainView, { model: new Backbone.Model({ globalData: data }) });
-    Origin.sidebar.addView(new sidebarView().$el);
+    Origin.contentPane.setView(CourseImportView, { model: new Backbone.Model({ globalData: data }) });
+    Origin.sidebar.addView(new CourseImportSidebarView().$el);
   });
 });

@@ -2,17 +2,18 @@
 var _ = require('underscore');
 var async = require('async');
 var fs = require("fs-extra");
-var path = require("path");
 var IncomingForm = require('formidable').IncomingForm;
+var path = require("path");
 
-var database = require("../../../lib/database");
-var logger = require("../../../lib/logger");
+var configuration = require('../../../lib/configuration');
 var Constants = require('../../../lib/outputmanager').Constants;
-var helpers = require('./helpers');
-var mime = require('mime');
-var glob = require('glob');
 var crypto = require('crypto');
+var database = require("../../../lib/database");
 var filestorage = require('../../../lib/filestorage');
+var glob = require('glob');
+var helpers = require('./helpers');
+var logger = require("../../../lib/logger");
+var mime = require('mime');
 
 // TODO integrate with sockets API to show progress
 // TODO add assets to clean up routine if import fails

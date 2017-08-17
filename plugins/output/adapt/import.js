@@ -2,16 +2,18 @@
 var _ = require('underscore');
 var async = require('async');
 var fs = require("fs-extra");
-var path = require("path");
+var glob = require('glob');
 var IncomingForm = require('formidable').IncomingForm;
+var path = require("path");
 
-var origin = require('../../../')();
+var configuration = require('../../../lib/configuration');
+var Constants = require('../../../lib/outputmanager').Constants;
 var database = require("../../../lib/database");
+var helpers = require('./helpers');
 var logger = require("../../../lib/logger");
 var usermanager = require('../../../lib/usermanager');
-var glob = require('glob');
-var Constants = require('../../../lib/outputmanager').Constants;
-var helpers = require('./helpers');
+
+var origin = require('../../../')();
 
 // TODO integrate with sockets API to show progress
 

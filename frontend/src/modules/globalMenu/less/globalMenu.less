@@ -1,0 +1,113 @@
+@import 'colours';
+
+.global-menu {
+  display:none;
+  top:61px;
+  position:absolute;
+  width:260px;
+  background-color:@primary-color;
+
+  a {
+    display:block;
+    color:@navigation-text-color;
+    text-decoration: none;
+    border-bottom:1px solid lighten(@primary-color, 10%);
+    &:hover {
+      background-color:lighten(@primary-color, 10%);
+      color:@navigation-text-color;
+    }
+  }
+
+  .global-menu-inner {
+    border-left: 1px solid rgba(0,0,0,0.1);
+    border-right: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .global-menu-submenu {
+    display:none;
+    width:260px;
+    position:absolute;
+    background-color:#FFF;
+    border-top:1px solid #FFF;
+    border-left:1px solid #FFF;
+  }
+
+  .global-menu-item-inner {
+    padding:14px 18px;
+  }
+
+  .global-menu-item-text-inner {
+    color: white;
+  }
+}
+
+#global-menu-icon {
+  width: 30px;
+  position: relative;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+  -webkit-transition: .5s ease-in-out;
+  -moz-transition: .5s ease-in-out;
+  -o-transition: .5s ease-in-out;
+  transition: .5s ease-in-out;
+  cursor: pointer;
+}
+
+#global-menu-icon span {
+  display: block;
+  position: absolute;
+  height: 2px;
+  width: 22px;
+  background: #fff;
+  border-radius: 5px;
+  -webkit-transform-origin: left center;
+  -moz-transform-origin: left center;
+  -o-transform-origin: left center;
+  transform-origin: left center;
+  -webkit-transition: .25s ease-in-out;
+  -moz-transition: .25s ease-in-out;
+  -o-transition: .25s ease-in-out;
+  transition: .25s ease-in-out;
+}
+
+#global-menu-icon.open span{
+  height: 12px;
+  width: 12px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+  border-radius: 0;
+}
+
+#global-menu-icon span:nth-child(1) {
+  top: 12px;
+  left: 10px;
+}
+
+#global-menu-icon span:nth-child(2) {
+  top: 19px;
+  left: 10px;
+}
+
+#global-menu-icon span:nth-child(3) {
+  top: 26px;
+  left: 10px;
+}
+
+#global-menu-icon.open span:nth-child(1) {
+  top: 6px;
+  left: 15px;
+}
+
+#global-menu-icon.open span:nth-child(2) {
+  top: 14px;
+  left: 23px;
+}
+
+#global-menu-icon.open span:nth-child(3) {
+  top: 14px;
+  left: 7px;
+}

@@ -1,5 +1,0 @@
---require should
---reporter dot
---ui bdd
---timeout 3500
---globals app

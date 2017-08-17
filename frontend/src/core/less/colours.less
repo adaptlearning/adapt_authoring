@@ -1,0 +1,132 @@
+// Use this file to change the feel of the interface
+
+/*///////////
+// Colors
+/////////*/
+
+/*///////////
+// Default adapt variables. (please don't touch!) If you don't like us then comment us out and edit the colors below!
+/////////*/
+@adapt-primary-color:#34bee0; // light blue (used in most places such as buttons)
+@adapt-secondary-color:#00dd95; // green (used as a secondary button)
+@adapt-tertiary-color:#263944; // dark blue (used in sidebar)
+@adapt-quaternary-color:#36cde8; //
+@adapt-white:#fff;
+////////////
+
+/*///////////
+// Editable variables
+//
+// Changes you make here will pull through the whole of the Authoring Tool.
+/////////*/
+@primary-color:@adapt-primary-color;
+@secondary-color:@adapt-secondary-color;
+@tertiary-color:@adapt-tertiary-color;
+@quaternary-color:@adapt-quaternary-color;
+@white:@adapt-white;
+///////////
+
+
+@ui-content-header-color:#e0e8f7;
+@ui-content-color:#f3fcfe;
+
+@alert-color: #ff5567;
+@warning-color: #ffa08d;
+@info-color: fade(@primary-color, 60%);
+@success-color: @secondary-color;
+
+@disabled-color: #454545;
+
+/*///////////
+// Layout colors
+/////////*/
+
+@navigation-text-color: @white;
+@navigation-hover-text-color: darken(@navigation-text-color, 2%);
+
+@sidebar-title-text-color: @white;
+@sidebar-color: @tertiary-color;
+@sidebar-text-color: @primary-color;
+@sidebar-item-hover-color: lighten(@tertiary-color, 10%);
+@sidebar-item-hover-text-color: white;
+@sidebar-input-text-color: @white;
+@sidebar-input-placeholder-color: #9fa8ad;
+@sidebar-input-color: #627178;
+@sidebar-input-border-color: lighten(@sidebar-input-color, 10%);
+@sidebar-input-button-color: @sidebar-input-text-color;
+
+@location-title:#000;
+@location-background-color:@white;
+
+@option-color: @primary-color;
+@option-hover-color: darken(@option-color, 10%);
+@option-selected-color: darken(@option-color, 20%);
+
+/*///////////
+// Buttons
+/////////*/
+
+// Default button
+@button-hover-text-color:#000000;
+@button-hover-color:@white;
+@button-radius: 3px;
+@button-border:1px solid #000000;
+@button-hover-border: 1px solid #000000;
+
+@button-transparent:transparent;
+
+// Primary button
+@button-primary-color:@primary-color;
+@button-primary-hover-color:darken(@primary-color, 5%);
+
+@button-primary-text-color:@white;
+@button-primary-hover-text-color:@white;
+
+// Secondary button
+@button-secondary-color:@secondary-color;
+@button-secondary-hover-color:darken(@secondary-color, 3%);
+
+@button-secondary-text-color:@white;
+@button-secondary-hover-text-color:@white;
+
+// tertiary button
+@button-tertiary-color:@tertiary-color;
+@button-tertiary-hover-color:darken(@tertiary-color, 5%);
+
+@button-tertiary-text-color:@white;
+@button-tertiary-hover-text-color:@white;
+
+// quaternary button
+@button-quaternary-color:@quaternary-color;
+@button-quaternary-hover-color:darken(@quaternary-color, 5%);
+
+@button-quaternary-text-color:@white;
+@button-quaternary-hover-text-color:@white;
+
+// white hollow button
+@button-white-hollow-hover-color:@white;
+
+@button-white-hollow-text-color:@white;
+@button-white-hollow-hover-text-color:@primary-color;
+
+// Warning button
+@button-warning-color:@warning-color;
+@button-warning-hover-color:darken(@button-warning-color, 15%);
+
+@button-warning-text-color:@white;
+@button-warning-hover-text-color:@white;
+
+// Alert button
+@button-alert-color:@alert-color;
+@button-alert-hover-color:darken(@alert-color, 10%);
+
+@button-alert-text-color:@white;
+@button-alert-hover-text-color:@white;
+
+// Disabled button
+@button-disabled-color:@disabled-color;
+@button-disabled-text-color:@white;
+
+// Tag colors
+@tag-background-color:@button-primary-color;
+@tag-title-color:@white;

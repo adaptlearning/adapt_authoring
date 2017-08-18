@@ -31,6 +31,9 @@ define(function(require){
         statusCode: {
           200: function() {
             $previewLoc.prepend($('<img/>', { src: previewUrl, alt: Origin.l10n.t('app.themepreviewalt') }));
+          },
+          204: function() {
+            $previewLoc.prepend($('<i/>', { class: 'fa fa-file-image-o' }));
           }
         }
       });

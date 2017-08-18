@@ -37,3 +37,6 @@ version.json
 .vagrant
 .env
 .project
+
+.nyc_output
+coverage

@@ -1,0 +1,12 @@
+{
+  "include": [
+    "lib/*.js",
+    "routes/**/*.js",
+    "plugins/**/*.js",
+    "index.js"
+  ],
+  "reporter": [
+    "text",
+    "text-summary"
+  ]
+}

@@ -197,9 +197,6 @@ module.exports = function(grunt) {
         tasks: ['merge-json']
       }
     },
-    casperjs: {
-      files: ['./test_frontend/*.js', '!./test_frontend/login.js']
-    },
     mochaTest: {
       src: ['test/*.js'],
       options: {
@@ -350,6 +347,6 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('test', ['mochaTest'/*, 'casperjs'*/]);
+  grunt.registerTask('test', ['mochaTest']);
   grunt.registerTask('default', ['merge-json', 'requireBundle', 'less:dev', 'handlebars', 'watch']);
 };

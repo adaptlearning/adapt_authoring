@@ -108,7 +108,6 @@
     "fs-extra": "^0.16.3",
     "grunt": "~0.4.1",
     "grunt-bower-requirejs": "~0.7.1",
-    "grunt-casperjs": "2.x",
     "grunt-concurrent": "~0.3.0",
     "grunt-contrib-connect": "~0.11.2",
     "grunt-contrib-copy": "~0.4.1",

@@ -28,11 +28,7 @@ define(function(require) {
       '_extensions',
       'themeSettings',
       '_onScreen'
-    ],
-
-    initialize: function() {
-      // TODO interntional override?
-    }
+    ]
   });
 
   return BlockModel;

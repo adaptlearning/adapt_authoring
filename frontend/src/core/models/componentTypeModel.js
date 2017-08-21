@@ -9,10 +9,6 @@ define(function(require) {
 
     comparator: function(model) {
       return model.get('displayName');
-    },
-
-    initialize: function() {
-      // TODO intentional override?
     }
   });
 

@@ -9,9 +9,6 @@ define(function(require) {
     _type: 'course',
     _children: 'contentObjects',
 
-    initialize : function(options) {
-    },
-
     getHeroImageURI: function () {
       if(Helpers.isAssetExternal(this.get('heroImage'))) {
         return this.get('heroImage');

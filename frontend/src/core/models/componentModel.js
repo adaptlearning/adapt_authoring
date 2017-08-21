@@ -27,11 +27,7 @@ define(function(require) {
       'version',
       'themeSettings',
       '_onScreen'
-    ],
-
-    initialize: function() {
-      // TODO intentional override?
-    }
+    ]
   });
 
   return ComponentModel;

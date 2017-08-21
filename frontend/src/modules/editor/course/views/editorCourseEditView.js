@@ -1,10 +1,15 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Backbone = require('backbone');
   var Origin = require('core/origin');
 
   var ConfigModel = require('core/models/configModel');
+  var ContentObjectModel = require('core/models/contentObjectModel');
+  var ArticleModel = require('core/models/articleModel');
+  var BlockModel = require('core/models/blockModel');
+  var ComponentModel = require('core/models/componentModel');
+  var ComponentTypeModel = require('core/models/componentTypeModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
+  var EditorCollection = require('../../global/collections/editorCollection');
 
   var EditorCourseEditView = EditorOriginView.extend({
     className: "course-edit",
@@ -44,7 +49,7 @@ define(function(require) {
 
     onSaveSuccess: function(model, response, options) {
       if (this.isNew) {
-        return Origin.router.navigateTo('editor/' + response._id + '/menu');
+        this.populateNewCourse(model);
       } else {
         EditorOriginView.prototype.onSaveSuccess.apply(this, arguments);
       }
@@ -58,7 +63,89 @@ define(function(require) {
 
       var messageText = typeof response.responseJSON == 'object' && response.responseJSON.message;
       EditorOriginView.prototype.onSaveError.call(this, null, messageText);
+    },
+
+    /**
+     * When a new course is created it gets populated with a page, article, block and text component
+     * so that it can be previewed immediately.
+     * @param model
+     */
+    populateNewCourse: function(model) {
+      this.createGenericPage(model);
+    },
+
+    createGenericPage: function(courseModel) {
+      var contentObjectModel = new ContentObjectModel({
+        title: Origin.l10n.t('app.placeholdernewpage'),
+        displayTitle: Origin.l10n.t('app.placeholdernewpage'),
+        _type: 'page',
+        _courseId: courseModel.get('_id'),
+        _parentId: courseModel.get('_id')
+      });
+      contentObjectModel.save(null, {
+        error: _.bind(this.onSaveError, this),
+        success: _.bind(this.createGenericArticle, this)
+      });
+    },
+
+    createGenericArticle: function(pageModel) {
+      var articleModel = new ArticleModel({
+        _courseId: pageModel.get('_courseId'),
+        _parentId: pageModel.get('_id'),
+        _type: 'article'
+      });
+      articleModel.save(null, {
+        error: _.bind(this.onSaveError, this),
+        success: _.bind(this.createGenericBlock, this)
+      });
+    },
+
+    createGenericBlock: function(articleModel) {
+      var blockModel = new BlockModel({
+        _courseId: articleModel.get('_courseId'),
+        _parentId: articleModel.get('_id'),
+        _type: 'block',
+        layoutOptions: [
+          { type: 'left', name: 'app.layoutleft', pasteZoneRenderOrder: 2 },
+          { type: 'full', name: 'app.layoutfull', pasteZoneRenderOrder: 1 },
+          { type: 'right', name: 'app.layoutright', pasteZoneRenderOrder: 3 }
+        ]
+      });
+      blockModel.save(null, {
+        error: _.bind(this.onSaveError, this),
+        success: _.bind(this.createGenericComponent, this)
+      });
+    },
+
+    createGenericComponent: function(blockModel) {
+      // Store the component types
+      var componentTypes = new EditorCollection(null, {
+        model: ComponentTypeModel,
+        url: '/api/componenttype',
+        _type: 'componentTypes'
+      });
+      componentTypes.fetch({
+        error: _.bind(this.onSaveError, this),
+        success: _.bind(function() {
+          var componentModel = new ComponentModel({
+            _courseId: blockModel.get('_courseId'),
+            _parentId: blockModel.get('_id'),
+            body: Origin.l10n.t('app.projectcontentbody'),
+            _type: 'component',
+            _component: 'text',
+            _componentType: componentTypes.findWhere({ component: 'text' }).attributes._id,
+            _layout: 'full'
+          });
+          componentModel.save(null, {
+            error: _.bind(this.onSaveError, this),
+            success: function() {
+              Origin.router.navigateTo('/editor/' + componentModel.get('_courseId') + '/menu');
+            }
+          });
+        }, this)
+      });
     }
+
   }, {
     template: 'editorCourseEdit'
   });

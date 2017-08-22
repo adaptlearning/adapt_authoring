@@ -1,0 +1,232 @@
+@import 'colours';
+
+.asset-picker-filters {
+    padding: 10px;
+    background-color: lightblue;
+}
+
+.asset-picker-sidebar-filter-button {
+    &.selected {
+        background-color: #F2F2F2;
+    }
+}
+
+.asset-management-sidebar-filter-image-icon {
+    float: left;
+}
+
+.asset-management-assets-container {
+    width:75%;
+    float:left;
+    .asset-management-no-assets {
+        text-align:center;
+        position:relative;
+        top:40%;
+    }
+}
+
+.asset-management-collection-inner {
+    padding-top:30px;
+    padding-left:30px;
+}
+
+.asset-management-preview-container {
+    width:25%;
+    float:right;
+    position: fixed;
+    right: 0;
+    overflow-x:hidden;
+    text-align:center;
+    background-color:#fff;
+
+    &-inner {
+        padding: 30px 15px;
+        color: #9d9d9d;
+        .asset-preview-title {
+          padding-bottom: 10px;
+          color: @primary-color;
+          font-weight: @font-weight;
+        }
+        .asset-preview-description,
+        .asset-size {
+          margin-bottom: 25px;
+        }
+        .asset-tags {
+          margin-bottom: 30px;
+        }
+    }
+
+    .asset-management-no-preview {
+        position:relative;
+        top:40%;
+    }
+}
+
+
+.asset-preview-edit {
+    margin-top:10px;
+}
+
+.asset-management-list-item {
+    position:relative;
+    width:160px;
+    height: 210px;
+    margin-right:30px;
+    margin-bottom:30px;
+    float:left;
+    cursor:pointer;
+    background-color:#fff;
+    border: 1px solid #d6f2f9;
+    border-radius:3px;
+    transition: all 0.3s;
+    box-shadow: 0px 0px 3pt 2pt transparent;
+    &:hover {
+        box-shadow: 0 0 5px 2px #CBE1E6;
+    }
+
+    &.selected {
+        background-color: @primary-color;
+        color: @button-primary-text-color;
+    }
+
+    &-icon {
+        &-inner {
+            padding:6px;
+        }
+    }
+
+    &-image {
+        width:160px;
+        height:120px;
+        background-position:center;
+        background-size:cover;
+        background-repeat: no-repeat;
+        background-color: white;
+        text-align:center;
+        border: 1px solid #d6f2f9;
+        border-left: none;
+        border-right: none;
+        i {
+            color:rgb(214, 242, 249);
+            padding-top:35px;
+            font-size:50px;
+        }
+    }
+
+    &-details {
+        word-wrap: break-word;
+        overflow:hidden;
+        width:160px;
+        &-inner {
+            padding:10px;
+        }
+    }
+
+    &-title {
+        height:40px;
+        overflow:hidden;
+        font-weight: @font-weight;
+    }
+
+    .asset-management-list-item-deleted {
+        position:absolute;
+        width:100%;
+        height:100%;
+        top:0;
+        left:0;
+        text-align: center;
+        background-color:rgba(255,255,255,0.8);
+        i {
+            position: relative;
+            top: 50%;
+            margin-top: -36px;
+            color: #ff5567;
+            font-size:72px;
+            line-height:72px;
+        }
+    }
+
+}
+
+
+  ul.tag-container {
+    margin: 4px;
+  }
+
+  li.tag-item {
+    margin: 1px 0px 1px 0px;
+    display: inline-block;
+
+
+    span.tag-value {
+      margin: 5px;
+      color:#fff;
+      padding: 3px;
+      background-color:@primary-color;
+    }
+  }
+
+.asset-preview-details-preview {
+    margin-bottom:20px;
+
+    i {
+        font-size:56px;
+    }
+    .fa-file-audio-o {
+        margin-bottom:20px;
+    }
+}
+
+.asset-preview-title {
+    word-wrap: break-word;
+}
+
+.asset-management-modal-filters {
+    float: left;
+    width: 50%;
+    display:inline-block;
+    text-align:left;
+    input {
+        border-radius:0px;
+        width: 200px;
+        border: none;
+        border-radius: 3px;
+        background: #627178;
+        color: #fff;
+    }
+    .modal & button {
+        margin-left:-4px;
+        color:#9cabc4;
+        transition:color 0.3s;
+        &:hover {
+            color:#fff;
+        }
+    }
+}
+
+.asset-preview-edit {
+    .modal-popup & {
+        display:none;
+    }
+}
+
+.asset-management-modal-new-asset {
+    position:fixed;
+    top:40px;
+    left:0px;
+    z-index:5;
+    background-color:#fff;
+    box-shadow:1px 2px 4px 0px #666;
+    &-inner {
+        padding:30px;
+    }
+}
+
+.asset-management-modal-new-asset-close {
+    position: absolute;
+    top: 0px;
+    right: 0;
+    &:hover {
+        color:#15a4fa;
+    }
+}

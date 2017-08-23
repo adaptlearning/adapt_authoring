@@ -24,6 +24,19 @@ define(function(require){
     },
 
     postRender: function() {
+      var previewUrl = '/api/theme/preview/' + this.model.get('name') + '/' + this.model.get('name');
+      var $previewLoc = this.$('.theme-preview');
+
+      $.ajax(previewUrl, {
+        statusCode: {
+          200: function() {
+            $previewLoc.prepend($('<img/>', { src: previewUrl, alt: Origin.l10n.t('app.themepreviewalt') }));
+          },
+          204: function() {
+            $previewLoc.prepend($('<i/>', { 'class': 'fa fa-paint-brush' }));
+          }
+        }
+      });
     },
 
     toggleSelect: function(event) {

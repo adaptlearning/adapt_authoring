@@ -1,0 +1,64 @@
+.editor-menu-layer {
+  height: 100%;
+  width:300px;
+  float:left;
+  border-right: 1px solid #ddf2fa;
+  overflow:hidden;
+
+  &.selected {
+    background-color: #F1F9FC;
+  }
+}
+
+.editor-menu-layer-inner {
+  position: relative;
+  overflow-y: auto;
+  overflow-x:hidden;
+}
+
+.editor-menu-layer-controls {
+  position:relative;
+  padding: 20px;
+  border-bottom: 1px solid #d6f2f9;
+  // FIXME this should be dynamic...
+  height: 40px;
+
+  .editor-menu-layer-actions.paste-zone {
+    width: 100%;
+    position: absolute;
+    top: -67px;
+    z-index: 99;
+    margin:0px;
+    padding:0;
+    border:none;
+    background: none;
+    transition:top 0.5s cubic-bezier(0.8, 0.0, 0.2, 1);
+    &.show {
+      top:20px;
+    }
+  }
+}
+
+.editor-menu-layer-controls {
+  button {
+    width: 128px;
+    padding: 10px 0px;
+    & i {
+      margin-right:8px;
+    }
+    .fa-folder {
+      margin-right: 3px;
+    }
+  }
+
+}
+
+.editor-menu-item {
+  &-title {
+    padding: 8px 0 0 35px;
+    h3 {
+      font-size: 14px;
+      font-weight: @font-weight;
+    }
+  }
+}

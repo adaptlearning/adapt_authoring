@@ -64,12 +64,31 @@ define(function(require){
       $('.add-control').removeClass('display-none');
     },
 
-    showDropZones: function() {
+    showDropZones: function (supportedLayout) {
       $('.paste-zone').addClass('display-none');
       $('.add-control').addClass('display-none');
       $('.paste-zone-'+ this.model.get('_type') + ' a').addClass('display-none');
+      // Components may be restricted to either full or half width so
+      // make sure only the appropriate paste zones are displayed
+      var type = this.model.get('_type');
+      var pasteZoneSelector = '.paste-zone-'+ type;
+      var $pasteZones;
 
-      $('.paste-zone-'+ this.model.get('_type'))
+      if (type === 'component') {
+        $pasteZones = $();
+        if (supportedLayout.full) {
+          $pasteZones = $pasteZones.add('.paste-zone-component-full');
+        }
+        if (supportedLayout.half) {
+          $pasteZones = $pasteZones.add('.paste-zone-component-left, .paste-zone-component-right');
+        }
+      } else {
+        $pasteZones = $(pasteZoneSelector);
+      }
+
+      $(pasteZoneSelector + ' a').addClass('display-none');
+
+      $pasteZones
         .addClass('paste-zone-available')
         .removeClass('display-none');
 

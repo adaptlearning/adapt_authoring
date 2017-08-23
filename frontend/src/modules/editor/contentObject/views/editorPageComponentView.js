@@ -25,7 +25,7 @@ define(function(require){
 
       this.on('contextMenu:component:edit', this.loadComponentEdit);
       this.on('contextMenu:component:copy', this.onCopy);
-      this.on('contextMenu:component:copyID', this.onCopyID),
+      this.on('contextMenu:component:copyID', this.onCopyID);
       this.on('contextMenu:component:cut', this.onCut);
       this.on('contextMenu:component:delete', this.deleteComponentPrompt);
     },
@@ -93,7 +93,10 @@ define(function(require){
           view.offsetTopFromWindow = view.$el.offset().top - $(window).scrollTop();
           // This is in the helper method because the height needs to be
           // manipulated before the drag start method due to adding drop zones
-          view.showDropZones();
+          // Passing the supported layout as a parameter allows the method to
+          // determine which drop zones should be displayed
+          var supportedLayout = view.getSupportedLayout();
+          view.showDropZones(supportedLayout);
           $(this).attr('data-component-id', view.model.get('_id'));
           $(this).attr('data-block-id', view.model.get('_parentId'));
           return $('<div class="drag-helper">' + view.model.get('title') + '</div>');
@@ -133,29 +136,49 @@ define(function(require){
       });
     },
 
+    getSupportedLayout: function() {
+      var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
+        return type.get('component') === this.model.get('_component');
+      }, this);
+
+      var supportedLayout = componentType.get('properties')._supportedLayout;
+
+      return {
+        full: _.indexOf(supportedLayout.enum, 'full-width') > -1,
+        half: _.indexOf(supportedLayout.enum, 'half-width') > -1
+      }
+    },
+
     evaluateLayout: function() {
+      var supportedLayout = this.getSupportedLayout();
+      var isFullWidthSupported = supportedLayout.full;
+      var isHalfWidthSupported = supportedLayout.half;
+
       var movePositions = {
         left: false,
         right: false,
         full: false
       };
 
-      var siblings = this.model.getSiblings();
-      var showFull = !siblings.length;
-      var type = this.model.get('_layout');
-      switch (type) {
-        case 'left':
-          movePositions.right = true;
-          movePositions.full = showFull;
-          break;
-        case 'right':
-          movePositions.left = true;
-          movePositions.full = showFull;
-          break;
-        case 'full':
-          movePositions.left = true;
-          movePositions.right = true;
-          break
+      if (isHalfWidthSupported) {
+        var siblings = this.model.getSiblings();
+        var showFull = !siblings.length && isFullWidthSupported;
+        var type = this.model.get('_layout');
+
+        switch (type) {
+          case 'left':
+            movePositions.right = true;
+            movePositions.full = showFull;
+            break;
+          case 'right':
+            movePositions.left = true;
+            movePositions.full = showFull;
+            break;
+          case 'full':
+            movePositions.left = true;
+            movePositions.right = true;
+            break
+        }
       }
 
       this.model.set('_movePositions', movePositions);

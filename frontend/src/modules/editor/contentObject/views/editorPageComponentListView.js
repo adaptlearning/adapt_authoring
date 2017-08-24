@@ -78,13 +78,13 @@ define(function(require) {
 
     renderComponentList: function() {
       Origin.trigger('editorComponentListView:removeSubviews');
-      // _.each(this.collection, function(componentType) {
 
       this.collection.each(function(componentType) {
         var properties = componentType.get('properties');
+        var availablePositions = _.clone(this.availablePositions);
+        
         if (properties && properties.hasOwnProperty('_supportedLayout')) {
           var supportedLayout = properties._supportedLayout.enum;
-          var availablePositions = _.clone(this.availablePositions);
 
           // Prune the available positions
           if (_.indexOf(supportedLayout, 'half-width') == -1) {

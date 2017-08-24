@@ -137,7 +137,7 @@ define(function(require){
     },
 
     getSupportedLayout: function() {
-      var componentType = _.find(Origin.editor.data.componentTypes.models, function(type){
+      var componentType = _.find(Origin.editor.data.componenttypes.models, function(type){
         return type.get('component') === this.model.get('_component');
       }, this);
 

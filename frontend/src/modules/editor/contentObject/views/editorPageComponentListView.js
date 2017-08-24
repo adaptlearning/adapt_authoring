@@ -97,7 +97,7 @@ define(function(require) {
           }
         }
 
-        this.$('.editor-component-list-sidebar-list').append(new EditorComponentListItemView({
+        this.$('.editor-component-list-sidebar-list').append(new EditorPageComponentListItemView({
           model: componentType,
           availablePositions: availablePositions,
           _parentId: this.model.get('_parentId'),

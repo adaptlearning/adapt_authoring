@@ -13,6 +13,7 @@
   - Authoring Tool Version:
   - Framework Version:
   - Operating System:
+  - Browser:
 
 
 # Feature Request Template

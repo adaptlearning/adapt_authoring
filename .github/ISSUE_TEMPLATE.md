@@ -1,8 +1,8 @@
 # BUG Template
 
-## Expected Behavior
+## Expected Behaviour
 
-## Actual Behavior
+## Actual Behaviour
 
 ## Steps to Reproduce
 1.
@@ -23,6 +23,6 @@
 
 ## Use Case
 
-## Current Work Around
+## Current Workaround
 
 ## Additional Information

@@ -27,7 +27,8 @@ define(function(require) {
         'contextMenu:course:edit': this.editProject,
         'contextMenu:course:delete': this.deleteProjectPrompt,
         'contextMenu:course:copy': this.duplicateProject,
-        'contextMenu:course:copyID': this.copyIdToClipboard
+        'contextMenu:course:copyID': this.copyIdToClipboard,
+        'contextMenu:course:export': this.exportProject
       });
       this.listenTo(Origin, {
         'dashboard:dashboardView:removeSubViews': this.remove,
@@ -119,6 +120,46 @@ define(function(require) {
         },
         error: function() {
           Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorduplication') });
+        }
+      });
+    },
+
+    exportProject: function() {
+      // aleady processing, don't try again
+      if(this.exporting) return;
+
+      this.$el.css('cursor', 'progress');
+
+      var courseId = this.model.get('_id');
+      var tenantId = Origin.sessionModel.get('tenantId');
+
+      this.exporting = true;
+
+      var self = this;
+
+      $.ajax({
+        url: '/export/' + tenantId + '/' + courseId + '/false',
+        success: function(data, textStatus, jqXHR) {
+          self.exporting = false;
+          self.$el.css('cursor', 'default');
+          // get the zip
+          var form = document.createElement('form');
+          self.$el.append(form);
+          form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
+          form.submit();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          var messageText = errorThrown;
+          if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) {
+            messageText += ':<br/>' + jqXHR.responseJSON.message;
+          }
+          self.exporting = false;
+          self.$el.css('cursor', 'default');
+          Origin.Notify.alert({
+            type: 'error',
+            title: Origin.l10n.t('app.exporterrortitle'),
+            text: messageText
+          });
         }
       });
     },

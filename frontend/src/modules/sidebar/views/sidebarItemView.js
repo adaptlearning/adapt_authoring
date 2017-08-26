@@ -19,7 +19,8 @@ define(function(require) {
       'click button.editor-common-sidebar-select-theme' : 'selectTheme',
       'click button.editor-common-sidebar-download'     : 'downloadProject',
       'click button.editor-common-sidebar-preview'      : 'previewProject',
-      'click button.editor-common-sidebar-export'       : 'exportProject',
+      'click button.editor-common-sidebar-export-dev'   : 'exportProjectDev',
+      'click button.editor-common-sidebar-backup'       : 'downloadBackup',
       'click button.editor-common-sidebar-close'        : 'closeProject'
     },
 
@@ -129,8 +130,12 @@ define(function(require) {
       Origin.trigger('editorCommon:preview');
     },
 
-    exportProject: function() {
-      Origin.trigger('editorCommon:export');
+    exportProjectDev: function() {
+      Origin.trigger('editorCommon:export', true);
+    },
+
+    downloadBackup: function() {
+      Origin.trigger('editorCommon:backup', true);
     },
 
     closeProject: function() {

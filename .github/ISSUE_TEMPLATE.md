@@ -1,8 +1,8 @@
 # BUG Template
 
-## Expected Behavior
+## Expected Behaviour
 
-## Actual Behavior
+## Actual Behaviour
 
 ## Steps to Reproduce
 1.
@@ -13,6 +13,7 @@
   - Authoring Tool Version:
   - Framework Version:
   - Operating System:
+  - Browser:
 
 
 # Feature Request Template
@@ -23,6 +24,6 @@
 
 ## Use Case
 
-## Current Work Around
+## Current Workaround
 
 ## Additional Information

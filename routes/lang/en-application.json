@@ -284,7 +284,6 @@
   "app.backtoassets": "Back to assets",
   "app.newasset": "New Asset",
   "app.editasset": "Edit Asset",
-  "app.assetmanagement": "Asset Management",
   "app.tagfetcherror": "An error occured getting the tags collection. Please try refreshing your page.",
   "app.editornew": "Add course",
   "app.editornewcoursetitle": "New course",

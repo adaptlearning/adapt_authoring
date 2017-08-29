@@ -26,7 +26,8 @@ define(function(require) {
       'title',
       'version',
       'themeSettings',
-      '_onScreen'
+      '_onScreen',
+      'instruction'
     ]
   });
 

@@ -24,6 +24,7 @@
 /plugins/content/bower/bowercache/
 
 /routes/lang/en.json
+/routes/lang/es.json
 
 /temp
 /test_frontend/img

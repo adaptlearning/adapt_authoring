@@ -4,15 +4,6 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    "merge-json": {
-      en: {
-        src: [
-          'routes/lang/en-application.json',
-          'frontend/src/**/lang/en.json'
-        ],
-        dest: 'routes/lang/en.json'
-      }
-    },
     copy: {
       main: {
         files: [
@@ -194,7 +185,7 @@ module.exports = function(grunt) {
       },
       lang: {
         files: ['routes/lang/*.json'],
-        tasks: ['merge-json']
+        tasks: ['generate-lang-json']
       }
     },
     mochaTest: {
@@ -251,7 +242,7 @@ module.exports = function(grunt) {
     grunt.file.write(configFile, JSON.stringify(config, null, 2));
     // run the tasks
     var compilation = (config.isProduction) ? 'compile' : 'dev';
-    grunt.task.run(['requireBundle', 'merge-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
+    grunt.task.run(['requireBundle', 'generate-lang-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
   });
 
   grunt.registerTask('server', "Running Server", function() {
@@ -346,7 +337,34 @@ module.exports = function(grunt) {
       done();
     }
   });
+  // TODO should probably have config up there ^
+  grunt.registerTask('generate-lang-json', function() {
+    var _ = require('underscore');
+    var fs = require('fs-extra');
+    var path = require('path');
+
+    var langFileExt = '.json';
+    var backendSrc = path.join('routes', 'lang', '*' + langFileExt);
+    var frontendSrc = path.join('frontend', 'src', '**', 'lang');
+    var dest = path.join('temp', 'lang');
+    // load each route lang file
+    /**
+    * NOTE there must be a file in routes/lang for the language to be loaded,
+    * won't work if you've only got lang files in frontend
+    */
+    grunt.file.expand({}, backendSrc).forEach(function(filePath) {
+      var lang = path.basename(filePath, langFileExt);
+      var data = _.extend({}, fs.readJSONSync(filePath));
+      // load all matching frontend lang files
+      grunt.file.expand({}, path.join(frontendSrc, lang + langFileExt)).forEach(function(filePath2) {
+        // TODO check for duplicates
+        _.extend(data, fs.readJSONSync(filePath2));
+      });
+      fs.ensureDirSync(dest);
+      fs.writeJSONSync(path.join(dest, lang + langFileExt), data, { spaces: 2 });
+    });
+  });
 
   grunt.registerTask('test', ['mochaTest']);
-  grunt.registerTask('default', ['merge-json', 'requireBundle', 'less:dev', 'handlebars', 'watch']);
+  grunt.registerTask('default', ['generate-lang-json', 'requireBundle', 'less:dev', 'handlebars', 'watch']);
 };

@@ -23,8 +23,6 @@
 /plugins/content/menu/versions/
 /plugins/content/bower/bowercache/
 
-/routes/lang/en.json
-
 /temp
 /test_frontend/img
 /tmp

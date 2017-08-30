@@ -11,6 +11,15 @@ module.exports = function(grunt) {
           'frontend/src/**/lang/en.json'
         ],
         dest: 'routes/lang/en.json'
+      },
+      es: {
+        src: [
+          'routes/lang/en-application.json',
+          'frontend/src/**/lang/en.json',
+          'routes/lang/es-application.json',
+          'frontend/src/**/lang/es.json'
+        ],
+        dest: 'routes/lang/es.json'
       }
     },
     copy: {

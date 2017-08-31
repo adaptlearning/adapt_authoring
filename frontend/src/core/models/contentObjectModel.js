@@ -6,8 +6,8 @@ define(function(require) {
   var ContentObjectModel = ContentModel.extend({
     urlRoot: '/api/content/contentobject',
     _parent: 'contentObjects',
-    _siblings:'contentObjects',
-    _children: 'articles',
+    _siblings: 'contentObjects',
+    _children: ['contentObjects', 'articles'],
 
     defaults: {
       _isSelected: false,

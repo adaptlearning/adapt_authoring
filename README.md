@@ -16,7 +16,7 @@ Interested? [See what Adapt can do.](https://community.adaptlearning.org/demo2/i
 * Supports all core extensions and components
 * Allows uploading and linking of course assets
 
-##Full Documentation
+## Full Documentation
 [Visit the wiki](https://github.com/adaptlearning/adapt_authoring/wiki) for full documentation, including [installation](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-the-Authoring-Tool), course authoring, developer guides, and other information.
 
 ## Communication

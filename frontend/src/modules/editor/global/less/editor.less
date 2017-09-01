@@ -1,0 +1,167 @@
+@import 'colours';
+
+.editor-view {
+
+  .editor-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .editor-panel {
+    float: right;
+    width: 10%;
+  }
+
+  .editor {
+    float: left;
+    width: 90%;
+    height: 100%;
+    background-color: lightgrey;
+  }
+
+  .paste-zone {
+    margin: 30px;
+    height: 50px;
+
+    &-inner {
+      padding: 20px 30px;
+    }
+
+    &-component-left {
+      width: 48%;
+      float: left;
+    }
+
+    &-component-right {
+      width: 48%;
+      float: right;
+    }
+
+    &-component {
+      margin: 0px;
+    }
+
+    &-component-full {
+      margin-bottom: 20px;
+    }
+
+  }
+
+  .paste-zone-available {
+    background-color: #d6f3f9;
+    border: 1px dashed #31b8cc;
+  }
+
+  .paste-zone-droppable {
+    visibility: visible;
+    background-color: #beebf5;
+    border-style: solid;
+  }
+
+  .drop-only {
+    display: none;
+  }
+
+  .component-full {
+    float: left;
+    width: 100%;
+  }
+
+  .page-article-components:after {
+    clear: both;
+    content: "";
+    display: block;
+  }
+
+  .editor-item-sidebar {
+    text-align: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 30px;
+    height: 100%;
+    background: #454545;
+
+    &.handle {
+      cursor: move;
+    }
+  }
+
+  .drag-helper {
+    color: #DEDEDE;
+    border: 1px solid #C9C9C9;
+    background: #7A7A7A;
+    padding: 10px;
+    margin: 10px;
+    cursor: move;
+    min-width: 100px;
+  }
+}
+
+.editor-item-settings {
+    position: absolute;
+    top: 0%;
+    left: 0px;
+    font-size: 16px;
+    width: 100%;
+    opacity: 1;
+    background-color: transparent;
+    transition: all 0.3s;
+
+    a {
+      text-decoration: none;
+    }
+
+    &:hover {
+      cursor: move;
+    }
+
+    &-inner {
+      padding: 6px;
+    }
+
+    .editor-delete-page-element {
+      float: right;
+    }
+}
+
+.editor-item-settings a,
+.editor-menu-item-settings a {
+  color:@primary-color;
+  transition: all 0.3s;
+  &:hover {
+    color:darken(@primary-color,5%);
+  }
+}
+
+i.asset-selector {
+  cursor: pointer;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+i.asset-clear {
+  cursor: pointer;
+}
+
+.sweet-alert .key {
+  font-weight: @font-weight-bold;
+}
+
+.syncing {
+  transform: scale(0.8, 0.8);
+  opacity:0.6;
+}
+
+.synced {
+  transition:transform 0.3s cubic-bezier(0.8, 0.0, 0.2, 1), opacity 0.3s cubic-bezier(0.8, 0.0, 0.2, 1)!important;
+  transform: scale(1, 1);
+  opacity:1;
+}
+
+.not-synced {
+  transition:transform 0.3s cubic-bezier(0.8, 0.0, 0.2, 1), opacity 0.3s cubic-bezier(0.8, 0.0, 0.2, 1)!important;
+  transform: scale(0.4, 0.4);
+  opacity:0;
+}

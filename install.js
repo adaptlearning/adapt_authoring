@@ -31,7 +31,7 @@ prompt.delimiter = '';
 // get available db drivers and auth plugins
 var drivers = database.getAvailableDriversSync();
 var auths = auth.getAvailableAuthPluginsSync();
-var app = builder();
+var app = origin();
 var masterTenant = false;
 var superUser = false;
 
@@ -72,6 +72,13 @@ var userConfig = [
     name: 'password',
     type: 'string',
     description: "Password",
+    hidden: true,
+    required: true
+  },
+  {
+    name: 'retypePassword',
+    type: 'string',
+    description: "Retype Password",
     hidden: true,
     required: true
   }
@@ -487,6 +494,7 @@ var steps = [
 
       var userEmail = result.email;
       var userPassword = result.password;
+      var userRetypePassword = result.retypePassword;
       // ruthlessly remove any existing users (we're already nuclear if we've deleted the existing tenant)
       app.usermanager.deleteUser({ email: userEmail }, function (err, userRec) {
         if (err) {
@@ -495,9 +503,10 @@ var steps = [
         }
 
         // add a new user using default auth plugin
-        new localAuth().internalRegisterUser({
+        new localAuth().internalRegisterUser(true, {
             email: userEmail,
             password: userPassword,
+            retypePassword: userRetypePassword,
             _tenantId: masterTenant._id
           }, function (err, user) {
             if (err) {

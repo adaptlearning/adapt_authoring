@@ -1,3 +1,9 @@
+/**
+* TODO:
+* - support any remote name
+* - look at consistent error logging/callbacks (we'd ideally bubble these all up to the main func rather than exiting early)
+*/
+
 var _ = require('underscore');
 var async = require('async');
 var chalk = require('chalk');
@@ -12,6 +18,7 @@ var spinner = require('cli-spinner').Spinner;
 
 var logger = require('./lib/logger');
 var origin = require('./lib/application');
+var installHelpers = require('./installHelpers');
 
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
 var FRAMEWORK_ROOT;
@@ -125,30 +132,23 @@ function doSteps() {
 */
 function checkInstalledVersions(callback) {
   logHeader('Checking installed versions');
-  try {
-    var authoringPackage = fs.readJSONSync('package.json');
-    installedAuthoringVersion = authoringPackage.version;
-    installedAuthoringVersion = 0.2;
-  } catch(e) {
-    return callback(`Cannot determine authoring tool version, ${e}`);
-  }
-  try {
-    var framworkPackage = fs.readJSONSync(path.join(FRAMEWORK_ROOT, 'package.json'));
-    installedFrameworkVersion = framworkPackage.version;
-    installedFrameworkVersion = 2.0;
-  } catch(e) {
-    return callback(`Cannot determine framework version, ${e}`);
-  }
-  // set the repo URLs if not specified
-  if(typeof configFile.authoringToolRepository === 'undefined'){
-    configFile.authoringToolRepository = 'https://github.com/adaptlearning/adapt_authoring.git';
-  }
-  if(typeof configFile.frameworkRepository === 'undefined'){
-    configFile.frameworkRepository = 'https://github.com/adaptlearning/adapt_framework.git';
-  }
-  log(`- ${app.polyglot.t('app.productname')}: ${installedAuthoringVersion}`);
-  log(`- Adapt Framework: ${installedFrameworkVersion}`);
-  callback();
+  installHelpers.getInstalledVersions(function(error, versionData) {
+    if(error) {
+      return callback(error);
+    }
+    installedAuthoringVersion = versionData.adapt_authoring;
+    installedFrameworkVersion = versionData.adapt_framework;
+    // set the repo URLs if not specified
+    if(typeof configFile.authoringToolRepository === 'undefined'){
+      configFile.authoringToolRepository = 'https://github.com/adaptlearning/adapt_authoring.git';
+    }
+    if(typeof configFile.frameworkRepository === 'undefined'){
+      configFile.frameworkRepository = 'https://github.com/adaptlearning/adapt_framework.git';
+    }
+    log(`- ${app.polyglot.t('app.productname')}: ${installedAuthoringVersion}`);
+    log(`- Adapt Framework: ${installedFrameworkVersion}`);
+    callback();
+  });
 }
 
 function checkLatestVersions(callback) {
@@ -165,37 +165,10 @@ function checkLatestVersions(callback) {
     return callback('You are using a custom framework repository, you must use manual upgrade and specify a git tag or branch.');
   }
   // no versions specified, check for the latest
-  checkLatestAdaptRepoVersion('adapt_authoring', function(error, version) {
-    if(error) return cb(error);
-    latestAuthoringTag = version;
-    checkLatestAdaptRepoVersion('adapt_framework', function(error, version) {
-      if(error) return cb(error);
-      latestFrameworkTag = version;
-      checkIfUpdateNeeded(function() {
-        callback();
-      });
-    });
-  });
-}
-
-function checkLatestAdaptRepoVersion(repoName, callback) {
-  request({
-    headers: { 'User-Agent': DEFAULT_USER_AGENT },
-    uri: `https://api.github.com/repos/adaptlearning/${repoName}/releases/latest`,
-    method: 'GET'
-  }, function(error, response, body) {
-    if (response.statusCode !== 200) {
-      error = 'GitubAPI did not respond with a 200 status code';
-    }
-    if (error) {
-      return callback(`Couldn't check latest version of ${repoName}, ${error}`);
-    }
-    try {
-      var version = JSON.parse(body).tag_name;
-    } catch(e) {
-      return callback(`Couldn't check latest version of ${repoName}, ${e}`);
-    }
-    callback(null, version);
+  installHelpers.getLatestVersions(function(error, versions) {
+    latestAuthoringTag = versions.adapt_authoring;
+    latestFrameworkTag = versions.adapt_framework;
+    checkIfUpdateNeeded(callback);
   });
 }
 

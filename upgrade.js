@@ -17,9 +17,8 @@ var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36
 
 // GLOBALS
 var app = origin();
-var spinner = new Spinner('');
+var spinner;
 
-spinner.setSpinnerString(19);
 /**
 * Start of execution
 */
@@ -182,14 +181,13 @@ function doUpdate(data) {
 }
 
 function showSpinner(text) {
-  if(text) {
-    spinner.setSpinnerTitle(text);
-  }
+  spinner = new Spinner(text || '');
+  spinner.setSpinnerString(19);
   spinner.start();
 }
 
 function hideSpinner() {
-  spinner.stop(true);
+  if(spinner) spinner.stop(true);
 }
 
 function logHeader(msg) {

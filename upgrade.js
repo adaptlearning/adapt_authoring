@@ -6,7 +6,7 @@ var optimist = require('optimist');
 var path = require('path');
 var prompt = require('prompt');
 var semver = require('semver');
-var spinner = require('cli-spinner').Spinner;
+var Spinner = require('cli-spinner').Spinner;
 
 var configuration = require('./lib/configuration');
 var logger = require('./lib/logger');
@@ -17,7 +17,9 @@ var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36
 
 // GLOBALS
 var app = origin();
-var spinner = new spinner('');
+var spinner = new Spinner('');
+
+spinner.setSpinnerString(19);
 /**
 * Start of execution
 */
@@ -96,7 +98,7 @@ function getUserInput() {
 }
 
 function checkForUpdates(callback) {
-  logHeader('Checking for updates');
+  showSpinner('Checking for updates');
   var versionData = {};
   async.series([
     function getCurrentVersions(cb) {
@@ -115,6 +117,7 @@ function checkForUpdates(callback) {
       });
     },
     function compareVersions(cb) {
+      hideSpinner();
       var updateData = {};
       if (semver.lt(versionData.installed.adapt_authoring, versionData.latest.adapt_authoring)) {
         updateData.adapt_authoring = versionData.latest.adapt_authoring;
@@ -125,7 +128,7 @@ function checkForUpdates(callback) {
         console.log(`Adapt framework ${versionData.installed.adapt_framework} installed, ${versionData.latest.adapt_framework} is available.`);
       }
       if (!updateData.adapt_authoring && !updateData.adapt_framework) {
-        return exit(0, `You're already using the latest, no need to upgrade.`);
+        return exit(0, `Your software is already up-to-date, no need to upgrade.`);
       }
       cb(null, updateData);
     }
@@ -138,7 +141,7 @@ function doUpdate(data) {
       if(!data.adapt_authoring) {
         return cb();
       }
-      logHeader(`Upgrading the ${app.polyglot.t('app.productname')}`);
+      showSpinner(`Upgrading the ${app.polyglot.t('app.productname')}`);
       installHelpers.updateAuthoring({
         repository: configuration.getConfig('authoringToolRepository'),
         revision: data.adapt_authoring
@@ -148,7 +151,7 @@ function doUpdate(data) {
       if(!data.adapt_framework) {
         return cb();
       }
-      logHeader('Upgrading the Adapt Framework');
+      showSpinner('Upgrading the Adapt Framework');
       installHelpers.installFramework({
         repository: configuration.getConfig('frameworkRepository'),
         revision: data.adapt_framework
@@ -163,12 +166,16 @@ function doUpdate(data) {
   });
 }
 
-function showSpinner() {
+function showSpinner(text) {
+  if(text) {
+    spinner.setSpinnerTitle(text);
+  }
   spinner.start();
 }
 
 function hideSpinner() {
-  spinner.stop(true);
+  spinner.stop();
+  // spinner.stop(true);
 }
 
 function logHeader(msg) {

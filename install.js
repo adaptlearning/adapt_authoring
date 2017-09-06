@@ -195,7 +195,7 @@ function start() {
     async.series([
       configureEnvironment,
       installFramework,
-      configureTenant,
+      createTenant,
       createSuperUser,
       buildFrontend
     ], function(error, results) {
@@ -208,7 +208,7 @@ function start() {
   });
 }
 
-function configureEnvironment(next) {
+function configureEnvironment(callback) {
   if(!IS_INTERACTIVE) {
     console.log('Now setting configuration items.');
   } else {
@@ -217,21 +217,20 @@ function configureEnvironment(next) {
   installHelpers.getLatestFrameworkVersion(function(error, version) {
     if(error) {
       console.error('ERROR: ', error);
-      return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
+      return exitInstall(1, 'Failed to get latest framework version');
     }
     latestFrameworkTag = version;
     prompt.get(authoringConfig, function(error, results) {
-      configResults = results;
       if(error) {
         console.error('ERROR: ', error);
-        return exitInstall(1, 'Could not save configuration items.');
+        return exitInstall(1, 'Failed to save configuration items.');
       }
-      saveConfig(configResults, next);
+      saveConfig(results, callback);
     });
   });
 }
 
-function installFramework(next) {
+function installFramework(callback) {
   installHelpers.installFramework({
     repository: configResults.frameworkRepository,
     revision: configResults.frameworkRevision,
@@ -241,38 +240,34 @@ function installFramework(next) {
       console.error('ERROR: ', error);
       return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
     }
-    next();
+    callback();
   });
 }
 
-function configureTenant(next) {
-  console.log("Checking configuration, please wait a moment ... ");
-  // suppress app log output
+function createTenant(callback) {
+  var tenantExit = function(error) {
+    console.error('ERROR: ', error);
+    return exitInstall(1, 'Failed to create master tenant. Please check the console output.');
+  };
+  if(!IS_INTERACTIVE) {
+    console.log('Creating master tenant');
+  } else {
+    console.log('Now we need to create the master tenant. Just press ENTER to accept the default value (in brackets).');
+  }
   logger.clear();
   // run the app
   app.run();
   app.on('serverStarted', function() {
-    if(!IS_INTERACTIVE) {
-      console.log('Creating your tenant. Please wait ...');
-    } else {
-      console.log('Now create your tenant. Just press ENTER to accept the default value (in brackets). Please wait ...');
-    }
     prompt.get(tenantConfig, function(error, result) {
-      if(error) {
-        console.error('ERROR: ', error);
-        return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
-      }
+      if(error) return tenantExit(error);
       // check if the tenant name already exists
       app.tenantmanager.retrieveTenant({ name: result.name }, function(error, tenant) {
-        if(error) {
-          console.error('ERROR: ', error);
-          return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
-        }
+        if(error) return tenantExit(error);
         var tenantName = result.name;
         var tenantDisplayName = result.displayName;
         // create the tenant according to the user provided details
         var _createTenant = function(cb) {
-          console.log("Creating file system for tenant: " + tenantName + ", please wait ...");
+          console.log(`Creating file system for master tenant: ${tenantName}`);
           app.tenantmanager.createTenant({
             name: tenantName,
             displayName: tenantDisplayName,
@@ -286,12 +281,10 @@ function configureTenant(next) {
             }
           },
           function(error, tenant) {
-            if(error || !tenant) {
-              console.error('ERROR: ', error);
-              return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
-            }
+            if(error) return tenantExit(error);
             masterTenant = tenant;
-            console.log("Tenant " + tenant.name + " was created. Now saving configuration, please wait ...");
+            console.log(`Master tenant (${tenant.name}) was created.`);
+            console.log(`Now saving configuration`);
             // save master tenant name to config
             app.configuration.setConfig('masterTenantName', tenant.name);
             app.configuration.setConfig('masterTenantID', tenant._id);
@@ -299,60 +292,51 @@ function configureTenant(next) {
           }
         );
       };
-      var _deleteCollections = function(cb) {
-        async.eachSeries(
-          app.db.getModelNames(),
-          function(modelName, nxt) {
-            app.db.destroy(modelName, null, nxt);
-          },
-          cb
-        );
-      };
       if(tenant) {
         // deal with duplicate tenant. permanently.
         console.log("Tenant already exists. It will be deleted.");
-        return prompt.get({ name: "confirm", description: "Continue? (Y/n)", default: "Y" }, function(error, result) {
+        prompt.get({ name: "confirm", description: "Continue? (Y/n)", default: "Y" }, function(error, result) {
           if(error){
             console.error('ERROR: ' + error);
           }
           if(!/(Y|y)[es]*/.test(result.confirm)) {
             return exitInstall(1, 'Exiting install ... ');
           }
-          _deleteCollections(function(error) {
+          // delete tenant
+          async.eachSeries(app.db.getModelNames(), function(modelName, cb) {
+            app.db.destroy(modelName, null, cb);
+          }, function(error) {
             if(error) {
               console.error('ERROR: ' + error);
-              return next(error);
+              return callback(error);
             }
-            return _createTenant(next);
+            _createTenant(callback);
           });
         });
+      } else {
+         _createTenant(callback);
       }
-      return _createTenant(next);
     });
   });
 });
 }
 
-function createSuperUser(next) {
-  if(!IS_INTERACTIVE) {
-    console.log("Creating the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
-  } else {
-    console.log("Create the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
-  }
+function createSuperUser(callback) {
+  var suExit = function(error) {
+    console.error('ERROR: ', error);
+    return exitInstall(1, 'Failed to create admin user account. Please check the console output.');
+  };
+  console.log(`Creating the super user account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
   prompt.get(userConfig, function(error, result) {
     if(error) {
-      console.error('ERROR: ', error);
-      return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
+      return suExit(error);
     }
     var userEmail = result.email;
     var userPassword = result.password;
     var userRetypePassword = result.retypePassword;
-    // ruthlessly remove any existing users (we're already nuclear if we've deleted the existing tenant)
+
     app.usermanager.deleteUser({ email: userEmail }, function(error, userRec) {
-      if(error) {
-        console.error('ERROR: ', error);
-        return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
-      }
+      if(error) return suExit(error);
       // add a new user using default auth plugin
       new localAuth().internalRegisterUser(true, {
         email: userEmail,
@@ -361,17 +345,12 @@ function createSuperUser(next) {
         _tenantId: masterTenant._id
       }, function(error, user) {
         if(error) {
-          console.error('ERROR: ', error);
-          return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
+          return suExit(error);
         }
         superUser = user;
-        // grant super permissions!
         helpers.grantSuperPermissions(user._id, function(error) {
-          if(error) {
-            console.error('ERROR: ', error);
-            return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
-          }
-          return next();
+          if(error) return suExit(error);
+          return callback();
         });
       }
     );
@@ -379,7 +358,7 @@ function createSuperUser(next) {
 });
 }
 
-function buildFrontend(next) {
+function buildFrontend(callback) {
   console.log('Compiling the ' + app.polyglot.t('app.productname') + ' web application, please wait a moment ... ');
   // TODO move this to installHelpers
   /*
@@ -388,10 +367,10 @@ function buildFrontend(next) {
       console.error('ERROR: ', error);
       console.log('grunt build:prod command failed. Is the grunt-cli module installed? You can install using ' + 'npm install -g grunt grunt-cli');
       console.log('Install will continue. Try running ' + 'grunt build:prod' + ' after installation completes.');
-      return next();
+      return callback();
     }
     console.log('The ' + app.polyglot.t('app.productname') + ' web application was compiled and is now ready to use.');
-    return next();
+    return callback();
   });
   proc.stdout.on('data', console.log);
   proc.stderr.on('data', console.error);
@@ -405,10 +384,10 @@ function buildFrontend(next) {
  * as a .env file for foreman
  *
  * @param {object} configItems
- * @param {callback} next
+ * @param {callback} callback
  */
 
-function saveConfig(configItems, next) {
+function saveConfig(configItems, callback) {
   //pass by reference so as not to delete frameworkRevision
   var config = _.clone(configItems);
   var env = [];
@@ -435,7 +414,7 @@ function saveConfig(configItems, next) {
     console.error('ERROR: Failed to write conf/config.json file. Do you have write permissions for the directory?');
     process.exit(1, 'Install Failed.');
   }
-  return next();
+  return callback();
 }
 
 /**

@@ -1,9 +1,3 @@
-/**
-* TODO:
-* - support any remote name
-* - look at consistent error logging/callbacks (we'd ideally bubble these all up to the main func rather than exiting early)
-*/
-
 var _ = require('underscore');
 var async = require('async');
 var chalk = require('chalk');
@@ -22,15 +16,6 @@ var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36
 // GLOBALS
 var app = origin();
 var spinner = new spinner('');
-var installedAuthoringVersion = '';
-var latestAuthoringTag = null;
-var installedFrameworkVersion = '';
-var latestFrameworkTag = null;
-var shouldUpdateAuthoring = false;
-var shouldUpdateFramework = false;
-var upgradeOptions = {
-  automatic: true
-};
 var configFile;
 /**
 * Start of execution
@@ -91,28 +76,36 @@ function getUserInput() {
         return exit(1, err);
       }
       if (result['updateAutomatically'] === 'Y' || result['updateAutomatically'] === 'y') {
-        return doSteps();
+        return checkForUpdates(function(error, updateData) {
+          if(error) exit(1, error);
+
+          doUpdate(updateData);
+        });
       }
       // no automatic update, so get the intended versions
-      upgradeOptions.automatic = false;
       prompt.get(tagProperties, function (err, result) {
-        upgradeOptions.authoringToolGitTag = result.authoringToolGitTag;
-        upgradeOptions.frameworkGitTag = result.frameworkGitTag;
-        doSteps();
+        doUpdate({
+          adapt_authoring: result.authoringToolGitTag,
+          adapt_framework: result.frameworkGitTag
+        });
       });
     });
   });
 }
 
-function doSteps() {
+function doUpdate(data) {
   async.series([
-    checkInstalledVersions,
-    checkLatestVersions,
-    upgradeAuthoring,
-    upgradeFramework
+    function(cb) {
+      if(!data.adapt_authoring) return cb();
+      upgradeAuthoring(data.adapt_authoring, cb);
+    },
+    function(cb) {
+      if(!data.adapt_framework) return cb();
+      upgradeFramework(data.adapt_framework, cb);
+    },
   ], function (err, results) {
     if (err) {
-      logError(err);
+      console.error('ERROR:', msg);
       return exit(1, 'Upgrade was unsuccessful. Please check the console output.');
     }
     exit(0, `Great work! Your ${app.polyglot.t('app.productname')} is now updated.`);
@@ -122,76 +115,56 @@ function doSteps() {
 /**
 * Queries GitHub
 */
-function checkInstalledVersions(callback) {
-  logHeader('Checking installed versions');
-  installHelpers.getInstalledVersions(function(error, versionData) {
-    if(error) {
-      return callback(error);
-    }
-    installedAuthoringVersion = versionData.adapt_authoring;
-    installedFrameworkVersion = versionData.adapt_framework;
-    console.log(`- ${app.polyglot.t('app.productname')}: ${installedAuthoringVersion}`);
-    console.log(`- Adapt Framework: ${installedFrameworkVersion}`);
-    callback();
-  });
-}
-
-function checkLatestVersions(callback) {
+function checkForUpdates(callback) {
   logHeader('Checking for updates');
-  // we're installing specific versions, return early
-  if (!upgradeOptions.automatic) {
-    shouldUpdateAuthoring = true;
-    shouldUpdateFramework = true;
-    latestAuthoringTag = upgradeOptions.authoringToolGitTag;
-    latestFrameworkTag = upgradeOptions.frameworkGitTag;
-    return callback();
-  }
-  if (configFile.frameworkRepository) {
-    return callback('You are using a custom framework repository, you must use manual upgrade and specify a git tag or branch.');
-  }
-  // no versions specified, check for the latest
-  installHelpers.getLatestVersions(function(error, versions) {
-    latestAuthoringTag = versions.adapt_authoring;
-    latestFrameworkTag = versions.adapt_framework;
-    checkIfUpdateNeeded(callback);
-  });
+  var versionData = {};
+  async.series([
+    function getCurrentVersions(cb) {
+      installHelpers.getInstalledVersions(function(error, installedVersionData) {
+        versionData.installed = installedVersionData;
+        cb(error);
+      });
+    }
+    function getLatestVersions(cb) {
+      if (configFile.frameworkRepository) {
+        return cb('You are using a custom framework repository, you must use manual upgrade and specify a git tag or branch.');
+      }
+      installHelpers.getLatestVersions(function(error, latestVersionData) {
+        versionData.latest = latestVersionData;
+        cb(error);
+      });
+    }
+    function(cb) {
+      var updateData = {};
+      if (versionData.latest.adapt_authoring !== versionData.installed.adapt_authoring) {
+        updateData.adapt_authoring = versionData.latest.adapt_authoring;
+        console.log(`${app.polyglot.t('app.productname')} ${versionData.installed.adapt_authoring} installed, ${versionData.latest.adapt_authoring} is available`);
+      }
+      if (versionData.latest.adapt_framework !== versionData.installed.adapt_framework) {
+        updateData.adapt_framework = versionData.latest.adapt_framework;
+        console.log(`Adapt framework ${versionData.installed.adapt_framework} installed, ${versionData.latest.adapt_framework} is available`);
+      }
+      if (!updateData.adapt_authoring && !updateData.adapt_framework) {
+        return exit(0, `You're already using the latest, no need to upgrade.`);
+      }
+      cb(null, updateData);
+    }
+  ], callback);
 }
 
-function checkIfUpdateNeeded(callback) {
-  if (latestAuthoringTag !== installedAuthoringVersion) {
-    shouldUpdateAuthoring = true;
-    console.log(`Update for ${app.polyglot.t('app.productname')} is available: ${latestAuthoringTag}`);
-  }
-  if (latestFrameworkTag !== installedFrameworkVersion) {
-    shouldUpdateFramework = true;
-    console.log(`Update for Adapt Framework is available: ${latestFrameworkTag}`);
-  }
-  // If neither need updating then quit the upgrading process
-  if (!shouldUpdateFramework && !shouldUpdateAuthoring) {
-    return exit(0, `You're already using the latest, no need to upgrade.`);
-  }
-  callback();
-}
-
-function upgradeAuthoring(callback) {
-  if (!shouldUpdateAuthoring) {
-    return callback();
-  }
+function upgradeAuthoring(revision, callback) {
   logHeader(`Upgrading the ${app.polyglot.t('app.productname')}`);
   installHelpers.updateAuthoring({
     repository: configFile.authoringToolRepository,
-    revision: upgradeOptions.authoringToolGitTag
+    revision: revision
   }, callback);
 }
 
-function upgradeFramework(callback) {
-  if (!shouldUpdateFramework) {
-    return callback();
-  }
+function upgradeFramework(revision, callback) {
   logHeader('Upgrading the Adapt Framework');
   installHelpers.installFramework({
     repository: configFile.frameworkRepository,
-    revision: upgradeOptions.frameworkGitTag
+    revision: revision
   }, callback);
 }
 
@@ -207,16 +180,6 @@ function logHeader(msg) {
   console.log(chalk.underline(`\n${msg}`));
 }
 
-function logError(msg) {
-  console.error('ERROR:', msg);
-}
-
-/**
-* Exits the install with some cleanup, should there be an error
-*
-* @param {int} code
-* @param {string} msg
-*/
 function exit(code, msg) {
   code = code || 0;
   msg = msg || 'Bye!';

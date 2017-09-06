@@ -65,19 +65,19 @@ function getUserInput() {
   console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} and/or Adapt Framework. Would you like to continue?`);
   prompt.override = optimist.argv;
   prompt.start();
-  prompt.get(confirmProperties, function (err, result) {
-    if(err) {
-      return exit(1, err);
+  prompt.get(confirmProperties, function(error, result) {
+    if(error) {
+      return exit(1, error);
     }
-    if (!/(Y|y)[es]*$/.test(result['Y/n'])) {
+    if(!/(Y|y)[es]*$/.test(result['Y/n'])) {
       return exit();
     }
-    prompt.get(upgradeProperties, function (err, result) {
-      if(err) {
-        return exit(1, err);
+    prompt.get(upgradeProperties, function(error, result) {
+      if(error) {
+        return exit(1, error);
       }
       console.log('');
-      if (result['updateAutomatically'] === 'Y' || result['updateAutomatically'] === 'y') {
+      if(result['updateAutomatically'] === 'Y' || result['updateAutomatically'] === 'y') {
         return checkForUpdates(function(error, updateData) {
           if(error) {
             return exit(1, error);
@@ -86,8 +86,8 @@ function getUserInput() {
         });
       }
       // no automatic update, so get the intended versions
-      prompt.get(tagProperties, function (err, result) {
-        if(err) exit(1, err);
+      prompt.get(tagProperties, function(error, result) {
+        if(error) exit(1, error);
         doUpdate({
           adapt_authoring: result.authoringToolGitTag,
           adapt_framework: result.frameworkGitTag
@@ -134,9 +134,9 @@ function doUpdate(data) {
         revision: data.adapt_framework
       }, cb);
     },
-  ], function (err, results) {
+  ], function(error, results) {
     hideSpinner();
-    if (err) {
+    if(error) {
       console.error('ERROR:', msg);
       return exit(1, 'Upgrade was unsuccessful. Please check the console output.');
     }

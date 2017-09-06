@@ -100,6 +100,20 @@ function getUserInput() {
 function checkForUpdates(callback) {
   showSpinner('Checking for updates');
   var versionData = {};
+  installHelpers.getUpdateData(function(error, data) {
+    hideSpinner();
+    if(!data) {
+      return exit(0, `Your software is already up-to-date, no need to upgrade.`);
+    }
+    if(data.adapt_authoring) {
+      console.log(`Update available for ${app.polyglot.t('app.productname')}: ${data.adapt_authoring}.`);
+    }
+    if(data.adapt_framework) {
+      console.log(`Update available for Adapt framework: ${data.adapt_framework}.`);
+    }
+    cb(null, data);
+  });
+  /*
   async.series([
     function getCurrentVersions(cb) {
       installHelpers.getInstalledVersions(function(error, installedVersionData) {
@@ -133,6 +147,7 @@ function checkForUpdates(callback) {
       cb(null, updateData);
     }
   ], callback);
+  */
 }
 
 function doUpdate(data) {
@@ -174,8 +189,7 @@ function showSpinner(text) {
 }
 
 function hideSpinner() {
-  spinner.stop();
-  // spinner.stop(true);
+  spinner.stop(true);
 }
 
 function logHeader(msg) {

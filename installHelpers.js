@@ -11,6 +11,7 @@ var exec = require('child_process').exec;
 var fs = require('fs-extra');
 var path = require('path');
 var request = require('request');
+var semver = require('semver');
 
 var configuration = require('./lib/configuration');
 
@@ -29,7 +30,10 @@ var exports = module.exports = {
   getLatestFrameworkVersion,
   getInstalledVersions,
   getLatestVersions,
+  getUpdateData,
   installFramework,
+  updateFramework,
+  updateFrameworkPlugins,
   updateAuthoring
 };
 
@@ -80,6 +84,25 @@ function getLatestVersions(callback) {
       adapt_authoring: results[0],
       adapt_framework: results[1]
     });
+  });
+}
+
+function getUpdateData(callback) {
+  async.parallel([
+    exports.getInstalledVersions,
+    exports.getLatestVersions
+  ], function(error, results) {
+    var updateData = {};
+    if(semver.lt(results[0].adapt_authoring, results[1].adapt_authoring)) {
+      updateData.adapt_authoring = results[1].adapt_authoring;
+    }
+    if(semver.lt(results[0].adapt_framework, results[1].adapt_framework)) {
+      updateData.adapt_framework = results[1].adapt_framework;
+    }
+    if(Object.keys(updateData).length === 0) {
+      updateData = undefined;
+    }
+    callback(error, updateData);
   });
 }
 

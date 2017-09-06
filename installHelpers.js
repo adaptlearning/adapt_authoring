@@ -157,9 +157,14 @@ function installFramework(opts, callback) {
 
 function cloneFramework(repoURL, callback) {
   console.log('Cloning the Adapt framework');
-  execCommand(`git clone ${repoURL} --origin ${REMOTE_NAME}`, {
-    cwd: getFrameworkRoot()
-  }, callback);
+  fs.remove(getFrameworkRoot(), function(error) {
+    if(error) {
+      return callback(error);
+    }
+    execCommand(`git clone ${repoURL} --origin ${REMOTE_NAME}`, {
+      cwd: getFrameworkRoot()
+    }, callback);
+  })
 }
 
 function fetchFramework(repoURL, callback) {

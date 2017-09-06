@@ -12,13 +12,11 @@ var fs = require('fs-extra');
 var path = require('path');
 var request = require('request');
 
-var configFile = fs.readJSONSync(path.join('conf','config.json'));
+var configuration = require('./lib/configuration');
 
 var SILENT = false;
 
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
-var SERVER_ROOT = path.resolve(configFile.serverRoot);
-var FRAMEWORK_ROOT = path.join(SERVER_ROOT, 'temp', configFile.masterTenantID, 'adapt_framework');
 
 var DEFAULT_SERVER_REPO = 'https://github.com/adaptlearning/adapt_authoring.git';
 var DEFAULT_FRAMEWORK_REPO = 'https://github.com/adaptlearning/adapt_framework.git';
@@ -50,7 +48,7 @@ function getLatestServerVersion(callback) {
 
 function getInstalledFrameworkVersion(callback) {
   try {
-    var pkg = fs.readJSONSync(path.join(FRAMEWORK_ROOT, 'package.json'));
+    var pkg = fs.readJSONSync(path.join(getFrameworkRoot(), 'package.json'));
     callback(null, pkg.version);
   } catch(e) {
     return callback(`Cannot determine framework version, ${e}`);
@@ -83,6 +81,10 @@ function getLatestVersions(callback) {
       adapt_framework: results[1]
     });
   });
+}
+
+function getFrameworkRoot() {
+  return path.join(configuration.serverRoot, 'temp', configuration.getConfig('masterTenantID'), 'adapt_framework');
 }
 
 function checkLatestAdaptRepoVersion(repoName, callback) {
@@ -121,7 +123,7 @@ function installFramework(opts, callback) {
   if(!opts.repository) {
     opts.repository = DEFAULT_FRAMEWORK_REPO;
   }
-  var func = fs.existsSync(FRAMEWORK_ROOT) && !opts.force ?  fetchFramework : cloneFramework;
+  var func = fs.existsSync(getFrameworkRoot()) && !opts.force ?  fetchFramework : cloneFramework;
   func.call(this, opts.repository, function(error) {
     if (error) {
       return callback(error);
@@ -133,14 +135,14 @@ function installFramework(opts, callback) {
 function cloneFramework(repoURL, callback) {
   console.log('Cloning the Adapt framework');
   execCommand(`git clone ${repoURL} --origin ${REMOTE_NAME}`, {
-    cwd: FRAMEWORK_ROOT
+    cwd: getFrameworkRoot()
   }, callback);
 }
 
 function fetchFramework(repoURL, callback) {
   console.log('Fetching the latest framework data');
-  execCommand(`git remote set-url ${REMOTE_NAME} ${configFile.frameworkRepository} && git fetch ${REMOTE_NAME}`, {
-    cwd: FRAMEWORK_ROOT
+  execCommand(`git remote set-url ${REMOTE_NAME} ${configuration.getConfig('frameworkRepository')} && git fetch ${REMOTE_NAME}`, {
+    cwd: getFrameworkRoot()
   }, callback);
 }
 
@@ -149,7 +151,7 @@ function updateFramework(opts, callback) {
     return callback('Cannot update framework, revision not specified');
   }
   execCommand(`git reset --hard ${opts.revision} && npm install`, {
-    cwd: FRAMEWORK_ROOT
+    cwd: getFrameworkRoot()
   }, function(error) {
     if (error) {
       return callback(error);
@@ -165,7 +167,7 @@ function updateFramework(opts, callback) {
 * Uses adapt.json to install the latest plugin versions
 */
 function updateFrameworkPlugins(callback) {
-  fs.readJSON(path.join(FRAMEWORK_ROOT, 'adapt.json'), function(error, json) {
+  fs.readJSON(path.join(getFrameworkRoot(), 'adapt.json'), function(error, json) {
     if (error) {
       return callback(error);
     }
@@ -184,7 +186,7 @@ function updateFrameworkPlugins(callback) {
 * This isn't used by the authoring tool
 */
 function purgeCourseFolder(callback) {
-  fs.remove(path.join(FRAMEWORK_ROOT, 'src', 'course'), callback);
+  fs.remove(path.join(getFrameworkRoot(), 'src', 'course'), callback);
 }
 
 function updateAuthoring(opts, callback) {

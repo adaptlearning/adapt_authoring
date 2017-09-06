@@ -18,32 +18,124 @@ var ncp = require('ncp').ncp;
 var installHelpers = require('./installHelpers');
 var request = require('request');
 
-// Constants
-var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
+var IS_INTERACTIVE = process.argv.length === 2;
 
-// set overrides from command line arguments
-prompt.override = optimist.argv;
-prompt.start();
-
-prompt.message = '> ';
-prompt.delimiter = '';
-
-// get available db drivers and auth plugins
-var drivers = database.getAvailableDriversSync();
-var auths = auth.getAvailableAuthPluginsSync();
 var app = origin();
 var masterTenant = false;
 var superUser = false;
+// from user input
+var configResults;
+var latestFrameworkTag;
 
-var isVagrant = function () {
-  if (process.argv.length > 2) {
-    return true;
+// prompt config items
+var installConfig = [
+  {
+    name: 'serverPort',
+    type: 'number',
+    description: 'Server port',
+    pattern: /^[0-9]+\W*$/,
+    default: 5000
+  },
+  {
+    name: 'serverName',
+    type: 'string',
+    description: 'Server name',
+    default: 'localhost'
+  },
+  {
+    name: 'dbHost',
+    type: 'string',
+    description: 'Database host',
+    default: 'localhost'
+  },
+  {
+    name: 'dbName',
+    type: 'string',
+    description: 'Master database name',
+    pattern: /^[A-Za-z0-9_-]+\W*$/,
+    default: 'adapt-tenant-master'
+  },
+  {
+    name: 'dbPort',
+    type: 'number',
+    description: 'Database server port',
+    pattern: /^[0-9]+\W*$/,
+    default: 27017
+  },
+  {
+    name: 'dataRoot',
+    type: 'string',
+    description: 'Data directory path',
+    pattern: /^[A-Za-z0-9_-]+\W*$/,
+    default: 'data'
+  },
+  {
+    name: 'sessionSecret',
+    type: 'string',
+    description: 'Session secret',
+    pattern: /^.+$/,
+    default: 'your-session-secret'
+  },
+  {
+    name: 'useffmpeg',
+    type: 'string',
+    description: "Will ffmpeg be used? y/N",
+    before: function (v) {
+      if (/(Y|y)[es]*/.test(v)) return true;
+      return false;
+    },
+    default: 'N'
+  },
+  {
+    name: 'smtpService',
+    type: 'string',
+    description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
+    default: 'none'
+  },
+  {
+    name: 'smtpUsername',
+    type: 'string',
+    description: "SMTP username",
+    default: ''
+  },
+  {
+    name: 'smtpPassword',
+    type: 'string',
+    description: "SMTP password",
+    hidden: true
+  },
+  {
+    name: 'fromAddress',
+    type: 'string',
+    description: "Sender email address",
+    default: ''
+  },
+  {
+    name: 'rootUrl',
+    type: 'string',
+    description: "The url this instance is accessed by",
+    default: 'http://localhost:5000/'
+  },
+  {
+    name: 'authoringToolRepository',
+    type: 'string',
+    description: "Authoring Tool Repository",
+    default: 'https://github.com/adaptlearning/adapt_authoring.git'
+  },
+  {
+    name: 'frameworkRepository',
+    type: 'string',
+    description: "Framework Repository",
+    default: 'https://github.com/adaptlearning/adapt_framework.git'
+  },
+  {
+    name: 'frameworkRevision',
+    type: 'string',
+    description: "Framework revision to install (branchName || tags/tagName)",
+    default: 'tags/' + latestFrameworkTag
   }
+];
 
-  return false;
-};
-
-// config items
 var tenantConfig = [
   {
     name: 'name',
@@ -84,204 +176,58 @@ var userConfig = [
   }
 ];
 
-/**
- * Installer steps
- *
- * 1. install the framework
- * 2. add config vars
- * 3. configure master tenant
- * 4. create admin account
- * 5. TODO install plugins
- */
+start();
 
-var configResults;
+function start() {
+  prompt.override = optimist.argv; // allow command line arguments
+  prompt.start();
+  prompt.message = '> ';
+  prompt.delimiter = '';
+  // set overrides from command line arguments
+  prompt.override = optimist.argv;
+  prompt.start();
+  // Prompt the user to begin the install
+  if (!IS_INTERACTIVE) {
+    console.log('This script will install the application. Please wait ...');
+  } else {
+    console.log('This script will install the application. Would you like to continue?');
+  }
+  prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
+    if (!/(Y|y)[es]*$/.test(result['install'])) {
+      return exitInstall();
+    }
+    async.series(steps, function (err, results) {
+      if (err) {
+        console.error('ERROR: ', err);
+        return exitInstall(1, 'Install was unsuccessful. Please check the console output.');
+      }
+      exitInstall();
+    });
+  });
+}
+
 var steps = [
   function configureEnvironment(next) {
-    if (isVagrant()) {
+    if(!IS_INTERACTIVE) {
       console.log('Now setting configuration items.');
     } else {
       console.log('We need to configure the tool before install. Just press ENTER to accept the default value (in brackets).');
     }
-    request({
-      headers: {
-        'User-Agent': DEFAULT_USER_AGENT
-      },
-      uri: 'https://api.github.com/repos/adaptlearning/adapt_framework/tags',
-      method: 'GET'
-    }, function(error, response, body) {
+    installHelpers.getLatestFrameworkVersion(function(error, version) {
       if (error) {
         console.error('ERROR: ', error);
         return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
       }
-
-      if (response.statusCode === 200) {
-        var tagInfo = JSON.parse(body);
-
-        if (tagInfo) {
-          var latestBuilderTag = tagInfo[0].name;
+      latestFrameworkTag = version;
+      prompt.get(authoringConfig, function(err, results) {
+        configResults = results;
+        if (err) {
+          console.error('ERROR: ', err);
+          return exitInstall(1, 'Could not save configuration items.');
         }
-
-        var configItems = [
-          {
-            name: 'serverPort',
-            type: 'number',
-            description: 'Server port',
-            pattern: /^[0-9]+\W*$/,
-            default: 5000
-          },
-          {
-            name: 'serverName',
-            type: 'string',
-            description: 'Server name',
-            default: 'localhost'
-          },
-          // {
-          //   name: 'dbType',
-          //   type: 'string',
-          //   description: getDriversPrompt(),
-          //   conform: function (v) {
-          //     // validate against db drivers
-          //     v = parseInt(v, 10);
-          //     return  v > 0 && v <= drivers.length;
-          //   },
-          //   before: function (v) {
-          //     // convert's the numeric answer to one of the available drivers
-          //     return drivers[(parseInt(v, 10) - 1)];
-          //   },
-          //   default: '1'
-          // },
-          {
-            name: 'dbHost',
-            type: 'string',
-            description: 'Database host',
-            default: 'localhost'
-          },
-          {
-            name: 'dbName',
-            type: 'string',
-            description: 'Master database name',
-            pattern: /^[A-Za-z0-9_-]+\W*$/,
-            default: 'adapt-tenant-master'
-          },
-          {
-            name: 'dbPort',
-            type: 'number',
-            description: 'Database server port',
-            pattern: /^[0-9]+\W*$/,
-            default: 27017
-          },
-          {
-            name: 'dataRoot',
-            type: 'string',
-            description: 'Data directory path',
-            pattern: /^[A-Za-z0-9_-]+\W*$/,
-            default: 'data'
-          },
-          {
-            name: 'sessionSecret',
-            type: 'string',
-            description: 'Session secret',
-            pattern: /^.+$/,
-            default: 'your-session-secret'
-          },
-          // {
-          //   name: 'auth',
-          //   type: 'string',
-          //   description: getAuthPrompt(),
-          //   conform: function (v) {
-          //     // validate against auth types
-          //     v = parseInt(v, 10);
-          //     return  v > 0 && v <= auths.length;
-          //   },
-          //   before: function (v) {
-          //     // convert's the numeric answer to one of the available auth types
-          //     return auths[(parseInt(v, 10) - 1)];
-          //   },
-          //   default: '1'
-          // },
-          {
-            name: 'useffmpeg',
-            type: 'string',
-            description: "Will ffmpeg be used? y/N",
-            before: function (v) {
-              if (/(Y|y)[es]*/.test(v)) {
-                return true;
-              }
-              return false;
-            },
-            default: 'N'
-          },
-          {
-            name: 'smtpService',
-            type: 'string',
-            description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
-            default: 'none'
-          },
-          {
-            name: 'smtpUsername',
-            type: 'string',
-            description: "SMTP username",
-            default: ''
-          },
-          {
-            name: 'smtpPassword',
-            type: 'string',
-            description: "SMTP password",
-            hidden: true
-          },
-          {
-            name: 'fromAddress',
-            type: 'string',
-            description: "Sender email address",
-            default: ''
-          },
-          {
-            name: 'rootUrl',
-            type: 'string',
-            description: "The url this instance is accessed by",
-            default: 'http://localhost:5000/'
-          },
-          {
-            name: 'authoringToolRepository',
-            type: 'string',
-            description: "Authoring Tool Repository",
-            default: 'https://github.com/adaptlearning/adapt_authoring.git'
-          },
-          {
-            name: 'frameworkRepository',
-            type: 'string',
-            description: "Framework Repository",
-            default: 'https://github.com/adaptlearning/adapt_framework.git'
-          },
-          {
-            name: 'frameworkRevision',
-            type: 'string',
-            description: "Framework revision to install (branchName || tags/tagName)",
-            default: 'tags/' + latestBuilderTag
-          },
-          // {
-          //   name: 'outputPlugin',
-          //   type: 'string',
-          //   description: "Which output plugin will be used?",
-          //   default: 'adapt'
-          // }
-        ];
-
-        prompt.get(configItems, function(err, results) {
-          configResults = results;
-          if (err) {
-            console.error('ERROR: ', err);
-            return exitInstall(1, 'Could not save configuration items.');
-          }
-          saveConfig(configResults, next);
-        });
-      } else {
-        console.error('ERROR: ', 'GitubAPI did not respond with a 200 status code');
-        return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
-      }
-
+        saveConfig(configResults, next);
+      });
     });
-
   },
   function installFramework(next) {
     installHelpers.installFramework({
@@ -310,7 +256,7 @@ var steps = [
     // run the app
     app.run();
     app.on('serverStarted', function () {
-      if (isVagrant()) {
+      if(!IS_INTERACTIVE) {
         console.log('Creating your tenant. Please wait ...');
       } else {
         console.log('Now create your tenant. Just press ENTER to accept the default value (in brackets). Please wait ...');
@@ -400,39 +346,8 @@ var steps = [
       });
     });
   },
-  function installContentPlugins (next) {
-    console.log('Installing framework plugins');
-    // Interrogate the adapt.json file from the adapt_framework folder and install the latest versions of the core plugins
-    fs.readFile(path.join(process.cwd(), 'adapt_framework', 'adapt.json'), function (err, data) {
-      if (err) {
-        console.error('ERROR: ' + err);
-        return next(err);
-      }
-      var json = JSON.parse(data);
-      async.eachSeries(Object.keys(json.dependencies), function(plugin, pluginCallback) {
-        // 'dependencies' contains a key-value pair representing the plugin name and the semver
-        if(json.dependencies[plugin] === '*') {
-          app.bowermanager.installLatestCompatibleVersion(plugin, pluginCallback);
-        } else {
-          app.bowermanager.installPlugin(plugin, json.dependencies[plugin], pluginCallback);
-        }
-      }, next);
-    });
-  },
-  // Create tenants copy of framework
-  function copyFramework (next) {
-    var source = path.join(process.cwd(), 'adapt_framework' );
-    var destination = path.join(process.cwd(), 'temp', app.configuration.getConfig('masterTenantID').toString(), 'adapt_framework' );
-    ncp(source, destination, function (err) {
-      if (err) {
-        console.error(err);
-        return next(err)
-      }
-      return next();
-    });
-  },
   function createSuperUser (next) {
-    if (isVagrant()) {
+    if(!IS_INTERACTIVE) {
       console.log("Creating the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
     } else {
       console.log("Create the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
@@ -493,41 +408,10 @@ var steps = [
     proc.stderr.on('data', console.error);
   },
   function finalize (next) {
-    if (isVagrant()) {
-      console.log("Installation complete.\nTo restart your instance run the command 'pm2 restart all'");
-    } else {
-      console.log("Installation complete.\n To restart your instance run the command 'node server' (or 'foreman start' if using heroku toolbelt).");
-    }
+    exitInstall(0, "Installation completed successfully, the server can now be started.");
     return next();
   }
 ];
-
-// set overrides from command line arguments
-prompt.override = optimist.argv;
-
-prompt.start();
-
-// Prompt the user to begin the install
-if (isVagrant()) {
-  console.log('This script will install the application. Please wait ...');
-} else {
-  console.log('This script will install the application. Would you like to continue?');
-}
-
-prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
-  if (!/(Y|y)[es]*$/.test(result['install'])) {
-    return exitInstall();
-  }
-
-  // run steps
-  async.series(steps, function (err, results) {
-    if (err) {
-      console.error('ERROR: ', err);
-      return exitInstall(1, 'Install was unsuccessful. Please check the console output.');
-    }
-    exitInstall();
-  });
-});
 
 // helper functions
 
@@ -558,7 +442,6 @@ function saveConfig (configItems, next) {
   config.auth = 'local';
   config.root = process.cwd();
   delete config.frameworkRevision;
-
   if(config.smtpService !== ''){
     config.useSmtp = true;
   }
@@ -568,35 +451,6 @@ function saveConfig (configItems, next) {
     process.exit(1, 'Install Failed.');
   }
   return next();
-}
-
-/**
- * writes an indexed prompt for available db drivers
- *
- * @return {string}
- */
-
-function getDriversPrompt() {
-  var str = "Choose your database driver type (enter a number)\n";
-  drivers.forEach(function (d, index) {
-    str += (index+1) + ". " + d + "\n";
-  });
-  return str;
-}
-
-/**
- * writes an indexed prompt for available authentication plugins
- *
- * @return {string}
- */
-
-function getAuthPrompt () {
-  var str = "Choose your authentication method (enter a number)\n";
-  auths.forEach(function (a, index) {
-    str += (index+1) + ". " + a + "\n";
-  });
-
-  return str;
 }
 
 /**

@@ -5,8 +5,7 @@ var fs = require('fs');
 var path = require('path');
 var rimraf = require('rimraf');
 var exec = require('child_process').exec;
-var builder = require('./lib/application');
-var frameworkHelper = require('./lib/frameworkhelper');
+var origin = require('./lib/application');
 var auth = require('./lib/auth');
 var database = require('./lib/database');
 var helpers = require('./lib/helpers');
@@ -16,6 +15,7 @@ var optimist = require('optimist');
 var util = require('util');
 var _ = require('underscore');
 var ncp = require('ncp').ncp;
+var installHelpers = require('./installHelpers');
 var request = require('request');
 
 // Constants

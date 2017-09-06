@@ -76,6 +76,7 @@ function getUserInput() {
       if(err) {
         return exit(1, err);
       }
+      console.log('');
       if (result['updateAutomatically'] === 'Y' || result['updateAutomatically'] === 'y') {
         return checkForUpdates(function(error, updateData) {
           if(error) {
@@ -104,49 +105,9 @@ function checkForUpdates(callback) {
     if(!data) {
       return exit(0, `Your software is already up-to-date, no need to upgrade.`);
     }
-    if(data.adapt_authoring) {
-      console.log(`Update available for ${app.polyglot.t('app.productname')}: ${data.adapt_authoring}.`);
-    }
-    if(data.adapt_framework) {
-      console.log(`Update available for Adapt framework: ${data.adapt_framework}.`);
-    }
-    cb(null, data);
+    console.log(chalk.underline('Software updates found.\n'));
+    callback(null, data);
   });
-  /*
-  async.series([
-    function getCurrentVersions(cb) {
-      installHelpers.getInstalledVersions(function(error, installedVersionData) {
-        versionData.installed = installedVersionData;
-        cb(error);
-      });
-    },
-    function getLatestVersions(cb) {
-      if (configuration.getConfig('frameworkRepository')) {
-        return cb('You are using a custom framework repository, you must use manual upgrade and specify a git tag or branch.');
-      }
-      installHelpers.getLatestVersions(function(error, latestVersionData) {
-        versionData.latest = latestVersionData;
-        cb(error);
-      });
-    },
-    function compareVersions(cb) {
-      hideSpinner();
-      var updateData = {};
-      if (semver.lt(versionData.installed.adapt_authoring, versionData.latest.adapt_authoring)) {
-        updateData.adapt_authoring = versionData.latest.adapt_authoring;
-        console.log(`${app.polyglot.t('app.productname')} ${versionData.installed.adapt_authoring} installed, ${versionData.latest.adapt_authoring} is available.`);
-      }
-      if (semver.lt(versionData.installed.adapt_framework, versionData.latest.adapt_framework)) {
-        updateData.adapt_framework = versionData.latest.adapt_framework;
-        console.log(`Adapt framework ${versionData.installed.adapt_framework} installed, ${versionData.latest.adapt_framework} is available.`);
-      }
-      if (!updateData.adapt_authoring && !updateData.adapt_framework) {
-        return exit(0, `Your software is already up-to-date, no need to upgrade.`);
-      }
-      cb(null, updateData);
-    }
-  ], callback);
-  */
 }
 
 function doUpdate(data) {
@@ -155,27 +116,31 @@ function doUpdate(data) {
       if(!data.adapt_authoring) {
         return cb();
       }
-      showSpinner(`Upgrading the ${app.polyglot.t('app.productname')}`);
+      showSpinner(`Upgrading the ${app.polyglot.t('app.productname')} to ${data.adapt_authoring}`);
       installHelpers.updateAuthoring({
         repository: configuration.getConfig('authoringToolRepository'),
         revision: data.adapt_authoring
       }, cb);
     },
     function upgradeFramework(cb) {
+      hideSpinner();
+      console.log(`${app.polyglot.t('app.productname')} upgraded to ${data.adapt_authoring}`);
       if(!data.adapt_framework) {
         return cb();
       }
-      showSpinner('Upgrading the Adapt Framework');
+      showSpinner(`Upgrading the Adapt framework to ${data.adapt_framework}`);
       installHelpers.installFramework({
         repository: configuration.getConfig('frameworkRepository'),
         revision: data.adapt_framework
       }, cb);
     },
   ], function (err, results) {
+    hideSpinner();
     if (err) {
       console.error('ERROR:', msg);
       return exit(1, 'Upgrade was unsuccessful. Please check the console output.');
     }
+    console.log(`Adapt framework upgraded to ${data.adapt_framework}`);
     exit(0, `Your ${app.polyglot.t('app.productname')} was updated successfully.`);
   });
 }
@@ -195,6 +160,7 @@ function logHeader(msg) {
 }
 
 function exit(code, msg) {
+  hideSpinner();
   code = code || 0;
   msg = msg || 'Bye!';
   console.log('\n' + (code === 0 ? chalk.green(msg) : chalk.red(msg)) + '\n');

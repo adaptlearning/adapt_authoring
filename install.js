@@ -76,8 +76,8 @@ var installConfig = [
     name: 'useffmpeg',
     type: 'string',
     description: "Will ffmpeg be used? y/N",
-    before: function (v) {
-      if (/(Y|y)[es]*/.test(v)) return true;
+    before: function(v) {
+      if(/(Y|y)[es]*/.test(v)) return true;
       return false;
     },
     default: 'N'
@@ -183,231 +183,220 @@ function start() {
   prompt.override = optimist.argv;
   prompt.start();
   // Prompt the user to begin the install
-  if (!IS_INTERACTIVE) {
+  if(!IS_INTERACTIVE) {
     console.log('This script will install the application. Please wait ...');
   } else {
     console.log('This script will install the application. Would you like to continue?');
   }
-  prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
-    if (!/(Y|y)[es]*$/.test(result['install'])) {
+  prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }, function(error, result) {
+    if(!/(Y|y)[es]*$/.test(result['install'])) {
       return exitInstall();
     }
-    async.series(steps, function (err, results) {
-      if (err) {
-        console.error('ERROR: ', err);
+    async.series([
+      configureEnvironment,
+      installFramework,
+      configureTenant,
+      createSuperUser,
+      buildFrontend
+    ], function(error, results) {
+      if(error) {
+        console.error('ERROR: ', error);
         return exitInstall(1, 'Install was unsuccessful. Please check the console output.');
       }
-      exitInstall();
+      exitInstall(0, `Installation completed successfully, the application can now be started with ${chalk.bgGreen('node server')}.`);
     });
   });
 }
 
-var steps = [
-  function configureEnvironment(next) {
-    if(!IS_INTERACTIVE) {
-      console.log('Now setting configuration items.');
-    } else {
-      console.log('We need to configure the tool before install. Just press ENTER to accept the default value (in brackets).');
+function configureEnvironment(next) {
+  if(!IS_INTERACTIVE) {
+    console.log('Now setting configuration items.');
+  } else {
+    console.log('We need to configure the tool before install. Just press ENTER to accept the default value (in brackets).');
+  }
+  installHelpers.getLatestFrameworkVersion(function(error, version) {
+    if(error) {
+      console.error('ERROR: ', error);
+      return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
     }
-    installHelpers.getLatestFrameworkVersion(function(error, version) {
-      if (error) {
+    latestFrameworkTag = version;
+    prompt.get(authoringConfig, function(error, results) {
+      configResults = results;
+      if(error) {
         console.error('ERROR: ', error);
-        return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
+        return exitInstall(1, 'Could not save configuration items.');
       }
-      latestFrameworkTag = version;
-      prompt.get(authoringConfig, function(err, results) {
-        configResults = results;
-        if (err) {
-          console.error('ERROR: ', err);
-          return exitInstall(1, 'Could not save configuration items.');
-        }
-        saveConfig(configResults, next);
-      });
+      saveConfig(configResults, next);
     });
-  },
-  function installFramework(next) {
-    installHelpers.installFramework({
-      repository: configResults.frameworkRepository,
-      revision: configResults.frameworkRevision,
-      force: true
-    }, function(err) {
-      if (err) {
-        console.error('ERROR: ', err);
-        return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
-      }
-      // Remove the default course
-      rimraf(path.resolve(__dirname, 'adapt_framework', 'src', 'course'), function(err) {
-        if (err) {
-          console.error('ERROR: ', err);
-          return exitInstall(1, 'Framework install failed, unable to remove default course.');
-        }
-        next();
-      });
-    });
-  },
-  function configureTenant (next) {
-    console.log("Checking configuration, please wait a moment ... ");
-    // suppress app log output
-    logger.clear();
-    // run the app
-    app.run();
-    app.on('serverStarted', function () {
-      if(!IS_INTERACTIVE) {
-        console.log('Creating your tenant. Please wait ...');
-      } else {
-        console.log('Now create your tenant. Just press ENTER to accept the default value (in brackets). Please wait ...');
-      }
-      prompt.get(tenantConfig, function (err, result) {
-        if (err) {
-          console.error('ERROR: ', err);
-          return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
-        }
-        // check if the tenant name already exists
-        app.tenantmanager.retrieveTenant({ name: result.name }, function (err, tenant) {
-          if (err) {
-            console.error('ERROR: ', err);
-            return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
-          }
+  });
+}
 
-          var tenantName = result.name;
-          var tenantDisplayName = result.displayName;
-
-          // create the tenant according to the user provided details
-          var _createTenant = function (cb) {
-            console.log("Creating file system for tenant: " + tenantName + ", please wait ...");
-            app.tenantmanager.createTenant({
-                name: tenantName,
-                displayName: tenantDisplayName,
-                isMaster: true,
-                database: {
-                  dbName: app.configuration.getConfig('dbName'),
-                  dbHost: app.configuration.getConfig('dbHost'),
-                  dbUser: app.configuration.getConfig('dbUser'),
-                  dbPass: app.configuration.getConfig('dbPass'),
-                  dbPort: app.configuration.getConfig('dbPort')
-                }
-              },
-              function (err, tenant) {
-                if (err || !tenant) {
-                  console.error('ERROR: ', err);
-                  return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
-                }
-
-                masterTenant = tenant;
-                console.log("Tenant " + tenant.name + " was created. Now saving configuration, please wait ...");
-                // save master tenant name to config
-                app.configuration.setConfig('masterTenantName', tenant.name);
-                app.configuration.setConfig('masterTenantID', tenant._id);
-                saveConfig(app.configuration.getConfig(), cb);
-              }
-            );
-          };
-          var _deleteCollections = function (cb) {
-            async.eachSeries(
-              app.db.getModelNames(),
-              function (modelName, nxt) {
-                app.db.destroy(modelName, null, nxt);
-              },
-              cb
-            );
-          };
-
-          if (tenant) {
-            // deal with duplicate tenant. permanently.
-            console.log("Tenant already exists. It will be deleted.");
-            return prompt.get({ name: "confirm", description: "Continue? (Y/n)", default: "Y" }, function (err, result) {
-              if(err){
-                console.error('ERROR: ' + err);
-              }
-
-              if (!/(Y|y)[es]*/.test(result.confirm)) {
-                return exitInstall(1, 'Exiting install ... ');
-              }
-
-              // buh-leted
-              _deleteCollections(function (err) {
-                if (err) {
-                  console.error('ERROR: ' + err);
-                  return next(err);
-                }
-
-                return _createTenant(next);
-              });
-            });
-          }
-
-          // tenant is fresh
-          return _createTenant(next);
-        });
-      });
-    });
-  },
-  function createSuperUser (next) {
-    if(!IS_INTERACTIVE) {
-      console.log("Creating the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
-    } else {
-      console.log("Create the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
+function installFramework(next) {
+  installHelpers.installFramework({
+    repository: configResults.frameworkRepository,
+    revision: configResults.frameworkRevision,
+    force: true
+  }, function(error) {
+    if(error) {
+      console.error('ERROR: ', error);
+      return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
     }
-    prompt.get(userConfig, function (err, result) {
-      if (err) {
-        console.error('ERROR: ', err);
+    next();
+  });
+}
+
+function configureTenant(next) {
+  console.log("Checking configuration, please wait a moment ... ");
+  // suppress app log output
+  logger.clear();
+  // run the app
+  app.run();
+  app.on('serverStarted', function() {
+    if(!IS_INTERACTIVE) {
+      console.log('Creating your tenant. Please wait ...');
+    } else {
+      console.log('Now create your tenant. Just press ENTER to accept the default value (in brackets). Please wait ...');
+    }
+    prompt.get(tenantConfig, function(error, result) {
+      if(error) {
+        console.error('ERROR: ', error);
         return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
       }
-      var userEmail = result.email;
-      var userPassword = result.password;
-      var userRetypePassword = result.retypePassword;
-      // ruthlessly remove any existing users (we're already nuclear if we've deleted the existing tenant)
-      app.usermanager.deleteUser({ email: userEmail }, function (err, userRec) {
-        if (err) {
-          console.error('ERROR: ', err);
-          return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
+      // check if the tenant name already exists
+      app.tenantmanager.retrieveTenant({ name: result.name }, function(error, tenant) {
+        if(error) {
+          console.error('ERROR: ', error);
+          return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
         }
-        // add a new user using default auth plugin
-        new localAuth().internalRegisterUser(true, {
-            email: userEmail,
-            password: userPassword,
-            retypePassword: userRetypePassword,
-            _tenantId: masterTenant._id
-          }, function (err, user) {
-            if (err) {
-              console.error('ERROR: ', err);
-              return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
+        var tenantName = result.name;
+        var tenantDisplayName = result.displayName;
+        // create the tenant according to the user provided details
+        var _createTenant = function(cb) {
+          console.log("Creating file system for tenant: " + tenantName + ", please wait ...");
+          app.tenantmanager.createTenant({
+            name: tenantName,
+            displayName: tenantDisplayName,
+            isMaster: true,
+            database: {
+              dbName: app.configuration.getConfig('dbName'),
+              dbHost: app.configuration.getConfig('dbHost'),
+              dbUser: app.configuration.getConfig('dbUser'),
+              dbPass: app.configuration.getConfig('dbPass'),
+              dbPort: app.configuration.getConfig('dbPort')
             }
-            superUser = user;
-            // grant super permissions!
-            helpers.grantSuperPermissions(user._id, function (err) {
-              if (err) {
-                console.error('ERROR: ', err);
-                return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
-              }
-
-              return next();
-            });
+          },
+          function(error, tenant) {
+            if(error || !tenant) {
+              console.error('ERROR: ', error);
+              return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
+            }
+            masterTenant = tenant;
+            console.log("Tenant " + tenant.name + " was created. Now saving configuration, please wait ...");
+            // save master tenant name to config
+            app.configuration.setConfig('masterTenantName', tenant.name);
+            app.configuration.setConfig('masterTenantID', tenant._id);
+            saveConfig(app.configuration.getConfig(), cb);
           }
         );
-      });
-    });
-  },
-  function gruntBuild (next) {
-    console.log('Compiling the ' + app.polyglot.t('app.productname') + ' web application, please wait a moment ... ');
-    var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function (err) {
-      if (err) {
-        console.error('ERROR: ', err);
-        console.log('grunt build:prod command failed. Is the grunt-cli module installed? You can install using ' + 'npm install -g grunt grunt-cli');
-        console.log('Install will continue. Try running ' + 'grunt build:prod' + ' after installation completes.');
-        return next();
+      };
+      var _deleteCollections = function(cb) {
+        async.eachSeries(
+          app.db.getModelNames(),
+          function(modelName, nxt) {
+            app.db.destroy(modelName, null, nxt);
+          },
+          cb
+        );
+      };
+      if(tenant) {
+        // deal with duplicate tenant. permanently.
+        console.log("Tenant already exists. It will be deleted.");
+        return prompt.get({ name: "confirm", description: "Continue? (Y/n)", default: "Y" }, function(error, result) {
+          if(error){
+            console.error('ERROR: ' + error);
+          }
+          if(!/(Y|y)[es]*/.test(result.confirm)) {
+            return exitInstall(1, 'Exiting install ... ');
+          }
+          _deleteCollections(function(error) {
+            if(error) {
+              console.error('ERROR: ' + error);
+              return next(error);
+            }
+            return _createTenant(next);
+          });
+        });
       }
-      console.log('The ' + app.polyglot.t('app.productname') + ' web application was compiled and is now ready to use.');
-      return next();
+      return _createTenant(next);
     });
-    proc.stdout.on('data', console.log);
-    proc.stderr.on('data', console.error);
-  },
-  function finalize (next) {
-    exitInstall(0, "Installation completed successfully, the server can now be started.");
-    return next();
+  });
+});
+}
+
+function createSuperUser(next) {
+  if(!IS_INTERACTIVE) {
+    console.log("Creating the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
+  } else {
+    console.log("Create the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
   }
-];
+  prompt.get(userConfig, function(error, result) {
+    if(error) {
+      console.error('ERROR: ', error);
+      return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
+    }
+    var userEmail = result.email;
+    var userPassword = result.password;
+    var userRetypePassword = result.retypePassword;
+    // ruthlessly remove any existing users (we're already nuclear if we've deleted the existing tenant)
+    app.usermanager.deleteUser({ email: userEmail }, function(error, userRec) {
+      if(error) {
+        console.error('ERROR: ', error);
+        return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
+      }
+      // add a new user using default auth plugin
+      new localAuth().internalRegisterUser(true, {
+        email: userEmail,
+        password: userPassword,
+        retypePassword: userRetypePassword,
+        _tenantId: masterTenant._id
+      }, function(error, user) {
+        if(error) {
+          console.error('ERROR: ', error);
+          return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
+        }
+        superUser = user;
+        // grant super permissions!
+        helpers.grantSuperPermissions(user._id, function(error) {
+          if(error) {
+            console.error('ERROR: ', error);
+            return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
+          }
+          return next();
+        });
+      }
+    );
+  });
+});
+}
+
+function buildFrontend(next) {
+  console.log('Compiling the ' + app.polyglot.t('app.productname') + ' web application, please wait a moment ... ');
+  // TODO move this to installHelpers
+  /*
+  var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function(error) {
+    if(error) {
+      console.error('ERROR: ', error);
+      console.log('grunt build:prod command failed. Is the grunt-cli module installed? You can install using ' + 'npm install -g grunt grunt-cli');
+      console.log('Install will continue. Try running ' + 'grunt build:prod' + ' after installation completes.');
+      return next();
+    }
+    console.log('The ' + app.polyglot.t('app.productname') + ' web application was compiled and is now ready to use.');
+    return next();
+  });
+  proc.stdout.on('data', console.log);
+  proc.stderr.on('data', console.error);
+  */
+}
 
 // helper functions
 
@@ -419,16 +408,16 @@ var steps = [
  * @param {callback} next
  */
 
-function saveConfig (configItems, next) {
+function saveConfig(configItems, next) {
   //pass by reference so as not to delete frameworkRevision
   var config = _.clone(configItems);
   var env = [];
 
-  Object.keys(config).forEach(function (key) {
+  Object.keys(config).forEach(function(key) {
     env.push(key + "=" + config[key]);
   });
   // write the env file!
-  if (0 === fs.writeSync(fs.openSync('.env', 'w'), env.join("\n"))) {
+  if(0 === fs.writeSync(fs.openSync('.env', 'w'), env.join("\n"))) {
     console.error('ERROR: Failed to write .env file. Do you have write permissions for the current directory?');
     process.exit(1, 'Install Failed.');
   }
@@ -442,7 +431,7 @@ function saveConfig (configItems, next) {
     config.useSmtp = true;
   }
   // write the config.json file!
-  if (0 === fs.writeSync(fs.openSync(path.join('conf', 'config.json'), 'w'), JSON.stringify(config))) {
+  if(0 === fs.writeSync(fs.openSync(path.join('conf', 'config.json'), 'w'), JSON.stringify(config))) {
     console.error('ERROR: Failed to write conf/config.json file. Do you have write permissions for the directory?');
     process.exit(1, 'Install Failed.');
   }
@@ -461,12 +450,12 @@ function exitInstall(code, msg) {
   msg = msg || 'Bye!';
   console.log('\n' + (code === 0 ? chalk.green(msg) : chalk.red(msg)) + '\n');
   // handle borked tenant, users, in case of a non-zero exit
-  if (0 !== code && app && app.db && masterTenant) {
-    return app.db.destroy('tenant', { _id: masterTenant._id }, function (err) {
+  if(0 !== code && app && app.db && masterTenant) {
+    return app.db.destroy('tenant', { _id: masterTenant._id }, function(error) {
       if(!superUser) {
         return process.exit(code);
       }
-      app.db.destroy('user', { _id: superUser._id }, function (err) {
+      app.db.destroy('user', { _id: superUser._id }, function(error) {
         return process.exit(code);
       });
     });

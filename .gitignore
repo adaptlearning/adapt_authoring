@@ -31,8 +31,6 @@
 
 /.settings
 
-version.json
-
 .idea
 .vagrant
 .env

@@ -287,57 +287,22 @@ var steps = [
 
   // install the framework
   function installFramework(next) {
-    // AB-277 always remove framework folder on install
-    rimraf(path.resolve(__dirname, 'adapt_framework'), function() {
-      // now clone the framework
-      frameworkHelper.cloneFramework(function(err) {
-          if (err) {
-            console.error('ERROR: ', err);
-            return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
-          }
-
-          // Remove the default course
-          rimraf(path.resolve(__dirname, 'adapt_framework', 'src', 'course'), function(err) {
-            if (err) {
-              console.error('ERROR: ', err);
-              return exitInstall(1, 'Framework install error -- unable to remove default course.');
-            }
-
-            fs.readFile(path.resolve(__dirname, 'adapt_framework','package.json'), function(error, data) {
-              if (error) {
-                console.error('ERROR: ' + error);
-                return callback(error);
-              }
-
-              var frameworkPackageFile = JSON.parse(data);
-              fs.readFile(path.resolve(__dirname,'package.json'), function(error, data) {
-                if (error) {
-                  console.error('ERROR: ' + error);
-                  return callback(error);
-                }
-
-                var atPackageFile = JSON.parse(data);
-                var versionFile = {};
-
-                versionFile.adapt_framework = 'v' + frameworkPackageFile.version;
-                versionFile.adapt_authoring = 'v' + atPackageFile.version;
-
-                fs.writeFile('version.json', JSON.stringify(versionFile, null, 4), function(err) {
-                  if(err) {
-                    console.error('ERROR: ' + err);
-                    return next(err);
-                  }
-
-                  console.log("Version file updated\n");
-                  return next();
-
-                });
-              });
-            });
-          });
-        },
-        configResults.frameworkRepository,
-        configResults.frameworkRevision);
+    installHelpers.installFramework({
+      repository: configResults.frameworkRepository,
+      revision: configResults.frameworkRevision,
+      force: true
+    }, function(err) {
+      if (err) {
+        console.error('ERROR: ', err);
+        return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
+      }
+      // Remove the default course
+      rimraf(path.resolve(__dirname, 'adapt_framework', 'src', 'course'), function(err) {
+        if (err) {
+          console.error('ERROR: ', err);
+          return exitInstall(1, 'Framework install failed, unable to remove default course.');
+        }
+      });
     });
   },
   // configure tenant

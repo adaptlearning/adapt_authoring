@@ -1,22 +1,18 @@
-// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-var prompt = require('prompt');
+var _ = require('underscore');
 var async = require('async');
+var chalk = require('chalk');
 var fs = require('fs');
+var optimist = require('optimist');
 var path = require('path');
-var rimraf = require('rimraf');
-var exec = require('child_process').exec;
-var origin = require('./lib/application');
+var prompt = require('prompt');
+
 var auth = require('./lib/auth');
 var database = require('./lib/database');
 var helpers = require('./lib/helpers');
+var installHelpers = require('./installHelpers');
 var localAuth = require('./plugins/auth/local');
 var logger = require('./lib/logger');
-var optimist = require('optimist');
-var util = require('util');
-var _ = require('underscore');
-var ncp = require('ncp').ncp;
-var installHelpers = require('./installHelpers');
-var request = require('request');
+var origin = require('./lib/application');
 
 var IS_INTERACTIVE = process.argv.length === 2;
 

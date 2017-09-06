@@ -299,6 +299,7 @@ var steps = [
           console.error('ERROR: ', err);
           return exitInstall(1, 'Framework install failed, unable to remove default course.');
         }
+        next();
       });
     });
   },
@@ -408,9 +409,8 @@ var steps = [
         return next(err);
       }
       var json = JSON.parse(data);
-      // 'dependencies' contains a key-value pair representing the plugin name and the semver
-      var plugins = Object.keys(json.dependencies);
-      async.eachSeries(plugins, function(plugin, pluginCallback) {
+      async.eachSeries(Object.keys(json.dependencies), function(plugin, pluginCallback) {
+        // 'dependencies' contains a key-value pair representing the plugin name and the semver
         if(json.dependencies[plugin] === '*') {
           app.bowermanager.installLatestCompatibleVersion(plugin, pluginCallback);
         } else {
@@ -606,27 +606,20 @@ function getAuthPrompt () {
  * @param {string} msg
  */
 
-function exitInstall (code, msg) {
+function exitInstall(code, msg) {
   code = code || 0;
   msg = msg || 'Bye!';
-  console.log(msg);
-
+  console.log('\n' + (code === 0 ? chalk.green(msg) : chalk.red(msg)) + '\n');
   // handle borked tenant, users, in case of a non-zero exit
-  if (0 !== code) {
-    if (app && app.db) {
-      if (masterTenant) {
-        return app.db.destroy('tenant', { _id: masterTenant._id }, function (err) {
-          if (superUser) {
-            return app.db.destroy('user', { _id: superUser._id }, function (err) {
-              return process.exit(code);
-            });
-          }
-
-          return process.exit(code);
-        });
+  if (0 !== code && app && app.db && masterTenant) {
+    return app.db.destroy('tenant', { _id: masterTenant._id }, function (err) {
+      if(!superUser) {
+        return process.exit(code);
       }
-    }
+      app.db.destroy('user', { _id: superUser._id }, function (err) {
+        return process.exit(code);
+      });
+    });
   }
-
   process.exit(code);
 }

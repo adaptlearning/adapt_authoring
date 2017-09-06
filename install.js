@@ -100,7 +100,7 @@ var steps = [
     if (isVagrant()) {
       console.log('Now setting configuration items.');
     } else {
-      console.log('Now set configuration items. Just press ENTER to accept the default value (in brackets).');
+      console.log('We need to configure the tool before install. Just press ENTER to accept the default value (in brackets).');
     }
     request({
       headers: {

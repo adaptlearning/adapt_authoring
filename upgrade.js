@@ -5,6 +5,7 @@ var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
 var prompt = require('prompt');
+var semver = require('semver');
 var spinner = require('cli-spinner').Spinner;
 
 var logger = require('./lib/logger');
@@ -136,13 +137,13 @@ function checkForUpdates(callback) {
     }
     function(cb) {
       var updateData = {};
-      if (versionData.latest.adapt_authoring !== versionData.installed.adapt_authoring) {
+      if (semver.lt(versionData.installed.adapt_authoring, versionData.latest.adapt_authoring)) {
         updateData.adapt_authoring = versionData.latest.adapt_authoring;
-        console.log(`${app.polyglot.t('app.productname')} ${versionData.installed.adapt_authoring} installed, ${versionData.latest.adapt_authoring} is available`);
+        console.log(`${app.polyglot.t('app.productname')} ${versionData.installed.adapt_authoring} installed, ${versionData.latest.adapt_authoring} is available.`);
       }
-      if (versionData.latest.adapt_framework !== versionData.installed.adapt_framework) {
+      if (semver.lt(versionData.installed.adapt_framework, versionData.latest.adapt_framework)) {
         updateData.adapt_framework = versionData.latest.adapt_framework;
-        console.log(`Adapt framework ${versionData.installed.adapt_framework} installed, ${versionData.latest.adapt_framework} is available`);
+        console.log(`Adapt framework ${versionData.installed.adapt_framework} installed, ${versionData.latest.adapt_framework} is available.`);
       }
       if (!updateData.adapt_authoring && !updateData.adapt_framework) {
         return exit(0, `You're already using the latest, no need to upgrade.`);

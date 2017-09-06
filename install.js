@@ -96,7 +96,6 @@ var userConfig = [
 
 var configResults;
 var steps = [
-
   function configureEnvironment(next) {
     if (isVagrant()) {
       console.log('Now setting configuration items.');
@@ -284,8 +283,6 @@ var steps = [
     });
 
   },
-
-  // install the framework
   function installFramework(next) {
     installHelpers.installFramework({
       repository: configResults.frameworkRepository,
@@ -305,12 +302,10 @@ var steps = [
       });
     });
   },
-  // configure tenant
   function configureTenant (next) {
     console.log("Checking configuration, please wait a moment ... ");
     // suppress app log output
     logger.clear();
-
     // run the app
     app.run();
     app.on('serverStarted', function () {
@@ -364,8 +359,6 @@ var steps = [
               }
             );
           };
-
-          // deletes all collections in the db
           var _deleteCollections = function (cb) {
             async.eachSeries(
               app.db.getModelNames(),
@@ -406,7 +399,6 @@ var steps = [
       });
     });
   },
-  // install content plugins
   function installContentPlugins (next) {
     console.log('Installing framework plugins');
     // Interrogate the adapt.json file from the adapt_framework folder and install the latest versions of the core plugins
@@ -415,11 +407,9 @@ var steps = [
         console.error('ERROR: ' + err);
         return next(err);
       }
-
       var json = JSON.parse(data);
       // 'dependencies' contains a key-value pair representing the plugin name and the semver
       var plugins = Object.keys(json.dependencies);
-
       async.eachSeries(plugins, function(plugin, pluginCallback) {
         if(json.dependencies[plugin] === '*') {
           app.bowermanager.installLatestCompatibleVersion(plugin, pluginCallback);
@@ -433,7 +423,6 @@ var steps = [
   function copyFramework (next) {
     var source = path.join(process.cwd(), 'adapt_framework' );
     var destination = path.join(process.cwd(), 'temp', app.configuration.getConfig('masterTenantID').toString(), 'adapt_framework' );
-
     ncp(source, destination, function (err) {
       if (err) {
         console.error(err);
@@ -441,22 +430,18 @@ var steps = [
       }
       return next();
     });
-
   },
-  // configure the super awesome user
   function createSuperUser (next) {
     if (isVagrant()) {
       console.log("Creating the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
     } else {
       console.log("Create the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
     }
-
     prompt.get(userConfig, function (err, result) {
       if (err) {
         console.error('ERROR: ', err);
         return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
       }
-
       var userEmail = result.email;
       var userPassword = result.password;
       var userRetypePassword = result.retypePassword;
@@ -466,7 +451,6 @@ var steps = [
           console.error('ERROR: ', err);
           return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
         }
-
         // add a new user using default auth plugin
         new localAuth().internalRegisterUser(true, {
             email: userEmail,
@@ -478,7 +462,6 @@ var steps = [
               console.error('ERROR: ', err);
               return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
             }
-
             superUser = user;
             // grant super permissions!
             helpers.grantSuperPermissions(user._id, function (err) {
@@ -494,7 +477,6 @@ var steps = [
       });
     });
   },
-  // run grunt build
   function gruntBuild (next) {
     console.log('Compiling the ' + app.polyglot.t('app.productname') + ' web application, please wait a moment ... ');
     var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function (err) {
@@ -504,23 +486,18 @@ var steps = [
         console.log('Install will continue. Try running ' + 'grunt build:prod' + ' after installation completes.');
         return next();
       }
-
       console.log('The ' + app.polyglot.t('app.productname') + ' web application was compiled and is now ready to use.');
       return next();
     });
-
-    // pipe through any output from grunt
     proc.stdout.on('data', console.log);
     proc.stderr.on('data', console.error);
   },
-  // all done
   function finalize (next) {
     if (isVagrant()) {
       console.log("Installation complete.\nTo restart your instance run the command 'pm2 restart all'");
     } else {
       console.log("Installation complete.\n To restart your instance run the command 'node server' (or 'foreman start' if using heroku toolbelt).");
     }
-
     return next();
   }
 ];
@@ -548,7 +525,6 @@ prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }
       console.error('ERROR: ', err);
       return exitInstall(1, 'Install was unsuccessful. Please check the console output.');
     }
-
     exitInstall();
   });
 });
@@ -571,13 +547,11 @@ function saveConfig (configItems, next) {
   Object.keys(config).forEach(function (key) {
     env.push(key + "=" + config[key]);
   });
-
   // write the env file!
   if (0 === fs.writeSync(fs.openSync('.env', 'w'), env.join("\n"))) {
     console.error('ERROR: Failed to write .env file. Do you have write permissions for the current directory?');
     process.exit(1, 'Install Failed.');
   }
-
   // Defaulting these config settings until there are actual options.
   config.outputPlugin = 'adapt';
   config.dbType = 'mongoose';
@@ -588,7 +562,6 @@ function saveConfig (configItems, next) {
   if(config.smtpService !== ''){
     config.useSmtp = true;
   }
-
   // write the config.json file!
   if (0 === fs.writeSync(fs.openSync(path.join('conf', 'config.json'), 'w'), JSON.stringify(config))) {
     console.error('ERROR: Failed to write conf/config.json file. Do you have write permissions for the directory?');
@@ -608,7 +581,6 @@ function getDriversPrompt() {
   drivers.forEach(function (d, index) {
     str += (index+1) + ". " + d + "\n";
   });
-
   return str;
 }
 

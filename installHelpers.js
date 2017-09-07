@@ -147,6 +147,7 @@ function installFramework(opts, callback) {
     opts.repository = DEFAULT_FRAMEWORK_REPO;
   }
   var func = fs.existsSync(getFrameworkRoot()) && !opts.force ?  fetchFramework : cloneFramework;
+  var func = (fs.existsSync(getFrameworkRoot()) && !opts.force) ?  fetchFramework : cloneFramework;
   func.call(this, opts.repository, function(error) {
     if (error) {
       return callback(error);

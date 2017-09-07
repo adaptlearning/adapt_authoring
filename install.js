@@ -44,8 +44,8 @@ function start() {
     }
     async.series([
       configureEnvironment,
-      installFramework,
       configureMasterTenant,
+      installFramework,
       createMasterTenant,
       createSuperUser,
       buildFrontend
@@ -188,6 +188,7 @@ function configureEnvironment(callback) {
 }
 
 function installFramework(callback) {
+  return callback();
   installHelpers.installFramework({
     repository: configResults.frameworkRepository,
     revision: configResults.frameworkRevision,
@@ -213,7 +214,7 @@ function configureMasterTenant(callback) {
   }
   logger.clear();
   // run the app
-  app.run();
+  app.run({ skipVersionCheck: true });
   app.on('serverStarted', function() {
     prompt.get([
       {

@@ -146,7 +146,7 @@ function installFramework(opts, callback) {
   if(!opts.repository) {
     opts.repository = DEFAULT_FRAMEWORK_REPO;
   }
-  if(!fs.existsSync(getFrameworkRoot() || opts.force) {
+  if(!fs.existsSync(opts.directory) || opts.force) {
     cloneFramework(opts, function() {
       updateFramework(opts, callback);
     })
@@ -158,6 +158,9 @@ function installFramework(opts, callback) {
 }
 
 function cloneFramework(opts, callback) {
+  if(arguments.length !== 2) {
+    return callback('Cannot clone framework, invalid options passed');
+  }
   if(!opts.repository) {
     return callback('Cannot clone framework, no repository specified');
   }
@@ -183,6 +186,12 @@ function fetchFramework(repoURL, callback) {
 }
 
 function updateFramework(opts, callback) {
+  if(arguments.length !== 2) {
+    return callback('Cannot update framework, invalid options passed');
+  }
+  if(!opts.directory) {
+    return callback('Cannot update framework, target directory not specified');
+  }
   if(!opts.revision) {
     return callback('Cannot update framework, revision not specified');
   }

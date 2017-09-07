@@ -220,7 +220,7 @@ function configureEnvironment(callback) {
       return exitInstall(1, 'Failed to get latest framework version');
     }
     latestFrameworkTag = version;
-    prompt.get(authoringConfig, function(error, results) {
+    prompt.get(installConfig, function(error, results) {
       if(error) {
         console.error('ERROR: ', error);
         return exitInstall(1, 'Failed to save configuration items.');
@@ -263,14 +263,12 @@ function createTenant(callback) {
       // check if the tenant name already exists
       app.tenantmanager.retrieveTenant({ name: result.name }, function(error, tenant) {
         if(error) return tenantExit(error);
-        var tenantName = result.name;
-        var tenantDisplayName = result.displayName;
         // create the tenant according to the user provided details
         var _createTenant = function(cb) {
-          console.log(`Creating file system for master tenant: ${tenantName}`);
+          console.log(`Creating file system for master tenant (${result.name})`);
           app.tenantmanager.createTenant({
-            name: tenantName,
-            displayName: tenantDisplayName,
+            name: result.name,
+            displayName: result.displayName,
             isMaster: true,
             database: {
               dbName: app.configuration.getConfig('dbName'),
@@ -293,11 +291,14 @@ function createTenant(callback) {
         );
       };
       if(tenant) {
-        // deal with duplicate tenant. permanently.
-        console.log("Tenant already exists. It will be deleted.");
+        if(!IS_INTERACTIVE) {
+          return exitInstall(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
+        }
+        console.log("Tenant already exists. It must be deleted for install to continue.");
         prompt.get({ name: "confirm", description: "Continue? (Y/n)", default: "Y" }, function(error, result) {
-          if(error){
+          if(error) {
             console.error('ERROR: ' + error);
+            return callback(error);
           }
           if(!/(Y|y)[es]*/.test(result.confirm)) {
             return exitInstall(1, 'Exiting install ... ');
@@ -406,7 +407,7 @@ function saveConfig(configItems, callback) {
   config.auth = 'local';
   config.root = process.cwd();
   delete config.frameworkRevision;
-  if(config.smtpService !== ''){
+  if(config.smtpService !== '') {
     config.useSmtp = true;
   }
   // write the config.json file!

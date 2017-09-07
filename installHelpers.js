@@ -147,14 +147,15 @@ function installFramework(opts, callback) {
     opts.repository = DEFAULT_FRAMEWORK_REPO;
   }
   if(!fs.existsSync(opts.directory) || opts.force) {
-    cloneFramework(opts, function() {
-      updateFramework(opts, callback);
-    })
-    return;
+    return async.applyEachSeries([
+      cloneFramework,
+      updateFramework
+    ], opts, callback);
   }
-  fetchFramework(opts.repository, function() {
-    updateFramework(opts, callback);
-  });
+  async.applyEachSeries([
+    fetchFramework,
+    updateFramework
+  ], opts, callback);
 }
 
 function cloneFramework(opts, callback) {
@@ -169,19 +170,24 @@ function cloneFramework(opts, callback) {
   }
   console.log(`Cloning the Adapt framework from ${opts.repository} to ${opts.directory}`);
   fs.remove(opts.directory, function(error) {
-    if(error) {
-      return callback(error);
-    }
-    execCommand(`git clone ${opts.repository} --origin ${REMOTE_NAME} ${opts.directory}`, {
-      cwd: getFrameworkRoot()
-    }, callback);
+    if(error) return callback(error);
+    execCommand(`git clone ${opts.repository} --origin ${REMOTE_NAME} ${opts.directory}`, callback);
   })
 }
 
-function fetchFramework(repoURL, callback) {
+function fetchFramework(opts, callback) {
+  if(arguments.length !== 2) {
+    return callback('Cannot fetch framework, invalid options passed');
+  }
+  if(!opts.repository) {
+    return callback('Cannot fetch framework, repository not specified');
+  }
+  if(!opts.directory) {
+    return callback('Cannot fetch framework, target directory not specified');
+  }
   console.log('Fetching the latest framework data');
   execCommand(`git remote set-url ${REMOTE_NAME} ${configuration.getConfig('frameworkRepository')} && git fetch ${REMOTE_NAME}`, {
-    cwd: getFrameworkRoot()
+    cwd: opts.directory
   }, callback);
 }
 
@@ -202,19 +208,27 @@ function updateFramework(opts, callback) {
     if (error) {
       return callback(error);
     }
-    async.parallel([
+    console.log('update framework opts', opts);
+    async.applyEach([
       purgeCourseFolder,
       updateFrameworkPlugins
-    ], callback);
+    ], opts, callback);
   });
 }
 
 /**
 * Uses adapt.json to install the latest plugin versions
 */
-function updateFrameworkPlugins(callback) {
+function updateFrameworkPlugins(opts, callback) {
+  console.log('update framework plugins opts', opts);
+  if(arguments.length !== 2) {
+    return callback('Cannot update framework plugins, invalid options passed');
+  }
+  if(!opts.directory) {
+    return callback('Cannot update framework plugins, no target directory specified');
+  }
   console.log('Updating framework plugins');
-  fs.readJSON(path.join(getFrameworkRoot(), 'adapt.json'), function(error, json) {
+  fs.readJSON(path.join(opts.directory, 'adapt.json'), function(error, json) {
     if (error) {
       return callback(error);
     }
@@ -232,8 +246,15 @@ function updateFrameworkPlugins(callback) {
 /**
 * This isn't used by the authoring tool
 */
-function purgeCourseFolder(callback) {
-  fs.remove(path.join(getFrameworkRoot(), 'src', 'course'), callback);
+function purgeCourseFolder(opts, callback) {
+  console.log('purgeCourseFolder opts', opts);
+  if(arguments.length !== 2) {
+    return callback('Cannot remove course folder, invalid options passed');
+  }
+  if(!opts.directory) {
+    return callback('Cannot remove course folder, no target directory specified');
+  }
+  fs.remove(path.join(opts.directory, 'src', 'course'), callback);
 }
 
 function updateAuthoring(opts, callback) {

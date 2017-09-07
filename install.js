@@ -180,6 +180,7 @@ function configureEnvironment(callback) {
         console.error('ERROR: ', error);
         return exitInstall(1, 'Failed to save configuration items.');
       }
+      configResults = results;
       saveConfig(results, callback);
     });
   });

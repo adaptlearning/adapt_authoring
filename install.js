@@ -21,156 +21,6 @@ var masterTenant = false;
 var superUser = false;
 // from user input
 var configResults;
-var latestFrameworkTag;
-
-// prompt config items
-var installConfig = [
-  {
-    name: 'serverPort',
-    type: 'number',
-    description: 'Server port',
-    pattern: /^[0-9]+\W*$/,
-    default: 5000
-  },
-  {
-    name: 'serverName',
-    type: 'string',
-    description: 'Server name',
-    default: 'localhost'
-  },
-  {
-    name: 'dbHost',
-    type: 'string',
-    description: 'Database host',
-    default: 'localhost'
-  },
-  {
-    name: 'dbName',
-    type: 'string',
-    description: 'Master database name',
-    pattern: /^[A-Za-z0-9_-]+\W*$/,
-    default: 'adapt-tenant-master'
-  },
-  {
-    name: 'dbPort',
-    type: 'number',
-    description: 'Database server port',
-    pattern: /^[0-9]+\W*$/,
-    default: 27017
-  },
-  {
-    name: 'dataRoot',
-    type: 'string',
-    description: 'Data directory path',
-    pattern: /^[A-Za-z0-9_-]+\W*$/,
-    default: 'data'
-  },
-  {
-    name: 'sessionSecret',
-    type: 'string',
-    description: 'Session secret',
-    pattern: /^.+$/,
-    default: 'your-session-secret'
-  },
-  {
-    name: 'useffmpeg',
-    type: 'string',
-    description: "Will ffmpeg be used? y/N",
-    before: function(v) {
-      if(/(Y|y)[es]*/.test(v)) return true;
-      return false;
-    },
-    default: 'N'
-  },
-  {
-    name: 'smtpService',
-    type: 'string',
-    description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
-    default: 'none'
-  },
-  {
-    name: 'smtpUsername',
-    type: 'string',
-    description: "SMTP username",
-    default: ''
-  },
-  {
-    name: 'smtpPassword',
-    type: 'string',
-    description: "SMTP password",
-    hidden: true
-  },
-  {
-    name: 'fromAddress',
-    type: 'string',
-    description: "Sender email address",
-    default: ''
-  },
-  {
-    name: 'rootUrl',
-    type: 'string',
-    description: "The url this instance is accessed by",
-    default: 'http://localhost:5000/'
-  },
-  {
-    name: 'authoringToolRepository',
-    type: 'string',
-    description: "Authoring Tool Repository",
-    default: 'https://github.com/adaptlearning/adapt_authoring.git'
-  },
-  {
-    name: 'frameworkRepository',
-    type: 'string',
-    description: "Framework Repository",
-    default: 'https://github.com/adaptlearning/adapt_framework.git'
-  },
-  {
-    name: 'frameworkRevision',
-    type: 'string',
-    description: "Framework revision to install (branchName || tags/tagName)",
-    default: 'tags/' + latestFrameworkTag
-  }
-];
-
-var tenantConfig = [
-  {
-    name: 'name',
-    type: 'string',
-    description: "Set a unique name for your tenant",
-    pattern: /^[A-Za-z0-9_-]+\W*$/,
-    default: 'master'
-  },
-  {
-    name: 'displayName',
-    type: 'string',
-    description: 'Set the display name for your tenant',
-    required: true,
-    default: 'Master'
-  }
-];
-
-var userConfig = [
-  {
-    name: 'email',
-    type: 'string',
-    description: "Email address",
-    required: true
-  },
-  {
-    name: 'password',
-    type: 'string',
-    description: "Password",
-    hidden: true,
-    required: true
-  },
-  {
-    name: 'retypePassword',
-    type: 'string',
-    description: "Retype Password",
-    hidden: true,
-    required: true
-  }
-];
 
 start();
 
@@ -214,13 +64,118 @@ function configureEnvironment(callback) {
   } else {
     console.log('We need to configure the tool before install. \nJust press ENTER to accept the default value (in brackets).');
   }
-  installHelpers.getLatestFrameworkVersion(function(error, version) {
+  installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     if(error) {
       console.error('ERROR: ', error);
       return exitInstall(1, 'Failed to get latest framework version');
     }
-    latestFrameworkTag = version;
-    prompt.get(installConfig, function(error, results) {
+    prompt.get([
+      {
+        name: 'serverPort',
+        type: 'number',
+        description: 'Server port',
+        pattern: /^[0-9]+\W*$/,
+        default: 5000
+      },
+      {
+        name: 'serverName',
+        type: 'string',
+        description: 'Server name',
+        default: 'localhost'
+      },
+      {
+        name: 'dbHost',
+        type: 'string',
+        description: 'Database host',
+        default: 'localhost'
+      },
+      {
+        name: 'dbName',
+        type: 'string',
+        description: 'Master database name',
+        pattern: /^[A-Za-z0-9_-]+\W*$/,
+        default: 'adapt-tenant-master'
+      },
+      {
+        name: 'dbPort',
+        type: 'number',
+        description: 'Database server port',
+        pattern: /^[0-9]+\W*$/,
+        default: 27017
+      },
+      {
+        name: 'dataRoot',
+        type: 'string',
+        description: 'Data directory path',
+        pattern: /^[A-Za-z0-9_-]+\W*$/,
+        default: 'data'
+      },
+      {
+        name: 'sessionSecret',
+        type: 'string',
+        description: 'Session secret',
+        pattern: /^.+$/,
+        default: 'your-session-secret'
+      },
+      {
+        name: 'useffmpeg',
+        type: 'string',
+        description: "Will ffmpeg be used? y/N",
+        before: function(v) {
+          if(/(Y|y)[es]*/.test(v)) return true;
+          return false;
+        },
+        default: 'N'
+      },
+      {
+        name: 'smtpService',
+        type: 'string',
+        description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
+        default: 'none'
+      },
+      {
+        name: 'smtpUsername',
+        type: 'string',
+        description: "SMTP username",
+        default: ''
+      },
+      {
+        name: 'smtpPassword',
+        type: 'string',
+        description: "SMTP password",
+        hidden: true
+      },
+      {
+        name: 'fromAddress',
+        type: 'string',
+        description: "Sender email address",
+        default: ''
+      },
+      {
+        name: 'rootUrl',
+        type: 'string',
+        description: "The url this instance is accessed by",
+        default: 'http://localhost:5000/'
+      },
+      {
+        name: 'authoringToolRepository',
+        type: 'string',
+        description: "Authoring Tool Repository",
+        default: 'https://github.com/adaptlearning/adapt_authoring.git'
+      },
+      {
+        name: 'frameworkRepository',
+        type: 'string',
+        description: "Framework Repository",
+        default: 'https://github.com/adaptlearning/adapt_framework.git'
+      },
+      {
+        name: 'frameworkRevision',
+        type: 'string',
+        description: "Framework revision to install (branchName || tags/tagName)",
+        default: 'tags/' + latestFrameworkTag
+      }
+    ], function(error, results) {
       if(error) {
         console.error('ERROR: ', error);
         return exitInstall(1, 'Failed to save configuration items.');
@@ -258,7 +213,22 @@ function createTenant(callback) {
   // run the app
   app.run();
   app.on('serverStarted', function() {
-    prompt.get(tenantConfig, function(error, result) {
+    prompt.get([
+      {
+        name: 'name',
+        type: 'string',
+        description: "Set a unique name for your tenant",
+        pattern: /^[A-Za-z0-9_-]+\W*$/,
+        default: 'master'
+      },
+      {
+        name: 'displayName',
+        type: 'string',
+        description: 'Set the display name for your tenant',
+        required: true,
+        default: 'Master'
+      }
+    ], function(error, result) {
       if(error) return tenantExit(error);
       // check if the tenant name already exists
       app.tenantmanager.retrieveTenant({ name: result.name }, function(error, tenant) {
@@ -328,7 +298,28 @@ function createSuperUser(callback) {
     return exitInstall(1, 'Failed to create admin user account. Please check the console output.');
   };
   console.log(`Creating the super user account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
-  prompt.get(userConfig, function(error, result) {
+  prompt.get([
+    {
+      name: 'email',
+      type: 'string',
+      description: "Email address",
+      required: true
+    },
+    {
+      name: 'password',
+      type: 'string',
+      description: "Password",
+      hidden: true,
+      required: true
+    },
+    {
+      name: 'retypePassword',
+      type: 'string',
+      description: "Retype Password",
+      hidden: true,
+      required: true
+    }
+  ], function(error, result) {
     if(error) {
       return suExit(error);
     }

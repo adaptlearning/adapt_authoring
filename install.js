@@ -361,6 +361,7 @@ function createSuperUser(callback) {
 
 function buildFrontend(callback) {
   console.log('Compiling the ' + app.polyglot.t('app.productname') + ' web application, please wait a moment ... ');
+  return callback();
   // TODO move this to installHelpers
   /*
   var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function(error) {

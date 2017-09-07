@@ -92,15 +92,15 @@ function getUpdateData(callback) {
     exports.getInstalledVersions,
     exports.getLatestVersions
   ], function(error, results) {
+    if(!results[1]) {
+      return callback();
+    }
     var updateData = {};
     if(semver.lt(results[0].adapt_authoring, results[1].adapt_authoring)) {
       updateData.adapt_authoring = results[1].adapt_authoring;
     }
     if(semver.lt(results[0].adapt_framework, results[1].adapt_framework)) {
       updateData.adapt_framework = results[1].adapt_framework;
-    }
-    if(Object.keys(updateData).length === 0) {
-      updateData = undefined;
     }
     callback(error, updateData);
   });
@@ -164,7 +164,7 @@ function cloneFramework(opts, callback) {
   if(!opts.repository) {
     return callback('Cannot clone framework, no repository specified');
   }
-  if(!opts.repository) {
+  if(!opts.directory) {
     return callback('Cannot clone framework, no target directory specified');
   }
   console.log(`Cloning the Adapt framework from ${opts.repository} to ${opts.directory}`);

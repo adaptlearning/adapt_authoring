@@ -140,28 +140,35 @@ function checkLatestAdaptRepoVersion(repoName, callback) {
 * }
 */
 function installFramework(opts, callback) {
-  if(arguments.length !== 2 || !opts.revision) {
+  if(arguments.length !== 2 || !opts.revision || !opts.directory) {
     return callback('Cannot install framework, invalid options passed');
   }
   if(!opts.repository) {
     opts.repository = DEFAULT_FRAMEWORK_REPO;
   }
-  var func = (fs.existsSync(getFrameworkRoot()) && !opts.force) ?  fetchFramework : cloneFramework;
-  func.call(this, opts.repository, function(error) {
-    if (error) {
-      return callback(error);
-    }
+  if(!fs.existsSync(getFrameworkRoot() || opts.force) {
+    cloneFramework(opts, function() {
+      updateFramework(opts, callback);
+    })
+    return;
+  }
+  fetchFramework(opts.repository, function() {
     updateFramework(opts, callback);
   });
 }
 
-function cloneFramework(repoURL, callback) {
-  console.log('Cloning the Adapt framework');
-  fs.remove(getFrameworkRoot(), function(error) {
+function cloneFramework(opts, callback) {
+  if(!opts.repository) {
+    return callback('Cannot clone framework, no repository specified');
+  }
+  if(!opts.repository) {
+    return callback('Cannot clone framework, no target directory specified');
+  }
+  fs.remove(opts.directory, function(error) {
     if(error) {
       return callback(error);
     }
-    execCommand(`git clone ${repoURL} --origin ${REMOTE_NAME}`, {
+    execCommand(`git clone ${opts.repository} --origin ${REMOTE_NAME} ${opts.directory}`, {
       cwd: getFrameworkRoot()
     }, callback);
   })

@@ -11,6 +11,7 @@ var Spinner = require('cli-spinner').Spinner;
 var configuration = require('./lib/configuration');
 var logger = require('./lib/logger');
 var origin = require('./lib/application');
+var OutputConstants = require('./lib/outputmanager').Constants;
 var installHelpers = require('./installHelpers');
 
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
@@ -131,7 +132,8 @@ function doUpdate(data) {
       showSpinner(`Upgrading the Adapt framework to ${data.adapt_framework}`);
       installHelpers.installFramework({
         repository: configuration.getConfig('frameworkRepository'),
-        revision: data.adapt_framework
+        revision: data.adapt_framework,
+        directory: path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), OutputConstants.Folders.Framework)
       }, cb);
     },
   ], function(error, results) {

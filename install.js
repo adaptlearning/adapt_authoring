@@ -45,7 +45,8 @@ function start() {
     async.series([
       configureEnvironment,
       installFramework,
-      createTenant,
+      configureMasterTenant,
+      createMasterTenant,
       createSuperUser,
       buildFrontend
     ], function(error, results) {
@@ -200,10 +201,10 @@ function installFramework(callback) {
   });
 }
 
-function createTenant(callback) {
-  var tenantExit = function(error) {
+function configureMasterTenant(callback) {
+  var onError = function(error) {
     console.error('ERROR: ', error);
-    return exitInstall(1, 'Failed to create master tenant. Please check the console output.');
+    return exitInstall(1, 'Failed to configure master tenant. Please check the console output.');
   };
   if(!IS_INTERACTIVE) {
     console.log('Creating master tenant');
@@ -230,71 +231,68 @@ function createTenant(callback) {
         default: 'Master'
       }
     ], function(error, result) {
-      if(error) return tenantExit(error);
+      if(error) return onError(error);
+      // add the input to our cached config
+      _.extend(configResults, { masterTenant: result });
       // check if the tenant name already exists
       app.tenantmanager.retrieveTenant({ name: result.name }, function(error, tenant) {
-        if(error) return tenantExit(error);
-        // create the tenant according to the user provided details
-        var _createTenant = function(cb) {
-          console.log(`Creating file system for master tenant (${result.name})`);
-          app.tenantmanager.createTenant({
-            name: result.name,
-            displayName: result.displayName,
-            isMaster: true,
-            database: {
-              dbName: app.configuration.getConfig('dbName'),
-              dbHost: app.configuration.getConfig('dbHost'),
-              dbUser: app.configuration.getConfig('dbUser'),
-              dbPass: app.configuration.getConfig('dbPass'),
-              dbPort: app.configuration.getConfig('dbPort')
-            }
-          },
-          function(error, tenant) {
-            if(error) return tenantExit(error);
-            masterTenant = tenant;
-            console.log(`Master tenant (${tenant.name}) was created.`);
-            console.log(`Now saving configuration`);
-            // save master tenant name to config
-            app.configuration.setConfig('masterTenantName', tenant.name);
-            app.configuration.setConfig('masterTenantID', tenant._id);
-            saveConfig(app.configuration.getConfig(), cb);
-          }
-        );
-      };
-      if(tenant) {
+        if(error) {
+          return onError(error);
+        }
+        if(!tenant) {
+          return callback();
+        }
         if(!IS_INTERACTIVE) {
           return exitInstall(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
         }
         console.log("Tenant already exists. It must be deleted for install to continue.");
         prompt.get({ name: "confirm", description: "Continue? (Y/n)", default: "Y" }, function(error, result) {
           if(error) {
-            console.error('ERROR: ' + error);
-            return callback(error);
+            return onError(error);
           }
-          if(!/(Y|y)[es]*/.test(result.confirm)) {
-            return exitInstall(1, 'Exiting install ... ');
+          if(/(N|n)[o]*/.test(result.confirm)) {
+            return exitInstall(1, 'Exiting install...');
           }
           // delete tenant
           async.eachSeries(app.db.getModelNames(), function(modelName, cb) {
             app.db.destroy(modelName, null, cb);
-          }, function(error) {
-            if(error) {
-              console.error('ERROR: ' + error);
-              return callback(error);
-            }
-            _createTenant(callback);
-          });
+          }, callback);
         });
-      } else {
-         _createTenant(callback);
-      }
+      });
     });
   });
-});
+}
+
+function createMasterTenant(callback) {
+  console.log(`Creating master tenant (${configResults.masterTenant.name})`);
+  app.tenantmanager.createTenant({
+    name: configResults.masterTenant.name,
+    displayName: configResults.masterTenant.displayName,
+    isMaster: true,
+    database: {
+      dbName: app.configuration.getConfig('dbName'),
+      dbHost: app.configuration.getConfig('dbHost'),
+      dbUser: app.configuration.getConfig('dbUser'),
+      dbPass: app.configuration.getConfig('dbPass'),
+      dbPort: app.configuration.getConfig('dbPort')
+    }
+  }, function(error, tenant) {
+    if(error) {
+      console.error('ERROR: ', error);
+      return exitInstall(1, 'Failed to create master tenant. Please check the console output.');
+    }
+    masterTenant = tenant;
+    console.log(`Master tenant (${tenant.name}) was created.`);
+    console.log(`Now saving configuration`);
+    // save master tenant name to config
+    app.configuration.setConfig('masterTenantName', tenant.name);
+    app.configuration.setConfig('masterTenantID', tenant._id);
+    saveConfig(app.configuration.getConfig(), callback);
+  });
 }
 
 function createSuperUser(callback) {
-  var suExit = function(error) {
+  var onError = function(error) {
     console.error('ERROR: ', error);
     return exitInstall(1, 'Failed to create admin user account. Please check the console output.');
   };
@@ -322,14 +320,14 @@ function createSuperUser(callback) {
     }
   ], function(error, result) {
     if(error) {
-      return suExit(error);
+      return onError(error);
     }
     var userEmail = result.email;
     var userPassword = result.password;
     var userRetypePassword = result.retypePassword;
 
     app.usermanager.deleteUser({ email: userEmail }, function(error, userRec) {
-      if(error) return suExit(error);
+      if(error) return onError(error);
       // add a new user using default auth plugin
       new localAuth().internalRegisterUser(true, {
         email: userEmail,
@@ -338,11 +336,11 @@ function createSuperUser(callback) {
         _tenantId: masterTenant._id
       }, function(error, user) {
         if(error) {
-          return suExit(error);
+          return onError(error);
         }
         superUser = user;
         helpers.grantSuperPermissions(user._id, function(error) {
-          if(error) return suExit(error);
+          if(error) return onError(error);
           return callback();
         });
       }

@@ -186,7 +186,7 @@ function start() {
   if(!IS_INTERACTIVE) {
     console.log('This script will install the application. Please wait ...');
   } else {
-    console.log('This script will install the application. Would you like to continue?');
+    console.log('This script will install the application. \nWould you like to continue?');
   }
   prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }, function(error, result) {
     if(!/(Y|y)[es]*$/.test(result['install'])) {
@@ -212,7 +212,7 @@ function configureEnvironment(callback) {
   if(!IS_INTERACTIVE) {
     console.log('Now setting configuration items.');
   } else {
-    console.log('We need to configure the tool before install. Just press ENTER to accept the default value (in brackets).');
+    console.log('We need to configure the tool before install. \nJust press ENTER to accept the default value (in brackets).');
   }
   installHelpers.getLatestFrameworkVersion(function(error, version) {
     if(error) {
@@ -252,7 +252,7 @@ function createTenant(callback) {
   if(!IS_INTERACTIVE) {
     console.log('Creating master tenant');
   } else {
-    console.log('Now we need to create the master tenant. Just press ENTER to accept the default value (in brackets).');
+    console.log('Now we need to create the master tenant. \nJust press ENTER to accept the default value (in brackets).');
   }
   logger.clear();
   // run the app

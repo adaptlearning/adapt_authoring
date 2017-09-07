@@ -197,7 +197,7 @@ function updateFramework(opts, callback) {
   }
   console.log(`Updating the Adapt framework at ${opts.directory} to ${opts.revision}`);
   execCommand(`git reset --hard ${opts.revision} && npm install`, {
-    cwd: getFrameworkRoot()
+    cwd: opts.directory
   }, function(error) {
     if (error) {
       return callback(error);

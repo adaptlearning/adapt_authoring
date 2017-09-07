@@ -164,6 +164,7 @@ function cloneFramework(opts, callback) {
   if(!opts.repository) {
     return callback('Cannot clone framework, no target directory specified');
   }
+  console.log(`Cloning the Adapt framework from ${opts.repository} to ${opts.directory}`);
   fs.remove(opts.directory, function(error) {
     if(error) {
       return callback(error);
@@ -185,6 +186,7 @@ function updateFramework(opts, callback) {
   if(!opts.revision) {
     return callback('Cannot update framework, revision not specified');
   }
+  console.log(`Updating the Adapt framework at ${opts.directory} to ${opts.revision}`);
   execCommand(`git reset --hard ${opts.revision} && npm install`, {
     cwd: getFrameworkRoot()
   }, function(error) {
@@ -202,6 +204,7 @@ function updateFramework(opts, callback) {
 * Uses adapt.json to install the latest plugin versions
 */
 function updateFrameworkPlugins(callback) {
+  console.log('Updating framework plugins');
   fs.readJSON(path.join(getFrameworkRoot(), 'adapt.json'), function(error, json) {
     if (error) {
       return callback(error);

@@ -53,7 +53,7 @@ function start() {
         console.error('ERROR: ', error);
         return exitInstall(1, 'Install was unsuccessful. Please check the console output.');
       }
-      exitInstall(0, `Installation completed successfully, the application can now be started with ${chalk.bgGreen('node server')}.`);
+      exitInstall(0, `Installation completed successfully, the application can now be started with ${chalk.bgwhite('node server')}.`);
     });
   });
 }

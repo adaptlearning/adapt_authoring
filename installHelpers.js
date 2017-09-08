@@ -169,7 +169,7 @@ function cloneFramework(opts, callback) {
   if(!opts.directory) {
     return callback('Cannot clone framework, no target directory specified');
   }
-  console.log(`Cloning the Adapt framework from ${opts.repository} to ${opts.directory}`);
+  log(`Cloning the Adapt framework from ${opts.repository} to ${opts.directory}`);
   fs.remove(opts.directory, function(error) {
     if(error) return callback(error);
     execCommand(`git clone ${opts.repository} --origin ${REMOTE_NAME} ${opts.directory}`, callback);
@@ -186,7 +186,7 @@ function fetchFramework(opts, callback) {
   if(!opts.directory) {
     return callback('Cannot fetch framework, target directory not specified');
   }
-  console.log('Fetching the latest framework data');
+  log('Fetching the latest framework data');
   execCommand(`git remote set-url ${REMOTE_NAME} ${configuration.getConfig('frameworkRepository')} && git fetch ${REMOTE_NAME}`, {
     cwd: opts.directory
   }, callback);
@@ -202,14 +202,13 @@ function updateFramework(opts, callback) {
   if(!opts.revision) {
     return callback('Cannot update framework, revision not specified');
   }
-  console.log(`Updating the Adapt framework at ${opts.directory} to ${opts.revision}`);
+  log(`Updating the Adapt framework at ${opts.directory} to ${opts.revision}`);
   execCommand(`git reset --hard ${opts.revision} && npm install`, {
     cwd: opts.directory
   }, function(error) {
     if (error) {
       return callback(error);
     }
-    console.log('update framework opts', opts);
     async.applyEach([
       purgeCourseFolder,
       updateFrameworkPlugins
@@ -221,14 +220,13 @@ function updateFramework(opts, callback) {
 * Uses adapt.json to install the latest plugin versions
 */
 function updateFrameworkPlugins(opts, callback) {
-  console.log('update framework plugins opts', opts);
   if(arguments.length !== 2) {
     return callback('Cannot update framework plugins, invalid options passed');
   }
   if(!opts.directory) {
     return callback('Cannot update framework plugins, no target directory specified');
   }
-  console.log('Updating framework plugins');
+  log('Updating framework plugins');
   fs.readJSON(path.join(opts.directory, 'adapt.json'), function(error, json) {
     if (error) {
       return callback(error);
@@ -248,7 +246,6 @@ function updateFrameworkPlugins(opts, callback) {
 * This isn't used by the authoring tool
 */
 function purgeCourseFolder(opts, callback) {
-  console.log('purgeCourseFolder opts', opts);
   if(arguments.length !== 2) {
     return callback('Cannot remove course folder, invalid options passed');
   }
@@ -301,8 +298,8 @@ function execCommand(cmd, opts, callback) {
     opts = {};
   }
   var child = exec(cmd, _.extend({ stdio: [0, 'pipe', 'pipe'] }, opts));
-  // child.stdout.on('data', log);
-  // child.stderr.on('data', logError);
+  child.stdout.on('data', log);
+  child.stderr.on('data', log);
   child.on('exit', callback);
 }
 

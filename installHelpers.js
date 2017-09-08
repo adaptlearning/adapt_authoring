@@ -298,8 +298,8 @@ function execCommand(cmd, opts, callback) {
     opts = {};
   }
   var child = exec(cmd, _.extend({ stdio: [0, 'pipe', 'pipe'] }, opts));
-  child.stdout.on('data', log);
-  child.stderr.on('data', log);
+  // child.stdout.on('data', log);
+  // child.stderr.on('data', log);
   child.on('exit', callback);
 }
 

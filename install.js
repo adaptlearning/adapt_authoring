@@ -335,23 +335,14 @@ function createSuperUser(callback) {
 }
 
 function buildFrontend(callback) {
-  console.log('Compiling the ' + app.polyglot.t('app.productname') + ' web application, please wait a moment ... ');
-  return callback();
-  // TODO move this to installHelpers
-  /*
-  var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function(error) {
+  console.log(`Compiling the ${app.polyglot.t('app.productname')} web application.`);
+  installHelpers.buildAuthoring(function(error) {
     if(error) {
-      console.error('ERROR: ', error);
-      console.log('grunt build:prod command failed. Is the grunt-cli module installed? You can install using ' + 'npm install -g grunt grunt-cli');
-      console.log('Install will continue. Try running ' + 'grunt build:prod' + ' after installation completes.');
-      return callback();
+      return callback(`Failed to build the web application, (${error})\nInstall will continue. Try again after installation completes using ${chalk.bgwhite('grunt build:prod')}.`);
     }
-    console.log('The ' + app.polyglot.t('app.productname') + ' web application was compiled and is now ready to use.');
-    return callback();
+    console.log(`The ${app.polyglot.t('app.productname')} web application was compiled and is now ready to use.`);
+    callback();
   });
-  proc.stdout.on('data', console.log);
-  proc.stderr.on('data', console.error);
-  */
 }
 
 // helper functions

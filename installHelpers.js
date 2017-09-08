@@ -34,7 +34,8 @@ var exports = module.exports = {
   installFramework,
   updateFramework,
   updateFrameworkPlugins,
-  updateAuthoring
+  updateAuthoring,
+  buildAuthoring
 };
 
 function getInstalledServerVersion(callback) {
@@ -280,13 +281,18 @@ function updateAuthoring(opts, callback) {
     },
     function rebuildApp(cb) {
       log('Building front-end');
-      execCommand('grunt build:prod', cb);
-    },
-    function updateVersion(cb) {
-      log(`Server has been updated successfully`);
-      cb();
+      buildAuthoring(cb);
     }
-  ], callback);
+  ], function(error) {
+    if(!error) {
+      log(`Server has been updated successfully`);
+    }
+    callback(error);
+  });
+}
+
+function buildAuthoring(callback) {
+  execCommand('grunt build:prod', callback);
 }
 
 function execCommand(cmd, opts, callback) {

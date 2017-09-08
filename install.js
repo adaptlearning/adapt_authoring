@@ -45,7 +45,6 @@ function start() {
     async.series([
       configureEnvironment,
       configureMasterTenant,
-      installFramework,
       createMasterTenant,
       createSuperUser,
       buildFrontend
@@ -184,21 +183,6 @@ function configureEnvironment(callback) {
       configResults = results;
       saveConfig(results, callback);
     });
-  });
-}
-
-function installFramework(callback) {
-  return callback();
-  installHelpers.installFramework({
-    repository: configResults.frameworkRepository,
-    revision: configResults.frameworkRevision,
-    force: true
-  }, function(error) {
-    if(error) {
-      console.error('ERROR: ', error);
-      return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
-    }
-    callback();
   });
 }
 

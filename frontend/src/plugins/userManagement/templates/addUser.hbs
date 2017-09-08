@@ -24,9 +24,17 @@
       <div class="form-group">
         <label for="role">{{t 'app.role'}}</label>
         <select name="role">
-          {{#each globalData.allRoles.models}}
-            <option value="{{this.attributes._id}}">{{this.attributes.name}}</option>
-          {{/each}}
+          {{#if globalData.hasTenantAdminPermissions}}
+            {{#each globalData.allRoles.models}}
+              {{#ifValueNotEquals this.attributes.name "Super Admin"}}
+                <option value="{{this.attributes._id}}">{{this.attributes.name}}</option>
+              {{/ifValueNotEquals}}
+            {{/each}}
+          {{else}}
+            {{#each globalData.allRoles.models}}
+              <option value="{{this.attributes._id}}">{{this.attributes.name}}</option>
+            {{/each}}
+          {{/if}}
         </select>
       </div>
   </form>

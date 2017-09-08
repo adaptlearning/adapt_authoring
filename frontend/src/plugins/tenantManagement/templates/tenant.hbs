@@ -40,17 +40,20 @@
            <div>{{t 'app.mastertenantcannotdisable'}}</div>
           {{else}} 
             {{#if _isDeleted}}
-              <button id="enable_{{_id}}" class="btn action-primary enableTenant">
+              <button id="enable_{{_id}}" class="btn action-primary restore enableTenant">
                   {{t 'app.enableTenant'}}
               </button>
-              <button id="disable_{{_id}}" class="btn action-primary disableTenant display-none">
+              <button id="delete_{{_id}}" class="btn action-primary alert deleteTenant">
+                  {{t 'app.deletetenant'}}
+              </button> 
+              <button id="disable_{{_id}}" class="btn action-primary warning disableTenant display-none">
                   {{t 'app.disableTenant'}}
               </button> 
             {{else}}
-              <button id="enable_{{_id}}" class="btn action-primary enableTenant display-none">
+              <button id="enable_{{_id}}" class="btn action-primary restore enableTenant display-none">
                 {{t 'app.enableTenant'}}
               </button>
-              <button id="disable_{{_id}}" class="btn action-primary disableTenant">
+              <button id="disable_{{_id}}" class="btn action-primary warning disableTenant">
                 {{t 'app.disableTenant'}}
               </button> 
             {{/if}}

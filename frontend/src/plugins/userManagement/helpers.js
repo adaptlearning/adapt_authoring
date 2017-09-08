@@ -13,7 +13,10 @@ define(function (require) {
         error: function (data, status, error) {
           var message = error + ': ';
           if (data.responseText) message += data.responseText;
-          Origin.Notify.alert({ type: 'error', text: message });
+          Origin.Notify.alert({
+            type: 'error',
+            text: message
+          });
         },
         success: success
       });
@@ -65,6 +68,14 @@ define(function (require) {
         return block.fn(this);
       } else {
         return block.inverse(this);
+      }
+    },
+
+    ifValueNotEquals: function (value, text, block) {
+      if (value === text) {
+        return block.inverse(this);
+      } else {
+        return block.fn(this);
       }
     }
   };

@@ -228,6 +228,8 @@
   "app.emailforgottenpasswordbody": "<p>We've received a request to reset the password for your <a href='%{rootUrl}' target='_blank'>Adapt authoring tool</a> account.</p><p>If you weren't expecting this email, don't worry! You can safely ignore it. Otherwise, please click the button below.</p>",
   "app.edittenant": "Edit Tenant",
   "app.addtenant": "Add Tenant",
+  "app.deletetenant": "Delete Tenant",
+  "app.confirmdeletetenant": "Deleting<br/><b>%{tenant}</b>.<br/><br/>This is a one-way trip. Continue?",
   "app.tenant": "Tenant",
   "app.role": "Role",
   "app.version": "Version",

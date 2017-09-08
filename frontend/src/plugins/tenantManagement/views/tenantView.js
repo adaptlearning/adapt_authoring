@@ -17,7 +17,8 @@ define(function (require) {
       'click a.cancel': 'onCancelClicked',
 
       'click button.disableTenant': 'onDisableTenantClicked',
-      'click button.enableTenant': 'onEnableClicked'
+      'click button.enableTenant': 'onEnableClicked',
+      'click button.deleteTenant': 'onDeleteClicked'
     },
 
     preRender: function () {
@@ -126,6 +127,28 @@ define(function (require) {
           }
         }
       });
+    },
+
+    onDeleteClicked: function () {
+      var self = this;
+      Origin.Notify.confirm({
+        type: 'confirm',
+        text: window.polyglot.t('app.confirmdeletetenant', {
+          tenant: this.model.get('name')
+        }),
+        callback: function (confirmed) {
+          if (confirmed) {
+            self.model.destroy({
+              success: self.onTenantDelete,
+              error: self.onError
+            });
+          }
+        }
+      });
+    },
+
+    onTenantDelete: function (t) {
+      Origin.trigger('tenantManagement:removetenant', t);
     },
 
     disableTenant: function (event) {

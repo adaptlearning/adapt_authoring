@@ -42,6 +42,7 @@ define(function (require) {
         },
         success: function (t) {
           self.showSuccessMessage('app.newtenant', 'app.addtenantsuccess');
+          Origin.trigger('tenantManagement:newtenant',t);
         }
       });
     },

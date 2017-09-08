@@ -20,28 +20,28 @@ define(function(require) {
     data.hasTenantAdminPermissions = false;
     setUserPermission();
 
-  	if (Origin.permissions.hasPermissions(data.featurePermissions)) {
-      
+    if (Origin.permissions.hasPermissions(data.featurePermissions)) {
+
       data.allTenants.on('sync', onDataFetched);
       if (data.hasSuperAdminPermissions) {
         data.allTenants.url = 'api/tenant';
       }else{
         data.allTenants.url = 'api/tenant/'+ Origin.sessionModel.get('tenantId');
-      }      
+      }    
       data.allTenants.fetch();
 
       data.allRoles.on('sync', onDataFetched);
       data.allRoles.url = 'api/role';
       data.allRoles.fetch();
 
-  		Origin.globalMenu.addItem({
+      Origin.globalMenu.addItem({
         "location": "global",
         "text": window.polyglot.t('app.usermanagement'),
         "icon": "fa-users",
         "sortOrder": 3,
         "callbackEvent": "userManagement:open"
       });
-  	} else {
+    } else {
       isReady = true;
     }
   });
@@ -61,7 +61,17 @@ define(function(require) {
     }
   });
 
-  var onRoute = function(location, subLocation, action) {
+  Origin.on('tenantManagement:newtenant', function(tenant) {
+    data.allTenants.add(tenant);
+  });
+
+  Origin.on('tenantManagement:removetenant', function (tenant) {
+    data.allTenants.remove(data.allTenants.findWhere({
+      _id: tenant.id
+    }));
+  });
+
+  var onRoute = function (location, subLocation, action) {
     var mainView, sidebarView;
 
     if(!location) {
@@ -78,11 +88,11 @@ define(function(require) {
   };
 
   var setUserPermission = function(){
-     if (Origin.permissions.hasSuperPermissions()) {
-       data.hasSuperAdminPermissions = true;
-      }else if (Origin.permissions.hasTenantAdminPermission()){
-        data.hasTenantAdminPermissions = true;
-      }   
+    if (Origin.permissions.hasSuperPermissions()) {
+      data.hasSuperAdminPermissions = true;
+    } else if (Origin.permissions.hasTenantAdminPermission()) {
+      data.hasTenantAdminPermissions = true;
+    }
   }
 
   var onDataFetched = function() {

@@ -21,12 +21,28 @@ define(function(require) {
     },
 
     getChildren: function() {
-      if (Origin.editor.data[this._children]) {
-        var children = Origin.editor.data[this._children].where({ _parentId: this.get('_id') });
-        var childrenCollection = new Backbone.Collection(children);
-        return childrenCollection;
+      var self = this;
+      var getChildrenDelegate = function(type) {
+        if (Origin.editor.data[type]) {
+          var children = Origin.editor.data[type].where({ _parentId: self.get('_id') });
+          var childrenCollection = new Backbone.Collection(children);
+          return childrenCollection;
+        }
+        return null;
+      };
+      if(_.isArray(this._children)) {
+        var allChildren;
+        for(var i = 0, count = this._children.length; i < count; i++) {
+          var children = getChildrenDelegate(this._children[i]);
+          if(children) {
+            if(!allChildren) allChildren = children;
+            else allChildren.add(children.models);
+          }
+        }
+        return allChildren;
+      } else {
+        return getChildrenDelegate(this._children);
       }
-      return null;
     },
 
     getParent: function() {

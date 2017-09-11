@@ -25,6 +25,7 @@ var REMOTE_NAME = 'adapt-origin';
 var spinner;
 
 var exports = module.exports = {
+  exit,
   showSpinner,
   hideSpinner,
   getInstalledServerVersion,
@@ -40,6 +41,21 @@ var exports = module.exports = {
   updateAuthoring,
   buildAuthoring
 };
+
+function exit(code, msg, preCallback) {
+  var _exit = function() {
+    hideSpinner();
+    code = code || 0;
+    msg = msg || 'Bye!';
+    console.log('\n' + (code === 0 ? chalk.green(msg) : chalk.red(msg)) + '\n');
+    process.exit(code);
+  }
+  if(preCallback) {
+    preCallback(_exit);
+  } else {
+    _exit();
+  }
+}
 
 function showSpinner(text) {
   spinner = new Spinner(text || '');

@@ -64,27 +64,27 @@ function getUserInput() {
   prompt.start();
   prompt.get(confirmProperties, function(error, result) {
     if(error) {
-      return exit(1, error);
+      return installHelpers.exit(1, error);
     }
     if(!/(Y|y)[es]*$/.test(result['Y/n'])) {
-      return exit();
+      return installHelpers.exit();
     }
     prompt.get(upgradeProperties, function(error, result) {
       if(error) {
-        return exit(1, error);
+        return installHelpers.exit(1, error);
       }
       console.log('');
       if(result['updateAutomatically'] === 'Y' || result['updateAutomatically'] === 'y') {
         return checkForUpdates(function(error, updateData) {
           if(error) {
-            return exit(1, error);
+            return installHelpers.exit(1, error);
           }
           doUpdate(updateData);
         });
       }
       // no automatic update, so get the intended versions
       prompt.get(tagProperties, function(error, result) {
-        if(error) exit(1, error);
+        if(error) installHelpers.exit(1, error);
         doUpdate({
           adapt_authoring: result.authoringToolGitTag,
           adapt_framework: result.frameworkGitTag
@@ -100,7 +100,7 @@ function checkForUpdates(callback) {
   installHelpers.getUpdateData(function(error, data) {
     installHelpers.hideSpinner();
     if(!data) {
-      return exit(0, `Your software is already up-to-date, no need to upgrade.`);
+      return installHelpers.exit(0, `Your software is already up-to-date, no need to upgrade.`);
     }
     console.log(chalk.underline('Software updates found.\n'));
     callback(null, data);
@@ -136,21 +136,13 @@ function doUpdate(data) {
     installHelpers.hideSpinner();
     if(error) {
       console.error('ERROR:', msg);
-      return exit(1, 'Upgrade was unsuccessful. Please check the console output.');
+      return installHelpers.exit(1, 'Upgrade was unsuccessful. Please check the console output.');
     }
     console.log(`Adapt framework upgraded to ${data.adapt_framework}`);
-    exit(0, `Your ${app.polyglot.t('app.productname')} was updated successfully.`);
+    installHelpers.exit(0, `Your ${app.polyglot.t('app.productname')} was updated successfully.`);
   });
 }
 
 function logHeader(msg) {
   console.log(chalk.underline(`\n${msg}`));
-}
-
-function exit(code, msg) {
-  hideSpinner();
-  code = code || 0;
-  msg = msg || 'Bye!';
-  console.log('\n' + (code === 0 ? chalk.green(msg) : chalk.red(msg)) + '\n');
-  process.exit(code);
 }

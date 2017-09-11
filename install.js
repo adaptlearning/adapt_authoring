@@ -51,9 +51,9 @@ function start() {
     ], function(error, results) {
       if(error) {
         console.error('ERROR: ', error);
-        return exitInstall(1, 'Install was unsuccessful. Please check the console output.');
+        return exit(1, 'Install was unsuccessful. Please check the console output.');
       }
-      exitInstall(0, `Installation completed successfully, the application can now be started with ${chalk.bgwhite('node server')}.`);
+      exit(0, `Installation completed successfully, the application can now be started with 'node server'.`);
     });
   });
 }
@@ -67,7 +67,7 @@ function configureEnvironment(callback) {
   installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     if(error) {
       console.error('ERROR: ', error);
-      return exitInstall(1, 'Failed to get latest framework version');
+      return exit(1, 'Failed to get latest framework version');
     }
     prompt.get([
       {
@@ -176,10 +176,6 @@ function configureEnvironment(callback) {
         default: 'tags/' + latestFrameworkTag
       }
     ], function(error, results) {
-      if(error) {
-        console.error('ERROR: ', error);
-        return exitInstall(1, 'Failed to save configuration items.');
-      }
       configResults = results;
       saveConfig(results, callback);
     });
@@ -189,7 +185,7 @@ function configureEnvironment(callback) {
 function configureMasterTenant(callback) {
   var onError = function(error) {
     console.error('ERROR: ', error);
-    return exitInstall(1, 'Failed to configure master tenant. Please check the console output.');
+    return exit(1, 'Failed to configure master tenant. Please check the console output.');
   };
   if(!IS_INTERACTIVE) {
     console.log('Creating master tenant');
@@ -228,7 +224,7 @@ function configureMasterTenant(callback) {
           return callback();
         }
         if(!IS_INTERACTIVE) {
-          return exitInstall(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
+          return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
         }
         console.log("Tenant already exists. It must be deleted for install to continue.");
         prompt.get({ name: "confirm", description: "Continue? (Y/n)", default: "Y" }, function(error, result) {
@@ -236,7 +232,7 @@ function configureMasterTenant(callback) {
             return onError(error);
           }
           if(/(N|n)[o]*/.test(result.confirm)) {
-            return exitInstall(1, 'Exiting install...');
+            return exit(1, 'Exiting install...');
           }
           // delete tenant
           async.eachSeries(app.db.getModelNames(), function(modelName, cb) {
@@ -264,7 +260,7 @@ function createMasterTenant(callback) {
   }, function(error, tenant) {
     if(error) {
       console.error('ERROR: ', error);
-      return exitInstall(1, 'Failed to create master tenant. Please check the console output.');
+      return exit(1, 'Failed to create master tenant. Please check the console output.');
     }
     masterTenant = tenant;
     console.log(`Master tenant (${tenant.name}) was created.`);
@@ -279,7 +275,7 @@ function createMasterTenant(callback) {
 function createSuperUser(callback) {
   var onError = function(error) {
     console.error('ERROR: ', error);
-    return exitInstall(1, 'Failed to create admin user account. Please check the console output.');
+    return exit(1, 'Failed to create admin user account. Please check the console output.');
   };
   console.log(`Creating the super user account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
   prompt.get([
@@ -392,20 +388,15 @@ function saveConfig(configItems, callback) {
  * @param {string} msg
  */
 
-function exitInstall(code, msg) {
-  code = code || 0;
-  msg = msg || 'Bye!';
-  console.log('\n' + (code === 0 ? chalk.green(msg) : chalk.red(msg)) + '\n');
-  // handle borked tenant, users, in case of a non-zero exit
-  if(0 !== code && app && app.db && masterTenant) {
-    return app.db.destroy('tenant', { _id: masterTenant._id }, function(error) {
-      if(!superUser) {
-        return process.exit(code);
-      }
-      app.db.destroy('user', { _id: superUser._id }, function(error) {
-        return process.exit(code);
-      });
+function exit(code, msg) {
+  installHelpers.exit(code, msg, function(callback) {
+    if(0 === code || app && app.db && !masterTenant) {
+      return callback();
+    }
+    // handle borked tenant, users, in case of a non-zero exit
+    app.db.destroy('tenant', { _id: masterTenant._id }, function(error) {
+      if(!superUser) return callback();
+      app.db.destroy('user', { _id: superUser._id }, callback);
     });
-  }
-  process.exit(code);
+  });
 }

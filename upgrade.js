@@ -52,20 +52,23 @@ var steps = [
       headers: {
         'User-Agent' : DEFAULT_USER_AGENT
       },
-      uri: 'https://api.github.com/repos/adaptlearning/adapt_authoring/tags',
+      uri: 'https://api.github.com/repos/adaptlearning/adapt_authoring/releases/latest',
       method: 'GET'
     }, function (error, response, body) {
-
-      if (!error && response.statusCode == 200) {
-        var tagInfo = JSON.parse(body);
-
-        if (tagInfo) {
-          latestBuilderTag = tagInfo[0].name;
-        }
-
-        callback();
+      if (error){
+        return callback(error)
       }
 
+      if(response.statusCode !== 200){
+        return callback(new Error('Github did not respond with a 200 status code'))
+      }
+      var releaseInfo = JSON.parse(body);
+
+      if (releaseInfo) {
+        latestBuilderTag = releaseInfo.tag_name;
+      }
+
+      return callback();
     });
 
   },
@@ -77,18 +80,24 @@ var steps = [
       headers: {
         'User-Agent' : DEFAULT_USER_AGENT
       },
-      uri: 'https://api.github.com/repos/adaptlearning/adapt_framework/tags',
+      uri: 'https://api.github.com/repos/adaptlearning/adapt_framework/releases/latest',
       method: 'GET'
     }, function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var tagInfo = JSON.parse(body);
-
-        if (tagInfo) {
-          latestFrameworkTag = tagInfo[0].name;
-        }
-
-        callback();
+      if (error){
+        return callback(error)
       }
+
+      if(response.statusCode !== 200){
+        return callback(new Error('Github did not respond with a 200 status code'))
+      }
+
+      var releaseInfo = JSON.parse(body);
+
+      if (releaseInfo) {
+        latestFrameworkTag = releaseInfo.tag_name;
+      }
+
+      return callback();
     });
 
   },

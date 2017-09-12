@@ -34,13 +34,13 @@ function start() {
   prompt.start();
   // Prompt the user to begin the install
   if(!IS_INTERACTIVE) {
-    console.log('This script will install the application. Please wait ...');
+    console.log('\nThis script will install the application. Please wait ...');
   } else {
-    console.log('This script will install the application. \nWould you like to continue?');
+    console.log('\nThis script will install the application. \nWould you like to continue?');
   }
-    if(!/(Y|y)[es]*$/.test(result['install'])) {
-      return exitInstall();
   getInput({ name: 'install', description: 'Continue? Y/n', type: 'string', default: 'Y' }, function(result) {
+    if(/(N|n)[o]*$/.test(result['install'])) {
+      return exit(0, 'User cancelled the install');
     }
     async.series([
       configureEnvironment,
@@ -187,10 +187,8 @@ function configureMasterTenant(callback) {
     console.error('ERROR: ', error);
     return exit(1, 'Failed to configure master tenant. Please check the console output.');
   };
-  if(!IS_INTERACTIVE) {
-    console.log('Creating master tenant');
-  } else {
-    console.log('Now we need to create the master tenant. \nJust press ENTER to accept the default value (in brackets).');
+  if(IS_INTERACTIVE) {
+    console.log('Now we need to configure the master tenant. \nJust press ENTER to accept the default value (in brackets).');
   }
   logger.clear();
   // run the app
@@ -227,6 +225,7 @@ function configureMasterTenant(callback) {
         }
         console.log("Tenant already exists. It must be deleted for install to continue.");
         prompt.get({ name: "confirm", description: "Continue? (Y/n)", default: "Y" }, function(error, result) {
+          console.log('');
           if(error) {
             return onError(error);
           }
@@ -261,9 +260,8 @@ function createMasterTenant(callback) {
       console.error('ERROR: ', error);
       return exit(1, 'Failed to create master tenant. Please check the console output.');
     }
+    console.log('Master tenant created');
     masterTenant = tenant;
-    console.log(`Master tenant (${tenant.name}) was created.`);
-    console.log(`Now saving configuration`);
     // save master tenant name to config
     app.configuration.setConfig('masterTenantName', tenant.name);
     app.configuration.setConfig('masterTenantID', tenant._id);
@@ -327,12 +325,12 @@ function createSuperUser(callback) {
 }
 
 function buildFrontend(callback) {
-  console.log(`Compiling the ${app.polyglot.t('app.productname')} web application.`);
+  console.log(`Building the web application.`);
   installHelpers.buildAuthoring(function(error) {
     if(error) {
-      return callback(`Failed to build the web application, (${error})\nInstall will continue. Try again after installation completes using ${chalk.bgwhite('grunt build:prod')}.`);
+      return callback(`Failed to build the web application, (${error}) \nInstall will continue. Try again after installation completes using 'grunt build:prod'.`);
     }
-    console.log(`The ${app.polyglot.t('app.productname')} web application was compiled and is now ready to use.`);
+    console.log('Web application built.');
     callback();
   });
 }

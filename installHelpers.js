@@ -258,7 +258,7 @@ function updateRepo(opts, callback) {
     if (error) {
       return callback(error);
     }
-    console.log(`Updated ${shortDir} to ${opts.revision}`);
+    log(`Updated ${shortDir} to ${opts.revision}`);
     callback();
   });
 }
@@ -334,7 +334,7 @@ function buildAuthoring(callback) {
     if(error) {
       return callback(error);
     }
-    console.log('Web application built.');
+    log('Web application built.');
   });
 }
 
@@ -349,7 +349,7 @@ function installDependencies(dir, callback) {
     if(error) {
       return callback(error);
     }
-    console.log('Node dependencies installed successfully.');
+    log('Node dependencies installed successfully.');
     callback();
   });
 }

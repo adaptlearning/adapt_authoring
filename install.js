@@ -188,7 +188,7 @@ function configureMasterTenant(callback) {
     return exit(1, 'Failed to configure master tenant. Please check the console output.');
   };
   if(IS_INTERACTIVE) {
-    console.log('Now we need to configure the master tenant. \nJust press ENTER to accept the default value (in brackets).');
+    console.log('Now we need to configure the master tenant. \nJust press ENTER to accept the default value (in brackets).\n');
   }
   logger.clear();
   // run the app
@@ -243,7 +243,6 @@ function configureMasterTenant(callback) {
 }
 
 function createMasterTenant(callback) {
-  console.log(`Creating master tenant (${configResults.masterTenant.name})`);
   app.tenantmanager.createTenant({
     name: configResults.masterTenant.name,
     displayName: configResults.masterTenant.displayName,
@@ -260,7 +259,7 @@ function createMasterTenant(callback) {
       console.error('ERROR: ', error);
       return exit(1, 'Failed to create master tenant. Please check the console output.');
     }
-    console.log('Master tenant created');
+    console.log('Master tenant created successfully.');
     masterTenant = tenant;
     // save master tenant name to config
     app.configuration.setConfig('masterTenantName', tenant.name);
@@ -274,7 +273,7 @@ function createSuperUser(callback) {
     console.error('ERROR: ', error);
     return exit(1, 'Failed to create admin user account. Please check the console output.');
   };
-  console.log(`Configuring super user account. \nThis account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
+  console.log(`\nConfiguring super user account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance. \nJust press ENTER to accept the default value (in brackets).`);
   getInput([
     {
       name: 'email',

@@ -146,7 +146,7 @@ function checkLatestAdaptRepoVersion(repoName, callback) {
       error = `You have exceeded GitHub's request limit of ${response.headers['x-ratelimit-limit']} requests per hour. Please wait until at least ${reqsReset.toTimeString()} before trying again.`;
     }
     else if (response.statusCode !== 200) {
-      error = 'GitubAPI did not respond with a 200 status code';
+      error = 'GitubAPI did not respond with a 200 status code.';
     }
 
     if (error) {
@@ -171,7 +171,7 @@ function checkLatestAdaptRepoVersion(repoName, callback) {
 */
 function installFramework(opts, callback) {
   if(arguments.length !== 2 || !opts.revision || !opts.directory) {
-    return callback('Cannot install framework, invalid options passed');
+    return callback('Cannot install framework, invalid options passed.');
   }
   if(!opts.repository) {
     opts.repository = DEFAULT_FRAMEWORK_REPO;
@@ -202,13 +202,13 @@ function updateFramework(opts, callback) {
 
 function cloneRepo(opts, callback) {
   if(arguments.length !== 2) {
-    return callback('Cannot clone repository, invalid options passed');
+    return callback('Cannot clone repository, invalid options passed.');
   }
   if(!opts.repository) {
-    return callback('Cannot clone repository, no repository specified');
+    return callback('Cannot clone repository, no repository specified.');
   }
   if(!opts.directory) {
-    return callback(`Cannot clone ${opts.repository}, no target directory specified`);
+    return callback(`Cannot clone ${opts.repository}, no target directory specified.`);
   }
   fs.remove(opts.directory, function(error) {
     if(error) {
@@ -220,7 +220,7 @@ function cloneRepo(opts, callback) {
       if(error) {
         return callback(error);
       }
-      log(`Cloned ${opts.repository} successfully`);
+      log(`Cloned ${opts.repository} successfully.`);
       callback();
     });
   })
@@ -246,10 +246,10 @@ function updateRepo(opts, callback) {
     return callback('Cannot update repository, invalid options passed');
   }
   if(!opts.directory) {
-    return callback('Cannot update repository, target directory not specified');
+    return callback('Cannot update repository, target directory not specified.');
   }
   if(!opts.revision) {
-    return callback(`Cannot update ${opts.repository}, revision not specified`);
+    return callback(`Cannot update ${opts.repository}, revision not specified.`);
   }
   var shortDir = opts.directory.replace(configuration.serverRoot, '');
   execCommand(`git reset --hard ${opts.revision}`, {
@@ -293,17 +293,17 @@ function updateFrameworkPlugins(opts, callback) {
 */
 function purgeCourseFolder(opts, callback) {
   if(arguments.length !== 2) {
-    return callback('Cannot remove course folder, invalid options passed');
+    return callback('Cannot remove course folder, invalid options passed.');
   }
   if(!opts.directory) {
-    return callback('Cannot remove course folder, no target directory specified');
+    return callback('Cannot remove course folder, no target directory specified.');
   }
   fs.remove(path.join(opts.directory, 'src', 'course'), callback);
 }
 
 function updateAuthoring(opts, callback) {
   if(!opts.revision) {
-    return callback('Cannot update server, revision not specified');
+    return callback('Cannot update server, revision not specified.');
   }
   if(!opts.repository) {
     opts.repository = DEFAULT_SERVER_REPO;
@@ -323,7 +323,7 @@ function updateAuthoring(opts, callback) {
     }
   ], function(error) {
     if(!error) {
-      log(`Server has been updated successfully`);
+      log(`Server has been updated successfully!`);
     }
     callback(error);
   });
@@ -334,7 +334,7 @@ function buildAuthoring(callback) {
     if(error) {
       return callback(error);
     }
-    console.log('Web application built');
+    console.log('Web application built.');
   });
 }
 
@@ -349,7 +349,7 @@ function installDependencies(dir, callback) {
     if(error) {
       return callback(error);
     }
-    console.log('Node dependencies installed successfully');
+    console.log('Node dependencies installed successfully.');
     callback();
   });
 }

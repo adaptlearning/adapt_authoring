@@ -38,9 +38,9 @@ function start() {
   } else {
     console.log('This script will install the application. \nWould you like to continue?');
   }
-  prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }, function(error, result) {
     if(!/(Y|y)[es]*$/.test(result['install'])) {
       return exitInstall();
+  getInput({ name: 'install', description: 'Continue? Y/n', type: 'string', default: 'Y' }, function(result) {
     }
     async.series([
       configureEnvironment,
@@ -69,7 +69,7 @@ function configureEnvironment(callback) {
       console.error('ERROR: ', error);
       return exit(1, 'Failed to get latest framework version');
     }
-    prompt.get([
+    getInput([
       {
         name: 'serverPort',
         type: 'number',
@@ -175,9 +175,9 @@ function configureEnvironment(callback) {
         description: "Framework revision to install (branchName || tags/tagName)",
         default: 'tags/' + latestFrameworkTag
       }
-    ], function(error, results) {
-      configResults = results;
-      saveConfig(results, callback);
+    ], function(result) {
+      configResults = result;
+      saveConfig(result, callback);
     });
   });
 }
@@ -196,7 +196,7 @@ function configureMasterTenant(callback) {
   // run the app
   app.run({ skipVersionCheck: true });
   app.on('serverStarted', function() {
-    prompt.get([
+    getInput([
       {
         name: 'name',
         type: 'string',
@@ -211,8 +211,7 @@ function configureMasterTenant(callback) {
         required: true,
         default: 'Master'
       }
-    ], function(error, result) {
-      if(error) return onError(error);
+    ], function(result) {
       // add the input to our cached config
       _.extend(configResults, { masterTenant: result });
       // check if the tenant name already exists
@@ -277,8 +276,8 @@ function createSuperUser(callback) {
     console.error('ERROR: ', error);
     return exit(1, 'Failed to create admin user account. Please check the console output.');
   };
-  console.log(`Creating the super user account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
-  prompt.get([
+  console.log(`Configuring super user account. \nThis account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
+  getInput([
     {
       name: 'email',
       type: 'string',
@@ -299,15 +298,12 @@ function createSuperUser(callback) {
       hidden: true,
       required: true
     }
-  ], function(error, result) {
-    if(error) {
-      return onError(error);
-    }
     var userEmail = result.email;
     var userPassword = result.password;
     var userRetypePassword = result.retypePassword;
 
     app.usermanager.deleteUser({ email: userEmail }, function(error, userRec) {
+  ], function(result) {
       if(error) return onError(error);
       // add a new user using default auth plugin
       new localAuth().internalRegisterUser(true, {
@@ -379,6 +375,18 @@ function saveConfig(configItems, callback) {
     process.exit(1, 'Install Failed.');
   }
   return callback();
+}
+
+function getInput(items, callback) {
+  console.log('');
+  prompt.get(items, function(error, result) {
+    console.log('');
+    if(error) {
+      if(error.message = 'canceled') error = new Error('User cancelled the install');
+      return exit(1, error);
+    }
+    callback(result);
+  });
 }
 
 /**

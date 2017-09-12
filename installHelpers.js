@@ -330,7 +330,28 @@ function updateAuthoring(opts, callback) {
 }
 
 function buildAuthoring(callback) {
-  execCommand('grunt build:prod', callback);
+  execCommand('grunt build:prod', function(error){
+    if(error) {
+      return callback(error);
+    }
+    console.log('Web application built');
+  });
+}
+
+function installDependencies(dir, callback) {
+  if(arguments.length === 1) {
+    callback = dir;
+  }
+
+  execCommand('npm install', {
+    cwd: dir || configuration.serverRoot
+  }, function(error) {
+    if(error) {
+      return callback(error);
+    }
+    console.log('Node dependencies installed successfully');
+    callback();
+  });
 }
 
 function execCommand(cmd, opts, callback) {

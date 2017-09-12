@@ -1,9 +1,3 @@
-/**
-* TODO:
-* - doesUpdateExist
-* - merge with frameworkHelpers
-*/
-
 var _ = require('underscore');
 var async = require('async');
 var chalk = require('chalk');
@@ -178,70 +172,88 @@ function installFramework(opts, callback) {
   }
   if(!fs.existsSync(opts.directory) || opts.force) {
     return async.applyEachSeries([
-      cloneFramework,
+      cloneRepo,
       updateFramework
     ], opts, callback);
   }
   async.applyEachSeries([
-    fetchFramework,
+    fetchRepo,
     updateFramework
   ], opts, callback);
 }
 
-function cloneFramework(opts, callback) {
-  if(arguments.length !== 2) {
-    return callback('Cannot clone framework, invalid options passed');
-  }
-  if(!opts.repository) {
-    return callback('Cannot clone framework, no repository specified');
-  }
-  if(!opts.directory) {
-    return callback('Cannot clone framework, no target directory specified');
-  }
-  log(`Cloning the Adapt framework from ${opts.repository} to ${opts.directory}`);
-  fs.remove(opts.directory, function(error) {
-    if(error) return callback(error);
-    execCommand(`git clone ${opts.repository} --origin ${REMOTE_NAME} ${opts.directory}`, callback);
-  })
-}
-
-function fetchFramework(opts, callback) {
-  if(arguments.length !== 2) {
-    return callback('Cannot fetch framework, invalid options passed');
-  }
-  if(!opts.repository) {
-    return callback('Cannot fetch framework, repository not specified');
-  }
-  if(!opts.directory) {
-    return callback('Cannot fetch framework, target directory not specified');
-  }
-  log('Fetching the latest framework data');
-  execCommand(`git remote set-url ${REMOTE_NAME} ${configuration.getConfig('frameworkRepository')} && git fetch ${REMOTE_NAME}`, {
-    cwd: opts.directory
-  }, callback);
-}
-
 function updateFramework(opts, callback) {
-  if(arguments.length !== 2) {
-    return callback('Cannot update framework, invalid options passed');
-  }
-  if(!opts.directory) {
-    return callback('Cannot update framework, target directory not specified');
-  }
-  if(!opts.revision) {
-    return callback('Cannot update framework, revision not specified');
-  }
-  log(`Updating the Adapt framework at ${opts.directory} to ${opts.revision}`);
-  execCommand(`git reset --hard ${opts.revision} && npm install`, {
-    cwd: opts.directory
-  }, function(error) {
-    if (error) {
-      return callback(error);
+  updateRepo(opts, function() {
+    if(error) {
+      return callback(error)
     }
     async.applyEach([
       purgeCourseFolder,
       updateFrameworkPlugins
     ], opts, callback);
+  });
+}
+
+function cloneRepo(opts, callback) {
+  if(arguments.length !== 2) {
+    return callback('Cannot clone repository, invalid options passed');
+  }
+  if(!opts.repository) {
+    return callback('Cannot clone repository, no repository specified');
+  }
+  if(!opts.directory) {
+    return callback(`Cannot clone ${opts.repository}, no target directory specified`);
+  }
+  fs.remove(opts.directory, function(error) {
+    if(error) {
+      hideSpinner();
+      return callback(error);
+    }
+    execCommand(`git clone ${opts.repository} --origin ${REMOTE_NAME} ${opts.directory}`, function(error) {
+      hideSpinner();
+      if(error) {
+        return callback(error);
+      }
+      log(`Cloned ${opts.repository} successfully`);
+      callback();
+    });
+  })
+}
+
+function fetchRepo(opts, callback) {
+  if(arguments.length !== 2) {
+    return callback('Cannot fetch repository, invalid options passed');
+  }
+  if(!opts.repository) {
+    return callback('Cannot fetch repository, repository URL not specified');
+  }
+  if(!opts.directory) {
+    return callback(`Cannot fetch ${opts.repository}, target directory not specified`);
+  }
+  execCommand(`git remote set-url ${REMOTE_NAME} ${opts.repository} && git fetch ${REMOTE_NAME}`, {
+    cwd: opts.directory
+  }, callback);
+}
+
+function updateRepo(opts, callback) {
+  if(arguments.length !== 2) {
+    return callback('Cannot update repository, invalid options passed');
+  }
+  if(!opts.directory) {
+    return callback('Cannot update repository, target directory not specified');
+  }
+  if(!opts.revision) {
+    return callback(`Cannot update ${opts.repository}, revision not specified`);
+  }
+  var shortDir = opts.directory.replace(configuration.serverRoot, '');
+  execCommand(`git reset --hard ${opts.revision}`, {
+    cwd: opts.directory
+  }, function(error) {
+    if (error) {
+      return callback(error);
+    }
+    console.log(`Updated ${shortDir} to ${opts.revision}`);
+    callback();
   });
 }
 
@@ -295,15 +307,15 @@ function updateAuthoring(opts, callback) {
   async.series([
     function fetchLatest(cb) {
       log('Fetching latest changes');
-      execCommand(`git remote set-url ${REMOTE_NAME} ${opts.repository} && git fetch ${REMOTE_NAME}`, cb);
+      fetchRepo(opts, cb);
     },
     function pullLatest(cb) {
       log('Pulling latest changes');
-      execCommand(`git reset --hard ${opts.revision}`, cb);
+      updateRepo(opts, cb);
     },
     function installDeps(cb) {
       log(`Installing server dependencies`);
-      exec('npm install', cb);
+      installDependencies(cb);
     },
     function rebuildApp(cb) {
       log('Building front-end');

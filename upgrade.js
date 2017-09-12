@@ -99,6 +99,9 @@ function checkForUpdates(callback) {
   var versionData = {};
   installHelpers.getUpdateData(function(error, data) {
     installHelpers.hideSpinner();
+    if(error) {
+      return callback(error);
+    }
     if(!data) {
       return installHelpers.exit(0, `Your software is already up-to-date, no need to upgrade.`);
     }

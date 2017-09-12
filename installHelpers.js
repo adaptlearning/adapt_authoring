@@ -116,8 +116,8 @@ function getUpdateData(callback) {
     exports.getInstalledVersions,
     exports.getLatestVersions
   ], function(error, results) {
-    if(!results[1]) {
-      return callback();
+    if(error) {
+      return callback(error);
     }
     var updateData = {};
     if(semver.lt(results[0].adapt_authoring, results[1].adapt_authoring)) {
@@ -126,7 +126,10 @@ function getUpdateData(callback) {
     if(semver.lt(results[0].adapt_framework, results[1].adapt_framework)) {
       updateData.adapt_framework = results[1].adapt_framework;
     }
-    callback(error, updateData);
+    if(_.isEmpty(updateData)) {
+      return callback();
+    }
+    callback(null, updateData);
   });
 }
 

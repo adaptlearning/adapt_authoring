@@ -137,12 +137,25 @@ function getFrameworkRoot() {
   return path.join(configuration.serverRoot, 'temp', configuration.getConfig('masterTenantID'), 'adapt_framework');
 }
 
+/**
+* Checks all releases for the latest to match framework value in config.json
+* Recusion required for pagination.
+*/
 function checkLatestAdaptRepoVersion(repoName, callback) {
-  request({
-    headers: { 'User-Agent': DEFAULT_USER_AGENT },
-    uri: `https://api.github.com/repos/adaptlearning/${repoName}/releases/latest`,
-    method: 'GET'
-  }, function(error, response, body) {
+  // used in pagination
+  var nextPage = `https://api.github.com/repos/adaptlearning/${repoName}/releases`;
+
+  var _getReleases = function(done) {
+    request({
+      headers: {
+        'User-Agent': DEFAULT_USER_AGENT ,
+        Authorization: 'token 15e160298d59a7a70ac7895c9766b0802735ac99'
+      },
+      uri: nextPage,
+      method: 'GET'
+    }, done);
+  };
+  var _requestHandler = function(error, response, body) {
     // we've exceeded the API limit
     if(response.statusCode === 403 && response.headers['x-ratelimit-remaining'] === '0') {
       var reqsReset = new Date(response.headers['x-ratelimit-reset']*1000);
@@ -155,13 +168,58 @@ function checkLatestAdaptRepoVersion(repoName, callback) {
     if (error) {
       return callback(`Couldn't check latest version of ${repoName}\n${error}`);
     }
+    nextPage = parseLinkHeader(response.headers.link).next;
     try {
-      var version = JSON.parse(body).tag_name;
+      var releases = JSON.parse(body);
     } catch(e) {
-      return callback(`Couldn't check latest version of ${repoName}\n${e}`);
+      return callback(`Failed to parse GitHub release data\n${e}`);
     }
-    callback(null, version);
+    var compatibleRelease;
+    var frameworkVersion = configuration.getConfig('framework');
+    if(!frameworkVersion) {
+      return callback(null, releases[0].tag_name);
+    }
+    async.someSeries(releases, function(release, cb) {
+      var isFullRelease = !release.draft && !release.prerelease;
+      if(isFullRelease && semver.satisfies(release.tag_name, frameworkVersion)) {
+        compatibleRelease = release;
+        return cb(null, true);
+      }
+      cb(null, false);
+    }, function(error, satisfied) {
+      if(!satisfied) {
+        if(nextPage) {
+          return _getReleases(_requestHandler);
+        }
+        error = `Couldn't find any releases compatible with specified framework version (${frameworkVersion}), please check that it is a valid version.`;
+      }
+      if(error) {
+        return callback(error);
+      }
+      callback(error, compatibleRelease.tag_name);
+    });
+  };
+  // start recursion
+  _getReleases(_requestHandler);
+}
+
+// taken from https://gist.github.com/niallo/3109252
+function parseLinkHeader(header) {
+  if (header.length === 0) {
+    throw new Error("input must not be of zero length");
+  }
+  var links = {};
+  // Parse each part into a named link
+  _.each(header.split(','), function(p) {
+    var section = p.split(';');
+    if (section.length !== 2) {
+      throw new Error("section could not be split on ';'");
+    }
+    var url = section[0].replace(/<(.*)>/, '$1').trim();
+    var name = section[1].replace(/rel="(.*)"/, '$1').trim();
+    links[name] = url;
   });
+  return links;
 }
 
 /**

@@ -351,7 +351,8 @@ function buildAuthoring(callback) {
     if(error) {
       return callback(error);
     }
-    log('Web application built.');
+    log('Web application built successfully.');
+    callback();
   });
 }
 

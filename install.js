@@ -275,7 +275,7 @@ function createSuperUser(callback) {
     console.error('ERROR: ', error);
     return exit(1, 'Failed to create admin user account. Please check the console output.');
   };
-  console.log(`\nConfiguring super user account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance. \nJust press ENTER to accept the default value (in brackets).`);
+  console.log(`\nConfiguring super user account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
   getInput([
     {
       name: 'email',

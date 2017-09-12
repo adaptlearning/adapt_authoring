@@ -10,7 +10,6 @@ var Spinner = require('cli-spinner').Spinner;
 
 var configuration = require('./lib/configuration');
 
-var SILENT = false;
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
 var DEFAULT_SERVER_REPO = 'https://github.com/adaptlearning/adapt_authoring.git';
 var DEFAULT_FRAMEWORK_REPO = 'https://github.com/adaptlearning/adapt_framework.git';
@@ -41,7 +40,7 @@ function exit(code, msg, preCallback) {
     hideSpinner();
     code = code || 0;
     msg = msg || 'Bye!';
-    console.log('\n' + (code === 0 ? chalk.green(msg) : chalk.red(msg)) + '\n');
+    log('\n' + (code === 0 ? chalk.green(msg) : chalk.red(msg)) + '\n');
     process.exit(code);
   }
   if(preCallback) {
@@ -52,12 +51,14 @@ function exit(code, msg, preCallback) {
 }
 
 function showSpinner(text) {
+  if(isSilent()) return;
   spinner = new Spinner(text || '');
   spinner.setSpinnerString(19);
   spinner.start();
 }
 
 function hideSpinner() {
+  if(isSilent()) return;
   if(spinner) spinner.stop(true);
 }
 
@@ -453,7 +454,7 @@ function execCommand(cmd, opts, callback) {
 }
 
 function log(msg) {
-  if(!SILENT) console.log(msg);
+  if(!isSilent()) console.log(msg);
 }
 
 function logHeader(msg) {
@@ -462,4 +463,8 @@ function logHeader(msg) {
 
 function logError(msg) {
   if(!SILENT) console.error('ERROR:', msg);
+}
+
+function isSilent() {
+  return process.env.SILENT;
 }

@@ -66,7 +66,7 @@ function getInstalledServerVersion(callback) {
     var pkg = fs.readJSONSync('package.json');
     callback(null, pkg.version);
   } catch(e) {
-    callback(`Cannot determine authoring tool version, ${e}`);
+    callback(`Cannot determine authoring tool version\n${e}`);
   }
 }
 
@@ -79,7 +79,7 @@ function getInstalledFrameworkVersion(callback) {
     var pkg = fs.readJSONSync(path.join(getFrameworkRoot(), 'package.json'));
     callback(null, pkg.version);
   } catch(e) {
-    return callback(`Cannot determine framework version, ${e}`);
+    return callback(`Cannot determine framework version\n${e}`);
   }
 }
 
@@ -140,16 +140,22 @@ function checkLatestAdaptRepoVersion(repoName, callback) {
     uri: `https://api.github.com/repos/adaptlearning/${repoName}/releases/latest`,
     method: 'GET'
   }, function(error, response, body) {
-    if (response.statusCode !== 200) {
+    // we've exceeded the API limit
+    if(response.statusCode === 403 && response.headers['x-ratelimit-remaining'] === '0') {
+      var reqsReset = new Date(response.headers['x-ratelimit-reset']*1000);
+      error = `You have exceeded GitHub's request limit of ${response.headers['x-ratelimit-limit']} requests per hour. Please wait until at least ${reqsReset.toTimeString()} before trying again.`;
+    }
+    else if (response.statusCode !== 200) {
       error = 'GitubAPI did not respond with a 200 status code';
     }
+
     if (error) {
-      return callback(`Couldn't check latest version of ${repoName}, ${error}`);
+      return callback(`Couldn't check latest version of ${repoName}\n${error}`);
     }
     try {
       var version = JSON.parse(body).tag_name;
     } catch(e) {
-      return callback(`Couldn't check latest version of ${repoName}, ${e}`);
+      return callback(`Couldn't check latest version of ${repoName}\n${e}`);
     }
     callback(null, version);
   });
@@ -262,12 +268,11 @@ function updateRepo(opts, callback) {
 */
 function updateFrameworkPlugins(opts, callback) {
   if(arguments.length !== 2) {
-    return callback('Cannot update framework plugins, invalid options passed');
+    return callback('Cannot update Adapt framework plugins, invalid options passed');
   }
   if(!opts.directory) {
-    return callback('Cannot update framework plugins, no target directory specified');
+    return callback('Cannot update Adapt framework plugins, no target directory specified');
   }
-  log('Updating framework plugins');
   fs.readJSON(path.join(opts.directory, 'adapt.json'), function(error, json) {
     if (error) {
       return callback(error);
@@ -303,22 +308,17 @@ function updateAuthoring(opts, callback) {
   if(!opts.repository) {
     opts.repository = DEFAULT_SERVER_REPO;
   }
-  log(`Updating server to ${opts.revision}`);
   async.series([
     function fetchLatest(cb) {
-      log('Fetching latest changes');
       fetchRepo(opts, cb);
     },
     function pullLatest(cb) {
-      log('Pulling latest changes');
       updateRepo(opts, cb);
     },
     function installDeps(cb) {
-      log(`Installing server dependencies`);
       installDependencies(cb);
     },
     function rebuildApp(cb) {
-      log('Building front-end');
       buildAuthoring(cb);
     }
   ], function(error) {

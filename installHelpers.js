@@ -189,7 +189,7 @@ function installFramework(opts, callback) {
 }
 
 function updateFramework(opts, callback) {
-  updateRepo(opts, function() {
+  updateRepo(opts, function(error) {
     if(error) {
       return callback(error)
     }

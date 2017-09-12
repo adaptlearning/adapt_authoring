@@ -396,7 +396,7 @@ function getInput(items, callback) {
 
 function exit(code, msg) {
   installHelpers.exit(code, msg, function(callback) {
-    if(0 === code || app && app.db && !masterTenant) {
+    if(0 === code || app && !app.db || !masterTenant) {
       return callback();
     }
     // handle borked tenant, users, in case of a non-zero exit

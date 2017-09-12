@@ -231,11 +231,17 @@ function parseLinkHeader(header) {
 * }
 */
 function installFramework(opts, callback) {
-  if(arguments.length !== 2 || !opts.revision || !opts.directory) {
+  if(arguments.length !== 2 || !opts.directory) {
     return callback('Cannot install framework, invalid options passed.');
   }
   if(!opts.repository) {
     opts.repository = DEFAULT_FRAMEWORK_REPO;
+  }
+  if(!opts.revision) {
+    return getLatestFrameworkVersion(function(error, version) {
+      if(error) return callback(error);
+      installFramework(_.extend(opts, { revision: version }), callback);
+    });
   }
   if(!fs.existsSync(opts.directory) || opts.force) {
     return async.applyEachSeries([

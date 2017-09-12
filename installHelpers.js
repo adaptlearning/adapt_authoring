@@ -210,6 +210,7 @@ function cloneRepo(opts, callback) {
   if(!opts.directory) {
     return callback(`Cannot clone ${opts.repository}, no target directory specified.`);
   }
+  showSpinner(`Cloning ${opts.repository}`);
   fs.remove(opts.directory, function(error) {
     if(error) {
       hideSpinner();
@@ -252,9 +253,11 @@ function updateRepo(opts, callback) {
     return callback(`Cannot update ${opts.repository}, revision not specified.`);
   }
   var shortDir = opts.directory.replace(configuration.serverRoot, '');
+  showSpinner(`Updating ${shortDir} to ${opts.revision}`);
   execCommand(`git reset --hard ${opts.revision}`, {
     cwd: opts.directory
   }, function(error) {
+    hideSpinner();
     if (error) {
       return callback(error);
     }
@@ -268,10 +271,10 @@ function updateRepo(opts, callback) {
 */
 function updateFrameworkPlugins(opts, callback) {
   if(arguments.length !== 2) {
-    return callback('Cannot update Adapt framework plugins, invalid options passed');
+    return callback('Cannot update Adapt framework plugins, invalid options passed.');
   }
   if(!opts.directory) {
-    return callback('Cannot update Adapt framework plugins, no target directory specified');
+    return callback('Cannot update Adapt framework plugins, no target directory specified.');
   }
   fs.readJSON(path.join(opts.directory, 'adapt.json'), function(error, json) {
     if (error) {
@@ -279,12 +282,24 @@ function updateFrameworkPlugins(opts, callback) {
     }
     var plugins = Object.keys(json.dependencies);
     async.eachSeries(plugins, function(plugin, pluginCallback) {
+      var _done = function() {
+        hideSpinner();
+        pluginCallback.apply(this, arguments);
+      };
+      showSpinner(`Updating Adapt framework plugin '${plugin}'`);
       if(json.dependencies[plugin] === '*') {
-        app.bowermanager.installLatestCompatibleVersion(plugin, pluginCallback);
+        app.bowermanager.installLatestCompatibleVersion(plugin, _done);
       } else {
-        app.bowermanager.installPlugin(plugin, json.dependencies[plugin], pluginCallback);
+        app.bowermanager.installPlugin(plugin, json.dependencies[plugin], _done);
       }
-    }, callback);
+    }, function(error) {
+      hideSpinner();
+      if(error) {
+        return callback(error);
+      }
+      log('Adapt framework plugins updated.');
+      callback();
+    });
   });
 }
 
@@ -330,7 +345,9 @@ function updateAuthoring(opts, callback) {
 }
 
 function buildAuthoring(callback) {
+  showSpinner('Building web application');
   execCommand('grunt build:prod', function(error){
+    hideSpinner();
     if(error) {
       return callback(error);
     }
@@ -342,10 +359,12 @@ function installDependencies(dir, callback) {
   if(arguments.length === 1) {
     callback = dir;
   }
+  showSpinner(`Installing node dependencies`);
 
   execCommand('npm install', {
     cwd: dir || configuration.serverRoot
   }, function(error) {
+    hideSpinner();
     if(error) {
       return callback(error);
     }

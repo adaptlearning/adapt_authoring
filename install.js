@@ -191,9 +191,11 @@ function configureMasterTenant(callback) {
     console.log('Now we need to configure the master tenant. \nJust press ENTER to accept the default value (in brackets).\n');
   }
   logger.clear();
+  installHelpers.showSpinner('Starting server');
   // run the app
   app.run({ skipVersionCheck: true });
   app.on('serverStarted', function() {
+    installHelpers.hideSpinner();
     getInput([
       {
         name: 'name',
@@ -305,6 +307,7 @@ function createSuperUser(callback) {
         retypePassword: result.retypePassword,
         _tenantId: masterTenant._id
       }, function(error, user) {
+        // TODO should we allow a retry if the passwords don't match?
         if(error) {
           return onError(error);
         }
@@ -320,12 +323,10 @@ function createSuperUser(callback) {
 }
 
 function buildFrontend(callback) {
-  console.log(`Building the web application.`);
   installHelpers.buildAuthoring(function(error) {
     if(error) {
       return callback(`Failed to build the web application, (${error}) \nInstall will continue. Try again after installation completes using 'grunt build:prod'.`);
     }
-    console.log('Web application built.');
     callback();
   });
 }

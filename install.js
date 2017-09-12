@@ -296,18 +296,14 @@ function createSuperUser(callback) {
       hidden: true,
       required: true
     }
-    var userEmail = result.email;
-    var userPassword = result.password;
-    var userRetypePassword = result.retypePassword;
-
-    app.usermanager.deleteUser({ email: userEmail }, function(error, userRec) {
   ], function(result) {
+    app.usermanager.deleteUser({ email: result.email }, function(error, userRec) {
       if(error) return onError(error);
       // add a new user using default auth plugin
       new localAuth().internalRegisterUser(true, {
-        email: userEmail,
-        password: userPassword,
-        retypePassword: userRetypePassword,
+        email: result.email,
+        password: result.password,
+        retypePassword: result.retypePassword,
         _tenantId: masterTenant._id
       }, function(error, user) {
         if(error) {

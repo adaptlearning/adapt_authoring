@@ -776,27 +776,22 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
               })
               .on('end', function (packageInfo) {
                 // add details for each to the db
-                async.eachSeries(
-                  Object.keys(packageInfo),
-                  function (key, next) {
-                    if (packageInfo[key].pkgMeta.framework) {
-                      installHelpers.getInstalledFrameworkVersion(function(error, frameworkVersion) {
-                        if(error) {
-                          return next(error);
-                        }
-                        // If the plugin defines a framework, ensure that it is compatible
-                        if (semver.satisfies(semver.clean(frameworkVersion), packageInfo[key].pkgMeta.framework)) {
-                          addPackage(plugin, packageInfo[key], options, next);
-                        } else {
-                          logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');
-                          next();
-                        }
-                      });
-                    } else {
-                      addPackage(plugin, packageInfo[key], options, next);
+                async.eachSeries(Object.keys(packageInfo), function (key, next) {
+                  if (!packageInfo[key].pkgMeta.framework) {
+                    return addPackage(plugin, packageInfo[key], options, next);
+                  }
+                  installHelpers.getInstalledFrameworkVersion(function(error, frameworkVersion) {
+                    if(error) {
+                      return next(error);
                     }
-                  },
-                  cb);
+                    // If the plugin defines a framework, ensure that it is compatible
+                    if (!semver.satisfies(semver.clean(frameworkVersion), packageInfo[key].pkgMeta.framework)) {
+                      logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');
+                      return next();
+                    }
+                    addPackage(plugin, packageInfo[key], options, next);
+                  });
+                }, cb);
               });
           });
       });

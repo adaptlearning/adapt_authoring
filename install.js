@@ -1,7 +1,7 @@
 var _ = require('underscore');
 var async = require('async');
 var chalk = require('chalk');
-var fs = require('fs');
+var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
 var prompt = require('prompt');
@@ -17,59 +17,33 @@ var origin = require('./lib/application');
 var IS_INTERACTIVE = process.argv.length === 2;
 
 var app = origin();
+// config for prompt inputs
+var inputData;
 var masterTenant = false;
 var superUser = false;
 // from user input
 var configResults;
 
-start();
-
-function start() {
-  prompt.override = optimist.argv; // allow command line arguments
-  prompt.start();
-  prompt.message = '> ';
-  prompt.delimiter = '';
-  // set overrides from command line arguments
-  prompt.override = optimist.argv;
-  prompt.start();
-  // Prompt the user to begin the install
-  if(!IS_INTERACTIVE) {
-    console.log('\nThis script will install the application. Please wait ...');
-  } else {
-    console.log('\nThis script will install the application. \nWould you like to continue?');
+// we need the framework version for the config items, so let's go
+installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
+  if(error) {
+    console.error('ERROR: ', error);
+    return exit(1, 'Failed to get latest framework version');
   }
-  getInput({ name: 'install', description: 'Continue? Y/n', type: 'string', default: 'Y' }, function(result) {
-    if(/(N|n)[o]*$/.test(result['install'])) {
-      return exit(0, 'User cancelled the install');
-    }
-    async.series([
-      configureEnvironment,
-      configureMasterTenant,
-      createMasterTenant,
-      createSuperUser,
-      buildFrontend
-    ], function(error, results) {
-      if(error) {
-        console.error('ERROR: ', error);
-        return exit(1, 'Install was unsuccessful. Please check the console output.');
-      }
-      exit(0, `Installation completed successfully, the application can now be started with 'node server'.`);
-    });
-  });
-}
-
-function configureEnvironment(callback) {
-  if(!IS_INTERACTIVE) {
-    console.log('Now setting configuration items.');
-  } else {
-    console.log('We need to configure the tool before install. \nJust press ENTER to accept the default value (in brackets).');
-  }
-  installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
-    if(error) {
-      console.error('ERROR: ', error);
-      return exit(1, 'Failed to get latest framework version');
-    }
-    getInput([
+  inputData = {
+    useConfigJSON: {
+      name: 'useJSON',
+      description: 'Use JSON values? y/N',
+      type: 'string',
+      default: 'N'
+    },
+    startInstall: {
+      name: 'install',
+      description: 'Continue? Y/n',
+      type: 'string',
+      default: 'Y'
+    },
+    configure: [
       {
         name: 'serverPort',
         type: 'number',
@@ -175,7 +149,120 @@ function configureEnvironment(callback) {
         description: "Framework revision to install (branchName || tags/tagName)",
         default: 'tags/' + latestFrameworkTag
       }
-    ], function(result) {
+    ],
+    tenant: [
+      {
+        name: 'name',
+        type: 'string',
+        description: "Set a unique name for your tenant",
+        default: 'master'
+      },
+      {
+        name: 'displayName',
+        type: 'string',
+        description: 'Set the display name for your tenant',
+        default: 'Master'
+      }
+    ],
+    tenantDelete: {
+      name: "confirm",
+      description: "Continue? (Y/n)",
+      default: "Y"
+    },
+    superUser: [
+      {
+        name: 'suEmail',
+        type: 'string',
+        description: "Email address",
+        required: true
+      },
+      {
+        name: 'suPassword',
+        type: 'string',
+        description: "Password",
+        hidden: true,
+        required: true
+      },
+      {
+        name: 'suRetypePassword',
+        type: 'string',
+        description: "Retype Password",
+        hidden: true,
+        required: true
+      }
+    ]
+  };
+  if(!IS_INTERACTIVE) {
+    return;
+  }
+  if(!fs.existsSync('conf/config.json')) {
+    initPrompt();
+    start();
+    return;
+  }
+  console.log('\nFound config.json file. Do you want to use the values in the file during install?');
+  getInput(inputData.useConfigJSON, function(result) {
+    initPrompt(result.useJSON);
+    start();
+  });
+});
+
+function initPrompt(shouldIncludeConfig) {
+  // set overrides from command line arguments and config.json
+  prompt.override = generatePromptOverrides(shouldIncludeConfig);
+  prompt.message = '> ';
+  prompt.delimiter = '';
+  prompt.start();
+}
+
+function generatePromptOverrides(shouldIncludeConfig) {
+  // NOTE that defaults < config.json < cmd args
+  return _.extend(
+    {},
+    shouldIncludeConfig ? require('./conf/config.json') : {},
+    optimist.argv
+  );
+}
+
+function start() {
+  // Prompt the user to begin the install
+  if(!IS_INTERACTIVE) {
+    console.log('\nThis script will install the application. Please wait ...');
+  } else {
+    console.log('\nThis script will install the application. \nWould you like to continue?');
+  }
+  getInput(inputData.startInstall, function(result) {
+    if(!result.install) {
+      return exit(0, 'User cancelled the install');
+    }
+    async.series([
+      configureEnvironment,
+      configureMasterTenant,
+      createMasterTenant,
+      createSuperUser,
+      buildFrontend
+    ], function(error, results) {
+      if(error) {
+        console.error('ERROR: ', error);
+        return exit(1, 'Install was unsuccessful. Please check the console output.');
+      }
+      exit(0, `Installation completed successfully, the application can now be started with 'node server'.`);
+    });
+  });
+}
+
+function configureEnvironment(callback) {
+  if(!IS_INTERACTIVE) {
+    console.log('Now setting configuration items.');
+  } else {
+    console.log('We need to configure the tool before install. \nJust press ENTER to accept the default value (in brackets).');
+  }
+  installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
+    if(error) {
+      console.error('ERROR: ', error);
+      return exit(1, 'Failed to get latest framework version');
+    }
+    getInput(inputData.configure, function(result) {
       configResults = result;
       saveConfig(result, callback);
     });
@@ -196,22 +283,7 @@ function configureMasterTenant(callback) {
   app.run({ skipVersionCheck: true });
   app.on('serverStarted', function() {
     installHelpers.hideSpinner();
-    getInput([
-      {
-        name: 'name',
-        type: 'string',
-        description: "Set a unique name for your tenant",
-        pattern: /^[A-Za-z0-9_-]+\W*$/,
-        default: 'master'
-      },
-      {
-        name: 'displayName',
-        type: 'string',
-        description: 'Set the display name for your tenant',
-        required: true,
-        default: 'Master'
-      }
-    ], function(result) {
+    getInput(inputData.tenant, function(result) {
       // add the input to our cached config
       _.extend(configResults, { masterTenant: result });
       // check if the tenant name already exists
@@ -226,12 +298,12 @@ function configureMasterTenant(callback) {
           return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
         }
         console.log("Tenant already exists. It must be deleted for install to continue.");
-        prompt.get({ name: "confirm", description: "Continue? (Y/n)", default: "Y" }, function(error, result) {
+        prompt.get(inputData.tenantDelete, function(error, result) {
           console.log('');
           if(error) {
             return onError(error);
           }
-          if(/(N|n)[o]*/.test(result.confirm)) {
+          if(!result.confirm) {
             return exit(1, 'Exiting install...');
           }
           // delete tenant
@@ -276,35 +348,14 @@ function createSuperUser(callback) {
     return exit(1, 'Failed to create admin user account. Please check the console output.');
   };
   console.log(`\nConfiguring super user account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
-  getInput([
-    {
-      name: 'email',
-      type: 'string',
-      description: "Email address",
-      required: true
-    },
-    {
-      name: 'password',
-      type: 'string',
-      description: "Password",
-      hidden: true,
-      required: true
-    },
-    {
-      name: 'retypePassword',
-      type: 'string',
-      description: "Retype Password",
-      hidden: true,
-      required: true
-    }
-  ], function(result) {
-    app.usermanager.deleteUser({ email: result.email }, function(error, userRec) {
+  getInput(inputData.superUser, function(result) {
+    app.usermanager.deleteUser({ email: result.suEmail }, function(error, userRec) {
       if(error) return onError(error);
       // add a new user using default auth plugin
       new localAuth().internalRegisterUser(true, {
-        email: result.email,
-        password: result.password,
-        retypePassword: result.retypePassword,
+        email: result.suEmail,
+        password: result.suPassword,
+        retypePassword: result.suRetypePassword,
         _tenantId: masterTenant._id
       }, function(error, user) {
         // TODO should we allow a retry if the passwords don't match?

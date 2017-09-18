@@ -96,7 +96,6 @@ function getUserInput() {
 
 function checkForUpdates(callback) {
   installHelpers.showSpinner('Checking for updates');
-  var versionData = {};
   installHelpers.getUpdateData(function(error, data) {
     installHelpers.hideSpinner();
     if(error) {

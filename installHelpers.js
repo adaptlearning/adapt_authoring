@@ -458,11 +458,11 @@ function log(msg) {
 }
 
 function logHeader(msg) {
-  if(!SILENT) console.log(chalk.underline(`\n${msg}`));
+  if(!isSilent()) console.log(chalk.underline(`\n${msg}`));
 }
 
 function logError(msg) {
-  if(!SILENT) console.error('ERROR:', msg);
+  if(!isSilent()) console.error('ERROR:', msg);
 }
 
 function isSilent() {

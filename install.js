@@ -359,7 +359,6 @@ function saveConfig(configItems, callback) {
   config.dbType = 'mongoose';
   config.auth = 'local';
   config.root = process.cwd();
-  // delete config.frameworkRevision;
   if(config.smtpService !== '') {
     config.useSmtp = true;
   }

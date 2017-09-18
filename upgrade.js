@@ -137,7 +137,7 @@ function doUpdate(data) {
   ], function(error, results) {
     installHelpers.hideSpinner();
     if(error) {
-      console.error('ERROR:', msg);
+      console.error('ERROR:', error);
       return installHelpers.exit(1, 'Upgrade was unsuccessful. Please check the console output.');
     }
     console.log(`Adapt framework upgraded to ${data.adapt_framework}`);

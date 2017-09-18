@@ -230,12 +230,9 @@ function initPrompt(shouldIncludeConfig) {
 }
 
 function generatePromptOverrides(shouldIncludeConfig) {
-  // NOTE that defaults < config.json < cmd args
-  return _.extend(
-    {},
-    shouldIncludeConfig ? require('./conf/config.json') : {},
-    optimist.argv
-  );
+  var configData = shouldIncludeConfig ? require('./conf/config.json') : {};
+  // NOTE that config.json < cmd args
+  return _.extend({}, configData, optimist.argv);
 }
 
 function start() {

@@ -19,6 +19,15 @@ var IS_INTERACTIVE = process.argv.length === 2;
 var app = origin();
 // config for prompt inputs
 var inputData;
+var inputHelpers = {
+  passwordReplace: '*',
+  numberValidator: /^[0-9]+\W*$/,
+  alphanumValidator: /^[A-Za-z0-9_-]+\W*$/,
+  toBoolean: function(v) {
+    if(/(Y|y)[es]*/.test(v)) return true;
+    return false;
+  }
+};
 var masterTenant = false;
 var superUser = false;
 // from user input
@@ -35,12 +44,14 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
       name: 'useJSON',
       description: 'Use JSON values? y/N',
       type: 'string',
+      before: inputHelpers.toBoolean,
       default: 'N'
     },
     startInstall: {
       name: 'install',
       description: 'Continue? Y/n',
       type: 'string',
+      before: inputHelpers.toBoolean,
       default: 'Y'
     },
     configure: [
@@ -48,7 +59,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         name: 'serverPort',
         type: 'number',
         description: 'Server port',
-        pattern: /^[0-9]+\W*$/,
+        pattern: inputHelpers.numberValidator,
         default: 5000
       },
       {
@@ -67,21 +78,21 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         name: 'dbName',
         type: 'string',
         description: 'Master database name',
-        pattern: /^[A-Za-z0-9_-]+\W*$/,
+        pattern: inputHelpers.alphanumValidator,
         default: 'adapt-tenant-master'
       },
       {
         name: 'dbPort',
         type: 'number',
         description: 'Database server port',
-        pattern: /^[0-9]+\W*$/,
+        pattern: inputHelpers.numberValidator,
         default: 27017
       },
       {
         name: 'dataRoot',
         type: 'string',
         description: 'Data directory path',
-        pattern: /^[A-Za-z0-9_-]+\W*$/,
+        pattern: inputHelpers.alphanumValidator,
         default: 'data'
       },
       {
@@ -95,10 +106,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         name: 'useffmpeg',
         type: 'string',
         description: "Will ffmpeg be used? y/N",
-        before: function(v) {
-          if(/(Y|y)[es]*/.test(v)) return true;
-          return false;
-        },
+        before: inputHelpers.toBoolean,
         default: 'N'
       },
       {
@@ -111,19 +119,21 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         name: 'smtpUsername',
         type: 'string',
         description: "SMTP username",
-        default: ''
+        default: '-'
       },
       {
         name: 'smtpPassword',
         type: 'string',
         description: "SMTP password",
-        hidden: true
+        hidden: true,
+        replace: inputHelpers.passwordReplace,
+        default: '-'
       },
       {
         name: 'fromAddress',
         type: 'string',
         description: "Sender email address",
-        default: ''
+        default: '-'
       },
       {
         name: 'rootUrl',
@@ -155,6 +165,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         name: 'name',
         type: 'string',
         description: "Set a unique name for your tenant",
+        pattern: inputHelpers.alphanumValidator,
         default: 'master'
       },
       {
@@ -167,6 +178,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     tenantDelete: {
       name: "confirm",
       description: "Continue? (Y/n)",
+      before: inputHelpers.toBoolean,
       default: "Y"
     },
     superUser: [
@@ -181,6 +193,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         type: 'string',
         description: "Password",
         hidden: true,
+        replace: inputHelpers.passwordReplace,
         required: true
       },
       {
@@ -188,6 +201,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         type: 'string',
         description: "Retype Password",
         hidden: true,
+        replace: inputHelpers.passwordReplace,
         required: true
       }
     ]

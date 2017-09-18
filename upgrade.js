@@ -144,7 +144,3 @@ function doUpdate(data) {
     installHelpers.exit(0, `Your ${app.polyglot.t('app.productname')} was updated successfully.`);
   });
 }
-
-function logHeader(msg) {
-  console.log(chalk.underline(`\n${msg}`));
-}

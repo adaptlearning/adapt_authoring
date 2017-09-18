@@ -457,14 +457,6 @@ function log(msg) {
   if(!isSilent()) console.log(msg);
 }
 
-function logHeader(msg) {
-  if(!isSilent()) console.log(chalk.underline(`\n${msg}`));
-}
-
-function logError(msg) {
-  if(!isSilent()) console.error('ERROR:', msg);
-}
-
 function isSilent() {
   return process.env.SILENT;
 }

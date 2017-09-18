@@ -414,11 +414,13 @@ function saveConfig(configItems, callback) {
     config.useSmtp = true;
   }
   // write the config.json file!
-  if(0 === fs.writeSync(fs.openSync(path.join('conf', 'config.json'), 'w'), JSON.stringify(config))) {
-    console.error('ERROR: Failed to write conf/config.json file. Do you have write permissions for the directory?');
-    process.exit(1, 'Install Failed.');
-  }
-  return callback();
+  fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
+    if(error) {
+      console.error(`ERROR: Failed to write conf/config.json file.\n${error}`);
+      process.exit(1, 'Install Failed.');
+    }
+    return callback();
+  });
 }
 
 function getInput(items, callback) {

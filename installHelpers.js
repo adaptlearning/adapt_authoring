@@ -206,8 +206,8 @@ function checkLatestAdaptRepoVersion(repoName, callback) {
 
 // taken from https://gist.github.com/niallo/3109252
 function parseLinkHeader(header) {
-  if (header.length === 0) {
-    throw new Error("input must not be of zero length");
+  if (!header || header.length === 0) {
+    return [];
   }
   var links = {};
   // Parse each part into a named link

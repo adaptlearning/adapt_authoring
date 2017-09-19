@@ -143,7 +143,7 @@
     "nodemailer": "~2.5.0",
     "optimist": "*",
     "passport": "~0.1.17",
-    "prompt": "0.2.14",
+    "prompt": "^1.0.0",
     "request": "^2.53.0",
     "rimraf": "~2.2.5",
     "semver": "^5.0.3",

@@ -15,6 +15,7 @@ var logger = require('./lib/logger');
 var origin = require('./lib/application');
 
 var IS_INTERACTIVE = process.argv.length === 2;
+var USE_CONFIG;
 
 var app = origin();
 // config for prompt inputs
@@ -162,14 +163,14 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     ],
     tenant: [
       {
-        name: 'name',
+        name: 'masterTenantName',
         type: 'string',
         description: "Set a unique name for your tenant",
         pattern: inputHelpers.alphanumValidator,
         default: 'master'
       },
       {
-        name: 'displayName',
+        name: 'masterTenantDisplayName',
         type: 'string',
         description: 'Set the display name for your tenant',
         default: 'Master'
@@ -216,28 +217,31 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
   }
   console.log('\nFound config.json file. Do you want to use the values in the file during install?');
   getInput(inputData.useConfigJSON, function(result) {
-    initPrompt(result.useJSON);
+    USE_CONFIG = result.useJSON;
+    initPrompt();
     start();
   });
 });
 
-function initPrompt(shouldIncludeConfig) {
+function initPrompt() {
   // set overrides from command line arguments and config.json
-  prompt.override = generatePromptOverrides(shouldIncludeConfig);
+  prompt.override = generatePromptOverrides();
   prompt.message = '> ';
   prompt.delimiter = '';
   prompt.start();
 }
 
-function generatePromptOverrides(shouldIncludeConfig) {
-  var configData = shouldIncludeConfig ? require('./conf/config.json') : {};
+function generatePromptOverrides() {
+  var configData = USE_CONFIG ? require('./conf/config.json') : {};
+  configData = JSON.parse(JSON.stringify(configData).replace('true', '"y"').replace('false', '"n"'));
+  if(USE_CONFIG) configData.install = 'y';
   // NOTE that config.json < cmd args
   return _.extend({}, configData, optimist.argv);
 }
 
 function start() {
   // Prompt the user to begin the install
-  if(!IS_INTERACTIVE) {
+  if(!IS_INTERACTIVE || USE_CONFIG) {
     console.log('\nThis script will install the application. Please wait ...');
   } else {
     console.log('\nThis script will install the application. \nWould you like to continue?');
@@ -263,7 +267,7 @@ function start() {
 }
 
 function configureEnvironment(callback) {
-  if(!IS_INTERACTIVE) {
+  if(!IS_INTERACTIVE || USE_CONFIG) {
     console.log('Now setting configuration items.');
   } else {
     console.log('We need to configure the tool before install. \nJust press ENTER to accept the default value (in brackets).');
@@ -296,9 +300,14 @@ function configureMasterTenant(callback) {
     installHelpers.hideSpinner();
     getInput(inputData.tenant, function(result) {
       // add the input to our cached config
-      _.extend(configResults, { masterTenant: result });
+      _.extend(configResults, {
+        masterTenant: {
+          name: result.masterTenantName,
+          displayName: result.masterTenantName
+        }
+      });
       // check if the tenant name already exists
-      app.tenantmanager.retrieveTenant({ name: result.name }, function(error, tenant) {
+      app.tenantmanager.retrieveTenant({ name: result.masterTenantName }, function(error, tenant) {
         if(error) {
           return onError(error);
         }
@@ -416,7 +425,7 @@ function saveConfig(configItems, callback) {
     console.error('ERROR: Failed to write .env file. Do you have write permissions for the current directory?');
     process.exit(1, 'Install Failed.');
   }
-  // Defaulting these config settings until there are actual options.
+  // Set defaults for the below until there are actual options...
   config.outputPlugin = 'adapt';
   config.dbType = 'mongoose';
   config.auth = 'local';
@@ -439,7 +448,7 @@ function getInput(items, callback) {
   prompt.get(items, function(error, result) {
     console.log('');
     if(error) {
-      if(error.message = 'canceled') error = new Error('User cancelled the install');
+      if(error.message === 'canceled') error = new Error('User cancelled the install');
       return exit(1, error);
     }
     callback(result);

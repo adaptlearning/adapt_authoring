@@ -405,26 +405,17 @@ function buildFrontend(callback) {
 // helper functions
 
 /**
- * This will write out the config items both as a config.json file and
- * as a .env file for foreman
+ * This will write out the config items both as a config.json file
  *
  * @param {object} configItems
  * @param {callback} callback
  */
 
 function saveConfig(configItems, callback) {
-  //pass by reference so as not to delete frameworkRevision
-  var config = _.clone(configItems);
-  var env = [];
-
-  Object.keys(config).forEach(function(key) {
-    env.push(key + "=" + config[key]);
+  var config = _.map(configItems, function(value, key) {
+    console.log(key,value);
+    return value;
   });
-  // write the env file!
-  if(0 === fs.writeSync(fs.openSync('.env', 'w'), env.join("\n"))) {
-    console.error('ERROR: Failed to write .env file. Do you have write permissions for the current directory?');
-    process.exit(1, 'Install Failed.');
-  }
   // Set defaults for the below until there are actual options...
   config.outputPlugin = 'adapt';
   config.dbType = 'mongoose';

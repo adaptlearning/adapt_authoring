@@ -412,19 +412,20 @@ function buildFrontend(callback) {
  */
 
 function saveConfig(configItems, callback) {
-  var config = _.map(configItems, function(value, key) {
-    console.log(key,value);
-    return value;
+  // add some default values as these aren't set
+  var config = {
+    outputPlugin: 'adapt',
+    dbType: 'mongoose',
+    auth: 'local',
+    root: process.cwd()
+  };
+  // copy over the input values
+  _.each(configItems, function(value, key) {
+    config[key] = value;
   });
-  // Set defaults for the below until there are actual options...
-  config.outputPlugin = 'adapt';
-  config.dbType = 'mongoose';
-  config.auth = 'local';
-  config.root = process.cwd();
   if(config.smtpService !== '') {
     config.useSmtp = true;
   }
-  // write the config.json file!
   fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
     if(error) {
       console.error(`ERROR: Failed to write conf/config.json file.\n${error}`);

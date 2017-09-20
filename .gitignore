@@ -30,6 +30,4 @@
 /.settings
 
 .idea
-.vagrant
-.env
 .project

@@ -38,12 +38,12 @@ var configResults;
 installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
   if(error) {
     console.error('ERROR: ', error);
-    return exit(1, 'Failed to get latest framework version');
+    return exit(1, 'Failed to get the latest framework version');
   }
   inputData = {
     useConfigJSON: {
       name: 'useJSON',
-      description: 'Use JSON values? y/N',
+      description: 'Use existing config values? y/N',
       type: 'string',
       before: inputHelpers.toBoolean,
       default: 'N'
@@ -99,14 +99,14 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
       {
         name: 'sessionSecret',
         type: 'string',
-        description: 'Session secret',
+        description: 'Session secret (value used when saving session cookie data)',
         pattern: /^.+$/,
         default: 'your-session-secret'
       },
       {
         name: 'useffmpeg',
         type: 'string',
-        description: "Will ffmpeg be used? y/N",
+        description: "Are you using ffmpeg? y/N",
         before: inputHelpers.toBoolean,
         default: 'N'
       },
@@ -120,7 +120,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         name: 'smtpUsername',
         type: 'string',
         description: "SMTP username",
-        default: '-'
+        default: ''
       },
       {
         name: 'smtpPassword',
@@ -128,36 +128,36 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         description: "SMTP password",
         hidden: true,
         replace: inputHelpers.passwordReplace,
-        default: '-'
+        default: ''
       },
       {
         name: 'fromAddress',
         type: 'string',
         description: "Sender email address",
-        default: '-'
+        default: ''
       },
       {
         name: 'rootUrl',
         type: 'string',
-        description: "The url this instance is accessed by",
+        description: "The url this install will be accessible from",
         default: 'http://localhost:5000/'
       },
       {
         name: 'authoringToolRepository',
         type: 'string',
-        description: "Authoring Tool Repository",
+        description: "Git repository URL to be used for the authoring tool source code",
         default: 'https://github.com/adaptlearning/adapt_authoring.git'
       },
       {
         name: 'frameworkRepository',
         type: 'string',
-        description: "Framework Repository",
+        description: "Git repository URL to be used for the framework source code",
         default: 'https://github.com/adaptlearning/adapt_framework.git'
       },
       {
         name: 'frameworkRevision',
         type: 'string',
-        description: "Framework revision to install (branchName || tags/tagName)",
+        description: "Specific git revision to be used for the framework (expects either a branch name, or a tag with the format `tags/tagName`)",
         default: 'tags/' + latestFrameworkTag
       }
     ],
@@ -200,7 +200,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
       {
         name: 'suRetypePassword',
         type: 'string',
-        description: "Retype Password",
+        description: "Confirm Password",
         hidden: true,
         replace: inputHelpers.passwordReplace,
         required: true
@@ -215,7 +215,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     start();
     return;
   }
-  console.log('\nFound config.json file. Do you want to use the values in the file during install?');
+  console.log('\nFound an existing config.json file. Do you want to use the values in this file during install?');
   getInput(inputData.useConfigJSON, function(result) {
     USE_CONFIG = result.useJSON;
     initPrompt();
@@ -270,7 +270,7 @@ function configureEnvironment(callback) {
   if(!IS_INTERACTIVE || USE_CONFIG) {
     console.log('Now setting configuration items.');
   } else {
-    console.log('We need to configure the tool before install. \nJust press ENTER to accept the default value (in brackets).');
+    console.log('We need to configure the tool before install. \nTip: just press ENTER to accept the default value in brackets.');
   }
   installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     if(error) {
@@ -290,7 +290,7 @@ function configureMasterTenant(callback) {
     return exit(1, 'Failed to configure master tenant. Please check the console output.');
   };
   if(IS_INTERACTIVE) {
-    console.log('Now we need to configure the master tenant. \nJust press ENTER to accept the default value (in brackets).\n');
+    console.log('Now we need to configure the master tenant. \nTip: just press ENTER to accept the default value in brackets.\n');
   }
   logger.clear();
   installHelpers.showSpinner('Starting server');
@@ -317,14 +317,14 @@ function configureMasterTenant(callback) {
         if(!IS_INTERACTIVE) {
           return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
         }
-        console.log("Tenant already exists. It must be deleted for install to continue.");
+        console.log(`Tenant '${tenant.name}' already exists. It must be deleted for install to continue.`);
         prompt.get(inputData.tenantDelete, function(error, result) {
           console.log('');
           if(error) {
             return onError(error);
           }
           if(!result.confirm) {
-            return exit(1, 'Exiting install...');
+            return exit(1, 'Exiting install.');
           }
           // delete tenant
           async.eachSeries(app.db.getModelNames(), function(modelName, cb) {
@@ -428,7 +428,7 @@ function saveConfig(configItems, callback) {
   }
   fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
     if(error) {
-      console.error(`ERROR: Failed to write conf/config.json file.\n${error}`);
+      console.error(`ERROR: Failed to write configuration file to ${chalk.underline(conf/config.json)}.\n${error}`);
       process.exit(1, 'Install Failed.');
     }
     return callback();

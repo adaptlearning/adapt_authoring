@@ -352,10 +352,13 @@ function updateFrameworkPlugins(opts, callback) {
         pluginCallback.apply(this, arguments);
       };
       showSpinner(`Updating Adapt framework plugin '${plugin}'`);
+      var bowerOpts = {
+        dest: opts.directory
+      };
       if(json.dependencies[plugin] === '*') {
-        app.bowermanager.installLatestCompatibleVersion(plugin, _done);
+        app.bowermanager.installLatestCompatibleVersion(plugin, bowerOpts, _done);
       } else {
-        app.bowermanager.installPlugin(plugin, json.dependencies[plugin], _done);
+        app.bowermanager.installPlugin(plugin, json.dependencies[plugin], bowerOpts, _done);
       }
     }, function(error) {
       hideSpinner();

@@ -257,15 +257,12 @@ function installFramework(opts, callback) {
 }
 
 function updateFramework(opts, callback) {
-  updateRepo(opts, function(error) {
-    if(error) {
-      return callback(error)
-    }
-    async.applyEach([
-      purgeCourseFolder,
-      updateFrameworkPlugins
-    ], opts, callback);
-  });
+  async.applyEachSeries([
+    updateRepo,
+    installDependencies,
+    purgeCourseFolder,
+    updateFrameworkPlugins
+  ], opts, callback);
 }
 
 function cloneRepo(opts, callback) {
@@ -424,14 +421,14 @@ function buildAuthoring(callback) {
   });
 }
 
-function installDependencies(dir, callback) {
+function installDependencies(opts, callback) {
   if(arguments.length === 1) {
-    callback = dir;
+    callback = opts;
   }
   showSpinner(`Installing node dependencies`);
 
   execCommand('npm install', {
-    cwd: dir || configuration.serverRoot
+    cwd: opts.directory || configuration.serverRoot
   }, function(error) {
     hideSpinner();
     if(error) {

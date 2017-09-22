@@ -241,7 +241,7 @@ function installFramework(opts, callback) {
   if(!opts.revision) {
     return getLatestFrameworkVersion(function(error, version) {
       if(error) return callback(error);
-      installFramework(_.extend(opts, { revision: version }), callback);
+      installFramework(_.extend({ revision: version }, opts), callback);
     });
   }
   if(!fs.existsSync(opts.directory) || opts.force) {

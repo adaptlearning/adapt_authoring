@@ -353,7 +353,7 @@ function updateFrameworkPlugins(opts, callback) {
       };
       showSpinner(`Updating Adapt framework plugin '${plugin}'`);
       var bowerOpts = {
-        dest: opts.directory
+        frameworkDest: opts.directory
       };
       if(json.dependencies[plugin] === '*') {
         app.bowermanager.installLatestCompatibleVersion(plugin, bowerOpts, _done);

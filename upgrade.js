@@ -60,7 +60,8 @@ function getUserInput() {
     }
   };
   console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} and/or Adapt Framework. Would you like to continue?`);
-  prompt.override = optimist.argv;
+  prompt.message = '> ';
+  prompt.delimiter = '';
   prompt.start();
   prompt.get(confirmProperties, function(error, result) {
     if(error) {

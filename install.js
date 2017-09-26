@@ -27,6 +27,9 @@ var inputHelpers = {
   toBoolean: function(v) {
     if(/(Y|y)[es]*/.test(v)) return true;
     return false;
+  },
+  askSMTP: function() {
+    return prompt.history('useSmtp').value;
   }
 };
 var masterTenant = false;
@@ -111,16 +114,25 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         default: 'N'
       },
       {
+        name: 'useSmtp',
+        type: 'string',
+        description: "Will you be using an SMTP server? (used for sending emails) y/N",
+        before: inputHelpers.toBoolean,
+        default: 'N'
+      },
+      {
         name: 'smtpService',
         type: 'string',
         description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
-        default: 'none'
+        default: 'none',
+        ask: inputHelpers.askSMTP
       },
       {
         name: 'smtpUsername',
         type: 'string',
         description: "SMTP username",
-        default: ''
+        default: '',
+        ask: inputHelpers.askSMTP
       },
       {
         name: 'smtpPassword',
@@ -128,13 +140,15 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         description: "SMTP password",
         hidden: true,
         replace: inputHelpers.passwordReplace,
-        default: ''
+        default: '',
+        ask: inputHelpers.askSMTP
       },
       {
         name: 'fromAddress',
         type: 'string',
         description: "Sender email address",
-        default: ''
+        default: '',
+        ask: inputHelpers.askSMTP
       },
       {
         name: 'rootUrl',

@@ -63,12 +63,12 @@ function getUserInput() {
   };
   console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} and/or Adapt Framework. Would you like to continue?`);
   installHelpers.getInput(confirmProperties, function(result) {
-    if(!result['continue']) {
+    if(!result.continue) {
       return installHelpers.exit();
     }
     installHelpers.getInput(upgradeProperties, function(result) {
       console.log('');
-      if(result['updateAutomatically'] === 'Y' || result['updateAutomatically'] === 'y') {
+      if(result.updateAutomatically) {
         return checkForUpdates(function(error, updateData) {
           if(error) {
             return installHelpers.exit(1, error);

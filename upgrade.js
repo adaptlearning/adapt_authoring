@@ -111,8 +111,14 @@ function doUpdate(data) {
       installHelpers.showSpinner(`Upgrading the ${app.polyglot.t('app.productname')} to ${data.adapt_authoring}`);
       installHelpers.updateAuthoring({
         repository: configuration.getConfig('authoringToolRepository'),
-        revision: data.adapt_authoring
-      }, cb);
+        revision: data.adapt_authoring,
+        directory: configuration.serverRoot
+      }, function(error) {
+        if(error) {
+          return cb(error);
+        }
+        cb();
+      });
     },
     function upgradeFramework(cb) {
       installHelpers.hideSpinner();

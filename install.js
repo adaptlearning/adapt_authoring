@@ -5,7 +5,6 @@ var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
 var prompt = require('prompt');
-var readline = require('readline');
 
 var auth = require('./lib/auth');
 var database = require('./lib/database');
@@ -21,26 +20,6 @@ var USE_CONFIG;
 var app = origin();
 // config for prompt inputs
 var inputData;
-var inputHelpers = {
-  passwordReplace: '*',
-  numberValidator: /^[0-9]+\W*$/,
-  alphanumValidator: /^[A-Za-z0-9_-]+\W*$/,
-  toBoolean: function(v) {
-    if(/(Y|y)[es]*/.test(v)) return true;
-    return false;
-  },
-  askSMTP: function() {
-    return prompt.history('useSmtp').value;
-  },
-  passwordBefore: function(v) {
-    /**
-    * HACK because read module used by prompt adds a blank line when
-    * hidden & replace attrs are set
-    */
-    readline.moveCursor(process.stdout, 0, -1);
-    return v;
-  }
-};
 var masterTenant = false;
 var superUser = false;
 // from user input
@@ -57,14 +36,14 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
       name: 'useJSON',
       description: 'Use existing config values? y/N',
       type: 'string',
-      before: inputHelpers.toBoolean,
+      before: installHelpers.inputHelpers.toBoolean,
       default: 'N'
     },
     startInstall: {
       name: 'install',
       description: 'Continue? Y/n',
       type: 'string',
-      before: inputHelpers.toBoolean,
+      before: installHelpers.inputHelpers.toBoolean,
       default: 'Y'
     },
     configure: [
@@ -72,7 +51,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         name: 'serverPort',
         type: 'number',
         description: 'Server port',
-        pattern: inputHelpers.numberValidator,
+        pattern: installHelpers.inputHelpers.numberValidator,
         default: 5000
       },
       {
@@ -91,21 +70,21 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         name: 'dbName',
         type: 'string',
         description: 'Master database name',
-        pattern: inputHelpers.alphanumValidator,
+        pattern: installHelpers.inputHelpers.alphanumValidator,
         default: 'adapt-tenant-master'
       },
       {
         name: 'dbPort',
         type: 'number',
         description: 'Database server port',
-        pattern: inputHelpers.numberValidator,
+        pattern: installHelpers.inputHelpers.numberValidator,
         default: 27017
       },
       {
         name: 'dataRoot',
         type: 'string',
         description: 'Data directory path',
-        pattern: inputHelpers.alphanumValidator,
+        pattern: installHelpers.inputHelpers.alphanumValidator,
         default: 'data'
       },
       {
@@ -119,14 +98,14 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         name: 'useffmpeg',
         type: 'string',
         description: "Are you using ffmpeg? y/N",
-        before: inputHelpers.toBoolean,
+        before: installHelpers.inputHelpers.toBoolean,
         default: 'N'
       },
       {
         name: 'useSmtp',
         type: 'string',
         description: "Will you be using an SMTP server? (used for sending emails) y/N",
-        before: inputHelpers.toBoolean,
+        before: installHelpers.inputHelpers.toBoolean,
         default: 'N'
       },
       {
@@ -134,31 +113,31 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         type: 'string',
         description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
         default: 'none',
-        ask: inputHelpers.askSMTP
+        ask: installHelpers.inputHelpers.askSMTP
       },
       {
         name: 'smtpUsername',
         type: 'string',
         description: "SMTP username",
         default: '',
-        ask: inputHelpers.askSMTP
+        ask: installHelpers.inputHelpers.askSMTP
       },
       {
         name: 'smtpPassword',
         type: 'string',
         description: "SMTP password",
         hidden: true,
-        replace: inputHelpers.passwordReplace,
+        replace: installHelpers.inputHelpers.passwordReplace,
         default: '',
-        ask: inputHelpers.askSMTP,
-        before: inputHelpers.passwordBefore
+        ask: installHelpers.inputHelpers.askSMTP,
+        before: installHelpers.inputHelpers.passwordBefore
       },
       {
         name: 'fromAddress',
         type: 'string',
         description: "Sender email address",
         default: '',
-        ask: inputHelpers.askSMTP
+        ask: installHelpers.inputHelpers.askSMTP
       },
       {
         name: 'rootUrl',
@@ -190,7 +169,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         name: 'masterTenantName',
         type: 'string',
         description: "Set a unique name for your tenant",
-        pattern: inputHelpers.alphanumValidator,
+        pattern: installHelpers.inputHelpers.alphanumValidator,
         default: 'master'
       },
       {
@@ -203,7 +182,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     tenantDelete: {
       name: "confirm",
       description: "Continue? (Y/n)",
-      before: inputHelpers.toBoolean,
+      before: installHelpers.inputHelpers.toBoolean,
       default: "Y"
     },
     superUser: [
@@ -218,18 +197,18 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         type: 'string',
         description: "Password",
         hidden: true,
-        replace: inputHelpers.passwordReplace,
+        replace: installHelpers.inputHelpers.passwordReplace,
         required: true,
-        before: inputHelpers.passwordBefore
+        before: installHelpers.inputHelpers.passwordBefore
       },
       {
         name: 'suRetypePassword',
         type: 'string',
         description: "Confirm Password",
         hidden: true,
-        replace: inputHelpers.passwordReplace,
+        replace: installHelpers.inputHelpers.passwordReplace,
         required: true,
-        before: inputHelpers.passwordBefore
+        before: installHelpers.inputHelpers.passwordBefore
       }
     ]
   };
@@ -242,7 +221,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     return start();
   }
   console.log('Found an existing config.json file. Do you want to use the values in this file during install?');
-  getInput(inputData.useConfigJSON, function(result) {
+  installHelpers.getInput(inputData.useConfigJSON, function(result) {
     console.log('');
     USE_CONFIG = result.useJSON;
     start();
@@ -252,9 +231,6 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
 function initPrompt() {
   // set overrides from command line arguments and config.json
   prompt.override = generatePromptOverrides();
-  prompt.message = '> ';
-  prompt.delimiter = '';
-  prompt.start();
 }
 
 function generatePromptOverrides() {
@@ -272,7 +248,7 @@ function start() {
   } else {
     console.log('This script will install the application. \nWould you like to continue?');
   }
-  getInput(inputData.startInstall, function(result) {
+  installHelpers.getInput(inputData.startInstall, function(result) {
     if(!result.install) {
       return exit(0, 'User cancelled the install');
     }
@@ -304,7 +280,7 @@ function configureEnvironment(callback) {
       console.error('ERROR: ', error);
       return exit(1, 'Failed to get latest framework version');
     }
-    getInput(inputData.configure, function(result) {
+    installHelpers.getInput(inputData.configure, function(result) {
       console.log('');
       configResults = result;
       saveConfig(result, callback);
@@ -326,7 +302,7 @@ function configureMasterTenant(callback) {
   app.run({ skipVersionCheck: true });
   app.on('serverStarted', function() {
     installHelpers.hideSpinner();
-    getInput(inputData.tenant, function(result) {
+    installHelpers.getInput(inputData.tenant, function(result) {
       console.log('');
       // add the input to our cached config
       _.extend(configResults, {
@@ -347,11 +323,8 @@ function configureMasterTenant(callback) {
           return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
         }
         console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
-        prompt.get(inputData.tenantDelete, function(error, result) {
+        installHelpers.getInput(inputData.tenantDelete, function(result) {
           console.log('');
-          if(error) {
-            return onError(error);
-          }
           if(!result.confirm) {
             return exit(1, 'Exiting install.');
           }
@@ -394,7 +367,7 @@ function createSuperUser(callback) {
     return exit(1, 'Failed to create admin user account. Please check the console output.');
   };
   console.log(`\nNow we need to set up a 'Super Admin' account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
-  getInput(inputData.superUser, function(result) {
+  installHelpers.getInput(inputData.superUser, function(result) {
     console.log('');
     app.usermanager.deleteUser({ email: result.suEmail }, function(error, userRec) {
       if(error) return onError(error);
@@ -456,16 +429,6 @@ function saveConfig(configItems, callback) {
       process.exit(1, 'Install Failed.');
     }
     return callback();
-  });
-}
-
-function getInput(items, callback) {
-  prompt.get(items, function(error, result) {
-    if(error) {
-      if(error.message === 'canceled') error = new Error('User cancelled the install');
-      return exit(1, error);
-    }
-    callback(result);
   });
 }
 

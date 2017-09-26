@@ -4,7 +4,6 @@ var chalk = require('chalk');
 var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
-var prompt = require('prompt');
 var semver = require('semver');
 
 var configuration = require('./lib/configuration');
@@ -34,14 +33,16 @@ function getUserInput() {
   var confirmProperties = {
     name: 'Y/n',
     type: 'string',
-    default: 'Y'
+    default: 'Y',
+    before: installHelpers.inputHelpers.toBoolean
   };
   var upgradeProperties = {
     properties: {
       updateAutomatically: {
         description: 'Update automatically',
         type: 'string',
-        default: 'Y'
+        default: 'Y',
+        before: installHelpers.inputHelpers.toBoolean
       }
     }
   };
@@ -60,20 +61,11 @@ function getUserInput() {
     }
   };
   console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} and/or Adapt Framework. Would you like to continue?`);
-  prompt.message = '> ';
-  prompt.delimiter = '';
-  prompt.start();
-  prompt.get(confirmProperties, function(error, result) {
-    if(error) {
-      return installHelpers.exit(1, error);
-    }
-    if(!/(Y|y)[es]*$/.test(result['Y/n'])) {
+  installHelpers.getInput(confirmProperties, function(result) {
+    if(!result['continue']) {
       return installHelpers.exit();
     }
-    prompt.get(upgradeProperties, function(error, result) {
-      if(error) {
-        return installHelpers.exit(1, error);
-      }
+    installHelpers.getInput(upgradeProperties, function(result) {
       console.log('');
       if(result['updateAutomatically'] === 'Y' || result['updateAutomatically'] === 'y') {
         return checkForUpdates(function(error, updateData) {
@@ -84,8 +76,7 @@ function getUserInput() {
         });
       }
       // no automatic update, so get the intended versions
-      prompt.get(tagProperties, function(error, result) {
-        if(error) installHelpers.exit(1, error);
+      installHelpers.getInput(tagProperties, function(result) {
         doUpdate({
           adapt_authoring: result.authoringToolGitTag,
           adapt_framework: result.frameworkGitTag

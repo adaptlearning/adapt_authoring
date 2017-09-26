@@ -117,12 +117,12 @@ function doUpdate(data) {
         if(error) {
           return cb(error);
         }
+        console.log(`${app.polyglot.t('app.productname')} upgraded to ${data.adapt_authoring}`);
         cb();
       });
     },
     function upgradeFramework(cb) {
       installHelpers.hideSpinner();
-      console.log(`${app.polyglot.t('app.productname')} upgraded to ${data.adapt_authoring}`);
       if(!data.adapt_framework) {
         return cb();
       }

@@ -434,9 +434,6 @@ function saveConfig(configItems, callback) {
   _.each(configItems, function(value, key) {
     config[key] = value;
   });
-  if(config.smtpService !== '') {
-    config.useSmtp = true;
-  }
   fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
     if(error) {
       console.error(`ERROR: Failed to write configuration file to ${chalk.underline(conf/config.json)}.\n${error}`);

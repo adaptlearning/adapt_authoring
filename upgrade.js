@@ -31,7 +31,8 @@ function start() {
 function getUserInput() {
   // properties for the prompts
   var confirmProperties = {
-    name: 'Y/n',
+    name: 'continue',
+    description: 'Continue? Y/n',
     type: 'string',
     default: 'Y',
     before: installHelpers.inputHelpers.toBoolean
@@ -39,7 +40,7 @@ function getUserInput() {
   var upgradeProperties = {
     properties: {
       updateAutomatically: {
-        description: 'Update automatically',
+        description: 'Update automatically? Y/n',
         type: 'string',
         default: 'Y',
         before: installHelpers.inputHelpers.toBoolean
@@ -51,12 +52,12 @@ function getUserInput() {
       authoringToolGitTag: {
         type: 'string',
         required: true,
-        description: 'Authoring Tool git revision (enter branch name or tag as tags/[tagname])'
+        description: 'Specific git revision to be used for the authoring tool (expects either a branch name, or a tag with the format `tags/tagName`)'
       },
       frameworkGitTag: {
         type: 'string',
         required: true,
-        description: 'Framework git revision (enter branch name or tag as tags/[tagname])'
+        description: 'Specific git revision to be used for the framework (expects either a branch name, or a tag with the format `tags/tagName`)'
       }
     }
   };

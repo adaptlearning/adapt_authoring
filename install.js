@@ -5,6 +5,7 @@ var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
 var prompt = require('prompt');
+var readline = require('readline');
 
 var auth = require('./lib/auth');
 var database = require('./lib/database');
@@ -30,6 +31,14 @@ var inputHelpers = {
   },
   askSMTP: function() {
     return prompt.history('useSmtp').value;
+  },
+  passwordBefore: function(v) {
+    /**
+    * HACK because read module used by prompt adds a blank line when
+    * hidden & replace attrs are set
+    */
+    readline.moveCursor(process.stdout, 0, -1);
+    return v;
   }
 };
 var masterTenant = false;
@@ -141,7 +150,8 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         hidden: true,
         replace: inputHelpers.passwordReplace,
         default: '',
-        ask: inputHelpers.askSMTP
+        ask: inputHelpers.askSMTP,
+        before: inputHelpers.passwordBefore
       },
       {
         name: 'fromAddress',
@@ -209,7 +219,8 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         description: "Password",
         hidden: true,
         replace: inputHelpers.passwordReplace,
-        required: true
+        required: true,
+        before: inputHelpers.passwordBefore
       },
       {
         name: 'suRetypePassword',
@@ -217,7 +228,8 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         description: "Confirm Password",
         hidden: true,
         replace: inputHelpers.passwordReplace,
-        required: true
+        required: true,
+        before: inputHelpers.passwordBefore
       }
     ]
   };

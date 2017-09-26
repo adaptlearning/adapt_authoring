@@ -33,7 +33,7 @@ var origin = require('../../../'),
     unzip = require('unzip'),
     exec = require('child_process').exec,
     IncomingForm = require('formidable').IncomingForm,
-    installHelpers = require('../../../installHelpers');
+    installHelpers = require('../../../lib/installHelpers');
 
 // errors
 function PluginPackageError (msg) {

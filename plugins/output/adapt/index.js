@@ -23,7 +23,7 @@ var origin = require('../../../'),
     assetmanager = require('../../../lib/assetmanager'),
     exec = require('child_process').exec,
     semver = require('semver'),
-    installHelpers = require('../../../installHelpers'),
+    installHelpers = require('../../../lib/installHelpers'),
     logger = require('../../../lib/logger');
 
 function AdaptOutput() {

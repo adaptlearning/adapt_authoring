@@ -11,7 +11,7 @@ var configuration = require('./lib/configuration');
 var logger = require('./lib/logger');
 var origin = require('./lib/application');
 var OutputConstants = require('./lib/outputmanager').Constants;
-var installHelpers = require('./installHelpers');
+var installHelpers = require('./lib/installHelpers');
 
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
 var app = origin();

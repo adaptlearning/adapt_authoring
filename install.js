@@ -355,9 +355,6 @@ function createMasterTenant(callback) {
     }
     console.log('Master tenant created successfully.');
     masterTenant = tenant;
-    // save master tenant name to config
-    app.configuration.setConfig('masterTenantName', tenant.name);
-    app.configuration.setConfig('masterTenantID', tenant._id);
     saveConfig(app.configuration.getConfig(), callback);
   });
 }

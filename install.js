@@ -224,13 +224,15 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
   if(!IS_INTERACTIVE) {
     return;
   }
+  console.log('');
   if(!fs.existsSync('conf/config.json')) {
     initPrompt();
     start();
     return;
   }
-  console.log('\nFound an existing config.json file. Do you want to use the values in this file during install?');
+  console.log('Found an existing config.json file. Do you want to use the values in this file during install?');
   getInput(inputData.useConfigJSON, function(result) {
+    console.log('');
     USE_CONFIG = result.useJSON;
     initPrompt();
     start();
@@ -256,9 +258,9 @@ function generatePromptOverrides() {
 function start() {
   // Prompt the user to begin the install
   if(!IS_INTERACTIVE || USE_CONFIG) {
-    console.log('\nThis script will install the application. Please wait ...');
+    console.log('This script will install the application. Please wait ...');
   } else {
-    console.log('\nThis script will install the application. \nWould you like to continue?');
+    console.log('This script will install the application. \nWould you like to continue?');
   }
   getInput(inputData.startInstall, function(result) {
     if(!result.install) {
@@ -281,6 +283,7 @@ function start() {
 }
 
 function configureEnvironment(callback) {
+  console.log('');
   if(!IS_INTERACTIVE || USE_CONFIG) {
     console.log('Now setting configuration items.');
   } else {
@@ -292,6 +295,7 @@ function configureEnvironment(callback) {
       return exit(1, 'Failed to get latest framework version');
     }
     getInput(inputData.configure, function(result) {
+      console.log('');
       configResults = result;
       saveConfig(result, callback);
     });
@@ -313,6 +317,7 @@ function configureMasterTenant(callback) {
   app.on('serverStarted', function() {
     installHelpers.hideSpinner();
     getInput(inputData.tenant, function(result) {
+      console.log('');
       // add the input to our cached config
       _.extend(configResults, {
         masterTenant: {
@@ -331,7 +336,7 @@ function configureMasterTenant(callback) {
         if(!IS_INTERACTIVE) {
           return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
         }
-        console.log(`Tenant '${tenant.name}' already exists. It must be deleted for install to continue.`);
+        console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
         prompt.get(inputData.tenantDelete, function(error, result) {
           console.log('');
           if(error) {
@@ -378,8 +383,9 @@ function createSuperUser(callback) {
     console.error('ERROR: ', error);
     return exit(1, 'Failed to create admin user account. Please check the console output.');
   };
-  console.log(`\nConfiguring super user account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
+  console.log(`\nNow we need to set up a 'Super Admin' account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
   getInput(inputData.superUser, function(result) {
+    console.log('');
     app.usermanager.deleteUser({ email: result.suEmail }, function(error, userRec) {
       if(error) return onError(error);
       // add a new user using default auth plugin
@@ -444,9 +450,7 @@ function saveConfig(configItems, callback) {
 }
 
 function getInput(items, callback) {
-  console.log('');
   prompt.get(items, function(error, result) {
-    console.log('');
     if(error) {
       if(error.message === 'canceled') error = new Error('User cancelled the install');
       return exit(1, error);

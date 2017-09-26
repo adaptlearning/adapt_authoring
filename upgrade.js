@@ -117,7 +117,9 @@ function doUpdate(data) {
         revision: data.adapt_authoring,
         directory: configuration.serverRoot
       }, function(error) {
+        installHelpers.hideSpinner();
         if(error) {
+          console.log('Failed to upgrade the Adapt framework');
           return cb(error);
         }
         console.log(`${app.polyglot.t('app.productname')} upgraded to ${data.adapt_authoring}`);
@@ -125,24 +127,29 @@ function doUpdate(data) {
       });
     },
     function upgradeFramework(cb) {
-      installHelpers.hideSpinner();
       if(!data.adapt_framework) {
         return cb();
       }
       installHelpers.showSpinner(`Upgrading the Adapt framework to ${data.adapt_framework}`);
-      installHelpers.installFramework({
+      installHelpers.updateFramework({
         repository: configuration.getConfig('frameworkRepository'),
         revision: data.adapt_framework,
         directory: path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), OutputConstants.Folders.Framework)
-      }, cb);
+      }, function(error) {
+        installHelpers.hideSpinner();
+        if(error) {
+          console.log('Failed to upgrade the Adapt framework');
+          return cb(error);
+        }
+        console.log(`Adapt framework upgraded to ${data.adapt_framework}`);
+        cb();
+      });
     },
-  ], function(error, results) {
-    installHelpers.hideSpinner();
+  ], function(error) {
     if(error) {
       console.error('ERROR:', error);
       return installHelpers.exit(1, 'Upgrade was unsuccessful. Please check the console output.');
     }
-    console.log(`Adapt framework upgraded to ${data.adapt_framework}`);
     installHelpers.exit(0, `Your ${app.polyglot.t('app.productname')} was updated successfully.`);
   });
 }

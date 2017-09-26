@@ -224,17 +224,15 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
   if(!IS_INTERACTIVE) {
     return;
   }
+  initPrompt();
   console.log('');
   if(!fs.existsSync('conf/config.json')) {
-    initPrompt();
-    start();
-    return;
+    return start();
   }
   console.log('Found an existing config.json file. Do you want to use the values in this file during install?');
   getInput(inputData.useConfigJSON, function(result) {
     console.log('');
     USE_CONFIG = result.useJSON;
-    initPrompt();
     start();
   });
 });

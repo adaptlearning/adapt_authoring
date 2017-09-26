@@ -51,13 +51,13 @@ function getUserInput() {
     properties: {
       authoringToolGitTag: {
         type: 'string',
-        required: true,
-        description: 'Specific git revision to be used for the authoring tool (expects either a branch name, or a tag with the format `tags/tagName`)'
+        description: 'Specific git revision to be used for the authoring tool (expects either a branch name, or a tag with the format `tags/tagName`)',
+        default: ''
       },
       frameworkGitTag: {
         type: 'string',
-        required: true,
-        description: 'Specific git revision to be used for the framework (expects either a branch name, or a tag with the format `tags/tagName`)'
+        description: 'Specific git revision to be used for the framework (expects either a branch name, or a tag with the format `tags/tagName`)',
+        default: ''
       }
     }
   };
@@ -78,6 +78,9 @@ function getUserInput() {
       }
       // no automatic update, so get the intended versions
       installHelpers.getInput(tagProperties, function(result) {
+        if(!result.authoringToolGitTag && !result.frameworkGitTag) {
+          return installHelpers.exit(1, 'Cannot update sofware if no revisions are specified.');
+        }
         doUpdate({
           adapt_authoring: result.authoringToolGitTag,
           adapt_framework: result.frameworkGitTag

@@ -51,12 +51,12 @@ function getUserInput() {
     properties: {
       authoringToolGitTag: {
         type: 'string',
-        description: 'Specific git revision to be used for the authoring tool (expects either a branch name, or a tag with the format `tags/tagName`)',
+        description: 'Specific git revision to be used for the authoring tool. Accepts any valid revision type (e.g. branch/tag/commit)',
         default: ''
       },
       frameworkGitTag: {
         type: 'string',
-        description: 'Specific git revision to be used for the framework (expects either a branch name, or a tag with the format `tags/tagName`)',
+        description: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
         default: ''
       }
     }
@@ -78,6 +78,7 @@ function getUserInput() {
       }
       // no automatic update, so get the intended versions
       installHelpers.getInput(tagProperties, function(result) {
+        console.log('');
         if(!result.authoringToolGitTag && !result.frameworkGitTag) {
           return installHelpers.exit(1, 'Cannot update sofware if no revisions are specified.');
         }
@@ -111,13 +112,11 @@ function doUpdate(data) {
       if(!data.adapt_authoring) {
         return cb();
       }
-      installHelpers.showSpinner(`Upgrading the ${app.polyglot.t('app.productname')} to ${data.adapt_authoring}`);
       installHelpers.updateAuthoring({
         repository: configuration.getConfig('authoringToolRepository'),
         revision: data.adapt_authoring,
         directory: configuration.serverRoot
       }, function(error) {
-        installHelpers.hideSpinner();
         if(error) {
           console.log('Failed to upgrade the Adapt framework');
           return cb(error);
@@ -130,13 +129,11 @@ function doUpdate(data) {
       if(!data.adapt_framework) {
         return cb();
       }
-      installHelpers.showSpinner(`Upgrading the Adapt framework to ${data.adapt_framework}`);
       installHelpers.updateFramework({
         repository: configuration.getConfig('frameworkRepository'),
         revision: data.adapt_framework,
         directory: path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), OutputConstants.Folders.Framework)
       }, function(error) {
-        installHelpers.hideSpinner();
         if(error) {
           console.log('Failed to upgrade the Adapt framework');
           return cb(error);

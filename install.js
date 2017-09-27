@@ -160,7 +160,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
       {
         name: 'frameworkRevision',
         type: 'string',
-        description: "Specific git revision to be used for the framework (expects either a branch name, or a tag with the format `tags/tagName`)",
+        description: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
         default: 'tags/' + latestFrameworkTag
       }
     ],

@@ -118,7 +118,7 @@ function doUpdate(data) {
         directory: configuration.serverRoot
       }, function(error) {
         if(error) {
-          console.log('Failed to upgrade the ${app.polyglot.t('app.productname')}');
+          console.log(`Failed to upgrade the ${app.polyglot.t('app.productname')}`);
           return cb(error);
         }
         console.log(`${app.polyglot.t('app.productname')} upgraded to ${data.adapt_authoring}`);

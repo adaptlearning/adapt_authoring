@@ -118,7 +118,7 @@ function doUpdate(data) {
         directory: configuration.serverRoot
       }, function(error) {
         if(error) {
-          console.log(`Failed to upgrade the ${app.polyglot.t('app.productname')}`);
+          console.log(`Failed to update ${configuration.serverRoot} to '${data.adapt_authoring}'`);
           return cb(error);
         }
         console.log(`${app.polyglot.t('app.productname')} upgraded to ${data.adapt_authoring}`);
@@ -129,13 +129,14 @@ function doUpdate(data) {
       if(!data.adapt_framework) {
         return cb();
       }
+      var dir = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), OutputConstants.Folders.Framework);
       installHelpers.updateFramework({
         repository: configuration.getConfig('frameworkRepository'),
         revision: data.adapt_framework,
-        directory: path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), OutputConstants.Folders.Framework)
+        directory: dir
       }, function(error) {
         if(error) {
-          console.log('Failed to upgrade the Adapt framework');
+          console.log(`Failed to upgrade ${dir.replace(configuration.serverRoot, '')} to ${data.adapt_framework}`);
           return cb(error);
         }
         console.log(`Adapt framework upgraded to ${data.adapt_framework}`);

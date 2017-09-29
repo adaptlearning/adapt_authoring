@@ -16,17 +16,13 @@ var version = require('../../../version');
 
 var origin = require('../../../')();
 
-// possible shared functions include:
-// addAssets
-// removeImport
-
 /**
 * unzip import
 * @param {string} filePath
+* @param {string} unzipPath
 * @param {callback} done
 */
 function unzip(filePath, unzipPath, done) {
-  // unzip package
   yauzl.open(filePath, { lazyEntries: true }, function(error, zipfile) {
     if (error) {
       return done(error);
@@ -35,7 +31,6 @@ function unzip(filePath, unzipPath, done) {
     zipfile.on("entry", function(entry) {
       var dest = path.join(unzipPath, entry.fileName);
       if (/\/$/.test(entry.fileName)) {
-        // directory file names end with '/'
         fs.ensureDir(dest, function(err) {
           if (error) {
             return done(error);
@@ -43,12 +38,10 @@ function unzip(filePath, unzipPath, done) {
           zipfile.readEntry();
         });
       } else {
-        // file entry
         zipfile.openReadStream(entry, function(err, readStream) {
           if (error) {
             return done(error);
           }
-          // ensure parent directory exists
           fs.ensureDir(path.dirname(dest), function(err) {
             if (error) {
               return done(error);
@@ -100,7 +93,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
       if(records.length === 0) {
         var serverVersion = semver.clean(version.adapt_framework);
         var pluginRange = semver.validRange(bowerJson.framework);
-        // check the plugin's compatible with the framework
+
         if(semver.satisfies(serverVersion, pluginRange)) {
           logger.log('info', 'Installing', pluginType, "'" + bowerJson.displayName + "'");
           bowerJson.isLocalPackage = true;
@@ -111,7 +104,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
         }
       } else {
         var serverPlugin = records[0];
-        // TODO what do we do with newer versions of plugins? (could affect other courses if we install new version)
+
         if(semver.gt(bowerJson.version,serverPlugin.version)) {
           logger.log('info', 'Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + '), but not installing');
         }
@@ -132,7 +125,6 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
 * @param {callback} assetImported
 */
 function importAsset(fileMetadata, metadata, assetImported) {
-  // metadata could be idMap or entire import data
   var search = {
     title: fileMetadata.title,
     size: fileMetadata.size
@@ -187,7 +179,7 @@ function importAsset(fileMetadata, metadata, assetImported) {
               asset.tags[index] = metadata.idMap[tag];
             }
           });
-          // Create the asset record
+
           origin.assetmanager.createAsset(asset, function onAssetCreated(createError, assetRec) {
             if (createError) {
               storage.deleteFile(storedFile.path, assetImported);

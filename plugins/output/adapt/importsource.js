@@ -48,7 +48,6 @@ function ImportSource(req, done) {
   var tenantId = app.usermanager.getCurrentUser().tenant._id;
   var unzipFolder = tenantId + '_unzipped';
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, unzipFolder);
-  // TODO - This should not be hard coded, needs to deal with other lang folders
   var COURSE_LANG;
   var COURSE_JSON_PATH = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course);
   var courseRoot = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course);
@@ -424,7 +423,7 @@ function ImportSource(req, done) {
             var customProps = _.pick(data, _.difference(Object.keys(data), genericPropKeys));
             var extensions = _.pick(customProps, _.intersection(Object.keys(customProps),Object.keys(extensionLocations)));
             customProps = _.omit(customProps, Object.keys(extensions));
-            data.properties = customProps
+            data.properties = customProps;
             data._extensions = extensions;
             data = _.omit(data, Object.keys(customProps));
             cb();

@@ -150,7 +150,7 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
         fs.exists(path.join(BUILD_FOLDER, Constants.Filenames.Main), function(exists) {
           if (!isRebuildRequired && exists) {
             resultObject.success = true;
-            return callback(null, 'Framework already built, nothing to do')
+            return callback(null, 'Framework already built, nothing to do');
           }
 
           logger.log('info', '3.1. Ensuring framework build exists');
@@ -356,8 +356,6 @@ function generateMetadata(generatedMetadata) {
 };
 
 
-
-
 // pulls out relevant attributes from package.json
 function getPackageData(frameworkDir, gotPackageJson) {
   fs.readJson(path.join(frameworkDir, Constants.Filenames.Package), function onJsonRead(error, packageJson) {
@@ -386,10 +384,9 @@ function getCourseMetdata(courseId, metadata, gotCourseMetadata) {
         // only store the _doc values
         var toSave = _.pluck(results,'_doc');
         // store data, remove blacklisted properties
-        // TODO make sure we're only saving what we need
         _.each(toSave, function(item, index) { toSave[index] = _.omit(item, blacklistedProps); });
         coursedata.course[collectionType] = toSave;
-        // move tag is so tag list van be generated later
+        // move tag so tag list can be generated later
         _.each(toSave, function(item, index) {
           if (item.tags) {
             _.each(item.tags, function(tagId) {

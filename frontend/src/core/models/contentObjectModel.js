@@ -12,20 +12,6 @@ define(function(require) {
     defaults: {
       _isSelected: false,
       _isExpanded: false
-    },
-
-    initialize: function() {
-      this.listenTo(this, 'sync change:_type', this.setupConstructor);
-      this.setupConstructor();
-    },
-
-    setupConstructor: function() {
-      if (this.get('_parentId') === Origin.editor.data.course.get('_id')) {
-        this._parent === 'course';
-      }
-      if (this.get('_type') === 'menu') {
-        this._children = 'contentObjects';
-      }
     }
   });
 

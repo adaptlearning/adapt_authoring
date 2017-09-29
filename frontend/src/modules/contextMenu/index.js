@@ -53,11 +53,7 @@ define(function(require) {
         callbackEvent: 'preview'
       }
     ]);
-    ContextMenu.addItem('course', getDefaultItems().concat({
-      title: Origin.l10n.t('app.downloadbackup'),
-      className: 'context-menu-item',
-      callbackEvent: 'export'
-    }));
+    ContextMenu.addItem('course', getDefaultItems());
   };
 
   /*

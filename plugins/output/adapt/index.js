@@ -259,12 +259,6 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
 AdaptOutput.prototype.importsource = require('./importsource');
 
 /**
-* Course import function
-*/
-AdaptOutput.prototype.import = require('./import');
-
-
-/**
 * FUNCTION: Export
 * TODO need implementation notes
 *      - metadata structure

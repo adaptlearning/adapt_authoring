@@ -58,7 +58,7 @@ function ImportSource(req, done) {
   var configId;
   var cleanupDirs = [];
   var assetFields = [];
-  var PATH_REXEX = new RegExp(/(course\/)((\w)*\/)*(\w)*.[a-zA-Z0-9]+/, 'gi');
+  var PATH_REXEX = new RegExp(/(course\/)((\w)*\/)*(\w)*.[a-zA-Z0-9]+/gi);
 
   form.parse(req, function (error, fields, files) {
 
@@ -157,7 +157,7 @@ function ImportSource(req, done) {
           helpers.checkFrameworkVersion(versionJson, cb);
         });
       },
-      checkContentJson: ['checkFramework', function(cb) {
+      checkContentJson: ['checkFramework', function(results, cb) {
         async.eachSeries(Object.keys(contentMap), function(type, cb2) {
           fs.readJson(path.join(COURSE_JSON_PATH, COURSE_LANG, contentMap[type] + '.json'), function(error, contentJson) {
             if(error) {
@@ -431,7 +431,7 @@ function ImportSource(req, done) {
         },
         function updateAssetData(cb) {
           // TODO -- Strip lang folder. This global replace is intended as a temporary solution
-          var replaceRegex = new RegExp(/(course\/)((\w){2}\/)/, 'gi');
+          var replaceRegex = new RegExp(/(course\/)((\w){2}\/)/gi);
           var newAssetPath = Constants.Folders.Course + path.sep;
 
           var traverse = require('traverse');

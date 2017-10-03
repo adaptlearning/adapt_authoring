@@ -571,7 +571,7 @@ function getTagsMetadata(metadata, gotTagsMetadata) {
 */
 
 // copies relevant files in adapt_framework
-function copyFrameworkFiles(filesCopied) {
+function copyFrameworkFiles(results, filesCopied) {
   self.generateIncludesForCourse(courseId, function(error, includes) {
     if(error) {
       return includesGenerated(error);
@@ -602,13 +602,13 @@ function copyFrameworkFiles(filesCopied) {
       if (error) {
         return filesCopied(error);
       }
-      copyCourseFiles(filesCopied);
+      filesCopied(null);
     });
   });
 };
 
 // uses the metadata list to include only relevant plugin files
-function copyCustomPlugins(filesCopied) {
+function copyCustomPlugins(results, filesCopied) {
   var src = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Source);
   var dest = path.join(EXPORT_DIR, Constants.Folders.Plugins);
   _.each(metadata.pluginIncludes, function iterator(plugin) {
@@ -623,7 +623,7 @@ function copyCustomPlugins(filesCopied) {
 };
 
 // copies everything in the course folder
-function copyCourseFiles(filesCopied) {
+function copyCourseFiles(results, filesCopied) {
   var source = path.join(COURSE_ROOT_DIR, Constants.Folders.Build, Constants.Folders.Course);
   var dest = path.join(EXPORT_DIR, Constants.Folders.Source, Constants.Folders.Course);
   fs.ensureDir(dest, function(error) {
@@ -635,7 +635,7 @@ function copyCourseFiles(filesCopied) {
 };
 
 // copies used assets directly from the data folder
-function copyAssets(assetsCopied) {
+function copyAssets(results, assetsCopied) {
   var dest = path.join(EXPORT_DIR, Constants.Folders.Assets);
   fs.ensureDir(dest, function(error) {
     if (error) {

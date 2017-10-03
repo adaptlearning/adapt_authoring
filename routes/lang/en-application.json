@@ -310,5 +310,6 @@
   "app.component": "component",
   "app.menueditor": "Menu editor",
   "app.pageeditor": "Page editor",
-  "app.backtoprojects": "Back to courses"  
+  "app.backtoprojects": "Back to courses",
+  "app.editorselectthemetitle": "Select a theme for your course"    
 }

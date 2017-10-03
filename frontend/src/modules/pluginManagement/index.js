@@ -27,7 +27,7 @@ define(function(require) {
 
   var globalMenuObject = {
     "location": "global",
-    "text": "Plugin Management",
+    "text": Origin.l10n.t('app.pluginmanagement'),
     "icon": "fa-plug",
     "callbackEvent": "pluginManagement:open",
     "sortOrder": 3

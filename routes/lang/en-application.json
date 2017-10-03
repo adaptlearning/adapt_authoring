@@ -307,5 +307,8 @@
   "app.page": "page",
   "app.article": "article",
   "app.block": "block",
-  "app.component": "component"
+  "app.component": "component",
+  "app.menueditor": "Menu editor",
+  "app.pageeditor": "Page editor",
+  "app.backtoprojects": "Back to courses"  
 }

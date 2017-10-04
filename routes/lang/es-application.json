@@ -288,7 +288,7 @@
   "app.editornew": "Añadir curso",
   "app.editornewcoursetitle": "Nuevo curso",
   "app.editormenu": "Estructura del curso",
-  "app.backtomenu": "Volver a la estructura del curso",
+  "app.backtomenu": "Volver a la estructura",
   "app.editorpage": "Estructura de la página",
   "app.editorpageedit": "Ajustes de la página",
   "app.editorarticle": "Ajustes del artículo",
@@ -308,7 +308,7 @@
   "app.article": "artículo",
   "app.block": "bloque",
   "app.component": "componente",
-  "app.menueditor": "Editor de menús",
+  "app.menueditor": "Editor de estructura",
   "app.pageeditor": "Editor de páginas",
   "app.backtoprojects": "Volver a cursos",
   "app.editorselectthemetitle": "Selecciona un tema para tu curso"

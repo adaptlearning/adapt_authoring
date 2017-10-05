@@ -92,6 +92,11 @@ function getUserInput() {
 }
 
 function checkForUpdates(callback) {
+  var isCustomFramework = configuration.getConfig('frameworkRepository') !== installHelpers.DEFAULT_FRAMEWORK_REPO;
+  var isCustomServer = configuration.getConfig('authoringToolRepository') !== installHelpers.DEFAULT_SERVER_REPO;
+  if(isCustomFramework || isCustomServer) {
+    return callback('Cannot perform an automatic upgrade when custom repositories are used.');
+  }
   installHelpers.showSpinner('Checking for updates');
   installHelpers.getUpdateData(function(error, data) {
     installHelpers.hideSpinner();

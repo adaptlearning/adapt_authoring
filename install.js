@@ -28,8 +28,7 @@ var configResults;
 // we need the framework version for the config items, so let's go
 installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
   if(error) {
-    console.error('ERROR: ', error);
-    return exit(1, 'Failed to get the latest framework version');
+    return handleError(error, 1, 'Failed to get the latest framework version');
   }
   inputData = {
     useConfigJSON: {
@@ -250,7 +249,7 @@ function start() {
   }
   installHelpers.getInput(inputData.startInstall, function(result) {
     if(!result.install) {
-      return exit(0, 'User cancelled the install');
+      return handleError(null, 0, 'User cancelled the install');
     }
     async.series([
       configureEnvironment,
@@ -277,8 +276,7 @@ function configureEnvironment(callback) {
   }
   installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     if(error) {
-      console.error('ERROR: ', error);
-      return exit(1, 'Failed to get latest framework version');
+      return handleError(error, 1, 'Failed to get latest framework version');
     }
     installHelpers.getInput(inputData.configure, function(result) {
       console.log('');
@@ -352,8 +350,7 @@ function createMasterTenant(callback) {
     }
   }, function(error, tenant) {
     if(error) {
-      console.error('ERROR: ', error);
-      return exit(1, 'Failed to create master tenant. Please check the console output.');
+      return handleError(error, 1, 'Failed to create master tenant. Please check the console output.');
     }
     console.log('Master tenant created successfully.');
     masterTenant = tenant;
@@ -363,8 +360,7 @@ function createMasterTenant(callback) {
 
 function createSuperUser(callback) {
   var onError = function(error) {
-    console.error('ERROR: ', error);
-    return exit(1, 'Failed to create admin user account. Please check the console output.');
+    handleError(error, 1, 'Failed to create admin user account. Please check the console output.');
   };
   console.log(`\nNow we need to set up a 'Super Admin' account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
   installHelpers.getInput(inputData.superUser, function(result) {
@@ -425,11 +421,19 @@ function saveConfig(configItems, callback) {
   });
   fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
     if(error) {
-      console.error(`ERROR: Failed to write configuration file to ${chalk.underline(conf/config.json)}.\n${error}`);
-      process.exit(1, 'Install Failed.');
+      handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
     }
     return callback();
   });
+}
+
+function handleError(error, exitCode, exitMessage) {
+  if(error) {
+    console.error(`ERROR: ${error}`);
+  }
+  if(exitCode) {
+    process.exit(exitCode, exitMessage);
+  }
 }
 
 /**

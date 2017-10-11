@@ -45,7 +45,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
       before: installHelpers.inputHelpers.toBoolean,
       default: 'Y'
     },
-    configure: [
+    server: [
       {
         name: 'serverPort',
         type: 'number',
@@ -94,57 +94,6 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         default: 'your-session-secret'
       },
       {
-        name: 'useffmpeg',
-        type: 'string',
-        description: "Are you using ffmpeg? y/N",
-        before: installHelpers.inputHelpers.toBoolean,
-        default: 'N'
-      },
-      {
-        name: 'useSmtp',
-        type: 'string',
-        description: "Will you be using an SMTP server? (used for sending emails) y/N",
-        before: installHelpers.inputHelpers.toBoolean,
-        default: 'N'
-      },
-      {
-        name: 'smtpService',
-        type: 'string',
-        description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
-        default: 'none',
-        ask: installHelpers.inputHelpers.askSMTP
-      },
-      {
-        name: 'smtpUsername',
-        type: 'string',
-        description: "SMTP username",
-        default: '',
-        ask: installHelpers.inputHelpers.askSMTP
-      },
-      {
-        name: 'smtpPassword',
-        type: 'string',
-        description: "SMTP password",
-        hidden: true,
-        replace: installHelpers.inputHelpers.passwordReplace,
-        default: '',
-        ask: installHelpers.inputHelpers.askSMTP,
-        before: installHelpers.inputHelpers.passwordBefore
-      },
-      {
-        name: 'fromAddress',
-        type: 'string',
-        description: "Sender email address",
-        default: '',
-        ask: installHelpers.inputHelpers.askSMTP
-      },
-      {
-        name: 'rootUrl',
-        type: 'string',
-        description: "The url this install will be accessible from",
-        default: 'http://localhost:5000/'
-      },
-      {
         name: 'authoringToolRepository',
         type: 'string',
         description: "Git repository URL to be used for the authoring tool source code",
@@ -163,6 +112,59 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         default: 'tags/' + latestFrameworkTag
       }
     ],
+    features: {
+      ffmpeg: {
+        name: 'useffmpeg',
+        type: 'string',
+        description: "Are you using ffmpeg? y/N",
+        before: installHelpers.inputHelpers.toBoolean,
+        default: 'N'
+      },
+      smtp: {
+        confirm: {
+          name: 'useSmtp',
+          type: 'string',
+          description: "Will you be using an SMTP server? (used for sending emails) y/N",
+          before: installHelpers.inputHelpers.toBoolean,
+          default: 'N'
+        },
+        configure: [
+          {
+            name: 'smtpService',
+            type: 'string',
+            description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
+            default: 'none',
+          },
+          {
+            name: 'smtpUsername',
+            type: 'string',
+            description: "SMTP username",
+            default: '',
+          },
+          {
+            name: 'smtpPassword',
+            type: 'string',
+            description: "SMTP password",
+            hidden: true,
+            replace: installHelpers.inputHelpers.passwordReplace,
+            default: '',
+            before: installHelpers.inputHelpers.passwordBefore
+          },
+          {
+            name: 'fromAddress',
+            type: 'string',
+            description: "Sender email address",
+            default: '',
+          },
+          {
+            name: 'rootUrl',
+            type: 'string',
+            description: "The url this install will be accessible from",
+            default: '' // set using default server options
+          }
+        ]
+      }
+    },
     tenant: [
       {
         name: 'masterTenantName',
@@ -252,7 +254,8 @@ function start() {
       return handleError(null, 0, 'User cancelled the install');
     }
     async.series([
-      configureEnvironment,
+      configureServer,
+      configureFeatures,
       configureMasterTenant,
       createMasterTenant,
       createSuperUser,
@@ -267,7 +270,7 @@ function start() {
   });
 }
 
-function configureEnvironment(callback) {
+function configureServer(callback) {
   console.log('');
   if(!IS_INTERACTIVE || USE_CONFIG) {
     console.log('Now setting configuration items.');
@@ -278,11 +281,39 @@ function configureEnvironment(callback) {
     if(error) {
       return handleError(error, 1, 'Failed to get latest framework version');
     }
-    installHelpers.getInput(inputData.configure, function(result) {
-      console.log('');
-      configResults = result;
-      saveConfig(result, callback);
+    installHelpers.getInput(inputData.server, function(result) {
+      addConfig(result);
+      callback();
     });
+  });
+}
+
+function configureFeatures(callback) {
+  async.series([
+    function ffmpeg(cb) {
+      installHelpers.getInput(inputData.features.ffmpeg, function(result) {
+        addConfig(configResults);
+        cb();
+      });
+    },
+    function smtp(cb) {
+      installHelpers.getInput(inputData.features.smtp.confirm, function(confirmed) {
+        if(!confirmed) {
+          return cb();
+        }
+        for(var i = 0, count = inputData.features.smtp.configure.length; i < count; i++) {
+          if(inputData.features.smtp.configure[i].name === 'rootUrl') {
+            inputData.features.smtp.configure[i].default = `http://${configResults.serverName}:${configResults.serverPort}`;
+          }
+        }
+        installHelpers.getInput(inputData.features.smtp.configure, function(result) {
+          addConfig(configResults);
+          cb();
+        });
+      });
+    }
+  ], function() {
+    saveConfig(configResults, callback);
   });
 }
 
@@ -303,7 +334,7 @@ function configureMasterTenant(callback) {
     installHelpers.getInput(inputData.tenant, function(result) {
       console.log('');
       // add the input to our cached config
-      _.extend(configResults, {
+      addConfig({
         masterTenant: {
           name: result.masterTenantName,
           displayName: result.masterTenantName
@@ -399,6 +430,10 @@ function buildFrontend(callback) {
 }
 
 // helper functions
+
+function addConfig(newConfigItems) {
+  configResults = _.extend({}, configResults, newConfigItems);
+}
 
 /**
  * This will write out the config items both as a config.json file

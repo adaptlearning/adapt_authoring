@@ -320,7 +320,9 @@ function configureMasterTenant(callback) {
     console.error('ERROR: ', error);
     return exit(1, 'Failed to configure master tenant. Please check the console output.');
   };
-  if(IS_INTERACTIVE) {
+  if(!IS_INTERACTIVE || USE_CONFIG) {
+    console.log('Now configuring the master tenant. \n');
+  } else {
     console.log('Now we need to configure the master tenant. \nTip: just press ENTER to accept the default value in brackets.\n');
   }
   logger.clear();

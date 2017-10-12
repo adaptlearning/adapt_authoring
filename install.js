@@ -214,9 +214,8 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     ]
   };
   if(!IS_INTERACTIVE) {
-    return;
+    return start();
   }
-  initPrompt();
   console.log('');
   if(!fs.existsSync('conf/config.json')) {
     return start();
@@ -229,20 +228,19 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
   });
 });
 
-function initPrompt() {
-  // set overrides from command line arguments and config.json
-  prompt.override = generatePromptOverrides();
-}
-
 function generatePromptOverrides() {
-  var configData = USE_CONFIG ? require('./conf/config.json') : {};
-  configData = JSON.parse(JSON.stringify(configData).replace('true', '"y"').replace('false', '"n"'));
-  if(USE_CONFIG) configData.install = 'y';
-  // NOTE that config.json < cmd args
+  if(USE_CONFIG) {
+    var configJson = require('./conf/config.json');
+    var configData = JSON.parse(JSON.stringify(configJson).replace('true', '"y"').replace('false', '"n"'));
+    configData.install = 'y';
+  }
+  // NOTE config.json < cmd args
   return _.extend({}, configData, optimist.argv);
 }
 
 function start() {
+  // set overrides from command line arguments and config.json
+  prompt.override = generatePromptOverrides();
   // Prompt the user to begin the install
   if(!IS_INTERACTIVE || USE_CONFIG) {
     console.log('This script will install the application. Please wait ...');
@@ -297,8 +295,8 @@ function configureFeatures(callback) {
       });
     },
     function smtp(cb) {
-      installHelpers.getInput(inputData.features.smtp.confirm, function(confirmed) {
-        if(!confirmed) {
+      installHelpers.getInput(inputData.features.smtp.confirm, function(result) {
+        if(!result.useSmtp) {
           return cb();
         }
         for(var i = 0, count = inputData.features.smtp.configure.length; i < count; i++) {

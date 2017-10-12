@@ -28,7 +28,7 @@ var configResults;
 // we need the framework version for the config items, so let's go
 installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
   if(error) {
-    return handleError(error, 1, 'Failed to get the latest framework version');
+    return handleError(error, 1, 'Failed to get the latest framework version. Check package.json.');
   }
   inputData = {
     useConfigJSON: {
@@ -465,7 +465,7 @@ function handleError(error, exitCode, exitMessage) {
     console.error(`ERROR: ${error}`);
   }
   if(exitCode) {
-    process.exit(exitCode, exitMessage);
+    exit(exitCode, exitMessage);
   }
 }
 

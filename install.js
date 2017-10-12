@@ -326,44 +326,50 @@ function configureMasterTenant(callback) {
     console.log('Now we need to configure the master tenant. \nTip: just press ENTER to accept the default value in brackets.\n');
   }
   logger.clear();
+
   installHelpers.showSpinner('Starting server');
   // run the app
   app.run({ skipVersionCheck: true });
   app.on('serverStarted', function() {
     installHelpers.hideSpinner();
-    installHelpers.getInput(inputData.tenant, function(result) {
-      console.log('');
-      // add the input to our cached config
-      addConfig({
-        masterTenant: {
-          name: result.masterTenantName,
-          displayName: result.masterTenantName
-        }
-      });
-      // check if the tenant name already exists
-      app.tenantmanager.retrieveTenant({ name: result.masterTenantName }, function(error, tenant) {
-        if(error) {
-          return onError(error);
-        }
-        if(!tenant) {
-          return callback();
-        }
-        if(!IS_INTERACTIVE) {
-          return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
-        }
-        console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
-        installHelpers.getInput(inputData.tenantDelete, function(result) {
-          console.log('');
-          if(!result.confirm) {
-            return exit(1, 'Exiting install.');
+    database.checkConnection(function(error) {
+      if(error) {
+        return callback(error);
+      }
+      installHelpers.getInput(inputData.tenant, function(result) {
+        console.log('');
+        // add the input to our cached config
+        addConfig({
+          masterTenant: {
+            name: result.masterTenantName,
+            displayName: result.masterTenantName
           }
-          // delete tenant
-          async.eachSeries(app.db.getModelNames(), function(modelName, cb) {
-            app.db.destroy(modelName, null, cb);
-          }, callback);
+        });
+        // check if the tenant name already exists
+        app.tenantmanager.retrieveTenant({ name: result.masterTenantName }, function(error, tenant) {
+          if(error) {
+            return onError(error);
+          }
+          if(!tenant) {
+            return callback();
+          }
+          if(!IS_INTERACTIVE) {
+            return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
+          }
+          console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
+          installHelpers.getInput(inputData.tenantDelete, function(result) {
+            console.log('');
+            if(!result.confirm) {
+              return exit(1, 'Exiting install.');
+            }
+            // delete tenant
+            async.eachSeries(app.db.getModelNames(), function(modelName, cb) {
+              app.db.destroy(modelName, null, cb);
+            }, callback);
+          });
         });
       });
-    });
+    }, configResults.dbName);
   });
 }
 

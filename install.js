@@ -412,10 +412,9 @@ function createSuperUser(callback) {
           if(error) return onError(error);
           return callback();
         });
-      }
-    );
+      });
+    });
   });
-});
 }
 
 function buildFrontend(callback) {

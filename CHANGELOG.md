@@ -4,6 +4,56 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 **IMPORTANT**: For information on how to *correctly* update your installation, consult [INSTALL.md](https://github.com/adaptlearning/adapt_authoring/blob/master/INSTALL.md#updating-the-tool).
 
+## [0.4.0] - 2017-10-16
+
+### Upgrade Notes
+Due to the changes made to the install script, this release restricts the installed framework version to `v2.x.x` to avoid unsupported breaking changes introduced in framework `v3`.
+
+Any custom code using `app:` prefixed events will stop working as of this release. Please check the release notes for more information (in most cases, simply changing the prefix to `origin:` will fix the issue).
+
+### Added
+- Framework themes can now display a preview in the theme picker. To enable this, a `preview.jpg` file is needed in the theme folder root
+- Can now specify custom auth source for MongoDB ([\#1673](https://github.com/adaptlearning/adapt_authoring/issues/1673))
+- Content pane added to app wrapper to act as a consistent container for main app content. Makes sure scrolling is consistent across the application among other things
+
+### Changed
+- Major refactoring of the frontend folder:
+    - 'Core' code separated into modules, and core
+    - Web-app loading rewritten
+    - Core LESS files are now accessible without needing to specify a relative file path
+    - Editor routing code has been simplified, and moved into the sub-module folders. See [modules/editor/index.js#L27-L55](https://github.com/adaptlearning/adapt_authoring/blob/v0.4.0/frontend/src/modules/editor/index.js#L27-L55) for the routing code, and [modules/editor/article/index.js#L10](https://github.com/adaptlearning/adapt_authoring/blob/release-0.4.0/frontend/src/modules/editor/article/index.js#L10) as an example of the new routing method.
+    - Events using `app:` replaced with `origin:` for consistency. Most notably: any code using `app:dataReady` will need to be switched over to listen to `origin:dataReady`
+- Install/upgrade scripts overhauled:
+    - Can now upgrade the server and framework to specific releases
+    - Can now upgrade the server and framework separately
+    - Install/upgrade scripts have been made prettier to look at (and more useful) with the introduction of activity spinners, and more helpful log messages
+    - Upgrade script now ignores draft and prereleases ([\#1723](https://github.com/adaptlearning/adapt_authoring/issues/1723))
+    - Upgrade/install script now allows custom git repositories to be used for both the server and framework source
+    - Framework version can be restricted so as not to automatically upgrade to a version you don't want to support. To enable this, specify the `framework` version in `package.json` (accepts any valid semver range) ([\#1703](https://github.com/adaptlearning/adapt_authoring/issues/1703))
+- Besides the schemas, the user interface is now completely localised ([\#1573](https://github.com/adaptlearning/adapt_authoring/issues/1573))
+- Improved multi-user support for previewing/publishing of courses ([\#1220](https://github.com/adaptlearning/adapt_authoring/issues/1220))
+- User profile page is now correctly styled ([\#1413](https://github.com/adaptlearning/adapt_authoring/issues/1413))
+- Newly created courses can now be built without any editing ([\#1678](https://github.com/adaptlearning/adapt_authoring/issues/1678))
+- Must now input super admin password twice during install to avoid user error ([\#1032][https://github.com/adaptlearning/adapt_authoring/issues/1032])
+- Abstracted polyglot into the new internal `l10n` library (accessible globally via the `Origin` object). Language strings are now obtained using `Origin.l10n.t`
+- Backbone forms version updated, and override code tidied up/removed where possible
+
+### Removed
+- **Vagrant support has been dropped** ([\#1503](https://github.com/adaptlearning/adapt_authoring/issues/1503))
+- The user management's user list sort is now case-insensitive ([\#1549](https://github.com/adaptlearning/adapt_authoring/issues/1549))
+- Front-end tests removed for now
+
+### Fixed
+- Framework plugin update has been fixed ([\#1415](https://github.com/adaptlearning/adapt_authoring/issues/1415))
+- Unused user password reset data is now cleared on delete of the related user ([\#1553](https://github.com/adaptlearning/adapt_authoring/issues/1553))
+- Copy and paste now correctly includes any extension settings ([\#1484](https://github.com/adaptlearning/adapt_authoring/issues/1484))
+- Dashboard no longer hangs if large images have been used as hero images ([\#1470](https://github.com/adaptlearning/adapt_authoring/issues/1470))
+- Server plugin schemas now correctly reflect the latest state after a plugin has been updated (previously a server restart was needed for any schema changes to be reflected) ([\#1524](https://github.com/adaptlearning/adapt_authoring/issues/1524))
+- Preview loading route added to prevent preview opening in a background tab/window ([\#1636](https://github.com/adaptlearning/adapt_authoring/issues/1636))
+- We now only attempt to load valid routes, avoiding unnecessary server breakdowns ([\#1534](https://github.com/adaptlearning/adapt_authoring/issues/1534))
+- Mocha tests fixed, and integrated with TravisCI
+- Dragging is now restricted for components depending on layout ([\#1631](https://github.com/adaptlearning/adapt_authoring/issues/1631))
+
 ## [0.3.0] - 2017-01-24
 
 ### Added
@@ -292,6 +342,7 @@ If upgrading from a previous version, please add the following keys to your conf
 - Loading screen of death
 - Session cookie security issues
 
+[0.4.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.0...v0.2.1

@@ -77,7 +77,7 @@ Any custom code using `app:` prefixed events will stop working as of this releas
   - Removed `on_start` from notifications as Travis WebLint shows as deprecated
 
 ### Fixed
-- Block alignment in page editor 
+- Block alignment in page editor
 - Password reset emails now work as intended
 - The 'enabled' checkbox in Plugin Management now hides plugins from editor
 - Removed tab/newline chars from CKEditor output to fix tabbing in published courses
@@ -107,7 +107,7 @@ This is a patch release which fixes minor issues with v0.2.0 uncovered by commun
 - reset.less now loaded before *everything*
 
 ## [0.2.0] - 2016-07-27
-This version introduces a new look and feel to the user interface of the authoring tool, and closely matches the new theme of the Adapt community site introduced at the beginning of the year. 
+This version introduces a new look and feel to the user interface of the authoring tool, and closely matches the new theme of the Adapt community site introduced at the beginning of the year.
 
 In addition, this release also includes the following:
 
@@ -126,7 +126,7 @@ This version contains numerous minor bug fixes and enhamcements, and supports th
  ### Added
 - Support for new Adapt Framework 'menu locking' functionality
 - Support for v2.0.9 of the Adapt Framework
-- Support for _isAvailable flag
+- Support for `_isAvailable` flag
 - Added link to GitHub repositories for plugins
 
 ### Changed
@@ -137,9 +137,9 @@ This version contains numerous minor bug fixes and enhamcements, and supports th
 ### Fixed
 - Role statements not updated on a server restart
 - Autocomplete enabled on text input fields
-- MongoStore does not support replicasets
-- Removed @learningpool.com e-mail address hack
- 
+- MongoStore does not support `replicasets`
+- Removed `@learningpool.com` e-mail address hack
+
 ## [0.1.6] - 2016-03-29
 This version adds the ability to export the source code for a course that can be built using the Adapt Framework. It also fixes some important issues for installing using Vagrant.
 
@@ -168,20 +168,20 @@ This version aligns closely with the re-work on the Adapt Framework v2.0.7 relea
 ### Added
 - Support for v2.0.7 of the Adapt Framework
 - Optimised build process, i.e. only plugins used are bundled
-- Ability to copy the _id value of contentobjects, articles, blocks and components to clipboard
+- Ability to copy the `_id` value of `contentobjects`, `articles`, `blocks` and `components` to clipboard
 - Ability to easily change component layouts without using drag and drop
 - Ability to export the source code of a particular course
 - Caching added to assets to improve performance
 
 ### Changed
-- _isAvailableInEditor flag persisted when a new plugin is uploaded
+- `_isAvailableInEditor` flag persisted when a new plugin is uploaded
 - Optimised performance of processing course assets in preview/download
 - Preview redirects to index.html rather than main.html
 - The count of failed logins is reset after a successful login
-- Turned off automatic population of Display Title for blocks
+- Turned off automatic population of display title for blocks
 
 ### Fixed
-- Non-essential attributes removed from course.json
+- Non-essential attributes removed from `course.json`
 - ACE JavaScript error when creating a new course
 - Hard 100kb limit on JSON payload
 - Corrected Project Details save issue
@@ -199,20 +199,20 @@ This version adds support for Node.js v4.2.2 LTS.
 - Locking the Title and Display Title by default
 - Renamed 'Publish' button to 'Download'
 - Updated package dependencies to correct security issues
-- Assets can now be defined in articles.json
+- Assets can now be defined in `articles.json`
 - Tag length has been increased to 30 characters
 
 ### Fixed
 - Error on copying and pasting a block
 - Custom CSS/LESS not pulling through
-- _supportedLayout not working correctly
+- `_supportedLayout` not working correctly
 
 ## [0.1.3] - 2015-10-21
 
 ### Added
-- Support for MongoDB replicasets
+- Support for MongoDB `replicasets`
 - More robust processing for missing schema pluginLocations
-- Support for _accessibility added to Configuration Settings
+- Support for `_accessibility` added to Configuration Settings
 - Support for screen breakpoints added to Configuration Settings
 - Added security to preview route
 
@@ -221,24 +221,24 @@ This version adds support for Node.js v4.2.2 LTS.
 - Bumped CKEditor version to 4.5.4
 
 ### Fixed
-- Page and menu/sections were created without a linkText property set
-- IE 9 issue with editor and list formatting
-- Problem with isAssetExternal()
+- Page and menu/sections were created without a `linkText` property set
+- IE9 issue with editor and list formatting
+- Problem with `isAssetExternal()`
 - Dashboard problems when a hero image is not set
 - Added validation for length of database name
-- Added validation to Confugration Settings
+- Added validation to Configuration Settings
 
 ## [0.1.2] - 2015-09-30
 
 ### Added
-- Support for _isOptional (Adapt Framework v2.x)
+- Support for `_isOptional` (Adapt Framework v2.x)
 - Support for accessibility (Adapt Framework v2.x)
 - Support for plugin 'globals' (Adapt Framework v2.x)
 - Improved install/upgrade
 - 'Global' configurations for plugins are conditionally applied
 - Added basic browser-based spell-check to HTML editor
 - Table editing is now an option on the HTML editor
-- Any <span> tag added in the HTML editor is now preserved
+- Any `<span>` tag added in the HTML editor is now preserved
 - Support for 'Autofill' on graphic components
 - Confirmation when deleting a component/extension item, such as a narrative or question stem
 - Ability to delete assets
@@ -246,12 +246,12 @@ This version adds support for Node.js v4.2.2 LTS.
 
 ### Changed
 - Course now has a Display Title property
-- Default plugins are now taken from the framework adapt.json file, hard-coded references to plugins are
+- Default plugins are now taken from the framework `adapt.json` file, hard-coded references to plugins are
 - Removed the dependency on adapt-cli
 - Added better logging for Validation Failed errors on database operations
 - Remove hard-coded references to core plugins
-- Upgrade to Express 4, support NodeJS 0.12.6, i.e. removed hard dependency on 0.10.33
-- Any logger.log() calls now support placeholders properly
+- Upgrade to Express 4, support NodeJS 0.12.6 (removed hard dependency on 0.10.33)
+- Any `logger.log()` calls now support placeholders properly
 - Authoring tool specific properties now removed from output JSON
 - Updated logo
 
@@ -268,7 +268,7 @@ This version adds support for Node.js v4.2.2 LTS.
 - Deleting an article or page does not remove associated assets contained with in
 - Modal overlay has a few responsive issues when appending content/custom editing views
 - Issue with long list item attribute values going outside of the list item box
-- Issue with nested items in backbone forms showing as [object Object]
+- Issue with nested items in backbone forms showing as `[object Object]`
 - Course tags were removed when a hero image was added or removed
 
 
@@ -277,16 +277,16 @@ This version adds support for Node.js v4.2.2 LTS.
 
 ## Upgrade Notes
 If upgrading from a previous version, please add the following keys to your config.json
-- "outputPlugin" - "adapt"
-- "masterTenantName" - {name of the folder containing your master tenant files}
-- "masterTenantID" - {MongoDB _id of the initial first row in the 'tenants' collection}
+- `outputPlugin` -> `adapt`
+- `masterTenantName` -> {name of the folder containing your master tenant files}
+- `masterTenantID` - {MongoDB `_id` of the initial first row in the `tenants` collection}
 
 ### Added
 - Support for client-side configs
 - Proper support for shared courses
 - Poster images now available on courses
 - Progress indicator on preview
-- Support for _trackingId values
+- Support for `_trackingId` values
 
 ### Changed
 - Role permissions synced on a server restart
@@ -294,7 +294,7 @@ If upgrading from a previous version, please add the following keys to your conf
 - Install process updated
 
 ### Fixed
-- Minor IE 9 fixes
+- Minor IE9 fixes
 - Corrected 'Back to courses' button
 - Missing language strings
 - Fixes around drag and drop, copy and paste
@@ -327,7 +327,7 @@ If upgrading from a previous version, please add the following keys to your conf
 - Copy/paste moved to server-side
 - Content plugins preloaded on server boot
 - Asset records now use relative paths
- 
+
 ### Removed
 - iframe previews
 - Sockets.io (for now...)
@@ -337,7 +337,7 @@ If upgrading from a previous version, please add the following keys to your conf
 - Issue where project settings caused a javascript error
 - Issue with uploading gifs would fail
 - Issues with course duplication
-- Issues with bowercache file locking
+- Issues with `bowercache` file locking
 - Issues with drag and drop in page editor
 - Loading screen of death
 - Session cookie security issues

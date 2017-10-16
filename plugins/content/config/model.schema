@@ -51,7 +51,7 @@
           "isSetting": false,
           "inputType": "Checkbox",
           "validators": [],
-          "title": "Enabled?"
+          "title": "Enable accessibility features?"
         },
         "_isEnabledOnTouchDevices": {
           "type": "boolean",

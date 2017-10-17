@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.4.0] - 2017-10-16
 
+Major refactor of the front-end application.
+
 ### Upgrade Notes
 Due to the changes made to the install script, this release restricts the installed framework version to `v2.x.x` to avoid unsupported breaking changes introduced in framework `v3`.
 
@@ -56,6 +58,8 @@ Any custom code using `app:` prefixed events will stop working as of this releas
 
 ## [0.3.0] - 2017-01-24
 
+User management feature release.
+
 ### Added
 - User management
   - Can add users
@@ -86,6 +90,8 @@ Any custom code using `app:` prefixed events will stop working as of this releas
 
 ## [0.2.2] - 2016-09-13
 
+Bugfix release.
+
 ### Added
 - Support for editing JSON objects, for example, the `_playerOptions` array in the Media component
 
@@ -93,7 +99,8 @@ Any custom code using `app:` prefixed events will stop working as of this releas
 - Vagrant issue with preventing updating plugins
 
 ## [0.2.1] - 2016-08-16
-This is a patch release which fixes minor issues with v0.2.0 uncovered by community user testing.
+
+Bugfix release after community user testing.
 
 ### Added
 - LESS sourcemaps
@@ -107,9 +114,8 @@ This is a patch release which fixes minor issues with v0.2.0 uncovered by commun
 - reset.less now loaded before *everything*
 
 ## [0.2.0] - 2016-07-27
-This version introduces a new look and feel to the user interface of the authoring tool, and closely matches the new theme of the Adapt community site introduced at the beginning of the year.
 
-In addition, this release also includes the following:
+Major theme update to match the new look and feel of [adaptlearning.org](www.adaptlearning.org).
 
 ### Changed
 - Disabled SSL certificate check during Vagrant install
@@ -121,9 +127,10 @@ In addition, this release also includes the following:
 - Saving course settings hangs if nothing has been changed  
 
 ## [0.1.7] - 2016-04-28
-This version contains numerous minor bug fixes and enhamcements, and supports the new menu locking feature released in version 2.0.9 of the Adapt Framework.
 
- ### Added
+Bugfix release to support framework v2.0.9.
+
+### Added
 - Support for new Adapt Framework 'menu locking' functionality
 - Support for v2.0.9 of the Adapt Framework
 - Support for `_isAvailable` flag
@@ -141,7 +148,8 @@ This version contains numerous minor bug fixes and enhamcements, and supports th
 - Removed `@learningpool.com` e-mail address hack
 
 ## [0.1.6] - 2016-03-29
-This version adds the ability to export the source code for a course that can be built using the Adapt Framework. It also fixes some important issues for installing using Vagrant.
+
+Release to add source-code export of courses.
 
 ### Added
 - Support for new Adapt Framework 'start page' functionality
@@ -163,7 +171,8 @@ This version adds the ability to export the source code for a course that can be
 - Intermittent error in copy and pasting component
 
 ## [0.1.5] - 2016-02-16
-This version aligns closely with the re-work on the Adapt Framework v2.0.7 release, with a focus on performance improvements around preview and downloading courses.
+
+Bugfix release to support framework v2.0.7.
 
 ### Added
 - Support for v2.0.7 of the Adapt Framework
@@ -187,7 +196,8 @@ This version aligns closely with the re-work on the Adapt Framework v2.0.7 relea
 - Corrected Project Details save issue
 
 ## [0.1.4] - 2015-11-25
-This version adds support for Node.js v4.2.2 LTS.  
+
+Release to add support for Node.js v4.2.2 LTS.
 
 ### Added
 - Support for Node.js v4.2.2 LTS
@@ -209,6 +219,8 @@ This version adds support for Node.js v4.2.2 LTS.
 
 ## [0.1.3] - 2015-10-21
 
+Bugfix release.
+
 ### Added
 - Support for MongoDB `replicasets`
 - More robust processing for missing schema pluginLocations
@@ -229,6 +241,8 @@ This version adds support for Node.js v4.2.2 LTS.
 - Added validation to Configuration Settings
 
 ## [0.1.2] - 2015-09-30
+
+Bugfix release.
 
 ### Added
 - Support for `_isOptional` (Adapt Framework v2.x)
@@ -275,6 +289,8 @@ This version adds support for Node.js v4.2.2 LTS.
 
 ## [0.1.1] - 2015-03-12
 
+Large bugfix release.
+
 ## Upgrade Notes
 If upgrading from a previous version, please add the following keys to your config.json
 - `outputPlugin` -> `adapt`
@@ -305,6 +321,8 @@ If upgrading from a previous version, please add the following keys to your conf
 
 
 ## [0.1.0] - 2015-01-26
+
+Initial release.
 
 ### Added
 - Support for menu selection

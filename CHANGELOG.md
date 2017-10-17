@@ -1,8 +1,10 @@
 # Change Log
-All notable changes to this project will be documented in this file.<br>
-This project adheres to [Semantic Versioning](http://semver.org/).
 
-**IMPORTANT**: For information on how to *correctly* update your installation, consult [INSTALL.md](https://github.com/adaptlearning/adapt_authoring/blob/master/INSTALL.md#updating-the-tool).
+All notable changes to the Adapt authoring tool are documented in this file.
+
+**IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.
+
+_Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
 ## [0.4.0] - 2017-10-16
 

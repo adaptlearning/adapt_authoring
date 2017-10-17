@@ -7,6 +7,18 @@
     "adapt",
     "authoring"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adaptlearning/adapt_authoring.git"
+  },
+  "framework": "2",
+  "main": "index",
+  "engines": {
+    "node": "4.x"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
   "contributors": [
     {
       "name": "Ryan Adams",
@@ -77,17 +89,6 @@
       "email": "nicola.willis@canstudios.com"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adaptlearning/adapt_authoring.git"
-  },
-  "main": "index",
-  "engines": {
-    "node": "4.x"
-  },
-  "scripts": {
-    "test": "grunt test"
-  },
   "dependencies": {
     "archiver": "~0.16.0",
     "async": "2.5.0",
@@ -126,6 +127,7 @@
     "json-schema-mapper": "0.0.2",
     "junk": "^1.0.2",
     "less": "^2.7.1",
+    "log-update": "^2.1.0",
     "matchdep": "~0.3.0",
     "method-override": "^2.3.5",
     "mime": "1.2.x",
@@ -142,7 +144,7 @@
     "nodemailer": "~2.5.0",
     "optimist": "*",
     "passport": "~0.1.17",
-    "prompt": "0.2.14",
+    "prompt": "^1.0.0",
     "request": "^2.53.0",
     "rimraf": "~2.2.5",
     "semver": "^5.0.3",

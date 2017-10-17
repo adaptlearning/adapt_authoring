@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 **IMPORTANT**: For information on how to *correctly* update your installation, consult [INSTALL.md](https://github.com/adaptlearning/adapt_authoring/blob/master/INSTALL.md#updating-the-tool).
 
-## [0.4.0] - 2017-10-16
+## [0.4.0] - 2017-10-17
 
 ### Upgrade Notes
 Due to the changes made to the install script, this release restricts the installed framework version to `v2.x.x` to avoid unsupported breaking changes introduced in framework `v3`.

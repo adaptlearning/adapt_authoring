@@ -6,7 +6,7 @@ All notable changes to the Adapt authoring tool are documented in this file.
 
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
-## [0.4.0] - 2017-10-16
+## [0.4.0] - 2017-10-17
 
 Major refactor of the front-end application.
 

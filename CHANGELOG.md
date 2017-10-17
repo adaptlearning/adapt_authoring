@@ -13,20 +13,36 @@ Major refactor of the front-end application.
 ### Upgrade Notes
 Due to the changes made to the install script, this release restricts the installed framework version to `v2.x.x` to avoid unsupported breaking changes introduced in framework `v3`.
 
-Any custom code using `app:` prefixed events will stop working as of this release. Please check the release notes for more information (in most cases, simply changing the prefix to `origin:` will fix the issue).
+There are a few notable changes to the code that may impact customisations:
+- `app:dataReady` has been renamed to `origin:dataReady`
+- `variables.less` has been renamed to `colours.less`.
+- Some editor collections have been renamed:
+    - `componentTypes` -> `componenttypes`
+    - `extensionTypes` -> `extensiontypes`
+    - `courseAssets` -> `courseassets`
+
+Please check the release notes below for more information.
 
 ### Added
 - Framework themes can now display a preview in the theme picker. To enable this, a `preview.jpg` file is needed in the theme folder root
 - Can now specify custom auth source for MongoDB ([\#1673](https://github.com/adaptlearning/adapt_authoring/issues/1673))
-- Content pane added to app wrapper to act as a consistent container for main app content. Makes sure scrolling is consistent across the application among other things
+- New `contentPane` module takes over view rendering from `Router`, and acts as a consistent container for main app content. Makes sure scrolling is consistent across the application among other things.
+- EditorDataLoader has been added to preload editor data. You can use the `EditorDataLoader.waitForLoad` function to halt code until preload has finished. You can also use the `editor:dataPreloaded` event.
 
 ### Changed
 - Major refactoring of the frontend folder:
     - 'Core' code separated into modules, and core
     - Web-app loading rewritten
-    - Core LESS files are now accessible without needing to specify a relative file path
+    - Core LESS files are now accessible without needing to specify a relative file path. `variables.less` has been renamed to `colours.less`.
+    - All duplicate LESS files have been merged, and put in their respective module folder
+    - The `adaptbuilder` folder has been renamed to `build`
     - Editor routing code has been simplified, and moved into the sub-module folders. See [modules/editor/index.js#L27-L55](https://github.com/adaptlearning/adapt_authoring/blob/v0.4.0/frontend/src/modules/editor/index.js#L27-L55) for the routing code, and [modules/editor/article/index.js#L10](https://github.com/adaptlearning/adapt_authoring/blob/release-0.4.0/frontend/src/modules/editor/article/index.js#L10) as an example of the new routing method.
     - Events using `app:` replaced with `origin:` for consistency. Most notably: any code using `app:dataReady` will need to be switched over to listen to `origin:dataReady`
+    - Router has been refactored, and the following convenience functions added: `navigateTo` - wrapper for `Backbone.Router.navigate`, `navigateToLogin`, `setHomeRoute` and `navigateToHome`
+    - Editor collections have been renamed to reflect the MongoDB collection names: `editor.componentTypes` -> `editor.componenttypes`, `editor.extensionTypes` -> `editor.extensiontypes`, `editor.courseAssets` -> `editor.courseassets`
+    - `window.polyglot` has been abstracted into the new localisation module, which can be referenced with `Origin.l10n`
+- Dashboard module has been renamed to projects, and is the default home route
+- User management has moved from plugins to modules
 - Install/upgrade scripts overhauled:
     - Can now upgrade the server and framework to specific releases
     - Can now upgrade the server and framework separately
@@ -41,6 +57,7 @@ Any custom code using `app:` prefixed events will stop working as of this releas
 - Must now input super admin password twice during install to avoid user error ([\#1032][https://github.com/adaptlearning/adapt_authoring/issues/1032])
 - Abstracted polyglot into the new internal `l10n` library (accessible globally via the `Origin` object). Language strings are now obtained using `Origin.l10n.t`
 - Backbone forms version updated, and override code tidied up/removed where possible
+- Boolean selects are now rendered as checkboxes.
 
 ### Removed
 - **Vagrant support has been dropped** ([\#1503](https://github.com/adaptlearning/adapt_authoring/issues/1503))

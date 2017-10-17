@@ -20,6 +20,8 @@ var EXTENDED_TIMEOUT = 600000;
 before(function(done) {
   this.timeout(EXTENDED_TIMEOUT);
 
+  process.env.SILENT = true;
+
   async.series([
     removeTestData,
     function initApp(cb) {

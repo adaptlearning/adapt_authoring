@@ -1,5 +1,3 @@
-/adapt_framework
-
 /conf/config.json
 
 /data
@@ -31,9 +29,5 @@
 
 /.settings
 
-version.json
-
 .idea
-.vagrant
-.env
 .project

@@ -1,14 +1,10 @@
-/adapt_framework
-
 /conf/config.json
 
 /data
 
-/frontend/src/adaptbuilder/css/adapt.css
-/frontend/src/adaptbuilder/css/adapt.css.map
-/frontend/src/adaptbuilder/css/adapt.css.map.imports
-/frontend/src/adaptbuilder/js/
+/frontend/build
 
+/frontend/src/modules/modules.js
 /frontend/src/plugins/plugins.js
 /frontend/src/templates/templates.js
 
@@ -33,10 +29,5 @@
 
 /.settings
 
-version.json
-
 .idea
-.vagrant
-.env
 .project
-*.iml

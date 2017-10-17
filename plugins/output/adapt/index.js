@@ -23,7 +23,7 @@ var origin = require('../../../'),
     assetmanager = require('../../../lib/assetmanager'),
     exec = require('child_process').exec,
     semver = require('semver'),
-    version = require('../../../version'),
+    installHelpers = require('../../../lib/installHelpers'),
     logger = require('../../../lib/logger');
 
 function AdaptOutput() {
@@ -31,7 +31,7 @@ function AdaptOutput() {
 
 util.inherits(AdaptOutput, OutputPlugin);
 
-AdaptOutput.prototype.publish = function(courseId, isPreview, request, response, next) {
+AdaptOutput.prototype.publish = function(courseId, mode, request, response, next) {
   var app = origin();
   var self = this;
   var user = usermanager.getCurrentUser(),
@@ -39,7 +39,8 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
     outputJson = {},
     isRebuildRequired = false,
     themeName = '',
-    menuName = Constants.Defaults.MenuName;
+    menuName = Constants.Defaults.MenuName,
+    frameworkVersion;
 
   var resultObject = {};
 
@@ -83,7 +84,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         });
       },
       function(callback) {
-        self.sanitizeCourseJSON(outputJson, function(err, data) {
+        self.sanitizeCourseJSON(mode, outputJson, function(err, data) {
           if (err) {
             return callback(err);
           }
@@ -146,8 +147,13 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
           if (err) {
             return callback(err);
           }
-
           callback(null);
+        });
+      },
+      function(callback) {
+        installHelpers.getInstalledFrameworkVersion(function(error, version) {
+          frameworkVersion = version;
+          callback(error);
         });
       },
       function(callback) {
@@ -159,7 +165,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
             var outputFolder = COURSE_FOLDER.replace(FRAMEWORK_ROOT_FOLDER + path.sep,'');
 
             // Append the 'build' folder to later versions of the framework
-            if (semver.gte(semver.clean(version.adapt_framework), semver.clean('2.0.0'))) {
+            if (semver.gte(semver.clean(frameworkVersion), semver.clean('2.0.0'))) {
               outputFolder = path.join(outputFolder, Constants.Folders.Build);
             }
 
@@ -215,7 +221,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
         });
       },
       function(callback) {
-        if (!isPreview) {
+        if (mode === Constants.Modes.publish) {
           // Now zip the build package
           var filename = path.join(COURSE_FOLDER, Constants.Filenames.Download);
           var zipName = self.slugify(outputJson['course'].title);
@@ -261,7 +267,6 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
 AdaptOutput.prototype.export = function (courseId, request, response, next) {
   var self = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
-  var userId = usermanager.getCurrentUser()._id;
   var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
 
   var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
@@ -271,9 +276,11 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
   var exportName;
   var exportDir;
 
+  var mode = Constants.Modes.export;
+
   async.waterfall([
     function publishCourse(callback) {
-      self.publish(courseId, true, request, response, callback);
+      self.publish(courseId, mode, request, response, callback);
     },
     function getCourseName(results, callback) {
       database.getDatabase(function (error, db) {
@@ -306,7 +313,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
 
         // regular expressions
         var includesRE = new RegExp(includes.join('|'));
-        var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
+        var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules(?!\.)|\/courses\b(?!\.)|\/course\b(?!\.)|\/exports\b/);
         var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
 
         fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {

@@ -1,206 +1,190 @@
-var should = require('should'),
-    origin = require('../'),
-    request = require('supertest'),
-    usermanager = require('../lib/usermanager'),
-    auth = require('../lib/auth');
+var should = require('should');
+var request = require('supertest');
 
-describe('auth', function() {
-  var app = origin();
-  var helper = {
-    passwordPlain: 'this is my password',
-    passwordCipher: '',
-    email: 'auth@foo.bar',
-    userId: '',
-    userAgent: {},
-    token: "testtokentesttokentesttokentest1",
-    newPassword: 'newpassword'
-  };
+var origin = require('../');
+var auth = require('../lib/auth');
+var usermanager = require('../lib/usermanager');
 
-  before (function (done) {
-    // retaining a reference to the agent allows us to
-    // take advantage of cookies
-    helper.userAgent = request.agent(app.getServerURL());
+var testData = require('./testData.json');
+var app = origin();
+
+var helper = {
+  passwordCipher: '',
+  userId: '',
+  userAgent: {},
+};
+
+before (function(done) {
+  // store the agent to use cookies
+  helper.userAgent = request.agent(app.getServerURL());
+  done();
+});
+
+after (function(done) {
+  if (!helper.userId) return done();
+  usermanager.deleteUser({ email: testData.auth.email }, function(error) {
+    if (error) return done(error);
+    usermanager.retrieveUserPasswordReset({ token: testData.auth.token }, function(error, record) {
+      if (error) return done(error);
+      usermanager.deleteUserPasswordReset({user:record.id}, done);
+    });
+  });
+});
+
+it('should be able to hash a password', function(done) {
+  auth.hashPassword(testData.auth.passwordPlain, function(error, hash) {
+    should.not.exist(error);
+    helper.passwordCipher = hash;
     done();
   });
+});
 
-  after (function (done) {
-    // cleanup
-    if (helper.userId) {
-      usermanager.deleteUser({ _id: helper.userId }, function (err) {
-        usermanager.retrieveUserPasswordReset({ token: helper.token }, function (error, record) {
-          if (error) {
-            return done(error)
-          }
-
-          usermanager.deleteUserPasswordReset({user:record.id}, function(error) {
-            if (error) {
-              return done(error);
-            }
-
-            return done();
-          });
-        });
-      });
-    } else {
-      done();
-    }
+it('should validate a correct password', function(done) {
+  auth.validatePassword(testData.auth.passwordPlain, helper.passwordCipher, function(error, valid) {
+    should.not.exist(error);
+    valid.should.be.true;
+    done();
   });
+});
 
-  it ('should hash a password', function (done) {
-    auth.hashPassword(helper.passwordPlain, function (error, hash) {
+it('should not validate an incorrect password', function(done) {
+  auth.validatePassword('this is not my password', helper.passwordCipher, function(error, valid) {
+    should.not.exist(error);
+    valid.should.not.be.true;
+    done();
+  });
+});
+
+it('should accept requests to register a user with the default auth strategy', function(done) {
+  helper.userAgent
+    .post('/api/register')
+    .set('Accept', 'application/json')
+    .send({
+      'email': testData.auth.email,
+      'password': testData.auth.passwordPlain
+    })
+    .expect(200)
+    .expect('Content-Type', /json/)
+    .end(function(error, res) {
+      should.exist(res.body);
+      should.exist(res.body.email);
+      should.exist(res.body._id);
+      res.body.email.should.equal(testData.auth.email);
+      helper.userId = res.body._id;
+      // we need to set the tenant
+      app.usermanager.updateUser({ _id: helper.userId }, { _tenantId: app.configuration.getConfig('masterTenantID') }, done);
+    });
+});
+
+it('should accept authenticated requests to create a user session', function(done) {
+  helper.userAgent
+    .post('/api/login')
+    .set('Accept', 'application/json')
+    .send({
+      'email': testData.auth.email,
+      'password': testData.auth.passwordPlain
+    })
+    .expect(200)
+    .expect('Content-Type', /json/)
+    .end(function(error, res) {
       should.not.exist(error);
-      helper.passwordCipher = hash;
       done();
     });
-  });
+});
 
-  it ('should validate a correct password', function (done) {
-    auth.validatePassword(helper.passwordPlain, helper.passwordCipher, function (error, valid) {
+it('should reject a user with an incorrect login', function(done) {
+  helper.userAgent
+    .post('/api/login')
+    .set('Accept', 'application/json')
+    .send({
+      'email': 'nobody@nowhere.com',
+      'password': '12345'
+    })
+    .expect(401)
+    .expect('Content-Type', /json/)
+    .end(function(error, res) {
       should.not.exist(error);
-      valid.should.be.true;
       done();
     });
-  });
+});
 
-  it ('should not validate an incorrect password', function (done) {
-    auth.validatePassword('this is not my password', helper.passwordCipher, function (error, valid) {
+// TODO not sure what this functionality's for
+it('should accept authenticated requests to log in as another user', function(done) {
+  helper.userAgent
+    .post('/api/loginas')
+    .set('Accept', 'application/json')
+    .send({
+      "email": testData.testUser.email,
+      "password": testData.testUser.plainPassword
+    })
+    .expect(200)
+    .expect('Content-Type', /json/)
+    .end(function(error, res) {
       should.not.exist(error);
-      valid.should.not.be.true;
+      res.body.success.should.be.true;
+      helper.userId = res.body.id;
       done();
     });
-  });
+});
 
-  it ('should allow me to register a user with default auth strategy', function (done) {
-    helper.userAgent
-      .post('/api/register')
-      .set('Accept', 'application/json')
-      .send({
-        'email': helper.email,
-        'password': helper.passwordPlain
-      })
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function (error, res) {
-        should.exist(res.body);
-        should.exist(res.body.email);
-        should.exist(res.body._id);
-        res.body.email.should.equal(helper.email);
-        helper.userId = res.body._id;
-
-        // having registered a user, we need to set the tenant
-        app.usermanager.updateUser({ _id: helper.userId }, { _tenantId: app.configuration.getConfig('masterTenantID') }, done);
-      });
-  });
-
-  it ('should create a user session with a correct login', function (done) {
-    helper.userAgent
-      .post('/api/login')
-      .set('Accept', 'application/json')
-      .send({
-        'email': helper.email,
-        'password': helper.passwordPlain
-      })
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function (error, res) {
-        should.not.exist(error);
-        done();
-      });
-  });
-
-  it ('should verify that an authenticated user is authenticated', function (done) {
-    helper.userAgent
-      .get('/api/authcheck')
-      .send()
-      .expect(200)
-      .end(function (error, res) {
-        should.not.exist(error);
-        done();
-      });
-  });
-
-  it ('should reject a user with an incorrect login', function (done) {
-    helper.userAgent
-      .post('/api/login')
-      .set('Accept', 'application/json')
-      .send({
-        'email': 'nobody@nowhere.com',
-        'password': '12345'
-      })
-      .expect(401)
-      .expect('Content-Type', /json/)
-      .end(function (error, res) {
-        should.not.exist(error);
-        done();
-      });
-  });
-
-  it ('should generate a token', function (done) {
-    auth.createToken(function (error, token) {
+it('should accept requests to verify if a user is authenticated', function(done) {
+  helper.userAgent
+    .get('/api/authcheck')
+    .send()
+    .expect(200)
+    .end(function(error, res) {
       should.not.exist(error);
-      token.should.have.lengthOf(24);
+      res.body.id.should.equal(helper.userId);
       done();
     });
-  });
+});
 
-  it ('should accept requests to create a token', function (done) {
-    helper.userAgent
-      .post('/api/createtoken')
-      .set('Accept', 'application/json')
-      .send({
-        'email': helper.email
-      })
-      .expect(200)
-      .end(function (error, res) {
-        should.not.exist(error);
-        done();
-      });
+it('should be able to generate a random token', function(done) {
+  auth.createToken(function(error, token) {
+    should.not.exist(error);
+    token.should.have.lengthOf(24);
+    done();
   });
+});
 
-  // @TODO something a bit funky about this test, needs revisiting
-  //
-  // it ('should reset a users password', function (done) {
-  //   // Manually pass in a reset request
-  //   var userReset = {
-  //     email: helper.email,
-  //     token: helper.token,
-  //     tokenCreated: new Date(),
-  //     ipAddress: '127.0.0.1'
-  //   };
-  //
-  //   usermanager.createUserPasswordReset(userReset, function (error) {
-  //     if (error) {
-  //       return done(error);
-  //     }
-  //
-  //     // Reset the users password
-  //     helper.userAgent
-  //       .post('/api/resetpassword')
-  //       .set('Accept', 'application/json')
-  //       .send({
-  //         'user': helper.userId,
-  //         'password': helper.newPassword,
-  //         'token': userReset.token
-  //       })
-  //       .expect(200)
-  //       .end(function (error, res) {
-  //         should.not.exist(error);
-  //
-  //         // Should allow user to login with the new password
-  //         helper.userAgent
-  //           .post('/api/login')
-  //           .set('Accept', 'application/json')
-  //           .send({
-  //             'email': helper.email,
-  //             'password': helper.newPassword
-  //           })
-  //           .expect(200)
-  //           .expect('Content-Type', /json/)
-  //           .end(function (error, res) {
-  //             should.not.exist(error);
-  //             done();
-  //           });
-  //         });
-  //     });
-  //   });
+it('should accept requests to create a password reset token', function(done) {
+  helper.userAgent
+    .post('/api/createtoken')
+    .set('Accept', 'application/json')
+    .send({ 'email': testData.auth.email })
+    .expect(200)
+    .end(function(error, res) {
+      should.not.exist(error);
+      res.body.success.should.be.true;
+      done();
+    });
+});
+
+it('should accept requests to reset a user\'s password', function(done) {
+  helper.userAgent
+    .post('/api/userpasswordreset/' + testData.auth.token)
+    .set('Accept', 'application/json')
+    .send({
+      'user': helper.userId,
+      'password': testData.testUser.newpassword,
+      'token': testData.auth.token
+    })
+    .expect(200)
+    .end(function(error, res) {
+      should.not.exist(error);
+      res.body.success.should.be.true;
+      done();
+    });
+});
+
+it('should accept requests to end a user session', function(done) {
+  helper.userAgent
+    .post('/api/logout')
+    .expect(200)
+    .expect('Content-Type', /json/)
+    .end(function(error, res) {
+      should.not.exist(error);
+      res.body.success.should.be.true;
+      done();
+    });
 });

@@ -1,0 +1,52 @@
+<button class="asset-management-modal-new-asset-close">
+    <i class="fa fa-times"></i>
+</button>
+<div class="asset-management-modal-new-asset-inner">
+    <!-- Begin upload form -->
+    <form class="asset-form forms asset-form" action="/api/asset" method="post">
+        <div class="form-group">
+            <label for="file">
+                {{t 'app.assetfile'}} <span class="req">*</span>
+                <span class="error"></span>
+            </label>
+            {{#if path}}
+            <div class="asset-management-new-asset-file">
+                {{t 'app.fileuploaded'}}
+            </div>
+            {{else}}
+            <input type="file" class="asset-file" name="file">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-percent">0%</div>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+        <div class="form-group">
+            <label for="title">
+                {{t 'app.assettitle'}} <span class="req">*</span>
+                <span class="error"></span>
+            </label>
+            <input type="text" class="asset-title required" name="title" placeholder="{{t 'app.assettitle'}}" value="{{ title }}" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label for="description">
+                {{t 'app.assetdescription'}} <span class="req">*</span>
+                <span class="error"></span>
+            </label>
+            <textarea class="asset-description required" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>
+        </div>
+
+        <div class="form-group tags">
+            <label for="tags_control">{{t 'app.tags'}}</label>
+            <input type="text" autocomplete="off" class="width-30" id="tags_control" name="tags_control" value="{{pickCSV tags "title"}}" />
+        </div>
+
+        <div class="">
+            <button class="asset-management-modal-new-asset-upload btn secondary">{{t 'app.upload'}}</button>
+        </div>
+        <input type="hidden" name="tags" id="tags" />
+    </form>
+    <!-- end upload form -->
+</div>

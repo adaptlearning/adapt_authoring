@@ -7,13 +7,21 @@ var Constants = require('../../lib/outputmanager').Constants;
 var configuration = require('../../lib/configuration');
 var fs = require('fs');
 var path = require('path');
+var OutputPlugin = require('../../lib/outputmanager').OutputPlugin;
+var util = require('util');
 
-server.get('/download/:tenant/:course', function (req, res, next) {
-  var course = req.params.course,
-      tenant = req.params.tenant,
-      currentUser = usermanager.getCurrentUser();
+function DownloadOutput() {
+}
 
-  if (currentUser && (currentUser.tenant._id == tenant)) {
+util.inherits(DownloadOutput, OutputPlugin);
+
+server.get('/download/:tenant/:course', function(req, res, next) {
+  var course = req.params.course;
+  var tenant = req.params.tenant;
+  var currentUser = usermanager.getCurrentUser();
+  var mode = this.Constants.Modes.publish;
+
+  if (currentUser && (currentUser.tenant._id === tenant)) {
 
     var outputplugin = app.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), function (error, plugin){
 
@@ -22,7 +30,7 @@ server.get('/download/:tenant/:course', function (req, res, next) {
         res.json({ success: false, message: error.message });
         return res.end();
       } else {
-        plugin.publish(course, false, req, res, function (error, result) {
+        plugin.publish(course, mode, req, res, function (error, result) {
           if (error) {
             logger.log('error', 'Unable to publish');
             return res.json({ success: false, message: error.message });

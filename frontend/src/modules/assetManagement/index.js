@@ -9,49 +9,6 @@ define(function(require) {
   var AssetManagementNewAssetSidebarView = require('./views/assetManagementNewAssetSidebarView');
   var TagsCollection = require('core/collections/tagsCollection');
 
-  Origin.on('router:assetManagement', function(location, subLocation, action) {
-    Origin.assetManagement = {};
-    Origin.assetManagement.filterData = {};
-
-    if (!location) {
-        var tagsCollection = new TagsCollection();
-
-        tagsCollection.fetch({
-          success: function() {
-            // Load asset collection before so sidebarView has access to it
-            var assetCollection = new AssetCollection();
-            // No need to fetch as the collectionView takes care of this
-            // Mainly due to serverside filtering
-            Origin.trigger('location:title:hide');
-            Origin.sidebar.addView(new AssetManagementSidebarView({collection: tagsCollection}).$el);
-            Origin.contentPane.setView(AssetManagementView, {collection: assetCollection});
-            Origin.trigger('assetManagement:loaded');
-          },
-          error: function() {
-            console.log('Error occured getting the tags collection - try refreshing your page');
-          }
-        });
-    } else if (location=== 'new') {
-        Origin.trigger('location:title:update', {title: 'New Asset'});
-        Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
-        Origin.contentPane.setView(AssetManagementNewAssetView, { model: new AssetModel });
-    } else if (subLocation === 'edit') {
-      var Asset = new AssetModel({ _id: location });
-      // Fetch existing asset model
-      Asset.fetch({
-        success: function() {
-          Origin.trigger('location:title:update', {title: 'Edit Asset'});
-          Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
-          Origin.contentPane.setView(AssetManagementNewAssetView, { model: Asset });
-        }
-      });
-    }
-  });
-
-  Origin.on('globalMenu:assetManagement:open', function() {
-    Origin.router.navigateTo('assetManagement');
-  });
-
   Origin.on('origin:dataReady login:changed', function() {
     Origin.globalMenu.addItem({
       "location": "global",
@@ -61,4 +18,54 @@ define(function(require) {
       "sortOrder": 2
     });
   });
+
+  Origin.on('globalMenu:assetManagement:open', function() {
+    Origin.router.navigateTo('assetManagement');
+  });
+
+  Origin.on('router:assetManagement', function(location, subLocation, action) {
+    Origin.assetManagement = {
+      filterData: {}
+    };
+    if(!location) loadAssetsView();
+    else if(location === 'new') loadNewAssetView();
+    else if (subLocation === 'edit') loadEditAssetView();
+  });
+
+  function loadAssetsView() {
+    (new TagsCollection()).fetch({
+      success: function(tags) {
+        Origin.trigger('location:title:hide');
+        Origin.sidebar.addView(new AssetManagementSidebarView({ collection: tags }).$el);
+        // no fetch here, collectionView handles this to allow server-side filtering
+        Origin.contentPane.setView(AssetManagementView, { collection: new AssetCollection() });
+        Origin.trigger('assetManagement:loaded');
+      },
+      error: onFetchError
+    });
+  }
+
+  function loadNewAssetView() {
+    Origin.trigger('location:title:update', { title: Origin.l10n.t('app.newasset') });
+    Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
+    Origin.contentPane.setView(AssetManagementNewAssetView, { model: new AssetModel });
+  }
+
+  function loadEditAssetView() {
+    (new AssetModel({ _id: Origin.location.route1 })).fetch({
+      success: function() {
+        Origin.trigger('location:title:update', { title: Origin.l10n.t('app.editasset') });
+        Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
+        Origin.contentPane.setView(AssetManagementNewAssetView, { model: Asset });
+      },
+      error: onFetchError
+    });
+  }
+
+  function onFetchError(jqXHR) {
+    Origin.Notify.alert({
+      type: 'error',
+      text: Origin.l10n.t('app.errorfetchingdata')
+    });
+  }
 });

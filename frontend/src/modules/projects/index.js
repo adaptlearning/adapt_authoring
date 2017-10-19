@@ -7,24 +7,44 @@ define(function(require) {
   var SharedProjectCollection = require('./collections/sharedProjectCollection');
   var TagsCollection = require('core/collections/tagsCollection');
 
-  function formatOptionItem(title, icon, cbEvent, value, group) {
-    return {
-      title: Origin.l10n.t('app.' + title),
-      icon: icon,
-      callbackEvent: cbEvent,
-      value: value,
-      group: group
-    };
-  }
-
   Origin.on('router:dashboard', function(location, subLocation, action) {
     Origin.trigger('editor:resetData');
     Origin.options.addItems([
-      formatOptionItem('grid', 'th', 'dashboard:layout:grid', 'grid', 'layout'),
-      formatOptionItem('list', 'list', 'dashboard:layout:list', 'list', 'layout'),
-      formatOptionItem('ascending', 'sort-alpha-asc', 'dashboard:sort:asc', 'asc', 'sort'),
-      formatOptionItem('descending', 'sort-alpha-desc', 'dashboard:sort:desc', 'desc', 'sort'),
-      formatOptionItem('recent', 'edit', 'dashboard:sort:updated', 'updated', 'sort')
+      {
+        title: Origin.l10n.t('app.grid'),
+        icon: 'th',
+        callbackEvent: 'dashboard:layout:grid',
+        value: 'grid',
+        group: 'layout',
+      },
+      {
+        title: Origin.l10n.t('app.list'),
+        icon: 'list',
+        callbackEvent: 'dashboard:layout:list',
+        value: 'list',
+        group: 'layout'
+      },
+      {
+        title: Origin.l10n.t('app.ascending'),
+        icon: 'sort-alpha-asc',
+        callbackEvent: 'dashboard:sort:asc',
+        value: 'asc',
+        group: 'sort'
+      },
+      {
+        title: Origin.l10n.t('app.descending'),
+        icon: 'sort-alpha-desc',
+        callbackEvent: 'dashboard:sort:desc',
+        value: 'desc',
+        group: 'sort'
+      },
+      {
+        title: Origin.l10n.t('app.recent'),
+        icon: 'edit',
+        callbackEvent: 'dashboard:sort:updated',
+        value: 'updated',
+        group: 'sort'
+      }
     ]);
 
     var tagsCollection = new TagsCollection();
@@ -41,17 +61,15 @@ define(function(require) {
   });
 
   Origin.on('dashboard:loaded', function (options) {
-    var langKey, collection;
     if(options.type === 'shared') {
-      langKey = 'app.sharedprojects';
-      collection = SharedProjectCollection;
+      Origin.trigger('location:title:update', { breadcrumbs: ['dashboard'], title: Origin.l10n.t(langKey) });
+      Origin.contentPane.setView(ProjectsView, { collection: new SharedProjectCollection });
+      return;
     }
     if(options.type === 'all') {
-      langKey = 'app.myprojects';
-      collection = MyProjectCollection;
+      Origin.trigger('location:title:update', { breadcrumbs: ['dashboard'], title: Origin.l10n.t(langKey) });
+      Origin.contentPane.setView(ProjectsView, { collection: new MyProjectCollection });
     }
-    Origin.trigger('location:title:update', { breadcrumbs: ['dashboard'], title: Origin.l10n.t(langKey) });
-    Origin.contentPane.setView(ProjectsView, { collection: new collection });
   });
 
   Origin.on('globalMenu:dashboard:open', function() {

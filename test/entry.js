@@ -15,7 +15,7 @@ var testData = require('./testData.json');
 var testConfig = require('./testConfig.json');
 
 var app = origin();
-var Constants = require('../lib/outputmanager').Constants;
+var Folders = require('../lib/outputmanager').Constants.Folders;
 
 var TEST_CACHE_DIR = path.join(__dirname, '.testcache');
 var EXTENDED_TIMEOUT = 600000;
@@ -130,7 +130,7 @@ function createCacheData(done) {
   var src = path.join(TEST_CACHE_DIR, Constants.Folders.Framework);
   function _copyFramework(error) {
     if(error) return done(error);
-    var dest = path.join(__dirname, '..', Constants.Folders.Temp, testData.testTenant._id, Constants.Folders.Framework);
+    var dest = path.join(app.configuration.serverRoot, Folders.Temp, testData.testTenant._id, Folders.Framework);
     fs.copy(src, dest, done);
   }
   // make sure we've got the framework, and copy it into place

@@ -128,22 +128,26 @@ function createCacheData(done) {
   app.configuration.setConfig('masterTenantName', testData.testTenant.name);
 
   var src = path.join(TEST_CACHE_DIR, Folders.Framework);
-  function _copyFramework(error) {
-    if(error) return done(error);
+  
+  function _copyFramework() {
     var dest = path.join(app.configuration.serverRoot, Folders.Temp, testData.testTenant._id);
-    fs.ensureDir(dest, function(error) {
-      if(error) {
-        return done(error);
-      }
-      fs.symlink(src, path.join(dest, Folders.Framework), 'dir', done);
-    });
+    async.series([
+      async.apply(fs.remove, dest),
+      async.apply(fs.ensureDir, dest),
+      async.apply(fs.symlink, src, path.join(dest, Folders.Framework), 'dir')
+    ], done);
   }
   // make sure we've got the framework, and copy it into place
   fs.stat(src, function(error, stats) {
-    if(error) {
-      return installHelpers.installFramework({ directory: src }, _copyFramework);
+    if(!error) {
+      return _copyFramework();
     }
-    _copyFramework();
+    installHelpers.installFramework({ directory: src }, function(error) {
+      if(error) {
+        return done(error);
+      }
+      _copyFramework();
+    });
   });
 }
 

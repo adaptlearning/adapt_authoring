@@ -127,7 +127,7 @@ function createCacheData(done) {
   app.configuration.setConfig('masterTenantID', testData.testTenant._id);
   app.configuration.setConfig('masterTenantName', testData.testTenant.name);
 
-  var src = path.join(TEST_CACHE_DIR, Constants.Folders.Framework);
+  var src = path.join(TEST_CACHE_DIR, Folders.Framework);
   function _copyFramework(error) {
     if(error) return done(error);
     var dest = path.join(app.configuration.serverRoot, Folders.Temp, testData.testTenant._id, Folders.Framework);

@@ -130,8 +130,13 @@ function createCacheData(done) {
   var src = path.join(TEST_CACHE_DIR, Folders.Framework);
   function _copyFramework(error) {
     if(error) return done(error);
-    var dest = path.join(app.configuration.serverRoot, Folders.Temp, testData.testTenant._id, Folders.Framework);
-    fs.copy(src, dest, done);
+    var dest = path.join(app.configuration.serverRoot, Folders.Temp, testData.testTenant._id);
+    fs.ensureDir(dest, function(error) {
+      if(error) {
+        return done(error);
+      }
+      fs.symlink(src, path.join(dest, Folders.Framework), 'dir', done);
+    });
   }
   // make sure we've got the framework, and copy it into place
   fs.stat(src, function(error, stats) {

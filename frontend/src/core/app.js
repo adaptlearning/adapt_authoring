@@ -5,6 +5,7 @@
   function loadLibraries(callback) {
     require([
       'ace/ace',
+      'handlebars',
       'imageReady',
       'inview',
       'jqueryForm',
@@ -77,6 +78,7 @@
   * Start app load
   */
   loadLibraries(function() {
+    window.Handlebars = $.extend(require('handlebars'), window.Handlebars);
     loadCore(function() {
       loadAddOns(function() {
         // start session

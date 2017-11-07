@@ -377,7 +377,7 @@ define(function(require){
 
     cutContent: function(view) {
       var type = helpers.capitalise(view.model.get('_type'));
-      var collectionType = view.model._siblings;
+      var collectionType = view.model._siblingTypes;
 
       this.addToClipboard(view.model);
 

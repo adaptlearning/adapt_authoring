@@ -181,14 +181,14 @@ define(function(require) {
   function createCollection(Model, query) {
     var courseId = Origin.location.route1;
     var url = Model.prototype.urlRoot;
-    var siblings = Model.prototype._siblings;
+    var siblingTypes = Model.prototype._siblingTypes;
     /**
     * FIXME for non course-specific data without a model._type.
     * Adding siblings will break the below check...
     */
     var inferredType = url.split('/').slice(-1) + 's';
     // FIXME not the best check for course-specific collections
-    if(siblings !== undefined) {
+    if(siblingTypes !== undefined) {
       if(!courseId) throw new Error('No Editor.data.course specified, cannot load ' + url);
       url += '?_courseId=' + courseId + (query || '');
     }
@@ -196,7 +196,7 @@ define(function(require) {
       autoFetch: false,
       model: Model,
       url: url,
-      _type: siblings || inferredType
+      _type: siblingTypes || inferredType
     });
   }
 

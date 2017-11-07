@@ -77,16 +77,6 @@ define(function(require) {
       return new Backbone.Collection(siblings);
     },
 
-    setOnChildren: function(key, value, options) {
-      var args = arguments;
-
-      if(!this._children) return;
-
-      this.getChildren().each(function(child){
-        child.setOnChildren.apply(child, args);
-      });
-    },
-
     getPossibleAncestors: function() {
       var map = {
         'contentObjects': { 'ancestorType': 'page' },
@@ -112,19 +102,6 @@ define(function(require) {
           }
         });
       }
-    },
-
-    serializeChildren: function() {
-      var children = this.getChildren();
-      var serializedJson = '';
-
-      if (children) {
-        _.each(children.models, function(child) {
-          serializedJson += child.serialize();
-        });
-      }
-
-      return serializedJson;
     }
   });
 

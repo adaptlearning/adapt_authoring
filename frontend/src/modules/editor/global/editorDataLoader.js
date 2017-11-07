@@ -3,12 +3,8 @@ define(function(require) {
   var _ = require('underscore');
   var Origin = require('core/origin');
 
-  var ArticleModel = require('core/models/articleModel');
-  var BlockModel = require('core/models/blockModel');
   var ClipboardModel = require('core/models/clipboardModel');
-  var ComponentModel = require('core/models/componentModel');
   var ComponentTypeModel = require('core/models/componentTypeModel');
-  var ContentObjectModel = require('core/models/contentObjectModel');
   var ConfigModel = require('core/models/configModel');
   var CourseAssetModel = require('core/models/courseAssetModel');
   var CourseModel = require('core/models/courseModel');
@@ -20,20 +16,14 @@ define(function(require) {
 
   // used to check what's preloaded
   var globalData = {
-    courses: false,
     extensiontypes: false,
     componenttypes: false
   };
   // used to check what's loaded
   var courseData = {
-    clipboards: false,
     course: false,
     config: false,
-    contentObjects: false,
-    articles: false,
-    blocks: false,
-    components: false,
-    courseassets: false
+    clipboards: false
   };
 
   // Public API
@@ -49,9 +39,6 @@ define(function(require) {
       ensureEditorData();
       resetLoadStatus(globalData);
       // create the global collections
-      if(!Origin.editor.data.courses) {
-        Origin.editor.data.courses = createCollection(CourseModel);
-      }
       if(!Origin.editor.data.extensiontypes) {
         Origin.editor.data.extensiontypes = createCollection(ExtensionModel);
       }
@@ -91,12 +78,7 @@ define(function(require) {
         _.extend(Origin.editor.data, {
           course: new CourseModel({ _id: courseId }),
           config: new ConfigModel({ _courseId: courseId }),
-          contentObjects: createCollection(ContentObjectModel),
-          articles: createCollection(ArticleModel),
-          blocks: createCollection(BlockModel),
-          components: createCollection(ComponentModel),
           clipboards: createCollection(ClipboardModel, '&createdBy=' + Origin.sessionModel.get('id')),
-          courseassets: createCollection(CourseAssetModel)
         });
       }
       // fetch all collections

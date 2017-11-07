@@ -306,7 +306,7 @@ define(function(require){
 
           function iterateOverChildren(model) {
             // Return the function if no children - on components
-            if(!model._children) return;
+            if(!model._childTypes) return;
 
             var currentChildren = model.getChildren();
 
@@ -314,7 +314,7 @@ define(function(require){
             if (currentChildren.length == 0) {
               containsAtLeastOneChild = false;
 
-              var children = _.isArray(model._children) ? model._children.join('/') : model._children;
+              var children = _.isArray(model._childTypes) ? model._childTypes.join('/') : model._childTypes;
               alerts.push(
                 "There seems to be a "
                 + model.get('_type')

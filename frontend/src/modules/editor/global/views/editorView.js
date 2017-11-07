@@ -275,7 +275,7 @@ define(function(require){
       var postData = {
         objectId: model.get('_id'),
         courseId: Origin.editor.data.course.get('_id'),
-        referenceType: model._siblings
+        referenceType: model._siblingTypes
       };
       $.post('/api/content/clipboard/copy', postData, _.bind(function(jqXHR) {
         Origin.editor.clipboardId = jqXHR.clipboardId;

@@ -94,6 +94,33 @@ define(function(require) {
 		return parts.join('<br />');
     };
 
+	Backbone.Form.editors.List.prototype.removeItem = function(item) {
+		//Confirm delete
+		var confirmMsg = this.schema.confirmDelete;
+
+		var remove = _.bind(function(isConfirmed) {
+			if (isConfirmed === false) return;
+
+			var index = _.indexOf(this.items, item);
+
+			this.items[index].remove();
+			this.items.splice(index, 1);
+
+			if (item.addEventTriggered) {
+				this.trigger('remove', this, item.editor);
+				this.trigger('change', this);
+			}
+
+			if (!this.items.length && !this.Editor.isAsync) this.addItem();
+		}, this);
+
+		if (confirmMsg) {
+			window.confirm({ title: confirmMsg, type: 'warning', callback: remove });
+		} else {
+			remove();
+		}
+	};
+
 	// Used to setValue with defaults
 
 	Backbone.Form.editors.Base.prototype.setValue = function(value) {

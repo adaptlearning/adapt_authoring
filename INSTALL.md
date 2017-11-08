@@ -12,7 +12,7 @@
 
 Install the following before proceeding:
 * [Git](http://git-scm.com/downloads)
-* [Node](http://nodejs.org/) Use Node.js v4.2.x. Node version managers, such as [nodist (Windows)](https://github.com/marcelklehr/nodist) or [nvm (OS X, Linux)]  (https://github.com/creationix/nvm), make it easy to switch between versions of Node.
+* [Node](http://nodejs.org/) We recommend the [current LTS release](https://github.com/nodejs/LTS). Node version managers, such as [nodist (Windows)](https://github.com/marcelklehr/nodist) or [nvm (OS X, Linux)]  (https://github.com/creationix/nvm), make it easy to switch between versions of Node.
 * [npm](https://www.npmjs.com/) is bundled and installed automatically with Node.
 * [Grunt](http://gruntjs.com/)
 * [Adapt-CLI](https://github.com/adaptlearning/adapt-cli)

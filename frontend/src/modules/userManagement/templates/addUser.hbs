@@ -1,0 +1,41 @@
+<div class="inner">
+  <div class="title">
+    {{t 'app.adduserformtitle'}}
+  </div>
+  <form class="addUser forms" action="/api/user" method="post" autocomplete="off">
+      <div class="form-group">
+        <label for="email">{{t 'app.usernameoremail'}} <span class="req">*</span></label>
+        <div class="field-error display-none" data-error="">{{t 'app.invalidusernameoremail'}}</div>
+        <input type="email" name="email">
+      </div>
+      <div class="form-group">
+          <label for="password">{{t 'app.password'}} <span class="req">*</span>
+          </label>
+          <input type="password" name="password">
+      </div>
+      <div class="form-group">
+        <label for="tenant">{{t 'app.tenant'}}</label>
+        <select name="_tenantId" {{#if globalData.hasTenantAdminPermissions}}disabled{{/if}}>
+          {{#each globalData.allTenants.models}}
+            <option value="{{this.attributes._id}}">{{this.attributes.displayName}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="role">{{t 'app.role'}}</label>
+        <select name="role">
+         {{#if globalData.hasTenantAdminPermissions}}
+            {{#each globalData.allRoles.models}}
+              {{#ifValueNotEquals this.attributes.name "Super Admin"}}
+                <option value="{{this.attributes._id}}">{{this.attributes.name}}</option>
+              {{/ifValueNotEquals}}
+            {{/each}}
+          {{else}}
+            {{#each globalData.allRoles.models}}
+              <option value="{{this.attributes._id}}">{{this.attributes.name}}</option>
+            {{/each}}
+          {{/if}}
+        </select>
+      </div>
+  </form>
+</div>

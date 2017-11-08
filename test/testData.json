@@ -1,0 +1,64 @@
+{
+  "testUser": {
+    "email": "user@adaptlearning.org",
+    "plainPassword": "password",
+    "newpassword": "newpassword",
+    "auth": "local",
+    "_isDeleted": false
+  },
+  "testTenant": {
+    "name": "adapt-tenant-mocha",
+    "displayName": "Test Tenant",
+    "isMaster": true
+  },
+  "assetmanager": {
+    "asset": {
+      "title": "Temporary Asset",
+      "description": "This is just a temp file",
+      "repo": "localfs"
+    }
+  },
+  "auth": {
+    "passwordPlain": "this is my password",
+    "email": "auth@foo.bar",
+    "token": "testtokentesttokentesttokentest1",
+    "newPassword": "newpassword"
+  },
+  "database": {
+    "model": "foo",
+    "email": "foo@bar.com",
+    "altEmail": "bar@foo.com"
+  },
+  "filestorage": {
+    "filename": "tempFile",
+    "dirname": "tempDir",
+    "fileContents": "foobar"
+  },
+  "permissions": {
+    "email": "testpermissions@adapt.org"
+  },
+  "pluginmanager": {
+    "name": "fooPlugin",
+    "type": "output",
+    "data": {
+      "displayName": "Foo Plugin",
+      "version": "1.0.0",
+      "requires": "0.0.1"
+    }
+  },
+  "tenantmanager": {
+    "name": "unit-test-tenant",
+    "displayName": "UnitTestTenant",
+    "isMaster": false,
+    "newDisplayName": "UnitTestTenant2"
+  },
+  "usermanager": {
+    "user": {
+      "email": "foo@bar.com",
+      "auth": "local",
+      "_isDeleted": false
+    },
+    "token": "testtokentesttokentesttokentest1",
+    "ipAddress": "127.0.0.1"
+  }
+}

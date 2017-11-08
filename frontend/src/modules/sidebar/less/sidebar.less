@@ -1,0 +1,232 @@
+@import 'colours';
+
+@sidebar-input-font-size: 110%;
+
+.sidebar-hide {
+    #app {
+        margin-left: 0px;
+    }
+
+    .sidebar {
+        display: none;
+    }
+}
+
+.sidebar {
+  position:fixed;
+  top:0;
+  left:0px;
+  width:250px;
+  height:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background-color:@sidebar-color;
+  color:@sidebar-text-color;
+
+  button {
+    &[class^="action-"],
+    &[class*=" action-"] {
+      margin: 5px 25px;
+      width: 200px;
+      height: 50px;
+      border-width: 1px;
+      border-style: solid;
+      border-radius:@button-radius;
+      font-size: 15px;
+      text-align: center;
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  a {
+    color:@sidebar-text-color;
+    text-decoration: none;
+    transition:all 0.3s;
+    &:hover,
+    &:focus {
+      color:darken(@sidebar-text-color, 10%);
+    }
+  }
+  .sidebar-filter-clear {
+    display:inline;
+    position: absolute;
+    left: 205px;
+    top: 25px;
+    width: 0px;
+    padding: 0;
+    background: none;
+    color: @sidebar-input-text-color;
+  }
+
+  .sidebar-item-container {
+    position: relative;
+    height:100%;
+  }
+
+  .separator {
+    margin-top: 20px;
+  }
+
+  .sidebar-row, .sidebar-breadcrumb {
+    button, a {
+      margin: 0;
+      color:@sidebar-text-color;
+      transition:all 0.3s;
+      &:hover {
+        color:@sidebar-item-hover-text-color;
+      }
+    }
+  }
+
+  .sidebar-row {
+    .error {
+      position: inherit;
+      top: inherit;
+      left: inherit;
+      color: white !important;
+      i {
+        color: white !important;
+      }
+    }
+  }
+}
+
+.sidebar-inner {
+  padding: 61px 0 25px 0;
+}
+
+.sidebar-breadcrumb {
+  position:relative;
+  top: -40px;
+}
+
+.sidebar-breadcrumb-inner {
+  display:block;
+  padding:30px 30px;
+  font-size: @sidebar-input-font-size;
+  i {
+    color: @secondary-color;
+    margin-right:8px;
+  }
+}
+
+.sidebar-item {
+  position:relative;
+  left:10%;
+  opacity:0;
+  label {
+    display:block;
+    margin-bottom:4px;
+  }
+}
+
+.sidebar-row, select.sidebar-row {
+  display:block;
+  position: relative;
+  button {
+    font-size: @sidebar-input-font-size;
+    background:none;
+    border:none;
+    width:100%;
+    padding:18px 30px;
+    text-align:left;
+
+    i {
+      margin-right:8px;
+
+      &.fa-toggle-off,
+      .fa-toggle-on {
+        float: right;
+        color:@secondary-color;
+        font-size: 20px;
+      }
+      &.fa-chevron-right,
+      &.primary-color {
+        color:@secondary-color;
+      }
+      &.fa-times {
+        color:@sidebar-input-text-color;
+      }
+    }
+  }
+}
+
+.sidebar-row-input {
+  margin: 10px 25px;
+}
+
+.sidebar input[type="text"] {
+  height: 25px;
+  background: @sidebar-input-color;
+  border-color: @sidebar-input-border-color;
+  color: @sidebar-input-text-color;
+  font-size: @sidebar-input-font-size;
+
+  &::-webkit-input-placeholder {
+    color: @sidebar-input-placeholder-color;
+  }
+  &:-moz-placeholder {
+    color: @sidebar-input-placeholder-color;
+  }
+  &::-moz-placeholder {
+    color: @sidebar-input-placeholder-color;
+  }
+  &:-ms-input-placeholder {
+    color: @sidebar-input-placeholder-color;
+  }
+
+  ~ button {
+    top: 25%;
+    i {
+      color: @sidebar-input-button-color;
+      margin-right: 0;
+      font-size: @font-size;
+    }
+    &:hover i {
+      color: lighten(@sidebar-input-border-color, 15%);
+    }
+  }
+}
+
+.sidebar-item-title {
+  background-color:@sidebar-color;
+  color:@sidebar-title-text-color;
+  text-align:center;
+}
+
+.sidebar-item-title-inner {
+  padding:30px 20px;
+  font-size: @sidebar-input-font-size;
+  font-weight: 200;
+}
+
+.sidebar-divide {
+  background-color:@sidebar-color;
+  text-align:center;
+
+  h3 {
+    font-size:13px;
+  }
+  i {
+    margin-right:4px;
+  }
+}
+
+.sidebar-divide-inner {
+  padding:20px;
+}
+
+.sidebar-fieldset-filter.error {
+  @alert-color:#de6262;
+  background: @alert-color;
+  color:#fff;
+  &:hover {
+    background: darken(@alert-color, 10%);
+  }
+}
+
+button.sidebar-tag {
+  padding: 14px 15px 14px 30px;
+}

@@ -189,7 +189,7 @@ function initialize () {
         });
       });
     });
-
+    
     /**
      * API Endpoint to duplicate a course
      *

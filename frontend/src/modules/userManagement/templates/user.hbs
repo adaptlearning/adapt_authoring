@@ -1,0 +1,144 @@
+{{!
+  Important classes for each column
+  ---------------------------------
+  General:
+  - .edit-mode shown when userManagementView is in edit mode
+  - .read/.write elements will be toggled when the edit/cancel buttons are clicked for that column
+  Inputs:
+  - .input must be set on any inputs (input, select etc. -- in the case that the input is just a button/a, set it on that)
+  - data-modelKey must be set on each .input with the corresponding model's key (e.g. _tenantId). This is used to change the model.
+}}
+<div class="inner">
+  <div class="col-row">
+    <div class="col-25">
+      <div class="tb-col-inner">
+        <span class="read no-wrap">{{{email}}}</span>
+        {{#ifUserNotMe _id}}{{#ifUserNotSuperAdmin roleNames}}
+          {{#unless _isDeleted}}
+            <a class="edit read edit-mode"><i class="fa fa-pencil-square-o"></i></a>
+            <div class="input-container write">
+              <input class="input" type="email" data-modelKey="email" autocomplete="off">
+              <a class="save"><i class="fa fa-check-square-o"></i></a>
+              <a class="cancel"><i class="fa fa-times"></i></a>
+            </div>
+          {{/unless}}
+        {{/ifUserNotSuperAdmin}}{{/ifUserNotMe}}
+      </div>
+    </div>
+    <div class="col-15">
+      <div class="tb-col-inner">
+        <span class="read no-wrap">{{tenantName}}</span>
+        {{#ifUserNotMe _id}}{{#ifUserNotSuperAdmin roleNames}}
+          {{#unless _isDeleted}}
+            <a class="edit read edit-mode"><i class="fa fa-pencil-square-o"></i></a>
+            <div class="write">
+              <select class="input" data-modelKey="_tenantId">
+                {{#each globalData.allTenants.models}}
+                  <option value="{{{this.attributes._id}}}"{{#ifValueEquals ../_tenantId._id this.attributes._id }} selected{{/ifValueEquals}}>{{{this.attributes.displayName}}}</option>
+                {{/each}}
+              </select>
+              <a class="save"><i class="fa fa-check-square-o"></i></a>
+              <a class="cancel"><i class="fa fa-times"></i></a>
+            </div>
+          {{/unless}} 
+        {{/ifUserNotSuperAdmin}}{{/ifUserNotMe}}
+      </div>
+    </div>
+    <div class="col-20">
+      <div class="tb-col-inner">
+        <div class="read">
+          <ul>
+          {{#each roleNames}}
+            <li class="no-wrap">{{this}}</li>
+          {{/each}}
+          </ul>
+        </div>
+        {{#ifUserNotMe _id}}{{#ifUserNotSuperAdmin roleNames}}
+          {{#unless _isDeleted}}
+            <a class="edit read edit-mode"><i class="fa fa-pencil-square-o"></i></a>
+            <div class="write">
+              <select class="input" data-modelKey="roles">
+                {{#if globalData.hasTenantAdminPermissions}}
+                    {{#each globalData.allRoles.models}}
+                      {{#ifValueNotEquals this.attributes.name "Super Admin"}}
+                        {{!NOTE this won't do if we introduce multiple roles (../roles.[0])}}
+                        <option value="{{this.attributes._id}}"{{#ifValueEquals ../roles.[0]._id this.attributes._id}} selected{{/ifValueEquals}}>{{this.attributes.name}}</option>
+                      {{/ifValueNotEquals}}
+                    {{/each}}
+                    
+                  {{else}}
+                     {{#each globalData.allRoles.models}}
+                       {{!NOTE this won't do if we introduce multiple roles (../roles.[0])}}
+                       <option value="{{this.attributes._id}}"{{#ifValueEquals ../roles.[0]._id this.attributes._id}} selected{{/ifValueEquals}}>{{this.attributes.name}}</option>
+                     {{/each}}
+                  {{/if}}
+              </select>
+              <a class="saveRoles"><i class="fa fa-check-square-o"></i></a>
+              <a class="cancel"><i class="fa fa-times"></i></a>
+            </div>
+          {{/unless}}
+        {{/ifUserNotSuperAdmin}}{{/ifUserNotMe}}
+      </div>
+    </div>
+    <div class="col-10 col-centered">
+      <div class="tb-col-inner">
+        {{{failedLoginCount}}}
+        {{#if _isLocked}}
+          <i class="fa fa-lock"></i>
+        {{/if}}
+      </div>
+    </div>
+    <div class="col-15 col-centered">
+      <div class="tb-col-inner no-wrap">{{momentFormat lastAccess 'DD MMM-YY'}}</div>
+    </div>
+    <div class="col-15">
+      <div class="tb-col-inner">
+        <div class="buttons edit-mode">
+            {{#ifUserSuperAdmin roleNames}}
+               <div class="group">
+                  {{t 'app.changesuperadminaccounts'}}
+               </div>
+            {{/ifUserSuperAdmin}}
+            {{#ifUserNotSuperAdmin roleNames}}
+              {{#ifUserIsMe _id}}
+                <div class="group">
+                  {{t 'app.changeadminaccounts'}}
+                </div>
+              {{/ifUserIsMe}}
+              {{#if _isDeleted}}
+              {{else}}
+                <div class="group">
+                  {{#ifMailEnabled}}
+                    <button class="btn primary resetPassword">{{t 'app.resetpassword'}}</button>
+                  {{/ifMailEnabled}}
+                  <button class="btn tertiary changePassword">{{t 'app.changepassword'}}</button>
+                </div>
+                {{#if _isLocked}}
+                  <div class="group">
+                    <button class="btn secondary unlock">{{t 'app.unlockuser'}}</button>
+                  </div>
+                {{else}}
+                  {{#ifValueEquals failedLoginCount 0}}
+                  {{else}}
+                    <div class="group">
+                      <button class="btn secondary unlock">{{t 'app.resetlogins'}}</button>
+                    </div>
+                  {{/ifValueEquals}}
+                {{/if}}
+              {{/if}}
+               {{#ifUserNotMe _id}} 
+                  <div class="group">
+                    {{#if _isDeleted}}
+                      <button class="btn action-primary restore">{{t 'app.restoreuser'}}</button>
+                    {{else}}
+                      <button class="btn warning disable">{{t 'app.disableuser'}}</button>
+                    {{/if}}
+                      <button class="btn alert edit-input delete">{{t 'app.deleteuser'}}</button>
+                  </div>
+              {{/ifUserNotMe}}
+            {{/ifUserNotSuperAdmin}}
+            
+           </div>
+      </div>
+    </div>
+</div>

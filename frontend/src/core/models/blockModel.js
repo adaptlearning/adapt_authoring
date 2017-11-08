@@ -4,9 +4,9 @@ define(function(require) {
 
   var BlockModel = ContentModel.extend({
     urlRoot: '/api/content/block',
-    _parent: 'articles',
-    _siblingTypes: 'blocks',
-    _childTypes: 'components',
+    _parentType: 'article',
+    _siblingTypes: 'block',
+    _childTypes: 'component',
     // Block specific properties
     layoutOptions:  null,
     dragLayoutOptions: null,

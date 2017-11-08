@@ -4,9 +4,9 @@ define(function(require) {
 
   var ArticleModel = ContentModel.extend({
     urlRoot: '/api/content/article',
-    _parent: 'contentObjects',
-    _siblingTypes: 'articles',
-    _childTypes: 'blocks'
+    _parentType: 'contentobject',
+    _siblingTypes: 'article',
+    _childTypes: 'block'
   });
 
   return ArticleModel;

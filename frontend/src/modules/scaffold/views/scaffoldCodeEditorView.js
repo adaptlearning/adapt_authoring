@@ -18,7 +18,7 @@ define(function(require) {
             Backbone.Form.editors.Base.prototype.initialize.call(this, options);
 
             // Check which mode the code editor should be in
-            var fieldType = options.schema.fieldType;
+            var fieldType = options.schema.inputType;
             var mode = fieldType.mode;
 
             if (mode) {

@@ -54,7 +54,7 @@ define(function(require) {
         },
 
         render: function() {
-            var assetType = this.schema.fieldType.replace('Asset:', '');
+            var assetType = this.schema.inputType.replace('Asset:', '');
             this.$el.html(Handlebars.templates[this.constructor.template]({value: this.value, type: assetType}));
             this.setValue(this.value);
             // Should see if the field contains anything on render
@@ -142,7 +142,7 @@ define(function(require) {
             event.preventDefault();
             Origin.trigger('modal:open', AssetManagementModalView, {
                 collection: new AssetCollection,
-                assetType: this.schema.fieldType,
+                assetType: this.schema.inputType,
                 onUpdate: function(data) {
                     if (data) {
 

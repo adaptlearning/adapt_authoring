@@ -110,10 +110,13 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
         })
       } else {
         var serverPlugin = records[0];
+        var serverPluginVersion = semver.clean(serverPlugin.version);
+        var bowerVersion = semver.clean(bowerJson.version);
 
-        if(semver.gt(bowerJson.version,serverPlugin.version)) {
-          logger.log('info', 'Import contains newer version of ' + bowerJson.displayName + ' (' + bowerJson.version + ') than server (' + serverPlugin.version + '), but not installing');
+        if(serverPluginVersion && bowerVersion && semver.gt(bowerVersion, serverPluginVersion)) {
+          logger.log('info', 'Import contains newer version of ' + bowerJson.displayName + ' (' + bowerVersion + ') than server (' + serverPluginVersion + '), but not installing');
         }
+
         cb();
       }
     }

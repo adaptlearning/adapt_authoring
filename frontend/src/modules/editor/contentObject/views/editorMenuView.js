@@ -1,6 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
   var Origin = require('core/origin');
+  var Helpers = require('core/helpers');
+  var ContentCollection = require('core/collections/contentCollection');
   var EditorOriginView = require('../../global/views/editorOriginView');
   var EditorMenuLayerView = require('./editorMenuLayerView');
   var EditorMenuItemView = require('./editorMenuItemView');
@@ -11,102 +13,109 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(Origin, {
-        'editorView:menuView:updateSelectedItem': this.updateSelectedItem,
+        'editorView:menuView:updateSelectedItem': this.onSelectedItemChanged,
         'window:resize': this.setupHorizontalScroll
       });
     },
 
     postRender: function() {
-      this.setupMenuViews();
-      _.defer(this.setViewToReady);
-    },
-
-    setupMenuViews: function() {
-      this.addMenuLayerView(this);
-      if (!Origin.editor.currentContentObjectId) {
-        return;
-      }
-      this.restoreCurrentMenuState();
+      this.contentobjects = new ContentCollection(null, {
+        _type: 'contentobject',
+        _courseId: Origin.editor.data.course.get('_id')
+      });
+      this.contentobjects.fetch({
+        success: _.bind(function(children) {
+          this.contentobjects = children;
+          this.renderLayers();
+          _.defer(this.setViewToReady);
+        }, this),
+        error: console.error
+      });
     },
 
     /**
-     * Recursive function which shows the expanded children for a given context model
-     * @param {Model} A given contextObject model
-     */
-    addMenuLayerView: function(view) {
-      var menuLayer = this.renderMenuLayerView(view);
-      // Add children views of current model
-      view.model.getChildren().each(function(contentObject) {
-        menuLayer.append(new EditorMenuItemView({ model: contentObject }).$el);
-      }, this);
+    * Renders all menu layers leading to the Origin.editor.currentContentObject
+    */
+    renderLayers: function() {
+      var selectedModel = Origin.editor.currentContentObject;
+      // no previous state, only render the first level
+      if(!selectedModel) {
+        this.renderLayer(Origin.editor.data.course);
+        return;
+      }
+      this.getItemHeirarchy(selectedModel, function(hierarchy) {
+        // the divs we've already rendered (sliced to the current level in the hierarchy)
+        var renderedLayers = this.$('.editor-menu-layer');
+        var index;
+        for(var i = 0, count = hierarchy.length; i < count; i++) {
+          var $layer = $(renderedLayers[i]);
+          if($layer.attr('data-parentid') === hierarchy[i].get('_id')) {
+            index = i+1;
+          }
+        }
+        if(index !== undefined) {
+          console.log(index);
+          hierarchy = hierarchy.slice(index);
+          var layersToRemove = renderedLayers.slice(index);
+          for(var i = 0, count = layersToRemove.length; i < count; i++) {
+            layersToRemove[i].remove();
+          }
+        }
+        Helpers.forSeriesAsync(hierarchy, _.bind(function(model, index, callback) {
+          this.renderLayer(model, callback);
+        }, this));
+      });
+    },
 
+    /**
+     * Renders a single menu layer
+     */
+    renderLayer: function(model, callback) {
+      var menuLayerView = new EditorMenuLayerView({
+        _parentId: model.get('_id'),
+        models: this.contentobjects.where({ _parentId: model.get('_id') })
+      });
+      $('.editor-menu-inner').append(menuLayerView.$el);
       _.defer(_.bind(function() {
         this.setupDragDrop();
         var $window = $(window);
         this.setupHorizontalScroll($window.width(), $window.height());
         this.scrollToElement();
+        if(typeof callback === 'function') callback();
       }, this));
     },
 
     /**
-     * Appemds a menu item layer for a given ID to the editor
-     * @param {String} parentId Unique identifier of the parent
-     */
-    renderMenuLayerView: function(view) {
-      // Get the current views _id to store as the _parentId
-      var parentId = view.model.get('_id');
-      // Create MenuLayerView
-      var menuLayerView = new EditorMenuLayerView({ _parentId: parentId });
-      // Set subview on layerView so this can be removed
-      view.subView = menuLayerView;
-      // Render and append the view
-      $('.editor-menu-inner').append(menuLayerView.$el);
-      // Return the container ready to render menuItemView's
-      return menuLayerView.$('.editor-menu-layer-inner');
-    },
-
-    /**
-     * Restores the current menu state by finding the current element
-     * then setting it's parent recursively to _isExpanded
-     */
-    restoreCurrentMenuState: function() {
-      // Find current menu item
-      var currentSelectedMenuItem = Origin.editor.data.contentObjects.findWhere({
-        _id: Origin.editor.currentContentObjectId
-      });
-      currentSelectedMenuItem.set({ _isSelected: true, _isExpanded: true });
-      this.setParentElementToSelected(currentSelectedMenuItem);
-    },
-
-    /**
-    * This is triggered when an item is clicked
+    * Generates an array with the inheritence line from a given contentobject to the current course
+    * @param {Model} contentModel
+    * @return {Array}
     */
-    updateSelectedItem: function(view) {
-      // store the ID of the currently selected contentObject
-      Origin.editor.currentContentObjectId = view.model.get('_id');
-
-      if(view.model.get('_type') === 'menu') {
-        this.addMenuLayerView(view);
-        return;
+    getItemHeirarchy: function(model, done) {
+      var hierarchy = [];
+      if(model.get('_type') === 'menu') {
+        hierarchy.push(model);
       }
-      this.scrollToElement();
+      var __this = this;
+      var _getParent = function(model, callback) {
+        var parent = __this.contentobjects.findWhere({ _id: model.get('_parentId') });
+        if(parent) {
+          hierarchy.push(parent);
+          return _getParent(parent, callback);
+        }
+        hierarchy.push(Origin.editor.data.course);
+        callback();
+      };
+      _getParent(model, function() {
+        if(typeof done === 'function') done.call(__this, hierarchy.reverse());
+      });
     },
 
-    /**
-     * Recursive function which shows any children for a given contentObject and sets
-     * the UI element to 'expanded'
-     * @param {Model} selectedItem A given contextObject model
-     */
-    setParentElementToSelected: function(selectedItem) {
-      var parentId = selectedItem.get('_parentId');
-
-      if(parentId === Origin.editor.data.course.get('_id')) {
+    onSelectedItemChanged: function(model) {
+      if(model.get('_id') === Origin.editor.currentContentObject && Origin.editor.currentContentObject.get('_id')) {
         return;
       }
-      var parentModel = Origin.editor.data.contentObjects.findWhere({ _id: parentId });
-      parentModel.set('_isExpanded', true);
-
-      this.setParentElementToSelected(parentModel);
+      Origin.editor.currentContentObject = model;
+      this.renderLayers();
     },
 
     setupHorizontalScroll: function(windowWidth, windowHeight) {

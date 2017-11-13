@@ -1,74 +1,101 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
+
   var Origin = require('core/origin');
+  var Helpers = require('core/helpers');
+  var ContentCollection = require('core/collections/contentCollection');
 
   var ContentModel = Backbone.Model.extend({
     idAttribute: '_id',
     whitelistAttributes: null,
+    children: undefined,
 
     initialize: function(options) {
+      this.initialiseChildren();
+
       this.on('sync', this.loadedData, this);
       this.on('change', this.loadedData, this);
       this.fetch();
     },
 
+    fetch: function() {
+      // console.log('ContentModel.fetch', this.get("_id"));
+      Backbone.Model.prototype.fetch.apply(this, arguments);
+    },
+
     loadedData: function() {
-      if (this._siblings) {
-        this._type = this._siblings;
+      if(this._siblingTypes) {
+        this._type = this._siblingTypes;
       }
-      Origin.trigger('editorModel:dataLoaded', this._type, this.get('_id'));
     },
 
-    getChildren: function() {
-      var self = this;
-      var getChildrenDelegate = function(type) {
-        if (Origin.editor.data[type]) {
-          var children = Origin.editor.data[type].where({ _parentId: self.get('_id') });
-          var childrenCollection = new Backbone.Collection(children);
-          return childrenCollection;
-        }
-        return null;
-      };
-      if(_.isArray(this._children)) {
-        var allChildren;
-        for(var i = 0, count = this._children.length; i < count; i++) {
-          var children = getChildrenDelegate(this._children[i]);
-          if(children) {
-            if(!allChildren) allChildren = children;
-            else allChildren.add(children.models);
+    initialiseChildren: function() {
+      if(!this._childTypes) {
+        return;
+      }
+      this.children = {};
+      var childTypes = _.isArray(this._childTypes) ? this._childTypes : [this._childTypes];
+      for(var i = 0, count = childTypes.length; i < count; i++) {
+        var childType = childTypes[i];
+        this.children[childType] = new ContentCollection(null, {
+          _type: childType,
+          _parentId: this.get('_id')
+        });
+      }
+    },
+
+    fetchChildren: function(callback) {
+      var childTypes = _.isArray(this._childTypes) ? this._childTypes : [this._childTypes];
+      var done = 0;
+      for(var i = 0, count = childTypes.length; i < count; i++) {
+        var childType = childTypes[i];
+        this.children[childType].fetch({
+          success: function(collection) {
+            if(++done === childTypes.length) callback(collection);
+          },
+          error: function(collecion, response) {
+            console.error(response.responseJSON.message);
           }
-        }
-        return allChildren;
-      } else {
-        return getChildrenDelegate(this._children);
+        });
       }
     },
 
-    getParent: function() {
-      var currentType = this.get('_type');
-      var parent;
-      var currentParentId = this.get('_parentId');
-
-      if (currentType === 'menu' || currentType === 'page') {
-        if (currentParentId === Origin.editor.data.course.get('_id')) {
-          parent = Origin.editor.data.course;
-        } else {
-          parent = Origin.editor.data.contentObjects.findWhere({ _id: currentParentId });
-        }
-      } else if (currentType != 'course'){
-        parent = Origin.editor.data[this._parent].findWhere({ _id: currentParentId });
+    getChildren: function(callback) {
+      var children = new Backbone.Collection();
+      var childTypes = _.isArray(this._childTypes) ? this._childTypes : [this._childTypes];
+      for(var i = 0, count = childTypes.length; i < count; i++) {
+        var childType = childTypes[i];
+        children.add(this.children[childType].models);
       }
+      return children;
+    },
 
-      return parent;
+    fetchParent: function(callback) {
+      if(!this._parentType || !this.get('_parentId')) {
+        return callback();
+      }
+      if(this.get('_parentId') === Origin.editor.data.course.get('_id')) {
+        return callback(Origin.editor.data.course);
+      }
+      // create model instance using _parentType and _parentId
+      var modelClass = Helpers.contentModelMap(this._parentType);
+      var model = new modelClass({ _id: this.get('_parentId') });
+      model.fetch({
+        success: callback,
+        error: function(jqXHR) {
+          console.error(jqXHR);
+          callback();
+        }
+      });
     },
 
     getSiblings: function(returnMyself) {
       if (returnMyself) {
-        var siblings = Origin.editor.data[this._siblings].where({ _parentId: this.get('_parentId') });
+        var siblings = Origin.editor.data[this._siblingTypes].where({ _parentId: this.get('_parentId') });
         return new Backbone.Collection(siblings);
       }
-      var siblings = _.reject(Origin.editor.data[this._siblings].where({
+      var siblings = _.reject(Origin.editor.data[this._siblingTypes].where({
         _parentId: this.get('_parentId')
       }), _.bind(function(model){
         return model.get('_id') == this.get('_id');

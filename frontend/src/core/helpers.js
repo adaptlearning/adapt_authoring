@@ -297,67 +297,38 @@ define(function(require){
           
           return success;
         },
-        
-        validateCourseContent: function(currentCourse) {
-          // Let's do a standard check for at least one child object
+
+        // checks for at least one child object
+        validateCourseContent: function(currentCourse, callback) {
           var containsAtLeastOneChild = true;
-
           var alerts = [];
-
-          function iterateOverChildren(model) {
-            // Return the function if no children - on components
-            if(!model._childTypes) return;
-
-            var currentChildren = model.getChildren();
-
-            // Do validate across each item
-            if (currentChildren.length == 0) {
+          var iterateOverChildren = function(model, index, doneIterator) {
+            console.log(model, model._childTypes);
+            if(!model._childTypes) {
+              return doneIterator();
+            }
+            model.fetchChildren(function(currentChildren) {
+              if (currentChildren.length > 0) {
+                return helpers.forSeriesAsync(currentChildren, iterateOverChildren, doneIterator);
+              }
               containsAtLeastOneChild = false;
-
               var children = _.isArray(model._childTypes) ? model._childTypes.join('/') : model._childTypes;
-              alerts.push(
-                "There seems to be a "
-                + model.get('_type')
-                + " with the title - '"
-                + model.get('title')
-                + "' with no "
-                + children
-              );
-
-              return;
-            } else {
-              // Go over each child and call validation again
-              currentChildren.each(function(childModel) {
-                iterateOverChildren(childModel);
-              });
-            }
-
-          }
-
-          iterateOverChildren(currentCourse);
-
-          if(alerts.length > 0) {
-            var errorMessage = "";
-            for(var i = 0, len = alerts.length; i < len; i++) {
-              errorMessage += "<li>" + alerts[i] + "</li>";
-            }
-
-            Origin.Notify.alert({
-              type: 'error',
-              title: Origin.l10n.t('app.validationfailed'),
-              text: errorMessage,
-              callback: _.bind(this.validateCourseConfirm, this)
+              alerts.push(model.get('_type') + " '" + model.get('title') + "' missing " + children);
+              doneIterator();
             });
-          }
-
-          return containsAtLeastOneChild;
+          };
+          // start recursion
+          iterateOverChildren(currentCourse, function() {
+            var errorMessage = "";
+            if(alerts.length > 0)  {
+              for(var i = 0, len = alerts.length; i < len; i++) {
+                errorMessage += "<li>" + alerts[i] + "</li>";
+              }
+              return callback(new Error(errorMessage));
+            }
+            callback(null, true);
+          });
         },
-
-      validateCourseConfirm: function(isConfirmed) {
-        if (isConfirmed) {
-          Origin.trigger('editor:courseValidation');
-        }
-      },
 
       isValidEmail: function(value) {
         var regEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -366,6 +337,37 @@ define(function(require){
         } else {
           return true;
         }
+      },
+
+      contentModelMap: function(type) {
+        var contentModels = {
+          contentobject: 'core/models/contentObjectModel',
+          article: 'core/models/articleModel',
+          block: 'core/models/blockModel',
+          component: 'core/models/componentModel'
+        };
+        if(contentModels.hasOwnProperty(type)) {
+          return require(contentModels[type]);
+        }
+      },
+
+      forSeriesAsync: function(list, func, callback) {
+        if(!list.hasOwnProperty('length') || list.length === 0) {
+          if(typeof callback === 'function') callback();
+          return;
+        }
+        var doneCount = 0;
+        var _doAsync = function() {
+          var nextItem = list.at && typeof list.at === 'function' ? list.at(done) : list[doneCount];
+          func(nextItem, doneCount, function() {
+            if(++doneCount === list.length) {
+              if(typeof callback === 'function') callback();
+              return;
+            }
+            _doAsync();
+          });
+        };
+        _doAsync();
       }
     };
 

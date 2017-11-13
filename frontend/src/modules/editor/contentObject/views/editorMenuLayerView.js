@@ -9,35 +9,51 @@ define(function(require) {
 
   var EditorMenuLayerView = EditorOriginView.extend({
     className: 'editor-menu-layer',
+    models: undefined,
 
     events: {
-      'click button.editor-menu-layer-add-page': 'addPage',
-      'click button.editor-menu-layer-add-menu': 'addMenu',
+      'click button.editor-menu-layer-add-page': 'addNewPage',
+      'click button.editor-menu-layer-add-menu': 'addNewMenu',
       'click .editor-menu-layer-paste': 'pasteMenuItem',
       'click .editor-menu-layer-paste-cancel': 'cancelPasteMenuItem'
     },
 
-    preRender: function(options) {
-      if(options._parentId) this._parentId = options._parentId;
+    initialize: function(options) {
+      this.models = options.models;
+      EditorOriginView.prototype.initialize.apply(this, arguments);
+    },
 
+    preRender: function(options) {
+      if(options._parentId) {
+        this._parentId = options._parentId;
+      }
       this.listenTo(Origin, {
         'editorView:removeSubViews': this.remove,
         'editorMenuView:removeMenuViews': this.remove
       });
     },
 
-    postRender: function() {
-      // Append the parentId value to the container to allow us to move pages, etc.
-      if(this._parentId) this.$el.attr('data-parentId', this._parentId);
-      this.setHeight();
-    },
-
     render: function() {
       var data = this.data ? this.data : false;
       var template = Handlebars.templates[this.constructor.template];
+
       this.$el.html(template(data));
+      this.renderMenuItems();
+
       _.defer(_.bind(this.postRender, this));
       return this;
+    },
+
+    renderMenuItems: function() {
+      for(var i = 0, count = this.models.length; i < count; i++) {
+        this.addMenuItemView(this.models[i]);
+      }
+    },
+
+    postRender: function() {
+      // Append the parentId value to the container to allow us to move pages, etc.
+      if(this._parentId) this.$el.attr('data-parentid', this._parentId);
+      this.setHeight();
     },
 
     setHeight: function() {
@@ -48,19 +64,19 @@ define(function(require) {
       this.$('.editor-menu-layer-inner').height(windowHeight-(offsetTop+controlsHeight));
     },
 
-    addMenu: function(event) {
-      this.addMenuItem(event, 'menu');
+    addNewMenu: function(event) {
+      this.addNewMenuItem(event, 'menu');
     },
 
-    addPage: function(event) {
-      this.addMenuItem(event, 'page');
+    addNewPage: function(event) {
+      this.addNewMenuItem(event, 'page');
     },
 
     /**
      * Adds a new contentObject of a given type
      * @param {String} type Given contentObject type, i.e. 'menu' or 'page'
      */
-    addMenuItem: function(event, type) {
+    addNewMenuItem: function(event, type) {
       event && event.preventDefault();
 
       var newMenuItemModel = new ContentObjectModel({
@@ -75,6 +91,7 @@ define(function(require) {
       });
       // Instantly add the view for UI purposes
       var newMenuItemView = this.addMenuItemView(newMenuItemModel);
+      newMenuItemView.$el.addClass('syncing');
       newMenuItemModel.save(null, {
         error: function(error) {
           // fade out menu item and alert
@@ -86,7 +103,6 @@ define(function(require) {
           _.delay(newMenuItemView.remove, 3000);
         },
         success: _.bind(function(model) {
-          Origin.editor.data.contentObjects.add(model);
           // Force setting the data-id attribute as this is required for drag-drop sorting
           newMenuItemView.$el.children('.editor-menu-item-inner').attr('data-id', model.get('_id'));
           if (type === 'page') {
@@ -135,9 +151,6 @@ define(function(require) {
           _.delay(newMenuItemView.remove, 3000);
         },
         success: _.bind(function(model, response, options) {
-          // Add this new element to the collect
-          Origin.editor.data[model.get('_type') + 's'].add(model);
-
           if (typeToAdd === 'article') {
             this.addNewPageArticleAndBlock(model, newMenuItemView);
           } else {
@@ -149,7 +162,13 @@ define(function(require) {
 
     addMenuItemView: function(model) {
       var newMenuItemView = new EditorMenuItemView({ model: model });
-      this.$('.editor-menu-layer-inner').append(newMenuItemView.$el.addClass('syncing'));
+      this.$('.editor-menu-layer-inner').append(newMenuItemView.$el);
+
+      newMenuItemView.on({
+        'click': _.bind(this.onMenuItemClicked, this),
+        'dblclick': _.bind(this.onMenuItemDblclicked, this)
+      });
+
       return newMenuItemView;
     },
 
@@ -167,6 +186,23 @@ define(function(require) {
         _courseId: Origin.editor.data.course.get('_id')
       });
       Origin.trigger('editorView:pasteCancel', target);
+    },
+
+    onMenuItemClicked: function(menuItem) {
+      this.$('.editor-menu-item').removeClass('selected');
+      menuItem.$el.addClass('selected');
+      Origin.trigger('editorView:menuView:updateSelectedItem', menuItem.model);
+    },
+
+    onMenuItemDblclicked: function(menuItem) {
+      var courseId = Origin.editor.data.course.get('_id');
+      var id = menuItem.model.get('_id');
+      var type = menuItem.model.get('_type');
+
+      var route = 'editor/' + courseId + '/' + type + '/' + id;
+      if(type === 'menu') route += '/edit';
+
+      Origin.router.navigateTo(route);
     }
   }, {
     template: 'editorMenuLayer'

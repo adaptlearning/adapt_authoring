@@ -189,6 +189,10 @@ define(function(require) {
     },
 
     onMenuItemClicked: function(menuItem) {
+      // if item's already selected, don't bother continuing
+      if(menuItem.$el.hasClass('selected')) {
+        return;
+      }
       this.$('.editor-menu-item').removeClass('selected');
       menuItem.$el.addClass('selected');
       Origin.trigger('editorView:menuView:updateSelectedItem', menuItem.model);

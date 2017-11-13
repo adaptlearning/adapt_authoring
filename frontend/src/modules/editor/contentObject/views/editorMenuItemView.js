@@ -24,11 +24,6 @@ define(function(require){
 
     postRender: function() {
       this.setupEvents();
-      // Check if the current item is expanded and update the next menuLayerView
-      // This can end up being recursive if an item is selected inside a few menu items
-      if(this.model.get('_isExpanded')) {
-        Origin.trigger('editorView:menuView:updateSelectedItem', this.model);
-      }
     },
 
     remove: function() {
@@ -117,10 +112,6 @@ define(function(require){
 
     deleteItem: function(event) {
       this.stopListening(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
-      this.model.set({ _isExpanded: false, _isSelected: false });
-      // When deleting an item - the parent needs to be selected
-      this.model.getParent().set({ _isSelected: true, _isExpanded: true });
-
       // We also need to navigate to the parent element - but if it's the courseId let's
       // navigate up to the menu
       var type = this.model.get('_type');
@@ -133,7 +124,6 @@ define(function(require){
 
     cancelDeleteItem: function() {
       this.stopListening(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
-      this.model.set({ _isSelected: true });
     },
 
     enableDrag: function(event) {

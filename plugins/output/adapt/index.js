@@ -167,13 +167,8 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
           var args = [];
           var outputFolder = COURSE_FOLDER.replace(FRAMEWORK_ROOT_FOLDER + path.sep,'');
           
-            // Append the 'build' folder to later versions of the framework
-            if (semver.gte(semver.clean(frameworkVersion), semver.clean('2.0.0'))) {
-              outputFolder = path.join(outputFolder, Constants.Folders.Build);
-            }
-
           // Append the 'build' folder to later versions of the framework
-          if (semver.gte(semver.clean(version.adapt_framework), semver.clean('2.0.0'))) {
+          if (semver.gte(semver.clean(frameworkVersion), semver.clean('2.0.0'))) {
             outputFolder = path.join(outputFolder, Constants.Folders.Build);
           }
 

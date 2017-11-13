@@ -34,36 +34,37 @@ define(function(require){
     },
 
     /**
-    * Renders all menu layers leading to the Origin.editor.currentContentObject
+    * Renders all menu layers from the current course to the Origin.editor.currentContentObject
     */
     renderLayers: function() {
       var selectedModel = Origin.editor.currentContentObject;
-      // no previous state, only render the first level
+      // no previous state, so should only render the first level
       if(!selectedModel) {
         this.renderLayer(Origin.editor.data.course);
         return;
       }
+      // check if we can reuse any existing layers, and only render the new ones
       this.getItemHeirarchy(selectedModel, function(hierarchy) {
-        // the divs we've already rendered (sliced to the current level in the hierarchy)
-        var renderedLayers = this.$('.editor-menu-layer');
         var index;
+        var renderedLayers = this.$('.editor-menu-layer');
         for(var i = 0, count = hierarchy.length; i < count; i++) {
-          var $layer = $(renderedLayers[i]);
-          if($layer.attr('data-parentid') === hierarchy[i].get('_id')) {
+          if($(renderedLayers[i]).attr('data-parentid') === hierarchy[i].get('_id')) {
             index = i+1;
           }
         }
+        // we can reuse layers up to 'index', remove the rest
         if(index !== undefined) {
-          console.log(index);
           hierarchy = hierarchy.slice(index);
           var layersToRemove = renderedLayers.slice(index);
           for(var i = 0, count = layersToRemove.length; i < count; i++) {
             layersToRemove[i].remove();
           }
         }
+        // all items left in hierarchy are new, render these
+        // note setUpInteraction when done
         Helpers.forSeriesAsync(hierarchy, _.bind(function(model, index, callback) {
           this.renderLayer(model, callback);
-        }, this));
+        }, this), _.defer(_.bind(this.setUpInteraction, this)));
       });
     },
 

@@ -89,7 +89,9 @@ define(function(require){
       });
       this.$('.page-articles').append(new EditorPasteZoneView({ model: prePasteArticle }).$el);
       // Iterate over each article and add it to the page
-      this.model.getChildren().each(this.addArticleView, this);
+      this.model.fetchChildren(function(children) {
+        children.each(this.addArticleView, this);
+      });
     },
 
     addArticleView: function(articleModel, scrollIntoView, addNewBlock) {

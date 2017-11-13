@@ -21,13 +21,13 @@ define(function(require){
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
       this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
 
-      this.evaluateLayout();
-
       this.on('contextMenu:component:edit', this.loadComponentEdit);
       this.on('contextMenu:component:copy', this.onCopy);
       this.on('contextMenu:component:copyID', this.onCopyID);
       this.on('contextMenu:component:cut', this.onCut);
       this.on('contextMenu:component:delete', this.deleteComponentPrompt);
+
+      this.evaluateLayout();
     },
 
     postRender: function () {
@@ -153,54 +153,50 @@ define(function(require){
       var supportedLayout = this.getSupportedLayout();
       var isFullWidthSupported = supportedLayout.full;
       var isHalfWidthSupported = supportedLayout.half;
-
       var movePositions = {
         left: false,
         right: false,
         full: false
       };
-
       if (isHalfWidthSupported) {
-        var siblings = this.model.getSiblings();
-        var showFull = !siblings.length && isFullWidthSupported;
-        var type = this.model.get('_layout');
+        this.model.fetchSiblings(function(siblings) {
+          var showFull = !siblings.length && isFullWidthSupported;
+          var type = this.model.get('_layout');
 
-        switch (type) {
-          case 'left':
-            movePositions.right = true;
-            movePositions.full = showFull;
-            break;
-          case 'right':
-            movePositions.left = true;
-            movePositions.full = showFull;
-            break;
-          case 'full':
-            movePositions.left = true;
-            movePositions.right = true;
-            break
-        }
+          switch (type) {
+            case 'left':
+              movePositions.right = true;
+              movePositions.full = showFull;
+              break;
+            case 'right':
+              movePositions.left = true;
+              movePositions.full = showFull;
+              break;
+            case 'full':
+              movePositions.left = true;
+              movePositions.right = true;
+              break
+          }
+        });
       }
-
       this.model.set('_movePositions', movePositions);
-
     },
 
     evaluateMove: function(event) {
       event && event.preventDefault();
+
       var left = $(event.currentTarget).hasClass('component-move-left');
       var right = $(event.currentTarget).hasClass('component-move-right');
       var newComponentLayout = (!left && !right) ? 'full' : (left ? 'left' : 'right');
-      var siblings = this.model.getSiblings();
 
-      if (siblings && siblings.length > 0) {
-        var siblingId = siblings.models[0].get('_id');
-      }
-
-      if (siblingId) {
-        this.moveSiblings(newComponentLayout, siblingId);
-      } else {
-        this.moveComponent(newComponentLayout);
-      }
+      this.model.fetchSiblings(function(siblings) {
+        var siblingId = siblings && siblings.length > 0 && siblings.models[0].get('_id');
+        if (siblingId) {
+          this.moveSiblings(newComponentLayout, siblingId);
+        } else {
+          this.moveComponent(newComponentLayout);
+        }
+      });
     },
 
     moveComponent: function (layout) {
@@ -210,7 +206,6 @@ define(function(require){
         _layout: layout,
         _parentId: parentId
       };
-
       $.ajax({
         type: 'PUT',
         url:'/api/content/component/' + componentId,
@@ -218,7 +213,6 @@ define(function(require){
         success: function(jqXHR, textStatus, errorThrown) {
           var componentModel = Origin.editor.data.components.get(componentId);
           componentModel.set(layoutData);
-
           // Re-render the block
           Origin.trigger('editorView:moveComponent:' + parentId);
         },

@@ -73,7 +73,9 @@ define(function(require){
       });
       this.$('.article-blocks').append(view.$el);
       // Iterate over each block and add it to the article
-      this.model.getChildren().each(this.addBlockView, this);
+      this.model.fetchChildren(function(children) {
+        children.each(this.addBlockView, this);
+      });
     },
 
     addBlockView: function(blockModel, scrollIntoView) {

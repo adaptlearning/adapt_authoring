@@ -66,30 +66,33 @@ define(function(require){
       this.evaluateComponents(this.render);
     },
 
-    getAvailableLayouts: function() {
+    getAvailableLayouts: function(callback) {
       var layoutOptions = {
         full: { type: 'full', name: 'app.layoutfull', pasteZoneRenderOrder: 1 },
         left: { type: 'left', name: 'app.layoutleft', pasteZoneRenderOrder: 2 },
         right: { type: 'right', name: 'app.layoutright', pasteZoneRenderOrder: 3 }
       };
-      var components = this.model.getChildren();
-      if (components.length === 0) {
-        return [layoutOptions.full,layoutOptions.left,layoutOptions.right];
-      }
-      if (components.length === 1) {
-        var layout = components.at(0).get('_layout');
-        if(layout === 'left') return [layoutOptions.right];
-        if(layout === 'right') return [layoutOptions.left];
-      }
-      return [];
+      this.model.fetchChildren(function(children) {
+        if (children.length === 0) {
+          callback([layoutOptions.full,layoutOptions.left,layoutOptions.right]);
+        }
+        if (children.length === 1) {
+          var layout = children.at(0).get('_layout');
+          if(layout === 'left') return callback([layoutOptions.right]);
+          if(layout === 'right') return callback([layoutOptions.left]);
+        }
+        return callback([]);
+      });
     },
 
     evaluateComponents: function(callback) {
-      this.model.set({
-        layoutOptions: this.getAvailableLayouts(),
-        dragLayoutOptions: this.getAvailableLayouts()
+      this.getAvailableLayouts(function(layouts) {
+        this.model.set({
+          layoutOptions: layouts,
+          dragLayoutOptions: layouts
+        });
+        if(callback) callback.apply(this);
       });
-      if(callback) callback.apply(this);
     },
 
     deleteBlockPrompt: function(event) {
@@ -194,23 +197,20 @@ define(function(require){
 
     addComponentViews: function() {
       this.$('.page-components').empty();
-      var components = this.model.getChildren();
-      var addPasteZonesFirst = components.length && components.at(0).get('_layout') != 'full';
 
-      this.addComponentButtonLayout(components);
+      this.model.fetchChildren(function(components) {
+        var addPasteZonesFirst = components.length && components.at(0).get('_layout') !== 'full';
 
-      if (addPasteZonesFirst) {
-        this.setupPasteZones();
-      }
+        this.addComponentButtonLayout(components);
 
-      // Add component elements
-      this.model.getChildren().each(function(component) {
-        this.$('.page-components').append(new EditorPageComponentView({ model: component }).$el);
-      }, this);
+        if (addPasteZonesFirst) this.setupPasteZones();
+        // Add component elements
+        children.each(function(component) {
+          this.$('.page-components').append(new EditorPageComponentView({ model: component }).$el);
+        }, this);
 
-      if (!addPasteZonesFirst) {
-        this.setupPasteZones();
-      }
+        if (!addPasteZonesFirst) this.setupPasteZones();
+      });
     },
 
     addComponentButtonLayout: function(components){

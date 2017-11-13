@@ -369,10 +369,20 @@ define(function(require){
     },
 
     renderEditorPage: function() {
-      var view = new EditorPageView({
-        model: Origin.editor.data.contentObjects.findWhere({ _id: this.currentPageId })
+      (new ContentObjectModel({
+        _id: this.currentPageId
+      })()).fetch({
+        success: function(model) {
+          var view = new EditorPageView({ model: model });
+          this.$('.editor-inner').html(view.$el);
+        },
+        error: function() {
+          Origin.Notify.alert({
+            type: 'error'
+            text: 'xxxxx'
+          });
+        }
       });
-      this.$('.editor-inner').html(view.$el);
     },
 
     cutContent: function(view) {

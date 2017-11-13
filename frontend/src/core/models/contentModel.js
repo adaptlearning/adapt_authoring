@@ -9,66 +9,34 @@ define(function(require) {
   var ContentModel = Backbone.Model.extend({
     idAttribute: '_id',
     whitelistAttributes: null,
-    children: undefined,
 
     initialize: function(options) {
-      this.initialiseChildren();
-
       this.on('sync', this.loadedData, this);
       this.on('change', this.loadedData, this);
       this.fetch();
     },
 
-    fetch: function() {
-      // console.log('ContentModel.fetch', this.get("_id"));
-      Backbone.Model.prototype.fetch.apply(this, arguments);
-    },
-
     loadedData: function() {
-      if(this._siblingTypes) {
-        this._type = this._siblingTypes;
-      }
-    },
-
-    initialiseChildren: function() {
-      if(!this._childTypes) {
-        return;
-      }
-      this.children = {};
-      var childTypes = _.isArray(this._childTypes) ? this._childTypes : [this._childTypes];
-      for(var i = 0, count = childTypes.length; i < count; i++) {
-        var childType = childTypes[i];
-        this.children[childType] = new ContentCollection(null, {
-          _type: childType,
-          _parentId: this.get('_id')
-        });
-      }
+      if(this._siblingTypes) this._type = this._siblingTypes;
     },
 
     fetchChildren: function(callback) {
       var childTypes = _.isArray(this._childTypes) ? this._childTypes : [this._childTypes];
-      var done = 0;
-      for(var i = 0, count = childTypes.length; i < count; i++) {
-        var childType = childTypes[i];
+      var children = new Backbone.Collection();
+      Helpers.forSeriesAsync(childTypes, function(childType, index, done) {
         this.children[childType].fetch({
-          success: function(collection) {
-            if(++done === childTypes.length) callback(collection);
-          },
+          success: done,
           error: function(collecion, response) {
-            console.error(response.responseJSON.message);
+            Origin.Notify.alert({
+              type: 'error',
+              text: 'xxxxx'
+            });
           }
         });
-      }
-    },
-
-    getChildren: function(callback) {
-      var children = new Backbone.Collection();
-      var childTypes = _.isArray(this._childTypes) ? this._childTypes : [this._childTypes];
-      for(var i = 0, count = childTypes.length; i < count; i++) {
-        var childType = childTypes[i];
-        children.add(this.children[childType].models);
-      }
-      return children;
+      }, function() {
+        children.add
+        callback();
+      });
     },
 
     fetchParent: function(callback) {
@@ -84,24 +52,30 @@ define(function(require) {
       model.fetch({
         success: callback,
         error: function(jqXHR) {
-          console.error(jqXHR);
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'xxxxx'
+          });
           callback();
         }
       });
     },
 
-    getSiblings: function(returnMyself) {
-      if (returnMyself) {
-        var siblings = Origin.editor.data[this._siblingTypes].where({ _parentId: this.get('_parentId') });
-        return new Backbone.Collection(siblings);
-      }
-      var siblings = _.reject(Origin.editor.data[this._siblingTypes].where({
+    fetchSiblings: function(callback) {
+      var siblings = new ContentCollection(null, {
+        _type: this._siblingTypes,
         _parentId: this.get('_parentId')
-      }), _.bind(function(model){
-        return model.get('_id') == this.get('_id');
-      }, this));
-
-      return new Backbone.Collection(siblings);
+      });
+      siblings.fetch({
+        success: callback,
+        error: function() {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'xxxxx'
+          });
+          callback();
+        }
+      });
     },
 
     getPossibleAncestors: function() {

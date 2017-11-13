@@ -32,6 +32,8 @@ function AdaptOutput() {
 util.inherits(AdaptOutput, OutputPlugin);
 
 AdaptOutput.prototype.publish = function(courseId, mode, request, response, next) {
+  var app = origin();
+
   var self = this;
   var user = usermanager.getCurrentUser();
   var tenantId = user.tenant._id;
@@ -198,7 +200,7 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
                 resultObject.success = true;
 
                 // Indicate that the course has built successfully
-                origin.emit('previewCreated', tenantId, courseId, outputFolder);
+                app.emit('previewCreated', tenantId, courseId, outputFolder);
 
                 return callback(null, 'Framework built OK');
               }
@@ -232,7 +234,7 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
             resultObject.zipName = zipName;
 
             // Indicate that the zip file is ready for download
-            origin.emit('zipCreated', tenantId, courseId, filename, zipName);
+            app.emit('zipCreated', tenantId, courseId, filename, zipName);
 
             callback();
           });

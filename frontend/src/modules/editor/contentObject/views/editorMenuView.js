@@ -77,13 +77,14 @@ define(function(require){
         models: this.contentobjects.where({ _parentId: model.get('_id') })
       });
       $('.editor-menu-inner').append(menuLayerView.$el);
-      _.defer(_.bind(function() {
-        this.setupDragDrop();
-        var $window = $(window);
-        this.setupHorizontalScroll($window.width(), $window.height());
-        this.scrollToElement();
-        if(typeof callback === 'function') callback();
-      }, this));
+      if(typeof callback === 'function') callback();
+    },
+
+    setUpInteraction: function() {
+      this.setupDragDrop();
+      var $window = $(window);
+      this.setupHorizontalScroll($window.width(), $window.height());
+      this.scrollToElement();
     },
 
     /**

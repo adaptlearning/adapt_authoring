@@ -12,7 +12,7 @@ var Constants = require('../../../lib/outputmanager').Constants;
 var database = require("../../../lib/database");
 var filestorage = require('../../../lib/filestorage');
 var logger = require("../../../lib/logger");
-var version = require('../../../version');
+var installHelpers = require('../../../lib/installHelpers');
 
 var origin = require('../../../')();
 
@@ -66,7 +66,7 @@ function unzip(filePath, unzipPath, done) {
 * @param {callback} pluginImported
 */
 function importPlugin(pluginDir, pluginType, pluginImported) {
-  var bowerJson, contentPlugin;
+  var bowerJson, contentPlugin, frameworkVersion;
 
   async.waterfall([
     function readBowerJson(cb) {
@@ -91,17 +91,23 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
     },
     function addPlugin(records, cb) {
       if(records.length === 0) {
-        var serverVersion = semver.clean(version.adapt_framework);
-        var pluginRange = semver.validRange(bowerJson.framework);
+        installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion ) {
+          if(err){
+            return cb(err)
+          }
 
-        if(semver.satisfies(serverVersion, pluginRange)) {
-          logger.log('info', 'Installing', pluginType, "'" + bowerJson.displayName + "'");
-          bowerJson.isLocalPackage = true;
-          contentPlugin.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
-        } else {
-          logger.log('info', "Can't install " + bowerJson.displayName + ", it requires framework v" + pluginVersion + " (" + version.adapt_framework + " installed)");
-          cb();
-        }
+          var serverVersion = semver.clean(frameworkVersion);
+          var pluginRange = semver.validRange(bowerJson.framework);
+
+          if(semver.satisfies(serverVersion, pluginRange)) {
+            logger.log('info', 'Installing', pluginType, "'" + bowerJson.displayName + "'");
+            bowerJson.isLocalPackage = true;
+            contentPlugin.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
+          } else {
+            logger.log('info', "Can't install " + bowerJson.displayName + ", it requires framework v" + pluginVersion + " (" + frameworkVersion + " installed)");
+            cb();
+          }
+        })
       } else {
         var serverPlugin = records[0];
 
@@ -209,18 +215,24 @@ function importAsset(fileMetadata, metadata, assetImported) {
 * @param {callback} cb
 */
 function checkFrameworkVersion(versionMetaData, cb) {
-  var installedVersion = semver.clean(version.adapt_framework);
-  var importVersion = semver.clean(versionMetaData.version);
+  installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion ) {
+    if (err) {
+      return cb(err)
+    }
 
-  if(!importVersion) {
-    return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
-  }
-  // check the import's within the major version number
-  if(semver.satisfies(importVersion,semver.major(installedVersion).toString())) {
-    cb();
-  } else {
-    cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
-  }
+    var installedVersion = semver.clean(frameworkVersion);
+    var importVersion = semver.clean(versionMetaData.version);
+
+    if (!importVersion) {
+      return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
+    }
+    // check the import's within the major version number
+    if (semver.satisfies(importVersion, semver.major(installedVersion).toString())) {
+      cb();
+    } else {
+      cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
+    }
+  });
 };
 
 // TODO move this to lib/outputmanager

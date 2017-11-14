@@ -64,9 +64,13 @@ define(function(require){
       });
       this.$('.page-articles').append(new EditorPasteZoneView({ model: prePasteArticle }).$el);
       // Iterate over each article and add it to the page
-      this.model.fetchChildren(function(children) {
-        children.each(this.addArticleView, this);
-      });
+      this.model.fetchChildren(_.bind(function(children) {
+        children.each(function(child) {
+          if(child.get('_type') === 'article') {
+            this.addArticleView(child);
+          }
+        }, this);
+      }, this));
     },
 
     addArticleView: function(articleModel, scrollIntoView, addNewBlock) {
@@ -86,7 +90,7 @@ define(function(require){
       // Increment the 'sortOrder' property
       articleModel.set('_pasteZoneSortOrder', sortOrder++);
       // Post-article paste zone - sort order of placeholder will be one greater
-      this.$('.page-articles').append(new EditorPasteZoneView({model: articleModel}).$el);
+      this.$('.page-articles').append(new EditorPasteZoneView({ model: articleModel }).$el);
       // Return the article view so syncing can be shown
       return newArticleView;
     },

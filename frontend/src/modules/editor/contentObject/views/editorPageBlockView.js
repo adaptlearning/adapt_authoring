@@ -213,7 +213,7 @@ define(function(require){
       });
     },
 
-    addComponentButtonLayout: function(components){
+    addComponentButtonLayout: function(components) {
       if(components.length === 2) {
         return;
       }

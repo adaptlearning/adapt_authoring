@@ -371,14 +371,14 @@ define(function(require){
     renderEditorPage: function() {
       (new ContentObjectModel({
         _id: this.currentPageId
-      })()).fetch({
+      })).fetch({
         success: function(model) {
           var view = new EditorPageView({ model: model });
           this.$('.editor-inner').html(view.$el);
         },
         error: function() {
           Origin.Notify.alert({
-            type: 'error'
+            type: 'error',
             text: 'xxxxx'
           });
         }

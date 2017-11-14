@@ -149,15 +149,15 @@ define(function(require){
         connectWith: ".editor-menu-layer-inner",
         scroll: true,
         helper: 'clone',
-        stop: function(event,ui) {
+        stop: _.bind(function(event,ui) {
           var $draggedElement = ui.item;
           var id = $('.editor-menu-item-inner', $draggedElement).attr('data-id');
           var sortOrder = $draggedElement.index() + 1;
           var parentId = $draggedElement.closest('.editor-menu-layer').attr('data-parentId');
-          var currentModel = Origin.editor.data.contentObjects.findWhere({ _id: id });
+          var currentModel = this.contentobjects.findWhere({ _id: id });
           currentModel.save({ _sortOrder: sortOrder, _parentId: parentId }, { patch: true });
           currentModel.set('_isDragging', false);
-        },
+        }, this),
         over: function(event, ui) {
           $(event.target).closest('.editor-menu-layer').attr('data-over', true);
         },

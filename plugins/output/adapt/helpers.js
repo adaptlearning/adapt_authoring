@@ -128,7 +128,6 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
 * Adds asset to the DB
 * Checks for a similar asset first (filename & size). if similar found, map that
 * to the import course.
-* TODO adapted from assetmanager.postAsset (...don't duplicate...)
 * @param {object} fileMetadata
 * @param {object} metadata
 * @param {callback} assetImported
@@ -156,7 +155,6 @@ function importAsset(fileMetadata, metadata, assetImported) {
     });
     rs.on('close', function onReadClose() {
       var filehash = hash.digest('hex');
-      // TODO get rid of hard-coded assets
       var directory = path.join('assets', filehash.substr(0,2), filehash.substr(2,2));
       var filepath = path.join(directory, filehash) + path.extname(fileMetadata.filename);
       var filename = path.basename(filepath);
@@ -238,7 +236,6 @@ function checkFrameworkVersion(versionMetaData, cb) {
   });
 };
 
-// TODO move this to lib/outputmanager
 function ImportError(message, httpStatus) {
   this.message = message || "Course import failed";
   this.httpStatus = httpStatus || 500;

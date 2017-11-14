@@ -15,9 +15,6 @@ var helpers = require('./helpers');
 var logger = require("../../../lib/logger");
 var mime = require('mime');
 
-// TODO integrate with sockets API to show progress
-// TODO add assets to clean up routine if import fails
-
 function ImportSource(req, done) {
   var contentMap = {
     'contentobject': 'contentObjects',
@@ -25,7 +22,7 @@ function ImportSource(req, done) {
     'block': 'blocks',
     'component': 'components'
   };
-  // TODO - move this to outputmanager.Constants see ./index.js line 492
+
   var plugindata = {
     pluginTypes: [
       { type: 'component', folder: 'components' },
@@ -177,7 +174,6 @@ function ImportSource(req, done) {
   * Imports assets to the library
   */
   function addAssets(assetTags, done) {
-    // TODO - need to deal with asset location path in a less hacky way. Also include other languages/folders
     var assetsGlob = path.join(COURSE_JSON_PATH, COURSE_LANG, Constants.Folders.Assets, '*');
     glob(assetsGlob, function (error, assets) {
       if(error) {
@@ -193,7 +189,6 @@ function ImportSource(req, done) {
         var assetId = path.basename(assetPath, assetExt);
         var fileStat = fs.statSync(assetPath);
 
-        // TODO - description is required and should be something more meaningful
         var fileMeta = {
           oldId: assetId,
           title: assetName,
@@ -307,7 +302,6 @@ function ImportSource(req, done) {
         });
       },
       function enableExtensions(cb) {
-        // TODO this function should be surfaced properly somewhere
         var includeExtensions = {};
         async.eachSeries(plugindata.pluginIncludes, function(pluginData, doneItemIterator) {
           switch(pluginData.type) {
@@ -430,12 +424,11 @@ function ImportSource(req, done) {
           });
         },
         function updateAssetData(cb) {
-          // TODO -- Strip lang folder. This global replace is intended as a temporary solution
           var replaceRegex = new RegExp(/(course\/)((\w){2}\/)/gi);
           var newAssetPath = Constants.Folders.Course + path.sep;
 
           var traverse = require('traverse');
-          // TODO - remove traverse and replace with string replace similar to https://github.com/adaptlearning/adapt_authoring/blob/master/lib/outputmanager.js#L764
+
           traverse(data).forEach(function (value) {
             if (!_.isString(value)) return;
             var isPath = value.match(PATH_REXEX);
@@ -470,7 +463,7 @@ function ImportSource(req, done) {
         plugin.create(data, function(error, record) {
           if(error) {
             logger.log('warn', 'Failed to import ' + type + ' ' + (originalData._id || '') + ' ' + error);
-            return done(); // TODO collect failures, maybe try again
+            return done();
           }
           // Create a courseAssets record if needed
           createCourseAssets(type, record, function(error){
@@ -556,7 +549,6 @@ function ImportSource(req, done) {
               plugin.create(assetData, function(error, assetRecord) {
                 if(error) {
                   logger.log('warn', 'Failed to create courseasset ' + type + ' ' + (assetRecord || '') + ' ' + error);
-                  //TODO collect failures, maybe try again
                 }
               });
             });

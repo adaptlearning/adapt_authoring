@@ -168,7 +168,7 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
 
           var args = [];
           var outputFolder = COURSE_FOLDER.replace(FRAMEWORK_ROOT_FOLDER + path.sep,'');
-          
+
           // Append the 'build' folder to later versions of the framework
           if (semver.gte(semver.clean(frameworkVersion), semver.clean('2.0.0'))) {
             outputFolder = path.join(outputFolder, Constants.Folders.Build);
@@ -271,9 +271,6 @@ AdaptOutput.prototype.importsource = require('./importsource');
 
 /**
 * FUNCTION: Export
-* TODO need implementation notes
-*      - metadata structure
-*      - devMode param
 * ------------------------------------------------------------------------------
 */
 
@@ -440,8 +437,6 @@ function getAssetMetadata(courseId, metadata, gotAssetMetadata) {
           }
           var asset = matchedAssets[0];
 
-          // would _.pick, but need to map some keys
-          // TODO not ideal
           if(!assetdata.assets[asset.filename]) {
             assetdata.assets[asset.filename] = {
               "oldId": asset._id,

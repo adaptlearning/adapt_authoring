@@ -23,9 +23,15 @@ define(function(require) {
     fetchChildren: function(callback) {
       var childTypes = _.isArray(this._childTypes) ? this._childTypes : [this._childTypes];
       var children = new Backbone.Collection();
-      Helpers.forSeriesAsync(childTypes, function(childType, index, done) {
-        this.children[childType].fetch({
-          success: done,
+      Helpers.forSeriesAsync(childTypes, _.bind(function(childType, index, done) {
+        (new ContentCollection(null, {
+          _type: childType,
+          _parentId: this.get('_id')
+        })).fetch({
+          success: function(models) {
+            children.add(models);
+            done();
+          },
           error: function(collecion, response) {
             Origin.Notify.alert({
               type: 'error',
@@ -33,9 +39,8 @@ define(function(require) {
             });
           }
         });
-      }, function() {
-        children.add
-        callback();
+      }, this), function() {
+        callback(children);
       });
     },
 
@@ -50,14 +55,14 @@ define(function(require) {
       var modelClass = Helpers.contentModelMap(this._parentType);
       var model = new modelClass({ _id: this.get('_parentId') });
       model.fetch({
-        success: callback,
-        error: function(jqXHR) {
+        success: _.bind(callback, this),
+        error: _.bind(function(jqXHR) {
           Origin.Notify.alert({
             type: 'error',
             text: 'xxxxx'
           });
-          callback();
-        }
+          callback.call(this);
+        }, this)
       });
     },
 
@@ -67,14 +72,14 @@ define(function(require) {
         _parentId: this.get('_parentId')
       });
       siblings.fetch({
-        success: callback,
-        error: function() {
+        success: _.bind(callback, this),
+        error: _.bind(function(jqXHR) {
           Origin.Notify.alert({
             type: 'error',
             text: 'xxxxx'
           });
-          callback();
-        }
+          callback.call(this);
+        }, this)
       });
     },
 

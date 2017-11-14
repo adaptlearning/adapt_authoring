@@ -138,7 +138,6 @@ define(function(require){
         },
         success: function(model, response, options) {
           var newBlockView = self.addBlockView(model, true);
-          Origin.editor.data.blocks.add(model);
           newBlockView.$el.removeClass('syncing').addClass('synced');
           newBlockView.reRender();
         }

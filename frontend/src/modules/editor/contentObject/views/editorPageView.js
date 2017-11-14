@@ -24,8 +24,6 @@ define(function(require){
     }),
 
     preRender: function() {
-      this.setupChildCount();
-
       this.listenTo(Origin, {
         'editorView:removeSubViews': this.remove,
         'pageView:itemRendered': this.evaluateChildStatus
@@ -39,29 +37,6 @@ define(function(require){
         var windowHeight = $(window).height();
         this.$el.height(windowHeight - this.$el.offset().top);
       }, this));
-    },
-
-    setupChildCount: function() {
-      var articles = Origin.editor.data.articles.where({_parentId: this.model.get('_id')});
-      var articleList = [], blockList = [];
-
-      _.each(articles, function(article) {
-        articleList.push(article.get('_id'));
-      });
-
-      var blocks = _.filter(Origin.editor.data.blocks.models, function (block) {
-        return _.contains(articleList, block.get('_parentId'));
-      });
-
-      _.each(blocks, function(block) {
-        blockList.push(block.get('_id'));
-      });
-
-      var components = _.filter(Origin.editor.data.components.models, function(component) {
-        return _.contains(blockList, component.get('_parentId'));
-      });
-
-      this.childrenCount = articles.length + blocks.length + components.length;
     },
 
     evaluateChildStatus: function() {
@@ -139,7 +114,6 @@ define(function(require){
           });
         },
         success: function(model, response, options) {
-          Origin.editor.data.articles.add(model);
           newArticleView.$el.removeClass('syncing').addClass('synced');
           newArticleView.addBlock();
         }

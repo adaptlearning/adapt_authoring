@@ -95,7 +95,6 @@ define(function(require) {
           Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.erroraddingcomponent') });
         },
         success: _.bind(function() {
-          Origin.editor.data.components.add(newComponentModel);
           this.parentView.evaluateComponents(this.parentView.toggleAddComponentsButton);
           // Re-render the block
           this.parentView.reRender();

@@ -211,8 +211,6 @@ define(function(require){
         url:'/api/content/component/' + componentId,
         data: layoutData,
         success: function(jqXHR, textStatus, errorThrown) {
-          var componentModel = Origin.editor.data.components.get(componentId);
-          componentModel.set(layoutData);
           // Re-render the block
           Origin.trigger('editorView:moveComponent:' + parentId);
         },
@@ -244,12 +242,6 @@ define(function(require){
         url:'/api/content/component/switch/' + componentId +'/'+ siblingId,
         data: layoutData,
         success: function(jqXHR, textStatus, errorThrown) {
-          var componentModel = Origin.editor.data.components.get(componentId);
-          componentModel.set(layoutData.newLayout);
-
-          var siblingModel = Origin.editor.data.components.get(siblingId);
-          siblingModel.set(layoutData.siblingLayout);
-
           // Re-render the block
           Origin.trigger('editorView:moveComponent:' + parentId);
         },

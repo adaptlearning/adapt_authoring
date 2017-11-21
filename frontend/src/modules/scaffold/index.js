@@ -6,7 +6,6 @@ define([
   'backbone-forms-lists',
   './backboneFormsOverrides',
   './views/scaffoldAssetView',
-  './views/scaffoldBooleanView',
   './views/scaffoldCodeEditorView',
   './views/scaffoldColorPickerView',
   './views/scaffoldDisplayTitleView',
@@ -14,7 +13,7 @@ define([
   './views/scaffoldQuestionButtonView',
   './views/scaffoldTagsView',
   './views/scaffoldTextAreaView'
-], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldBooleanView, ScaffoldCodeEditorView, ScaffoldColorPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldQuestionButtonView, ScaffoldTagsView, ScaffoldTextAreaView) {
+], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldCodeEditorView, ScaffoldColorPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldQuestionButtonView, ScaffoldTagsView, ScaffoldTextAreaView) {
 
   var Scaffold = {};
   var builtSchemas = {};
@@ -290,6 +289,7 @@ define([
   Scaffold.getCurrentActiveModals = function() { return ActiveItemsModal; };
   Scaffold.isOverlayActive = function() { return isOverlayActive; };
   Scaffold.setOverlayActive = function(booleanValue) { isOverlayActive = booleanValue; };
+  Scaffold.addCustomField('Boolean', Backbone.Form.editors.Checkbox);
 
   Origin.on({
     'scaffold:updateSchemas': onScaffoldUpdateSchemas,

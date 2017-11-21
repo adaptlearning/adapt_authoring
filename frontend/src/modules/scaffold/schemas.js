@@ -1,84 +1,79 @@
-// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
-    var Origin = require('core/origin');
-    var SchemasModel = require('./models/schemasModel');
+define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel) {
 
-    var Schemas = function(schemaName) {
-        var configModel = Origin.editor.data.config;
+  var Schemas = function(schemaName) {
+    var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
 
-        if (configModel) {
-            // Remove any extensions and components that are not enabled on this course
-            var enabledExtensions = configModel.get('_enabledExtensions');
-            var enabledExtensionsKeys = [];
+    if (!schema) {
+      throw new Error('No schema found for "' + schemaName + '"');
+    }
 
-            // Grab the targetAttribute
-            _.each(enabledExtensions, function(value, key) {
-                enabledExtensionsKeys.push(value.targetAttribute);
-            });
-            // Get the schema
-            var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
-            if(!schema) {
-              throw new Error('No schema found for \'' + schemaName + '\'');
-            }
-            // Compare the enabledExtensions against the current schemas
-            if (schema._extensions) {
-                _.each(schema._extensions.properties, function(value, key) {
-                    if (!_.contains(enabledExtensionsKeys, key)) {
-                        delete schema._extensions.properties[key];
-                    }
-                });
-            }
+    var config = Origin.editor.data.config;
 
-            if (schemaName == 'course') {
-                // Remove unrequired globals from the course
-                if (schema._globals && schema._globals.properties._extensions) {
-                    _.each(schema._globals.properties._extensions.properties, function(value, key) {
-                        if (!_.contains(enabledExtensionsKeys, key)) {
-                            delete schema._globals.properties._extensions.properties[key];
-                        }
-                    });
-                }
+    if (!config) {
+      delete schema._extensions;
 
-                // Go through each _enabledComponents and find it in the schemas
-                if (schema._globals && schema._globals.properties._components) {
+      return schema;
+    }
 
-                    var enabledComponents = configModel.get('_enabledComponents');
+    // remove any extensions and components that are not enabled on this course
+    var enabledExtensions = _.pluck(config.get('_enabledExtensions'), 'targetAttribute');
+    var schemaExtensions = schema._extensions;
+    var schemaExtensionsProperties = schemaExtensions && schemaExtensions.properties;
 
-                    var enabledComponentsKeys = _.pluck(enabledComponents, '_component');
-                    _.each(schema._globals.properties._components.properties, function(value, key) {
-                        if (!_.contains(enabledComponentsKeys, key)) {
-                            delete schema._globals.properties._components.properties[key];
-                        }
-                    });
 
-                }
+    for (var key in schemaExtensionsProperties) {
+      if (schemaExtensionsProperties.hasOwnProperty(key) &&
+        !_.contains(enabledExtensions, key)) {
+        delete schemaExtensionsProperties[key];
+      }
+    }
 
-                // trim off the empty globals objects
-                _.each(schema._globals.properties, function(value, key) {
-                    if(_.isEmpty(value.properties)) {
-                    delete schema._globals.properties[key];
-                    }
-                });
+    if (schemaName === 'course') {
+      // remove unrequired globals from the course
+      var globals = schema._globals;
 
-            }
+      if (globals) globals = globals.properties;
 
-            // trim off any empty fieldsets
-            _.each(schema, function(value, key) {
-                if(value.hasOwnProperty('properties') && _.isEmpty(value.properties)) {
-                  delete schema[key];
-                }
-            });
+      var extensionGlobals = globals && globals._extensions.properties;
+      var componentGlobals = globals && globals._components.properties;
+      var enabledComponents = _.pluck(config.get('_enabledComponents'), '_component');
 
-            // Return the modified schema
-            return schema;
-        } else {
-            var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
-            delete schema._extensions;
-            // Remove globals as these are appended to the course model
-            delete schema.globals;
-            return schema;
+      for (key in extensionGlobals) {
+        if (extensionGlobals.hasOwnProperty(key) &&
+          !_.contains(enabledExtensions, key)) {
+          delete extensionGlobals[key];
         }
-    };
+      }
+
+      for (key in componentGlobals) {
+        if (componentGlobals.hasOwnProperty(key) &&
+          !_.contains(enabledComponents, key)) {
+          delete componentGlobals[key];
+        }
+      }
+
+      // trim off the empty globals objects
+      for (key in globals) {
+        if (globals.hasOwnProperty(key) && _.isEmpty(globals[key].properties)) {
+          delete globals[key];
+        }
+      }
+    }
+
+    // trim off any empty fieldsets
+    for (key in schema) {
+      if (!schema.hasOwnProperty(key)) continue;
+
+      var properties = schema[key].properties;
+
+      if (properties && _.isEmpty(properties)) {
+        delete schema[key];
+      }
+    }
+
+    return schema;
+  };
 
   return Schemas;
+
 });

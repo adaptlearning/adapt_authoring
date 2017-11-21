@@ -8,9 +8,9 @@
 
 fieldset {
   margin: 0 0 30px 20px;
-  background-color: #fff;
+  background-color: @white;
   form form & {
-    padding-bottom: 0px;
+    padding-bottom: 0;
   }
   label {
     cursor: auto;
@@ -28,23 +28,23 @@ form .error {
   display: block;
   legend {
     padding: 25px 0 10px 30px;
-    font-size:16px;
+    font-size: 16px;
     font-weight: @font-weight-bold;
   }
   .fieldset-object & {
-    color:#3e4960;
+    color: #3e4960;
     text-decoration: underline;
     legend {
-      padding:0;
-      margin-bottom:0px;
+      padding: 0;
+      margin-bottom: 0;
     }
   }
 }
 
 .fieldset-object .field {
-  padding:18px 0px;
+  padding: 18px 0;
   &-object {
-    padding:18px 20px;
+    padding: 18px 20px;
   }
 }
 
@@ -53,18 +53,18 @@ form .error {
 }
 
 .field {
-  padding:18px 30px;
+  padding: 18px 30px;
   &-object {
-    padding:8px 10px;
-    border:1px solid #aaa;
-    border-radius:3px;
-    margin-bottom:20px;
+    padding: 8px 10px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    margin-bottom: 20px;
   }
   i {
     color: #3e4960;
-    transition:color 0.3s;
+    transition: color 0.3s;
     &:hover {
-      color:#15a4fa;
+      color: #15a4fa;
     }
   }
 }
@@ -80,21 +80,21 @@ form .error {
     border-color: #696969;
   }
   span {
-    display:inline-block;
-    float:left;
-    width:88%;
+    display: inline-block;
+    float: left;
+    width: 88%;
   }
   button {
-    float:right;
+    float: right;
     padding: 1px 8px;
     font-size: 140%;
   }
 }
 
 .collapsed {
-  display:none;
+  display: none;
 }
 
 .expanded {
-  display:block;
+  display: block;
 }

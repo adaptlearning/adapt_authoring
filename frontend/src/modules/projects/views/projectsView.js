@@ -34,13 +34,13 @@ define(function(require){
       });
       this.listenTo(this.collection, 'add', this.appendProjectItem);
 
-      $('#app > .app-inner > .contentPane').scroll(_.bind(this.doLazyScroll, this));
+      $('.contentPane').scroll(_.bind(this.doLazyScroll, this));
     },
 
     initUserPreferences: function() {
       var prefs = this.getUserPreferences();
 
-      this.doLayout(prefs.layout, false);
+      this.doLayout(prefs.layout);
       this.doSort(prefs.sort, false);
       this.doFilter(prefs.search, prefs.tags, false);
       // set relevant filters as selected
@@ -142,10 +142,7 @@ define(function(require){
       if(_.indexOf(layouts, layout) === -1) {
         return;
       }
-      var classSuffix = '-layout';
-      this.getProjectsContainer()
-        .removeClass(layouts.join(classSuffix + ' ') + classSuffix)
-        .addClass(layout + '-layout');
+      this.getProjectsContainer().attr('data-layout', layout);
       this.setUserPreference('layout', layout);
     },
 
@@ -169,7 +166,7 @@ define(function(require){
     doFilter: function(text, tags, fetch) {
       text = text || '';
       this.filterText = text;
-      this.search = this.convertFilterTextToPattern(text || '');
+      this.search = this.convertFilterTextToPattern(text);
       this.setUserPreference('search', text);
 
       tags = tags || [];

@@ -45,11 +45,10 @@ define(function(require){
       this.doSort(prefs.sort, false);
       this.doFilter(prefs.search, prefs.tags, false);
       // set relevant filters as selected
-      $("a[data-callback='dashboard:layout:grid']").addClass('selected');
-      $("a[data-callback='dashboard:sort:asc']").addClass('selected');
-
+      $("a[data-callback='dashboard:layout:" + prefs.layout + "']").addClass('selected');
+      $("a[data-callback='dashboard:sort:" + prefs.sort + "']").addClass('selected');
+      // need to refresh this to get latest filters
       prefs = this.getUserPreferences();
-
       Origin.trigger('options:update:ui', prefs);
       Origin.trigger('sidebar:update:ui', prefs);
     },

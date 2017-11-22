@@ -7,6 +7,10 @@ define(function(require){
 
   var ProjectsView = OriginView.extend({
     className: 'projects',
+    supportedLayouts: [
+      "grid",
+      "list"
+    ],
 
     preRender: function() {
       this.settings.preferencesKey = 'dashboard';
@@ -23,15 +27,18 @@ define(function(require){
 
     initEventListeners: function() {
       this.listenTo(Origin, {
-        'window:resize': this.initPaging,
-        'dashboard:layout:grid': function() { this.doLayout('grid') },
-        'dashboard:layout:list': function() { this.doLayout('list') },
+        'window:resize': this.onResize,
         'dashboard:dashboardSidebarView:filterBySearch': function(text) { this.doFilter(text) },
         'dashboard:dashboardSidebarView:filterByTags': function(tags) { this.doFilter(null, tags) },
         'dashboard:sort:asc': function() { this.doSort('asc'); },
         'dashboard:sort:desc': function() { this.doSort('desc'); },
         'dashboard:sort:updated': function() { this.doSort('updated'); }
       });
+
+      this.supportedLayouts.forEach(function(layout) {
+        this.listenTo(Origin, 'dashboard:layout:' + layout, function() { this.doLayout(layout); });
+      }, this);
+
       this.listenTo(this.collection, 'add', this.appendProjectItem);
 
       $('.contentPane').scroll(_.bind(this.doLazyScroll, this));
@@ -138,8 +145,7 @@ define(function(require){
     },
 
     doLayout: function(layout) {
-      var layouts = ["grid", "list"];
-      if(_.indexOf(layouts, layout) === -1) {
+      if(this.supportedLayouts.indexOf(layout) === -1) {
         return;
       }
       this.getProjectsContainer().attr('data-layout', layout);

@@ -12,17 +12,11 @@ define(function(require){
       "list"
     ],
 
-    preRender: function() {
-      this.settings.preferencesKey = 'dashboard';
-
-      this.initEventListeners();
-      this.initUserPreferences();
-    },
-
     postRender: function() {
-      this.initPaging(_.bind(function() {
-        this.resetCollection(this.setViewToReady);
-      }, this));
+      this.settings.preferencesKey = 'dashboard';
+      this.initUserPreferences();
+      this.initEventListeners();
+      this.initPaging();
     },
 
     initEventListeners: function() {
@@ -60,7 +54,21 @@ define(function(require){
       Origin.trigger('sidebar:update:ui', prefs);
     },
 
-    initPaging: function(cb) {
+    // Set some default preferences
+    getUserPreferences: function() {
+      var prefs = OriginView.prototype.getUserPreferences.apply(this, arguments);
+
+      if(!prefs.layout) prefs.layout = 'grid';
+      if(!prefs.sort) prefs.sort = 'asc';
+
+      return prefs;
+    },
+
+    initPaging: function() {
+      if(this.resizeTimer) {
+        clearTimeout(this.resizeTimer);
+        this.resizeTimer = -1;
+      }
       // we need to load one course first to check page size
       this.pageSize = 1;
       this.resetCollection(_.bind(function(collection) {
@@ -73,10 +81,8 @@ define(function(require){
         // columns stack nicely, but need to add extra row if it's not a clean split
         if((containerHeight % itemHeight) > 0) rows++;
         this.pageSize = columns*rows;
-
-        if(typeof cb === 'function') {
-          cb();
-        }
+        // need another reset to get the actual pageSize number of items
+        this.resetCollection(this.setViewToReady);
       }, this));
     },
 
@@ -180,6 +186,14 @@ define(function(require){
       this.setUserPreference('tags', tags);
 
       if(fetch !== false) this.resetCollection();
+    },
+
+    onResize: function() {
+      // we don't want to re-initialise for _every_ resize event
+      if(this.resizeTimer) {
+        clearTimeout(this.resizeTimer);
+      }
+      this.resizeTimer = setTimeout(_.bind(this.initPaging, this), 250);
     }
   }, {
     template: 'projects'

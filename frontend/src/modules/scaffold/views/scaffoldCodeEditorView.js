@@ -66,6 +66,10 @@ define(function(require) {
             }
 
             this.value = value;
+
+            if (this.editor) {
+                this.editor.setValue(value);
+            }
         },
 
         getValue: function() {

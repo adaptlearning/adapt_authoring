@@ -7,8 +7,10 @@ define([
   var templates = Handlebars.templates;
   var fieldTemplate = templates.field;
   var templateData = Backbone.Form.Field.prototype.templateData;
+  var listSetValue = Backbone.Form.editors.List.prototype.setValue;
   var textInitialize = Backbone.Form.editors.Text.prototype.initialize;
   var textAreaRender = Backbone.Form.editors.TextArea.prototype.render;
+  var textAreaSetValue = Backbone.Form.editors.TextArea.prototype.setValue;
 
   Backbone.Form.prototype.constructor.template = templates.form;
   Backbone.Form.Fieldset.prototype.template = templates.fieldset;
@@ -17,13 +19,18 @@ define([
   Backbone.Form.editors.List.prototype.constructor.template = templates.list;
   Backbone.Form.editors.List.Item.prototype.constructor.template = templates.listItem;
 
-  // add legend to data
+  // add reset to default handler
+  Backbone.Form.Field.prototype.events = {
+    'click [data-action="default"]': function() {
+      this.setValue(this.schema.default);
+
+      return false;
+    }
+  };
+
+  // merge schema into data
   Backbone.Form.Field.prototype.templateData = function() {
-    var data = templateData.call(this);
-
-    data.legend = this.schema.legend;
-
-    return data;
+    return _.extend(templateData.call(this), this.schema);
   };
 
   // process nested items
@@ -67,6 +74,57 @@ define([
 
     return parts.join('<br />');
   };
+
+  // fix rerendering of lists
+  // see https://github.com/powmedia/backbone-forms/pull/372
+  Backbone.Form.editors.List.prototype.setValue = function(value) {
+    this.items = [];
+
+    listSetValue.call(this, value);
+  }
+
+  Backbone.Form.editors.List.prototype.render = function() {
+    var self = this,
+        value = this.value || [],
+        $ = Backbone.$;
+
+    //Create main element
+    var $el = $($.trim(this.template({
+      addLabel: this.schema.addLabel
+    })));
+
+    //Store a reference to the list (item container)
+    this.$list = $el.is('[data-items]') ? $el : $el.find('[data-items]');
+
+    //Add existing items
+    if (value.length) {
+      _.each(value, function(itemValue) {
+        self.addItem(itemValue);
+      });
+    }
+
+    //If no existing items create an empty one, unless the editor specifies otherwise
+    else {
+      if (!this.Editor.isAsync) this.addItem();
+    }
+
+    // cache existing element
+    var domReferencedElement = this.el;
+
+    this.setElement($el);
+
+    // replace existing element
+    if (domReferencedElement) {
+      $(domReferencedElement).replaceWith(this.el);
+    }
+
+    this.$el.attr('id', this.id);
+    this.$el.attr('name', this.key);
+
+    if (this.hasFocus) this.trigger('blur', this);
+
+    return this;
+  }
 
   // accomodate sweetalert in item removal
   Backbone.Form.editors.List.prototype.removeItem = function(item) {
@@ -152,6 +210,15 @@ define([
   // get data from ckeditor in textarea
   Backbone.Form.editors.TextArea.prototype.getValue = function() {
     return this.editor.getData();
+  };
+
+  // set value in ckeditor
+  Backbone.Form.editors.TextArea.prototype.setValue = function(value) {
+    textAreaSetValue.call(this, value);
+
+    if (this.editor) {
+      this.editor.setData(value);
+    }
   };
 
   // ckeditor removal

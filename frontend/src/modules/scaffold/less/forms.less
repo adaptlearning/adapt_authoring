@@ -7,7 +7,7 @@
 }
 
 fieldset {
-  margin: 0 0 30px 20px;
+  margin-left: 20px;
   background-color: @white;
   form form & {
     padding-bottom: 0;
@@ -42,7 +42,7 @@ form .error {
 }
 
 .fieldset-object .field {
-  padding: 18px 0;
+  padding: 10px 0;
   &-object {
     padding: 18px 20px;
   }
@@ -53,20 +53,79 @@ form .error {
 }
 
 .field {
-  padding: 18px 30px;
+  padding: 10px 30px;
   &-object {
     padding: 8px 10px;
     border: 1px solid #aaa;
     border-radius: 3px;
     margin-bottom: 20px;
   }
+  label {
+    display: inline-block;
+    [data-type="Checkbox"]&,
+    [data-type="Boolean"]& {
+      margin-left: 10px;
+    }
+  }
   i {
+    width: 13px;
     color: #3e4960;
+    text-align: center;
     transition: color 0.3s;
     &:hover {
       color: #15a4fa;
     }
   }
+  input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+.field-help {
+  position: relative;
+  display: inline-block;
+  padding: 0 3px;
+  .tooltip {
+    position: absolute;
+    top: 0;
+    left: 105%;
+    padding: 5px;
+    border-radius: 6px;
+    background-color: @tertiary-color;
+    color: @white;
+    opacity: 0;
+    text-align: center;
+    transition: opacity 0.3s, visibility 0s 0.3s;
+    visibility: hidden;
+    .tooltip-key {
+      color: @primary-color;
+      font-family: monospace;
+    }
+    .tooltip-help {
+      width: 300px;
+      .scaffold-items-modal & {
+        width: 200px;
+      }
+    }
+  }
+  i:hover + .tooltip {
+    opacity: 0.9;
+    transition-delay: 0s;
+    visibility: inherit;
+  }
+}
+
+.field-default {
+  padding: 0 3px;
+  [data-type=""] > &,
+  [data-type^="Asset"] > & {
+    display: none;
+  }
+}
+
+.field-error {
+  color: red;
 }
 
 .list-item {
@@ -91,10 +150,15 @@ form .error {
   }
 }
 
-.collapsed {
-  display: none;
-}
-
-.expanded {
-  display: block;
+.field-editor {
+  [data-type="Checkbox"] &,
+  [data-type="Boolean"] & {
+    float: left;
+  }
+  .collapsed {
+    display: none;
+  }
+  .expanded {
+    display: block;
+  }
 }

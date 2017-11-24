@@ -18,7 +18,9 @@ define(function(require){
     },
 
     postRender: function() {
-      this.setupSubViews();
+      var view = new AssetManagementCollectionView({ collection: this.collection });
+      this.$('.asset-management-assets-container-inner').append(view.$el);
+
       this.resizeAssetPanels();
       // Set imageReady
       _.defer(_.bind(this.setupImageReady, this));
@@ -26,11 +28,6 @@ define(function(require){
 
     setupImageReady: function() {
       this.$el.imageready(this.setViewToReady);
-    },
-
-    setupSubViews: function() {
-      // Push collection through to collection view
-      this.$('.asset-management-assets-container-inner').append(new AssetManagementCollectionView({ collection: this.collection }).$el);
     },
 
     resizeAssetPanels: function() {
@@ -44,7 +41,9 @@ define(function(require){
 
     onAssetClicked: function(model) {
       this.$('.asset-management-no-preview').hide();
-      this.$('.asset-management-preview-container-inner').html(new AssetManagementPreviewView({ model: model }).$el);
+      
+      var view = new AssetManagementPreviewView({ model: model });
+      this.$('.asset-management-preview-container-inner').html(view.$el);
     },
 
     onAssetDeleted: function() {

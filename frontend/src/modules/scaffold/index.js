@@ -11,9 +11,8 @@ define([
   './views/scaffoldDisplayTitleView',
   './views/scaffoldItemsModalView',
   './views/scaffoldQuestionButtonView',
-  './views/scaffoldTagsView',
-  './views/scaffoldTextAreaView'
-], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldCodeEditorView, ScaffoldColorPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldQuestionButtonView, ScaffoldTagsView, ScaffoldTextAreaView) {
+  './views/scaffoldTagsView'
+], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldCodeEditorView, ScaffoldColorPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldQuestionButtonView, ScaffoldTagsView) {
 
   var Scaffold = {};
   var builtSchemas = {};

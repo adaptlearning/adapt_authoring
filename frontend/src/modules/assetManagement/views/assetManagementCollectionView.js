@@ -8,16 +8,13 @@ define(function(require){
     tagName: "div",
     className: "asset-management-collection",
 
-    sort: {
-      createdAt: -1
-    },
+    sort: { createdAt: -1 },
     search: {},
     filters: [],
     tags: [],
-    assetLimit: -32,
-    assetDenominator: 32,
-    collectionLength: 0,
+    fetchCount: 0,
     shouldStopFetches: false,
+    pageSize: 1,
 
     preRender: function(options) {
       if(options.search) {
@@ -29,10 +26,9 @@ define(function(require){
     },
 
     postRender: function() {
-      this.setupLazyScrolling();
-      // Fake a scroll trigger - just incase the limit is too low and no scroll bars
-      $('.asset-management-assets-container').trigger('scroll');
-      this.setViewToReady();
+      this.initPaging();
+      // init lazy scrolling
+      $('.asset-management-assets-container').scroll(_.bind(this.doLazyScroll, this));
     },
 
     initEventListeners: function() {
@@ -41,106 +37,83 @@ define(function(require){
         'assetManagement:sidebarFilter:remove': this.removeFilter,
         'assetManagement:sidebarView:filter': this.filterBySearchInput,
         'assetManagement:assetManagementSidebarView:filterByTags': this.filterByTags,
-        'assetManagement:collection:refresh': this.updateCollection
+        'assetManagement:collection:refresh': this.fetchCollection
       });
-      this.listenTo(this.collection, {
-        'add': this.appendAssetItem,
-        'sync': this.onCollectionSynced
-      });
+      this.listenTo(this.collection, 'add', this.appendAssetItem);
+    },
+
+    initPaging: function() {
+      if(this.resizeTimer) {
+        clearTimeout(this.resizeTimer);
+        this.resizeTimer = -1;
+      }
+      this.resetCollection(_.bind(function(collection) {
+        var containerHeight = $(window).height()-this.$el.offset().top;
+        var containerWidth = this.$el.width();
+        var itemHeight = $('.asset-management-list-item').outerHeight(true);
+        var itemWidth = $('.asset-management-list-item').outerWidth(true);
+        var columns = Math.floor(containerWidth/itemWidth);
+        var rows = Math.floor(containerHeight/itemHeight);
+        // columns stack nicely, but need to add extra row if it's not a clean split
+        if((containerHeight % itemHeight) > 0) rows++;
+        this.pageSize = columns*rows;
+        // need another reset to get the actual pageSize number of items
+        this.resetCollection(this.setViewToReady);
+      }, this));
     },
 
     appendAssetItem: function (asset) {
       this.$('.asset-management-collection-inner').append(new AssetItemView({ model: asset }).$el);
     },
 
-    setupLazyScrolling: function() {
-      var $assetContainer = $('.asset-management-assets-container');
-      var $assetContainerInner = $('.asset-management-assets-container-inner');
-      // Remove event before attaching
-      $assetContainer.off('scroll');
-      $assetContainer.on('scroll', _.bind(function() {
-        var scrollableHeight = $assetContainerInner.height() - $assetContainer.height();
-        var scrollTop = $assetContainer.scrollTop();
-        var isAtBottom = (scrollableHeight - scrollTop) < 30;
-        if (isAtBottom && !this.isCollectionFetching) {
-          this.isCollectionFetching = true;
-          this.lazyRenderCollection();
-        }
-      }, this));
-    },
-
-    removeLazyScrolling: function() {
-      $('.asset-management-assets-container').off('scroll');
-    },
-
     /**
     * Collection manipulation
     */
 
-    updateCollection: function (reset) {
-      if (reset) this.resetCollection();
-
-      if (!Origin.permissions.hasPermissions(["*"])) {
-        this.search = _.extend(this.search, { _isDeleted: false });
-      }
-
-      this.search = _.extend(this.search, {
-        tags: { $all: this.tags },
-        assetType: { $in: this.filters }
-      });
-      // This is set when the fetched amount is equal to the collection length
-      // Stops any further fetches and HTTP requests
-      if (this.shouldStopFetches) {
+    fetchCollection: function(cb) {
+      if(this.shouldStopFetches) {
         return;
       }
+      this.isCollectionFetching = true;
 
       this.collection.fetch({
-        remove: reset,
         data: {
-          search: this.search,
+          search: _.extend(this.search, {
+            tags: { $all: this.tags },
+            assetType: { $in: this.filters }
+          }),
           operators : {
-            skip: this.assetLimit,
-            limit: this.assetDenominator,
+            skip: this.fetchCount,
+            limit: this.pageSize,
             sort: this.sort
           }
         },
-        success: _.bind(function() {
-          this.shouldStopFetches = this.collectionLength === this.collection.length;
-          this.collectionLength = this.collection.length;
+        success: _.bind(function(collection, response) {
           this.isCollectionFetching = false;
+          this.fetchCount += response.length;
+          // stop further fetching if this is the last page
+          if(response.length < this.pageSize) this.shouldStopFetches = true;
+
+          $('.asset-management-no-assets').toggleClass('display-none', this.fetchCount > 0);
+
           Origin.trigger('assetManagement:assetManagementCollection:fetched');
-        }, this)
+          if(typeof cb === 'function') cb(collection);
+        }, this),
+        error: function(error) {
+          console.log(error);
+          this.isCollectionFetching = false;
+        }
       });
     },
 
-    onCollectionSynced: function () {
-      $('.asset-management-no-assets').toggleClass('display-none', this.collection.length === 0);
-      // FIX: Purely and lovingly put in for a rendering issue with chrome.
-      // For when the items being re-rendering after a search return an
-      // amount of items that means the container is not scrollable
-      if (this.assetLimit >= this.assetDenominator) {
-        return;
-      }
-      $('.asset-management-assets-container').hide();
-      _.delay(function() {
-          $('.asset-management-assets-container').show();
-      }, 10);
-    },
-
-    resetCollection: function() {
-      // Trigger event to kill zombie views
+    resetCollection: function(cb) {
+      // to remove old views
       Origin.trigger('assetManagement:assetViews:remove');
 
       this.shouldStopFetches = false;
-      this.assetLimit = 0;
-      this.collectionLength = 0;
+      this.fetchCount = 0;
       this.collection.reset();
-    },
-
-    lazyRenderCollection: function() {
-      // Adjust limit based upon the denominator
-      this.assetLimit += this.assetDenominator;
-      this.updateCollection(false);
+      this.fetchCollection(cb);
     },
 
     /**
@@ -149,7 +122,7 @@ define(function(require){
 
     filterCollection: function() {
       this.search.assetType = this.filters.length ? { $in: this.filters } : null;
-      this.updateCollection(true);
+      this.fetchCollection();
     },
 
     addFilter: function(filterType) {
@@ -166,14 +139,38 @@ define(function(require){
     filterBySearchInput: function (filterText) {
       var pattern = '.*' + filterText.toLowerCase() + '.*';
       this.search = { title: pattern, description: pattern };
-      this.updateCollection(true);
+      this.fetchCollection();
 
       $(".asset-management-modal-filter-search" ).focus();
     },
 
     filterByTags: function(tags) {
       this.tags = _.pluck(tags, 'id');
-      this.updateCollection(true);
+      this.fetchCollection();
+    },
+
+    /**
+    * Event handling
+    */
+
+    onResize: function() {
+      // we don't want to re-initialise for _every_ resize event
+      if(this.resizeTimer) {
+        clearTimeout(this.resizeTimer);
+      }
+      this.resizeTimer = setTimeout(_.bind(this.initPaging, this), 250);
+    },
+
+    doLazyScroll: function(e) {
+      if(this.isCollectionFetching) {
+        return;
+      }
+      var $el = $(e.currentTarget);
+      var scrollableHeight = this.$el.height() - this.$el.height();
+      var pxRemaining = this.$el.height() - ($el.scrollTop() + $el.height());
+      var scrollTriggerAmmount = $('.asset-management-list-item').first().outerHeight()/2;
+      // we're at the bottom, fetch more
+      if (pxRemaining <= scrollTriggerAmmount) this.fetchCollection();
     }
   }, {
     template: 'assetManagementCollection'

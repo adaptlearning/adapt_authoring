@@ -24,12 +24,13 @@ define(function(require){
     }),
 
     preRender: function() {
-      this.listenTo(Origin, {
+      var originEvents = {
         'editorView:removeSubViews': this.remove,
         'pageView:itemRendered': this.evaluateChildStatus
-      });
-      this.listenTo(Origin, 'editorView:moveArticle:' + this.model.get('_id'), this.render);
-      this.listenTo(Origin, 'editorView:cutArticle:' + this.model.get('_id'), this.onCutArticle);
+      };
+      originEvents['editorView:moveArticle:' + this.model.get('_id')] = this.render;
+      originEvents['editorView:cutArticle:' + this.model.get('_id')] = this.onCutArticle;
+      this.listenTo(Origin, originEvents);
     },
 
     resize: function() {

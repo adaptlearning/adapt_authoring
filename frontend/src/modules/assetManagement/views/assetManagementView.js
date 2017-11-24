@@ -22,12 +22,10 @@ define(function(require){
       this.$('.asset-management-assets-container-inner').append(view.$el);
 
       this.resizeAssetPanels();
-      // Set imageReady
-      _.defer(_.bind(this.setupImageReady, this));
-    },
-
-    setupImageReady: function() {
-      this.$el.imageready(this.setViewToReady);
+      // defer setting ready status until images are ready
+      _.defer(function() {
+        view.$el.imageready(this.setViewToReady);
+      });
     },
 
     resizeAssetPanels: function() {
@@ -41,7 +39,7 @@ define(function(require){
 
     onAssetClicked: function(model) {
       this.$('.asset-management-no-preview').hide();
-      
+
       var view = new AssetManagementPreviewView({ model: model });
       this.$('.asset-management-preview-container-inner').html(view.$el);
     },

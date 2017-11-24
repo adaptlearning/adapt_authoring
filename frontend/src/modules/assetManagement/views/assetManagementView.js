@@ -11,7 +11,7 @@ define(function(require){
 
     preRender: function() {
       this.listenTo(Origin, {
-        'window:resize': this.resizeAssetPanels,
+        'window:resize': this.resizePanels,
         'assetManagement:assetItemView:preview': this.onAssetClicked,
         'assetManagement:assetPreviewView:delete': this.onAssetDeleted
       });
@@ -21,20 +21,25 @@ define(function(require){
       var view = new AssetManagementCollectionView({ collection: this.collection });
       this.$('.asset-management-assets-container-inner').append(view.$el);
 
-      this.resizeAssetPanels();
+      this.resizePanels();
       // defer setting ready status until images are ready
       _.defer(function() {
         view.$el.imageready(this.setViewToReady);
       });
     },
 
-    resizeAssetPanels: function() {
+    resizePanels: function() {
       var navigationHeight = $('.navigation').outerHeight();
       var locationTitleHeight = $('.location-title').outerHeight();
       var windowHeight = $(window).height();
       var actualHeight = windowHeight - (navigationHeight + locationTitleHeight);
-      this.$('.asset-management-assets-container').height(actualHeight);
-      this.$('.asset-management-preview-container').height(actualHeight);
+      var paneWidth = $('.asset-management').outerWidth();
+      this.$('.asset-management-assets-container')
+        .height(actualHeight)
+        .width(paneWidth*0.75);
+      this.$('.asset-management-preview-container')
+        .height(actualHeight)
+        .width(paneWidth*0.25);
     },
 
     onAssetClicked: function(model) {

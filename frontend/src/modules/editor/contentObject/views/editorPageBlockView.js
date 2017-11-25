@@ -209,7 +209,7 @@ define(function(require){
         this.$('.add-component').addClass('full');
         return;
       }
-      var className = (components.models[0].attributes._layout === 'left') ? 'right' : 'left';
+      var className = (components[0].attributes._layout === 'left') ? 'right' : 'left';
       this.$('.add-component').addClass(className);
     },
 

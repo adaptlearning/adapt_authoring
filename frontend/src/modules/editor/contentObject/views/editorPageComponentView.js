@@ -8,6 +8,7 @@ define(function(require){
   var EditorPageComponentView = EditorOriginView.extend({
     className: 'component editable component-draggable',
     tagName: 'div',
+    settings: { autoRender: false },
 
     events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.component-delete': 'deleteComponentPrompt',
@@ -18,16 +19,17 @@ define(function(require){
 
     preRender: function() {
       this.$el.addClass('component-' + this.model.get('_layout'));
-      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-      this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
-
-      this.on('contextMenu:component:edit', this.loadComponentEdit);
-      this.on('contextMenu:component:copy', this.onCopy);
-      this.on('contextMenu:component:copyID', this.onCopyID);
-      this.on('contextMenu:component:cut', this.onCut);
-      this.on('contextMenu:component:delete', this.deleteComponentPrompt);
-
-      this.evaluateLayout();
+      this.listenTo(Origin, 'editorView:removeSubViews editorPageView:removePageSubViews', this.remove);
+      this.on({
+        'contextMenu:component:edit': this.loadComponentEdit,
+        'contextMenu:component:copy': this.onCopy,
+        'contextMenu:component:copyID': this.onCopyID,
+        'contextMenu:component:delete': this.deleteComponentPrompt
+      });
+      this.evaluateLayout(_.bind(function(layouts) {
+        this.model.set('_movePositions', layouts);
+        this.render();
+      }, this));
     },
 
     postRender: function () {
@@ -149,7 +151,7 @@ define(function(require){
       }
     },
 
-    evaluateLayout: function() {
+    evaluateLayout: function(cb) {
       var supportedLayout = this.getSupportedLayout();
       var isFullWidthSupported = supportedLayout.full;
       var isHalfWidthSupported = supportedLayout.half;
@@ -158,28 +160,24 @@ define(function(require){
         right: false,
         full: false
       };
-      if (isHalfWidthSupported) {
-        this.model.fetchSiblings(function(siblings) {
-          var showFull = !siblings.length && isFullWidthSupported;
-          var type = this.model.get('_layout');
-
-          switch (type) {
-            case 'left':
-              movePositions.right = true;
-              movePositions.full = showFull;
-              break;
-            case 'right':
-              movePositions.left = true;
-              movePositions.full = showFull;
-              break;
-            case 'full':
-              movePositions.left = true;
-              movePositions.right = true;
-              break
-          }
-        });
-      }
-      this.model.set('_movePositions', movePositions);
+      this.model.fetchSiblings(_.bind(function(siblings) {
+        var showFull = siblings.length < 2 && isFullWidthSupported;
+        switch(this.model.get('_layout')) {
+          case 'left':
+            movePositions.right = true;
+            movePositions.full = showFull;
+            break;
+          case 'right':
+            movePositions.left = true;
+            movePositions.full = showFull;
+            break;
+          case 'full':
+            movePositions.left = true;
+            movePositions.right = true;
+            break
+        }
+        cb(movePositions);
+      }, this));
     },
 
     evaluateMove: function(event) {
@@ -187,7 +185,7 @@ define(function(require){
 
       var left = $(event.currentTarget).hasClass('component-move-left');
       var right = $(event.currentTarget).hasClass('component-move-right');
-      var newComponentLayout = (!left && !right) ? 'full' : (left ? 'left' : 'right');
+      var newComponentLayout = (!left && !right) ? 'full' : (left ? 'right' : 'left');
 
       this.model.fetchSiblings(_.bind(function(siblings) {
         var siblingId = siblings && siblings.length > 0 && siblings.models[0].get('_id');
@@ -226,7 +224,7 @@ define(function(require){
     moveSiblings: function (layout, siblingId) {
       var componentId = this.model.get('_id');
       var parentId = this.model.get('_parentId');
-      var newSiblingLayout = (layout == 'left') ? 'right' : 'left';
+      var newSiblingLayout = (layout === 'left') ? 'right' : 'left';
       var layoutData = {
         newLayout: {
           _layout: layout,
@@ -239,7 +237,7 @@ define(function(require){
       };
       $.ajax({
         type: 'PUT',
-        url:'/api/content/component/switch/' + componentId +'/'+ siblingId,
+        url:'/api/content/component/switch/' + componentId + '/' + siblingId,
         data: layoutData,
         success: function(jqXHR, textStatus, errorThrown) {
           // Re-render the block

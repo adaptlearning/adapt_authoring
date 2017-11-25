@@ -52,12 +52,15 @@ define(function(require){
     },
 
     deleteComponent: function() {
-      var parentId = this.model.get('_parentId');
-
-      if (this.model.destroy()) {
-        this.remove();
-        Origin.trigger('editorView:removeComponent:' + parentId);
-      }
+      this.model.destroy({
+        success: _.bind(function(model) {
+          this.remove();
+          Origin.trigger('editorView:removeComponent:' + model.get('_parentId'));
+        }, this),
+        error: function(response) {
+          console.error(response);
+        }
+      })
     },
 
     loadComponentEdit: function(event) {

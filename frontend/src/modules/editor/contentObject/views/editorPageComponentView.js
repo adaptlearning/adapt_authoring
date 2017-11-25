@@ -133,12 +133,8 @@ define(function(require){
     },
 
     getSupportedLayout: function() {
-      var componentType = _.find(Origin.editor.data.componenttypes.models, function(type){
-        return type.get('component') === this.model.get('_component');
-      }, this);
-
+      var componentType = Origin.editor.data.componenttypes.findWhere({ component: this.model.get('_component') });
       var supportedLayout = componentType.get('properties')._supportedLayout;
-
       return {
         full: _.indexOf(supportedLayout.enum, 'full-width') > -1,
         half: _.indexOf(supportedLayout.enum, 'half-width') > -1
@@ -147,27 +143,25 @@ define(function(require){
 
     evaluateLayout: function(cb) {
       var supportedLayout = this.getSupportedLayout();
-      var isFullWidthSupported = supportedLayout.full;
-      var isHalfWidthSupported = supportedLayout.half;
       var movePositions = {
         left: false,
         right: false,
         full: false
       };
       this.model.fetchSiblings(_.bind(function(siblings) {
-        var showFull = siblings.length < 2 && isFullWidthSupported;
+        var showFull = supportedLayout.full && siblings.length < 1;
         switch(this.model.get('_layout')) {
           case 'left':
-            movePositions.right = true;
+            movePositions.right = supportedLayout.half;
             movePositions.full = showFull;
             break;
           case 'right':
-            movePositions.left = true;
+            movePositions.left = supportedLayout.half;
             movePositions.full = showFull;
             break;
           case 'full':
-            movePositions.left = true;
-            movePositions.right = true;
+            movePositions.left = supportedLayout.half;
+            movePositions.right = supportedLayout.half;
             break
         }
         cb(movePositions);
@@ -176,65 +170,29 @@ define(function(require){
 
     evaluateMove: function(event) {
       event && event.preventDefault();
-
-      var left = $(event.currentTarget).hasClass('component-move-left');
-      var right = $(event.currentTarget).hasClass('component-move-right');
-      var newComponentLayout = (!left && !right) ? 'full' : (left ? 'right' : 'left');
-
+      var $btn = $(event.currentTarget);
       this.model.fetchSiblings(_.bind(function(siblings) {
+        var isLeft = $btn.hasClass('component-move-left');
+        var isRight = $btn.hasClass('component-move-right');
+        var isFull = $btn.hasClass('component-move-full');
+        // move self to layout of clicked button
+        this.moveComponent(this.model.get('_id'), (isLeft ? 'left' : isRight ? 'right' : 'full'));
+        // move sibling to inverse of self
         var siblingId = siblings && siblings.length > 0 && siblings.models[0].get('_id');
-        if (siblingId) {
-          this.moveSiblings(newComponentLayout, siblingId);
-        } else {
-          this.moveComponent(newComponentLayout);
-        }
+        if (siblingId) this.moveComponent(siblingId, (isLeft ? 'right' : 'left'));
       }, this));
     },
 
-    moveComponent: function (layout) {
-      var componentId = this.model.get('_id');
+    moveComponent: function (id, layout) {
       var parentId = this.model.get('_parentId');
-      var layoutData = {
-        _layout: layout,
-        _parentId: parentId
-      };
       $.ajax({
         type: 'PUT',
-        url:'/api/content/component/' + componentId,
-        data: layoutData,
-        success: function(jqXHR, textStatus, errorThrown) {
-          // Re-render the block
-          Origin.trigger('editorView:moveComponent:' + parentId);
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: jqXHR.responseJSON.message
-          });
-        }
-      });
-    },
-
-    moveSiblings: function (layout, siblingId) {
-      var componentId = this.model.get('_id');
-      var parentId = this.model.get('_parentId');
-      var newSiblingLayout = (layout === 'left') ? 'right' : 'left';
-      var layoutData = {
-        newLayout: {
+        url:'/api/content/component/' + id,
+        data: {
           _layout: layout,
           _parentId: parentId
         },
-        siblingLayout: {
-          _layout: newSiblingLayout,
-          _parentId: parentId
-        }
-      };
-      $.ajax({
-        type: 'PUT',
-        url:'/api/content/component/switch/' + componentId + '/' + siblingId,
-        data: layoutData,
         success: function(jqXHR, textStatus, errorThrown) {
-          // Re-render the block
           Origin.trigger('editorView:moveComponent:' + parentId);
         },
         error: function(jqXHR, textStatus, errorThrown) {

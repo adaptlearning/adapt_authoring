@@ -72,7 +72,10 @@ define(function(require) {
         _parentId: this.get('_parentId')
       });
       siblings.fetch({
-        success: _.bind(callback, this),
+        success: _.bind(function(collection) {
+          collection.remove(this);
+          callback(collection);
+        }, this),
         error: _.bind(function(jqXHR) {
           Origin.Notify.alert({
             type: 'error',

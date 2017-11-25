@@ -26,20 +26,33 @@ define(function(require){
     preRender: function() {
       this.listenToEvents();
       this.model.set('componentTypes', Origin.editor.data.componenttypes.toJSON());
-      // seems odd calling re-render here, but it does what we want
-      this.reRender();
+      this.render();
+    },
+
+    render: function() {
+      this.model.fetchChildren(_.bind(function(components) {
+        this.children = components;
+        var layouts = this.getAvailableLayouts();
+        // TODO why do we have two attributes with the same value?
+        this.model.set({ layoutOptions: layouts, dragLayoutOptions: layouts });
+
+        EditorOriginView.prototype.render.apply(this);
+
+        this.addComponentViews();
+        this.setupDragDrop();
+      }, this));
     },
 
     listenToEvents: function() {
       var id = this.model.get('_id');
-      var events = {};
-      events['editorView:removeSubViews editorPageView:removePageSubViews'] = this.remove;
-      events['editorView:deleteBlock:' + id] = this.deleteBlock;
+      var events = {
+        'editorView:removeSubViews editorPageView:removePageSubViews': this.remove
+      };
       events[
         'editorView:addComponent:' + id + ' ' +
         'editorView:removeComponent:' + id + ' ' +
         'editorView:moveComponent:' + id
-      ] = this.reRender;
+      ] = this.render;
       this.listenTo(Origin, events);
 
       this.listenTo(this, {
@@ -51,46 +64,25 @@ define(function(require){
     },
 
     postRender: function() {
-      this.addComponentViews();
-      this.setupDragDrop();
-      _.defer(_.bind(function(){
-        this.trigger('blockView:postRender');
-        Origin.trigger('pageView:itemRendered');
-      }, this));
+      this.trigger('blockView:postRender');
+      Origin.trigger('pageView:itemRendered');
     },
 
-    reRender: function() {
-      this.toggleAddComponentsButton();
-      this.evaluateComponents(this.render);
-    },
-
-    getAvailableLayouts: function(callback) {
+    getAvailableLayouts: function() {
       var layoutOptions = {
         full: { type: 'full', name: 'app.layoutfull', pasteZoneRenderOrder: 1 },
         left: { type: 'left', name: 'app.layoutleft', pasteZoneRenderOrder: 2 },
         right: { type: 'right', name: 'app.layoutright', pasteZoneRenderOrder: 3 }
       };
-      this.model.fetchChildren(function(children) {
-        if (children.length === 0) {
-          return callback([layoutOptions.full,layoutOptions.left,layoutOptions.right]);
-        }
-        if (children.length === 1) {
-          var layout = children[0].get('_layout');
-          if(layout === 'left') return callback([layoutOptions.right]);
-          if(layout === 'right') return callback([layoutOptions.left]);
-        }
-        return callback([]);
-      });
-    },
-
-    evaluateComponents: function(callback) {
-      this.getAvailableLayouts(_.bind(function(layouts) {
-        this.model.set({
-          layoutOptions: layouts,
-          dragLayoutOptions: layouts
-        });
-        if(callback) callback.apply(this);
-      }, this));
+      if (this.children.length === 0) {
+        return [layoutOptions.full,layoutOptions.left,layoutOptions.right];
+      }
+      if (this.children.length === 1) {
+        var layout = this.children[0].get('_layout');
+        if(layout === layoutOptions.left.type) return [layoutOptions.right];
+        if(layout === layoutOptions.right.type) return [layoutOptions.left];
+      }
+      return [];
     },
 
     deleteBlockPrompt: function(event) {
@@ -100,14 +92,10 @@ define(function(require){
         type: 'warning',
         title: Origin.l10n.t('app.deleteblock'),
         text: Origin.l10n.t('app.confirmdeleteblock') + '<br />' + '<br />' + Origin.l10n.t('app.confirmdeleteblockwarning'),
-        callback: _.bind(this.deleteBlockConfirm, this)
+        callback: _.bind(function(confirmed) {
+          if (confirmed) this.deleteBlock();
+        }, this)
       });
-    },
-
-    deleteBlockConfirm: function(confirmed) {
-      if (confirmed) {
-        Origin.trigger('editorView:deleteBlock:' + this.model.get('_id'));
-      }
     },
 
     deleteBlock: function(event) {
@@ -184,19 +172,17 @@ define(function(require){
     addComponentViews: function() {
       this.$('.page-components').empty();
 
-      this.model.fetchChildren(_.bind(function(components) {
-        var addPasteZonesFirst = components.length && components[0].get('_layout') !== 'full';
+      var addPasteZonesFirst = this.children.length && this.children[0].get('_layout') !== 'full';
 
-        this.addComponentButtonLayout(components);
+      this.addComponentButtonLayout(this.children);
 
-        if (addPasteZonesFirst) this.setupPasteZones();
-        // Add component elements
-        for(var i = 0, count = components.length; i < count; i++) {
-          var view = new EditorPageComponentView({ model: components[i] });
-          this.$('.page-components').append(view.$el);
-        }
-        if (!addPasteZonesFirst) this.setupPasteZones();
-      }, this));
+      if (addPasteZonesFirst) this.setupPasteZones();
+      // Add component elements
+      for(var i = 0, count = this.children.length; i < count; i++) {
+        var view = new EditorPageComponentView({ model: this.children[i] });
+        this.$('.page-components').append(view.$el);
+      }
+      if (!addPasteZonesFirst) this.setupPasteZones();
     },
 
     addComponentButtonLayout: function(components) {
@@ -207,7 +193,10 @@ define(function(require){
         this.$('.add-component').addClass('full');
         return;
       }
-      var className = (components[0].attributes._layout === 'left') ? 'right' : 'left';
+      var layout = components[0].get('_layout');
+      var className = '';
+      if(layout === 'left') className = 'right';
+      if(layout === 'right') className = 'left';
       this.$('.add-component').addClass(className);
     },
 
@@ -241,15 +230,8 @@ define(function(require){
 
     setupPasteZones: function() {
       // Add available paste zones
-      var layouts = [];
-      var dragLayouts = [];
-
-      _.each(this.model.get('dragLayoutOptions'), function (dragLayout) {
-        dragLayouts.push(dragLayout);
-      });
-      _.each(this.model.get('layoutOptions'), function (layout) {
-        layouts.push(layout);
-      });
+      var layouts = this.model.get('layoutOptions').slice();
+      var dragLayouts = this.model.get('dragLayoutOptions').slice();
 
       _.each(this.sortArrayByKey(dragLayouts, 'pasteZoneRenderOrder'), function(layout) {
         var pasteComponent = new ComponentModel();
@@ -268,12 +250,6 @@ define(function(require){
         pasteComponent.set('_pasteZoneLayout', layout.type);
         this.$('.page-components').append(new EditorPageComponentPasteZoneView({ model: pasteComponent }).$el);
       }, this);
-    },
-
-    toggleAddComponentsButton: function() {
-      var layoutOptions = this.model.get('layoutOptions') || [];
-      // display-none if we've no layout options
-      this.$('.add-control').toggleClass('display-none', layoutOptions.length === 0);
     }
   }, {
     template: 'editorPageBlock'

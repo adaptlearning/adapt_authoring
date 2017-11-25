@@ -62,6 +62,7 @@ define(function(require){
     },
 
     reRender: function() {
+      this.toggleAddComponentsButton();
       this.evaluateComponents(this.render);
     },
 
@@ -85,13 +86,13 @@ define(function(require){
     },
 
     evaluateComponents: function(callback) {
-      this.getAvailableLayouts(function(layouts) {
+      this.getAvailableLayouts(_.bind(function(layouts) {
         this.model.set({
           layoutOptions: layouts,
           dragLayoutOptions: layouts
         });
         if(callback) callback.apply(this);
-      });
+      }, this));
     },
 
     deleteBlockPrompt: function(event) {

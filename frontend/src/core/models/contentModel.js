@@ -86,16 +86,6 @@ define(function(require) {
       });
     },
 
-    getPossibleAncestors: function() {
-      var map = {
-        'contentObjects': { 'ancestorType': 'page' },
-        'articles': { 'ancestorType': 'article' },
-        'blocks': { 'ancestorType': 'block' }
-      };
-      ancestors = Origin.editor.data[this._parent].where({ _type: map[this._parent].ancestorType });
-      return new Backbone.Collection(ancestors);
-    },
-
     serialize: function() {
       return JSON.stringify(this);
     },

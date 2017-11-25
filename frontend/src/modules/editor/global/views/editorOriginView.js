@@ -24,6 +24,14 @@ define(function(require){
       });
     },
 
+    render: function() {
+      OriginView.prototype.render.apply(this, arguments);
+      if(this.model) {
+        this.$el.attr('data-id', this.model.get('_id'));
+      }
+      return this;
+    },
+
     postRender: function() {
       if (!this.form) {
         return this.setViewToReady();

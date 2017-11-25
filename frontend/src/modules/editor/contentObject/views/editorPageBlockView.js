@@ -74,10 +74,10 @@ define(function(require){
       };
       this.model.fetchChildren(function(children) {
         if (children.length === 0) {
-          callback([layoutOptions.full,layoutOptions.left,layoutOptions.right]);
+          return callback([layoutOptions.full,layoutOptions.left,layoutOptions.right]);
         }
         if (children.length === 1) {
-          var layout = children.at(0).get('_layout');
+          var layout = children[0].get('_layout');
           if(layout === 'left') return callback([layoutOptions.right]);
           if(layout === 'right') return callback([layoutOptions.left]);
         }
@@ -198,19 +198,19 @@ define(function(require){
     addComponentViews: function() {
       this.$('.page-components').empty();
 
-      this.model.fetchChildren(function(components) {
-        var addPasteZonesFirst = components.length && components.at(0).get('_layout') !== 'full';
+      this.model.fetchChildren(_.bind(function(components) {
+        var addPasteZonesFirst = components.length && components[0].get('_layout') !== 'full';
 
         this.addComponentButtonLayout(components);
 
         if (addPasteZonesFirst) this.setupPasteZones();
         // Add component elements
-        children.each(function(component) {
-          this.$('.page-components').append(new EditorPageComponentView({ model: component }).$el);
-        }, this);
-
+        for(var i = 0, count = components.length; i < count; i++) {
+          var view = new EditorPageComponentView({ model: components[i] });
+          this.$('.page-components').append(view.$el);
+        }
         if (!addPasteZonesFirst) this.setupPasteZones();
-      });
+      }, this));
     },
 
     addComponentButtonLayout: function(components) {

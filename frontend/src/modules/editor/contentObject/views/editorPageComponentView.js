@@ -189,14 +189,14 @@ define(function(require){
       var right = $(event.currentTarget).hasClass('component-move-right');
       var newComponentLayout = (!left && !right) ? 'full' : (left ? 'left' : 'right');
 
-      this.model.fetchSiblings(function(siblings) {
+      this.model.fetchSiblings(_.bind(function(siblings) {
         var siblingId = siblings && siblings.length > 0 && siblings.models[0].get('_id');
         if (siblingId) {
           this.moveSiblings(newComponentLayout, siblingId);
         } else {
           this.moveComponent(newComponentLayout);
         }
-      });
+      }, this));
     },
 
     moveComponent: function (layout) {

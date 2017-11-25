@@ -22,14 +22,15 @@ define(function(require) {
 
     fetchChildren: function(callback) {
       var childTypes = _.isArray(this._childTypes) ? this._childTypes : [this._childTypes];
-      var children = new Backbone.Collection();
+      // has to be a plain old array because we may have multiple model types
+      var children = [];
       Helpers.forSeriesAsync(childTypes, _.bind(function(childType, index, done) {
         (new ContentCollection(null, {
           _type: childType,
           _parentId: this.get('_id')
         })).fetch({
-          success: function(models) {
-            children.add(models);
+          success: function(collection) {
+            children = children.concat(collection.models);
             done();
           },
           error: function(collecion, response) {

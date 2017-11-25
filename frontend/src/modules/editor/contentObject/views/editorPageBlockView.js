@@ -55,7 +55,6 @@ define(function(require){
     postRender: function() {
       this.addComponentViews();
       this.setupDragDrop();
-
       _.defer(_.bind(function(){
         this.trigger('blockView:postRender');
         Origin.trigger('pageView:itemRendered');
@@ -119,10 +118,6 @@ define(function(require){
           Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
         }
       });
-    },
-
-    handleRemovedComponent: function() {
-      this.reRender();
     },
 
     setupDragDrop: function() {
@@ -274,13 +269,6 @@ define(function(require){
         pasteComponent.set('_pasteZoneLayout', layout.type);
         this.$('.page-components').append(new EditorPageComponentPasteZoneView({ model: pasteComponent }).$el);
       }, this);
-    },
-
-    swapLayout: function (layout) {
-      if (layout === 'full') {
-        return layout;
-      }
-      return (layout == 'left') ? 'right' : 'left';
     },
 
     toggleAddComponentsButton: function() {

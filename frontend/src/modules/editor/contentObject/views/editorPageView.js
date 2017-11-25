@@ -1,11 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
   var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
   var Origin = require('core/origin');
-
   var ArticleModel = require('core/models/articleModel');
-  var ContentModel = require('core/models/contentModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
   var EditorPageArticleView = require('./editorPageArticleView');
   var EditorPasteZoneView = require('../../global/views/editorPasteZoneView');

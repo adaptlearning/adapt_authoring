@@ -4,7 +4,6 @@
  */
 define(function(require){
   var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
   var Origin = require('core/origin');
   var helpers = require('core/helpers');
 

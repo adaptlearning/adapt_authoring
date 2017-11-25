@@ -45,14 +45,10 @@ define(function(require){
         type: 'warning',
         title: Origin.l10n.t('app.deletecomponent'),
         text: Origin.l10n.t('app.confirmdeletecomponent') + '<br />' + '<br />' + Origin.l10n.t('app.confirmdeletecomponentwarning'),
-        callback: _.bind(this.deleteComponentConfirm, this)
+        callback: _.bind(function(confirmed) {
+          if(confirmed) this.deleteComponent();
+        }, this)
       });
-    },
-
-    deleteComponentConfirm: function(confirmed) {
-      if(confirmed) {
-        this.deleteComponent();
-      }
     },
 
     deleteComponent: function() {

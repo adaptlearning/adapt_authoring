@@ -69,63 +69,47 @@ define(function(require){
     },
 
     addBlockView: function(blockModel, scrollIntoView) {
-      var newBlockView = new EditorPageBlockView({model: blockModel});
-      var sortOrder = blockModel.get('_sortOrder');
-      // Add syncing class
-      if (blockModel.isNew()) {
-        newBlockView.$el.addClass('syncing');
-      }
       scrollIntoView = scrollIntoView || false;
 
-      this.$('.article-blocks').append(newBlockView.$el);
+      var newBlockView = new EditorPageBlockView({ model: blockModel });
 
-      if (scrollIntoView) {
-        $.scrollTo(newBlockView.$el, 200);
-      }
+      this.$('.article-blocks').append(newBlockView.$el);
+      if (scrollIntoView) $.scrollTo(newBlockView.$el, 200);
       // Increment the sortOrder property
-      blockModel.set('_pasteZoneSortOrder', ++sortOrder);
+      blockModel.set('_pasteZoneSortOrder', (blockModel.get('_sortOrder')+1));
       // Post-block paste zone - sort order of placeholder will be one greater
-      this.$('.article-blocks').append(new EditorPasteZoneView({model: blockModel}).$el);
-      // Return the block view so syncing can be shown
-      return newBlockView;
+      this.$('.article-blocks').append(new EditorPasteZoneView({ model: blockModel }).$el);
     },
 
     addBlock: function(event) {
       event && event.preventDefault();
-
-      var self = this;
-      var layoutOptions = [{
-          type: 'left',
-          name: 'app.layoutleft',
-          pasteZoneRenderOrder: 2
-        }, {
-          type: 'full',
-          name: 'app.layoutfull',
-          pasteZoneRenderOrder: 1
-        }, {
-          type: 'right',
-          name: 'app.layoutright',
-          pasteZoneRenderOrder: 3
-      }];
-
-      var newPageBlockModel = new BlockModel({
+      var model = new BlockModel();
+      model.save({
         title: Origin.l10n.t('app.placeholdernewblock'),
         displayTitle: Origin.l10n.t('app.placeholdernewblock'),
         body: '',
-        _parentId: self.model.get('_id'),
+        _parentId: this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
-        layoutOptions: layoutOptions,
+        layoutOptions: [{
+            type: 'left',
+            name: 'app.layoutleft',
+            pasteZoneRenderOrder: 2
+          }, {
+            type: 'full',
+            name: 'app.layoutfull',
+            pasteZoneRenderOrder: 1
+          }, {
+            type: 'right',
+            name: 'app.layoutright',
+            pasteZoneRenderOrder: 3
+        }],
         _type: 'block'
-      });
-
-      newPageBlockModel.save(null, {
+      }, {
+        success: _.bind(function(model, response, options) {
+          this.addBlockView(model, true);
+        }, this),
         error: function() {
           Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.erroraddingblock') });
-        },
-        success: function(model, response, options) {
-          var newBlockView = self.addBlockView(model, true);
-          newBlockView.$el.removeClass('syncing').addClass('synced');
-          newBlockView.reRender();
         }
       });
     },

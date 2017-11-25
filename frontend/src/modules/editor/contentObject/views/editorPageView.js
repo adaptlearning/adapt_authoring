@@ -14,7 +14,7 @@ define(function(require){
     childrenRenderedCount: 0,
 
     events: _.extend({}, EditorOriginView.prototype.events, {
-      'click a.add-article': 'addArticle',
+      'click a.add-article': 'addNewArticle',
       'click a.page-edit-button': 'openContextMenu',
       'dblclick .page-detail': 'loadPageEdit',
       'click .paste-cancel': 'onPasteCancel'
@@ -93,31 +93,25 @@ define(function(require){
       return newArticleView;
     },
 
-    addArticle: function(event) {
+    addNewArticle: function(event) {
       event && event.preventDefault();
-
-      var _this = this;
-      var newPageArticleModel = new ArticleModel({
+      (new ArticleModel()).save({
         title: Origin.l10n.t('app.placeholdernewarticle'),
         displayTitle: Origin.l10n.t('app.placeholdernewarticle'),
         body: '',
-        _parentId: _this.model.get('_id'),
+        _parentId: this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
         _type:'article'
-      });
-
-      var newArticleView = _this.addArticleView(newPageArticleModel);
-
-      newPageArticleModel.save(null, {
+      }, {
+        success: _.bind(function(model, response, options) {
+          var articleView = this.addArticleView(model);
+          articleView.addBlock();
+        }, this),
         error: function() {
           Origin.Notify.alert({
             type: 'error',
             text: Origin.l10n.t('app.erroraddingarticle')
           });
-        },
-        success: function(model, response, options) {
-          newArticleView.$el.removeClass('syncing').addClass('synced');
-          newArticleView.addBlock();
         }
       });
     },

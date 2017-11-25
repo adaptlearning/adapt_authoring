@@ -37,7 +37,6 @@ define(function(require){
         var id = this.model.get('_id');
         var events = {};
         events['editorView:moveBlock:' + id] = this.render;
-        events['editorView:cutBlock:' + id] = this.onCutBlock;
         events['editorView:deleteArticle:' + id] = this.deletePageArticle;
         this.listenTo(Origin, events);
       }
@@ -46,16 +45,8 @@ define(function(require){
         'contextMenu:article:edit': this.loadArticleEdit,
         'contextMenu:article:copy': this.onCopy,
         'contextMenu:article:copyID': this.onCopyID,
-        'contextMenu:article:cut': this.onCut,
         'contextMenu:article:delete': this.deleteArticlePrompt
       });
-    },
-
-    onCutBlock: function(view) {
-      this.once('articleView:postRender', function() {
-        view.showPasteZones();
-      });
-      this.render();
     },
 
     addBlockViews: function() {

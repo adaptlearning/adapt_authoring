@@ -45,7 +45,6 @@ define(function(require){
         'editorView:refreshView': this.setupEditor,
         'editorView:copy': this.addToClipboard,
         'editorView:copyID': this.copyIdToClipboard,
-        'editorView:cut': this.cutContent,
         'editorView:paste': this.pasteFromClipboard,
         'editorCommon:download': this.downloadProject,
         'editorCommon:preview': this.previewProject,
@@ -382,21 +381,6 @@ define(function(require){
             text: 'xxxxx'
           });
         }
-      });
-    },
-
-    cutContent: function(view) {
-      var type = helpers.capitalise(view.model.get('_type'));
-      var collectionType = view.model._siblingTypes;
-
-      this.addToClipboard(view.model);
-
-      // Remove model from collection (to save fetching) and destroy it
-      Origin.editor.data[collectionType].remove(view.model);
-      view.model.destroy();
-
-      _.defer(function () {
-        Origin.trigger('editorView:cut' + type + ':' + view.model.get('_parentId'), view);
       });
     },
 

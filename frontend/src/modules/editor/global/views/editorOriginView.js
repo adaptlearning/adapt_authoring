@@ -186,11 +186,6 @@ define(function(require){
       Origin.trigger('editorView:copyID', this.model);
     },
 
-    onCut: function(e) {
-      e && e.preventDefault();
-      Origin.trigger('editorView:cut', this);
-    },
-
     onPaste: function(e) {
       if(e) {
         e.stopPropagation();

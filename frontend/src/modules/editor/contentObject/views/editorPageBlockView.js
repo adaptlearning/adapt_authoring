@@ -36,18 +36,18 @@ define(function(require){
       var id = this.model.get('_id');
       var events = {};
       events['editorView:removeSubViews editorPageView:removePageSubViews'] = this.remove;
-      events['editorView:removeComponent:' + id] = this.handleRemovedComponent;
-      events['editorView:moveComponent:' + id] = this.reRender;
-      events['editorView:cutComponent:' + id] = this.onCutComponent;
-      events['editorView:addComponent:' + id] = this.addComponent;
       events['editorView:deleteBlock:' + id] = this.deleteBlock;
+      events[
+        'editorView:addComponent:' + id + ' ' +
+        'editorView:removeComponent:' + id + ' ' +
+        'editorView:moveComponent:' + id
+      ] = this.reRender;
       this.listenTo(Origin, events);
 
       this.listenTo(this, {
         'contextMenu:block:edit': this.loadBlockEdit,
         'contextMenu:block:copy': this.onCopy,
         'contextMenu:block:copyID': this.onCopyID,
-        'contextMenu:block:cut': this.onCut,
         'contextMenu:block:delete': this.deleteBlockPrompt
       });
     },
@@ -122,14 +122,6 @@ define(function(require){
     },
 
     handleRemovedComponent: function() {
-      this.reRender();
-    },
-
-    onCutComponent: function(view) {
-      this.once('blockView:postRender', function() {
-        view.showPasteZones();
-      });
-
       this.reRender();
     },
 

@@ -29,7 +29,6 @@ define(function(require){
         'pageView:itemRendered': this.evaluateChildStatus
       };
       originEvents['editorView:moveArticle:' + this.model.get('_id')] = this.render;
-      originEvents['editorView:cutArticle:' + this.model.get('_id')] = this.onCutArticle;
       this.listenTo(Origin, originEvents);
     },
 
@@ -146,11 +145,6 @@ define(function(require){
         'contextMenu:page-min:copyID': this.onCopyID
       });
       Origin.trigger('contextMenu:open', fakeView, event);
-    },
-
-    onCutArticle: function(view) {
-      this.once('pageView:postRender', view.showPasteZones);
-      this.render();
     }
   }, {
     template: 'editorPage'

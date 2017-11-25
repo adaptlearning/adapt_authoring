@@ -95,9 +95,7 @@ define(function(require) {
           Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.erroraddingcomponent') });
         },
         success: _.bind(function() {
-          this.parentView.evaluateComponents(this.parentView.toggleAddComponentsButton);
-          // Re-render the block
-          this.parentView.reRender();
+          Origin.trigger('editorView:addComponent:' + newComponentModel.get('_id'));
           newComponentView.addClass('synced');
           $('html').css('overflow-y', '');
           $.scrollTo(newComponentView.$el);

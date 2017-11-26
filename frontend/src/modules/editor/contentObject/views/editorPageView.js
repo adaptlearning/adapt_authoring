@@ -74,10 +74,7 @@ define(function(require){
     addArticleView: function(articleModel, scrollIntoView, addNewBlock) {
       var newArticleView = new EditorPageArticleView({ model: articleModel });
       var sortOrder = articleModel.get('_sortOrder');
-      // Add syncing class
-      if (articleModel.isNew()) {
-        newArticleView.$el.addClass('syncing');
-      }
+
       scrollIntoView = scrollIntoView || false;
 
       this.$('.page-articles').append(newArticleView.$el);
@@ -89,7 +86,6 @@ define(function(require){
       articleModel.set('_pasteZoneSortOrder', sortOrder++);
       // Post-article paste zone - sort order of placeholder will be one greater
       this.$('.page-articles').append(new EditorPasteZoneView({ model: articleModel }).$el);
-      // Return the article view so syncing can be shown
       return newArticleView;
     },
 

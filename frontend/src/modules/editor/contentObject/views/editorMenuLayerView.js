@@ -92,6 +92,7 @@ define(function(require) {
       // Instantly add the view for UI purposes
       var newMenuItemView = this.addMenuItemView(newMenuItemModel);
       newMenuItemView.$el.addClass('syncing');
+
       newMenuItemModel.save(null, {
         error: function(error) {
           // fade out menu item and alert
@@ -110,7 +111,7 @@ define(function(require) {
             this.addNewPageArticleAndBlock(model, newMenuItemView);
             return;
           }
-          newMenuItemView.$el.removeClass('syncing').addClass('synced');
+          newMenuItemView.$el.removeClass('syncing');
           this.setHeight();
         }, this)
       });
@@ -154,7 +155,7 @@ define(function(require) {
           if (typeToAdd === 'article') {
             this.addNewPageArticleAndBlock(model, newMenuItemView);
           } else {
-            newMenuItemView.$el.removeClass('syncing').addClass('synced');
+            newMenuItemView.$el.removeClass('syncing');
           }
         }, this)
       });

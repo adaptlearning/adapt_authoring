@@ -34,7 +34,6 @@ define(function(require){
 
     preRender: function(options) {
       this.currentView = options.currentView;
-      Origin.editor.pasteParentModel = false;
       Origin.editor.isPreviewPending = false;
       this.currentCourseId = Origin.editor.data.course.get('_id');
       this.currentCourse = Origin.editor.data.course;
@@ -277,7 +276,6 @@ define(function(require){
       };
       $.post('/api/content/clipboard/copy', postData, _.bind(function(jqXHR) {
         Origin.editor.clipboardId = jqXHR.clipboardId;
-        Origin.editor.pasteParentModel = model.getParent();
         this.showPasteZones(model.get('_type'));
       }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
         Origin.Notify.alert({
@@ -314,7 +312,6 @@ define(function(require){
       };
       $.post('/api/content/clipboard/paste', data, function(jqXHR) {
         Origin.editor.clipboardId = null;
-        Origin.editor.pasteParentModel = null;
         Origin.trigger('editor:refreshData', function() {
           /**
           * FIXME views should handle rendering the new data,

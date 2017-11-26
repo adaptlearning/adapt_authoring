@@ -4,10 +4,8 @@ define(function(require) {
   * This module handles both sections/menus and pages.
   */
   var Origin = require('core/origin');
-
   var ContentObjectModel = require('core/models/contentObjectModel');
   var EditorMenuSidebarView = require('./views/editorMenuSidebarView');
-  var EditorPageComponentListView = require('./views/editorPageComponentListView');
   var EditorPageEditView = require('./views/editorPageEditView');
   var EditorPageEditSidebarView = require('./views/editorPageEditSidebarView');
   var EditorPageSidebarView = require('./views/editorPageSidebarView');
@@ -29,23 +27,6 @@ define(function(require) {
         route();
       }
     });
-  });
-
-  // component add is just a page overlay view, so handling it here
-  Origin.on('editor:block', function(data) {
-    if(data.action !== 'add') {
-      return;
-    }
-    var containingBlock = Origin.editor.data.blocks.findWhere({ _id: Origin.location.route3 });
-    var layoutOptions = containingBlock.get('layoutOptions');
-    var componentsModel = new Backbone.Model({
-      title: Origin.l10n.t('app.addcomponent'),
-      body: Origin.l10n.t('app.pleaseselectcomponent'),
-      _parentId: Origin.location.route3,
-      componentTypes: Origin.editor.data.componenttypes.toJSON(),
-      layoutOptions: layoutOptions
-    });
-    Origin.contentPane.setView(EditorPageComponentListView, { model: componentsModel });
   });
 
   function renderContentObjectEdit(data) {

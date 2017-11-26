@@ -65,7 +65,7 @@ define(function(require){
 
     postRender: function() {
       this.trigger('blockView:postRender');
-      Origin.trigger('pageView:itemRendered');
+      Origin.trigger('pageView:itemRendered', this);
     },
 
     getAvailableLayouts: function() {

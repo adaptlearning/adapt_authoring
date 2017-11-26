@@ -6,7 +6,10 @@ define(function(require){
   var EditorPageComponentView = EditorOriginView.extend({
     className: 'component editable component-draggable',
     tagName: 'div',
-    settings: { autoRender: false },
+
+    settings: _.extend({}, EditorOriginView.prototype.settings, {
+      autoRender: false,
+    }),
 
     events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.component-delete': 'deleteComponentPrompt',
@@ -34,7 +37,7 @@ define(function(require){
       this.setupDragDrop();
       _.defer(_.bind(function(){
         this.trigger('componentView:postRender');
-        Origin.trigger('pageView:itemRendered');
+        Origin.trigger('pageView:itemRendered', this);
       }, this));
     },
 

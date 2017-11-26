@@ -13,6 +13,10 @@ define(function(require){
     childrenCount: 0,
     childrenRenderedCount: 0,
 
+    settings: _.extend({}, EditorOriginView.prototype.settings, {
+      hasAsyncPostRender: true
+    }),
+
     events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.add-article': 'addNewArticle',
       'click a.page-edit-button': 'openContextMenu',
@@ -29,6 +33,19 @@ define(function(require){
       this.listenTo(Origin, originEvents);
     },
 
+    render: function() {
+      var returnVal = EditorOriginView.prototype.render.apply(this, arguments);
+
+      this.addArticleViews();
+      this.$el.hide();
+
+      return returnVal;
+    },
+
+    postRender: function() {
+      this.resize();
+    },
+
     resize: function() {
       _.defer(_.bind(function() {
         var windowHeight = $(window).height();
@@ -38,16 +55,6 @@ define(function(require){
 
     evaluateChildStatus: function() {
       this.childrenRenderedCount++;
-    },
-
-    postRender: function() {
-      this.addArticleViews();
-
-      _.defer(_.bind(function(){
-        this.resize();
-        this.trigger('pageView:postRender');
-        this.setViewToReady();
-      }, this));
     },
 
     addArticleViews: function() {
@@ -62,6 +69,7 @@ define(function(require){
       this.$('.page-articles').append(new EditorPasteZoneView({ model: prePasteArticle }).$el);
       // Iterate over each article and add it to the page
       this.model.fetchChildren(_.bind(function(children) {
+        this.childCount = children.length;
         for(var i = 0, count = children.length; i < count; i++) {
           if(children[i].get('_type') !== 'article') {
             continue;

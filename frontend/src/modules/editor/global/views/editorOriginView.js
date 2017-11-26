@@ -29,7 +29,38 @@ define(function(require){
       if(this.model) {
         this.$el.attr('data-id', this.model.get('_id'));
       }
+      if(this.settings.hasAsyncPostRender) {
+        this.handleAsyncPostRender();
+        this.$el.hide();
+      }
       return this;
+    },
+
+    // this function does the true post-render after our async stuff
+    // FIXME this should probably go in a view only inherited by the pageView
+    // views (i.e. page/article/block/component)
+    // FIXME need to set this.childCount manually in each view, this should happen automagically
+    handleAsyncPostRender: function() {
+      var renderedChildren = [];
+      this.listenTo(Origin, 'pageView:itemRendered', function(view) {
+        if(this.model._childTypes.indexOf(view.model.get('_type')) === -1) {
+          return;
+        }
+        var id = view.model.get('_id');
+        if(renderedChildren.indexOf(id) !== -1) {
+          return;
+        }
+        renderedChildren.push(id);
+        if(renderedChildren.length === this.childCount) {
+          console.log(this.model.get('_type'), 'all', view.model.get('_type') + 's rendered');
+          this.stopListening(Origin, 'pageView:itemRendered');
+          this.trigger(this.model.get('_type') + 'View:postRender');
+          this.$el.fadeIn();
+          Origin.trigger('pageView:itemRendered', this);
+          this.setViewToReady();
+          return;
+        }
+      });
     },
 
     postRender: function() {

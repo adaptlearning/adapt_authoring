@@ -287,7 +287,7 @@ define(function(require){
             });
           };
           // start recursion
-          iterateOverChildren(currentCourse, function() {
+          iterateOverChildren(currentCourse, null, function() {
             var errorMessage = "";
             if(alerts.length > 0)  {
               for(var i = 0, len = alerts.length; i < len; i++) {

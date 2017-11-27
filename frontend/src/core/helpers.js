@@ -303,7 +303,6 @@ define(function(require){
           var containsAtLeastOneChild = true;
           var alerts = [];
           var iterateOverChildren = function(model, index, doneIterator) {
-            console.log(model, model._childTypes);
             if(!model._childTypes) {
               return doneIterator();
             }

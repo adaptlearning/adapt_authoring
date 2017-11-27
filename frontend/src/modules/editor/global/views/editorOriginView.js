@@ -52,7 +52,6 @@ define(function(require){
         }
         renderedChildren.push(id);
         if(renderedChildren.length === this.childCount) {
-          console.log(this.model.get('_type'), 'all', view.model.get('_type') + 's rendered');
           this.stopListening(Origin, 'pageView:itemRendered');
           this.trigger(this.model.get('_type') + 'View:postRender');
           this.$el.fadeIn();

@@ -9,13 +9,13 @@
 		<img class="scaffold-asset-preview" src="/api/asset/thumb/{{value}}"/>
 		{{else}}
       {{#if thumbnailPath}}
-		  <img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
+		  <img class="scaffold-asset-preview" src="{{thumbUrl}}"/>
 		  {{else}}
         {{#ifImageIsCourseAsset value}}
-        <img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
+        <img class="scaffold-asset-preview" src="{{thumbUrl}}"/>
         {{else}}
-        <a class="scaffold-asset-preview" title="{{t 'app.nothumbnailforimage'}}" href="{{getAssetFromValue value}}" target="_blank">
-          <i class="fa fa-file-image-o fa-large"></i>  
+        <a class="scaffold-asset-preview" title="{{t 'app.nothumbnailforimage'}}" href="{{url}}" target="_blank">
+          <i class="fa fa-file-image-o fa-large"></i>
         </a>
         {{/ifImageIsCourseAsset}}
       {{/if}}
@@ -30,7 +30,7 @@
 		<div>{{value}}</div>
 	</a>
 	{{else}}
-	<a class="scaffold-asset-preview" href="{{getAssetFromValue value}}" target="_blank">
+	<a class="scaffold-asset-preview" href="{{url}}" target="_blank">
 		<i class="fa fa-file-o fa-large"></i>
 		<div>{{value}}</div>
 	</a>
@@ -45,7 +45,7 @@
 		<div>{{value}}</div>
 	</a>
 	{{else}}
-	<img class="scaffold-asset-preview" src="{{getThumbnailFromValue value}}"/>
+	<img class="scaffold-asset-preview" src="{{url}}"/>
 	{{/ifAssetIsExternal}}
 {{/ifValueEquals}}
 
@@ -56,7 +56,7 @@
 		<div>{{value}}</div>
 	</a>
 	{{else}}
-	<a class="scaffold-asset-preview" href="{{getAssetFromValue value}}" target="_blank">
+	<a class="scaffold-asset-preview" href="{{url}}" target="_blank">
 		<i class="fa fa-file-audio-o fa-large"></i>
 		<div>{{value}}</div>
 	</a>

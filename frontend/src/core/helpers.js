@@ -205,42 +205,12 @@ define(function(require){
           }
         },
 
-        getAssetFromValue: function(url) {
-          var urlSplit = url.split('/')
-          var fileName = urlSplit[urlSplit.length - 1];
-          // Get courseAsset model
-          var courseAsset = Origin.editor.data.courseassets.findWhere({_fieldName: fileName});
-
-          if (courseAsset) {
-            var courseAssetId = courseAsset.get('_assetId');
-
-            return '/api/asset/serve/' + courseAssetId;  
-          } else {
-            return '';
-          }
-        },
-
         ifImageIsCourseAsset: function(url, block) {
           if (url.length !== 0 && url.indexOf('course/assets') == 0) {
             return block.fn(this);
           } else {
             return block.inverse(this);
           }
-        },
-
-        getThumbnailFromValue: function(url) {
-
-          var urlSplit = url.split('/')
-          var fileName = urlSplit[urlSplit.length - 1];
-          // Get courseAsset model
-          var courseAsset = Origin.editor.data.courseassets.findWhere({_fieldName: fileName});
-          if (courseAsset) {
-            var courseAssetId = courseAsset.get('_assetId');
-            return '/api/asset/thumb/' + courseAssetId;
-          } else {
-            return '/api/asset/thumb/' + url;
-          }
-
         },
 
         ifAssetIsExternal: function(url, block) {

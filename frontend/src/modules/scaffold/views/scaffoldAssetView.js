@@ -234,7 +234,7 @@ define(function(require) {
         _contentTypeId: contentTypeId,
         _contentType: contentType,
         _fieldName: fieldname
-      }, function(error, courseassets) {
+      }, _.bind(function(error, courseassets) {
         if(error) {
           return console.error(error);
         }
@@ -251,7 +251,7 @@ define(function(require) {
         //     console.error('Failed to destroy courseasset record', courseasset.get('_id'));
         //   }
         // });
-      });
+      }, this));
     },
 
     saveModel: function(attributesToSave) {

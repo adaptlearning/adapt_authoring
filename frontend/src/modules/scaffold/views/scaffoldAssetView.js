@@ -66,7 +66,6 @@ define(function(require) {
           return _renderDelegate();
         }
         if(collection.length === 0) {
-          console.warn('No asset data found for', Origin.scaffold.getCurrentModel().get('_id'));
           return _renderDelegate();
         }
         _renderDelegate(collection.at(0).get('_assetId'));

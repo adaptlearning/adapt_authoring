@@ -5,6 +5,7 @@ define(function(require) {
   var Origin = require('core/origin');
   var AssetManagementModalView = require('modules/assetManagement/views/assetManagementModalView');
   var AssetCollection = require('modules/assetManagement/collections/assetCollection');
+  var ContentCollection = require('core/collections/contentCollection');
   var CourseAssetModel = require('core/models/courseAssetModel');
 
   var ScaffoldAssetView = Backbone.Form.editors.Base.extend({
@@ -47,11 +48,33 @@ define(function(require) {
         value: this.value,
         type: this.schema.fieldType.replace('Asset:', '')
       };
-      this.$el.html(template(templateData));
-
+      // this delgate function is async, so does a re-render once the data is loaded
+      var _renderDelegate = _.bind(function(assetId) {
+        if(assetId) {
+          templateData.url = '/api/asset/serve/' + assetId;
+          templateData.thumbUrl = '/api/asset/thumb/' + assetId;
+          this.$el.html(template(templateData));
+        }
+      }, this);
+      // don't have asset ID, so query courseassets for matching URL && content ID
+      this.fetchCourseAsset({
+        _fieldName: this.value.split('/').pop(),
+        _contentTypeId: Origin.scaffold.getCurrentModel().get('_id')
+      }, function(error, collection) {
+        if(error) {
+          console.error(error);
+          return _renderDelegate();
+        }
+        if(collection.length === 0) {
+          console.warn('No asset data found for', Origin.scaffold.getCurrentModel().get('_id'));
+          return _renderDelegate();
+        }
+        _renderDelegate(collection.at(0).get('_assetId'));
+      });
+      // we do a first pass render here to satisfy code expecting us to return 'this'
       this.setValue(this.value);
       this.toggleFieldAvailibility();
-
+      this.$el.html(template());
       return this;
     },
 
@@ -83,7 +106,7 @@ define(function(require) {
 
     checkValueHasChanged: function() {
       if ('heroImage' === this.key) {
-        this.saveModel(false, { heroImage: this.getValue() });
+        this.saveModel({ heroImage: this.getValue() });
         return;
       }
       var contentTypeId = Origin.scaffold.getCurrentModel().get('_id');
@@ -108,7 +131,7 @@ define(function(require) {
         return;
       }
       this.value = inputValue;
-      this.saveModel(false);
+      this.saveModel();
     },
 
     onExternalAssetCancelClicked: function(event) {
@@ -128,7 +151,7 @@ define(function(require) {
           }
           if ('heroImage' === this.key) {
             this.setValue(data.assetId);
-            this.saveModel(false, { heroImage: data.assetId });
+            this.saveModel({ heroImage: data.assetId });
             return;
           }
           // Setup courseasset
@@ -167,23 +190,26 @@ define(function(require) {
     onExternalClearButtonClicked: function(event) {
       event.preventDefault();
       this.setValue('');
-      this.saveModel(false);
+      this.saveModel();
       this.toggleFieldAvailibility();
     },
 
-    findAsset: function (contentTypeId, contentType, fieldname) {
-      var searchCriteria = {
-        _contentType: contentType,
-        _contentTypeId: contentTypeId,
-        _fieldName: fieldname
-      };
-      if(!contentTypeId) {
+    fetchCourseAsset: function(searchCriteria, cb) {
+      if(!searchCriteria._contentTypeId) {
         searchCriteria._contentTypeParentId = Origin.editor.data.course.get('_id');
       }
-      return Origin.editor.data.courseassets.findWhere(searchCriteria) || false;
+      (new ContentCollection(null, { _type: 'courseasset' })).fetch({
+        data: searchCriteria,
+        success: function(collection) {
+          cb(null, collection);
+        },
+        error: function(model, response) {
+          cb('Failed to fetch data for', model.get('filename') + ':', response.statusText);
+        }
+      });
     },
 
-    createCourseAsset: function (courseAssetObject) {
+    createCourseAsset: function(courseAssetObject) {
       (new CourseAssetModel()).save({
         _courseId : Origin.editor.data.course.get('_id'),
         _contentType : courseAssetObject.contentType,
@@ -193,7 +219,7 @@ define(function(require) {
         _contentTypeParentId: courseAssetObject.contentTypeParentId
       }, {
         success: _.bind(function() {
-          this.saveModel(true);
+          this.saveModel();
         }, this),
         error: function(error) {
           Origin.Notify.alert({
@@ -204,71 +230,62 @@ define(function(require) {
       });
     },
 
-    removeCourseAsset: function (contentTypeId, contentType, fieldname) {
-      var courseAsset = this.findAsset(contentTypeId, contentType, fieldname);
-      if(!courseAsset) {
-        this.setValue('');
-        this.saveModel(true);
-        return;
-      }
-      courseAsset.destroy({
-        success: _.bind(function(success) {
-          this.saveModel(true);
-        }, this),
-        error: function(error) { }
+    removeCourseAsset: function(contentTypeId, contentType, fieldname) {
+      this.fetchCourseAsset({
+        _contentTypeId: contentTypeId,
+        _contentType: contentType,
+        _fieldName: fieldname
+      }, function(error, courseassets) {
+        if(error) {
+          return console.error(error);
+        }
+        if(courseassets.length === 0) {
+          this.setValue('');
+          this.saveModel();
+          return;
+        }
+        console.log(courseassets.destroy);
+        // courseassets.destroy({
+        //   success: _.bind(function(success) {
+        //     this.saveModel();
+        //   }, this),
+        //   error: function(error) {
+        //     console.error('Failed to destroy courseasset record', courseasset.get('_id'));
+        //   }
+        // });
       });
     },
 
-    saveModel: function(shouldResetAssetCollection, attributesToSave) {
-      var that = this;
+    saveModel: function(attributesToSave) {
       var isUsingAlternativeModel = false;
-      var currentModel = Origin.scaffold.getCurrentModel()
+      var currentModel = Origin.scaffold.getCurrentModel();
       var alternativeModel = Origin.scaffold.getAlternativeModel();
       var alternativeAttribute = Origin.scaffold.getAlternativeAttribute();
-      var isPatch = false;
-
-      attributesToSave = attributesToSave === undefined ? [] : attributesToSave;
-
       // Check if alternative model should be used
       if (alternativeModel) {
         currentModel = alternativeModel;
         isUsingAlternativeModel = true;
       }
-      var currentForm = Origin.scaffold.getCurrentForm();
-      var errors = currentForm.commit({validate: false});
-
+      // run schema validation
+      Origin.scaffold.getCurrentForm().commit({ validate: false });
       // Check if alternative attribute should be used
       if (alternativeAttribute) {
         attributesToSave[alternativeAttribute] = Origin.scaffold.getCurrentModel().attributes;
       }
-
-      if (!attributesToSave || !attributesToSave.length) {
+      if (!attributesToSave) {
         currentModel.pruneAttributes();
         currentModel.unset('tags');
-      } else {
-        isPatch = true;
       }
-
       currentModel.save(attributesToSave, {
-        patch: isPatch,
+        patch: attributesToSave !== undefined,
+        success: _.bind(function() {
+          this.render();
+          this.trigger('change', this);
+        }, this),
         error: function() {
           Origin.Notify.alert({
             type: 'error',
             text: Origin.l10n.t('app.errorsaveasset')
-          });
-        },
-        success: function() {
-          if(!shouldResetAssetCollection) {
-            that.render();
-            that.trigger('change', that);
-            return;
-          }
-          Origin.editor.data.courseassets.fetch({
-            reset:true,
-            success: function() {
-              that.render();
-              that.trigger('change', that);
-            }
           });
         }
       });

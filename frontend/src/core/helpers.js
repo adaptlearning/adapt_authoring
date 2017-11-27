@@ -313,7 +313,8 @@ define(function(require){
           contentobject: 'core/models/contentObjectModel',
           article: 'core/models/articleModel',
           block: 'core/models/blockModel',
-          component: 'core/models/componentModel'
+          component: 'core/models/componentModel',
+          courseasset: 'core/models/courseAssetModel'
         };
         if(contentModels.hasOwnProperty(type)) {
           return require(contentModels[type]);

@@ -243,7 +243,6 @@ define(function(require) {
           this.saveModel();
           return;
         }
-        console.log(courseassets.destroy);
         // courseassets.destroy({
         //   success: _.bind(function(success) {
         //     this.saveModel();

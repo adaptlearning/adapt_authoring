@@ -12,7 +12,6 @@ define(function(require) {
     initialize: function(options) {
       this.on('sync', this.loadedData, this);
       this.on('change', this.loadedData, this);
-      this.fetch();
     },
 
     loadedData: function() {

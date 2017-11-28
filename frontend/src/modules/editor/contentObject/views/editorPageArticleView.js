@@ -10,10 +10,6 @@ define(function(require){
     className: 'article editable article-draggable',
     tagName: 'div',
 
-    settings: _.extend({}, EditorOriginView.prototype.settings, {
-      hasAsyncPostRender: true
-    }),
-
     events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.add-block': 'addBlock',
       'click a.article-delete': 'deleteArticlePrompt',
@@ -62,7 +58,6 @@ define(function(require){
       this.$('.article-blocks').append(view.$el);
       // Iterate over each block and add it to the article
       this.model.fetchChildren(_.bind(function(children) {
-        this.childCount = children.length;
         for(var i = 0, count = children.length; i < count; i++) {
           this.addBlockView(children[i]);
         }

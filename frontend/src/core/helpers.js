@@ -278,7 +278,7 @@ define(function(require){
             }
             model.fetchChildren(function(currentChildren) {
               if (currentChildren.length > 0) {
-                return helpers.forSeriesAsync(currentChildren, iterateOverChildren, doneIterator);
+                return helpers.forParallelAsync(currentChildren, iterateOverChildren, doneIterator);
               }
               containsAtLeastOneChild = false;
               var children = _.isArray(model._childTypes) ? model._childTypes.join('/') : model._childTypes;
@@ -318,6 +318,30 @@ define(function(require){
         };
         if(contentModels.hasOwnProperty(type)) {
           return require(contentModels[type]);
+        }
+      },
+
+      /**
+      * Ensures list is iterated (doesn't guarantee order), even if using async iterator
+      * @param list Array or Backbone.Collection
+      * @param func Function to use as iterator. Will be passed item, index and callback function
+      * @param callback Function to be called on completion
+      */
+      forParallelAsync: function(list, func, callback) {
+        if(!list.hasOwnProperty('length') || list.length === 0) {
+          if(typeof callback === 'function') callback();
+          return;
+        }
+        // make a copy in case func modifies the original
+        var listCopy = list.models ? list.models.slice() : list.slice();
+        var doneCount = 0;
+        var _checkCompletion = function() {
+          if((++doneCount === listCopy.length) && typeof callback === 'function') {
+            callback();
+          }
+        };
+        for(var i = 0, count = listCopy.length; i < count; i++) {
+          func(listCopy[i], i, _checkCompletion);
         }
       },
 

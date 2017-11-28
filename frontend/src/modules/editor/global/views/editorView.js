@@ -245,8 +245,6 @@ define(function(require){
     },
 
     addToClipboard: function(model) {
-      _.defer(_.bind(function() { _.invoke(Origin.editor.data.clipboards.models, 'destroy') }, this));
-
       var postData = {
         objectId: model.get('_id'),
         courseId: Origin.editor.data.course.get('_id'),

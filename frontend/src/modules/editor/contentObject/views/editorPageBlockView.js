@@ -9,12 +9,13 @@ define(function(require){
   var EditorPageComponentListView = require('./editorPageComponentListView');
 
   var EditorPageBlockView = EditorOriginView.extend({
-    className: 'block editable block-draggable',
+    className: 'block editable block-draggable display-none',
     tagName: 'div',
 
-    settings: {
+    settings: _.extend({}, EditorOriginView.prototype.settings, {
+      hasAsyncPostRender: true,
       autoRender: false
-    },
+    }),
 
     events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.block-delete': 'deleteBlockPrompt',
@@ -33,14 +34,37 @@ define(function(require){
       this.model.fetchChildren(_.bind(function(components) {
         this.children = components;
         var layouts = this.getAvailableLayouts();
-        // TODO why do we have two attributes with the same value?
+        // FIXME why do we have two attributes with the same value?
         this.model.set({ layoutOptions: layouts, dragLayoutOptions: layouts });
 
         EditorOriginView.prototype.render.apply(this);
 
         this.addComponentViews();
         this.setupDragDrop();
+
+        this.handleAsyncPostRender();
       }, this));
+    },
+
+    animateIn: function() {
+      this.$el.hide().removeClass('display-none').fadeIn();
+    },
+
+    handleAsyncPostRender: function() {
+      var renderedChildren = [];
+      if(this.children.length === 0) {
+        return this.animateIn();
+      }
+      this.listenTo(Origin, 'editorPageComponent:postRender', function(view) {
+        var id = view.model.get('_id');
+        if(this.children.indexOf(view.model) !== -1 && renderedChildren.indexOf(id) === -1) {
+          renderedChildren.push(id);
+        }
+        if(renderedChildren.length === this.children.length) {
+          this.stopListening(Origin, 'editorPageComponent:postRender');
+          this.animateIn();
+        }
+      });
     },
 
     listenToEvents: function() {

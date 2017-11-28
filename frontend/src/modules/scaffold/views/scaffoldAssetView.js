@@ -157,7 +157,7 @@ define(function(require) {
           return;
         }
         // delete all matching courseassets and then saveModel
-        Helpers.forSeriesAsync(courseassets, function(model, index, cb) {
+        Helpers.forParallelAsync(courseassets, function(model, index, cb) {
           model.destroy({
             success: cb,
             error: function(error) {

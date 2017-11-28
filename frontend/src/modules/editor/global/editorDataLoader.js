@@ -22,8 +22,7 @@ define(function(require) {
   // used to check what's loaded
   var courseData = {
     course: false,
-    config: false,
-    clipboards: false
+    config: false
   };
 
   // Public API
@@ -77,8 +76,7 @@ define(function(require) {
       if(!isAlreadyLoaded) {
         _.extend(Origin.editor.data, {
           course: new CourseModel({ _id: courseId }),
-          config: new ConfigModel({ _courseId: courseId }),
-          clipboards: createCollection(ClipboardModel, '&createdBy=' + Origin.sessionModel.get('id')),
+          config: new ConfigModel({ _courseId: courseId })
         });
       }
       // fetch all collections

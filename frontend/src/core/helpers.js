@@ -321,21 +321,30 @@ define(function(require){
         }
       },
 
+      /**
+      * Ensures list is iterated in order, even if using async iterator
+      * @param list Array or Backbone.Collection
+      * @param func Function to use as iterator. Will be passed item, index and callback function
+      * @param callback Function to be called on completion
+      */
       forSeriesAsync: function(list, func, callback) {
         if(!list.hasOwnProperty('length') || list.length === 0) {
           if(typeof callback === 'function') callback();
           return;
         }
-        var doneCount = 0;
+        // make a copy in case func modifies the original
+        var listCopy = list.models ? list.models.slice() : list.slice();
+        var doneCount = -1;
         var _doAsync = function() {
-          var nextItem = list.at && typeof list.at === 'function' ? list.at(done) : list[doneCount];
-          func(nextItem, doneCount, function() {
-            if(++doneCount === list.length) {
-              if(typeof callback === 'function') callback();
-              return;
-            }
-            _doAsync();
-          });
+          if(++doneCount === listCopy.length) {
+            if(typeof callback === 'function') callback();
+            return;
+          }
+          var nextItem = listCopy[doneCount];
+          if(!nextItem) {
+            console.error('Invalid item at', doneCount + ':', nextItem);
+          }
+          func(nextItem, doneCount, _doAsync);
         };
         _doAsync();
       }

@@ -156,25 +156,16 @@ define(function(require) {
           this.saveModel();
           return;
         }
-        courseassets.forEach(function(model, index, list) {
+        // delete all matching courseassets and then saveModel
+        Helpers.forSeriesAsync(courseassets, function(model, index, cb) {
           model.destroy({
-            success: _.bind(function(model) {
-              console.log(list);
-              // this.saveModel();
-            }, this),
+            success: cb,
             error: function(error) {
               console.error('Failed to destroy courseasset record', courseasset.get('_id'));
+              cb();
             }
           });
-        });
-        // courseassets.destroy({
-        //   success: _.bind(function(success) {
-        //     this.saveModel();
-        //   }, this),
-        //   error: function(error) {
-        //     console.error('Failed to destroy courseasset record', courseasset.get('_id'));
-        //   }
-        // });
+        }, _.bind(this.saveModel, this));
       }, this));
     },
 

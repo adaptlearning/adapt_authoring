@@ -9,7 +9,7 @@ define(function(require){
   var EditorPageComponentListView = require('./editorPageComponentListView');
 
   var EditorPageBlockView = EditorOriginView.extend({
-    className: 'block editable block-draggable',
+    className: 'block editable block-draggable display-none',
     tagName: 'div',
 
     settings: _.extend({}, EditorOriginView.prototype.settings, {
@@ -32,7 +32,6 @@ define(function(require){
 
     render: function() {
       this.model.fetchChildren(_.bind(function(components) {
-        this.childCount = components.length;
         this.children = components;
         var layouts = this.getAvailableLayouts();
         // FIXME why do we have two attributes with the same value?
@@ -42,7 +41,23 @@ define(function(require){
 
         this.addComponentViews();
         this.setupDragDrop();
+
+        this.handleAsyncPostRender();
       }, this));
+    },
+
+    handleAsyncPostRender: function() {
+      var renderedChildren = [];
+      this.listenTo(Origin, 'editorPageComponent:postRender', function(view) {
+        var id = view.model.get('_id');
+        if(this.children.indexOf(view.model) !== -1 && renderedChildren.indexOf(id) === -1) {
+          renderedChildren.push(id);
+        }
+        if(renderedChildren.length === this.children.length) {
+          this.stopListening(Origin, 'editorPageComponent:postRender');
+          this.$el.hide().removeClass('display-none').fadeIn();
+        }
+      });
     },
 
     listenToEvents: function() {

@@ -48,8 +48,12 @@ define(function(require) {
         if(assetId) {
           templateData.url = '/api/asset/serve/' + assetId;
           templateData.thumbUrl = '/api/asset/thumb/' + assetId;
-          this.$el.html(template(templateData));
+        } else {
+          templateData.url = this.value;
+          templateData.thumbUrl = this.value;
         }
+        console.log(JSON.stringify(templateData, null, 2));
+        this.$el.html(template(templateData));
       }, this);
       // don't have asset ID, so query courseassets for matching URL && content ID
       this.fetchCourseAsset({
@@ -68,7 +72,7 @@ define(function(require) {
       // we do a first pass render here to satisfy code expecting us to return 'this'
       this.setValue(this.value);
       this.toggleFieldAvailibility();
-      this.$el.html(template(templateData));
+      this.$el.html(template());
       return this;
     },
 

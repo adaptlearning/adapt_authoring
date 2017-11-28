@@ -10,9 +10,9 @@ define(function(require){
     className: 'article editable article-draggable',
     tagName: 'div',
 
-    settings: _.extend({}, EditorOriginView.prototype.settings, {
-      hasAsyncPostRender: true
-    }),
+    // settings: _.extend({}, EditorOriginView.prototype.settings, {
+    //   hasAsyncPostRender: true
+    // }),
 
     events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.add-block': 'addBlock',

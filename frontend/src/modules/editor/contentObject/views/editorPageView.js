@@ -13,9 +13,9 @@ define(function(require){
     childrenCount: 0,
     childrenRenderedCount: 0,
 
-    settings: _.extend({}, EditorOriginView.prototype.settings, {
-      hasAsyncPostRender: true
-    }),
+    // settings: _.extend({}, EditorOriginView.prototype.settings, {
+    //   hasAsyncPostRender: true
+    // }),
 
     events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.add-article': 'addNewArticle',
@@ -37,7 +37,7 @@ define(function(require){
       var returnVal = EditorOriginView.prototype.render.apply(this, arguments);
 
       this.addArticleViews();
-      this.$el.hide();
+      // this.$el.hide();
 
       return returnVal;
     },

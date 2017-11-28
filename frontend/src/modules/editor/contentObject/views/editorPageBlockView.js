@@ -12,9 +12,10 @@ define(function(require){
     className: 'block editable block-draggable',
     tagName: 'div',
 
-    settings: {
+    settings: _.extend({}, EditorOriginView.prototype.settings, {
+      hasAsyncPostRender: true,
       autoRender: false
-    },
+    }),
 
     events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.block-delete': 'deleteBlockPrompt',
@@ -31,9 +32,10 @@ define(function(require){
 
     render: function() {
       this.model.fetchChildren(_.bind(function(components) {
+        this.childCount = components.length;
         this.children = components;
         var layouts = this.getAvailableLayouts();
-        // TODO why do we have two attributes with the same value?
+        // FIXME why do we have two attributes with the same value?
         this.model.set({ layoutOptions: layouts, dragLayoutOptions: layouts });
 
         EditorOriginView.prototype.render.apply(this);

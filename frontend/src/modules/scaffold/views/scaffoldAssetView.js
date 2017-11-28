@@ -52,7 +52,6 @@ define(function(require) {
           templateData.url = this.value;
           templateData.thumbUrl = this.value;
         }
-        console.log(JSON.stringify(templateData, null, 2));
         this.$el.html(template(templateData));
       }, this);
       // don't have asset ID, so query courseassets for matching URL && content ID

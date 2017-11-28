@@ -65,11 +65,14 @@
 {{/ifValueEquals}}
 
 <div class="scaffold-asset-buttons">
-	{{#ifAssetIsExternal value}}
-	<button class="btn scaffold-asset-clear-external"><i class="fa fa-times-circle"></i> {{t 'app.removeexternalasset'}}</button>
-	{{else}}
-	<button class="btn scaffold-asset-clear"><i class="fa fa-times-circle"></i> {{t 'app.removeasset'}}</button>
-	{{/ifAssetIsExternal}}
+	<button class="btn scaffold-asset-clear">
+		<i class="fa fa-times-circle"></i>
+		{{#ifAssetIsExternal value}}
+			{{t 'app.removeexternalasset'}}
+		{{else}}
+			{{t 'app.removeasset'}}
+		{{/ifAssetIsExternal}}
+	</button>
 </div>
 
 {{else}}

@@ -48,30 +48,33 @@ define(function(require) {
         if(assetId) {
           templateData.url = '/api/asset/serve/' + assetId;
           templateData.thumbUrl = '/api/asset/thumb/' + assetId;
-        } else {
-          templateData.url = this.value;
-          templateData.thumbUrl = this.value;
+          this.$el.html(template(templateData));
         }
-        this.$el.html(template(templateData));
       }, this);
-      // don't have asset ID, so query courseassets for matching URL && content ID
-      this.fetchCourseAsset({
-        _fieldName: this.value.split('/').pop(),
-        _contentTypeId: Origin.scaffold.getCurrentModel().get('_id')
-      }, function(error, collection) {
-        if(error) {
-          console.error(error);
-          return _renderDelegate();
-        }
-        if(collection.length === 0) {
-          return _renderDelegate();
-        }
-        _renderDelegate(collection.at(0).get('_assetId'));
-      });
+      if(Helpers.isAssetExternal(this.value)) {
+        // we know there won't be a courseasset record, so don't bother fetching
+        templateData.url = this.value;
+        templateData.thumbUrl = this.value;
+      } else {
+        // don't have asset ID, so query courseassets for matching URL && content ID
+        this.fetchCourseAsset({
+          _fieldName: this.value.split('/').pop(),
+          _contentTypeId: Origin.scaffold.getCurrentModel().get('_id')
+        }, function(error, collection) {
+          if(error) {
+            console.error(error);
+            return _renderDelegate();
+          }
+          if(collection.length === 0) {
+            return _renderDelegate();
+          }
+          _renderDelegate(collection.at(0).get('_assetId'));
+        });
+      }
       // we do a first pass render here to satisfy code expecting us to return 'this'
       this.setValue(this.value);
       this.toggleFieldAvailibility();
-      this.$el.html(template());
+      this.$el.html(template(templateData));
       return this;
     },
 

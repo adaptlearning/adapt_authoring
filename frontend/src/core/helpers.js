@@ -278,7 +278,7 @@ define(function(require){
             }
             model.fetchChildren(function(currentChildren) {
               if (currentChildren.length > 0) {
-                return helpers.forSeriesAsync(currentChildren, iterateOverChildren, doneIterator);
+                return helpers.forParallelAsync(currentChildren, iterateOverChildren, doneIterator);
               }
               containsAtLeastOneChild = false;
               var children = _.isArray(model._childTypes) ? model._childTypes.join('/') : model._childTypes;

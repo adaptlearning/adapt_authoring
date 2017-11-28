@@ -2,8 +2,6 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
-
-  var ConfigModel = require('core/models/configModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
 
   var EditorExtensionsEditView = EditorOriginView.extend({

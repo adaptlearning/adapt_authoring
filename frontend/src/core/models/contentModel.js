@@ -23,7 +23,7 @@ define(function(require) {
       var childTypes = _.isArray(this._childTypes) ? this._childTypes : [this._childTypes];
       // has to be a plain old array because we may have multiple model types
       var children = [];
-      Helpers.forSeriesAsync(childTypes, _.bind(function(childType, index, done) {
+      Helpers.forParallelAsync(childTypes, _.bind(function(childType, index, done) {
         (new ContentCollection(null, {
           _type: childType,
           _parentId: this.get('_id')

@@ -73,7 +73,7 @@ define(function(require) {
       // we do a first pass render here to satisfy code expecting us to return 'this'
       this.setValue(this.value);
       this.toggleFieldAvailibility();
-      this.$el.html(template());
+      this.$el.html(template(templateData));
       return this;
     },
 

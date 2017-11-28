@@ -46,8 +46,15 @@ define(function(require){
       }, this));
     },
 
+    animateIn: function() {
+      this.$el.hide().removeClass('display-none').fadeIn();
+    },
+
     handleAsyncPostRender: function() {
       var renderedChildren = [];
+      if(this.children.length === 0) {
+        return this.animateIn();
+      }
       this.listenTo(Origin, 'editorPageComponent:postRender', function(view) {
         var id = view.model.get('_id');
         if(this.children.indexOf(view.model) !== -1 && renderedChildren.indexOf(id) === -1) {
@@ -55,7 +62,7 @@ define(function(require){
         }
         if(renderedChildren.length === this.children.length) {
           this.stopListening(Origin, 'editorPageComponent:postRender');
-          this.$el.hide().removeClass('display-none').fadeIn();
+          this.animateIn();
         }
       });
     },

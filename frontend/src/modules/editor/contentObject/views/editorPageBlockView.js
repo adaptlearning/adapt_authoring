@@ -9,7 +9,7 @@ define(function(require){
   var EditorPageComponentListView = require('./editorPageComponentListView');
 
   var EditorPageBlockView = EditorOriginView.extend({
-    className: 'block editable block-draggable display-none',
+    className: 'block editable block-draggable page-content-syncing',
     tagName: 'div',
 
     settings: _.extend({}, EditorOriginView.prototype.settings, {
@@ -47,7 +47,7 @@ define(function(require){
     },
 
     animateIn: function() {
-      this.$el.hide().removeClass('display-none').fadeIn();
+      this.$el.removeClass('page-content-syncing');
     },
 
     handleAsyncPostRender: function() {

@@ -314,13 +314,14 @@ define(function(require){
             if (currentChildren.length == 0) {
               containsAtLeastOneChild = false;
 
+              var children = _.isArray(model._children) ? model._children.join('/') : model._children;
               alerts.push(
                 "There seems to be a "
                 + model.get('_type')
                 + " with the title - '"
                 + model.get('title')
                 + "' with no "
-                + model._children
+                + children
               );
 
               return;

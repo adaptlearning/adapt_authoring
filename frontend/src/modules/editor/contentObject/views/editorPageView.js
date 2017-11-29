@@ -127,8 +127,6 @@ define(function(require){
         _type:'article'
       });
 
-      var newArticleView = _this.addArticleView(newPageArticleModel);
-
       newPageArticleModel.save(null, {
         error: function() {
           Origin.Notify.alert({
@@ -138,6 +136,7 @@ define(function(require){
         },
         success: function(model, response, options) {
           Origin.editor.data.articles.add(model);
+          var newArticleView = _this.addArticleView(newPageArticleModel);
           newArticleView.$el.removeClass('syncing').addClass('synced');
           newArticleView.addBlock();
         }

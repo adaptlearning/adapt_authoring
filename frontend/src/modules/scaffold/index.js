@@ -10,9 +10,8 @@ define([
   './views/scaffoldColorPickerView',
   './views/scaffoldDisplayTitleView',
   './views/scaffoldItemsModalView',
-  './views/scaffoldQuestionButtonView',
   './views/scaffoldTagsView'
-], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldCodeEditorView, ScaffoldColorPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldQuestionButtonView, ScaffoldTagsView) {
+], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldCodeEditorView, ScaffoldColorPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldTagsView) {
 
   var Scaffold = {};
   var builtSchemas = {};
@@ -289,6 +288,7 @@ define([
   Scaffold.isOverlayActive = function() { return isOverlayActive; };
   Scaffold.setOverlayActive = function(booleanValue) { isOverlayActive = booleanValue; };
   Scaffold.addCustomField('Boolean', Backbone.Form.editors.Checkbox);
+  Scaffold.addCustomField('QuestionButton', Backbone.Form.editors.Text);
 
   Origin.on({
     'scaffold:updateSchemas': onScaffoldUpdateSchemas,

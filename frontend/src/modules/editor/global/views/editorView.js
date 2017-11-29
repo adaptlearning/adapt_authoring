@@ -48,7 +48,13 @@ define(function(require){
           this.validateProject(event, this.downloadProject);
         },
         'editorCommon:preview': function(event) {
-          this.validateProject(event, this.previewProject);
+          var previewWindow = window.open('/loading', 'preview');
+          this.validateProject(event, function(error) {
+            if(error) {
+              return previewWindow.close();
+            }
+            this.previewProject(previewWindow);
+          });
         },
         'editorCommon:export': function(event) {
           this.validateProject(event, this.exportProject);
@@ -71,17 +77,15 @@ define(function(require){
       helpers.validateCourseContent(this.currentCourse, _.bind(function(error) {
         if(error) {
           Origin.Notify.alert({ type: 'error', text: "There's something wrong with your course:<br/><br/>" + error });
-          return;
         }
-        next.apply(this);
+        next.call(this, error);
       }, this));
     },
 
-    previewProject: function() {
+    previewProject: function(previewWindow) {
       if(Origin.editor.isPreviewPending) {
         return;
       }
-      var previewWindow = window.open('/loading', 'preview');
       Origin.editor.isPreviewPending = true;
       $('.navigation-loading-indicator').removeClass('display-none');
       $('.editor-common-sidebar-preview-inner').addClass('display-none');

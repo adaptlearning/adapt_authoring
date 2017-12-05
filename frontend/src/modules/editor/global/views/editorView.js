@@ -283,22 +283,20 @@ define(function(require){
     },
 
     pasteFromClipboard: function(parentId, sortOrder, layout) {
-      var data = {
+      Origin.trigger('editorView:pasteCancel');
+      var postData = {
         id: Origin.editor.clipboardId,
         parentId: parentId,
         layout: layout,
         sortOrder: sortOrder,
         courseId: Origin.editor.data.course.get('_id')
       };
-      $.post('/api/content/clipboard/paste', data, function(jqXHR) {
+      $.post('/api/content/clipboard/paste', postData, function(data) {
         Origin.editor.clipboardId = null;
-        Origin.trigger('editor:refreshData', function() {
-          /**
-          * FIXME views should handle rendering the new data,
-          * we shouldn't need to refresh the whole page
-          */
-          Backbone.history.loadUrl();
-        }, this);
+        Origin.trigger('editorView:pasted:' + postData.parentId, {
+          _id: data._id,
+          sortOrder: postData.sortOrder
+        });
       }).fail(function(jqXHR, textStatus, errorThrown) {
         Origin.Notify.alert({
           type: 'error',

@@ -77,6 +77,7 @@ define(function(require){
         'editorView:removeComponent:' + id + ' ' +
         'editorView:moveComponent:' + id
       ] = this.render;
+      events['editorView:pasted:' + id] = this.onPaste;
       this.listenTo(Origin, events);
 
       this.listenTo(this, {
@@ -197,7 +198,6 @@ define(function(require){
       this.$('.page-components').empty();
 
       var addPasteZonesFirst = this.children.length && this.children[0].get('_layout') !== 'full';
-
       this.addComponentButtonLayout(this.children);
 
       if (addPasteZonesFirst) this.setupPasteZones();
@@ -274,6 +274,21 @@ define(function(require){
         pasteComponent.set('_pasteZoneLayout', layout.type);
         this.$('.page-components').append(new EditorPageComponentPasteZoneView({ model: pasteComponent }).$el);
       }, this);
+    },
+
+    onPaste: function(data) {
+      (new ComponentModel({ _id: data._id })).fetch({
+        success: _.bind(function(model) {
+          this.children.push(model);
+          this.render();
+        }, this),
+        error: function(data) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'xxxxx'
+          });
+        }
+      });
     }
   }, {
     template: 'editorPageBlock'

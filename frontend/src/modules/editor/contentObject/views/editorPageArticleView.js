@@ -34,6 +34,7 @@ define(function(require){
         var events = {};
         events['editorView:moveBlock:' + id] = this.render;
         events['editorView:deleteArticle:' + id] = this.deletePageArticle;
+        events['editorView:pasted:' + id] = this.onPaste;
         this.listenTo(Origin, events);
       }
 
@@ -68,8 +69,18 @@ define(function(require){
       scrollIntoView = scrollIntoView || false;
 
       var newBlockView = new EditorPageBlockView({ model: blockModel });
+      var $blocks = this.$('.article-blocks .block');
+      var sortOrder = blockModel.get('_sortOrder');
+      var index = sortOrder > 0 ? sortOrder-1 : undefined;
+      var shouldAppend = index === undefined || index >= $blocks.length || $blocks.length === 0;
 
-      this.$('.article-blocks').append(newBlockView.$el);
+      console.log('addBlockView:', 'sortOrder:', blockModel.get('_sortOrder'), 'index:', index, '$el:', $blocks.length, 'append:', shouldAppend);
+
+      if(shouldAppend) { // add to the end of the article
+        this.$('.article-blocks').append(newBlockView.$el);
+      } else { // 'splice' block into the new position
+        $($blocks[index]).before(newBlockView.$el);
+      }
       if (scrollIntoView) $.scrollTo(newBlockView.$el, 200);
       // Increment the sortOrder property
       blockModel.set('_pasteZoneSortOrder', (blockModel.get('_sortOrder')+1));
@@ -206,6 +217,20 @@ define(function(require){
           window.clearInterval(autoScrollTimer);
           view.hideDropZones();
           $container.scrollTop($(this).offset().top*-1);
+        }
+      });
+    },
+
+    onPaste: function(data) {
+      (new BlockModel({ _id: data._id })).fetch({
+        success: _.bind(function(model) {
+          this.addBlockView(model);
+        }, this),
+        error: function(data) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'xxxxx'
+          });
         }
       });
     }

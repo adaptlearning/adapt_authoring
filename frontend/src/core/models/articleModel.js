@@ -6,7 +6,12 @@ define(function(require) {
     urlRoot: '/api/content/article',
     _parent: 'contentObjects',
     _siblings: 'articles',
-    _children: 'blocks'
+    _children: 'blocks',
+
+    defaults: {
+      _isCollapsed: false
+    }
+
   });
 
   return ArticleModel;

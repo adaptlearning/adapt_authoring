@@ -27,6 +27,8 @@ define(function(require){
     postRender: function() {
       this.addBlockViews();
       this.setupDragDrop();
+      this.collapseArticle();
+
       _.defer(_.bind(function(){
         this.trigger('articleView:postRender');
         Origin.trigger('pageView:itemRendered');
@@ -50,7 +52,8 @@ define(function(require){
         'contextMenu:article:copy': this.onCopy,
         'contextMenu:article:copyID': this.onCopyID,
         'contextMenu:article:cut': this.onCut,
-        'contextMenu:article:delete': this.deleteArticlePrompt
+        'contextMenu:article:delete': this.deleteArticlePrompt,
+        'contextMenu:article:collapse': this.toggleCollapseArticle
       });
     },
 
@@ -241,7 +244,38 @@ define(function(require){
           $container.scrollTop($(this).offset().top*-1);
         }
       });
+    },
+
+    toggleCollapseArticle: function() {
+      var isCollapsed = this.model.get('_isCollapsed');
+      this.model.set('_isCollapsed', !isCollapsed);
+      this.collapseArticle();
+    },
+    
+    collapseArticle: function() {
+      var isCollapsed = this.model.get('_isCollapsed');
+
+      this.$el.toggleClass('collapsed-view', isCollapsed);
+      var contentHeight = this.$('.article-blocks').height() + this.$('.add-control').height();
+      var ownHeight = this.$el.height();
+      var height;
+
+      if (isCollapsed) {
+        height = ownHeight - contentHeight;
+      } else {
+        height = ownHeight + contentHeight;
+      }
+
+      this.$el.velocity({height: height}, {
+        duration: 200,
+        complete: function() {
+          if (!isCollapsed) {
+            this.css('height', 'auto');
+          }
+        }
+      });
     }
+
   }, {
     template: 'editorPageArticle'
   });

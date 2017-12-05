@@ -84,8 +84,6 @@ define(function(require){
       var index = sortOrder > 0 ? sortOrder-1 : undefined;
       var shouldAppend = index === undefined || index >= $articles.length || $articles.length === 0;
 
-      console.log('addArticleView:', 'sortOrder:', articleModel.get('_sortOrder'), 'index:', index, '$el:', $articles.length, 'append:', shouldAppend);
-
       if(shouldAppend) { // add to the end of the article
         this.$('.page-articles').append(newArticleView.$el);
       } else { // 'splice' block into the new position

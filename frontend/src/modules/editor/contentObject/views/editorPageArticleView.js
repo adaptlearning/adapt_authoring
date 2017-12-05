@@ -74,8 +74,6 @@ define(function(require){
       var index = sortOrder > 0 ? sortOrder-1 : undefined;
       var shouldAppend = index === undefined || index >= $blocks.length || $blocks.length === 0;
 
-      console.log('addBlockView:', 'sortOrder:', blockModel.get('_sortOrder'), 'index:', index, '$el:', $blocks.length, 'append:', shouldAppend);
-
       if(shouldAppend) { // add to the end of the article
         this.$('.article-blocks').append(newBlockView.$el);
       } else { // 'splice' block into the new position

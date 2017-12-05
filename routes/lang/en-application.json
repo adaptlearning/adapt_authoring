@@ -53,6 +53,7 @@
   "app.delete": "Delete",
   "app.copy": "Copy",
   "app.copyidtoclipboard": "Copy ID to clipboard",
+  "app.collapsearticle": "Collapse",
   "app.paste": "Paste",
   "app.save": "Save",
   "app.saving": "Saving...",

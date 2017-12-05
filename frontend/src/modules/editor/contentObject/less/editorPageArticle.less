@@ -21,8 +21,17 @@
 
     &-blocks {
         margin:20px 2%;
+        transition: opacity 200ms ease-in-out;
     }
-
+    
+    &.collapsed-view {
+        overflow: hidden;
+        
+        .article-blocks {
+            transition: opacity 200ms ease-in-out;
+            opacity: 0.5;
+        }
+    }
 }
 
 .article-detail {

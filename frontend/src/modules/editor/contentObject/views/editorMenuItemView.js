@@ -119,7 +119,18 @@ define(function(require){
       var parentId = isTopLevel ? '' : '/' + this.model.get('_parentId');
       Origin.router.navigateTo('editor/' + Origin.editor.data.course.id + '/menu' + parentId);
 
-      if(this.model.destroy()) this.remove();
+      this.model.destroy({
+        success: _.bind(function(model) {
+          Origin.trigger('editorView:itemDeleted', model);
+          this.remove()
+        }, this),
+        error: function() {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'xxxxx'
+          });
+        }
+      });
     },
 
     cancelDeleteItem: function() {

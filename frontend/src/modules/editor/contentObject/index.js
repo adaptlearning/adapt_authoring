@@ -53,7 +53,6 @@ define(function(require) {
   function renderMenuStructure(data) {
     Origin.trigger('location:title:update', { title: 'Menu editor' });
 
-    Origin.editor.currentContentObject = data.model;
     Origin.editor.scrollTo = 0;
 
     Origin.sidebar.addView(new EditorMenuSidebarView().$el, {

@@ -63,10 +63,15 @@ define(function(require){
           }
         }
         // all items left in hierarchy are new, render these
-        // note setUpInteraction when done
         Helpers.forParallelAsync(hierarchy, _.bind(function(model, index, callback) {
+        Helpers.forSeriesAsync(hierarchy, _.bind(function(model, index, callback) {
           this.renderLayer(model, callback);
-        }, this), _.defer(_.bind(this.setUpInteraction, this)));
+        }, this), _.defer(_.bind(function() {
+        // called after all layers rendered
+          this.removeSelectedItemStyling();
+          this.addSelectedItemStyling(selectedModel.get('_id'));
+          this.setUpInteraction();
+        }, this)));
       });
     },
 
@@ -87,6 +92,20 @@ define(function(require){
       var $window = $(window);
       this.setupHorizontalScroll($window.width(), $window.height());
       this.scrollToElement();
+    },
+
+    addSelectedItemStyling: function(id) {
+      this.$('.editor-menu-item[data-id="' + id + '"]').addClass('selected');
+      var model = this.contentobjects.findWhere({ _id: id });
+      var parentId = model && model.get('_parentId');
+      if(parentId) {
+        // recurse
+        this.addSelectedItemStyling(parentId);
+      }
+    },
+
+    removeSelectedItemStyling: function() {
+      this.$('.editor-menu-item').removeClass('selected');
     },
 
     /**

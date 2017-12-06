@@ -23,12 +23,14 @@ define(function(require){
         if(assetType) this.filters = assetType.$in;
       }
       this.initEventListeners();
+
+      this._doLazyScroll = _.bind(this.doLazyScroll, this);
     },
 
     postRender: function() {
       this.initPaging();
       // init lazy scrolling
-      $('.asset-management-assets-container').scroll(_.bind(this.doLazyScroll, this));
+      $('.asset-management-assets-container').on('scroll', this._doLazyScroll);
     },
 
     initEventListeners: function() {
@@ -171,7 +173,14 @@ define(function(require){
       var scrollTriggerAmmount = $('.asset-management-list-item').first().outerHeight()/2;
       // we're at the bottom, fetch more
       if (pxRemaining <= scrollTriggerAmmount) this.fetchCollection();
+    },
+
+    remove: function() {
+      $('.asset-management-assets-container').off('scroll', this._doLazyScroll);
+      
+      OriginView.prototype.remove.apply(this, arguments);
     }
+
   }, {
     template: 'assetManagementCollection'
   });

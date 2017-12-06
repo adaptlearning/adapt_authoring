@@ -21,7 +21,7 @@ define(function(require){
 
     initEventListeners: function() {
       this._doLazyScroll = _.bind(_.throttle(this.doLazyScroll, 250), this);
-      this._onResize = _.bind(_.throttle(this.onResize, 250), this);
+      this._onResize = _.bind(_.debounce(this.onResize, 250), this);
 
       this.listenTo(Origin, {
         'window:resize': this._onResize,

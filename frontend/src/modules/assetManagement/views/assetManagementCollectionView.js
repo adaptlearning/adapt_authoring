@@ -23,8 +23,8 @@ define(function(require){
       }
       this.initEventListeners();
 
-      this._doLazyScroll = _.bind(this.doLazyScroll, this);
-      this._onResize = _.bind(_.throttle(this.onResize, 400), this);
+      this._doLazyScroll = _.bind(_.throttle(this.doLazyScroll, 250), this);
+      this._onResize = _.bind(_.debounce(this.onResize, 400), this);
     },
 
     postRender: function() {

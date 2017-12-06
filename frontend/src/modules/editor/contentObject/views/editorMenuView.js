@@ -14,6 +14,8 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, {
         'editorView:menuView:updateSelectedItem': this.onSelectedItemChanged,
+        'editorView:menuView:addItem': this.onItemAdded,
+        'editorView:itemDeleted': this.onItemDeleted,
         'window:resize': this.setupHorizontalScroll
       });
     },
@@ -167,6 +169,25 @@ define(function(require){
         receive: function(event, ui) {
           // Prevent moving a menu item between levels
           if (ui.item.hasClass('content-type-menu')) ui.sender.sortable("cancel");
+        }
+      });
+    },
+
+    onItemAdded: function(newModel) {
+      this.contentobjects.add(newModel);
+    },
+
+    onItemDeleted: function(oldModel) {
+      this.contentobjects.fetch({
+        success: _.bind(function() {
+          // select the parent of the deleted item
+          Origin.trigger('editorView:menuView:updateSelectedItem', this.contentobjects.findWhere({ _id: oldModel.get('_parentId') }));
+        }, this),
+        error: function() {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'xxxxx'
+          });
         }
       });
     }

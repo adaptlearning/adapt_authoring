@@ -10,7 +10,6 @@ define(function(require){
 
   var EditorPageBlockView = EditorOriginView.extend({
     className: 'block editable block-draggable page-content-syncing',
-    className: 'block editable block-draggable display-none',
     tagName: 'div',
 
     settings: _.extend({}, EditorOriginView.prototype.settings, {
@@ -48,7 +47,7 @@ define(function(require){
     },
 
     animateIn: function() {
-      this.$el.hide().removeClass('display-none').fadeIn();
+      this.$el.removeClass('page-content-syncing');
     },
 
     handleAsyncPostRender: function() {

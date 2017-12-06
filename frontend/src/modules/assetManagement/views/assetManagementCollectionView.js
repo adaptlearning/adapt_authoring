@@ -5,7 +5,6 @@ define(function(require){
   var AssetItemView = require('./assetManagementItemView');
 
   var AssetCollectionView = OriginView.extend({
-    tagName: "div",
     className: "asset-management-collection",
 
     sort: { createdAt: -1 },
@@ -25,12 +24,14 @@ define(function(require){
       this.initEventListeners();
 
       this._doLazyScroll = _.bind(this.doLazyScroll, this);
+      this._onResize = _.bind(_.throttle(this.onResize, 400), this);
     },
 
     postRender: function() {
       this.initPaging();
       // init lazy scrolling
       $('.asset-management-assets-container').on('scroll', this._doLazyScroll);
+      $(window).on('resize', this._onResize);
     },
 
     initEventListeners: function() {
@@ -45,12 +46,8 @@ define(function(require){
     },
 
     initPaging: function() {
-      if(this.resizeTimer) {
-        clearTimeout(this.resizeTimer);
-        this.resizeTimer = -1;
-      }
       this.resetCollection(_.bind(function(collection) {
-        var containerHeight = $(window).height()-this.$el.offset().top;
+        var containerHeight = $(window).height() - this.$el.offset().top;
         var containerWidth = this.$el.width();
         var itemHeight = $('.asset-management-list-item').outerHeight(true);
         var itemWidth = $('.asset-management-list-item').outerWidth(true);
@@ -59,6 +56,7 @@ define(function(require){
         // columns stack nicely, but need to add extra row if it's not a clean split
         if((containerHeight % itemHeight) > 0) rows++;
         this.pageSize = columns*rows;
+
         // need another reset to get the actual pageSize number of items
         this.resetCollection(this.setViewToReady);
       }, this));
@@ -73,7 +71,7 @@ define(function(require){
     */
 
     fetchCollection: function(cb) {
-      if(this.shouldStopFetches) {
+      if(this.shouldStopFetches || this.isCollectionFetching) {
         return;
       }
       this.isCollectionFetching = true;
@@ -108,14 +106,17 @@ define(function(require){
       });
     },
 
-    resetCollection: function(cb) {
+    resetCollection: function(cb, shouldFetch) {
       // to remove old views
       Origin.trigger('assetManagement:assetViews:remove');
 
       this.shouldStopFetches = false;
       this.fetchCount = 0;
       this.collection.reset();
-      this.fetchCollection(cb);
+
+      if (shouldFetch === undefined || shouldFetch === true) {
+        this.fetchCollection(cb);
+      }
     },
 
     /**
@@ -123,6 +124,7 @@ define(function(require){
     */
 
     filterCollection: function() {
+      this.resetCollection(null, false);
       this.search.assetType = this.filters.length ? { $in: this.filters } : null;
       this.fetchCollection();
     },
@@ -139,6 +141,7 @@ define(function(require){
     },
 
     filterBySearchInput: function (filterText) {
+      this.resetCollection(null, false);
       var pattern = '.*' + filterText.toLowerCase() + '.*';
       this.search = { title: pattern, description: pattern };
       this.fetchCollection();
@@ -147,6 +150,7 @@ define(function(require){
     },
 
     filterByTags: function(tags) {
+      this.resetCollection(null, false);
       this.tags = _.pluck(tags, 'id');
       this.fetchCollection();
     },
@@ -156,11 +160,7 @@ define(function(require){
     */
 
     onResize: function() {
-      // we don't want to re-initialise for _every_ resize event
-      if(this.resizeTimer) {
-        clearTimeout(this.resizeTimer);
-      }
-      this.resizeTimer = setTimeout(_.bind(this.initPaging, this), 250);
+      this.initPaging();
     },
 
     doLazyScroll: function(e) {
@@ -177,6 +177,7 @@ define(function(require){
 
     remove: function() {
       $('.asset-management-assets-container').off('scroll', this._doLazyScroll);
+      $(window).on('resize', this._onResize);
       
       OriginView.prototype.remove.apply(this, arguments);
     }

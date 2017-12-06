@@ -21,11 +21,13 @@ define(function(require){
     }),
 
     preRender: function() {
+      var id = this.model.get('_id');
       var originEvents = {
         'editorView:removeSubViews': this.remove,
         'pageView:itemRendered': this.evaluateChildStatus
       };
-      originEvents['editorView:moveArticle:' + this.model.get('_id')] = this.render;
+      originEvents['editorView:moveArticle:' + id] = this.render;
+      originEvents['editorView:pasted:' + id] = this.onPaste;
       this.listenTo(Origin, originEvents);
     },
 
@@ -33,7 +35,6 @@ define(function(require){
       var returnVal = EditorOriginView.prototype.render.apply(this, arguments);
 
       this.addArticleViews();
-      // this.$el.hide();
 
       return returnVal;
     },
@@ -74,13 +75,20 @@ define(function(require){
       }, this));
     },
 
-    addArticleView: function(articleModel, scrollIntoView, addNewBlock) {
-      var newArticleView = new EditorPageArticleView({ model: articleModel });
-      var sortOrder = articleModel.get('_sortOrder');
-
+    addArticleView: function(articleModel, scrollIntoView) {
       scrollIntoView = scrollIntoView || false;
 
-      this.$('.page-articles').append(newArticleView.$el);
+      var newArticleView = new EditorPageArticleView({ model: articleModel });
+      var sortOrder = articleModel.get('_sortOrder');
+      var $articles = this.$('.page-articles .article');
+      var index = sortOrder > 0 ? sortOrder-1 : undefined;
+      var shouldAppend = index === undefined || index >= $articles.length || $articles.length === 0;
+
+      if(shouldAppend) { // add to the end of the article
+        this.$('.page-articles').append(newArticleView.$el);
+      } else { // 'splice' block into the new position
+        $($articles[index]).before(newArticleView.$el);
+      }
 
       if (scrollIntoView) {
         $.scrollTo(newArticleView.$el, 200);
@@ -135,6 +143,20 @@ define(function(require){
         'contextMenu:page-min:copyID': this.onCopyID
       });
       Origin.trigger('contextMenu:open', fakeView, event);
+    },
+
+    onPaste: function(data) {
+      (new ArticleModel({ _id: data._id })).fetch({
+        success: _.bind(function(model) {
+          this.addArticleView(model);
+        }, this),
+        error: function(data) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'xxxxx'
+          });
+        }
+      });
     }
   }, {
     template: 'editorPage'

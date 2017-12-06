@@ -27,10 +27,12 @@ define(function(require) {
       if(options._parentId) {
         this._parentId = options._parentId;
       }
-      this.listenTo(Origin, {
+      var events = {
         'editorView:removeSubViews': this.remove,
         'editorMenuView:removeMenuViews': this.remove
-      });
+      };
+      events['editorView:pasted:' + this._parentId] = this.onPaste;
+      this.listenTo(Origin, events);
     },
 
     render: function() {
@@ -104,6 +106,7 @@ define(function(require) {
           _.delay(newMenuItemView.remove, 3000);
         },
         success: _.bind(function(model) {
+          Origin.trigger('editorView:menuView:addItem', model);
           // Force setting the data-id attribute as this is required for drag-drop sorting
           newMenuItemView.$el.children('.editor-menu-item-inner').attr('data-id', model.get('_id'));
           if (type === 'page') {
@@ -208,6 +211,18 @@ define(function(require) {
       if(type === 'menu') route += '/edit';
 
       Origin.router.navigateTo(route);
+    },
+
+    // called after a successful paste
+    onPaste: function(data) {
+      (new ContentObjectModel({ _id: data._id})).fetch({
+        success: _.bind(function(model) {
+          this.addMenuItemView(model);
+        }, this),
+        error: function() {
+
+        }
+      });
     }
   }, {
     template: 'editorMenuLayer'

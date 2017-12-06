@@ -64,7 +64,7 @@ define(function(require){
         }
         // all items left in hierarchy are new, render these
         // note setUpInteraction when done
-        Helpers.forParallelAsync(hierarchy, _.bind(function(model, index, callback) {
+        Helpers.forSeriesAsync(hierarchy, _.bind(function(model, index, callback) {
           this.renderLayer(model, callback);
         }, this), _.defer(_.bind(this.setUpInteraction, this)));
       });

@@ -141,6 +141,9 @@ define(function(require){
     getSupportedLayout: function() {
       var componentType = Origin.editor.data.componenttypes.findWhere({ component: this.model.get('_component') });
       var supportedLayout = componentType.get('properties')._supportedLayout;
+      // allow all layouts by default
+      if(!supportedLayout) return { full: true, half: true };
+
       return {
         full: _.indexOf(supportedLayout.enum, 'full-width') > -1,
         half: _.indexOf(supportedLayout.enum, 'half-width') > -1

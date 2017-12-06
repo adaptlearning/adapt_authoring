@@ -20,8 +20,11 @@ define(function(require){
     },
 
     initEventListeners: function() {
+      this._doLazyScroll = _.bind(_.throttle(this.doLazyScroll, 250), this);
+      this._onResize = _.bind(_.throttle(this.onResize, 250), this);
+
       this.listenTo(Origin, {
-        'window:resize': this.onResize,
+        'window:resize': this._onResize,
         'dashboard:dashboardSidebarView:filterBySearch': function(text) { this.doFilter(text) },
         'dashboard:dashboardSidebarView:filterByTags': function(tags) { this.doFilter(null, tags) },
         'dashboard:sort:asc': function() { this.doSort('asc'); },
@@ -35,7 +38,7 @@ define(function(require){
 
       this.listenTo(this.collection, 'add', this.appendProjectItem);
 
-      $('.contentPane').scroll(_.bind(this.doLazyScroll, this));
+      $('.contentPane').on('scroll', this._doLazyScroll);
     },
 
     initUserPreferences: function() {
@@ -188,12 +191,15 @@ define(function(require){
     },
 
     onResize: function() {
-      // we don't want to re-initialise for _every_ resize event
-      if(this.resizeTimer) {
-        clearTimeout(this.resizeTimer);
-      }
-      this.resizeTimer = setTimeout(_.bind(this.initPaging, this), 250);
+      this.initPaging();
+    },
+
+    remove: function() {
+      $('.contentPane').off('scroll', this._doLazyScroll);
+
+      OriginView.prototype.remove.apply(this, arguments);
     }
+
   }, {
     template: 'projects'
   });

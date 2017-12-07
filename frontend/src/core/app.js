@@ -12,6 +12,7 @@
       'jqueryUI',
       'mediaelement',
       'scrollTo',
+      'selectize',
       'sweetalert',
       'velocity'
     ], callback);

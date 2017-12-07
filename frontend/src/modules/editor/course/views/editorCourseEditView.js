@@ -12,9 +12,6 @@ define(function(require) {
   var EditorCourseEditView = EditorOriginView.extend({
     className: "course-edit",
     tagName: "div",
-    settings: {
-      autoRender: false
-    },
 
     preRender: function() {
       this.listenTo(Origin, 'projectEditSidebar:views:save', this.save);
@@ -24,24 +21,9 @@ define(function(require) {
         this.$el.addClass('project-detail-hide-hero');
         // Initialise the 'tags' property for a new course
         this.model.set('tags', []);
-        this.render();
-        // This next line is important for a proper PATCH request on saveProject()
-        this.originalAttributes = _.clone(this.model.attributes);
-        return;
       }
-      Origin.editor.data.config.fetch({
-        success: _.bind(function() {
-          // This next line is important for a proper PATCH request on saveProject()
-          this.originalAttributes = _.clone(this.model.attributes);
-          this.render();
-        }, this),
-        error: _.bind(function(model) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: Origin.l10n.t('app.errorloadconfig', { course: Origin.editor.data.course.get('displayTitle') })
-          });
-        }, this)
-      });
+      // This next line is important for a proper PATCH request on saveProject()
+      this.originalAttributes = _.clone(this.model.attributes);
     },
 
     getAttributesToSave: function() {

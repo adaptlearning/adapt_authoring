@@ -371,6 +371,35 @@ define(function(require){
           func(nextItem, doneCount, _doAsync);
         };
         _doAsync();
+      },
+
+      /**
+      * Does a fetch for model in models, and returns the latest data in the
+      * passed callback
+      * @param models {Array of Backbone.Models}
+      * @param callback {Function to call when complete}
+      */
+      multiModelFetch: function(models, callback) {
+        var collatedData = {};
+        helpers.forParallelAsync(models, function(model, index, done) {
+          model.fetch({
+            success: function(data) {
+              collatedData[index] = data;
+              done();
+            },
+            error: function(data) {
+              console.error('Failed to fetch data for', model.get('_id'), + data.responseText);
+              done();
+            }
+          });
+        }, function doneAll() {
+          var orderedKeys = Object.keys(collatedData).sort();
+          var returnArr = [];
+          for(var i = 0, count = orderedKeys.length; i < count; i++) {
+            returnArr.push(collatedData[orderedKeys[i]]);
+          }
+          callback(returnArr);
+        });
       }
     };
 

@@ -15,7 +15,7 @@ define(function(require) {
     };
     if(!location) return loadAssetsView();
     if(location === 'new') loadNewAssetView();
-    if(subLocation === 'edit') loadEditAssetView();
+    if(subLocation === 'edit') loadEditAssetView(location);
   });
 
   Origin.on('globalMenu:assetManagement:open', function() {
@@ -56,7 +56,7 @@ define(function(require) {
     Origin.contentPane.setView(AssetManagementNewAssetView, { model: new AssetModel });
   }
 
-  function loadEditAssetView() {
+  function loadEditAssetView(location) {
     // Fetch existing asset model
     (new AssetModel({ _id: location })).fetch({
       success: function(model) {

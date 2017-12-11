@@ -1,10 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Origin = require('core/origin');
 
   var ModalView = Backbone.View.extend({
-
     className: 'modal',
 
     events: {
@@ -13,15 +11,14 @@ define(function(require) {
     },
 
     initialize: function(options) {
-      var defaults = {
+      this.view = options.view;
+      this.options = _.extend({
         _shouldShowCancelButton: true,
         _shouldShowDoneButton: true,
         _shouldShowScrollbar: true,
         _shouldDisableCancelButton: false,
         _shouldDisableDoneButton: false
-      }
-      this.view = options.view;
-      this.options = _.extend(defaults, options.options);
+      }, options.options);
       this.context = options.context;
 
       this.listenTo(Origin, {
@@ -42,7 +39,7 @@ define(function(require) {
       var template = Handlebars.templates['modal'];
       this.$el.html(template(data)).appendTo('body');
       _.defer(_.bind(this.postRender, this));
-      
+
       return this;
     },
 

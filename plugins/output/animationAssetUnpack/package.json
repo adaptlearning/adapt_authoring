@@ -1,0 +1,10 @@
+{
+  "displayName": "Animation Asset Unpack",
+  "version": "0.0.1",
+  "dependencies": {
+    "decompress": "^4.2.0",
+    "filehound": "^1.16.2",
+    "fs-extra": "^4.0.3",
+    "fsmonitor": "^0.2.4"
+  }
+}

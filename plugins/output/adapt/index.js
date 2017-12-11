@@ -24,7 +24,8 @@ var origin = require('../../../'),
     exec = require('child_process').exec,
     semver = require('semver'),
     installHelpers = require('../../../lib/installHelpers'),
-    logger = require('../../../lib/logger');
+    logger = require('../../../lib/logger'),
+    AnimationAssetUnpack = require('../animationAssetUnpack');
 
 function AdaptOutput() {
 }
@@ -244,9 +245,17 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
 
           archive.pipe(output);
 
-          archive.bulk([
-            { expand: true, cwd: path.join(BUILD_FOLDER), src: ['**/*'] },
-          ]).finalize();
+          // locks on course build directory for OAM package files and
+          // unpack them when available
+          AnimationAssetUnpack.getInstance().processDir(BUILD_FOLDER,function onDirProcessed(err) {
+            if (!err) {
+              archive.bulk([{ expand: true, cwd: path.join(BUILD_FOLDER), src: ['**/*'] }]).finalize();
+            }
+            else {
+              logger.log('error', err);
+              callback(err);
+            }
+          });
 
         } else {
           // No download required -- skip this step

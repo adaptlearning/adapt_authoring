@@ -23,7 +23,7 @@ define(function(require) {
 	        if (this.options.assetType === "Asset:image" && Origin.scaffold.getCurrentModel().get('_component') === 'graphic') {
 	        	this.setupImageAutofillButton();
 	        }
-	        this.resizeAssetPanels();
+	        this.resizePanels();
 	    },
 
 	    setupSubViews: function() {
@@ -48,12 +48,10 @@ define(function(require) {
 	    	new AssetManagementModelAutofillView({modalView: this});
 	    },
 
-	    resizeAssetPanels: function() {
-	        var navigationHeight = $('.navigation').outerHeight();
-	        var windowHeight = $(window).height();
-	        var actualHeight = windowHeight - (navigationHeight);
-	        this.$('.asset-management-assets-container').height(actualHeight);
-	        this.$('.asset-management-preview-container').height(actualHeight);
+			resizePanels: function() {
+	      var actualHeight = $(window).height() - $('.modal-popup-toolbar').outerHeight();
+	      this.$('.asset-management-assets-container').height(actualHeight);
+	      this.$('.asset-management-preview-container').height(actualHeight);
 	    },
 
 	    onAssetClicked: function(model) {

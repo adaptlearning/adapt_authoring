@@ -32,7 +32,11 @@ define(function(require) {
     	  this.search.assetType = { $in: filters };
       }
       // Push collection through to collection view
-      this.$('.asset-management-assets-container-inner').append(new AssetManagementCollectionView({collection: this.collection, search: this.search}).$el);
+      var view = new AssetManagementCollectionView({
+        collection: this.collection,
+        search: this.search
+      });
+      this.$('.asset-management-assets-container-inner').append(view.$el);
     },
 
     setupFilterAndSearchView: function() {
@@ -45,8 +49,13 @@ define(function(require) {
 
     resizePanels: function() {
       var actualHeight = $(window).height() - $('.modal-popup-toolbar').outerHeight();
-      this.$('.asset-management-assets-container').height(actualHeight);
-      this.$('.asset-management-preview-container').height(actualHeight);
+      var windowWidth = $(window).width();
+      this.$('.asset-management-assets-container')
+        .width(windowWidth*0.75)
+        .height(actualHeight);
+      this.$('.asset-management-preview-container')
+        .width(windowWidth*0.25)
+        .height(actualHeight);
     },
 
     onAssetClicked: function(model) {

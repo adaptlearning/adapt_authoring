@@ -47,8 +47,8 @@ define(function(require){
 
     initPaging: function() {
       this.resetCollection(_.bind(function(collection) {
-        var containerHeight = $(window).height() - this.$el.offset().top;
-        var containerWidth = this.$el.width();
+        var containerHeight = $('.asset-management-assets-container').outerHeight();
+        var containerWidth = $('.asset-management-assets-container').outerWidth();
         var itemHeight = $('.asset-management-list-item').outerHeight(true);
         var itemWidth = $('.asset-management-list-item').outerWidth(true);
         var columns = Math.floor(containerWidth/itemWidth);
@@ -178,7 +178,7 @@ define(function(require){
     remove: function() {
       $('.asset-management-assets-container').off('scroll', this._doLazyScroll);
       $(window).on('resize', this._onResize);
-      
+
       OriginView.prototype.remove.apply(this, arguments);
     }
 

@@ -352,7 +352,7 @@ define(function(require){
         error: function() {
           Origin.Notify.alert({
             type: 'error',
-            text: 'xxxxx'
+            text: 'app.errorfetchingdata'
           });
         }
       });

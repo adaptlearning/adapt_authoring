@@ -16,6 +16,7 @@ define(function(require) {
       var defaults = {
         _shouldShowCancelButton: true,
         _shouldShowDoneButton: true,
+        _shouldShowScrollbar: true,
         _shouldDisableCancelButton: false,
         _shouldDisableDoneButton: false
       }
@@ -47,6 +48,9 @@ define(function(require) {
       }
       if (this.options._shouldDisableDoneButton) {
         this.onDoneButtonDisabled();
+      }
+      if(this.options._shouldShowScrollbar === false) {
+        this.$el.css('overflow-y', 'hidden');
       }
       this.modalView = new this.view(this.options);
       this.$('.modal-popup-content-inner').append(this.modalView.$el);

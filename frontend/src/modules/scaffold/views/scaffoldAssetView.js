@@ -143,6 +143,7 @@ define(function(require) {
             Origin.trigger('modal:open', AssetManagementModalView, {
                 collection: new AssetCollection,
                 assetType: this.schema.fieldType,
+                _shouldShowScrollbar: false,
                 onUpdate: function(data) {
                     if (data) {
 

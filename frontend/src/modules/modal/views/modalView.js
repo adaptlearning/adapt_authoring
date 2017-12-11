@@ -23,13 +23,17 @@ define(function(require) {
       this.view = options.view;
       this.options = _.extend(defaults, options.options);
       this.context = options.context;
-      this.listenTo(Origin, 'remove:views', this.remove);
-      this.listenTo(Origin, 'modal:onCancel', this.onCloseButtonClicked);
-      this.listenTo(Origin, 'modal:onUpdate', this.onDoneButtonClicked);
-      this.listenTo(Origin, 'modal:disableCancelButton', this.onCloseButtonDisabled);
-      this.listenTo(Origin, 'modal:disableDoneButton', this.onDoneButtonDisabled);
-      this.listenTo(Origin, 'modal:enableCancelButton', this.onCloseButtonEnabled);
-      this.listenTo(Origin, 'modal:enableDoneButton', this.onDoneButtonEnabled);
+
+      this.listenTo(Origin, {
+        'remove:views': this.remove,
+        'modal:onCancel': this.onCloseButtonClicked,
+        'modal:onUpdate': this.onDoneButtonClicked,
+        'modal:disableCancelButton': this.onCloseButtonDisabled,
+        'modal:disableDoneButton': this.onDoneButtonDisabled,
+        'modal:enableCancelButton': this.onCloseButtonEnabled,
+        'modal:enableDoneButton': this.onDoneButtonEnabled
+      });
+
       this.render();
     },
 

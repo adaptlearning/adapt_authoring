@@ -25,13 +25,14 @@ define(function(require){
 
     preRender: function() {
       this.setupChildCount();
-
       this.listenTo(Origin, {
         'editorView:removeSubViews': this.remove,
         'pageView:itemRendered': this.evaluateChildStatus
       });
       this.listenTo(Origin, 'editorView:moveArticle:' + this.model.get('_id'), this.render);
       this.listenTo(Origin, 'editorView:cutArticle:' + this.model.get('_id'), this.onCutArticle);
+
+      this._onScroll = _.bind(_.throttle(this.onScroll, 400), this);
     },
 
     resize: function() {
@@ -66,10 +67,14 @@ define(function(require){
 
     evaluateChildStatus: function() {
       this.childrenRenderedCount++;
+
+      if (this.childrenRenderedCount < this.childrenCount) return;
+      this.allChildrenRendered();
     },
 
     postRender: function() {
       this.addArticleViews();
+      this.setupScrollListener();
 
       _.defer(_.bind(function(){
         this.resize();
@@ -168,7 +173,31 @@ define(function(require){
     onCutArticle: function(view) {
       this.once('pageView:postRender', view.showPasteZones);
       this.render();
+    },
+
+    setupScrollListener: function() {
+      $('.contentPane').on('scroll', this._onScroll);
+    },
+    
+    onScroll: function(event) {
+      var scrollPos = event.currentTarget.scrollTop;
+      Origin.editor.scrollTo = scrollPos;
+    },
+    
+    removeScrollListener: function() {
+      $('.contentPane').off('scroll', this._onScroll);
+    },
+
+    allChildrenRendered: function() {
+      $('.contentPane').scrollTop(Origin.editor.scrollTo);
+    },
+
+    remove: function() {
+      this.removeScrollListener();
+
+      EditorOriginView.prototype.remove.apply(this, arguments);
     }
+
   }, {
     template: 'editorPage'
   });

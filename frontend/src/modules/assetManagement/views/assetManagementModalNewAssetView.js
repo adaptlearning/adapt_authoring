@@ -54,7 +54,6 @@ define(function(require){
       var $uploadFileErrormsg = $uploadFile.prev('label').find('span.error');
 
       $.each(this.$('.required'), function (index, el) {
-        console.log(el.val, el);
         var $errormsg = $(el).prev('label').find('span.error');
         if (!$.trim($(el).val())) {
           validated = false;

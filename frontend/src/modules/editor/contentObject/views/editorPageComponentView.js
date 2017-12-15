@@ -1,13 +1,15 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
   var Origin = require('core/origin');
   var EditorOriginView = require('../../global/views/editorOriginView');
 
   var EditorPageComponentView = EditorOriginView.extend({
     className: 'component editable component-draggable',
     tagName: 'div',
+
+    settings: _.extend({}, EditorOriginView.prototype.settings, {
+      autoRender: false,
+    }),
 
     events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.component-delete': 'deleteComponentPrompt',
@@ -18,23 +20,24 @@ define(function(require){
 
     preRender: function() {
       this.$el.addClass('component-' + this.model.get('_layout'));
-      this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
-      this.listenTo(Origin, 'editorPageView:removePageSubViews', this.remove);
-
-      this.evaluateLayout();
-
-      this.on('contextMenu:component:edit', this.loadComponentEdit);
-      this.on('contextMenu:component:copy', this.onCopy);
-      this.on('contextMenu:component:copyID', this.onCopyID);
-      this.on('contextMenu:component:cut', this.onCut);
-      this.on('contextMenu:component:delete', this.deleteComponentPrompt);
+      this.listenTo(Origin, 'editorView:removeSubViews editorPageView:removePageSubViews', this.remove);
+      this.on({
+        'contextMenu:component:edit': this.loadComponentEdit,
+        'contextMenu:component:copy': this.onCopy,
+        'contextMenu:component:copyID': this.onCopyID,
+        'contextMenu:component:delete': this.deleteComponentPrompt
+      });
+      this.evaluateLayout(_.bind(function(layouts) {
+        this.model.set('_movePositions', layouts);
+        this.render();
+      }, this));
     },
 
     postRender: function () {
       this.setupDragDrop();
       _.defer(_.bind(function(){
         this.trigger('componentView:postRender');
-        Origin.trigger('pageView:itemRendered');
+        Origin.trigger('pageView:itemRendered', this);
       }, this));
     },
 
@@ -45,23 +48,22 @@ define(function(require){
         type: 'warning',
         title: Origin.l10n.t('app.deletecomponent'),
         text: Origin.l10n.t('app.confirmdeletecomponent') + '<br />' + '<br />' + Origin.l10n.t('app.confirmdeletecomponentwarning'),
-        callback: _.bind(this.deleteComponentConfirm, this)
+        callback: _.bind(function(confirmed) {
+          if(confirmed) this.deleteComponent();
+        }, this)
       });
     },
 
-    deleteComponentConfirm: function(confirmed) {
-      if(confirmed) {
-        this.deleteComponent();
-      }
-    },
-
     deleteComponent: function() {
-      var parentId = this.model.get('_parentId');
-
-      if (this.model.destroy()) {
-        this.remove();
-        Origin.trigger('editorView:removeComponent:' + parentId);
-      }
+      this.model.destroy({
+        success: _.bind(function(model) {
+          this.remove();
+          Origin.trigger('editorView:removeComponent:' + model.get('_parentId'));
+        }, this),
+        error: function(response) {
+          console.error(response);
+        }
+      })
     },
 
     loadComponentEdit: function(event) {
@@ -137,11 +139,10 @@ define(function(require){
     },
 
     getSupportedLayout: function() {
-      var componentType = _.find(Origin.editor.data.componenttypes.models, function(type){
-        return type.get('component') === this.model.get('_component');
-      }, this);
-
+      var componentType = Origin.editor.data.componenttypes.findWhere({ component: this.model.get('_component') });
       var supportedLayout = componentType.get('properties')._supportedLayout;
+      // allow all layouts by default
+      if(!supportedLayout) return { full: true, half: true };
 
       return {
         full: _.indexOf(supportedLayout.enum, 'full-width') > -1,
@@ -149,114 +150,58 @@ define(function(require){
       }
     },
 
-    evaluateLayout: function() {
+    evaluateLayout: function(cb) {
       var supportedLayout = this.getSupportedLayout();
-      var isFullWidthSupported = supportedLayout.full;
-      var isHalfWidthSupported = supportedLayout.half;
-
       var movePositions = {
         left: false,
         right: false,
         full: false
       };
-
-      if (isHalfWidthSupported) {
-        var siblings = this.model.getSiblings();
-        var showFull = !siblings.length && isFullWidthSupported;
-        var type = this.model.get('_layout');
-
-        switch (type) {
+      this.model.fetchSiblings(_.bind(function(siblings) {
+        var showFull = supportedLayout.full && siblings.length < 1;
+        switch(this.model.get('_layout')) {
           case 'left':
-            movePositions.right = true;
+            movePositions.right = supportedLayout.half;
             movePositions.full = showFull;
             break;
           case 'right':
-            movePositions.left = true;
+            movePositions.left = supportedLayout.half;
             movePositions.full = showFull;
             break;
           case 'full':
-            movePositions.left = true;
-            movePositions.right = true;
+            movePositions.left = supportedLayout.half;
+            movePositions.right = supportedLayout.half;
             break
         }
-      }
-
-      this.model.set('_movePositions', movePositions);
-
+        cb(movePositions);
+      }, this));
     },
 
     evaluateMove: function(event) {
       event && event.preventDefault();
-      var left = $(event.currentTarget).hasClass('component-move-left');
-      var right = $(event.currentTarget).hasClass('component-move-right');
-      var newComponentLayout = (!left && !right) ? 'full' : (left ? 'left' : 'right');
-      var siblings = this.model.getSiblings();
-
-      if (siblings && siblings.length > 0) {
-        var siblingId = siblings.models[0].get('_id');
-      }
-
-      if (siblingId) {
-        this.moveSiblings(newComponentLayout, siblingId);
-      } else {
-        this.moveComponent(newComponentLayout);
-      }
+      var $btn = $(event.currentTarget);
+      this.model.fetchSiblings(_.bind(function(siblings) {
+        var isLeft = $btn.hasClass('component-move-left');
+        var isRight = $btn.hasClass('component-move-right');
+        var isFull = $btn.hasClass('component-move-full');
+        // move self to layout of clicked button
+        this.moveComponent(this.model.get('_id'), (isLeft ? 'left' : isRight ? 'right' : 'full'));
+        // move sibling to inverse of self
+        var siblingId = siblings && siblings.length > 0 && siblings.models[0].get('_id');
+        if (siblingId) this.moveComponent(siblingId, (isLeft ? 'right' : 'left'));
+      }, this));
     },
 
-    moveComponent: function (layout) {
-      var componentId = this.model.get('_id');
+    moveComponent: function (id, layout) {
       var parentId = this.model.get('_parentId');
-      var layoutData = {
-        _layout: layout,
-        _parentId: parentId
-      };
-
       $.ajax({
         type: 'PUT',
-        url:'/api/content/component/' + componentId,
-        data: layoutData,
-        success: function(jqXHR, textStatus, errorThrown) {
-          var componentModel = Origin.editor.data.components.get(componentId);
-          componentModel.set(layoutData);
-
-          // Re-render the block
-          Origin.trigger('editorView:moveComponent:' + parentId);
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: jqXHR.responseJSON.message
-          });
-        }
-      });
-    },
-
-    moveSiblings: function (layout, siblingId) {
-      var componentId = this.model.get('_id');
-      var parentId = this.model.get('_parentId');
-      var newSiblingLayout = (layout == 'left') ? 'right' : 'left';
-      var layoutData = {
-        newLayout: {
+        url:'/api/content/component/' + id,
+        data: {
           _layout: layout,
           _parentId: parentId
         },
-        siblingLayout: {
-          _layout: newSiblingLayout,
-          _parentId: parentId
-        }
-      };
-      $.ajax({
-        type: 'PUT',
-        url:'/api/content/component/switch/' + componentId +'/'+ siblingId,
-        data: layoutData,
         success: function(jqXHR, textStatus, errorThrown) {
-          var componentModel = Origin.editor.data.components.get(componentId);
-          componentModel.set(layoutData.newLayout);
-
-          var siblingModel = Origin.editor.data.components.get(siblingId);
-          siblingModel.set(layoutData.siblingLayout);
-
-          // Re-render the block
           Origin.trigger('editorView:moveComponent:' + parentId);
         },
         error: function(jqXHR, textStatus, errorThrown) {

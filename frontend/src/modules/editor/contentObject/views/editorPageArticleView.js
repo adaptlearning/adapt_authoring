@@ -1,9 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
   var Origin = require('core/origin');
-
   var BlockModel = require('core/models/blockModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
   var EditorPageBlockView = require('./editorPageBlockView');
@@ -27,10 +24,6 @@ define(function(require){
     postRender: function() {
       this.addBlockViews();
       this.setupDragDrop();
-      _.defer(_.bind(function(){
-        this.trigger('articleView:postRender');
-        Origin.trigger('pageView:itemRendered');
-      }, this));
     },
 
     listenToEvents: function() {
@@ -40,8 +33,8 @@ define(function(require){
         var id = this.model.get('_id');
         var events = {};
         events['editorView:moveBlock:' + id] = this.render;
-        events['editorView:cutBlock:' + id] = this.onCutBlock;
         events['editorView:deleteArticle:' + id] = this.deletePageArticle;
+        events['editorView:pasted:' + id] = this.onPaste;
         this.listenTo(Origin, events);
       }
 
@@ -49,16 +42,8 @@ define(function(require){
         'contextMenu:article:edit': this.loadArticleEdit,
         'contextMenu:article:copy': this.onCopy,
         'contextMenu:article:copyID': this.onCopyID,
-        'contextMenu:article:cut': this.onCut,
         'contextMenu:article:delete': this.deleteArticlePrompt
       });
-    },
-
-    onCutBlock: function(view) {
-      this.once('articleView:postRender', function() {
-        view.showPasteZones();
-      });
-      this.render();
     },
 
     addBlockViews: function() {
@@ -73,72 +58,63 @@ define(function(require){
       });
       this.$('.article-blocks').append(view.$el);
       // Iterate over each block and add it to the article
-      this.model.getChildren().each(this.addBlockView, this);
+      this.model.fetchChildren(_.bind(function(children) {
+        for(var i = 0, count = children.length; i < count; i++) {
+          this.addBlockView(children[i]);
+        }
+      }, this));
     },
 
     addBlockView: function(blockModel, scrollIntoView) {
-      var newBlockView = new EditorPageBlockView({model: blockModel});
-      var sortOrder = blockModel.get('_sortOrder');
-
-      // Add syncing class
-      if (blockModel.isNew()) {
-        newBlockView.$el.addClass('syncing');
-      }
-
       scrollIntoView = scrollIntoView || false;
 
-      this.$('.article-blocks').append(newBlockView.$el);
+      var newBlockView = new EditorPageBlockView({ model: blockModel });
+      var $blocks = this.$('.article-blocks .block');
+      var sortOrder = blockModel.get('_sortOrder');
+      var index = sortOrder > 0 ? sortOrder-1 : undefined;
+      var shouldAppend = index === undefined || index >= $blocks.length || $blocks.length === 0;
 
-      if (scrollIntoView) {
-        $.scrollTo(newBlockView.$el, 200);
+      if(shouldAppend) { // add to the end of the article
+        this.$('.article-blocks').append(newBlockView.$el);
+      } else { // 'splice' block into the new position
+        $($blocks[index]).before(newBlockView.$el);
       }
-
+      if (scrollIntoView) $.scrollTo(newBlockView.$el, 200);
       // Increment the sortOrder property
-      blockModel.set('_pasteZoneSortOrder', ++sortOrder);
-
+      blockModel.set('_pasteZoneSortOrder', (blockModel.get('_sortOrder')+1));
       // Post-block paste zone - sort order of placeholder will be one greater
-      this.$('.article-blocks').append(new EditorPasteZoneView({model: blockModel}).$el);
-      // Return the block view so syncing can be shown
-      return newBlockView;
+      this.$('.article-blocks').append(new EditorPasteZoneView({ model: blockModel }).$el);
     },
 
     addBlock: function(event) {
       event && event.preventDefault();
-
-      var self = this;
-      var layoutOptions = [{
-          type: 'left',
-          name: 'app.layoutleft',
-          pasteZoneRenderOrder: 2
-        }, {
-          type: 'full',
-          name: 'app.layoutfull',
-          pasteZoneRenderOrder: 1
-        }, {
-          type: 'right',
-          name: 'app.layoutright',
-          pasteZoneRenderOrder: 3
-      }];
-
-      var newPageBlockModel = new BlockModel({
+      var model = new BlockModel();
+      model.save({
         title: Origin.l10n.t('app.placeholdernewblock'),
         displayTitle: Origin.l10n.t('app.placeholdernewblock'),
         body: '',
-        _parentId: self.model.get('_id'),
+        _parentId: this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
-        layoutOptions: layoutOptions,
+        layoutOptions: [{
+            type: 'left',
+            name: 'app.layoutleft',
+            pasteZoneRenderOrder: 2
+          }, {
+            type: 'full',
+            name: 'app.layoutfull',
+            pasteZoneRenderOrder: 1
+          }, {
+            type: 'right',
+            name: 'app.layoutright',
+            pasteZoneRenderOrder: 3
+        }],
         _type: 'block'
-      });
-
-      newPageBlockModel.save(null, {
+      }, {
+        success: _.bind(function(model, response, options) {
+          this.addBlockView(model, true);
+        }, this),
         error: function() {
           Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.erroraddingblock') });
-        },
-        success: function(model, response, options) {
-          var newBlockView = self.addBlockView(model, true);
-          Origin.editor.data.blocks.add(model);
-          newBlockView.$el.removeClass('syncing').addClass('synced');
-          newBlockView.reRender();
         }
       });
     },
@@ -239,6 +215,20 @@ define(function(require){
           window.clearInterval(autoScrollTimer);
           view.hideDropZones();
           $container.scrollTop($(this).offset().top*-1);
+        }
+      });
+    },
+
+    onPaste: function(data) {
+      (new BlockModel({ _id: data._id })).fetch({
+        success: _.bind(function(model) {
+          this.addBlockView(model);
+        }, this),
+        error: function(data) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'app.errorfetchingdata'
+          });
         }
       });
     }

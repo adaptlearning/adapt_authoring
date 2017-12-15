@@ -40,7 +40,7 @@ define(function(require){
         'assetManagement:sidebarFilter:remove': this.removeFilter,
         'assetManagement:sidebarView:filter': this.filterBySearchInput,
         'assetManagement:assetManagementSidebarView:filterByTags': this.filterByTags,
-        'assetManagement:collection:refresh': this.fetchCollection
+        'assetManagement:collection:refresh': this.resetCollection
       });
       this.listenTo(this.collection, 'add', this.appendAssetItem);
     },

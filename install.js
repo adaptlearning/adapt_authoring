@@ -290,13 +290,14 @@ function configureFeatures(callback) {
   async.series([
     function ffmpeg(cb) {
       installHelpers.getInput(inputData.features.ffmpeg, function(result) {
-        addConfig(configResults);
+        addConfig(result);
         cb();
       });
     },
     function smtp(cb) {
       installHelpers.getInput(inputData.features.smtp.confirm, function(result) {
         if(!result.useSmtp || USE_CONFIG && configResults.useSmtp !== 'y') {
+          addConfig(result);
           return cb();
         }
         for(var i = 0, count = inputData.features.smtp.configure.length; i < count; i++) {
@@ -305,7 +306,7 @@ function configureFeatures(callback) {
           }
         }
         installHelpers.getInput(inputData.features.smtp.configure, function(result) {
-          addConfig(configResults);
+          addConfig(result);
           cb();
         });
       });
@@ -391,7 +392,8 @@ function createMasterTenant(callback) {
     }
     console.log('Master tenant created successfully.');
     masterTenant = tenant;
-    saveConfig(app.configuration.getConfig(), callback);
+    addConfig(app.configuration.getConfig());
+    saveConfig(configResults, callback);
   });
 }
 

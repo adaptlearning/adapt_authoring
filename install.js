@@ -231,7 +231,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
 function generatePromptOverrides() {
   if(USE_CONFIG) {
     var configJson = require('./conf/config.json');
-    var configData = JSON.parse(JSON.stringify(configJson).replace('true', '"y"').replace('false', '"n"'));
+    var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
     configData.install = 'y';
   }
   // NOTE config.json < cmd args

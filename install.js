@@ -337,6 +337,15 @@ function configureMasterTenant(callback) {
       if(error) {
         return callback(error);
       }
+      if(USE_CONFIG && prompt.override.masterTenantName) {
+        /**
+        * remove the masterTenantDisplayName, as we can use the existing value
+        * (which isn't in config.json so can't be used as an auto override)
+        */
+        inputData.tenant = _.filter(inputData.tenant, function(item) {
+          return item.name !== 'masterTenantDisplayName';
+        });
+      }
       installHelpers.getInput(inputData.tenant, function(result) {
         console.log('');
         // add the input to our cached config
@@ -356,6 +365,9 @@ function configureMasterTenant(callback) {
           }
           if(!IS_INTERACTIVE) {
             return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
+          }
+          if(!configResults.masterTenant.displayName) {
+            configResults.masterTenant.displayName = tenant.displayName;
           }
           console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
           installHelpers.getInput(inputData.tenantDelete, function(result) {

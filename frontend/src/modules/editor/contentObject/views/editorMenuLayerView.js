@@ -108,6 +108,7 @@ define(function(require) {
         success: _.bind(function(model) {
           Origin.trigger('editorView:menuView:addItem', model);
           // Force setting the data-id attribute as this is required for drag-drop sorting
+          newMenuItemView.$el.attr('data-id', model.get('_id'));
           newMenuItemView.$el.children('.editor-menu-item-inner').attr('data-id', model.get('_id'));
           if (type === 'page') {
             // HACK -- This should be removed and placed on the server-side

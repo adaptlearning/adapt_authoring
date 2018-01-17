@@ -102,7 +102,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
           if(semver.satisfies(serverVersion, pluginRange)) {
             logger.log('info', 'Installing', pluginType, "'" + bowerJson.displayName + "'");
             bowerJson.isLocalPackage = true;
-            contentPlugin.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
+            app.bowermanager.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
           } else {
             logger.log('info', "Can't install " + bowerJson.displayName + ", it requires framework v" + pluginVersion + " (" + frameworkVersion + " installed)");
             cb();

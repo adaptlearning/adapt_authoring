@@ -404,6 +404,7 @@ function createMasterTenant(callback) {
     }
     console.log('Master tenant created successfully.');
     masterTenant = tenant;
+    delete configResults.masterTenant;
     addConfig(app.configuration.getConfig());
     saveConfig(configResults, callback);
   });

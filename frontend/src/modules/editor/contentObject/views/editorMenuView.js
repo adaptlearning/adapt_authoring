@@ -145,11 +145,8 @@ define(function(require){
     },
 
     onSelectedItemChanged: function(model) {
-      if (model) {
-        if (model.get('_id') === Origin.editor.currentContentObject && Origin.editor.currentContentObject.get('_id')) {
-          return;
-        }
-      }
+      if (!model || !Origin.editor.currentContentObject) return;
+      if (model.get('_id') === Origin.editor.currentContentObject.get('_id')) return;
 
       Origin.editor.currentContentObject = model;
       this.renderLayers();

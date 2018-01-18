@@ -55,13 +55,11 @@ define(function(require){
 
         // remove all unused layerviews 
         for (var id in this.layerViews) {
-          if (this.layerViews.hasOwnProperty(id)) {
-            var layerView = this.layerViews[id];
-            if (ids.indexOf(id) === -1) {
-              layerView.remove();
-              delete this.layerViews[id];
-            }
+          if (this.layerViews.hasOwnProperty(id) || ids.indexOf(id) === -1) {
+            continue;
           }
+          this.layerViews[id].remove();
+          delete this.layerViews[id];
         }
 
         _.defer(_.bind(function() {
@@ -75,14 +73,13 @@ define(function(require){
     /**
      * Renders a single menu layer
      */
-    renderLayer: function(model, callback) {
+    renderLayer: function(model) {
       var menuLayerView = new EditorMenuLayerView({
         _parentId: model.get('_id'),
         models: this.contentobjects.where({ _parentId: model.get('_id') })
       });
       this.layerViews[model.get('_id')] = menuLayerView;
       $('.editor-menu-inner').append(menuLayerView.$el);
-      if (typeof callback === 'function') callback();
     },
     
     updateItemViews: function(previousParent, model) {

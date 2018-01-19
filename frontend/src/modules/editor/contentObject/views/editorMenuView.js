@@ -55,11 +55,13 @@ define(function(require){
 
         // remove all unused layerviews 
         for (var id in this.layerViews) {
-          if (this.layerViews.hasOwnProperty(id) || ids.indexOf(id) === -1) {
-            continue;
+          if (this.layerViews.hasOwnProperty(id)) {
+            var layerView = this.layerViews[id];
+            if (ids.indexOf(id) === -1) {
+              layerView.remove();
+              delete this.layerViews[id];
+            }
           }
-          this.layerViews[id].remove();
-          delete this.layerViews[id];
         }
 
         _.defer(_.bind(function() {
@@ -145,8 +147,7 @@ define(function(require){
     },
 
     onSelectedItemChanged: function(model) {
-      if (!model || !Origin.editor.currentContentObject) return;
-      if (model.get('_id') === Origin.editor.currentContentObject.get('_id')) return;
+      if (model && model.get('_id') === Origin.editor.currentContentObject && Origin.editor.currentContentObject.get('_id')) return;
 
       Origin.editor.currentContentObject = model;
       this.renderLayers();

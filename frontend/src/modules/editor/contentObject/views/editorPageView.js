@@ -112,6 +112,7 @@ define(function(require){
       }, {
         success: _.bind(function(model, response, options) {
           var articleView = this.addArticleView(model);
+          articleView._skipRender = true; // prevent render of blocks in postRender
           articleView.addBlock();
         }, this),
         error: function() {

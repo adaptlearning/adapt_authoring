@@ -22,7 +22,9 @@ define(function(require){
     },
 
     postRender: function() {
-      this.addBlockViews();
+      if (!this._skipRender) {
+        this.addBlockViews();
+      }
       this.setupDragDrop();
     },
 

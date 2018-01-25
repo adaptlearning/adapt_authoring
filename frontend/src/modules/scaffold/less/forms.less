@@ -76,7 +76,8 @@ form .error {
       color: #15a4fa;
     }
   }
-  input[type="checkbox"] {
+  input[type="checkbox"],
+  input[type="radio"] {
     width: 15px;
     height: 15px;
   }
@@ -159,6 +160,15 @@ form .error {
   }
   [data-type="DisplayTitle"] & input {
     width: 81%;
+  }
+  [data-type="Radio"] & {
+    li {
+      margin-left: 0;
+      list-style-type: none;
+    }
+    label {
+      margin-left: 10px;
+    }
   }
   .collapsed {
     display: none;

@@ -21,7 +21,7 @@ define([
   var currentForm;
   var ActiveItemsModal = 0;
   var isOverlayActive = false;
-  var defaultValidators = _.keys(Backbone.Form.validators);
+  var defaultValidators = Object.keys(Backbone.Form.validators);
   var customValidators = [];
   var customTemplates = [];
 
@@ -78,7 +78,7 @@ define([
 
         if (!validator) continue;
 
-        var isDefaultValidator = !_.isArray(validator) && _.isObject(validator) ||
+        var isDefaultValidator = !Array.isArray(validator) && _.isObject(validator) ||
           _.contains(defaultValidators, validator);
 
         if (isDefaultValidator) continue;
@@ -97,7 +97,7 @@ define([
           '", validatorMethod);');
       }
 
-      return _.compact(validators);
+      return validators.filter(Boolean);
     };
 
     var fieldObject = {

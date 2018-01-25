@@ -86,8 +86,7 @@ define(function(require){
     
     updateItemViews: function(previousParent, model) {
       // since we remove the childViews when the layerView is destroyed 
-      // we must move menuItemView to it's new layerView
-      var newParent = model.get('_parentId');
+      // we must move menuItemView to its new layerView
       var index = -1;
       for (var i = 0; i < this.layerViews[previousParent].childViews.length; i++) {
         var v = this.layerViews[previousParent].childViews[i];

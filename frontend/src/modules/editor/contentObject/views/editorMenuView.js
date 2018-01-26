@@ -55,13 +55,11 @@ define(function(require){
 
         // remove all unused layerviews 
         for (var id in this.layerViews) {
-          if (this.layerViews.hasOwnProperty(id)) {
-            var layerView = this.layerViews[id];
-            if (ids.indexOf(id) === -1) {
-              layerView.remove();
-              delete this.layerViews[id];
-            }
+          if (!this.layerViews.hasOwnProperty(id) || ids.indexOf(id) > -1) {
+            continue;
           }
+          this.layerViews[id].remove();
+          delete this.layerViews[id];
         }
 
         _.defer(_.bind(function() {

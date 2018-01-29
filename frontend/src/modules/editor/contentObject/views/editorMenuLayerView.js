@@ -24,7 +24,8 @@ define(function(require) {
     },
 
     preRender: function(options) {
-      if(options._parentId) {
+      this.childViews = [];
+      if (options._parentId) {
         this._parentId = options._parentId;
       }
       var events = {
@@ -54,7 +55,7 @@ define(function(require) {
 
     postRender: function() {
       // Append the parentId value to the container to allow us to move pages, etc.
-      if(this._parentId) this.$el.attr('data-parentid', this._parentId);
+      if (this._parentId) this.$el.attr('data-parentid', this._parentId);
       this.setHeight();
     },
 
@@ -108,6 +109,7 @@ define(function(require) {
         success: _.bind(function(model) {
           Origin.trigger('editorView:menuView:addItem', model);
           // Force setting the data-id attribute as this is required for drag-drop sorting
+          newMenuItemView.$el.attr('data-id', model.get('_id'));
           newMenuItemView.$el.children('.editor-menu-item-inner').attr('data-id', model.get('_id'));
           if (type === 'page') {
             // HACK -- This should be removed and placed on the server-side
@@ -173,6 +175,7 @@ define(function(require) {
         'dblclick': _.bind(this.onMenuItemDblclicked, this)
       });
 
+      this.childViews.push(newMenuItemView);
       return newMenuItemView;
     },
 
@@ -194,7 +197,7 @@ define(function(require) {
 
     onMenuItemClicked: function(menuItem) {
       // if item's already selected, don't bother continuing
-      if(menuItem.$el.hasClass('selected')) {
+      if (menuItem.$el.hasClass('selected')) {
         return;
       }
       Origin.trigger('editorView:menuView:updateSelectedItem', menuItem.model);
@@ -206,7 +209,7 @@ define(function(require) {
       var type = menuItem.model.get('_type');
 
       var route = 'editor/' + courseId + '/' + type + '/' + id;
-      if(type === 'menu') route += '/edit';
+      if (type === 'menu') route += '/edit';
 
       Origin.router.navigateTo(route);
     },
@@ -221,7 +224,19 @@ define(function(require) {
 
         }
       });
+    },
+
+    removeChildViews: function() {
+      for (var i = 0; i < this.childViews.length; i++) {
+        this.childViews[i].remove();
+      }
+    },
+
+    remove: function() {
+      this.removeChildViews();
+      EditorOriginView.prototype.remove.apply(this, arguments);
     }
+
   }, {
     template: 'editorMenuLayer'
   });

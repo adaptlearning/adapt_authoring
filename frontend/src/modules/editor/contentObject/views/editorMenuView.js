@@ -12,6 +12,7 @@ define(function(require){
     tagName: "div",
 
     preRender: function() {
+      this.layerViews = {};
       this.listenTo(Origin, {
         'editorView:menuView:updateSelectedItem': this.onSelectedItemChanged,
         'editorView:menuView:addItem': this.onItemAdded,
@@ -39,51 +40,61 @@ define(function(require){
     * Renders all menu layers from the current course to the Origin.editor.currentContentObject
     */
     renderLayers: function() {
-      var selectedModel = Origin.editor.currentContentObject;
-      // no previous state, so should only render the first level
-      if(!selectedModel) {
-        this.renderLayer(Origin.editor.data.course);
-        return;
-      }
-      // check if we can reuse any existing layers, and only render the new ones
+      var selectedModel = Origin.editor.currentContentObject || Origin.editor.data.course;
       this.getItemHeirarchy(selectedModel, function(hierarchy) {
-        var index;
-        var renderedLayers = this.$('.editor-menu-layer');
-        for(var i = 0, count = hierarchy.length; i < count; i++) {
-          if($(renderedLayers[i]).attr('data-parentid') === hierarchy[i].get('_id')) {
-            index = i+1;
+        var ids = [];
+
+        for (var i = 0; i < hierarchy.length; i++) {
+          var item = hierarchy[i];
+          var id = item.get('_id');
+          ids.push(id);
+          if (!this.layerViews.hasOwnProperty(id)) {
+            this.renderLayer(item);
           }
         }
-        // we can reuse layers up to 'index', remove the rest
-        if(index !== undefined) {
-          hierarchy = hierarchy.slice(index);
-          var layersToRemove = renderedLayers.slice(index);
-          for(var i = 0, count = layersToRemove.length; i < count; i++) {
-            layersToRemove[i].remove();
+
+        // remove all unused layerviews 
+        for (var id in this.layerViews) {
+          if (!this.layerViews.hasOwnProperty(id) || ids.indexOf(id) > -1) {
+            continue;
           }
+          this.layerViews[id].remove();
+          delete this.layerViews[id];
         }
-        // all items left in hierarchy are new, render these
-        Helpers.forSeriesAsync(hierarchy, _.bind(function(model, index, callback) {
-          this.renderLayer(model, callback);
-        }, this), _.defer(_.bind(function() {
-        // called after all layers rendered
+
+        _.defer(_.bind(function() {
           this.removeSelectedItemStyling();
           this.addSelectedItemStyling(selectedModel.get('_id'));
           this.setUpInteraction();
-        }, this)));
+        }, this));
       });
     },
 
     /**
      * Renders a single menu layer
      */
-    renderLayer: function(model, callback) {
+    renderLayer: function(model) {
       var menuLayerView = new EditorMenuLayerView({
         _parentId: model.get('_id'),
         models: this.contentobjects.where({ _parentId: model.get('_id') })
       });
+      this.layerViews[model.get('_id')] = menuLayerView;
       $('.editor-menu-inner').append(menuLayerView.$el);
-      if(typeof callback === 'function') callback();
+    },
+    
+    updateItemViews: function(previousParent, model) {
+      // since we remove the childViews when the layerView is destroyed 
+      // we must move menuItemView to its new layerView
+      var index = -1;
+      for (var i = 0; i < this.layerViews[previousParent].childViews.length; i++) {
+        var v = this.layerViews[previousParent].childViews[i];
+        if (v.model.get('_id') === model.get('_id')) {
+          index = i;
+          break;
+        }
+      }
+      var view = this.layerViews[previousParent].childViews.splice(index, 1);
+      this.layerViews[model.get('_parentId')].childViews.push(view[0]);
     },
 
     setUpInteraction: function() {
@@ -97,7 +108,7 @@ define(function(require){
       this.$('.editor-menu-item[data-id="' + id + '"]').addClass('selected');
       var model = this.contentobjects.findWhere({ _id: id });
       var parentId = model && model.get('_parentId');
-      if(parentId) {
+      if (parentId) {
         // recurse
         this.addSelectedItemStyling(parentId);
       }
@@ -114,13 +125,13 @@ define(function(require){
     */
     getItemHeirarchy: function(model, done) {
       var hierarchy = [];
-      if(model.get('_type') === 'menu') {
+      if (model.get('_type') === 'menu') {
         hierarchy.push(model);
       }
       var __this = this;
       var _getParent = function(model, callback) {
         var parent = __this.contentobjects.findWhere({ _id: model.get('_parentId') });
-        if(parent) {
+        if (parent) {
           hierarchy.push(parent);
           return _getParent(parent, callback);
         }
@@ -128,14 +139,13 @@ define(function(require){
         callback();
       };
       _getParent(model, function() {
-        if(typeof done === 'function') done.call(__this, hierarchy.reverse());
+        if (typeof done === 'function') done.call(__this, hierarchy.reverse());
       });
     },
 
     onSelectedItemChanged: function(model) {
-      if(model.get('_id') === Origin.editor.currentContentObject && Origin.editor.currentContentObject.get('_id')) {
-        return;
-      }
+      if (model && model.get('_id') === Origin.editor.currentContentObject && Origin.editor.currentContentObject.get('_id')) return;
+
       Origin.editor.currentContentObject = model;
       this.renderLayers();
     },
@@ -175,7 +185,16 @@ define(function(require){
           var sortOrder = $draggedElement.index() + 1;
           var parentId = $draggedElement.closest('.editor-menu-layer').attr('data-parentId');
           var currentModel = this.contentobjects.findWhere({ _id: id });
-          currentModel.save({ _sortOrder: sortOrder, _parentId: parentId }, { patch: true });
+          var previousParent = currentModel.get('_parentId');
+          currentModel.save({
+            _sortOrder: sortOrder,
+            _parentId: parentId 
+          }, {
+            patch: true,
+            success: _.bind(function(model, response, options) {
+              this.updateItemViews(previousParent, model);
+            }, this)
+          });
           currentModel.set('_isDragging', false);
         }, this),
         over: function(event, ui) {

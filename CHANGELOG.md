@@ -6,7 +6,7 @@ All notable changes to the Adapt authoring tool are documented in this file.
 
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
-## [0.4.1] - 2018-01-21
+## [0.4.1] - 2018-02-05
 
 This is a patch release fixing issues introduced in v0.4.0.
 

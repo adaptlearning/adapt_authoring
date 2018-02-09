@@ -50,10 +50,13 @@ define(function(require) {
     updateUI: function(userPreferences) {
       // set selected preferences
       _.defer(_.bind(function() {
-        _.each(userPreferences, function(preference) {
-          if (_.isArray(preference)) return;
-          this.$('a.option-value-' + preference).addClass('selected');
-        }, this);
+        for (var key in userPreferences) {
+          if (userPreferences.hasOwnProperty(key)) {
+            var item = userPreferences[key];
+            if (!key || !item || _.isArray(item)) continue;
+            this.$('a[data-callback="dashboard:'+key+':'+item+'"]').addClass('selected');
+          }
+        }
       }, this));
     },
 
@@ -81,6 +84,7 @@ define(function(require) {
       event && event.preventDefault();
       this.setSelectedOption($(event.currentTarget));
     }
+
   }, {
     template: 'options'
   });

@@ -49,10 +49,6 @@ define(function(require){
 
       this.collectionLength = 0;
       this.shouldStopFetches = false;
-
-      // set relevant filters as selected
-      $("a[data-callback='dashboard:layout:grid']").addClass('selected');
-      $("a[data-callback='dashboard:sort:asc']").addClass('selected');
     },
 
     resizeDashboard: function() {
@@ -80,29 +76,29 @@ define(function(require){
 
     switchLayoutToList: function() {
       this.getProjectsContainer().removeClass('grid-layout').addClass('list-layout');
-      this.setUserPreference('layout','list');
+      this.setUserPreference('layout','list',true);
     },
 
     switchLayoutToGrid: function() {
       this.getProjectsContainer().removeClass('list-layout').addClass('grid-layout');
-      this.setUserPreference('layout','grid');
+      this.setUserPreference('layout','grid',true);
     },
 
     sortAscending: function(shouldRenderProjects) {
       this.sort = { title: 1 };
-      this.setUserPreference('sort','asc');
+      this.setUserPreference('sort','asc',true);
       if(shouldRenderProjects) this.updateCollection(true);
     },
 
     sortDescending: function(shouldRenderProjects) {
       this.sort = { title: -1 };
-      this.setUserPreference('sort','desc');
+      this.setUserPreference('sort','desc',true);
       if(shouldRenderProjects) this.updateCollection(true);
     },
 
     sortLastUpdated: function(shouldRenderProjects) {
       this.sort = { updatedAt: -1 };
-      this.setUserPreference('sort','updated');
+      this.setUserPreference('sort','updated',true);
       if (shouldRenderProjects) this.updateCollection(true);
     },
 

@@ -13,6 +13,8 @@
   "dbHost": "localhost",
   "dbPort": 27017,
   "useSmtp": false,
+  "useSmtpConnectionUrl": false,
+  "smtpConnectionUrl": "smtps://user%40gmail.com:pass@smtp.gmail.com/?pool=true",
   "smtpService": "",
   "smtpUsername": "",
   "smtpPassword": "",

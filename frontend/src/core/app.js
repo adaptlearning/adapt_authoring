@@ -70,6 +70,7 @@
       'modules/sidebar/index',
       'modules/user/index',
       'modules/userManagement/index',
+      'modules/colorLabel/index',
     ], callback);
   }
 

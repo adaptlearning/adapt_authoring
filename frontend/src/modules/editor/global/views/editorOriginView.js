@@ -5,6 +5,28 @@ define(function(require){
   var Helpers = require('core/helpers');
 
   var EditorOriginView = OriginView.extend({
+
+    attributes: function() {
+      var attr = {};
+      if (this.model && this.model.has('_id')) {
+        attr['data-adapt-id'] = this.model.get('_id');
+      }
+      
+      if (this.model && this.model.has('_colorLabel')) {
+        var colorLabel = this.model.get('_colorLabel');
+        var colors = [];
+
+        if (colorLabel.background) {
+          colors.push('background-color:'+colorLabel.background);
+        }
+        if (colorLabel.border) {
+          colors.push('border-color:'+colorLabel.border);
+        }
+        attr['style'] = colors.join(';');
+      }
+      return attr;
+    },
+
     events: {
       'click .paste-cancel': 'onPasteCancel',
       'click .field-object .legend': 'onFieldObjectClicked'

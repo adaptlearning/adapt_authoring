@@ -1,0 +1,18 @@
+<div class="colorlabel-inner">
+    <div class="colors">
+        <div class="colors-inner clearfix">
+            {{#each colors}}
+                <div class="color-item" data-item={{@index}}>
+                    <div style="background-color:{{background}};border-color:{{border}}"></div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+    <div class="footer">
+        <div class="footer-inner">
+            <button class="btn warning reset">Reset</button>
+            <button class="btn primary apply">Apply</button>
+            <button class="btn secondary cancel">Cancel</button>
+        </div>
+    </div>
+</div>

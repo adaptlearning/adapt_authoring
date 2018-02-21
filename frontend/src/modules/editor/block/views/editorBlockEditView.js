@@ -11,7 +11,13 @@ define(function(require) {
     preRender: function() {
       this.listenTo(Origin, 'editorBlockEditSidebar:views:save', this.save);
       this.model.set('ancestors', this.model.getPossibleAncestors().toJSON());
+    },
+
+    applyColorLabels: function() {
+      // overwrite defaults from EditorOriginView
+      return;
     }
+
   }, {
     template: 'editorBlockEdit'
   });

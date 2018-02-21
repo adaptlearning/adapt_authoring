@@ -10,7 +10,13 @@ define(function(require) {
 
     preRender: function() {
       this.listenTo(Origin, 'editorPageEditSidebar:views:save', this.save);
+    },
+
+    applyColorLabels: function() {
+      // overwrite defaults from EditorOriginView
+      return;
     }
+
   }, {
     template: 'editorPageEdit'
   });

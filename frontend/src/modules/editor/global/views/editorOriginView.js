@@ -11,19 +11,6 @@ define(function(require){
       if (this.model && this.model.has('_id')) {
         attr['data-adapt-id'] = this.model.get('_id');
       }
-      
-      if (this.model && this.model.has('_colorLabel')) {
-        var colorLabel = this.model.get('_colorLabel');
-        var colors = [];
-
-        if (colorLabel.background) {
-          colors.push('background-color:'+colorLabel.background);
-        }
-        if (colorLabel.border) {
-          colors.push('border-color:'+colorLabel.border);
-        }
-        attr['style'] = colors.join(';');
-      }
       return attr;
     },
 
@@ -38,6 +25,7 @@ define(function(require){
         this.form = options.form;
         this.filters = [];
       }
+      this.applyColorLabels();
       OriginView.prototype.initialize.apply(this, arguments);
 
       this.listenTo(Origin, {
@@ -239,7 +227,27 @@ define(function(require){
       Origin.Notify.alert({ type: 'error', title: title, text: text });
 
       Origin.trigger('sidebar:resetButtons');
+    },
+
+    generateColorLabelStyles: function() {
+      var colorLabel = this.model.get('_colorLabel');
+      var colors = [];
+
+      if (colorLabel.background) {
+        colors.push('background-color:'+colorLabel.background);
+      }
+      if (colorLabel.border) {
+        colors.push('border-color:'+colorLabel.border);
+      }
+
+      return colors.join(';');
+    },
+
+    applyColorLabels: function() {
+      if (!this.model || !this.model.has('_colorLabel')) return;
+      this.el.style = this.generateColorLabelStyles();
     }
+
   });
 
   return EditorOriginView;

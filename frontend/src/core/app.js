@@ -59,6 +59,7 @@
       'modules/filters/index',
       'modules/globalMenu/index',
       'modules/help/index',
+      'modules/localStorage/index',
       'modules/location/index',
       'modules/modal/index',
       'modules/navigation/index',

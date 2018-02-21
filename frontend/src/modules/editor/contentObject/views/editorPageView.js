@@ -168,7 +168,14 @@ define(function(require){
     onCutArticle: function(view) {
       this.once('pageView:postRender', view.showPasteZones);
       this.render();
+    },
+
+    applyColorLabels: function() {
+      // overwrite defaults from EditorOriginView
+      if (!this.model || !this.model.has('_colorLabel')) return;
+      this.model.set('_colorLabelStyle', this.generateColorLabelStyles());
     }
+
   }, {
     template: 'editorPage'
   });

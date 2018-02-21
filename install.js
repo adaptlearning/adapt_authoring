@@ -133,7 +133,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
           type: 'string',
           description: "Will you use a URL to connect to your smtp Server y/N",
           before: installHelpers.inputHelpers.toBoolean,
-        default: 'N'
+          default: 'N'
         },
         configure: [
           {

@@ -35,14 +35,7 @@ define(function(require) {
   };
 
   function setUpMenuItems() {
-    var articleItems = getDefaultItems();
-    articleItems.push({
-      title: Origin.l10n.t('app.collapsearticle'),
-      className: 'context-menu-item',
-      callbackEvent: "collapse"
-    });
-
-    ContextMenu.addItem('article', articleItems);
+    ContextMenu.addItem('article', getDefaultItems());
     ContextMenu.addItem('block', getDefaultItems());
     ContextMenu.addItem('component', getDefaultItems());
     ContextMenu.addItem('page', getDefaultItems());

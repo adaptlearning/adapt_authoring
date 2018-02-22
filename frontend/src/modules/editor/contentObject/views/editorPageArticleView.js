@@ -14,10 +14,11 @@ define(function(require){
     tagName: 'div',
 
     events: _.extend({}, EditorOriginView.prototype.events, {
-      'click a.add-block': 'addBlock',
-      'click a.article-delete': 'deleteArticlePrompt',
-      'click a.open-context-article': 'openContextMenu',
-      'dblclick': 'loadArticleEdit'
+      'click .add-block': 'addBlock',
+      'click .article-delete': 'deleteArticlePrompt',
+      'click .open-context-article': 'openContextMenu',
+      'dblclick': 'loadArticleEdit',
+      'click .editor-collapse-article': 'toggleCollapseArticle'
     }),
 
     preRender: function() {
@@ -246,7 +247,10 @@ define(function(require){
       });
     },
 
-    toggleCollapseArticle: function() {
+    toggleCollapseArticle: function(event) {
+      event && event.preventDefault();
+
+      $(event.currentTarget).toggleClass('iscollapsed');
       var isCollapsed = this.model.get('_isCollapsed');
       this.model.set('_isCollapsed', !isCollapsed);
       this.collapseArticle();

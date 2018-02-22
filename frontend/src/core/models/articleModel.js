@@ -9,6 +9,7 @@ define(function(require) {
     _children: 'blocks',
 
     defaults: {
+      _isCollapsible: true,
       _isCollapsed: false
     }
 

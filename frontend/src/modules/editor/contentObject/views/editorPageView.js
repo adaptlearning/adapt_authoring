@@ -17,8 +17,8 @@ define(function(require){
     childrenRenderedCount: 0,
 
     events: _.extend({}, EditorOriginView.prototype.events, {
-      'click a.add-article': 'addArticle',
-      'click a.page-edit-button': 'openContextMenu',
+      'click .add-article': 'addArticle',
+      'click .page-edit-button': 'openContextMenu',
       'dblclick .page-detail': 'loadPageEdit',
       'click .paste-cancel': 'onPasteCancel'
     }),

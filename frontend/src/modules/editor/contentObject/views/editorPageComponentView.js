@@ -10,9 +10,9 @@ define(function(require){
     tagName: 'div',
 
     events: _.extend({}, EditorOriginView.prototype.events, {
-      'click a.component-delete': 'deleteComponentPrompt',
-      'click a.component-move': 'evaluateMove',
-      'click a.open-context-component': 'openContextMenu',
+      'click .component-delete': 'deleteComponentPrompt',
+      'click .component-move': 'evaluateMove',
+      'click .open-context-component': 'openContextMenu',
       'dblclick': 'loadComponentEdit'
     }),
 

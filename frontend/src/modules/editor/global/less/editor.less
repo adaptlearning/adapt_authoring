@@ -100,35 +100,80 @@
 }
 
 .editor-item-settings {
-    position: absolute;
-    top: 0%;
-    left: 0px;
     font-size: 16px;
     width: 100%;
     opacity: 1;
     background-color: transparent;
     transition: all 0.3s;
 
+    
     a {
       text-decoration: none;
     }
-
+    
     &:hover {
       cursor: move;
     }
-
+    
     &-inner {
-      padding: 6px;
-    }
+      button {
+        padding: 10px;
+        font-size: 16px;
+        line-height: 16px;
+        height: 16px;
+        box-sizing: content-box;
+        text-align: center;
+      }
 
-    .editor-delete-page-element {
-      float: right;
+      width: 100%;
+      box-sizing: border-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+
+      .open-context-icon {
+      }
+      .editor-delete-page-element {
+        -ms-flex-order: 2;
+        -webkit-order: 2;
+        order: 2;
+      }
+      .editor-page-element-detail-inner {
+        width: 100%;
+        padding: 0 10px;
+        overflow: hidden;
+        -ms-flex-order: 1;
+        -webkit-order: 1;
+        order: 1;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        align-items: center;
+        .title {
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+        &.component-detail-inner {
+          visibility: hidden;  // we need the element to move the trash-icon to the right
+        }
+      }
+      .component-move {
+        -ms-flex-order: 1;
+        -webkit-order: 1;
+        order: 1;
+      }
+      .editor-collapse-article {
+        -ms-flex-order: 0;
+        -webkit-order: 0;
+        order: 0;
+      }
     }
 }
 
-.editor-item-settings a,
-.editor-menu-item-settings a {
-  color:@primary-color;
+.editor-item-settings button,
+.editor-menu-item-settings button {
+  color: @primary-color;
   transition: all 0.3s;
   &:hover {
     color:darken(@primary-color,5%);

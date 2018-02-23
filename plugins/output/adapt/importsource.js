@@ -425,8 +425,7 @@ function ImportSource(req, done) {
         },
         function updateAssetData(cb) {
           var replaceRegex = new RegExp(/(course\/)((\w){2}\/)/gi);
-          var newAssetPath = Constants.Folders.Course + path.sep;
-
+          var newAssetPath = Constants.Folders.Course + '/'; // always use '/' for paths in content
           var traverse = require('traverse');
 
           traverse(data).forEach(function (value) {
@@ -444,7 +443,7 @@ function ImportSource(req, done) {
                 var fileId = metadata.idMap[fileName];
                 var newFileName = metadata.assetNameMap[fileId];
                 if (newFileName) {
-                  this.update(path.join(newDirName, newFileName));
+                  this.update(newDirName + '/' + newFileName); // always use '/' for paths in content 
                 }
               } catch (e) {
                 logger.log('error', e);

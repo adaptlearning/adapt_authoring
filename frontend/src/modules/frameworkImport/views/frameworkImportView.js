@@ -55,10 +55,10 @@ define(function(require){
       return validated;
     },
 
-    uploadCourse: function() {
-      if(!this.isValid()) {
-        return;
-      }
+    uploadCourse: function(sidebarView) {
+      if(!this.isValid()) return;
+
+      sidebarView.updateButton('.framework-import-sidebar-save-button', Origin.l10n.t('app.importing'));
 
       var tags = [];
       _.each(this.model.get('tags'), function (item) {

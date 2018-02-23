@@ -11,8 +11,7 @@ define(function(require) {
 
     importCourse: function(event) {
       event && event.preventDefault();
-      this.updateButton('.framework-import-sidebar-save-button', Origin.l10n.t('app.importing'));
-      Origin.trigger('frameworkImport:uploadCourse');
+      Origin.trigger('frameworkImport:uploadCourse', this);
     },
 
     goBack: function(event) {
@@ -20,7 +19,11 @@ define(function(require) {
       Origin.router.navigateToHome();
     }
   }, {
+
     template: 'frameworkImportSidebar'
+
   });
+
   return FrameworkImportSidebarView;
+
 });

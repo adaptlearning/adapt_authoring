@@ -1,0 +1,34 @@
+<div class="modal-popup">
+  <div class="modal-popup-toolbar clearfix">
+    {{#if title}}
+    <div class="modal-popup-title">
+      <h2 class="modal-popup-title-inner">{{title}}</h2>
+    </div>
+    {{/if}}
+    <div class="model-popup-toolbar-buttons">
+      {{#if _shouldShowDoneButton}}
+      <button href="#" class="modal-popup-done">
+        <i class="fa fa-check"></i>{{t 'app.done'}}
+      </button>
+      {{/if}}
+      {{#if _shouldShowCancelButton}}
+      <button href="#" class="modal-popup-close">
+        <i class="fa fa-times"></i>{{t 'app.cancel'}}
+      </button>
+      {{/if}}
+    </div>
+  </div>
+  <div class="modal-popup-inner">
+    {{#if body}}
+    <div class="modal-popup-body">
+      <div class="modal-popup-body-inner">
+        {{body}}
+      </div>
+    </div>
+    {{/if}}
+    <div class="modal-popup-content">
+      <div class="modal-popup-content-inner">
+      </div>
+    </div>
+  </div>
+</div>

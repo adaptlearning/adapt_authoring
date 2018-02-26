@@ -1,0 +1,58 @@
+@import (inline) '../assets/sweetalert.css';
+@import 'buttons';
+@import 'colours';
+
+.sweet-alert {
+  max-height: 91%;
+  overflow-y: auto;
+
+  button {
+    min-width: 100px;
+    margin: 10px 5px 20px 5px;
+
+    &.cancel {
+      .btn;
+      .primary-hollow;
+      font-size: 115%;
+    }
+    &.confirm {
+      .btn;
+      .primary;
+      font-size: 115%;
+    }
+  }
+  .sa-icon {
+    &.sa-error {
+      border-color: @alert-color;
+      .sa-line { background-color: @alert-color; }
+    }
+    &.sa-warning {
+      border-color: @warning-color;
+      .sa-dot, .sa-body { background-color: @warning-color; }
+    }
+    &.sa-info {
+      border-color: @info-color;
+      &:before, &:after { background-color: @info-color; }
+    }
+    &.sa-success {
+      .sa-line { background-color: @success-color; }
+      .sa-placeholder { border-color: fade(@success-color, 20%); }
+    }
+  }
+
+  &.destructive {
+    .wait-text {
+      margin-right: 18px;
+    }
+    .la-ball-fall {
+      left: 37.5%;
+      top: 46%;
+      margin: 0;
+      > div {
+          width: 3px;
+          height: 3px;
+          margin: 1.5px;
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:@{font-weight},@{font-weight-bold}|Raleway:@{font-weight},@{font-weight-bold}');
+
+@font-title: 'Raleway', sans-serif;
+@font-family: 'Open Sans', sans-serif;
+
+@font-size:13px;
+@font-weight: 400;
+@font-weight-bold: 700;
+
+// Fonts sizes
+
+body {
+  font-family:@font-family;
+  font-size: @font-size;
+  font-weight:@font-weight;
+}
+
+h1 {
+  font-size:15px;
+  font-family: @font-title;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: @font-weight-bold;
+}
+
+button, input, textarea {
+  font-family:@font-family;
+  font-size:13px;
+}

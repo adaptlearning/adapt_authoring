@@ -1,0 +1,55 @@
+@import 'colours';
+
+.menu-settings-list-item {
+
+
+  .display-name {
+    font-size: 175%;
+  }
+  .description {
+    font-size: 110%;
+    color: #a6c2ca;
+  }
+}
+
+
+
+.menu-settings-list {
+  padding-left: 30px;
+  padding-top: 30px;
+}
+
+.menu-settings-list-item {
+  height: 175px;
+  width: 275px;
+  margin-left:0px;
+  margin-right: 30px;
+  margin-bottom: 30px;
+  list-style-type: none;
+  overflow: hidden;
+  border-radius: 3px;
+  float: left;
+  background-color:#fff;
+  border: 1px solid #d6f2f9;
+  transition:background-color 0.3s;
+  transition:all 0.3s;
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 0 5px 2px #CBE1E6;
+  }
+  &.selected {
+    background-color: @primary-color;
+    color: @button-primary-text-color;
+    .name {
+      color: #d6f2f9;
+    }
+    .description {
+      color: white;
+    }
+  }
+
+  &-inner {
+    padding: 20px;
+  }
+}

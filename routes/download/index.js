@@ -7,13 +7,21 @@ var Constants = require('../../lib/outputmanager').Constants;
 var configuration = require('../../lib/configuration');
 var fs = require('fs');
 var path = require('path');
+var OutputPlugin = require('../../lib/outputmanager').OutputPlugin;
+var util = require('util');
 
-server.get('/download/:tenant/:course', function (req, res, next) {
-  var course = req.params.course,
-      tenant = req.params.tenant,
-      currentUser = usermanager.getCurrentUser();
+function DownloadOutput() {
+}
 
-  if (currentUser && (currentUser.tenant._id == tenant)) {
+util.inherits(DownloadOutput, OutputPlugin);
+
+server.get('/download/:tenant/:course', function(req, res, next) {
+  var course = req.params.course;
+  var tenant = req.params.tenant;
+  var currentUser = usermanager.getCurrentUser();
+  var mode = this.Constants.Modes.publish;
+
+  if (currentUser && (currentUser.tenant._id === tenant)) {
 
     var outputplugin = app.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), function (error, plugin){
 
@@ -22,7 +30,7 @@ server.get('/download/:tenant/:course', function (req, res, next) {
         res.json({ success: false, message: error.message });
         return res.end();
       } else {
-        plugin.publish(course, false, req, res, function (error, result) {
+        plugin.publish(course, mode, req, res, function (error, result) {
           if (error) {
             logger.log('error', 'Unable to publish');
             return res.json({ success: false, message: error.message });
@@ -46,27 +54,32 @@ server.get('/download/:tenant/:course/:title/download.zip', function (req, res, 
   var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
   var downloadZipFilename = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Filenames.Download);
   var zipName = req.params.title;
+  var currentUser = usermanager.getCurrentUser();
 
-  fs.stat(downloadZipFilename, function(err, stat) {
-    if (err) {
-      logger.log('error', 'Error calling fs.stat');
-      logger.log('error', err);
+  if (currentUser && (currentUser.tenant._id == tenantId)) {
+    fs.stat(downloadZipFilename, function(err, stat) {
+      if (err) {
+        logger.log('error', 'Error calling fs.stat');
+        logger.log('error', err);
 
-      next(err);
-    } else {
-      res.writeHead(200, {
-          'Content-Type': 'application/zip',
-          'Content-Length': stat.size,
-          'Content-disposition' : 'attachment; filename=' + zipName + '.zip',
-          'Pragma' : 'no-cache',
-          'Expires' : '0'
-      });
+        next(err);
+      } else {
+        res.writeHead(200, {
+            'Content-Type': 'application/zip',
+            'Content-Length': stat.size,
+            'Content-disposition' : 'attachment; filename=' + zipName + '.zip',
+            'Pragma' : 'no-cache',
+            'Expires' : '0'
+        });
 
-      var readStream = fs.createReadStream(downloadZipFilename);
+        var readStream = fs.createReadStream(downloadZipFilename);
 
-      readStream.pipe(res);
-
-    }
-  });
-
+        readStream.pipe(res);
+      }
+    });
+  } else {
+    // User does not have access to this download.
+    res.statusCode = 401;
+    return res.json({success: false});
+  }
 });

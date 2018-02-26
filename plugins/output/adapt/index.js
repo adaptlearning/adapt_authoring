@@ -32,6 +32,7 @@ function AdaptOutput() {
 util.inherits(AdaptOutput, OutputPlugin);
 
 AdaptOutput.prototype.publish = function(courseId, mode, request, response, next) {
+  var app = origin();
   var self = this;
   var user = usermanager.getCurrentUser();
   var tenantId = user.tenant._id;
@@ -112,8 +113,8 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
           if (semver.gte(semver.clean(frameworkVersion), semver.clean('2.0.0'))) {
             outputFolder = path.join(outputFolder, Constants.Folders.Build);
           }
-          logger.log('info', '3.2. Using theme: ' + themeName);
-          logger.log('info', '3.3. Using menu: ' + menuName);
+          logger.log('info', `3.2. Using theme: ${themeName}`);
+          logger.log('info', `3.3. Using menu: ${menuName}`);
 
           var buildMode = outputJson.config._generateSourcemap === true ? 'dev' : 'prod';
           var cmd = `grunt server-build:${buildMode} --outputdir=${outputFolder} --theme=${themeName} --menu=${menuName}`;
@@ -123,16 +124,16 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
           exec(cmd, { cwd: FRAMEWORK_ROOT_FOLDER }, function(error, stdout, stderr) {
             if (error !== null || stderr.length !== 0) {
               if(error) {
-                logger.log('error', 'exec error: ' + error);
-                logger.log('error', 'stdout error: ' + stdout);
+                logger.log('error', `exec error: ${error}`);
+                logger.log('error', `stdout error: ${stdout}`);
               } else {
-                logger.log('error', 'stderr: ' + stderr);
+                logger.log('error', `stderr: ${stderr}`);
               }
               return callback(error);
             }
             if (stdout.length > 0) {
-              logger.log('info', 'stdout: ' + stdout);
-              origin.emit('previewCreated', tenantId, courseId, outputFolder);
+              logger.log('info', `stdout: ${stdout}`);
+              app.emit('previewCreated', tenantId, courseId, outputFolder);
             }
             self.clearBuildFlag(path.join(BUILD_FOLDER, Constants.Filenames.Rebuild), callback);
           });
@@ -150,7 +151,7 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
 
       output.on('close', function() {
         // Indicate that the zip file is ready for download
-        origin.emit('zipCreated', tenantId, courseId, filename, zipName);
+        app.emit('zipCreated', tenantId, courseId, filename, zipName);
         next(null, {
           filename: filename,
           zipName: zipName

@@ -9,19 +9,28 @@ define(function(require){
 
     events: {
       'change .pluginType-enabled': 'toggleEnabled',
+      'change .pluginType-addedDefault': 'toggleAddedDefault',
       'click .plugin-update-check': 'checkForUpdates',
       'click .plugin-update-confirm': 'updatePlugin'
     },
 
     preRender: function () {
       this.listenTo(this, 'remove', this.remove);
-      this.listenTo(this.model, 'destroy', this.remove);
-      this.listenTo(this.model, 'sync', this.render);
+      this.listenTo(this.model, {
+        'destroy': this.remove,
+        'sync': this.render
+      });
     },
 
     toggleEnabled: function () {
       this.model.save({
         _isAvailableInEditor: this.$('.pluginType-enabled').is(':checked')
+      }, { patch: true });
+    },
+
+    toggleAddedDefault: function() {
+      this.model.save({
+        _isAddedByDefault: this.$('.pluginType-addedDefault').is(':checked')
       }, { patch: true });
     },
 

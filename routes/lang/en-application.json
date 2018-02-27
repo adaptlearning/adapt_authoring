@@ -308,5 +308,6 @@
   "app.page": "page",
   "app.article": "article",
   "app.block": "block",
-  "app.component": "component"
+  "app.component": "component",
+  "app.addedDefault": "Add to new courses by default?"
 }

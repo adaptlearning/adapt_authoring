@@ -211,18 +211,18 @@ function initialize () {
 
 BowerPlugin.prototype.updatePluginType = function (req, res, next) {
   var self = this;
-  var delta = _.pick(req.body, '_isAvailableInEditor'); // only allow update of certain attributes
-
+  var whitelistedAttrs = [ // only certain attributes are allowed
+    '_isAvailableInEditor',
+    '_isAddedByDefault'
+  ];
   database.getDatabase(function (err, db) {
     if (err) {
       return next(err);
     }
-
-    db.update(self.getPluginType(), { _id: req.params.id }, delta, function (err) {
+    db.update(self.getPluginType(), { _id: req.params.id }, _.pick(req.body, whitelistedAttrs), function (err) {
       if (err) {
         return next(err);
       }
-
       return res.json({ success: true });
     });
   });

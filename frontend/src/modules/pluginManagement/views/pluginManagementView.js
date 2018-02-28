@@ -42,6 +42,15 @@ define(function(require){
       this.initialiseCollection();
     },
 
+    render: function() {
+      this.model = {
+        toJSON: _.bind(function() {
+          return { type: this.pluginType };
+        }, this)
+      }
+      return OriginView.prototype.render.apply(this, arguments);
+    },
+
     renderPluginTypeViews: function(collection) {
       this.$('.pluginManagement-plugins').empty();
 

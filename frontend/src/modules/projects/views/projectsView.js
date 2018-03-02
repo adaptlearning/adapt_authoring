@@ -90,19 +90,19 @@ define(function(require){
 
     sortAscending: function(shouldRenderProjects) {
       this.sort = { title: 1 };
-      this.setUserPreference('sort','asc', true);
+      this.setUserPreference('sort','asc');
       if(shouldRenderProjects) this.updateCollection(true);
     },
 
     sortDescending: function(shouldRenderProjects) {
       this.sort = { title: -1 };
-      this.setUserPreference('sort','desc', true);
+      this.setUserPreference('sort','desc');
       if(shouldRenderProjects) this.updateCollection(true);
     },
 
     sortLastUpdated: function(shouldRenderProjects) {
       this.sort = { updatedAt: -1 };
-      this.setUserPreference('sort','updated', true);
+      this.setUserPreference('sort','updated');
       if (shouldRenderProjects) this.updateCollection(true);
     },
 

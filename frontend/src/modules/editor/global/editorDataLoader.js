@@ -21,7 +21,6 @@ define(function(require) {
   // used to check what's preloaded
   var globalData = {
     courses: false,
-    extensiontypes: false,
     componenttypes: false
   };
   // used to check what's loaded

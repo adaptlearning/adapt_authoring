@@ -2,35 +2,32 @@
 define(function(require) {
   // don't bother doing anything if there's no storage
   if(!Storage) return;
-  
+
   var _ = require('underscore');
   var Origin = require('core/origin');
 
   var userData = false;
-  
+
   var BrowserStorage = {
     initialise: function() {
       var userId = Origin.sessionModel.get('id');
       userData = {
-        local: JSON.parse(localStorage.getItem(userId)) || {}, 
+        local: JSON.parse(localStorage.getItem(userId)) || {},
         session: JSON.parse(sessionStorage.getItem(userId)) || {}
-      };      
+      };
     },
 
     set: function(key, value, sessionOnly, replaceExisting) {
-      if(sessionOnly === true) {
-        if(replaceExisting) userData.session[key] = value;
-        else userData.session[key] = _.extend({}, userData.session[key], value);
-      } else {
-        if(replaceExisting) userData.local[key] = value;
-        else userData.local[key] = _.extend({}, userData.local[key], value);
-      }
+      // determine what we're storing, and where
+      var storageObj = sessionOnly ? userData.session : userData.local;
+      var value = replaceExisting ? value : _.extend({}, storageObj[key], value);
+      // persist data
+      storageObj[key] = value;
       this.save();
     },
 
     get: function(key) {
-      var value = _.extend({}, userData.local[key], userData.session[key]);
-      return value;
+      return _.extend({}, userData.local[key], userData.session[key]);
     },
 
     // persist data to Storage

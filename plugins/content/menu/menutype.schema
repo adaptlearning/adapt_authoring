@@ -15,6 +15,9 @@
     },
     "properties":{
       "type": "object"
+    },
+    "globals":{
+      "type": "object"
     }
   }
 }

@@ -7,7 +7,7 @@ define(function(require) {
   if(!Storage) return;
   
   var _ = require('underscore');
-  var Origin = require('coreJS/app/origin');
+  var Origin = require('core/origin');
 
   var userData = false;
   
@@ -51,7 +51,7 @@ define(function(require) {
   };
 
   // init
-  Origin.on('app:dataReady login:changed', function() {
+  Origin.on('origin:dataReady login:changed', function() {
     BrowserStorage.initialise();
     Origin.browserStorage = BrowserStorage;
   });

@@ -1,7 +1,4 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-/**
- * TODO Look into setting this up like Notify with registered plugins 
- */
 define(function(require) {
   // don't bother doing anything if there's no storage
   if(!Storage) return;
@@ -21,7 +18,6 @@ define(function(require) {
     },
 
     set: function(key, value, sessionOnly, replaceExisting) {
-      // TODO messy & only handles objects
       if(sessionOnly === true) {
         if(replaceExisting) userData.session[key] = value;
         else userData.session[key] = _.extend({}, userData.session[key], value);
@@ -50,7 +46,7 @@ define(function(require) {
     }
   };
 
-  // init
+  // initialise
   Origin.on('origin:dataReady login:changed', function() {
     BrowserStorage.initialise();
     Origin.browserStorage = BrowserStorage;

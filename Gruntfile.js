@@ -223,6 +223,23 @@ module.exports = function(grunt) {
         src: 'frontend/src/plugins/*',
         dest: 'frontend/src/plugins/plugins.js'
       }
+    },
+    'validate-comments': {
+      all: {
+        filetypes: [
+          '.js',
+          '.hbs',
+        ],
+        ignore: [
+          '.git',
+          'frontend/build',
+          'frontend/src/libraries',
+          'node_modules',
+          'plugins/content/bower/bowercache',
+          'plugins/content/theme/versions',
+          'temp',
+        ]
+      }
     }
   });
 
@@ -347,6 +364,53 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('test', ['mochaTest']);
+  grunt.registerMultiTask('validate-comments', "Checks for any comments marked as HACK/TODO/FIXME", function() {
+    var fs = require('fs-extra');
+    var klaw = require('klaw');
+    var path = require('path');
+
+    var done = this.async();
+    var regex = new RegExp(/TODO|todo|HACK|hack|FIXME|fixme/g);
+    var filetypes = this.data.filetypes;
+    var ignoredPaths = this.data.ignore;
+    var results = [];
+    // recurse
+    klaw(__dirname, {
+      filter: function(item) {
+        if(path.basename(item)[0] === '.') {
+          return false;
+        }
+        // make sure it's a valid file type
+        var extname = path.extname(item);
+        if(extname && filetypes.indexOf(extname) === -1) {
+          return false;
+        }
+        // make sure it's not in the ignored list
+        for(var i = 0, count = ignoredPaths.length; i < count; i++) {
+          if(item.indexOf(ignoredPaths[i]) !== -1) {
+            return false;
+          }
+        }
+        return true;
+      }
+    }).on('data', function(item) {
+      if(item.stats.isDirectory()) {
+        return;
+      }
+      fs.readFile(item.path, function(error, contents) {
+        var match = contents.toString().match(regex);
+        if(match) {
+          results.push(item.path.replace(__dirname, '') + ' (' + match.join(', ') + ')');
+        }
+      });
+    }).on('end', function() {
+      if(results.length) {
+        grunt.fail.fatal('Found flagged comments in the following files:\n\n' + results.join('\n'));
+      }
+      done();
+    });
+  });
+
+  grunt.registerTask('test', ['validate-comments', 'mochaTest']);
   grunt.registerTask('default', ['merge-json', 'requireBundle', 'less:dev', 'handlebars', 'watch']);
 };

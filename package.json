@@ -126,6 +126,7 @@
     "jshint-stylish": "^2.1.0",
     "json-schema-mapper": "0.0.2",
     "junk": "^1.0.2",
+    "klaw": "^2.1.1",
     "less": "^2.7.1",
     "log-update": "^2.1.0",
     "matchdep": "~0.3.0",

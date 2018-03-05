@@ -10,7 +10,7 @@ define(function(require){
     className: 'asset-management-new-asset',
 
     events: {
-      'change .asset-file'          : 'onChangeFile',
+      'change .asset-file': 'onChangeFile',
     },
 
     preRender: function() {

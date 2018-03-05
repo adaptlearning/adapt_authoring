@@ -238,6 +238,14 @@ module.exports = function(grunt) {
           'plugins/content/bower/bowercache',
           'plugins/content/theme/versions',
           'temp',
+        ],
+        blacklist: [
+          'TODO',
+          'todo',
+          'HACK',
+          'hack',
+          'FIXME',
+          'fixme'
         ]
       }
     }
@@ -370,7 +378,7 @@ module.exports = function(grunt) {
     var path = require('path');
 
     var done = this.async();
-    var regex = new RegExp(/TODO|todo|HACK|hack|FIXME|fixme/g);
+    var regex = new RegExp(this.data.blacklist.join('|'), 'g');
     var filetypes = this.data.filetypes;
     var ignoredPaths = this.data.ignore;
     var results = [];

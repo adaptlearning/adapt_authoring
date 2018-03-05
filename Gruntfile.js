@@ -408,7 +408,7 @@ module.exports = function(grunt) {
       fs.readFile(item.path, function(error, contents) {
         var match = contents.toString().match(regex);
         if(match) {
-          results.push(item.path.replace(__dirname, '') + ' (' + match.join(', ') + ')');
+          results.push(item.path.replace(__dirname + path.sep, '') + ' (' + match.join(', ') + ')');
         }
       });
     }).on('end', function() {

@@ -53,6 +53,7 @@
       // modules
       'modules/actions/index',
       'modules/assetManagement/index',
+      'modules/browserStorage/index',
       'modules/contentPane/index',
       'modules/contextMenu/index',
       'modules/editor/index',

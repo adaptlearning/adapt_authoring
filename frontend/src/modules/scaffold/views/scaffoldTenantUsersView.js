@@ -52,7 +52,7 @@ define(function(require) {
     }
   });
 
-  Origin.on('app:dataReady', function() {
+  Origin.on('origin:dataReady', function() {
     // Add Image editor to the list of editors
     Origin.scaffold.addCustomField('TenantUsers', ScaffoldTenantUsersView);
   });

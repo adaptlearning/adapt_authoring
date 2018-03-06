@@ -15,7 +15,13 @@ define(function(require) {
     cancel: function (event) {
       event && event.preventDefault();
       Origin.trigger('editorSidebarView:removeEditView', this.model);
+    },
+
+    applyColorLabels: function() {
+      // overwrite defaults from EditorOriginView
+      return;
     }
+
   }, {
     template: 'editorComponentEdit'
   });

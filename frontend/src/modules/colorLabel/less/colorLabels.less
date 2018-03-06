@@ -1,0 +1,51 @@
+.colorlabel {
+    @popup-border-color: silver;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+
+    background: @adapt-white;
+    border: solid 1px @popup-border-color;
+    box-shadow: 0 0 4px @popup-border-color;
+
+    .colorlabel-inner {
+        padding: 60px 40px;
+    }
+
+    .colors {
+        .colors-inner {
+
+            padding-bottom: 20px;
+
+            .color-item {
+
+                float: left;
+                font-size: 0;
+                border: solid 4px @adapt-white;
+
+                div {
+                    border: solid 1px @adapt-white;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 4px;
+                }
+
+                &.selected {
+                    border-color: darken(@adapt-white, 50%);
+                    background-color: darken(@adapt-white, 50%);
+                    border-radius: 8px;
+                }
+            }
+        }
+    }
+
+    .footer {
+        text-align: center;
+
+        .warning {
+            margin-right: 40px;
+        }
+    }
+}

@@ -15,7 +15,8 @@ define(function(require) {
 
       this.listenTo(Origin, {
         'remove:views': this.remove,
-        'options:update:ui': this.updateUI
+        'options:update:ui': this.updateUI,
+        'options:reset:ui': this.resetUI
       });
       this.render();
     },
@@ -54,6 +55,12 @@ define(function(require) {
           if (_.isArray(preference)) return;
           this.$('a.option-value-' + preference).addClass('selected');
         }, this);
+      }, this));
+    },
+
+    resetUI: function(group) {
+      _.defer(_.bind(function() {
+        this.$('a[data-group="'+group+'"]').removeClass('selected');
       }, this));
     },
 

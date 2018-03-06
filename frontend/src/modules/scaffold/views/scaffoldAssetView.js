@@ -41,7 +41,7 @@ define(function(require) {
       var template = Handlebars.templates[this.constructor.template];
       var templateData = {
         value: this.value,
-        type: this.schema.fieldType.replace('Asset:', '')
+        type: this.schema.inputType.replace('Asset:', '')
       };
       // this delgate function is async, so does a re-render once the data is loaded
       var _renderDelegate = _.bind(function(assetId) {
@@ -226,7 +226,7 @@ define(function(require) {
       event.preventDefault();
       Origin.trigger('modal:open', AssetManagementModalView, {
         collection: new AssetCollection,
-        assetType: this.schema.fieldType,
+        assetType: this.schema.inputType,
         _shouldShowScrollbar: false,
         onUpdate: function(data) {
           if (!data) {

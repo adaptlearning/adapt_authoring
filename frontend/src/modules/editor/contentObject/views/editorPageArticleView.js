@@ -35,7 +35,11 @@ define(function(require){
     },
 
     listenToEvents: function() {
-      this.listenTo(Origin, 'editorView:removeSubViews editorPageView:removePageSubViews', this.remove);
+      this.listenTo(Origin, {
+        'editorView:collapseArticle:collapse': this.collapseAllArticles,
+        'editorView:collapseArticle:expand': this.expandAllArticles,
+        'editorView:removeSubViews editorPageView:removePageSubViews': this.remove
+      });
 
       if (!this.model.isNew()) {
         var id = this.model.get('_id');
@@ -45,6 +49,8 @@ define(function(require){
         events['editorView:pasted:' + id] = this.onPaste;
         this.listenTo(Origin, events);
       }
+
+      this.listenTo(this.model, 'change:_isCollapsed', this.onIsCollapsedChange);
 
       this.listenTo(this, {
         'contextMenu:article:edit': this.loadArticleEdit,
@@ -233,12 +239,28 @@ define(function(require){
     toggleCollapseArticle: function(event) {
       event && event.preventDefault();
 
-      $(event.currentTarget).toggleClass('iscollapsed');
+      Origin.trigger('options:reset:ui', 'collapseArticle');
       var isCollapsed = this.model.get('_isCollapsed');
       this.model.set('_isCollapsed', !isCollapsed);
       this.collapseArticle();
     },
     
+    onIsCollapsedChange: function(isCollapsed) {
+      this.$('.editor-collapse-article').toggleClass('iscollapsed', isCollapsed);
+    },
+
+    collapseAllArticles: function() {
+      if (this.model.get('_isCollapsed') === true) return; 
+      this.model.set('_isCollapsed', true);
+      this.collapseArticle();
+    },
+    
+    expandAllArticles: function() {
+      if (this.model.get('_isCollapsed') === false) return; 
+      this.model.set('_isCollapsed', false);
+      this.collapseArticle();
+    },
+
     collapseArticle: function() {
       var isCollapsed = this.model.get('_isCollapsed');
 

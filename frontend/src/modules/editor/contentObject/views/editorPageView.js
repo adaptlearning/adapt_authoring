@@ -29,6 +29,23 @@ define(function(require){
       originEvents['editorView:moveArticle:' + id] = this.render;
       originEvents['editorView:pasted:' + id] = this.onPaste;
       this.listenTo(Origin, originEvents);
+
+      Origin.options.addItems([
+        {
+          title: Origin.l10n.t('app.collapseAllArticles'),
+          icon: 'compress',
+          callbackEvent: 'editorView:collapseArticle:collapse',
+          value: 'collapse',
+          group: 'collapseArticle',
+        },
+        {
+          title: Origin.l10n.t('app.expandAllArticles'),
+          icon: 'expand',
+          callbackEvent: 'editorView:collapseArticle:expand',
+          value: 'expand',
+          group: 'collapseArticle',
+        }
+      ]);
     },
 
     render: function() {

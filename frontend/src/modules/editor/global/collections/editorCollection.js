@@ -8,7 +8,9 @@ define(function(require) {
       this.url = options.url;
       this._type = options._type;
       this.on('reset', this.loadedData, this);
-      this.fetch({ reset:true });
+      if(options.autoFetch !== false){
+        this.fetch({ reset:true });
+      }
     },
 
     loadedData: function() {

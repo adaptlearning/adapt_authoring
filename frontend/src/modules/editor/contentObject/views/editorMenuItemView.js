@@ -24,11 +24,6 @@ define(function(require){
 
     postRender: function() {
       this.setupEvents();
-      // Check if the current item is expanded and update the next menuLayerView
-      // This can end up being recursive if an item is selected inside a few menu items
-      if(this.model.get('_isExpanded')) {
-        Origin.trigger('editorView:menuView:updateSelectedItem', this);
-      }
     },
 
     remove: function() {
@@ -39,31 +34,23 @@ define(function(require){
     setupEvents: function() {
       this.listenTo(Origin, 'editorView:removeSubViews', this.remove);
 
-      this.listenTo(this.model, {
-        'change:_isExpanded': this.onExpandedChange,
-        'change:_isSelected': this.onSelectedChange
-      });
-      // Handle the context menu clicks
-      this.on('contextMenu:' + this.model.get('_type') + ':edit', this.editMenuItem);
-      this.on('contextMenu:' + this.model.get('_type') + ':copy', this.copyMenuItem);
-      this.on('contextMenu:' + this.model.get('_type') + ':copyID', this.copyID);
-      this.on('contextMenu:' + this.model.get('_type') + ':delete', this.deleteItemPrompt);
+      var type = this.model.get('_type');
+
+      this.on('contextMenu:' + type + ':edit', this.editMenuItem);
+      this.on('contextMenu:' + type + ':copy', this.copyMenuItem);
+      this.on('contextMenu:' + type + ':copyID', this.copyID);
+      this.on('contextMenu:' + type + ':delete', this.deleteItemPrompt);
 
       this.$el.closest('.editor-menu').on('mousemove', _.bind(this.handleDrag, this));
     },
 
     setupClasses: function() {
-      var classString = '';
-      if (this.model.get('_isSelected')) classString += 'selected ';
-      if(this.model.get('_isExpanded')) classString += 'expanded ';
-      classString += ('content-type-'+this.model.get('_type'));
-      this.$el.addClass(classString);
+      this.$el.addClass('content-type-' + this.model.get('_type'));
     },
 
     onMenuItemClicked: function(event) {
       event && event.preventDefault();
-      // select item regardless of single/double click
-      this.setItemAsSelected();
+      this.trigger('click', this);
       // handle double-click
       if(this.clickTimerActive) {
         return this.onMenuItemDoubleClicked(event);
@@ -78,75 +65,7 @@ define(function(require){
 
     onMenuItemDoubleClicked: function(event) {
       event && event.preventDefault();
-      var type = this.model.get('_type');
-      if(type === 'page') {
-        this.gotoPageEditor();
-      }
-      else if(type === 'menu') {
-        this.gotoSubMenuEditor();
-      }
-    },
-
-    gotoPageEditor: function() {
-      Origin.router.navigateTo('editor/' + Origin.editor.data.course.get('_id') + '/page/' + this.model.get('_id'));
-    },
-
-    gotoSubMenuEditor: function() {
-      Origin.router.navigateTo('editor/' + Origin.editor.data.course.get('_id') + '/menu/' + this.model.get('_id') + '/edit');
-    },
-
-    setItemAsSelected: function() {
-      if(this.model.get('_isSelected')) {
-        return;
-      }
-      if(this.model.get('_isExpanded')) {
-        // bit odd, but we need to remove and child views before we continue
-        this.model.set('_isExpanded', false);
-      }
-      else {
-        this.setSiblingsSelectedState();
-        this.setParentSelectedState();
-      }
-      this.model.set({
-        _isExpanded: this.model.get('_type') === 'menu',
-        _isSelected: true
-      });
-      // This event passes out the view to the editorMenuView to add
-      // a editorMenuLayerView and setup this.subView
-      Origin.trigger('editorView:menuView:updateSelectedItem', this);
-    },
-
-    setParentSelectedState: function() {
-      this.model.getParent().set('_isSelected', false);
-    },
-
-    setSiblingsSelectedState: function() {
-      this.model.getSiblings().each(function(sibling) {
-        sibling.set({ _isSelected: false, _isExpanded: false });
-      });
-    },
-
-    setChildrenSelectedState: function() {
-      this.model.getChildren().each(function(child) {
-        child.set({ _isSelected: false, _isExpanded: false });
-      })
-    },
-
-    onSelectedChange: function(model, isSelected) {
-      this.$el.toggleClass('selected', isSelected);
-    },
-
-    onExpandedChange: function(model, isExpanded) {
-      var isMenuType = (this.model.get('_type') === 'menu');
-      if(isExpanded) {
-        this.$el.addClass('expanded');
-        return;
-      }
-      if(isMenuType) {
-        this.setChildrenSelectedState();
-        if (this.subView) this.subView.remove();
-      }
-      this.$el.removeClass('expanded');
+      this.trigger('dblclick', this);
     },
 
     editMenuItem: function() {
@@ -193,10 +112,6 @@ define(function(require){
 
     deleteItem: function(event) {
       this.stopListening(Origin, 'editorView:cancelRemoveItem:'+ this.model.get('_id'), this.cancelDeleteItem);
-      this.model.set({ _isExpanded: false, _isSelected: false });
-      // When deleting an item - the parent needs to be selected
-      this.model.getParent().set({ _isSelected: true, _isExpanded: true });
-
       // We also need to navigate to the parent element - but if it's the courseId let's
       // navigate up to the menu
       var type = this.model.get('_type');
@@ -204,12 +119,22 @@ define(function(require){
       var parentId = isTopLevel ? '' : '/' + this.model.get('_parentId');
       Origin.router.navigateTo('editor/' + Origin.editor.data.course.id + '/menu' + parentId);
 
-      if(this.model.destroy()) this.remove();
+      this.model.destroy({
+        success: _.bind(function(model) {
+          Origin.trigger('editorView:itemDeleted', model);
+          this.remove()
+        }, this),
+        error: function() {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'app.errordelete'
+          });
+        }
+      });
     },
 
     cancelDeleteItem: function() {
       this.stopListening(Origin, 'editorView:removeItem:'+ this.model.get('_id'), this.deleteItem);
-      this.model.set({ _isSelected: true });
     },
 
     enableDrag: function(event) {

@@ -27,7 +27,8 @@ define(function(require) {
       'version',
       'themeSettings',
       '_onScreen',
-      '_colorLabel'
+      '_colorLabel',
+      'instruction'
     ]
   });
 

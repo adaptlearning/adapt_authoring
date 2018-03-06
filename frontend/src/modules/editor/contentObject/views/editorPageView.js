@@ -153,7 +153,8 @@ define(function(require){
     // TODO fragile HACK, refactor context menu code to allow what I want to do later...
     openContextMenu: function(event) {
       if(!event) return console.log('Error: needs a current target to attach the menu to...');
-      event.preventDefault() && event.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
 
       var fakeModel = new Backbone.Model({ _id: this.model.get('_id'), _type: 'page-min' });
       var fakeView = new Backbone.View({ model: fakeModel });

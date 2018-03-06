@@ -20,7 +20,6 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
     var schemaExtensions = schema._extensions;
     var schemaExtensionsProperties = schemaExtensions && schemaExtensions.properties;
 
-
     for (var key in schemaExtensionsProperties) {
       if (schemaExtensionsProperties.hasOwnProperty(key) &&
         !_.contains(enabledExtensions, key)) {
@@ -30,12 +29,9 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
 
     if (schemaName === 'course') {
       // remove unrequired globals from the course
-      var globals = schema._globals;
-
-      if (globals) globals = globals.properties;
-
-      var extensionGlobals = globals && globals._extensions.properties;
-      var componentGlobals = globals && globals._components.properties;
+      var globals = schema._globals.properties;
+      var extensionGlobals = globals._extensions.properties;
+      var componentGlobals = globals._components.properties;
       var enabledComponents = _.pluck(config.get('_enabledComponents'), '_component');
 
       for (key in extensionGlobals) {

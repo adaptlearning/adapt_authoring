@@ -27,7 +27,6 @@ define(function(require){
         this.addBlockViews();
       }
       this.setupDragDrop();
-      this.collapseArticle();
 
       _.defer(_.bind(function(){
         this.trigger('articleView:postRender');

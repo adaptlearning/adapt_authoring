@@ -6,6 +6,19 @@ All notable changes to the Adapt authoring tool are documented in this file.
 
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.4.1] - 2018-02-05
+
+This is a patch release fixing issues introduced in v0.4.0.
+
+### Fixed
+- Major performance fix for large installs ([\#1758](https://github.com/adaptlearning/adapt_authoring/issues/1758))
+- Various minor fixes for install and upgrade scripts ([\#1749](https://github.com/adaptlearning/adapt_authoring/issues/1749), [\#1760](https://github.com/adaptlearning/adapt_authoring/issues/1760), [\#1763](https://github.com/adaptlearning/adapt_authoring/issues/1763), [\#1797](https://github.com/adaptlearning/adapt_authoring/issues/1797), [\#1838](https://github.com/adaptlearning/adapt_authoring/issues/1838), [\#1842](https://github.com/adaptlearning/adapt_authoring/issues/1842))
+- Dashboard paging fixed ([\#1759](https://github.com/adaptlearning/adapt_authoring/issues/1759))
+- Asset management paging fixed ([\#1790](https://github.com/adaptlearning/adapt_authoring/issues/1790))
+- Fixed issue whereby the page editor screen would occasionally render the same block twice ([\#1834](https://github.com/adaptlearning/adapt_authoring/issues/1834))
+- Asset preview image has been fixed for contrib-media video assets ([\#1835](https://github.com/adaptlearning/adapt_authoring/issues/1835))
+- Fixed menu editor rendering quirks ([\#1837](https://github.com/adaptlearning/adapt_authoring/issues/1837))
+
 ## [0.4.0] - 2017-10-17
 
 Major refactor of the front-end application.
@@ -379,6 +392,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.4.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.1...v0.2.2

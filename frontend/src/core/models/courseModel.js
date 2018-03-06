@@ -7,7 +7,7 @@ define(function(require) {
   var CourseModel = ContentModel.extend({
     urlRoot: '/api/content/course',
     _type: 'course',
-    _childTypes: 'contentobject',
+    _children: 'contentObjects',
 
     getHeroImageURI: function () {
       if(Helpers.isAssetExternal(this.get('heroImage'))) {

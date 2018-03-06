@@ -205,12 +205,42 @@ define(function(require){
           }
         },
 
+        getAssetFromValue: function(url) {
+          var urlSplit = url.split('/')
+          var fileName = urlSplit[urlSplit.length - 1];
+          // Get courseAsset model
+          var courseAsset = Origin.editor.data.courseassets.findWhere({_fieldName: fileName});
+
+          if (courseAsset) {
+            var courseAssetId = courseAsset.get('_assetId');
+
+            return '/api/asset/serve/' + courseAssetId;  
+          } else {
+            return '';
+          }
+        },
+
         ifImageIsCourseAsset: function(url, block) {
           if (url.length !== 0 && url.indexOf('course/assets') == 0) {
             return block.fn(this);
           } else {
             return block.inverse(this);
           }
+        },
+
+        getThumbnailFromValue: function(url) {
+
+          var urlSplit = url.split('/')
+          var fileName = urlSplit[urlSplit.length - 1];
+          // Get courseAsset model
+          var courseAsset = Origin.editor.data.courseassets.findWhere({_fieldName: fileName});
+          if (courseAsset) {
+            var courseAssetId = courseAsset.get('_assetId');
+            return '/api/asset/thumb/' + courseAssetId;
+          } else {
+            return '/api/asset/thumb/' + url;
+          }
+
         },
 
         ifAssetIsExternal: function(url, block) {
@@ -267,37 +297,67 @@ define(function(require){
           
           return success;
         },
-
-        // checks for at least one child object
-        validateCourseContent: function(currentCourse, callback) {
+        
+        validateCourseContent: function(currentCourse) {
+          // Let's do a standard check for at least one child object
           var containsAtLeastOneChild = true;
+
           var alerts = [];
-          var iterateOverChildren = function(model, index, doneIterator) {
-            if(!model._childTypes) {
-              return doneIterator();
-            }
-            model.fetchChildren(function(currentChildren) {
-              if (currentChildren.length > 0) {
-                return helpers.forParallelAsync(currentChildren, iterateOverChildren, doneIterator);
-              }
+
+          function iterateOverChildren(model) {
+            // Return the function if no children - on components
+            if(!model._children) return;
+
+            var currentChildren = model.getChildren();
+
+            // Do validate across each item
+            if (currentChildren.length == 0) {
               containsAtLeastOneChild = false;
-              var children = _.isArray(model._childTypes) ? model._childTypes.join('/') : model._childTypes;
-              alerts.push(model.get('_type') + " '" + model.get('title') + "' missing " + children);
-              doneIterator();
-            });
-          };
-          // start recursion
-          iterateOverChildren(currentCourse, null, function() {
-            var errorMessage = "";
-            if(alerts.length > 0)  {
-              for(var i = 0, len = alerts.length; i < len; i++) {
-                errorMessage += "<li>" + alerts[i] + "</li>";
-              }
-              return callback(new Error(errorMessage));
+
+              var children = _.isArray(model._children) ? model._children.join('/') : model._children;
+              alerts.push(
+                "There seems to be a "
+                + model.get('_type')
+                + " with the title - '"
+                + model.get('title')
+                + "' with no "
+                + children
+              );
+
+              return;
+            } else {
+              // Go over each child and call validation again
+              currentChildren.each(function(childModel) {
+                iterateOverChildren(childModel);
+              });
             }
-            callback(null, true);
-          });
+
+          }
+
+          iterateOverChildren(currentCourse);
+
+          if(alerts.length > 0) {
+            var errorMessage = "";
+            for(var i = 0, len = alerts.length; i < len; i++) {
+              errorMessage += "<li>" + alerts[i] + "</li>";
+            }
+
+            Origin.Notify.alert({
+              type: 'error',
+              title: Origin.l10n.t('app.validationfailed'),
+              text: errorMessage,
+              callback: _.bind(this.validateCourseConfirm, this)
+            });
+          }
+
+          return containsAtLeastOneChild;
         },
+
+      validateCourseConfirm: function(isConfirmed) {
+        if (isConfirmed) {
+          Origin.trigger('editor:courseValidation');
+        }
+      },
 
       isValidEmail: function(value) {
         var regEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -306,100 +366,6 @@ define(function(require){
         } else {
           return true;
         }
-      },
-
-      contentModelMap: function(type) {
-        var contentModels = {
-          contentobject: 'core/models/contentObjectModel',
-          article: 'core/models/articleModel',
-          block: 'core/models/blockModel',
-          component: 'core/models/componentModel',
-          courseasset: 'core/models/courseAssetModel'
-        };
-        if(contentModels.hasOwnProperty(type)) {
-          return require(contentModels[type]);
-        }
-      },
-
-      /**
-      * Ensures list is iterated (doesn't guarantee order), even if using async iterator
-      * @param list Array or Backbone.Collection
-      * @param func Function to use as iterator. Will be passed item, index and callback function
-      * @param callback Function to be called on completion
-      */
-      forParallelAsync: function(list, func, callback) {
-        if(!list.hasOwnProperty('length') || list.length === 0) {
-          if(typeof callback === 'function') callback();
-          return;
-        }
-        // make a copy in case func modifies the original
-        var listCopy = list.models ? list.models.slice() : list.slice();
-        var doneCount = 0;
-        var _checkCompletion = function() {
-          if((++doneCount === listCopy.length) && typeof callback === 'function') {
-            callback();
-          }
-        };
-        for(var i = 0, count = listCopy.length; i < count; i++) {
-          func(listCopy[i], i, _checkCompletion);
-        }
-      },
-
-      /**
-      * Ensures list is iterated in order, even if using async iterator
-      * @param list Array or Backbone.Collection
-      * @param func Function to use as iterator. Will be passed item, index and callback function
-      * @param callback Function to be called on completion
-      */
-      forSeriesAsync: function(list, func, callback) {
-        if(!list.hasOwnProperty('length') || list.length === 0) {
-          if(typeof callback === 'function') callback();
-          return;
-        }
-        // make a copy in case func modifies the original
-        var listCopy = list.models ? list.models.slice() : list.slice();
-        var doneCount = -1;
-        var _doAsync = function() {
-          if(++doneCount === listCopy.length) {
-            if(typeof callback === 'function') callback();
-            return;
-          }
-          var nextItem = listCopy[doneCount];
-          if(!nextItem) {
-            console.error('Invalid item at', doneCount + ':', nextItem);
-          }
-          func(nextItem, doneCount, _doAsync);
-        };
-        _doAsync();
-      },
-
-      /**
-      * Does a fetch for model in models, and returns the latest data in the
-      * passed callback
-      * @param models {Array of Backbone.Models}
-      * @param callback {Function to call when complete}
-      */
-      multiModelFetch: function(models, callback) {
-        var collatedData = {};
-        helpers.forParallelAsync(models, function(model, index, done) {
-          model.fetch({
-            success: function(data) {
-              collatedData[index] = data;
-              done();
-            },
-            error: function(data) {
-              console.error('Failed to fetch data for', model.get('_id'), + data.responseText);
-              done();
-            }
-          });
-        }, function doneAll() {
-          var orderedKeys = Object.keys(collatedData).sort();
-          var returnArr = [];
-          for(var i = 0, count = orderedKeys.length; i < count; i++) {
-            returnArr.push(collatedData[orderedKeys[i]]);
-          }
-          callback(returnArr);
-        });
       }
     };
 

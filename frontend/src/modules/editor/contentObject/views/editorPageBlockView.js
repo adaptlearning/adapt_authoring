@@ -1,7 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
   var Backbone = require('backbone');
+  var Handlebars = require('handlebars');
   var Origin = require('core/origin');
+
   var ComponentModel = require('core/models/componentModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
   var EditorPageComponentView = require('./editorPageComponentView');
@@ -9,13 +11,12 @@ define(function(require){
   var EditorPageComponentListView = require('./editorPageComponentListView');
 
   var EditorPageBlockView = EditorOriginView.extend({
-    className: 'block editable block-draggable page-content-syncing',
+    className: 'block editable block-draggable',
     tagName: 'div',
 
-    settings: _.extend({}, EditorOriginView.prototype.settings, {
-      hasAsyncPostRender: true,
+    settings: {
       autoRender: false
-    }),
+    },
 
     events: _.extend({}, EditorOriginView.prototype.events, {
       'click a.block-delete': 'deleteBlockPrompt',
@@ -27,70 +28,42 @@ define(function(require){
     preRender: function() {
       this.listenToEvents();
       this.model.set('componentTypes', Origin.editor.data.componenttypes.toJSON());
-      this.render();
-    },
-
-    render: function() {
-      this.model.fetchChildren(_.bind(function(components) {
-        this.children = components;
-        var layouts = this.getAvailableLayouts();
-        // FIXME why do we have two attributes with the same value?
-        this.model.set({ layoutOptions: layouts, dragLayoutOptions: layouts });
-
-        EditorOriginView.prototype.render.apply(this);
-
-        this.addComponentViews();
-        this.setupDragDrop();
-
-        this.handleAsyncPostRender();
-      }, this));
-    },
-
-    animateIn: function() {
-      this.$el.removeClass('page-content-syncing');
-    },
-
-    handleAsyncPostRender: function() {
-      var renderedChildren = [];
-      if(this.children.length === 0) {
-        return this.animateIn();
-      }
-      this.listenTo(Origin, 'editorPageComponent:postRender', function(view) {
-        var id = view.model.get('_id');
-        if(this.children.indexOf(view.model) !== -1 && renderedChildren.indexOf(id) === -1) {
-          renderedChildren.push(id);
-        }
-        if(renderedChildren.length === this.children.length) {
-          this.stopListening(Origin, 'editorPageComponent:postRender');
-          this.animateIn();
-        }
-      });
+      // seems odd calling re-render here, but it does what we want
+      this.reRender();
     },
 
     listenToEvents: function() {
       var id = this.model.get('_id');
-      var events = {
-        'editorView:removeSubViews editorPageView:removePageSubViews': this.remove
-      };
-      events[
-        'editorView:addComponent:' + id + ' ' +
-        'editorView:removeComponent:' + id + ' ' +
-        'editorView:moveComponent:' + id
-      ] = this.render;
-      events['editorView:pasted:' + id] = this.onPaste;
+      var events = {};
+      events['editorView:removeSubViews editorPageView:removePageSubViews'] = this.remove;
+      events['editorView:removeComponent:' + id] = this.handleRemovedComponent;
+      events['editorView:moveComponent:' + id] = this.reRender;
+      events['editorView:cutComponent:' + id] = this.onCutComponent;
+      events['editorView:addComponent:' + id] = this.addComponent;
+      events['editorView:deleteBlock:' + id] = this.deleteBlock;
       this.listenTo(Origin, events);
 
       this.listenTo(this, {
         'contextMenu:block:edit': this.loadBlockEdit,
         'contextMenu:block:copy': this.onCopy,
         'contextMenu:block:copyID': this.onCopyID,
+        'contextMenu:block:cut': this.onCut,
         'contextMenu:block:delete': this.deleteBlockPrompt
       });
     },
 
     postRender: function() {
-      this.trigger('blockView:postRender');
-      Origin.trigger('pageView:itemRendered', this);
+      this.addComponentViews();
+      this.setupDragDrop();
+
+      _.defer(_.bind(function(){
+        this.trigger('blockView:postRender');
+        Origin.trigger('pageView:itemRendered');
+      }, this));
+    },
+
+    reRender: function() {
+      this.evaluateComponents(this.render);
     },
 
     getAvailableLayouts: function() {
@@ -99,15 +72,24 @@ define(function(require){
         left: { type: 'left', name: 'app.layoutleft', pasteZoneRenderOrder: 2 },
         right: { type: 'right', name: 'app.layoutright', pasteZoneRenderOrder: 3 }
       };
-      if (this.children.length === 0) {
+      var components = this.model.getChildren();
+      if (components.length === 0) {
         return [layoutOptions.full,layoutOptions.left,layoutOptions.right];
       }
-      if (this.children.length === 1) {
-        var layout = this.children[0].get('_layout');
-        if(layout === layoutOptions.left.type) return [layoutOptions.right];
-        if(layout === layoutOptions.right.type) return [layoutOptions.left];
+      if (components.length === 1) {
+        var layout = components.at(0).get('_layout');
+        if(layout === 'left') return [layoutOptions.right];
+        if(layout === 'right') return [layoutOptions.left];
       }
       return [];
+    },
+
+    evaluateComponents: function(callback) {
+      this.model.set({
+        layoutOptions: this.getAvailableLayouts(),
+        dragLayoutOptions: this.getAvailableLayouts()
+      });
+      if(callback) callback.apply(this);
     },
 
     deleteBlockPrompt: function(event) {
@@ -117,10 +99,14 @@ define(function(require){
         type: 'warning',
         title: Origin.l10n.t('app.deleteblock'),
         text: Origin.l10n.t('app.confirmdeleteblock') + '<br />' + '<br />' + Origin.l10n.t('app.confirmdeleteblockwarning'),
-        callback: _.bind(function(confirmed) {
-          if (confirmed) this.deleteBlock();
-        }, this)
+        callback: _.bind(this.deleteBlockConfirm, this)
       });
+    },
+
+    deleteBlockConfirm: function(confirmed) {
+      if (confirmed) {
+        Origin.trigger('editorView:deleteBlock:' + this.model.get('_id'));
+      }
     },
 
     deleteBlock: function(event) {
@@ -130,6 +116,18 @@ define(function(require){
           Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
         }
       });
+    },
+
+    handleRemovedComponent: function() {
+      this.reRender();
+    },
+
+    onCutComponent: function(view) {
+      this.once('blockView:postRender', function() {
+        view.showPasteZones();
+      });
+
+      this.reRender();
     },
 
     setupDragDrop: function() {
@@ -196,20 +194,26 @@ define(function(require){
 
     addComponentViews: function() {
       this.$('.page-components').empty();
+      var components = this.model.getChildren();
+      var addPasteZonesFirst = components.length && components.at(0).get('_layout') != 'full';
 
-      var addPasteZonesFirst = this.children.length && this.children[0].get('_layout') !== 'full';
-      this.addComponentButtonLayout(this.children);
+      this.addComponentButtonLayout(components);
 
-      if (addPasteZonesFirst) this.setupPasteZones();
-      // Add component elements
-      for(var i = 0, count = this.children.length; i < count; i++) {
-        var view = new EditorPageComponentView({ model: this.children[i] });
-        this.$('.page-components').append(view.$el);
+      if (addPasteZonesFirst) {
+        this.setupPasteZones();
       }
-      if (!addPasteZonesFirst) this.setupPasteZones();
+
+      // Add component elements
+      this.model.getChildren().each(function(component) {
+        this.$('.page-components').append(new EditorPageComponentView({ model: component }).$el);
+      }, this);
+
+      if (!addPasteZonesFirst) {
+        this.setupPasteZones();
+      }
     },
 
-    addComponentButtonLayout: function(components) {
+    addComponentButtonLayout: function(components){
       if(components.length === 2) {
         return;
       }
@@ -217,10 +221,7 @@ define(function(require){
         this.$('.add-component').addClass('full');
         return;
       }
-      var layout = components[0].get('_layout');
-      var className = '';
-      if(layout === 'left') className = 'right';
-      if(layout === 'right') className = 'left';
+      var className = (components.models[0].attributes._layout === 'left') ? 'right' : 'left';
       this.$('.add-component').addClass(className);
     },
 
@@ -254,8 +255,15 @@ define(function(require){
 
     setupPasteZones: function() {
       // Add available paste zones
-      var layouts = this.model.get('layoutOptions').slice();
-      var dragLayouts = this.model.get('dragLayoutOptions').slice();
+      var layouts = [];
+      var dragLayouts = [];
+
+      _.each(this.model.get('dragLayoutOptions'), function (dragLayout) {
+        dragLayouts.push(dragLayout);
+      });
+      _.each(this.model.get('layoutOptions'), function (layout) {
+        layouts.push(layout);
+      });
 
       _.each(this.sortArrayByKey(dragLayouts, 'pasteZoneRenderOrder'), function(layout) {
         var pasteComponent = new ComponentModel();
@@ -276,19 +284,17 @@ define(function(require){
       }, this);
     },
 
-    onPaste: function(data) {
-      (new ComponentModel({ _id: data._id })).fetch({
-        success: _.bind(function(model) {
-          this.children.push(model);
-          this.render();
-        }, this),
-        error: function(data) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: 'app.errorfetchingdata'
-          });
-        }
-      });
+    swapLayout: function (layout) {
+      if (layout === 'full') {
+        return layout;
+      }
+      return (layout == 'left') ? 'right' : 'left';
+    },
+
+    toggleAddComponentsButton: function() {
+      var layoutOptions = this.model.get('layoutOptions') || [];
+      // display-none if we've no layout options
+      this.$('.add-control').toggleClass('display-none', layoutOptions.length === 0);
     }
   }, {
     template: 'editorPageBlock'

@@ -1,6 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var Backbone = require('backbone');
   var Origin = require('core/origin');
+
   var ComponentModel = require('core/models/componentModel');
   var EditorOriginView = require('../../global/views/editorOriginView');
   var EditorPageComponentView = require('./editorPageComponentView');
@@ -62,10 +64,12 @@ define(function(require) {
     addComponent: function(layout) {
       Origin.trigger('editorComponentListView:remove');
 
-      var componentType = Origin.editor.data.componenttypes.findWhere({ name: this.model.get('name') });
-      var model = new ComponentModel();
+      var componentName = this.model.get('name');
+      var componentType = _.find(Origin.editor.data.componenttypes.models, function(type){
+        return type.get('name') == componentName;
+      });
 
-      model.save({
+      var newComponentModel = new ComponentModel({
         title: Origin.l10n.t('app.placeholdernewcomponent'),
         displayTitle: Origin.l10n.t('app.placeholdernewcomponent'),
         body: '',
@@ -77,17 +81,28 @@ define(function(require) {
         _component: componentType.get('component'),
         _layout: layout,
         version: componentType.get('version')
-      }, {
-        success: _.bind(function(model) {
-          var parentId = model.get('_parentId');
-          Origin.trigger('editorView:addComponent:' + parentId);
-          $('html').css('overflow-y', '');
-          $.scrollTo('.block[data-id=' + parentId + ']');
-        }, this),
+      });
+
+      var newComponentView = new EditorPageComponentView({ model: newComponentModel }).$el.addClass('syncing');
+
+      this.$parentElement
+        .find('.page-components')
+        .append(newComponentView);
+
+      newComponentModel.save(null, {
         error: function() {
           $('html').css('overflow-y', '');
           Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.erroraddingcomponent') });
-        }
+        },
+        success: _.bind(function() {
+          Origin.editor.data.components.add(newComponentModel);
+          this.parentView.evaluateComponents(this.parentView.toggleAddComponentsButton);
+          // Re-render the block
+          this.parentView.reRender();
+          newComponentView.addClass('synced');
+          $('html').css('overflow-y', '');
+          $.scrollTo(newComponentView.$el);
+        }, this)
       });
     }
   }, {

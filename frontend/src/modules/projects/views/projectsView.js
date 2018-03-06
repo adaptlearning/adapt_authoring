@@ -1,7 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
   var ProjectView = require('./projectView');
@@ -9,142 +7,85 @@ define(function(require){
 
   var ProjectsView = OriginView.extend({
     className: 'projects',
-    settings: {
-      autoRender: true,
-      preferencesKey: 'dashboard'
-    },
-
-    preRender: function(options) {
-      this.setupFilterSettings();
-
-      this.listenTo(Origin, {
-        'window:resize': this.resizeDashboard,
-        'dashboard:layout:grid': this.switchLayoutToGrid,
-        'dashboard:layout:list': this.switchLayoutToList,
-        'dashboard:dashboardSidebarView:filterBySearch': this.filterBySearchInput,
-        'dashboard:dashboardSidebarView:filterByTags': this.filterCoursesByTags,
-        'dashboard:sidebarFilter:add': this.addTag,
-        'dashboard:sidebarFilter:remove': this.removeTag,
-        // These need to pass in true to re-render the collections
-        'dashboard:sort:asc': function() { this.sortAscending(true); },
-        'dashboard:sort:desc': function() { this.sortDescending(true); },
-        'dashboard:sort:updated': function() { this.sortLastUpdated(true); }
-      });
-
-      this.listenTo(this.collection, {
-        'add': this.appendProjectItem,
-        'sync': this.checkIfCollectionIsEmpty
-      });
-    },
-
-    setupFilterSettings: function() {
-      // Setup filtering and lazy loading settings
-      this.sort = {createdAt: -1};
-      this.search = {};
-      this.courseLimit = -32;
-      this.courseDenominator = 32;
-      // Set empty filters
-      this.filters = [];
-      this.tags = [];
-
-      this.collectionLength = 0;
-      this.shouldStopFetches = false;
-
-      // set relevant filters as selected
-      $("a[data-callback='dashboard:layout:grid']").addClass('selected');
-      $("a[data-callback='dashboard:sort:asc']").addClass('selected');
-    },
-
-    resizeDashboard: function() {
-      var navigationHeight = $('.navigation').outerHeight();
-      var locationTitleHeight = $('.location-title').outerHeight();
-      var windowHeight = $(window).height();
-      var actualHeight = windowHeight - (navigationHeight + locationTitleHeight);
-      this.$el.css('height', actualHeight);
-    },
-
-    checkIfCollectionIsEmpty: function() {
-      this.$('.no-projects').toggleClass('display-none', this.collection.length > 0);
-    },
+    supportedLayouts: [
+      "grid",
+      "list"
+    ],
 
     postRender: function() {
-      this.setupUserPreferences();
-
-      // Fake a scroll trigger - just incase the limit is too low and no scroll bars
-      this.getProjectsContainer().trigger('scroll');
-      this.lazyRenderCollection();
-      this.resizeDashboard();
-      this.setViewToReady();
-      this.setupLazyScrolling();
+      this.settings.preferencesKey = 'dashboard';
+      this.initUserPreferences();
+      this.initEventListeners();
+      this.initPaging();
     },
 
-    switchLayoutToList: function() {
-      this.getProjectsContainer().removeClass('grid-layout').addClass('list-layout');
-      this.setUserPreference('layout','list');
+    initEventListeners: function() {
+      this._doLazyScroll = _.bind(_.throttle(this.doLazyScroll, 250), this);
+      this._onResize = _.bind(_.debounce(this.onResize, 250), this);
+
+      this.listenTo(Origin, {
+        'window:resize': this._onResize,
+        'dashboard:dashboardSidebarView:filterBySearch': function(text) { this.doFilter(text) },
+        'dashboard:dashboardSidebarView:filterByTags': function(tags) { this.doFilter(null, tags) },
+        'dashboard:sort:asc': function() { this.doSort('asc'); },
+        'dashboard:sort:desc': function() { this.doSort('desc'); },
+        'dashboard:sort:updated': function() { this.doSort('updated'); }
+      });
+
+      this.supportedLayouts.forEach(function(layout) {
+        this.listenTo(Origin, 'dashboard:layout:' + layout, function() { this.doLayout(layout); });
+      }, this);
+
+      this.listenTo(this.collection, 'add', this.appendProjectItem);
+
+      $('.contentPane').on('scroll', this._doLazyScroll);
     },
 
-    switchLayoutToGrid: function() {
-      this.getProjectsContainer().removeClass('list-layout').addClass('grid-layout');
-      this.setUserPreference('layout','grid');
+    initUserPreferences: function() {
+      var prefs = this.getUserPreferences();
+
+      this.doLayout(prefs.layout);
+      this.doSort(prefs.sort, false);
+      this.doFilter(prefs.search, prefs.tags, false);
+      // set relevant filters as selected
+      $("a[data-callback='dashboard:layout:" + prefs.layout + "']").addClass('selected');
+      $("a[data-callback='dashboard:sort:" + prefs.sort + "']").addClass('selected');
+      // need to refresh this to get latest filters
+      prefs = this.getUserPreferences();
+      Origin.trigger('options:update:ui', prefs);
+      Origin.trigger('sidebar:update:ui', prefs);
     },
 
-    sortAscending: function(shouldRenderProjects) {
-      this.sort = { title: 1 };
-      this.setUserPreference('sort','asc');
-      if(shouldRenderProjects) this.updateCollection(true);
+    // Set some default preferences
+    getUserPreferences: function() {
+      var prefs = OriginView.prototype.getUserPreferences.apply(this, arguments);
+
+      if(!prefs.layout) prefs.layout = 'grid';
+      if(!prefs.sort) prefs.sort = 'asc';
+
+      return prefs;
     },
 
-    sortDescending: function(shouldRenderProjects) {
-      this.sort = { title: -1 };
-      this.setUserPreference('sort','desc');
-      if(shouldRenderProjects) this.updateCollection(true);
-    },
-
-    sortLastUpdated: function(shouldRenderProjects) {
-      this.sort = { updatedAt: -1 };
-      this.setUserPreference('sort','updated');
-      if (shouldRenderProjects) this.updateCollection(true);
-    },
-
-    setupUserPreferences: function() {
-      // Preserve the user preferences or display default mode
-      var userPreferences = this.getUserPreferences();
-      // Check if the user preferences are list view
-      // Else if nothing is set or is grid view default to grid view
-      if (userPreferences && userPreferences.layout === 'list') {
-        this.switchLayoutToList();
-      } else {
-        this.switchLayoutToGrid();
+    initPaging: function() {
+      if(this.resizeTimer) {
+        clearTimeout(this.resizeTimer);
+        this.resizeTimer = -1;
       }
-      // Check if there's any user preferences for search and tags
-      // then set on this view
-      if (userPreferences) {
-        var searchString = (userPreferences.search || '');
-        this.search = this.convertFilterTextToPattern(searchString);
-        this.setUserPreference('search', searchString);
-        this.tags = (_.pluck(userPreferences.tags, 'id') || []);
-        this.setUserPreference('tags', userPreferences.tags);
-      }
-      // Check if sort is set and sort the collection
-      if (userPreferences && userPreferences.sort === 'desc') {
-        this.sortDescending();
-      } else if (userPreferences && userPreferences.sort === 'updated') {
-        this.sortLastUpdated();
-      } else {
-        this.sortAscending();
-      }
-      // Once everything has been setup
-      // refresh the userPreferences object
-      userPreferences = this.getUserPreferences();
-      // Trigger event to update options UI
-      Origin.trigger('options:update:ui', userPreferences);
-      Origin.trigger('sidebar:update:ui', userPreferences);
-    },
-
-    lazyRenderCollection: function() {
-      // Adjust limit based upon the denominator
-      this.courseLimit += this.courseDenominator;
-      this.updateCollection(false);
+      // we need to load one course first to check page size
+      this.pageSize = 1;
+      this.resetCollection(_.bind(function(collection) {
+        var containerHeight = $(window).height()-this.$el.offset().top;
+        var containerWidth = this.$('.projects-inner').width();
+        var itemHeight = $('.project-list-item').outerHeight(true);
+        var itemWidth = $('.project-list-item').outerWidth(true);
+        var columns = Math.floor(containerWidth/itemWidth);
+        var rows = Math.floor(containerHeight/itemHeight);
+        // columns stack nicely, but need to add extra row if it's not a clean split
+        if((containerHeight % itemHeight) > 0) rows++;
+        this.pageSize = columns*rows;
+        // need another reset to get the actual pageSize number of items
+        this.resetCollection(this.setViewToReady);
+      }, this));
     },
 
     getProjectsContainer: function() {
@@ -152,130 +93,113 @@ define(function(require){
     },
 
     emptyProjectsContainer: function() {
-      // Trigger event to kill zombie views
       Origin.trigger('dashboard:dashboardView:removeSubViews');
-      // Empty collection container
       this.getProjectsContainer().empty();
     },
 
-    updateCollection: function(reset) {
-      // If removing items, we need to reset our limits
-      if (reset) {
-        // Empty container
-        this.emptyProjectsContainer();
-        // Reset fetches cache
-        this.shouldStopFetches = false;
-        this.courseLimit = 0;
-        this.collectionLength = 0;
-        this.collection.reset();
-      }
-      this.search = _.extend(this.search, { tags: { $all: this.tags } });
-      // This is set when the fetched amount is equal to the collection length
-      // Stops any further fetches and HTTP requests
-      if (this.shouldStopFetches) {
-        return;
-      }
-
-      this.collection.fetch({
-        remove: reset,
-        data: {
-          search: this.search,
-          operators : {
-            skip: this.courseLimit,
-            limit: this.courseDenominator,
-            sort: this.sort
-          }
-        },
-        success: _.bind(function(data) {
-          // On successful collection fetching set lazy render to enabled
-           if (this.collectionLength === this.collection.length) {
-              this.shouldStopFetches = true;
-          } else {
-              this.shouldStopFetches = false;
-              this.collectionLength = this.collection.length;
-          }
-          this.isCollectionFetching = false;
-        }, this)
-      });
-    },
-
-    appendProjectItem: function(projectModel) {
-      projectModel.attributes.title=this.highlight(projectModel.attributes.title)
-
-      if (!projectModel.isEditable()) {
-        this.getProjectsContainer().append(new SharedProjectView({ model: projectModel }).$el);
-      } else {
-        this.getProjectsContainer().append(new ProjectView({ model: projectModel }).$el);
-      }
-    },
-
-    highlight: function(text) {
-      var search  = this.getUserPreferences().search || '';
-      // replace special characters: .*+?|()[]{}\$^
-      search.replace(/[.*+?|()\[\]{}\\$^]/g, "\\$&");
-      // add the span
-      return text.replace(new RegExp(search, "gi"), function(term) {
-        return '<span class="highlighted">' + term + '</span>';
-      });
-    },
-
-    addTag: function(filterType) {
-      // add filter to this.filters
-      this.tags.push(filterType);
-      this.filterCollection();
-    },
-
-    removeTag: function(filterType) {
-      // remove filter from this.filters
-      this.tags = _.filter(this.tags, function(item) { return item != filterType; });
-      this.filterCollection();
-    },
-
-    filterCollection: function() {
-      this.search.tags = this.tags.length
-          ? { $all: this.tags }
-          : null ;
-      this.updateCollection(true);
+    appendProjectItem: function(model) {
+      var viewClass = model.isEditable() ? ProjectView : SharedProjectView;
+      this.getProjectsContainer().append(new viewClass({ model: model }).$el);
     },
 
     convertFilterTextToPattern: function(filterText) {
       var pattern = '.*' + filterText.toLowerCase() + '.*';
-      return { title: pattern};
+      return { title: pattern };
     },
 
-    filterBySearchInput: function (filterText) {
-      this.filterText = filterText;
-      this.search = this.convertFilterTextToPattern(filterText);
-      this.setUserPreference('search', filterText);
-      this.updateCollection(true);
+    resetCollection: function(cb) {
+      this.emptyProjectsContainer();
+      this.fetchCount = 0;
+      this.shouldStopFetches = false;
+      this.collection.reset();
+      this.fetchCollection(cb);
     },
 
-    filterCoursesByTags: function(tags) {
-      this.setUserPreference('tags', tags);
-      this.tags = _.pluck(tags, 'id');
-      this.updateCollection(true);
-    },
+    fetchCollection: function(cb) {
+      if(this.shouldStopFetches) {
+        return;
+      }
+      this.isCollectionFetching = true;
 
-    setupLazyScrolling: function() {
-      var $projectContainer = $('.projects');
-      var $projectContainerInner = $('.projects-inner');
-      // Remove event before attaching
-      $projectContainer.off('scroll');
-
-      $projectContainer.on('scroll', _.bind(function() {
-        var scrollTop = $projectContainer.scrollTop();
-        var scrollableHeight = $projectContainerInner.height();
-        var containerHeight = $projectContainer.height();
-        // If the scroll position of the assets container is
-        // near the bottom
-        if ((scrollableHeight-containerHeight) - scrollTop < 30) {
-          if (!this.isCollectionFetching) {
-            this.isCollectionFetching = true;
-            this.lazyRenderCollection();
+      this.collection.fetch({
+        data: {
+          search: _.extend(this.search, { tags: { $all: this.tags } }),
+          operators : {
+            skip: this.fetchCount,
+            limit: this.pageSize,
+            sort: this.sort
           }
-        }
-      }, this));
+        },
+        success: _.bind(function(collection, response) {
+          this.isCollectionFetching = false;
+          this.fetchCount += response.length;
+          // stop further fetching if this is the last page
+          if(response.length < this.pageSize) this.shouldStopFetches = true;
+
+          this.$('.no-projects').toggleClass('display-none', this.fetchCount > 0);
+          if(typeof cb === 'function') cb(collection);
+        }, this)
+      });
+    },
+
+    doLazyScroll: function(e) {
+      if(this.isCollectionFetching) {
+        return;
+      }
+      var $el = $(e.currentTarget);
+      var pxRemaining = this.getProjectsContainer().height() - ($el.scrollTop() + $el.height());
+      // we're at the bottom, fetch more
+      if (pxRemaining <= 0) this.fetchCollection();
+    },
+
+    doLayout: function(layout) {
+      if(this.supportedLayouts.indexOf(layout) === -1) {
+        return;
+      }
+      this.getProjectsContainer().attr('data-layout', layout);
+      this.setUserPreference('layout', layout);
+    },
+
+    doSort: function(sort, fetch) {
+      switch(sort) {
+        case "desc":
+          this.sort = { title: -1 };
+          break;
+        case "updated":
+          this.sort = { updatedAt: -1 };
+          break;
+        case "asc":
+        default:
+          sort = "asc";
+          this.sort = { title: 1 };
+      }
+      this.setUserPreference('sort', sort);
+      if(fetch !== false) this.resetCollection();
+    },
+
+    doFilter: function(text, tags, fetch) {
+      text = text || '';
+      this.filterText = text;
+      this.search = this.convertFilterTextToPattern(text);
+      this.setUserPreference('search', text);
+
+      tags = tags || [];
+      this.tags = _.pluck(tags, 'id');
+      this.setUserPreference('tags', tags);
+
+      if(fetch !== false) this.resetCollection();
+    },
+
+    onResize: function() {
+      this.initPaging();
+    },
+
+    remove: function() {
+      $('.contentPane').off('scroll', this._doLazyScroll);
+
+      OriginView.prototype.remove.apply(this, arguments);
     }
+
   }, {
     template: 'projects'
   });

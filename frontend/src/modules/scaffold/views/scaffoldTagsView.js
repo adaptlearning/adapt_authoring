@@ -1,8 +1,4 @@
-define([
-  'core/origin',
-  'backbone-forms',
-  'core/helpers'
-], function(Origin, BackboneForms, Helpers) {
+define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
 
   var ScaffoldTagsView = Backbone.Form.editors.Base.extend({
 

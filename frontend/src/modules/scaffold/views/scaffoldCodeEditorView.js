@@ -4,8 +4,6 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
 
     defaultValue: '',
 
-    tagName: 'div',
-
     className: 'scaffold-code-editor',
 
     editor: null,

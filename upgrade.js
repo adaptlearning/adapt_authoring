@@ -25,7 +25,19 @@ function start() {
   logger.level('console','error');
   // start the server first
   app.run({ skipVersionCheck: true, skipStartLog: true });
-  app.on('serverStarted', getUserInput);
+  app.on('serverStarted', function() {
+    ensureRepoValues();
+    getUserInput();
+  });
+}
+
+function ensureRepoValues() {
+  if(configuration.getConfig('frameworkRepository') === '') {
+    configuration.setConfig('frameworkRepository', installHelpers.DEFAULT_FRAMEWORK_REPO);
+  }
+  if(configuration.getConfig('authoringToolRepository') === '') {
+    configuration.setConfig('authoringToolRepository', installHelpers.DEFAULT_SERVER_REPO);
+  }
 }
 
 function getUserInput() {

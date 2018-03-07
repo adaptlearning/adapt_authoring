@@ -248,7 +248,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
 function generatePromptOverrides() {
   if(USE_CONFIG) {
     var configJson = require('./conf/config.json');
-    var configData = JSON.parse(JSON.stringify(configJson).replace('true', '"y"').replace('false', '"n"'));
+    var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
     configData.install = 'y';
   }
   // NOTE config.json < cmd args
@@ -317,7 +317,7 @@ function configureFeatures(callback) {
         if(!result.useSmtp || USE_CONFIG && configResults.useSmtp !== 'y') {
           return cb();
         }
-        // prompt user if custom connection url or well-known-service should be used 
+        // prompt user if custom connection url or well-known-service should be used
         installHelpers.getInput(inputData.features.smtp.confirmConnectionUrl, function(result) {
           addConfig(result);
           var smtpConfig;
@@ -326,7 +326,6 @@ function configureFeatures(callback) {
           } else {
             smtpConfig = inputData.features.smtp.configure.concat(inputData.features.smtp.configureService);
           }
-
           for(var i = 0, count = smtpConfig.length; i < count; i++) {
             if(smtpConfig[i].name === 'rootUrl') {
               smtpConfig[i].default = `http://${configResults.serverName}:${configResults.serverPort}`;
@@ -365,6 +364,15 @@ function configureMasterTenant(callback) {
       if(error) {
         return callback(error);
       }
+      if(USE_CONFIG && prompt.override.masterTenantName) {
+        /**
+        * remove the masterTenantDisplayName, as we can use the existing value
+        * (which isn't in config.json so can't be used as an auto override)
+        */
+        inputData.tenant = _.filter(inputData.tenant, function(item) {
+          return item.name !== 'masterTenantDisplayName';
+        });
+      }
       installHelpers.getInput(inputData.tenant, function(result) {
         console.log('');
         // add the input to our cached config
@@ -384,6 +392,9 @@ function configureMasterTenant(callback) {
           }
           if(!IS_INTERACTIVE) {
             return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
+          }
+          if(!configResults.masterTenant.displayName) {
+            configResults.masterTenant.displayName = tenant.displayName;
           }
           console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
           installHelpers.getInput(inputData.tenantDelete, function(result) {
@@ -420,7 +431,9 @@ function createMasterTenant(callback) {
     }
     console.log('Master tenant created successfully.');
     masterTenant = tenant;
-    saveConfig(app.configuration.getConfig(), callback);
+    delete configResults.masterTenant;
+    addConfig(app.configuration.getConfig());
+    saveConfig(configResults, callback);
   });
 }
 

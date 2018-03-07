@@ -11,16 +11,9 @@ define([
   var ScaffoldAssetView = Backbone.Form.editors.Base.extend({
 
     events: {
-      'change input': function() {
-        this.toggleFieldAvailibility();
-        this.trigger('change', this);
-      },
-      'focus input': function() {
-        this.trigger('focus', this);
-      },
-      'blur input': function() {
-        this.trigger('blur', this);
-      },
+      'change input': function() { this.trigger('change', this); },
+      'focus input': function() { this.trigger('focus', this); },
+      'blur input': function() { this.trigger('blur', this); },
       'click .scaffold-asset-picker': 'onAssetButtonClicked',
       'click .scaffold-asset-clear': 'onClearButtonClicked',
       'click .scaffold-asset-external': 'onExternalAssetButtonClicked',
@@ -51,7 +44,6 @@ define([
       }
 
       this.setValue(this.value);
-      this.toggleFieldAvailibility();
       this.renderData();
 
       return this;
@@ -69,18 +61,15 @@ define([
       }));
     },
 
-    toggleFieldAvailibility: function() {
-      this.$('input').prop('disabled', !this.getValue().length);
-    },
-
     checkValueHasChanged: function() {
       var value = this.getValue();
 
       if ('heroImage' === this.key) return this.saveModel({ heroImage: value });
       if (Helpers.isAssetExternal(value)) return this.saveModel();
 
-      var contentTypeId = Origin.scaffold.getCurrentModel().get('_id');
-      var contentType = Origin.scaffold.getCurrentModel().get('_type');
+      var model = Origin.scaffold.getCurrentModel();
+      var contentTypeId = model.get('_id');
+      var contentType = model.get('_type');
       var fieldname = value.replace('course/assets/', '');
 
       this.removeCourseAsset(contentTypeId, contentType, fieldname);
@@ -249,7 +238,6 @@ define([
 
       this.checkValueHasChanged();
       this.setValue('');
-      this.toggleFieldAvailibility();
     },
 
     onAutofill: function(courseAssetObject, value) {

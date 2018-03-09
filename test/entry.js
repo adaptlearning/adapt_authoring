@@ -31,7 +31,7 @@ before(function(done) {
       app.on('serverStarted', function(server) {
         cb();
       });
-      app.run();
+      app.run({ skipVersionCheck: true });
     },
     createCacheData,
     function createTenant(cb) {
@@ -128,7 +128,7 @@ function createCacheData(done) {
   app.configuration.setConfig('masterTenantName', testData.testTenant.name);
 
   var src = path.join(TEST_CACHE_DIR, Folders.Framework);
-  
+
   function _copyFramework() {
     var dest = path.join(app.configuration.serverRoot, Folders.Temp, testData.testTenant._id);
     async.series([

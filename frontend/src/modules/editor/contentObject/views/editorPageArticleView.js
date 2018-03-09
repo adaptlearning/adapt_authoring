@@ -265,21 +265,22 @@ define(function(require){
       var isCollapsed = this.model.get('_isCollapsed');
 
       this.$el.toggleClass('collapsed-view', isCollapsed);
-      var contentHeight = this.$('.article-blocks').height() + this.$('.add-control').height();
-      var ownHeight = this.$el.height();
       var height;
-
       if (isCollapsed) {
-        height = ownHeight - contentHeight;
+        height = this.$('.article-detail').height();
       } else {
-        height = ownHeight + contentHeight;
+        height = this.$('.add-control').height() + this.$('.article-blocks').height();
       }
 
+      this.$el.css('overflow', 'hidden');
       this.$el.velocity({height: height}, {
         duration: 200,
         complete: function() {
           if (!isCollapsed) {
-            this.css('height', 'auto');
+            this.css({
+              'height': 'auto',
+              'overflow': 'auto'
+            });
           }
         }
       })

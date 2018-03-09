@@ -10,7 +10,6 @@ define(function(require){
   var EditorPageView = EditorOriginView.extend({
     className: 'page',
     tagName: 'div',
-    childrenCount: 0,
     childrenRenderedCount: 0,
 
     events: _.extend({}, EditorOriginView.prototype.events, {
@@ -21,10 +20,11 @@ define(function(require){
     }),
 
     preRender: function() {
+      Origin.editor.blockCount = 0;
       var id = this.model.get('_id');
       var originEvents = {
         'editorView:removeSubViews': this.remove,
-        'pageView:itemRendered': this.evaluateChildStatus
+        'pageView:itemAnimated': this.evaluateChildStatus
       };
       originEvents['editorView:moveArticle:' + id] = this.render;
       originEvents['editorView:pasted:' + id] = this.onPaste;
@@ -55,7 +55,7 @@ define(function(require){
     evaluateChildStatus: function() {
       this.childrenRenderedCount++;
 
-      if (this.childrenRenderedCount < this.childrenCount) return;
+      if (this.childrenRenderedCount < Origin.editor.blockCount) return;
       this.allChildrenRendered();
     },
 
@@ -190,7 +190,15 @@ define(function(require){
     },
 
     allChildrenRendered: function() {
-      $('.contentPane').scrollTop(Origin.editor.scrollTo);
+      if (Origin.editor.scrollTo > 0) {
+        this.removeScrollListener();
+      }
+      $('.contentPane').scrollTo(Origin.editor.scrollTo, {
+        duration: 200,
+        onAfter: _.bind(function() {
+          this.setupScrollListener();
+        }, this)
+      });
     },
 
     remove: function() {

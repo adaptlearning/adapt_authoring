@@ -54,6 +54,7 @@
   "app.copy": "Copy",
   "app.copyidtoclipboard": "Copy ID to clipboard",
   "app.collapsearticle": "Collapse",
+  "app.expandarticle": "Expand",
   "app.collapseAllArticles": "Collapse",
   "app.expandAllArticles": "Expand",
   "app.paste": "Paste",

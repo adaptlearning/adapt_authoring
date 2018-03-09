@@ -245,8 +245,14 @@ define(function(require){
       this.collapseArticle();
     },
     
-    onIsCollapsedChange: function(isCollapsed) {
-      this.$('.editor-collapse-article').toggleClass('iscollapsed', isCollapsed);
+    onIsCollapsedChange: function(model, isCollapsed) {
+      var title;
+      if (isCollapsed) {
+        title = Origin.l10n.t('app.expandarticle');
+      } else {
+        title = Origin.l10n.t('app.collapsearticle');
+      }
+      this.$('.editor-collapse-article').toggleClass('iscollapsed', isCollapsed).attr('title', title);
     },
 
     collapseAllArticles: function() {

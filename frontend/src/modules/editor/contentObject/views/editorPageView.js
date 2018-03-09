@@ -33,14 +33,14 @@ define(function(require){
       Origin.options.addItems([
         {
           title: Origin.l10n.t('app.collapseAllArticles'),
-          icon: 'compress',
+          icon: 'minus-square',
           callbackEvent: 'editorView:collapseArticle:collapse',
           value: 'collapse',
           group: 'collapseArticle',
         },
         {
           title: Origin.l10n.t('app.expandAllArticles'),
-          icon: 'expand',
+          icon: 'plus-square',
           callbackEvent: 'editorView:collapseArticle:expand',
           value: 'expand',
           group: 'collapseArticle',

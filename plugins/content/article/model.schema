@@ -82,10 +82,18 @@
       "title": "Is this visible?",
       "help": "Disabling this is equivalent to applying the CSS 'visibility:hidden' to the article."
     },
+    "_ariaLevel": {
+      "type": "number",
+      "default": 0,
+      "isSetting": true,
+      "inputType": "Number",
+      "validators": ["number"],
+      "help": "If you need to override the default article ARIA level (as defined in Configuration Settings), set this to any number greater than 0."
+    },
     "_onScreen": {
       "type": "object",
-        "title": "On-screen classes",
-        "help": "These settings allow you to attach classes to the article when it is within the browser's viewport; helpful for running CSS-based animations on articles as they scroll into view.",
+      "title": "On-screen classes",
+      "help": "These settings allow you to attach classes to the article when it is within the browser's viewport; helpful for running CSS-based animations on articles as they scroll into view.",
       "properties": {
         "_isEnabled": {
           "type": "boolean",

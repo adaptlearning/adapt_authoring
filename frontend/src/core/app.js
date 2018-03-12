@@ -15,7 +15,10 @@
       'scrollTo',
       'sweetalert',
       'velocity'
-    ], callback);
+    ], function() {
+      window.Handlebars = $.extend(require('handlebars'), window.Handlebars);
+      callback();
+    });
   }
 
   function loadCore(callback) {
@@ -55,7 +58,6 @@
   * Start app load
   */
   loadLibraries(function() {
-    window.Handlebars = $.extend(require('handlebars'), window.Handlebars);
     loadCore(function() {
       loadAddOns(function() {
         // start session

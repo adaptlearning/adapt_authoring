@@ -253,6 +253,7 @@
   "app.errorsessionexpired": "Your session has expired, click OK to log on again",
   "app.errorassetupdate": "Something went wrong while updating the asset.<br/>Please try again.",
   "app.errordeleteasset": "Couldn't delete this asset, %{message}",
+  "app.errordelete": "An error occurred while deleting, please try again",
   "app.errorsave": "Something went wrong while saving your data.<br/>Please try again.",
   "app.errorgeneric": "Oops, something went wrong!",
   "app.errorpreview": "Something went wrong while generating your preview.<br/>Please contact an administrator for assistance.",
@@ -265,7 +266,7 @@
   "app.errorgettingschemas": "An error occurred while getting schemas.",
   "app.errorgeneratingpreview": "Error generating preview, please contact an administrator.",
   "app.errorcopy": "Error during copy.",
-  "app.errorpaste": "Error during paste",
+  "app.errorpaste": "An error occurred during paste. Please try again.",
   "app.errorsaveasset": "An error occurred doing the save",
   "app.errorusernoaccess": "Sorry, the current user doesn't have access to this course",
   "app.errorpagenoaccesstitle": "Access Denied",
@@ -308,5 +309,6 @@
   "app.page": "page",
   "app.article": "article",
   "app.block": "block",
-  "app.component": "component"
+  "app.component": "component",
+  "app.errorloadconfig": "Failed to load configuration settings for %{course}"
 }

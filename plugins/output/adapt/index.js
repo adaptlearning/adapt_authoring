@@ -130,9 +130,10 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
         });
       },
       function(callback) {
-        var assetsFolder = path.join(BUILD_FOLDER, Constants.Folders.Course, outputJson['config']._defaultLanguage, Constants.Folders.Assets);
+        var assetsJsonFolder = path.join(BUILD_FOLDER, Constants.Folders.Course, outputJson['config']._defaultLanguage);
+        var assetsFolder = path.join(assetsJsonFolder, Constants.Folders.Assets);
 
-        self.writeCourseAssets(tenantId, courseId, assetsFolder, outputJson, function(err, modifiedJson) {
+        self.writeCourseAssets(tenantId, courseId, assetsJsonFolder, assetsFolder, outputJson, function(err, modifiedJson) {
           if (err) {
             return callback(err);
           }

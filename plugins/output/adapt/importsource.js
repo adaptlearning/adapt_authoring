@@ -219,21 +219,26 @@ function ImportSource(req, done) {
         async.each(plugindata.pluginTypes, function iterator(pluginType, doneMapIterator) {
 
           var srcDir = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, pluginType.folder);
-          fs.readdir(srcDir, function (err, files) {
-              if (err) {
-                return done(err);
-              }
-              files.map(function (file) {
-                return path.join(srcDir, file);
-              }).filter(function (file) {
-                return fs.statSync(file).isDirectory();
-              }).forEach(function (file) {
-                var thisPluginType = _.clone(pluginType);
-                var data = _.extend(thisPluginType, { location: file });
-                plugindata.pluginIncludes.push(data);
-              });
-              doneMapIterator();
-          });
+          if (fs.existsSync(srcDir)) {
+            fs.readdir(srcDir, function (err, files) {
+                if (err) {
+                  return done(err);
+                }
+                files.map(function (file) {
+                  return path.join(srcDir, file);
+                }).filter(function (file) {
+                  return fs.statSync(file).isDirectory();
+                }).forEach(function (file) {
+                  var thisPluginType = _.clone(pluginType);
+                  var data = _.extend(thisPluginType, { location: file });
+                  plugindata.pluginIncludes.push(data);
+                });
+                return doneMapIterator();
+            });
+          } else {
+            logger.log('info', 'No plugins found.');
+            doneMapIterator();
+          }
         }, cb);
       },
       function importPlugins(cb) {
@@ -443,7 +448,7 @@ function ImportSource(req, done) {
                 var fileId = metadata.idMap[fileName];
                 var newFileName = metadata.assetNameMap[fileId];
                 if (newFileName) {
-                  this.update(newDirName + '/' + newFileName); // always use '/' for paths in content 
+                  this.update(newDirName + '/' + newFileName); // always use '/' for paths in content
                 }
               } catch (e) {
                 logger.log('error', e);

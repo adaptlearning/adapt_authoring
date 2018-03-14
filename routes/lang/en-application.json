@@ -255,7 +255,6 @@
   "app.errordeleteasset": "Couldn't delete this asset, %{message}",
   "app.errordelete": "An error occurred while deleting, please try again",
   "app.errorsave": "Something went wrong while saving your data.<br/>Please try again.",
-  "app.error": "Error",
   "app.errorgeneric": "Oops, something went wrong!",
   "app.errorpreview": "Something went wrong while generating your preview.<br/>Please contact an administrator for assistance.",
   "app.errornomenuselected": "No menu has been selected.",

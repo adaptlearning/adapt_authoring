@@ -87,8 +87,7 @@ define(function(require) {
         } else {
           Origin.Notify.alert({
             type: 'error',
-            title: Origin.l10n.t('app.error'),
-            text: Origin.l10n.t('app.errorpermission'),
+            text: Origin.l10n.t('app.errorpermission')
           });
         }
         return;

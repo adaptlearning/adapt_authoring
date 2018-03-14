@@ -80,6 +80,27 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         default: 27017
       },
       {
+        name: 'dbUser',
+        type: 'string',
+        description: 'Database server user',
+        pattern: installHelpers.inputHelpers.alphanumValidator,
+        default: ''
+      },
+      {
+        name: 'dbPass',
+        type: 'string',
+        description: 'Database server password',
+        pattern: installHelpers.inputHelpers.alphanumValidator,
+        default: ''
+      },
+      {
+        name: 'dbAuthSource',
+        type: 'string',
+        description: 'Database server authentication database',
+        pattern: installHelpers.inputHelpers.alphanumValidator,
+        default: 'admin'
+      },
+      {
         name: 'dataRoot',
         type: 'string',
         description: 'Data directory path',

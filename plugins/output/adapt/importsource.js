@@ -171,10 +171,21 @@ function ImportSource(req, done) {
   }
 
   /**
-  * Imports assets to the library
+  * Imports assets to the library. If the course to be imported contains an assets.json file
+  * (it was exported from the authoring tool) then use metadata from this file to populate the
+  * title, description and tag fields, these will be used to create a new asset if an asset
+  * with matching filename is not found in the database.
   */
   function addAssets(assetTags, done) {
     var assetsGlob = path.join(COURSE_JSON_PATH, COURSE_LANG, Constants.Folders.Assets, '*');
+    var assetsJsonFilename = path.join(COURSE_JSON_PATH, COURSE_LANG, Constants.Filenames.Assets);
+
+    var assetsJson = {};
+
+    if (fs.existsSync(assetsJsonFilename)) {
+      assetsJson = fs.readJSONSync(assetsJsonFilename);
+    }
+
     glob(assetsGlob, function (error, assets) {
       if(error) {
         return cb(error);
@@ -188,16 +199,28 @@ function ImportSource(req, done) {
         var assetExt = path.extname(assetPath);
         var assetId = path.basename(assetPath, assetExt);
         var fileStat = fs.statSync(assetPath);
+        var assetTitle = assetName;
+        var assetDescription = assetName;
+        var tags = assetTags.slice();
+
+        if (assetsJson[assetName]) {
+          assetTitle = assetsJson[assetName].title;
+          assetDescription = assetsJson[assetName].description;
+
+          assetsJson[assetName].tags.forEach(function(tag) {
+            tags.push(tag._id);
+          });
+        }
 
         var fileMeta = {
           oldId: assetId,
-          title: assetName,
+          title: assetTitle,
           type: mime.lookup(assetName),
           size: fileStat["size"],
           filename: assetName,
-          description: assetName,
+          description: assetDescription,
           path: assetPath,
-          tags: assetTags,
+          tags: tags,
           repository: repository,
           createdBy: app.usermanager.getCurrentUser()._id
         };

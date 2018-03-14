@@ -1,5 +1,3 @@
-/adapt_framework
-
 /conf/config.json
 
 /data
@@ -13,6 +11,8 @@
 /node_modules/
 /nbproject/
 /master/
+
+package-lock.json
 
 /plugins/content/component/versions/
 /plugins/content/component/componentcache/
@@ -31,9 +31,6 @@
 
 /.settings
 
-version.json
-
 .idea
-.vagrant
-.env
 .project
+.vscode

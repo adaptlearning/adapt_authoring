@@ -26,7 +26,10 @@ define(function(require) {
       'title',
       'version',
       'themeSettings',
-      '_onScreen'
+      '_onScreen',
+      '_isVisible',
+      '_isHidden',
+      'instruction'
     ]
   });
 

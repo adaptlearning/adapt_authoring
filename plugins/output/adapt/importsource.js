@@ -65,12 +65,6 @@ function ImportSource(req, done) {
     var formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
     var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
 
-    if (formAssetDirs.length) {
-      assetFolders = formAssetDirs;
-    } else {
-      assetFolders = Constants.Folders.ImportAssets;
-    }
-
     /**
     * Main process
     * All functions delgated below for readability
@@ -106,7 +100,7 @@ function ImportSource(req, done) {
       },
       function asyncValidate(cb) {
         // socket validating package
-        validateCoursePackage(function(error) {
+        validateCoursePackage(formAssetDirs, function(error) {
           if(error) return cb(error);
           // socket package passed validation
           cb();
@@ -149,7 +143,7 @@ function ImportSource(req, done) {
   /**
   * Checks course for any potential incompatibilities
   */
-  function validateCoursePackage(done) {
+  function validateCoursePackage(formAssetDirs, done) {
     // - Check framework version compatibility
     // - check we have all relevant json files using contentMap
     async.auto({
@@ -172,6 +166,30 @@ function ImportSource(req, done) {
             cb2();
           });
         }, cb);
+      }],
+      checkAssetFolders: ['checkContentJson', function(results, cb) {
+        if (formAssetDirs.length) {
+          var assetFolderError = false;
+          var missingFolders = [];
+          assetFolders = formAssetDirs;
+          for (index = 0; index < assetFolders.length; ++index) {
+            var assetFolderPath = path.join(COURSE_JSON_PATH , COURSE_LANG, assetFolders[index]);
+            if (!fs.existsSync(assetFolderPath)) {
+              assetFolderError = true;
+              missingFolders.push(assetFolders[index]);
+            }
+          }
+          // if a user input folder is missing log error and abort early
+          if (assetFolderError) {
+            var folderError = 'Cannot find asset folder/s ' + missingFolders.toString() + ' in framework import.';
+            return cb(folderError);
+          } else {
+            return cb();
+          }
+        } else {
+          assetFolders = Constants.Folders.ImportAssets;
+          cb();
+        }
       }]
     }, function doneAuto(error, data) {
       done(error);

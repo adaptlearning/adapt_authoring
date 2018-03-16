@@ -56,12 +56,20 @@ function ImportSource(req, done) {
   var cleanupDirs = [];
   var assetFields = [];
   var PATH_REXEX = new RegExp(/(course\/)((\w)*\/)*(\w)*.[a-zA-Z0-9]+/gi);
+  var assetFolders = [];
 
   form.parse(req, function (error, fields, files) {
 
     if (error) return next(error);
 
     var formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
+    var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
+
+    if (formAssetDirs.length) {
+      assetFolders = formAssetDirs;
+    } else {
+      assetFolders = Constants.Folders.ImportAssets;
+    }
 
     /**
     * Main process
@@ -174,40 +182,49 @@ function ImportSource(req, done) {
   * Imports assets to the library
   */
   function addAssets(assetTags, done) {
-    var assetsGlob = path.join(COURSE_JSON_PATH, COURSE_LANG, Constants.Folders.Assets, '*');
-    glob(assetsGlob, function (error, assets) {
-      if(error) {
-        return cb(error);
+
+    async.eachSeries(assetFolders, function iterator(assetDir, doneAssetFolder) {
+      var assetDirPath = path.join(COURSE_JSON_PATH, COURSE_LANG, assetDir);
+
+      if (fs.existsSync(assetDirPath)) {
+        var assetsGlob = path.join(assetDirPath, '*');
+        glob(assetsGlob, function (error, assets) {
+          if(error) {
+            return cb(error);
+          }
+          var repository = configuration.getConfig('filestorage') || 'localfs';
+          async.eachSeries(assets, function iterator(assetPath, doneAsset) {
+            if (error) {
+              return doneAsset(error);
+            }
+            var assetName = path.basename(assetPath);
+            var assetExt = path.extname(assetPath);
+            var assetId = path.basename(assetPath);
+            var fileStat = fs.statSync(assetPath);
+
+            var fileMeta = {
+              oldId: assetId,
+              title: assetName,
+              type: mime.lookup(assetName),
+              size: fileStat["size"],
+              filename: assetName,
+              description: assetName,
+              path: assetPath,
+              tags: assetTags,
+              repository: repository,
+              createdBy: app.usermanager.getCurrentUser()._id
+            };
+
+            if(!fileMeta) {
+              return doneAsset(new helpers.ImportError('No metadata found for asset: ' + assetName));
+            }
+            helpers.importAsset(fileMeta, metadata, doneAsset);
+          }, doneAssetFolder);
+        });
+      } else {
+        doneAssetFolder();
       }
-      var repository = configuration.getConfig('filestorage') || 'localfs';
-      async.eachSeries(assets, function iterator(assetPath, doneAsset) {
-        if (error) {
-          return doneAsset(error);
-        }
-        var assetName = path.basename(assetPath);
-        var assetExt = path.extname(assetPath);
-        var assetId = path.basename(assetPath, assetExt);
-        var fileStat = fs.statSync(assetPath);
-
-        var fileMeta = {
-          oldId: assetId,
-          title: assetName,
-          type: mime.lookup(assetName),
-          size: fileStat["size"],
-          filename: assetName,
-          description: assetName,
-          path: assetPath,
-          tags: assetTags,
-          repository: repository,
-          createdBy: app.usermanager.getCurrentUser()._id
-        };
-
-        if(!fileMeta) {
-          return doneAsset(new helpers.ImportError('No metadata found for asset: ' + assetName));
-        }
-        helpers.importAsset(fileMeta, metadata, doneAsset);
-      }, done);
-    });
+    }, done);
   }
 
   /**
@@ -429,8 +446,7 @@ function ImportSource(req, done) {
           });
         },
         function updateAssetData(cb) {
-          var replaceRegex = new RegExp(/(course\/)((\w){2}\/)/gi);
-          var newAssetPath = Constants.Folders.Course + '/'; // always use '/' for paths in content
+          var newAssetPath = Constants.Folders.Course + '/' + Constants.Folders.Assets; // always use '/' for paths in content
           var traverse = require('traverse');
 
           traverse(data).forEach(function (value) {
@@ -439,11 +455,19 @@ function ImportSource(req, done) {
 
             if (!isPath) return;
             var dirName = path.dirname(value);
-            var newDirName = dirName.replace(replaceRegex, newAssetPath);
-            var fileExt = path.extname(value);
-            var fileName = path.basename(value, fileExt);
+            var newDirName;
 
-            if (dirName && fileName && fileExt) {
+            for (index = 0; index < assetFolders.length; ++index) {
+              var folderMatch = "(course\/)((\\w){2}\/)" + '(' + assetFolders[index] + ')';
+              var assetFolderRegex = new RegExp(folderMatch, "gi");
+
+              if (!dirName.match(assetFolderRegex)) continue;
+              newDirName = dirName.replace(assetFolderRegex, newAssetPath);
+            }
+
+            var fileExt = path.extname(value);
+            var fileName = path.basename(value);
+            if (newDirName && fileName && fileExt) {
               try {
                 var fileId = metadata.idMap[fileName];
                 var newFileName = metadata.assetNameMap[fileId];

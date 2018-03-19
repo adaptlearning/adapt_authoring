@@ -54,7 +54,6 @@ function ImportSource(req, done) {
   var courseId;
   var configId;
   var cleanupDirs = [];
-  var assetFields = [];
   var PATH_REXEX = new RegExp(/(course\/)((\w)*\/)*(\w)*.[a-zA-Z0-9]+/gi);
   var assetFolders = [];
 
@@ -64,6 +63,10 @@ function ImportSource(req, done) {
 
     var formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
     var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
+    var cleanFormAssetDirs = formAssetDirs.map(function(item) {
+      return item.trim();
+    });
+
 
     /**
     * Main process
@@ -100,7 +103,7 @@ function ImportSource(req, done) {
       },
       function asyncValidate(cb) {
         // socket validating package
-        validateCoursePackage(formAssetDirs, function(error) {
+        validateCoursePackage(cleanFormAssetDirs, function(error) {
           if(error) return cb(error);
           // socket package passed validation
           cb();
@@ -143,7 +146,7 @@ function ImportSource(req, done) {
   /**
   * Checks course for any potential incompatibilities
   */
-  function validateCoursePackage(formAssetDirs, done) {
+  function validateCoursePackage(cleanFormAssetDirs, done) {
     // - Check framework version compatibility
     // - check we have all relevant json files using contentMap
     async.auto({
@@ -168,10 +171,10 @@ function ImportSource(req, done) {
         }, cb);
       }],
       checkAssetFolders: ['checkContentJson', function(results, cb) {
-        if (formAssetDirs.length) {
+        if (cleanFormAssetDirs.length) {
           var assetFolderError = false;
           var missingFolders = [];
-          assetFolders = formAssetDirs;
+          assetFolders = cleanFormAssetDirs;
           for (index = 0; index < assetFolders.length; ++index) {
             var assetFolderPath = path.join(COURSE_JSON_PATH , COURSE_LANG, assetFolders[index]);
             if (!fs.existsSync(assetFolderPath)) {
@@ -240,6 +243,7 @@ function ImportSource(req, done) {
           }, doneAssetFolder);
         });
       } else {
+        logger.log('error', 'Framework import error. Cannot find folder: ' + assetDirPath);
         doneAssetFolder();
       }
     }, done);

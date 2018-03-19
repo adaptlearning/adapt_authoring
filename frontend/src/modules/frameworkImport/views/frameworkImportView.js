@@ -28,21 +28,9 @@ define(function(require){
     },
 
     isValid: function() {
-      var reqs = this.$('.required');
       var uploadFile = this.$('.asset-file');
       var validated = true;
-      var uploadFileErrormsg = $(uploadFile).prev('label').find('span.error');
-      $.each(reqs, function (index, el) {
-        var errormsg = $(el).prev('label').find('span.error');
-        if (!$.trim($(el).val())) {
-          validated = false;
-          $(el).addClass('input-error');
-          $(errormsg).text(Origin.l10n.t('app.pleaseentervalue'));
-        } else {
-          $(el).removeClass('input-error');
-          $(errormsg).text('');
-        }
-      });
+      var uploadFileErrormsg = $('.field-file').find('span.error');
 
       if (this.model.isNew() && !uploadFile.val()) {
         validated = false;

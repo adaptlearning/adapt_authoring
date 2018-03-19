@@ -20,13 +20,15 @@ define(function(require){
 
     preRender: function() {
       this.listenToEvents();
+      Origin.editor.data._collapsedArticles = Origin.editor.data._collapsedArticles || {};
     },
-
+    
     postRender: function() {
       if (!this._skipRender) {
         this.addBlockViews();
       }
       this.setupDragDrop();
+      this.restoreCollapsedState();
 
       _.defer(_.bind(function(){
         this.trigger('articleView:postRender');
@@ -236,13 +238,17 @@ define(function(require){
       });
     },
 
+    restoreCollapsedState: function() {
+      if (!Origin.editor.data._collapsedArticles.hasOwnProperty(this.model.get('_id'))) return;
+      this.model.set('_isCollapsed', Origin.editor.data._collapsedArticles[this.model.get('_id')]);
+    },
+
     toggleCollapseArticle: function(event) {
       event && event.preventDefault();
 
       Origin.trigger('options:reset:ui', 'collapseArticle');
       var isCollapsed = this.model.get('_isCollapsed');
       this.model.set('_isCollapsed', !isCollapsed);
-      this.collapseArticle();
     },
     
     onIsCollapsedChange: function(model, isCollapsed) {
@@ -253,18 +259,18 @@ define(function(require){
         title = Origin.l10n.t('app.collapsearticle');
       }
       this.$('.editor-collapse-article').toggleClass('iscollapsed', isCollapsed).attr('title', title);
+      Origin.editor.data._collapsedArticles[this.model.get('_id')] = isCollapsed;
+      this.collapseArticle();
     },
 
     collapseAllArticles: function() {
       if (this.model.get('_isCollapsed') === true) return; 
       this.model.set('_isCollapsed', true);
-      this.collapseArticle();
     },
     
     expandAllArticles: function() {
       if (this.model.get('_isCollapsed') === false) return; 
       this.model.set('_isCollapsed', false);
-      this.collapseArticle();
     },
 
     collapseArticle: function() {

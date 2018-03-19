@@ -10,6 +10,14 @@ define(function(require){
       'click .field-object .legend': 'onFieldObjectClicked'
     },
 
+    attributes: function() {
+      if (this.model && this.model.has('_colorLabel') && this.model.get('_colorLabel')) {
+        return {
+          'data-colorlabel': this.model.get('_colorLabel')
+        }
+      }
+    },
+
     initialize: function(options) {
       // Set form on view
       if (options && options.form) {

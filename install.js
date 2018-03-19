@@ -256,6 +256,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
   }
   console.log('');
   if(!fs.existsSync('conf/config.json')) {
+    fs.ensureDirSync('conf');
     return start();
   }
   console.log('Found an existing config.json file. Do you want to use the values in this file during install?');

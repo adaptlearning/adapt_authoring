@@ -43,23 +43,30 @@
     });
   }
 
-  function loadAddOns(callback) {
+  function loadModules(callback) {
     require([
-      'modules/modules',
+      'modules/modules'
+    ], callback);
+  }
+
+  function loadPlugins(callback) {
+    require([
       'plugins/plugins'
     ], callback);
   }
 
   /**
-  * Start app load
-  */
+ * Start app load
+ */
   loadLibraries(function() {
     loadCore(function() {
-      loadAddOns(function() {
-        // start session
-        // FIXME required here to avoid errors
-        require(['modules/user/models/sessionModel'], function(SessionModel) {
-          origin.startSession(new SessionModel());
+      loadModules(function() {
+        loadPlugins(function() {
+          // start session
+          // FIXME required here to avoid errors
+          require(['modules/user/models/sessionModel'], function(SessionModel) {
+              origin.startSession(new SessionModel());
+          });
         });
       });
     });

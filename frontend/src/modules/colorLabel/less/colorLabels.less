@@ -1,0 +1,88 @@
+.colorlabel {
+    @popup-border-color: silver;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+
+    background: @adapt-white;
+    border: solid 1px @popup-border-color;
+    box-shadow: 0 0 4px @popup-border-color;
+
+    .colorlabel-inner {
+        padding: 60px 40px;
+    }
+
+    .colors {
+        .colors-inner {
+
+            padding-bottom: 20px;
+
+            .color-item {
+                float: left;
+                font-size: 0;
+                border: solid 4px @adapt-white;
+                width: 30px;
+                height: 30px;
+                border-radius: 4px;
+
+                &[data-colorlabel="grey-700"] {
+                    background-color: #616161;
+                }
+                &[data-colorlabel="grey-400"] {
+                    background-color: #BDBDBD;
+                }
+                &[data-colorlabel="red-700"] {
+                    background-color: #D32F2F;
+                }
+                &[data-colorlabel="red-200"] {
+                    background-color: #EF9A9A;
+                }
+                &[data-colorlabel="purple-700"] {
+                    background-color: #7B1FA2;
+                }
+                &[data-colorlabel="purple-200"] {
+                    background-color: #CE93D8;
+                }
+                &[data-colorlabel="blue-700"] {
+                    background-color: #1976D2;
+                }
+                &[data-colorlabel="blue-200"] {
+                    background-color: #90CAF9;
+                }
+                &[data-colorlabel="green-700"] {
+                    background-color: #388E3C;
+                }
+                &[data-colorlabel="green-200"] {
+                    background-color: #A5D6A7;
+                }
+                &[data-colorlabel="orange-700"] {
+                    background-color: #F57C00;
+                }
+                &[data-colorlabel="orange-200"] {
+                    background-color: #FFCC80;
+                }
+                &[data-colorlabel="brown-700"] {
+                    background-color: #5D4037;
+                }
+                &[data-colorlabel="brown-200"] {
+                    background-color: #BCAAA4;
+                }
+
+                &.selected {
+                    border-color: darken(@adapt-white, 50%);
+                    border-radius: 8px;
+                }
+            }
+        }
+    }
+
+    .footer {
+        text-align: center;
+
+        .warning {
+            margin-right: 40px;
+        }
+    }
+}

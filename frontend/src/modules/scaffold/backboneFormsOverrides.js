@@ -7,6 +7,7 @@ define([
   var templates = Handlebars.templates;
   var fieldTemplate = templates.field;
   var templateData = Backbone.Form.Field.prototype.templateData;
+  var initialize = Backbone.Form.editors.Base.prototype.initialize;
   var listSetValue = Backbone.Form.editors.List.prototype.setValue;
   var textInitialize = Backbone.Form.editors.Text.prototype.initialize;
   var textAreaRender = Backbone.Form.editors.TextArea.prototype.render;
@@ -22,7 +23,7 @@ define([
   // add reset to default handler
   Backbone.Form.Field.prototype.events = {
     'click [data-action="default"]': function() {
-      this.setValue(this.schema.default);
+      this.setValue(this.editor.defaultValue);
 
       return false;
     }
@@ -31,6 +32,17 @@ define([
   // merge schema into data
   Backbone.Form.Field.prototype.templateData = function() {
     return _.extend(templateData.call(this), this.schema);
+  };
+
+  // use default from schema
+  Backbone.Form.editors.Base.prototype.initialize = function(options) {
+    var schemaDefault = options.schema.default;
+
+    if (schemaDefault !== undefined) {
+      this.defaultValue = schemaDefault;
+    }
+
+    initialize.call(this, options);
   };
 
   // process nested items

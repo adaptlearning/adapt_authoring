@@ -104,7 +104,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
             bowerJson.isLocalPackage = true;
             app.bowermanager.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
           } else {
-            logger.log('info', "Can't install " + bowerJson.displayName + ", it requires framework v" + pluginVersion + " (" + frameworkVersion + " installed)");
+            logger.log('info', "Can't install " + bowerJson.displayName + ", it requires framework v" + pluginRange + " (" + frameworkVersion + " installed)");
             cb();
           }
         })

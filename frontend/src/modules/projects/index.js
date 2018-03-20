@@ -5,6 +5,7 @@ define(function(require) {
   var ProjectsSidebarView = require('./views/projectsSidebarView');
   var MyProjectCollection = require('./collections/myProjectCollection');
   var SharedProjectCollection = require('./collections/sharedProjectCollection');
+  var AllProjectCollection = require('./collections/allProjectCollection');
   var TagsCollection = require('core/collections/tagsCollection');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
@@ -54,7 +55,7 @@ define(function(require) {
     tagsCollection.fetch({
       success: function() {
         Origin.sidebar.addView(new ProjectsSidebarView({ collection: tagsCollection }).$el);
-        Origin.trigger('dashboard:loaded', { type: location || 'all' });
+        Origin.trigger('dashboard:loaded', { type: location || 'mine' });
       },
       error: function() {
         console.log('Error occured getting the tags collection - try refreshing your page');
@@ -65,12 +66,17 @@ define(function(require) {
   Origin.on('dashboard:loaded', function (options) {
     switch (options.type) {
       case 'shared':
-        Origin.trigger('location:title:update', {title: 'Dashboard - viewing shared courses'});
+        Origin.trigger('location:title:update', { title: 'Dashboard - viewing shared courses' });
         Origin.contentPane.setView(ProjectsView, { collection: new SharedProjectCollection });
         break;
-      case 'all':
-        Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
+      case 'mine':
+        Origin.trigger('location:title:update', { title: 'Dashboard - viewing my courses' });
         Origin.contentPane.setView(ProjectsView, { collection: new MyProjectCollection });
+        break;
+      case 'all':
+        Origin.trigger('location:title:update', { title: 'Dashboard - viewing all courses' });
+        Origin.contentPane.setView(ProjectsView, { collection: new AllProjectCollection });
+        break;
       default:
         break;
     }

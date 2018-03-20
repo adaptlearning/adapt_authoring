@@ -88,7 +88,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
 
     toggleLockButton: function() {
       this.$('.fa-lock').toggleClass('fa-unlink', this.isLocked);
-      this.$('input').attr('disabled', this.isLocked);
+      this.$('input').prop('disabled', this.isLocked);
     },
 
     toggleClearButton: function() {

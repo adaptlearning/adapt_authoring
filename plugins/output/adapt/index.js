@@ -11,8 +11,7 @@ var origin = require('../../../'),
     database = require('../../../lib/database'),
     util = require('util'),
     path = require('path'),
-    fs = require('fs'),
-    fse = require('fs-extra'),
+    fs = require('fs-extra'),
     async = require('async'),
     archiver = require('archiver'),
     _ = require('underscore'),
@@ -316,7 +315,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
         var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules(?!\.)|\/courses\b(?!\.)|\/course\b(?!\.)|\/exports\b/);
         var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
 
-        fse.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
+        fs.copy(FRAMEWORK_ROOT_FOLDER, exportDir, {
           filter: function(filePath) {
             var posixFilePath = filePath.replace(/\\/g, '/');
 
@@ -337,11 +336,11 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
           }
           var source = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Build, Constants.Folders.Course);
           var dest = path.join(exportDir, Constants.Folders.Source, Constants.Folders.Course);
-          fse.ensureDir(dest, function (error) {
+          fs.ensureDir(dest, function (error) {
             if(error) {
               return callback(error);
             }
-            fse.copy(source, dest, callback);
+            fs.copy(source, dest, callback);
           });
         });
       });
@@ -356,7 +355,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
       archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
     },
     function cleanUp(callback) {
-      fse.remove(exportDir, function (error) {
+      fs.remove(exportDir, function (error) {
         callback(error, { zipName: exportName + '.zip' });
       });
     }

@@ -38,7 +38,7 @@ define([
     var createTitle = function(key) {
       var context = { key: key };
 
-      return Form.Field.prototype.createTitle.call(context);
+      return Backbone.Form.Field.prototype.createTitle.call(context);
     };
 
     value = value || {};

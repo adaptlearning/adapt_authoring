@@ -24,16 +24,10 @@ server.post('/importsource', function (request, response, next) {
       plugin.importsource(request, function (error) {
         if (error) {
           logger.log('error', 'Unable to import course:', error);
-          return response.status(error.httpStatus || 500).json({
-            success: false,
-            message: error.message
-          });
+          return response.status(error.httpStatus || 500).send(error.message);
         }
         logger.log('info', 'Course imported successfully');
-        response.status(200).json({
-          success: true,
-          message: app.polyglot.t('app.importcoursesuccess')
-        });
+        response.status(200).send(app.polyglot.t('app.importcoursesuccess'));
       });
     }
   });

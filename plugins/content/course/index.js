@@ -86,8 +86,9 @@ function initialize () {
 
   app.once('serverStarted', function (server) {
     rest.get('/all/course', function(req, res, next) {
-      var user = usermanager.getCurrentUser();
-      permissions.hasPermission(user._id, '*', permissions.buildResourceString('*', '/*'), function(error, hasPermission) {
+      console.log(usermanager.getCurrentUser()._id, 'delete', permissions.buildResourceString('*', '/*'));
+      permissions.hasPermission(usermanager.getCurrentUser()._id, 'delete', permissions.buildResourceString('*', '/*'), function(error, hasPermission) {
+        console.log(error, hasPermission);
         if(error) return next(error);
         if(!hasPermission) return res.status(403).end();
         doQuery(req, res, next);
@@ -314,13 +315,11 @@ CourseContent.prototype.destroy = function (search, force, next) {
   var self = this;
   var user = app.usermanager.getCurrentUser();
   var tenantId = user.tenant && user.tenant._id;
-
   // shuffle params
   if ('function' === typeof force) {
     next = force;
     force = false;
   }
-
   self.hasPermission('delete', user._id, tenantId, search, function (err, isAllowed) {
     if (!isAllowed && !force) {
       return next(new ContentPermissionError());
@@ -330,25 +329,22 @@ CourseContent.prototype.destroy = function (search, force, next) {
       if (error) {
         return next(error);
       }
-
-      if (docs && docs.length) {
+      if (!docs || !docs.length) {
+        return next(null);
+      }
+      var resource = permissions.buildResourceString(tenantId, '/api/content/course/*');
+      permissions.hasPermission(user._id, 'delete', resource, function(error, canDeleteAll) {
         // Final check before deletion
-        if (docs[0]._isShared && docs[0].createdBy != user._id) {
+        if(!canDeleteAll && docs[0]._isShared && docs[0].createdBy != user._id) {
           return next(new ContentPermissionError());
         }
-
         // Courses use cascading delete
-        async.eachSeries(
-          docs,
-          function (doc, cb) {
-            self.destroyChildren(doc._id, '_courseId', cb);
-          },
-          function (err) {
-            ContentPlugin.prototype.destroy.call(self, search, true, next);
-          });
-      } else {
-        next(null);
-      }
+        async.eachSeries(docs, function(doc, cb) {
+          self.destroyChildren(doc._id, '_courseId', cb);
+        }, function (err) {
+          ContentPlugin.prototype.destroy.call(self, search, true, next);
+        });
+      });
     });
   });
 };

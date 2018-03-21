@@ -1,8 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Origin = require('core/origin');
-
-  var ConfigModel = require('core/models/configModel');
   var ContentObjectModel = require('core/models/contentObjectModel');
   var ArticleModel = require('core/models/articleModel');
   var BlockModel = require('core/models/blockModel');
@@ -23,44 +21,35 @@ define(function(require) {
         this.$el.addClass('project-detail-hide-hero');
         // Initialise the 'tags' property for a new course
         this.model.set('tags', []);
-      } else {
-        // Ensure that the latest config model is always up-to-date when entering this screen
-        Origin.editor.data.config = new ConfigModel({_courseId: this.model.get('_id')});
       }
       // This next line is important for a proper PATCH request on saveProject()
       this.originalAttributes = _.clone(this.model.attributes);
     },
 
     getAttributesToSave: function() {
-      // set tags
-      var tags = [];
-      _.each(this.model.get('tags'), function(item) {
-        item._id && tags.push(item._id);
-      });
-      this.model.set('tags', tags);
+      this.model.set('tags', _.pluck(this.model.get('tags'), '_id'));
 
       var changedAttributes = this.model.changedAttributes(this.originalAttributes);
       if(changedAttributes) {
         return _.pick(this.model.attributes, _.keys(changedAttributes));
       }
-
       return null;
     },
 
     onSaveSuccess: function(model, response, options) {
-      if (this.isNew) {
-        this.populateNewCourse(model);
-      } else {
+      if(!this.isNew) {
         EditorOriginView.prototype.onSaveSuccess.apply(this, arguments);
+        return;
       }
+      this.populateNewCourse(model);
     },
 
-    // TODO not really  good enough to handle model save errors and other errors here
+    // FIXME not really  good enough to handle model save errors and other errors here
     onSaveError: function(model, response, options) {
-      if(arguments.length == 2) {
-        return EditorOriginView.prototype.onSaveError.apply(this, arguments);
+      if(arguments.length === 2) {
+        EditorOriginView.prototype.onSaveError.apply(this, arguments);
+        return;
       }
-
       var messageText = typeof response.responseJSON == 'object' && response.responseJSON.message;
       EditorOriginView.prototype.onSaveError.call(this, null, messageText);
     },
@@ -145,7 +134,6 @@ define(function(require) {
         }, this)
       });
     }
-
   }, {
     template: 'editorCourseEdit'
   });

@@ -80,7 +80,8 @@ define(function(require){
     },
 
     ifUserIsMe: function(userId, block) {
-      return (userId === Origin.sessionModel.get('id') block.fn(this) : block.inverse(this);
+      var isMe = userId === Origin.sessionModel.get('id');
+      return isMe ? block.fn(this) : block.inverse(this);
     },
 
     selected: function(option, value){

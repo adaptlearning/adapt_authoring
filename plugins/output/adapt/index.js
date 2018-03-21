@@ -11,8 +11,7 @@ var origin = require('../../../'),
     database = require('../../../lib/database'),
     util = require('util'),
     path = require('path'),
-    fs = require('fs'),
-    fse = require('fs-extra'),
+    fs = require('fs-extra'),
     async = require('async'),
     archiver = require('archiver'),
     _ = require('underscore'),
@@ -21,6 +20,7 @@ var origin = require('../../../'),
     mkdirp = require('mkdirp'),
     usermanager = require('../../../lib/usermanager'),
     assetmanager = require('../../../lib/assetmanager'),
+    helpers = require('../../../lib/helpers'),
     exec = require('child_process').exec,
     semver = require('semver'),
     installHelpers = require('../../../lib/installHelpers'),
@@ -61,10 +61,8 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
         if (err) {
           return callback(err);
         }
-
         // Store off the retrieved collections
         outputJson = data;
-
         callback(null);
       });
     },
@@ -75,12 +73,9 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
         if (err) {
           return callback(err);
         }
-
         // Replace the theme in outputJson with the applied theme name.
         themeName = appliedThemeName;
-
         outputJson['config'][0]._theme = themeName;
-
         callback(null);
       });
     },
@@ -89,10 +84,8 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
         if (err) {
           return callback(err);
         }
-
         // Update the JSON object
         outputJson = data;
-
         callback(null);
       });
     },
@@ -101,9 +94,7 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
         if (err) {
           return callback(err);
         }
-
         isRebuildRequired = exists;
-
         callback(null);
       });
     },
@@ -113,7 +104,6 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
         if (err) {
           return callback(err);
         }
-
         callback(null);
       });
     },
@@ -123,23 +113,20 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
         if (err) {
           return callback(err);
         }
-
         menuName = appliedMenuName;
-
         callback(null);
       });
     },
     function(callback) {
-      var assetsFolder = path.join(BUILD_FOLDER, Constants.Folders.Course, outputJson['config']._defaultLanguage, Constants.Folders.Assets);
+      var assetsJsonFolder = path.join(BUILD_FOLDER, Constants.Folders.Course, outputJson['config']._defaultLanguage);
+      var assetsFolder = path.join(assetsJsonFolder, Constants.Folders.Assets);
 
-      self.writeCourseAssets(tenantId, courseId, assetsFolder, outputJson, function(err, modifiedJson) {
+      self.writeCourseAssets(tenantId, courseId, assetsJsonFolder, assetsFolder, outputJson, function(err, modifiedJson) {
         if (err) {
           return callback(err);
         }
-
         // Store the JSON with the new paths to assets
         outputJson = modifiedJson;
-
         callback(null);
       });
     },

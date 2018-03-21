@@ -73,12 +73,11 @@ define(function(require) {
     },
 
     validateProject: function(e, next) {
-      e && e.preventDefault();
       helpers.validateCourseContent(this.currentCourse, _.bind(function(error) {
         if(error) {
           Origin.Notify.alert({ type: 'error', text: "There's something wrong with your course:<br/><br/>" + error });
         }
-        next.call(this, error);
+        next.call(this, e, error);
       }, this));
     },
 

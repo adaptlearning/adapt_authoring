@@ -10,7 +10,6 @@ define(function(require){
   var EditorPageView = EditorOriginView.extend({
     className: 'page',
     tagName: 'div',
-    childrenCount: 0,
     childrenRenderedCount: 0,
 
     events: _.extend({}, EditorOriginView.prototype.events, {
@@ -21,10 +20,11 @@ define(function(require){
     }),
 
     preRender: function() {
+      Origin.editor.blockCount = 0;
       var id = this.model.get('_id');
       var originEvents = {
         'editorView:removeSubViews': this.remove,
-        'pageView:itemRendered': this.evaluateChildStatus
+        'pageView:itemAnimated': this.evaluateChildStatus
       };
       originEvents['editorView:moveArticle:' + id] = this.render;
       originEvents['editorView:pasted:' + id] = this.onPaste;
@@ -46,6 +46,8 @@ define(function(require){
           group: 'collapseArticle',
         }
       ]);
+
+      this._onScroll = _.bind(_.throttle(this.onScroll, 400), this);
     },
 
     render: function() {
@@ -69,6 +71,14 @@ define(function(require){
 
     evaluateChildStatus: function() {
       this.childrenRenderedCount++;
+
+      if (this.childrenRenderedCount < Origin.editor.blockCount) return;
+      this.allChildrenRendered();
+    },
+
+    postRender: function() {
+      this.setupScrollListener();
+      this.resize();
     },
 
     addArticleViews: function() {
@@ -176,6 +186,41 @@ define(function(require){
           });
         }
       });
+    },
+
+    onCutArticle: function(view) {
+      this.once('pageView:postRender', view.showPasteZones);
+      this.render();
+    },
+
+    setupScrollListener: function() {
+      $('.contentPane').on('scroll', this._onScroll);
+    },
+
+    onScroll: function(event) {
+      var scrollPos = event.currentTarget.scrollTop;
+      Origin.editor.scrollTo = scrollPos;
+    },
+
+    removeScrollListener: function() {
+      $('.contentPane').off('scroll', this._onScroll);
+    },
+
+    allChildrenRendered: function() {
+      if (Origin.editor.scrollTo > 0) {
+        this.removeScrollListener();
+      }
+      $('.contentPane').scrollTo(Origin.editor.scrollTo, {
+        duration: 200,
+        onAfter: _.bind(function() {
+          this.setupScrollListener();
+        }, this)
+      });
+    },
+
+    remove: function() {
+      this.removeScrollListener();
+      EditorOriginView.prototype.remove.apply(this, arguments);
     }
   }, {
     template: 'editorPage'

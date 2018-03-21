@@ -181,11 +181,11 @@ define(function(require){
       text = text || '';
       this.filterText = text;
       this.search = this.convertFilterTextToPattern(text);
-      this.setUserPreference('search', text);
+      this.setUserPreference('search', text, true);
 
       tags = tags || [];
       this.tags = _.pluck(tags, 'id');
-      this.setUserPreference('tags', tags);
+      this.setUserPreference('tags', tags, true);
 
       if(fetch !== false) this.resetCollection();
     },

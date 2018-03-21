@@ -86,7 +86,12 @@ function initialize () {
 
   app.once('serverStarted', function (server) {
     rest.get('/all/course', function(req, res, next) {
-      doQuery(req, res, next);
+      var user = usermanager.getCurrentUser();
+      permissions.hasPermission(user._id, '*', permissions.buildResourceString('*', '/*'), function(error, hasPermission) {
+        if(error) return next(error);
+        if(!hasPermission) return res.status(403).end();
+        doQuery(req, res, next);
+      });
     });
     // force search to use only courses created by current user
     rest.get('/my/course', function (req, res, next) {

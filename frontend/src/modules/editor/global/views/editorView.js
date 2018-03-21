@@ -115,7 +115,7 @@ define(function(require) {
       }, this));
     },
 
-    exportProject: function(devMode) {
+    exportProject: function() {
       // TODO - very similar to export in project/views/projectView.js, remove duplication
       // aleady processing, don't try again
       if(this.exporting) return;
@@ -123,14 +123,14 @@ define(function(require) {
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
 
-      var $btn = devMode == true ? $('button.editor-common-sidebar-export-dev') : $('button.editor-common-sidebar-export');
+      var $btn = $('button.editor-common-sidebar-export');
 
       this.showExportAnimation(true, $btn);
       this.exporting = true;
 
       var self = this;
       $.ajax({
-         url: '/export/' + tenantId + '/' + courseId + '/' + devMode,
+         url: '/export/' + tenantId + '/' + courseId,
          success: function(data, textStatus, jqXHR) {
            self.showExportAnimation(false, $btn);
            self.exporting = false;

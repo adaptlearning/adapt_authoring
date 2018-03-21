@@ -134,7 +134,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
 */
 function importAsset(fileMetadata, metadata, assetImported) {
   var search = {
-    title: fileMetadata.title,
+    filename: fileMetadata.filename,
     size: fileMetadata.size
   };
   origin.assetmanager.retrieveAsset(search, function gotAsset(error, results) {

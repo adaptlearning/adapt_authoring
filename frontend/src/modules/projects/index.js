@@ -74,6 +74,9 @@ define(function(require) {
         Origin.contentPane.setView(ProjectsView, { collection: new MyProjectCollection });
         break;
       case 'all':
+        if(!Origin.permissions.hasPermissions(['*/*:create','*/*:read','*/*:update','*/*:delete'])) {
+          return Origin.router.blockUserAccess();
+        }
         Origin.trigger('location:title:update', { title: 'Dashboard - viewing all courses' });
         Origin.contentPane.setView(ProjectsView, { collection: new AllProjectCollection });
         break;

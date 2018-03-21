@@ -21,7 +21,8 @@ define(function(require){
       'click a.block-delete': 'deleteBlockPrompt',
       'click a.add-component': 'showComponentList',
       'click a.open-context-block': 'openContextMenu',
-      'dblclick': 'loadBlockEdit'
+      'dblclick': 'loadBlockEdit',
+      'transitionend': 'onTransitionEnd'
     }),
 
     preRender: function() {
@@ -289,7 +290,13 @@ define(function(require){
           });
         }
       });
+    },
+
+    onTransitionEnd: function(event) {
+      if (event.originalEvent.propertyName !== 'transform') return;
+      Origin.trigger('pageView:itemAnimated', this);
     }
+
   }, {
     template: 'editorPageBlock'
   });

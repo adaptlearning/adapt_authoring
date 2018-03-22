@@ -75,7 +75,8 @@ define(function(require) {
 						itemType: 'Object',
 						subSchema: field.items.properties,
             confirmDelete: Origin.l10n.t('app.confirmdelete'),
-						fieldType: 'List'
+						fieldType: 'List',
+            help: field.help
 					}
 				}
 
@@ -97,7 +98,8 @@ define(function(require) {
 						type: 'List',
 						itemType:field.items.inputType,
 						subSchema: field.items,
-						fieldType: field.items.inputType
+						fieldType: field.items.inputType,
+            help: field.help
 					}
 				}
 			}

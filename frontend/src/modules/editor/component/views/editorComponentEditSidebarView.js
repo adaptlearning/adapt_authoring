@@ -18,9 +18,14 @@ define(function(require) {
 
     cancelEditing: function(event) {
       event.preventDefault();
-      var currentCourseId = Origin.editor.data.course.get('_id');
-      var currentPageId = this.model.getParent().getParent().getParent().get('_id');
-      Origin.router.navigateTo('editor/' + currentCourseId + '/page/' + currentPageId);
+      // FIXME got to be a better way to do this
+      this.model.fetchParent(function(parentBlock) {
+        parentBlock.fetchParent(function(parentArticle) {
+          parentArticle.fetchParent(function(parentPage) {
+            Origin.router.navigateTo('editor/' + Origin.editor.data.course.get('_id') + '/page/' + parentPage.get('_id'));
+          });
+        });
+      });
     }
   }, {
     template: 'editorComponentEditSidebar'

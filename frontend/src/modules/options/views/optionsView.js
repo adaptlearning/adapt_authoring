@@ -7,7 +7,7 @@ define(function(require) {
     className: 'options',
 
     events: {
-    'click a': 'onOptionClicked'
+    'click button': 'onOptionClicked'
     },
 
     initialize: function() {
@@ -53,14 +53,14 @@ define(function(require) {
       _.defer(_.bind(function() {
         _.each(userPreferences, function(preference) {
           if (_.isArray(preference)) return;
-          this.$('a.option-value-' + preference).addClass('selected');
+          this.$('button.option-value-' + preference).addClass('selected');
         }, this);
       }, this));
     },
 
     resetUI: function(group) {
       _.defer(_.bind(function() {
-        this.$('a[data-group="'+group+'"]').removeClass('selected');
+        this.$('button[data-group="'+group+'"]').removeClass('selected');
       }, this));
     },
 
@@ -79,7 +79,7 @@ define(function(require) {
       if(!group || selectedOption.hasClass('selected')) {
         return;
       }
-      this.$('.options-group-' + group + ' a').removeClass('selected');
+      this.$('.options-group-' + group + ' button').removeClass('selected');
       selectedOption.addClass('selected');
       Origin.trigger(callbackEvent);
     },

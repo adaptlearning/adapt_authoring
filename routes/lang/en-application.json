@@ -314,5 +314,8 @@
   "app.article": "article",
   "app.block": "block",
   "app.component": "component",
-  "app.errorloadconfig": "Failed to load configuration settings for %{course}"
+  "app.errorloadconfig": "Failed to load configuration settings for %{course}",
+  "app.reset": "Reset",
+  "app.titlelock": "Link with title",
+  "app.titleunlock": "Unlink with title"
 }

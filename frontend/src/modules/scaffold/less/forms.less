@@ -120,8 +120,10 @@ form .error {
 
 .field-default {
   padding: 0 3px;
+  .is-default-value > &,
   [data-type=""] > &,
   [data-type^="Asset"] > &,
+  [data-type="DisplayTitle"]:not(.unlocked) > &,
   [data-type="Tags"] > & {
     display: none;
   }
@@ -157,9 +159,6 @@ form .error {
   [data-type="Checkbox"] &,
   [data-type="Boolean"] & {
     float: left;
-  }
-  [data-type="DisplayTitle"] & input {
-    width: 81%;
   }
   [data-type="Radio"] & {
     li {

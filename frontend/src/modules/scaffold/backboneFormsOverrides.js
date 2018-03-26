@@ -24,6 +24,7 @@ define([
   Backbone.Form.Field.prototype.events = {
     'click [data-action="default"]': function() {
       this.setValue(this.editor.defaultValue);
+      this.editor.trigger('change', this);
 
       return false;
     }
@@ -31,16 +32,27 @@ define([
 
   // merge schema into data
   Backbone.Form.Field.prototype.templateData = function() {
-    return _.extend(templateData.call(this), this.schema);
+    return _.extend(templateData.call(this), this.schema, {
+      isDefaultValue: _.isEqual(this.editor.value, this.editor.defaultValue)
+    });
   };
 
-  // use default from schema
+  // use default from schema and set up isDefaultValue toggler
   Backbone.Form.editors.Base.prototype.initialize = function(options) {
     var schemaDefault = options.schema.default;
 
     if (schemaDefault !== undefined) {
       this.defaultValue = schemaDefault;
     }
+
+    this.listenTo(this, 'change', function() {
+      if (this.hasNestedForm) return;
+
+      var isDefaultValue = _.isEqual(this.getValue(), this.defaultValue);
+
+      this.form.$('[data-editor-id="' + this.id + '"]')
+        .toggleClass('is-default-value', isDefaultValue);
+    });
 
     initialize.call(this, options);
   };
@@ -185,12 +197,15 @@ define([
         disableNativeSpellChecker: false,
         extraAllowedContent: 'span(*)',
         on: {
+          change: function() {
+            this.trigger('change', this);
+          }.bind(this),
           instanceReady: function() {
             var writer = this.dataProcessor.writer;
 
             writer.lineBreakChars = '';
 
-            writer.setRules( 'p', {
+            writer.setRules('p', {
               indent: false,
               breakBeforeOpen: false,
               breakAfterOpen: false,

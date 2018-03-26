@@ -11,8 +11,12 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     events: {
       'change input': 'triggerChange',
       'keyup input': 'triggerChange',
-      'focus input': function() { this.trigger('focus', this); },
-      'blur input': function() { this.trigger('blur', this); },
+      'focus input': function() {
+        this.trigger('focus', this);
+      },
+      'blur input': function() {
+        this.trigger('blur', this);
+      },
       'click .scaffold-display-title-clear': function(event) {
         event.preventDefault();
 
@@ -87,7 +91,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     toggleLockButton: function() {
-      this.$('.fa-lock').toggleClass('fa-unlink', this.isLocked);
+      this.$el.parents('.field').toggleClass('unlocked', !this.isLocked);
       this.$('input').prop('disabled', this.isLocked);
     },
 

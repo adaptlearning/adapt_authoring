@@ -26,6 +26,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     render: function() {
       this.editor = window.ace.edit(this.$el[0]);
       this.editor.$blockScrolling = Infinity;
+      this.editor.on('change', function() { this.trigger('change', this); }.bind(this));
       this.editor.setTheme('ace/theme/chrome');
       this.session = this.editor.getSession();
       this.session.setMode('ace/mode/' + this.mode);

@@ -24,7 +24,18 @@
         </span>
       </button>
     </div>
-
+    
+    {{#ifHasPermissions "{{tenantid}}/*:delete"}}
+      <div class="sidebar-row">
+          <button class="projects-sidebar-tenant-courses">
+              <span class="projects-sidebar-tenant-courses-inner">
+                  <i class="fa fa-chevron-right primary-color"/>
+                  {{t 'app.tenantprojects'}}
+              </span>
+          </button>
+      </div>
+    {{/ifHasPermissions}}
+    
     <div class="sidebar-search-tag">
       <div class="sidebar-row">
         <div class="sidebar-row-input">

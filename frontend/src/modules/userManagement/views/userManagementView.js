@@ -29,7 +29,7 @@ define(function(require){
 
     initData: function() {
       this.listenTo(this.users, 'sync', this.onDataFetched);
-      this.users.fetch();
+      this.fetchUsers();
     },
 
     render: function() {
@@ -59,9 +59,17 @@ define(function(require){
       this.$('.users').fadeIn(300);
     },
 
+    fetchUsers: function () {
+      if (this.model.get('globalData').hasSuperAdminPermissions) {
+        this.users.fetch();
+      } else if (this.model.get('globalData').hasTenantAdminPermissions) {
+        this.users.fetch({ url: 'api/user/tenant', data: $.param({ _tenantId: Origin.sessionModel.get('tenantId') }) });
+      }
+    },
+
     refreshUserViews: function(event) {
       event && event.preventDefault();
-      this.users.fetch();
+      this.fetchUsers();
     },
 
     createUserView: function(model) {

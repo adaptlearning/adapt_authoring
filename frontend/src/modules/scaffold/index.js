@@ -8,6 +8,7 @@ define(function(require) {
 	var ScaffoldItemsModalView = require('./views/scaffoldItemsModalView');
 	var ScaffoldImageView = require('./views/scaffoldAssetView');
 	var ScaffoldBooleanView = require('./views/scaffoldBooleanView');
+	var ScaffoldTenantUsersView = require('./views/scaffoldTenantUsersView');
 	var ScaffoldTagsView = require('./views/scaffoldTagsView');
 	var ScaffoldQuestionButtonView = require('./views/scaffoldQuestionButtonView');
 	var ScaffoldColorPickerView = require('./views/scaffoldColorPickerView');

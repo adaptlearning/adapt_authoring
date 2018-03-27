@@ -36,6 +36,44 @@ define(function(require){
       } else {
         return block.inverse(this);
       }
+    },
+
+    ifUserNotSuperAdmin: function (roleNames, block) {
+      var isSuperAdmin = false;
+      _.each(roleNames, function (role, index) {
+        if (role == 'Super Admin') {
+          isSuperAdmin = true;
+        }
+      });
+
+      if (isSuperAdmin) {
+        return block.inverse(this);
+      } else {
+        return block.fn(this);
+      }
+    },
+
+    ifUserSuperAdmin: function (roleNames, block) {
+      var isSuperAdmin = false;
+      _.each(roleNames, function (role, index) {
+        if (role == 'Super Admin') {
+          isSuperAdmin = true;
+        }
+      });
+
+      if (isSuperAdmin) {
+        return block.fn(this);
+      } else {
+        return block.inverse(this);
+      }
+    },
+
+    ifValueNotEquals: function (value, text, block) {
+      if (value === text) {
+        return block.inverse(this);
+      } else {
+        return block.fn(this);
+      }
     }
   };
 

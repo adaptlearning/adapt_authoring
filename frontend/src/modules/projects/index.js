@@ -5,6 +5,7 @@ define(function(require) {
   var ProjectsSidebarView = require('./views/projectsSidebarView');
   var MyProjectCollection = require('./collections/myProjectCollection');
   var SharedProjectCollection = require('./collections/sharedProjectCollection');
+  var TenantProjectCollection = require('./collections/tenantProjectCollection');
   var TagsCollection = require('core/collections/tagsCollection');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
@@ -68,6 +69,12 @@ define(function(require) {
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing shared courses'});
         Origin.contentPane.setView(ProjectsView, { collection: new SharedProjectCollection });
         break;
+      case 'tenant':
+        if (Origin.permissions.hasTenantAdminPermission()) {
+           Origin.trigger('location:title:update', {title: 'Dashboard - viewing tenant courses'});
+           Origin.contentPane.setView(ProjectsView, {collection: new TenantProjectCollection});
+         }
+         break;  
       case 'all':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
         Origin.contentPane.setView(ProjectsView, { collection: new MyProjectCollection });
@@ -89,5 +96,6 @@ define(function(require) {
       "callbackEvent": "dashboard:open",
       "sortOrder": 1
     });
+    Origin.permissions.addRoute('tenantCourses', ["{{tenantid}}/*:delete"]);
   });
 });

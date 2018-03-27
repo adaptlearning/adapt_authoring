@@ -8,16 +8,20 @@ define(function(require) {
   var PluginManagementUploadSidebarView = require('./views/pluginManagementUploadSidebarView');
 
   Origin.on('router:pluginManagement', function(location, subLocation, action) {
-    if (!location) {
-      location = 'extension';
-    }
+    if (Origin.permissions.hasSuperPermissions()) {
+      if (!location) {
+        location = 'extension';
+      }
 
-    if ('upload' === location) {
-      Origin.contentPane.setView(PluginManagementUploadView);
-      Origin.sidebar.addView(new PluginManagementUploadSidebarView().$el, {});
-    } else {
-      Origin.contentPane.setView(PluginManagementView, { pluginType: location });
-      Origin.sidebar.addView(new PluginManagementSidebarView().$el);
+      if ('upload' === location) {
+        Origin.contentPane.setView(PluginManagementUploadView);
+        Origin.sidebar.addView(new PluginManagementUploadSidebarView().$el, {});
+      } else {
+        Origin.contentPane.setView(PluginManagementView, { pluginType: location });
+        Origin.sidebar.addView(new PluginManagementSidebarView().$el);
+      }
+     } else {
+      Origin.permissions.showNoPermissionPage();
     }
   });
 

@@ -16,15 +16,23 @@ define(function(require) {
 
   Origin.on('origin:dataReady login:changed', function() {
     Origin.permissions.addRoute('userManagement', data.featurePermissions);
+     data.hasSuperAdminPermissions = false;
+    data.hasTenantAdminPermissions = false;
+    setUserPermission();
 
   	if (Origin.permissions.hasPermissions(data.featurePermissions)) {
+
+      data.allTenants.on('sync', onDataFetched);
+      if (data.hasSuperAdminPermissions) {
+        data.allTenants.url = 'api/tenant';
+      }else{
+        data.allTenants.url = 'api/tenant/'+ Origin.sessionModel.get('tenantId');
+      }    
+      data.allTenants.fetch();
+
       data.allRoles.on('sync', onDataFetched);
       data.allRoles.url = 'api/role';
       data.allRoles.fetch();
-
-      data.allTenants.on('sync', onDataFetched);
-      data.allTenants.url = 'api/tenant';
-      data.allTenants.fetch();
 
   		Origin.globalMenu.addItem({
         "location": "global",
@@ -51,6 +59,16 @@ define(function(require) {
     });
   });
 
+   Origin.on('tenantManagement:newtenant', function(tenant) {
+    data.allTenants.add(tenant);
+  });
+
+  Origin.on('tenantManagement:removetenant', function (tenant) {
+    data.allTenants.remove(data.allTenants.findWhere({
+      _id: tenant.id
+    }));
+  });
+
   var onRoute = function(location, subLocation, action) {
     var mainView, sidebarView;
 
@@ -67,6 +85,14 @@ define(function(require) {
     Origin.sidebar.addView(new sidebarView().$el);
   };
 
+  var setUserPermission = function(){
+    if (Origin.permissions.hasSuperPermissions()) {
+      data.hasSuperAdminPermissions = true;
+    } else if (Origin.permissions.hasTenantAdminPermission()) {
+      data.hasTenantAdminPermissions = true;
+    }
+  }
+  
   var onDataFetched = function() {
     // ASSUMPTION we always have roles and tenants
     if(data.allRoles.length > 0 && data.allTenants.length > 0) {

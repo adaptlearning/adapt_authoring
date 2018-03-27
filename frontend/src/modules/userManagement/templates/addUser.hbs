@@ -15,18 +15,26 @@
       </div>
       <div class="form-group">
         <label for="tenant">{{t 'app.tenant'}}</label>
-        <select name="_tenantId">
+        <select name="_tenantId" {{#if globalData.hasTenantAdminPermissions}}disabled{{/if}}>
           {{#each globalData.allTenants.models}}
-            <option value="{{{this.attributes._id}}}">{{{this.attributes.displayName}}}</option>
+            <option value="{{this.attributes._id}}">{{this.attributes.displayName}}</option>
           {{/each}}
         </select>
       </div>
       <div class="form-group">
         <label for="role">{{t 'app.role'}}</label>
         <select name="role">
-          {{#each globalData.allRoles.models}}
-            <option value="{{{this.attributes._id}}}">{{{this.attributes.name}}}</option>
-          {{/each}}
+         {{#if globalData.hasTenantAdminPermissions}}
+            {{#each globalData.allRoles.models}}
+              {{#ifValueNotEquals this.attributes.name "Super Admin"}}
+                <option value="{{this.attributes._id}}">{{this.attributes.name}}</option>
+              {{/ifValueNotEquals}}
+            {{/each}}
+          {{else}}
+            {{#each globalData.allRoles.models}}
+              <option value="{{this.attributes._id}}">{{this.attributes.name}}</option>
+            {{/each}}
+          {{/if}}
         </select>
       </div>
   </form>

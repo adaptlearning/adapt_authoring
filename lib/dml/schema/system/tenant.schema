@@ -10,7 +10,8 @@
     },
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "unique": true
     },
     "isMaster": {
       "type": "boolean",

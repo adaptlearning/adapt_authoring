@@ -12,6 +12,7 @@ define(function(require) {
       'click .projects-sidebar-add-course': 'addCourse',
       'click .projects-sidebar-my-courses': 'gotoMyCourses',
       'click .projects-sidebar-shared-courses': 'gotoSharedCourses',
+      'click .projects-sidebar-tenant-courses' : 'gotoTenantCourses',
       'click .sidebar-filter-clear': 'clearFilterInput',
       'click .projects-sidebar-tag': 'onFilterButtonClicked',
       'click .projects-sidebar-add-tag': 'onAddTagClicked',
@@ -55,6 +56,10 @@ define(function(require) {
 
     gotoSharedCourses: function() {
       Origin.router.navigateTo('dashboard/shared');
+    },
+
+    gotoTenantCourses: function() {
+        Origin.router.navigate('dashboard/tenant', {trigger: true});
     },
 
     filterProjectsByTitle: function(event, filter) {

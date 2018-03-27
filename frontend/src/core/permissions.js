@@ -72,6 +72,48 @@ define(function(require) {
 			
 		},
 
+		hasSuperPermissions:function(){
+			var sessionModelPermissions = Origin.sessionModel.get('permissions');
+			var hasWildCard = false;
+
+			_.each(sessionModelPermissions, function(permission) {
+				// Find out if the first character is a wild card
+				if (permission.charAt(0) === '*') {
+					return hasWildCard = true;
+				}
+			});
+
+			if (hasWildCard) {
+				return true;
+			}else{
+				return false;
+			}
+
+		},
+
+		hasTenantAdminPermission:function(){
+			var sessionModelPermissions = Origin.sessionModel.get('permissions');
+			var hasTenantWildCard = false;
+
+			_.each(sessionModelPermissions, function(permission) {
+				// Find out if theres any {{tenantid}}/*:delete
+				var splitPermission = splitString(permission)
+
+				if (splitPermission[1].charAt(0) === '*') {
+					var permission = splitPermission[splitPermission.length - 1];
+					if(permission == 'delete'){
+						return hasTenantWildCard = true;
+					}
+				}
+			});
+
+			if (hasTenantWildCard) {
+				return true;
+			}else{
+				return false;
+			}
+		},
+
 		addRoute: function(route, permissions) {
 			if (_.isString(route) && _.isArray(permissions)) {
 				// Push the route and permissions to the routes array
@@ -102,6 +144,12 @@ define(function(require) {
 				return false;
 			}
 
+		},
+
+		showNoPermissionPage: function() {
+			Origin.trigger('sidebar:sidebarContainer:hide');
+			Origin.trigger('location:title:hide');
+			return $('.app-inner').empty().append(new PermissionsView().$el);
 		}
 	};
 

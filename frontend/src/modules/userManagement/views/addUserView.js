@@ -38,6 +38,10 @@ define(function(require){
       if(!this.isValid()) {
         return;
       }
+       //To Submit disabled tenant value
+      if(this.model.get('globalData').hasTenantAdminPermissions){
+        this.$("select[name='_tenantId']").removeAttr('disabled');
+      }
       // submit form data
       this.$('form.addUser').ajaxSubmit({
         error: _.bind(this.onAjaxError, this),

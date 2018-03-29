@@ -88,7 +88,7 @@ function ImportSource(req, done) {
         var courseLangs = [];
         fs.readdir(COURSE_JSON_PATH, function (error, files) {
             if (error) {
-              return cb(error);
+              return cb(new Error(app.polyglot.t('app.importinvalidpackage')));
             }
             files.map(function (file) {
               return path.join(COURSE_JSON_PATH, file);

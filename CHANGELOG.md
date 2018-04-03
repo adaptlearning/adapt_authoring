@@ -6,6 +6,42 @@ All notable changes to the Adapt authoring tool are documented in this file.
 
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.5.0] - 2018-XX-XX
+
+Release which adds the ability to import courses created in the framework, as well as exports from other authoring tool installs.
+
+### Added
+- Courses built with the framework and authoring tool exports can now be imported ([\#1387](https://github.com/adaptlearning/adapt_authoring/issues/1387))
+- The ability to colour ABC content views in the editor screens ([\#1785](https://github.com/adaptlearning/adapt_authoring/issues/1785))
+- The ability to minimise articles in the page editor view ([\#1483](https://github.com/adaptlearning/adapt_authoring/issues/1483))
+- Ability to set MongoDB authentication from the install script ([\#1903](https://github.com/adaptlearning/adapt_authoring/issues/1903))
+- Support for framework plugins' `pluginDependencies` field, as defined in `bower.json` ([\#1858](https://github.com/adaptlearning/adapt_authoring/issues/1858))
+- Dashboard sorts now persist across sessions, while filters persist for the duration of the current session ([\#1857](https://github.com/adaptlearning/adapt_authoring/issues/1857))
+- Instruction to component schema ([\#1712](https://github.com/adaptlearning/adapt_authoring/issues/1712))
+- Custom SMTP servers can now be used with mailer ([\#1447](https://github.com/adaptlearning/adapt_authoring/issues/1447))
+
+### Changed
+-  Bumpted archive module dependency version ([\#1930](https://github.com/adaptlearning/adapt_authoring/issues/1930))
+- Core front-end modules are now loaded before any front-end plugins ([\#1913](https://github.com/adaptlearning/adapt_authoring/issues/1913))
+- `Database#addModel` now catches and logs errors ([\#1855](https://github.com/adaptlearning/adapt_authoring/issues/1855))
+- Server now logs more appropriate message if error is caught when loading a route ([\#1853](https://github.com/adaptlearning/adapt_authoring/issues/1853))
+- NPM deprecation warnings are now suppressed ([\#1745](https://github.com/adaptlearning/adapt_authoring/issues/1745))
+- Switched to zip2 NPM package ([\#1732](https://github.com/adaptlearning/adapt_authoring/issues/1732))
+- Only one course export per-user is saved on the server ([\#1056](https://github.com/adaptlearning/adapt_authoring/issues/1056))
+
+### Removed
+- The need to define third-party front-end plugins in `app.js` ([\#1866](https://github.com/adaptlearning/adapt_authoring/issues/1866))
+- Redundant `conf/config_sample.json` file ([\#1793](https://github.com/adaptlearning/adapt_authoring/issues/1793))
+
+### Fixed
+- 'Find' feature in Ace editor plugin ([\#1928](https://github.com/adaptlearning/adapt_authoring/issues/1928))
+- Issue with `_isVisible` and `_isHidden` not being saved on blocks and components ([\#1888](https://github.com/adaptlearning/adapt_authoring/issues/1888))
+- Issue with 'Manage extensions' list ordering ([\#1878](https://github.com/adaptlearning/adapt_authoring/issues/1878))
+- Cog menu for pages ([\#1874](https://github.com/adaptlearning/adapt_authoring/issues/1874))
+- Upgrade script failure when missing `authoringToolRepository` and `frameworkRepository` from `config.json` ([\#1851](https://github.com/adaptlearning/adapt_authoring/issues/1851))
+- Scroll position not persisting in page editor ([\#1814](https://github.com/adaptlearning/adapt_authoring/issues/1814))
+- Error thrown when deleting a shared course belonging to another user ([\#1776](https://github.com/adaptlearning/adapt_authoring/issues/1776))
+
 ## [0.4.1] - 2018-02-05
 
 This is a patch release fixing issues introduced in v0.4.0.
@@ -392,6 +428,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.5.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.2...v0.3.0

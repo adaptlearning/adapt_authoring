@@ -2,8 +2,7 @@
 
 All notable changes to the Adapt authoring tool are documented in this file.
 
-**IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.
-
+**IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
 ## [0.5.0] - 2018-XX-XX

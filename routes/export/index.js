@@ -41,23 +41,20 @@ server.get('/export/:tenant/:course', function (req, res, next) {
           plugin.export(course, req, res, function (error, result) {
             if (error) {
               logger.log('error', 'Unable to export:', error);
-              res.statusCode = 500;
-              return res.json({
+              return res.status(500).json({
                 success: false,
                 message: error.message
               });
             }
-
-            result.success = true;
-            result.message = app.polyglot.t('app.exportcoursesuccess');
-            res.statusCode = 200;
-            return res.json(result);
+            return res.status(200).json({
+              success: true,
+              message: app.polyglot.t('app.exportcoursesuccess')
+            });
           });
         }
       });
     } else {
-      res.statusCode = 401;
-      return res.json({
+      return res.status(401).json({
         success: false,
         message: app.polyglot.t('app.errorusernoaccess')
       });
@@ -65,34 +62,42 @@ server.get('/export/:tenant/:course', function (req, res, next) {
   });
 });
 // TODO probably needs to be moved to download route
-server.get('/export/:tenant/:course/:title/download.zip', function (req, res, next) {
+server.get('/export/:tenant/:course/download.zip', function (req, res, next) {
   var tenantId = req.params.tenant;
   var courseId = req.params.course;
   var userId = usermanager.getCurrentUser()._id;
-  var zipName = req.params.title;
   // TODO don't like having to specify this here AND in plugins/output/adapt.export->getCourseName()-exportDir
   var zipDir = path.join(
     configuration.tempDir,
     configuration.getConfig('masterTenantID'),
     Constants.Folders.Framework,
     Constants.Folders.Exports,
-    zipName
+    userId + '.zip'
   );
-
-  fs.stat(zipDir, function(err, stat) {
-    if (err) {
-      next(err);
-    } else {
-      res.writeHead(200, {
-          'Content-Type': 'application/zip',
-          'Content-Length': stat.size,
-          'Content-disposition' : 'attachment; filename=' + zipName,
-          'Pragma' : 'no-cache',
-          'Expires' : '0'
+  // get the course name
+  app.contentmanager.getContentPlugin('course', function (error, plugin) {
+    if (error) return callback(error);
+    plugin.retrieve({ _id:courseId }, {}, function(error, results) {
+      if (error) {
+        return callback(error);
+      }
+      if (results.length !== 1) {
+        return callback(new Error('Export: cannot find course (' + courseId + ')'));
+      }
+      fs.stat(zipDir, function(error, stat) {
+        if (error) {
+          return next(error);
+        }
+        var zipName = helpers.slugify(results[0].title,'export') + '.zip';
+        res.writeHead(200, {
+            'Content-Type': 'application/zip',
+            'Content-Length': stat.size,
+            'Content-disposition' : 'attachment; filename=' + zipName,
+            'Pragma' : 'no-cache',
+            'Expires' : '0'
+        });
+        fs.createReadStream(zipDir).pipe(res);
       });
-
-      var readStream = fs.createReadStream(zipDir);
-      readStream.pipe(res);
-    }
+    });
   });
 });

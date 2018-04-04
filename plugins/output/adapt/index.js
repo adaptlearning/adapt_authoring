@@ -244,11 +244,7 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
           });
 
           archive.pipe(output);
-
-          archive.bulk([
-            { expand: true, cwd: path.join(BUILD_FOLDER), src: ['**/*'] },
-          ]).finalize();
-
+          archive.glob('**/*', {cwd: path.join(BUILD_FOLDER)}).finalize();
         } else {
           // No download required -- skip this step
           callback();
@@ -331,7 +327,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
       archive.on('error', callback);
       output.on('close', callback);
       archive.pipe(output);
-      archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
+      archive.glob('**/*', {cwd: exportDir}).finalize();
     }
   ],
   function onDone(asyncError) {

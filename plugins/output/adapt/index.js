@@ -23,6 +23,7 @@ var origin = require('../../../'),
     helpers = require('../../../lib/helpers'),
     exec = require('child_process').exec,
     semver = require('semver'),
+    helpers = require('../../../lib/helpers'),
     installHelpers = require('../../../lib/installHelpers'),
     logger = require('../../../lib/logger');
 

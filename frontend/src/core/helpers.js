@@ -112,7 +112,7 @@ define(function(require){
     },
 
     bytesToSize: function(bytes) {
-      if (bytes == 0) return '0 B';
+      if (bytes === 0) return '0 B';
 
       var k = 1000;
       var sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -176,7 +176,7 @@ define(function(require){
     },
 
     ifImageIsCourseAsset: function(url, block) {
-      var isCourseAsset = url.length !== 0 && url.indexOf('course/assets') == 0;
+      var isCourseAsset = url.length !== 0 && url.indexOf('course/assets') === 0;
       return isCourseAsset ? block.fn(this) : block.inverse(this);
     },
 

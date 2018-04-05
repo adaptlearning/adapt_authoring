@@ -31,15 +31,14 @@ define(function(require) {
   });
 
   function renderContentObjectEdit(data) {
-    Helpers.setPageTitle(data.model, true);
+    Helpers.setPageTitle(data.model);
     var form = Origin.scaffold.buildForm({ model: data.model });
     Origin.sidebar.addView(new EditorPageEditSidebarView({ form: form }).$el);
     Origin.contentPane.setView(EditorPageEditView, { model: data.model, form: form });
   }
 
   function renderPageStructure(data) {
-    var pageModel = Origin.editor.data.contentObjects.findWhere({ _id: data.id });
-    Helpers.setPageTitle(pageModel);
+    Helpers.setPageTitle(data.model);
 
     Origin.sidebar.addView(new EditorPageSidebarView().$el, {
       "backButtonText": Origin.l10n.t('app.backtomenu'),

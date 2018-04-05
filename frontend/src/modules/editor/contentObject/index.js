@@ -53,7 +53,7 @@ define(function(require) {
   }
 
   function renderMenuStructure(data) {
-    Helpers.setPageTitle(Origin.editor.data.course, true);
+    Helpers.setPageTitle(Origin.editor.data.course);
 
     Origin.editor.scrollTo = 0;
 

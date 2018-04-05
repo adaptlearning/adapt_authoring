@@ -50,7 +50,6 @@ define(function(require) {
   }
 
   function getTitleForModel(data) {
-    var type = getType();
     var modelTitle = data.model.title || data.model.get && data.model.get('title');
     return modelTitle || data.langString;
   }

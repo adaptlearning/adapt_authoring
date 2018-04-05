@@ -1,19 +1,27 @@
 define(function(require) {
   var Origin = require('core/origin');
 
+  var ContentObjectModel = require('core/models/contentObjectModel');
+  var ArticleModel = require('core/models/articleModel');
+  var BlockModel = require('core/models/blockModel');
+  var ComponentModel = require('core/models/componentModel');
+
   var Helpers = {
     /**
     * set the page title based on location
     * accepts backbone model, or object like so { title: '' }
     */
     setPageTitle: function(model) {
-      var data = {
-        model: model || {},
-        langString: Origin.l10n.t('app.' + getLangKey())
-      };
-      Origin.trigger('location:title:update', {
-        breadcrumbs: generateBreadcrumbs(data),
-        title: getTitleForModel(data)
+      getNearestPage(model, function(page) {
+        var data = {
+          model: model || {},
+          page: page,
+          langString: Origin.l10n.t('app.' + getLangKey())
+        };
+        Origin.trigger('location:title:update', {
+          breadcrumbs: generateBreadcrumbs(data),
+          title: getTitleForModel(data)
+        });
       });
     }
   }
@@ -39,10 +47,9 @@ define(function(require) {
       crumbs.push('course');
     }
     if(action === 'edit') {
-      var page = getNearestPage(data.model);
       crumbs.push({
         title: Origin.l10n.t('app.editorpage'),
-        url: '#/editor/' + page.get('_courseId') + '/page/' + page.get('_id')
+        url: '#/editor/' + data.page.get('_courseId') + '/page/' + data.page.get('_id')
       });
     }
     crumbs.push({ title: data.langString });
@@ -57,27 +64,30 @@ define(function(require) {
   function getLangKey() {
     var type = getType();
     var action = getAction();
-    
+
     if(type === 'page' && action === 'edit') {
       return 'editor' + type + 'settings';
     }
     return 'editor' + type;
   }
 
-  function getNearestPage(model) {
+  function getNearestPage(model, cb) {
     var map = {
-      'component': 'components',
-      'block': 'blocks',
-      'article': 'articles',
-      'page': 'contentObjects'
+      component: ComponentModel,
+      block: BlockModel,
+      article: ArticleModel,
+      page: ContentObjectModel
     };
     var mapKeys = Object.keys(map);
-    while(model.get('_type') !== 'page') {
-      var parentType = mapKeys[_.indexOf(mapKeys, model.get('_type')) + 1];
-      var parentCollection = Origin.editor.data[map[parentType]];
-      model = parentCollection.findWhere({ _id: model.get('_parentId') });
+    var _recurse = function(model) {
+      if(model.get('_type') === 'page') {
+        return cb(model);
+      }
+      var parentType = mapKeys[_.indexOf(mapKeys, model.get('_type'))+1];
+      (new map[parentType]({ _id: model.get('_parentId') })).fetch({ success: _recurse });
     }
-    return model;
+    // start recursion
+    _recurse(model);
   }
 
   return Helpers;

@@ -61,15 +61,16 @@ define(function(require) {
   });
 
   Origin.on('dashboard:loaded', function (options) {
-    if(options.type === 'shared') {
-      Origin.trigger('location:title:update', { breadcrumbs: ['dashboard'], title: Origin.l10n.t(langKey) });
-      Origin.contentPane.setView(ProjectsView, { collection: new SharedProjectCollection });
+    var isMine = options.type === 'all';
+    var isShared = options.type === 'shared';
+    if(!isMine && !isShared) {
       return;
     }
-    if(options.type === 'all') {
-      Origin.trigger('location:title:update', { breadcrumbs: ['dashboard'], title: Origin.l10n.t(langKey) });
-      Origin.contentPane.setView(ProjectsView, { collection: new MyProjectCollection });
-    }
+    var titleKey = (isMine) ? 'myprojects' : 'sharedprojects';
+    var Coll = (isMine) ? MyProjectCollection : SharedProjectCollection;
+    
+    Origin.trigger('location:title:update', { breadcrumbs: ['dashboard'], title: Origin.l10n.t('app.' + titleKey) });
+    Origin.contentPane.setView(ProjectsView, { collection: new Coll });
   });
 
   Origin.on('globalMenu:dashboard:open', function() {

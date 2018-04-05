@@ -57,12 +57,11 @@ define(function(require) {
   function getLangKey() {
     var type = getType();
     var action = getAction();
-    switch(type) {
-      case 'page':
-        if(action === 'edit') return 'editor'+type+'settings';
-      default:
-        return 'editor'+type;
+    
+    if(type === 'page' && action === 'edit') {
+      return 'editor' + type + 'settings';
     }
+    return 'editor' + type;
   }
 
   function getNearestPage(model) {

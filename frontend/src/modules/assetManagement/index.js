@@ -9,7 +9,7 @@ define(function(require) {
   var AssetModel = require('./models/assetModel');
   var TagsCollection = require('core/collections/tagsCollection');
 
-  Origin.on('app:dataReady login:changed', function() {
+  Origin.on('origin:dataReady login:changed', function() {
     Origin.globalMenu.addItem({
       "location": "global",
       "text": Origin.l10n.t('app.assetmanagement'),
@@ -24,51 +24,46 @@ define(function(require) {
   });
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
-    Origin.assetManagement = { filterData: {} };
-    if(!location) {
-      loadCollectionView();
-    }
-    else if(location === 'new') {
-      loadAssetView();
-    }
-    else if(subLocation === 'edit') {
-      loadAssetView(location);
-    }
+    Origin.assetManagement = {
+      filterData: {}
+    };
+    if(!location) return loadAssetsView();
+    if(location === 'new') return loadNewAssetView();
+    if(subLocation === 'edit') loadEditAssetView(location);
   });
 
-  function loadCollectionView() {
-    // Sidebar needs access to collection, so create now
-    new TagsCollection().fetch({
-      success: function(tags) {
+  function loadAssetsView() {
+    (new TagsCollection()).fetch({
+      success: function(tagsCollection) {
+        // Load asset collection before so sidebarView has access to it
+        var assetCollection = new AssetCollection();
+        // No need to fetch as the collectionView takes care of this
+        // Mainly due to serverside filtering
         Origin.trigger('location:title:hide');
-        Origin.sidebar.addView(new AssetManagementSidebarView({ collection: tags }).$el);
-        // Fetch is done in collectionView due to server-side filtering
-        Origin.contentPane.setView(AssetManagementView, { collection: new AssetCollection() });
+        Origin.sidebar.addView(new AssetManagementSidebarView({ collection: tagsCollection }).$el);
+        Origin.contentPane.setView(AssetManagementView, { collection: assetCollection });
         Origin.trigger('assetManagement:loaded');
       },
       error: function() {
-        Origin.Notify.alert({
-          type: 'error',
-          text: Origin.l10n.t('app.errorfetchingdata')
-        });
+        console.log('Error occured getting the tags collection - try refreshing your page');
       }
     });
   }
 
-  function loadAssetView(id) {
-    var isNew = id === undefined;
-    var model = new AssetModel(isNew ? {} : { _id: id });
+  function loadNewAssetView() {
+    Origin.trigger('location:title:update', { title: 'New Asset' });
+    Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
+    Origin.contentPane.setView(AssetManagementNewAssetView, { model: new AssetModel });
+  }
 
-    if(isNew) loadView();
-    else model.fetch({ success: loadView });
-
-    function loadView() {
-      Origin.trigger('location:title:update', { title: isNew ? Origin.l10n.t('app.newasset') : Origin.l10n.t('app.editasset') } );
-      Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el, {
-        "backButtonText": Origin.l10n.t('app.backtoassets'),
-        "backButtonRoute": "/#/assetManagement"
-      });
-      Origin.contentPane.setView(AssetManagementNewAssetView, { model: model });
-    };
+  function loadEditAssetView(location) {
+    // Fetch existing asset model
+    (new AssetModel({ _id: location })).fetch({
+      success: function(model) {
+        Origin.trigger('location:title:update', { title: 'Edit Asset' });
+        Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
+        Origin.contentPane.setView(AssetManagementNewAssetView, { model: model });
+      }
+    });
   }
 });

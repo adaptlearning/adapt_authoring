@@ -72,7 +72,7 @@ define(function(require) {
   }
 
   function getNearestPage(model, cb) {
-    if(model.get('_type') === 'course') {
+    if(!model.get('_type') || model.get('_type') === 'course') {
       return cb();
     }
     var map = {

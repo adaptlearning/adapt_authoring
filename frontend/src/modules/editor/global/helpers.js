@@ -72,6 +72,9 @@ define(function(require) {
   }
 
   function getNearestPage(model, cb) {
+    if(model.get('_type') === 'course') {
+      return cb();
+    }
     var map = {
       component: ComponentModel,
       block: BlockModel,

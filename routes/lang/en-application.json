@@ -317,5 +317,5 @@
   "app.errorloadconfig": "Failed to load configuration settings for %{course}",
   "app.reset": "Reset",
   "app.titlelock": "Link with title",
-  "app.titleunlock": "Unlink with title"
+  "app.titleunlock": "Unlink from title"
 }

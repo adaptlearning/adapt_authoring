@@ -23,6 +23,7 @@ var origin = require('../../../'),
     assetmanager = require('../../../lib/assetmanager'),
     exec = require('child_process').exec,
     semver = require('semver'),
+    helpers = require('../../../lib/helpers'),
     installHelpers = require('../../../lib/installHelpers'),
     logger = require('../../../lib/logger');
 
@@ -131,18 +132,91 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
               }
               return callback(error);
             }
-            if (stdout.length > 0) {
-              logger.log('info', `stdout: ${stdout}`);
-              app.emit('previewCreated', tenantId, courseId, outputFolder);
-            }
-            self.clearBuildFlag(path.join(BUILD_FOLDER, Constants.Filenames.Rebuild), callback);
-          });
+
+            args.push('--outputdir=' + outputFolder);
+            args.push('--theme=' + themeName);
+            args.push('--menu=' + menuName);
+
+            logger.log('info', '3.2. Using theme: ' + themeName);
+            logger.log('info', '3.3. Using menu: ' + menuName);
+
+            var generateSourcemap = outputJson.config._generateSourcemap;
+            var buildMode = generateSourcemap === true ? 'dev' : 'prod';
+
+            logger.log('info', 'grunt server-build:' + buildMode + ' ' + args.join(' '));
+
+            child = exec('grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
+                      function(error, stdout, stderr) {
+                        if (error !== null) {
+                          logger.log('error', 'exec error: ' + error);
+                          logger.log('error', 'stdout error: ' + stdout);
+                          resultObject.success = true;
+                          return callback(error, 'Error building framework');
+                        }
+
+                        if (stdout.length != 0) {
+                          logger.log('info', 'stdout: ' + stdout);
+                          resultObject.success = true;
+
+                          // Indicate that the course has built successfully
+                          app.emit('previewCreated', tenantId, courseId, outputFolder);
+
+                          return callback(null, 'Framework built OK');
+                        }
+
+                        if (stderr.length != 0) {
+                          logger.log('error', 'stderr: ' + stderr);
+                          resultObject.success = false;
+                          return callback(stderr, 'Error (stderr) building framework!');
+                        }
+
+                        resultObject.success = true;
+                        return callback(null, 'Framework built');
+                      });
+          } else {
+            resultObject.success = true;
+            callback(null, 'Framework already built, nothing to do')
+          }
         });
-      });
-    },
-    function zipPackage(callback) {
-      if (mode !== Constants.Modes.publish) { // no download required, skip
-        return callback();
+      },
+      function(callback) {
+        self.clearBuildFlag(path.join(BUILD_FOLDER, Constants.Filenames.Rebuild), function(err) {
+          callback(null);
+        });
+      },
+      function(callback) {
+        if (mode === Constants.Modes.publish) {
+          // Now zip the build package
+          var filename = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Filenames.Download);
+          var zipName = helpers.slugify(outputJson['course'].title);
+          var output = fs.createWriteStream(filename),
+            archive = archiver('zip');
+
+          output.on('close', function() {
+            resultObject.filename = filename;
+            resultObject.zipName = zipName;
+
+            // Indicate that the zip file is ready for download
+            app.emit('zipCreated', tenantId, courseId, filename, zipName);
+
+            callback();
+          });
+          archive.on('error', function(err) {
+            logger.log('error', err);
+            callback(err);
+          });
+
+          archive.pipe(output);
+          archive.glob('**/*', {cwd: path.join(BUILD_FOLDER)}).finalize();
+        } else {
+          // No download required -- skip this step
+          callback();
+        }
+      }
+    ], function(err) {
+      if (err) {
+        logger.log('error', err);
+        return next(err);
       }
       // Now zip the build package
       var filename = path.join(COURSE_FOLDER, Constants.Filenames.Download);
@@ -172,14 +246,11 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
 AdaptOutput.prototype.export = function (courseId, request, response, next) {
   var self = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
-  var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
+  var userId = usermanager.getCurrentUser()._id;
 
   var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
   var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
-
-  // set in getCourseName
-  var exportName;
-  var exportDir;
+  var exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, userId);
 
   var mode = Constants.Modes.export;
 
@@ -187,27 +258,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
     function publishCourse(callback) {
       self.publish(courseId, mode, request, response, callback);
     },
-    function getCourseName(results, callback) {
-      database.getDatabase(function (error, db) {
-        if (error) {
-          return callback(err);
-        }
-
-        db.retrieve('course', { _id: courseId }, { jsonOnly: true }, function (error, results) {
-          if (error) {
-            return callback(error);
-          }
-          if(!results || results.length > 1) {
-            return callback(new Error('Unexpected results returned for course ' + courseId + ' (' + results.length + ')', self));
-          }
-
-          exportName = self.slugify(results[0].title) + '-export-' + timestamp;
-          exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, exportName);
-          callback();
-        });
-      });
-    },
-    function copyFiles(callback) {
+    function copyFiles(results, callback) {
       self.generateIncludesForCourse(courseId, function(error, includes) {
         if(error) {
           return callback(error);
@@ -253,20 +304,21 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
     },
     function zipFiles(callback) {
       var archive = archiver('zip');
-      var output = fs.createWriteStream(exportDir +  '.zip');
-
+      var zipPath = exportDir +  '.zip';
+      var output = fs.createWriteStream(zipPath);
       archive.on('error', callback);
       output.on('close', callback);
       archive.pipe(output);
-      archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
-    },
-    function cleanUp(callback) {
-      fse.remove(exportDir, function (error) {
-        callback(error, { zipName: exportName + '.zip' });
-      });
+      archive.glob('**/*', {cwd: exportDir}).finalize();
     }
   ],
-  next);
+  function onDone(asyncError) {
+    // remove the exportDir, if there is one
+    fse.remove(exportDir, function(removeError) {
+      // async error more important
+      next(asyncError || removeError);
+    });
+  });
 };
 
 /**

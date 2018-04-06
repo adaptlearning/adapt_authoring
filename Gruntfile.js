@@ -31,7 +31,7 @@ module.exports = function(grunt) {
           {
             expand: true,
             flatten: true,
-            src: ['frontend/src/core/libraries/ace/**/*'],
+            src: ['frontend/src/libraries/ace/*'],
             dest: 'frontend/build/js/ace'
           }
         ]
@@ -260,23 +260,21 @@ module.exports = function(grunt) {
 
   // Compiles frontend plugins
   grunt.registerMultiTask('requireBundle', 'Generates a .js file with a bunch of imports for the path files', function() {
-    var requirePaths = '';
+    var modulePaths = '';
     // Go through each subfolder in the plugins directory
     var foldersArray = grunt.file.expand({ filter: "isDirectory" }, this.data.src);
     // Check if any plugins are available
     if (foldersArray.length === 0) {
-      requirePaths += "'";
+      modulePaths += "'";
     }
     foldersArray.forEach(function(path, index, folders) {
       // Strip off front of path to make relative path to config file
       var relativePath = path.replace(grunt.config.get('requirejs').dev.options.baseUrl, '').slice(1);
       var splitter = "','";
       if (index === folders.length - 1) splitter = "'";
-      requirePaths += relativePath + '/index' + splitter;
+      modulePaths += relativePath + '/index' + splitter;
     });
-
-    var defineStatement = "define('" + this.target + "',['" + requirePaths +"]);";
-    grunt.file.write(this.data.dest, defineStatement);
+    grunt.file.write(this.data.dest, "define(['" + modulePaths +"], function() {});");
   });
 
   grunt.registerMultiTask('less', 'Compile Less files to CSS', function() {

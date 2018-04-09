@@ -8,20 +8,20 @@ define([
         defaults: {
             // colors from https://material.io/guidelines/style/color.html#color-color-palette
             colors: [
-                "grey-700",
-                "grey-400",
-                "red-700",
-                "red-200",
-                "purple-700",
-                "purple-200",
-                "blue-700",
-                "blue-200",
-                "green-700",
-                "green-200",
-                "orange-700",
-                "orange-200",
-                "brown-700",
-                "brown-200"
+                "colorlabel-1",
+                "colorlabel-2",
+                "colorlabel-3",
+                "colorlabel-4",
+                "colorlabel-5",
+                "colorlabel-6",
+                "colorlabel-7",
+                "colorlabel-8",
+                "colorlabel-9",
+                "colorlabel-10",
+                "colorlabel-11",
+                "colorlabel-12",
+                "colorlabel-13",
+                "colorlabel-14"
             ]
         }
     });

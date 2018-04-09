@@ -160,7 +160,7 @@ define(function(require){
       // success
         var form = document.createElement('form');
         this.$el.append(form);
-        form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
+        form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
         form.submit();
       }, this)).fail(_.bind(function(jqXHR, textStatus, errorThrown) {
       // failure

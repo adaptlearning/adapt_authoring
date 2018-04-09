@@ -80,6 +80,27 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         default: 27017
       },
       {
+        name: 'dbUser',
+        type: 'string',
+        description: 'Database server user',
+        pattern: installHelpers.inputHelpers.alphanumValidator,
+        default: ''
+      },
+      {
+        name: 'dbPass',
+        type: 'string',
+        description: 'Database server password',
+        pattern: installHelpers.inputHelpers.alphanumValidator,
+        default: ''
+      },
+      {
+        name: 'dbAuthSource',
+        type: 'string',
+        description: 'Database server authentication database',
+        pattern: installHelpers.inputHelpers.alphanumValidator,
+        default: 'admin'
+      },
+      {
         name: 'dataRoot',
         type: 'string',
         description: 'Data directory path',
@@ -128,7 +149,28 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
           before: installHelpers.inputHelpers.toBoolean,
           default: 'N'
         },
+        confirmConnectionUrl: {
+          name: 'useSmtpConnectionUrl',
+          type: 'string',
+          description: "Will you use a URL to connect to your smtp Server y/N",
+          before: installHelpers.inputHelpers.toBoolean,
+          default: 'N'
+        },
         configure: [
+          {
+            name: 'fromAddress',
+            type: 'string',
+            description: "Sender email address",
+            default: '',
+          },
+          {
+            name: 'rootUrl',
+            type: 'string',
+            description: "The url this install will be accessible from",
+            default: '' // set using default server options
+          }
+        ],
+        configureService: [
           {
             name: 'smtpService',
             type: 'string',
@@ -149,18 +191,14 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
             replace: installHelpers.inputHelpers.passwordReplace,
             default: '',
             before: installHelpers.inputHelpers.passwordBefore
-          },
+          }
+        ],
+        configureConnectionUrl: [
           {
-            name: 'fromAddress',
+            name: 'smtpConnectionUrl',
             type: 'string',
-            description: "Sender email address",
-            default: '',
-          },
-          {
-            name: 'rootUrl',
-            type: 'string',
-            description: "The url this install will be accessible from",
-            default: '' // set using default server options
+            description: "Custom connection URL: smtps://user%40gmail.com:pass@smtp.gmail.com/?pool=true",
+            default: 'none',
           }
         ]
       }
@@ -218,6 +256,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
   }
   console.log('');
   if(!fs.existsSync('conf/config.json')) {
+    fs.ensureDirSync('conf');
     return start();
   }
   console.log('Found an existing config.json file. Do you want to use the values in this file during install?');
@@ -231,7 +270,7 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
 function generatePromptOverrides() {
   if(USE_CONFIG) {
     var configJson = require('./conf/config.json');
-    var configData = JSON.parse(JSON.stringify(configJson).replace('true', '"y"').replace('false', '"n"'));
+    var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
     configData.install = 'y';
   }
   // NOTE config.json < cmd args
@@ -290,23 +329,34 @@ function configureFeatures(callback) {
   async.series([
     function ffmpeg(cb) {
       installHelpers.getInput(inputData.features.ffmpeg, function(result) {
-        addConfig(configResults);
+        addConfig(result);
         cb();
       });
     },
     function smtp(cb) {
       installHelpers.getInput(inputData.features.smtp.confirm, function(result) {
+        addConfig(result);
         if(!result.useSmtp || USE_CONFIG && configResults.useSmtp !== 'y') {
           return cb();
         }
-        for(var i = 0, count = inputData.features.smtp.configure.length; i < count; i++) {
-          if(inputData.features.smtp.configure[i].name === 'rootUrl') {
-            inputData.features.smtp.configure[i].default = `http://${configResults.serverName}:${configResults.serverPort}`;
+        // prompt user if custom connection url or well-known-service should be used
+        installHelpers.getInput(inputData.features.smtp.confirmConnectionUrl, function(result) {
+          addConfig(result);
+          var smtpConfig;
+          if (result.useSmtpConnectionUrl === true) {
+            smtpConfig = inputData.features.smtp.configure.concat(inputData.features.smtp.configureConnectionUrl);
+          } else {
+            smtpConfig = inputData.features.smtp.configure.concat(inputData.features.smtp.configureService);
           }
-        }
-        installHelpers.getInput(inputData.features.smtp.configure, function(result) {
-          addConfig(configResults);
-          cb();
+          for(var i = 0, count = smtpConfig.length; i < count; i++) {
+            if(smtpConfig[i].name === 'rootUrl') {
+              smtpConfig[i].default = `http://${configResults.serverName}:${configResults.serverPort}`;
+            }
+          }
+          installHelpers.getInput(smtpConfig, function(result) {
+            addConfig(result);
+            cb();
+          });
         });
       });
     }
@@ -336,6 +386,15 @@ function configureMasterTenant(callback) {
       if(error) {
         return callback(error);
       }
+      if(USE_CONFIG && prompt.override.masterTenantName) {
+        /**
+        * remove the masterTenantDisplayName, as we can use the existing value
+        * (which isn't in config.json so can't be used as an auto override)
+        */
+        inputData.tenant = _.filter(inputData.tenant, function(item) {
+          return item.name !== 'masterTenantDisplayName';
+        });
+      }
       installHelpers.getInput(inputData.tenant, function(result) {
         console.log('');
         // add the input to our cached config
@@ -355,6 +414,9 @@ function configureMasterTenant(callback) {
           }
           if(!IS_INTERACTIVE) {
             return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
+          }
+          if(!configResults.masterTenant.displayName) {
+            configResults.masterTenant.displayName = tenant.displayName;
           }
           console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
           installHelpers.getInput(inputData.tenantDelete, function(result) {
@@ -391,7 +453,9 @@ function createMasterTenant(callback) {
     }
     console.log('Master tenant created successfully.');
     masterTenant = tenant;
-    saveConfig(app.configuration.getConfig(), callback);
+    delete configResults.masterTenant;
+    addConfig(app.configuration.getConfig());
+    saveConfig(configResults, callback);
   });
 }
 

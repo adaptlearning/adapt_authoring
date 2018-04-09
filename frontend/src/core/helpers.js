@@ -112,7 +112,7 @@ define(function(require){
     },
 
     bytesToSize: function(bytes) {
-      if (bytes == 0) return '0 B';
+      if (bytes === 0) return '0 B';
 
       var k = 1000;
       var sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -132,18 +132,18 @@ define(function(require){
       return new Handlebars.SafeString(html);
     },
 
-    pickCSV: function (list, key, separator) {
-      var vals = [];
-      separator = (separator && separator.length) ? separator : ',';
-      if (list && list.length) {
-        return vals.join(separator);
+    pickCSV: function(list, key, separator) {
+      if (!list || !list.length) {
+        return '';
       }
-      for (var i = 0; i < list.length; ++i) {
-        if (key && list[i][key]) {
-          vals.push(list[i][key]);
-        } else {
-          vals.push(list[i]);
-        }
+      if (!separator || !separator.length) {
+        separator = ',';
+      }
+      var vals = [];
+      for (var i = 0, l = list.length; i < l; i++) {
+        var val = list[i];
+        var nestedVal = key && val[key];
+        vals.push(nestedVal || val);
       }
       return vals.join(separator);
     },
@@ -176,7 +176,7 @@ define(function(require){
     },
 
     ifImageIsCourseAsset: function(url, block) {
-      var isCourseAsset = url.length !== 0 && url.indexOf('course/assets') == 0;
+      var isCourseAsset = url.length !== 0 && url.indexOf('course/assets') === 0;
       return isCourseAsset ? block.fn(this) : block.inverse(this);
     },
 

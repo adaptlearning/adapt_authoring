@@ -15,7 +15,7 @@ define(function(require){
       'click .component-delete': 'deleteComponentPrompt',
       'click .component-move': 'evaluateMove',
       'click .open-context-component': 'openContextMenu',
-      'dblclick': 'loadComponentEdit'
+      'dblclick .component-detail-inner': 'loadComponentEdit'
     }),
 
     preRender: function() {

@@ -5,22 +5,36 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
+    max-width: 640px;
 
     background: @adapt-white;
     border: solid 1px @popup-border-color;
     box-shadow: 0 0 4px @popup-border-color;
 
     .colorlabel-inner {
-        padding: 60px 40px;
+        padding: 20px;
+
+        .colorlabel-header {
+            .title {
+                font-size: 17px;
+                font-weight: 700;
+                line-height: 20px;
+                padding: 0 4px;
+            }
+            .intro {
+                padding: 20px 4px;
+            }
+        }
+
     }
 
     .colors {
         .colors-inner {
-
             padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
 
             .color-item {
-                float: left;
                 font-size: 0;
                 border: solid 4px @adapt-white;
                 width: 30px;

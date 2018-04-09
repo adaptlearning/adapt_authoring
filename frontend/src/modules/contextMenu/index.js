@@ -82,7 +82,7 @@ define(function(require) {
         callbackEvent: "delete"
       },
       {
-        title: 'Color Label',
+        title: Origin.l10n.t('app.colourLabel'),
         className: 'context-menu-item',
         callbackEvent: "colorLabel"
       }

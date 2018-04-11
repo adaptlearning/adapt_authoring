@@ -5,25 +5,29 @@ var helpers = require('./../../migrations/helpers/helper');
 var configuration = require('./../../lib/configuration');
 
 exports.up = function up (done) {
-  database.getDatabase(function(err, db) {
-    if(err){
-      done(err)
-    }
+  helpers.start(function() {
+    database.getDatabase(function(err, db) {
+      if (err) {
+        done(err)
+      }
 
-    //DO up migration here
+      //DO up migration here
 
-    return done()
-  }, configuration.getConfig('masterTenantID'))
+      return done()
+    }, configuration.getConfig('masterTenantID'))
+  })
 };
 
 exports.down = function down(done) {
-  database.getDatabase(function(err, db) {
-    if(err){
-      done(err)
-    }
+  helpers.start(function() {
+    database.getDatabase(function(err, db) {
+      if (err) {
+        done(err)
+      }
 
-    //DO down migration here
+      //DO down migration here
 
-    return done()
-  }, configuration.getConfig('masterTenantID'))
+      return done()
+    }, configuration.getConfig('masterTenantID'))
+  });
 };

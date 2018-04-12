@@ -14,7 +14,7 @@ define(function(require){
       'click .add-block': 'addBlock',
       'click .article-delete': 'deleteArticlePrompt',
       'click .open-context-article': 'openContextMenu',
-      'dblclick .editor-page-element-detail-inner': 'loadArticleEdit',
+      'dblclick .editor-page-element-detail-inner,.article-blocks': 'loadArticleEdit',
       'click .editor-collapse-article': 'toggleCollapseArticle'
     }),
 

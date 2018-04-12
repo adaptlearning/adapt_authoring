@@ -35,9 +35,13 @@ define(function(require) {
                 // only include settings for used menus
                 var appliedMenus = [ configModel.get('_menu') ]; // FIXME we only support one menu right now...
                 _.each(schema.menuSettings.properties, function(value, key) {
-                    if (!_.contains(appliedMenus, value.name)) {
+                    if (_.contains(appliedMenus, value.name)) {
                         delete schema.menuSettings.properties[key];
+                        return;
                     }
+                    // give the fieldset the title of the menu
+                    var menuName = Origin.editor.data.menutypes.findWhere({ name: value.name }).get('displayName');
+                    schema.menuSettings.properties[key].title = menuName;
                 });
                 if(_.isEmpty(schema.menuSettings.properties)) {
                     delete schema.menuSettings;
@@ -49,7 +53,11 @@ define(function(require) {
                 _.each(schema.themeSettings.properties, function(value, key) {
                     if (!_.contains(appliedThemes, value.name)) {
                         delete schema.themeSettings.properties[key];
+                        return;
                     }
+                    // give the fieldset the title of the theme
+                    var themeName = Origin.editor.data.themetypes.findWhere({ name: value.name }).get('displayName');
+                    schema.themeSettings.properties[key].title = themeName;
                 });
                 if(_.isEmpty(schema.themeSettings.properties)) {
                     delete schema.themeSettings;

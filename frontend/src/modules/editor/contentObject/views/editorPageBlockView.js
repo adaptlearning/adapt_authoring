@@ -21,7 +21,7 @@ define(function(require){
       'click .block-delete': 'deleteBlockPrompt',
       'click .add-component': 'showComponentList',
       'click .open-context-block': 'openContextMenu',
-      'dblclick .editor-page-element-detail-inner,.block-inner': 'loadBlockEdit',
+      'dblclick': 'loadBlockEdit',
       'transitionend': 'onTransitionEnd'
     }),
 

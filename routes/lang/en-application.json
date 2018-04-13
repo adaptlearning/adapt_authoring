@@ -286,7 +286,7 @@
   "app.importing": "Importing...",
   "app.importerrortitle": "Course import failed",
   "app.importcoursesuccess": "Course imported successfully!",
-  "app.frameworkimportmenu": "Course Import",
+  "app.importproject": "Import course",
   "app.frameworkimporttitle": "Import Framework Course",
   "app.importframeworkinstruction": "Select a framework zip for import. Tags will be added to the course and all new assets.",
 	"app.importassetfoldersinstruction": "Enter the names of folders that contain assets. If there are multiple folders enter a comma seperated list. Automatically checks for the following folders if no value is entered: assets, images, video, audio.",

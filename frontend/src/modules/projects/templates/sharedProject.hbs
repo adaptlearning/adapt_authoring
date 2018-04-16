@@ -8,10 +8,10 @@
             <a href="#" class="open-context-icon open-context-course"><i class="fa fa-cog fa-fw"></i></a>
           </div>
         </div>
-        
+
       </div>
     </div>
-    
+
     {{#if heroImage}}
     <div class="project-image" style="background-image: url({{heroImageURI}});">
     </div>
@@ -28,7 +28,7 @@
 
         <div class="project-details-last-updated project-details-row">
           <div class="projects-details-label">{{t 'app.recent'}}</div>
-          <div class="projects-details-value">{{formatDate updatedAt}}</div>
+          <div class="projects-details-value">{{momentFormat updatedAt "Do MMMM YYYY"}}</div>
         </div>
         {{#if tags.length}}
         <div class="project-details-tags project-details-row tags">

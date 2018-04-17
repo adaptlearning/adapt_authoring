@@ -74,71 +74,20 @@ function ImportSource(req, done) {
     */
     async.series([
       function asyncUnzip(cb) {
-        // socket unzipping files
         helpers.unzip(files.file.path, COURSE_ROOT_FOLDER, function(error) {
-          if(error) return cb(error);
-          // socket files unzipped
-          var zipPath = files.file.path;
-          cleanupDirs.push(zipPath,COURSE_ROOT_FOLDER);
+          if(error) return cb(error)
+          cleanupDirs.push(files.file.path, COURSE_ROOT_FOLDER);
           cb();
         });
       },
-      function findLanguages(cb) {
-        // socket import setup
-        var courseLangs = [];
-        fs.readdir(COURSE_JSON_PATH, function (error, files) {
-            if (error) {
-              return cb(new Error(app.polyglot.t('app.importinvalidpackage')));
-            }
-            files.map(function (file) {
-              return path.join(COURSE_JSON_PATH, file);
-            }).filter(function (file) {
-              return fs.statSync(file).isDirectory();
-            }).forEach(function (file) {
-              courseLangs.push(path.basename(file));
-            });
-            COURSE_LANG = courseLangs[0] ? courseLangs[0] : 'en';
-            cb();
-        });
-      },
-      function asyncValidate(cb) {
-        // socket validating package
-        validateCoursePackage(cleanFormAssetDirs, function(error) {
-          if(error) return cb(error);
-          // socket package passed validation
-          cb();
-        });
-      },
-      function asyncInstallPlugins(cb) {
-        // socket installing custom plugins
-        installPlugins(function(error) {
-          if(error) return cb(error);
-          // socket custom plugins installed
-          cb();
-        });
-      },
-      function asyncAddAssets(cb) {
-        // socket importing assets
-        addAssets(formTags, function(error) {
-          if(error) return cb(error);
-          // socket assets imported
-          cb();
-        });
-      },
-      function asyncCacheMetadata(cb) {
-        cacheMetadata(cb);
-      },
-      function asyncImportContent(cb) {
-        // socket importing course content
-        importContent(formTags, function(error) {
-          if(error) return cb(error);
-          // socket course content imported successfully
-          cb();
-        });
-      },
-      function cleanUpTasks(cb) {
-        helpers.cleanUpImport(cleanupDirs, cb);
-      }
+      async.apply(findLanguages),
+      async.apply(validateCoursePackage, cleanFormAssetDirs),
+      async.apply(installPlugins),
+      async.apply(addAssets, formTags),
+      async.apply(cacheMetadata),
+      async.apply(importContent, formTags),
+      async.apply(transformContent),
+      async.apply(helpers.cleanUpImport, cleanupDirs)
     ], done);
   });
 

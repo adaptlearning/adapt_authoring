@@ -221,7 +221,6 @@ define([
 
           // all ScaffoldAssetViews listen to the autofill event, so we trigger
           // that rather than call code directly
-          // FIXME only works with graphic components
           if (data._shouldAutofill) {
             Origin.trigger('scaffold:assets:autofill', courseAssetObject, data.assetLink);
             return;

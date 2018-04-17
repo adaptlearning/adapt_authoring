@@ -37,7 +37,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
 
     setValue: function(value) {
       if (this.mode === 'json') {
-        value = value ? JSON.stringify(value, null, '\t') : '{}';
+        value = JSON.stringify(value, null, '\t');
       }
 
       this.editor.setValue(value);
@@ -46,11 +46,15 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     getValue: function() {
       var value = this.editor.getValue();
 
-      if (this.mode === 'json' && !this.isSyntaxError()) {
-        return value ? JSON.parse(value) : {};
+      if (this.mode !== 'json') {
+        return value;
       }
 
-      return value;
+      try {
+        return JSON.parse(value);
+      } catch(e) {
+        return value;
+      }
     },
 
     validate: function() {

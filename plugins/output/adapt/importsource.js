@@ -92,6 +92,24 @@ function ImportSource(req, done) {
   });
 
 
+  function findLanguages(cb) {
+    var courseLangs = [];
+    fs.readdir(COURSE_JSON_PATH, function (error, files) {
+      if (error) {
+        return cb(new Error(app.polyglot.t('app.importinvalidpackage')));
+      }
+      files.map(function (file) {
+        return path.join(COURSE_JSON_PATH, file);
+      }).filter(function (file) {
+        return fs.statSync(file).isDirectory();
+      }).forEach(function (file) {
+        courseLangs.push(path.basename(file));
+      });
+      COURSE_LANG = courseLangs[0] ? courseLangs[0] : 'en';
+      cb();
+    });
+  }
+
   /**
   * Checks course for any potential incompatibilities
   */

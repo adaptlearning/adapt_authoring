@@ -310,7 +310,7 @@ function generateLatestBuild(courseBuilt) {
 function copyFrameworkFiles(results, filesCopied) {
   self.generateIncludesForCourse(courseId, function(error, includes) {
     if(error) {
-      return includesGenerated(error);
+      return filesCopied(error);
     }
     // create list of includes
     for(var i = 0, count = includes.length; i < count; i++)

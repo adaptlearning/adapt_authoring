@@ -86,7 +86,6 @@ function ImportSource(req, done) {
       async.apply(addAssets, formTags),
       async.apply(cacheMetadata),
       async.apply(importContent, formTags),
-      async.apply(transformContent),
       async.apply(helpers.cleanUpImport, cleanupDirs)
     ], done);
   });

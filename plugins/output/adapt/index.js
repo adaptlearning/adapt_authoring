@@ -344,32 +344,32 @@ function getPackageData(frameworkDir, gotPackageJson) {
 function getCourseMetdata(courseId, metadata, gotCourseMetadata) {
   database.getDatabase(function(error, db) {
     if (error) {
-      return callback(error);
+      return gotCourseMetadata(error);
     }
     // coursedata structure
     var coursedata = {
       course: {},
       courseTagMap: []
     };
-
     async.each(Object.keys(Constants.CourseCollections), function iterator(collectionType, doneIterator) {
       var criteria = collectionType === 'course' ? { _id: courseId } : { _courseId: courseId };
-      db.retrieve(collectionType, criteria, {operators: { sort: { _sortOrder: 1}}}, function dbRetrieved(error, results) {
+      var opts = { operators: { sort: { _sortOrder: 1} } };
+      db.retrieve(collectionType, criteria, opts, function dbRetrieved(error, results) {
         if (error) {
-          gotCourseMetadata(doneIterator);
+          return gotCourseMetadata(doneIterator);
         }
         // only store the _doc values
         var toSave = _.pluck(results,'_doc');
         // store data, remove blacklisted properties
-        _.each(toSave, function(item, index) { toSave[index] = _.omit(item, blacklistedProps); });
+        _.each(toSave, function(item, index) {
+          toSave[index] = _.omit(item, blacklistedProps);
+        });
         coursedata.course[collectionType] = toSave;
         // move tag so tag list can be generated later
         _.each(toSave, function(item, index) {
-          if (item.tags) {
-            _.each(item.tags, function(tagId) {
-              coursedata.courseTagMap.push(tagId);
-            })
-          }
+          _.each(item.tags, function(tagId) {
+            coursedata.courseTagMap.push(tagId);
+          });
         });
         doneIterator();
       });
@@ -571,12 +571,7 @@ function copyFrameworkFiles(results, filesCopied) {
         // include everything else
         else return true;
       }
-    }, function doneCopy(error) {
-      if (error) {
-        return filesCopied(error);
-      }
-      filesCopied(null);
-    });
+    }, filesCopied);
   });
 };
 
@@ -587,9 +582,7 @@ function copyCustomPlugins(results, filesCopied) {
   _.each(metadata.pluginIncludes, function iterator(plugin) {
     var pluginDir = path.join(src, plugin.folder, plugin.name);
     fs.copy(pluginDir, path.join(dest, plugin.name), function(err) {
-      if (err) {
-        logger.log('error', err);
-      }
+      if (err) logger.log('error', err);
     });
   });
   filesCopied();

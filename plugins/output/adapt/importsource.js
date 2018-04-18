@@ -513,8 +513,8 @@ function ImportSource(req, done) {
     var componentPlugin;
     var extensionPlugins;
     var assetData = {
-      type: type,
       _courseId : contentData._courseId,
+      _contentType: type,
       _contentTypeParentId: contentData._parentId
     };
     // some courseassets values change depending on what content type they're for

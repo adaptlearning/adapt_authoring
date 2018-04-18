@@ -175,65 +175,60 @@ function ImportSource(req, done) {
     async.eachSeries(assetFolders, function iterator(assetDir, doneAssetFolder) {
       var assetDirPath = path.join(COURSE_JSON_PATH, COURSE_LANG, assetDir);
 
-      if (fs.existsSync(assetDirPath)) {
-        var assetsGlob = path.join(COURSE_JSON_PATH, COURSE_LANG, assetDir, '*');
-        var assetsJsonFilename = path.join(COURSE_JSON_PATH, COURSE_LANG, Constants.Filenames.Assets);
-
-        var assetsJson = {};
-
-        if (fs.existsSync(assetsJsonFilename)) {
-          assetsJson = fs.readJSONSync(assetsJsonFilename);
-        }
-
-        glob(assetsGlob, function (error, assets) {
-          if(error) {
-            return cb(error);
-          }
-          var repository = configuration.getConfig('filestorage') || 'localfs';
-          async.eachSeries(assets, function iterator(assetPath, doneAsset) {
-            if (error) {
-              return doneAsset(error);
-            }
-            var assetName = path.basename(assetPath);
-            var assetExt = path.extname(assetPath);
-            var assetId = path.basename(assetPath);
-            var fileStat = fs.statSync(assetPath);
-            var assetTitle = assetName;
-            var assetDescription = assetName;
-            var tags = assetTags.slice();
-
-            if (assetsJson[assetName]) {
-              assetTitle = assetsJson[assetName].title;
-              assetDescription = assetsJson[assetName].description;
-
-              assetsJson[assetName].tags.forEach(function(tag) {
-                tags.push(tag._id);
-              });
-            }
-
-            var fileMeta = {
-              oldId: assetId,
-              title: assetTitle,
-              type: mime.lookup(assetName),
-              size: fileStat["size"],
-              filename: assetName,
-              description: assetDescription,
-              path: assetPath,
-              tags: tags,
-              repository: repository,
-              createdBy: app.usermanager.getCurrentUser()._id
-            };
-
-            if(!fileMeta) {
-              return doneAsset(new helpers.ImportError('No metadata found for asset: ' + assetName));
-            }
-            helpers.importAsset(fileMeta, metadata, doneAsset);
-          }, doneAssetFolder);
-        });
-      } else {
+      if (!fs.existsSync(assetDirPath)) {
         logger.log('error', 'Framework import error. Cannot find folder: ' + assetDirPath);
-        doneAssetFolder();
+        return doneAssetFolder();
       }
+      var assetsGlob = path.join(COURSE_JSON_PATH, COURSE_LANG, assetDir, '*');
+      var assetsJsonFilename = path.join(COURSE_JSON_PATH, COURSE_LANG, Constants.Filenames.Assets);
+      var assetsJson = {};
+
+      if (fs.existsSync(assetsJsonFilename)) {
+        assetsJson = fs.readJSONSync(assetsJsonFilename);
+      }
+      glob(assetsGlob, function (error, assets) {
+        if(error) {
+          return cb(error);
+        }
+        var repository = configuration.getConfig('filestorage') || 'localfs';
+        async.eachSeries(assets, function iterator(assetPath, doneAsset) {
+          if (error) {
+            return doneAsset(error);
+          }
+          var assetName = path.basename(assetPath);
+          var assetExt = path.extname(assetPath);
+          var assetId = path.basename(assetPath);
+          var fileStat = fs.statSync(assetPath);
+          var assetTitle = assetName;
+          var assetDescription = assetName;
+          var tags = assetTags.slice();
+
+          if (assetsJson[assetName]) {
+            assetTitle = assetsJson[assetName].title;
+            assetDescription = assetsJson[assetName].description;
+
+            assetsJson[assetName].tags.forEach(function(tag) {
+              tags.push(tag._id);
+            });
+          }
+          var fileMeta = {
+            oldId: assetId,
+            title: assetTitle,
+            type: mime.lookup(assetName),
+            size: fileStat["size"],
+            filename: assetName,
+            description: assetDescription,
+            path: assetPath,
+            tags: tags,
+            repository: repository,
+            createdBy: app.usermanager.getCurrentUser()._id
+          };
+          if(!fileMeta) {
+            return doneAsset(new helpers.ImportError('No metadata found for asset: ' + assetName));
+          }
+          helpers.importAsset(fileMeta, metadata, doneAsset);
+        }, doneAssetFolder);
+      });
     }, done);
   }
 

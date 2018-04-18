@@ -138,28 +138,26 @@ function ImportSource(req, done) {
         }, cb);
       }],
       checkAssetFolders: ['checkContentJson', function(results, cb) {
-        if (cleanFormAssetDirs.length) {
-          var assetFolderError = false;
-          var missingFolders = [];
-          assetFolders = cleanFormAssetDirs;
-          for (index = 0; index < assetFolders.length; ++index) {
-            var assetFolderPath = path.join(COURSE_JSON_PATH , COURSE_LANG, assetFolders[index]);
-            if (!fs.existsSync(assetFolderPath)) {
-              assetFolderError = true;
-              missingFolders.push(assetFolders[index]);
-            }
-          }
-          // if a user input folder is missing log error and abort early
-          if (assetFolderError) {
-            var folderError = 'Cannot find asset folder/s ' + missingFolders.toString() + ' in framework import.';
-            return cb(folderError);
-          } else {
-            return cb();
-          }
-        } else {
+        if (!cleanFormAssetDirs.length) {
           assetFolders = Constants.Folders.ImportAssets;
           cb();
         }
+        var assetFolderError = false;
+        var missingFolders = [];
+        assetFolders = cleanFormAssetDirs;
+        for (index = 0; index < assetFolders.length; ++index) {
+          var assetFolderPath = path.join(COURSE_JSON_PATH , COURSE_LANG, assetFolders[index]);
+          if (!fs.existsSync(assetFolderPath)) {
+            assetFolderError = true;
+            missingFolders.push(assetFolders[index]);
+          }
+        }
+        // if a user input folder is missing log error and abort early
+        if (assetFolderError) {
+          var folderError = 'Cannot find asset folder/s ' + missingFolders.toString() + ' in framework import.';
+          return cb(folderError);
+        }
+        cb();
       }]
     }, function doneAuto(error, data) {
       done(error);

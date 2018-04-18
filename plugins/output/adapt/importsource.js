@@ -236,40 +236,34 @@ function ImportSource(req, done) {
   * Installs any custom plugins
   */
   function installPlugins(done) {
-    async.series([
-      function mapPluginIncludes(cb) {
-        async.each(plugindata.pluginTypes, function iterator(pluginType, doneMapIterator) {
+    async.each(plugindata.pluginTypes, function iterator(pluginType, doneMapIterator) {
+      var srcDir = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, pluginType.folder);
 
-          var srcDir = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, pluginType.folder);
-          if (fs.existsSync(srcDir)) {
-            fs.readdir(srcDir, function (err, files) {
-                if (err) {
-                  return done(err);
-                }
-                files.map(function (file) {
-                  return path.join(srcDir, file);
-                }).filter(function (file) {
-                  return fs.statSync(file).isDirectory();
-                }).forEach(function (file) {
-                  var thisPluginType = _.clone(pluginType);
-                  var data = _.extend(thisPluginType, { location: file });
-                  plugindata.pluginIncludes.push(data);
-                });
-                return doneMapIterator();
-            });
-          } else {
-            logger.log('info', 'No plugins found.');
-            doneMapIterator();
-          }
-        }, cb);
-      },
-      function importPlugins(cb) {
-        async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
-          helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
-        }, cb);
-      },
-    ], function(error, results) {
-      done(error);
+      if (!fs.existsSync(srcDir)) {
+        logger.log('info', 'No plugins found.');
+        return doneMapIterator();
+      }
+      fs.readdir(srcDir, function (err, files) {
+        if (err) {
+          return doneMapIterator(err);
+        }
+        files.map(function (file) {
+          return path.join(srcDir, file);
+        }).filter(function (file) {
+          return fs.statSync(file).isDirectory();
+        }).forEach(function (file) {
+          var data = _.extend(_.clone(pluginType), { location: file });
+          plugindata.pluginIncludes.push(data);
+        });
+        doneMapIterator();
+      });
+    }, function(err) {
+      if(err) {
+        return done(err);
+      }
+      async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
+        helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
+      }, done);
     });
   }
 

@@ -259,7 +259,7 @@ define(function(require){
       } else {
         title = Origin.l10n.t('app.collapsearticle');
       }
-      this.$('.editor-collapse-article').toggleClass('iscollapsed', isCollapsed).attr('title', title);
+      this.$('.editor-collapse-article').attr('title', title);
       Origin.editor.data._collapsedArticles[this.model.get('_id')] = isCollapsed;
       this.collapseArticle();
     },
@@ -275,28 +275,10 @@ define(function(require){
     },
 
     collapseArticle: function() {
-      var isCollapsed = this.model.get('_isCollapsed');
+      var shouldCollapse = this.model.get('_isCollapsed');
 
-      this.$el.toggleClass('collapsed-view', isCollapsed);
-      var height;
-      if (isCollapsed) {
-        height = this.$('.article-detail').height();
-      } else {
-        height = this.$('.add-control').height() + this.$('.article-blocks').height();
-      }
-
-      this.$el.css('overflow', 'hidden');
-      this.$el.velocity({height: height}, {
-        duration: 200,
-        complete: function() {
-          if (!isCollapsed) {
-            this.css({
-              'height': 'auto',
-              'overflow': 'auto'
-            });
-          }
-        }
-      })
+      this.$el.toggleClass('collapsed-view', shouldCollapse);
+      this.$('.article-content').velocity(shouldCollapse ? 'slideUp' : 'slideDown', 200);
     },
 
     onPaste: function(data) {

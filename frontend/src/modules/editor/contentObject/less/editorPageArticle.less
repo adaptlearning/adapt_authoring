@@ -2,13 +2,11 @@
     position: relative;
     border-radius: 3px;
     background-color: #F6FBFE;
-    border:1px solid #CEE4E2;
+    border: 1px solid #CEE4E2;
     margin-bottom: 20px;
     cursor: pointer;
 
     &-inner {
-        padding: 0px 0px 10px;
-
         .article-body {
             margin: 0 2%;
         }
@@ -25,21 +23,10 @@
 
     &-blocks {
         padding: 20px 2%;
-        transition: opacity 200ms ease-in-out;
     }
     
-    &.collapsed-view {
-        overflow: hidden;
-        
-        .article-blocks {
-            transition: opacity 200ms ease-in-out;
-            opacity: 0.5;
-        }
-    }
-
-    .editor-collapse-article {
-
-        &.iscollapsed {
+    &.collapsed-view {        
+        .editor-collapse-article {
             .fa::before {
                 content: "\f067";
             }

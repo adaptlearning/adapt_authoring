@@ -327,7 +327,6 @@ function generateMetadata(generatedMetadata) {
     if(error) {
       return generatedMetadata(error);
     }
-
     metadata = results;
     fs.writeJson(path.join(EXPORT_DIR, Constants.Filenames.Metadata), metadata, { spaces:0 }, generatedMetadata);
   });
@@ -393,7 +392,6 @@ function getAssetMetadata(courseId, metadata, gotAssetMetadata) {
       if(error) {
         return gotAssetMetadata(error);
       }
-
       async.each(results, function iterator(courseasset, doneIterator) {
         origin.assetmanager.retrieveAsset({ _id:courseasset._assetId }, function(error, matchedAssets) {
           if(error) {
@@ -424,7 +422,6 @@ function getAssetMetadata(courseId, metadata, gotAssetMetadata) {
               }
             });
           }
-
           // store the courseasset, omitting the blacklistedProps + _id
           var toOmit = blacklistedProps.concat([ "_id" ]);
           var courseassetData = _.omit(courseasset._doc, toOmit);
@@ -647,7 +644,7 @@ function zipExport(error) {
   output.on('close', cleanUpExport);
 
   archive.on('warning', function(err) {
-      logger.log('warn', err);
+    logger.log('warn', err);
   });
   archive.on('error', function(error){
     logger.log('error', error);

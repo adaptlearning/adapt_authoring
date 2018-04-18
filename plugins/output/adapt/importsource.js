@@ -510,76 +510,59 @@ function ImportSource(req, done) {
   */
   function createCourseAssets(type, contentData, cb) {
     var courseAssetsArray;
-    var assetData = {};
     var componentPlugin;
     var extensionPlugins;
-    // courseassets values change depending on what content type they are for
+    var assetData = {
+      type: type,
+      _courseId : contentData._courseId,
+      _contentTypeParentId: contentData._parentId
+    };
+    // some courseassets values change depending on what content type they're for
     switch(type) {
       case 'course':
-        assetData = {
-            _courseId : contentData._id,
-            _contentType : type,
-            _contentTypeId : contentData._id,
-            _contentTypeParentId: contentData._id
-        };
+        assetData._courseId = assetData._contentTypeId = assetData._contentTypeParentId = contentData._id;
         break;
       case 'article', 'block', 'config':
-        assetData = {
-            _courseId : contentData._courseId,
-            _contentType : type,
-            _contentTypeId : contentData._componentType,
-            _contentTypeParentId: contentData._parentId
-        };
+        assetData._contentTypeId = contentData._componentType;
         break;
       default:
-        assetData = {
-            _courseId : contentData._courseId,
-            _contentType : type,
-            _contentTypeId : contentData._id,
-            _contentTypeParentId: contentData._parentId
-        };
+        assetData._contentTypeId = contentData._id;
         break;
     }
-
     var contentDataString = JSON.stringify(contentData);
     var assetArray = contentDataString.match(PATH_REXEX);
-
     // search through object values for file paths
     async.each(assetArray, function(data, callback) {
       delete assetData._assetId;
-      if (!_.isString(data)) return callback();
-
+      if (!_.isString(data)) {
+        return callback();
+      }
       var assetBaseName = path.basename(data);
       // get asset _id from lookup of the key of metadata.assetNameMap mapped to assetBaseName
-      _.findKey(metadata.assetNameMap, function(value, key) {
-        if (value === assetBaseName) {
-          var assetId = key;
-          var search = {
-            _id: assetId
-          };
-          app.assetmanager.retrieveAsset(search, function gotAsset(error, results) {
-            if (error) {
-              logger.log('error', error);
+      _.findKey(metadata.assetNameMap, function(value, assetId) {
+        if (value !== assetBaseName) {
+          return;
+        }        
+        app.assetmanager.retrieveAsset({ _id: assetId }, function gotAsset(error, results) {
+          if (error) {
+            logger.log('error', error);
+          }
+          Object.assign(assetData, {
+            _assetId: assetId,
+            createdBy: app.usermanager.getCurrentUser(),
+            _fieldName: results.length > 0 ? _.pluck(results, 'filename') : assetBaseName
+          });
+          app.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
+            if(error) {
+              return cb(error);
             }
-
-            assetData._assetId = assetId;
-            assetData.createdBy = app.usermanager.getCurrentUser();
-
-            if (results.length > 0) {
-              assetData._fieldName = _.pluck(results, 'filename');
-            } else {
-              assetData._fieldName = assetBaseName;
-            }
-            app.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
-              if(error) return cb(error);
-              plugin.create(assetData, function(error, assetRecord) {
-                if(error) {
-                  logger.log('warn', 'Failed to create courseasset ' + type + ' ' + (assetRecord || '') + ' ' + error);
-                }
-              });
+            plugin.create(assetData, function(error, assetRecord) {
+              if(error) {
+                logger.log('warn', `Failed to create courseasset ${type} ${assetRecord || ''} ${error}`);
+              }
             });
           });
-        }
+        });
       });
     }, cb(null, contentData));
   }

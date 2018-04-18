@@ -140,7 +140,7 @@ function ImportSource(req, done) {
       checkAssetFolders: ['checkContentJson', function(results, cb) {
         if (!cleanFormAssetDirs.length) {
           assetFolders = Constants.Folders.ImportAssets;
-          cb();
+          return cb();
         }
         var assetFolderError = false;
         var missingFolders = [];

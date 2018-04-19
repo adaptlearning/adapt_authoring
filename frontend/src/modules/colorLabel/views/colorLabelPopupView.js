@@ -47,23 +47,20 @@ define([
         },
 
         preRender: function() {
-            this.selected = -1;
+            this.selected = null;
         },
 
         postRender: function() {
-            if (!this.parentView.model.has('_colorLabel')) return;
-
             var color = this.parentView.model.get('_colorLabel');
-            if (color) {
-                this.selected = color;
-                this.updateClasses();
-            }
+            if (!color) return;
+            this.selected = color;
+            this.updateClasses();
         },
 
         applyOnParent: function() {
             var color = this.selected;
 
-            if (this.selected !== -1) {
+            if (this.selected) {
                 this.parentView.$el.attr('data-colorlabel', color);
             } else {
                 this.parentView.$el.removeAttr('data-colorlabel');

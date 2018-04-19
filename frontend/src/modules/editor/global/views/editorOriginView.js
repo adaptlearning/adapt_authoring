@@ -11,10 +11,9 @@ define(function(require){
     },
 
     attributes: function() {
-      if (this.model && this.model.has('_colorLabel') && this.model.get('_colorLabel')) {
-        return {
-          'data-colorlabel': this.model.get('_colorLabel')
-        }
+      var colorLabel = this.model && this.model.get('_colorLabel');
+      if (colorLabel) {
+        return { 'data-colorlabel': colorLabel };
       }
     },
 

@@ -35,7 +35,7 @@ define(function(require) {
                 // only include settings for used menus
                 var appliedMenus = [ configModel.get('_menu') ]; // FIXME we only support one menu right now...
                 _.each(schema.menuSettings.properties, function(value, key) {
-                    if (_.contains(appliedMenus, value.name)) {
+                    if (!_.contains(appliedMenus, value.name)) {
                         delete schema.menuSettings.properties[key];
                         return;
                     }

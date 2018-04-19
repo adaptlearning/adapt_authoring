@@ -2,6 +2,8 @@
 
 .editor-view {
 
+  overflow-y: scroll;
+
   .editor-container {
     position: relative;
     width: 100%;
@@ -127,26 +129,16 @@
 
       width: 100%;
       box-sizing: border-box;
-      display: -ms-flexbox;
-      display: -webkit-flex;
       display: flex;
 
-      .open-context-icon {
-      }
       .editor-delete-page-element {
-        -ms-flex-order: 2;
-        -webkit-order: 2;
         order: 2;
       }
       .editor-page-element-detail-inner {
         width: 100%;
         padding: 0 10px;
         overflow: hidden;
-        -ms-flex-order: 1;
-        -webkit-order: 1;
         order: 1;
-        display: -ms-flexbox;
-        display: -webkit-flex;
         display: flex;
         align-items: center;
         .title {
@@ -159,13 +151,9 @@
         }
       }
       .component-move {
-        -ms-flex-order: 1;
-        -webkit-order: 1;
         order: 1;
       }
       .editor-collapse-article {
-        -ms-flex-order: 0;
-        -webkit-order: 0;
         order: 2;
       }
     }

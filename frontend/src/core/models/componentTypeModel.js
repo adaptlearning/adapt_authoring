@@ -5,14 +5,10 @@ define(function(require) {
   var ComponentTypeModel = ContentModel.extend({
     idAttribute: '_id',
     urlRoot: '/api/componenttype',
-    _parent: 'blocks',
+    _parent: 'block',
 
     comparator: function(model) {
       return model.get('displayName');
-    },
-
-    initialize: function() {
-      // TODO intentional override?
     }
   });
 

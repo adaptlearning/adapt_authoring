@@ -5,27 +5,13 @@ define(function(require) {
 
   var ContentObjectModel = ContentModel.extend({
     urlRoot: '/api/content/contentobject',
-    _parent: 'contentObjects',
-    _siblings:'contentObjects',
-    _children: 'articles',
+    _parentType: 'contentobject',
+    _siblingTypes: 'contentobject',
+    _childTypes: ['contentobject', 'article'],
 
     defaults: {
       _isSelected: false,
       _isExpanded: false
-    },
-
-    initialize: function() {
-      this.listenTo(this, 'sync change:_type', this.setupConstructor);
-      this.setupConstructor();
-    },
-
-    setupConstructor: function() {
-      if (this.get('_parentId') === Origin.editor.data.course.get('_id')) {
-        this._parent === 'course';
-      }
-      if (this.get('_type') === 'menu') {
-        this._children = 'contentObjects';
-      }
     }
   });
 

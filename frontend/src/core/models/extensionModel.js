@@ -5,10 +5,7 @@ define(function(require) {
   var ExtensionModel = ContentModel.extend({
     urlRoot: '/api/extensiontype',
     idAttribute: '_id',
-    _type: 'extension',
-
-    initialize: function(){
-    }
+    _type: 'extension'
   });
 
   return ExtensionModel;

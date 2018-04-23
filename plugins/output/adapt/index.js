@@ -23,7 +23,8 @@ var origin = require('../../../'),
     assetmanager = require('../../../lib/assetmanager'),
     exec = require('child_process').exec,
     semver = require('semver'),
-    version = require('../../../version'),
+    helpers = require('../../../lib/helpers'),
+    installHelpers = require('../../../lib/installHelpers'),
     logger = require('../../../lib/logger');
 
 function AdaptOutput() {
@@ -39,7 +40,8 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
     outputJson = {},
     isRebuildRequired = false,
     themeName = '',
-    menuName = Constants.Defaults.MenuName;
+    menuName = Constants.Defaults.MenuName,
+    frameworkVersion;
 
   var resultObject = {};
 
@@ -146,8 +148,13 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
           if (err) {
             return callback(err);
           }
-
           callback(null);
+        });
+      },
+      function(callback) {
+        installHelpers.getInstalledFrameworkVersion(function(error, version) {
+          frameworkVersion = version;
+          callback(error);
         });
       },
       function(callback) {
@@ -159,7 +166,7 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
             var outputFolder = COURSE_FOLDER.replace(FRAMEWORK_ROOT_FOLDER + path.sep,'');
 
             // Append the 'build' folder to later versions of the framework
-            if (semver.gte(semver.clean(version.adapt_framework), semver.clean('2.0.0'))) {
+            if (semver.gte(semver.clean(frameworkVersion), semver.clean('2.0.0'))) {
               outputFolder = path.join(outputFolder, Constants.Folders.Build);
             }
 
@@ -217,8 +224,8 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
       function(callback) {
         if (mode === Constants.Modes.publish) {
           // Now zip the build package
-          var filename = path.join(COURSE_FOLDER, Constants.Filenames.Download);
-          var zipName = self.slugify(outputJson['course'].title);
+          var filename = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId, Constants.Filenames.Download);
+          var zipName = helpers.slugify(outputJson['course'].title);
           var output = fs.createWriteStream(filename),
             archive = archiver('zip');
 
@@ -237,11 +244,7 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
           });
 
           archive.pipe(output);
-
-          archive.bulk([
-            { expand: true, cwd: path.join(BUILD_FOLDER), src: ['**/*'] },
-          ]).finalize();
-
+          archive.glob('**/*', {cwd: path.join(BUILD_FOLDER)}).finalize();
         } else {
           // No download required -- skip this step
           callback();
@@ -261,14 +264,11 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
 AdaptOutput.prototype.export = function (courseId, request, response, next) {
   var self = this;
   var tenantId = usermanager.getCurrentUser().tenant._id;
-  var timestamp = new Date().toISOString().replace('T', '-').replace(/:/g, '').substr(0,17);
+  var userId = usermanager.getCurrentUser()._id;
 
   var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
   var COURSE_ROOT_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses, tenantId, courseId);
-
-  // set in getCourseName
-  var exportName;
-  var exportDir;
+  var exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, userId);
 
   var mode = Constants.Modes.export;
 
@@ -276,27 +276,7 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
     function publishCourse(callback) {
       self.publish(courseId, mode, request, response, callback);
     },
-    function getCourseName(results, callback) {
-      database.getDatabase(function (error, db) {
-        if (error) {
-          return callback(err);
-        }
-
-        db.retrieve('course', { _id: courseId }, { jsonOnly: true }, function (error, results) {
-          if (error) {
-            return callback(error);
-          }
-          if(!results || results.length > 1) {
-            return callback(new Error('Unexpected results returned for course ' + courseId + ' (' + results.length + ')', self));
-          }
-
-          exportName = self.slugify(results[0].title) + '-export-' + timestamp;
-          exportDir = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Exports, exportName);
-          callback();
-        });
-      });
-    },
-    function copyFiles(callback) {
+    function copyFiles(results, callback) {
       self.generateIncludesForCourse(courseId, function(error, includes) {
         if(error) {
           return callback(error);
@@ -342,20 +322,21 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
     },
     function zipFiles(callback) {
       var archive = archiver('zip');
-      var output = fs.createWriteStream(exportDir +  '.zip');
-
+      var zipPath = exportDir +  '.zip';
+      var output = fs.createWriteStream(zipPath);
       archive.on('error', callback);
       output.on('close', callback);
       archive.pipe(output);
-      archive.bulk([{ expand: true, cwd: exportDir, src: ['**/*'] }]).finalize();
-    },
-    function cleanUp(callback) {
-      fse.remove(exportDir, function (error) {
-        callback(error, { zipName: exportName + '.zip' });
-      });
+      archive.glob('**/*', {cwd: exportDir}).finalize();
     }
   ],
-  next);
+  function onDone(asyncError) {
+    // remove the exportDir, if there is one
+    fse.remove(exportDir, function(removeError) {
+      // async error more important
+      next(asyncError || removeError);
+    });
+  });
 };
 
 /**

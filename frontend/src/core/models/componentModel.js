@@ -4,8 +4,8 @@ define(function(require) {
 
   var ComponentModel = ContentModel.extend({
     urlRoot: '/api/content/component',
-    _parent: 'blocks',
-    _siblings: 'components',
+    _parentType: 'block',
+    _siblingTypes: 'component',
     // These are the only attributes which should be permitted on a save
     // TODO look into this...
     whitelistAttributes: [
@@ -26,12 +26,11 @@ define(function(require) {
       'title',
       'version',
       'themeSettings',
-      '_onScreen'
-    ],
-
-    initialize: function() {
-      // TODO intentional override?
-    }
+      '_onScreen',
+      '_isVisible',
+      '_isHidden',
+      'instruction'
+    ]
   });
 
   return ComponentModel;

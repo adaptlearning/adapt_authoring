@@ -67,13 +67,13 @@ define(function(require) {
       // move bar into place and animate in
       this.$el.css({ right:this.$('.editor-component-list-sidebar')
         .width()*-1})
-        .velocity({ right: 0 }, {duraiton: 400, easing: 'easeOutQuart'});
+        .velocity({ right: 0 }, {duration: 400, easing: 'easeOutQuart'});
     },
 
     closeView: function() {
       var self = this;
       this.$el.velocity({ right:this.$('.editor-component-list-sidebar').width() *- 1 }, {
-        duraiton: 400, 
+        duration: 400, 
         easing: 'easeOutQuart',
         complete: function onAnimOut() {
           $('html').css('overflow-y', '');

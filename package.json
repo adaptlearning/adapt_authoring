@@ -17,7 +17,8 @@
     "node": "4.x"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "test-coverage": "nyc mocha"
   },
   "contributors": [
     "Ryan Adams <ryana@learningpool.com>",
@@ -106,6 +107,7 @@
   "devDependencies": {
     "mocha": "3",
     "mongodb": "^2.2.30",
+    "nyc": "^11.1.0",
     "phantom": "^0.6.5",
     "should": "~11.2.1",
     "supertest": "~0.8.1"

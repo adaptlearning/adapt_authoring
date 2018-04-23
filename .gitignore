@@ -34,3 +34,6 @@ package-lock.json
 .idea
 .project
 .vscode
+
+.nyc_output
+coverage

@@ -16,6 +16,7 @@ define([
 
         initialize: function(options) {
             this.parentView = options.parentView;
+            this.selected = null;
             OriginView.prototype.initialize.apply(this, arguments);
         },
 
@@ -46,10 +47,6 @@ define([
             this.addItem();
         },
 
-        preRender: function() {
-            this.selected = null;
-        },
-
         postRender: function() {
             var color = this.parentView.model.get('_colorLabel');
             if (!color) return;
@@ -58,13 +55,7 @@ define([
         },
 
         applyOnParent: function() {
-            var color = this.selected;
-
-            if (this.selected) {
-                this.parentView.$el.attr('data-colorlabel', color);
-            } else {
-                this.parentView.$el.removeAttr('data-colorlabel');
-            }
+            this.parentView.$el.attr('data-colorlabel', this.selected);
         },
 
         addItem: function() {

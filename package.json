@@ -14,7 +14,7 @@
   "framework": "2",
   "main": "index",
   "engines": {
-    "node": "4.x"
+    "node": "6.x"
   },
   "scripts": {
     "test": "grunt test"

@@ -39,7 +39,7 @@
     "Nicola Willis <nicola.willis@canstudios.com>"
   ],
   "dependencies": {
-    "archiver": "~0.16.0",
+    "archiver": "2.1.1",
     "async": "2.5.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.13.3",
@@ -99,7 +99,7 @@
     "semver": "^5.0.3",
     "serve-favicon": "^2.3.0",
     "underscore": "~1.5.2",
-    "unzip": "0.1.8",
+    "unzip2": "0.2.5",
     "validator": "4.2.1",
     "winston": "1.0.2"
   },

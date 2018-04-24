@@ -60,6 +60,8 @@
   "app.done": "Done",
   "app.continue": "Continue",
   "app.cancel": "Cancel",
+  "app.apply": "Apply",
+  "app.reset": "Reset",
   "app.confirmduplicate": "Are you sure you want to duplicate this course so you can edit it locally?",
   "app.myprojects": "My courses",
   "app.addnewproject": "Add new course",
@@ -311,5 +313,8 @@
   "app.article": "article",
   "app.block": "block",
   "app.component": "component",
-  "app.errorloadconfig": "Failed to load configuration settings for %{course}"
+  "app.errorloadconfig": "Failed to load configuration settings for %{course}",
+  "app.colourLabel": "Colour Label",
+  "app.colourLabelTitle": "Colour Label",
+  "app.colourLabelIntro": "The colours are <b>only</b> applied in the authoring tool and will <b>not affect the generated course</b>. The settings are synced with all users in the authoring tool."
 }

@@ -31,7 +31,7 @@ module.exports = function(grunt) {
           {
             expand: true,
             flatten: true,
-            src: ['frontend/src/core/libraries/ace/**/*'],
+            src: ['frontend/src/libraries/ace/*'],
             dest: 'frontend/build/js/ace'
           }
         ]

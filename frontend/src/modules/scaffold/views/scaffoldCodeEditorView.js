@@ -39,7 +39,7 @@ define(function(require) {
             this.setValue(this.value);
 
             _.defer(_.bind(function() {
-                window.ace.config.set("basePath", "./build/js/ace");
+                window.ace.config.set("basePath", "./js/ace");
                 this.editor = window.ace.edit(this.$el[0]);
 
                 var session = this.editor.getSession();

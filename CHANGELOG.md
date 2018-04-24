@@ -9,26 +9,32 @@ _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for
 
 Release which adds the ability to import courses created in the framework, as well as exports from other authoring tool installs.
 
+### Upgrade Notes
+:skull: This release drops official support for Node.js `v4.x.x`, please upgrade to `v6.x.x` prior to installing this version of the authoring tool. :skull:
+
 ### Added
 - Courses built with the framework and authoring tool exports can now be imported ([\#1387](https://github.com/adaptlearning/adapt_authoring/issues/1387))
 - The ability to colour ABC content views in the editor screens ([\#1785](https://github.com/adaptlearning/adapt_authoring/issues/1785))
 - The ability to minimise articles in the page editor view ([\#1483](https://github.com/adaptlearning/adapt_authoring/issues/1483))
 - Ability to set MongoDB authentication from the install script ([\#1903](https://github.com/adaptlearning/adapt_authoring/issues/1903))
 - Support for framework plugins' `pluginDependencies` field, as defined in `bower.json` ([\#1858](https://github.com/adaptlearning/adapt_authoring/issues/1858))
+- Support for migration scripts ([#1937](https://github.com/adaptlearning/adapt_authoring/issues/1937))
 - Dashboard sorts now persist across sessions, while filters persist for the duration of the current session ([\#1857](https://github.com/adaptlearning/adapt_authoring/issues/1857))
 - Instruction to component schema ([\#1712](https://github.com/adaptlearning/adapt_authoring/issues/1712))
 - Custom SMTP servers can now be used with mailer ([\#1447](https://github.com/adaptlearning/adapt_authoring/issues/1447))
 
 ### Changed
--  Bumpted archive module dependency version ([\#1930](https://github.com/adaptlearning/adapt_authoring/issues/1930))
+-  Bumped archive module dependency version ([\#1930](https://github.com/adaptlearning/adapt_authoring/issues/1930))
 - Core front-end modules are now loaded before any front-end plugins ([\#1913](https://github.com/adaptlearning/adapt_authoring/issues/1913))
 - `Database#addModel` now catches and logs errors ([\#1855](https://github.com/adaptlearning/adapt_authoring/issues/1855))
 - Server now logs more appropriate message if error is caught when loading a route ([\#1853](https://github.com/adaptlearning/adapt_authoring/issues/1853))
 - NPM deprecation warnings are now suppressed ([\#1745](https://github.com/adaptlearning/adapt_authoring/issues/1745))
 - Switched to zip2 NPM package ([\#1732](https://github.com/adaptlearning/adapt_authoring/issues/1732))
 - Only one course export per-user is saved on the server ([\#1056](https://github.com/adaptlearning/adapt_authoring/issues/1056))
+- Some mocha test data is now cached after the initial run to reduce runtime ([#1761](https://github.com/adaptlearning/adapt_authoring/issues/1761))
 
 ### Removed
+- Support for Node.js v4.x.x
 - The need to define third-party front-end plugins in `app.js` ([\#1866](https://github.com/adaptlearning/adapt_authoring/issues/1866))
 - Redundant `conf/config_sample.json` file ([\#1793](https://github.com/adaptlearning/adapt_authoring/issues/1793))
 

@@ -11,6 +11,13 @@ define(function(require){
       'dblclick .editor-item-settings-inner > button': 'onDbClick'
     },
 
+    attributes: function() {
+      var colorLabel = this.model && this.model.get('_colorLabel');
+      if (colorLabel) {
+        return { 'data-colorlabel': colorLabel };
+      }
+    },
+
     initialize: function(options) {
       // Set form on view
       if (options && options.form) {

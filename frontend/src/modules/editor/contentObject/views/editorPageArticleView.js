@@ -241,6 +241,7 @@ define(function(require){
 
     restoreCollapsedState: function() {
       if (!Origin.editor.data._collapsedArticles.hasOwnProperty(this.model.get('_id'))) return;
+      this.skipAnimation = true;
       this.model.set('_isCollapsed', Origin.editor.data._collapsedArticles[this.model.get('_id')]);
     },
 
@@ -251,7 +252,7 @@ define(function(require){
       var isCollapsed = this.model.get('_isCollapsed');
       this.model.set('_isCollapsed', !isCollapsed);
     },
-    
+
     onIsCollapsedChange: function(model, isCollapsed) {
       var title;
       if (isCollapsed) {
@@ -268,7 +269,7 @@ define(function(require){
       if (this.model.get('_isCollapsed') === true) return; 
       this.model.set('_isCollapsed', true);
     },
-    
+
     expandAllArticles: function() {
       if (this.model.get('_isCollapsed') === false) return; 
       this.model.set('_isCollapsed', false);
@@ -278,7 +279,12 @@ define(function(require){
       var shouldCollapse = this.model.get('_isCollapsed');
 
       this.$el.toggleClass('collapsed-view', shouldCollapse);
-      this.$('.article-content').velocity(shouldCollapse ? 'slideUp' : 'slideDown', 200);
+      var duration = 200;
+      if (this.skipAnimation) {
+        this.skipAnimation = false;
+        duration = 0;
+      }
+      this.$('.article-content').velocity(shouldCollapse ? 'slideUp' : 'slideDown', duration);
     },
 
     onPaste: function(data) {

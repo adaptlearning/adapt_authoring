@@ -187,7 +187,7 @@ function ImportSource(req, done) {
       }
       glob(assetsGlob, function (error, assets) {
         if(error) {
-          return cb(error);
+          return doneAssetFolder(error);
         }
         var repository = configuration.getConfig('filestorage') || 'localfs';
         async.eachSeries(assets, function iterator(assetPath, doneAsset) {
@@ -271,7 +271,7 @@ function ImportSource(req, done) {
   */
   function cacheMetadata(done) {
     database.getDatabase(function(error, db) {
-      if(error) return cb(error);
+      if(error) return done(error);
       async.parallel([
         function storeComponentypes(cb) {
           db.retrieve('componenttype', {}, { jsonOnly: true }, function(error, results) {
@@ -333,7 +333,7 @@ function ImportSource(req, done) {
               });
               break;
             case 'theme':
-              // add the theme value to config JSON
+              // add the theme name to config JSON
               fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, themeJson) {
                 if(error) return cb(error);
                 plugindata.theme.push({ _theme: themeJson.name});
@@ -341,7 +341,7 @@ function ImportSource(req, done) {
               });
               break;
             case 'menu':
-              // add the theme value to config JSON
+              // add the menu name to config JSON
               fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, menuJson) {
                 if(error) return cb(error);
                 plugindata.menu.push({ _menu: menuJson.name});
@@ -542,7 +542,7 @@ function ImportSource(req, done) {
       _.findKey(metadata.assetNameMap, function(value, assetId) {
         if (value !== assetBaseName) {
           return;
-        }        
+        }
         app.assetmanager.retrieveAsset({ _id: assetId }, function gotAsset(error, results) {
           if (error) {
             logger.log('error', error);

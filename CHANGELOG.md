@@ -29,7 +29,6 @@ Release which adds the ability to import courses created in the framework, as we
 - `Database#addModel` now catches and logs errors ([\#1855](https://github.com/adaptlearning/adapt_authoring/issues/1855))
 - Server now logs more appropriate message if error is caught when loading a route ([\#1853](https://github.com/adaptlearning/adapt_authoring/issues/1853))
 - NPM deprecation warnings are now suppressed ([\#1745](https://github.com/adaptlearning/adapt_authoring/issues/1745))
-- Switched to zip2 NPM package ([\#1732](https://github.com/adaptlearning/adapt_authoring/issues/1732))
 - Only one course export per-user is saved on the server ([\#1056](https://github.com/adaptlearning/adapt_authoring/issues/1056))
 - Some mocha test data is now cached after the initial run to reduce runtime ([#1761](https://github.com/adaptlearning/adapt_authoring/issues/1761))
 

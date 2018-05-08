@@ -289,7 +289,7 @@
   "app.importcourse": "Import source",
   "app.frameworkimporttitle": "Import framework source",
   "app.importframeworkinstruction": "Select a framework zip for import. Tags will be added to the course and all new assets.",
-	"app.importassetfoldersinstruction": "Enter the names of folders that contain assets. If there are multiple folders enter a comma seperated list. Automatically checks for the following folders if no value is entered: assets, images, video, audio.",
+  "app.importassetfoldersinstruction": "Enter the names of folders that contain assets. If there are multiple folders enter a comma seperated list. Automatically checks for the following folders if no value is entered: assets, images, video, audio.",
   "app.importassetfolderstitle": "Asset Folders",
   "app.importassetfoldersplaceholder": "assets, images, video, audio",
   "app.importinvalidpackage": "Encountered an unexpected file structure. Please check you have uploaded a valid export package and try again.",

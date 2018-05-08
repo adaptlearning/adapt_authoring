@@ -249,16 +249,6 @@ define(function(require) {
       Origin.editor.isDownloadPending = false;
     },
 
-    showExportAnimation: function(show) {
-      if(show !== false) {
-        $('.editor-common-sidebar-export-inner').addClass('display-none');
-        $('.editor-common-sidebar-exporting').removeClass('display-none');
-      } else {
-        $('.editor-common-sidebar-export-inner').removeClass('display-none');
-        $('.editor-common-sidebar-exporting').addClass('display-none');
-      }
-    },
-
     updateCoursePreview: function(previewWindow) {
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');

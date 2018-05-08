@@ -53,7 +53,7 @@ define(function(require) {
 		removeBackButtonRoute: function() {
 			// If breadcrumb needs removing, animate out and trigger animateIn for the new view
 			this.$('.sidebar-breadcrumb').velocity({'top': '-40px', 'opacity': 0}, function() {
-				this.empty();
+				$(this).empty();
 				Origin.trigger('sidebar:views:animateIn');
 			});
 		},

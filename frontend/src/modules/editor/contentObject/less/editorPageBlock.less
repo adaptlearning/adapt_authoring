@@ -3,15 +3,25 @@
     border: 1px solid #D3E2E5;
     position: relative;
     margin-bottom: 20px;
+    padding-top: 10px;
     border-radius: 3px;
 
     &-inner {
-        padding:15px;
+        padding: 15px;
+        padding-top: 5px;
+
+        .block-body {
+            padding-bottom: 10px;
+            &:empty {
+                padding-bottom: 0;
+            }
+        }
+
         .block-detail {
             padding: 0 30px;
         }
         .page-components {
-            padding: 20px 5px 5px 5px;
+            padding: 5px;
         }
     }
 

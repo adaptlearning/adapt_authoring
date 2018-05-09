@@ -2,7 +2,7 @@
 /*
  * TODO I think this exists to add extra functionality to the menu/page structure pages
  */
-define(function(require){
+define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
   var helpers = require('core/helpers');
@@ -73,12 +73,11 @@ define(function(require){
     },
 
     validateProject: function(e, next) {
-      e && e.preventDefault();
       helpers.validateCourseContent(this.currentCourse, _.bind(function(error) {
         if(error) {
           Origin.Notify.alert({ type: 'error', text: "There's something wrong with your course:<br/><br/>" + error });
         }
-        next.call(this, error);
+        next.call(this, e, error);
       }, this));
     },
 
@@ -115,6 +114,58 @@ define(function(require){
       }, this));
     },
 
+    exportProject: function() {
+      // TODO - very similar to export in project/views/projectView.js, remove duplication
+      // aleady processing, don't try again
+      if(this.exporting) return;
+
+      var courseId = Origin.editor.data.course.get('_id');
+      var tenantId = Origin.sessionModel.get('tenantId');
+
+      var $btn = $('button.editor-common-sidebar-export');
+
+      this.showExportAnimation(true, $btn);
+      this.exporting = true;
+
+      var self = this;
+      $.ajax({
+         url: '/export/' + tenantId + '/' + courseId,
+         success: function(data, textStatus, jqXHR) {
+           self.showExportAnimation(false, $btn);
+           self.exporting = false;
+
+           // get the zip
+           var form = document.createElement('form');
+           self.$el.append(form);
+           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
+           form.submit();
+         },
+         error: function(jqXHR, textStatus, errorThrown) {
+           var messageText = errorThrown;
+           if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) messageText += ':<br/>' + jqXHR.responseJSON.message;
+
+           self.showExportAnimation(false, $btn);
+           self.exporting = false;
+
+           Origin.Notify.alert({
+             type: 'error',
+             title: Origin.l10n.t('app.exporterrortitle'),
+             text: messageText
+           });
+         }
+      });
+    },
+
+    showExportAnimation: function(show, $btn) {
+      if(show !== false) {
+        $('.editor-common-sidebar-export-inner', $btn).addClass('display-none');
+        $('.editor-common-sidebar-exporting', $btn).removeClass('display-none');
+      } else {
+        $('.editor-common-sidebar-export-inner', $btn).removeClass('display-none');
+        $('.editor-common-sidebar-exporting', $btn).addClass('display-none');
+      }
+    },
+
     downloadProject: function() {
       if(Origin.editor.isDownloadPending) {
         return;
@@ -143,40 +194,6 @@ define(function(require){
       }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
         this.resetDownloadProgress();
         Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
-      }, this));
-    },
-
-    exportProject: function() {
-      if(this.exporting) {
-        return;
-      }
-      this.showExportAnimation();
-      this.exporting = true;
-
-      var courseId = Origin.editor.data.course.get('_id');
-      var tenantId = Origin.sessionModel.get('tenantId');
-
-      $.get('/export/' + tenantId + '/' + courseId, _.bind(function(data, textStatus, jqXHR) {
-      // success
-        var form = document.createElement('form');
-        this.$el.append(form);
-        form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
-        form.submit();
-      }, this)).fail(_.bind(function(jqXHR, textStatus, errorThrown) {
-      // failure
-        var messageText = errorThrown;
-        if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) {
-          messageText += ':<br/>' + jqXHR.responseJSON.message;
-        }
-        Origin.Notify.alert({
-          type: 'error',
-          title: Origin.l10n.t('app.exporterrortitle'),
-          text: messageText
-        });
-      }, this)).always(_.bind(function() {
-      // always
-        this.showExportAnimation(false);
-        this.exporting = false;
       }, this));
     },
 
@@ -230,16 +247,6 @@ define(function(require){
       $('.editor-common-sidebar-download-inner').removeClass('display-none');
       $('.editor-common-sidebar-downloading').addClass('display-none');
       Origin.editor.isDownloadPending = false;
-    },
-
-    showExportAnimation: function(show) {
-      if(show !== false) {
-        $('.editor-common-sidebar-export-inner').addClass('display-none');
-        $('.editor-common-sidebar-exporting').removeClass('display-none');
-      } else {
-        $('.editor-common-sidebar-export-inner').removeClass('display-none');
-        $('.editor-common-sidebar-exporting').addClass('display-none');
-      }
     },
 
     updateCoursePreview: function(previewWindow) {

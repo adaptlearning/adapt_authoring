@@ -56,6 +56,7 @@
     "fluent-ffmpeg": "~2.x",
     "formidable": "1.0.17",
     "fs-extra": "^0.16.3",
+    "glob": "^7.1.2",
     "grunt": "~0.4.1",
     "grunt-bower-requirejs": "~0.7.1",
     "grunt-concurrent": "~0.3.0",
@@ -98,10 +99,12 @@
     "rimraf": "~2.2.5",
     "semver": "^5.0.3",
     "serve-favicon": "^2.3.0",
-    "underscore": "~1.5.2",
+    "traverse": "^0.6.6",
+    "underscore": "~1.8.3",
     "unzip2": "0.2.5",
     "validator": "4.2.1",
-    "winston": "1.0.2"
+    "winston": "1.0.2",
+    "yauzl": "2.8.0"
   },
   "devDependencies": {
     "mocha": "3",

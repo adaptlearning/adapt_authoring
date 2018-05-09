@@ -1,13 +1,19 @@
 .article {
     position: relative;
-    border-radius:3px;
-    background-color:#F6FBFE;
-    border:1px solid #CEE4E2;
-    margin-bottom:20px;
-    cursor:pointer;
+    border-radius: 3px;
+    background-color: #F6FBFE;
+    border: 1px solid #CEE4E2;
+    margin-bottom: 20px;
+    cursor: pointer;
 
     &-inner {
-        padding:15px 0px 10px;
+        .article-body {
+            margin: 0 2%;
+            padding-bottom: 15px;
+            &:empty {
+                padding-bottom: 0;
+            }
+        }
     }
 
     &-edit-panel {
@@ -17,16 +23,18 @@
     }
 
     &-detail {
+        padding: 10px 0;
     }
 
     &-blocks {
-        margin:20px 2%;
+        padding: 0 2%;
     }
-
-}
-
-.article-detail {
-    &-inner {
-        padding:0px 45px;
+    
+    &.collapsed-view {        
+        .editor-collapse-article {
+            .fa::before {
+                content: "\f067";
+            }
+        }
     }
 }

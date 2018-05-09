@@ -13,8 +13,8 @@ define(function(require){
     childrenRenderedCount: 0,
 
     events: _.extend({}, EditorOriginView.prototype.events, {
-      'click a.add-article': 'addNewArticle',
-      'click a.page-edit-button': 'openContextMenu',
+      'click .add-article': 'addNewArticle',
+      'click .page-edit-button': 'openContextMenu',
       'dblclick .page-detail': 'loadPageEdit',
       'click .paste-cancel': 'onPasteCancel'
     }),
@@ -29,6 +29,23 @@ define(function(require){
       originEvents['editorView:moveArticle:' + id] = this.render;
       originEvents['editorView:pasted:' + id] = this.onPaste;
       this.listenTo(Origin, originEvents);
+
+      Origin.options.addItems([
+        {
+          title: Origin.l10n.t('app.collapseAllArticles'),
+          icon: 'minus',
+          callbackEvent: 'editorView:collapseArticle:collapse',
+          value: 'collapse',
+          group: 'collapseArticle',
+        },
+        {
+          title: Origin.l10n.t('app.expandAllArticles'),
+          icon: 'plus',
+          callbackEvent: 'editorView:collapseArticle:expand',
+          value: 'expand',
+          group: 'collapseArticle',
+        }
+      ]);
 
       this._onScroll = _.bind(_.throttle(this.onScroll, 400), this);
     },

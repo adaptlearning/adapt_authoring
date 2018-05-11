@@ -97,7 +97,7 @@
     "underscore": "^1.8.3",
     "unzip": "^0.1.11",
     "validator": "^9.4.1",
-    "winston": "^3.0.0-rc2",
+    "winston": "^2.4.2",
     "yauzl": "2.8.0"
   },
   "devDependencies": {

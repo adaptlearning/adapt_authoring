@@ -7,7 +7,15 @@ define(function(require){
   var EditorOriginView = OriginView.extend({
     events: {
       'click .paste-cancel': 'onPasteCancel',
-      'click .field-object .legend': 'onFieldObjectClicked'
+      'click .field-object .legend': 'onFieldObjectClicked',
+      'dblclick .editor-item-settings-inner > button': 'onDbClick'
+    },
+
+    attributes: function() {
+      var colorLabel = this.model && this.model.get('_colorLabel');
+      if (colorLabel) {
+        return { 'data-colorlabel': colorLabel };
+      }
     },
 
     initialize: function(options) {
@@ -182,6 +190,11 @@ define(function(require){
         .children('.collapsed')
         .first()
         .toggleClass('expanded');
+    },
+
+    onDbClick: function(event) {
+      event.preventDefault();
+      event.stopPropagation();
     },
 
     onCopy: function(e) {

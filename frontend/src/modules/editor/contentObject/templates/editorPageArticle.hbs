@@ -1,16 +1,15 @@
-{{>part_editorItemSidebar}}
-
 <div class="article-inner">
   <div class="article-detail unselectable">
-    <div class="article-detail-inner">
-      <h4 class="article-title title">{{#if displayTitle}}{{{displayTitle}}}{{else}}{{title}}{{/if}}</h4>
-      <div class="article-body">{{{body}}}</div>
-    </div>
+    {{>part_editorItemSidebar}}
   </div>
+  <div class="article-content">
+    {{#if body}}
+      <div class="{{_type}}-body">{{{body}}}</div>
+    {{/if}}
 
-  <div class="article-blocks"></div>
-
-  <div class="add-control">
-    <a href="#" class="btn add-block">{{t 'app.addblock'}}</a>
+    <div class="article-blocks"></div>
+    <div class="add-control">
+      <button class="btn add-block">{{t 'app.addblock'}}</button>
+    </div>
   </div>
 </div>

@@ -101,7 +101,7 @@
     "serve-favicon": "^2.3.0",
     "traverse": "^0.6.6",
     "underscore": "~1.8.3",
-    "unzip2": "0.2.5",
+    "unzip": "0.1.11",
     "validator": "4.2.1",
     "winston": "1.0.2",
     "yauzl": "2.8.0"

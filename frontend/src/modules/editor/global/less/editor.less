@@ -2,6 +2,8 @@
 
 .editor-view {
 
+  overflow-y: scroll;
+
   .editor-container {
     position: relative;
     width: 100%;
@@ -100,35 +102,66 @@
 }
 
 .editor-item-settings {
-    position: absolute;
-    top: 0%;
-    left: 0px;
     font-size: 16px;
     width: 100%;
     opacity: 1;
     background-color: transparent;
     transition: all 0.3s;
-
+    
     a {
       text-decoration: none;
     }
-
+    
     &:hover {
       cursor: move;
     }
-
+    
     &-inner {
-      padding: 6px;
-    }
+      button {
+        padding: 10px;
+        font-size: 16px;
+        line-height: 16px;
+        height: 16px;
+        box-sizing: content-box;
+        text-align: center;
+      }
 
-    .editor-delete-page-element {
-      float: right;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      padding: 0 10px;
+
+      .editor-delete-page-element {
+        order: 2;
+      }
+      .editor-page-element-detail-inner {
+        width: 100%;
+        padding: 0 10px;
+        overflow: hidden;
+        order: 1;
+        display: flex;
+        align-items: center;
+        .title {
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+        &.component-detail-inner {
+          opacity: 0;  // we need the element to move the trash-icon to the right
+        }
+      }
+      .component-move {
+        order: 1;
+      }
+      .editor-collapse-article {
+        order: 2;
+      }
     }
 }
 
-.editor-item-settings a,
-.editor-menu-item-settings a {
-  color:@primary-color;
+.editor-item-settings button,
+.editor-menu-item-settings button {
+  color: @primary-color;
   transition: all 0.3s;
   &:hover {
     color:darken(@primary-color,5%);

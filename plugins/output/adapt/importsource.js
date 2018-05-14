@@ -213,7 +213,7 @@ function ImportSource(req, done) {
           var fileMeta = {
             oldId: assetId,
             title: assetTitle,
-            type: mime.lookup(assetName),
+            type: mime.getType(assetName),
             size: fileStat["size"],
             filename: assetName,
             description: assetDescription,

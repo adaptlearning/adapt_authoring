@@ -198,6 +198,9 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
 
 function initialize () {
   var app = origin();
+  // HACK to allow framework import helpers to use this function. Should surface this properly somewhere
+  app.bowermanager.addPackage = addPackage;
+
   app.once('serverStarted', function (server) {
     // add plugin upload route
     rest.post('/upload/contentplugin', handleUploadedPlugin);

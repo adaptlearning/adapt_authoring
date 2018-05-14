@@ -5,6 +5,7 @@ var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
 var semver = require('semver');
+var migrateMongoose = require('migrate-mongoose');
 
 var configuration = require('./lib/configuration');
 var logger = require('./lib/logger');
@@ -160,6 +161,58 @@ function doUpdate(data) {
         cb();
       });
     },
+    function runMigrations(callback) {
+      installHelpers.syncMigrations(function(err, migrations) {
+        if(err){
+          return callback(err);
+        }
+
+        installHelpers.getMigrationConfig(function(err, config) {
+          if(err){
+            return callback(err);
+          }
+
+          var migrator = new migrateMongoose({
+            migrationsPath: config.migrationsDir,
+            dbConnectionUri: config.dbConnectionUri,
+            autosync: true
+          });
+
+          migrator.list().then(
+            function(migrations) {
+              var migrationsRan = 0;
+              async.everySeries(migrations, function(migration, callback) {
+                if(migration.state === 'up'){
+                  return callback();
+                }
+
+                console.log(`Running ${migration.name} migration`);
+                migrationsRan += 1;
+                migrator.run('up', migration.name).then(
+                  function(value) { return callback(); },
+                  function(reason) { return callback(reason); }
+                )
+
+              }, function(err, data) {
+                if(err){
+                  return callback(err);
+                }
+
+                if(migrationsRan === 1) {
+                  console.log(`1 Migration ran successfully`);
+                } else if(migrationsRan > 1) {
+                  console.log(`${migrationsRan} Migrations ran successfully`);
+                } else {
+                  console.log(`No migrations to run`);
+                }
+                return callback();
+              });
+            },
+            function(reason) { return callback(reason); }
+          )
+        });
+      })
+    }
   ], function(error) {
     if(error) {
       console.error('ERROR:', error);

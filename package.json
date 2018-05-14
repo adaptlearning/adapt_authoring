@@ -14,7 +14,8 @@
   "framework": "2",
   "main": "index",
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "migrate": "migrate --config conf/migrate.json --template-file migrations/helpers/template.js"
   },
   "contributors": [
     "Ryan Adams <ryana@learningpool.com>",
@@ -77,6 +78,7 @@
     "log-update": "^2.3.0",
     "matchdep": "^2.0.0",
     "method-override": "^2.3.10",
+    "migrate-mongoose": "^3.2.2",
     "mime": "^2.3.1",
     "moment": "^2.22.1",
     "mongoose": "^5.1.0",

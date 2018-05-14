@@ -106,11 +106,14 @@ function removeTestData(done) {
     function dumpOldDb(cb) {
       var MongoClient = mongodb.MongoClient;
       var connStr = 'mongodb://' + testConfig.dbHost + ':' + testConfig.dbPort + '/' + testConfig.dbName;
-      MongoClient.connect(connStr, function(error, db) {
+      MongoClient.connect(connStr, { domainsEnabled: true }, function(error, client) {
         if(error) return cb(error);
+
+        var db = client.db(testConfig.dbName);
+
         db.dropDatabase(function(error, result) {
           if(error) return cb(error);
-          db.close();
+          client.close();
           return cb();
         });
       });

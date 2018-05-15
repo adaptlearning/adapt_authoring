@@ -134,7 +134,7 @@ function createCacheData(done) {
     async.series([
       async.apply(fs.remove, dest),
       async.apply(fs.ensureDir, dest),
-      async.apply(fs.symlink, src, path.join(dest, Folders.Framework), 'dir')
+      async.apply(fs.symlink, src, path.join(dest, Folders.Framework), 'junction')
     ], done);
   }
   // make sure we've got the framework, and copy it into place

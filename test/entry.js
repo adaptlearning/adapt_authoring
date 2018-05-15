@@ -139,13 +139,9 @@ function createCacheData(done) {
   }
   // make sure we've got the framework, and copy it into place
   fs.stat(src, function(error, stats) {
-    if(!error) {
-      return _copyFramework();
-    }
+    if(!error) return _copyFramework();
     installHelpers.installFramework({ directory: src }, function(error) {
-      if(error) {
-        return done(error);
-      }
+      if(error) return done(error);
       _copyFramework();
     });
   });

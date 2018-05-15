@@ -15,14 +15,11 @@ var userReset = {
 
 // ensure the user record is deleted
 after(function(done) {
-  usermanager.retrieveUser({ email: testData.user.email }, function(error, record) {
+  usermanager.deleteUser({ email: testData.user.email }, function(error) {
     if(error) return done(error);
-    usermanager.deleteUser(record, function(error) {
+    usermanager.retrieveUserPasswordReset({ token: userReset.token }, function(error, record) {
       if(error) return done(error);
-      usermanager.retrieveUserPasswordReset({ token: userReset.token }, function(error, record) {
-        if(error) return done(error);
-        usermanager.deleteUserPasswordReset({ user: record.id }, done);
-      });
+      usermanager.deleteUserPasswordReset({ user: record.id }, done);
     });
   });
 });

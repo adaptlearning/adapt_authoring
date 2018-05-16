@@ -17,7 +17,8 @@
     "node": "4.x"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "migrate": "migrate --config conf/migrate.json --template-file migrations/helpers/template.js"
   },
   "contributors": [
     "Ryan Adams <ryana@learningpool.com>",
@@ -56,6 +57,7 @@
     "fluent-ffmpeg": "~2.x",
     "formidable": "1.0.17",
     "fs-extra": "^0.16.3",
+    "glob": "^7.1.2",
     "grunt": "~0.4.1",
     "grunt-bower-requirejs": "~0.7.1",
     "grunt-concurrent": "~0.3.0",
@@ -79,6 +81,7 @@
     "log-update": "^2.1.0",
     "matchdep": "~0.3.0",
     "method-override": "^2.3.5",
+    "migrate-mongoose": "^3.2.2",
     "mime": "1.2.x",
     "mkdirp": "0.3.5",
     "moment": "^2.9.0",
@@ -98,10 +101,12 @@
     "rimraf": "~2.2.5",
     "semver": "^5.0.3",
     "serve-favicon": "^2.3.0",
-    "underscore": "~1.5.2",
-    "unzip2": "0.2.5",
+    "traverse": "^0.6.6",
+    "underscore": "~1.8.3",
+    "unzip": "0.1.11",
     "validator": "4.2.1",
-    "winston": "1.0.2"
+    "winston": "1.0.2",
+    "yauzl": "2.8.0"
   },
   "devDependencies": {
     "mocha": "3",

@@ -30,7 +30,7 @@ var origin = require('../../../'),
     _ = require('underscore'),
     util = require('util'),
     path = require('path'),
-    unzip = require('unzip2'),
+    unzip = require('unzip'),
     exec = require('child_process').exec,
     IncomingForm = require('formidable').IncomingForm,
     installHelpers = require('../../../lib/installHelpers');
@@ -198,6 +198,9 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
 
 function initialize () {
   var app = origin();
+  // HACK to allow framework import helpers to use this function. Should surface this properly somewhere
+  app.bowermanager.addPackage = addPackage;
+
   app.once('serverStarted', function (server) {
     // add plugin upload route
     rest.post('/upload/contentplugin', handleUploadedPlugin);

@@ -18,9 +18,9 @@ define(function(require){
     }),
 
     events: _.extend({}, EditorOriginView.prototype.events, {
-      'click a.block-delete': 'deleteBlockPrompt',
-      'click a.add-component': 'showComponentList',
-      'click a.open-context-block': 'openContextMenu',
+      'click .block-delete': 'deleteBlockPrompt',
+      'click .add-component': 'showComponentList',
+      'click .open-context-block': 'openContextMenu',
       'dblclick': 'loadBlockEdit',
       'transitionend': 'onTransitionEnd'
     }),

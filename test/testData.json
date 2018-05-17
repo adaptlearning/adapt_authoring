@@ -7,6 +7,7 @@
     "_isDeleted": false
   },
   "testTenant": {
+    "_id": "000000000000000000000000",
     "name": "adapt-tenant-mocha",
     "displayName": "Test Tenant",
     "isMaster": true

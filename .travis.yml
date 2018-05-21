@@ -21,6 +21,7 @@ branches:
   only:
     - master
     - develop
+    - /^greenkeeper/.*$/
 
 git:
   depth: 10

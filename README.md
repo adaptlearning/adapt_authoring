@@ -1,5 +1,7 @@
 # Adapt Authoring Tool
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/adaptlearning/adapt_authoring.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://secure.travis-ci.org/adaptlearning/adapt_authoring.png)](http://travis-ci.org/adaptlearning/adapt_authoring) [![Join the chat at https://gitter.im/adaptlearning/adapt_authoring](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/adaptlearning/adapt_authoring?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Adapt is a free and easy to use framework and authoring tool that creates fully responsive, multi-device, HTML5 e-learning content.

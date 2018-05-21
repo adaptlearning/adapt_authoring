@@ -1,0 +1,25 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "package.json",
+        "plugins/auth/local/package.json",
+        "plugins/content/article/package.json",
+        "plugins/content/block/package.json",
+        "plugins/content/bower/package.json",
+        "plugins/content/clipboard/package.json",
+        "plugins/content/component/package.json",
+        "plugins/content/config/package.json",
+        "plugins/content/contentobject/package.json",
+        "plugins/content/course/package.json",
+        "plugins/content/courseasset/package.json",
+        "plugins/content/extension/package.json",
+        "plugins/content/menu/package.json",
+        "plugins/content/tag/package.json",
+        "plugins/content/theme/package.json",
+        "plugins/filestorage/localfs/package.json",
+        "plugins/output/adapt/package.json"
+      ]
+    }
+  }
+}

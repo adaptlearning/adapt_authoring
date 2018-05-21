@@ -9,8 +9,10 @@ _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for
 
 Release which adds the ability to import courses created in the framework, as well as exports from other authoring tool installs.
 
+We're also switching our Node.js support strategy to only include the current **active LTS** release of Node.js, which at time of writing is `v8.x` (see the Node.js [release schedule](https://github.com/nodejs/Release) for more information).
+
 ### Upgrade Notes
-:skull: This release drops official support for Node.js `v4.x.x`, please upgrade to `v6.x.x` prior to installing this version of the authoring tool. :skull:
+:skull: If you're using a Node.js version older than `v8.x`, please upgrade prior to installing this version of the authoring tool. :skull:
 
 ### Added
 - Courses built with the framework and authoring tool exports can now be imported ([\#1387](https://github.com/adaptlearning/adapt_authoring/issues/1387))
@@ -33,7 +35,7 @@ Release which adds the ability to import courses created in the framework, as we
 - Some mocha test data is now cached after the initial run to reduce runtime ([#1761](https://github.com/adaptlearning/adapt_authoring/issues/1761))
 
 ### Removed
-- Support for Node.js v4.x.x
+- Support for Node.js `v4.x` and `v6.x` ([#1769](https://github.com/adaptlearning/adapt_authoring/issues/1769))
 - The need to define third-party front-end plugins in `app.js` ([\#1866](https://github.com/adaptlearning/adapt_authoring/issues/1866))
 - Redundant `conf/config_sample.json` file ([\#1793](https://github.com/adaptlearning/adapt_authoring/issues/1793))
 

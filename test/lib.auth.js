@@ -115,7 +115,7 @@ it('should accept requests to create a password reset token', function(done) {
 });
 
 it('should accept requests to reset a user\'s password', function(done) {
-  usermanager.createUserPasswordReset(authUser, function (error, reset) {
+  usermanager.createUserPasswordReset(getUserResetData(), function (error, reset) {
     should.not.exist(error);
     should.exist(reset);
     helper.userAgent
@@ -135,15 +135,7 @@ it('should accept requests to reset a user\'s password', function(done) {
 });
 
 it('should reset a users password', function(done) {
-  // Manually pass in a reset request
-  var userReset = {
-    email: authUser.email,
-    token: authUser.token,
-    issueDate: new Date(),
-    ipAddress: '127.0.0.1',
-    auth: 'local'
-  };
-  usermanager.createUserPasswordReset(userReset, function(error, reset) {
+  usermanager.createUserPasswordReset(getUserResetData(), function(error, reset) {
     should.not.exist(error);
     should.exist(reset);
     helper.userAgent
@@ -266,4 +258,14 @@ function removeUser(userData, done) {
       usermanager.deleteUserPasswordReset({ user: record.user }, done);
     });
   });
+}
+
+function getUserResetData() {
+  return {
+    email: authUser.email,
+    token: authUser.token,
+    issueDate: new Date(),
+    ipAddress: '127.0.0.1',
+    auth: 'local'
+  };
 }

@@ -20,10 +20,11 @@
     }
   },
   "auth": {
-    "passwordPlain": "this is my password",
-    "email": "auth@foo.bar",
+    "email": "auth@adaptlearning.org",
+    "plainPassword": "thisismypassword",
+    "newPassword": "newpassword",
     "token": "testtokentesttokentesttokentest1",
-    "newPassword": "newpassword"
+    "auth": "local"
   },
   "database": {
     "model": "foo",

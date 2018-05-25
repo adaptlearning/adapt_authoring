@@ -284,19 +284,11 @@ CourseContent.prototype.hasPermission = function (action, userId, tenantId, cont
     if (err) {
       return next(err);
     }
-
-    if (!isAllowed) {
-      // Check the permissions string
-      if (contentItem.hasOwnProperty('_courseId')) {
-        var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
-        permissions.hasPermission(userId, action, resource, next);
-      } else {
-        // This is a brand new course
-        return next(null, true);
-      }
-    } else {
+    if (isAllowed) {
       return next(null, isAllowed);
     }
+    var resource = permissions.buildResourceString(tenantId, `/api/content/course/${contentItem._courseId || '*'}`);
+    permissions.hasPermission(userId, action, resource, next);
   });
 };
 

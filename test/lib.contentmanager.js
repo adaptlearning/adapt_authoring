@@ -23,7 +23,7 @@ before(function(done) {
     .set('Accept', 'application/json')
     .send({
       email: testData.testUser.email,
-      password: testData.testUser.newpassword
+      password: testData.testUser.plainPassword
     })
     .expect(200)
     .expect('Content-Type', /json/)

@@ -91,7 +91,7 @@ function createTestTenant (tenantDetails, cb) {
 
 function createTestUser (userDetails, cb) {
   auth.hashPassword(userDetails.plainPassword, function(error, hash) {
-    if(error) return done(error);
+    if(error) return cb(error);
     userDetails.password = hash;
     usermanager.createUser(userDetails, function(error, user) {
       if(error && error instanceof usermanager.errors.DuplicateUserError) {

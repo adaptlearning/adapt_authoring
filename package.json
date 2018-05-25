@@ -104,6 +104,8 @@
   },
   "devDependencies": {
     "mocha": "^5.2.0",
+    "mocha-multi": "^1.0.1",
+    "mocha-simple-html-reporter": "^1.1.0",
     "mongodb": "^3.0.8",
     "phantom": "^4.0.12",
     "should": "^13.2.1",

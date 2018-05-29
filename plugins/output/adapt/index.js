@@ -15,9 +15,6 @@ var origin = require('../../../'),
     async = require('async'),
     archiver = require('archiver'),
     _ = require('underscore'),
-    ncp = require('ncp').ncp,
-    rimraf = require('rimraf'),
-    mkdirp = require('mkdirp'),
     usermanager = require('../../../lib/usermanager'),
     assetmanager = require('../../../lib/assetmanager'),
     helpers = require('../../../lib/helpers'),
@@ -282,7 +279,7 @@ AdaptOutput.prototype.export = function(pCourseId, request, response, pNext) {
   // store the params
   var currentUser = usermanager.getCurrentUser();
   COURSE_ROOT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.AllCourses, currentUser.tenant._id, pCourseId);
-  EXPORT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Exports, currentUser._id);
+  EXPORT_DIR = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Exports, currentUser._id);
   courseId = pCourseId;
   next = pNext;
   // create the EXPORT_DIR if it isn't there

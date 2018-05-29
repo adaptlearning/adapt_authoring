@@ -21,12 +21,9 @@ var origin = require('../../../'),
     logger = require('../../../lib/logger'),
     defaultOptions = require('./defaults.json'),
     bower = require('bower'),
-    rimraf = require('rimraf'),
     async = require('async'),
     semver = require('semver'),
-    fs = require('fs'),
-    ncp = require('ncp').ncp,
-    mkdirp = require('mkdirp'),
+    fs = require('fs-extra'),
     _ = require('underscore'),
     util = require('util'),
     path = require('path'),
@@ -566,19 +563,19 @@ function addPackage (plugin, packageInfo, options, cb) {
         // Copy this version of the component to a holding area (used for publishing).
         // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
         var destination = path.join(plugin.options.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
-        rimraf(destination, function(err) {
+        fs.remove(destination, function(err) {
           if (err) {
             // can't continue
             return logger.log('error', err);
           }
 
-          mkdirp(destination, function (err) {
+          fs.mkdirs(destination, function (err) {
             if (err) {
               return logger.log('error', err);
             }
 
             // move from the cache to the versioned dir
-            ncp(packageInfo.canonicalDir, destination, function (err) {
+            fs.copy(packageInfo.canonicalDir, destination, function (err) {
               if (err) {
                 // don't double call callback
                 return logger.log('error', err);
@@ -600,12 +597,12 @@ function addPackage (plugin, packageInfo, options, cb) {
               );
 
               // remove older version first
-              rimraf(tenantPluginPath, function (err) {
+              fs.remove(tenantPluginPath, function (err) {
                 if (err) {
                   return logger.log('error', err);
                 }
 
-                ncp(packageInfo.canonicalDir, tenantPluginPath, function (err) {
+                fs.copy(packageInfo.canonicalDir, tenantPluginPath, function (err) {
                   if (err) {
                     return logger.log('error', err);
                   }
@@ -751,7 +748,7 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
   options.cwd = configuration.serverRoot;
 
   // clean our bower cache
-  rimraf(options.directory, function (err) {
+  fs.remove(options.directory, function (err) {
     if (err) {
       return cb(err);
     }

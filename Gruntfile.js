@@ -1,3 +1,6 @@
+
+var mongoUri = require('mongodb-uri');
+
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 module.exports = function(grunt) {
   require('matchdep').filterAll('grunt-*').forEach(grunt.loadNpmTasks);
@@ -239,22 +242,26 @@ module.exports = function(grunt) {
     var config = grunt.file.readJSON('conf/config.json');
     var connectionString = '';
 
-    // Construct the authentication part of the connection string.
-    var authenticationString = config.dbUser && config.dbPass ? config.dbUser + ':' + config.dbPass + '@' : '';
-
-    // Check if a MongoDB replicaset array has been specified.
-    if (config.dbReplicaset && Array.isArray(config.dbReplicaset) && config.dbReplicaset.length !== 0) {
-      // The replicaset should contain an array of hosts and ports
-      connectionString = 'mongodb://' + authenticationString + config.dbReplicaset.join(',') + '/' + config.dbName
+    if (config.dbConnectionUri) {
+      connectionString = config.dbConnectionUri
     } else {
-      // Get the host and port number from the configuration.
+      // Construct the authentication part of the connection string.
+      var authenticationString = config.dbUser && config.dbPass ? config.dbUser + ':' + config.dbPass + '@' : '';
 
-      var portString = config.dbPort ? ':' + config.dbPort : '';
+      // Check if a MongoDB replicaset array has been specified.
+      if (config.dbReplicaset && Array.isArray(config.dbReplicaset) && config.dbReplicaset.length !== 0) {
+        // The replicaset should contain an array of hosts and ports
+        connectionString = 'mongodb://' + authenticationString + config.dbReplicaset.join(',') + '/' + config.dbName
+      } else {
+        // Get the host and port number from the configuration.
 
-      connectionString = 'mongodb://' + authenticationString + config.dbHost + portString + '/' + config.dbName;
-    }
-    if(typeof config.authSource === 'string' && config.authSource !== '' ){
-      connectionString += '?authSource=' + config.authSource
+        var portString = config.dbPort ? ':' + config.dbPort : '';
+
+        connectionString = 'mongodb://' + authenticationString + config.dbHost + portString + '/' + config.dbName;
+      }
+      if(typeof config.authSource === 'string' && config.authSource !== '' ){
+        connectionString += '?authSource=' + config.authSource
+      }
     }
 
     var migrateConf = {

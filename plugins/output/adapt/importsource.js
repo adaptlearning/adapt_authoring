@@ -59,7 +59,7 @@ function ImportSource(req, done) {
 
   form.parse(req, function (error, fields, files) {
 
-    if (error) return next(error);
+    if (error) return done(error);
 
     var formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
     var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];

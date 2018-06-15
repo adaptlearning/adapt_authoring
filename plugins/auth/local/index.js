@@ -279,7 +279,7 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
         var subject = app.polyglot.t('app.emailforgottenpasswordsubject');
         var body = app.polyglot.t('app.emailforgottenpasswordbody', { rootUrl: configuration.getConfig('rootUrl'), data: userToken.token });
         var templateData = {
-          name: 'passwordReset',
+          name: 'passwordReset/html.hbs',
           user: user,
           showButton: true,
           rootUrl: configuration.getConfig('rootUrl'),

@@ -14,6 +14,7 @@ var glob = require('glob');
 var helpers = require('./helpers');
 var logger = require("../../../lib/logger");
 var mime = require('mime');
+var installHelpers = require('../../../lib/installHelpers');
 
 function ImportSource(req, done) {
   var contentMap = {
@@ -260,9 +261,22 @@ function ImportSource(req, done) {
       if(err) {
         return done(err);
       }
-      async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
-        helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
-      }, done);
+      // check that all plugins support the installed framework versions 
+      installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion) {
+        async.every(plugindata.pluginIncludes, function everyIterator(pluginData, doneEveryIterator) {
+          fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
+            if (error) return doneEveryIterator(error);
+            var versionError = helpers.checkPluginFrameworkVersion(frameworkVersion, data);
+            if (versionError) return doneEveryIterator(versionError, false);
+            return doneEveryIterator(null, true);
+          });
+        }, function(error, allSupported) {
+          if (error) return done(error);
+          async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
+            helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
+          }, done);
+        });
+      })
     });
   }
 

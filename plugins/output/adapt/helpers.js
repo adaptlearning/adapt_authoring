@@ -91,23 +91,9 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
     },
     function addPlugin(records, cb) {
       if(records.length === 0) {
-        installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion ) {
-          if(err){
-            return cb(err)
-          }
-
-          var serverVersion = semver.clean(frameworkVersion);
-          var pluginRange = semver.validRange(bowerJson.framework);
-
-          if(semver.satisfies(serverVersion, pluginRange)) {
-            logger.log('info', 'Installing', pluginType, "'" + bowerJson.displayName + "'");
-            bowerJson.isLocalPackage = true;
-            app.bowermanager.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
-          } else {
-            logger.log('info', "Can't install " + bowerJson.displayName + ", it requires framework v" + pluginRange + " (" + frameworkVersion + " installed)");
-            cb();
-          }
-        })
+        logger.log('info', 'Installing', pluginType, "'" + bowerJson.displayName + "'");
+        bowerJson.isLocalPackage = true;
+        app.bowermanager.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
       } else {
         var serverPlugin = records[0];
         var serverPluginVersion = semver.clean(serverPlugin.version);
@@ -234,6 +220,18 @@ function checkFrameworkVersion(versionMetaData, cb) {
   });
 };
 
+function checkPluginFrameworkVersion(serverFrameworkVersion, pluginMetaData) {
+  if (semver.valid(pluginMetaData.framework) || semver.validRange(pluginMetaData.framework)) {
+    if (semver.satisfies(serverFrameworkVersion, pluginMetaData.framework)) {
+      return null;
+    } else {
+      return new ImportError(`Plugin ${pluginMetaData.name} (${pluginMetaData.framework}) is not compatible with the installed version (${serverFrameworkVersion})`, 400);
+    }
+  } else {
+    return new ImportError(`Invalid version number (${pluginMetaData.framework}) found in ${pluginMetaData.name}`, 400);
+  }
+};
+
 function ImportError(message, httpStatus) {
   this.message = message || "Course import failed";
   this.httpStatus = httpStatus || 500;
@@ -268,6 +266,7 @@ exports = module.exports = {
   importPlugin: importPlugin,
   importAsset: importAsset,
   checkFrameworkVersion: checkFrameworkVersion,
+  checkPluginFrameworkVersion: checkPluginFrameworkVersion,
   ImportError: ImportError,
   sortContentObjects: sortContentObjects,
   cleanUpImport: cleanUpImport

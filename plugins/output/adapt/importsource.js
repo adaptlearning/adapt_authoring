@@ -263,15 +263,20 @@ function ImportSource(req, done) {
       }
       // check that all plugins support the installed framework versions 
       installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion) {
-        async.every(plugindata.pluginIncludes, function everyIterator(pluginData, doneEveryIterator) {
+        async.reduce(plugindata.pluginIncludes, [], function checkFwVersion(memo, pluginData, checkFwVersionCb) {
           fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
-            if (error) return doneEveryIterator(error);
+            if (error) return checkFwVersionCb(error);
             var versionError = helpers.checkPluginFrameworkVersion(frameworkVersion, data);
-            if (versionError) return doneEveryIterator(versionError, false);
-            return doneEveryIterator(null, true);
+            if (versionError) {
+              memo.push(versionError);
+            }
+            return checkFwVersionCb(null, memo);
           });
-        }, function(error, allSupported) {
+        }, function(error, unsupportedPlugins) {
           if (error) return done(error);
+          if (unsupportedPlugins.length > 0) {
+            return done(new helpers.ImportError(unsupportedPlugins.join('\n'), 400));
+          }
           async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
             helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
           }, done);

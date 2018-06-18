@@ -91,10 +91,12 @@ define(function(require){
         // TODO - add route for course destroy
         //$.ajax('/api/course/' + this.createdCourseId, { method: 'DELETE', error: _.bind(this.onAjaxError, this) });
       }
+      var text = (data.responseText) ? data.responseText.replace(/\n/g, "<br />") : error;
+
       Origin.Notify.alert({
         type: 'error',
         title: Origin.l10n.t('app.importerrortitle'),
-        text: data.responseText || error
+        text: text
       });
     },
 

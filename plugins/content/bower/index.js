@@ -557,17 +557,17 @@ function addPackage (plugin, packageInfo, options, cb) {
         return cb(null);
       }
 
-      async.parallel([
-        storeOnFs,
-        storeInDB
-      ], function(error, results) {
+      async.waterfall([
+        addToDB,
+        copyPlugin
+      ], function(error, plugin) {
         if (error) return cb(error);
-        cb(null, results[1]);
+        cb(null, plugin);
       });
     });
   });
 
-  function storeOnFs(parallelCb) {
+  function copyPlugin(pluginDoc, addCb) {
     // @TODO - this should be removed when we move to symlinked plugins :-\
     if (!options.skipTenantCopy) {
       // Copy this version of the component to a holding area (used for publishing).
@@ -577,13 +577,13 @@ function addPackage (plugin, packageInfo, options, cb) {
         if (err) {
           // can't continue
           logger.log('error', err);
-          return parallelCb(err);
+          return addCb(err);
         }
 
         fs.mkdirs(destination, function (err) {
           if (err) {
             logger.log('error', err);
-            return parallelCb(err);
+            return addCb(err);
           }
 
           // move from the cache to the versioned dir
@@ -591,7 +591,7 @@ function addPackage (plugin, packageInfo, options, cb) {
             if (err) {
               // don't double call callback
               logger.log('error', err);
-              return parallelCb(err);
+              return addCb(err);
             }
 
             // temporary hack to get stuff moving
@@ -613,18 +613,18 @@ function addPackage (plugin, packageInfo, options, cb) {
             fs.remove(tenantPluginPath, function (err) {
               if (err) {
                 logger.log('error', err);
-                return parallelCb(err);
+                return addCb(err);
               }
 
               fs.copy(packageInfo.canonicalDir, tenantPluginPath, function (err) {
                 if (err) {
                   logger.log('error', err);
-                  return parallelCb(err);
+                  return addCb(err);
                 }
 
                 // done
                 logger.log('info', 'Successfully copied ' + pkgMeta.name + ' to tenant ' + tenantPluginPath);
-                return parallelCb(null, pkgMeta);
+                return addCb(null, pluginDoc);
               });
             });
           });
@@ -633,39 +633,39 @@ function addPackage (plugin, packageInfo, options, cb) {
     }
   }
 
-  function storeInDB(parallelCb) {
+  function addToDB(addCb) {
     // build the package information
     var package = extractPackageInfo(plugin, pkgMeta, schema);
     // add the package to the modelname collection
     database.getDatabase(function (err, db) {
       if (err) {
         logger.log('error', err);
-        return parallelCb(err);
+        return addCb(err);
       }
 
       // don't duplicate component.name, component.version
       db.retrieve(plugin.type, { name: package.name, version: package.version }, function (err, results) {
         if (err) {
           logger.log('error', err);
-          return parallelCb(err);
+          return addCb(err);
         }
 
         if (results && 0 !== results.length) {
           // don't add duplicate
           if (options.strict) {
-            return parallelCb(new PluginPackageError("Can't add plugin: plugin already exists!"));
+            return addCb(new PluginPackageError("Can't add plugin: plugin already exists!"));
           }
-          return parallelCb(null);
+          return addCb(null);
         }
 
         db.create(plugin.type, package, function (err, newPlugin) {
           if (err) {
             if (options.strict) {
-              return parallelCb(err);
+              return addCb(err);
             }
 
             logger.log('error', 'Failed to add package: ' + package.name, err);
-            return parallelCb(null);
+            return addCb(null);
           }
 
           logger.log('info', 'Added package: ' + package.name);
@@ -695,24 +695,24 @@ function addPackage (plugin, packageInfo, options, cb) {
               db.update(plugin.type, {_id: newPlugin._id}, {_isAvailableInEditor: oldPlugin._isAvailableInEditor}, function(err, results) {
                 if (err) {
                   logger.log('error', err);
-                  return parallelCb(err);
+                  return addCb(err);
                 }
 
                 plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
                   if (err) {
                     logger.log('error', err);
-                    return parallelCb(err);
+                    return addCb(err);
                   }
 
                   // Remove older versions of this plugin
                   db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
                     if (err) {
                       logger.log('error', err);
-                      return parallelCb(err);
+                      return addCb(err);
                     }
 
                     logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
-                    return parallelCb(null, newPlugin);
+                    return addCb(null, newPlugin);
                   });
                 });
               });
@@ -722,12 +722,12 @@ function addPackage (plugin, packageInfo, options, cb) {
               db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
                 if (err) {
                   logger.log('error', err);
-                  return parallelCb(err);
+                  return addCb(err);
                 }
 
                 logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
 
-                return parallelCb(null, newPlugin);
+                return addCb(null, newPlugin);
               });
             }
           });

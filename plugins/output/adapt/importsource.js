@@ -59,7 +59,7 @@ function ImportSource(req, done) {
 
   form.parse(req, function (error, fields, files) {
 
-    if (error) return next(error);
+    if (error) return done(error);
 
     var formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
     var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
@@ -382,6 +382,12 @@ function ImportSource(req, done) {
 
               // Sorts in-place the content objects to make sure processing can happen
               if (type == 'contentobject') {
+                var byParent = _.groupBy(contentJson, '_parentId');
+                Object.keys(byParent).forEach(function(parentId) {
+                  byParent[parentId].forEach(function(item, index) {
+                    item._sortOrder = index + 1;
+                  });
+                });
                 var groups = _.groupBy(contentJson, '_type');
                 var sortedSections = helpers.sortContentObjects(groups.menu, origCourseId, []);
                 contentJson = sortedSections.concat(groups.page);

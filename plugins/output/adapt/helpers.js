@@ -221,15 +221,14 @@ function checkFrameworkVersion(versionMetaData, cb) {
 };
 
 function checkPluginFrameworkVersion(serverFrameworkVersion, pluginMetaData) {
-  if (semver.valid(pluginMetaData.framework) || semver.validRange(pluginMetaData.framework)) {
-    if (semver.satisfies(serverFrameworkVersion, pluginMetaData.framework)) {
-      return null;
-    } else {
-      return new ImportError(`Plugin ${pluginMetaData.name} (${pluginMetaData.framework}) is not compatible with the installed version (${serverFrameworkVersion})`, 400);
-    }
-  } else {
+  const validFrameworkVersion = (semver.valid(pluginMetaData.framework) || semver.validRange(pluginMetaData.framework));
+  if (!validFrameworkVersion) {
     return new ImportError(`Invalid version number (${pluginMetaData.framework}) found in ${pluginMetaData.name}`, 400);
   }
+  if (semver.satisfies(serverFrameworkVersion, pluginMetaData.framework)) {
+    return null;
+  }
+  return new ImportError(`Plugin ${pluginMetaData.name} (${pluginMetaData.framework}) is not compatible with the installed version (${serverFrameworkVersion})`, 400);
 };
 
 function ImportError(message, httpStatus) {

@@ -86,9 +86,13 @@ function ImportSource(req, done) {
       async.apply(installPlugins),
       async.apply(addAssets, formTags),
       async.apply(cacheMetadata),
-      async.apply(importContent, formTags),
-      async.apply(helpers.cleanUpImport, cleanupDirs)
-    ], done);
+      async.apply(importContent, formTags)
+    ], function(importError, result) {
+      helpers.cleanUpImport(cleanupDirs, function(cleanUpError) {
+        const error = importError || cleanUpError;
+        done(error);
+      });
+    });
   });
 
 
@@ -412,9 +416,7 @@ function ImportSource(req, done) {
       },
       function checkDetachedContent(cb) {
         const detachedIds = Object.keys(detachedElementsMap);
-        if (detachedIds.length === 0) {
-          return cb();
-        }
+        if (detachedIds.length === 0) return cb();
 
         const groups = detachedIds.reduce(function(result, id) {
           if (result[detachedElementsMap[id]] === undefined) {
@@ -424,12 +426,11 @@ function ImportSource(req, done) {
           return result;
         }, Object.create(null));
         const errorMsg = Object.keys(groups).reduce(function(errorString, group) {
-          errorString.push(`${group}'s: ${ groups[group].join(',') } \n`);
+          errorString.push(`${group}'s: ${ groups[group].join(',') }`);
           return errorString;
-        }, ['Partial import, the following elements could not be imported:\n']);
-        errorMsg.push('Please check your imported Course.');  
-        debugger;
-        cb();
+        }, [app.polyglot.t('app.importcoursepartialintro')]);
+        errorMsg.push(app.polyglot.t('app.importcoursecheckcourse'));
+        cb(new helpers.PartialImportError(errorMsg.join('\n')));
       }
     ], done);
   }

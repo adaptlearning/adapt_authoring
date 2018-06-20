@@ -46,9 +46,19 @@
 
   .server-log {
     padding: 0 30px;
-
+    
+    &.error {
+      color: @alert-color;
+      position: static;
+    }
+    
     .server-log-inner {
       font-weight: bold;
+      font-size: 0.8rem;
+
+      .title {
+        padding-bottom: 10px;
+      }
     }
   }
 }

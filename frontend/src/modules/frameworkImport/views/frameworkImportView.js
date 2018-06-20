@@ -75,27 +75,24 @@ define(function(require){
       Origin.router.navigateToHome();
     },
 
-    onFormSubmitSuccess: function(importData, impoprtStatus, importXhr) {
-      Origin.trigger('sidebar:resetButtons');
-      this.$('.server-log-inner').empty().html(importData.replace(/\n/g, "<br />"));
-    },
-
-    onAjaxSuccess: function() {
-      this.goBack();
+    onFormSubmitSuccess: function(data, impoprtStatus, importXhr) {
+      var title = data.title || '';
+      var msg = data.body.replace(/\n/g, "<br />") || '';
+      this.promptUser(title, msg, false);
     },
 
     onAjaxError: function(data, status, error) {
+      var title = data.responseJSON.title || Origin.l10n.t('app.importerrortitle');
+      var msg = data.responseJSON.body.replace(/\n/g, "<br />") || error;
+      this.promptUser(title, msg, true);
+    },
+    
+    promptUser: function(title, message, isError) {
       Origin.trigger('sidebar:resetButtons');
-      // We may have a partially created course, make sure it's gone
-      if(this.createdCourseId) {
-        // TODO - add route for course destroy
-        //$.ajax('/api/course/' + this.createdCourseId, { method: 'DELETE', error: _.bind(this.onAjaxError, this) });
-      }
-      Origin.Notify.alert({
-        type: 'error',
-        title: Origin.l10n.t('app.importerrortitle'),
-        text: data.responseText || error
-      });
+      var $serverLog = this.$('.server-log');
+      $serverLog.toggleClass('error', isError);
+      $serverLog.find('.title').empty().html(title);
+      $serverLog.find('.body').empty().html(message);
     },
 
     onAddTag: function (tag) {

@@ -76,7 +76,6 @@ define(function(require){
     },
 
     onFormSubmitSuccess: function(importData, impoprtStatus, importXhr) {
-      this.createdCourseId = importData._id;
       Origin.router.navigateToHome();
     },
 
@@ -86,11 +85,6 @@ define(function(require){
 
     onAjaxError: function(data, status, error) {
       Origin.trigger('sidebar:resetButtons');
-      // We may have a partially created course, make sure it's gone
-      if(this.createdCourseId) {
-        // TODO - add route for course destroy
-        //$.ajax('/api/course/' + this.createdCourseId, { method: 'DELETE', error: _.bind(this.onAjaxError, this) });
-      }
       var text = (data.responseText) ? data.responseText.replace(/\n/g, "<br />") : error;
 
       Origin.Notify.alert({

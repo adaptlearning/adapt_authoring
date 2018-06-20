@@ -498,7 +498,7 @@ function addPackage (plugin, packageInfo, options, cb) {
       strict: false
     };
   }
-
+  var schema = false;
   // verify packageInfo meets requirements
   var pkgMeta = packageInfo.pkgMeta;
   if (pkgMeta.keywords) { // only allow our package type
@@ -537,7 +537,6 @@ function addPackage (plugin, packageInfo, options, cb) {
     }
 
     fs.readFile(schemaPath, function (err, data) {
-      var schema = false;
       if (err) {
         if (options.strict) {
           return cb(new PluginPackageError('Failed to parse schema for package ' + pkgMeta.name));
@@ -558,166 +557,184 @@ function addPackage (plugin, packageInfo, options, cb) {
         return cb(null);
       }
 
-      // @TODO - this should be removed when we move to symlinked plugins :-\
-      if (!options.skipTenantCopy) {
-        // Copy this version of the component to a holding area (used for publishing).
-        // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
-        var destination = path.join(plugin.options.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
-        fs.remove(destination, function(err) {
+      async.waterfall([
+        addToDB,
+        copyPlugin
+      ], function(error, plugin) {
+        if (error) return cb(error);
+        cb(null, plugin);
+      });
+    });
+  });
+
+  function copyPlugin(pluginDoc, addCb) {
+    // @TODO - this should be removed when we move to symlinked plugins :-\
+    if (!options.skipTenantCopy) {
+      // Copy this version of the component to a holding area (used for publishing).
+      // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
+      var destination = path.join(plugin.options.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
+      fs.remove(destination, function(err) {
+        if (err) {
+          // can't continue
+          logger.log('error', err);
+          return addCb(err);
+        }
+
+        fs.mkdirs(destination, function (err) {
           if (err) {
-            // can't continue
-            return logger.log('error', err);
+            logger.log('error', err);
+            return addCb(err);
           }
 
-          fs.mkdirs(destination, function (err) {
+          // move from the cache to the versioned dir
+          fs.copy(packageInfo.canonicalDir, destination, function (err) {
             if (err) {
-              return logger.log('error', err);
+              // don't double call callback
+              logger.log('error', err);
+              return addCb(err);
             }
 
-            // move from the cache to the versioned dir
-            fs.copy(packageInfo.canonicalDir, destination, function (err) {
+            // temporary hack to get stuff moving
+            // copy plugin source to tenant dir
+            var currentUser = usermanager.getCurrentUser();
+            var tenantId = options.tenantId
+              ? options.tenantId
+              : currentUser.tenant._id.toString()
+            var tenantPluginPath = path.join(
+              configuration.tempDir,
+              tenantId,
+              'adapt_framework',
+              'src',
+              plugin.srcLocation,
+              pkgMeta.name
+            );
+
+            // remove older version first
+            fs.remove(tenantPluginPath, function (err) {
               if (err) {
-                // don't double call callback
-                return logger.log('error', err);
+                logger.log('error', err);
+                return addCb(err);
               }
 
-              // temporary hack to get stuff moving
-              // copy plugin source to tenant dir
-              var currentUser = usermanager.getCurrentUser();
-              var tenantId = options.tenantId
-                ? options.tenantId
-                : currentUser.tenant._id.toString()
-              var tenantPluginPath = path.join(
-                configuration.tempDir,
-                tenantId,
-                'adapt_framework',
-                'src',
-                plugin.srcLocation,
-                pkgMeta.name
-              );
-
-              // remove older version first
-              fs.remove(tenantPluginPath, function (err) {
+              fs.copy(packageInfo.canonicalDir, tenantPluginPath, function (err) {
                 if (err) {
-                  return logger.log('error', err);
+                  logger.log('error', err);
+                  return addCb(err);
                 }
 
-                fs.copy(packageInfo.canonicalDir, tenantPluginPath, function (err) {
-                  if (err) {
-                    return logger.log('error', err);
-                  }
-
-                  // done
-                  logger.log('info', 'Successfully copied ' + pkgMeta.name + ' to tenant ' + tenantPluginPath);
-                });
+                // done
+                logger.log('info', 'Successfully copied ' + pkgMeta.name + ' to tenant ' + tenantPluginPath);
+                return addCb(null, pluginDoc);
               });
             });
           });
         });
+      });
+    }
+  }
+
+  function addToDB(addCb) {
+    // build the package information
+    var package = extractPackageInfo(plugin, pkgMeta, schema);
+    // add the package to the modelname collection
+    database.getDatabase(function (err, db) {
+      if (err) {
+        logger.log('error', err);
+        return addCb(err);
       }
 
-      // build the package information
-      var package = extractPackageInfo(plugin, pkgMeta, schema);
-      // add the package to the modelname collection
-      database.getDatabase(function (err, db) {
+      // don't duplicate component.name, component.version
+      db.retrieve(plugin.type, { name: package.name, version: package.version }, function (err, results) {
         if (err) {
           logger.log('error', err);
-          return cb(err);
+          return addCb(err);
         }
 
-        // don't duplicate component.name, component.version
-        db.retrieve(plugin.type, { name: package.name, version: package.version }, function (err, results) {
+        if (results && 0 !== results.length) {
+          // don't add duplicate
+          if (options.strict) {
+            return addCb(new PluginPackageError("Can't add plugin: plugin already exists!"));
+          }
+          return addCb(null);
+        }
+
+        db.create(plugin.type, package, function (err, newPlugin) {
           if (err) {
-            logger.log('error', err);
-            return cb(err);
-          }
-
-          if (results && 0 !== results.length) {
-            // don't add duplicate
             if (options.strict) {
-              return cb(new PluginPackageError("Can't add plugin: plugin already exists!"));
+              return addCb(err);
             }
-            return cb(null);
+
+            logger.log('error', 'Failed to add package: ' + package.name, err);
+            return addCb(null);
           }
 
-          db.create(plugin.type, package, function (err, newPlugin) {
-            if (err) {
-              if (options.strict) {
-                return cb(err);
-              }
+          logger.log('info', 'Added package: ' + package.name);
 
-              logger.log('error', 'Failed to add package: ' + package.name, err);
-              return cb(null);
+          // #509 update content targeted by previous versions of this package
+          logger.log('info', 'searching old package types ... ');
+          db.retrieve(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err, results) {
+
+            if (err) {
+              // strictness doesn't matter at this point
+              logger.log('error', 'Failed to retrieve previous packages: ' + err.message, err);
             }
 
-            logger.log('info', 'Added package: ' + package.name);
+            if (results && results.length) {
+              // found previous versions to update
+              // only update content using the id of the most recent version
+              var oldPlugin = false;
+              results.forEach(function (item) {
+                if (!oldPlugin) {
+                  oldPlugin = item;
+                } else if (semver.gt(item.version, oldPlugin.version)) {
+                  oldPlugin = item;
+                }
+              });
 
-            // #509 update content targeted by previous versions of this package
-            logger.log('info', 'searching old package types ... ');
-            db.retrieve(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err, results) {
+              // Persist the _isAvailableInEditor flag.
+              db.update(plugin.type, {_id: newPlugin._id}, {_isAvailableInEditor: oldPlugin._isAvailableInEditor}, function(err, results) {
+                if (err) {
+                  logger.log('error', err);
+                  return addCb(err);
+                }
 
-              if (err) {
-                // strictness doesn't matter at this point
-                logger.log('error', 'Failed to retrieve previous packages: ' + err.message, err);
-              }
-
-              if (results && results.length) {
-                // found previous versions to update
-                // only update content using the id of the most recent version
-                var oldPlugin = false;
-                results.forEach(function (item) {
-                  if (!oldPlugin) {
-                    oldPlugin = item;
-                  } else if (semver.gt(item.version, oldPlugin.version)) {
-                    oldPlugin = item;
-                  }
-                });
-
-                // Persist the _isAvailableInEditor flag.
-                db.update(plugin.type, {_id: newPlugin._id}, {_isAvailableInEditor: oldPlugin._isAvailableInEditor}, function(err, results) {
+                plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
                   if (err) {
                     logger.log('error', err);
-                    return cb(err);
+                    return addCb(err);
                   }
 
-                  plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
+                  // Remove older versions of this plugin
+                  db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
                     if (err) {
                       logger.log('error', err);
-                      return cb(err);
+                      return addCb(err);
                     }
 
-                    // Remove older versions of this plugin
-                    db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
-                      if (err) {
-                        logger.log('error', err);
-                        return cb(err);
-                      }
-
-                      logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
-                      return cb(null, newPlugin);
-                    });
+                    logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
+                    return addCb(null, newPlugin);
                   });
                 });
-              } else {
-                // nothing to do!
-                // Remove older versions of this plugin
-                db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
-                  if (err) {
-                    logger.log('error', err);
-                    return cb(err);
-                  }
+              });
+            } else {
+              // nothing to do!
+              // Remove older versions of this plugin
+              db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
+                if (err) {
+                  logger.log('error', err);
+                  return addCb(err);
+                }
 
-                  logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
+                logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
 
-                  return cb(null, newPlugin);
-                });
-              }
-            });
+                return addCb(null, newPlugin);
+              });
+            }
           });
         });
-      }, options.tenantId);
-    });
-  });
+      });
+    }, options.tenantId);
+  }
 }
 
 /**

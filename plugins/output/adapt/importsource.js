@@ -14,6 +14,7 @@ var glob = require('glob');
 var helpers = require('./helpers');
 var logger = require("../../../lib/logger");
 var mime = require('mime');
+var installHelpers = require('../../../lib/installHelpers');
 
 function ImportSource(req, done) {
   var contentMap = {
@@ -260,9 +261,27 @@ function ImportSource(req, done) {
       if(err) {
         return done(err);
       }
-      async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
-        helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
-      }, done);
+      // check that all plugins support the installed framework versions 
+      installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion) {
+        async.reduce(plugindata.pluginIncludes, [], function checkFwVersion(memo, pluginData, checkFwVersionCb) {
+          fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
+            if (error) return checkFwVersionCb(error);
+            var versionError = helpers.checkPluginFrameworkVersion(frameworkVersion, data);
+            if (versionError) {
+              memo.push(versionError);
+            }
+            return checkFwVersionCb(null, memo);
+          });
+        }, function(error, unsupportedPlugins) {
+          if (error) return done(error);
+          if (unsupportedPlugins.length > 0) {
+            return done(new helpers.ImportError(unsupportedPlugins.join('\n'), 400));
+          }
+          async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
+            helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
+          }, done);
+        });
+      })
     });
   }
 

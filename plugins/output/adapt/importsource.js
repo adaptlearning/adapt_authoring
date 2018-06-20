@@ -89,6 +89,7 @@ function ImportSource(req, done) {
       async.apply(cacheMetadata),
       async.apply(importContent, formTags)
     ], function(importError, result) {
+      // cleanup should run regardless of import fail or success  
       helpers.cleanUpImport(cleanupDirs, function(cleanUpError) {
         const error = importError || cleanUpError;
         done(error);

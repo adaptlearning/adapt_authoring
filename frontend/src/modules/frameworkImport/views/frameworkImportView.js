@@ -76,9 +76,7 @@ define(function(require){
     },
 
     onFormSubmitSuccess: function(data, impoprtStatus, importXhr) {
-      var title = data.title || '';
-      var msg = data.body.replace(/\n/g, "<br />") || '';
-      this.promptUser(title, msg, false);
+      Origin.router.navigateToHome();
     },
 
     onAjaxError: function(data, status, error) {
@@ -89,10 +87,11 @@ define(function(require){
     
     promptUser: function(title, message, isError) {
       Origin.trigger('sidebar:resetButtons');
-      var $serverLog = this.$('.server-log');
-      $serverLog.toggleClass('error', isError);
-      $serverLog.find('.title').empty().html(title);
-      $serverLog.find('.body').empty().html(message);
+      Origin.Notify.alert({
+        type: (!isError) ? 'success' : 'error',
+        title: title,
+        text: message
+      });
     },
 
     onAddTag: function (tag) {

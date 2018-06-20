@@ -76,8 +76,8 @@ define(function(require){
     },
 
     onFormSubmitSuccess: function(importData, impoprtStatus, importXhr) {
-      this.createdCourseId = importData._id;
-      Origin.router.navigateToHome();
+      Origin.trigger('sidebar:resetButtons');
+      this.$('.server-log-inner').empty().html(importData.replace(/\n/g, "<br />"));
     },
 
     onAjaxSuccess: function() {

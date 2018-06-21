@@ -75,7 +75,7 @@ define(function(require){
       Origin.router.navigateToHome();
     },
 
-    onFormSubmitSuccess: function(data, impoprtStatus, importXhr) {
+    onFormSubmitSuccess: function(data, importStatus, importXhr) {
       Origin.router.navigateToHome();
     },
 

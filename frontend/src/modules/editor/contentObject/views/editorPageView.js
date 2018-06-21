@@ -194,7 +194,7 @@ define(function(require){
     },
 
     setupScrollListener: function() {
-      $('.contentPane').on('scroll', this._onScroll);
+      $('.editor-view').on('scroll', this._onScroll);
     },
 
     onScroll: function(event) {
@@ -203,14 +203,14 @@ define(function(require){
     },
 
     removeScrollListener: function() {
-      $('.contentPane').off('scroll', this._onScroll);
+      $('.editor-view').off('scroll', this._onScroll);
     },
 
     allChildrenRendered: function() {
       if (Origin.editor.scrollTo > 0) {
         this.removeScrollListener();
       }
-      $('.contentPane').scrollTo(Origin.editor.scrollTo, {
+      $('.editor-view').scrollTo(Origin.editor.scrollTo, {
         duration: 200,
         onAfter: _.bind(function() {
           this.setupScrollListener();

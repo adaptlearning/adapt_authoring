@@ -154,10 +154,10 @@ define(function(require){
       }
       var html = '<ul class="tag-container">';
       for (var i = 0; i < list.length; ++i) {
-        var tag = (key && list[i][key]) ? list[i][key] : list[i];
+        var tag = Handlebars.Utils.escapeExpression((key && list[i][key]) ? list[i][key] : list[i]);
         html += '<li class="tag-item" title="' + tag + '"><span class="tag-value">' + tag  + '</span></li>';
       }
-      return html + '</ul>';
+      return new Handlebars.SafeString(html + '</ul>');
     },
 
     decodeHTML: function(html) {

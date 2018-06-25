@@ -52,8 +52,10 @@ define(function(require){
         opacity: [1, 0.4]
       }, {
         duration: 400,
-        complete: function() {
+        begin: function() {
           this.$el.removeClass('page-content-syncing');
+        }.bind(this),
+        complete: function() {
           Origin.trigger('pageView:itemAnimated', this);
         }.bind(this)
       })

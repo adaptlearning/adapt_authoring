@@ -80,8 +80,9 @@ define(function(require){
     },
 
     onAjaxError: function(data, status, error) {
-      var title = data.responseJSON.title || Origin.l10n.t('app.importerrortitle');
-      var msg = data.responseJSON.body && data.responseJSON.body.replace(/\n/g, "<br />") || error;
+      var resJson = data.responseJSON || {};
+      var title = resJson.title || Origin.l10n.t('app.importerrortitle');
+      var msg = resJson.body && resJson.body.replace(/\n/g, "<br />") || error;
       this.promptUser(title, msg, true);
     },
 

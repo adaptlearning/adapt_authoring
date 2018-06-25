@@ -15,12 +15,12 @@ server.post('/importsource', function (request, response, next) {
   var outputplugin = app.outputmanager.getOutputPlugin(app.configuration.getConfig('outputPlugin'), function (error, plugin) {
     if (error) {
       logger.log('error', error);
-      return response.status(500).send(error.message);
+      return response.status(500).send({ body: error.message });
     }
     plugin.importsource(request, function (error) {
       if (!error) {
         logger.log('info', 'Course imported successfully');
-        return response.status(200).send({body: app.polyglot.t('app.importcoursesuccess')});
+        return response.status(200).send({ body: app.polyglot.t('app.importcoursesuccess') });
       }
 
       if (error instanceof helpers.PartialImportError) {

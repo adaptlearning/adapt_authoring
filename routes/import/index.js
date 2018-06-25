@@ -8,10 +8,7 @@ var helpers = require('../../plugins/output/adapt/helpers');
 // stop any auto permissions checks
 permissions.ignoreRoute(/^\/import\/?.*$/);
 
-// TODO think we should move this to plugins/output/adapt/import
-
 server.post('/importsource', function (request, response, next) {
-  // TODO permissions check
   var outputplugin = app.outputmanager.getOutputPlugin(app.configuration.getConfig('outputPlugin'), function (error, plugin) {
     if (error) {
       logger.log('error', error);
@@ -42,7 +39,6 @@ server.post('/importsource', function (request, response, next) {
 
 
 server.post('/import', function (request, response, next) {
-  // TODO permissions check
   var outputplugin = app.outputmanager.getOutputPlugin(app.configuration.getConfig('outputPlugin'), function (error, plugin) {
     if (error) {
       logger.log('error', error);

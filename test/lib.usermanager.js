@@ -15,14 +15,12 @@ var userReset = {
 
 // ensure the user record is deleted
 after(function(done) {
-  usermanager.retrieveUser({ email: testData.user.email }, function(error, record) {
+  usermanager.deleteUser({ email: testData.user.email }, function(error) {
     if(error) return done(error);
-    usermanager.deleteUser(record, function(error) {
+    usermanager.retrieveUserPasswordReset({ token: userReset.token }, function(error, record) {
       if(error) return done(error);
-      usermanager.retrieveUserPasswordReset({ token: userReset.token }, function(error, record) {
-        if(error) return done(error);
-        usermanager.deleteUserPasswordReset({ user: record.id }, done);
-      });
+      if(!record) return done();
+      usermanager.deleteUserPasswordReset({ user: record.id }, done);
     });
   });
 });
@@ -77,7 +75,7 @@ it('should be able to delete a user password reset', function(done) {
     // Ensure reset request was deleted
     usermanager.retrieveUserPasswordReset({ token: userReset.token }, function(error, resetRecord) {
       should.not.exist(error);
-      resetRecord.should.equal(false, 'Failed to delete user password reset');
+      should.not.exist(resetRecord, 'Failed to delete user password reset');
       done();
     });
   });

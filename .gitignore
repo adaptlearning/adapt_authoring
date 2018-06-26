@@ -1,5 +1,5 @@
 /conf/config.json
-
+/conf/migrate.json
 /data
 
 /frontend/build
@@ -11,6 +11,8 @@
 /node_modules/
 /nbproject/
 /master/
+
+package-lock.json
 
 /plugins/content/component/versions/
 /plugins/content/component/componentcache/
@@ -24,10 +26,11 @@
 /routes/lang/en.json
 
 /temp
-/test_frontend/img
+/test/.testcache
 /tmp
 
 /.settings
 
 .idea
 .project
+.vscode

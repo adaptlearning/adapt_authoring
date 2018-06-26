@@ -77,11 +77,6 @@ define(function(require) {
         }
     });
 
-    // if login as another user reset the collection as per that user's permissions
-    Origin.on('login:loginas', function() {
-        GlobalMenuStore.remove(GlobalMenuStore.models);
-    });
-
     function openGlobalMenu() {
         _isActive = true;
 

@@ -27,7 +27,10 @@ define(function(require) {
       'title',
       '_extensions',
       'themeSettings',
-      '_onScreen'
+      '_onScreen',
+      '_isVisible',
+      '_isHidden',
+      '_colorLabel'
     ]
   });
 

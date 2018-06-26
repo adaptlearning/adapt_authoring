@@ -3,6 +3,8 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
   var EditorOriginView = require('../../global/views/editorOriginView');
+  var ExtensionModel = require('core/models/extensionModel');
+  var EditorCollection = require('../../global/collections/editorCollection');
 
   var EditorExtensionsEditView = EditorOriginView.extend({
     className: "extension-management",
@@ -18,6 +20,7 @@ define(function(require) {
     },
 
     preRender: function() {
+      var _this = this;
       this.currentSelectedIds = [];
 
       this.listenTo(Origin, {
@@ -27,29 +30,62 @@ define(function(require) {
       // assumption: extensions are always switched between enabled and available
       this.listenTo(this.model, 'change:enabledExtensions', this.render);
 
-      this.setupExtensions();
-
-      // TODO is defer a good idea?
-      _.defer(_.bind(this.postRender, this));
+      this.setupExtensions(function() {
+        _this.postRender()
+      });
     },
 
-    setupExtensions: function() {
+    setupExtensions: function(callback) {
       var enabledExtensionNames = _.pluck(Origin.editor.data.config.get('_enabledExtensions'), 'name');
       var enabledExtensions = [];
       var disabledExtensions = [];
+      var _this = this;
 
-      Origin.editor.data.extensiontypes.each(function(model) {
-        var extension = model.toJSON();
-        if(_.indexOf(enabledExtensionNames, extension.name) > -1) {
-          enabledExtensions.push(extension);
-        } else if(extension._isAvailableInEditor) {
-          disabledExtensions.push(extension);
+      var extensionTypes = new EditorCollection(null, {
+        autoFetch: false,
+        model: ExtensionModel,
+        url: ExtensionModel.prototype.urlRoot,
+        _type: 'extension'
+      });
+
+      extensionTypes.fetch({
+        success: function() {
+          extensionTypes.each(function(model) {
+            var extension = model.toJSON();
+            if (_.indexOf(enabledExtensionNames, extension.name) > -1) {
+              enabledExtensions.push(extension);
+            } else if (extension._isAvailableInEditor) {
+              disabledExtensions.push(extension);
+            }
+          });
+
+          enabledExtensions.sort(function(a, b){
+            if(a.displayName < b.displayName) return -1;
+            if(a.displayName > b.displayName) return 1;
+            return 0;
+          });
+
+          disabledExtensions.sort(function(a, b){
+            if(a.displayName < b.displayName) return -1;
+            if(a.displayName > b.displayName) return 1;
+            return 0;
+          });
+
+          _this.model.set({
+            enabledExtensions: enabledExtensions,
+            availableExtensions: disabledExtensions
+          });
+
+          if(callback){
+            return callback();
+          }
+        },
+        error: function(err) {
+          if(callback){
+            return callback(err);
+          }
         }
-      });
-      this.model.set({
-        enabledExtensions: enabledExtensions,
-        availableExtensions: disabledExtensions
-      });
+      })
     },
 
     postRender: function() {

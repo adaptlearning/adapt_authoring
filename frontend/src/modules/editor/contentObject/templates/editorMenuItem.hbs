@@ -1,20 +1,22 @@
 <div data-id="{{_id}}" data-parentId="{{_parentId}}" class="editor-menu-item-inner clearfix unselectable">
   <div class="editor-menu-item-settings handle">
     <div class="editor-menu-item-settings-inner">
-      <a href="#" class="open-context-contentObject"><i class="fa fa-cog fa-fw"></i></a>
-      <a href="#" class="contentObject-delete editor-delete-contentobject-element" title="{{ t 'app.clicktodelete'}}"><i class="fa fa-trash-o"></i></a>
+      <button class="open-context-contentObject"><i class="fa fa-cog fa-fw"></i></button>
+      <button class="contentObject-delete editor-delete-contentobject-element" title="{{ t 'app.clicktodelete'}}"><i class="fa fa-trash-o"></i></button>
     </div>
   </div>
-  <div class="editor-menu-item-icon {{_type}}">
-    {{#ifValueEquals _type "menu"}}
-      <i class="fa fa-folder-o"></i>
-    {{/ifValueEquals}}
-    {{#ifValueEquals _type "page"}}
-      <i class="fa fa-file-o"></i>
-    {{/ifValueEquals}}
+  <div class="editor-menu-item-content">
+    <div class="editor-menu-item-icon {{_type}}">
+      {{#ifValueEquals _type "menu"}}
+        <i class="fa fa-folder-o"></i>
+      {{/ifValueEquals}}
+      {{#ifValueEquals _type "page"}}
+        <i class="fa fa-file-o"></i>
+      {{/ifValueEquals}}
     </div>
-  <div class="editor-menu-item-title">
-    <h3 class="editor-menu-item-title-text">{{{title}}}</h3>
+    <div class="editor-menu-item-title">
+      <h3 class="editor-menu-item-title-text">{{{title}}}</h3>
+    </div>
   </div>
 </div>
 

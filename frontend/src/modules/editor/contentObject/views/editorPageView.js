@@ -58,17 +58,6 @@ define(function(require){
       return returnVal;
     },
 
-    postRender: function() {
-      this.resize();
-    },
-
-    resize: function() {
-      _.defer(_.bind(function() {
-        var windowHeight = $(window).height();
-        this.$el.height(windowHeight - this.$el.offset().top);
-      }, this));
-    },
-
     evaluateChildStatus: function() {
       this.childrenRenderedCount++;
 
@@ -78,7 +67,6 @@ define(function(require){
 
     postRender: function() {
       this.setupScrollListener();
-      this.resize();
     },
 
     addArticleViews: function() {

@@ -195,6 +195,7 @@ define([
       this.editor = CKEDITOR.replace(this.$el[0], {
         dataIndentationChars: '',
         disableNativeSpellChecker: false,
+        entities: false,
         extraAllowedContent: 'span(*)',
         on: {
           change: function() {
@@ -202,15 +203,19 @@ define([
           }.bind(this),
           instanceReady: function() {
             var writer = this.dataProcessor.writer;
+            var elements = Object.keys(CKEDITOR.dtd.$block);
 
-            writer.lineBreakChars = '';
-
-            writer.setRules('p', {
+            var rules = {
               indent: false,
               breakBeforeOpen: false,
               breakAfterOpen: false,
+              breakBeforeClose: false,
               breakAfterClose: false
-            });
+            };
+
+            writer.indentationChars = '';
+            writer.lineBreakChars = '';
+            elements.forEach(function(element) { writer.setRules(element, rules); });
           }
         },
         toolbar: [

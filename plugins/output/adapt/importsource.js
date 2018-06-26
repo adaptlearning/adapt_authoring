@@ -41,6 +41,7 @@ function ImportSource(req, done) {
     extensionMap: {},
     assetNameMap: {}
   };
+  var detachedElementsMap = Object.create(null);
   var extensionLocations = {};
   var enabledExtensions = {};
   var tenantId = app.usermanager.getCurrentUser().tenant._id;
@@ -86,9 +87,14 @@ function ImportSource(req, done) {
       async.apply(installPlugins),
       async.apply(addAssets, formTags),
       async.apply(cacheMetadata),
-      async.apply(importContent, formTags),
-      async.apply(helpers.cleanUpImport, cleanupDirs)
-    ], done);
+      async.apply(importContent, formTags)
+    ], function(importError, result) {
+      // cleanup should run regardless of import fail or success  
+      helpers.cleanUpImport(cleanupDirs, function(cleanUpError) {
+        const error = importError || cleanUpError;
+        done(error);
+      });
+    });
   });
 
 
@@ -427,6 +433,24 @@ function ImportSource(req, done) {
             });
           });
         }, cb);
+      },
+      function checkDetachedContent(cb) {
+        const detachedIds = Object.keys(detachedElementsMap);
+        if (detachedIds.length === 0) return cb();
+
+        const groups = detachedIds.reduce(function(result, id) {
+          if (result[detachedElementsMap[id]] === undefined) {
+            result[detachedElementsMap[id]] = [];
+          }
+          result[detachedElementsMap[id]].push(id);
+          return result;
+        }, Object.create(null));
+        const errorMsg = Object.keys(groups).reduce(function(errorString, group) {
+          errorString.push(`${group}'s: ${ groups[group].join(',') }`);
+          return errorString;
+        }, [app.polyglot.t('app.importcoursepartialintro')]);
+        errorMsg.push(app.polyglot.t('app.importcoursecheckcourse'));
+        cb(new helpers.PartialImportError(errorMsg.join('\n')));
       }
     ], done);
   }
@@ -451,7 +475,9 @@ function ImportSource(req, done) {
             if(metadata.idMap[data._parentId]) {
               data._parentId = metadata.idMap[data._parentId];
             } else {
+              detachedElementsMap[originalData._id] = type;
               logger.log('warn', 'Cannot update ' + originalData._id + '._parentId, ' +  originalData._parentId + ' not found in idMap');
+              return cb();
             }
           }
 
@@ -507,6 +533,11 @@ function ImportSource(req, done) {
         }
     ], function(error, results) {
       if(error) return done(error);
+
+      if (detachedElementsMap[originalData._id]) {
+        // do not import detached elements 
+        return done();
+      }
 
       // now we're ready to create the content
       app.contentmanager.getContentPlugin(type, function(error, plugin) {

@@ -75,22 +75,23 @@ define(function(require){
       Origin.router.navigateToHome();
     },
 
-    onFormSubmitSuccess: function(importData, impoprtStatus, importXhr) {
+    onFormSubmitSuccess: function(data, importStatus, importXhr) {
       Origin.router.navigateToHome();
     },
 
-    onAjaxSuccess: function() {
-      this.goBack();
+    onAjaxError: function(data, status, error) {
+      var resJson = data.responseJSON || {};
+      var title = resJson.title || Origin.l10n.t('app.importerrortitle');
+      var msg = resJson.body && resJson.body.replace(/\n/g, "<br />") || error;
+      this.promptUser(title, msg, true);
     },
 
-    onAjaxError: function(data, status, error) {
+    promptUser: function(title, message, isError) {
       Origin.trigger('sidebar:resetButtons');
-      var text = (data.responseText) ? data.responseText.replace(/\n/g, "<br />") : error;
-
       Origin.Notify.alert({
-        type: 'error',
-        title: Origin.l10n.t('app.importerrortitle'),
-        text: text
+        type: (!isError) ? 'success' : 'error',
+        title: title,
+        text: message
       });
     },
 

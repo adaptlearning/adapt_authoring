@@ -21,8 +21,7 @@ define(function(require){
       'click .block-delete': 'deleteBlockPrompt',
       'click .add-component': 'showComponentList',
       'click .open-context-block': 'openContextMenu',
-      'dblclick': 'loadBlockEdit',
-      'transitionend': 'onTransitionEnd'
+      'dblclick': 'loadBlockEdit'
     }),
 
     preRender: function() {
@@ -48,7 +47,18 @@ define(function(require){
     },
 
     animateIn: function() {
-      this.$el.removeClass('page-content-syncing');
+      this.$el.velocity({
+        scale: [1, 0.95],
+        opacity: [1, 0.4]
+      }, {
+        duration: 400,
+        begin: function() {
+          this.$el.removeClass('page-content-syncing');
+        }.bind(this),
+        complete: function() {
+          Origin.trigger('pageView:itemAnimated', this);
+        }.bind(this)
+      })
     },
 
     handleAsyncPostRender: function() {
@@ -290,11 +300,6 @@ define(function(require){
           });
         }
       });
-    },
-
-    onTransitionEnd: function(event) {
-      if (event.originalEvent.propertyName !== 'transform') return;
-      Origin.trigger('pageView:itemAnimated', this);
     }
 
   }, {

@@ -2,8 +2,6 @@
 
 .editor-view {
 
-  overflow-y: scroll;
-
   .editor-container {
     position: relative;
     width: 100%;
@@ -182,14 +180,9 @@ i.asset-clear {
   font-weight: @font-weight-bold;
 }
 
-.module-editor .block {
-  transition: transform 0.3s cubic-bezier(0.8, 0.0, 0.2, 1), opacity 0.3s cubic-bezier(0.8, 0.0, 0.2, 1) !important;
-}
 .page-content-syncing {
   &.block {
     min-height: 150px;
-    transform: scale(0.95, 0.95);
-    opacity: 0.6;
     .component {
       &-inner {
         display: none;
@@ -200,7 +193,7 @@ i.asset-clear {
 
 .syncing {
   transform: scale(0.8, 0.8);
-  opacity:0.6;
+  opacity: 0.6;
 }
 
 .not-synced {

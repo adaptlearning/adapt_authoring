@@ -7,6 +7,7 @@
     "_isDeleted": false
   },
   "testTenant": {
+    "_id": "000000000000000000000000",
     "name": "adapt-tenant-mocha",
     "displayName": "Test Tenant",
     "isMaster": true
@@ -19,10 +20,11 @@
     }
   },
   "auth": {
-    "passwordPlain": "this is my password",
-    "email": "auth@foo.bar",
+    "email": "auth@adaptlearning.org",
+    "plainPassword": "thisismypassword",
+    "newPassword": "newpassword",
     "token": "testtokentesttokentesttokentest1",
-    "newPassword": "newpassword"
+    "auth": "local"
   },
   "database": {
     "model": "foo",

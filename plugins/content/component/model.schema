@@ -148,6 +148,11 @@
     },
     "properties" : {
       "type": "object"
+    },
+    "_colorLabel": {
+      "type": "string",
+      "required": false,
+      "editorOnly": true
     }
   }
 }

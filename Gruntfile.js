@@ -77,6 +77,7 @@ module.exports = function(grunt) {
     handlebars: {
       compile: {
         options: {
+          amd: true,
           namespace:"Handlebars.templates",
           processName: function(filePath) {
             var newFilePath = filePath.split("/");
@@ -234,6 +235,38 @@ module.exports = function(grunt) {
     return config.serverPort;
   };
 
+  grunt.registerTask('migration-conf', 'Creating migration Conf', function() {
+    var config = grunt.file.readJSON('conf/config.json');
+    var connectionString = '';
+
+    // Construct the authentication part of the connection string.
+    var authenticationString = config.dbUser && config.dbPass ? config.dbUser + ':' + config.dbPass + '@' : '';
+
+    // Check if a MongoDB replicaset array has been specified.
+    if (config.dbReplicaset && Array.isArray(config.dbReplicaset) && config.dbReplicaset.length !== 0) {
+      // The replicaset should contain an array of hosts and ports
+      connectionString = 'mongodb://' + authenticationString + config.dbReplicaset.join(',') + '/' + config.dbName
+    } else {
+      // Get the host and port number from the configuration.
+
+      var portString = config.dbPort ? ':' + config.dbPort : '';
+
+      connectionString = 'mongodb://' + authenticationString + config.dbHost + portString + '/' + config.dbName;
+    }
+    if(typeof config.authSource === 'string' && config.authSource !== '' ){
+      connectionString += '?authSource=' + config.authSource
+    }
+
+    var migrateConf = {
+      migrationsDir : 'migrations/lib',
+      es6 : false,
+      dbConnectionUri: connectionString
+    };
+
+    grunt.file.write('conf/migrate.json', JSON.stringify(migrateConf, null, 2));
+
+  });
+
   /**
   * Accepts 'build' and 'prod' params
   * e.g. grunt build:prod
@@ -251,7 +284,7 @@ module.exports = function(grunt) {
     grunt.file.write(configFile, JSON.stringify(config, null, 2));
     // run the tasks
     var compilation = (config.isProduction) ? 'compile' : 'dev';
-    grunt.task.run(['requireBundle', 'merge-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
+    grunt.task.run(['migration-conf', 'requireBundle', 'merge-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
   });
 
   grunt.registerTask('server', "Running Server", function() {

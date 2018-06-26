@@ -11,25 +11,37 @@ define(function(require){
     tagName: 'div',
 
     events: _.extend({}, EditorOriginView.prototype.events, {
-      'click a.add-block': 'addBlock',
-      'click a.article-delete': 'deleteArticlePrompt',
-      'click a.open-context-article': 'openContextMenu',
-      'dblclick': 'loadArticleEdit'
+      'click .add-block': 'addBlock',
+      'click .article-delete': 'deleteArticlePrompt',
+      'click .open-context-article': 'openContextMenu',
+      'dblclick': 'loadArticleEdit',
+      'click .editor-collapse-article': 'toggleCollapseArticle'
     }),
 
     preRender: function() {
       this.listenToEvents();
+      Origin.editor.data._collapsedArticles = Origin.editor.data._collapsedArticles || {};
     },
-
+    
     postRender: function() {
       if (!this._skipRender) {
         this.addBlockViews();
       }
       this.setupDragDrop();
+      this.restoreCollapsedState();
+
+      _.defer(_.bind(function(){
+        this.trigger('articleView:postRender');
+        Origin.trigger('pageView:itemRendered');
+      }, this));
     },
 
     listenToEvents: function() {
-      this.listenTo(Origin, 'editorView:removeSubViews editorPageView:removePageSubViews', this.remove);
+      this.listenTo(Origin, {
+        'editorView:collapseArticle:collapse': this.collapseAllArticles,
+        'editorView:collapseArticle:expand': this.expandAllArticles,
+        'editorView:removeSubViews editorPageView:removePageSubViews': this.remove
+      });
 
       if (!this.model.isNew()) {
         var id = this.model.get('_id');
@@ -40,10 +52,15 @@ define(function(require){
         this.listenTo(Origin, events);
       }
 
+      this.listenTo(this.model, 'change:_isCollapsed', this.onIsCollapsedChange);
+
       this.listenTo(this, {
         'contextMenu:article:edit': this.loadArticleEdit,
         'contextMenu:article:copy': this.onCopy,
         'contextMenu:article:copyID': this.onCopyID,
+        'contextMenu:article:cut': this.onCut,
+        'contextMenu:article:delete': this.deleteArticlePrompt,
+        'contextMenu:article:collapse': this.toggleCollapseArticle,
         'contextMenu:article:delete': this.deleteArticlePrompt
       });
     },
@@ -222,6 +239,54 @@ define(function(require){
       });
     },
 
+    restoreCollapsedState: function() {
+      if (!Origin.editor.data._collapsedArticles.hasOwnProperty(this.model.get('_id'))) return;
+      this.skipAnimation = true;
+      this.model.set('_isCollapsed', Origin.editor.data._collapsedArticles[this.model.get('_id')]);
+    },
+
+    toggleCollapseArticle: function(event) {
+      event && event.preventDefault();
+
+      Origin.trigger('options:reset:ui', 'collapseArticle');
+      var isCollapsed = this.model.get('_isCollapsed');
+      this.model.set('_isCollapsed', !isCollapsed);
+    },
+
+    onIsCollapsedChange: function(model, isCollapsed) {
+      var title;
+      if (isCollapsed) {
+        title = Origin.l10n.t('app.expandarticle');
+      } else {
+        title = Origin.l10n.t('app.collapsearticle');
+      }
+      this.$('.editor-collapse-article').attr('title', title);
+      Origin.editor.data._collapsedArticles[this.model.get('_id')] = isCollapsed;
+      this.collapseArticle();
+    },
+
+    collapseAllArticles: function() {
+      if (this.model.get('_isCollapsed') === true) return; 
+      this.model.set('_isCollapsed', true);
+    },
+
+    expandAllArticles: function() {
+      if (this.model.get('_isCollapsed') === false) return; 
+      this.model.set('_isCollapsed', false);
+    },
+
+    collapseArticle: function() {
+      var shouldCollapse = this.model.get('_isCollapsed');
+
+      this.$el.toggleClass('collapsed-view', shouldCollapse);
+      var duration = 200;
+      if (this.skipAnimation) {
+        this.skipAnimation = false;
+        duration = 0;
+      }
+      this.$('.article-content').velocity(shouldCollapse ? 'slideUp' : 'slideDown', duration);
+    },
+
     onPaste: function(data) {
       (new BlockModel({ _id: data._id })).fetch({
         success: _.bind(function(model) {
@@ -235,6 +300,7 @@ define(function(require){
         }
       });
     }
+
   }, {
     template: 'editorPageArticle'
   });

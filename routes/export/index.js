@@ -18,6 +18,43 @@ util.inherits(ExportPermissionError, Error);
 // stop any auto permissions checks
 permissions.ignoreRoute(/^\/export\/?.*$/);
 
+// TODO think we should move these to plugins/output/adapt/export
+
+server.get('/export/:tenant/:course/download.zip', function (req, res, next) {
+  var tenantId = req.params.tenant;
+  var courseId = req.params.course;
+  var userId = usermanager.getCurrentUser()._id;
+  // TODO not good specifying this here AND in plugins/output/adapt/export EXPORT_DIR
+  var zipDir = path.join(
+    configuration.tempDir,
+    configuration.getConfig('masterTenantID'),
+    Constants.Folders.Exports,
+    userId + '.zip'
+  );
+  // get the course name
+  app.contentmanager.getContentPlugin('course', function (error, plugin) {
+    if (error) return handleError(error, res);
+    plugin.retrieve({ _id:courseId }, {}, function(error, results) {
+      if (error) return handleError(error, res);
+      if (results.length !== 1) {
+        return handleError(new Error('Export: cannot find course (' + courseId + ')'), res);
+      }
+      fs.stat(zipDir, function(error, stat) {
+        if (error) return handleError(error, res);
+        var zipName = helpers.slugify(results[0].title,'export') + '.zip';
+        res.writeHead(200, {
+          'Content-Type': 'application/zip',
+          'Content-Length': stat.size,
+          'Content-disposition' : 'attachment; filename=' + zipName,
+          'Pragma' : 'no-cache',
+          'Expires' : '0'
+        });
+        fs.createReadStream(zipDir).pipe(res);
+      });
+    });
+  });
+});
+
 server.get('/export/:tenant/:course', function (req, res, next) {
   var course = req.params.course;
   var tenant = req.params.tenant;
@@ -25,18 +62,12 @@ server.get('/export/:tenant/:course', function (req, res, next) {
 
   helpers.hasCoursePermission('', currentUser._id, tenant, {_id: course}, function(err, hasPermission) {
     if (err || !hasPermission) {
-      return next(err || new ExportPermissionError());
+      return handleError(err || new ExportPermissionError(), res);
     }
-
     if (currentUser && (currentUser.tenant._id == tenant)) {
       var outputplugin = app.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), function (error, plugin){
         if (error) {
-          logger.log('error', error);
-          res.statusCode = 500;
-          return res.json({
-            success: false,
-            message: error.message
-          });
+          return handleError(error, res);
         } else {
           plugin.export(course, req, res, function (error, result) {
             if (error) {
@@ -61,43 +92,11 @@ server.get('/export/:tenant/:course', function (req, res, next) {
     }
   });
 });
-// TODO probably needs to be moved to download route
-server.get('/export/:tenant/:course/download.zip', function (req, res, next) {
-  var tenantId = req.params.tenant;
-  var courseId = req.params.course;
-  var userId = usermanager.getCurrentUser()._id;
-  // TODO don't like having to specify this here AND in plugins/output/adapt.export->getCourseName()-exportDir
-  var zipDir = path.join(
-    configuration.tempDir,
-    configuration.getConfig('masterTenantID'),
-    Constants.Folders.Framework,
-    Constants.Folders.Exports,
-    userId + '.zip'
-  );
-  // get the course name
-  app.contentmanager.getContentPlugin('course', function (error, plugin) {
-    if (error) return callback(error);
-    plugin.retrieve({ _id:courseId }, {}, function(error, results) {
-      if (error) {
-        return callback(error);
-      }
-      if (results.length !== 1) {
-        return callback(new Error('Export: cannot find course (' + courseId + ')'));
-      }
-      fs.stat(zipDir, function(error, stat) {
-        if (error) {
-          return next(error);
-        }
-        var zipName = helpers.slugify(results[0].title,'export') + '.zip';
-        res.writeHead(200, {
-            'Content-Type': 'application/zip',
-            'Content-Length': stat.size,
-            'Content-disposition' : 'attachment; filename=' + zipName,
-            'Pragma' : 'no-cache',
-            'Expires' : '0'
-        });
-        fs.createReadStream(zipDir).pipe(res);
-      });
-    });
+
+function handleError(error, res) {
+  logger.log('error', error);
+  res.status(500).json({
+    success: false,
+    message: error.message
   });
-});
+};

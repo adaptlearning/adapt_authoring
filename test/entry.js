@@ -5,6 +5,7 @@ var mongodb = require('mongodb');
 
 var origin = require('../');
 var auth = require('../lib/auth');
+var installHelpers = require('../lib/installHelpers');
 var logger = require('../lib/logger');
 var permissions = require('../lib/permissions');
 var usermanager = require('../lib/usermanager');
@@ -14,43 +15,43 @@ var testData = require('./testData.json');
 var testConfig = require('./testConfig.json');
 
 var app = origin();
+var Folders = require('../lib/outputmanager').Constants.Folders;
 
+var TEST_CACHE_DIR = path.join(__dirname, '.testcache');
 var EXTENDED_TIMEOUT = 600000;
 
 before(function(done) {
   this.timeout(EXTENDED_TIMEOUT);
-
   process.env.SILENT = true;
-
   async.series([
     removeTestData,
-    function initApp(cb) {
-      // only show errors
-      logger.level('console','error');
-      // bootstrapping!
+    function startApp(cb) {
+      logger.level('console','error'); // only show errors
       app.use({ configFile: path.join('test', 'testConfig.json') });
-      // add some test entities ...
       app.on('serverStarted', function(server) {
-        createTestTenant(testData.testTenant, function(error, tenant) {
-          if(error) {
-            return cb(error);
-          }
-          testData.testTenant = tenant;
-          testData.testUser._tenantId = tenant._id;
-
-          app.configuration.setConfig('masterTenantID', tenant._id);
-          app.configuration.setConfig('masterTenantName', tenant.name);
-
-          createTestUser(testData.testUser, function(error, user) {
-            if(error) {
-              return cb(error);
-            }
-            testData.testUser._id = user._id;
-            app.rolemanager.assignRoleByName('Super Admin', user._id, cb);
-          });
-        });
+        cb();
       });
-      app.run();
+      app.run({ skipVersionCheck: true });
+    },
+    createCacheData,
+    function createTenant(cb) {
+      createTestTenant(testData.testTenant, function(error, tenant) {
+        if(error) {
+          return cb(error);
+        }
+        testData.testTenant = tenant;
+        testData.testUser._tenantId = tenant._id;
+        cb();
+      });
+    },
+    function createUser(cb) {
+      createTestUser(testData.testUser, function(error, user) {
+        if(error) {
+          return cb(error);
+        }
+        testData.testUser._id = user._id;
+        app.rolemanager.assignRoleByName('Super Admin', user._id, cb);
+      });
     }
   ], done);
 });
@@ -90,7 +91,7 @@ function createTestTenant (tenantDetails, cb) {
 
 function createTestUser (userDetails, cb) {
   auth.hashPassword(userDetails.plainPassword, function(error, hash) {
-    if(error) return done(error);
+    if(error) return cb(error);
     userDetails.password = hash;
     usermanager.createUser(userDetails, function(error, user) {
       if(error && error instanceof usermanager.errors.DuplicateUserError) {
@@ -106,11 +107,14 @@ function removeTestData(done) {
     function dumpOldDb(cb) {
       var MongoClient = mongodb.MongoClient;
       var connStr = 'mongodb://' + testConfig.dbHost + ':' + testConfig.dbPort + '/' + testConfig.dbName;
-      MongoClient.connect(connStr, function(error, db) {
+      MongoClient.connect(connStr, { domainsEnabled: true }, function(error, client) {
         if(error) return cb(error);
+
+        var db = client.db(testConfig.dbName);
+
         db.dropDatabase(function(error, result) {
           if(error) return cb(error);
-          db.close();
+          client.close();
           return cb();
         });
       });
@@ -119,6 +123,31 @@ function removeTestData(done) {
       fs.remove(testConfig.dataRoot, cb);
     }
   ], done);
+}
+
+function createCacheData(done) {
+  // these are needed by the below
+  app.configuration.setConfig('masterTenantID', testData.testTenant._id);
+  app.configuration.setConfig('masterTenantName', testData.testTenant.name);
+
+  var src = path.join(TEST_CACHE_DIR, Folders.Framework);
+
+  function _copyFramework() {
+    var dest = path.join(app.configuration.serverRoot, Folders.Temp, testData.testTenant._id);
+    async.series([
+      async.apply(fs.remove, dest),
+      async.apply(fs.ensureDir, dest),
+      async.apply(fs.symlink, src, path.join(dest, Folders.Framework), 'junction')
+    ], done);
+  }
+  // make sure we've got the framework, and copy it into place
+  fs.stat(src, function(error, stats) {
+    if(!error) return _copyFramework();
+    installHelpers.installFramework({ directory: src }, function(error) {
+      if(error) return done(error);
+      _copyFramework();
+    });
+  });
 }
 
 // Assumes any .js file in this folder is a test script

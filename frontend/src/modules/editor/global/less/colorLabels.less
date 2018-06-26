@@ -1,0 +1,55 @@
+[data-colorlabel="colorlabel-1"] {
+    .colorLabel(@colorlabel-1);
+}
+[data-colorlabel="colorlabel-2"] {
+    .colorLabel(@colorlabel-2);
+}
+[data-colorlabel="colorlabel-3"] {
+    .colorLabel(@colorlabel-3);
+}
+[data-colorlabel="colorlabel-4"] {
+    .colorLabel(@colorlabel-4);
+}
+[data-colorlabel="colorlabel-5"] {
+    .colorLabel(@colorlabel-5);
+}
+[data-colorlabel="colorlabel-6"] {
+    .colorLabel(@colorlabel-6);
+}
+[data-colorlabel="colorlabel-7"] {
+    .colorLabel(@colorlabel-7);
+}
+[data-colorlabel="colorlabel-8"] {
+    .colorLabel(@colorlabel-8);
+}
+[data-colorlabel="colorlabel-9"] {
+    .colorLabel(@colorlabel-9);
+}
+[data-colorlabel="colorlabel-10"] {
+    .colorLabel(@colorlabel-10);
+}
+[data-colorlabel="colorlabel-11"] {
+    .colorLabel(@colorlabel-11);
+}
+[data-colorlabel="colorlabel-12"] {
+    .colorLabel(@colorlabel-12);
+}
+[data-colorlabel="colorlabel-13"] {
+    .colorLabel(@colorlabel-13);
+}
+[data-colorlabel="colorlabel-14"] {
+    .colorLabel(@colorlabel-14);
+}
+
+.colorLabel(@colorlabel) {
+    .editor-menu &.editor-menu-item .editor-menu-item-inner,
+    .editor-view &.article,
+    .editor-view &.block,
+    .editor-view &.component,
+    .editor-view &.page .page-detail {
+        box-shadow: -4px 0 0 @colorlabel;
+        &.hovering {
+            box-shadow: -4px 0 0 @colorlabel, 0px 0 4px @colorlabel;
+        }
+    }
+}

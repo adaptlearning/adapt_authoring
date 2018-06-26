@@ -14,6 +14,7 @@ var glob = require('glob');
 var helpers = require('./helpers');
 var logger = require("../../../lib/logger");
 var mime = require('mime');
+var installHelpers = require('../../../lib/installHelpers');
 
 function ImportSource(req, done) {
   var contentMap = {
@@ -59,7 +60,7 @@ function ImportSource(req, done) {
 
   form.parse(req, function (error, fields, files) {
 
-    if (error) return next(error);
+    if (error) return done(error);
 
     var formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
     var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
@@ -213,7 +214,7 @@ function ImportSource(req, done) {
           var fileMeta = {
             oldId: assetId,
             title: assetTitle,
-            type: mime.lookup(assetName),
+            type: mime.getType(assetName),
             size: fileStat["size"],
             filename: assetName,
             description: assetDescription,
@@ -260,9 +261,27 @@ function ImportSource(req, done) {
       if(err) {
         return done(err);
       }
-      async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
-        helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
-      }, done);
+      // check that all plugins support the installed framework versions 
+      installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion) {
+        async.reduce(plugindata.pluginIncludes, [], function checkFwVersion(memo, pluginData, checkFwVersionCb) {
+          fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
+            if (error) return checkFwVersionCb(error);
+            var versionError = helpers.checkPluginFrameworkVersion(frameworkVersion, data);
+            if (versionError) {
+              memo.push(versionError);
+            }
+            return checkFwVersionCb(null, memo);
+          });
+        }, function(error, unsupportedPlugins) {
+          if (error) return done(error);
+          if (unsupportedPlugins.length > 0) {
+            return done(new helpers.ImportError(unsupportedPlugins.join('\n'), 400));
+          }
+          async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
+            helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
+          }, done);
+        });
+      })
     });
   }
 
@@ -382,6 +401,12 @@ function ImportSource(req, done) {
 
               // Sorts in-place the content objects to make sure processing can happen
               if (type == 'contentobject') {
+                var byParent = _.groupBy(contentJson, '_parentId');
+                Object.keys(byParent).forEach(function(parentId) {
+                  byParent[parentId].forEach(function(item, index) {
+                    item._sortOrder = index + 1;
+                  });
+                });
                 var groups = _.groupBy(contentJson, '_type');
                 var sortedSections = helpers.sortContentObjects(groups.menu, origCourseId, []);
                 contentJson = sortedSections.concat(groups.page);

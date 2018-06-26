@@ -28,7 +28,6 @@ server.get('/export/:tenant/:course/download.zip', function (req, res, next) {
   var zipDir = path.join(
     configuration.tempDir,
     configuration.getConfig('masterTenantID'),
-    Constants.Folders.Framework,
     Constants.Folders.Exports,
     userId + '.zip'
   );

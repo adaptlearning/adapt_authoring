@@ -235,7 +235,14 @@ function ImportError(message, httpStatus) {
   this.message = message || "Course import failed";
   this.httpStatus = httpStatus || 500;
 };
+
+function PartialImportError(message, httpStatus) {
+  this.message = message || "Partial course import";
+  this.httpStatus = httpStatus || 500;
+}
+
 util.inherits(ImportError, Error);
+util.inherits(PartialImportError, ImportError);
 
 
 /**
@@ -267,6 +274,7 @@ exports = module.exports = {
   checkFrameworkVersion: checkFrameworkVersion,
   checkPluginFrameworkVersion: checkPluginFrameworkVersion,
   ImportError: ImportError,
+  PartialImportError: PartialImportError,
   sortContentObjects: sortContentObjects,
   cleanUpImport: cleanUpImport
 };

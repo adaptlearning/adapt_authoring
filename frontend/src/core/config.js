@@ -19,6 +19,7 @@ require.config({
     pikaday: 'libraries/pikaday/js/pikaday',
     polyglot: 'libraries/polyglot.min',
     scrollTo: 'libraries/scrollTo',
+    selectize: 'libraries/selectize/js/selectize',
     sweetalert: 'libraries/sweetalert.min',
     typeahead: 'libraries/typeahead',
     underscore: 'libraries/underscore',
@@ -78,6 +79,10 @@ require.config({
     scrollTo: {
       deps: ['jquery'],
       exports: 'scrollTo'
+    },
+    selectize: {
+      deps: ['jquery'],
+      exports: "$"
     },
     sweetalert: {
       deps: ['jquery'],

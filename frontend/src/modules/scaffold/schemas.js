@@ -13,20 +13,19 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
       delete schema._extensions;
       return schema;
     }
-
     var enabledExtensions = _.pluck(config.get('_enabledExtensions'), 'targetAttribute');
 
-    trimEmptyProperties(schema._extensions, enabledExtensions);
-    trimEmptyProperties(schema.menuSettings, [config.get('_menu')]);
-    trimEmptyProperties(schema.themeSettings, [config.get('_theme')]);
+    trimDisabledPlugins(schema._extensions, enabledExtensions);
+    trimDisabledPlugins(schema.menuSettings, [config.get('_menu')]);
+    trimDisabledPlugins(schema.themeSettings, [config.get('_theme')]);
 
     if (schemaName === 'course') {
       var globals = schema._globals.properties;
       var enabledComponents = _.pluck(config.get('_enabledComponents'), '_component');
       // remove unrequired globals from the course
-      trimEmptyProperties(globals._extensions, enabledExtensions);
-      trimEmptyProperties(globals._components, enabledComponents);
-      trimEmptyProperties(globals, enabledComponents);
+      trimDisabledPlugins(globals._extensions, enabledExtensions);
+      trimDisabledPlugins(globals._components, enabledComponents);
+      trimDisabledPlugins(globals, enabledComponents);
       // trim off the empty globals objects
       trimEmptyProperties(globals);
     }
@@ -36,7 +35,7 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
     return schema;
   };
 
-  function trimEmptyProperties(schemaData, enabledPlugins) {
+  function trimDisabledPlugins(schemaData, enabledPlugins) {
     var properties = schemaData && schemaData.properties;
     for (var key in properties) {
       if (!properties.hasOwnProperty(key)) continue;

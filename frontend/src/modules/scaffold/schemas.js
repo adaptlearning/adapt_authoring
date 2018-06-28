@@ -44,7 +44,7 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
   }
 
   function trimEmptyProperties(object) {
-    for (key in object) {
+    for (var key in object) {
       if (!object.hasOwnProperty(key) || object[key].type !== 'object') continue;
       if (_.isEmpty(object[key].properties)) delete object[key];
     }

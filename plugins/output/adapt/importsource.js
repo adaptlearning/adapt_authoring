@@ -207,11 +207,17 @@ function ImportSource(req, done) {
           var fileStat = fs.statSync(assetPath);
           var assetTitle = assetName;
           var assetDescription = assetName;
+          var assetSource = "unknown";
+          var assetLicence = "unknown";
+          var assetAttribution = "unknown";
           var tags = assetTags.slice();
 
           if (assetsJson[assetName]) {
             assetTitle = assetsJson[assetName].title;
             assetDescription = assetsJson[assetName].description;
+            assetSource = assetsJson[assetName].source || "unknown";
+            assetLicence = assetsJson[assetName].licence || "unknown";
+            assetAttribution = assetsJson[assetName].attribution || "unknown";
 
             assetsJson[assetName].tags.forEach(function(tag) {
               tags.push(tag._id);
@@ -224,6 +230,9 @@ function ImportSource(req, done) {
             size: fileStat["size"],
             filename: assetName,
             description: assetDescription,
+	     source: assetSource,
+	     licence: assetLicence,
+            attribution: assetAttribution,
             path: assetPath,
             tags: tags,
             repository: repository,

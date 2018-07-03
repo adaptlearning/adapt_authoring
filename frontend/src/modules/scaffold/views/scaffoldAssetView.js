@@ -64,7 +64,7 @@ define([
     checkValueHasChanged: function() {
       var value = this.getValue();
 
-      if ('heroImage' === this.key) return this.saveModel({ heroImage: value });
+      if (this.key === 'heroImage') return this.saveModel({ heroImage: value });
       if (Helpers.isAssetExternal(value)) return this.saveModel();
 
       var model = Origin.scaffold.getCurrentModel();
@@ -84,7 +84,9 @@ define([
         _assetId : courseAssetObject.assetId,
         _contentTypeParentId: courseAssetObject.contentTypeParentId
       }, {
-        success: this.saveModel.bind(this),
+        success: function() {
+          this.saveModel();
+        }.bind(this),
         error: function(error) {
           Origin.Notify.alert({
             type: 'error',
@@ -203,7 +205,7 @@ define([
         onUpdate: function(data) {
           if (!data) return;
 
-          if ('heroImage' === this.key) {
+          if (this.key === 'heroImage') {
             this.setValue(data.assetId);
             this.saveModel({ heroImage: data.assetId });
             return;

@@ -14,6 +14,7 @@ var glob = require('glob');
 var helpers = require('./helpers');
 var logger = require("../../../lib/logger");
 var mime = require('mime');
+var installHelpers = require('../../../lib/installHelpers');
 
 function ImportSource(req, done) {
   var contentMap = {
@@ -40,6 +41,7 @@ function ImportSource(req, done) {
     extensionMap: {},
     assetNameMap: {}
   };
+  var detachedElementsMap = Object.create(null);
   var extensionLocations = {};
   var enabledExtensions = {};
   var tenantId = app.usermanager.getCurrentUser().tenant._id;
@@ -85,9 +87,14 @@ function ImportSource(req, done) {
       async.apply(installPlugins),
       async.apply(addAssets, formTags),
       async.apply(cacheMetadata),
-      async.apply(importContent, formTags),
-      async.apply(helpers.cleanUpImport, cleanupDirs)
-    ], done);
+      async.apply(importContent, formTags)
+    ], function(importError, result) {
+      // cleanup should run regardless of import fail or success  
+      helpers.cleanUpImport(cleanupDirs, function(cleanUpError) {
+        const error = importError || cleanUpError;
+        done(error);
+      });
+    });
   });
 
 
@@ -260,9 +267,27 @@ function ImportSource(req, done) {
       if(err) {
         return done(err);
       }
-      async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
-        helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
-      }, done);
+      // check that all plugins support the installed framework versions 
+      installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion) {
+        async.reduce(plugindata.pluginIncludes, [], function checkFwVersion(memo, pluginData, checkFwVersionCb) {
+          fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
+            if (error) return checkFwVersionCb(error);
+            var versionError = helpers.checkPluginFrameworkVersion(frameworkVersion, data);
+            if (versionError) {
+              memo.push(versionError);
+            }
+            return checkFwVersionCb(null, memo);
+          });
+        }, function(error, unsupportedPlugins) {
+          if (error) return done(error);
+          if (unsupportedPlugins.length > 0) {
+            return done(new helpers.ImportError(unsupportedPlugins.join('\n'), 400));
+          }
+          async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
+            helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
+          }, done);
+        });
+      })
     });
   }
 
@@ -408,6 +433,24 @@ function ImportSource(req, done) {
             });
           });
         }, cb);
+      },
+      function checkDetachedContent(cb) {
+        const detachedIds = Object.keys(detachedElementsMap);
+        if (detachedIds.length === 0) return cb();
+
+        const groups = detachedIds.reduce(function(result, id) {
+          if (result[detachedElementsMap[id]] === undefined) {
+            result[detachedElementsMap[id]] = [];
+          }
+          result[detachedElementsMap[id]].push(id);
+          return result;
+        }, Object.create(null));
+        const errorMsg = Object.keys(groups).reduce(function(errorString, group) {
+          errorString.push(`${group}'s: ${ groups[group].join(',') }`);
+          return errorString;
+        }, [app.polyglot.t('app.importcoursepartialintro')]);
+        errorMsg.push(app.polyglot.t('app.importcoursecheckcourse'));
+        cb(new helpers.PartialImportError(errorMsg.join('\n')));
       }
     ], done);
   }
@@ -432,7 +475,9 @@ function ImportSource(req, done) {
             if(metadata.idMap[data._parentId]) {
               data._parentId = metadata.idMap[data._parentId];
             } else {
+              detachedElementsMap[originalData._id] = type;
               logger.log('warn', 'Cannot update ' + originalData._id + '._parentId, ' +  originalData._parentId + ' not found in idMap');
+              return cb();
             }
           }
 
@@ -488,6 +533,11 @@ function ImportSource(req, done) {
         }
     ], function(error, results) {
       if(error) return done(error);
+
+      if (detachedElementsMap[originalData._id]) {
+        // do not import detached elements 
+        return done();
+      }
 
       // now we're ready to create the content
       app.contentmanager.getContentPlugin(type, function(error, plugin) {

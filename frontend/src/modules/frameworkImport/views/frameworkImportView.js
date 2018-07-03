@@ -75,26 +75,23 @@ define(function(require){
       Origin.router.navigateToHome();
     },
 
-    onFormSubmitSuccess: function(importData, impoprtStatus, importXhr) {
-      this.createdCourseId = importData._id;
+    onFormSubmitSuccess: function(data, importStatus, importXhr) {
       Origin.router.navigateToHome();
     },
 
-    onAjaxSuccess: function() {
-      this.goBack();
+    onAjaxError: function(data, status, error) {
+      var resJson = data.responseJSON || {};
+      var title = resJson.title || Origin.l10n.t('app.importerrortitle');
+      var msg = resJson.body && resJson.body.replace(/\n/g, "<br />") || error;
+      this.promptUser(title, msg, true);
     },
 
-    onAjaxError: function(data, status, error) {
+    promptUser: function(title, message, isError) {
       Origin.trigger('sidebar:resetButtons');
-      // We may have a partially created course, make sure it's gone
-      if(this.createdCourseId) {
-        // TODO - add route for course destroy
-        //$.ajax('/api/course/' + this.createdCourseId, { method: 'DELETE', error: _.bind(this.onAjaxError, this) });
-      }
       Origin.Notify.alert({
-        type: 'error',
-        title: Origin.l10n.t('app.importerrortitle'),
-        text: data.responseText || error
+        type: (!isError) ? 'success' : 'error',
+        title: title,
+        text: message
       });
     },
 

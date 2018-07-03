@@ -1,6 +1,6 @@
 {
   "name": "adapt_authoring",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "license": "GPL-3.0",
   "description": "A server-based user interface for authoring eLearning courses using the Adapt Framework.",
   "keywords": [
@@ -13,6 +13,9 @@
   },
   "framework": "2",
   "main": "index",
+  "engines": {
+    "node": "8.x"
+  },
   "scripts": {
     "test": "grunt test",
     "migrate": "migrate --config conf/migrate.json --template-file migrations/helpers/template.js"

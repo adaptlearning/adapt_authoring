@@ -6,6 +6,12 @@
     <span class="projects-sidebar-add-course-inner">{{t 'app.addnewproject'}}</span>
   </button>
 
+  {{#ifHasPermissions "*/*:create,*/*:read,*/*:update,*/*:delete"}}
+    <button class="projects-sidebar-import-course action-secondary">
+      <span class="projects-sidebar-import-course-inner">{{t 'app.importcourse'}}</span>
+    </button>
+  {{/ifHasPermissions}}
+
   <div class="separator"></div>
 
     <div class="sidebar-row">

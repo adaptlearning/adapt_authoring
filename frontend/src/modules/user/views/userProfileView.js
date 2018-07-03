@@ -114,14 +114,19 @@ define(function(require){
       };
 
       if (self.model.get('_isNewPassword')) {
+        toChange._isNewPassword = true;
         toChange.password = self.$('#password').val();
       } else {
         self.model.unset('password');
       }
 
-      this.model.set(toChange);
+      _.extend(toChange, {
+        _id: self.model.get('_id'),
+        email: self.model.get('email')
+      });
 
-      self.model.save({}, {
+      self.model.save(toChange, {
+        patch: true,
         error: function(model, response, optinos) {
           Origin.Notify.alert({
             type: 'error',

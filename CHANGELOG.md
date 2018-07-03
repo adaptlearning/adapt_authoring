@@ -2,9 +2,51 @@
 
 All notable changes to the Adapt authoring tool are documented in this file.
 
-**IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.
-
+**IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
+
+## [0.5.0] - 2018-06-26
+
+Release which adds the ability to import courses created in the framework, as well as exports from other authoring tool installs.
+
+We're also switching our Node.js support strategy to only include the current **active LTS** release of Node.js, which at time of writing is `v8.x` (see the Node.js [release schedule](https://github.com/nodejs/Release) for more information).
+
+### Upgrade Notes
+:skull: If you're using a Node.js version older than `v8.x`, please upgrade prior to installing this version of the authoring tool. :skull:
+
+### Added
+- Courses built with the framework and authoring tool exports can now be imported ([\#1387](https://github.com/adaptlearning/adapt_authoring/issues/1387))
+- The ability to colour ABC content views in the editor screens ([\#1785](https://github.com/adaptlearning/adapt_authoring/issues/1785))
+- The ability to minimise articles in the page editor view ([\#1483](https://github.com/adaptlearning/adapt_authoring/issues/1483))
+- Ability to set MongoDB authentication from the install script ([\#1903](https://github.com/adaptlearning/adapt_authoring/issues/1903))
+- Support for framework plugins' `pluginDependencies` field, as defined in `bower.json` ([\#1858](https://github.com/adaptlearning/adapt_authoring/issues/1858))
+- Support for migration scripts ([#1937](https://github.com/adaptlearning/adapt_authoring/issues/1937))
+- Dashboard sorts now persist across sessions, while filters persist for the duration of the current session ([\#1857](https://github.com/adaptlearning/adapt_authoring/issues/1857))
+- Instruction to component schema ([\#1712](https://github.com/adaptlearning/adapt_authoring/issues/1712))
+- Custom SMTP servers can now be used with mailer ([\#1447](https://github.com/adaptlearning/adapt_authoring/issues/1447))
+
+### Changed
+-  Bumped archive module dependency version ([\#1930](https://github.com/adaptlearning/adapt_authoring/issues/1930))
+- Core front-end modules are now loaded before any front-end plugins ([\#1913](https://github.com/adaptlearning/adapt_authoring/issues/1913))
+- `Database#addModel` now catches and logs errors ([\#1855](https://github.com/adaptlearning/adapt_authoring/issues/1855))
+- Server now logs more appropriate message if error is caught when loading a route ([\#1853](https://github.com/adaptlearning/adapt_authoring/issues/1853))
+- NPM deprecation warnings are now suppressed ([\#1745](https://github.com/adaptlearning/adapt_authoring/issues/1745))
+- Only one course export per-user is saved on the server ([\#1056](https://github.com/adaptlearning/adapt_authoring/issues/1056))
+- Some mocha test data is now cached after the initial run to reduce runtime ([#1761](https://github.com/adaptlearning/adapt_authoring/issues/1761))
+
+### Removed
+- Support for Node.js `v4.x` and `v6.x` ([#1769](https://github.com/adaptlearning/adapt_authoring/issues/1769))
+- The need to define third-party front-end plugins in `app.js` ([\#1866](https://github.com/adaptlearning/adapt_authoring/issues/1866))
+- Redundant `conf/config_sample.json` file ([\#1793](https://github.com/adaptlearning/adapt_authoring/issues/1793))
+
+### Fixed
+- 'Find' feature in Ace editor plugin ([\#1928](https://github.com/adaptlearning/adapt_authoring/issues/1928))
+- Issue with `_isVisible` and `_isHidden` not being saved on blocks and components ([\#1888](https://github.com/adaptlearning/adapt_authoring/issues/1888))
+- Issue with 'Manage extensions' list ordering ([\#1878](https://github.com/adaptlearning/adapt_authoring/issues/1878))
+- Cog menu for pages ([\#1874](https://github.com/adaptlearning/adapt_authoring/issues/1874))
+- Upgrade script failure when missing `authoringToolRepository` and `frameworkRepository` from `config.json` ([\#1851](https://github.com/adaptlearning/adapt_authoring/issues/1851))
+- Scroll position not persisting in page editor ([\#1814](https://github.com/adaptlearning/adapt_authoring/issues/1814))
+- Error thrown when deleting a shared course belonging to another user ([\#1776](https://github.com/adaptlearning/adapt_authoring/issues/1776))
 
 ## [0.4.1] - 2018-02-05
 
@@ -392,6 +434,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.5.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.2...v0.3.0

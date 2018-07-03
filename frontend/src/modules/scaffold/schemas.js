@@ -6,40 +6,53 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
     if (!schema) {
       throw new Error('No schema found for "' + schemaName + '"');
     }
-
-    var config = Origin.editor.data.config;
-
-    if (!config) {
+    if (!Origin.editor.data.config) {
       delete schema._extensions;
       return schema;
     }
-    var enabledExtensions = _.pluck(config.get('_enabledExtensions'), 'targetAttribute');
-
-    trimDisabledPlugins(schema._extensions, enabledExtensions);
-    trimDisabledPlugins(schema.menuSettings, [config.get('_menu')]);
-    trimDisabledPlugins(schema.themeSettings, [config.get('_theme')]);
-
-    if (schemaName === 'course') {
-      var globals = schema._globals.properties;
-      var enabledComponents = _.pluck(config.get('_enabledComponents'), '_component');
-      // remove unrequired globals from the course
-      trimDisabledPlugins(globals._extensions, enabledExtensions);
-      trimDisabledPlugins(globals._components, enabledComponents);
-      trimDisabledPlugins(globals, enabledComponents);
-      // trim off the empty globals objects
-      trimEmptyProperties(globals);
-    }
+    handlePlugins(schema);
+    if (schemaName === 'course') handleCourse(schema);
     // trim off any empty fieldsets
     trimEmptyProperties(schema);
 
     return schema;
   };
 
+  function handleCourse(schema) {
+    var globals = schema._globals.properties;
+    var enabledComponents = _.pluck(Origin.editor.data.config.get('_enabledComponents'), '_component');
+    // remove unrequired globals from the course
+    trimDisabledPlugins(globals._extensions, Origin.editor.data.config.get('_enabledExtensions'));
+    trimDisabledPlugins(globals._components, enabledComponents);
+    trimDisabledPlugins(globals, enabledComponents);
+    // trim off the empty globals objects
+    trimEmptyProperties(globals);
+  }
+
+  function handlePlugins(schema) {
+    trimDisabledPlugins(schema._extensions, Origin.editor.data.config.get('_enabledExtensions'));
+
+    ['menu','theme'].forEach(function(type) {
+      var current = Origin.editor.data[type + 'types'].findWhere({
+        name: Origin.editor.data.config.get('_' + type)
+      });
+      if(!current) return;
+
+      var plugins = {};
+      plugins[current.get(type)] = current.toJSON();
+      trimDisabledPlugins(schema[type + 'Settings'], plugins);
+    });
+  }
+
   function trimDisabledPlugins(schemaData, enabledPlugins) {
     var properties = schemaData && schemaData.properties;
     for (var key in properties) {
-      if (!properties.hasOwnProperty(key)) continue;
-      if (!_.contains(enabledPlugins, key)) delete properties[key];
+      if (!properties.hasOwnProperty(key)) {
+        continue;
+      }
+      if(!_.contains(_.pluck(enabledPlugins, 'targetAttribute'), key)) {
+        delete properties[key];
+      }
     }
   }
 

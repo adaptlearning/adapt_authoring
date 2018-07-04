@@ -6,43 +6,43 @@
   "properties": {
     "title": {
       "type": "string",
-      "required": "true"
+      "required": true
     },
     "assetType": {
       "type": "string",
-      "required": "true"
+      "required": true
     },
     "description": {
       "type": "string",
-      "required": "false"
+      "required": false
     },
     "source": {
       "type": "string",
-      "required": "false"
+      "required": false
     },
     "licence": {
       "type": "string",
-      "required": "false"
+      "required": false
     },
     "attribution": {
       "type": "string",
-      "required": "false"
+      "required": false
     },
     "path": {
       "type": "string",
-      "required": "true"
+      "required": true
     },
     "filename": {
       "type" : "string",
-      "required" : "true"
+      "required" : true
     },
     "thumbnailPath": {
       "type": "string",
-      "required": "false"
+      "required": false
     },
     "repository": {
       "type": "string",
-      "required": "true"
+      "required": true
     },
     "size": {
       "type": "number"
@@ -52,7 +52,7 @@
     },
     "isDirectory": {
       "type": "boolean",
-      "default": "false"
+      "default": false
     },
     "mimeType": {
       "type": "string"

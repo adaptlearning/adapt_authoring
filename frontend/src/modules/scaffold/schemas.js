@@ -10,15 +10,30 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
       delete schema._extensions;
       return schema;
     }
-    handlePlugins(schema);
-    if (schemaName === 'course') handleCourse(schema);
+    trimPlugins(schema);
+    if (schemaName === 'course') trimGlobals(schema);
     // trim off any empty fieldsets
     trimEmptyProperties(schema);
 
     return schema;
   };
 
-  function handleCourse(schema) {
+  function trimPlugins(schema) {
+    trimDisabledPlugins(schema._extensions, Origin.editor.data.config.get('_enabledExtensions'));
+    // trim unnecessary data for menus and themes
+    ['menu','theme'].forEach(function(type) {
+      var current = Origin.editor.data[type + 'types'].findWhere({
+        name: Origin.editor.data.config.get('_' + type)
+      });
+      if(current) {
+        var plugins = {}; // we only ever have one plugin of each, so mock the aggregated 'plugins' object
+        plugins[current.get(type)] = current.toJSON();
+        trimDisabledPlugins(schema[type + 'Settings'], plugins);
+      }
+    });
+  }
+
+  function trimGlobals(schema) {
     var globals = schema._globals.properties;
     var enabledComponents = _.pluck(Origin.editor.data.config.get('_enabledComponents'), '_component');
     // remove unrequired globals from the course
@@ -27,21 +42,6 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
     trimDisabledPlugins(globals, enabledComponents);
     // trim off the empty globals objects
     trimEmptyProperties(globals);
-  }
-
-  function handlePlugins(schema) {
-    trimDisabledPlugins(schema._extensions, Origin.editor.data.config.get('_enabledExtensions'));
-
-    ['menu','theme'].forEach(function(type) {
-      var current = Origin.editor.data[type + 'types'].findWhere({
-        name: Origin.editor.data.config.get('_' + type)
-      });
-      if(!current) return;
-
-      var plugins = {};
-      plugins[current.get(type)] = current.toJSON();
-      trimDisabledPlugins(schema[type + 'Settings'], plugins);
-    });
   }
 
   function trimDisabledPlugins(schemaData, enabledPlugins) {

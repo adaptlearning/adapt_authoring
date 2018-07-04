@@ -18,15 +18,15 @@
     },
     "source": {
       "type": "string",
-      "required": "true"
+      "required": "false"
     },
     "licence": {
       "type": "string",
-      "required": "true"
+      "required": "false"
     },
     "attribution": {
       "type": "string",
-      "required": "true"
+      "required": "false"
     },
     "path": {
       "type": "string",

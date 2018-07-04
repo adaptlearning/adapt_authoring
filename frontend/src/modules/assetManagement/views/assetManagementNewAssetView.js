@@ -84,7 +84,13 @@ define(function(require){
           return false;
         } else {
           // Else just update the title, description and tags
-          this.model.set({title: title, description: description, attribution: attribution, source: source, licence: licence});
+          this.model.set({
+            title: title, 
+            description: description, 
+            attribution: attribution, 
+            source: source, 
+            licence: licence
+          });
           this.model.save(null, {
             error: function(model, response, options) {
               Origin.Notify.alert({

@@ -196,7 +196,7 @@ define([
         dataIndentationChars: '',
         disableNativeSpellChecker: false,
         entities: false,
-        extraAllowedContent: Origin.constants.ckEditorAllowedContent,
+        extraAllowedContent: Origin.constants.ckExtraAllowedContent,
         on: {
           change: function() {
             this.trigger('change', this);

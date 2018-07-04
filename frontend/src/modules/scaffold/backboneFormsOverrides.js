@@ -196,7 +196,7 @@ define([
         dataIndentationChars: '',
         disableNativeSpellChecker: false,
         entities: false,
-        extraAllowedContent: Origin.constants.ckEditorAllowedContent || 'span(*)',
+        extraAllowedContent: Origin.constants.ckEditorAllowedContent,
         on: {
           change: function() {
             this.trigger('change', this);

@@ -173,10 +173,10 @@ define([
 
   function buildFieldsets(schema, options) {
     var fieldsets = {
-      general: { legend: Origin.l10n.t('app.general'), fields: [] },
-      properties: { legend: Origin.l10n.t('app.properties'), fields: [] },
-      settings: { legend: Origin.l10n.t('app.settings'), fields: [] },
-      extensions: { legend: Origin.l10n.t('app.extensions'), fields: [ '_extensions' ] }
+      general: { legend: Origin.l10n.t('app.scaffold.general'), fields: [] },
+      properties: { legend: Origin.l10n.t('app.scaffold.properties'), fields: [] },
+      settings: { legend: Origin.l10n.t('app.scaffold.settings'), fields: [] },
+      extensions: { legend: Origin.l10n.t('app.scaffold.extensions'), fields: [ '_extensions' ] }
     };
 
     for (var key in schema) {

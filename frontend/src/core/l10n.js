@@ -8,6 +8,12 @@ define(['require', 'jquery', 'polyglot', 'core/origin'], function(require, $, Po
         return string;
       }
       return polyglot.t.apply(polyglot, arguments);
+    },
+    has: function() {
+      if(!polyglot || !polyglot.has) {
+        return false;
+      }
+      return polyglot.has.apply(polyglot, arguments);
     }
   };
   /**

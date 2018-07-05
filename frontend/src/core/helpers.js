@@ -38,9 +38,13 @@ define(function(require){
 
     keyToTitleString: function(key) {
       if (!key) return;
-      // Take in key value and remove all _'s and capitalise
-      var string = key.replace(/_/g, "").toLowerCase();
-      return this.capitalise(string);
+      // check translatable strings first
+      var l10nKey = 'app.scaffold.' + key;
+      if(Origin.l10n.has(l10nKey)) {
+        return Origin.l10n.t(l10nKey);
+      }
+      // fall-back: remove all _ and capitalise
+      return this.capitalise(key.replace(/_/g, "").toLowerCase());
     },
 
     momentFormat: function(date, format) {

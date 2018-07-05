@@ -22,6 +22,7 @@ define(['require', 'jquery', 'polyglot', 'core/origin'], function(require, $, Po
   var locale = localStorage.getItem('lang') || 'en';
   $.getJSON('lang/' + locale, function(data) {
     polyglot = new Polyglot({
+      locale: locale,
       phrases: data,
       warn: function(message) {
         if(Origin.debug) console.warn('l10n:', message);

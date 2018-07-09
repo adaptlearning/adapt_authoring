@@ -1,7 +1,7 @@
 .scaffold-items-modal {
   position: fixed;
   top: 0;
-  right: -500px;
+  right: -680px;
   z-index: 500;
   height: 100%;
   width: 100%;
@@ -9,18 +9,22 @@
   &.show {
     right: 0;
   }
+
+  .field-editor .cke_editor_body {
+    width: 100%;
+  }
 }
 
 .scaffold-items-modal-sidebar {
   float: right;
   background-color: #fff;
   height: 100%;
-  width: 440px;
+  width: 680px;
   border-left: 1px solid #ccc;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   &-inner {
-    padding: 40px;
+    padding: 20px;
     fieldset {
       margin: 0;
       margin-bottom: 15px;
@@ -28,8 +32,8 @@
   }
   input,
   textarea {
-    max-width: 440px;
-    width: 75%;
+    width: 100%;
+    box-sizing: border-box;
   }
 }
 

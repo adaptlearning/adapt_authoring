@@ -29,5 +29,7 @@ define(['require', 'jquery', 'polyglot', 'core/origin'], function(require, $, Po
       }
     });
     Origin.trigger('l10n:loaded');
+  }).fail(function(jqXHR, textStatus, error) {
+    Origin.trigger('l10n:loaded');
   });
 });

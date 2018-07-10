@@ -60,47 +60,6 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         default: 'localhost'
       },
       {
-        name: 'dbHost',
-        type: 'string',
-        description: 'Database host',
-        default: 'localhost'
-      },
-      {
-        name: 'dbName',
-        type: 'string',
-        description: 'Master database name',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'adapt-tenant-master'
-      },
-      {
-        name: 'dbPort',
-        type: 'number',
-        description: 'Database server port',
-        pattern: installHelpers.inputHelpers.numberValidator,
-        default: 27017
-      },
-      {
-        name: 'dbUser',
-        type: 'string',
-        description: 'Database server user',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: ''
-      },
-      {
-        name: 'dbPass',
-        type: 'string',
-        description: 'Database server password',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: ''
-      },
-      {
-        name: 'dbAuthSource',
-        type: 'string',
-        description: 'Database server authentication database',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'admin'
-      },
-      {
         name: 'dataRoot',
         type: 'string',
         description: 'Data directory path',
@@ -133,6 +92,68 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         default: 'tags/' + latestFrameworkTag
       }
     ],
+    database: {
+      dbConfig: [
+        {
+          name: 'dbName',
+          type: 'string',
+          description: 'Master database name',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'adapt-tenant-master'
+        },
+        {
+          name: 'useConnectionUri',
+          type: 'string',
+          description: "Will you be using a full database connection URI? (all connection options in the URI) y/N",
+          before: installHelpers.inputHelpers.toBoolean,
+          default: 'N'
+        }
+      ],
+      configureUri: [
+        {
+          name: 'dbConnectionUri',
+          type: 'string',
+          description: 'Database connection URI',
+          default: ''
+        }
+      ],
+      configureStandard: [
+        {
+          name: 'dbHost',
+          type: 'string',
+          description: 'Database host',
+          default: 'localhost'
+        },
+        {
+          name: 'dbPort',
+          type: 'number',
+          description: 'Database server port',
+          pattern: installHelpers.inputHelpers.numberValidator,
+          default: 27017
+        },
+        {
+          name: 'dbUser',
+          type: 'string',
+          description: 'Database server user',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: ''
+        },
+        {
+          name: 'dbPass',
+          type: 'string',
+          description: 'Database server password',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: ''
+        },
+        {
+          name: 'dbAuthSource',
+          type: 'string',
+          description: 'Database server authentication database',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'admin'
+        }
+      ]
+    },
     features: {
       ffmpeg: {
         name: 'useffmpeg',
@@ -292,6 +313,7 @@ function start() {
     }
     async.series([
       configureServer,
+      configureDatabase,
       configureFeatures,
       configureMasterTenant,
       createMasterTenant,
@@ -323,6 +345,29 @@ function configureServer(callback) {
       addConfig(result);
       callback();
     });
+  });
+}
+
+function configureDatabase(callback) {
+  async.series([
+    function database(cb) {
+      installHelpers.getInput(inputData.database.dbConfig, function(result) {
+        addConfig(result);
+        if(!result.useConnectionUri || USE_CONFIG && configResults.useConnectionUri !== 'y') {
+          installHelpers.getInput(inputData.database.configureStandard, function(result) {
+            addConfig(result);
+            callback();
+          });
+        } else {
+          installHelpers.getInput(inputData.database.configureUri, function(result) {
+            addConfig(result);
+            callback();
+          });
+        }
+      });
+    }
+  ], function() {
+    saveConfig(configResults, callback);
   });
 }
 

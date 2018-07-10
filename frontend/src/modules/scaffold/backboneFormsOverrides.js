@@ -78,7 +78,7 @@ define([
 
       if (Array.isArray(val)) {
         // print length
-        val = val.length += ' ' + val.length === 1 ? itemString : itemsString;
+        val = val.length + ' ' + (val.length === 1 ? itemString : itemsString);
       } else if (typeof val === 'object') {
         // print nested name/value pairs
         for (var name in val) {

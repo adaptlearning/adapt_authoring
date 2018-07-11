@@ -4,7 +4,6 @@ require.config({
     ace: 'libraries/ace',
     backbone: 'libraries/backbone',
     'backbone-forms': 'libraries/backbone-forms',
-    'backbone-forms-lists': 'libraries/backbone-forms-lists',
     colorPicker: 'libraries/colorPicker/js/colorpicker',
     handlebars: 'libraries/handlebars',
     imageReady: 'libraries/imageReady',
@@ -36,9 +35,6 @@ require.config({
     },
     'backbone-forms': {
       deps: ['backbone']
-    },
-    'backbone-forms-lists': {
-      deps: ['backbone-forms']
     },
     colorPicker: {
       deps: ['jquery'],

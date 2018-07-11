@@ -6,8 +6,10 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
     if (!schema) {
       throw new Error('No schema found for "' + schemaName + '"');
     }
-    if (!Origin.editor.data.config) {
+    if (!Origin.editor.data.config) { // new course, so remove plugins
       delete schema._extensions;
+      delete schema.menuSettings;
+      delete schema.themeSettings;
       return schema;
     }
     trimPlugins(schema);

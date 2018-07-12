@@ -1,9 +1,10 @@
 define([
-  'libraries/backbone-forms-lists/ListView'
-], function(ListView) {
+  'backbone-forms',
+  'backbone-forms-lists',
+], function(BackboneForms, BackboneFormsLists) {
   'use strict';
-  
-  var CustomListView = ListView.extend({
+
+  var CustomListView = Backbone.Form.editors.List.extend({
 
     setValue: function(value) {
       this.items = [];

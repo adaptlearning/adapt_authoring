@@ -1,9 +1,10 @@
 define([
-  'libraries/backbone-forms-lists/ListItemView'
-], function(ListItemView) {
+  'backbone-forms',
+  'backbone-forms-lists',
+], function(BackboneForms, BackboneFormsLists) {
   'use strict';
   
-  var CustomListItemView = ListItemView.extend({
+  var CustomListItemView = Backbone.Form.editors.List.Item.extend({
   }, {
     template: Handlebars.templates.listItem
   })

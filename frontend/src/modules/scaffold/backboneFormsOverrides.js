@@ -1,12 +1,11 @@
 define([
   'core/origin',
   'backbone-forms',
+  'backbone-forms-lists',
   './listViews/ListView',
   './listViews/ListItemView',
-  './listViews/ListModalView',
-  'libraries/backbone-forms-lists/ListObject',
-  'libraries/backbone-forms-lists/ListNestedModal'
-], function(Origin, BackboneForms, ListView, ListItemView, ListModalView, ListObject, ListNestedModal) {
+  './listViews/ListModalView'
+], function(Origin, BackboneForms, BackboneFormsLists, ListView, ListItemView, ListModalView) {
 
   var templates = Handlebars.templates;
   var fieldTemplate = templates.field;
@@ -19,8 +18,6 @@ define([
   Backbone.Form.editors.List = ListView;
   Backbone.Form.editors.List.Item = ListItemView;
   Backbone.Form.editors.List.Modal = ListModalView;
-  Backbone.Form.editors.List.Object = ListObject;
-  Backbone.Form.editors.List.NestedModel = ListNestedModal;
 
   Backbone.Form.prototype.constructor.template = templates.form;
   Backbone.Form.Fieldset.prototype.template = templates.fieldset;

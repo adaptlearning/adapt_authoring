@@ -1,9 +1,10 @@
 define([
-  'libraries/backbone-forms-lists/ListModalView'
-], function(ListModalView) {
+  'backbone-forms',
+  'backbone-forms-lists',
+], function(BackboneForms, BackboneFormsLists) {
   'use strict';
   
-  var CustomListModalView = ListModalView.extend({
+  var CustomListModalView = Backbone.Form.editors.List.Modal.extend({
 
     itemToString: function(value) {
       var createTitle = function(key) {

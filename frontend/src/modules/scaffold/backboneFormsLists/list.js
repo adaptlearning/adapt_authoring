@@ -38,6 +38,10 @@ define([
       } else {
         ++newIndex; 
       }
+
+      // check bounds
+      if (newIndex < 0 || newIndex >= this.items.length) return;
+
       var existingItem = this.items[newIndex];
       var item = this.items[oldIndex];
 

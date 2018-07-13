@@ -1,74 +1,67 @@
 define([
   'core/origin',
   'backbone-forms',
-  'colorPicker'
-], function(Origin, BackboneForms, ColorPicker) {
+  'libraries/spectrum/spectrum'
+], function(Origin, BackboneForms, Spectrum) {
 
-  var ScaffoldColorPickerView = Backbone.Form.editors.Text.extend({
+  var ScaffoldColorPickerView = Backbone.Form.editors.Base.extend({
 
-    tagName: 'div',
+    tagName: 'input',
 
     className: 'scaffold-color-picker',
 
+    events: {
+      'change': function() { this.trigger('change', this); },
+      'focus': function() { this.trigger('focus', this); },
+      'blur': function() { this.trigger('blur', this); }
+    },
+
     render: function() {
-      Backbone.Form.editors.Text.prototype.render.call(this);
-      /*
-      if (this.value === null) {
-        this.value = '';
-      }
-      this.setValue(this.value);
-      this.$el.css('backgroundColor', this.getValue());
-      */
-
-      this.$el.ColorPicker({
-        color: this.value,
-        onBeforeShow: function() {
-          this.$el.ColorPickerSetColor(this.value);
-        }.bind(this),
-        onSubmit: function(hsb, hex, rgb, el) {
-          this.setValue('#' + hex);
-          $(el).ColorPickerHide();
-        }.bind(this)
-      });
-      /*
-      // HACK change the submit button
-      $('.colorpicker_submit', this.getColourPicker()).html(Origin.l10n.t('app.coloursave'));
-      // Append reset button
-      // FIXME externalise this...
-      var btnStyle = 'display:inline-block;margin-left:10px;position:relative;vertical-align:top;top:10px;cursor:pointer;';
-      var btn = '<div class="reset" style="' + btnStyle + '"><i class="fa fa-ban"></i> ' + Origin.l10n.t('app.colourclear') + '</div>';
-      this.$el.after(btn);
-      this.$el.siblings('.reset').click(_.bind(this.resetValue, this));
-
-      if(this.value) this.setValue(this.value);
-      this.$el.siblings('.reset').show(this.value);
-      */
+      _.defer(this.postRender.bind(this));
       return this;
     },
-
-    setValue: function(value) {
-      Backbone.Form.editors.Text.prototype.setValue.call(this, value);
-      this.$el.css('background-color', value);
-      /*
-      this.value = newValue;
-      this.$el.ColorPickerSetColor(this.value);
-
-      if(this.value) this.$el.siblings('.reset').show();
-      else this.$el.siblings('.reset').hide();
-      */
+    
+    postRender: function() {
+      this.$el.spectrum({
+        color: this.value,
+        showInput: true,
+        showAlpha: true,
+        allowEmpty: true,
+        showInitial: true,
+        showInput: true,
+        showPalette: true,
+        palette: [],
+        showSelectionPalette: true,
+        localStorageKey: "adapt-authoring.spectrum.colorpicker",
+        maxSelectionSize: 24
+      });
     },
 
-    resetValue: function() {
-      this.setValue('');
+    getValue: function() {
+      var colour = this.$el.spectrum('get');
+      if (colour) return colour.toHexString();
+      return '';
+    },
+    
+    setValue: function(value) {
+      this.$el.spectrum('set', value);
+    },
+
+    focus: function() {
+      if (!this.hasFocus) {
+        this.$el.focus();
+      }
+    },
+
+    blur: function() {
+      if (this.hasFocus) {
+        this.$el.blur();
+      }
     },
 
     remove: function() {
-      this.getColourPicker().remove();
+      this.$el.spectrum('destroy');
       Backbone.Form.editors.Text.prototype.remove.call(this);
-    },
-
-    getColourPicker: function() {
-      return $("#" + this.$el.data('colorpickerId'));
     }
   });
 

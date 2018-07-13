@@ -1,32 +1,80 @@
 .scaffold-color-picker {
-  width: 30px;
-  height: 30px;
-  background-image: url(assets/select.png);
-  background-position: -3px -3px;
-  border-radius: 2px;
+  & + .sp-replacer,
+  & + .sp-replacer.sp-active {
+    border-color: #aaa;
+    &:hover {
+      border-color: #666;
+    }
+  }
 }
 
-.colorpicker {
-  z-index:100;
-  .colorpicker_hsb_h,
-  .colorpicker_hsb_s,
-  .colorpicker_hsb_b {
-    display: none;
+// Spectrum container is appended to the body
+body .sp-container {
+  border-color: #aaa;
+
+  // use icons instead of choose and cancel 
+  .sp-button-container {
+    width: 100%;
+    justify-content: flex-end;
+    display: flex;
+
+    .sp-choose,
+    .sp-cancel {
+      &:hover {
+        background: transparent;
+        text-decoration: none;
+      }
+      &:focus {
+        box-shadow: none;
+      }
+      &:active {
+        box-shadow: none;
+      }
+      background: transparent;
+      border: none;
+      color: transparent;
+      font-size: 0;
+      text-shadow: none;
+      width: 30px;
+      height: 30px;
+      line-height: 20px;
+      text-align: center;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+    
+    .sp-choose {
+      &::after {
+        color: black;
+        content: "\f00c";
+        font-family: "FontAwesome";
+        font-size: 20px;
+      }
+    }
+    
+    .sp-cancel {
+      &::after {
+        color: @alert-color;
+        content: "\f00d";
+        font-family: "FontAwesome";
+        font-size: 20px;
+      }
+    }
   }
-  .colorpicker_submit {
-    // to revert the defaults
-    background: none;
-    width: auto;
-    height: auto;
-    // new
-    left: 303px;
-    top: 145px;
-    background-color: #2D2D2D;
-    padding: 3px 6px 3px 6px;
-    border-radius: 2px;
-    border: 1px solid #2F2F2F;
-    color: #BFBFBF;
-    font-size: 80%;
-    cursor: pointer;
+
+  .sp-clear {
+    background-image: none;
+    text-align: center;
+    &::after {
+      content: "\f1f8";
+      font-family: "FontAwesome";
+      font-size: 20px;
+      line-height: 28px;
+    }
+  }
+
+  .sp-palette .sp-thumb-el:hover,
+  .sp-palette .sp-thumb-el.sp-thumb-active {
+    border-color: #aaa;
   }
 }

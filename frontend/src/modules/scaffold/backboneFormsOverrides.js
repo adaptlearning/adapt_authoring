@@ -2,10 +2,10 @@ define([
   'core/origin',
   'backbone-forms',
   'backbone-forms-lists',
-  './listViews/ListView',
-  './listViews/ListItemView',
-  './listViews/ListModalView'
-], function(Origin, BackboneForms, BackboneFormsLists, ListView, ListItemView, ListModalView) {
+  './backboneFormsLists/list',
+  './backboneFormsLists/listItem',
+  './backboneFormsLists/listModal'
+], function(Origin, BackboneForms, BackboneFormsLists, List, ListItem, ListModalView) {
 
   var templates = Handlebars.templates;
   var fieldTemplate = templates.field;
@@ -14,15 +14,17 @@ define([
   var textInitialize = Backbone.Form.editors.Text.prototype.initialize;
   var textAreaRender = Backbone.Form.editors.TextArea.prototype.render;
   var textAreaSetValue = Backbone.Form.editors.TextArea.prototype.setValue;
-
-  Backbone.Form.editors.List = ListView;
-  Backbone.Form.editors.List.Item = ListItemView;
-  Backbone.Form.editors.List.Modal = ListModalView;
-
+  
   Backbone.Form.prototype.constructor.template = templates.form;
   Backbone.Form.Fieldset.prototype.template = templates.fieldset;
   Backbone.Form.Field.prototype.template = fieldTemplate;
   Backbone.Form.NestedField.prototype.template = fieldTemplate;
+  Backbone.Form.editors.List.prototype.constructor.template = templates.list;
+  Backbone.Form.editors.List.Item.prototype.constructor.template = templates.listItem;
+
+  _.extend(Backbone.Form.editors.List.prototype, List);
+  _.extend(Backbone.Form.editors.List.Modal.prototype, ListModalView);
+  _.extend(Backbone.Form.editors.List.Item.prototype, ListItem);
 
   // add reset to default handler
   Backbone.Form.Field.prototype.events = {
@@ -236,5 +238,4 @@ define([
       event.preventDefault();
     }
   };
-
 });

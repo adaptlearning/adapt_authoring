@@ -1,10 +1,11 @@
 define([
+  'core/origin',
   'backbone-forms',
   'backbone-forms-lists',
-], function(BackboneForms, BackboneFormsLists) {
+], function(Origin, BackboneForms, BackboneFormsLists) {
   'use strict';
-  
-  var CustomListModalView = Backbone.Form.editors.List.Modal.extend({
+
+  return {
 
     itemToString: function(value) {
       var createTitle = function(key) {
@@ -47,9 +48,6 @@ define([
       return parts.join('<br />');
     }
 
-  }, {
-  })
-
-  return CustomListModalView;
+  }
 
 });

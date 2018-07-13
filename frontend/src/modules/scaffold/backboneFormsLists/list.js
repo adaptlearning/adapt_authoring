@@ -4,11 +4,33 @@ define([
 ], function(BackboneForms, BackboneFormsLists) {
   'use strict';
 
-  var CustomListView = Backbone.Form.editors.List.extend({
+  var List = Backbone.Form.editors.List.prototype;
+  var listSetValue = List.setValue;
+
+  var listInit = List.initialize;
+
+  return {
+
+    initialize: function(options) {
+      listInit.call(this, options);
+      
+      this.listenTo(this, {
+        'copyItem': this.copyItem,
+        'moveItem': this.moveItem
+      });
+    },
+
+    moveItem: function(direction, item) {
+      debugger;
+    },
+
+    copyItem: function(itemEditor) {
+      this.addItem(itemEditor.value);
+    },
 
     setValue: function(value) {
       this.items = [];
-      ListView.prototype.listSetValue.call(this, value);
+      listSetValue.call(this, value);
     },
 
     render: function() {
@@ -81,10 +103,6 @@ define([
       }
     }
 
-  }, {
-    template: Handlebars.templates.list
-  })
-
-  return CustomListView;
+  }
 
 });

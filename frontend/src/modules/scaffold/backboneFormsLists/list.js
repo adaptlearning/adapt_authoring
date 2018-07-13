@@ -20,8 +20,35 @@ define([
       });
     },
 
-    moveItem: function(direction, item) {
-      debugger;
+    moveItem: function(direction, itemView) {
+      var itemIndex = -1;
+      for (var i = 0; i < this.items.length; i++) {
+        if (this.items[i] !== itemView) continue; 
+        itemIndex =  i;
+      }
+
+      this.changePosition(itemIndex, direction);
+      this.trigger('change', this);
+    },
+
+    changePosition: function(oldIndex, direction) {
+      var newIndex = oldIndex;
+      if (direction === 'up') {
+        --newIndex;
+      } else {
+        ++newIndex; 
+      }
+      var existingItem = this.items[newIndex];
+      var item = this.items[oldIndex];
+
+      if (direction === 'up') {
+        this.items[oldIndex].$el.insertBefore(this.items[newIndex].$el);
+      } else {
+        this.items[oldIndex].$el.insertAfter(this.items[newIndex].$el);
+      }
+
+      this.items[oldIndex] = existingItem;
+      this.items[newIndex] = item;
     },
 
     copyItem: function(itemEditor) {
@@ -102,7 +129,6 @@ define([
         remove();
       }
     }
-
   }
 
 });

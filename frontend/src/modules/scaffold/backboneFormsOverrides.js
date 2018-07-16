@@ -37,6 +37,64 @@ define([
     });
   };
 
+  Backbone.Form.prototype.initialize = function(options) {
+    var self = this;
+
+    //Merge default options
+    options = this.options = _.extend({
+      submitButton: false
+    }, options);
+
+    //Find the schema to use
+    var schema = this.schema = (function() {
+      //Prefer schema from options
+      if (options.schema) return _.result(options, 'schema');
+
+      //Then schema on model
+      var model = options.model;
+      if (model && model.schema) return _.result(model, 'schema');
+
+      //Then built-in schema
+      if (self.schema) return _.result(self, 'schema');
+
+      //Fallback to empty schema
+      return {};
+    })();
+
+    //Store important data
+    _.extend(this, _.pick(options, 'model', 'data', 'idPrefix', 'templateData'));
+
+    //Override defaults
+    var constructor = this.constructor;
+    this.template = options.template || this.template || constructor.template;
+    this.Fieldset = options.Fieldset || this.Fieldset || constructor.Fieldset;
+    this.Field = options.Field || this.Field || constructor.Field;
+    this.NestedField = options.NestedField || this.NestedField || constructor.NestedField;
+
+    //Check which fields will be included (defaults to all)
+    var selectedFields = this.selectedFields = options.fields || _.keys(schema);
+
+    //Create fields
+    var fields = this.fields = {};
+
+    _.each(selectedFields, function(key) {
+      var fieldSchema = schema[key];
+      if (options.model && fieldSchema.editorAttrs && fieldSchema.editorAttrs.hideOn && fieldSchema.editorAttrs.hideOn === options.model.get('_type')) {
+        delete fields[key];
+      } else {
+        fields[key] = this.createField(key, fieldSchema);
+      }
+    }, this);
+
+    //Create fieldsets
+    var fieldsetSchema = options.fieldsets || _.result(this, 'fieldsets') || _.result(this.model, 'fieldsets') || [selectedFields],
+        fieldsets = this.fieldsets = [];
+
+    _.each(fieldsetSchema, function(itemSchema) {
+      this.fieldsets.push(this.createFieldset(itemSchema));
+    }, this);
+  }
+
   // use default from schema and set up isDefaultValue toggler
   Backbone.Form.editors.Base.prototype.initialize = function(options) {
     var schemaDefault = options.schema.default;

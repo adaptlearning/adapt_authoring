@@ -12,17 +12,16 @@ define([
   './overrideBackboneFormsLists/listItem',
   './overrideBackboneFormsLists/listModal'
 ], function(
-  Origin, 
-  BackboneForms, 
+  Origin,
+  BackboneForms,
   BackboneFormsLists, 
-  Base, 
-  Form, 
-  TextArea, 
-  Field, 
-  TextView, 
+  Base,
+  Form,
+  TextArea,
+  Field,
+  TextView,
   NumberView,
-  List, 
-  ListItem, 
+  List,
   ListModalView
 ) {
 
@@ -45,6 +44,5 @@ define([
 
   _.extend(Backbone.Form.editors.List.prototype, List);
   _.extend(Backbone.Form.editors.List.Modal.prototype, ListModalView);
-  _.extend(Backbone.Form.editors.List.Item.prototype, ListItem);
 
 });

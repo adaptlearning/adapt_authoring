@@ -7,57 +7,7 @@ define([
   var List = Backbone.Form.editors.List.prototype;
   var listSetValue = List.setValue;
 
-  var listInit = List.initialize;
-
   return {
-
-    initialize: function(options) {
-      listInit.call(this, options);
-      
-      this.listenTo(this, {
-        'copyItem': this.copyItem,
-        'moveItem': this.moveItem
-      });
-    },
-
-    moveItem: function(direction, itemView) {
-      var itemIndex = -1;
-      for (var i = 0; i < this.items.length; i++) {
-        if (this.items[i] !== itemView) continue; 
-        itemIndex =  i;
-      }
-
-      this.changePosition(itemIndex, direction);
-      this.trigger('change', this);
-    },
-
-    changePosition: function(oldIndex, direction) {
-      var newIndex = oldIndex;
-      if (direction === 'up') {
-        --newIndex;
-      } else {
-        ++newIndex; 
-      }
-
-      // check bounds
-      if (newIndex < 0 || newIndex >= this.items.length) return;
-
-      var existingItem = this.items[newIndex];
-      var item = this.items[oldIndex];
-
-      if (direction === 'up') {
-        this.items[oldIndex].$el.insertBefore(this.items[newIndex].$el);
-      } else {
-        this.items[oldIndex].$el.insertAfter(this.items[newIndex].$el);
-      }
-
-      this.items[oldIndex] = existingItem;
-      this.items[newIndex] = item;
-    },
-
-    copyItem: function(itemEditor) {
-      this.addItem(itemEditor.value);
-    },
 
     setValue: function(value) {
       this.items = [];

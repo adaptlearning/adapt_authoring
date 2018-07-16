@@ -47,7 +47,6 @@ define([
   
       return parts.join('<br />');
     }
-
   }
 
 });

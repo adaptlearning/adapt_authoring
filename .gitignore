@@ -1,20 +1,18 @@
-/adapt_framework
-
 /conf/config.json
-
+/conf/migrate.json
 /data
 
-/frontend/src/adaptbuilder/css/adapt.css
-/frontend/src/adaptbuilder/css/adapt.css.map
-/frontend/src/adaptbuilder/css/adapt.css.map.imports
-/frontend/src/adaptbuilder/js/
+/frontend/build
 
+/frontend/src/modules/modules.js
 /frontend/src/plugins/plugins.js
 /frontend/src/templates/templates.js
 
 /node_modules/
 /nbproject/
 /master/
+
+package-lock.json
 
 /plugins/content/component/versions/
 /plugins/content/component/componentcache/
@@ -28,15 +26,11 @@
 /routes/lang/en.json
 
 /temp
-/test_frontend/img
+/test/.testcache
 /tmp
 
 /.settings
 
-version.json
-
 .idea
-.vagrant
-.env
 .project
-*.iml
+.vscode

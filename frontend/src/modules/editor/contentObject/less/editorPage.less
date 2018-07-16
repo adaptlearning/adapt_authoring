@@ -1,0 +1,165 @@
+@import 'colours';
+
+.page {
+  .paste-zone {
+      margin: 0 0 30px 0;
+      &-inner {
+        text-align: center;
+        padding: 0;
+      }
+      .btn {
+        padding: 12px 60px;
+        margin: 0 10px;
+      }
+   }
+   .page-components .paste-zone a {
+      padding: 7px 35px;
+      margin: 20px 0 0 0;
+   }
+}
+
+.editing-overlay-component-option {
+  background-color:#e8e8e8;
+  transition:background-color 0.2s;
+  &:hover {
+    background-color:darken(#e8e8e8, 10%);
+  }
+  &.selected {
+    background-color:darken(#e8e8e8, 20%);
+  }
+}
+
+.editing-overlay-component-layout-option {
+    border:none;
+    border-right:1px solid #b7caed;
+    padding:0px 10px;
+    float:left;
+    background-color:#fff;
+    color:#3e4960;
+    transition:all 0.2s;
+    &:hover {
+        color:#fff;
+        background-color:lighten(@secondary-color, 20%);
+    }
+    &.selected {
+        color:#fff;
+        background-color:@secondary-color;
+    }
+}
+
+.article,
+.block,
+.component {
+  &.hovering {
+    box-shadow: 0px 0px 5px 2px #CBE1E6;
+    position:relative;
+  }
+}
+
+.block .add-control {
+  padding: 0 5px 5px 5px;
+}
+
+.add-control {
+  .add-article, .add-block, .add-component {
+    font-size: 16px;
+    width: 100%;
+    padding: 0;
+    line-height: 50px;
+    text-align: center;
+    color: @primary-color;
+    border: 1px dashed @primary-color;
+    transition: all 0s;
+
+    &.add-article {
+      background-color:#F6FBFE;
+      margin-bottom: 50px;
+    }
+
+    &.add-block {
+      background-color:#EAF8FB;
+      width: 96%;
+      margin: 0 2% 20px;
+    }
+
+    &.add-component {
+      background-color: #D6F3F9;
+      &.left,
+      &.right {
+        width: 48%;
+        position: relative;
+        top: -100px;
+        float: left;
+      }
+      &.right {
+        float: right;
+      }
+    }
+
+    &:hover, &:focus {
+      padding: 0;
+      line-height: 50px;
+      text-align: center;
+      color: @primary-color;
+      border: 1px solid @primary-color;
+    }
+  }
+}
+
+
+.page-edit-button {
+  font-size:16px;
+  text-decoration: none;
+  color: #34bee0;
+  transition: all 0.3s;
+  &:hover {
+    color:#15a4fa;
+  }
+}
+
+.page-inner {
+  padding:30px;
+}
+
+.page-detail {
+  position: relative;
+  height: 100%;
+  background-color: white;
+  border: 1px solid #D2E4E6;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 20px;
+  &:hover {
+    box-shadow: 0px 0px 5px 2px #CBE1E6;
+  }
+  .page-edit-button {
+    padding: 0;
+    padding-right: 15px;
+  }
+  .page-body {
+    padding-top: 10px;
+    &:empty {
+      padding-top: 0;
+    }
+  }
+}
+
+.editor-inner {
+  > .page {
+    .title {
+      font-size: 16px;
+      font-weight: @font-weight;
+    }
+    .description {
+      font-size: 16px;
+    }
+    .page-edit-panel {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    .page-articles {
+      margin:20px 0px;
+    }
+  }
+}

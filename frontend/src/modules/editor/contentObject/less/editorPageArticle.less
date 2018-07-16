@@ -1,0 +1,40 @@
+.article {
+    position: relative;
+    border-radius: 3px;
+    background-color: #F6FBFE;
+    border: 1px solid #CEE4E2;
+    margin-bottom: 20px;
+    cursor: pointer;
+
+    &-inner {
+        .article-body {
+            margin: 0 2%;
+            padding-bottom: 15px;
+            &:empty {
+                padding-bottom: 0;
+            }
+        }
+    }
+
+    &-edit-panel {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    &-detail {
+        padding: 10px 0;
+    }
+
+    &-blocks {
+        padding: 0 2%;
+    }
+    
+    &.collapsed-view {        
+        .editor-collapse-article {
+            .fa::before {
+                content: "\f067";
+            }
+        }
+    }
+}

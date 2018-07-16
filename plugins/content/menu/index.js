@@ -3,27 +3,26 @@
  * Menu content plugin
  *
  */
+var _ = require('underscore');
+var async = require('async');
+var bower = require('bower');
+var fs = require('fs');
+var path = require('path');
+var util = require('util');
 
-var origin = require('../../../'),
-    contentmanager = require('../../../lib/contentmanager'),
-    rest = require('../../../lib/rest'),
-    BowerPlugin = require('../bower'),
-    ContentPlugin = contentmanager.ContentPlugin,
-    ContentTypeError = contentmanager.errors.ContentTypeError,
-    configuration = require('../../../lib/configuration'),
-    usermanager = require('../../../lib/usermanager'),
-    database = require('../../../lib/database'),
-    logger = require('../../../lib/logger'),
-    defaultOptions = require('./defaults.json'),
-    bower = require('bower'),
-    rimraf = require('rimraf'),
-    async = require('async'),
-    fs = require('fs'),
-    ncp = require('ncp').ncp,
-    mkdirp = require('mkdirp'),
-    _ = require('underscore'),
-    util = require('util'),
-    path = require('path');
+var BowerPlugin = require('../bower');
+var configuration = require('../../../lib/configuration');
+var contentmanager = require('../../../lib/contentmanager');
+var database = require('../../../lib/database');
+var logger = require('../../../lib/logger');
+var origin = require('../../../');
+var rest = require('../../../lib/rest');
+var usermanager = require('../../../lib/usermanager');
+
+var ContentPlugin = contentmanager.ContentPlugin;
+var ContentTypeError = contentmanager.errors.ContentTypeError;
+
+var defaultOptions = require('./defaults.json');
 
 var bowerConfig = {
   type: 'menutype',
@@ -141,10 +140,10 @@ BowerPlugin.prototype.initialize.call(new Menu(), bowerConfig);
               app.emit('rebuildCourse', tenantId, courseId);
 
               res.statusCode = 200;
-              return res.json({success: true});
+              return res.json({ success: true });
             });
           });
-        }, configuration.getConfig('dbName'));        
+        }, configuration.getConfig('dbName'));
       });
     });
   });

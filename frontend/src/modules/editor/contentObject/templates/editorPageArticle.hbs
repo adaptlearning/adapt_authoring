@@ -1,0 +1,15 @@
+<div class="article-inner">
+  <div class="article-detail unselectable">
+    {{>part_editorItemSidebar}}
+  </div>
+  <div class="article-content">
+    {{#if body}}
+      <div class="{{_type}}-body">{{{body}}}</div>
+    {{/if}}
+
+    <div class="article-blocks"></div>
+    <div class="add-control">
+      <button class="btn add-block">{{t 'app.addblock'}}</button>
+    </div>
+  </div>
+</div>

@@ -1,10 +1,138 @@
 # Change Log
-All notable changes to this project will be documented in this file.<br>
-This project adheres to [Semantic Versioning](http://semver.org/).
 
-**IMPORTANT**: For information on how to *correctly* update your installation, consult [INSTALL.md](https://github.com/adaptlearning/adapt_authoring/blob/master/INSTALL.md#updating-the-tool).
+All notable changes to the Adapt authoring tool are documented in this file.
+
+**IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
+_Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
+
+## [0.5.0] - 2018-06-26
+
+Release which adds the ability to import courses created in the framework, as well as exports from other authoring tool installs.
+
+We're also switching our Node.js support strategy to only include the current **active LTS** release of Node.js, which at time of writing is `v8.x` (see the Node.js [release schedule](https://github.com/nodejs/Release) for more information).
+
+### Upgrade Notes
+:skull: If you're using a Node.js version older than `v8.x`, please upgrade prior to installing this version of the authoring tool. :skull:
+
+### Added
+- Courses built with the framework and authoring tool exports can now be imported ([\#1387](https://github.com/adaptlearning/adapt_authoring/issues/1387))
+- The ability to colour ABC content views in the editor screens ([\#1785](https://github.com/adaptlearning/adapt_authoring/issues/1785))
+- The ability to minimise articles in the page editor view ([\#1483](https://github.com/adaptlearning/adapt_authoring/issues/1483))
+- Ability to set MongoDB authentication from the install script ([\#1903](https://github.com/adaptlearning/adapt_authoring/issues/1903))
+- Support for framework plugins' `pluginDependencies` field, as defined in `bower.json` ([\#1858](https://github.com/adaptlearning/adapt_authoring/issues/1858))
+- Support for migration scripts ([#1937](https://github.com/adaptlearning/adapt_authoring/issues/1937))
+- Dashboard sorts now persist across sessions, while filters persist for the duration of the current session ([\#1857](https://github.com/adaptlearning/adapt_authoring/issues/1857))
+- Instruction to component schema ([\#1712](https://github.com/adaptlearning/adapt_authoring/issues/1712))
+- Custom SMTP servers can now be used with mailer ([\#1447](https://github.com/adaptlearning/adapt_authoring/issues/1447))
+
+### Changed
+-  Bumped archive module dependency version ([\#1930](https://github.com/adaptlearning/adapt_authoring/issues/1930))
+- Core front-end modules are now loaded before any front-end plugins ([\#1913](https://github.com/adaptlearning/adapt_authoring/issues/1913))
+- `Database#addModel` now catches and logs errors ([\#1855](https://github.com/adaptlearning/adapt_authoring/issues/1855))
+- Server now logs more appropriate message if error is caught when loading a route ([\#1853](https://github.com/adaptlearning/adapt_authoring/issues/1853))
+- NPM deprecation warnings are now suppressed ([\#1745](https://github.com/adaptlearning/adapt_authoring/issues/1745))
+- Only one course export per-user is saved on the server ([\#1056](https://github.com/adaptlearning/adapt_authoring/issues/1056))
+- Some mocha test data is now cached after the initial run to reduce runtime ([#1761](https://github.com/adaptlearning/adapt_authoring/issues/1761))
+
+### Removed
+- Support for Node.js `v4.x` and `v6.x` ([#1769](https://github.com/adaptlearning/adapt_authoring/issues/1769))
+- The need to define third-party front-end plugins in `app.js` ([\#1866](https://github.com/adaptlearning/adapt_authoring/issues/1866))
+- Redundant `conf/config_sample.json` file ([\#1793](https://github.com/adaptlearning/adapt_authoring/issues/1793))
+
+### Fixed
+- 'Find' feature in Ace editor plugin ([\#1928](https://github.com/adaptlearning/adapt_authoring/issues/1928))
+- Issue with `_isVisible` and `_isHidden` not being saved on blocks and components ([\#1888](https://github.com/adaptlearning/adapt_authoring/issues/1888))
+- Issue with 'Manage extensions' list ordering ([\#1878](https://github.com/adaptlearning/adapt_authoring/issues/1878))
+- Cog menu for pages ([\#1874](https://github.com/adaptlearning/adapt_authoring/issues/1874))
+- Upgrade script failure when missing `authoringToolRepository` and `frameworkRepository` from `config.json` ([\#1851](https://github.com/adaptlearning/adapt_authoring/issues/1851))
+- Scroll position not persisting in page editor ([\#1814](https://github.com/adaptlearning/adapt_authoring/issues/1814))
+- Error thrown when deleting a shared course belonging to another user ([\#1776](https://github.com/adaptlearning/adapt_authoring/issues/1776))
+
+## [0.4.1] - 2018-02-05
+
+This is a patch release fixing issues introduced in v0.4.0.
+
+### Fixed
+- Major performance fix for large installs ([\#1758](https://github.com/adaptlearning/adapt_authoring/issues/1758))
+- Various minor fixes for install and upgrade scripts ([\#1749](https://github.com/adaptlearning/adapt_authoring/issues/1749), [\#1760](https://github.com/adaptlearning/adapt_authoring/issues/1760), [\#1763](https://github.com/adaptlearning/adapt_authoring/issues/1763), [\#1797](https://github.com/adaptlearning/adapt_authoring/issues/1797), [\#1838](https://github.com/adaptlearning/adapt_authoring/issues/1838), [\#1842](https://github.com/adaptlearning/adapt_authoring/issues/1842))
+- Dashboard paging fixed ([\#1759](https://github.com/adaptlearning/adapt_authoring/issues/1759))
+- Asset management paging fixed ([\#1790](https://github.com/adaptlearning/adapt_authoring/issues/1790))
+- Fixed issue whereby the page editor screen would occasionally render the same block twice ([\#1834](https://github.com/adaptlearning/adapt_authoring/issues/1834))
+- Asset preview image has been fixed for contrib-media video assets ([\#1835](https://github.com/adaptlearning/adapt_authoring/issues/1835))
+- Fixed menu editor rendering quirks ([\#1837](https://github.com/adaptlearning/adapt_authoring/issues/1837))
+
+## [0.4.0] - 2017-10-17
+
+Major refactor of the front-end application.
+
+### Upgrade Notes
+Due to the changes made to the install script, this release restricts the installed framework version to `v2.x.x` to avoid unsupported breaking changes introduced in framework `v3`.
+
+There are a few notable changes to the code that may impact customisations:
+- `app:dataReady` has been renamed to `origin:dataReady`
+- `variables.less` has been renamed to `colours.less`.
+- Some editor collections have been renamed:
+    - `componentTypes` -> `componenttypes`
+    - `extensionTypes` -> `extensiontypes`
+    - `courseAssets` -> `courseassets`
+
+Please check the release notes below for more information.
+
+### Added
+- Framework themes can now display a preview in the theme picker. To enable this, a `preview.jpg` file is needed in the theme folder root
+- Can now specify custom auth source for MongoDB ([\#1673](https://github.com/adaptlearning/adapt_authoring/issues/1673))
+- New `contentPane` module takes over view rendering from `Router`, and acts as a consistent container for main app content. Makes sure scrolling is consistent across the application among other things.
+- EditorDataLoader has been added to preload editor data. You can use the `EditorDataLoader.waitForLoad` function to halt code until preload has finished. You can also use the `editor:dataPreloaded` event.
+
+### Changed
+- Major refactoring of the frontend folder:
+    - 'Core' code separated into modules, and core
+    - Web-app loading rewritten
+    - Core LESS files are now accessible without needing to specify a relative file path. `variables.less` has been renamed to `colours.less`.
+    - All duplicate LESS files have been merged, and put in their respective module folder
+    - The `adaptbuilder` folder has been renamed to `build`
+    - Editor routing code has been simplified, and moved into the sub-module folders. See [modules/editor/index.js#L27-L55](https://github.com/adaptlearning/adapt_authoring/blob/v0.4.0/frontend/src/modules/editor/index.js#L27-L55) for the routing code, and [modules/editor/article/index.js#L10](https://github.com/adaptlearning/adapt_authoring/blob/release-0.4.0/frontend/src/modules/editor/article/index.js#L10) as an example of the new routing method.
+    - Events using `app:` replaced with `origin:` for consistency. Most notably: any code using `app:dataReady` will need to be switched over to listen to `origin:dataReady`
+    - Router has been refactored, and the following convenience functions added: `navigateTo` - wrapper for `Backbone.Router.navigate`, `navigateToLogin`, `setHomeRoute` and `navigateToHome`
+    - Editor collections have been renamed to reflect the MongoDB collection names: `editor.componentTypes` -> `editor.componenttypes`, `editor.extensionTypes` -> `editor.extensiontypes`, `editor.courseAssets` -> `editor.courseassets`
+    - `window.polyglot` has been abstracted into the new localisation module, which can be referenced with `Origin.l10n`
+- Dashboard module has been renamed to projects, and is the default home route
+- User management has moved from plugins to modules
+- Install/upgrade scripts overhauled:
+    - Can now upgrade the server and framework to specific releases
+    - Can now upgrade the server and framework separately
+    - Install/upgrade scripts have been made prettier to look at (and more useful) with the introduction of activity spinners, and more helpful log messages
+    - Upgrade script now ignores draft and prereleases ([\#1723](https://github.com/adaptlearning/adapt_authoring/issues/1723))
+    - Upgrade/install script now allows custom git repositories to be used for both the server and framework source
+    - Framework version can be restricted so as not to automatically upgrade to a version you don't want to support. To enable this, specify the `framework` version in `package.json` (accepts any valid semver range) ([\#1703](https://github.com/adaptlearning/adapt_authoring/issues/1703))
+- Besides the schemas, the user interface is now completely localised ([\#1573](https://github.com/adaptlearning/adapt_authoring/issues/1573))
+- Improved multi-user support for previewing/publishing of courses ([\#1220](https://github.com/adaptlearning/adapt_authoring/issues/1220))
+- User profile page is now correctly styled ([\#1413](https://github.com/adaptlearning/adapt_authoring/issues/1413))
+- Newly created courses can now be built without any editing ([\#1678](https://github.com/adaptlearning/adapt_authoring/issues/1678))
+- Must now input super admin password twice during install to avoid user error ([\#1032][https://github.com/adaptlearning/adapt_authoring/issues/1032])
+- Abstracted polyglot into the new internal `l10n` library (accessible globally via the `Origin` object). Language strings are now obtained using `Origin.l10n.t`
+- Backbone forms version updated, and override code tidied up/removed where possible
+- Boolean selects are now rendered as checkboxes.
+
+### Removed
+- **Vagrant support has been dropped** ([\#1503](https://github.com/adaptlearning/adapt_authoring/issues/1503))
+- The user management's user list sort is now case-insensitive ([\#1549](https://github.com/adaptlearning/adapt_authoring/issues/1549))
+- Front-end tests removed for now
+
+### Fixed
+- Framework plugin update has been fixed ([\#1415](https://github.com/adaptlearning/adapt_authoring/issues/1415))
+- Unused user password reset data is now cleared on delete of the related user ([\#1553](https://github.com/adaptlearning/adapt_authoring/issues/1553))
+- Copy and paste now correctly includes any extension settings ([\#1484](https://github.com/adaptlearning/adapt_authoring/issues/1484))
+- Dashboard no longer hangs if large images have been used as hero images ([\#1470](https://github.com/adaptlearning/adapt_authoring/issues/1470))
+- Server plugin schemas now correctly reflect the latest state after a plugin has been updated (previously a server restart was needed for any schema changes to be reflected) ([\#1524](https://github.com/adaptlearning/adapt_authoring/issues/1524))
+- Preview loading route added to prevent preview opening in a background tab/window ([\#1636](https://github.com/adaptlearning/adapt_authoring/issues/1636))
+- We now only attempt to load valid routes, avoiding unnecessary server breakdowns ([\#1534](https://github.com/adaptlearning/adapt_authoring/issues/1534))
+- Mocha tests fixed, and integrated with TravisCI
+- Dragging is now restricted for components depending on layout ([\#1631](https://github.com/adaptlearning/adapt_authoring/issues/1631))
 
 ## [0.3.0] - 2017-01-24
+
+User management feature release.
 
 ### Added
 - User management
@@ -27,7 +155,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - Removed `on_start` from notifications as Travis WebLint shows as deprecated
 
 ### Fixed
-- Block alignment in page editor 
+- Block alignment in page editor
 - Password reset emails now work as intended
 - The 'enabled' checkbox in Plugin Management now hides plugins from editor
 - Removed tab/newline chars from CKEditor output to fix tabbing in published courses
@@ -36,6 +164,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.2.2] - 2016-09-13
 
+Bugfix release.
+
 ### Added
 - Support for editing JSON objects, for example, the `_playerOptions` array in the Media component
 
@@ -43,7 +173,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Vagrant issue with preventing updating plugins
 
 ## [0.2.1] - 2016-08-16
-This is a patch release which fixes minor issues with v0.2.0 uncovered by community user testing.
+
+Bugfix release after community user testing.
 
 ### Added
 - LESS sourcemaps
@@ -57,9 +188,8 @@ This is a patch release which fixes minor issues with v0.2.0 uncovered by commun
 - reset.less now loaded before *everything*
 
 ## [0.2.0] - 2016-07-27
-This version introduces a new look and feel to the user interface of the authoring tool, and closely matches the new theme of the Adapt community site introduced at the beginning of the year. 
 
-In addition, this release also includes the following:
+Major theme update to match the new look and feel of [adaptlearning.org](www.adaptlearning.org).
 
 ### Changed
 - Disabled SSL certificate check during Vagrant install
@@ -71,12 +201,13 @@ In addition, this release also includes the following:
 - Saving course settings hangs if nothing has been changed  
 
 ## [0.1.7] - 2016-04-28
-This version contains numerous minor bug fixes and enhamcements, and supports the new menu locking feature released in version 2.0.9 of the Adapt Framework.
 
- ### Added
+Bugfix release to support framework v2.0.9.
+
+### Added
 - Support for new Adapt Framework 'menu locking' functionality
 - Support for v2.0.9 of the Adapt Framework
-- Support for _isAvailable flag
+- Support for `_isAvailable` flag
 - Added link to GitHub repositories for plugins
 
 ### Changed
@@ -87,11 +218,12 @@ This version contains numerous minor bug fixes and enhamcements, and supports th
 ### Fixed
 - Role statements not updated on a server restart
 - Autocomplete enabled on text input fields
-- MongoStore does not support replicasets
-- Removed @learningpool.com e-mail address hack
- 
+- MongoStore does not support `replicasets`
+- Removed `@learningpool.com` e-mail address hack
+
 ## [0.1.6] - 2016-03-29
-This version adds the ability to export the source code for a course that can be built using the Adapt Framework. It also fixes some important issues for installing using Vagrant.
+
+Release to add source-code export of courses.
 
 ### Added
 - Support for new Adapt Framework 'start page' functionality
@@ -113,31 +245,33 @@ This version adds the ability to export the source code for a course that can be
 - Intermittent error in copy and pasting component
 
 ## [0.1.5] - 2016-02-16
-This version aligns closely with the re-work on the Adapt Framework v2.0.7 release, with a focus on performance improvements around preview and downloading courses.
+
+Bugfix release to support framework v2.0.7.
 
 ### Added
 - Support for v2.0.7 of the Adapt Framework
 - Optimised build process, i.e. only plugins used are bundled
-- Ability to copy the _id value of contentobjects, articles, blocks and components to clipboard
+- Ability to copy the `_id` value of `contentobjects`, `articles`, `blocks` and `components` to clipboard
 - Ability to easily change component layouts without using drag and drop
 - Ability to export the source code of a particular course
 - Caching added to assets to improve performance
 
 ### Changed
-- _isAvailableInEditor flag persisted when a new plugin is uploaded
+- `_isAvailableInEditor` flag persisted when a new plugin is uploaded
 - Optimised performance of processing course assets in preview/download
 - Preview redirects to index.html rather than main.html
 - The count of failed logins is reset after a successful login
-- Turned off automatic population of Display Title for blocks
+- Turned off automatic population of display title for blocks
 
 ### Fixed
-- Non-essential attributes removed from course.json
+- Non-essential attributes removed from `course.json`
 - ACE JavaScript error when creating a new course
 - Hard 100kb limit on JSON payload
 - Corrected Project Details save issue
 
 ## [0.1.4] - 2015-11-25
-This version adds support for Node.js v4.2.2 LTS.  
+
+Release to add support for Node.js v4.2.2 LTS.
 
 ### Added
 - Support for Node.js v4.2.2 LTS
@@ -149,20 +283,22 @@ This version adds support for Node.js v4.2.2 LTS.
 - Locking the Title and Display Title by default
 - Renamed 'Publish' button to 'Download'
 - Updated package dependencies to correct security issues
-- Assets can now be defined in articles.json
+- Assets can now be defined in `articles.json`
 - Tag length has been increased to 30 characters
 
 ### Fixed
 - Error on copying and pasting a block
 - Custom CSS/LESS not pulling through
-- _supportedLayout not working correctly
+- `_supportedLayout` not working correctly
 
 ## [0.1.3] - 2015-10-21
 
+Bugfix release.
+
 ### Added
-- Support for MongoDB replicasets
+- Support for MongoDB `replicasets`
 - More robust processing for missing schema pluginLocations
-- Support for _accessibility added to Configuration Settings
+- Support for `_accessibility` added to Configuration Settings
 - Support for screen breakpoints added to Configuration Settings
 - Added security to preview route
 
@@ -171,24 +307,26 @@ This version adds support for Node.js v4.2.2 LTS.
 - Bumped CKEditor version to 4.5.4
 
 ### Fixed
-- Page and menu/sections were created without a linkText property set
-- IE 9 issue with editor and list formatting
-- Problem with isAssetExternal()
+- Page and menu/sections were created without a `linkText` property set
+- IE9 issue with editor and list formatting
+- Problem with `isAssetExternal()`
 - Dashboard problems when a hero image is not set
 - Added validation for length of database name
-- Added validation to Confugration Settings
+- Added validation to Configuration Settings
 
 ## [0.1.2] - 2015-09-30
 
+Bugfix release.
+
 ### Added
-- Support for _isOptional (Adapt Framework v2.x)
+- Support for `_isOptional` (Adapt Framework v2.x)
 - Support for accessibility (Adapt Framework v2.x)
 - Support for plugin 'globals' (Adapt Framework v2.x)
 - Improved install/upgrade
 - 'Global' configurations for plugins are conditionally applied
 - Added basic browser-based spell-check to HTML editor
 - Table editing is now an option on the HTML editor
-- Any <span> tag added in the HTML editor is now preserved
+- Any `<span>` tag added in the HTML editor is now preserved
 - Support for 'Autofill' on graphic components
 - Confirmation when deleting a component/extension item, such as a narrative or question stem
 - Ability to delete assets
@@ -196,12 +334,12 @@ This version adds support for Node.js v4.2.2 LTS.
 
 ### Changed
 - Course now has a Display Title property
-- Default plugins are now taken from the framework adapt.json file, hard-coded references to plugins are
+- Default plugins are now taken from the framework `adapt.json` file, hard-coded references to plugins are
 - Removed the dependency on adapt-cli
 - Added better logging for Validation Failed errors on database operations
 - Remove hard-coded references to core plugins
-- Upgrade to Express 4, support NodeJS 0.12.6, i.e. removed hard dependency on 0.10.33
-- Any logger.log() calls now support placeholders properly
+- Upgrade to Express 4, support NodeJS 0.12.6 (removed hard dependency on 0.10.33)
+- Any `logger.log()` calls now support placeholders properly
 - Authoring tool specific properties now removed from output JSON
 - Updated logo
 
@@ -218,25 +356,27 @@ This version adds support for Node.js v4.2.2 LTS.
 - Deleting an article or page does not remove associated assets contained with in
 - Modal overlay has a few responsive issues when appending content/custom editing views
 - Issue with long list item attribute values going outside of the list item box
-- Issue with nested items in backbone forms showing as [object Object]
+- Issue with nested items in backbone forms showing as `[object Object]`
 - Course tags were removed when a hero image was added or removed
 
 
 
 ## [0.1.1] - 2015-03-12
 
+Large bugfix release.
+
 ## Upgrade Notes
 If upgrading from a previous version, please add the following keys to your config.json
-- "outputPlugin" - "adapt"
-- "masterTenantName" - {name of the folder containing your master tenant files}
-- "masterTenantID" - {MongoDB _id of the initial first row in the 'tenants' collection}
+- `outputPlugin` -> `adapt`
+- `masterTenantName` -> {name of the folder containing your master tenant files}
+- `masterTenantID` - {MongoDB `_id` of the initial first row in the `tenants` collection}
 
 ### Added
 - Support for client-side configs
 - Proper support for shared courses
 - Poster images now available on courses
 - Progress indicator on preview
-- Support for _trackingId values
+- Support for `_trackingId` values
 
 ### Changed
 - Role permissions synced on a server restart
@@ -244,7 +384,7 @@ If upgrading from a previous version, please add the following keys to your conf
 - Install process updated
 
 ### Fixed
-- Minor IE 9 fixes
+- Minor IE9 fixes
 - Corrected 'Back to courses' button
 - Missing language strings
 - Fixes around drag and drop, copy and paste
@@ -255,6 +395,8 @@ If upgrading from a previous version, please add the following keys to your conf
 
 
 ## [0.1.0] - 2015-01-26
+
+Initial release.
 
 ### Added
 - Support for menu selection
@@ -277,7 +419,7 @@ If upgrading from a previous version, please add the following keys to your conf
 - Copy/paste moved to server-side
 - Content plugins preloaded on server boot
 - Asset records now use relative paths
- 
+
 ### Removed
 - iframe previews
 - Sockets.io (for now...)
@@ -287,11 +429,14 @@ If upgrading from a previous version, please add the following keys to your conf
 - Issue where project settings caused a javascript error
 - Issue with uploading gifs would fail
 - Issues with course duplication
-- Issues with bowercache file locking
+- Issues with `bowercache` file locking
 - Issues with drag and drop in page editor
 - Loading screen of death
 - Session cookie security issues
 
+[0.5.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.4.1...v0.5.0
+[0.4.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.4.0...v0.4.1
+[0.4.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.2.0...v0.2.1

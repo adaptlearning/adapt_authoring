@@ -16,11 +16,8 @@ var origin = require('../../../'),
     logger = require('../../../lib/logger'),
     defaultOptions = require('./defaults.json'),
     bower = require('bower'),
-    rimraf = require('rimraf'),
     async = require('async'),
     fs = require('fs'),
-    ncp = require('ncp').ncp,
-    mkdirp = require('mkdirp'),
     _ = require('underscore'),
     util = require('util'),
     path = require('path');
@@ -129,6 +126,33 @@ function initialize () {
 
   var app = origin();
   app.once('serverStarted', function (server) {
+
+    //get the theme preview image
+    rest.get('/theme/preview/:themename/:version', function (req, res, next) {
+      //strip slashes to stop unwanted directory traversal
+      var themeName = req.params.themename.replace(/\\(.)/mg, "$1");
+      var themeVersion = req.params.version.replace(/\\(.)/mg, "$1");
+      var tenantId = configuration.getConfig('masterTenantID');
+
+      async.tryEach([
+        function(callback) {
+          //try manual install location
+          fs.readFile(path.join(__dirname, 'versions', themeName, themeVersion, themeName, 'preview.jpg'), callback);
+        },
+        function(callback) {
+          //try bower install location
+          fs.readFile(path.join(__dirname, '..', '..', '..', 'temp', tenantId, 'adapt_framework', 'src', 'theme', themeName, 'preview.jpg'), callback);
+        }
+      ],function(err, img) {
+        if(err){
+          res.sendStatus(204);
+          return res;
+        }
+        res.writeHead(200, {'Content-Type': 'image/jpg' });
+        res.end(img);
+        return res;
+      });
+    });
 
     // Assign a theme to to a course
     rest.post('/theme/:themeid/makeitso/:courseid', function (req, res, next) {

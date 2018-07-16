@@ -1,0 +1,65 @@
+{{#if value}}
+	{{! Work out which type it is and display the correct html markup}}
+
+	{{#ifValueEquals type 'image'}}
+		{{#if thumbUrl}}
+			<img class="scaffold-asset-preview" src="{{thumbUrl}}"/>
+		{{else}}
+			<a class="scaffold-asset-preview" title="{{t 'app.nothumbnailforimage'}}" href="{{url}}" target="_blank">
+				<i class="fa fa-file-image-o fa-large"></i>
+			</a>
+		{{/if}}
+	{{/ifValueEquals}}
+
+	{{#ifValueEquals type 'other'}}
+		<a class="scaffold-asset-preview" href="{{#ifAssetIsExternal value}}{{value}}{{else}}{{url}}{{/ifAssetIsExternal}}" target="_blank">
+			<i class="fa fa-file-o fa-large"></i>
+			<div>{{value}}</div>
+		</a>
+	{{/ifValueEquals}}
+
+	{{#ifValueEquals type 'video'}}
+		{{#ifAssetIsExternal value}}
+			<a class="scaffold-asset-preview" href="{{value}}" target="_blank">
+				<i class="fa fa-file-movie-o fa-large"></i>
+				<div>{{value}}</div>
+			</a>
+		{{else}}
+			<img class="scaffold-asset-preview" src="{{thumbUrl}}"/>
+		{{/ifAssetIsExternal}}
+	{{/ifValueEquals}}
+
+	{{#ifValueEquals type 'audio'}}
+		<a class="scaffold-asset-preview" href="{{#ifAssetIsExternal value}}{{value}}{{else}}{{url}}{{/ifAssetIsExternal}}" target="_blank">
+			<i class="fa fa-file-audio-o fa-large"></i>
+			<div>{{value}}</div>
+		</a>
+	{{/ifValueEquals}}
+
+	<div class="scaffold-asset-buttons">
+		<button class="btn scaffold-asset-clear">
+			<i class="fa fa-times-circle"></i>
+			{{#ifAssetIsExternal value}}
+				{{t 'app.removeexternalasset'}}
+			{{else}}
+				{{t 'app.removeasset'}}
+			{{/ifAssetIsExternal}}
+		</button>
+	</div>
+
+{{else}}
+
+	<div class="scaffold-asset-external-input display-none">
+		<input type="text" class="scaffold-asset-external-input-field" />
+		<div class="scaffold-asset-external-input-buttons">
+			<button class="btn primary scaffold-asset-external-input-save">{{t 'app.save'}}</button>
+			<button class="btn primary-hollow scaffold-asset-external-input-cancel">{{t 'app.cancel'}}</button>
+		</div>
+	</div>
+
+	<div class="scaffold-asset-buttons">
+		<button class="btn secondary scaffold-asset-picker">{{t 'app.selectasset'}}</button>
+		<button class="btn secondary-hollow scaffold-asset-external">{{t 'app.selectexternalasset'}}</button>
+	</div>
+
+{{/if}}

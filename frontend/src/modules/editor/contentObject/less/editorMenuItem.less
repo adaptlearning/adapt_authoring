@@ -1,0 +1,109 @@
+.open-context-contentObject {
+    color: white;
+}
+
+.editor-menu-item {
+    position: relative;
+    display: block;
+    margin: 20px;
+
+    &-inner {
+        overflow:hidden;
+        border-radius:3px;
+        position: relative;
+        background-color: #fff;
+        cursor: pointer;
+        transition:background-color 0.3s;
+        &:hover {   
+            .editor-menu-item-settings {
+                top:0;
+                opacity:1;
+            }
+        }
+    }
+
+    &-icon {
+        float: left;
+        font-size: 24px;
+        margin-right: 10px;
+        color: #999;
+        &.page {
+        }
+
+        &.menu {
+        }
+    }
+
+	&.expanded {
+        transition:background-color 0s;
+
+        &.content-type-menu .editor-menu-item-pin {
+            display:block;
+        }
+        .editor-menu-item-icon.menu i:before {
+            content: "\f115";
+        }
+        
+        .editor-menu-item-icon {
+            color: #fff;
+        }
+	}
+
+	&.selected {
+        transition:background-color 0s;
+
+        .editor-menu-item-settings {
+            top:0;
+            opacity:1;
+        }
+
+        &.content-type-menu .editor-menu-item-pin {
+            display:block;
+        }
+
+        .editor-menu-item-icon,
+        .editor-menu-item-settings button {
+            color: #fff;
+        }
+	}
+
+    .handle {
+        cursor: move;
+    }
+
+    .editor-menu-item-content {
+        display: flex;
+        align-items: center;
+        padding: 0 10px 15px 10px;
+    }
+}
+
+.editor-menu-item-settings {
+    font-size: 16px;
+    width:100%;
+    opacity:1;
+    transition:all 0.3s;
+    &-inner {
+        display: flex;
+        button {
+            padding: 5px 10px;
+            font-size: 15px;
+        }
+    }
+
+    .editor-delete-contentobject-element {
+        margin-left: auto;
+    }
+}
+
+.editor-menu-item-pin {
+    display:none;
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    margin-top: -5px;
+    width: 0; 
+    height: 0; 
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent; 
+}

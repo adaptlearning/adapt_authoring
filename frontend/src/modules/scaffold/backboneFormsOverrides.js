@@ -9,7 +9,6 @@ define([
   './overrideBackboneForms/text',
   './overrideBackboneForms/number',
   './overrideBackboneFormsLists/list',
-  './overrideBackboneFormsLists/listItem',
   './overrideBackboneFormsLists/listModal'
 ], function(
   Origin,

@@ -105,12 +105,14 @@ define(function(require){
 
     saveUser: function() {
       var self = this;
+      var prev_email = self.model.get('email');
 
       this.$('.error-text').addClass('display-none');
 
       var toChange = {
         'firstName': self.$('#firstName').val().trim(),
-        'lastName': self.$('#lastName').val().trim()
+        'lastName': self.$('#lastName').val().trim(),
+        'email': self.$('#email').val().trim()
       };
 
       if (self.model.get('_isNewPassword')) {
@@ -122,7 +124,7 @@ define(function(require){
 
       _.extend(toChange, {
         _id: self.model.get('_id'),
-        email: self.model.get('email')
+        email_prev: prev_email
       });
 
       self.model.save(toChange, {
@@ -134,7 +136,12 @@ define(function(require){
           });
         },
         success: function(model, response, options) {
-          Backbone.history.history.back();
+          if (prev_email !== self.$('#email').val().trim()) {
+            window.location.href = '/#/user/login';
+            location.reload();
+          } else {
+            Backbone.history.history.back();
+          }
         }
       });
     },

@@ -91,7 +91,7 @@
       "type": "string",
       "default": "",
       "editorAttrs": {
-        "hideOn": "page"
+        "data-hideon": "page"
       },
       "inputType": {
         "type": "Select",

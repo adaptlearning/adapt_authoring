@@ -79,7 +79,7 @@ define([
 
     _.each(selectedFields, function(key) {
       var fieldSchema = schema[key];
-      if (options.model && fieldSchema.editorAttrs && fieldSchema.editorAttrs.hideOn && fieldSchema.editorAttrs.hideOn === options.model.get('_type')) {
+      if (options.model && fieldSchema.editorAttrs && fieldSchema.editorAttrs['data-hideon'] && fieldSchema.editorAttrs['data-hideon'] === options.model.get('_type')) {
         delete fields[key];
       } else {
         fields[key] = this.createField(key, fieldSchema);

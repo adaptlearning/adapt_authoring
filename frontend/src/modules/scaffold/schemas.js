@@ -1,5 +1,4 @@
 define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel) {
-
   var Schemas = function(schemaName) {
     var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
 
@@ -14,48 +13,48 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
     }
     trimPlugins(schema);
     if (schemaName === 'course') trimGlobals(schema);
-    // trim off any empty fieldsets
     trimEmptyProperties(schema);
 
     return schema;
   };
 
   function trimPlugins(schema) {
-    trimDisabledPlugins(schema._extensions, Origin.editor.data.config.get('_enabledExtensions'));
+    trimDisabledPlugins(schema._extensions, _.values(Origin.editor.data.config.get('_enabledExtensions')), 'targetAttribute');
     // trim unnecessary data for menus and themes
     ['menu','theme'].forEach(function(type) {
       var current = Origin.editor.data[type + 'types'].findWhere({
         name: Origin.editor.data.config.get('_' + type)
       });
-      if(current) {
-        var plugins = {}; // we only ever have one plugin of each, so mock the aggregated 'plugins' object
-        plugins[current.get(type)] = current.toJSON();
-        trimDisabledPlugins(schema[type + 'Settings'], plugins);
-      }
+      if(current) trimDisabledPlugins(schema[type + 'Settings'], [current.toJSON()], type);
     });
   }
 
+  // remove unrequired globals from the course
   function trimGlobals(schema) {
+    var editorData = Origin.editor.data;
+    var config = editorData.config;
     var globals = schema._globals.properties;
-    var enabledComponents = _.pluck(Origin.editor.data.config.get('_enabledComponents'), '_component');
-    // remove unrequired globals from the course
-    trimDisabledPlugins(globals._extensions, Origin.editor.data.config.get('_enabledExtensions'));
-    trimDisabledPlugins(globals._components, enabledComponents);
-    trimDisabledPlugins(globals, enabledComponents);
+    trimDisabledPlugins(globals._extensions, _.values(config.get('_enabledExtensions')), 'targetAttribute');
+    trimDisabledPlugins(globals._components, config.get('_enabledComponents'), '_component');
+    trimDisabledPlugins(globals._menu, editorData.menutypes.where({ name: config.get('_menu') }), 'menu');
+    trimDisabledPlugins(globals._theme, editorData.themetypes.where({ name: config.get('_theme') }), 'theme');
     // trim off the empty globals objects
     trimEmptyProperties(globals);
   }
 
-  function trimDisabledPlugins(schemaData, enabledPlugins) {
-    var properties = schemaData && schemaData.properties;
-    for (var key in properties) {
-      if (!properties.hasOwnProperty(key)) {
-        continue;
-      }
-      if(!_.contains(_.pluck(enabledPlugins, 'targetAttribute'), key)) {
-        delete properties[key];
-      }
+  function trimDisabledPlugins(schemaData, enabledPlugins, propertyToCheck) {
+    if(!schemaData || !schemaData.properties) {
+      return;
     }
+    var enabledPluginNames = enabledPlugins.map(function(plugin) {
+      var value = plugin[propertyToCheck] || plugin.get && plugin.get(propertyToCheck);
+      // FIXME #2023: all plugin type data should be consistent
+      var shouldPrefixUnderscore = propertyToCheck === 'menu' || propertyToCheck === 'theme';
+      return shouldPrefixUnderscore ? '_' + value : value;
+    });
+    Object.keys(schemaData.properties).forEach(function(schemaKey) {
+      if(enabledPluginNames.indexOf(schemaKey) === -1) delete schemaData.properties[schemaKey];
+    });
   }
 
   function trimEmptyProperties(object) {

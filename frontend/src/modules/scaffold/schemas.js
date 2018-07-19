@@ -19,7 +19,7 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
   };
 
   function trimPlugins(schema) {
-    trimDisabledPlugins(schema._extensions, _.values(Origin.editor.data.config.get('_enabledExtensions')), 'targetAttribute');
+    trimDisabledPlugins(schema._extensions, Object.values(Origin.editor.data.config.get('_enabledExtensions')), 'targetAttribute');
     // trim unnecessary data for menus and themes
     ['menu','theme'].forEach(function(type) {
       var current = Origin.editor.data[type + 'types'].findWhere({
@@ -34,7 +34,7 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
     var editorData = Origin.editor.data;
     var config = editorData.config;
     var globals = schema._globals.properties;
-    trimDisabledPlugins(globals._extensions, _.values(config.get('_enabledExtensions')), 'targetAttribute');
+    trimDisabledPlugins(globals._extensions, Object.values(config.get('_enabledExtensions')), 'targetAttribute');
     trimDisabledPlugins(globals._components, config.get('_enabledComponents'), '_component');
     trimDisabledPlugins(globals._menu, editorData.menutypes.where({ name: config.get('_menu') }), 'menu');
     trimDisabledPlugins(globals._theme, editorData.themetypes.where({ name: config.get('_theme') }), 'theme');

@@ -4,6 +4,8 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
 
     tagName: 'input',
 
+    className: 'scaffold-tags',
+
     events: {
       'change': function() { this.trigger('change', this); },
       'focus': function() { this.trigger('focus', this); },

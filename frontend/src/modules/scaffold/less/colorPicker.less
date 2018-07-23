@@ -1,80 +1,95 @@
 .scaffold-color-picker {
   & + .sp-replacer,
   & + .sp-replacer.sp-active {
-    border-color: #aaa;
+    background: white;
+    border-color: #cccccc;
     &:hover {
-      border-color: #666;
+      border-color: darken(#dcdcdc, 10%);
     }
   }
 }
+.scaffold-color-picker & + .sp-replacer .sp-preview {
+  border-color: #bbb;
+}
 
-// Spectrum container is appended to the body
 body .sp-container {
-  border-color: #aaa;
-
-  // use icons instead of choose and cancel 
-  .sp-button-container {
-    width: 100%;
-    justify-content: flex-end;
-    display: flex;
-
-    .sp-choose,
-    .sp-cancel {
-      &:hover {
-        background: transparent;
-        text-decoration: none;
-      }
-      &:focus {
-        box-shadow: none;
-      }
-      &:active {
-        box-shadow: none;
-      }
-      background: transparent;
-      border: none;
-      color: transparent;
-      font-size: 0;
-      text-shadow: none;
-      width: 30px;
-      height: 30px;
-      line-height: 20px;
-      text-align: center;
-      padding: 5px;
-      box-sizing: border-box;
-    }
-    
-    .sp-choose {
-      &::after {
-        color: black;
-        content: "\f00c";
-        font-family: "FontAwesome";
-        font-size: 20px;
-      }
-    }
-    
-    .sp-cancel {
-      &::after {
-        color: @alert-color;
-        content: "\f00d";
-        font-family: "FontAwesome";
-        font-size: 20px;
-      }
+  border-color: #dcdcdc;
+  .sp-palette {
+    max-width: 90px;
+    .sp-thumb-el {
+      border-radius: 11px;
+      border-color: #cccccc;
+      overflow: hidden;
+      width: 20px;
+      height: 20px;
+      margin: 4px;
     }
   }
 
-  .sp-clear {
-    background-image: none;
-    text-align: center;
-    &::after {
-      content: "\f1f8";
-      font-family: "FontAwesome";
-      font-size: 20px;
-      line-height: 28px;
+  .sp-color {
+    border-color: #ccc;
+  }
+
+  .sp-initial {
+    border: 1px solid #ccc;
+  }
+
+  .sp-palette-container {
+    float: right;
+    border-left: 1px solid #dcdcdc;
+    border-right: none;
+    background-color: #eff7f9;
+  }
+  .sp-picker-container {
+    background: white;
+    padding: 20px;
+    padding-right: 12px;
+    border: none;
+  }
+
+  input.sp-input {
+    padding: 5px;
+    width: 95%;
+    font-family: monospace;
+    border-radius: 0;
+    font-size: 120% !important;
+  }
+
+  .sp-alpha-inner,
+  .sp-hue {
+    border-radius: 3px;
+    border-color: #cccccc;;
+  }
+
+  .sp-alpha-inner .sp-alpha-handle,
+  .sp-hue .sp-slider {
+    border: 1px solid #ccc;
+    background: #ffffff;
+    opacity: 1;
+    width: 10px;
+    height: 10px;
+    border-radius: 6px;
+  }
+
+  .sp-alpha {
+    width: 140px;
+    .sp-alpha-inner .sp-alpha-handle {
+      top: -4px;
     }
   }
 
-  .sp-palette .sp-thumb-el:hover,
-  .sp-palette .sp-thumb-el.sp-thumb-active {
-    border-color: #aaa;
+  .sp-hue {
+    margin: 0 9px;
+    .sp-slider {
+      left: -2px;
+    }
+  }
+
+  .sp-dragger {
+    // border-radius: 10px;
+    height: 7px;
+    width: 7px;
+    border-color: #273944;
+    background: rgba(255,255,255,0.2);
   }
 }

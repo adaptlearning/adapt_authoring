@@ -20,20 +20,21 @@ define([
       _.defer(this.postRender.bind(this));
       return this;
     },
-    
+
     postRender: function() {
       this.$el.spectrum({
         color: this.value,
         showInput: true,
         showAlpha: true,
-        allowEmpty: true,
         showInitial: true,
         showInput: true,
         showPalette: true,
+        showButtons: false,
         palette: [],
+        preferredFormat: "hex3",
         showSelectionPalette: true,
-        localStorageKey: "adapt-authoring.spectrum.colorpicker",
-        maxSelectionSize: 24
+        maxSelectionSize: 21,
+        localStorageKey: "adapt-authoring.spectrum.colorpicker"
       });
     },
 

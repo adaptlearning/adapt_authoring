@@ -38,7 +38,7 @@ define([
       var remove = function(isConfirmed) {
         if(isConfirmed === false) return;
 
-        var index = _.indexOf(this.items, item);
+        var index = this.items.indexOf(item);
         this.items[index].remove();
         this.items.splice(index, 1);
 

@@ -71,41 +71,45 @@ define([
     Backbone.Form.editors.List.Modal.prototype.itemToString = modalItemToString;
   });
 
+  /**
+  * Helper functions
+  */
+
+  /**
+  * Builds a string from nested values
+  * OVERRIDES Backbone.Form.editors.List.Modal.prototype.itemToString
+  */
+  function modalItemToString(value) {
+    if(!value) {
+      return '';
+    }
+    return Object.keys(this.nestedSchema).reduce(function(parts, key) {
+      var schema = this.nestedSchema[key];
+      var val = getModalItemValueString(value[key]);
+      var desc = schema.title ? schema.title : Backbone.Form.Field.prototype.createTitle.call({ key: key });
+      return parts + '<span class="list-item-description">' + desc + ':</span>' + val + '<br />';
+    }.bind(this), '');
+  }
+
+  /**
+  * Returns an apt string value from Modal.Item value
+  */
+  function getModalItemValueString(value) {
+    if(!value) {
+      return '';
+    }
+    if(Array.isArray(value)) {
+      return Origin.l10n.t('app.items', value.length);
+    }
+    if(typeof val === 'object') { // print nested name/value pairs
+      var pairs = '' + Origin.l10n.t('app.items', { smart_count: Object.keys(value).length });
+      for (var name in value) {
+        if(val.hasOwnProperty(name)) pairs += '<br />' + name + ' - ' + value[name];
+      }
+      return pairs;
+    }
+    return value;
+  }
+
   return ScaffoldListView;
 });
-
-/**
-* Builds a string from nested values
-* OVERRIDES Backbone.Form.editors.List.Modal.prototype.itemToString
-*/
-function modalItemToString(value) {
-  if(!value) {
-    return '';
-  }
-  return Object.keys(this.nestedSchema).reduce(function(parts, key) {
-    var schema = this.nestedSchema[key];
-    var val = getModalItemValueString(value[key]);
-    var desc = schema.title ? schema.title : Backbone.Form.Field.prototype.createTitle.call({ key: key });
-    return parts + '<span class="list-item-description">' + desc + ':</span>' + val + '<br />';
-  }.bind(this), '');
-}
-
-/**
-* Returns an apt string value from Modal.Item value
-*/
-function getModalItemValueString(value) {
-  if(!value) {
-    return '';
-  }
-  if(Array.isArray(value)) {
-    return Origin.l10n.t('app.items', { smart_count: value.length });
-  }
-  if(typeof val === 'object') { // print nested name/value pairs
-    var pairs = '' + Origin.l10n.t('app.items', { smart_count: Object.keys(value).length });
-    for (var name in value) {
-      if(val.hasOwnProperty(name)) pairs += '<br />' + name + ' - ' + value[name];
-    }
-    return pairs;
-  }
-  return value;
-}

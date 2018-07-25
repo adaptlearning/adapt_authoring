@@ -524,6 +524,20 @@ function addConfig(newConfigItems) {
 
 function saveConfig(configItems, callback) {
   // add some default values as these aren't set
+  if (!IS_INTERACTIVE) {
+    for (var key in configItems) {
+      if (configItems.hasOwnProperty(key) === false) continue;
+      var value = configItems[key]; 
+      if (typeof value !== 'string') continue;
+      value = value.toLocaleLowerCase();
+      if (value === 'y') {
+        configItems[key] = true;
+      } else if (value === 'n') {
+        configItems[key] = false;
+      }
+    }
+  }
+
   var config = {
     outputPlugin: 'adapt',
     dbType: 'mongoose',

@@ -349,25 +349,16 @@ function configureServer(callback) {
 }
 
 function configureDatabase(callback) {
-  async.series([
-    function database(cb) {
-      installHelpers.getInput(inputData.database.dbConfig, function(result) {
-        addConfig(result);
-        if(!result.useConnectionUri || USE_CONFIG && configResults.useConnectionUri !== 'y') {
-          installHelpers.getInput(inputData.database.configureStandard, function(result) {
-            addConfig(result);
-            callback();
-          });
-        } else {
-          installHelpers.getInput(inputData.database.configureUri, function(result) {
-            addConfig(result);
-            callback();
-          });
-        }
-      });
-    }
-  ], function() {
-    saveConfig(configResults, callback);
+  installHelpers.getInput(inputData.database.dbConfig, function(result) {
+    addConfig(result);
+
+    var isStandard = !result.useConnectionUri || USE_CONFIG && configResults.useConnectionUri !== 'y';
+    var config = inputData.database[isStandard ? 'configureStandard' : 'configureUri'];
+
+    installHelpers.getInput(config, function(result) {
+      addConfig(result);
+      callback();
+    });
   });
 }
 

@@ -41,7 +41,7 @@ define([
   Backbone.Form.editors.Base.prototype.initialize = function(options) {
     var schemaDefault = options.schema.default;
 
-    if (schemaDefault !== undefined) {
+    if (schemaDefault !== undefined && options.id) {
       this.defaultValue = schemaDefault;
     }
 

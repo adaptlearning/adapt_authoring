@@ -254,7 +254,7 @@ module.exports = function(grunt) {
       connectionString = 'mongodb://' + authenticationString + config.dbHost + portString + '/' + config.dbName;
     }
     if(typeof config.dbAuthSource === 'string' && config.dbAuthSource !== '' ){
-      connectionString += '?dbAuthSource=' + config.dbAuthSource
+      connectionString += '?authSource=' + config.dbAuthSource
     }
 
     var migrateConf = {

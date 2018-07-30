@@ -20,7 +20,6 @@ var origin = require('../../../'),
     helpers = require('../../../lib/helpers'),
     exec = require('child_process').exec,
     semver = require('semver'),
-    helpers = require('../../../lib/helpers'),
     installHelpers = require('../../../lib/installHelpers'),
     logger = require('../../../lib/logger');
 
@@ -406,7 +405,6 @@ function zipExport(error) {
   archive.pipe(output);
   archive.glob('**/*', { cwd: path.join(EXPORT_DIR) });
   archive.finalize();
-
 };
 
 // remove the EXPORT_DIR, if there is one
@@ -421,5 +419,4 @@ function cleanUpExport(exportError) {
  * Module exports
  *
  */
-
 exports = module.exports = AdaptOutput;

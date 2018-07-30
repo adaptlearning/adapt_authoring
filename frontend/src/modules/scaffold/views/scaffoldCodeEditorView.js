@@ -50,7 +50,7 @@ define(function(require) {
                 session.on('changeAnnotation', _.bind(this.onChangeAnnotation, this));
                 this.editor.setValue(this.value);
                 this.editor.setAutoScrollEditorIntoView(true);
-                this.editor.setOption("minLines", 15);
+                this.editor.setOption("minLines", 14);
                 this.editor.setOption("maxLines", 45);
             }, this));
 

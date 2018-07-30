@@ -49,6 +49,9 @@ define(function(require) {
                 session.setMode("ace/mode/" + this.mode);
                 session.on('changeAnnotation', _.bind(this.onChangeAnnotation, this));
                 this.editor.setValue(this.value);
+                this.editor.setAutoScrollEditorIntoView(true);
+                this.editor.setOption("minLines", 15);
+                this.editor.setOption("maxLines", 45);
             }, this));
 
             return this;

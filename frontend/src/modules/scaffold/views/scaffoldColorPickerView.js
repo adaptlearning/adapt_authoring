@@ -20,7 +20,7 @@ define([
       _.defer(this.postRender.bind(this));
       return this;
     },
-    
+
     postRender: function() {
       this.$el.spectrum({
         color: this.value,
@@ -42,7 +42,7 @@ define([
       if (colour) return colour.toHexString();
       return '';
     },
-    
+
     setValue: function(value) {
       this.$el.spectrum('set', value);
     },
@@ -63,6 +63,7 @@ define([
       this.$el.spectrum('destroy');
       Backbone.Form.editors.Text.prototype.remove.call(this);
     }
+
   });
 
   Origin.on('origin:dataReady', function() {
@@ -70,4 +71,5 @@ define([
   });
 
   return ScaffoldColorPickerView;
+
 });

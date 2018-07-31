@@ -1,11 +1,17 @@
 define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel) {
+  var editorData;
+  var configModel;
+
   var Schemas = function(schemaName) {
+    editorData = Origin.editor.data;
+    configModel = editorData.config;
+
     var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
 
     if (!schema) {
       throw new Error('No schema found for "' + schemaName + '"');
     }
-    if (!Origin.editor.data.config) { // new course, so remove plugins
+    if (!configModel) { // new course, so remove plugins
       delete schema._extensions;
       delete schema.menuSettings;
       delete schema.themeSettings;
@@ -22,8 +28,8 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
     trimDisabledPlugins(schema._extensions, Object.values(configModel.get('_enabledExtensions') || {}), 'targetAttribute');
     // trim unnecessary data for menus and themes
     ['menu','theme'].forEach(function(type) {
-      var current = Origin.editor.data[type + 'types'].findWhere({
-        name: Origin.editor.data.config.get('_' + type)
+      var current = editorData[type + 'types'].findWhere({
+        name: configModel.get('_' + type)
       });
       if(current) trimDisabledPlugins(schema[type + 'Settings'], [current.toJSON()], type);
     });
@@ -31,13 +37,11 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
 
   // remove unrequired globals from the course
   function trimGlobals(schema) {
-    var editorData = Origin.editor.data;
-    var config = editorData.config;
     var globals = schema._globals.properties;
-    trimDisabledPlugins(globals._components, config.get('_enabledComponents'), '_component');
-    trimDisabledPlugins(globals._menu, editorData.menutypes.where({ name: config.get('_menu') }), 'menu');
-    trimDisabledPlugins(globals._theme, editorData.themetypes.where({ name: config.get('_theme') }), 'theme');
     trimDisabledPlugins(globals._extensions, Object.values(configModel.get('_enabledExtensions') || {}), 'targetAttribute');
+    trimDisabledPlugins(globals._components, configModel.get('_enabledComponents'), '_component');
+    trimDisabledPlugins(globals._menu, editorData.menutypes.where({ name: configModel.get('_menu') }), 'menu');
+    trimDisabledPlugins(globals._theme, editorData.themetypes.where({ name: configModel.get('_theme') }), 'theme');
     // trim off the empty globals objects
     trimEmptyProperties(globals);
   }

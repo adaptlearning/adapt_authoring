@@ -51,10 +51,7 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
       return;
     }
     var enabledPluginNames = enabledPlugins.map(function(plugin) {
-      var value = plugin[propertyToCheck] || plugin.get && plugin.get(propertyToCheck);
-      // FIXME #2023: all plugin type data should be consistent
-      var shouldPrefixUnderscore = propertyToCheck === 'menu' || propertyToCheck === 'theme';
-      return shouldPrefixUnderscore ? '_' + value : value;
+      return plugin.targetAttribute || plugin.get && plugin.get('targetAttribute');
     });
     Object.keys(schemaData.properties).forEach(function(schemaKey) {
       if(enabledPluginNames.indexOf(schemaKey) === -1) delete schemaData.properties[schemaKey];

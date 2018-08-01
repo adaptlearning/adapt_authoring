@@ -28,9 +28,7 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
     trimDisabledPlugins(schema._extensions, Object.values(configModel.get('_enabledExtensions') || {}), 'targetAttribute');
     // trim unnecessary data for menus and themes
     ['menu','theme'].forEach(function(type) {
-      var current = editorData[type + 'types'].findWhere({
-        name: configModel.get('_' + type)
-      });
+      var current = editorData[type + 'types'].findWhere({ name: configModel.get('_' + type) });
       if(current) trimDisabledPlugins(schema[type + 'Settings'], [current.toJSON()], type);
     });
   }

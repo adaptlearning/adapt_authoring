@@ -548,12 +548,18 @@ function saveConfig(configItems, callback) {
   _.each(configItems, function(value, key) {
     config[key] = value;
   });
-  fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
-    if(error) {
-      handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+  
+  fs.ensureDir('conf', function(error) {
+    if (error) {
+      return handleError(`Failed to create configuration directory.\n${error}`, 1, 'Install Failed.');
     }
-    return callback();
-  });
+    fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
+      if(error) {
+        handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+      }
+      return callback();
+    });
+  })
 }
 
 function handleError(error, exitCode, exitMessage) {

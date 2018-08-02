@@ -89,10 +89,9 @@ define([
       return '';
     }
     return Object.keys(this.nestedSchema).reduce(function(parts, key) {
-      var schema = this.nestedSchema[key];
       var val = getModalItemValueString(value[key]);
-      var desc = schema.title ? schema.title : Backbone.Form.Field.prototype.createTitle.call({ key: key });
-      return parts + '<span class="list-item-description">' + desc + ':</span>' + val + '<br />';
+      var title = this.nestedSchema[key].title || Backbone.Form.Field.prototype.createTitle.call({ key: key });
+      return parts + '<p class="list-item-modal-item">' + wrapSchemaTitle(title) + val + '</p>';
     }.bind(this), '');
   }
 
@@ -104,16 +103,20 @@ define([
       return '';
     }
     if(Array.isArray(value)) {
-      return Origin.l10n.t('app.items', value.length);
+      return Origin.l10n.t('app.items', { smart_count: Object.keys(value).length });
     }
-    if(typeof val === 'object') { // print nested name/value pairs
-      var pairs = '' + Origin.l10n.t('app.items', { smart_count: Object.keys(value).length });
+    if(typeof value === 'object') { // print nested name/value pairs
+      var pairs = '';
       for (var name in value) {
-        if(val.hasOwnProperty(name)) pairs += '<br />' + name + ' - ' + value[name];
+        if(value.hasOwnProperty(name)) pairs += '<br />' + wrapSchemaTitle(name) + value[name];
       }
-      return pairs;
+      return '<p class="list-item-modal-object">' + pairs + '</p>';
     }
     return value;
+  }
+
+  function wrapSchemaTitle(value) {
+    return '<span class="list-item-description">' + value + ':</span>';
   }
 
   return ScaffoldListView;

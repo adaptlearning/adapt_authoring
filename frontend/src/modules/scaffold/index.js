@@ -174,10 +174,10 @@ define([
 
   function buildFieldsets(schema, options) {
     var fieldsets = {
-      general: { legend: Origin.l10n.t('app.general'), fields: [] },
-      properties: { legend: Origin.l10n.t('app.properties'), fields: [] },
-      settings: { legend: Origin.l10n.t('app.settings'), fields: [] },
-      extensions: { legend: Origin.l10n.t('app.extensions'), fields: [ '_extensions' ] }
+      general: { key: 'general', legend: Origin.l10n.t('app.scaffold.general'), fields: [] },
+      properties: { key: 'properties', legend: Origin.l10n.t('app.scaffold.properties'), fields: [] },
+      settings: { key: 'settings', legend: Origin.l10n.t('app.scaffold.settings'), fields: [] },
+      extensions: { key: 'extensions', legend: Origin.l10n.t('app.scaffold.extensions'), fields: [ '_extensions' ] }
     };
 
     for (var key in schema) {
@@ -199,8 +199,8 @@ define([
       if (fieldsets[key]) {
         fieldsets[key].fields.push(key);
       } else {
-        fieldsets[key] = { legend: Helpers.keyToTitleString(key), fields: [ key ] };
-      }  
+        fieldsets[key] = { key: key, legend: Helpers.keyToTitleString(key), fields: [ key ] };
+      }
     }
 
     if (!schema._extensions) {

@@ -2,11 +2,11 @@
 define(function(require) {
   var ContentModel = require('./contentModel');
 
-  var ExtensionModel = ContentModel.extend({
+  var ExtensionTypeModel = ContentModel.extend({
     urlRoot: '/api/extensiontype',
     idAttribute: '_id',
     _type: 'extension'
   });
 
-  return ExtensionModel;
+  return ExtensionTypeModel;
 });

@@ -1,10 +1,11 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Backbone = require('backbone');
+  var ContentModel = require('./contentModel');
 
-  var MenuTypeModel = Backbone.Model.extend({
+  var MenuTypeModel = ContentModel.extend({
+    urlRoot: '/api/menutype',
     idAttribute: '_id',
-    urlRoot: '/api/menutype'
+    _type: 'menu'
   });
 
   return MenuTypeModel;

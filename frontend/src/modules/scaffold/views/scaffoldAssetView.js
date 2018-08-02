@@ -215,7 +215,7 @@ define([
 
           var courseAssetObject = {
             contentTypeId: model.get('_id') || '',
-            contentType: model.get('_type'),
+            contentType: model.get('_type') || model._type,
             contentTypeParentId: model.get('_parentId') || Origin.editor.data.course.get('_id'),
             fieldname: data.assetFilename,
             assetId: data.assetId

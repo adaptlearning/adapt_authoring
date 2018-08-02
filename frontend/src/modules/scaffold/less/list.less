@@ -1,9 +1,28 @@
-.list-items .list-item {
-  background: white;
+.list-items {
 
-  .list-item-description {
-    font-weight: bold;
-    margin-right: 5px;
-    width: auto;
+  .ui-sortable {
+    margin-bottom: 20px;
   }
+
+  .list-item {
+    background: white;
+
+    .list-item-description {
+      font-weight: bold;
+      margin-right: 5px;
+      width: auto;
+    }
+  }
+
+  .sortable-placeholder {
+    background: darken(white,  20%);
+    margin: 5px 0;
+    padding: 16px;
+  }
+
+  .ui-sortable-helper {
+    opacity: 0.8;
+    transform: scale(0.9) rotate(2deg);
+  }
+
 }

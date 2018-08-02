@@ -191,6 +191,12 @@
       "required": true,
       "default": 1,
       "editorOnly": true
+    },
+    "menuSettings": {
+      "type": "object"
+    },
+    "themeSettings": {
+      "type": "object"
     }
   }
 }

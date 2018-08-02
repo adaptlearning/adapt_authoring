@@ -1,42 +1,44 @@
 .scaffold-items-modal {
-	position: fixed;
-	top: 0%;
-	right: -500px;
-	z-index: 3000;
-	height: 100%;
-	width: 100%;
-	transition:right 0.4s cubic-bezier(0.8, 0.0, 0.2, 1);
-	&.show {
-		right:0px;
-	}
+  position: fixed;
+  top: 0;
+  right: -500px;
+  z-index: 500;
+  height: 100%;
+  width: 100%;
+  transition: right 0.4s cubic-bezier(0.8, 0.0, 0.2, 1);
+  &.show {
+    right: 0;
+  }
 }
 
 .scaffold-items-modal-sidebar {
-	float:right;
-	background-color: #fff;
-	height: 100%;
-	width: 440px;
-	border-left: 1px solid #ccc;
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
-	&-inner {
-		padding: 40px;
-		fieldset {
-			margin: 0;
-			margin-bottom: 15px;
-		}
-	}
-	input, textarea {
-		max-width:440px;
-		width:75%;
-	}
+  float: right;
+  background-color: #fff;
+  height: 100%;
+  width: 440px;
+  border-left: 1px solid #ccc;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  &-inner {
+    padding: 40px;
+    fieldset {
+      margin: 0;
+      margin-bottom: 15px;
+    }
+  }
+  input,
+  textarea {
+    max-width: 440px;
+    width: 75%;
+  }
 }
 
 .scaffold-modal-overlay {
-	position:fixed;
-	top:0;
-	left:0;z-index: 2999;
-	background-color:rgba(255,255,255,0.6);
-	width:100%;
-	height:100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 500;
+  background-color: rgba(255, 255, 255, 0.6);
+  width: 100%;
+  height: 100%;
 }

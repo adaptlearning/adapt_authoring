@@ -34,7 +34,7 @@
             <div class="write">
               <select class="input" data-modelKey="_tenantId">
                 {{#each globalData.allTenants.models}}
-                  <option value="{{{this.attributes._id}}}"{{#ifValueEquals ../_tenantId._id this.attributes._id }} selected{{/ifValueEquals}}>{{{this.attributes.displayName}}}</option>
+                  <option value="{{{this.attributes._id}}}"{{#ifValueEquals ../_tenantId._id this.attributes._id }} selected{{/ifValueEquals}}>{{this.attributes.displayName}}</option>
                 {{/each}}
               </select>
               <a class="save"><i class="fa fa-check-square-o"></i></a>
@@ -82,7 +82,7 @@
     </div>
     <div class="col-10 col-centered">
       <div class="tb-col-inner">
-        {{{failedLoginCount}}}
+        {{failedLoginCount}}
         {{#if _isLocked}}
           <i class="fa fa-lock"></i>
         {{/if}}

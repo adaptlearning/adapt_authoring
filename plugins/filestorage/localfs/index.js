@@ -5,8 +5,6 @@
 var async = require('async');
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs-extra');
-var mkdirp = require('mkdirp');
-var ncp = require('ncp').ncp;
 var path = require('path');
 var probe = require('node-ffprobe');
 var util = require('util');
@@ -163,7 +161,7 @@ LocalFileStorage.prototype.deleteFile = function (filePath, callback) {
 LocalFileStorage.prototype.moveFile = function (oldPath, newPath, callback) {
   oldPath = this.resolvePath(oldPath);
   newPath = this.resolvePath(newPath);
-  mkdirp(path.dirname(newPath), function (error) {
+  fs.mkdirs(path.dirname(newPath), function (error) {
     if (error) {
       return callback(error);
     }
@@ -192,7 +190,7 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
     options = {};
   }
 
-  mkdirp(path.dirname(newPath), function (error) {
+  fs.mkdirs(path.dirname(newPath), function (error) {
     if (error) {
       return cb(error);
     }
@@ -302,9 +300,9 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
   var dataRoot = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'));
   var assetFolder = path.join(dataRoot, destinationTenantName, asset.directory);
 
-  mkdirp(assetFolder, function(error) {
+  fs.mkdirs(assetFolder, function(error) {
     if (error) {
-      logger.log('error', 'mkdirp error while copying asset, creating ' + assetFolder);
+      logger.log('error', 'fs.mkdirs error while copying asset, creating ' + assetFolder);
       return callback(error);
     }
 
@@ -312,9 +310,9 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
     var sourceFile = path.join(dataRoot, sourceTenantName, asset.path);
     var destinationFile = path.join(dataRoot, destinationTenantName, asset.path);
 
-    ncp(sourceFile, destinationFile, {clobber:false}, function(error) {
+    fs.copy(sourceFile, destinationFile, {clobber:false}, function(error) {
       if (error) {
-        logger.log('error', 'ncp error while copying ' + asset.filename);
+        logger.log('error', 'fs.copy error while copying ' + asset.filename);
         logger.log('error', 'error copying ' + sourceFile + ' to ' + destinationFile);
         return callback(error);
       }
@@ -325,9 +323,9 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
         var sourceThumbnailFile = path.join(dataRoot, sourceTenantName, asset.thumbnailPath);
         var destinationThumbnailFile = path.join(dataRoot, destinationTenantName, asset.thumbnailPath);
 
-        ncp(sourceThumbnailFile, destinationThumbnailFile, function(error) {
+        fs.copy(sourceThumbnailFile, destinationThumbnailFile, function(error) {
           if (error) {
-            logger.log('error', 'ncp error while copying ' + asset.thumbnailPath);
+            logger.log('error', 'fs.copy error while copying ' + asset.thumbnailPath);
             logger.log('error', 'error copying (thumbnail) ' + sourceThumbnailFile + ' to ' + destinationThumbnailFile);
 
             // TODO If thumbnails fail it's not the end of the world -- for now

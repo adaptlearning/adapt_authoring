@@ -1,10 +1,6 @@
 <div class="navigation-bg"></div>
 <div class="navigation-inner clearfix">
-{{#if _canRevert}}
-<div class="navigation-left navigation-loginas-background">
-{{else}}
-<div class="navigation-left">
-{{/if}}
+  <div class="navigation-left">
     {{#if isAuthenticated}}
     <a href="#" class="navigation-item navigation-global-menu" data-event="globalMenu:toggle">
       {{!-- <i class="fa fa-bars"></i> --}}
@@ -17,12 +13,7 @@
     <div href="#" class="navigation-item navigation-product-name">{{t 'app.productname'}}</div>
     {{/if}}
   </div>
-{{#if _canRevert}}
-<div class="navigation-right navigation-loginas-background">
-{{else}}
-<div class="navigation-right">
-{{/if}}
-  {{#if _canRevert}}<button class="revert-loginas btn">{{t 'app.logbackinas'}} {{_revertLogin.email}}</button>{{/if}}
+  <div class="navigation-right">
     {{#if isAuthenticated}}
     <a href="#" class="navigation-item navigation-help" data-event="help">
       <span>{{t 'app.help'}}</span>

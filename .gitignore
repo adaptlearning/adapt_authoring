@@ -1,5 +1,5 @@
 /conf/config.json
-
+/conf/migrate.json
 /data
 
 /frontend/build
@@ -26,7 +26,7 @@ package-lock.json
 /routes/lang/en.json
 
 /temp
-/test_frontend/img
+/test/.testcache
 /tmp
 
 /.settings

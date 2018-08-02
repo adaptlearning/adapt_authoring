@@ -12,7 +12,7 @@ var user = {
 };
 
 before(function(done) {
-  user._tenantId = configuration.getConfig('masterTenantID');
+  user._tenantId = app.configuration.getConfig('masterTenantID');
   usermanager.createUser(user, function(error, userRec) {
     if(error) return done(error);
     user = userRec;

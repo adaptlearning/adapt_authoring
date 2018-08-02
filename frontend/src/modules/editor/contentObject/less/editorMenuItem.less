@@ -1,4 +1,4 @@
-a.open-context-contentObject {
+.open-context-contentObject {
     color: white;
 }
 
@@ -13,7 +13,6 @@ a.open-context-contentObject {
         position: relative;
         background-color: #fff;
         cursor: pointer;
-        padding: 30px 20px 10px;
         transition:background-color 0.3s;
         &:hover {   
             .editor-menu-item-settings {
@@ -23,14 +22,10 @@ a.open-context-contentObject {
         }
     }
 
-    &-title {
-        padding: 5px 0 0 30px;
-    }
-
     &-icon {
         float: left;
-        font-size:24px;
-        margin-bottom:10px;
+        font-size: 24px;
+        margin-right: 10px;
         color: #999;
         &.page {
         }
@@ -66,7 +61,8 @@ a.open-context-contentObject {
             display:block;
         }
 
-        .editor-menu-item-icon {
+        .editor-menu-item-icon,
+        .editor-menu-item-settings button {
             color: #fff;
         }
 	}
@@ -74,22 +70,29 @@ a.open-context-contentObject {
     .handle {
         cursor: move;
     }
+
+    .editor-menu-item-content {
+        display: flex;
+        align-items: center;
+        padding: 0 10px 15px 10px;
+    }
 }
 
 .editor-menu-item-settings {
-    position: absolute;
-    top: 0%;
-    left: 0px;
     font-size: 16px;
     width:100%;
     opacity:1;
     transition:all 0.3s;
     &-inner {
-        padding:6px;
+        display: flex;
+        button {
+            padding: 5px 10px;
+            font-size: 15px;
+        }
     }
 
     .editor-delete-contentobject-element {
-        float:right;
+        margin-left: auto;
     }
 }
 

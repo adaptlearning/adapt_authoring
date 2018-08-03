@@ -34,8 +34,7 @@ define([
         palette: [],
         preferredFormat: "hex3",
         showSelectionPalette: true,
-        maxSelectionSize: 21,
-        localStorageKey: "adapt-authoring.spectrum.colorpicker"
+        maxSelectionSize: 24,
         localStorageKey: "adapt-authoring.spectrum.colorpicker",
         show: function(color) {
           Origin.contentPane.disableScroll();

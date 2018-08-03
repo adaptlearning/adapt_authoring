@@ -36,6 +36,13 @@ define([
         showSelectionPalette: true,
         maxSelectionSize: 21,
         localStorageKey: "adapt-authoring.spectrum.colorpicker"
+        localStorageKey: "adapt-authoring.spectrum.colorpicker",
+        show: function(color) {
+          Origin.contentPane.disableScroll();
+        },
+        hide: function(color) {
+          Origin.contentPane.enableScroll();
+        }
       });
     },
 

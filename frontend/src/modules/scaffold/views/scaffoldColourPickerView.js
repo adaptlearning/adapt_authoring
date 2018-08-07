@@ -4,11 +4,11 @@ define([
   'libraries/spectrum/spectrum'
 ], function(Origin, BackboneForms, Spectrum) {
 
-  var ScaffoldColorPickerView = Backbone.Form.editors.Base.extend({
+  var ScaffoldColourPickerView = Backbone.Form.editors.Base.extend({
 
     tagName: 'input',
 
-    className: 'scaffold-color-picker',
+    className: 'scaffold-colour-picker',
 
     events: {
       'change': function() { this.trigger('change', this); },
@@ -35,11 +35,11 @@ define([
         preferredFormat: "hex3",
         showSelectionPalette: true,
         maxSelectionSize: 24,
-        localStorageKey: "adapt-authoring.spectrum.colorpicker",
-        show: function(color) {
+        localStorageKey: "adapt-authoring.spectrum.colourpicker",
+        show: function(colour) {
           Origin.contentPane.disableScroll();
         },
-        hide: function(color) {
+        hide: function(colour) {
           Origin.contentPane.enableScroll();
         }
       });
@@ -75,9 +75,8 @@ define([
   });
 
   Origin.on('origin:dataReady', function() {
-    Origin.scaffold.addCustomField('ColorPicker', ScaffoldColorPickerView);
+    Origin.scaffold.addCustomField('ColourPicker', ScaffoldColourPickerView);
   });
 
-  return ScaffoldColorPickerView;
-
+  return ScaffoldColourPickerView;
 });

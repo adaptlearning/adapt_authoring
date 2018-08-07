@@ -2,9 +2,10 @@
   & + .sp-replacer,
   & + .sp-replacer.sp-active {
     background: white;
-    border-color: #cccccc;
+    @replacerBorderColour: #cccccc;
+    border-color: @replacerBorderColour;
     &:hover {
-      border-color: darken(#dcdcdc, 10%);
+      border-color: darken(@replacerBorderColour, 20%);
     }
   }
 }

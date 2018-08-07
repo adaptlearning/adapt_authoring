@@ -1,25 +1,28 @@
+@darkBorderColour: #dcdcdc;
+@lightBorderColour: #cccccc;
+
 .scaffold-colour-picker {
   & + .sp-replacer,
   & + .sp-replacer.sp-active {
     background: white;
-    @replacerBorderColour: #cccccc;
-    border-color: @replacerBorderColour;
+    border-color: @lightBorderColour;
     &:hover {
-      border-color: darken(@replacerBorderColour, 20%);
+      border-color: darken(@lightBorderColour, 20%);
     }
   }
 }
 .scaffold-colour-picker & + .sp-replacer .sp-preview {
-  border-color: #bbb;
+  border-color: @darkBorderColour;
 }
 
 body .sp-container {
-  border-color: #dcdcdc;
+  border-color: @darkBorderColour;
   .sp-palette {
     max-width: 90px;
     .sp-thumb-el {
       border-radius: 11px;
-      border-color: #cccccc;
+      @thumbBorderColour: @lightBorderColour;
+      border-color: @thumbBorderColour;
       overflow: hidden;
       width: 20px;
       height: 20px;
@@ -28,16 +31,16 @@ body .sp-container {
   }
 
   .sp-color {
-    border-color: #ccc;
+    border-color: @lightBorderColour;
   }
 
   .sp-initial {
-    border: 1px solid #ccc;
+    border: 1px solid @lightBorderColour;
   }
 
   .sp-palette-container {
     float: right;
-    border-left: 1px solid #dcdcdc;
+    border-left: 1px solid @darkBorderColour;
     border-right: none;
     background-color: #eff7f9;
   }
@@ -60,12 +63,12 @@ body .sp-container {
   .sp-alpha-inner,
   .sp-hue {
     border-radius: 3px;
-    border-color: #cccccc;;
+    border-color: @lightBorderColour;
   }
 
   .sp-alpha-inner .sp-alpha-handle,
   .sp-hue .sp-slider {
-    border: 1px solid #ccc;
+    border: 1px solid @lightBorderColour;
     background: #ffffff;
     opacity: 1;
     width: 10px;

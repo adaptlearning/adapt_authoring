@@ -32,7 +32,7 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
       if(current) trimDisabledPlugins(schema[type + 'Settings'], [current.toJSON()], type);
     });
   }
-  
+
   // remove unrequired globals from the course
   function trimGlobals(schema) {
     var globals = schema._globals.properties;

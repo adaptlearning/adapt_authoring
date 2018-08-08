@@ -1,83 +1,49 @@
-// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define([
+  'core/origin',
+  'backbone-forms',
+  'colorPicker'
+], function(Origin, BackboneForms, ColorPicker) {
 
-    var Backbone = require('backbone');
-    var BackboneForms = require('backbone-forms');
-    var Origin = require('core/origin');
-    var ColorPicker = require('colorPicker');
+  var ScaffoldColorPickerView = Backbone.Form.editors.Text.extend({
 
-    var ScaffoldColorPickerView = Backbone.Form.editors.Text.extend({
+    tagName: 'div',
 
-        tagName: 'div',
+    className: 'scaffold-color-picker',
 
-        className: 'scaffold-color-picker',
+    render: function() {
+      Backbone.Form.editors.Text.prototype.render.call(this);
 
-        events: {
-            'change': function() {
-                // The 'change' event should be triggered whenever something happens
-                // that affects the result of `this.getValue()`.
-                this.trigger('change', this);
-            },
-            'focus': function() {
-                // The 'focus' event should be triggered whenever an input within
-                // this editor becomes the `document.activeElement`.
-                this.trigger('focus', this);
-                // This call automatically sets `this.hasFocus` to `true`.
-            },
-            'blur': function() {
-                // The 'blur' event should be triggered whenever an input within
-                // this editor stops being the `document.activeElement`.
-                this.trigger('blur', this);
-                // This call automatically sets `this.hasFocus` to `false`.
-            }
+      this.$el.ColorPicker({
+        color: this.value,
+        onBeforeShow: function() {
+          this.$el.ColorPickerSetColor(this.value);
+        }.bind(this),
+        onChange: function(hsb, hex) {
+          this.setValue('#' + hex);
+        }.bind(this)
+      });
 
-        },
+      return this;
+    },
 
-        render: function() {
-            // Listen to remove:views and remove color picker
-            this.listenTo(Origin, 'remove:views', this.removeColorPicker);
+    setValue: function(value) {
+      Backbone.Form.editors.Text.prototype.setValue.call(this, value);
 
-            if (this.value === null) {
-                this.value = '';
-            }
-            
-            this.setValue(this.value);
-            this.$el.css('backgroundColor', this.getValue());
+      this.$el.css('background-color', value);
+    },
 
-            _.defer(_.bind(function() {
-                var that = this;
-                // Setup colorPicker
-                this.$el.ColorPicker({
-                    color: that.value,
-                    onChange: function (hsb, hex, rgb) {
-                        that.setValue('#' + hex);
-                        that.$el.css('backgroundColor', '#' + hex);
-                    },
-                    onBeforeShow: function () {
-                        that.$el.ColorPickerSetColor(that.value);
-                    }
-                });
+    remove: function() {
+      $('#' + this.$el.data('colorpickerId')).remove();
 
+      Backbone.Form.editors.Text.prototype.remove.call(this);
+    }
 
-            }, this));
+  });
 
-            return this;
-        },
+  Origin.on('origin:dataReady', function() {
+    Origin.scaffold.addCustomField('ColorPicker', ScaffoldColorPickerView);
+  });
 
-        removeColorPicker: function() {
-            var colorpickerId = this.$el.data('colorpickerId');
-            $("#"+colorpickerId).remove();
-        }
+  return ScaffoldColorPickerView;
 
-    }, {
-        template: "scaffoldColorPicker"
-    });
-
-    Origin.on('origin:dataReady', function() {
-        Origin.scaffold.addCustomField('ColorPicker', ScaffoldColorPickerView);
-    })
-    
-
-    return ScaffoldColorPickerView;
-
-})
+});

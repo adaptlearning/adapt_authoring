@@ -24,19 +24,28 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
     return schema;
   };
 
+  function getEnabledExtensions() {
+    var enabledExtensions = configModel.get('_enabledExtensions') || {};
+    return Object.keys(enabledExtensions).map(function(extension) {
+      return enabledExtensions[extension];
+    });
+  }
+
   function trimPlugins(schema) {
-    trimDisabledPlugins(schema._extensions, Object.values(configModel.get('_enabledExtensions') || {}), 'targetAttribute');
+    var enabledExtensions = getEnabledExtensions();
+    trimDisabledPlugins(schema._extensions, enabledExtensions, 'targetAttribute');
     // trim unnecessary data for menus and themes
     ['menu','theme'].forEach(function(type) {
       var current = editorData[type + 'types'].findWhere({ name: configModel.get('_' + type) });
       if(current) trimDisabledPlugins(schema[type + 'Settings'], [current.toJSON()], type);
     });
   }
-
+  
   // remove unrequired globals from the course
   function trimGlobals(schema) {
+    var enabledExtensions = getEnabledExtensions();
     var globals = schema._globals.properties;
-    trimDisabledPlugins(globals._extensions, Object.values(configModel.get('_enabledExtensions') || {}), 'targetAttribute');
+    trimDisabledPlugins(globals._extensions, enabledExtensions, 'targetAttribute');
     trimDisabledPlugins(globals._components, configModel.get('_enabledComponents'), '_component');
     trimDisabledPlugins(globals._menu, editorData.menutypes.where({ name: configModel.get('_menu') }), 'menu');
     trimDisabledPlugins(globals._theme, editorData.themetypes.where({ name: configModel.get('_theme') }), 'theme');

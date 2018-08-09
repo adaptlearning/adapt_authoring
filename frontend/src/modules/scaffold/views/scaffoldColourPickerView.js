@@ -30,7 +30,7 @@ define([
         showInput: true,
         showPalette: true,
         showButtons: true,
-        cancelText: "Cancel selection",
+        cancelText: Origin.l10n.t('app.scaffold.colourPickerCancel'),
         palette: [],
         preferredFormat: "hex3",
         showSelectionPalette: true,

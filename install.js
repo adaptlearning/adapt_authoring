@@ -25,247 +25,251 @@ var superUser = false;
 // from user input
 var configResults;
 
-// we need the framework version for the config items, so let's go
-installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
-  if(error) {
-    return handleError(error, 1, 'Failed to get the latest framework version. Check package.json.');
-  }
-  inputData = {
-    useConfigJSON: {
-      name: 'useJSON',
-      description: 'Use existing config values? y/N',
-      type: 'string',
-      before: installHelpers.inputHelpers.toBoolean,
-      default: 'N'
-    },
-    startInstall: {
-      name: 'install',
-      description: 'Continue? Y/n',
-      type: 'string',
-      before: installHelpers.inputHelpers.toBoolean,
-      default: 'Y'
-    },
-    server: [
-      {
-        name: 'serverPort',
-        type: 'number',
-        description: 'Server port',
-        pattern: installHelpers.inputHelpers.numberValidator,
-        default: 5000
-      },
-      {
-        name: 'serverName',
+installHelpers.checkPrerequisites(function(error) {
+  exit(0);
+  installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
+    if(error) {
+      return handleError(error, 1, 'Failed to get the latest framework version. Check package.json.');
+    }
+    inputData = {
+      useConfigJSON: {
+        name: 'useJSON',
+        description: 'Use existing config values? y/N',
         type: 'string',
-        description: 'Server name',
-        default: 'localhost'
-      },
-      {
-        name: 'dbHost',
-        type: 'string',
-        description: 'Database host',
-        default: 'localhost'
-      },
-      {
-        name: 'dbName',
-        type: 'string',
-        description: 'Master database name',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'adapt-tenant-master'
-      },
-      {
-        name: 'dbPort',
-        type: 'number',
-        description: 'Database server port',
-        pattern: installHelpers.inputHelpers.numberValidator,
-        default: 27017
-      },
-      {
-        name: 'dbUser',
-        type: 'string',
-        description: 'Database server user',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: ''
-      },
-      {
-        name: 'dbPass',
-        type: 'string',
-        description: 'Database server password',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: ''
-      },
-      {
-        name: 'dbAuthSource',
-        type: 'string',
-        description: 'Database server authentication database',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'admin'
-      },
-      {
-        name: 'dataRoot',
-        type: 'string',
-        description: 'Data directory path',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'data'
-      },
-      {
-        name: 'sessionSecret',
-        type: 'string',
-        description: 'Session secret (value used when saving session cookie data)',
-        pattern: /^.+$/,
-        default: 'your-session-secret'
-      },
-      {
-        name: 'authoringToolRepository',
-        type: 'string',
-        description: "Git repository URL to be used for the authoring tool source code",
-        default: 'https://github.com/adaptlearning/adapt_authoring.git'
-      },
-      {
-        name: 'frameworkRepository',
-        type: 'string',
-        description: "Git repository URL to be used for the framework source code",
-        default: 'https://github.com/adaptlearning/adapt_framework.git'
-      },
-      {
-        name: 'frameworkRevision',
-        type: 'string',
-        description: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
-        default: 'tags/' + latestFrameworkTag
-      }
-    ],
-    features: {
-      ffmpeg: {
-        name: 'useffmpeg',
-        type: 'string',
-        description: "Are you using ffmpeg? y/N",
         before: installHelpers.inputHelpers.toBoolean,
         default: 'N'
       },
-      smtp: {
-        confirm: {
-          name: 'useSmtp',
+      startInstall: {
+        name: 'install',
+        description: 'Continue? Y/n',
+        type: 'string',
+        before: installHelpers.inputHelpers.toBoolean,
+        default: 'Y'
+      },
+      server: [
+        {
+          name: 'serverPort',
+          type: 'number',
+          description: 'Server port',
+          pattern: installHelpers.inputHelpers.numberValidator,
+          default: 5000
+        },
+        {
+          name: 'serverName',
           type: 'string',
-          description: "Will you be using an SMTP server? (used for sending emails) y/N",
+          description: 'Server name',
+          default: 'localhost'
+        },
+        {
+          name: 'dbHost',
+          type: 'string',
+          description: 'Database host',
+          default: 'localhost'
+        },
+        {
+          name: 'dbName',
+          type: 'string',
+          description: 'Master database name',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'adapt-tenant-master'
+        },
+        {
+          name: 'dbPort',
+          type: 'number',
+          description: 'Database server port',
+          pattern: installHelpers.inputHelpers.numberValidator,
+          default: 27017
+        },
+        {
+          name: 'dbUser',
+          type: 'string',
+          description: 'Database server user',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: ''
+        },
+        {
+          name: 'dbPass',
+          type: 'string',
+          description: 'Database server password',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: ''
+        },
+        {
+          name: 'dbAuthSource',
+          type: 'string',
+          description: 'Database server authentication database',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'admin'
+        },
+        {
+          name: 'dataRoot',
+          type: 'string',
+          description: 'Data directory path',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'data'
+        },
+        {
+          name: 'sessionSecret',
+          type: 'string',
+          description: 'Session secret (value used when saving session cookie data)',
+          pattern: /^.+$/,
+          default: 'your-session-secret'
+        },
+        {
+          name: 'authoringToolRepository',
+          type: 'string',
+          description: "Git repository URL to be used for the authoring tool source code",
+          default: 'https://github.com/adaptlearning/adapt_authoring.git'
+        },
+        {
+          name: 'frameworkRepository',
+          type: 'string',
+          description: "Git repository URL to be used for the framework source code",
+          default: 'https://github.com/adaptlearning/adapt_framework.git'
+        },
+        {
+          name: 'frameworkRevision',
+          type: 'string',
+          description: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
+          default: 'tags/' + latestFrameworkTag
+        }
+      ],
+      features: {
+        ffmpeg: {
+          name: 'useffmpeg',
+          type: 'string',
+          description: "Are you using ffmpeg? y/N",
           before: installHelpers.inputHelpers.toBoolean,
           default: 'N'
         },
-        confirmConnectionUrl: {
-          name: 'useSmtpConnectionUrl',
+        smtp: {
+          confirm: {
+            name: 'useSmtp',
+            type: 'string',
+            description: "Will you be using an SMTP server? (used for sending emails) y/N",
+            before: installHelpers.inputHelpers.toBoolean,
+            default: 'N'
+          },
+          confirmConnectionUrl: {
+            name: 'useSmtpConnectionUrl',
+            type: 'string',
+            description: "Will you use a URL to connect to your smtp Server y/N",
+            before: installHelpers.inputHelpers.toBoolean,
+            default: 'N'
+          },
+          configure: [
+            {
+              name: 'fromAddress',
+              type: 'string',
+              description: "Sender email address",
+              default: '',
+            },
+            {
+              name: 'rootUrl',
+              type: 'string',
+              description: "The url this install will be accessible from",
+              default: '' // set using default server options
+            }
+          ],
+          configureService: [
+            {
+              name: 'smtpService',
+              type: 'string',
+              description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
+              default: 'none',
+            },
+            {
+              name: 'smtpUsername',
+              type: 'string',
+              description: "SMTP username",
+              default: '',
+            },
+            {
+              name: 'smtpPassword',
+              type: 'string',
+              description: "SMTP password",
+              hidden: true,
+              replace: installHelpers.inputHelpers.passwordReplace,
+              default: '',
+              before: installHelpers.inputHelpers.passwordBefore
+            }
+          ],
+          configureConnectionUrl: [
+            {
+              name: 'smtpConnectionUrl',
+              type: 'string',
+              description: "Custom connection URL: smtps://user%40gmail.com:pass@smtp.gmail.com/?pool=true",
+              default: 'none',
+            }
+          ]
+        }
+      },
+      tenant: [
+        {
+          name: 'masterTenantName',
           type: 'string',
-          description: "Will you use a URL to connect to your smtp Server y/N",
-          before: installHelpers.inputHelpers.toBoolean,
-          default: 'N'
+          description: "Set a unique name for your tenant",
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'master'
         },
-        configure: [
-          {
-            name: 'fromAddress',
-            type: 'string',
-            description: "Sender email address",
-            default: '',
-          },
-          {
-            name: 'rootUrl',
-            type: 'string',
-            description: "The url this install will be accessible from",
-            default: '' // set using default server options
-          }
-        ],
-        configureService: [
-          {
-            name: 'smtpService',
-            type: 'string',
-            description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
-            default: 'none',
-          },
-          {
-            name: 'smtpUsername',
-            type: 'string',
-            description: "SMTP username",
-            default: '',
-          },
-          {
-            name: 'smtpPassword',
-            type: 'string',
-            description: "SMTP password",
-            hidden: true,
-            replace: installHelpers.inputHelpers.passwordReplace,
-            default: '',
-            before: installHelpers.inputHelpers.passwordBefore
-          }
-        ],
-        configureConnectionUrl: [
-          {
-            name: 'smtpConnectionUrl',
-            type: 'string',
-            description: "Custom connection URL: smtps://user%40gmail.com:pass@smtp.gmail.com/?pool=true",
-            default: 'none',
-          }
-        ]
-      }
-    },
-    tenant: [
-      {
-        name: 'masterTenantName',
-        type: 'string',
-        description: "Set a unique name for your tenant",
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'master'
+        {
+          name: 'masterTenantDisplayName',
+          type: 'string',
+          description: 'Set the display name for your tenant',
+          default: 'Master'
+        }
+      ],
+      tenantDelete: {
+        name: "confirm",
+        description: "Continue? (Y/n)",
+        before: installHelpers.inputHelpers.toBoolean,
+        default: "Y"
       },
-      {
-        name: 'masterTenantDisplayName',
-        type: 'string',
-        description: 'Set the display name for your tenant',
-        default: 'Master'
-      }
-    ],
-    tenantDelete: {
-      name: "confirm",
-      description: "Continue? (Y/n)",
-      before: installHelpers.inputHelpers.toBoolean,
-      default: "Y"
-    },
-    superUser: [
-      {
-        name: 'suEmail',
-        type: 'string',
-        description: "Email address",
-        required: true
-      },
-      {
-        name: 'suPassword',
-        type: 'string',
-        description: "Password",
-        hidden: true,
-        replace: installHelpers.inputHelpers.passwordReplace,
-        required: true,
-        before: installHelpers.inputHelpers.passwordBefore
-      },
-      {
-        name: 'suRetypePassword',
-        type: 'string',
-        description: "Confirm Password",
-        hidden: true,
-        replace: installHelpers.inputHelpers.passwordReplace,
-        required: true,
-        before: installHelpers.inputHelpers.passwordBefore
-      }
-    ]
-  };
-  if(!IS_INTERACTIVE) {
-    return start();
-  }
-  console.log('');
-  if(!fs.existsSync('conf/config.json')) {
-    fs.ensureDirSync('conf');
-    return start();
-  }
-  console.log('Found an existing config.json file. Do you want to use the values in this file during install?');
-  installHelpers.getInput(inputData.useConfigJSON, function(result) {
+      superUser: [
+        {
+          name: 'suEmail',
+          type: 'string',
+          description: "Email address",
+          required: true
+        },
+        {
+          name: 'suPassword',
+          type: 'string',
+          description: "Password",
+          hidden: true,
+          replace: installHelpers.inputHelpers.passwordReplace,
+          required: true,
+          before: installHelpers.inputHelpers.passwordBefore
+        },
+        {
+          name: 'suRetypePassword',
+          type: 'string',
+          description: "Confirm Password",
+          hidden: true,
+          replace: installHelpers.inputHelpers.passwordReplace,
+          required: true,
+          before: installHelpers.inputHelpers.passwordBefore
+        }
+      ]
+    };
+    if(!IS_INTERACTIVE) {
+      return start();
+    }
     console.log('');
-    USE_CONFIG = result.useJSON;
-    start();
+    if(!fs.existsSync('conf/config.json')) {
+      fs.ensureDirSync('conf');
+      return start();
+    }
+    console.log('Found an existing config.json file. Do you want to use the values in this file during install?');
+    installHelpers.getInput(inputData.useConfigJSON, function(result) {
+      console.log('');
+      USE_CONFIG = result.useJSON;
+      start();
+    });
   });
 });
+
+// we need the framework version for the config items, so let's go
 
 function generatePromptOverrides() {
   if(USE_CONFIG) {

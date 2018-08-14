@@ -26,7 +26,10 @@ var superUser = false;
 var configResults;
 
 installHelpers.checkPrerequisites(function(error) {
-  exit(0);
+  if(error) {
+    return handleError(error, 1, 'Not all required pre-requisites fulfilled. Please check install guides.');
+  }
+
   installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     if(error) {
       return handleError(error, 1, 'Failed to get the latest framework version. Check package.json.');

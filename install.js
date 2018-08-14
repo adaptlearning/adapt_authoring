@@ -27,7 +27,7 @@ var configResults;
 
 installHelpers.checkPrerequisites(function(error) {
   if(error) {
-    return handleError(error, 1, 'Not all required pre-requisites fulfilled. Please check install guides.');
+    return handleError(error, 1, 'Not all pre-requisites fulfilled. Please check install guides.');
   }
 
   installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {

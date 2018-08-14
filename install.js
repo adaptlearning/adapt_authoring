@@ -417,6 +417,9 @@ function configureMasterTenant(callback) {
   installHelpers.showSpinner('Starting server');
   // run the app
   app.run({ skipVersionCheck: true });
+  app.on('serverStartError', function(error) {
+    return exit(1, error.message || error);
+  });
   app.on('serverStarted', function() {
     installHelpers.hideSpinner();
     database.checkConnection(function(error) {

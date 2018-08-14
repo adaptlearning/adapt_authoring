@@ -5,6 +5,7 @@ var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
 var prompt = require('prompt');
+var crypto = require('crypto');
 
 var auth = require('./lib/auth');
 var database = require('./lib/database');
@@ -274,7 +275,12 @@ function generatePromptOverrides() {
     configData.install = 'y';
   }
   // NOTE config.json < cmd args
-  return _.extend({}, configData, optimist.argv);
+  const overrides = _.extend({}, configData, optimist.argv);
+
+  if(optimist.argv.autogenerateSessionToken) {
+    overrides.sessionSecret = crypto.randomBytes(64).toString('hex');
+  }
+  return overrides;
 }
 
 function start() {

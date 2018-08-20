@@ -268,8 +268,7 @@ function generatePromptOverrides() {
     configData.install = 'y';
   }
 
-  const isSessionSecretDefined = USE_CONFIG && configData.sessionSecret;
-  const sessionSecret = (isSessionSecretDefined) ? configData.sessionSecret : crypto.randomBytes(64).toString('hex');
+  const sessionSecret = USE_CONFIG && configData.sessionSecret || crypto.randomBytes(64).toString('hex');
   addConfig({ sessionSecret: sessionSecret });
   // NOTE config.json < cmd args
   return _.extend({}, configData, optimist.argv);

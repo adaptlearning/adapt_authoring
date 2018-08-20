@@ -109,13 +109,6 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         default: 'data'
       },
       {
-        name: 'sessionSecret',
-        type: 'string',
-        description: 'Session secret (value used when saving session cookie data)',
-        pattern: /^.+$/,
-        default: 'your-session-secret'
-      },
-      {
         name: 'authoringToolRepository',
         type: 'string',
         description: "Git repository URL to be used for the authoring tool source code",
@@ -274,13 +267,12 @@ function generatePromptOverrides() {
     var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
     configData.install = 'y';
   }
-  // NOTE config.json < cmd args
-  const overrides = _.extend({}, configData, optimist.argv);
 
-  if(optimist.argv.autogenerateSessionToken) {
-    overrides.sessionSecret = crypto.randomBytes(64).toString('hex');
-  }
-  return overrides;
+  const isSessionSecretDefined = USE_CONFIG && configData.sessionSecret;
+  const sessionSecret = (isSessionSecretDefined) ? configData.sessionSecret : crypto.randomBytes(64).toString('hex');
+  addConfig({ sessionSecret: sessionSecret });
+  // NOTE config.json < cmd args
+  return _.extend({}, configData, optimist.argv);
 }
 
 function start() {

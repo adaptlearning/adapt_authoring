@@ -10,7 +10,7 @@ define([
       // set-up drag 'n drop
       this.$list.sortable({
         placeholder: 'sortable-placeholder',
-        axis: 'y',
+        containment: '.app-inner',
         update: this.updateItemPositions.bind(this),
         start: function(event, ui) {
           ui.placeholder.height(ui.item.height());

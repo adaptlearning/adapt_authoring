@@ -5,6 +5,7 @@ var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
 var prompt = require('prompt');
+var crypto = require('crypto');
 
 var auth = require('./lib/auth');
 var database = require('./lib/database');
@@ -106,13 +107,6 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         description: 'Data directory path',
         pattern: installHelpers.inputHelpers.alphanumValidator,
         default: 'data'
-      },
-      {
-        name: 'sessionSecret',
-        type: 'string',
-        description: 'Session secret (value used when saving session cookie data)',
-        pattern: /^.+$/,
-        default: 'your-session-secret'
       },
       {
         name: 'authoringToolRepository',
@@ -273,6 +267,9 @@ function generatePromptOverrides() {
     var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
     configData.install = 'y';
   }
+
+  const sessionSecret = USE_CONFIG && configData.sessionSecret || crypto.randomBytes(64).toString('hex');
+  addConfig({ sessionSecret: sessionSecret });
   // NOTE config.json < cmd args
   return _.extend({}, configData, optimist.argv);
 }

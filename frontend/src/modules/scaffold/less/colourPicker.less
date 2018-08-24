@@ -1,5 +1,6 @@
 @darkBorderColour: #dcdcdc;
 @lightBorderColour: #cccccc;
+@paletteBackgroundColour: #eff7f9;
 
 .scaffold-colour-picker {
   & + .sp-replacer,
@@ -21,14 +22,23 @@ body .sp-container {
     max-width: 90px;
     .sp-thumb-el {
       border-radius: 11px;
-      @thumbBorderColour: @lightBorderColour;
-      border-color: @thumbBorderColour;
+      border-color: @paletteBackgroundColour;
+      box-sizing: border-box;
       overflow: hidden;
       width: 20px;
       height: 20px;
       margin: 4px;
       &:hover {
-        transform: scale(1.1);
+        transform: scale(1.2);
+      }
+      &.sp-thumb-active {
+        border: 2px solid @tertiary-color;
+        transform: scale(1);
+      }
+      .sp-thumb-inner {
+        border: 1px solid @paletteBackgroundColour;
+        border-radius: 50%;
+        background-image: none;
       }
     }
   }
@@ -45,7 +55,7 @@ body .sp-container {
     float: right;
     border-left: 1px solid @darkBorderColour;
     border-right: none;
-    background-color: #eff7f9;
+    background-color: @paletteBackgroundColour;
   }
   .sp-picker-container {
     background: white;

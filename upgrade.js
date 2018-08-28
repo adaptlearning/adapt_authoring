@@ -25,20 +25,22 @@ var app = origin();
 start();
 
 function start() {
-  installHelpers.checkNodeVersion(function(error) {
+  installHelpers.checkPrimaryDependencies(function(error) {
     if(error) {
       return installHelpers.exit(1, error.message);
     }
-    // don't show any logger messages in the console
-    logger.level('console','error');
+    installHelpers.checkSecondaryDependencies(function(error) {
+      // don't show any logger messages in the console
+      logger.level('console','error');
 
-    prompt.override = optimist.argv;
+      prompt.override = optimist.argv;
 
-    // start the server first
-    app.run({ skipVersionCheck: true, skipStartLog: true });
-    app.on('serverStarted', function() {
-      ensureRepoValues();
-      getUserInput();
+      // start the server first
+      app.run({ skipVersionCheck: true, skipStartLog: true });
+      app.on('serverStarted', function() {
+        ensureRepoValues();
+        getUserInput();
+      });
     });
   });
 }

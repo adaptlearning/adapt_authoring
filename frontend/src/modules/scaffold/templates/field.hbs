@@ -1,23 +1,27 @@
-<div class="field {{#if title}}
-    field-{{stringToClassName title}}
-    {{else}}{{#if legend}}field-object 
-    field-object-{{stringToClassName legend}}{{/if}}
-    {{/if}}">
-    {{#if title}}
-    <label for="{{editorId}}">
-        {{title}}:
-    </label>
-    {{else}}
-    {{#if legend}}
-    <div class="legend"><legend>{{legend}}</legend></div>
-    {{/if}}
-    {{/if}}
-    <div {{#unless title}}{{#if legend}}class="collapsed"{{/if}}{{/unless}}>
-        <div class="field-error" data-error></div>
-        {{#if help}}
-        <div class="field-help">{{help}}</div>
-        {{/if}}
-        <span data-editor>
-        </span>
+<div class="field{{#if title}} field-{{stringToClassName title}}{{else}}{{#if legend}} field-object field-object-{{stringToClassName legend}}{{/if}}{{/if}}{{#if isDefaultValue}} is-default-value{{/if}}" data-editor-id="{{editorId}}" data-type="{{#if inputType.type}}{{inputType.type}}{{else}}{{inputType}}{{/if}}">
+  {{#if title}}
+  <label for="{{editorId}}">{{title}}</label>
+  <div class="field-help">
+    <i class="fa fa-info-circle"></i>
+    <div class="tooltip">
+      <div class="tooltip-key">{{key}}</div>
+      {{#if help}}
+      <div class="tooltip-help">{{help}}</div>
+      {{/if}}
     </div>
+  </div>
+  <button class="field-default" data-action="default" title="{{t 'app.reset'}}">
+    <i class="fa fa-undo"></i>
+  </button>
+  {{else}}
+  {{#if legend}}
+  <div class="legend">
+    <legend>{{legend}}</legend>
+  </div>
+  {{/if}}
+  {{/if}}
+  <div class="field-editor{{#unless title}}{{#if legend}} collapsed{{/if}}{{/unless}}">
+    <div class="field-error" data-error></div>
+    <span data-editor></span>
+  </div>
 </div>

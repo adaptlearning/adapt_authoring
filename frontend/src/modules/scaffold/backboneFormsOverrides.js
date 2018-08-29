@@ -1,292 +1,357 @@
-// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define([
+  'core/origin',
+  'backbone-forms',
+  'backbone-forms-lists',
+], function(Origin, BackboneForms, BackboneFormsLists) {
 
-	var Backbone = require('backbone');
-	var BackboneForms = require('backbone-forms');
-	var BackboneFormsLists = require('backbone-forms-lists');
-	var Handlebars = require('handlebars');
-	var templateSettings = Backbone.Form.templateSettings;
+  var templates = Handlebars.templates;
+  var fieldTemplate = templates.field;
+  var templateData = Backbone.Form.Field.prototype.templateData;
+  var initialize = Backbone.Form.editors.Base.prototype.initialize;
+  var listSetValue = Backbone.Form.editors.List.prototype.setValue;
+  var textInitialize = Backbone.Form.editors.Text.prototype.initialize;
+  var textAreaRender = Backbone.Form.editors.TextArea.prototype.render;
+  var textAreaSetValue = Backbone.Form.editors.TextArea.prototype.setValue;
 
-	// Setup templates
-	Backbone.Form.prototype.constructor.template = _.template('\
-	    <form>\
-	     <div data-fieldsets></div>\
-	      <% if (submitButton) { %>\
-	        <button class="btn btn-primary" type="submit"><%= submitButton %></button>\
-	      <% } %>\
-	    </form>\
-	', null, templateSettings);
-	Backbone.Form.Fieldset.prototype.template = Handlebars.templates['fieldset'];
-	Backbone.Form.Field.prototype.template = Handlebars.templates['field'];
-	Backbone.Form.NestedField.prototype.template = Handlebars.templates['field'];
-	Backbone.Form.editors.List.prototype.constructor.template = _.template('\
-		<div class="list-items">\
-			<div data-items></div>\
-			<button class="btn primary" type="button" data-action="add">\
-				<%= addLabel %>\
-			</button>\
-		</div>\
-	', null, templateSettings)
-	Backbone.Form.editors.List.Item.prototype.constructor.template = _.template('\
-		<div class="list-item clearfix">\
-			<span data-editor></span>\
-			<button class="btn warning" type="button" data-action="remove">\
-				&times;\
-			</button>\
-		</div>\
-	', null, templateSettings);
+  Backbone.Form.prototype.constructor.template = templates.form;
+  Backbone.Form.Fieldset.prototype.template = templates.fieldset;
+  Backbone.Form.Field.prototype.template = fieldTemplate;
+  Backbone.Form.NestedField.prototype.template = fieldTemplate;
+  Backbone.Form.editors.List.prototype.constructor.template = templates.list;
+  Backbone.Form.editors.List.Item.prototype.constructor.template = templates.listItem;
 
-	// Overwrites
-	Backbone.Form.Field.prototype.templateData = function() {
-		var schema = this.schema;
+  // add reset to default handler
+  Backbone.Form.Field.prototype.events = {
+    'click [data-action="default"]': function() {
+      this.setValue(this.editor.defaultValue);
+      this.editor.trigger('change', this);
 
-		return {
-			help: schema.help || '',
-			title: schema.title,
-			titleHTML: schema.titleHTML,
-			fieldAttrs: schema.fieldAttrs,
-			editorAttrs: schema.editorAttrs,
-			key: this.key,
-			editorId: this.editor.id,
-			legend: schema.legend,
-			fieldType: this.schema.fieldType
-		};
-	};
+      return false;
+    }
+  };
 
-	Backbone.Form.editors.List.Modal.prototype.itemToString = function(value) {
-		var createTitle = function(key) {
-			var context = { key: key };
+  // merge schema into data
+  Backbone.Form.Field.prototype.templateData = function() {
+    return _.extend(templateData.call(this), this.schema, {
+      isDefaultValue: _.isEqual(this.editor.value, this.editor.defaultValue)
+    });
+  };
 
-			return Backbone.Form.Field.prototype.createTitle.call(context);
-		};
+  // use default from schema and set up isDefaultValue toggler
+  Backbone.Form.editors.Base.prototype.initialize = function(options) {
+    var schemaDefault = options.schema.default;
 
-		value = value || {};
+    if (schemaDefault !== undefined && options.id) {
+      this.defaultValue = schemaDefault;
+    }
 
-		//Pretty print the object keys and values
-		var parts = [];
-		_.each(this.nestedSchema, function(schema, key) {
-			
-			var desc = schema.title ? schema.title : createTitle(key),
-			val = value[key];
+    this.listenTo(this, 'change', function() {
+      if (this.hasNestedForm) return;
 
-			// If value is an array then print out how many items it contains
-			if (_.isArray(val)) {
-				var itemsString = ' items';
-				if (val.length === 1) {
-					itemsString = ' item';
-				}
-				val = val.length + itemsString;
-			} else if (_.isObject(val)) {
-				// If the value is an object print out the keys and values
-				valueText = '';
-				_.each(val, function(value, key) {
-					valueText += '<br>' + key + ' - ' + value;
-				});
-				val = valueText;
-			}
+      var isDefaultValue = _.isEqual(this.getValue(), this.defaultValue);
 
-			if (_.isUndefined(val) || _.isNull(val)) val = '';
+      this.form.$('[data-editor-id="' + this.id + '"]')
+        .toggleClass('is-default-value', isDefaultValue);
+    });
 
-			parts.push('<b>' + desc + '</b>: ' + val);
+    initialize.call(this, options);
+  };
 
-		});
+  // process nested items
+  Backbone.Form.editors.List.Modal.prototype.itemToString = function(value) {
+    var createTitle = function(key) {
+      var context = { key: key };
 
-		return parts.join('<br />');
+      return Backbone.Form.Field.prototype.createTitle.call(context);
     };
 
-	Backbone.Form.editors.List.prototype.removeItem = function(item) {
-		//Confirm delete
-		var confirmMsg = this.schema.confirmDelete;
+    value = value || {};
 
-		var remove = _.bind(function(isConfirmed) {
-			if (isConfirmed === false) return;
+    //Pretty print the object keys and values
+    var itemString = Origin.l10n.t('app.item');
+    var itemsString = Origin.l10n.t('app.items');
+    var parts = [];
+    _.each(this.nestedSchema, function(schema, key) {
+      var desc = schema.title ? schema.title : createTitle(key),
+          val = value[key],
+          pairs = '';
 
-			var index = _.indexOf(this.items, item);
-
-			this.items[index].remove();
-			this.items.splice(index, 1);
-
-			if (item.addEventTriggered) {
-				this.trigger('remove', this, item.editor);
-				this.trigger('change', this);
-			}
-
-			if (!this.items.length && !this.Editor.isAsync) this.addItem();
-		}, this);
-
-		if (confirmMsg) {
-			window.confirm({ title: confirmMsg, type: 'warning', callback: remove });
-		} else {
-			remove();
-		}
-	};
-
-	// Used to setValue with defaults
-
-	Backbone.Form.editors.Base.prototype.setValue = function(value) {
-		if (!value && typeof this.schema.default !== 'undefined') {
-            value = this.schema.default;
+      if (Array.isArray(val)) {
+        // print length
+        val = val.length + ' ' + (val.length === 1 ? itemString : itemsString);
+      } else if (typeof val === 'object') {
+        // print nested name/value pairs
+        for (var name in val) {
+          if (val.hasOwnProperty(name)) {
+            pairs += '<br>' + name + ' - ' + val[name];
+          }
         }
-		this.value = value;
-	}
 
-	var textInitialize = Backbone.Form.editors.Text.prototype.initialize;
+        val = pairs;
+      }
 
-	Backbone.Form.editors.Text.prototype.initialize = function(options) {
-		textInitialize.call(this, options);
+      if (_.isUndefined(val) || _.isNull(val)) val = '';
 
-		// HACK to disable auto-completion
-		this.$el.attr('autocomplete', 'off');
-	};
+      // embolden key
+      parts.push('<b>' + desc + '</b>: ' + val);
+    });
 
-	Backbone.Form.editors.Text.prototype.setValue = function(value) {
-		var schemaDefault = this.schema.default;
+    return parts.join('<br />');
+  };
 
-		if (!value && typeof schemaDefault !== 'undefined' &&
-			!(schemaDefault instanceof Array)) {
-			value = schemaDefault;
-		}
+  // fix rerendering of lists
+  // see https://github.com/powmedia/backbone-forms/pull/372
+  Backbone.Form.editors.List.prototype.setValue = function(value) {
+    this.items = [];
 
-		this.$el.val(value);
-	}
+    listSetValue.call(this, value);
+  }
 
-	Backbone.Form.editors.TextArea.prototype.render = function() {
+  Backbone.Form.editors.List.prototype.render = function() {
+    var self = this,
+        value = this.value || [],
+        $ = Backbone.$;
 
-	    // Place value
-	    this.setValue(this.value);
-	    _.defer(_.bind(function() {
-	    	// Initialize the editor
-	    	var textarea = this.$el[0];
-	    	this.editor = CKEDITOR.replace(textarea, {
-	    		toolbar: [
-            { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'ShowBlocks' ] },
-            { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-            { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
-            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv' ] },
-            {name: 'direction', items: ['BidiLtr', 'BidiRtl']},
-            '/',
-            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
-            { name: 'styles', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-            { name: 'links', items: [ 'Link', 'Unlink' ] },
-            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
-            { name: 'insert', items: [ 'SpecialChar', 'Table' ] },
-            { name: 'tools', items: [  ] },
-            { name: 'others', items: [ '-' ] }
-          ],
-          extraAllowedContent: 'span(*)',
-          disableNativeSpellChecker: false
-        });
+    //Create main element
+    var $el = $($.trim(this.template({
+      addLabel: this.schema.addLabel
+    })));
 
-	    }, this));
+    //Store a reference to the list (item container)
+    this.$list = $el.is('[data-items]') ? $el : $el.find('[data-items]');
 
-	    return this;
-	}
-
-	Backbone.Form.editors.TextArea.prototype.setValue = function(value) {
-		if (!value && typeof this.schema.default !== 'undefined') {
-      value = this.schema.default;
+    //Add existing items
+    if (value.length) {
+      _.each(value, function(itemValue) {
+        self.addItem(itemValue);
+      });
     }
-    
-    this.$el.val(value);
-	}
 
-	Backbone.Form.editors.TextArea.prototype.getValue = function() {
-		return this.editor.getData().replace(/[\t\n]/g, '');
-	}
-  
+    //If no existing items create an empty one, unless the editor specifies otherwise
+    else {
+      if (!this.Editor.isAsync) this.addItem();
+    }
+
+    // cache existing element
+    var domReferencedElement = this.el;
+
+    this.setElement($el);
+
+    // replace existing element
+    if (domReferencedElement) {
+      $(domReferencedElement).replaceWith(this.el);
+    }
+
+    this.$el.attr('id', this.id);
+    this.$el.attr('name', this.key);
+
+    if (this.hasFocus) this.trigger('blur', this);
+
+    return this;
+  }
+
+  // accomodate sweetalert in item removal
+  Backbone.Form.editors.List.prototype.removeItem = function(item) {
+    //Confirm delete
+    var confirmMsg = this.schema.confirmDelete;
+
+    var remove = function(isConfirmed) {
+      if (isConfirmed === false) return;
+
+      var index = _.indexOf(this.items, item);
+
+      this.items[index].remove();
+      this.items.splice(index, 1);
+
+      if (item.addEventTriggered) {
+        this.trigger('remove', this, item.editor);
+        this.trigger('change', this);
+      }
+
+      if (!this.items.length && !this.Editor.isAsync) this.addItem();
+    }.bind(this);
+
+    if (confirmMsg) {
+      window.confirm({ title: confirmMsg, type: 'warning', callback: remove });
+    } else {
+      remove();
+    }
+  };
+
+  // disable automatic completion on text fields if not specified
+  Backbone.Form.editors.Text.prototype.initialize = function(options) {
+    textInitialize.call(this, options);
+
+    if (!this.$el.attr('autocomplete')) {
+      this.$el.attr('autocomplete', 'off');
+    }
+  };
+
+  // render ckeditor in textarea
+  Backbone.Form.editors.TextArea.prototype.render = function() {
+    textAreaRender.call(this);
+
+    _.defer(function() {
+      this.editor = CKEDITOR.replace(this.$el[0], {
+        dataIndentationChars: '',
+        disableNativeSpellChecker: false,
+        entities: false,
+        extraAllowedContent: Origin.constants.ckEditorExtraAllowedContent,
+        on: {
+          change: function() {
+            this.trigger('change', this);
+          }.bind(this),
+          instanceReady: function() {
+            var writer = this.dataProcessor.writer;
+            var elements = Object.keys(CKEDITOR.dtd.$block);
+
+            var rules = {
+              indent: false,
+              breakBeforeOpen: false,
+              breakAfterOpen: false,
+              breakBeforeClose: false,
+              breakAfterClose: false
+            };
+
+            writer.indentationChars = '';
+            writer.lineBreakChars = '';
+            elements.forEach(function(element) { writer.setRules(element, rules); });
+          }
+        },
+        toolbar: [
+          { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'ShowBlocks' ] },
+          { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+          { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
+          { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv' ] },
+          { name: 'direction', items: [ 'BidiLtr', 'BidiRtl' ] },
+          '/',
+          { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
+          { name: 'styles', items: [ 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
+          { name: 'links', items: [ 'Link', 'Unlink' ] },
+          { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+          { name: 'insert', items: [ 'SpecialChar', 'Table' ] },
+          { name: 'tools', items: [] },
+          { name: 'others', items: [ '-' ] }
+        ]
+      });
+    }.bind(this));
+
+    return this;
+  };
+
+  // get data from ckeditor in textarea
+  Backbone.Form.editors.TextArea.prototype.getValue = function() {
+    return this.editor.getData();
+  };
+
+  // set value in ckeditor
+  Backbone.Form.editors.TextArea.prototype.setValue = function(value) {
+    textAreaSetValue.call(this, value);
+
+    if (this.editor) {
+      this.editor.setData(value);
+    }
+  };
+
+  // ckeditor removal
   Backbone.Form.editors.TextArea.prototype.remove = function() {
     this.editor.removeAllListeners();
     CKEDITOR.remove(this.editor);
-  }
+  };
 
-	Backbone.Form.prototype.validate = function(options) {
-	    var self = this,
-	        fields = this.fields,
-	        model = this.model,
-	        errors = {};
+  // add override to allow prevention of validation
+  Backbone.Form.prototype.validate = function(options) {
+    var self = this,
+        fields = this.fields,
+        model = this.model,
+        errors = {};
 
-	    options = options || {};
+    options = options || {};
 
-	    //Collect errors from schema validation
-	    // !!!OVERRIDE Passing in validate:false will stop the validation of the backbone forms validators
-	    if (!options.skipModelValidate) {
-			_.each(fields, function(field) {
-				var error = field.validate();
-				if (error) {
-					if(field.schema.title) {
-						error.title = field.schema.title;
-					}
-					errors[field.key] = error;
-				}
-			});
-	    }
+    //Collect errors from schema validation
+    // passing in validate: false will stop validation of the backbone forms validators
+    if (!options.skipModelValidate) {
+      _.each(fields, function(field) {
+        var error = field.validate();
 
-	    //Get errors from default Backbone model validator
-		if (!options.skipModelValidate && model && model.validate) {
-			var modelErrors = model.validate(this.getValue());
+        if (!error) return;
 
-			if (modelErrors) {
-				var isDictionary = _.isObject(modelErrors) && !_.isArray(modelErrors);
+        var title = field.schema.title;
 
-				//If errors are not in object form then just store on the error object
-				if (!isDictionary) {
-					errors._others = errors._others || [];
-					errors._others.push(modelErrors);
-				}
+        if (title) {
+            error.title = title;
+        }
 
-				//Merge programmatic errors (requires model.validate() to return an object e.g. { fieldKey: 'error' })
-				if (isDictionary) {
-					_.each(modelErrors, function(val, key) {
-						//Set error on field if there isn't one already
-						if (fields[key] && !errors[key]) {
-							fields[key].setError(val);
-							errors[key] = val;
-						}
+        errors[field.key] = error;
+      });
+    }
 
-						else {
-							//Otherwise add to '_others' key
-							errors._others = errors._others || [];
-							var tmpErr = {};
-							tmpErr[key] = val;
-							errors._others.push(tmpErr);
-						}
-					});
-				}
-			}
-		}
+    //Get errors from default Backbone model validator
+    if (!options.skipModelValidate && model && model.validate) {
+      var modelErrors = model.validate(this.getValue());
 
-	    return _.isEmpty(errors) ? null : errors;
-	}
+      if (modelErrors) {
+        var isDictionary = _.isObject(modelErrors) && !_.isArray(modelErrors);
 
-	Backbone.Form.editors.Number.prototype.onKeyPress = function(event) {
-		var self = this,
-			delayedDetermineChange = function() {
-				setTimeout(function() {
-				self.determineChange();
-			}, 0);
-		};
+        //If errors are not in object form then just store on the error object
+        if (!isDictionary) {
+          errors._others = errors._others || [];
+          errors._others.push(modelErrors);
+        }
 
-		//Allow backspace
-		if (event.charCode === 0) {
-			delayedDetermineChange();
-			return;
-		}
+        //Merge programmatic errors (requires model.validate() to return an object e.g. { fieldKey: 'error' })
+        if (isDictionary) {
+          _.each(modelErrors, function(val, key) {
+            //Set error on field if there isn't one already
+            if (fields[key] && !errors[key]) {
+              fields[key].setError(val);
+              errors[key] = val;
+            }
 
-		//Get the whole new value so that we can prevent things like double decimals points etc.
-		var newVal = this.$el.val()
-		if( event.charCode != undefined ) {
-			newVal = newVal + String.fromCharCode(event.charCode);
-		}
+            else {
+              //Otherwise add to '_others' key
+              errors._others = errors._others || [];
+              var tmpErr = {};
+              tmpErr[key] = val;
+              errors._others.push(tmpErr);
+            }
+          });
+        }
+      }
+    }
 
-		// Allow support for negative numbers.
-		var numeric = /^-?[0-9]*\.?[0-9]*?$/.test(newVal);
+    return _.isEmpty(errors) ? null : errors;
+  };
 
-		if (numeric) {
-			delayedDetermineChange();
-		}
-		else {
-			event.preventDefault();
-		}
-	};
+  // allow hyphen to be typed in number fields
+  Backbone.Form.editors.Number.prototype.onKeyPress = function(event) {
+    var self = this,
+      delayedDetermineChange = function() {
+        setTimeout(function() {
+        self.determineChange();
+      }, 0);
+    };
+
+    //Allow backspace
+    if (event.charCode === 0) {
+      delayedDetermineChange();
+      return;
+    }
+
+    //Get the whole new value so that we can prevent things like double decimals points etc.
+    var newVal = this.$el.val()
+    if( event.charCode != undefined ) {
+      newVal = newVal + String.fromCharCode(event.charCode);
+    }
+
+    var numeric = /^-?[0-9]*\.?[0-9]*?$/.test(newVal);
+
+    if (numeric) {
+      delayedDetermineChange();
+    }
+    else {
+      event.preventDefault();
+    }
+  };
 
 });

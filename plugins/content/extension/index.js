@@ -31,7 +31,6 @@ var bowerConfig = {
   packageType: 'extension',
   srcLocation: 'extensions',
   options: defaultOptions,
-  extra: [ "targetAttribute" ],
   nameList: [],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     database.getDatabase(function (err, db) {

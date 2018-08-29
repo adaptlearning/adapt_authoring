@@ -13,7 +13,7 @@
   - Authoring Tool Version:
   - Framework Version:
   - Node.js Version
-  - MongoBD Version
+  - MongoDB Version
   - Operating System:
   - Browser:
 

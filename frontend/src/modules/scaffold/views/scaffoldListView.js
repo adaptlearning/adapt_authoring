@@ -13,7 +13,13 @@ define([
         containment: '.app-inner',
         update: this.updateItemPositions.bind(this),
         start: function(event, ui) {
+          Origin.scaffold.getCurrentModel().set('_isDragging', true);
           ui.placeholder.height(ui.item.height());
+        },
+        stop: function(event, ui) {
+          _.defer(function() {
+            Origin.scaffold.getCurrentModel().set('_isDragging', false);
+          });
         }
       });
       return instance;
@@ -83,6 +89,9 @@ define([
     Backbone.Form.editors.List.prototype.constructor.template = Handlebars.templates.list;
     Backbone.Form.editors.List.Item.prototype.constructor.template = Handlebars.templates.listItem;
     Backbone.Form.editors.List.Modal.prototype.itemToString = modalItemToString;
+
+    Backbone.Form.editors.List.Modal.prototype.__openEditor = Backbone.Form.editors.List.Modal.prototype.openEditor;
+    Backbone.Form.editors.List.Modal.prototype.openEditor = openEditor;
   });
 
   /**
@@ -102,6 +111,17 @@ define([
       var title = this.nestedSchema[key].title || Backbone.Form.Field.prototype.createTitle.call({ key: key });
       return parts + '<p class="list-item-modal-item">' + wrapSchemaTitle(title) + val + '</p>';
     }.bind(this), '');
+  }
+
+  /**
+  * FIX to avoid opening the modal after stopping dragging a list item
+  * OVERRIDES Backbone.Form.editors.List.Modal.prototype.openEditor
+  */
+  function openEditor() {
+    if(Origin.scaffold.getCurrentModel().get('_isDragging')) {
+      return;
+    }
+    Backbone.Form.editors.List.Modal.prototype.__openEditor.apply(this, arguments);
   }
 
   /**

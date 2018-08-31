@@ -25,14 +25,12 @@ var superUser = false;
 // from user input
 var configResults;
 
-installHelpers.checkNodeVersion(function(error) {
-  if(error) {
-    return installHelpers.exit(1, error.message);
-  }
-  // we need the framework version for the config items, so let's go
+installHelpers.checkPrimaryDependencies(function(error) {
+  if(error) return handleError(null, 1, error);
+
   installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     if(error) {
-      return handleError(error, 1, 'Failed to get the latest framework version. Check package.json.');
+      return handleError(error, 1, 'Failed to get the latest framework version.');
     }
     inputData = {
       useConfigJSON: {
@@ -143,7 +141,7 @@ installHelpers.checkNodeVersion(function(error) {
           type: 'string',
           description: "Are you using ffmpeg? y/N",
           before: installHelpers.inputHelpers.toBoolean,
-          default: 'Y'
+          default: 'N'
         },
         smtp: {
           confirm: {
@@ -383,63 +381,56 @@ function configureMasterTenant(callback) {
   } else {
     console.log('Now we need to configure the master tenant. \nTip: just press ENTER to accept the default value in brackets.\n');
   }
-  logger.clear();
-
-  installHelpers.showSpinner('Starting server');
+  logger.level('console','warn');
   // run the app
   app.run({ skipVersionCheck: true });
   app.on('serverStarted', function() {
-    installHelpers.hideSpinner();
-    database.checkConnection(function(error) {
-      if(error) {
-        return callback(error);
-      }
-      if(USE_CONFIG && prompt.override.masterTenantName) {
-        /**
-        * remove the masterTenantDisplayName, as we can use the existing value
-        * (which isn't in config.json so can't be used as an auto override)
-        */
-        inputData.tenant = _.filter(inputData.tenant, function(item) {
-          return item.name !== 'masterTenantDisplayName';
-        });
-      }
-      installHelpers.getInput(inputData.tenant, function(result) {
-        console.log('');
-        // add the input to our cached config
-        addConfig({
-          masterTenant: {
-            name: result.masterTenantName,
-            displayName: result.masterTenantName
+
+    if(USE_CONFIG && prompt.override.masterTenantName) {
+      /**
+      * remove the masterTenantDisplayName, as we can use the existing value
+      * (which isn't in config.json so can't be used as an auto override)
+      */
+      inputData.tenant = _.filter(inputData.tenant, function(item) {
+        return item.name !== 'masterTenantDisplayName';
+      });
+    }
+    installHelpers.getInput(inputData.tenant, function(result) {
+      console.log('');
+      // add the input to our cached config
+      addConfig({
+        masterTenant: {
+          name: result.masterTenantName,
+          displayName: result.masterTenantName
+        }
+      });
+      // check if the tenant name already exists
+      app.tenantmanager.retrieveTenant({ name: result.masterTenantName }, function(error, tenant) {
+        if(error) {
+          return onError(error);
+        }
+        if(!tenant) {
+          return callback();
+        }
+        if(!IS_INTERACTIVE) {
+          return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
+        }
+        if(!configResults.masterTenant.displayName) {
+          configResults.masterTenant.displayName = tenant.displayName;
+        }
+        console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
+        installHelpers.getInput(inputData.tenantDelete, function(result) {
+          console.log('');
+          if(!result.confirm) {
+            return exit(1, 'Exiting install.');
           }
-        });
-        // check if the tenant name already exists
-        app.tenantmanager.retrieveTenant({ name: result.masterTenantName }, function(error, tenant) {
-          if(error) {
-            return onError(error);
-          }
-          if(!tenant) {
-            return callback();
-          }
-          if(!IS_INTERACTIVE) {
-            return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
-          }
-          if(!configResults.masterTenant.displayName) {
-            configResults.masterTenant.displayName = tenant.displayName;
-          }
-          console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
-          installHelpers.getInput(inputData.tenantDelete, function(result) {
-            console.log('');
-            if(!result.confirm) {
-              return exit(1, 'Exiting install.');
-            }
-            // delete tenant
-            async.eachSeries(app.db.getModelNames(), function(modelName, cb) {
-              app.db.destroy(modelName, null, cb);
-            }, callback);
-          });
+          // delete tenant
+          async.eachSeries(app.db.getModelNames(), function(modelName, cb) {
+            app.db.destroy(modelName, null, cb);
+          }, callback);
         });
       });
-    }, configResults.dbName);
+    });
   });
 }
 

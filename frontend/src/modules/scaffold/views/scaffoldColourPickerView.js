@@ -31,6 +31,7 @@ define([
         showPalette: true,
         showButtons: true,
         cancelText: Origin.l10n.t('app.scaffold.colourPickerCancel'),
+        allowEmpty: true, // to allow empty strings in schema default value
         palette: [],
         preferredFormat: "hex3",
         showSelectionPalette: true,
@@ -43,6 +44,8 @@ define([
           Origin.contentPane.enableScroll();
         }
       });
+      // remove class beacuse we aren't using the clear button
+      $('.sp-container').removeClass('sp-clear-enabled');
     },
 
     getValue: function() {

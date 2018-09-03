@@ -10,7 +10,7 @@ define([
   './views/scaffoldColorPickerView',
   './views/scaffoldDisplayTitleView',
   './views/scaffoldItemsModalView',
-  './views/ScaffoldListView',
+  './views/scaffoldListView',
   './views/scaffoldTagsView'
 ], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldCodeEditorView, ScaffoldColorPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldListView, ScaffoldTagsView) {
 

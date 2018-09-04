@@ -7,12 +7,12 @@ define([
   './backboneFormsOverrides',
   './views/scaffoldAssetView',
   './views/scaffoldCodeEditorView',
-  './views/scaffoldColorPickerView',
+  './views/scaffoldColourPickerView',
   './views/scaffoldDisplayTitleView',
   './views/scaffoldItemsModalView',
   './views/scaffoldListView',
   './views/scaffoldTagsView'
-], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldCodeEditorView, ScaffoldColorPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldListView, ScaffoldTagsView) {
+], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldCodeEditorView, ScaffoldColourPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldListView, ScaffoldTagsView) {
 
   var Scaffold = {};
   var builtSchemas = {};

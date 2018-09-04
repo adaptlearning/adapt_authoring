@@ -5,6 +5,37 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.6.0] - 2018-XX-XX
+
+Release to tidy up the core 'scaffold' code which is used to render the edit forms in the application.
+
+**Main headlines**:
+* All editors given a spring clean for readability and code consistency
+* Backbone 'overrides' using hard-coded strings have been refactored into Handlebars templates where appropriate
+* Switched to Selectize library for tags
+* Fields from the properties schema are now properly passed through to Backbone Forms. This includes:
+`confirmDelete`, `default`, `editorAttrs`, `editorClass`, `fieldAttrs`, `fieldClass`, `help`, `inputType`, `legend`, `title`, `titleHTML`, `validators`
+* Tooltips displaying help text have been added, as well as the underlying attribute name to align with documentation, and to aid troubleshooting
+* A reset button has been added to revert a field to its default state
+* The custom Question Button editor has been replaced with the standard Text editor out since this was only compatible with version 1 of the framework
+* The custom Boolean true/false dropdown has been replaced with the Checkbox editor for consistency. All core plugin schemas have already been switched over
+* The undocumented & unused custom `TextArea:blank` editor has been retired
+
+### Added
+- Theme and menu settings can now be exposed via the `properties.schema` ([\#1116](https://github.com/adaptlearning/adapt_authoring/issues/1116), [\#1495](https://github.com/adaptlearning/adapt_authoring/issues/1495))
+
+### Changed
+- The colour picker widget has been changed to [Spectrum](http://bgrins.github.io/spectrum/) ([\#2014](https://github.com/adaptlearning/adapt_authoring/issues/2014))
+- Form fieldset labels are now localised ([\#1376](https://github.com/adaptlearning/adapt_authoring/issues/1376))
+- List items can now be rearranged via drag and drop ([\#1430](https://github.com/adaptlearning/adapt_authoring/issues/1430))
+- CKEditor's `allowedContent` can now be specified using `ckEditorExtraAllowedContent` in `config.json` to control what's filtered from CK's output ([\#1619](https://github.com/adaptlearning/adapt_authoring/issues/1619))
+
+### Removed
+- The `Gruntfile.js` has been tidied up, and any unused code removed ([\#1993](https://github.com/adaptlearning/adapt_authoring/issues/1993))
+
+### Fixed
+- A Select input's default value is now configurable via the `properties.schema` ([\#1539](https://github.com/adaptlearning/adapt_authoring/issues/1539))
+
 ## [0.5.0] - 2018-06-26
 
 Release which adds the ability to import courses created in the framework, as well as exports from other authoring tool installs.
@@ -26,7 +57,7 @@ We're also switching our Node.js support strategy to only include the current **
 - Custom SMTP servers can now be used with mailer ([\#1447](https://github.com/adaptlearning/adapt_authoring/issues/1447))
 
 ### Changed
--  Bumped archive module dependency version ([\#1930](https://github.com/adaptlearning/adapt_authoring/issues/1930))
+- Bumped archive module dependency version ([\#1930](https://github.com/adaptlearning/adapt_authoring/issues/1930))
 - Core front-end modules are now loaded before any front-end plugins ([\#1913](https://github.com/adaptlearning/adapt_authoring/issues/1913))
 - `Database#addModel` now catches and logs errors ([\#1855](https://github.com/adaptlearning/adapt_authoring/issues/1855))
 - Server now logs more appropriate message if error is caught when loading a route ([\#1853](https://github.com/adaptlearning/adapt_authoring/issues/1853))
@@ -434,6 +465,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.6.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.3.0...v0.4.0

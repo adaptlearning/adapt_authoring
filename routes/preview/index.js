@@ -29,29 +29,29 @@ server.get('/preview/:tenant/:course/*', function (req, res, next) {
     masterTenantId = configuration.getConfig('masterTenantID'),
     previewKey = tenantId + '-' + courseId,
     root = path.join(configuration.serverRoot, Constants.Folders.Temp, masterTenantId, Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build);
-    
+
   if (!user) {
     logger.log('warn', 'Preview: Unauthorised attempt to view course %s on tenant %s', courseId, tenantId);
-    
+
     return next(new PreviewPermissionError());
   }
-  
+
   var options = {
     root: root
   };
-  
+
   if (file == Constants.Filenames.Main) {
     // Verify the session is configured to hold the course previews accessible for this user.
     if (!req.session.previews || Array.isArray(req.session.previews)) {
       req.session.previews = [];
     }
-    
+
     // Compare the tenantId values
     if (tenantId !== user.tenant._id.toString() && tenantId !== masterTenantId) {
       logger.log('warn', 'Preview: User %s does not have permission to view course %s on tenant %s', user._id, courseId, tenantId);
-      
+
       return next(new PreviewPermissionError());
-    }    
+    }
 
     if (tenantId == masterTenantId) {
       // Viewing a preview on master courses, so check that the course is shared
@@ -59,28 +59,28 @@ server.get('/preview/:tenant/:course/*', function (req, res, next) {
       helpers.isMasterPreviewAccessible(courseId, user._id, function(err, hasPermission) {
         if (err) {
           logger.log('error', err);
-          
+
           return next(new PreviewPermissionError());
         }
-        
+
         if (!hasPermission) {
           // Remove this course from the cached sessions.
           var position = req.session.previews.indexOf(previewKey);
-          
+
           if (position > -1) {
-            req.session.previews.splice(position, 1);  
+            req.session.previews.splice(position, 1);
           }
-          
+
           logger.log('warn', 'Preview: User %s does not have permission to view course %s on tenant %s', user._id, courseId, tenantId);
-  
+
           return next(new PreviewPermissionError());
         } else {
           req.session.previews.push(previewKey);
-      
+
           res.sendFile(file, options, function(err) {
             if (err) {
               // Display the error to the user.
-              res.status(err.status).end();
+              return res.status(err.status || 500).end();
             }
           });
         }
@@ -90,30 +90,30 @@ server.get('/preview/:tenant/:course/*', function (req, res, next) {
       helpers.hasCoursePermission('*', user._id, tenantId, {_id: courseId}, function(err, hasPermission) {
         if (err) {
           logger.log('error', err);
-          
+
           return next(new PreviewPermissionError());
         }
-        
+
         if (!hasPermission) {
           // Remove this course from the cached sessions.
           var position = req.session.previews.indexOf(previewKey);
-          
+
           if (position > -1) {
-            req.session.previews.splice(position, 1);  
+            req.session.previews.splice(position, 1);
           }
-          
+
           logger.log('warn', 'Preview: User %s does not have permission to view course %s on tenant %s', user._id, courseId, tenantId);
-  
+
           return next(new PreviewPermissionError());
         }
-        
+
         // Store in the session that the user has access to this course.
         req.session.previews.push(previewKey);
-        
+
         res.sendFile(file, options, function(err) {
           if (err) {
             // Display the error to the user.
-            res.status(err.status).end();
+            return res.status(err.status || 500).end();
           }
         });
       });
@@ -125,7 +125,7 @@ server.get('/preview/:tenant/:course/*', function (req, res, next) {
         if (err) {
           // Display the error to the user.
           // We don't want to clog the log with 404s, etc.
-          res.status(err.status).end();
+          return res.status(err.status || 500).end();
         }
       });
     } else {

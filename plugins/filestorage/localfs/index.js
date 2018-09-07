@@ -356,6 +356,10 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
   }
   var fileFormat = fileType.split('/')[1];
   fileType = fileType.split('/')[0];
+  // https://github.com/adaptlearning/adapt_authoring/issues/2065
+  if (fileFormat === 'svg+xml') {
+    return next(null, false);
+  }
   // also check fileType is supported
   if(!isThumbnailTypeSupported(fileType)) {
     return next(null, false);

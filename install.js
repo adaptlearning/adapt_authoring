@@ -524,6 +524,20 @@ function addConfig(newConfigItems) {
 
 function saveConfig(configItems, callback) {
   // add some default values as these aren't set
+  if (!IS_INTERACTIVE) {
+    for (var key in configItems) {
+      if (configItems.hasOwnProperty(key) === false) continue;
+      var value = configItems[key]; 
+      if (typeof value !== 'string') continue;
+      value = value.toLocaleLowerCase();
+      if (value === 'y') {
+        configItems[key] = true;
+      } else if (value === 'n') {
+        configItems[key] = false;
+      }
+    }
+  }
+
   var config = {
     outputPlugin: 'adapt',
     dbType: 'mongoose',
@@ -534,12 +548,18 @@ function saveConfig(configItems, callback) {
   _.each(configItems, function(value, key) {
     config[key] = value;
   });
-  fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
-    if(error) {
-      handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+  
+  fs.ensureDir('conf', function(error) {
+    if (error) {
+      return handleError(`Failed to create configuration directory.\n${error}`, 1, 'Install Failed.');
     }
-    return callback();
-  });
+    fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
+      if(error) {
+        handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+      }
+      return callback();
+    });
+  })
 }
 
 function handleError(error, exitCode, exitMessage) {

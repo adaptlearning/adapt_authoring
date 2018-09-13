@@ -404,7 +404,6 @@ function isThumbnailTypeSupported(type, format) {
     case 'image':
       // https://github.com/adaptlearning/adapt_authoring/issues/2065
       return format !== 'svg+xml';
-      break;
     default:
       return false;
   }

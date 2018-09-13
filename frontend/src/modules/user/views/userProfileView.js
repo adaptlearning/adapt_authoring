@@ -136,7 +136,7 @@ define(function(require){
           });
         },
         success: function(model, response, options) {
-          if (prev_email !== self.$('#email').val().trim()) {
+          if (prev_email !== model.get('email')) {
             window.location.href = '/#/user/login';
             location.reload();
           } else {

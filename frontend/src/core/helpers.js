@@ -261,6 +261,7 @@ define(function(require){
 
     contentModelMap: function(type) {
       var contentModels = {
+        course: 'core/models/courseModel',
         contentobject: 'core/models/contentObjectModel',
         article: 'core/models/articleModel',
         block: 'core/models/blockModel',

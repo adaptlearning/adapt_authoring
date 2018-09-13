@@ -377,7 +377,7 @@ function configureMasterTenant(callback) {
   } else {
     console.log('Now we need to configure the master tenant. \nTip: just press ENTER to accept the default value in brackets.\n');
   }
-  logger.level('console','warn');
+  logger.level('console','error');
   // run the app
   app.run({ skipVersionCheck: true });
   app.on('serverStarted', function() {

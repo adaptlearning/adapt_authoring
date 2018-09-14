@@ -1,4 +1,3 @@
-var _ = require('underscore');
 var async = require('async');
 var chalk = require('chalk');
 var fs = require('fs-extra');
@@ -24,7 +23,7 @@ var inputData;
 var masterTenant = false;
 var superUser = false;
 // from user input
-var configResults;
+var configResults = {};
 
 // we need the framework version for the config items, so let's go
 installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
@@ -271,7 +270,7 @@ function generatePromptOverrides() {
   const sessionSecret = USE_CONFIG && configData.sessionSecret || crypto.randomBytes(64).toString('hex');
   addConfig({ sessionSecret: sessionSecret });
   // NOTE config.json < cmd args
-  return _.extend({}, configData, optimist.argv);
+  return Object.assign({}, configData, optimist.argv);
 }
 
 function start() {
@@ -389,9 +388,7 @@ function configureMasterTenant(callback) {
         * remove the masterTenantDisplayName, as we can use the existing value
         * (which isn't in config.json so can't be used as an auto override)
         */
-        inputData.tenant = _.filter(inputData.tenant, function(item) {
-          return item.name !== 'masterTenantDisplayName';
-        });
+        inputData.tenant = inputData.tenant.filter(item => item.name !== 'masterTenantDisplayName');
       }
       installHelpers.getInput(inputData.tenant, function(result) {
         console.log('');
@@ -512,7 +509,7 @@ function syncMigrations(callback) {
 // helper functions
 
 function addConfig(newConfigItems) {
-  configResults = _.extend({}, configResults, newConfigItems);
+  Object.assign(configResults, newConfigItems);
 }
 
 /**
@@ -544,10 +541,8 @@ function saveConfig(configItems, callback) {
     root: process.cwd()
   };
   // copy over the input values
-  _.each(configItems, function(value, key) {
-    config[key] = value;
-  });
-  
+  Object.keys(configItems).forEach(key => config[key] = configItems[key]);
+
   fs.ensureDir('conf', function(error) {
     if (error) {
       return handleError(`Failed to create configuration directory.\n${error}`, 1, 'Install Failed.');

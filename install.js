@@ -548,7 +548,7 @@ function saveConfig(configItems, callback) {
     }
     fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
       if(error) {
-        handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+        return handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
       }
       callback();
     });

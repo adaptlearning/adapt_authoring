@@ -523,8 +523,7 @@ function addConfig(newConfigItems) {
  */
 
 function saveConfig(configItems, callback) {
-  // add some default values as these aren't set
-  if (!IS_INTERACTIVE) {
+  if (!IS_INTERACTIVE || USE_CONFIG) {
     for (var key in configItems) {
       if (configItems.hasOwnProperty(key) === false) continue;
       var value = configItems[key]; 
@@ -537,7 +536,7 @@ function saveConfig(configItems, callback) {
       }
     }
   }
-
+  // add some default values as these aren't set
   var config = {
     outputPlugin: 'adapt',
     dbType: 'mongoose',

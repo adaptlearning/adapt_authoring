@@ -495,14 +495,13 @@ function buildFrontend(callback) {
 
 //As this is a fresh install we dont need to run the migrations so add them to the db and set them to up
 function syncMigrations(callback) {
-  installHelpers.syncMigrations(function(err, migrations){
+  installHelpers.syncMigrations(function(err, migrations) {
     database.getDatabase(function(err, db) {
-      if(err){
-        return callback(err)
+      if(err) {
+        return callback(err);
       }
-
-      db.update('migration', {}, {'state': 'up'}, callback)
-    }, masterTenant._id)
+      db.update('migration', {}, {'state': 'up'}, callback);
+    }, masterTenant._id);
   });
 }
 
@@ -551,9 +550,9 @@ function saveConfig(configItems, callback) {
       if(error) {
         handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
       }
-      return callback();
+      callback();
     });
-  })
+  });
 }
 
 function handleError(error, exitCode, exitMessage) {

@@ -11,7 +11,8 @@ define([
   './views/scaffoldDisplayTitleView',
   './views/scaffoldItemsModalView',
   './views/scaffoldListView',
-  './views/scaffoldTagsView'
+  './views/scaffoldTagsView',
+  './views/scaffoldUsersView'
 ], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldCodeEditorView, ScaffoldColourPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldListView, ScaffoldTagsView) {
 
   var Scaffold = {};

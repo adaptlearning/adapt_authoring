@@ -25,7 +25,6 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     postRender: function() {
-      this.model.set('users', []);
       this.fetchUsers(this.initSelectize);
     },
 
@@ -42,8 +41,6 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
         labelField: 'email',
         valueField: '_id',
         options: users,
-        onItemAdd: this.onAddUser.bind(this),
-        onItemRemove: this.onRemoveUser.bind(this),
         searchField: [ 'email', 'firstName', 'lastName' ],
         render: {
           item: this.renderItem,
@@ -53,7 +50,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     getValue: function() {
-      return this.model.get('users');
+      return this.$el.val();
     },
 
     setValue: function(value) {
@@ -66,20 +63,6 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
 
     blur: function() {
       if(this.hasFocus) this.$el.blur();
-    },
-
-    onAddUser: function(value) {
-      var users = this.model.get('users');
-      users.push(value);
-      this.model.set('users', users);
-      console.log(value, users);
-    },
-
-    onRemoveUser: function(value) {
-      var users = this.model.get('users').filter(function(item) {
-        return item[this.idField] !== value;
-      });
-      this.model.set('users', users);
     }
   });
 

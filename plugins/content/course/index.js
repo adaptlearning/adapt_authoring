@@ -40,102 +40,46 @@ function initialize () {
   var self = this;
   var app = origin();
   app.once('serverStarted', function (server) {
-    // My Courses
-    rest.get('/my/course', function (req, res, next) {
-      var options = _.keys(req.body).length
-      ? req.body
-      : req.query;
+    // common function used by API endpoints
+    function retrieveCourses(req, res, addQuery) {
+      var options = _.keys(req.body).length ? req.body : req.query;
       var search = options.search || {};
-      var self = this;
       var orList = [];
-      var andList = [];
-
+      var andList = addQuery ? addQuery : [];
       // convert searches to regex
-      async.each(
-        Object.keys(search),
-        function (key, nextKey) {
-          var exp = {};
-          // convert strings to regex for likey goodness
-          if ('string' === typeof search[key]) {
-            exp[key] = new RegExp(search[key], 'i');
-            orList.push(exp);
-          } else {
-            exp[key] = search[key];
-            andList.push(exp);
-          }
-          nextKey();
-      }, function () {
-        var query = {};
-        if (orList.length) {
-          query.$or = orList;
+      async.each(Object.keys(search), function (key, nextKey) {
+        var exp = {};
+        // convert strings to regex for likey goodness
+        if ('string' === typeof search[key]) {
+          exp[key] = new RegExp(search[key], 'i');
+          orList.push(exp);
+        } else {
+          exp[key] = search[key];
+          andList.push(exp);
         }
-        
-        query.$and = andList;
+        nextKey();
+      }, () => {
+        var query = {};
+        if (orList.length) query.$or = orList;
+        if (andList.length) query.$and = andList;
 
-        // force search to use only courses created by current user
-        var user = usermanager.getCurrentUser();
-        query.$and.push({ createdBy : user._id });
-
-        options.jsonOnly = true;
-        options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
-        
+        Object.assign(options, {
+          jsonOnly: true,
+          fields: DASHBOARD_COURSE_FIELDS.join(' ')
+        });
         new CourseContent().retrieve(query, options, function (err, results) {
-          if (err) {
-            res.statusCode = 500;
-            return res.json(err);
-          }
-          return res.json(results);
+          if (err) return res.status(500).json(err);
+          res.json(results);
         });
       });
+    }
+
+    rest.get('/my/course', function (req, res, next) {
+      retrieveCourses(req, res, [{ createdBy: usermanager.getCurrentUser()._id }]);
     });
 
-    // Shared Courses
     rest.get('/shared/course', function (req, res, next) {
-      var options = _.keys(req.body).length
-      ? req.body
-      : req.query;
-      var search = options.search || {};
-      var self = this;
-      var orList = [];
-      var andList = [];
-
-      // convert searches to regex
-      async.each(
-        Object.keys(search),
-        function (key, nextKey) {
-          var exp = {};
-          // convert strings to regex for likey goodness
-          if ('string' === typeof search[key]) {
-            exp[key] = new RegExp(search[key], 'i');
-            orList.push(exp);
-          } else {
-            exp[key] = search[key];
-            andList.push(exp);
-          }
-          nextKey();
-      }, function () {
-        var query = {};
-        if (orList.length) {
-          query.$or = orList;
-        }
-        
-        query.$and = andList;
-
-        // Only return courses which have been shared
-        query.$and.push({ _isShared: true });
-        
-        options.jsonOnly = true;
-        options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
-
-        new CourseContent().retrieve(query, options, function (err, results) {
-          if (err) {
-            res.statusCode = 500;
-            return res.json(err);
-          }
-
-          return res.json(results);
-        });
-      });
+      retrieveCourses(req, res, [{ $or: [{ _shareWithUsers: usermanager.getCurrentUser()._id }, { _isShared: true }] }]);
     });
 
     /**

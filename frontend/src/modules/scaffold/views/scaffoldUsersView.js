@@ -40,7 +40,9 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
       this.$el.selectize({
         labelField: 'email',
         valueField: '_id',
-        options: users,
+        options: users.filter(function(user) { // filter out me
+          return user._id !== Origin.sessionModel.get('id');
+        }),
         searchField: [ 'email', 'firstName', 'lastName' ],
         render: {
           item: this.renderItem,

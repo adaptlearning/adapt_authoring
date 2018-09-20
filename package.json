@@ -14,7 +14,7 @@
   "framework": "2",
   "main": "index",
   "engines": {
-    "node": "8.x"
+    "node": "8 || 10"
   },
   "scripts": {
     "test": "grunt test",

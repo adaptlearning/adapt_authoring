@@ -52,7 +52,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     getValue: function() {
-      return this.$el.val();
+      return this.$el.val().split(',');
     },
 
     setValue: function(value) {

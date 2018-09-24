@@ -79,7 +79,10 @@ function initialize () {
     });
 
     rest.get('/shared/course', function (req, res, next) {
-      retrieveCourses(req, res, [{ $or: [{ _shareWithUsers: usermanager.getCurrentUser()._id }, { _isShared: true }] }]);
+      retrieveCourses(req, res, [
+        { createdBy: { $ne: usermanager.getCurrentUser()._id } },
+        { $or: [{ _shareWithUsers: usermanager.getCurrentUser()._id }, { _isShared: true }] }
+      ]);
     });
 
     /**

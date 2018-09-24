@@ -67,6 +67,9 @@ function initialize () {
           jsonOnly: true,
           fields: DASHBOARD_COURSE_FIELDS.join(' ')
         });
+        if(!options.populate) {
+          options.populate = { 'createdBy': 'email firstName lastName' };
+        }
         new CourseContent().retrieve(query, options, function (err, results) {
           if (err) return res.status(500).json(err);
           res.json(results);

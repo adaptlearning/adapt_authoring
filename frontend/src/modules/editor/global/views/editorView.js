@@ -49,7 +49,7 @@ define(function(require) {
         },
         'editorCommon:preview': function(event) {
           var previewWindow = window.open('/loading', 'preview');
-          this.validateProject(event, function(error) {
+          this.validateProject(event, function(e, error) {
             if(error) {
               return previewWindow.close();
             }
@@ -114,10 +114,10 @@ define(function(require) {
       }, this));
     },
 
-    exportProject: function() {
+    exportProject: function(e, error) {
       // TODO - very similar to export in project/views/projectView.js, remove duplication
       // aleady processing, don't try again
-      if(this.exporting) return;
+      if(error || this.exporting) return;
 
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
@@ -166,8 +166,8 @@ define(function(require) {
       }
     },
 
-    downloadProject: function() {
-      if(Origin.editor.isDownloadPending) {
+    downloadProject: function(e, error) {
+      if(error || Origin.editor.isDownloadPending) {
         return;
       }
       $('.editor-common-sidebar-download-inner').addClass('display-none');

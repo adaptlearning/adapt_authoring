@@ -66,7 +66,7 @@ define(function(require) {
     switch (options.type) {
       case 'shared':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing shared courses'});
-        Origin.contentPane.setView(ProjectsView, { collection: new SharedProjectCollection });
+        Origin.contentPane.setView(ProjectsView, { collection: new SharedProjectCollection, _isShared: true });
         break;
       case 'all':
         Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});

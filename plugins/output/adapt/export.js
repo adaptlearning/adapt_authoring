@@ -24,16 +24,6 @@ var EXPORT_DIR;
 var courseId;
 // the top-level callback
 var next;
-// used with _.omit when saving metadata
-var blacklistedProps = [
-  '__v',
-  '_isDeleted',
-  'createdAt',
-  'createdBy',
-  'updatedAt',
-  'updatedBy',
-  '_hasPreview'
-];
 
 function exportCourse(pCourseId, request, response, pNext) {
   self = this;

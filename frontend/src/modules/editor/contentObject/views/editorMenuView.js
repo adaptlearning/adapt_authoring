@@ -179,6 +179,10 @@ define(function(require){
         connectWith: ".editor-menu-layer-inner",
         scroll: true,
         helper: 'clone',
+        placeholder: 'sortable-placeholder',
+        start: function(event, ui) {
+          ui.placeholder.height(ui.item.height());
+        },
         stop: _.bind(function(event,ui) {
           var $draggedElement = ui.item;
           var id = $('.editor-menu-item-inner', $draggedElement).attr('data-id');

@@ -5,7 +5,7 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
-## [0.6.0] - 2018-XX-XX
+## [0.6.0] - 2018-09-25
 
 Release to tidy up the core 'scaffold' code which is used to render the edit forms in the application.
 

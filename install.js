@@ -532,20 +532,18 @@ function saveConfig(configItems, callback) {
       }
     }
   }
-  // add some default values as these aren't set
-  var config = {
-    outputPlugin: 'adapt',
-    dbType: 'mongoose',
-    auth: 'local',
-    root: process.cwd()
-  };
-  // copy over the input values
-  Object.keys(configItems).forEach(key => config[key] = configItems[key]);
-
   fs.ensureDir('conf', function(error) {
     if (error) {
       return handleError(`Failed to create configuration directory.\n${error}`, 1, 'Install Failed.');
     }
+    // Create the final config (with some default values not set in this script)
+    const config = Object.assign({
+      outputPlugin: 'adapt',
+      dbType: 'mongoose',
+      auth: 'local',
+      root: process.cwd()
+    }, configItems);
+
     fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
       if(error) {
         return handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');

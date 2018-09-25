@@ -9,7 +9,9 @@ define(function(require) {
   var CourseAssetModel = require('core/models/courseAssetModel');
   var CourseModel = require('core/models/courseModel');
   var EditorCollection = require('../global/collections/editorCollection');
-  var ExtensionModel = require('core/models/extensionModel');
+  var ExtensionTypeModel = require('core/models/extensionTypeModel');
+  var MenuTypeModel = require('core/models/menuTypeModel');
+  var ThemeTypeModel = require('core/models/themeTypeModel');
 
   var loadingGlobalData = false;
   var loadingCourseData = false;
@@ -17,7 +19,15 @@ define(function(require) {
   // used to check what's preloaded
   var globalData = {
     componenttypes: false,
-    extensiontypes: false
+    extensiontypes: false,
+    menutypes: false,
+    themetypes: false
+  };
+  var globalDataMap = {
+    componenttypes: ComponentTypeModel,
+    extensiontypes: ExtensionTypeModel,
+    menutypes: MenuTypeModel,
+    themetypes: ThemeTypeModel
   };
   // used to check what's loaded
   var courseData = {
@@ -38,11 +48,10 @@ define(function(require) {
       ensureEditorData();
       resetLoadStatus(globalData);
       // create the global collections
-      if(!Origin.editor.data.extensiontypes) {
-        Origin.editor.data.extensiontypes = createCollection(ExtensionModel);
-      }
-      if(!Origin.editor.data.componenttypes) {
-        Origin.editor.data.componenttypes = createCollection(ComponentTypeModel);
+      for (var collName in globalData) {
+        if (globalData.hasOwnProperty(collName) && !Origin.editor.data[collName]) {
+          Origin.editor.data[collName] = createCollection(globalDataMap[collName]);
+        }
       }
       // start preload
       fetchEditorData(globalData, function() {

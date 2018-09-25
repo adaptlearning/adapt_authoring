@@ -6,48 +6,43 @@ const path = require('path');
 // internal
 const assetmanager = require('../../../lib/assetmanager');
 const configuration = require('../../../lib/configuration');
+const contentmanager = require('../../../lib/contentmanager');
 const Constants = require('../../../lib/outputmanager').Constants;
 const filestorage = require('../../../lib/filestorage');
 const logger = require('../../../lib/logger');
 const usermanager = require('../../../lib/usermanager');
 
-/**
-* Global vars
-* For access by the other funcs
-*/
+const FRAMEWORK_ROOT_DIR = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+let COURSE_DIR;
+let EXPORT_DIR;
+let TENANT_ID;
+let COURSE_ID;
 
-// directories
-var FRAMEWORK_ROOT_DIR = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
-var COURSE_ROOT_DIR;
-var EXPORT_DIR;
-
-var courseId;
-// the top-level callback
-var next;
-
-function exportCourse(pCourseId, request, response, pNext) {
+function exportCourse(pCourseId, request, response, next) {
   self = this;
-  // store the params
-  var currentUser = usermanager.getCurrentUser();
-  COURSE_ROOT_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.AllCourses, currentUser.tenant._id, pCourseId);
+  const currentUser = usermanager.getCurrentUser();
+
+  TENANT_ID = currentUser.tenant._id;
+  COURSE_ID = pCourseId;
+  COURSE_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.AllCourses, TENANT_ID, COURSE_ID);
   EXPORT_DIR = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Exports, currentUser._id);
-  courseId = pCourseId;
-  next = pNext;
-  // create the EXPORT_DIR if it isn't there
-  fs.ensureDir(EXPORT_DIR, function(error) {
-    if(error) {
-      return next(error);
-    }
-    async.auto({
-      generateLatestBuild: generateLatestBuild,
-      copyFrameworkFiles: ['generateLatestBuild', copyFrameworkFiles],
-      copyCourseFiles: ['generateLatestBuild', copyCourseFiles]
-    }, zipExport);
-  });
+
+  async.auto({
+    ensureExportDir: ensureExportDir,
+    generateLatestBuild: ['ensureExportDir', generateLatestBuild],
+    copyFrameworkFiles: ['generateLatestBuild', copyFrameworkFiles],
+    writeCustomStyle: ['copyFrameworkFiles', writeCustomStyle],
+    copyCourseFiles: ['generateLatestBuild', copyCourseFiles]
+  }, async.apply(zipExport, next));
 }
 
-function generateLatestBuild(courseBuilt) {
-  self.publish(courseId, Constants.Modes.export, null, null, courseBuilt);
+// creates the EXPORT_DIR if it isn't there
+function ensureExportDir(exportDirEnsured) {
+  fs.ensureDir(EXPORT_DIR, exportDirEnsured);
+}
+
+function generateLatestBuild(results, courseBuilt) {
+  self.publish(COURSE_ID, Constants.Modes.export, null, null, courseBuilt);
 }
 
 /**
@@ -56,25 +51,20 @@ function generateLatestBuild(courseBuilt) {
 
 // copies relevant files in adapt_framework
 function copyFrameworkFiles(results, filesCopied) {
-  self.generateIncludesForCourse(courseId, function(error, includes) {
+  self.generateIncludesForCourse(COURSE_ID, function(error, includes) {
     if(error) {
       return filesCopied(error);
     }
-    // create list of includes
-    for(var i = 0, count = includes.length; i < count; i++)
-      includes[i] = '\/' + includes[i] + '(\/|$)';
-
-    var includesRE = new RegExp(includes.join('|'));
-    var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
-    var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
+    const includesRE = new RegExp(includes.map(i => `\/${i}(\/|$)`).join('|'));
+    const excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
+    const pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
 
     fs.copy(FRAMEWORK_ROOT_DIR, EXPORT_DIR, {
       filter: function(filePath) {
-        var posixFilePath = filePath.replace(/\\/g, '/');
-        var isIncluded = posixFilePath.search(includesRE) > -1;
-        var isExcluded = posixFilePath.search(excludesRE) > -1;
-        var isPlugin = posixFilePath.search(pluginsRE) > -1;
-
+        const posixFilePath = filePath.replace(/\\/g, '/');
+        const isIncluded = posixFilePath.search(includesRE) > -1;
+        const isExcluded = posixFilePath.search(excludesRE) > -1;
+        const isPlugin = posixFilePath.search(pluginsRE) > -1;
         // exclude any matches to excludesRE
         if(isExcluded) return false;
         // exclude any plugins not in includes
@@ -86,12 +76,33 @@ function copyFrameworkFiles(results, filesCopied) {
   });
 }
 
+function writeCustomStyle(results, styleWritten) {
+  const cm = new contentmanager.ContentManager();
+  cm.getContentPlugin('config', function(error, plugin) {
+    if(error) {
+      return styleWritten(error);
+    }
+    plugin.retrieve({ _courseId: COURSE_ID }, {}, function(error, docs) {
+      if(error) {
+        return styleWritten(error);
+      }
+      if(docs.length !== 1) {
+        return styleWritten(new Error(`Failed to find course '${COURSE_ID}'`));
+      }
+      const customLessDir = path.join(EXPORT_DIR, 'src', 'theme', docs[0]._theme);
+      self.writeCustomStyle(TENANT_ID, COURSE_ID, customLessDir, styleWritten);
+    });
+  });
+
+}
+
 // uses the metadata list to include only relevant plugin files
 function copyCustomPlugins(results, filesCopied) {
-  var src = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Source);
-  var dest = path.join(EXPORT_DIR, Constants.Folders.Plugins);
+  const src = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Source);
+  const dest = path.join(EXPORT_DIR, Constants.Folders.Plugins);
+  debugger;
   _.each(metadata.pluginIncludes, function iterator(plugin) {
-    var pluginDir = path.join(src, plugin.folder, plugin.name);
+    const pluginDir = path.join(src, plugin.folder, plugin.name);
     fs.copy(pluginDir, path.join(dest, plugin.name), function(err) {
       if (err) logger.log('error', err);
     });
@@ -101,8 +112,8 @@ function copyCustomPlugins(results, filesCopied) {
 
 // copies everything in the course folder
 function copyCourseFiles(results, filesCopied) {
-  var source = path.join(COURSE_ROOT_DIR, Constants.Folders.Build, Constants.Folders.Course);
-  var dest = path.join(EXPORT_DIR, Constants.Folders.Source, Constants.Folders.Course);
+  const source = path.join(COURSE_DIR, Constants.Folders.Build, Constants.Folders.Course);
+  const dest = path.join(EXPORT_DIR, Constants.Folders.Source, Constants.Folders.Course);
   fs.ensureDir(dest, function(error) {
     if (error) {
       return filesCopied(error);
@@ -113,20 +124,20 @@ function copyCourseFiles(results, filesCopied) {
 
 // copies used assets directly from the data folder
 function copyAssets(results, assetsCopied) {
-  var dest = path.join(EXPORT_DIR, Constants.Folders.Assets);
+  const dest = path.join(EXPORT_DIR, Constants.Folders.Assets);
   fs.ensureDir(dest, function(error) {
     if (error) {
       return assetsCopied(error);
     }
     async.each(Object.keys(metadata.assets), function iterator(assetKey, doneIterator) {
-      var oldId = metadata.assets[assetKey].oldId;
+      const oldId = metadata.assets[assetKey].oldId;
       assetmanager.retrieveAsset({ _id:oldId }, function(error, results) {
         if(error) {
           return doneIterator(error);
         }
         filestorage.getStorage(results[0].repository, function gotStorage(error, storage) {
-          var srcPath = storage.resolvePath(results[0].path);
-          var destPath = path.join(dest, assetKey);
+          const srcPath = storage.resolvePath(results[0].path);
+          const destPath = path.join(dest, assetKey);
           fs.copy(srcPath, destPath, doneIterator);
         });
       });
@@ -138,31 +149,28 @@ function copyAssets(results, assetsCopied) {
 * post-processing
 */
 
-function zipExport(error) {
+function zipExport(next, error, results) {
   if(error) {
     return next(error);
   }
-  var archive = archiver('zip');
-  var output = fs.createWriteStream(EXPORT_DIR +  '.zip');
+  const archive = archiver('zip');
+  const output = fs.createWriteStream(EXPORT_DIR +  '.zip');
 
-  output.on('close', cleanUpExport);
-
-  archive.on('warning', function(err) {
-    logger.log('warn', err);
-  });
-  archive.on('error', function(error){
-    logger.log('error', error);
-    cleanUpExport();
-  });
+  output.on('close', async.apply(cleanUpExport, next));
+  archive.on('error', async.apply(cleanUpExport, next));
+  archive.on('warning', error => logger.log('warn', error));
   archive.pipe(output);
   archive.glob('**/*', { cwd: path.join(EXPORT_DIR) });
   archive.finalize();
 }
 
 // remove the EXPORT_DIR, if there is one
-function cleanUpExport(exportError) {
+function cleanUpExport(next, exportError) {
+  debugger;
   fs.remove(EXPORT_DIR, function(removeError) {
-    next(exportError || removeError);
+    const error = exportError || removeError;
+    if(error) logger.log('error', error);
+    next(error);
   });
 }
 

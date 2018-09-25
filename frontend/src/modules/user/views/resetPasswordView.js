@@ -61,12 +61,9 @@ define(function(require) {
       this.model.save(toChange, {
         patch: true,
         success: _.bind(function(model, response, options) {
-          if (response.success) {
-            this.$('.form-reset-password').addClass('display-none');
-            this.$('.reset-introduction').addClass('display-none');
-
-            this.$('.message .success').removeClass('display-none');
-          }
+          this.$('.form-reset-password').addClass('display-none');
+          this.$('.reset-introduction').addClass('display-none');
+          this.$('.message .success').removeClass('display-none');
         },this),
         error: _.bind(function(model, response, options) {
           Origin.Notify.alert({

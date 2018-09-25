@@ -11,11 +11,6 @@ util.inherits(AdaptOutput, OutputPlugin);
 
 AdaptOutput.prototype.publish = require('./publish');
 AdaptOutput.prototype.importsource = require('./importsource');
+AdaptOutput.prototype.export = require('./export');
 
 exports = module.exports = AdaptOutput;
-AdaptOutput.prototype.export = require('./exportsource');
-
-/**
- * Module exports
- *
- */

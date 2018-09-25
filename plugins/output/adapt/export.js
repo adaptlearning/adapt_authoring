@@ -1,3 +1,16 @@
+// external
+const archiver = require('archiver');
+const async = require('async');
+const fs = require('fs-extra');
+const path = require('path');
+// internal
+const assetmanager = require('../../../lib/assetmanager');
+const configuration = require('../../../lib/configuration');
+const Constants = require('../../../lib/outputmanager').Constants;
+const filestorage = require('../../../lib/filestorage');
+const logger = require('../../../lib/logger');
+const usermanager = require('../../../lib/usermanager');
+
 /**
 * Global vars
 * For access by the other funcs
@@ -22,7 +35,7 @@ var blacklistedProps = [
   '_hasPreview'
 ];
 
-AdaptOutput.prototype.export = function(pCourseId, request, response, pNext) {
+function exportCourse(pCourseId, request, response, pNext) {
   self = this;
   // store the params
   var currentUser = usermanager.getCurrentUser();
@@ -41,11 +54,11 @@ AdaptOutput.prototype.export = function(pCourseId, request, response, pNext) {
       copyCourseFiles: ['generateLatestBuild', copyCourseFiles]
     }, zipExport);
   });
-};
+}
 
 function generateLatestBuild(courseBuilt) {
   self.publish(courseId, Constants.Modes.export, null, null, courseBuilt);
-};
+}
 
 /**
 * Copy functions
@@ -81,7 +94,7 @@ function copyFrameworkFiles(results, filesCopied) {
       }
     }, filesCopied);
   });
-};
+}
 
 // uses the metadata list to include only relevant plugin files
 function copyCustomPlugins(results, filesCopied) {
@@ -94,7 +107,7 @@ function copyCustomPlugins(results, filesCopied) {
     });
   });
   filesCopied();
-};
+}
 
 // copies everything in the course folder
 function copyCourseFiles(results, filesCopied) {
@@ -106,7 +119,7 @@ function copyCourseFiles(results, filesCopied) {
     }
     fs.copy(source, dest, filesCopied);
   });
-};
+}
 
 // copies used assets directly from the data folder
 function copyAssets(results, assetsCopied) {
@@ -117,7 +130,7 @@ function copyAssets(results, assetsCopied) {
     }
     async.each(Object.keys(metadata.assets), function iterator(assetKey, doneIterator) {
       var oldId = metadata.assets[assetKey].oldId;
-      origin.assetmanager.retrieveAsset({ _id:oldId }, function(error, results) {
+      assetmanager.retrieveAsset({ _id:oldId }, function(error, results) {
         if(error) {
           return doneIterator(error);
         }
@@ -129,7 +142,7 @@ function copyAssets(results, assetsCopied) {
       });
     }, assetsCopied);
   });
-};
+}
 
 /**
 * post-processing
@@ -154,11 +167,13 @@ function zipExport(error) {
   archive.pipe(output);
   archive.glob('**/*', { cwd: path.join(EXPORT_DIR) });
   archive.finalize();
-};
+}
 
 // remove the EXPORT_DIR, if there is one
 function cleanUpExport(exportError) {
   fs.remove(EXPORT_DIR, function(removeError) {
     next(exportError || removeError);
   });
-};
+}
+
+module.exports = exportCourse;

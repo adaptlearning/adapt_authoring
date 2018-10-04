@@ -89,20 +89,44 @@ function initialize () {
         }
       };
 
-      contentmanager.create.apply(contentmanager, ['config', configObj, function (err, results) {
-        // log an error if it exists, but don't propagate it
+      database.getDatabase(function(err, db) {
         if (err) {
-          logger.log('error', 'config hook failed on course creation: ' + err.message);
+          logger.log('error', err);
+          return next(err);
         }
-        next(null, course);
-      }]);
+        async.parallel([
+          function(cb) {
+            db.retrieveOne('themetype', {}, {}, function(error, doc) {
+              if (error) return cb(error);
+              return cb(null, doc.name);
+            });
+          },
+          function(cb) {
+            db.retrieveOne('menutype', {}, {}, function(error, doc) {
+              if (error) return cb(error);
+              return cb(null, doc.name);
+            });
+          }
+        ], function(error, results) {
+          if (error) return next(error);
+          configObj._theme = results[0];
+          configObj._menu = results[1];
+          contentmanager.create.apply(contentmanager, ['config', configObj, function (err, results) {
+            // log an error if it exists, but don't propagate it
+            if (err) {
+              logger.log('error', 'config hook failed on course creation: ' + err.message);
+            }
+            next(null, course);
+          }]);
+        });
+      });
     });
 
     app.contentmanager.addContentHook('update', 'config', { when: 'pre' }, function (data, next) {
       if (data[1].hasOwnProperty('_generateSourcemap')) {
         var tenant = usermanager.getCurrentUser().tenant._id;
         var course = data[1]._courseId;
-        
+
         app.emit('rebuildCourse', tenant, course);
       }
 

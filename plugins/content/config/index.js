@@ -94,9 +94,23 @@ function initialize () {
           logger.log('error', err);
           return next(err);
         }
-        // get default theme
-        db.retrieveOne('themetype', {}, {}, function(error, doc) {
-          configObj._theme = doc.name;
+        async.parallel([
+          function(cb) {
+            db.retrieveOne('themetype', {}, {}, function(error, doc) {
+              if (error) return cb(error);
+              return cb(null, doc.name);
+            });
+          },
+          function(cb) {
+            db.retrieveOne('menutype', {}, {}, function(error, doc) {
+              if (error) return cb(error);
+              return cb(null, doc.name);
+            });
+          }
+        ], function(error, results) {
+          if (error) return next(error);
+          configObj._theme = results[0];
+          configObj._menu = results[1];
           contentmanager.create.apply(contentmanager, ['config', configObj, function (err, results) {
             // log an error if it exists, but don't propagate it
             if (err) {

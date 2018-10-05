@@ -5,7 +5,7 @@
   "$ref": "http://localhost/system/trackedObject.schema",
   "properties": {
     "_courseId":{
-      "type": "string",
+      "type": "objectid",
       "required": true
     },
     "_contentType": {
@@ -13,15 +13,15 @@
       "required": true
     },
     "_contentTypeId": {
-      "type": "string",
+      "type": "objectid",
       "required": false
     },
     "_contentTypeParentId": {
-      "type": "string",
+      "type": "objectid",
       "required": true
     },
     "_assetId": {
-      "type": "string",
+      "type": "objectid",
       "required": true
     },
     "_fieldName": {

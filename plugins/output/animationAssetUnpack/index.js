@@ -25,7 +25,8 @@ var config = require('./config.json');
 
 // path to the directory where Adapt AT builds
 // the course output for previewing
-// TODO: periodically review this path on new AT releases
+// TODO: periodically review this path on new AT releases to
+// make sure to target the right output directory
 var WATCHING_DIR = path.join(__dirname + config.previewOutputDirectoryPath);
 
 var ERROR_UNPACKING = 'Error decompressing OAM/ZIP package';

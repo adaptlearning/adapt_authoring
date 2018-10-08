@@ -3,7 +3,7 @@ define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
   var EditorOriginView = require('../../global/views/editorOriginView');
-  var ExtensionModel = require('core/models/extensionModel');
+  var ExtensionTypeModel = require('core/models/extensionTypeModel');
   var EditorCollection = require('../../global/collections/editorCollection');
 
   var EditorExtensionsEditView = EditorOriginView.extend({
@@ -43,8 +43,8 @@ define(function(require) {
 
       var extensionTypes = new EditorCollection(null, {
         autoFetch: false,
-        model: ExtensionModel,
-        url: ExtensionModel.prototype.urlRoot,
+        model: ExtensionTypeModel,
+        url: ExtensionTypeModel.prototype.urlRoot,
         _type: 'extension'
       });
 

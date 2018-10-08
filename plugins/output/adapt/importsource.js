@@ -52,6 +52,7 @@ function ImportSource(req, done) {
   var courseRoot = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course);
 
   var form = new IncomingForm();
+  form.maxFileSize = configuration.getConfig('maxFileUploadSize');
   var origCourseId;
   var courseId;
   var configId;

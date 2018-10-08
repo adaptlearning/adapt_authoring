@@ -5,6 +5,7 @@ var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
 var prompt = require('prompt');
+var crypto = require('crypto');
 
 var auth = require('./lib/auth');
 var database = require('./lib/database');
@@ -67,13 +68,6 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         default: 'data'
       },
       {
-        name: 'sessionSecret',
-        type: 'string',
-        description: 'Session secret (value used when saving session cookie data)',
-        pattern: /^.+$/,
-        default: 'your-session-secret'
-      },
-      {
         name: 'authoringToolRepository',
         type: 'string',
         description: "Git repository URL to be used for the authoring tool source code",
@@ -134,24 +128,24 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         {
           name: 'dbUser',
           type: 'string',
-          description: 'Database server user',
+          description: 'Database server user (only specify if using database authentication)',
           pattern: installHelpers.inputHelpers.alphanumValidator,
           default: ''
         },
         {
           name: 'dbPass',
           type: 'string',
-          description: 'Database server password',
+          description: 'Database server password (only specify if using database authentication)',
           pattern: installHelpers.inputHelpers.alphanumValidator,
           default: ''
         },
         {
           name: 'dbAuthSource',
           type: 'string',
-          description: 'Database server authentication database',
+          description: 'Database server authentication database (only specify if using database authentication)',
           pattern: installHelpers.inputHelpers.alphanumValidator,
           default: 'admin'
-        }
+        },
       ]
     },
     features: {
@@ -294,6 +288,9 @@ function generatePromptOverrides() {
     var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
     configData.install = 'y';
   }
+
+  const sessionSecret = USE_CONFIG && configData.sessionSecret || crypto.randomBytes(64).toString('hex');
+  addConfig({ sessionSecret: sessionSecret });
   // NOTE config.json < cmd args
   return _.extend({}, configData, optimist.argv);
 }
@@ -563,6 +560,20 @@ function addConfig(newConfigItems) {
 
 function saveConfig(configItems, callback) {
   // add some default values as these aren't set
+  if (!IS_INTERACTIVE) {
+    for (var key in configItems) {
+      if (configItems.hasOwnProperty(key) === false) continue;
+      var value = configItems[key];
+      if (typeof value !== 'string') continue;
+      value = value.toLocaleLowerCase();
+      if (value === 'y') {
+        configItems[key] = true;
+      } else if (value === 'n') {
+        configItems[key] = false;
+      }
+    }
+  }
+
   var config = {
     outputPlugin: 'adapt',
     dbType: 'mongoose',
@@ -573,12 +584,18 @@ function saveConfig(configItems, callback) {
   _.each(configItems, function(value, key) {
     config[key] = value;
   });
-  fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
-    if(error) {
-      handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+
+  fs.ensureDir('conf', function(error) {
+    if (error) {
+      return handleError(`Failed to create configuration directory.\n${error}`, 1, 'Install Failed.');
     }
-    return callback();
-  });
+    fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
+      if(error) {
+        handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+      }
+      return callback();
+    });
+  })
 }
 
 function handleError(error, exitCode, exitMessage) {

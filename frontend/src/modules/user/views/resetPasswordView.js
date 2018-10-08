@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-  var Backbone = require('backbone');
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
 
@@ -15,8 +14,10 @@ define(function(require) {
     },
 
     preRender: function() {
-      this.listenTo(this.model, 'sync', this.verifyToken);
-      this.listenTo(this.model, 'invalid', this.handleValidationError);
+      this.listenTo(this.model, {
+        sync: this.verifyToken,
+        invalid: this.handleValidationError
+      });
     },
 
     postRender: function() {
@@ -57,16 +58,12 @@ define(function(require) {
         id: this.model.get('_id'),
         token: this.model.get('token')
       };
-
       this.model.save(toChange, {
         patch: true,
         success: _.bind(function(model, response, options) {
-          if (response.success) {
-            this.$('.form-reset-password').addClass('display-none');
-            this.$('.reset-introduction').addClass('display-none');
-
-            this.$('.message .success').removeClass('display-none');
-          }
+          this.$('.form-reset-password').addClass('display-none');
+          this.$('.reset-introduction').addClass('display-none');
+          this.$('.message .success').removeClass('display-none');
         },this),
         error: _.bind(function(model, response, options) {
           Origin.Notify.alert({

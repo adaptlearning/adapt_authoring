@@ -885,7 +885,12 @@ function checkIfHigherVersionExists (package, options, cb) {
 
 function handleUploadedPlugin (req, res, next) {
   var form = new IncomingForm();
+  form.maxFileSize = configuration.getConfig('maxFileUploadSize');
   form.parse(req, function (error, fields, files) {
+    if (form.bytesExpected > form.maxFileSize) {
+      return next(new PluginPackageError(`File size limit exceeded: ${form.bytesExpected} of ${form.maxFileSize}.`));
+    }
+
     if (error) {
       return next(error);
     }

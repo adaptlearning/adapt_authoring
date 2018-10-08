@@ -54,13 +54,24 @@ define(function(require){
         }
       });
 
+      var fileInput = this.$('.asset-file')[0];
+      var isFileTooBig = fileInput.files[0] && fileInput.files[0].size > Origin.constants.maxFileUploadSize;
+      if (isFileTooBig) {
+        $(uploadFileErrormsg).text(Origin.l10n.t('app.assetfilesizeexceeded', {
+          uploadLimit: Origin.constants.humanMaxFileUploadSize
+        }));
+        validated = false;
+      }
+
       if (this.model.isNew() && !uploadFile.val()) {
         validated = false;
         $(uploadFile).addClass('input-error');
         $(uploadFileErrormsg).text(Origin.l10n.t('app.pleaseaddfile'));
       } else {
         $(uploadFile).removeClass('input-error');
-        $(uploadFileErrormsg).text('');
+        if (!isFileTooBig) {
+          $(uploadFileErrormsg).text('');
+        }
       }
       return validated;
     },

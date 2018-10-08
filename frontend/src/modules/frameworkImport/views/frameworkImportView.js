@@ -29,18 +29,25 @@ define(function(require){
 
     isValid: function() {
       var uploadFile = this.$('.asset-file');
-      var validated = true;
       var uploadFileErrormsg = $('.field-file').find('span.error');
+      var isFileTooBig = uploadFile[0].files[0] && uploadFile[0].files[0].size > Origin.constants.maxFileUploadSize;
 
       if (this.model.isNew() && !uploadFile.val()) {
         validated = false;
         $(uploadFile).addClass('input-error');
         $(uploadFileErrormsg).text(Origin.l10n.t('app.pleaseaddfile'));
+        return false;
+      } else if(isFileTooBig) {
+        $(uploadFile).addClass('input-error');
+        $(uploadFileErrormsg).text(Origin.l10n.t('app.assetfilesizeexceeded', {
+          uploadLimit: Origin.constants.humanMaxFileUploadSize
+        }));
+        return false;
       } else {
         $(uploadFile).removeClass('input-error');
         $(uploadFileErrormsg).text('');
       }
-      return validated;
+      return true;
     },
 
     uploadCourse: function(sidebarView) {

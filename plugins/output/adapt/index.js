@@ -313,7 +313,7 @@ function copyFrameworkFiles(results, filesCopied) {
       includes[i] = '\/' + includes[i] + '(\/|$)';
 
     var includesRE = new RegExp(includes.join('|'));
-    var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
+    var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b(?!\.)|\/exports\b/);
     var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
 
     fs.copy(FRAMEWORK_ROOT_DIR, EXPORT_DIR, {

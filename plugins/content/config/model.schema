@@ -286,6 +286,9 @@
           "title": "Log to browser console?"
         }
       }
+    },
+    "themeSettings": {
+      "type": "object"
     }
   }
 }

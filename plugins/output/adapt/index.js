@@ -20,7 +20,6 @@ var origin = require('../../../'),
     helpers = require('../../../lib/helpers'),
     exec = require('child_process').exec,
     semver = require('semver'),
-    helpers = require('../../../lib/helpers'),
     installHelpers = require('../../../lib/installHelpers'),
     logger = require('../../../lib/logger');
 
@@ -314,7 +313,7 @@ function copyFrameworkFiles(results, filesCopied) {
       includes[i] = '\/' + includes[i] + '(\/|$)';
 
     var includesRE = new RegExp(includes.join('|'));
-    var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
+    var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b(?!\.)|\/exports\b/);
     var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
 
     fs.copy(FRAMEWORK_ROOT_DIR, EXPORT_DIR, {
@@ -406,7 +405,6 @@ function zipExport(error) {
   archive.pipe(output);
   archive.glob('**/*', { cwd: path.join(EXPORT_DIR) });
   archive.finalize();
-
 };
 
 // remove the EXPORT_DIR, if there is one
@@ -421,5 +419,4 @@ function cleanUpExport(exportError) {
  * Module exports
  *
  */
-
 exports = module.exports = AdaptOutput;

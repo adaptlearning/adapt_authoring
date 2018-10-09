@@ -13,7 +13,14 @@
 .editor-menu-layer-inner {
   position: relative;
   overflow-y: auto;
-  overflow-x:hidden;
+  overflow-x: hidden;
+
+  .sortable-placeholder {
+    background: lighten(@primary-color,  40%);
+    border: 1px dashed lighten(@primary-color,  15%);
+    border-radius: 3px;
+    margin: 20px;
+  }
 }
 
 .editor-menu-layer-controls {

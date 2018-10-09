@@ -128,13 +128,7 @@ define([
   * Returns an apt string value from Modal.Item value
   */
   function getModalItemValueString(value) {
-    if (value === 0 || value === false) {
-      return value;
-    }
-    if (value === '') {
-      return '-';
-    }
-    if(!value) {
+    if (value === undefined) {
       return '';
     }
     if(Array.isArray(value)) {

@@ -34,7 +34,7 @@ exports.up = function up (done) {
       });
 
     }, configuration.getConfig('dbName'));
-  })
+  });
 };
 
 exports.down = function down(done) {
@@ -43,6 +43,7 @@ exports.down = function down(done) {
       if (err) return done(err);
 
       db.retrieve('courseasset', {}, {}, function(error, docs) {
+        debugger;
         async.eachSeries(docs, function(doc, callback) {
           doc._courseId = doc._courseId.toString();
           doc._contentTypeId = doc._contentTypeId.toString();
@@ -62,8 +63,6 @@ exports.down = function down(done) {
           return done();
         });
       });
-
-      return done()
     }, configuration.getConfig('dbName'));
   });
 };

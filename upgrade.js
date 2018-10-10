@@ -29,15 +29,15 @@ function start() {
     if(error) {
       return installHelpers.exit(1, error.message);
     }
-    installHelpers.checkSecondaryDependencies(function(error) {
-      // don't show any logger messages in the console
-      logger.level('console','error');
+    // don't show any logger messages in the console
+    logger.level('console','error');
 
-      prompt.override = optimist.argv;
+    prompt.override = optimist.argv;
 
-      // start the server first
-      app.run({ skipVersionCheck: true, skipStartLog: true });
-      app.on('serverStarted', function() {
+    // start the server first
+    app.run({ skipVersionCheck: true, skipStartLog: true });
+    app.on('serverStarted', function() {
+      installHelpers.checkSecondaryDependencies(function(error) {
         ensureRepoValues();
         getUserInput();
       });

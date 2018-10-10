@@ -143,6 +143,9 @@
     "_extensions": {
       "type": "object"
     },
+    "themeSettings": {
+      "type": "object"
+    },
     "properties" : {
       "type": "object"
     },

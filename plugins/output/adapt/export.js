@@ -56,7 +56,7 @@ function copyFrameworkFiles(results, filesCopied) {
       return filesCopied(error);
     }
     const includesRE = new RegExp(includes.map(i => `\/${i}(\/|$)`).join('|'));
-    const excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
+    const excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b(?!\.)|\/exports\b/);
     const pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
 
     fs.copy(FRAMEWORK_ROOT_DIR, EXPORT_DIR, {

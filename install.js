@@ -5,6 +5,7 @@ var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
 var prompt = require('prompt');
+var crypto = require('crypto');
 
 var auth = require('./lib/auth');
 var database = require('./lib/database');
@@ -60,59 +61,11 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         default: 'localhost'
       },
       {
-        name: 'dbHost',
-        type: 'string',
-        description: 'Database host',
-        default: 'localhost'
-      },
-      {
-        name: 'dbName',
-        type: 'string',
-        description: 'Master database name',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'adapt-tenant-master'
-      },
-      {
-        name: 'dbPort',
-        type: 'number',
-        description: 'Database server port',
-        pattern: installHelpers.inputHelpers.numberValidator,
-        default: 27017
-      },
-      {
-        name: 'dbUser',
-        type: 'string',
-        description: 'Database server user',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: ''
-      },
-      {
-        name: 'dbPass',
-        type: 'string',
-        description: 'Database server password',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: ''
-      },
-      {
-        name: 'dbAuthSource',
-        type: 'string',
-        description: 'Database server authentication database',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'admin'
-      },
-      {
         name: 'dataRoot',
         type: 'string',
         description: 'Data directory path',
         pattern: installHelpers.inputHelpers.alphanumValidator,
         default: 'data'
-      },
-      {
-        name: 'sessionSecret',
-        type: 'string',
-        description: 'Session secret (value used when saving session cookie data)',
-        pattern: /^.+$/,
-        default: 'your-session-secret'
       },
       {
         name: 'authoringToolRepository',
@@ -133,6 +86,68 @@ installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
         default: 'tags/' + latestFrameworkTag
       }
     ],
+    database: {
+      dbConfig: [
+        {
+          name: 'dbName',
+          type: 'string',
+          description: 'Master database name',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'adapt-tenant-master'
+        },
+        {
+          name: 'useConnectionUri',
+          type: 'string',
+          description: "Will you be using a full database connection URI? (all connection options in the URI) y/N",
+          before: installHelpers.inputHelpers.toBoolean,
+          default: 'N'
+        }
+      ],
+      configureUri: [
+        {
+          name: 'dbConnectionUri',
+          type: 'string',
+          description: 'Database connection URI',
+          default: ''
+        }
+      ],
+      configureStandard: [
+        {
+          name: 'dbHost',
+          type: 'string',
+          description: 'Database host',
+          default: 'localhost'
+        },
+        {
+          name: 'dbPort',
+          type: 'number',
+          description: 'Database server port',
+          pattern: installHelpers.inputHelpers.numberValidator,
+          default: 27017
+        },
+        {
+          name: 'dbUser',
+          type: 'string',
+          description: 'Database server user (only specify if using database authentication)',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: ''
+        },
+        {
+          name: 'dbPass',
+          type: 'string',
+          description: 'Database server password (only specify if using database authentication)',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: ''
+        },
+        {
+          name: 'dbAuthSource',
+          type: 'string',
+          description: 'Database server authentication database (only specify if using database authentication)',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'admin'
+        },
+      ]
+    },
     features: {
       ffmpeg: {
         name: 'useffmpeg',
@@ -273,6 +288,9 @@ function generatePromptOverrides() {
     var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
     configData.install = 'y';
   }
+
+  const sessionSecret = USE_CONFIG && configData.sessionSecret || crypto.randomBytes(64).toString('hex');
+  addConfig({ sessionSecret: sessionSecret });
   // NOTE config.json < cmd args
   return _.extend({}, configData, optimist.argv);
 }
@@ -292,6 +310,7 @@ function start() {
     }
     async.series([
       configureServer,
+      configureDatabase,
       configureFeatures,
       configureMasterTenant,
       createMasterTenant,
@@ -320,6 +339,20 @@ function configureServer(callback) {
       return handleError(error, 1, 'Failed to get latest framework version');
     }
     installHelpers.getInput(inputData.server, function(result) {
+      addConfig(result);
+      callback();
+    });
+  });
+}
+
+function configureDatabase(callback) {
+  installHelpers.getInput(inputData.database.dbConfig, function(result) {
+    addConfig(result);
+
+    var isStandard = !result.useConnectionUri || USE_CONFIG && configResults.useConnectionUri !== 'y';
+    var config = inputData.database[isStandard ? 'configureStandard' : 'configureUri'];
+
+    installHelpers.getInput(config, function(result) {
       addConfig(result);
       callback();
     });
@@ -527,6 +560,20 @@ function addConfig(newConfigItems) {
 
 function saveConfig(configItems, callback) {
   // add some default values as these aren't set
+  if (!IS_INTERACTIVE) {
+    for (var key in configItems) {
+      if (configItems.hasOwnProperty(key) === false) continue;
+      var value = configItems[key];
+      if (typeof value !== 'string') continue;
+      value = value.toLocaleLowerCase();
+      if (value === 'y') {
+        configItems[key] = true;
+      } else if (value === 'n') {
+        configItems[key] = false;
+      }
+    }
+  }
+
   var config = {
     outputPlugin: 'adapt',
     dbType: 'mongoose',
@@ -537,12 +584,18 @@ function saveConfig(configItems, callback) {
   _.each(configItems, function(value, key) {
     config[key] = value;
   });
-  fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
-    if(error) {
-      handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+
+  fs.ensureDir('conf', function(error) {
+    if (error) {
+      return handleError(`Failed to create configuration directory.\n${error}`, 1, 'Install Failed.');
     }
-    return callback();
-  });
+    fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
+      if(error) {
+        handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+      }
+      return callback();
+    });
+  })
 }
 
 function handleError(error, exitCode, exitMessage) {

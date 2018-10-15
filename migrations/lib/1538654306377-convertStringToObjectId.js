@@ -5,6 +5,7 @@ const helpers = require('./../../migrations/helpers/helper');
 const configuration = require('./../../lib/configuration');
 const mongoose = require('mongoose');
 const async = require('async');
+const path = require('path');
 
 exports.up = function up (done) {
   helpers.start(function() {
@@ -38,31 +39,37 @@ exports.up = function up (done) {
 };
 
 exports.down = function down(done) {
-  helpers.start(function() {
-    database.getDatabase(function(err, db) {
-      if (err) return done(err);
+  const src = path.join(__dirname,'..','..','plugins','content','courseasset','model.schema');
 
-      db.retrieve('courseasset', {}, {}, function(error, docs) {
-        debugger;
-        async.eachSeries(docs, function(doc, callback) {
-          doc._courseId = doc._courseId.toString();
-          doc._contentTypeId = doc._contentTypeId.toString();
-          doc._assetId = doc._assetId.toString();
-          doc._contentTypeParentId = doc._contentTypeParentId.toString();
+  helpers.replaceSchema('courseassetStringId', src, function(error) {
+    if (error) return done(error);
 
-          doc.markModified('_courseId');
-          doc.markModified('_contentTypeId');
-          doc.markModified('_assetId');
-          doc.markModified('_contentTypeParentId');
+    helpers.start(function() {
+      database.getDatabase(function(err, db) {
+        if (err) return done(err);
 
-          doc.save(error => {
-            if (error) return callback(error);
-            return callback(null);
+        db.retrieve('courseasset', {}, {}, function(error, docs) {
+          async.eachSeries(docs, function(doc, callback) {
+            doc._courseId = doc._courseId.toString();
+            doc._contentTypeId = doc._contentTypeId.toString();
+            doc._assetId = doc._assetId.toString();
+            doc._contentTypeParentId = doc._contentTypeParentId.toString();
+
+            doc.markModified('_courseId');
+            doc.markModified('_contentTypeId');
+            doc.markModified('_assetId');
+            doc.markModified('_contentTypeParentId');
+
+            doc.save(error => {
+              if (error) return callback(error);
+              return callback(null);
+            });
+          }, function(error) {
+            return done();
           });
-        }, function(error) {
-          return done();
         });
-      });
-    }, configuration.getConfig('dbName'));
+      }, configuration.getConfig('dbName'));
+    });
   });
+
 };

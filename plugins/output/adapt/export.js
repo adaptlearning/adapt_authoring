@@ -93,14 +93,12 @@ function writeCustomStyle(results, styleWritten) {
       self.writeCustomStyle(TENANT_ID, COURSE_ID, customLessDir, styleWritten);
     });
   });
-
 }
 
 // uses the metadata list to include only relevant plugin files
 function copyCustomPlugins(results, filesCopied) {
   const src = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.Source);
   const dest = path.join(EXPORT_DIR, Constants.Folders.Plugins);
-  debugger;
   _.each(metadata.pluginIncludes, function iterator(plugin) {
     const pluginDir = path.join(src, plugin.folder, plugin.name);
     fs.copy(pluginDir, path.join(dest, plugin.name), function(err) {

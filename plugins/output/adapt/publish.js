@@ -21,8 +21,8 @@ function publishCourse(courseId, mode, request, response, next) {
   var tenantId = user.tenant._id;
   var outputJson = {};
   var isRebuildRequired = false;
-  var themeName = '';
-  var menuName = Constants.Defaults.MenuName;
+  var themeName;
+  var menuName;
   var frameworkVersion;
 
   var resultObject = {};

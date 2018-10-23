@@ -17,6 +17,8 @@ var mime = require('mime');
 var installHelpers = require('../../../lib/installHelpers');
 
 function ImportSource(req, done) {
+  var dbInstance;
+
   var contentMap = {
     'contentobject': 'contentObjects',
     'article': 'articles',
@@ -27,9 +29,9 @@ function ImportSource(req, done) {
   var plugindata = {
     pluginTypes: [
       { type: 'component', folder: 'components' },
-      { type: 'extension', folder: 'extensions' },
-      { type: 'menu',      folder: 'menu'       },
-      { type: 'theme',     folder: 'theme'      }
+      { type: 'extension', folder: 'extensions', attribute: '_extensions' },
+      { type: 'menu',      folder: 'menu',       attribute: 'menuSettings' },
+      { type: 'theme',     folder: 'theme',      attribute: 'themeSettings' }
     ],
     pluginIncludes: [],
     theme: [],
@@ -37,12 +39,10 @@ function ImportSource(req, done) {
   };
   var metadata = {
     idMap: {},
-    componentMap: {},
-    extensionMap: {},
     assetNameMap: {}
   };
   var detachedElementsMap = Object.create(null);
-  var extensionLocations = {};
+  var pluginLocations = {};
   var enabledExtensions = {};
   var tenantId = app.usermanager.getCurrentUser().tenant._id;
   var unzipFolder = tenantId + '_unzipped';
@@ -59,44 +59,56 @@ function ImportSource(req, done) {
   var PATH_REXEX = new RegExp(/(course\/)((\w)*\/)*(\w)*.[a-zA-Z0-9]+/gi);
   var assetFolders = [];
 
-  form.parse(req, function (error, fields, files) {
+  var files;
+  var formTags;
+  var cleanFormAssetDirs;
 
-    if (error) return done(error);
-
-    var formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
-    var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
-    var cleanFormAssetDirs = formAssetDirs.map(function(item) {
-      return item.trim();
-    });
-
-
-    /**
-    * Main process
-    * All functions delgated below for readability
-    */
-    async.series([
-      function asyncUnzip(cb) {
-        helpers.unzip(files.file.path, COURSE_ROOT_FOLDER, function(error) {
-          if(error) return cb(error)
-          cleanupDirs.push(files.file.path, COURSE_ROOT_FOLDER);
-          cb();
-        });
-      },
-      async.apply(findLanguages),
-      async.apply(validateCoursePackage, cleanFormAssetDirs),
-      async.apply(installPlugins),
-      async.apply(addAssets, formTags),
-      async.apply(cacheMetadata),
-      async.apply(importContent, formTags)
-    ], function(importError, result) {
-      // cleanup should run regardless of import fail or success  
-      helpers.cleanUpImport(cleanupDirs, function(cleanUpError) {
-        const error = importError || cleanUpError;
-        done(error);
-      });
+  /**
+  * Main process
+  * All functions delegated below for readability
+  */
+  async.series([
+    async.apply(prepareImport, files),
+    findLanguages,
+    validateCoursePackage,
+    installPlugins,
+    addAssets,
+    cacheMetadata,
+    importContent
+  ], function(importError, result) {
+    // cleanup should run regardless of import fail or success
+    helpers.cleanUpImport(cleanupDirs, function(cleanUpError) {
+      const error = importError || cleanUpError;
+      done(error);
     });
   });
 
+  function prepareImport(files, cb) {
+    async.parallel([
+      function(cb2) {
+        database.getDatabase(function(error, db) {
+          if(error) return cb2(error);
+          dbInstance = db; // cache this for reuse
+          cb2();
+        });
+      },
+      function(cb2) {
+        // parse the form
+        form.parse(req, function (error, fields, files) {
+          if (error) return done(error);
+          var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
+          formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
+          cleanFormAssetDirs = formAssetDirs.map(item => item.trim());
+          // upzip the uploaded file
+          helpers.unzip(files.file.path, COURSE_ROOT_FOLDER, function(error) {
+            if(error) return cb2(error);
+            cleanupDirs.push(files.file.path, COURSE_ROOT_FOLDER);
+            cb2();
+          });
+        });
+      }
+    ], cb);
+  }
 
   function findLanguages(cb) {
     var courseLangs = [];
@@ -119,7 +131,7 @@ function ImportSource(req, done) {
   /**
   * Checks course for any potential incompatibilities
   */
-  function validateCoursePackage(cleanFormAssetDirs, done) {
+  function validateCoursePackage(done) {
     // - Check framework version compatibility
     // - check we have all relevant json files using contentMap
     async.auto({
@@ -176,8 +188,7 @@ function ImportSource(req, done) {
   * title, description and tag fields, these will be used to create a new asset if an asset
   * with matching filename is not found in the database.
   */
-  function addAssets(assetTags, done) {
-
+  function addAssets(done) {
     async.eachSeries(assetFolders, function iterator(assetDir, doneAssetFolder) {
       var assetDirPath = path.join(COURSE_JSON_PATH, COURSE_LANG, assetDir);
 
@@ -267,7 +278,7 @@ function ImportSource(req, done) {
       if(err) {
         return done(err);
       }
-      // check that all plugins support the installed framework versions 
+      // check that all plugins support the installed framework versions
       installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion) {
         async.reduce(plugindata.pluginIncludes, [], function checkFwVersion(memo, pluginData, checkFwVersionCb) {
           fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
@@ -295,44 +306,40 @@ function ImportSource(req, done) {
   * Stores plugin metadata for use later
   */
   function cacheMetadata(done) {
-    database.getDatabase(function(error, db) {
-      if(error) return done(error);
-      async.parallel([
-        function storeComponentypes(cb) {
-          db.retrieve('componenttype', {}, { jsonOnly: true }, function(error, results) {
-            if(error) return cb(error);
-            async.each(results, function(component, cb2) {
-              metadata.componentMap[component.component] = component._id;
-              cb2();
-            }, cb);
-          });
-        },
-        function storeExtensiontypes(cb) {
-          db.retrieve('extensiontype', {}, { jsonOnly: true }, function(error, results) {
-            if(error) return cb(error);
-            async.each(results, function(extension, cb2) {
-              metadata.extensionMap[extension.extension] = {
-                "targetAttribute": extension.targetAttribute,
-                "version": extension.version,
-                "name": extension.name,
-                "_id": extension._id
-              };
+    async.each(plugindata.pluginTypes, storePlugintype, done);
+  }
 
-              if(extension.properties.pluginLocations) {
-                extensionLocations[extension.targetAttribute] = extension.properties.pluginLocations;
-              }
-              cb2();
-            }, cb);
-          });
-        },
-      ], done);
+  function storePlugintype(pluginTypeData, cb) {
+    const type = pluginTypeData.type;
+    dbInstance.retrieve(`${type}type`, {}, { jsonOnly: true }, function(error, results) {
+      if(error) {
+        return cb(error);
+      }
+      async.each(results, function(plugin, cb2) {
+        if(!metadata[`${type}Map`]) {
+          metadata[`${type}Map`] = {};
+        }
+        metadata[`${type}Map`][plugin[type]] = {
+          targetAttribute: plugin.targetAttribute,
+          version: plugin.version,
+          name: plugin.name,
+          _id: plugin._id
+        };
+        if(plugin.properties.pluginLocations) {
+          if(!pluginLocations[type]) {
+            pluginLocations[type] = {};
+          }
+          pluginLocations[type][plugin.targetAttribute] = plugin.properties.pluginLocations;
+        }
+        cb2();
+      }, cb);
     });
   }
 
   /**
   * Creates the course content
   */
-  function importContent(formTags, done) {
+  function importContent(done) {
     async.series([
       function createCourse(cb) {
         fs.readJson(path.join(COURSE_JSON_PATH, COURSE_LANG, 'course.json'), function(error, courseJson) {
@@ -469,7 +476,7 @@ function ImportSource(req, done) {
           data.createdBy = app.usermanager.getCurrentUser()._id;
           if(!_.isEmpty(courseId)) data._courseId = courseId;
           if(data._component) {
-            data._componentType = metadata.componentMap[data._component];
+            data._componentType = metadata.componentMap[data._component]._id;
           }
           if(data._parentId) {
             if(metadata.idMap[data._parentId]) {
@@ -480,19 +487,30 @@ function ImportSource(req, done) {
               return cb();
             }
           }
+          // define the custom properties and and pluginLocations
+          var genericPropKeys = Object.keys(dbInstance.getModel(type).schema.paths);
+          var customProps = _.pick(data, _.difference(Object.keys(data), genericPropKeys));
 
-          // define the custom properties and _extensions
-          database.getDatabase(function(error, db) {
-            if(error) return cb(error);
-            var genericPropKeys = Object.keys(db.getModel(type).schema.paths);
-            var customProps = _.pick(data, _.difference(Object.keys(data), genericPropKeys));
-            var extensions = _.pick(customProps, _.intersection(Object.keys(customProps),Object.keys(extensionLocations)));
-            customProps = _.omit(customProps, Object.keys(extensions));
-            data.properties = customProps;
-            data._extensions = extensions;
-            data = _.omit(data, Object.keys(customProps));
-            cb();
+          if(_.isEmpty(customProps)) {
+            return cb();
+          }
+          plugindata.pluginTypes.forEach(function(typeData) {
+            if(!pluginLocations[typeData.type]) return;
+
+            var pluginKeys = _.intersection(Object.keys(customProps), Object.keys(pluginLocations[typeData.type]));
+
+            if(pluginKeys.length === 0) return;
+
+            var locationData = _.pick(customProps, pluginKeys);
+
+            data[typeData.attribute] = locationData;
+            data = _.omit(data, pluginKeys);
+            customProps = _.omit(customProps, pluginKeys);
           });
+          // everything else is a customer property
+          data.properties = customProps;
+          data = _.omit(data, Object.keys(customProps));
+          cb();
         },
         function updateAssetData(cb) {
           var newAssetPath = Constants.Folders.Course + '/' + Constants.Folders.Assets; // always use '/' for paths in content

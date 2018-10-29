@@ -30,30 +30,13 @@ define(function(require){
     },
 
     validate: function() {
-      var inputField = this.$('form input');
-      var isValid = true;
-      var message = '';
-
-      if (_.isEmpty(inputField.val())) {
-        isValid = false;
-        message = Origin.l10n.t('app.required');
-      }
-
-      if (inputField[0].files[0] && inputField[0].files[0].size > Origin.constants.maxFileUploadSize) {
-        isValid = false;
-        message = Origin.l10n.t('app.assetfilesizeexceeded', {
-          uploadLimit: Origin.constants.humanMaxFileUploadSize
-        });
-      }
-
-      if (isValid) {
-        this.$('.field-error').addClass('display-none');
-        return true;
-      } else {
-        this.$('.field-error').text(message).removeClass('display-none');
+      if(_.isEmpty(this.$('form input').val())) {
+        this.$('.field-error').removeClass('display-none');
         Origin.trigger('sidebar:resetButtons');
         return false;
       }
+      this.$('.field-error').addClass('display-none');
+      return true;
     },
 
     onUploadSuccess: function(data) {

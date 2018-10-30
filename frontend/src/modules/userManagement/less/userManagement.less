@@ -1,13 +1,46 @@
-@import 'sharedStyles';
-@import 'colours';
+// @import 'sharedStyles';
+// @import 'colours';
 
 @user-hover-bg-colour: #f3faff;
 @user-hover-borderl-colour: #8ea3af;
 
 .userManagement {
     .container {
+      .search {
+        padding: 10px;
+        display: flex;
+
+        input[type="text"] {
+          width: 85%;
+          box-sizing: border-box;
+        }
+
+        button.reset-filter {
+          flex-grow: 1;
+          margin-left: 10px;
+        }
+      }
+
         .form-container-style;
         max-width: inherit;
+      .tb-heading {
+        > div {
+          display: flex;
+          align-items: center;
+
+          > h4 {
+            flex-grow: 1;
+          }
+        }
+
+        .sort,
+        .filter {
+          color: fade(@sidebar-color, 50%);
+          &.active {
+            color: @sidebar-color;
+          }
+        }
+      }
     }
 
     .view-buttons {

@@ -6,6 +6,7 @@ define(function(require){
   var UserCollection = require('../collections/userCollection');
   var UserModel = require('../models/userModel');
   var UserView = require('../views/userView');
+  var FilterView = require('./filterView');
 
   var UserManagementView = OriginView.extend({
     className: 'userManagement',
@@ -20,6 +21,7 @@ define(function(require){
       'click button.refresh-all': 'refreshUserViews',
       'click button[data-sort]': 'sortCollection',
       'click .reset-filter': 'resetFilter',
+      'click .filter': 'onClickFilter',
       'input .search-email': 'onSearchInput'
     },
 
@@ -36,7 +38,10 @@ define(function(require){
     },
 
     initData: function() {
-      this.listenTo(this.users, 'sync', this.onDataFetched);
+      this.listenTo(this.users, {
+        'sync': this.onDataFetched,
+        'filterUpdate': this.onFilterUpdate
+      });
       this.users.fetch();
     },
 
@@ -100,20 +105,28 @@ define(function(require){
 
     onSearchInput: function(event) {
       var searchTerm = $(event.currentTarget).val();
-      this.users.mailSearchTerm = searchTerm;
+      this.users.mailSearchTerm = searchTerm.toLowerCase();
       this.users.sortCollection();
     },
 
     resetFilter: function() {
       this.$('.sort').removeClass('active fa-sort-up').addClass('fa-sort-down');
+      this.$('.filter').removeClass('active');
       this.users.sortBy = 'email';
       this.users.direction = 1;
       this.users.mailSearchTerm = false;
+      this.users.filterValues = [];
+
       this.$('.search-email').val('');
       this.$('.sort').removeClass('active fa-sort-up').addClass('fa-sort-down');
       this.$('button[data-sort="email"]').addClass('active');
+      this.closeFilterView();
 
       this.users.sortCollection();
+    },
+
+    onFilterUpdate: function(filterBy, filterValues) {
+      this.$('button[data-filter="'+filterBy+'"]').toggleClass('active', filterValues.length);
     },
 
     refreshUserViews: function(event) {
@@ -122,8 +135,40 @@ define(function(require){
       this.resetFilter();
     },
 
+    onClickFilter: function (event) {
+      var $elm = $(event.currentTarget);
+      var offset = $elm.offset();
+      var type = $elm.data('filter');
+
+      this.closeFilterView();
+
+      this.filterView = new FilterView({
+        type: type,
+        groups: this.users.getGroups(type),
+        selected: this.users.filterValues,
+        users: this.users
+      });
+
+      var $header = this.$('.tb-heading');
+      var headerOffset = $header.offset();
+      var width = $elm.closest('div').outerWidth();
+
+      this.filterView.$el.css({
+        top: headerOffset.top + $header.outerHeight() - 1,
+        left: offset.left - width + $elm.outerWidth(),
+        width: width
+      });
+      document.body.appendChild(this.filterView.el);
+    },
+
     onDataFetched: function(models, reponse, options) {
       this.render();
+    },
+
+    closeFilterView: function() {
+      if (this.filterView) {
+        this.filterView.remove();
+      }
     }
 
   }, {

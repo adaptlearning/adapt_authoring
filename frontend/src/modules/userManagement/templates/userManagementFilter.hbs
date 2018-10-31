@@ -1,0 +1,12 @@
+<button class="close"><i class="fa fa-close"></i></button>
+<div class="filter-inner">
+  <form>
+  {{#each items}}
+  <label>
+    <input type="checkbox" name="group" {{#if selected}} checked {{/if}} value="{{name}}">
+    <i class="fa fa-toggle-off"></i>
+    <span>{{name}}</span>
+  </label>
+  {{/each}}
+</form>
+</div>

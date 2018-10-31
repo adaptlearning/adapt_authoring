@@ -4,6 +4,38 @@
 @user-hover-bg-colour: #f3faff;
 @user-hover-borderl-colour: #8ea3af;
 
+.user-management-filter {
+  position: absolute;
+  max-height: 80vh;
+  overflow-y: auto;
+  background-color: #fbfbfb;
+  border: solid 1px #efefef;
+
+  .close {
+    display: block;
+    margin-left: auto;
+  }
+
+  .filter-inner {
+    form {
+      input {
+        display: none;
+        &:checked + .fa-toggle-off:before {
+          content: "\f205";
+          color: @button-secondary-color;
+        }
+      }
+      span {
+        margin-left: 10px;
+      }
+      label {
+        padding: 10px 5px;
+        border-top: solid 1px #efefef;
+      }
+    }
+  }
+}
+
 .userManagement {
     .container {
       .search {

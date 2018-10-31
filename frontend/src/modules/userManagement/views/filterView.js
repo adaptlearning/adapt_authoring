@@ -7,7 +7,8 @@ define([
     className: 'user-management-filter',
 
     events: {
-      'click .close': 'remove',
+      'click .back-drop': 'remove',
+      'click form': 'onFormClick',
       'change form': 'onFormChange'
     },
 
@@ -42,6 +43,10 @@ define([
         return elm.value;
       }).get();
       this.users.trigger('filterUpdate', this.type, selected);
+    },
+
+    onFormClick: function(event) {
+      event.stopPropagation();
     }
 
   });

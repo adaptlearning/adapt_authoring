@@ -153,7 +153,7 @@ define(function(require){
       var headerOffset = $header.offset();
       var width = $elm.closest('div').outerWidth();
 
-      this.filterView.$el.css({
+      this.filterView.$('.filter-inner').css({
         top: headerOffset.top + $header.outerHeight() - 1,
         left: offset.left - width + $elm.outerWidth(),
         width: width

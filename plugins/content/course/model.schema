@@ -584,7 +584,7 @@
       "editorOnly": true,
       "inputType": "Checkbox",
       "validators": [],
-      "title": "Share with all other users",
+      "title": "Share with all users",
       "help": "Controls whether or not your colleagues will be able to see this course from the 'Shared courses' option"
     },
     "_shareWithUsers": {

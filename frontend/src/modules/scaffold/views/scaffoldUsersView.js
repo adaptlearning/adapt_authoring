@@ -10,22 +10,24 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     render: function() {
-      this.setValue(this.value);
-      _.defer(this.postRender.bind(this));
+      this.fetchUsers(this.initSelectize);
       return this;
     },
 
     renderItem: function(item, escape) {
       var name = item.firstName && item.lastName ? escape(item.firstName  + ' ' +  item.lastName) : '';
       var email = escape(item.email);
-      if(name) {
-        return '<div><span class="name">' + name + '</span> <span class="email">&lt;' + email + '&gt;</span></div>'
-      }
-      return '<div><span class="name">' + email + '</span></div>';
-    },
 
-    postRender: function() {
-      this.fetchUsers(this.initSelectize);
+      var $div = $('<div class="option">')
+        .append('<span class="name">' + (name || email) + '</span>');
+
+      if(name) {
+        $div.append('<span class="email">&lt;' + email + '&gt;</span>');
+      }
+      if(item.disabled) {
+        $div.attr('data-disabled', true);
+      }
+      return $div
     },
 
     fetchUsers: function(callback) {
@@ -37,21 +39,40 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     initSelectize: function(users) {
+      this.setValue(this.value);
+
+      var meId = Origin.sessionModel.get('id');
+
+      users.forEach(function(user) {
+        if(user._id === meId) user.disabled = true;
+      });
+
       this.$el.selectize({
         labelField: 'email',
         valueField: '_id',
-        options: users.filter(function(user) { // filter out me
-          return user._id !== Origin.sessionModel.get('id');
-        }),
+        options: users,
         searchField: [ 'email', 'firstName', 'lastName' ],
         render: {
           item: this.renderItem,
           option: this.renderItem
+        },
+        onItemRemove: function(value, $item) {
+          if(value === Origin.sessionModel.get('id')) {
+            Origin.Notify.alert({
+              type: 'warning',
+              text: Origin.l10n.t('app.stopsharingwithyourself')
+            });
+            this.addItem(value, true);
+            this.close();
+          }
         }
       });
     },
 
     getValue: function() {
+      if(this.$el.val() === "") {
+        return [];
+      }
       return this.$el.val().split(',');
     },
 

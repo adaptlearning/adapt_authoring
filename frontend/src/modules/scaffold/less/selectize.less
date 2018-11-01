@@ -1,0 +1,25 @@
+.field .field-editor .selectize-control {
+  .selectize-input {
+    box-sizing: inherit;
+    width: 90%;
+    padding: 11px 10px;
+
+    .option, .option.active {
+      background-color: @secondary-color;
+      background-image: none;
+      border: none;
+      border-radius: 0;
+      text-shadow: none;
+      padding: 4px 7px;
+    }
+  }
+  .selectize-dropdown {
+    .option {
+      cursor: pointer;
+      &[data-disabled="true"] { cursor: not-allowed; }
+    }
+    .create {
+      .selectize-dropdown .option;
+    }
+  }
+}

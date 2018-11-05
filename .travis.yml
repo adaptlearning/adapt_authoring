@@ -29,8 +29,6 @@ services:
 before_install:
   - git --version
   - mongod --version
-  - npm install -g adapt-cli
-  - adapt --version
   - npm install -g grunt-cli
 
 install:

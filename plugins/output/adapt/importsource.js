@@ -497,7 +497,7 @@ function ImportSource(req, done) {
       var genericPropKeys = Object.keys(dbInstance.getModel(type).schema.paths);
       var customProps = _.pick(data, _.difference(Object.keys(data), genericPropKeys));
 
-      if(_.isEmpty(customProps)) resolve(data);
+      if(_.isEmpty(customProps)) return resolve(data);
 
       plugindata.pluginTypes.forEach(function(typeData) {
         if(!pluginLocations[typeData.type]) return;

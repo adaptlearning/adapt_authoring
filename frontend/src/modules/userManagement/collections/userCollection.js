@@ -10,8 +10,14 @@ define(function(require) {
     sortBy: 'email',
     direction: 1,
     mailSearchTerm: false,
-    filterBy: false,
-    filterValues: [],
+
+    filterGroups: {},
+
+    lastAccess: null,
+
+    initialize: function() {
+      this.listenTo(this, 'sync', this.onSync);
+    },
 
     comparator: function(ma, mb) {
       var a = ma.get(this.sortBy);
@@ -39,13 +45,8 @@ define(function(require) {
 
     url: 'api/user',
 
-    initialize: function() {
-      this.listenTo(this, 'filterUpdate', this.onFilterUpdate);
-    },
-
-    onFilterUpdate: function(filterBy, filterValues) {
-      this.filterBy = filterBy;
-      this.filterValues = filterValues;
+    updateFilter: function(filterMap) {
+      this.filterGroups = filterMap;
       this.sortCollection();
     },
 
@@ -57,33 +58,56 @@ define(function(require) {
     },
 
     filter: function() {
-      if (!this.filterBy || !this.filterValues.length) return;
+      this.models.forEach(function(model) {
+        this.filterFailedLoginCount(model);
+        this.filterTenants(model);
+        this.filterRoleNames(model);
+        this.filterLastAccess(model);
+      }, this);
+    },
 
-      switch (this.filterBy) {
-        case 'roleNames':
-          this.models.forEach(function(model) {
-            if (this.filterValues.indexOf(model.get('roleNames')[0]) < 0) {
-              model.set('_isHidden', true);
-            }
-          }, this);
-          break;
-
-        case 'tenantName':
-          this.models.forEach(function(model) {
-            if (this.filterValues.indexOf(model.get('tenantName')) < 0) {
-              model.set('_isHidden', true);
-            }
-          }, this);
-          break;
-
-        case 'failedLoginCount':
-          this.models.forEach(function(model) {
-            if (this.filterValues.indexOf(model.get('failedLoginCount').toString()) < 0) {
-              model.set('_isHidden', true);
-            }
-          }, this);
-          break;
+    filterFailedLoginCount: function(model) {
+      if (this.filterGroups.failedLoginCount
+        && this.filterGroups.failedLoginCount.indexOf(model.get('failedLoginCount').toString()) < 0) {
+        model.set('_isHidden', true);
       }
+    },
+
+    filterTenants: function() {
+      if (this.filterGroups.tenantName
+        && this.filterGroups.tenantName.indexOf(model.get('tenantName')) < 0) {
+        model.set('_isHidden', true);
+      }
+    },
+
+    filterRoleNames: function(model) {
+      if (this.filterGroups.roleNames
+        && this.filterGroups.roleNames.indexOf(model.get('roleNames')[0]) < 0) {
+        model.set('_isHidden', true);
+      }
+    },
+
+    filterLastAccess: function(model) {
+      var lastAccess = model.get('lastAccess');
+      if (this.filterGroups.lastAccess && this.filterGroups.lastAccess[0] === 'never') {
+        if (lastAccess) {
+          model.set('_isHidden', true);
+        }
+        return;
+      }
+      if (this.filterGroups.startDate && this.filterGroups.endDate) {
+        if (!lastAccess) return model.set('_isHidden', true);
+        var lastAccessDate = new Date(lastAccess);
+        if (lastAccessDate < this.filterGroups.startDate || lastAccessDate > this.filterGroups.endDate) {
+          model.set('_isHidden', true);
+        }
+      }
+    },
+
+    onSync: function() {
+      ['roleNames','tenantName','failedLoginCount'].forEach(function(key) {
+        this.filterGroups[key] = this.getGroups(key);
+      }, this);
     },
 
     resetHidden: function() {

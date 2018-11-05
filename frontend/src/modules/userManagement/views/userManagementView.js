@@ -16,12 +16,13 @@ define(function(require){
     users: new UserCollection(),
     views: [],
     selectedView: null,
+    showFilterScreen: false,
 
     events: {
       'click button.refresh-all': 'refreshUserViews',
-      'click button[data-sort]': 'sortCollection',
+      'click button[data-sort]': 'onSortClick',
       'click .reset-filter': 'resetFilter',
-      'click .filter': 'onClickFilter',
+      'click .toggle-filter': 'toggleFilter',
       'input .search-email': 'onSearchInput'
     },
 
@@ -81,9 +82,13 @@ define(function(require){
     postRender: function() {
       this.setViewToReady();
       this.$('.users').fadeIn(300);
+      this.filterView = new FilterView({
+        collection: this.users
+      });
+      this.$('.search').after(this.filterView.el);
     },
 
-    sortCollection: function(event) {
+    onSortClick: function(event) {
       var $elm = $(event.currentTarget);
       var sortBy = $elm.data('sort');
       var sortAscending = $elm.hasClass('fa-sort-down');
@@ -111,64 +116,35 @@ define(function(require){
 
     resetFilter: function() {
       this.$('.sort').removeClass('active fa-sort-up').addClass('fa-sort-down');
-      this.$('.filter').removeClass('active');
       this.users.sortBy = 'email';
       this.users.direction = 1;
-      this.users.mailSearchTerm = false;
-      this.users.filterValues = [];
 
       this.$('.search-email').val('');
-      this.$('.sort').removeClass('active fa-sort-up').addClass('fa-sort-down');
+      this.users.mailSearchTerm = false;
       this.$('button[data-sort="email"]').addClass('active');
-      this.closeFilterView();
-
+      this.filterView.reset();
       this.users.sortCollection();
     },
 
-    onFilterUpdate: function(filterBy, filterValues) {
-      this.$('button[data-filter="'+filterBy+'"]').toggleClass('active', filterValues.length);
+    toggleFilter: function (event) {
+      var slideDir = this.showFilterScreen ? 'slideUp' : 'slideDown';
+      var buttonText = this.showFilterScreen ?
+        Origin.l10n.t('app.filterShow') : Origin.l10n.t('app.filterHide');
+      $(event.currentTarget).text(buttonText);
+      this.$('.user-management-filter').velocity(slideDir, {duration: 400});
+      this.showFilterScreen = !this.showFilterScreen;
     },
 
     refreshUserViews: function(event) {
       event && event.preventDefault();
       this.users.fetch();
-      this.resetFilter();
-    },
-
-    onClickFilter: function (event) {
-      var $elm = $(event.currentTarget);
-      var offset = $elm.offset();
-      var type = $elm.data('filter');
-
-      this.closeFilterView();
-
-      this.filterView = new FilterView({
-        type: type,
-        groups: this.users.getGroups(type),
-        selected: this.users.filterValues,
-        users: this.users
-      });
-
-      var $header = this.$('.tb-heading');
-      var headerOffset = $header.offset();
-      var width = $elm.closest('div').outerWidth();
-
-      this.filterView.$('.filter-inner').css({
-        top: headerOffset.top + $header.outerHeight() - 1,
-        left: offset.left - width + $elm.outerWidth(),
-        width: width
-      });
-      document.body.appendChild(this.filterView.el);
     },
 
     onDataFetched: function(models, reponse, options) {
-      this.render();
-    },
-
-    closeFilterView: function() {
       if (this.filterView) {
         this.filterView.remove();
       }
+      this.render();
     }
 
   }, {

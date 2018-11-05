@@ -1,13 +1,39 @@
-<div class="back-drop">
-  <div class="filter-inner">
-    <form>
+<form>
+<div class="filter-inner">
+  {{#each groups}}
+  <div class="">
+    <h5 class="">{{name}}</h5>
     {{#each items}}
-    <label>
-      <input type="checkbox" name="group" {{#if selected}} checked {{/if}} value="{{name}}">
-      <i class="fa fa-toggle-off"></i>
-      <span>{{name}}</span>
-    </label>
+      <label>
+        <input type="checkbox" name="{{../key}}" value="{{this}}">
+        <i class="fa fa-toggle-off"></i>
+        <span>{{this}}</span>
+      </label><br>
     {{/each}}
-  </form>
+  </div>
+  {{/each}}
+
+  <div class="">
+    <h5 class="">{{t 'app.lastaccess'}}</h5>
+    <label>
+      <input type="checkbox" name="lastAccess" value="never">
+      <i class="fa fa-toggle-off"></i>
+      <span>{{t 'app.filterNeverLogedin'}}</span>
+    </label>
+    <p>{{t 'app.filterStartDate'}}:</p>
+    <div class="date-input-wrapper">
+      <input autocomplete="off" type="text" name="start-date">
+      <button data-resetdate="start" class="btn warning">
+        <i class="fa fa-remove"></i>
+      </button>
+    </div>
+    <p>{{t 'app.filterEndDate'}}:</p>
+    <div class="date-input-wrapper">
+      <input autocomplete="off" type="text" name="end-date">
+      <button data-resetdate="end" class="btn warning">
+        <i class="fa fa-remove"></i>
+      </button>
+    </div>
   </div>
 </div>
+</form>

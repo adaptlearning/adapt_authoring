@@ -337,6 +337,12 @@
   "app.reset": "Reset",
   "app.titlelock": "Link with title",
   "app.titleunlock": "Unlink from title",
-  "app.resetFilter": "Reset Filter",
-  "app.searchByMail": "Search by E-Mail"
+  "app.filterReset": "Reset Filter",
+  "app.filterShow": "Show Filter",
+  "app.filterHide": "Hide Filter",
+  "app.searchByMail": "Search by E-Mail",
+  "app.filterNeverLogedin": "Never",
+  "app.filterStartDate": "Start Date",
+  "app.filterEndDate": "End Date"
+
 }

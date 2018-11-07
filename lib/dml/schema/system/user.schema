@@ -33,10 +33,6 @@
       "type": "array",
       "items": { "type": "objectid", "ref":"role" }
     },
-    "invalidatePermissionCache" : {
-      "type": "boolean",
-      "protect": "true"
-    },
     "firstAccess": {
       "type": "date",
       "required": false

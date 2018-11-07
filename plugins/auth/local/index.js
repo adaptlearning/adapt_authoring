@@ -153,13 +153,8 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
 };
 
 LocalAuth.prototype.disavow = function (req, res, next) {
-  permissions.invalidateUserPermissions(function(error) {
-    if(error) {
-      return next(error);
-    }
-    req.logout();
-    return res.status(200).end();
-  });
+  req.logout();
+  res.status(200).end();
 };
 
 LocalAuth.prototype.internalRegisterUser = function(retypePasswordRequired, user, cb) {

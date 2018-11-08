@@ -577,7 +577,7 @@ function ImportSource(req, done) {
             logger.log('warn', 'Failed to import ' + type + ' ' + (originalData._id || '') + ' ' + error);
             return done();
           } // Create a courseAssets record if needed
-          createCourseAssets(type, record, () => done(null, record));
+          createCourseAssets(type, record, error => done(error, record));
         });
       });
     });

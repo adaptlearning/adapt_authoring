@@ -31,7 +31,7 @@ function publishCourse(courseId, mode, request, response, next) {
   var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
   var SRC_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source);
   var COURSES_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses);
-  var COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId, courseId);
+  var COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId.toString(), courseId);
   var BUILD_FOLDER = path.join(COURSE_FOLDER, Constants.Folders.Build);
 
   var customPluginName = user._id;
@@ -50,7 +50,7 @@ function publishCourse(courseId, mode, request, response, next) {
     },
     //
     function(callback) {
-      var temporaryThemeFolder = path.join(SRC_FOLDER, Constants.Folders.Theme, customPluginName);
+      var temporaryThemeFolder = path.join(SRC_FOLDER, Constants.Folders.Theme, customPluginName.toString());
       self.applyTheme(tenantId, courseId, outputJson, temporaryThemeFolder, function(err, appliedThemeName) {
         if (err) {
           return callback(err);
@@ -81,7 +81,7 @@ function publishCourse(courseId, mode, request, response, next) {
       });
     },
     function(callback) {
-      var temporaryThemeFolder = path.join(SRC_FOLDER, Constants.Folders.Theme, customPluginName);
+      var temporaryThemeFolder = path.join(SRC_FOLDER, Constants.Folders.Theme, customPluginName.toString());
       self.writeCustomStyle(tenantId, courseId, temporaryThemeFolder, function(err) {
         if (err) {
           return callback(err);
@@ -90,7 +90,7 @@ function publishCourse(courseId, mode, request, response, next) {
       });
     },
     function(callback) {
-      var temporaryMenuFolder = path.join(SRC_FOLDER, Constants.Folders.Menu, customPluginName);
+      var temporaryMenuFolder = path.join(SRC_FOLDER, Constants.Folders.Menu, customPluginName.toString());
       self.applyMenu(tenantId, courseId, outputJson, temporaryMenuFolder, function(err, appliedMenuName) {
         if (err) {
           return callback(err);

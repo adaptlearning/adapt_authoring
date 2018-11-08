@@ -44,7 +44,7 @@ function ImportSource(req, done) {
   var detachedElementsMap = Object.create(null);
   var extensionLocations = {};
   var enabledExtensions = {};
-  var tenantId = app.usermanager.getCurrentUser().tenant._id;
+  var tenantId = app.usermanager.getCurrentUser().tenant._id.toString();
   var unzipFolder = tenantId + '_unzipped';
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, unzipFolder);
   var COURSE_LANG;
@@ -89,7 +89,7 @@ function ImportSource(req, done) {
       async.apply(cacheMetadata),
       async.apply(importContent, formTags)
     ], function(importError, result) {
-      // cleanup should run regardless of import fail or success  
+      // cleanup should run regardless of import fail or success
       helpers.cleanUpImport(cleanupDirs, function(cleanUpError) {
         const error = importError || cleanUpError;
         done(error);
@@ -267,7 +267,7 @@ function ImportSource(req, done) {
       if(err) {
         return done(err);
       }
-      // check that all plugins support the installed framework versions 
+      // check that all plugins support the installed framework versions
       installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion) {
         async.reduce(plugindata.pluginIncludes, [], function checkFwVersion(memo, pluginData, checkFwVersionCb) {
           fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
@@ -535,7 +535,7 @@ function ImportSource(req, done) {
       if(error) return done(error);
 
       if (detachedElementsMap[originalData._id]) {
-        // do not import detached elements 
+        // do not import detached elements
         return done();
       }
 

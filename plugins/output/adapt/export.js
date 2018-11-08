@@ -22,10 +22,10 @@ function exportCourse(pCourseId, request, response, next) {
   self = this;
   const currentUser = usermanager.getCurrentUser();
 
-  TENANT_ID = currentUser.tenant._id;
+  TENANT_ID = currentUser.tenant._id.toString();
   COURSE_ID = pCourseId;
   COURSE_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.AllCourses, TENANT_ID, COURSE_ID);
-  EXPORT_DIR = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Exports, currentUser._id);
+  EXPORT_DIR = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Exports, currentUser._id.toString());
 
   async.auto({
     ensureExportDir: ensureExportDir,
@@ -164,7 +164,6 @@ function zipExport(next, error, results) {
 
 // remove the EXPORT_DIR, if there is one
 function cleanUpExport(next, exportError) {
-  debugger;
   fs.remove(EXPORT_DIR, function(removeError) {
     const error = exportError || removeError;
     if(error) logger.log('error', error);

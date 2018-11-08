@@ -30,7 +30,8 @@ var origin = require('../../../'),
     unzip = require('unzip'),
     exec = require('child_process').exec,
     IncomingForm = require('formidable').IncomingForm,
-    installHelpers = require('../../../lib/installHelpers');
+    installHelpers = require('../../../lib/installHelpers'),
+    bytes = require('bytes');
 
 // errors
 function PluginPackageError (msg) {
@@ -887,11 +888,13 @@ function handleUploadedPlugin (req, res, next) {
   var form = new IncomingForm();
   form.maxFileSize = configuration.getConfig('maxFileUploadSize');
   form.parse(req, function (error, fields, files) {
-    if (form.bytesExpected > form.maxFileSize) {
-      return next(new PluginPackageError(`File size limit exceeded: ${form.bytesExpected} of ${form.maxFileSize}.`));
-    }
-
-    if (error) {
+    if(error) {
+      if (form.bytesExpected > form.maxFileSize) {
+        return res.status(400).json(new PluginPackageError(app.polyglot.t('app.uploadsizeerror', {
+          max: bytes.format(form.maxFileSize),
+          size: bytes.format(form.bytesExpected)
+        })));
+      }
       return next(error);
     }
 

@@ -4,7 +4,7 @@ var async = require('async');
 var fs = require("fs-extra");
 var IncomingForm = require('formidable').IncomingForm;
 var path = require("path");
-
+var bytes = require('bytes');
 var configuration = require('../../../lib/configuration');
 var Constants = require('../../../lib/outputmanager').Constants;
 var crypto = require('crypto');
@@ -61,9 +61,15 @@ function ImportSource(req, done) {
   var assetFolders = [];
 
   form.parse(req, function (error, fields, files) {
-
-    if (error) return done(error);
-
+    if(error) {
+      if (form.bytesExpected > form.maxFileSize) {
+        return done(new Error(app.polyglot.t('app.uploadsizeerror', {
+          max: bytes.format(form.maxFileSize),
+          size: bytes.format(form.bytesExpected)
+        })));
+      }
+      return done(error);
+    }
     var formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
     var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
     var cleanFormAssetDirs = formAssetDirs.map(function(item) {
@@ -90,7 +96,7 @@ function ImportSource(req, done) {
       async.apply(cacheMetadata),
       async.apply(importContent, formTags)
     ], function(importError, result) {
-      // cleanup should run regardless of import fail or success  
+      // cleanup should run regardless of import fail or success
       helpers.cleanUpImport(cleanupDirs, function(cleanUpError) {
         const error = importError || cleanUpError;
         done(error);
@@ -268,7 +274,7 @@ function ImportSource(req, done) {
       if(err) {
         return done(err);
       }
-      // check that all plugins support the installed framework versions 
+      // check that all plugins support the installed framework versions
       installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion) {
         async.reduce(plugindata.pluginIncludes, [], function checkFwVersion(memo, pluginData, checkFwVersionCb) {
           fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
@@ -536,7 +542,7 @@ function ImportSource(req, done) {
       if(error) return done(error);
 
       if (detachedElementsMap[originalData._id]) {
-        // do not import detached elements 
+        // do not import detached elements
         return done();
       }
 

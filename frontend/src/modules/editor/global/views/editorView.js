@@ -45,19 +45,19 @@ define(function(require) {
         'editorView:copyID': this.copyIdToClipboard,
         'editorView:paste': this.pasteFromClipboard,
         'editorCommon:download': function(event) {
-          this.validateProject(event, this.downloadProject);
+          this.validateProject(this.downloadProject);
         },
-        'editorCommon:preview': function(event) {
+        'editorCommon:preview': function(isForceRebuild) {
           var previewWindow = window.open('/loading', 'preview');
-          this.validateProject(event, function(error) {
+          this.validateProject(function(error) {
             if(error) {
               return previewWindow.close();
             }
-            this.previewProject(previewWindow);
+            this.previewProject(previewWindow, isForceRebuild);
           });
         },
         'editorCommon:export': function(event) {
-          this.validateProject(event, this.exportProject);
+          this.validateProject(this.exportProject);
         }
       });
       this.render();
@@ -72,16 +72,16 @@ define(function(require) {
       this.renderCurrentEditorView();
     },
 
-    validateProject: function(e, next) {
+    validateProject: function(next) {
       helpers.validateCourseContent(this.currentCourse, _.bind(function(error) {
         if(error) {
           Origin.Notify.alert({ type: 'error', text: "There's something wrong with your course:<br/><br/>" + error });
         }
-        next.call(this, e, error);
+        next.call(this, error);
       }, this));
     },
 
-    previewProject: function(previewWindow) {
+    previewProject: function(previewWindow, forceRebuild) {
       if(Origin.editor.isPreviewPending) {
         return;
       }
@@ -90,7 +90,8 @@ define(function(require) {
       $('.editor-common-sidebar-preview-inner').addClass('display-none');
       $('.editor-common-sidebar-previewing').removeClass('display-none');
 
-      $.get('/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId, _.bind(function(jqXHR, textStatus, errorThrown) {
+      var url = '/api/output/'+Origin.constants.outputPlugin+'/preview/'+this.currentCourseId+'?force='+(forceRebuild === true);
+      $.get(url, _.bind(function(jqXHR, textStatus, errorThrown) {
         if(!jqXHR.success) {
           this.resetPreviewProgress();
           Origin.Notify.alert({

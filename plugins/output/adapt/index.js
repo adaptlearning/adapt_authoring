@@ -91,7 +91,8 @@ AdaptOutput.prototype.publish = function(courseId, mode, request, response, next
         if (err) {
           return callback(err);
         }
-        isRebuildRequired = exists;
+        const isForceRebuld = (request) ? request.query.force === 'true' : false;
+        isRebuildRequired = exists || isForceRebuld;
         callback(null);
       });
     },

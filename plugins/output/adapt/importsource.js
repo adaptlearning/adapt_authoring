@@ -218,7 +218,7 @@ function ImportSource(req, done) {
           var fileStat = fs.statSync(assetPath);
           var assetTitle = assetName;
           var assetDescription = assetName;
-          var tags = assetTags.slice();
+          var tags = formTags.slice();
 
           if (assetsJson[assetName]) {
             assetTitle = assetsJson[assetName].title;

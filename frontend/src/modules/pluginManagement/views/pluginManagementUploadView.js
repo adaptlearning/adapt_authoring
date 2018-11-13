@@ -54,19 +54,15 @@ define(function(require){
       Origin.trigger('sidebar:resetButtons');
       $('.loading').hide();
 
-      var message = '';
-      var hasText = data && data.responseText;
-      var hasError = data && data.responseJSON && data.responseJSON.error;
-
-      if(hasText) message = data.responseText;
-      else if(hasError) message = data.responseJSON.error;
+      var resError = data && data.responseJSON && data.responseJSON.message;
+      var resText = data && data.responseText;
+      var message = resError || resText || '';
 
       Origin.Notify.alert({
         type: 'error',
         title: Origin.l10n.t('app.uploadpluginerror'),
         text: Helpers.decodeHTML(message)
       });
-
       Origin.router.navigateTo('pluginManagement/upload');
     },
   }, {

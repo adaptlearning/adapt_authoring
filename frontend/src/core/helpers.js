@@ -328,6 +328,13 @@ define(function(require){
         }
         callback(returnArr);
       });
+    },
+
+    maxUploadSize: function(options) {
+      return new Handlebars.SafeString([
+        '<span class="max-fileupload-size">',
+        Origin.l10n.t('app.maxfileuploadsize', {size: Origin.constants.humanMaxFileUploadSize}),
+        '</span>'].join(''))
     }
   };
 

@@ -74,12 +74,8 @@ function ImportSource(req, done) {
     addAssets,
     cacheMetadata,
     importContent
-  ], function(importError, result) {
-    // cleanup should run regardless of import fail or success
-    helpers.cleanUpImport(cleanupDirs, function(cleanUpError) {
-      const error = importError || cleanUpError;
-      done(error);
-    });
+  ], (importErr, result) => { // cleanup should run regardless of import success
+    helpers.cleanUpImport(cleanupDirs, cleanUpErr => done(importErr || cleanUpErr));
   });
 
   function prepareImport(cb) {

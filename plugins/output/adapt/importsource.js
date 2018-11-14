@@ -67,7 +67,7 @@ function ImportSource(req, done) {
   * All functions delegated below for readability
   */
   async.series([
-    async.apply(prepareImport, files),
+    prepareImport,
     findLanguages,
     validateCoursePackage,
     installPlugins,
@@ -82,7 +82,7 @@ function ImportSource(req, done) {
     });
   });
 
-  function prepareImport(files, cb) {
+  function prepareImport(cb) {
     async.parallel([
       function(cb2) {
         database.getDatabase(function(error, db) {

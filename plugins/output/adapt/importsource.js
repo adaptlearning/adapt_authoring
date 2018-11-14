@@ -98,12 +98,12 @@ function ImportSource(req, done) {
         form.parse(req, function (error, fields, files) {
           if(error) {
             if (form.bytesExpected > form.maxFileSize) {
-              return done(new Error(app.polyglot.t('app.uploadsizeerror', {
+              return cb2(new Error(app.polyglot.t('app.uploadsizeerror', {
                 max: bytes.format(form.maxFileSize),
                 size: bytes.format(form.bytesExpected)
               })));
             }
-            return done(error);
+            return cb2(error);
           }
           var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
           formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];

@@ -364,7 +364,7 @@ function ImportSource(req, done) {
             case 'theme':
               // add the theme name to config JSON
               fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, themeJson) {
-                if(error) return cb(error);
+                if(error) return doneItemIterator(error);
                 plugindata.theme.push({ _theme: themeJson.name});
                 doneItemIterator();
               });
@@ -372,7 +372,7 @@ function ImportSource(req, done) {
             case 'menu':
               // add the menu name to config JSON
               fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, menuJson) {
-                if(error) return cb(error);
+                if(error) return doneItemIterator(error);
                 plugindata.menu.push({ _menu: menuJson.name});
                 doneItemIterator();
               });
@@ -634,6 +634,7 @@ function ImportSource(req, done) {
         app.assetmanager.retrieveAsset({ _id: assetId }, function gotAsset(error, results) {
           if (error) {
             logger.log('error', error);
+            return callback(error);
           }
           Object.assign(assetData, {
             _assetId: assetId,
@@ -642,12 +643,11 @@ function ImportSource(req, done) {
           });
           app.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
             if(error) {
-              return cb(error);
+              return callback(error);
             }
             plugin.create(assetData, function(error, assetRecord) {
-              if(error) {
-                logger.log('warn', `Failed to create courseasset ${type} ${assetRecord || ''} ${error}`);
-              }
+              if(error) logger.log('warn', `Failed to create courseasset ${type} ${assetRecord || ''} ${error}`);
+              callback(error);
             });
           });
         });

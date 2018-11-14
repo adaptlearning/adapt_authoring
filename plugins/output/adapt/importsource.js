@@ -1,20 +1,20 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-var _ = require('underscore');
-var async = require('async');
-var bytes = require('bytes');
-var configuration = require('../../../lib/configuration');
-var Constants = require('../../../lib/outputmanager').Constants;
-var crypto = require('crypto');
-var database = require("../../../lib/database");
-var filestorage = require('../../../lib/filestorage');
-var fs = require("fs-extra");
-var glob = require('glob');
-var helpers = require('./helpers');
-var IncomingForm = require('formidable').IncomingForm;
-var installHelpers = require('../../../lib/installHelpers');
-var logger = require("../../../lib/logger");
-var mime = require('mime');
-var path = require("path");
+const _ = require('underscore');
+const async = require('async');
+const bytes = require('bytes');
+const configuration = require('../../../lib/configuration');
+const Constants = require('../../../lib/outputmanager').Constants;
+const crypto = require('crypto');
+const database = require("../../../lib/database");
+const filestorage = require('../../../lib/filestorage');
+const fs = require("fs-extra");
+const glob = require('glob');
+const helpers = require('./helpers');
+const IncomingForm = require('formidable').IncomingForm;
+const installHelpers = require('../../../lib/installHelpers');
+const logger = require("../../../lib/logger");
+const mime = require('mime');
+const path = require("path");
 
 function ImportSource(req, done) {
   var dbInstance;

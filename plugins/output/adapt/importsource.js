@@ -1,31 +1,33 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 var _ = require('underscore');
 var async = require('async');
-var fs = require("fs-extra");
-var IncomingForm = require('formidable').IncomingForm;
-var path = require("path");
-
+var bytes = require('bytes');
 var configuration = require('../../../lib/configuration');
 var Constants = require('../../../lib/outputmanager').Constants;
 var crypto = require('crypto');
 var database = require("../../../lib/database");
 var filestorage = require('../../../lib/filestorage');
+var fs = require("fs-extra");
 var glob = require('glob');
 var helpers = require('./helpers');
+var IncomingForm = require('formidable').IncomingForm;
+var installHelpers = require('../../../lib/installHelpers');
 var logger = require("../../../lib/logger");
 var mime = require('mime');
-var installHelpers = require('../../../lib/installHelpers');
+var path = require("path");
 
 function ImportSource(req, done) {
   var dbInstance;
 
   var contentMap = {
-    'contentobject': 'contentObjects',
-    'article': 'articles',
-    'block': 'blocks',
-    'component': 'components'
+    course: 'course',
+    config: 'config',
+    contentobject: 'contentObjects',
+    article: 'articles',
+    block: 'blocks',
+    component: 'components'
   };
-
+  var cachedJson = {};
   var plugindata = {
     pluginTypes: [
       { type: 'component', folder: 'components' },
@@ -50,15 +52,12 @@ function ImportSource(req, done) {
   var COURSE_LANG;
   var COURSE_JSON_PATH = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course);
   var courseRoot = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course);
-
-  var form = new IncomingForm();
   var origCourseId;
   var courseId;
   var configId;
   var cleanupDirs = [];
   var PATH_REXEX = new RegExp(/(course\/)((\w)*\/)*(\w)*.[a-zA-Z0-9]+/gi);
   var assetFolders = [];
-
   var files;
   var formTags;
   var cleanFormAssetDirs;
@@ -93,9 +92,19 @@ function ImportSource(req, done) {
         });
       },
       function(cb2) {
+        const form = new IncomingForm();
+        form.maxFileSize = configuration.getConfig('maxFileUploadSize');
         // parse the form
         form.parse(req, function (error, fields, files) {
-          if (error) return done(error);
+          if(error) {
+            if (form.bytesExpected > form.maxFileSize) {
+              return done(new Error(app.polyglot.t('app.uploadsizeerror', {
+                max: bytes.format(form.maxFileSize),
+                size: bytes.format(form.bytesExpected)
+              })));
+            }
+            return done(error);
+          }
           var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
           formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
           cleanFormAssetDirs = formAssetDirs.map(item => item.trim());
@@ -553,7 +562,7 @@ function ImportSource(req, done) {
       if(error) return done(error);
 
       if (detachedElementsMap[originalData._id]) {
-        // do not import detached elements 
+        // do not import detached elements
         return done();
       }
 

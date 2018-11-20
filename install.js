@@ -414,7 +414,7 @@ function configureMasterTenant(callback) {
   }
   logger.level('console','error');
   // run the app
-  app.run({ skipVersionCheck: true });
+  app.run({ skipVersionCheck: true, skipDependencyCheck: true });
   app.on('serverStarted', function() {
 
     if(USE_CONFIG && prompt.override.masterTenantName) {

@@ -145,7 +145,7 @@ installHelpers.checkPrimaryDependencies(function(error) {
             type: 'string',
             description: 'Database server authentication database (only specify if using database authentication)',
             pattern: installHelpers.inputHelpers.alphanumValidator,
-            default: 'admin'
+            default: ''
           },
         ]
       },

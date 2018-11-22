@@ -48,7 +48,7 @@
     "bytes": "^3.0.0",
     "chalk": "^2.4.1",
     "compression": "^1.7.2",
-    "connect-mongodb-session": "2.0.3",
+    "connect-mongodb-session": "^2.0.5",
     "consolidate": "^0.15.1",
     "cookie-parser": "^1.4.3",
     "email-templates": "^4.0.0",

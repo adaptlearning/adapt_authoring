@@ -1,7 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(['require', 'underscore', 'backbone'], function(require, _, Backbone){
   var initialized = false;
-  var eventTaps = [];
   var $loading;
 
   var Origin = _.extend({}, Backbone.Events, {
@@ -38,23 +37,14 @@ define(['require', 'underscore', 'backbone'], function(require, _, Backbone){
       return initialized;
     },
     /**
-    * Override to allow for tapping and debug logging
+    * Override to allow for debug logging
     * TODO this is probably very inefficient, look into this
     */
     trigger: function(eventName, data) {
-      var args = arguments;
-      callTaps(eventName, function() {
-        if(Origin.debug){
-          console.log('Origin.trigger:', eventName, (data ? data : ''));
-        }
-        Backbone.Events.trigger.apply(Origin, args);
-      });
-    },
-    /**
-    * Register a function to tap into a certain event before it fires
-    */
-    tap: function(event, callback) {
-      eventTaps.push({ event: event, callback: callback });
+      if(Origin.debug) {
+        console.log('Origin.trigger:', eventName, (data ? data : ''));
+      }
+      Backbone.Events.trigger.apply(Origin, arguments);
     },
     /**
     * Tells views to clean themselves up
@@ -96,20 +86,6 @@ define(['require', 'underscore', 'backbone'], function(require, _, Backbone){
         .addClass('display-none')
         .removeClass('cover-top-bar');
     }, this), 300);
-  }
-
-  /**
-  * Calls all 'tapped' functions before continuing
-  */
-  function callTaps(event, callback) {
-    var taps = _.where(eventTaps, { event: event });
-    // recurse
-    function callTap() {
-      var tap = taps.pop();
-      if(!tap) return callback();
-      tap.callback.call(Origin, callTap);
-    }
-    callTap();
   }
 
   /**

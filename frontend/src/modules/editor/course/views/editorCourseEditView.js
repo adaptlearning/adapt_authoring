@@ -6,10 +6,10 @@ define(function(require) {
   var BlockModel = require('core/models/blockModel');
   var ComponentModel = require('core/models/componentModel');
   var ComponentTypeModel = require('core/models/componentTypeModel');
-  var EditorOriginView = require('../../global/views/editorOriginView');
+  var EditorContentView = require('../../global/views/editorContentView');
   var EditorCollection = require('../../global/collections/editorCollection');
 
-  var EditorCourseEditView = EditorOriginView.extend({
+  var EditorCourseEditView = EditorContentView.extend({
     className: "course-edit",
     tagName: "div",
 
@@ -30,7 +30,7 @@ define(function(require) {
       this.model.set('tags', _.pluck(this.model.get('tags'), '_id'));
 
       var changedAttributes = this.model.changedAttributes(this.originalAttributes);
-      // should also include anything that's new 
+      // should also include anything that's new
       var newAttributes = _.omit(this.model.attributes, Object.keys(this.originalAttributes));
       _.extend(changedAttributes, newAttributes);
 
@@ -138,8 +138,6 @@ define(function(require) {
         }, this)
       });
     }
-  }, {
-    template: 'editorCourseEdit'
   });
 
   return EditorCourseEditView;

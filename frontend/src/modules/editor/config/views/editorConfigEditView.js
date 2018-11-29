@@ -2,9 +2,9 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
-  var EditorOriginView = require('../../global/views/editorOriginView');
+  var EditorContentView = require('../../global/views/editorContentView');
 
-  var EditorConfigEditView = EditorOriginView.extend({
+  var EditorConfigEditView = EditorContentView.extend({
     className: "config-edit",
     tagName: "div",
 
@@ -25,8 +25,6 @@ define(function(require) {
         _courseId: this.model.get('_courseId')
       });
     }
-  }, {
-    template: 'editorConfigEdit'
   });
 
   return EditorConfigEditView;

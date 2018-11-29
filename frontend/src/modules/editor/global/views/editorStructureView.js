@@ -1,11 +1,11 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 /*
- * TODO I think this exists to add extra functionality to the menu/page structure pages
+ * This view encompasses 'page editor' and 'menu editor' pages
  */
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
-  var helpers = require('core/helpers');
+  var Helpers = require('core/helpers');
 
   var EditorOriginView = require('./editorOriginView');
   var EditorMenuView = require('../../contentObject/views/editorMenuView');
@@ -19,11 +19,8 @@ define(function(require) {
   var EditorView = EditorOriginView.extend({
     className: "editor-view",
     tagName: "div",
-
-    settings: {
-      autoRender: false
-    },
     exporting: false,
+    settings: { autoRender: false },
 
     events: {
       "click a.page-add-link": "addNewPage",
@@ -65,7 +62,7 @@ define(function(require) {
     },
 
     postRender: function() {
-
+      // NOTE this exists to prevent parent from executing
     },
 
     setupEditor: function() {
@@ -73,7 +70,7 @@ define(function(require) {
     },
 
     validateProject: function(next) {
-      helpers.validateCourseContent(this.currentCourse, _.bind(function(error) {
+      Helpers.validateCourseContent(this.currentCourse, _.bind(function(error) {
         if(error) {
           Origin.Notify.alert({ type: 'error', text: "There's something wrong with your course:<br/><br/>" + error });
         }
@@ -115,7 +112,6 @@ define(function(require) {
     },
 
     exportProject: function(error) {
-      // TODO - very similar to export in project/views/projectView.js, remove duplication
       // aleady processing, don't try again
       if(error || this.exporting) return;
 
@@ -127,33 +123,27 @@ define(function(require) {
       this.showExportAnimation(true, $btn);
       this.exporting = true;
 
-      var self = this;
-      $.ajax({
-         url: '/export/' + tenantId + '/' + courseId,
-         success: function(data, textStatus, jqXHR) {
-           self.showExportAnimation(false, $btn);
-           self.exporting = false;
+      $.ajax('/export/' + tenantId + '/' + courseId)
 
-           // get the zip
-           var form = document.createElement('form');
-           self.$el.append(form);
-           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
-           form.submit();
-         },
-         error: function(jqXHR, textStatus, errorThrown) {
-           var messageText = errorThrown;
-           if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) messageText += ':<br/>' + jqXHR.responseJSON.message;
+        .done(function() {
+          this.downloadFile('/export/' + tenantId + '/' + courseId + '/download.zip')
+        }.bind(this))
 
-           self.showExportAnimation(false, $btn);
-           self.exporting = false;
+        .fail(function() {
+          var messageText = errorThrown;
+          if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) messageText += ':<br/>' + jqXHR.responseJSON.message;
 
-           Origin.Notify.alert({
-             type: 'error',
-             title: Origin.l10n.t('app.exporterrortitle'),
-             text: messageText
-           });
-         }
-      });
+          Origin.Notify.alert({
+            type: 'error',
+            title: Origin.l10n.t('app.exporterrortitle'),
+            text: messageText
+          });
+        }.bind(this))
+
+        .always(function() {
+          this.showExportAnimation(false, $btn);
+          this.exporting = false;
+        }.bind(this));
     },
 
     showExportAnimation: function(show, $btn) {
@@ -187,9 +177,7 @@ define(function(require) {
         }
         this.resetDownloadProgress();
 
-        var $downloadForm = $('#downloadForm');
-        $downloadForm.attr('action', '/download/' + Origin.sessionModel.get('tenantId') + '/' + Origin.editor.data.course.get('_id') + '/' + jqXHR.payload.zipName + '/download.zip');
-        $downloadForm.submit();
+        this.downloadFile('/download/' + Origin.sessionModel.get('tenantId') + '/' + Origin.editor.data.course.get('_id') + '/' + jqXHR.payload.zipName + '/download.zip');
 
       }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
         this.resetDownloadProgress();
@@ -276,7 +264,7 @@ define(function(require) {
     copyIdToClipboard: function(model) {
       var id = model.get('_id');
 
-      if (helpers.copyStringToClipboard(id)) {
+      if (Helpers.copyStringToClipboard(id)) {
         Origin.Notify.alert({
           type: 'success',
           text: Origin.l10n.t('app.copyidtoclipboardsuccess', { id: id })
@@ -363,6 +351,14 @@ define(function(require) {
           });
         }
       });
+    },
+
+    downloadFile: function(url, callback) {
+      var form = document.createElement('form');
+      this.$el.append(form);
+      form.setAttribute('action', url);
+      form.submit();
+      this.$el.remove(form);
     },
 
     /**

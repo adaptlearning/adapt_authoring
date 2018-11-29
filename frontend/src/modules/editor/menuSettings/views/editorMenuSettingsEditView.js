@@ -17,7 +17,7 @@ define(function(require) {
 
       this.listenTo(Origin, {
         'editorSideBarView:removeEditView': this.remove,
-        'editorMenuSettingsEditSidebar:views:save': this.saveData
+        'sidebar:action:save': this.saveData
       });
     },
 
@@ -34,11 +34,6 @@ define(function(require) {
         }
       }, this);
       this.setViewToReady();
-    },
-
-    cancel: function(event) {
-      event && event.preventDefault();
-      Origin.trigger('editorSidebarView:removeEditView', this.model);
     },
 
     saveData: function(event) {

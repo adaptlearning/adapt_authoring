@@ -117,6 +117,7 @@ define(function(require) {
     },
 
     navigateBack: function() {
+      // TODO this should work on page refresh
       Backbone.history.history.back();
     },
 

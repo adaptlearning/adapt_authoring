@@ -23,13 +23,11 @@ define(function(require){
       if (options && options.form) {
         this.form = options.form;
         this.filters = [];
+        this.listenTo(Origin, 'sidebarFieldsetFilter:filterForm', this.filterForm);
       }
       OriginView.prototype.initialize.apply(this, arguments);
 
-      this.listenTo(Origin, {
-        'sidebarFieldsetFilter:filterForm': this.filterForm,
-        'editorView:pasteCancel': this.hidePasteZones
-      });
+      this.listenTo(Origin, 'editorView:pasteCancel', this.hidePasteZones);
     },
 
     render: function() {

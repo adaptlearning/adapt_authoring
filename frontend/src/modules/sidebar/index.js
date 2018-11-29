@@ -1,22 +1,28 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Origin = require('core/origin');
-  var SidebarContainerView = require('./views/sidebarView');
+  var SidebarView = require('./views/sidebarView');
 
-  Origin.once('origin:dataReady', function() {
-    $('body').append(new SidebarContainerView().$el);
-  });
+  var view;
 
   Origin.sidebar = {
-    addView: function($el, options) {
-      // Trigger to remove current views
-      Origin.trigger('sidebar:views:remove');
-      // Check if element is a view element
-      if (_.isElement($el[0]) !== true) {
-          return console.log("Sidebar - Cannot add this object to the sidebar view. Please make sure it's the views $el");
-      }
-      // Trigger update of views
-      Origin.trigger('sidebar:sidebarContainer:update', $el, options);
+    show: function() {
+      view.show();
+    },
+    hide: function() {
+      view.hide();
+    },
+    update: function(options) {
+      view.update(options);
+    },
+    addView: function($el) {
+      // TODO remove this
     }
   };
-})
+
+  Origin.once('origin:dataReady', function() {
+    view = new SidebarView();
+    // TODO fix this
+    setTimeout(function() { $('body').append(view.$el); }, 1);
+  });
+});

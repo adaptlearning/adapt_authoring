@@ -34,11 +34,11 @@ define(function(require) {
         Origin.sessionModel.logout();
         break;
       case 'forgot':
-        Origin.trigger('sidebar:sidebarContainer:hide');
+        Origin.sidebar.hide();
         currentView = ForgotPasswordView;
         break;
       case 'reset':
-        Origin.trigger('sidebar:sidebarContainer:hide');
+        Origin.sidebar.hide();
         currentView = ResetPasswordView;
         break;
       case 'profile':

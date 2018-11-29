@@ -2,6 +2,21 @@ define(function(require) {
   var Origin = require('core/origin');
 
   var helpers = {
+    setContentSidebar: function(data) {
+      data = data || {};
+      var options = {
+        breadcrumb: {
+          label: 'Back'
+        },
+        actionButtons: [
+          { name: 'save', type: 'primary', labels: { default: 'app.save' } },
+          // { name: 'cancel', type: 'secondary', labels: { default: 'app.cancel' } },
+        ],
+        fieldsets: data.fieldsets || []
+      };
+      Origin.once('sidebar:action:cancel', Origin.router.navigateBack);
+      Origin.sidebar.update(options);
+    },
     /**
     * set the page title based on location
     * accepts backbone model, or object like so { title: '' }

@@ -1,44 +1,28 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-	var Origin = require('core/origin');
-	var Backbone = require('backbone');
+  var Origin = require('core/origin');
+  var SidebarLinkButtonView = require('./sidebarLinkButtonView');
 
-	var SidebarFieldsetFilterView = Backbone.View.extend({
-		className: 'sidebar-row',
-		events: {
-			'click button': 'onFilterClicked'
-		},
+  var SidebarFieldsetFilterView = SidebarLinkButtonView.extend({
+    className: function() {
+      console.log(this.model.attributes);
+      return 'link fieldset sidebar-fieldset-filter-' + this.model.get('key');
+    },
 
-		initialize: function() {
-			this.onFilterClicked(this); // Hack used for #1184. Sure there must be a better way to turn on.
-			this.listenTo(Origin, 'remove:views', this.remove);
-			this.render();
-		},
+    initialize: function(options) {
+      this.model.set({
+        icon: 'fa-toggle-off fa-toggle-on',
+        label: this.model.get('legend')
+      });
+      SidebarLinkButtonView.prototype.initialize.apply(this, arguments);
+    },
 
-		render: function() {
-			var data = this.model ? this.model.toJSON() : null;
-			var template = Handlebars.templates[this.constructor.template];
-			this.$el.html(template(data));
-			return this;
-		},
+    onClick: function(e) {
+      this.$('i').toggleClass('fa-toggle-on');
+      console.log('sidebar:filter:toggle', this.model.get('key'));
+      Origin.trigger('sidebar:filter:toggle', this.model.get('key'));
+    }
+  });
 
-		onFilterClicked: function(event) {
-			if (this.model.get('_isSelected')) {
-				this.model.set('_isSelected', false);
-				this.$('i').removeClass('fa-toggle-on');
-			} else {
-				this.model.set('_isSelected', true);
-				this.$('i').addClass('fa-toggle-on');
-			}
-
-			Origin.trigger('sidebarFieldsetFilter:filterForm', this.model.get('key'));
-
-		}
-
-	}, {
-		template: 'sidebarFieldsetFilter'
-	});
-
-	return SidebarFieldsetFilterView;
-
+  return SidebarFieldsetFilterView;
 });

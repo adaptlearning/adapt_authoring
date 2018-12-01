@@ -10,7 +10,7 @@ define(function(require){
 
     preRender: function() {
       Origin.trigger('location:title:update', { title: Origin.l10n.t('app.uploadplugin') });
-      this.listenTo(Origin, 'pluginManagement:uploadPlugin', this.uploadFile);
+      this.listenTo(Origin, 'sidebar:action:upload', this.uploadFile);
     },
 
     postRender: function() {

@@ -1,15 +1,12 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Origin = require('core/origin');
-  var LoginView = require('./views/loginView');
-  var UserProfileView = require('./views/userProfileView');
-  var UserProfileSidebarView = require('./views/userProfileSidebarView');
-  var UserProfileModel = require('./models/userProfileModel');
-
   var ForgotPasswordView = require('./views/forgotPasswordView');
+  var LoginView = require('./views/loginView');
   var ResetPasswordView = require('./views/resetPasswordView');
   var UserPasswordResetModel = require('./models/userPasswordResetModel');
+  var UserProfileModel = require('./models/userProfileModel');
+  var UserProfileView = require('./views/userProfileView');
 
   Origin.on('navigation:user:logout', function() {
     Origin.router.navigateTo('user/logout');
@@ -43,33 +40,34 @@ define(function(require) {
         break;
       case 'profile':
         settings.authenticate = true;
-        Origin.trigger('location:title:update', {title: Origin.l10n.t('app.editprofiletitle')});
+        Origin.trigger('location:title:update');
         currentView = UserProfileView;
         break;
     }
 
-    if (currentView) {
-      switch (location) {
-        case 'profile':
-          var profile = new UserProfileModel();
-          profile.fetch({
-            success: function() {
-              Origin.sidebar.addView(new UserProfileSidebarView().$el);
-              Origin.contentPane.setView(currentView, { model: profile });
-            }
-          });
-          break;
-        case 'reset':
-          var reset = new UserPasswordResetModel({token: subLocation});
-          reset.fetch({
-            success: function() {
-              Origin.contentPane.setView(currentView, { model: reset });
-            }
-          });
-          break;
-        default:
-          Origin.contentPane.setView(currentView, { model: Origin.sessionModel });
-      }
+    if(!currentView) {
+      return;
+    }
+    if(location === 'profile') {
+      var profile = new UserProfileModel();
+      profile.fetch({
+        success: function() {
+          Origin.sidebar.update([
+            { name: 'save', type: 'primary', labels: { default: 'app.save' } },
+            { name: 'cancel', type: 'secondary', labels: { default: 'app.cancel' } },
+          ]);
+          Origin.contentPane.setView(currentView, { model: profile });
+        }
+      });
+    } else if(location === 'reset') {
+      var reset = new UserPasswordResetModel({token: subLocation});
+      reset.fetch({
+        success: function() {
+          Origin.contentPane.setView(currentView, { model: reset });
+        }
+      });
+    } else {
+      Origin.contentPane.setView(currentView, { model: Origin.sessionModel });
     }
   });
 

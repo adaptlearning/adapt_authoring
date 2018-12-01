@@ -1,0 +1,30 @@
+.sidebar .fieldsets .fieldset {
+  i {
+    font-size: 20px;
+    float: right;
+  }
+}
+
+
+.sidebar {
+  .sidebar-row {
+    .error {
+      position: inherit;
+      top: inherit;
+      left: inherit;
+      color: white !important;
+      i {
+        color: white !important;
+      }
+    }
+  }
+}
+
+.sidebar-fieldset-filter.error {
+  @alert-color:#de6262;
+  background: @alert-color;
+  color:#fff;
+  &:hover {
+    background: darken(@alert-color, 10%);
+  }
+}

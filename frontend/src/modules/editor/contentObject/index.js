@@ -9,12 +9,12 @@ define(function(require) {
   var Helpers = require('../global/helpers');
 
   var DefaultSidebarOptions = {
-    actionButtons: [
-      { name: 'preview', type: 'secondary', labels: { default: 'app.preview', processing: 'app.previewing' } },
-      { name: 'download', type: 'primary', labels: { default: 'app.download', processing: 'app.downloading' } },
+    actions: [
+      { name: 'preview', type: 'primary', labels: { default: 'app.preview', processing: 'app.previewing' } },
+      { name: 'download', type: 'secondary', labels: { default: 'app.download', processing: 'app.downloading' } },
       { name: 'export', type: 'secondary', labels: { default: 'app.export', processing: 'app.exporting' } }
     ],
-    linkButtons: [
+    links: [
       { name: 'project', page: 'settings', label: 'app.editorsettings' },
       { name: 'config', page: 'config', label: 'app.editorconfig' },
       { name: 'selecttheme', page: 'selecttheme', label: 'app.themepicker' },
@@ -45,7 +45,7 @@ define(function(require) {
     Origin.trigger('location:title:update', { title: 'Page editor' });
 
     Origin.sidebar.update(_.extend(DefaultSidebarOptions, {
-      breadcrumb: {
+      backButton: {
         label: "Back to course structure",
         route: "/#/editor/" + Origin.location.route1 + "/menu"
       }
@@ -63,7 +63,7 @@ define(function(require) {
     Origin.editor.scrollTo = 0;
 
     Origin.sidebar.update(_.extend(DefaultSidebarOptions, {
-      breadcrumb: {
+      backButton: {
         label: "Back to courses",
         route: Origin.dashboardRoute || '/#/dashboard'
       }

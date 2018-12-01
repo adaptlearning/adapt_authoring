@@ -1,0 +1,24 @@
+@import 'buttons';
+
+.sidebar button.link {
+  margin-bottom: 10px;
+  &:last-child { margin-bottom: 0; }
+
+  padding-left: 0; 
+  padding-right: 0;
+  width: 100%;
+
+  font-size: 15px;
+  text-align: left;
+  color: @sidebar-text-color;
+
+  transition: all 0.3s;
+  &:hover {
+    color: @sidebar-item-hover-text-color;
+  }
+
+  i {
+    color: @secondary-color;
+    margin-right: 10px;
+  }
+}

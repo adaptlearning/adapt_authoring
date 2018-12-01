@@ -2,9 +2,8 @@
 define(function(require) {
 
     var Origin = require('core/origin');
-    var SidebarItemView = require('modules/sidebar/views/sidebarItemView');
 
-    var AssetManagementSidebarView = SidebarItemView.extend({
+    var AssetManagementSidebarView = Backbone.View.extend({
 
         events: {
             'click .asset-management-sidebar-new': 'onAddNewAssetClicked',

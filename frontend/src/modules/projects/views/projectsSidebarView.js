@@ -1,9 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Origin = require('core/origin');
-  var SidebarItemView = require('modules/sidebar/views/sidebarItemView');
 
-  var ProjectsSidebarView = SidebarItemView.extend({
+  var ProjectsSidebarView = Backbone.View.extend({
     settings: {
       autoRender: true
     },

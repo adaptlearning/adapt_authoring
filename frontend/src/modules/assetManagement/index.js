@@ -4,10 +4,15 @@ define(function(require) {
   var AssetModel = require('./models/assetModel');
   var AssetCollection = require('./collections/assetCollection');
   var AssetManagementView = require('./views/assetManagementView');
-  var AssetManagementSidebarView = require('./views/assetManagementSidebarView');
   var AssetManagementNewAssetView = require('./views/assetManagementNewAssetView');
-  var AssetManagementNewAssetSidebarView = require('./views/assetManagementNewAssetSidebarView');
   var TagsCollection = require('core/collections/tagsCollection');
+
+  var editAssetSidebarSettings = {
+    actions: [
+      { name: 'save', type: 'primary', labels: { default: 'app.save' } },
+      { name: 'cancel', type: 'secondary', labels: { default: 'app.cancel' } },
+    ]
+  };
 
   Origin.on('router:assetManagement', function(location, subLocation, action) {
     Origin.assetManagement = {
@@ -40,7 +45,7 @@ define(function(require) {
         // No need to fetch as the collectionView takes care of this
         // Mainly due to serverside filtering
         Origin.trigger('location:title:hide');
-        Origin.sidebar.addView(new AssetManagementSidebarView({ collection: tagsCollection }).$el);
+        // Origin.sidebar.addView(new AssetManagementSidebarView({ collection: tagsCollection }).$el);
         Origin.contentPane.setView(AssetManagementView, { collection: assetCollection });
         Origin.trigger('assetManagement:loaded');
       },
@@ -51,8 +56,8 @@ define(function(require) {
   }
 
   function loadNewAssetView() {
-    Origin.trigger('location:title:update', { title: 'New Asset' });
-    Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
+    Origin.trigger('location:title:update');
+    Origin.sidebar.update(editAssetSidebarSettings);
     Origin.contentPane.setView(AssetManagementNewAssetView, { model: new AssetModel });
   }
 
@@ -61,7 +66,7 @@ define(function(require) {
     (new AssetModel({ _id: location })).fetch({
       success: function(model) {
         Origin.trigger('location:title:update', { title: 'Edit Asset' });
-        Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
+        Origin.sidebar.update(editAssetSidebarSettings);
         Origin.contentPane.setView(AssetManagementNewAssetView, { model: model });
       }
     });

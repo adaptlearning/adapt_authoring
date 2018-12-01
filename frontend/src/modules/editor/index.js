@@ -13,7 +13,8 @@ define([
     'editor:resetData': EditorData.reset
   });
   /**
-  * Make sure we load the below files AFTER the editor data has finished loading
+  * Make sure we only load the below files AFTER the editor data has finished
+  * loading
   */
   require([
     './global/editorContentEditRouter',

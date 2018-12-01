@@ -2,15 +2,38 @@
 define(function(require) {
   var Origin = require('core/origin');
   var ProjectsView = require('./views/projectsView');
-  var ProjectsSidebarView = require('./views/projectsSidebarView');
   var MyProjectCollection = require('./collections/myProjectCollection');
   var SharedProjectCollection = require('./collections/sharedProjectCollection');
-  var TagsCollection = require('core/collections/tagsCollection');
+
+  Origin.on('origin:dataReady login:changed', function() {
+    Origin.router.setHomeRoute('dashboard');
+    Origin.globalMenu.addItem({
+      "location": "global",
+      "text": Origin.l10n.t('app.dashboard'),
+      "icon": "fa-home",
+      "callbackEvent": "dashboard:open",
+      "sortOrder": 1
+    });
+  });
+
+  Origin.on('globalMenu:dashboard:open', function() {
+    Origin.router.navigateTo('dashboard');
+  });
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
     Origin.trigger('editor:resetData');
+    initOptions();
 
-    Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
+    location = location || 'all';
+
+    var Collection = (location === 'all') ? MyProjectCollection : SharedProjectCollection;
+
+    Origin.contentPane.setView(ProjectsView, { collection: new Collection });
+    Origin.sidebar.addView();
+    Origin.trigger('location:title:update');
+  });
+
+  function initOptions() {
     Origin.options.addItems([
       {
         title: Origin.l10n.t('app.grid'),
@@ -48,46 +71,5 @@ define(function(require) {
         group: 'sort'
       }
     ]);
-
-    var tagsCollection = new TagsCollection();
-
-    tagsCollection.fetch({
-      success: function() {
-        Origin.sidebar.addView(new ProjectsSidebarView({ collection: tagsCollection }).$el);
-        Origin.trigger('dashboard:loaded', { type: location || 'all' });
-      },
-      error: function() {
-        console.log('Error occured getting the tags collection - try refreshing your page');
-      }
-    });
-  });
-
-  Origin.on('dashboard:loaded', function (options) {
-    switch (options.type) {
-      case 'shared':
-        Origin.trigger('location:title:update', {title: 'Dashboard - viewing shared courses'});
-        Origin.contentPane.setView(ProjectsView, { collection: new SharedProjectCollection });
-        break;
-      case 'all':
-        Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
-        Origin.contentPane.setView(ProjectsView, { collection: new MyProjectCollection });
-      default:
-        break;
-    }
-  });
-
-  Origin.on('globalMenu:dashboard:open', function() {
-    Origin.router.navigateTo('dashboard');
-  });
-
-  Origin.on('origin:dataReady login:changed', function() {
-    Origin.router.setHomeRoute('dashboard');
-    Origin.globalMenu.addItem({
-      "location": "global",
-      "text": Origin.l10n.t('app.dashboard'),
-      "icon": "fa-home",
-      "callbackEvent": "dashboard:open",
-      "sortOrder": 1
-    });
-  });
+  }
 });

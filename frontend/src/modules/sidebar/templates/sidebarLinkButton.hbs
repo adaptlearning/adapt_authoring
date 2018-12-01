@@ -1,7 +1,10 @@
+<!--
 <div class="sidebar-row">
   <button class="editor-common-sidebar-{{name}}">
     <span class="editor-common-sidebar-{{name}}-inner">
-      <i class="fa fa-chevron-right primary-color"/>{{t label}}
+      <i class="fa {{#if icon}}icon{{else}}fa-chevron-right{{/if}} primary-color"/>{{t label}}
     </span>
   </button>
 </div>
+-->
+<i class="fa {{#if icon}}{{icon}}{{else}}fa-chevron-right{{/if}} primary-color"/>{{t label}}

@@ -5,13 +5,11 @@ define(function(require) {
   var OriginView = require('core/views/originView');
 
   var SidebarLinkButtonView = OriginView.extend({
-    className: 'sidebar-item',
-    events: { 'click': 'onClick' },
-
-    initialize: function(options) {
-      this.model = new Backbone.Model(options);
-      OriginView.prototype.initialize.apply(this, arguments);
+    tagName: 'button',
+    className: function() {
+      return 'link ' + this.model.get('name');
     },
+    events: { 'click': 'onClick' },
 
     onClick: function(e) {
       // NOTE two versions of events

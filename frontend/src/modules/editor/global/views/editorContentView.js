@@ -20,7 +20,7 @@ define(function(require){
 
       this.listenTo(Origin, {
         'sidebar:action:save': this.save,
-        'sidebarFieldsetFilter:filterForm': this.filterForm,
+        'sidebar:filter:toggle': this.filterForm,
         'editorView:pasteCancel': this.hidePasteZones
       });
     },
@@ -36,6 +36,13 @@ define(function(require){
         return this.setViewToReady();
       }
       this.getFormContainerDiv().append(this.form.el);
+
+      this.getFieldsetDivs().each(function(i, el) {
+        var key = $(el).attr('data-key');
+        if(key) this.filters.push(key);
+      }.bind(this));
+
+      this.filterForm();
       // Set the delays going to stop jumping pages
       _.delay(_.bind(this.setViewToReady, this, 400));
     },
@@ -47,6 +54,7 @@ define(function(require){
       } else {
         this.filters.push(filter);
       }
+      console.log(this.filters);
       // Now actually filter the form
       if(this.filters.length === 0) {
         this.getFieldsetDivs().removeClass('display-none');
@@ -54,7 +62,8 @@ define(function(require){
       }
       this.getFieldsetDivs().addClass('display-none');
       this.filters.forEach(function(filter) {
-        $('fieldset[data-key=' + filter + ']').removeClass('display-none');
+        console.log(filter);
+        this.$('fieldset[data-key=' + filter + ']').removeClass('display-none');
       });
     },
 

@@ -2,7 +2,6 @@
 define(function(require) {
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
-  var SidebarBreadcrumbView = require('./sidebarBreadcrumbView');
   var SidebarActionButtonView = require('./sidebarActionButtonView');
   var SidebarLinkButtonView = require('./sidebarLinkButtonView');
   var SidebarFilterView = require('./sidebarFilterView');
@@ -16,11 +15,12 @@ define(function(require) {
 
       this.listenTo(Origin, {
         'sidebar:hide': this.hide,
-        'sidebar:actionButton:add': this.renderActionButton,
-        'sidebar:linkButton:add': this.renderLinkButton,
+        'sidebar:action:add': this.renderActionButton,
+        'sidebar:link:add': this.renderLinkButton,
         'sidebar:widget:add': this.renderWidget,
-        // 'sidebar:sidebarFilter:add': this.renderFilterView,
-        'editorSidebar:showErrors': this.showErrors
+        // 'sidebar:filter:add': this.renderFilterView,
+        'editorSidebar:showErrors': this.showErrors,
+        'sidebar:action:cancel sidebar:link:back': Origin.router.navigateBack
       });
       OriginView.prototype.initialize.apply(this, arguments);
     },
@@ -28,9 +28,9 @@ define(function(require) {
     resetModel: function(data) {
       data = data || {};
       this.model = new Backbone.Model({
-        actionButtons: data.actionButtons || [],
-        linkButtons: data.linkButtons || [],
-        customButtons: data.customButtons || [],
+        backButton: data.backButton,
+        actions: data.actions || [],
+        links: data.links || [],
         fieldsets: data.fieldsets || [],
         widgets: data.widgets || []
       });
@@ -38,11 +38,6 @@ define(function(require) {
 
     update: function(options) {
       this.resetModel(options);
-      if(options && options.breadcrumb) {
-        this.renderBreadcrumb(options.breadcrumb);
-      } else {
-        this.hideEl(this.$('.sidebar-breadcrumb'));
-      }
       this.render();
     },
 
@@ -57,24 +52,30 @@ define(function(require) {
     },
 
     postRender: function() {
+      this.renderBackButton();
       this.renderGroups();
       this.show();
     },
 
-    renderBreadcrumb: function(data) {
-      console.log('renderBreadcrumb:', data);
-      setTimeout(function() {
-        var view = new SidebarBreadcrumbView(data);
-        var $el = this.$('.sidebar-breadcrumb');
-        $el.html(view.$el);
-        this.showEl($el);
-      }.bind(this), 1);
+    renderBackButton: function() {
+      var data = this.model.get('backButton');
+      if(!data) {
+        return this.hideEl(this.$('.back-button'));
+      }
+      data.name = 'back';
+      data.icon = 'fa-chevron-left';
+      console.log('renderBackButton:', data);
+
+      var view = new SidebarLinkButtonView({ model: new Backbone.Model(data) });
+      var $el = this.$('.back-button.group');
+      $el.html(view.$el);
+      this.showEl($el);
     },
 
     renderGroups: function() {
       var groups = [
-        { name: 'actionButtons', func: this.renderActionButton },
-        { name: 'linkButtons', func: this.renderLinkButton },
+        { name: 'actions', func: this.renderActionButton },
+        { name: 'links', func: this.renderLinkButton },
         { name: 'fieldsets', func: this.renderFieldsetFilter },
         { name: 'widgets', func: this.renderWidget },
       ];
@@ -85,20 +86,20 @@ define(function(require) {
     },
 
     renderActionButton: function(data, index) {
-      this.attachHTML(new SidebarActionButtonView(data).$el, this.$('.action-button-container'), index);
+      this.attachHTML(new SidebarActionButtonView({ model: new Backbone.Model(data) }).$el, this.$('.actions.group'), index);
     },
 
     renderLinkButton: function(data, index) {
-      this.attachHTML(new SidebarLinkButtonView(data).$el, this.$('.link-button-container'), index);
+      this.attachHTML(new SidebarLinkButtonView({ model: new Backbone.Model(data) }).$el, this.$('.links.group'), index);
     },
 
     renderFieldsetFilter: function(data) {
       var view = new SidebarFieldsetFilterView({ model: new Backbone.Model(data.schema) });
-      this.attachHTML(view.$el, this.$('.fieldset-container'));
+      this.attachHTML(view.$el, this.$('.fieldsets.group'));
     },
 
     renderWidget: function($el, index) {
-      this.attachHTML($el, this.$('.widget-container'));
+      this.attachHTML($el, this.$('.widgets.group'));
     },
 
 
@@ -125,11 +126,11 @@ define(function(require) {
     },
 
     showEl: function($el) {
-      $el.addClass('show');
+      $el.show();
     },
 
     hideEl: function($el) {
-      $el.removeClass('show');
+      $el.hide();
     },
 
     showErrors: function(errors) {

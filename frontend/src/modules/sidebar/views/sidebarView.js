@@ -104,7 +104,6 @@ define(function(require) {
       this.attachHTML($el, this.$('.widgets.group'));
     },
 
-
     /*
     renderFilterView: function(options) {
       Origin.trigger('sidebar:sidebarFilter:remove');

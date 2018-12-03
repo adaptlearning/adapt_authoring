@@ -3,8 +3,11 @@ define(function(require) {
   var Origin = require('core/origin');
   var SidebarView = require('./views/sidebarView');
 
-  var view;
+  var view = new SidebarView();
 
+  /**
+  * Public API for the sidebar
+  */
   Origin.sidebar = {
     show: function() {
       view.show();
@@ -15,14 +18,26 @@ define(function(require) {
     update: function(options) {
       view.update(options);
     },
+    addActionButton: function(data, index) {
+      view.model.get('actions').push(data);
+      view.renderActionButton(data, index);
+    },
+    addLinkButton: function(data, index) {
+      view.model.get('links').push(data);
+      view.renderLinkButton(data, index);
+    },
+    addWidget: function($el, index) {
+      view.model.get('widgets').push(data);
+      view.renderWidget($el, index);
+    },
+    showErrors: function(errors) {
+      view.showErrors(errors);
+    },
+    // TODO remove this
     addView: function($el) {
-      // TODO remove this
+      console.log('Sidebar#addView', $el);
+      view.renderWidget($el);
     }
   };
-
-  Origin.once('origin:dataReady', function() {
-    view = new SidebarView();
-    // TODO fix this
-    setTimeout(function() { $('body').append(view.$el); }, 1);
-  });
+  Origin.once('origin:initialize', function() { $('body').append(view.$el); });
 });

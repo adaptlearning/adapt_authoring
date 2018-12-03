@@ -129,9 +129,8 @@ define(function(require){
         return;
       }
       var errors = this.form.validate();
-
-      // MUST trigger as sidebar needs to know when the form has been resubmitted
-      Origin.trigger('editorSidebar:showErrors', errors);
+      // MUST call this as sidebar needs to know when the form has been resubmitted
+      Origin.sidebar.showErrors(errors);
 
       if (errors) {
         var errorText =

@@ -4,6 +4,7 @@ define(function(require) {
   var EditorData = require('./editorDataLoader');
 
   Origin.on('sidebar:link', function(page) {
+    if(page === 'back') return;
     EditorData.waitForLoad(function() {
       Origin.router.navigateTo('editor/' + Origin.editor.data.course.get('_id') + '/' + page);
     });

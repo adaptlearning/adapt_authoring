@@ -13,7 +13,7 @@ define(function(require) {
     console.log(data);
 
     Origin.sidebar.update({
-      breadcrumb: {
+      backbutton: {
         label: isMenu ? "Back to menu" : "Back to page",
         route: "/#/editor/" + route1 + (isMenu ? "/menu" : "/page/" + data.id)
       }

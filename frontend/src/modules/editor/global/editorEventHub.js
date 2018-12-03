@@ -6,6 +6,7 @@ define(function(require) {
   /**
   * Mini event-hub for editor events.
   * Sends out more developer-friendly versions of router:editor events.
+  * Also note that these events are only triggered once the editor data's ready
   */
   Origin.on('router:editor', function() {
     EditorData.waitForLoad(function() {

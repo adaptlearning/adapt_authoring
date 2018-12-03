@@ -49,15 +49,11 @@
   }
 
   function loadModules(callback) {
-    require([
-      'modules/modules'
-    ], callback);
+    require(['modules/modules'], callback);
   }
 
   function loadPlugins(callback) {
-    require([
-      'plugins/plugins'
-    ], callback);
+    require(['plugins/plugins'], callback);
   }
 
   /**

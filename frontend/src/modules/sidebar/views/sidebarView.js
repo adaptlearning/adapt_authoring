@@ -11,18 +11,14 @@ define(function(require) {
     className: 'sidebar',
 
     initialize: function(options) {
-      this.resetModel();
-
-      this.listenTo(Origin, {
-        'sidebar:hide': this.hide,
-        'sidebar:action:add': this.renderActionButton,
-        'sidebar:link:add': this.renderLinkButton,
-        'sidebar:widget:add': this.renderWidget,
-        // 'sidebar:filter:add': this.renderFilterView,
-        'editorSidebar:showErrors': this.showErrors,
-        'sidebar:action:cancel sidebar:link:back': Origin.router.navigateBack
-      });
       OriginView.prototype.initialize.apply(this, arguments);
+
+      this.resetModel();
+      // TODO why can't I do listenTo?!
+      Origin.on({
+        // 'sidebar:filter:add': this.renderFilterView.bind(this),
+        'sidebar:action:cancel sidebar:link:back': Origin.router.navigateBack.bind(this)
+      });
     },
 
     resetModel: function(data) {
@@ -52,9 +48,16 @@ define(function(require) {
     },
 
     postRender: function() {
+      this.emptyContainers();
       this.renderBackButton();
       this.renderGroups();
       this.show();
+      Origin.trigger('sidebar:ready');
+    },
+
+    emptyContainers: function() {
+      this.$('.back-button').empty();
+      this.$('.group').empty();
     },
 
     renderBackButton: function() {
@@ -62,9 +65,8 @@ define(function(require) {
       if(!data) {
         return this.hideEl(this.$('.back-button'));
       }
-      data.name = 'back';
+      data.name = data.page = 'back';
       data.icon = 'fa-chevron-left';
-      console.log('renderBackButton:', data);
 
       var view = new SidebarLinkButtonView({ model: new Backbone.Model(data) });
       var $el = this.$('.back-button.group');

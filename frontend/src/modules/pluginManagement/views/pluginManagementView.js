@@ -26,7 +26,10 @@ define(function(require){
         theme: Origin.editor.data.themetypes,
         menu: Origin.editor.data.menutypes
       };
-
+      this.listenTo(Origin, {
+        'sidebar:action:upload': this.onUploadClicked,
+        'sidebar:link': this.onLinkClicked
+      });
       return OriginView.prototype.initialize.apply(this, arguments);
     },
 
@@ -72,6 +75,21 @@ define(function(require){
         }, this),
         error: console.log
       });
+    },
+
+    onUploadClicked: function() {
+      Origin.router.navigateTo('pluginManagement/upload');
+    },
+
+    onLinkClicked: function(type) {
+      switch(type) {
+        case 'component': case 'extension': case 'menu': case 'theme':
+          Origin.router.navigateTo('pluginManagement/' + type);
+          return;
+        case 'pluginBrowser':
+          window.open("https://www.adaptlearning.org/index.php/plugin-browser/", '_blank');
+          return;
+      }
     }
   }, {
     template: 'pluginManagement'

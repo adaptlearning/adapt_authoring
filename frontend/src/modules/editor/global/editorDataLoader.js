@@ -64,7 +64,6 @@ define(function(require) {
     * Accepts callback for editor:refreshData
     */
     loadCourseData: function(callback) {
-      console.log('loadCourseData');
       if(!Origin.sessionModel.get('isAuthenticated')) {
         // no point continuing if not logged in
         return;

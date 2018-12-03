@@ -5,7 +5,6 @@ define(function(require) {
 
   var SidebarFieldsetFilterView = SidebarLinkButtonView.extend({
     className: function() {
-      console.log(this.model.attributes);
       return 'link fieldset sidebar-fieldset-filter-' + this.model.get('key');
     },
 
@@ -19,7 +18,6 @@ define(function(require) {
 
     onClick: function(e) {
       this.$('i').toggleClass('fa-toggle-on');
-      console.log('sidebar:filter:toggle', this.model.get('key'));
       Origin.trigger('sidebar:filter:toggle', this.model.get('key'));
     }
   });

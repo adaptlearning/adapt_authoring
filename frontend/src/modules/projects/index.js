@@ -2,8 +2,6 @@
 define(function(require) {
   var Origin = require('core/origin');
   var ProjectsView = require('./views/projectsView');
-  var MyProjectCollection = require('./collections/myProjectCollection');
-  var SharedProjectCollection = require('./collections/sharedProjectCollection');
 
   Origin.on('origin:dataReady login:changed', function() {
     Origin.router.setHomeRoute('dashboard');
@@ -24,13 +22,15 @@ define(function(require) {
     Origin.trigger('editor:resetData');
     initOptions();
 
-    location = location || 'all';
-
-    var Collection = (location === 'all') ? MyProjectCollection : SharedProjectCollection;
-
-    Origin.contentPane.setView(ProjectsView, { collection: new Collection });
-    Origin.sidebar.addView();
     Origin.trigger('location:title:update');
+    Origin.contentPane.setView(ProjectsView);
+    Origin.sidebar.update({
+      actions: [{ name: 'createproject', type: 'primary', labels: { default: 'app.addnewproject' } }],
+      links: [
+        { name: 'my-projects', page: 'myprojects', label: 'app.myprojects' },
+        { name: 'shared-projects', page: 'sharedprojects', label: 'app.sharedprojects' },
+      ]
+    });
   });
 
   function initOptions() {

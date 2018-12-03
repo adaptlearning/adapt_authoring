@@ -8,7 +8,7 @@ define(function(require){
     className: 'editor-content',
 
     getFormContainerDiv: function() { return this.$('.form-container'); },
-    getFieldsetDivs: function() { return $('form > div > fieldset', this.getFormContainerDiv()); },
+    getFieldsetDivs: function() { return $('.form-container > form > div > fieldset'); },
 
     initialize: function(options) {
       // Set form on view
@@ -54,7 +54,6 @@ define(function(require){
       } else {
         this.filters.push(filter);
       }
-      console.log(this.filters);
       // Now actually filter the form
       if(this.filters.length === 0) {
         this.getFieldsetDivs().removeClass('display-none');
@@ -62,7 +61,6 @@ define(function(require){
       }
       this.getFieldsetDivs().addClass('display-none');
       this.filters.forEach(function(filter) {
-        console.log(filter);
         this.$('fieldset[data-key=' + filter + ']').removeClass('display-none');
       });
     },
@@ -72,8 +70,8 @@ define(function(require){
         return;
       }
       var errors = this.form.validate();
-      // trigger this to allow the sidebar to respond
-      Origin.trigger('editorSidebar:showErrors', errors);
+      
+      Origin.sidebar.showErrors(errors);
 
       if (errors) {
         var errorText = Origin.l10n.t('app.validationfailedmessage') + "<br/><br/>" + this.buildErrorMessage(errors, '');

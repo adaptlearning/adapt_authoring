@@ -52,10 +52,12 @@ define(function(require) {
       var profile = new UserProfileModel();
       profile.fetch({
         success: function() {
-          Origin.sidebar.update([
-            { name: 'save', type: 'primary', labels: { default: 'app.save' } },
-            { name: 'cancel', type: 'secondary', labels: { default: 'app.cancel' } },
-          ]);
+          Origin.sidebar.update({
+            actions: [
+              { name: 'save', type: 'primary', labels: { default: 'app.save' } },
+              { name: 'cancel', type: 'secondary', labels: { default: 'app.cancel' } },
+            ]
+          });
           Origin.contentPane.setView(currentView, { model: profile });
         }
       });

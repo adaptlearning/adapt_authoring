@@ -10,17 +10,18 @@ define(function(require){
     className: 'user-profile',
 
     events: {
-      'click a.change-password' : 'togglePassword',
-      'keyup #password'         : 'onPasswordKeyup',
-      'keyup #passwordText'         : 'onPasswordTextKeyup',
-      'click .toggle-password'  : 'togglePasswordView'
+      'click a.change-password': this.togglePassword,
+      'keyup #password': this.onPasswordKeyup,
+      'keyup #passwordText': this.onPasswordTextKeyup,
+      'click .toggle-password': this.togglePasswordView,
     },
 
     preRender: function() {
-      this.listenTo(Origin, 'userProfileSidebar:views:save', this.saveUser);
-      this.listenTo(this.model, 'invalid', this.handleValidationError);
-      this.listenTo(this.model, 'change:_isNewPassword', this.togglePasswordUI);
-
+      this.listenTo(Origin, 'sidebar:action:save', this.saveUser);
+      this.listenTo(this.model, {
+        'invalid': this.handleValidationError,
+        'change:_isNewPassword': this.togglePasswordUI
+      });
       this.model.set('_isNewPassword', false);
     },
 
@@ -31,12 +32,13 @@ define(function(require){
     handleValidationError: function(model, error) {
       Origin.trigger('sidebar:resetButtons');
 
-      if (error && _.keys(error).length !== 0) {
-        _.each(error, function(value, key) {
-          this.$('#' + key + 'Error').text(value);
-        }, this);
-        this.$('.error-text').removeClass('display-none');
+      if (!error || _.keys(error).length === 0) {
+        return;
       }
+      _.each(error, function(value, key) {
+        this.$('#' + key + 'Error').text(value);
+      }, this);
+      this.$('.error-text').removeClass('display-none');
     },
 
     togglePassword: function(event) {

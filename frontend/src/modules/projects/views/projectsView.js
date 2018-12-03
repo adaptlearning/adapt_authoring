@@ -2,8 +2,12 @@
 define(function(require){
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
+  var CourseModel = require('core/models/courseModel');
   var ProjectView = require('./projectView');
   var SharedProjectView = require('./sharedProjectView');
+
+  var MY_PROJECT_URL = 'api/my/course';
+  var SHARED_PROJECT_URL = 'api/shared/course';
 
   var ProjectsView = OriginView.extend({
     className: 'projects',
@@ -11,6 +15,13 @@ define(function(require){
       "grid",
       "list"
     ],
+
+    initialize: function() {
+      var ProjectCollection = Backbone.Collection.extend({ model: CourseModel, url: MY_PROJECT_URL });
+      this.collection = new ProjectCollection();
+
+      OriginView.prototype.initialize.apply(this, arguments);
+    },
 
     postRender: function() {
       this.settings.preferencesKey = 'dashboard';
@@ -29,7 +40,8 @@ define(function(require){
         'dashboard:dashboardSidebarView:filterByTags': function(tags) { this.doFilter(null, tags) },
         'dashboard:sort:asc': function() { this.doSort('asc'); },
         'dashboard:sort:desc': function() { this.doSort('desc'); },
-        'dashboard:sort:updated': function() { this.doSort('updated'); }
+        'dashboard:sort:updated': function() { this.doSort('updated'); },
+        'sidebar:link': this.switchCollection
       });
 
       this.supportedLayouts.forEach(function(layout) {
@@ -142,6 +154,23 @@ define(function(require){
       });
     },
 
+    switchCollection: function(view) {
+      var newURL;
+      switch(view) {
+        case 'myprojects':
+          newURL = MY_PROJECT_URL;
+          break;
+        case 'sharedprojects':
+          newURL = SHARED_PROJECT_URL;
+          break;
+        default: return;
+      }
+      if(newURL !== this.collection.url) {
+        this.collection.url = newURL;
+        this.resetCollection();
+      }
+    },
+
     doLazyScroll: function(e) {
       if(this.isCollectionFetching) {
         return;
@@ -196,10 +225,8 @@ define(function(require){
 
     remove: function() {
       $('.contentPane').off('scroll', this._doLazyScroll);
-
       OriginView.prototype.remove.apply(this, arguments);
     }
-
   }, {
     template: 'projects'
   });

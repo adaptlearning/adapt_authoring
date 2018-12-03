@@ -7,6 +7,12 @@ define(function(require) {
     Origin.permissions.addRoute('frameworkImport', ["*/*:create","*/*:read","*/*:update","*/*:delete"]);
   });
 
+  Origin.on('router:dashboard', function(location, subLocation, action) {
+    Origin.once('sidebar:ready', function(location, subLocation, action) {
+      Origin.sidebar.addActionButton({ name: 'import', type: 'secondary', labels: { default: 'app.importcourse' } });
+    });
+  });
+
   Origin.on('router:frameworkImport', function(location, subLocation, action) {
     Origin.contentPane.setView(FrameworkImportView, { model: new Backbone.Model() });
     Origin.sidebar.update({

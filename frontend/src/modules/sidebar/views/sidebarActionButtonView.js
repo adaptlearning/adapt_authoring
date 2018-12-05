@@ -12,6 +12,15 @@ define(function(require) {
     },
     events: { 'click': 'onClick' },
 
+    initialize: function() {
+      var label = this.model.get('label');
+
+      if(label && !this.model.get('labels')) {
+        this.model.set('labels', { default: label });
+      }
+      OriginView.prototype.initialize.apply(this, arguments);
+    },
+
     /*
     TODO
     updateButton: function(buttonClass, updateText) {
@@ -34,8 +43,8 @@ define(function(require) {
         // TODO switch label
       }
       // NOTE two versions of events
-      Origin.trigger('sidebar:action:' + this.model.get('name'));
-      Origin.trigger('sidebar:action', this.model.get('name'));
+      Origin.trigger('sidebar:action:' + this.model.get('name'), this.model);
+      Origin.trigger('sidebar:action', this.model);
       console.log('sidebar:action:' + this.model.get('name'));
     }
   }, {

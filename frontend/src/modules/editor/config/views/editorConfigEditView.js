@@ -8,13 +8,6 @@ define(function(require) {
     className: "config-edit",
     tagName: "div",
 
-    preRender: function() {
-      this.listenTo(Origin, {
-        'editorSidebarView:removeEditView': this.remove,
-        'editorConfigEditSidebar:views:save': this.save
-      });
-    },
-
     getAttributesToSave: function() {
       var changed = this.model.changedAttributes();
       if(!changed) {

@@ -33,14 +33,14 @@ define(function(require) {
       Origin.sidebar.update({
         actions: [
           { name: 'upload', type: 'primary', labels: { default: 'app.upload' } },
-          { name: 'cancel', type: 'secondary', labels: { default: 'app.cancel' } },
+          { name: 'cancel', type: 'secondary', label: 'app.cancel' },
         ]
       });
     } else {
       Origin.contentPane.setView(PluginManagementView, { pluginType: location });
       Origin.sidebar.update({
         actions: [
-          { name: 'upload', type: 'primary', labels: { default: 'app.uploadplugin' } },
+          { name: 'upload', type: 'primary', label: 'app.uploadplugin' },
         ],
         links: [
           { name: 'extensions', page: 'extension', label: 'app.extensions', icon: 'fa-plug' },

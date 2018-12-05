@@ -68,7 +68,7 @@ define(function(require) {
     Origin.sidebar.update({
       actions: [
         { name: 'save', type: 'primary', labels: { default: 'app.save' } },
-        { name: 'cancel', type: 'secondary', labels: { default: 'app.cancel' } },
+        { name: 'cancel', type: 'secondary', label: 'app.cancel' },
       ]
     });
   }
@@ -77,7 +77,7 @@ define(function(require) {
     Origin.contentPane.setView(UserManagementView, options);
     Origin.sidebar.update({
       actions: [
-        { name: 'add', type: 'primary', labels: { default: 'app.addnewuser' } },
+        { name: 'add', type: 'primary', label: 'app.addnewuser' },
       ]
     });
   }

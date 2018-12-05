@@ -22,8 +22,6 @@ define(function(require){
 
     initialize: function() {
       OriginView.prototype.initialize.apply(this, arguments);
-
-      Origin.trigger('location:title:update', { title: Origin.l10n.t('app.usermanagementtitle') });
       this.initData();
     },
 

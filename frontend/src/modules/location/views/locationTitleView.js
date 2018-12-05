@@ -8,34 +8,55 @@ define(function(require) {
 
     initialize: function() {
       this.listenTo(Origin, {
-        'location:title:update': this.render,
-        'location:title:hide': this.onHideTitle
+        'router': this.render,
+        'location:title:hide': this.hide
       });
       this.render();
     },
 
     render: function() {
+      this.hide();
+
       var template = Handlebars.templates[this.constructor.template];
       var location = Origin.location;
 
-      if(location) {
-        var mod = location.module;
-        var type = location.route2;
-        var action = location.route4;
-        console.log('LocationTitleView#render: titles.' + mod + '.' + type + (action ? '.' + action : ''), location);
-        var title = 'titles.' + mod + (type ? '.' + type : '') + (action ? '.' + action : '');
+      if(!location || !location.module) {
+        return;
       }
-      this.$el.html(template({ title: title }));
+      var mod = location.module;
+      var page = location.route1;
+      var type = location.route2;
+      var action = location.route4;
+
+      var title = 'titles.' + mod.toLowerCase() + '.';
+
+      if(page && !type) {
+        title += page.toLowerCase();
+      } else {
+        if(type) title += '.' + type.toLowerCase();
+        if(action) title += '.' + action.toLowerCase();
+      }
+      console.log('LocationTitleView#render:', title);
+
+      if(!Origin.l10n.has(title)) {
+        console.warn('Missing', title);
+        return;
+      }
+      this.$el.html(template({ title: Origin.l10n.t(title) }));
       _.defer(_.bind(this.postRender, this));
       return this;
     },
 
     postRender: function() {
-      this.$el.removeClass('display-none');
+      this.show();
       Origin.trigger('location:title:postRender', this);
     },
 
-    onHideTitle: function() {
+    show: function() {
+      this.$el.removeClass('display-none');
+    },
+
+    hide: function() {
       this.$el.addClass('display-none');
     }
   }, {

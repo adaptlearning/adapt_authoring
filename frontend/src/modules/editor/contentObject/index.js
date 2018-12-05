@@ -42,13 +42,8 @@ define(function(require) {
   });
 
   function renderPageStructure(data) {
-    Origin.trigger('location:title:update', { title: 'Page editor' });
-
     Origin.sidebar.update(_.extend(DefaultSidebarOptions, {
-      backButton: {
-        label: "Back to course structure",
-        route: "/#/editor/" + Origin.location.route1 + "/menu"
-      }
+      backButton: { label: "Back to course structure" }
     }));
     Origin.contentPane.setView(EditorView, {
       currentCourseId: Origin.location.route1,
@@ -58,15 +53,10 @@ define(function(require) {
   }
 
   function renderMenuStructure(data) {
-    Origin.trigger('location:title:update', { title: 'Menu editor' });
-
     Origin.editor.scrollTo = 0;
 
     Origin.sidebar.update(_.extend(DefaultSidebarOptions, {
-      backButton: {
-        label: "Back to courses",
-        route: Origin.dashboardRoute || '/#/dashboard'
-      }
+      backButton: { label: "Back to courses" }
     }));
     Origin.contentPane.setView(EditorView, {
       currentCourseId: Origin.location.route1,

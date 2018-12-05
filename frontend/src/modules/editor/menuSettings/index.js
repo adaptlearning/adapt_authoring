@@ -10,7 +10,6 @@ define(function(require) {
     var route1 = Origin.location.route1;
     (new ConfigModel({ _courseId: route1 })).fetch({
       success: function(model) {
-        Origin.trigger('location:title:update', { title: 'Select menu' });
         Helpers.setContentSidebar();
         Origin.contentPane.setView(EditorMenuSettingsEditView, { model: model });
       }

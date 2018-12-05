@@ -30,9 +30,9 @@ define(function(require) {
         'contextMenu:course:copyID': this.copyIdToClipboard
       });
       this.listenTo(Origin, {
-        'dashboard:dashboardView:removeSubViews': this.remove,
-        'dashboard:projectView:itemSelected': this.deselectItem,
-        'dashboard:dashboardView:deselectItem': this.deselectItem
+        'projects:dashboardView:removeSubViews': this.remove,
+        'projects:projectView:itemSelected': this.deselectItem,
+        'projects:dashboardView:deselectItem': this.deselectItem
       });
       this.listenTo(Origin, 'editorView:deleteProject:' + this.model.get('_id'), this.deleteProject);
 
@@ -63,7 +63,7 @@ define(function(require) {
     },
 
     selectItem: function() {
-      Origin.trigger('dashboard:projectView:itemSelected');
+      Origin.trigger('projects:projectView:itemSelected');
       this.$el.addClass('selected');
       this.model.set({ _isSelected: true });
     },

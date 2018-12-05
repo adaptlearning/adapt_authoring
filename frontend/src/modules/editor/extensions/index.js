@@ -5,19 +5,7 @@ define(function(require) {
   var EditorExtensionsEditView = require('./views/editorExtensionsEditView');
 
   Origin.on('editor:extensions', function(data) {
-    Origin.trigger('location:title:update', { title: 'Manage extensions' });
-
-    var route1 = Origin.location.route1;
-    var isMenu = data.type === "menu";
-
-    console.log(data);
-
-    Origin.sidebar.update({
-      backbutton: {
-        label: isMenu ? "Back to menu" : "Back to page",
-        route: "/#/editor/" + route1 + (isMenu ? "/menu" : "/page/" + data.id)
-      }
-    });
-    Origin.contentPane.setView(EditorExtensionsEditView, { model: new Backbone.Model({ _id: route1 }) });
+    Origin.sidebar.update({ backButton: { label: "Back to course" } });
+    Origin.contentPane.setView(EditorExtensionsEditView, { model: new Backbone.Model({ _id: Origin.location.route1 }) });
   });
 });

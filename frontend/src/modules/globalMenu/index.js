@@ -50,6 +50,16 @@ define(function(require) {
         GlobalMenuStore.add(subItemObject);
     }
 
+    Origin.on('router:homeRouteUpdated', function(route) {
+      GlobalMenu.addItem({
+        "location": "global",
+        "text": Origin.l10n.t('buttons.' + route),
+        "icon": "fa-home",
+        "callbackEvent": "home:open",
+        "sortOrder": 1
+      });
+    });
+
     // Listen to navigation event to toggle
     Origin.on('navigation:globalMenu:toggle', function() {
         // Remove all events off #app

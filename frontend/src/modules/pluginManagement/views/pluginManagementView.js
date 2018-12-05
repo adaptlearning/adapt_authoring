@@ -34,7 +34,6 @@ define(function(require){
     },
 
     preRender: function() {
-      Origin.trigger('location:title:update', { title: Origin.l10n.t('app.' + this.pluginType + 'management') });
       this.getColl().fetch({ success: this.renderPluginTypeViews.bind(this) });
     },
 

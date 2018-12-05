@@ -8,7 +8,7 @@ define(function(require) {
         // backButton: { label: 'Back' },
         actions: [
           { name: 'save', type: 'primary', labels: { default: 'app.save' } },
-          { name: 'cancel', type: 'secondary', labels: { default: 'app.cancel' } },
+          { name: 'cancel', type: 'secondary', label: 'app.cancel' },
         ],
         fieldsets: data.fieldsets || []
       };

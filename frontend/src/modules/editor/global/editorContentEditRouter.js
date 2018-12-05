@@ -17,7 +17,6 @@ define(function(require) {
       }
       fetchModelForType(data.type, function(model) {
         var form = Origin.scaffold.buildForm({ model: model });
-        Helpers.setPageTitle(model, true);
         Helpers.setContentSidebar({ fieldsets: form.fieldsets });
         Origin.contentPane.setView(EditorContentView, { model: model, form: form });
       });

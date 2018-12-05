@@ -4,31 +4,23 @@ define(function(require) {
   var ProjectsView = require('./views/projectsView');
 
   Origin.on('origin:dataReady login:changed', function() {
-    Origin.router.setHomeRoute('dashboard');
-    Origin.globalMenu.addItem({
-      "location": "global",
-      "text": Origin.l10n.t('app.dashboard'),
-      "icon": "fa-home",
-      "callbackEvent": "dashboard:open",
-      "sortOrder": 1
-    });
+    Origin.router.setHomeRoute('projects');
   });
 
-  Origin.on('globalMenu:dashboard:open', function() {
-    Origin.router.navigateTo('dashboard');
+  Origin.on('globalMenu:projects:open', function() {
+    Origin.router.navigateTo('projects');
   });
 
-  Origin.on('router:dashboard', function(location, subLocation, action) {
+  Origin.on('router:projects', function(location, subLocation, action) {
     Origin.trigger('editor:resetData');
     initOptions();
 
-    Origin.trigger('location:title:update');
     Origin.contentPane.setView(ProjectsView);
     Origin.sidebar.update({
-      actions: [{ name: 'createproject', type: 'primary', labels: { default: 'app.addnewproject' } }],
+      actions: [{ name: 'createproject', type: 'primary', label: 'buttons.addnewproject' }],
       links: [
-        { name: 'my-projects', page: 'myprojects', label: 'app.myprojects' },
-        { name: 'shared-projects', page: 'sharedprojects', label: 'app.sharedprojects' },
+        { name: 'my-projects', page: 'myprojects', label: 'buttons.myprojects' },
+        { name: 'shared-projects', page: 'sharedprojects', label: 'buttons.sharedprojects' },
       ]
     });
   });
@@ -36,37 +28,37 @@ define(function(require) {
   function initOptions() {
     Origin.options.addItems([
       {
-        title: Origin.l10n.t('app.grid'),
+        title: Origin.l10n.t('buttons.grid'),
         icon: 'th',
-        callbackEvent: 'dashboard:layout:grid',
+        callbackEvent: 'projects:layout:grid',
         value: 'grid',
         group: 'layout',
       },
       {
-        title: Origin.l10n.t('app.list'),
+        title: Origin.l10n.t('buttons.list'),
         icon: 'list',
-        callbackEvent: 'dashboard:layout:list',
+        callbackEvent: 'projects:layout:list',
         value: 'list',
         group: 'layout'
       },
       {
-        title: Origin.l10n.t('app.ascending'),
+        title: Origin.l10n.t('buttons.ascending'),
         icon: 'sort-alpha-asc',
-        callbackEvent: 'dashboard:sort:asc',
+        callbackEvent: 'projects:sort:asc',
         value: 'asc',
         group: 'sort'
       },
       {
-        title: Origin.l10n.t('app.descending'),
+        title: Origin.l10n.t('buttons.descending'),
         icon: 'sort-alpha-desc',
-        callbackEvent: 'dashboard:sort:desc',
+        callbackEvent: 'projects:sort:desc',
         value: 'desc',
         group: 'sort'
       },
       {
-        title: Origin.l10n.t('app.recent'),
+        title: Origin.l10n.t('buttons.recent'),
         icon: 'edit',
-        callbackEvent: 'dashboard:sort:updated',
+        callbackEvent: 'projects:sort:updated',
         value: 'updated',
         group: 'sort'
       }

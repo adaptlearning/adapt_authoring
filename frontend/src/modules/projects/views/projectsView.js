@@ -24,7 +24,7 @@ define(function(require){
     },
 
     postRender: function() {
-      this.settings.preferencesKey = 'dashboard';
+      this.settings.preferencesKey = 'projects';
       this.initUserPreferences();
       this.initEventListeners();
       this.initPaging();
@@ -36,16 +36,16 @@ define(function(require){
 
       this.listenTo(Origin, {
         'window:resize': this._onResize,
-        'dashboard:dashboardSidebarView:filterBySearch': function(text) { this.doFilter(text) },
-        'dashboard:dashboardSidebarView:filterByTags': function(tags) { this.doFilter(null, tags) },
-        'dashboard:sort:asc': function() { this.doSort('asc'); },
-        'dashboard:sort:desc': function() { this.doSort('desc'); },
-        'dashboard:sort:updated': function() { this.doSort('updated'); },
+        'projects:dashboardSidebarView:filterBySearch': function(text) { this.doFilter(text) },
+        'projects:dashboardSidebarView:filterByTags': function(tags) { this.doFilter(null, tags) },
+        'projects:sort:asc': function() { this.doSort('asc'); },
+        'projects:sort:desc': function() { this.doSort('desc'); },
+        'projects:sort:updated': function() { this.doSort('updated'); },
         'sidebar:link': this.switchCollection
       });
 
       this.supportedLayouts.forEach(function(layout) {
-        this.listenTo(Origin, 'dashboard:layout:' + layout, function() { this.doLayout(layout); });
+        this.listenTo(Origin, 'projects:layout:' + layout, function() { this.doLayout(layout); });
       }, this);
 
       this.listenTo(this.collection, 'add', this.appendProjectItem);
@@ -60,8 +60,8 @@ define(function(require){
       this.doSort(prefs.sort, false);
       this.doFilter(prefs.search, prefs.tags, false);
       // set relevant filters as selected
-      $("a[data-callback='dashboard:layout:" + prefs.layout + "']").addClass('selected');
-      $("a[data-callback='dashboard:sort:" + prefs.sort + "']").addClass('selected');
+      $("a[data-callback='projects:layout:" + prefs.layout + "']").addClass('selected');
+      $("a[data-callback='projects:sort:" + prefs.sort + "']").addClass('selected');
       // need to refresh this to get latest filters
       prefs = this.getUserPreferences();
       Origin.trigger('options:update:ui', prefs);
@@ -105,7 +105,7 @@ define(function(require){
     },
 
     emptyProjectsContainer: function() {
-      Origin.trigger('dashboard:dashboardView:removeSubViews');
+      Origin.trigger('projects:dashboardView:removeSubViews');
       this.getProjectsContainer().empty();
     },
 

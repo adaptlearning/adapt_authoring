@@ -1,0 +1,9 @@
+{
+  "titles": {
+    "assetmanagement.new": "New Asset"
+  },
+  "buttons": {
+    "assetmanagement": "Asset Management",
+    "uploadnewasset": "Upload new asset"
+  }
+}

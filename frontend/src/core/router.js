@@ -13,7 +13,10 @@ define(function(require) {
     },
 
     initialize: function() {
-      this.listenTo(Origin, 'origin:initialize', this.onOriginInitialize);
+      this.listenTo(Origin, {
+        'origin:initialize': this.onOriginInitialize,
+        'globalMenu:home:open': this.navigateToHome
+      });
       this.locationKeys = ['module', 'route1', 'route2', 'route3', 'route4'];
       this.resetLocation();
     },
@@ -46,6 +49,7 @@ define(function(require) {
     */
     setHomeRoute: function(url) {
       this.homeRoute = url;
+      Origin.trigger('router:homeRouteUpdated', url);
     },
 
     isUserAuthenticated: function() {
@@ -146,12 +150,16 @@ define(function(require) {
     },
 
     handleRoute: function(module, route1, route2, route3, route4) {
+      if(module === 'dashboard') {
+        return this.navigateToHome();
+      }
       Origin.removeViews();
       if(!this.verifyRoute(module, route1)) {
         return;
       }
       this.updateLocation(arguments);
       Origin.trigger('router:' + module, route1, route2, route3, route4);
+      Origin.trigger('router', module, route1, route2, route3, route4);
     },
 
     /**

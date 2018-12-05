@@ -14,8 +14,6 @@ define(function(require) {
     tagName: "div",
 
     preRender: function() {
-      this.listenTo(Origin, 'projectEditSidebar:views:save', this.save);
-
       if (this.model.isNew()) {
         this.isNew = true;
         this.$el.addClass('project-detail-hide-hero');

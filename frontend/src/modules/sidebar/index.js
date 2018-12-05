@@ -39,5 +39,8 @@ define(function(require) {
       view.renderWidget($el);
     }
   };
-  Origin.once('origin:initialize', function() { $('body').append(view.$el); });
+  
+  Origin.once('origin:initialize', function() {
+    $('body').append(view.$el);
+  });
 });

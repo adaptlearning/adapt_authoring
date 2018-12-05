@@ -17,7 +17,7 @@ define(function(require) {
       // TODO why can't I do listenTo?!
       Origin.on({
         // 'sidebar:filter:add': this.renderFilterView.bind(this),
-        'sidebar:action:cancel sidebar:link:back': Origin.router.navigateBack.bind(this)
+        'sidebar:action:cancel sidebar:link:back': this.goBack.bind(this)
       });
     },
 
@@ -147,6 +147,14 @@ define(function(require) {
         }, this);
       }, this);
     },
+
+    goBack: function(model) {
+      var route = model.get('route');
+      if(route) {
+        return Origin.router.navigateTo(route);
+      }
+      Origin.router.navigateBack();
+    }
   }, {
     template: 'sidebar'
   });

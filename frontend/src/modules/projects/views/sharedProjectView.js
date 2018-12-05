@@ -16,8 +16,8 @@ define(function(require){
     preRender: function() {
       this.listenTo(this, 'remove', this.remove);
       this.listenTo(Origin, 'editorView:deleteProject:' + this.model.get('_id'), this.deleteProject);
-      this.listenTo(Origin, 'dashboard:projectView:itemSelected', this.deselectItem);
-      this.listenTo(Origin, 'dashboard:dashboardView:deselectItem', this.deselectItem);
+      this.listenTo(Origin, 'projects:projectView:itemSelected', this.deselectItem);
+      this.listenTo(Origin, 'projects:dashboardView:deselectItem', this.deselectItem);
 
       this.on('contextMenu:sharedcourse:duplicate', this.promptDuplicateProject);
       this.on('contextMenu:sharedcourse:preview', this.preview);
@@ -39,7 +39,7 @@ define(function(require){
     },
 
     selectItem: function() {
-      Origin.trigger('dashboard:projectView:itemSelected');
+      Origin.trigger('projects:projectView:itemSelected');
       this.$el.addClass('selected');
       this.model.set({ _isSelected: true });
     },

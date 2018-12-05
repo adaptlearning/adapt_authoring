@@ -13,7 +13,8 @@ define(function(require){
       this.listenTo(Origin, {
         'window:resize': this.resizePanels,
         'assetManagement:assetItemView:preview': this.onAssetClicked,
-        'assetManagement:assetPreviewView:delete': this.onAssetDeleted
+        'assetManagement:assetPreviewView:delete': this.onAssetDeleted,
+        'sidebar:action:upload': this.uploadNewAsset
       });
     },
 
@@ -40,6 +41,10 @@ define(function(require){
       this.$('.asset-management-preview-container')
         .height(actualHeight)
         .width(paneWidth*0.25);
+    },
+
+    uploadNewAsset: function() {
+      Origin.router.navigateTo('assetManagement/new');
     },
 
     onAssetClicked: function(model) {

@@ -15,10 +15,7 @@ define(function(require) {
       this.listenTo(this.collection, 'sync', this.addMenuItemView);
       this.collection.fetch();
 
-      this.listenTo(Origin, {
-        'editorSideBarView:removeEditView': this.remove,
-        'sidebar:action:save': this.saveData
-      });
+      this.listenTo(Origin, 'sidebar:action:save', this.saveData);
     },
 
     addMenuItemView: function() {

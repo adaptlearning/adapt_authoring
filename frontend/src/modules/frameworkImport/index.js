@@ -9,7 +9,7 @@ define(function(require) {
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
     Origin.once('sidebar:ready', function(location, subLocation, action) {
-      Origin.sidebar.addActionButton({ name: 'import', type: 'secondary', labels: { default: 'app.importcourse' } });
+      Origin.sidebar.addActionButton({ name: 'import', type: 'secondary', label: 'app.importcourse' });
     });
   });
 
@@ -18,7 +18,7 @@ define(function(require) {
     Origin.sidebar.update({
       actions: [
         { name: 'import', type: 'primary', labels: { default: 'app.importcourse' } },
-        { name: 'cancel', type: 'secondary', labels: { default: 'app.cancel' } },
+        { name: 'cancel', type: 'secondary', label: 'app.cancel' },
       ]
     });
   });

@@ -9,7 +9,6 @@ define(function(require){
     className: 'pluginManagement-upload-plugin',
 
     preRender: function() {
-      Origin.trigger('location:title:update', { title: Origin.l10n.t('app.uploadplugin') });
       this.listenTo(Origin, 'sidebar:action:upload', this.uploadFile);
     },
 

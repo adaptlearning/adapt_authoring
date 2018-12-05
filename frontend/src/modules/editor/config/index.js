@@ -9,7 +9,6 @@ define(function(require) {
     (new ConfigModel({ _courseId: Origin.location.route1 })).fetch({
       success: function(model) {
         var form = Origin.scaffold.buildForm({ model: model });
-        Origin.trigger('location:title:update', { title: Origin.l10n.t('app.editorconfig') });
         Helpers.setContentSidebar({ fieldsets: form.fieldsets });
         Origin.contentPane.setView(EditorConfigEditView, { model: model, form: form });
       }

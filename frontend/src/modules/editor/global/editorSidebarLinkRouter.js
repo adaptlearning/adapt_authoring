@@ -3,10 +3,12 @@ define(function(require) {
   var Origin = require('core/origin');
   var EditorData = require('./editorDataLoader');
 
-  Origin.on('sidebar:link', function(page) {
-    if(page === 'back') return;
+  function EditorSidebarLinkRouter(model) {
+    if(Origin.location.module !== 'editor' || model.get('page') === 'back') return;
     EditorData.waitForLoad(function() {
-      Origin.router.navigateTo('editor/' + Origin.editor.data.course.get('_id') + '/' + page);
+      Origin.router.navigateTo('editor/' + Origin.editor.data.course.get('_id') + '/' + model.get('page'));
     });
-  });
+  }
+
+  return EditorSidebarLinkRouter;
 });

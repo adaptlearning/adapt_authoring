@@ -1,0 +1,16 @@
+{
+  "titles": {
+    "projects": "Courses"
+  },
+  "buttons": {
+    "projects": "Courses",
+    "addnewproject": "Add new course",
+    "myprojects": "My courses",
+    "sharedprojects": "Shared courses",
+    "grid": "Grid",
+    "list": "List",
+    "ascending": "A to Z",
+    "descending": "Z to A",
+    "recent": "Recent"
+  }
+}

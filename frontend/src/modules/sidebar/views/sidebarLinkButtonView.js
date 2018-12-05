@@ -13,9 +13,9 @@ define(function(require) {
 
     onClick: function(e) {
       // NOTE two versions of events
-      Origin.trigger('sidebar:link:' + this.model.get('page'));
-      Origin.trigger('sidebar:link', this.model.get('page'));
-      console.log('sidebar:link:' + this.model.get('page'));
+      Origin.trigger('sidebar:link:' + this.model.get('page'), this.model);
+      Origin.trigger('sidebar:link', this.model);
+      console.log('sidebar:link:' + this.model.get('name'));
     }
   }, {
     template: 'sidebarLinkButton'

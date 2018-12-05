@@ -17,7 +17,6 @@ define(function(require) {
     var courseModel = new CourseModel({ _id: Origin.location.route1 });
     // FIXME need to fetch config to ensure scaffold has the latest extensions data
     CoreHelpers.multiModelFetch([ courseModel, Origin.editor.data.config ], function(data) {
-      EditorHelpers.setPageTitle({ title: Origin.l10n.t('app.editorsettings') });
       var form = Origin.scaffold.buildForm({ model: courseModel });
       EditorHelpers.setContentSidebar({ fieldsets: form.fieldsets });
       Origin.contentPane.setView(EditorCourseEditView, { model: courseModel, form: form });
@@ -29,7 +28,6 @@ define(function(require) {
       title: Origin.l10n.t('app.placeholdernewcourse'),
       displayTitle: Origin.l10n.t('app.placeholdernewcourse')
     });
-    EditorHelpers.setPageTitle({ title: Origin.l10n.t('app.editornew') });
     var form = Origin.scaffold.buildForm({ model: model });
     EditorHelpers.setContentSidebar({ fieldsets: form.fieldsets });
     Origin.contentPane.setView(EditorCourseEditView, { model: model, form: form });

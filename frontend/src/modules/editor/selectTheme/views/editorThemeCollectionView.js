@@ -16,8 +16,7 @@ define(function(require) {
       this.listenTo(this.collection, 'sync', this.addThemeViews);
       this.collection.fetch();
 
-      this.listenTo(Origin, 'editorSidebarView:removeEditView', this.remove);
-      this.listenTo(Origin, 'editorThemeEditSidebar:views:save', this.saveData);
+      this.listenTo(Origin, 'sidebar:action:save', this.saveData);
     },
 
     addThemeViews: function() {
@@ -34,11 +33,6 @@ define(function(require) {
         }
       }, this);
       this.setViewToReady();
-    },
-
-    cancel: function(event) {
-      event && event.preventDefault();
-      Origin.trigger('editorSidebarView:removeEditView', this.model);
     },
 
     saveData: function(event) {

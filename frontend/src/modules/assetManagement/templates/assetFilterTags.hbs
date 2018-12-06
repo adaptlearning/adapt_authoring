@@ -1,0 +1,12 @@
+<div class="filter-inner">
+  <button class="close fa fa-times"></button>
+  <div class="search">
+    <input type="text" placeholder="{{t 'app.filterbytags'}}"/>
+    <i class="fa fa-search"></i>
+  </div>
+  <div class="items">
+    {{#each items}}
+      <button class="item" data-title="{{title}}" data-id="{{_id}}">{{title}}</button>
+    {{/each}}
+  </div>
+</div>

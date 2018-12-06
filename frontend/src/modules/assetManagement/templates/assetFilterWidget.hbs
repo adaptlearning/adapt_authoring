@@ -1,0 +1,36 @@
+<div class="group name">
+  <h1 class="title">Filters</h1>
+  <div class="sidebar-row-input">
+    <input type="text" class="search" placeholder="{{t 'app.searchbyname'}}"/>
+    <!-- <button class="clear"><i class="fa fa-times"></i></button> -->
+  </div>
+</div>
+<div class="group media">
+  <h3 class="title">Media</h3>
+  <button class="filter" data-filter-type="image">
+    <span class="toggle"><i class="fa fa-toggle-off"></i></span>
+    <span class="label">{{t 'app.filetypeimage'}}</span>
+    <span class="icon"><i class="fa fa-image"></i></span>
+  </button>
+  <button class="filter" data-filter-type="audio">
+    <span class="toggle"><i class="fa fa-toggle-off"></i></span>
+    <span class="label">{{t 'app.filetypeaudio'}}</span>
+    <span class="icon"><i class="fa fa-file-audio-o"></i></span>
+  </button>
+  <button class="filter" data-filter-type="video">
+    <span class="toggle"><i class="fa fa-toggle-off"></i></span>
+    <span class="label">{{t 'app.filetypevideo'}}</span>
+    <span class="icon"><i class="fa fa-file-video-o"></i></span>
+  </button>
+  <button class="filter" data-filter-type="other">
+    <span class="toggle"><i class="fa fa-toggle-off"></i></span>
+    <span class="label">{{t 'app.filetypeother'}}</span>
+    <span class="icon"><i class="fa fa-file-o"></i></span>
+  </button>
+</div>
+<div class="group tags">
+  <h3 class="title">{{t 'app.tags'}}</h3>
+  <button class="add-tag action action-secondary">
+    <span class="label">{{t 'app.searchbytag'}}</span>
+  </button>
+</div>

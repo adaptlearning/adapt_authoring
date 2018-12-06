@@ -3,6 +3,7 @@ define(function(require) {
   var Origin = require('core/origin');
   var AssetModel = require('./models/assetModel');
   var AssetCollection = require('./collections/assetCollection');
+  var AssetFilterView = require('./views/assetFilterWidgetView');
   var AssetManagementView = require('./views/assetManagementView');
   var AssetManagementNewAssetView = require('./views/assetManagementNewAssetView');
   var TagsCollection = require('core/collections/tagsCollection');
@@ -44,12 +45,12 @@ define(function(require) {
         // No need to fetch as the collectionView takes care of this
         // Mainly due to serverside filtering
         var assetCollection = new AssetCollection();
-        var SidebarView = require('./views/assetManagementSidebarView');
+        var filterView = new AssetFilterView({ collection: tagsCollection });
+        console.log(filterView.$el);
         Origin.sidebar.update({
-          actions: [{ name: 'upload', type: 'primary', label: 'buttons.uploadnewasset' }]
+          actions: [{ name: 'upload', type: 'primary', label: 'buttons.uploadnewasset' }],
+          widgets: [filterView.$el]
         });
-        Origin.sidebar.addView(new SidebarView({ collection: tagsCollection }).$el);
-
         Origin.contentPane.setView(AssetManagementView, { collection: assetCollection });
         Origin.trigger('assetManagement:loaded');
       },

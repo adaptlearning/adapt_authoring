@@ -14,7 +14,7 @@ define(function(require){
     },
 
     preRender: function() {
-        this.listenTo(Origin, 'assetManagement:newAsset', this.uploadAsset);
+      this.listenTo(Origin, 'sidebar:action:save', this.uploadAsset);
     },
 
     postRender: function() {

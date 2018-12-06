@@ -22,6 +22,10 @@ define(function(require){
 
     initialize: function() {
       OriginView.prototype.initialize.apply(this, arguments);
+
+      this.listenTo(Origin, 'sidebar:action:add', function() {
+        Origin.router.navigateTo('userManagement/addUser');
+      });
       this.initData();
     },
 

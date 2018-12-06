@@ -10,7 +10,7 @@ define(function(require){
     createdUserId: false,
 
     preRender: function() {
-      this.listenTo(Origin, 'userManagement:saveUser', this.saveNewUser);
+      this.listenTo(Origin, 'sidebar:action:save', this.saveNewUser);
     },
 
     postRender: function() {
@@ -46,10 +46,6 @@ define(function(require){
       return false;
     },
 
-    goBack: function() {
-      Origin.router.navigateTo('userManagement');
-    },
-
     onFormSubmitSuccess: function(userData, userStatus, userXhr) {
       this.createdUserId = userData._id;
 
@@ -77,7 +73,7 @@ define(function(require){
     },
 
     onAjaxSuccess: function() {
-      this.goBack();
+      Origin.router.navigateTo('userManagement');
     },
 
     onAjaxError: function(data, status, error) {

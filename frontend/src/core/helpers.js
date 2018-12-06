@@ -39,7 +39,7 @@ define(function(require){
     keyToTitleString: function(key) {
       if (!key) return;
       // check translatable strings first
-      var l10nKey = 'app.scaffold.' + key;
+      var l10nKey = 'scaffold.' + key;
       if(Origin.l10n.has(l10nKey)) {
         return Origin.l10n.t(l10nKey);
       }

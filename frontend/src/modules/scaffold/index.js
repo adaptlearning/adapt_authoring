@@ -52,7 +52,7 @@ define([
       }
 
       if (!isFieldTypeObject) {
-        return Backbone.Form.Field.prototype.createTitle.call({ key: key }); 
+        return Backbone.Form.Field.prototype.createTitle.call({ key: key });
       }
     };
 
@@ -177,10 +177,10 @@ define([
 
   function buildFieldsets(schema, options) {
     var fieldsets = {
-      general: { key: 'general', legend: Origin.l10n.t('app.scaffold.general'), fields: [] },
-      properties: { key: 'properties', legend: Origin.l10n.t('app.scaffold.properties'), fields: [] },
-      settings: { key: 'settings', legend: Origin.l10n.t('app.scaffold.settings'), fields: [] },
-      extensions: { key: 'extensions', legend: Origin.l10n.t('app.scaffold.extensions'), fields: [ '_extensions' ] }
+      general: { key: 'general', legend: Origin.l10n.t('scaffold.general'), fields: [] },
+      properties: { key: 'properties', legend: Origin.l10n.t('scaffold.properties'), fields: [] },
+      settings: { key: 'settings', legend: Origin.l10n.t('scaffold.settings'), fields: [] },
+      extensions: { key: 'extensions', legend: Origin.l10n.t('scaffold.extensions'), fields: [ '_extensions' ] }
     };
 
     for (var key in schema) {

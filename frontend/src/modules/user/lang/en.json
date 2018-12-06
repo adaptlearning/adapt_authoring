@@ -1,7 +1,11 @@
 {
-  "titles": {
-    "user.profile": "User profile"
-  },
-  "buttons": {
+  "user": {
+    "loggedinas": "Logged in as",
+    "logout": "Log out",
+    "titles": {
+      "user.profile": "User profile"
+    },
+    "buttons": {
+    }
   }
 }

@@ -30,7 +30,7 @@ define([
         showInput: true,
         showPalette: true,
         showButtons: true,
-        cancelText: Origin.l10n.t('app.scaffold.colourPickerCancel'),
+        cancelText: Origin.l10n.t('scaffold.colourPickerCancel'),
         allowEmpty: true, // to allow empty strings in schema default value
         palette: [],
         preferredFormat: "hex3",

@@ -1,9 +1,11 @@
 {
-  "titles": {
-    "assetmanagement.new": "New Asset"
-  },
-  "buttons": {
-    "assetmanagement": "Asset Management",
-    "uploadnewasset": "Upload new asset"
+  "assetmanagement": {
+    "titles": {
+      "assetmanagement.new": "New Asset"
+    },
+    "buttons": {
+      "assetmanagement": "Assets",
+      "uploadnewasset": "Upload new asset"
+    }
   }
 }

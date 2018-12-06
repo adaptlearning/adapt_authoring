@@ -23,12 +23,12 @@ define(function(require) {
       if(!location || !location.module) {
         return;
       }
-      var mod = location.module;
+      var mod = location.module.toLowerCase();
       var page = location.route1;
       var type = location.route2;
       var action = location.route4;
 
-      var title = 'titles.' + mod.toLowerCase();
+      var title = mod + '.titles.' + mod;
 
       if(page && !type) {
         title += '.' + page.toLowerCase();
@@ -36,7 +36,7 @@ define(function(require) {
         if(type) title += '.' + type.toLowerCase();
         if(action) title += '.' + action.toLowerCase();
       }
-      console.log('LocationTitleView#render:', title);
+      console.log('LocationTitleView#render:', title, location);
 
       if(!Origin.l10n.has(title)) {
         console.warn('Missing', title);

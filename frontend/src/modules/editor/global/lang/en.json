@@ -1,0 +1,17 @@
+{
+  "editor": {
+    "titles": {
+      "editor.settings": "Project settings",
+      "editor.config": "Configuration settings",
+      "editor.themepicker": "Theme picker",
+      "editor.menusettings": "Menu picker",
+      "editor.extensions": "Manage extensions",
+      "editor.menu": "Course structure",
+      "editor.page": "Page structure",
+      "editor.page.edit": "Page settings",
+      "editor.article.edit": "Article settings",
+      "editor.block.edit": "Block settings",
+      "editor.component.edit": "Component settings"
+    }
+  }
+}

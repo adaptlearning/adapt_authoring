@@ -1,6 +1,10 @@
 {
-  "buttons": {
-    "save": "Save",
-    "cancel": "Cancel"
+  "app": {
+    "productname": "Adapt authoring tool",
+    "loading": "Loading",
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel"
+    }
   }
 }

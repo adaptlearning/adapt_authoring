@@ -28,10 +28,10 @@ define(function(require) {
       var type = location.route2;
       var action = location.route4;
 
-      var title = 'titles.' + mod.toLowerCase() + '.';
+      var title = 'titles.' + mod.toLowerCase();
 
       if(page && !type) {
-        title += page.toLowerCase();
+        title += '.' + page.toLowerCase();
       } else {
         if(type) title += '.' + type.toLowerCase();
         if(action) title += '.' + action.toLowerCase();

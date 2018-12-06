@@ -27,7 +27,7 @@ define(function(require) {
       view.renderLinkButton(data, index);
     },
     addWidget: function($el, index) {
-      view.model.get('widgets').push(data);
+      view.model.get('widgets').push($el);
       view.renderWidget($el, index);
     },
     showErrors: function(errors) {
@@ -39,7 +39,7 @@ define(function(require) {
       view.renderWidget($el);
     }
   };
-  
+
   Origin.once('origin:initialize', function() {
     $('body').append(view.$el);
   });

@@ -5,7 +5,7 @@ define(function(require) {
 
   var SidebarFieldsetFilterView = SidebarLinkButtonView.extend({
     className: function() {
-      return 'link fieldset sidebar-fieldset-filter-' + this.model.get('key');
+      return 'link fieldset ' + this.model.get('key');
     },
 
     initialize: function(options) {
@@ -14,6 +14,10 @@ define(function(require) {
         label: this.model.get('legend')
       });
       SidebarLinkButtonView.prototype.initialize.apply(this, arguments);
+    },
+
+    showError: function() {
+      this.$el.addClass('fieldset-error');
     },
 
     onClick: function(e) {

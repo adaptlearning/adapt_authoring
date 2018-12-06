@@ -1,3 +1,6 @@
+@sidebar-padding: 25px;
+
+
 .sidebar-hide {
   #app { margin-left: 0px; }
   .sidebar { display: none; }
@@ -19,11 +22,33 @@
 
   .sidebar-inner {
     margin-top: 61px;
-    padding: 25px;
+    padding-top: @sidebar-padding;
 
     .group {
-      margin-bottom: 30px;
-      &:last-child { margin-bottom: 0 };
+      padding: 0 @sidebar-padding @sidebar-padding @sidebar-padding;
+      &.full-width { padding: 0; padding-bottom: @sidebar-padding; }
+    }
+    button {
+      color: @sidebar-text-color;
+      font-size: 110%;
+      width: 100%;
+      text-align: left;
+    }
+
+    input[type="text"] {
+      @input-background-color: #627178;
+      @input-placeholder-color: lighten(@input-background-color, 20%);
+
+      height: 25px;
+      background: @input-background-color;
+      border-color: lighten(@input-background-color, 10%);
+      color: #fff;
+      font-size: 110%;
+
+      &::-webkit-input-placeholder { color: @input-placeholder-color; }
+      &:-moz-placeholder { color: @input-placeholder-color; }
+      &::-moz-placeholder { color: @input-placeholder-color; }
+      &:-ms-input-placeholder { color: @input-placeholder-color; }
     }
   }
 }

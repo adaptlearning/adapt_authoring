@@ -4,7 +4,6 @@ define(function(require) {
   var OriginView = require('core/views/originView');
   var SidebarActionButtonView = require('./sidebarActionButtonView');
   var SidebarLinkButtonView = require('./sidebarLinkButtonView');
-  var SidebarFilterView = require('./sidebarFilterView');
   var SidebarFieldsetFilterView = require('./sidebarFieldsetFilterView');
 
   var Sidebar = OriginView.extend({
@@ -15,10 +14,7 @@ define(function(require) {
 
       this.resetModel();
       // TODO why can't I do listenTo?!
-      Origin.on({
-        // 'sidebar:filter:add': this.renderFilterView.bind(this),
-        'sidebar:action:cancel sidebar:link:back': this.goBack.bind(this)
-      });
+      Origin.on('sidebar:action:cancel sidebar:link:back', this.goBack.bind(this));
     },
 
     resetModel: function(data) {
@@ -84,7 +80,10 @@ define(function(require) {
       groups.forEach(function(group) {
         var items = this.model.get(group.name);
         if(items && items.length) items.forEach(group.func, this);
+        else this.$('.group.' + group.name).addClass('display-none');
       }.bind(this));
+
+      this.showErrors();
     },
 
     renderActionButton: function(data, index) {
@@ -97,19 +96,13 @@ define(function(require) {
 
     renderFieldsetFilter: function(data) {
       var view = new SidebarFieldsetFilterView({ model: new Backbone.Model(data.schema) });
+      data.view = view;
       this.attachHTML(view.$el, this.$('.fieldsets.group'));
     },
 
     renderWidget: function($el, index) {
-      this.attachHTML($el, this.$('.widgets.group'));
+      this.attachHTML($el, this.$('.widgets.group'), index);
     },
-
-    /*
-    renderFilterView: function(options) {
-      Origin.trigger('sidebar:sidebarFilter:remove');
-      $('body').append(new SidebarFilterView(options).$el);
-    },
-    */
 
     /**
     * A number of assumptions are made here:
@@ -118,6 +111,7 @@ define(function(require) {
     * - index value is zero-indexed
     */
     attachHTML: function($el, $container, index) {
+      console.log('SidebarView#attachHTML:', $el);
       var children = $container.children();
       // deal with unexpected values by just appending
       if(children.length === 0 || index === undefined || index < 0 || index > children.length-1) {
@@ -137,13 +131,13 @@ define(function(require) {
     showErrors: function(errors) {
       this.$('.sidebar-fieldset-filter').removeClass('error');
 
-      if (!errors) return;
-
+      if (!errors) {
+        return;
+      }
       // add a visual cue for any fieldsets with errors
       _.each(errors, function(error, attribute) {
-        _.each(this.form.options.fieldsets, function(fieldset, key) {
-          if(!_.contains(fieldset.fields, attribute)) return;
-          this.$('.sidebar-fieldset-filter-' + fieldset.key).addClass('error');
+        _.each(this.model.get('fieldsets'), function(fieldset) {
+          if(Object.keys(fieldset.fields).includes(attribute)) fieldset.view.showError();
         }, this);
       }, this);
     },

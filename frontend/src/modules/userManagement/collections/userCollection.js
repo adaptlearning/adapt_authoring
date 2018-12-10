@@ -73,7 +73,7 @@ define(function(require) {
       }
     },
 
-    filterTenants: function() {
+    filterTenants: function(model) {
       if (this.filterGroups.tenantName
         && this.filterGroups.tenantName.indexOf(model.get('tenantName')) < 0) {
         model.set('_isHidden', true);

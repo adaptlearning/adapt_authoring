@@ -277,12 +277,12 @@ define(function(require) {
       var id = model.get('_id');
 
       if (helpers.copyStringToClipboard(id)) {
-        Origin.Notify.alert({
-          type: 'success',
+        Origin.Notify.snackbar({
+          type: 'info',
           text: Origin.l10n.t('app.copyidtoclipboardsuccess', { id: id })
         });
       } else {
-        Origin.Notify.alert({
+        Origin.Notify.snackbar({
           type: 'warning',
           text: Origin.l10n.t('app.app.copyidtoclipboarderror', { id: id })
         });

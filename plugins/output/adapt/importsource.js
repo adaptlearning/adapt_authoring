@@ -484,8 +484,12 @@ function ImportSource(req, done) {
       */
       if(type === 'course') {
         try {
-          var contents = await fs.readFile(path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Theme, plugindata.theme[0]._theme, 'less', Constants.Filenames.CustomStyle), 'utf8');
-          data = _.extend(data, { tags: formTags, customStyle: contents.toString() });
+          var customStylePath = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Theme, plugindata.theme[0]._theme, 'less', Constants.Filenames.CustomStyle);
+          var customStyleContents = '';
+          if (fs.existsSync(customStylePath)) {
+              customStyleContents = await fs.readFile(customStylePath, 'utf8');
+          }
+          data = _.extend(data, { tags: formTags, customStyle: customStyleContents.toString() });
         } catch(e) {
           return reject(e);
         }

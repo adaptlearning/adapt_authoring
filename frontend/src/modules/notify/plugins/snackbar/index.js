@@ -13,7 +13,7 @@ define(function(require) {
     timeout: 3000,
     callback: null
   };
-  var el;
+  var $el;
   var timer;
   var queue = [];
 
@@ -25,33 +25,31 @@ define(function(require) {
     if(queue.length === 1) processQueue();
   };
 
-  var processQueue = function() {
-    el = document.createElement('div');
-    el.id = 'snackbar';
+  function processQueue() {
     var data = queue[0];
-    var html = ['<div class="body">',data.text,'</div>'];
+    $el = $('<div>', { id: 'snackbar', 'class': data.type })
+      .append($('<div>', { 'class': 'body', text: data.text }));
+
     if (data.persist && data.buttonText) {
-      html.push('<button class="close">');
-      html.push(data.buttonText);
-      html.push('</button>');
+      $el.append($('<button>', { 'class': 'close', text: data.buttonText }));
     }
 
-    el.innerHTML = html.join('');
-    $(el).addClass(data.type).appendTo('.app-inner').velocity('fadeIn', {
+    $el.appendTo('.app-inner').velocity('fadeIn', {
       duration: data.animTime,
       display: 'flex'
     });
+
     if (!data.persist) timer = setTimeout(closeSnack, data.timeout);
   };
 
-  var closeSnack = function(event) {
+  function closeSnack(event) {
     clearTimeout(timer);
     var data = queue.shift();
 
-    $(el).velocity('fadeOut', {
+    $el.velocity('fadeOut', {
       duration: data.animTime,
       complete: function() {
-        el.remove();
+        $el.remove();
         if (data.callback) data.callback.apply();
         if (queue.length > 0) processQueue();
       }

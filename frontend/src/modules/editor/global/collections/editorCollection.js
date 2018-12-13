@@ -15,6 +15,15 @@ define(function(require) {
 
     loadedData: function() {
       Origin.trigger('editorCollection:dataLoaded', this._type);
+    },
+
+    comparator: function(item) {
+      return item.get(this.sort_key);
+    },
+
+    sortByField: function(fieldName) {
+      this.sort_key = fieldName;
+      return this.sort();
     }
   });
 

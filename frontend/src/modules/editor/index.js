@@ -11,7 +11,7 @@ define([
   './course/index',
   './extensions/index',
   './menuSettings/index',
-  './selectTheme/index'
+  './themeEditor/index'
 ], function(require, Origin, EditorData) {
   // loads editor data
   Origin.on('origin:dataReady login:changed', EditorData.loadGlobalData);

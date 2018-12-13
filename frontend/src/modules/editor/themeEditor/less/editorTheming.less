@@ -1,0 +1,80 @@
+// @import '../../../less/sharedStyles.less';
+// @import '../../../less/variables.less';
+
+// HACK to fix icon positioning
+.sweet-alert .sa-input-error {
+  top: 24px !important;
+}
+
+.sidebar {
+  .editor-theming-sidebar-savePreset {
+    height: 35px !important;
+    padding: 0;
+  }
+}
+
+.theming-inner {
+  .error {
+    position: inherit;
+    padding: 30px 30px 0 30px;
+    color: @alert-color;
+    font-size: 17px;
+    font-weight: 600;
+    text-align: center;
+    max-width: 800px;
+  }
+  .header {
+    .form-container-style;
+    .description {
+      padding-bottom: 15px;
+    }
+  }
+  .title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 30px;
+  }
+  button {
+    margin-right: 5px;
+  }
+  // custom styles
+  .theme-selector {
+    .tile {
+      label {
+        font-weight: bold;
+        padding-right: 5px;
+      }
+      padding-right: 15px;
+      padding-bottom: 20px;
+      display: inline-block;
+      select {
+        min-width: 150px;
+      }
+    }
+    .buttons-container {
+      display: inline-block;
+      button {
+        padding: 7px;
+      }
+    }
+  }
+
+  .theme-customiser {
+    .form-container-style;
+    .form-container {
+      // HACK to hide fieldset titles
+      .legend {
+        display: none;
+      }
+      fieldset {
+        margin: 0;
+        border: none;
+        padding-bottom: 0;
+        max-width: none;
+        .field {
+          padding-left: 0;
+        }
+      }
+    }
+  }
+}

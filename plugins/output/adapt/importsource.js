@@ -483,11 +483,14 @@ function ImportSource(req, done) {
       * Content-specific attributes
       */
       if(type === 'course') {
+        data = _.extend(data, { tags: formTags });
         try {
           var contents = await fs.readFile(path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Theme, plugindata.theme[0]._theme, 'less', Constants.Filenames.CustomStyle), 'utf8');
-          data = _.extend(data, { tags: formTags, customStyle: contents.toString() });
+          data = _.extend(data, { customStyle: contents.toString() });
         } catch(e) {
-          return reject(e);
+          if (e.code !== 'ENOENT') {
+            return reject(e);
+          }
         }
       }
       else if(type === 'config') {

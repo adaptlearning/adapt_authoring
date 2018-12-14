@@ -10,10 +10,20 @@
     display: flex;
     flex-wrap: wrap;
 
-    > div {
+    .filter-item {
       width: 25%;
       box-sizing: border-box;
-      padding: 20px 10px;
+      margin: 10px 0;
+      padding: 10px;
+      border-right: solid 1px darken(#fff, 15%);
+
+      &:first-of-type {
+        padding-left: 0;
+      }
+      &:last-of-type {
+        border-right: none;
+        padding-right: 0;
+      }
     }
   }
 
@@ -49,6 +59,7 @@
       .search {
         padding: 10px;
         display: flex;
+        background-color: darken(#fff, 3%);
 
         input[type="text"] {
           width: 85%;
@@ -61,8 +72,17 @@
         }
       }
 
-        .form-container-style;
-        max-width: inherit;
+      .user-management-filter {
+        padding: 0 10px;
+        background-color: darken(#fff, 3%);
+
+        .filter-inner {
+          border-top: solid 1px darken(#fff, 15%);
+        }
+      }
+
+      .form-container-style;
+      max-width: inherit;
       .tb-heading {
         > div {
           display: flex;

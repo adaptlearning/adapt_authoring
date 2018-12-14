@@ -82,8 +82,8 @@ define(function(require){
         this.$('.theme-customiser').show();
         Origin.trigger('theming:showPresetButton', true);
 
-        var toRestore = Origin.editor.data.course.get('themeSettings') || this.getDefaultThemeSettings();
-        this.restoreFormSettings(toRestore);
+        var toRestore = Origin.editor.data.course.get('themeVariables') || this.getDefaultThemeSettings();
+        _.defer(function() { this.restoreFormSettings(toRestore); }.bind(this));
       } else {
         this.$('.tile.preset').hide();
         this.$('.buttons-container').hide();
@@ -184,7 +184,7 @@ define(function(require){
         if(!view) {
           continue;
         }
-        if(view.schema.fieldType === 'ColorPicker') {
+        if(view.schema.inputType === 'ColourPicker') {
           view.setValue(toRestore[key]);
         }
         else {
@@ -299,7 +299,7 @@ define(function(require){
         this.form.commit();
         var selectedTheme = this.getSelectedTheme();
         var settings = _.pick(selectedTheme.attributes, Object.keys(selectedTheme.get('properties')));
-        Origin.editor.data.course.set('themeSettings', settings);
+        Origin.editor.data.course.set('themeVariables', settings);
         Origin.editor.data.course.save(null, {
           error: _.bind(this.onSaveError, this),
           success: _.bind(callback, this)
@@ -445,7 +445,7 @@ define(function(require){
 
     onSaveSuccess: function() {
       Origin.trigger('editingOverlay:views:hide');
-      Origin.trigger('editor:refreshData', this.navigateBack, this);
+      Origin.trigger('editor:refreshData', this.navigateBack.bind(this), this);
     }
   }, {
     template: 'editorTheming'

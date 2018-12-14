@@ -225,7 +225,7 @@ define([
 
   Scaffold.buildForm = function(options) {
     var model = options.model;
-    var type = model.get('_type') || model._type;
+    var type = model.get('_type') || model._type || options.schemaType;
 
     switch (type) {
       case 'menu':

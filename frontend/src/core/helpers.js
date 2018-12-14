@@ -115,6 +115,12 @@ define(function(require){
       return new Handlebars.SafeString(html);
     },
 
+    escapeText: function(text) {
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(text));
+      return div.innerHTML;
+    },
+
     bytesToSize: function(bytes) {
       if (bytes === 0) return '0 B';
 

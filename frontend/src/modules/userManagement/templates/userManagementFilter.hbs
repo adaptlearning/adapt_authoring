@@ -1,19 +1,27 @@
 <form>
 <div class="filter-inner">
   {{#each groups}}
-  <div class="">
-    <h5 class="">{{name}}</h5>
-    {{#each items}}
+  <div class="filter-item">
+    <h5>{{name}}</h5>
+    {{#ifValueEquals key "tenantName"}}
+      <select name="tenantName">
+        {{#each items}}
+          <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+    {{else}}
+      {{#each items}}
       <label>
         <input type="checkbox" name="{{../key}}" value="{{this}}">
         <i class="fa fa-toggle-off"></i>
         <span>{{this}}</span>
       </label><br>
-    {{/each}}
+      {{/each}}
+    {{/ifValueEquals}}
   </div>
   {{/each}}
 
-  <div class="">
+  <div class="filter-item">
     <h5 class="">{{t 'app.lastaccess'}}</h5>
     <label>
       <input type="checkbox" name="lastAccess" value="never">

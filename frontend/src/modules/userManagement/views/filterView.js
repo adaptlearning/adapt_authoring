@@ -17,7 +17,7 @@ define([
     className: 'user-management-filter',
 
     events: {
-      'change input[type="checkbox"]': 'onFormChange',
+      'change input[type="checkbox"],select': 'onFormChange',
       'click button[data-resetdate]': 'resetDate'
     },
 
@@ -49,7 +49,8 @@ define([
         startDate: this.startDate,
         endDate: this.endDate
       };
-      var selected = this.$('form').find(':checked').each(function(index, input) {
+
+      var selected = this.$('form').find('input:checked').each(function(index, input) {
         var name = input.name;
         var value = input.value;
         if (!attributeMap[name]) {
@@ -57,6 +58,11 @@ define([
         }
         attributeMap[name].push(value);
       });
+
+      var tenantNames = this.tenantSelect.getValue();
+      if (tenantNames.length) {
+        attributeMap.tenantName = tenantNames;
+      }
 
       if (attributeMap.lastAccess && attributeMap.lastAccess[0] === 'never') {
         attributeMap.startDate = null;
@@ -69,6 +75,7 @@ define([
     },
 
     remove: function() {
+      this.tenantSelect.destroy();
       this.startPicker.destroy();
       this.endPicker.destroy();
       Backbone.View.prototype.remove.apply(this, arguments);
@@ -100,6 +107,11 @@ define([
     },
 
     postRender: function() {
+      this.tenantSelect = this.$('[name="tenantName"]').selectize({
+        maxItems: null
+      })[0].selectize;
+      this.tenantSelect.setValue('');
+
       this.startPicker = new Pikaday({
         field: this.$('input[name="start-date"]')[0],
         onSelect: this.onStartSelect.bind(this)

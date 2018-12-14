@@ -27,11 +27,11 @@ define(function(require) {
 
   function processQueue() {
     var data = queue[0];
-    $el = $('<div>', { id: 'snackbar', 'class': data.type })
-      .append($('<div>', { 'class': 'body', text: data.text }));
+    $el = $('<div></div>', { id: 'snackbar', 'class': data.type })
+      .append($('<div></div>', { 'class': 'body', text: data.text }));
 
     if (data.persist && data.buttonText) {
-      $el.append($('<button>', { 'class': 'close', text: data.buttonText }));
+      $el.append($('<button></button>', { 'class': 'close', text: data.buttonText }));
     }
 
     $el.appendTo('.app-inner').velocity('fadeIn', {

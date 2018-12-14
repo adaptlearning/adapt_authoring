@@ -204,7 +204,7 @@ define(function(require) {
       model: Model,
       url: url,
       _type: siblingTypes || inferredType
-    }).sortByField('displayName');
+    });
   }
 
   /**

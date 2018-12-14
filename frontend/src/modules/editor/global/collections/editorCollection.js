@@ -4,6 +4,8 @@ define(function(require) {
   var Origin = require('core/origin');
 
   var EditorCollection = Backbone.Collection.extend({
+    comparator: 'displayName',
+
     initialize : function(models, options){
       this.url = options.url;
       this._type = options._type;
@@ -15,15 +17,6 @@ define(function(require) {
 
     loadedData: function() {
       Origin.trigger('editorCollection:dataLoaded', this._type);
-    },
-
-    comparator: function(item) {
-      return item.get(this.sort_key);
-    },
-
-    sortByField: function(fieldName) {
-      this.sort_key = fieldName;
-      return this.sort();
     }
   });
 

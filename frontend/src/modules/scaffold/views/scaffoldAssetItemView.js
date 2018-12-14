@@ -64,14 +64,14 @@ define([
 
       this.removeDragItems();
       this.itemListView.value && this.itemListView.value.forEach(function(i, index) {
-        var item = document.createElement('div');
-        item.style.top = parseInt(i[this.topAttr]).toFixed(this.precision)+'%';
-        item.style.left = parseInt(i[this.leftAttr]).toFixed(this.precision)+'%';
-        item.innerText = index+1;
-        item.setAttribute('data-index', index);
-
-        this.$('.scaffold-asset-item-img-holder').append(item);
-        $(item).draggable({
+        $('<div></div>', {
+          css: {
+            top: parseInt(i[this.topAttr]).toFixed(this.precision)+'%',
+            left: parseInt(i[this.leftAttr]).toFixed(this.precision)+'%'
+          },
+          text: index + 1,
+          'data-index': index
+        }).appendTo('.scaffold-asset-item-img-holder').draggable({
           containment: 'parent',
           stop: this.onDragStop.bind(this)
         }).css( 'position', 'absolute' );
@@ -100,10 +100,7 @@ define([
       var $parent = this.$('.scaffold-asset-item-img-holder');
       var left = (parseInt($(event.target).css("left")) / ($parent.width() / 100)).toFixed(this.precision);
       var top = (parseInt($(event.target).css("top")) / ($parent.height() / 100)).toFixed(this.precision);
-      var $item = $(event.target);
-      $item.css("left", left+"%");
-      $item.css("top", top+"%");
-      var index = $item.data('index');
+      $(event.target).css({left: left + '%', top: top+'%'}).data('index');
 
       var child = this.itemListView.items[index];
       var value = {};

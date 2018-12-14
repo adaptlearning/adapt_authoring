@@ -67,7 +67,6 @@ define([
         var item = document.createElement('div');
         item.style.top = parseInt(i[this.topAttr]).toFixed(this.precision)+'%';
         item.style.left = parseInt(i[this.leftAttr]).toFixed(this.precision)+'%';
-        item.title = i.title;
         item.innerText = index+1;
         item.setAttribute('data-index', index);
 
@@ -152,7 +151,8 @@ define([
       this.$el.html(Handlebars.templates[this.constructor.template]({
         value: this.value,
         type: 'image',
-        url: id ? '/api/asset/serve/' + id : dataUrl
+        url: id ? '/api/asset/serve/' + id : dataUrl,
+        addLabel: this.schema.editorAttrs['data-addLabel'] || Origin.l10n.t('app.add')
       }));
 
       _.defer(this.postRender.bind(this));

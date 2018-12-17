@@ -30,68 +30,28 @@
     }
   }
 
-  .editor-common-sidebar-preview-wrapper {
-    display: flex;
-    width: 200px;
-    margin: 5px 25px;
-
-    .editor-common-sidebar-preview {
-      flex-grow: 1;
-      width: auto;
-      margin: 0;
-      border-radius: 5px 0 0 5px;
-      z-index: 1;
+  .editor-common-force-rebuild {
+    margin: 10px 25px 25px;
+    label {
+      display: flex;
+      align-items: center;
+      font-size: 15px;
     }
 
-    .dropdown {
-      > button {
-        width: auto;
-        height: 100%;
-        margin: 0;
-        border-left: solid 2px @button-secondary-hover-color;
-        background-color: @button-secondary-color;
-        border-radius: 0 5px 5px 0;
-        color: @white;
-        .fa {
-        }
-      }
-      ul {
-        position: absolute;
-        padding-top: 5px;
-        top: 50px - 5px;
-        left: 0;
-        z-index: 0;
-        border-radius: 0 0 5px 5px;
-        display: none;
-        width: 200px;
-        margin: 0 25px;
-        list-style: none;
-        background-color: @button-secondary-hover-color;
+    i.fa.fa-toggle-off {
+      font-size: 1.5rem;
+      margin-right: 10px;
+    }
 
-        li {
-          padding: 5px;
-          button {
-            width: 100%;
-            color: @white;
-          }
-          .editor-common-sidebar-preview-force {
-
-          }
-        }
-      }
-      &:hover {
-        .editor-common-sidebar-preview-force {
-        }
-        ul {
-          display: block;
-        }
-        > button {
-          border-color: @button-secondary-hover-color;
-          background-color: @button-secondary-hover-color;
-        }
+    input[type="checkbox"] {
+      display: none;
+      &:checked + .fa-toggle-off:before {
+        content: "\f205";
+        color: @button-secondary-color;
       }
     }
   }
+
 
   a {
     color:@sidebar-text-color;

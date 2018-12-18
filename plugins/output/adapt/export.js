@@ -42,7 +42,7 @@ function ensureExportDir(exportDirEnsured) {
 }
 
 function generateLatestBuild(results, courseBuilt) {
-  self.publish(COURSE_ID, Constants.Modes.export, null, null, courseBuilt);
+  self.publish(COURSE_ID, Constants.Modes.Export, null, null, courseBuilt);
 }
 
 /**

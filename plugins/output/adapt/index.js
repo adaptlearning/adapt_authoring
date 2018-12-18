@@ -288,15 +288,15 @@ AdaptOutput.prototype.export = function(pCourseId, request, response, pNext) {
       return next(error);
     }
     async.auto({
-      generateLatestBuild: generateLatestBuild,
+      generateLatestBuild: async.apply(generateLatestBuild, request),
       copyFrameworkFiles: ['generateLatestBuild', copyFrameworkFiles],
       copyCourseFiles: ['generateLatestBuild', copyCourseFiles]
     }, zipExport);
   });
 };
 
-function generateLatestBuild(courseBuilt) {
-  self.publish(courseId, Constants.Modes.export, null, null, courseBuilt);
+function generateLatestBuild(request, courseBuilt) {
+  self.publish(courseId, Constants.Modes.Export, request, null, courseBuilt);
 };
 
 /**

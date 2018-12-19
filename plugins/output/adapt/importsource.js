@@ -321,6 +321,8 @@ function ImportSource(req, done) {
         return cb(error);
       }
       async.each(results, function(plugin, cb2) {
+        const properties = plugin.properties;
+        const locations = properties && properties.pluginLocations;
         if(!metadata[`${type}Map`]) {
           metadata[`${type}Map`] = {};
         }
@@ -330,11 +332,11 @@ function ImportSource(req, done) {
           name: plugin.name,
           _id: plugin._id
         };
-        if(plugin.properties.pluginLocations) {
+        if(locations) {
           if(!pluginLocations[type]) {
             pluginLocations[type] = {};
           }
-          pluginLocations[type][plugin.targetAttribute] = plugin.properties.pluginLocations;
+          pluginLocations[type][plugin.targetAttribute] = locations;
         }
         cb2();
       }, cb);

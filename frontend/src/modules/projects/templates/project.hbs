@@ -1,0 +1,56 @@
+<div class="project-inner clearfix no-select" data-id="{{_id}}">
+
+    <div class="project-header">
+      <div class="project-header-inner">
+
+        <div class="project-settings">
+          <div class="project-settings-inner">
+            <a href="#" class="open-context-icon open-context-course"><i class="fa fa-cog fa-fw"></i></a>
+            <a href="#" class="course-delete editor-delete-course-element" title="{{ t 'app.clicktodelete'}}">
+                <i class="fa fa-trash-o"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {{#if heroImage}}
+    <div class="project-image" style="background-image: url({{heroImageURI}});">
+    </div>
+    {{else}}
+    <div class="project-image">
+    </div>
+    {{/if}}
+
+    <div class="project-details">
+      <div class="project-details-inner">
+        <div class="project-detail-title">
+          <h1 class="project-detail-title-inner">{{{title}}}</h1>
+        </div>
+
+        <div class="project-details-last-updated project-details-row">
+          <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
+          <div class="projects-details-value">{{momentFormat updatedAt "Do MMMM YYYY"}}</div>
+        </div>
+        {{#if tags.length}}
+        <div class="project-details-tags project-details-row tags">
+          <div class="projects-details-tags-button">
+            <button class="btn secondary-hollow projects-details-tags-button-show">{{t 'app.viewtags'}}</button>
+          </div>
+          <div class="projects-details-value tag-container">
+            <ul class="items tags">
+            {{#each tags}}
+              <li class="item-row tag" title="{{{title}}}">
+                <span class="value-text">{{{title}}}</span>
+              </li>
+            {{/each}}
+            </ul>
+            <button class="btn secondary-hollow projects-details-tags-button-hide">{{t 'app.hidetags'}}</button>
+          </div>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+
+
+</div>

@@ -1,0 +1,33 @@
+.block {
+    background-color:#EAF8FB;
+    border: 1px solid #D3E2E5;
+    position: relative;
+    margin-bottom: 20px;
+    padding-top: 10px;
+    border-radius: 3px;
+
+    &-inner {
+        padding: 15px;
+        padding-top: 5px;
+
+        .block-body {
+            padding-bottom: 10px;
+            &:empty {
+                padding-bottom: 0;
+            }
+        }
+
+        .block-detail {
+            padding: 0 30px;
+        }
+        .page-components {
+            padding: 5px;
+        }
+    }
+
+    &-edit-panel {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+}

@@ -1,0 +1,29 @@
+<div class="navigation-bg"></div>
+<div class="navigation-inner clearfix">
+  <div class="navigation-left">
+    {{#if isAuthenticated}}
+    <a href="#" class="navigation-item navigation-global-menu" data-event="globalMenu:toggle">
+      {{!-- <i class="fa fa-bars"></i> --}}
+      <div id="global-menu-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </a>
+    <div href="#" class="navigation-item navigation-product-name">{{t 'app.productname'}}</div>
+    {{/if}}
+  </div>
+  <div class="navigation-right">
+    {{#if isAuthenticated}}
+    <a href="#" class="navigation-item navigation-help" data-event="help">
+      <span>{{t 'app.help'}}</span>
+    </a>
+    <a href="#" class="navigation-item navigation-profile" data-event="user:profile">
+      {{t 'app.loggedinas'}}: <span>{{email}}</span>
+    </a>
+    <a href="#" class="navigation-item navigation-user-logout btn white-hollow" data-event="user:logout">
+      <span>{{t 'app.logout'}}</span>
+    </a>
+    {{/if}}
+  </div>
+</div>

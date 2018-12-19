@@ -1,18 +1,18 @@
 {
-  "serverPort": 5000,
+  "rootUrl": "http://localhost:5000",
   "serverName": "localhost",
+  "serverPort": 5001,
   "dbType": "mongoose",
   "dbHost": "localhost",
-  "dbName": "adapt-tenant-unit-test",
   "dbPort": 27017,
+  "dbName": "adapt-tenant-mocha",
   "dataRoot": "testDataRoot",
   "sessionSecret": "your-session-secret",
-  "auth": "local",
   "smtpService": "none",
   "smtpUsername": "",
   "smtpPassword": "",
   "fromAddress": "",
   "outputPlugin": "adapt",
-  "masterTenantName": "adapt-tenant-unit-test",
+  "auth": "local",
   "isTestEnvironment": true
 }

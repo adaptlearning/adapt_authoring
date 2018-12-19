@@ -3,28 +3,27 @@
  * Extension content plugin
  *
  */
+var _ = require('underscore');
+var async = require('async');
+var bower = require('bower');
+var fs = require('fs');
+var path = require('path');
+var util = require('util');
 
-var origin = require('../../../'),
-    contentmanager = require('../../../lib/contentmanager'),
-    usermanager = require('../../../lib/usermanager'),
-    rest = require('../../../lib/rest'),
-    BowerPlugin = require('../bower'),
-    ContentPlugin = contentmanager.ContentPlugin,
-    ContentTypeError = contentmanager.errors.ContentTypeError,
-    configuration = require('../../../lib/configuration'),
-    database = require('../../../lib/database'),
-    helpers = require('../../../lib/helpers'),
-    logger = require('../../../lib/logger'),
-    defaultOptions = require('./defaults.json'),
-    bower = require('bower'),
-    rimraf = require('rimraf'),
-    async = require('async'),
-    fs = require('fs'),
-    ncp = require('ncp').ncp,
-    mkdirp = require('mkdirp'),
-    _ = require('underscore'),
-    util = require('util'),
-    path = require('path');
+var BowerPlugin = require('../bower');
+var database = require('../../../lib/database');
+var configuration = require('../../../lib/configuration');
+var contentmanager = require('../../../lib/contentmanager');
+var helpers = require('../../../lib/helpers');
+var logger = require('../../../lib/logger');
+var origin = require('../../../');
+var rest = require('../../../lib/rest');
+var usermanager = require('../../../lib/usermanager');
+
+var ContentPlugin = contentmanager.ContentPlugin;
+var ContentTypeError = contentmanager.errors.ContentTypeError;
+
+var defaultOptions = require('./defaults.json');
 
 var bowerConfig = {
   type: 'extensiontype',
@@ -32,7 +31,6 @@ var bowerConfig = {
   packageType: 'extension',
   srcLocation: 'extensions',
   options: defaultOptions,
-  extra: [ "targetAttribute" ],
   nameList: [],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     database.getDatabase(function (err, db) {
@@ -57,14 +55,12 @@ var bowerConfig = {
                 enabledExtensions[key].version = newPlugin.version;
               }
             });
-
             // run the update
             db.update('config', { _id: doc._id }, { _enabledExtensions: enabledExtensions }, nextItem);
           }, function (err) {
             if (err) {
               logger.log('error', 'Failed to update old documents: ' + err.message, err);
             }
-
             return next(null);
           });
       });
@@ -152,7 +148,7 @@ function getEnabledExtensions(courseId, cb) {
 
 function contentDeletionHook(contentType, data, cb) {
   var contentData = data[0];
-  
+
   if (!contentData._id) {
     return cb(null, data);
   }
@@ -184,51 +180,51 @@ function contentCreationHook (contentType, data, cb) {
           if (error) {
             return callback(error);
           }
-          
+
           db.retrieve('componenttype', {component: contentData._component}, function(err, results) {
             if (err) {
               return callback(err);
             }
-            
+
             if (!results || results.length == 0) {
               return callback('Unexpected number of componentType records');
             }
-            
+
             var componentType = results[0]._doc;
-            
+
             if (componentType.globals) {
               // The component has globals.
               database.getDatabase(function(error, tenantDb) {
                 // Add the globals to the course.
-                tenantDb.retrieve('course', {_id: contentData._courseId}, function(err, results) {
+                tenantDb.retrieve('course', { _id: contentData._courseId }, function(err, results) {
                   if (err) {
                     return callback(err);
                   }
-                  
+
                   var key = '_' + componentType.component;
                   var courseDoc = results[0]._doc;
                   var courseGlobals = courseDoc._globals
                     ? courseDoc._globals
                     : {};
-                    
+
                   // Create the _components global object.
                   if (!courseGlobals._components) {
                     courseGlobals._components = {};
                   }
-                  
+
                   if (!courseGlobals._components[key]) {
                     // The global JSON does not exist for this component so set the defaults.
                     var componentGlobals = {};
-                    
+
                     for (var prop in componentType.globals) {
                       if (componentType.globals.hasOwnProperty(prop)) {
                         componentGlobals[prop] = componentType.globals[prop].default;
                       }
                     }
-                    
+
                     courseGlobals._components[key] = componentGlobals;
-                    
-                    tenantDb.update('course', {_id: contentData._courseId}, {_globals: courseGlobals}, function(err, doc) {
+
+                    tenantDb.update('course', { _id: contentData._courseId }, { _globals: courseGlobals }, function(err, doc) {
                       if (err) {
                         return callback(err);
                       } else {
@@ -238,8 +234,8 @@ function contentCreationHook (contentType, data, cb) {
                   } else {
                     return callback(null);
                   }
-                });  
-              });              
+                });
+              });
             } else {
               return callback(null)
             }
@@ -250,23 +246,24 @@ function contentCreationHook (contentType, data, cb) {
       }
     },
     function(callback) {
-      getEnabledExtensions(contentData._courseId, function (error, extensions) {
+      getEnabledExtensions(contentData._courseId, function(error, extensions) {
         if (error) {
           // permit content creation to continue, but log error
           logger.log('error', 'could not load extensions: ' + error.message);
           return callback(null);
         }
-    
-        // _extensions is undefined at this point
-        contentData._extensions = {};
-        extensions.forEach(function (extensionItem) {
+
+        // create _extensions if we need it
+        if(!contentData._extensions) contentData._extensions = {};
+        extensions.forEach(function(extensionItem) {
           if (extensionItem.properties.hasOwnProperty('pluginLocations') && extensionItem.properties.pluginLocations.properties[contentType]) {
             var schema = extensionItem.properties.pluginLocations.properties[contentType].properties; // yeesh
             var generatedObject = helpers.schemaToObject(schema, extensionItem.name, extensionItem.version, contentType);
-            contentData._extensions = _.extend(contentData._extensions, generatedObject);  
-          }          
+            // keep any existing values in place
+            contentData._extensions = _.defaults(contentData._extensions, generatedObject);
+          }
         });
-    
+
         // assign back to passed args
         data[0] = contentData;
         callback(null);
@@ -278,7 +275,7 @@ function contentCreationHook (contentType, data, cb) {
       logger.log('error', err);
       return cb(err);
     }
-    
+
     return cb(null, data);
   });
 }
@@ -294,7 +291,7 @@ function contentCreationHook (contentType, data, cb) {
 
 function toggleExtensions (courseId, action, extensions, cb) {
   if (!extensions || 'object' !== typeof extensions) {
-    return cb(error);
+    return cb(new Error('Incorrect parameters passed'));
   }
 
   var user = usermanager.getCurrentUser();
@@ -302,7 +299,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
   if (user && user.tenant && user.tenant._id) {
     // Changes to extensions warrants a full course rebuild
     app.emit('rebuildCourse', user.tenant._id, courseId);
-  }   
+  }
 
   database.getDatabase(function (err, db) {
     if (err) {
@@ -335,9 +332,9 @@ function toggleExtensions (courseId, action, extensions, cb) {
                 targetAttribute: targetAttribute
               };
             }
-            
+
             if (generatedObject) {
-              updatedExtensions = _.extend(updatedExtensions, generatedObject);  
+              updatedExtensions = _.extend(updatedExtensions, generatedObject);
             }
           } else {
             // remove from list of enabled extensions in config object
@@ -353,7 +350,7 @@ function toggleExtensions (courseId, action, extensions, cb) {
           if (isConfig) {
             delta._enabledExtensions = enabledExtensions;
           }
-          
+
           tenantDb.update(componentType, { _id: component._id }, delta, next);
         }, nextComponent);
       });
@@ -370,11 +367,11 @@ function toggleExtensions (courseId, action, extensions, cb) {
           logger.log('error', err);
           return cb(err);
         }
-        
+
         // Iterate over all the extensions
         async.eachSeries(results, function (extensionItem, nextItem) {
           var locations = extensionItem.properties.pluginLocations.properties;
-          
+
           // Ensure that the 'config' key always exists, as this is required
           // to presist the list of enabled extensions.
           if (!_.has(locations, 'config')) {
@@ -382,34 +379,34 @@ function toggleExtensions (courseId, action, extensions, cb) {
           }
 
           if (extensionItem.globals) {
-            tenantDb.retrieve('course', {_id: courseId}, function (err, results) {
+            tenantDb.retrieve('course', { _id: courseId }, function (err, results) {
               if (err) {
                 return cb(err);
               }
-              
+
               var courseDoc = results[0]._doc;
               var key = '_' + extensionItem.extension;
               // Extract the global defaults
               var courseGlobals = courseDoc._globals
                 ? courseDoc._globals
                 : {};
-                  
-              if (action == 'enable') { 
+
+              if (action == 'enable') {
                 // Add default value and
                 if (!courseGlobals._extensions) {
                   courseGlobals._extensions = {};
                 }
-                
+
                 if (!courseGlobals._extensions[key]) {
                   // The global JSON does not exist for this extension so set the defaults
                   var extensionGlobals = {};
-                  
+
                   for (var prop in extensionItem.globals) {
                     if (extensionItem.globals.hasOwnProperty(prop)) {
                       extensionGlobals[prop] = extensionItem.globals[prop].default;
                     }
                   }
-                  
+
                   courseGlobals._extensions[key] = extensionGlobals;
                 }
               } else {
@@ -418,19 +415,19 @@ function toggleExtensions (courseId, action, extensions, cb) {
                   delete courseGlobals._extensions[key];
                 }
               }
-              
-              tenantDb.update('course', {_id: courseId}, {_globals: courseGlobals}, function(err, doc) {
+
+              tenantDb.update('course', { _id: courseId }, { _globals: courseGlobals }, function(err, doc) {
                 if (!err) {
                   async.eachSeries(Object.keys(locations), function (key, nextLocation) {
                     updateComponentItems(tenantDb, key, locations[key].properties, extensionItem, nextLocation);
-                  }, nextItem); 
+                  }, nextItem);
                 }
               });
-            });        
+            });
           } else {
             async.eachSeries(Object.keys(locations), function (key, nextLocation) {
               updateComponentItems(tenantDb, key, locations[key].properties, extensionItem, nextLocation);
-            }, nextItem);  
+            }, nextItem);
           }
         }, function(err) {
           if (err) {
@@ -441,12 +438,12 @@ function toggleExtensions (courseId, action, extensions, cb) {
               // Trigger an event to indicate that the extension has been enabled/disabled.
               app.emit(`extension:${action}`, results[0].name, user.tenant._id, courseId, user._id);
             }
-            
+
             cb();
           }
-        });  
+        });
       });
-      
+
     });
   }, configuration.getConfig('dbName'));
 }
@@ -509,12 +506,14 @@ function initialize () {
       });
     });
   });
+  // HACK surface this properly somewhere
+  app.contentmanager.toggleExtensions = toggleExtensions;
 
   // add content creation hooks for each viable content type
   ['contentobject', 'article', 'block', 'component'].forEach(function (contentType) {
     app.contentmanager.addContentHook('create', contentType, contentCreationHook.bind(null, contentType));
   });
-  
+
   ['component'].forEach(function(contentType) {
     app.contentmanager.addContentHook('destroy', contentType, contentDeletionHook.bind(null, contentType));
   });

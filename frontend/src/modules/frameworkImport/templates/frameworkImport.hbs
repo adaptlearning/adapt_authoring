@@ -1,0 +1,41 @@
+<div class="inner">
+  <form class="frameworkImport forms" action="/importsource" method="post" autocomplete="off">
+      <div class="form-group">
+        <div class="field field-file">
+          <label for="file">
+              {{t 'app.assetfile'}} <span class="req">*</span>
+              <span class="error"></span>
+          </label>
+          <div class="field-help">
+            {{t 'app.importframeworkinstruction'}}
+          </div>
+          {{#if path}}
+          <div class="asset-management-new-asset-file">
+            {{t 'app.importframeworkfileuploaded'}}
+          </div>
+          {{else}}
+          <input type="file" class="asset-file" name="file">
+          <div class="progress-container">
+              <div class="progress-bar">
+                  <div class="progress-percent">0%</div>
+              </div>
+          </div>
+          {{/if}}
+        </div>
+        <div class="field field-assets">
+            <label for="tags">{{t 'app.importassetfolderstitle'}}</label>
+            <div class="field-help">
+              {{t 'app.importassetfoldersinstruction'}}
+            </div>
+            <div>
+              <input type="text" autocomplete="off" class="width-30" id="formAssetFolders" name="formAssetFolders" placeholder="{{t 'app.importassetfoldersplaceholder'}}" value="" />
+            </div>
+        </div>
+        <div class="field field-tags">
+            <label for="tags">{{t 'app.tags'}}</label>
+            <input type="text" autocomplete="off" class="width-30" id="tags_control" name="tags_control" value="{{pickCSV tags "title"}}" />
+        </div>
+        <input type="hidden" name="tags" id="tags" />
+      </div>
+  </form>
+</div>

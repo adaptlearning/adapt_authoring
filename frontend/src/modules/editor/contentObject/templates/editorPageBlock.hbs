@@ -1,0 +1,14 @@
+{{>part_editorItemSidebar}}
+
+<div class="block-inner">
+  {{#if body}}
+    <div class="{{_type}}-body">{{{body}}}</div>
+  {{/if}}
+  <div class="page-components clearfix"></div>
+
+  {{#if layoutOptions}}
+    <div class="add-control">
+      <button class="btn add-component">{{t 'app.addcomponent'}}</button>
+    </div>
+  {{/if}}
+</div>

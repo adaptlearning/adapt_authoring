@@ -27,8 +27,6 @@ var ERROR_CODES = {
   ACCOUNT_INACTIVE: 5
 };
 
-var MAX_LOGIN_ATTEMPTS = 3;
-
 function LocalAuth() {
   this.strategy = new LocalStrategy({ usernameField: 'email' }, this.verifyUser);
   passport.use(this.strategy);
@@ -48,11 +46,13 @@ LocalAuth.prototype.verifyUser = function (email, password, done) {
     }
 
     if (!user) {
-      return done(null, false, {message: MESSAGES.INVALID_USERNAME_OR_PASSWORD, 
-        errorCode: ERROR_CODES.INVALID_USERNAME_OR_PASSWORD});
+      return done(null, false, {
+        message: MESSAGES.INVALID_USERNAME_OR_PASSWORD,
+        errorCode: ERROR_CODES.INVALID_USERNAME_OR_PASSWORD
+      });
     }
 
-    if (user.failedLoginCount < MAX_LOGIN_ATTEMPTS) {
+    if (user.failedLoginCount < configuration.getConfig('maxLoginAttempts')) {
       // Validate the user's password
       auth.validatePassword(password, user.password, function (error, valid) {
         if (error) {
@@ -63,23 +63,25 @@ LocalAuth.prototype.verifyUser = function (email, password, done) {
         if (!valid) {
           // Increment the count of failed attempts
           var failedCount = user.failedLoginCount ? user.failedLoginCount : 0;
-          
+
           failedCount++;
 
           var delta = {
             failedLoginCount: failedCount
           };
 
-          usermanager.updateUser({email: user.email}, delta, function(error) {
+          usermanager.updateUser({ email: user.email }, delta, function(error) {
             if (error) {
               return done(error);
             }
-            
-            return done(null, false, {message: MESSAGES.INVALID_USERNAME_OR_PASSWORD, 
-              errorCode: ERROR_CODES.INVALID_USERNAME_OR_PASSWORD});
+
+            return done(null, false, {
+              message: MESSAGES.INVALID_USERNAME_OR_PASSWORD,
+              errorCode: ERROR_CODES.INVALID_USERNAME_OR_PASSWORD
+            });
           });
         } else {
-          usermanager.updateUser({email: user.email}, {failedLoginCount: 0}, function(error) {
+          usermanager.updateUser({ email: user.email }, { failedLoginCount: 0 }, function(error) {
             if (error) {
               return done(error);
             }
@@ -90,7 +92,10 @@ LocalAuth.prototype.verifyUser = function (email, password, done) {
       });
     } else {
       // Indicate that the account is locked out
-      return done(null, false, {message: MESSAGES.ACCOUNT_LOCKED, errorCode: ERROR_CODES.ACCOUNT_LOCKED});
+      return done(null, false, {
+        message: MESSAGES.ACCOUNT_LOCKED,
+        errorCode: ERROR_CODES.ACCOUNT_LOCKED
+      });
     }
   });
 };
@@ -101,100 +106,73 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
     if (error) {
       return next(error);
     }
-
-    if (!user) {
-      // Check if a valid email was used
-      res.statusCode = 401;
-      return res.json({ success: false, errorCode: info.errorCode});
-    } else {
-      // check user is not deleted
-      if (user._isDeleted) {
-        res.statusCode = 401;
-        return res.json({ success: false, errorCode: ERROR_CODES.ACCOUNT_INACTIVE });
+    if(!user) {
+      return res.status(401).json({ errorCode: info.errorCode});
+    }
+    // check user is not deleted
+    if (user._isDeleted) {
+      return res.status(401).json({ errorCode: ERROR_CODES.ACCOUNT_INACTIVE });
+    }
+    // check tenant is enabled
+    self.isTenantEnabled(user, function (err, isEnabled) {
+      if (!isEnabled) {
+        return res.status(401).json({ errorCode: ERROR_CODES.TENANT_DISABLED });
       }
-
-      // check tenant is enabled
-      self.isTenantEnabled(user, function (err, isEnabled) {
-        if (!isEnabled) {
-          // don't allow login
-          res.statusCode = 401;
-          return res.json({ success: false, errorCode: ERROR_CODES.TENANT_DISABLED });
+      // Store the login details
+      req.logIn(user, function (error) {
+        if (error) {
+          return next(error);
         }
-
-        // Store the login details
-        req.logIn(user, function (error) {
+        usermanager.logAccess(user, function(error) {
           if (error) {
             return next(error);
           }
-  
-          usermanager.logAccess(user, function(error) {
+          //Used to get the users permissions
+          permissions.getUserPermissions(user._id, function(error, userPermissions) {
             if (error) {
               return next(error);
             }
-  
-  
-            //Used to get the users permissions
-            permissions.getUserPermissions(user._id, function(error, userPermissions) {
-              if (error) {
-                return next(error);
-              }
-              res.statusCode = 200;
-  
-              if (req.body.shouldPersist && req.body.shouldPersist == 'true') {
-                // Session is persisted for 2 weeks if the user has set 'Remember me'
-                req.session.cookie.maxAge = 14 * 24 * 3600000;
-              } else {
-                req.session.cookie.expires = false;
-              }
-
-              var userSession = req.session.passport.user;
-  
-              return res.json({
-                success: true,
-                id: user._id,
-                email: user.email,
-                tenantId: user._tenantId,
-                tenantName: userSession.tenant.name,
-                permissions: userPermissions
-              });
-  
+            if (req.body.shouldPersist && req.body.shouldPersist == 'true') {
+              // Session is persisted for 2 weeks if the user has set 'Remember me'
+              req.session.cookie.maxAge = 14 * 24 * 3600000;
+            } else {
+              req.session.cookie.expires = false;
+            }
+            return res.status(200).json({
+              id: user._id,
+              email: user.email,
+              tenantId: user._tenantId,
+              tenantName: req.session.passport.user.tenant.name,
+              permissions: userPermissions
             });
-             
           });
         });
       });
-    }
-    
+    });
   })(req, res, next);
 };
 
 LocalAuth.prototype.disavow = function (req, res, next) {
-  req.logout();
-  res.statusCode = 200;
-  return res.json({ success: true });
-};
-
-LocalAuth.prototype.registerUser = function (req, res, next) {
-  // presently, all we need is email and password
-  var user = {
-    email: req.body.email,
-    password: req.body.password
-  };
-
-  this.internalRegisterUser(user, function (error, user) {
-    if (error) {
+  permissions.invalidateUserPermissions(function(error) {
+    if(error) {
       return next(error);
     }
-
-
-    res.statusCode = 200;
-    return res.json({ _id:user._id, email: user.email });
-
+    req.logout();
+    return res.status(200).end();
   });
-
 };
 
-LocalAuth.prototype.internalRegisterUser = function (user, cb) {
+LocalAuth.prototype.internalRegisterUser = function(retypePasswordRequired, user, cb) {
+  if (retypePasswordRequired) {
+    if (!user.email || !user.password || !user.retypePassword) {
+      return cb(new auth.errors.UserRegistrationError('email, password and retyped password are required!'));
+    }
+
+    if (user.password !== user.retypePassword) {
+      return cb(new auth.errors.UserRegistrationError('password and retyped password must match!'));
+    }
+  }
+
   if (!user.email || !user.password) {
     return cb(new auth.errors.UserRegistrationError('email and password are required!'));
   }
@@ -219,22 +197,27 @@ LocalAuth.prototype.internalRegisterUser = function (user, cb) {
 };
 
 LocalAuth.prototype.resetPassword = function (req, res, next) {
-  var user = {
-    id: req.body.user,
-    password: req.body.password,
-    token: req.body.token
-  };
+  var resetPasswordToken = req.body.token;
+  var self = this;
 
-  this.internalResetPassword(user, function (error, user) {
+  if (!resetPasswordToken) {
+    return next(new auth.errors.UserResetPasswordError('Token was not found'));
+  }
+  usermanager.retrieveUserPasswordReset({ token: resetPasswordToken }, function (error, usrReset) {
     if (error) {
       logger.log('error', error);
-      res.statusCode = 200;
-      return res.json({success: false});
-      // return next(error);
+      return res.status(500).end();
     }
-
-    res.statusCode = 200;
-    return res.json({success: true});
+    if (!usrReset) {
+      return res.status(200).end();
+    }
+    self.internalResetPassword({ id: usrReset.user, password: req.body.password }, function (error, user) {
+      if (error) {
+        logger.log('error', error);
+        return res.status(500).end();
+      }
+      res.status(200).end();
+    });
   });
  };
 
@@ -250,12 +233,12 @@ LocalAuth.prototype.internalResetPassword = function (user, next) {
     }
 
     // Update user details with hashed password
-    usermanager.updateUser({_id: user.id}, {password: hash, failedLoginCount: 0}, function(err) {
+    usermanager.updateUser({ _id: user.id }, { password: hash, failedLoginCount: 0 }, function(err) {
       if (error) {
         return next(error)
       }
 
-      usermanager.deleteUserPasswordReset({user: user.id}, function (error, user) {
+      usermanager.deleteUserPasswordReset({ user: user.id }, function (error, user) {
         if (error) {
           return next(error);
         }
@@ -270,13 +253,13 @@ LocalAuth.prototype.internalResetPassword = function (user, next) {
 LocalAuth.prototype.generateResetToken = function (req, res, next) {
   var self = this;
 
-  usermanager.retrieveUser({email: req.body.email, auth: 'local'}, function (error, userRecord) {
+  usermanager.retrieveUser({ email: req.body.email, auth: 'local' }, function (error, userRecord) {
     if (error) {
       logger.log('error', error);
       res.statusCode = 400;
-      return res.json({success: false});
+      return res.json({ success: false });
     }
-      
+
     if (userRecord) {
       var user = {
         email: req.body.email,
@@ -292,28 +275,31 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
         if (!userToken) {
           return next(new auth.errors.UserGenerateTokenError('In generateResetToken and user object is not set!'));
         }
-        
+
         var subject = app.polyglot.t('app.emailforgottenpasswordsubject');
-        var body = app.polyglot.t('app.emailforgottenpasswordbody', {rootUrl: configuration.getConfig('rootUrl'), data: userToken.token});
+        var body = app.polyglot.t('app.emailforgottenpasswordbody', { rootUrl: configuration.getConfig('rootUrl'), data: userToken.token });
+        var templateData = {
+          name: 'passwordReset/html.hbs',
+          user: user,
+          showButton: true,
+          rootUrl: configuration.getConfig('rootUrl'),
+          resetToken: userToken.token,
+          resetLabel: app.polyglot.t('app.resetpassword')
+        }
 
-        app.mailer.send(user.email, subject, body, function(error) {
+        app.mailer.send(user.email, subject, body, templateData, function(error) {
           if (error) {
-            logger.log('error', error);
-            res.statusCode = 200;
-            return res.json({success: false});
-          } 
-      
-          logger.log('info', 'Password reset for ' + user.email + ' from ' + user.ipAddress);
+            return res.status(500).send(error.message);
+          }
 
-          res.statusCode = 200;
-          return res.json({success: true});
+          logger.log('info', 'Password reset for ' + user.email + ' from ' + user.ipAddress);
+          return res.status(200).json({ success: true });
         });
       });
     } else {
-      // Indicate that all is ok even if the user does not exist
-      // This is to prevent hacking attempts
+      // Return 200 even if user doesn't exist to prevent brute force hacking
       res.statusCode = 200;
-      return res.json({success: true});      
+      return res.json({ success: true });
     }
   });
 };

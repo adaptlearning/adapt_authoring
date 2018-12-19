@@ -1,0 +1,77 @@
+{{#if _isDeleted}}
+<div class="asset-management-list-item-deleted">
+    <i class="fa fa-ban"></i>
+</div>
+{{/if}}
+
+<div class="asset-management-list-item-inner">
+
+    <div class="asset-management-list-item-icon">
+        <div class="asset-management-list-item-icon-inner">
+            {{#ifValueEquals assetType "image"}}
+            <i class="fa fa-file-image-o"></i>
+            {{/ifValueEquals}}
+
+            {{#ifValueEquals assetType "audio"}}
+            <i class="fa fa-file-audio-o"></i>
+            {{/ifValueEquals}}
+
+            {{#ifValueEquals assetType "video"}}
+            <i class="fa fa-file-video-o"></i>
+            {{/ifValueEquals}}
+
+            {{#ifValueEquals assetType "other"}}
+            <i class="fa fa-file-o"></i>
+            {{/ifValueEquals}}
+        </div>
+    </div>
+
+    {{#ifValueEquals assetType "image"}}
+        {{#if metadata}}
+        <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
+        {{else}}
+        <div class="asset-management-list-item-image">
+            <i class="fa fa-file-image-o"></i>
+        </div>
+        {{/if}}
+    </div>
+    {{/ifValueEquals}}
+
+    {{#ifValueEquals assetType "video"}}
+        {{#if metadata}}
+        <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})"}>
+        {{else}}
+        <div class="asset-management-list-item-image">
+            <i class="fa fa-file-video-o"></i>
+        </div>
+        {{/if}}
+    </div>
+    {{/ifValueEquals}}
+
+    {{#ifValueEquals assetType "audio"}}
+    <div class="asset-management-list-item-image">
+        <i class="fa fa-file-audio-o"></i>
+    </div>
+    {{/ifValueEquals}}
+
+    {{#ifValueEquals assetType "other"}}
+    <div class="asset-management-list-item-image">
+        <i class="fa fa-file-o"></i>
+    </div>
+    {{/ifValueEquals}}
+
+    <div class="asset-management-list-item-details">
+
+        <div class="asset-management-list-item-details-inner">
+
+        <div class="asset-management-list-item-title">
+            <h4 class="asset-management-list-item-title-inner">{{title}}</h4>
+        </div>
+
+        </div>
+
+
+
+    </div>
+
+</div>

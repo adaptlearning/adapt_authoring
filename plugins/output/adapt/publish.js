@@ -45,19 +45,7 @@ function publishCourse(courseId, mode, request, response, next) {
         }
         // Store off the retrieved collections
         outputJson = data;
-        callback(null);
-      });
-    },
-    //
-    function(callback) {
-      var temporaryThemeFolder = path.join(SRC_FOLDER, Constants.Folders.Theme, customPluginName);
-      self.applyTheme(tenantId, courseId, outputJson, temporaryThemeFolder, function(err, appliedThemeName) {
-        if (err) {
-          return callback(err);
-        }
-        // Replace the theme in outputJson with the applied theme name.
-        themeName = appliedThemeName;
-        outputJson['config'][0]._theme = themeName;
+        themeName = outputJson['config'][0]._theme;
         callback(null);
       });
     },
@@ -81,7 +69,7 @@ function publishCourse(courseId, mode, request, response, next) {
       });
     },
     function(callback) {
-      var temporaryThemeFolder = path.join(SRC_FOLDER, Constants.Folders.Theme, customPluginName);
+      var temporaryThemeFolder = path.join(SRC_FOLDER, Constants.Folders.Theme, themeName);
       self.writeCustomStyle(tenantId, courseId, temporaryThemeFolder, function(err) {
         if (err) {
           return callback(err);

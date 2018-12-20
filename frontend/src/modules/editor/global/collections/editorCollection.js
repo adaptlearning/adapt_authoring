@@ -4,6 +4,8 @@ define(function(require) {
   var Origin = require('core/origin');
 
   var EditorCollection = Backbone.Collection.extend({
+    comparator: 'displayName',
+
     initialize : function(models, options){
       this.url = options.url;
       this._type = options._type;

@@ -4,7 +4,6 @@
   "app.loading": "Laden...",
   "app.rememberme": "Onthoud mij",
   "app.ok": "OK",
-  "app.yes": "Ja",
   "app.no": "Nee",
   "app.confirm": "Bevestig",
   "app.clicktodelete": "Klik om te verwijderen",
@@ -79,7 +78,7 @@
   "app.resetpassworderror": "Uw wachtwoord kon niet veranderd worden",
   "app.submit": "Zenden",
   "app.newpassword": "Nieuw wachtwoord",
-  "app.forgotpasswordblurb": "Voer het e-mail adres in wat bij uw Learning Pool Adapt account hoort, klik dan op Continue. Wij sturen een email met een link waar u makkelijk een nieww wachtwoord maakt.",
+  "app.forgotpasswordblurb": "Voer het e-mail adres in wat bij uw Adapt account hoort, klik dan op Continue. Wij sturen een email met een link waar u makkelijk een nieww wachtwoord maakt.",
   "app.forgotpasswordfooter": "Indien u niet langer het e-mail adres wat bij uw Adapt account hoort gebruikt, neem dan contact op met Support voor hulp bij het herstellen van uw account.",
   "app.hasyouremailchanged": "Is uw e-mail adres veranderd?",
   "app.forgotpasswordsuccess": "Uw verzoek is in behandeling. Wanneer de verstrekte gegevens met onze data klopt, ontvangt u meer instructies via email.",
@@ -351,6 +350,6 @@
   "app.errorpagenoaccess": "Sorry, u heeft niet de juiste bevoegdheden om deze pagina te zien. Klik op onderstaande knop om naar het dashboard te gaan.",
   "app.greeting": "Hallo",
   "app.emaillogotext": "ADAPT",
-  "app.emailfooter": "Verzonden door Adapt Learning.",
+  "app.emailfooter": "Verzonden door Adapt Learning."
 
 }

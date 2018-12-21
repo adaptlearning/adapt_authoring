@@ -212,7 +212,9 @@ function checkFrameworkVersion(versionMetaData, cb) {
       return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
     }
     // check the import's within the major version number
-    if (semver.satisfies(importVersion, semver.major(installedVersion).toString())) {
+    if (semver.satisfies(importVersion, semver.major(installedVersion).toString(), {
+      includePrerelease: true
+    })) {
       cb();
     } else {
       cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
@@ -225,7 +227,9 @@ function checkPluginFrameworkVersion(serverFrameworkVersion, pluginMetaData) {
   if (!validFrameworkVersion) {
     return new ImportError(`Invalid version number (${pluginMetaData.framework}) found in ${pluginMetaData.name}`, 400);
   }
-  if (semver.satisfies(serverFrameworkVersion, pluginMetaData.framework)) {
+  if (semver.satisfies(serverFrameworkVersion, pluginMetaData.framework, {
+    includePrerelease: true
+  })) {
     return null;
   }
   return new ImportError(`Plugin ${pluginMetaData.name} (${pluginMetaData.framework}) is not compatible with the installed version (${serverFrameworkVersion})`, 400);

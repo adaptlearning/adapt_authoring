@@ -60,7 +60,7 @@ define(function(require) {
         },
         'editorCommon:export': function(isForceRebuild) {
           this.validateProject(function(error) {
-            this.exportProject(isForceRebuild);
+            this.exportProject(error, isForceRebuild);
           });
         }
       });
@@ -119,7 +119,7 @@ define(function(require) {
       }, this));
     },
 
-    exportProject: function(forceRebuild) {
+    exportProject: function(error, forceRebuild) {
       // TODO - very similar to export in project/views/projectView.js, remove duplication
       // aleady processing, don't try again
       if(error || this.exporting) return;

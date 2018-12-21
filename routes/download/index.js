@@ -19,7 +19,7 @@ server.get('/download/:tenant/:course', function(req, res, next) {
   var course = req.params.course;
   var tenant = req.params.tenant;
   var currentUser = usermanager.getCurrentUser();
-  var mode = this.Constants.Modes.publish;
+  var mode = this.Constants.Modes.Publish;
 
   if (currentUser && (currentUser.tenant._id === tenant)) {
 
@@ -45,7 +45,7 @@ server.get('/download/:tenant/:course', function(req, res, next) {
     // User doesn't have access to this course
     res.statusCode = 401;
     return res.json({success: false});
-  }  
+  }
 });
 
 server.get('/download/:tenant/:course/:title/download.zip', function (req, res, next) {

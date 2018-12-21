@@ -461,6 +461,10 @@ function duplicate (data, cb) {
                 contentData._courseId = newCourseId;
                 contentData._parentId = parentIdMap[oldParentId];
 
+                if(oldParentId && !contentData._parentId) {
+                  logger.log('warn', `Cannot copy ${contenttype} '${oldId}', cannot find parent object with ID '${oldParentId}'`);
+                  return next();
+                }
                 return db.create(contenttype, contentData, function (error, newContent) {
                   if (error) {
                     logger.log('error', error);

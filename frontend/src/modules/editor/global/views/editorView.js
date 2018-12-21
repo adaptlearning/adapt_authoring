@@ -45,7 +45,9 @@ define(function(require) {
         'editorView:copyID': this.copyIdToClipboard,
         'editorView:paste': this.pasteFromClipboard,
         'editorCommon:download': function(isForceRebuild) {
-          this.validateProject(this.downloadProject.bind(this, isForceRebuild));
+          this.validateProject(function(error) {
+            this.downloadProject(isForceRebuild);
+          });
         },
         'editorCommon:preview': function(isForceRebuild) {
           var previewWindow = window.open('/loading', 'preview');
@@ -57,7 +59,9 @@ define(function(require) {
           });
         },
         'editorCommon:export': function(isForceRebuild) {
-          this.validateProject(this.exportProject.bind(this, isForceRebuild));
+          this.validateProject(function(error) {
+            this.exportProject(isForceRebuild);
+          });
         }
       });
       this.render();

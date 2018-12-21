@@ -118,7 +118,7 @@ define(function(require) {
     exportProject: function(forceRebuild) {
       // TODO - very similar to export in project/views/projectView.js, remove duplication
       // aleady processing, don't try again
-      if(this.exporting) return;
+      if(error || this.exporting) return;
 
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');

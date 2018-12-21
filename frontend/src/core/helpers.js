@@ -265,6 +265,7 @@ define(function(require){
 
     contentModelMap: function(type) {
       var contentModels = {
+        course: 'core/models/courseModel',
         contentobject: 'core/models/contentObjectModel',
         article: 'core/models/articleModel',
         block: 'core/models/blockModel',
@@ -327,6 +328,13 @@ define(function(require){
         }
         callback(returnArr);
       });
+    },
+
+    maxUploadSize: function(options) {
+      return new Handlebars.SafeString([
+        '<span class="max-fileupload-size">',
+        Origin.l10n.t('app.maxfileuploadsize', {size: Origin.constants.humanMaxFileUploadSize}),
+        '</span>'].join(''))
     }
   };
 

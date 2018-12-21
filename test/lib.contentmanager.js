@@ -171,15 +171,18 @@ it('should accept requests to retrieve only desired content attributes', functio
   agent
     .get('/api/content/course/query')
     .set('Accept', 'application/json')
-    .send({ fields: { _id: 0, title: 1 } })
+    .send({ fields: { title: 1 } })
     .expect(200)
     .expect('Content-Type', /json/)
     .end(function(error, res) {
       should.not.exist(error);
       res.body.length.should.be.above(0);
+      /*
+      * _id is returned by default
+      * Tags are returned as result of population, see https://github.com/adaptlearning/adapt_authoring/blob/dc04351192d62c6e6f6520e33eee1478a01d672d/lib/contentmanager.js#L191-L197
+      */
       var bodyKeys = Object.keys(res.body[0]);
-      // tags are also returned as result of population, see https://github.com/adaptlearning/adapt_authoring/blob/dc04351192d62c6e6f6520e33eee1478a01d672d/lib/contentmanager.js#L191-L197
-      bodyKeys.length.should.equal(2);
+      bodyKeys.length.should.equal(3);
       bodyKeys.should.containEql('title');
       done();
     });

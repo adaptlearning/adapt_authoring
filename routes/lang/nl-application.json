@@ -343,7 +343,7 @@
   "app.passwordtip": "Voer onder een nieuw wachtwoord in. Een veilig wachtwoord heeft een mix van nummers, letters (inclusief hoofdleters) en andere karakters.",
   "app.forgotpasswordsuccesstitle": "Verzoek gelukt",
   "app.emailadminpasswordchangesubject": "Uw Adapt wachtwoord is veranderd",
-  "app.emailadminpasswordchangebody": "Het wachtwoord voor uw <a href=\'%{rootUrl}\' target=\'_blank\'>Adapt Authoring tool</a> account is veranderd. Neem aub contact op met de beheerder, als u dit niet verzocht heeft.",
+  "app.emailadminpasswordchangebody": "Het wachtwoord voor uw <a href='%{rootUrl}' target='_blank'>Adapt Authoring tool</a> account is veranderd. Neem aub contact op met de beheerder, als u dit niet verzocht heeft.",
   "app.role": "Rol",
   "app.warningdefaulttitle": "Waarschuwing",
   "app.errorpagenoaccesstitle": "Toegang geweigerd",

@@ -192,36 +192,45 @@ function initialize () {
                   return res.json({ success: false, message: 'theme not found' });
                 }
 
+                var newThemeName = results[0].name;
+
+                if (config._theme === newThemeName) {
+                  forceRebuild();
+                  return;
+                }
+
                 // Update the course config object
-                app.contentmanager.update('config', { _courseId: courseId }, { _courseId: courseId, _theme: results[0].name }, function (err) {
+                app.contentmanager.update('config', { _courseId: courseId }, { _courseId: courseId, _theme: newThemeName }, function (err) {
                   if (err) {
                     return next(err);
                   }
 
                   // As the theme has changed, lose any previously set theme settings
                   // These will not apply to the new theme
-                  app.contentmanager.update('course', { _id: courseId }, { themeSettings: null }, function (err) {
-                    if (err) {
-                      return next(err);
-                    }
-
-                    // If we successfully changed the theme, we need to force a rebuild of the course
-                    var user = usermanager.getCurrentUser();
-                    var tenantId = user.tenant._id;
-                    if (!tenantId) {
-                      // log an error, but don't fail
-                      logger.log('error', 'failed to determine current tenant', user);
-                      res.statusCode = 200;
-                      return res.json({ success: true });
-                    }
-
-
-                    app.emit('rebuildCourse', tenantId, courseId);
-
-                    res.statusCode = 200;
-                    return res.json({success: true});
-                  });  
+                  app.contentmanager.update('course', { _id: courseId }, { themeSettings: null }, forceRebuild);
                 });
+
+                function forceRebuild(err) {
+                  if (err) {
+                    return next(err);
+                  }
+
+                  // If we successfully changed the theme, we need to force a rebuild of the course
+                  var user = usermanager.getCurrentUser();
+                  var tenantId = user.tenant._id;
+                  if (!tenantId) {
+                    // log an error, but don't fail
+                    logger.log('error', 'failed to determine current tenant', user);
+                    res.statusCode = 200;
+                    return res.json({ success: true });
+                  }
+
+
+                  app.emit('rebuildCourse', tenantId, courseId);
+
+                  res.statusCode = 200;
+                  return res.json({success: true});
+                }
               });
             }, configuration.getConfig('dbName'));            
           }

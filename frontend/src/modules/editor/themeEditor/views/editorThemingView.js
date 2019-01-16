@@ -22,6 +22,7 @@ define(function(require){
     events: {
       'change .theme select': 'onThemeChanged',
       'change .preset select': 'onPresetChanged',
+      'change .form-container form': 'onFieldChanged',
       'click button.edit': 'showPresetEdit',
       'click button.reset': 'restoreDefaultSettings'
     },
@@ -51,6 +52,7 @@ define(function(require){
         title: Origin.l10n.t('app.themingtitle')
       });
 
+      this.updateRestoreDefaultButton();
       this.renderForm();
     },
 
@@ -159,7 +161,7 @@ define(function(require){
       _.each(presets, function(item, index) {
         select.append($('<option>', { value: item.get('_id') }).text(item.get('displayName')));
       }, this);
-      // disable delect, hide manage preset buttons if empty
+      // disable delete, hide manage preset buttons if empty
       if(presets.length > 0) {
         // TODO check selected preset exists in db (in case deleted)
         var selectedPreset = this.getSelectedPreset();
@@ -172,8 +174,6 @@ define(function(require){
         select.attr('disabled', true);
         this.$('button.edit').hide();
       }
-
-      // TODO need to hide reset button if defaults selected
     },
 
     restoreFormSettings: function(toRestore) {
@@ -212,6 +212,7 @@ define(function(require){
           if(confirmed) {
             var preset = self.getSelectedPreset();
             var settings = (preset) ? preset.get('properties') : self.getDefaultThemeSettings();
+            self.updateRestoreDefaultButton(false);
             self.restoreFormSettings(settings);
           }
         }
@@ -254,7 +255,7 @@ define(function(require){
         },
         success: function() {
           self.presets.add(presetModel);
-          // HACK reorder things so this works without setTimeout later
+          self.updateRestoreDefaultButton(false);
           window.setTimeout(function() { self.$('.preset select').val(presetModel.get('_id')); }, 1);
         }
       });
@@ -369,6 +370,22 @@ define(function(require){
       return true;
     },
 
+    updateRestoreDefaultButton: function(shouldShow) {
+      if (typeof shouldShow === 'undefined') {
+        // If flag was not passed in then compare default settings with current settings
+        // and show restore button if there are differences
+        var currentSettings = Origin.editor.data.course.get('themeVariables');
+        var defaultSettings = this.getDefaultThemeSettings();
+        shouldShow = false;
+        for (var key in currentSettings) {
+          if (currentSettings[key].toString() !== defaultSettings[key].toString()) {
+            shouldShow = true;
+          }
+        }
+      }
+
+      shouldShow ? this.$('button.reset').show() : this.$('button.reset').hide();
+    },
 
     /**
     * Event handling
@@ -411,6 +428,11 @@ define(function(require){
       var preset = this.presets.findWhere({ _id: $(event.currentTarget).val() });
       var settings = preset && preset.get('properties') || this.getDefaultThemeSettings();
       this.restoreFormSettings(settings);
+      this.updateRestoreDefaultButton(false);
+    },
+
+    onFieldChanged: function() {
+        this.updateRestoreDefaultButton(true);
     },
 
     onSavePresetClicked: function() {

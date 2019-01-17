@@ -416,7 +416,7 @@ function ImportSource(req, done) {
               });
               var groups = _.groupBy(contentJson, '_type');
               var sortedSections = helpers.sortContentObjects(groups.menu, origCourseId, []);
-                  contentJson = sortedSections.concat(groups.page);
+              contentJson = sortedSections.concat(groups.page);
             }
           }
           // assume we're using arrays

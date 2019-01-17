@@ -1,10 +1,10 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
-  var ThemeModel = require('../models/editorThemeModel');
+  var ThemeTypeModel = require('core/models/themeTypeModel');
 
   var ThemeCollection = Backbone.Collection.extend({
-    model: ThemeModel,
+    model: ThemeTypeModel,
     url: 'api/themetype',
     comparator: 'displayName'
   });

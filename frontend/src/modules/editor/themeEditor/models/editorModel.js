@@ -4,11 +4,11 @@ define(function(require) {
     var Origin = require('core/origin');
 
     var EditorModel = Backbone.Model.extend({
-
       idAttribute: '_id',
       whitelistAttributes: null,
+      _type: 'theme',
 
-      initialize : function(options) {
+      initialize : function() {
         this.on('sync', this.loadedData, this);
         this.on('change', this.loadedData, this);
         this.fetch();
@@ -44,7 +44,7 @@ define(function(require) {
           } else {
             parent = Origin.editor.data.contentObjects.findWhere({_id: currentParentId});
           }
-        } else if (currentType != 'course'){
+        } else if (currentType !== 'course'){
           parent = Origin.editor.data[this._parent].findWhere({_id: currentParentId});
         }
 
@@ -64,7 +64,7 @@ define(function(require) {
             var siblings = _.reject(Origin.editor.data[this._siblings].where({
                 _parentId:this.get("_parentId")
             }), _.bind(function(model){ 
-                return model.get('_id') == this.get('_id'); 
+                return model.get('_id') === this.get('_id');
             }, this));
             var siblingsCollection = new Backbone.Collection(siblings);
 

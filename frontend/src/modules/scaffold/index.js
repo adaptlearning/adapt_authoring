@@ -234,6 +234,9 @@ define([
         break;
       case 'component':
         type = model.get('_component');
+        break;
+      case 'theme':
+        type = options.schemaType;
     }
 
     var schema = new Schemas(type);

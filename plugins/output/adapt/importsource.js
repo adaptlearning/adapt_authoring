@@ -409,14 +409,14 @@ function ImportSource(req, done) {
               });
               return;
             }
-            case 'contentObject': { // Sorts in-place the content objects to make sure processing can happen
-              var byParent = _.groupBy(data, '_parentId');
+            case 'contentobject': { // Sorts in-place the content objects to make sure processing can happen
+              var byParent = _.groupBy(contentJson, '_parentId');
               Object.keys(byParent).forEach(id => {
                 byParent[id].forEach((item, index) => item._sortOrder = index + 1);
               });
-              var groups = _.groupBy(data, '_type');
+              var groups = _.groupBy(contentJson, '_type');
               var sortedSections = helpers.sortContentObjects(groups.menu, origCourseId, []);
-              data = sortedSections.concat(groups.page);
+              contentJson = sortedSections.concat(groups.page);
             }
           }
           // assume we're using arrays

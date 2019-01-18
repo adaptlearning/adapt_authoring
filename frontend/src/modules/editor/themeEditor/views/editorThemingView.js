@@ -338,7 +338,7 @@ define(function(require){
         var selectedTheme = this.getSelectedTheme();
         if(!selectedTheme) return;
         var parent = selectedTheme.get('_id');
-        return this.presets.findWhere({ '_id': this.model.get('_themepreset'), parentTheme: parent });
+        return this.presets.findWhere({ '_id': this.model.get('_themePreset'), parentTheme: parent });
       }
     },
 
@@ -378,7 +378,7 @@ define(function(require){
         var defaultSettings = this.getDefaultThemeSettings();
         shouldShow = false;
         for (var key in currentSettings) {
-          if (currentSettings[key].toString() !== defaultSettings[key].toString()) {
+          if (currentSettings[key] && defaultSettings[key] && currentSettings[key].toString() !== defaultSettings[key].toString()) {
             shouldShow = true;
           }
         }

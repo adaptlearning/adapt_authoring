@@ -20,8 +20,7 @@ ThemePresetContent.prototype.getModelName = function () {
 
 function initialize () {
   var app = Origin();
-  app.once('serverStarted', function (server) {
-    // assign preset
+  app.once('serverStarted', function () {
     app.rest.post('/themepreset/:presetid/makeitso/:courseid', function (req, res, next) {
       var presetId = req.params.presetid;
       var courseId = req.params.courseid;
@@ -36,14 +35,11 @@ function initialize () {
             return res.status(404).json({ success: false, message: 'preset not found' });
           }
           // save to config
-          // TODO permissions error here
           app.contentmanager.retrieve('config', { _courseId: courseId }, function (err, results) {
             if(err) return next(err);
-            // HACK requires _courseId for permissions
-            app.contentmanager.update('config', { _courseId: courseId }, { _courseId: courseId, _themepreset: presetId }, function (err) {
+            app.contentmanager.update('config', { _courseId: courseId }, { _courseId: courseId, _themePreset: presetId }, function (err) {
               if (err) return next(err);
               // lose any previously set theme settings, preset overrides
-              // HACK requires _courseId for permissions
               app.contentmanager.update('course', { _id: courseId }, { _courseId: courseId, themeSettings: null }, function (err) {
                 if (err) return next(err);
                 // force a rebuild of the course

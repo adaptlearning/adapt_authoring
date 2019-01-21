@@ -336,5 +336,7 @@
   "app.colourLabelIntro": "The colours are <b>only</b> applied in the authoring tool and will <b>not affect the generated course</b>. The settings are synced with all users in the authoring tool.",
   "app.reset": "Reset",
   "app.titlelock": "Link with title",
-  "app.titleunlock": "Unlink from title"
+  "app.titleunlock": "Unlink from title",
+  "app.maxfileuploadsize": "Maximum upload file size: %{size}.",
+  "app.uploadsizeerror": "File size limit exceeded. Expected no more than %{max}, received %{size}."
 }

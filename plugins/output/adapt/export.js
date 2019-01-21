@@ -29,7 +29,7 @@ function exportCourse(pCourseId, request, response, next) {
 
   async.auto({
     ensureExportDir: ensureExportDir,
-    generateLatestBuild: ['ensureExportDir', async.apply(generateLatestBuild, request)],
+    generateLatestBuild: ['ensureExportDir', generateLatestBuild],
     copyFrameworkFiles: ['generateLatestBuild', copyFrameworkFiles],
     writeCustomStyle: ['copyFrameworkFiles', writeCustomStyle],
     copyCourseFiles: ['generateLatestBuild', copyCourseFiles]
@@ -41,7 +41,7 @@ function ensureExportDir(exportDirEnsured) {
   fs.ensureDir(EXPORT_DIR, exportDirEnsured);
 }
 
-function generateLatestBuild(request, results, courseBuilt) {
+function generateLatestBuild(results, courseBuilt) {
   self.publish(COURSE_ID, Constants.Modes.Export, null, null, courseBuilt);
 }
 

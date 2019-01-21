@@ -343,6 +343,7 @@
   "app.searchByMail": "Search by E-Mail",
   "app.filterNeverLogedin": "Never",
   "app.filterStartDate": "Start Date",
-  "app.filterEndDate": "End Date"
-
+  "app.filterEndDate": "End Date",
+  "app.maxfileuploadsize": "Maximum upload file size: %{size}.",
+  "app.uploadsizeerror": "File size limit exceeded. Expected no more than %{max}, received %{size}."
 }

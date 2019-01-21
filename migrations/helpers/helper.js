@@ -1,25 +1,23 @@
 //add any helper methods that all migrations can use here
-const origin = require('./../../lib/application');
-const logger = require('./../../lib/logger');
+const origin = require('../../lib/application');
+const logger = require('../../lib/logger');
 const fs = require('fs-extra');
 const path = require('path');
 
+/**
+* Helper methods for all migrations
+*/
 module.exports = {
   start: function(callback) {
     const app = origin();
-
     //App is already running
-    if(app._httpServer){
-      return callback()
-    }
-
+    if(app._httpServer) return callback();
     // don't show any logger messages in the console
     logger.level('console','error');
-    // start the server first
+    // start the server
     app.run({ skipVersionCheck: true, skipStartLog: true });
-    app.on('serverStarted', function() {
-      return callback();
-    });
+    // return a reference to the app
+    app.on('serverStarted', function () { callback(app); });
   },
 
   replaceSchema: function(schemaName, destination, callback) {
@@ -31,5 +29,4 @@ module.exports = {
       });
     });
   }
-
 };

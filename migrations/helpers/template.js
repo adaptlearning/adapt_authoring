@@ -1,33 +1,25 @@
 'use strict';
 
-var database = require('./../../lib/database');
-var helpers = require('./../../migrations/helpers/helper');
-var configuration = require('./../../lib/configuration');
+var helpers = require('../helpers/helper');
 
-exports.up = function up (done) {
-  helpers.start(function() {
-    database.getDatabase(function(err, db) {
-      if (err) {
-        done(err)
-      }
-
-      //DO up migration here
-
-      return done()
-    }, configuration.getConfig('masterTenantID'))
-  })
+exports.up = function up(done) {
+  helpers.start(function(app) {
+    /**
+    * Do UP migration here
+    * - reference master DB with app.db
+    * - call done on finish
+    */
+    done();
+  });
 };
 
 exports.down = function down(done) {
-  helpers.start(function() {
-    database.getDatabase(function(err, db) {
-      if (err) {
-        done(err)
-      }
-
-      //DO down migration here
-
-      return done()
-    }, configuration.getConfig('masterTenantID'))
+  helpers.start(function(app) {
+    /**
+    * Do DOWN migration here
+    * - reference master DB with app.db
+    * - call done on finish
+    */
+    done();
   });
 };

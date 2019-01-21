@@ -146,20 +146,18 @@ define([
   * Returns an apt string value from Modal.Item value
   */
   function getModalItemValueString(value) {
-    if(!value) {
-      return '';
+    if (typeof value !== 'object') {
+      return value;
     }
     if(Array.isArray(value)) {
       return Origin.l10n.t('app.items', { smart_count: Object.keys(value).length });
     }
-    if(typeof value === 'object') { // print nested name/value pairs
-      var pairs = '';
-      for (var name in value) {
-        if(value.hasOwnProperty(name)) pairs += '<br />' + wrapSchemaTitle(name) + value[name];
-      }
-      return '<p class="list-item-modal-object">' + pairs + '</p>';
+    // print nested name/value pairs
+    var pairs = '';
+    for (var name in value) {
+      if(value.hasOwnProperty(name)) pairs += '<br />' + wrapSchemaTitle(name) + value[name];
     }
-    return value;
+    return '<p class="list-item-modal-object">' + pairs + '</p>';
   }
 
   function wrapSchemaTitle(value) {

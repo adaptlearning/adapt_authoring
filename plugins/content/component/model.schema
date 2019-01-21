@@ -99,12 +99,6 @@
       "validators": [],
       "translatable": true
     },
-    "instruction": {
-      "type": "string",
-      "default" : "",
-      "inputType": "Text",
-      "translatable": true
-    },
     "_onScreen": {
       "type": "object",
       "title": "On-screen classes",

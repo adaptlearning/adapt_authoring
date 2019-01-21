@@ -76,6 +76,12 @@ function publishCourse(courseId, mode, request, response, next) {
         if (err) {
           return callback(err);
         }
+
+        if (mode === Constants.Modes.Export || mode === Constants.Modes.Publish) {
+          isRebuildRequired = true;
+          return callback(null);
+        }
+
         const isForceRebuld = (request) ? request.query.force === 'true' : false;
         isRebuildRequired = exists || isForceRebuld;
         callback(null);

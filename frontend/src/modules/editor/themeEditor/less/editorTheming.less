@@ -62,18 +62,19 @@
   .theme-customiser {
     .form-container-style;
     .form-container {
-      // HACK to hide fieldset titles
       .legend {
         display: none;
       }
       fieldset {
-        margin: 0;
         border: none;
         padding-bottom: 0;
         max-width: none;
         .field {
           padding-left: 0;
         }
+      }
+      fieldset.fieldset-general {
+        margin-top: 0;
       }
     }
   }

@@ -122,7 +122,7 @@ define(function(require) {
     },
 
     downloadProject: function() {
-      Origin.trigger('editorCommon:download', this.isForceRebuild());
+      Origin.trigger('editorCommon:download');
     },
 
     previewProject: function() {
@@ -130,7 +130,7 @@ define(function(require) {
     },
 
     exportProject: function() {
-      Origin.trigger('editorCommon:export', this.isForceRebuild());
+      Origin.trigger('editorCommon:export');
     },
 
     closeProject: function() {

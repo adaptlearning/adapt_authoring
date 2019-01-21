@@ -44,9 +44,9 @@ define(function(require) {
         'editorView:copy': this.addToClipboard,
         'editorView:copyID': this.copyIdToClipboard,
         'editorView:paste': this.pasteFromClipboard,
-        'editorCommon:download': function(isForceRebuild) {
+        'editorCommon:download': function() {
           this.validateProject(function(error) {
-            this.downloadProject(isForceRebuild);
+            this.downloadProject();
           });
         },
         'editorCommon:preview': function(isForceRebuild) {
@@ -58,9 +58,9 @@ define(function(require) {
             this.previewProject(previewWindow, isForceRebuild);
           });
         },
-        'editorCommon:export': function(isForceRebuild) {
+        'editorCommon:export': function() {
           this.validateProject(function(error) {
-            this.exportProject(error, isForceRebuild);
+            this.exportProject(error);
           });
         }
       });
@@ -119,7 +119,7 @@ define(function(require) {
       }, this));
     },
 
-    exportProject: function(error, forceRebuild) {
+    exportProject: function(error) {
       // TODO - very similar to export in project/views/projectView.js, remove duplication
       // aleady processing, don't try again
       if(error || this.exporting) return;
@@ -134,7 +134,7 @@ define(function(require) {
 
       var self = this;
       $.ajax({
-         url: '/export/' + tenantId + '/' + courseId + '?force='+(forceRebuild === true),
+         url: '/export/' + tenantId + '/' + courseId,
          success: function(data, textStatus, jqXHR) {
            self.showExportAnimation(false, $btn);
            self.exporting = false;
@@ -171,14 +171,14 @@ define(function(require) {
       }
     },
 
-    downloadProject: function(forceRebuild) {
+    downloadProject: function() {
       if(Origin.editor.isDownloadPending) {
         return;
       }
       $('.editor-common-sidebar-download-inner').addClass('display-none');
       $('.editor-common-sidebar-downloading').removeClass('display-none');
 
-      var url = '/api/output/' + Origin.constants.outputPlugin + '/publish/' + this.currentCourseId + '?force='+(forceRebuild === true);
+      var url = '/api/output/' + Origin.constants.outputPlugin + '/publish/' + this.currentCourseId;
       $.get(url, _.bind(function(jqXHR, textStatus, errorThrown) {
 
         if (!jqXHR.success) {

@@ -5,6 +5,30 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.6.1] - 2018-12-20
+
+Bugfix release primarily to resolve issues introduced in v0.6.0.
+
+### Fixed
+- Copy function fails if course has orphaned components ([#1701](https://github.com/adaptlearning/adapt_authoring/issues/1701))
+- Preview route is sending invalid status codes ([#1882](https://github.com/adaptlearning/adapt_authoring/issues/1882))
+- Can't create a course ContentCollection ([#1953](https://github.com/adaptlearning/adapt_authoring/issues/1953))
+- toBoolean not fired for cli arguments ([#2024](https://github.com/adaptlearning/adapt_authoring/issues/2024))
+- Deprecation warning when using MongoDB versions 3.2 or above  ([#2053](https://github.com/adaptlearning/adapt_authoring/issues/2053))
+- Re-add 'server started' log ([#2063](https://github.com/adaptlearning/adapt_authoring/issues/2063))
+- Import of course with SVG asset into AT 0.5.0 seems to yield an error ([#2065](https://github.com/adaptlearning/adapt_authoring/issues/2065))
+- No useful error when attempting to preview course with empty children ([#2067](https://github.com/adaptlearning/adapt_authoring/issues/2067))
+- Password reset displays error alert on success ([#2075](https://github.com/adaptlearning/adapt_authoring/issues/2075))
+- Custom theme/menu settings are not imported ([#2088](https://github.com/adaptlearning/adapt_authoring/issues/2088))
+- Formidable limits file uploads to 200mb ([#2095](https://github.com/adaptlearning/adapt_authoring/issues/2095))
+
+### Added
+- Standard GitHub API limit too low for install ([#1825](https://github.com/adaptlearning/adapt_authoring/issues/1825))
+- Check for compatible node version on start ([#1917](https://github.com/adaptlearning/adapt_authoring/issues/1917))
+- Session secret should be auto-generated ([#2007](https://github.com/adaptlearning/adapt_authoring/issues/2007))
+- Mailer should verify settings on startup ([#2072](https://github.com/adaptlearning/adapt_authoring/issues/2072))
+- Custom LESS should be included on import ([#2108](https://github.com/adaptlearning/adapt_authoring/issues/2108))
+
 ## [0.6.0] - 2018-09-25
 
 Release to tidy up the core 'scaffold' code which is used to render the edit forms in the application.
@@ -465,6 +489,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.6.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.4.0...v0.4.1

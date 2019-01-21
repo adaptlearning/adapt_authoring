@@ -6,6 +6,14 @@
     </span>
   </button>
 
+  <div class="editor-common-force-rebuild">
+    <label>
+      <span>Force rebuild</span>
+      <input type="checkbox" name="force-rebuild">
+      <i class="fa fa-toggle-off"></i>
+    </label>
+  </div>
+
   <button class="editor-common-sidebar-download action-secondary">
     <span class="editor-common-sidebar-download-inner">{{ t 'app.download'}}</span>
     <span class="editor-common-sidebar-downloading display-none">
@@ -21,14 +29,6 @@
     </span>
   </button>
   {{/ifHasPermissions}}
-
-  <div class="editor-common-force-rebuild">
-    <label>
-      <input type="checkbox" name="force-rebuild">
-      <i class="fa fa-toggle-off"></i>
-      <span>Force rebuild</span>
-    </label>
-  </div>
 
   <div class="separator" />
 

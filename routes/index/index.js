@@ -29,16 +29,14 @@ server.get('/', async function (req, res, next) {
   }, versions));
 });
 
-function getVersions(cb) {
-  return new Promise((resolve, reject) => {
-    if (Object.keys(_versions).length) return resolve(_versions);
+async function getVersions(cb) {
+  if (Object.keys(_versions).length) return _versions;
 
-    installHelper.getInstalledVersions((error, data) => {
-      if (error) {
-        logger.log('error', error);
-      }
-      _versions = data;
-      resolve(data);
-    });
+  installHelper.getInstalledVersions((error, data) => {
+    if (error) {
+      logger.log('error', error);
+    }
+    _versions = data;
+    return _versions;
   });
 }

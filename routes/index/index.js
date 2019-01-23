@@ -29,7 +29,7 @@ server.get('/', async function (req, res, next) {
   }, versions));
 });
 
-async function getVersions(cb) {
+async function getVersions() {
   if (Object.keys(_versions).length) return _versions;
 
   installHelper.getInstalledVersions((error, data) => {

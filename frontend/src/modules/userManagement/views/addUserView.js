@@ -20,32 +20,21 @@ define(function(require){
 
     isValid: function() {
       var valid = true;
-      var validFirstName = this.$('input[name=firstName]').val().trim().length > 0;
-      var validLastName = this.$('input[name=lastName]').val().trim().length > 0;
-      var validEmail = Helpers.isValidEmail(this.$('input[name=email]').val().trim());
-      var validPassword = this.$('input[name=password]').val().trim().length > 0;
 
-      this.$('.field-error').addClass('display-none');
+      this.$('.field-error').each(function(index, element) {
+        var $error = $(element);
+        var $input = $error.siblings('input');
 
-      if (!validFirstName) {
-        this.$('#firstNameError').removeClass('display-none');
-        valid = false;
-      }
+        var isValid = $input.attr('name') === 'email' ?
+          Helpers.isValidEmail($input.val().trim()) :
+          $input.val().trim().length > 0;
 
-      if (!validLastName) {
-        this.$('#lastNameError').removeClass('display-none');
-        valid = false;
-      }
+        $error.toggleClass('display-none', isValid);
 
-      if (!validEmail) {
-        this.$('#emailError').removeClass('display-none');
-        valid = false;
-      }
-
-      if (!validPassword) {
-        this.$('#passwordError').removeClass('display-none');
-        valid = false;
-      }
+        if (!isValid) {
+          valid = false;
+        }
+      });
 
       if (valid) {
         this.$('.field-error').addClass('display-none');

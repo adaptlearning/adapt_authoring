@@ -5,22 +5,22 @@
   <form class="addUser forms" action="/api/user" method="post" autocomplete="off">
       <div class="form-group">
         <label for="firstName">{{t 'app.firstname'}} <span class="req">*</span></label>
-        <div id="firstNameError" class="field-error display-none" data-error="">{{t 'app.validationrequired'}}</div>
+        <div class="field-error display-none" data-error="">{{t 'app.validationrequired'}}</div>
         <input type="text" name="firstName" autocomplete="off">
       </div>
       <div class="form-group">
         <label for="lastName">{{t 'app.lastname'}}<span class="req">*</span></label>
-        <div id="lastNameError" class="field-error display-none" data-error="">{{t 'app.validationrequired'}}</div>
+        <div class="field-error display-none" data-error="">{{t 'app.validationrequired'}}</div>
         <input type="text" name="lastName" autocomplete="off">
       </div>
       <div class="form-group">
         <label for="email">{{t 'app.usernameoremail'}} <span class="req">*</span></label>
-        <div id="emailError" class="field-error display-none" data-error="">{{t 'app.invalidusernameoremail'}}</div>
+        <div class="field-error display-none" data-error="">{{t 'app.invalidusernameoremail'}}</div>
         <input type="email" name="email" autocomplete="off">
       </div>
       <div class="form-group">
           <label for="password">{{t 'app.password'}} <span class="req">*</span></label>
-          <div id="passwordError" class="field-error display-none" data-error="">{{t 'app.validationrequired'}}</div>
+          <div class="field-error display-none" data-error="">{{t 'app.validationrequired'}}</div>
           <input type="password" name="password" autocomplete="off">
       </div>
       <div class="form-group">

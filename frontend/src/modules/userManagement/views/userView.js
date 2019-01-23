@@ -174,7 +174,7 @@ define(function(require){
     onResetPasswordClicked: function(e) {
       Origin.Notify.confirm({
         text: Origin.l10n.t('app.confirmsendreset', { email: this.model.get('email') }),
-        callback: _.bind(function(confirmed) {
+        callback: function(confirmed) {
           if (!confirmed) {
             return;
           }
@@ -183,7 +183,7 @@ define(function(require){
           Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST', function() {
             $btn.removeClass('submitted');
           });
-        }, this)
+        }.bind(this)
       });
     },
 

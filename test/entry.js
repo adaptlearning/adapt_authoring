@@ -107,7 +107,10 @@ function removeTestData(done) {
     function dumpOldDb(cb) {
       var MongoClient = mongodb.MongoClient;
       var connStr = 'mongodb://' + testConfig.dbHost + ':' + testConfig.dbPort + '/' + testConfig.dbName;
-      MongoClient.connect(connStr, { domainsEnabled: true }, function(error, client) {
+      MongoClient.connect(connStr, {
+        domainsEnabled: true,
+        useNewUrlParser: true
+      }, function(error, client) {
         if(error) return cb(error);
 
         var db = client.db(testConfig.dbName);

@@ -5,6 +5,7 @@ define([
 ], function(Origin, BackboneForms) {
 
   var ScaffoldListView = Backbone.Form.editors.List.extend({
+
     render: function() {
       var instance = Backbone.Form.editors.__List.prototype.render.apply(this, arguments);
       // set-up drag 'n drop
@@ -81,10 +82,27 @@ define([
     }
   });
 
+  var ScaffoldListItemView = Backbone.Form.editors.List.Item.extend({
+
+    events: function() {
+      return _.extend({}, Backbone.Form.editors.__List.__Item.prototype.events, {
+        'click [data-action="clone"]': 'cloneItem'
+      });
+    },
+
+    cloneItem: function(event) {
+      this.list.addItem(this.editor.value);
+    }
+
+  });
+
   Origin.on('origin:dataReady', function() {
     // NOTE override default list view (keep the old one in case...)
     Backbone.Form.editors.__List = Backbone.Form.editors.List;
+    Backbone.Form.editors.__List.__Item = Backbone.Form.editors.List.Item;
+
     Backbone.Form.editors.List = ScaffoldListView;
+    Backbone.Form.editors.List.Item = ScaffoldListItemView;
     // overrides
     Backbone.Form.editors.List.prototype.constructor.template = Handlebars.templates.list;
     Backbone.Form.editors.List.Item.prototype.constructor.template = Handlebars.templates.listItem;
@@ -128,20 +146,18 @@ define([
   * Returns an apt string value from Modal.Item value
   */
   function getModalItemValueString(value) {
-    if(!value) {
-      return '';
+    if (typeof value !== 'object') {
+      return value;
     }
     if(Array.isArray(value)) {
       return Origin.l10n.t('app.items', { smart_count: Object.keys(value).length });
     }
-    if(typeof value === 'object') { // print nested name/value pairs
-      var pairs = '';
-      for (var name in value) {
-        if(value.hasOwnProperty(name)) pairs += '<br />' + wrapSchemaTitle(name) + value[name];
-      }
-      return '<p class="list-item-modal-object">' + pairs + '</p>';
+    // print nested name/value pairs
+    var pairs = '';
+    for (var name in value) {
+      if(value.hasOwnProperty(name)) pairs += '<br />' + wrapSchemaTitle(name) + value[name];
     }
-    return value;
+    return '<p class="list-item-modal-object">' + pairs + '</p>';
   }
 
   function wrapSchemaTitle(value) {

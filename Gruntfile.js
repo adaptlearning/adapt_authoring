@@ -138,21 +138,35 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('migration-conf', 'Creating migration Conf', function() {
+    var mongoUri = require('mongodb-uri');
     var config = grunt.file.readJSON('conf/config.json');
     var connectionString = '';
-    // Construct the authentication part of the connection string.
-    var authenticationString = config.dbUser && config.dbPass ? config.dbUser + ':' + config.dbPass + '@' : '';
-    // Check if a MongoDB replicaset array has been specified.
-    if (config.dbReplicaset && Array.isArray(config.dbReplicaset) && config.dbReplicaset.length !== 0) {
-      // The replicaset should contain an array of hosts and ports
-      connectionString = 'mongodb://' + authenticationString + config.dbReplicaset.join(',') + '/' + config.dbName
+
+    if (config.dbConnectionUri) {
+      connectionString = config.dbConnectionUri;
+
+      var dbConnectionUriParsed = mongoUri.parse(connectionString);
+      dbConnectionUriParsed.database = config.dbName;
+      connectionString = mongoUri.format(dbConnectionUriParsed);
+
     } else {
-      // Get the host and port number from the configuration.
-      var portString = config.dbPort ? ':' + config.dbPort : '';
-      connectionString = 'mongodb://' + authenticationString + config.dbHost + portString + '/' + config.dbName;
-    }
-    if(typeof config.dbAuthSource === 'string' && config.dbAuthSource !== '' ){
-      connectionString += '?authSource=' + config.dbAuthSource
+      // Construct the authentication part of the connection string.
+      var authenticationString = config.dbUser && config.dbPass ? config.dbUser + ':' + config.dbPass + '@' : '';
+
+      // Check if a MongoDB replicaset array has been specified.
+      if (config.dbReplicaset && Array.isArray(config.dbReplicaset) && config.dbReplicaset.length !== 0) {
+        // The replicaset should contain an array of hosts and ports
+        connectionString = 'mongodb://' + authenticationString + config.dbReplicaset.join(',') + '/' + config.dbName
+      } else {
+        // Get the host and port number from the configuration.
+
+        var portString = config.dbPort ? ':' + config.dbPort : '';
+
+        connectionString = 'mongodb://' + authenticationString + config.dbHost + portString + '/' + config.dbName;
+      }
+      if (typeof config.authSource === 'string' && config.authSource !== '' ) {
+        connectionString += '?authSource=' + config.authSource
+      }
     }
     var migrateConf = {
       migrationsDir : 'migrations/lib',

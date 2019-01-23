@@ -172,10 +172,18 @@ define(function(require){
     },
 
     onResetPasswordClicked: function(e) {
-      var $btn = $(e.currentTarget);
-      $btn.addClass('submitted');
-      Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST', function() {
-        $btn.removeClass('submitted');
+      var self = this;
+      Origin.Notify.confirm({
+        text: Origin.l10n.t('app.confirmsendreset', { email: self.model.get('email') }),
+        callback: function(confirmed) {
+          if(confirmed) {
+            var $btn = $(e.currentTarget);
+            $btn.addClass('submitted');
+            Helpers.ajax('/api/createtoken', { email: self.model.get('email') }, 'POST', function() {
+              $btn.removeClass('submitted');
+            });
+          }
+        }
       });
     },
 

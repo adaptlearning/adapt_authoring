@@ -19,6 +19,7 @@
   "app.restoreuser": "Restore user",
   "app.resetlogins": "Reset logins",
   "app.confirmresetlogins": "Reset failed login attempts for<br/><b>%{email}</b>?",
+  "app.confirmsendreset": "Send a password reset email to <br/><b>%{email}</b>?",
   "app.resetpasswordtitle": "Change password",
   "app.resetpasswordinstruction": "Enter a new password for<br/><b>%{email}</b>",
   "app.changepasswordtext": "Password updated for<br/><b>%{email}</b>",

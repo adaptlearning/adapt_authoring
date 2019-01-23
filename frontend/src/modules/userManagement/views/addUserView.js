@@ -19,17 +19,36 @@ define(function(require){
     },
 
     isValid: function() {
-      var email = this.$('input[name=email]').val().trim();
-      var valid = Helpers.isValidEmail(email);
-      if(valid) {
+      var valid = true;
+      var validFirstName = this.$('input[name=firstName]').val().trim().length > 0;
+      var validLastName = this.$('input[name=lastName]').val().trim().length > 0;
+      var validEmail = Helpers.isValidEmail(this.$('input[name=email]').val().trim());
+      var validPassword = this.$('input[name=password]').val().trim().length > 0;
+
+      this.$('.field-error').addClass('display-none');
+
+      if (!validFirstName) {
+        this.$('#firstNameError').removeClass('display-none');
+        valid = false;
+      }
+
+      if (!validLastName) {
+        this.$('#lastNameError').removeClass('display-none');
+        valid = false;
+      }
+
+      if (!validEmail) {
+        this.$('#emailError').removeClass('display-none');
+        valid = false;
+      }
+
+      if (!validPassword) {
+        this.$('#passwordError').removeClass('display-none');
+        valid = false;
+      }
+
+      if (valid) {
         this.$('.field-error').addClass('display-none');
-      } else {
-        this.$('.field-error').removeClass('display-none');
-        Origin.Notify.alert({
-          type: 'error',
-          title: Origin.l10n.t('app.validationfailed'),
-          text: Origin.l10n.t('app.invalidusernameoremail')
-        });
       }
       return valid;
     },

@@ -179,17 +179,27 @@ define(function(require){
     restoreFormSettings: function(toRestore) {
       if(!this.form || !this.form.el) return;
 
-      for(var key in toRestore) {
-        var view = this.form.fields[key];
-        if(!view) {
-          continue;
+      for (var key in toRestore) {
+        // Check for nested properties
+        if (typeof toRestore[key] === 'object') {
+          for (var innerKey in toRestore[key]) {
+            this.restoreField(this.form.fields[innerKey], toRestore[key][innerKey]);
+          }
+        } else {
+          this.restoreField(this.form.fields[key], toRestore[key])
         }
-        if(view.schema.inputType === 'ColourPicker') {
-          view.setValue(toRestore[key]);
-        }
-        else {
-          view.editor.$el.val(toRestore[key].toString());
-        }
+      }
+    },
+
+    restoreField: function(fieldView, value) {
+      if(!fieldView) {
+        return;
+      }
+      if(fieldView.schema.inputType === 'ColourPicker') {
+        fieldView.setValue(value);
+      }
+      else {
+        fieldView.editor.$el.val(value.toString());
       }
     },
 
@@ -226,7 +236,6 @@ define(function(require){
     // checks form for errors, returns boolean
     validateForm: function() {
       var selectedTheme = this.getSelectedTheme();
-      var selectedPreset = this.getSelectedPreset();
 
       if (selectedTheme === undefined) {
         Origin.Notify.alert({

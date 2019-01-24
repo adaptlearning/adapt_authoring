@@ -165,7 +165,14 @@ define([
 
     for (var key in schema) {
       if (schema.hasOwnProperty(key)) {
-        setUpSchemaFields(schema[key], key, schema, scaffoldSchema);
+        // check for nested
+        if (schema[key].hasOwnProperty('properties')) {
+          for (var innerKey in schema[key].properties) {
+            setUpSchemaFields(schema[key].properties[innerKey], innerKey, schema[key].properties, scaffoldSchema);
+          }
+        } else {
+          setUpSchemaFields(schema[key], key, schema, scaffoldSchema);
+        }
       }
     }
 
@@ -204,7 +211,13 @@ define([
       if (fieldsets[key]) {
         fieldsets[key].fields.push(key);
       } else {
-        fieldsets[key] = { key: key, legend: Helpers.keyToTitleString(key), fields: [ key ] };
+        var innerFieldSets = [];
+        for (var innerKey in schema[key].properties) {
+          innerFieldSets.push(innerKey)
+          schema[innerKey] = _.pick(schema[key].properties[innerKey], 'default', 'help', 'inputType', 'title', 'type');
+        }
+
+        fieldsets[key] = { key: key, legend: Helpers.keyToTitleString(key), fields: innerFieldSets };
       }
     }
 

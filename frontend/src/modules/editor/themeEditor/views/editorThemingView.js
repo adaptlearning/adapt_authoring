@@ -254,7 +254,7 @@ define(function(require){
       var presetModel = new PresetModel({
         displayName: presetName,
         parentTheme: this.getSelectedTheme().get('_id'),
-        properties: _.pick(this.form.model.attributes, Object.keys(this.form.model.get('properties')))
+        properties: this.extractData(this.form.model.attributes, this.form.model.attributes.properties)
       });
 
       var self = this;
@@ -307,8 +307,7 @@ define(function(require){
     postSettingsData: function(callback) {
       if(this.form) {
         this.form.commit();
-        var selectedTheme = this.getSelectedTheme();
-        var settings = _.pick(selectedTheme.attributes, Object.keys(selectedTheme.get('properties')));
+        var settings = this.extractData(this.form.model.attributes, this.form.model.attributes.properties);
         Origin.editor.data.course.set('themeVariables', settings);
         Origin.editor.data.course.save(null, {
           error: _.bind(this.onSaveError, this),
@@ -317,6 +316,22 @@ define(function(require){
       } else {
         callback.apply(this);
       }
+    },
+
+    extractData: function(attributes, properties) {
+      var data = {};
+      for (var key in properties) {
+        data[key] = {};
+        // Determine if property is nested
+        if (properties[key].properties !== 'undefined') {
+          for (var innerKey in properties[key].properties) {
+            data[key][innerKey] = attributes[innerKey];
+          }
+        } else {
+          data[key] = attributes.key;
+        }
+      }
+      return data;
     },
 
     navigateBack: function(event) {
@@ -353,9 +368,14 @@ define(function(require){
 
     getDefaultThemeSettings: function() {
       var defaults = {};
-      var props = this.getSelectedTheme().get('properties');
+      var props = this.getSelectedTheme().attributes.properties;
       for (var key in props) {
-        if (props.hasOwnProperty(key)) {
+        if (typeof props[key].properties === 'object') {
+          defaults[key] = {};
+          for (var innerKey in props[key].properties) {
+            defaults[key][innerKey] = props[key].properties[innerKey].default;
+          }
+        } else {
           defaults[key] = props[key].default;
         }
       }

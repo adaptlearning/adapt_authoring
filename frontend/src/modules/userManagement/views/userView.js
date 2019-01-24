@@ -23,6 +23,7 @@ define(function(require){
 
       'click a.saveRoles': 'onSaveRoleClicked',
 
+      'click button.invite': 'onInviteClicked',
       'click button.resetPassword': 'onResetPasswordClicked',
       'click button.changePassword': 'onChangePasswordClicked',
 
@@ -168,6 +169,23 @@ define(function(require){
         callback: function(confirmed) {
           if(confirmed) self.updateModel('failedLoginCount', 0);
         }
+      });
+    },
+
+    onInviteClicked: function(e) {
+      Origin.Notify.confirm({
+        text: Origin.l10n.t('app.confirmsendinvite', { email: this.model.get('email') }),
+        callback: function(confirmed) {
+          if(!confirmed) {
+            return;
+          }
+
+          var $btn = $(e.currentTarget);
+          $btn.addClass('submitted');
+          Helpers.ajax('/api/user/invite', { email: this.model.get('email') }, 'POST', function() {
+            $btn.removeClass('submitted');
+          });
+        }.bind(this)
       });
     },
 

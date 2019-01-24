@@ -44,11 +44,7 @@ define([
     },
 
     postRender: function() {
-      if (this.itemListView) {
-        this.itemListView.items.forEach(function(item) {
-          this.addDragItem(item.editor);
-        }, this);
-      } else {
+      if (!this.itemListView) {
         this.itemListView = this.findItemView();
         this.listenTo(this.itemListView, {
           'add': this.onItemListAdd,
@@ -56,9 +52,19 @@ define([
           'change': this.onItemListChange
         });
       }
+      // double defer:
+      // if external asset, postRender is triggered before el is injected into Dom
+      _.defer(function() {
+        this.removeDragItems();
+        this.itemListView.items && this.itemListView.items.forEach(function(item) {
+          this.addDragItem(item.editor);
+        }, this);
+      }.bind(this));
     },
 
     findItemView: function() {
+      // todo: replace with current model _type?
+      // var model = Origin.scaffold.getCurrentModel();
       var form = Origin.scaffold.getCurrentForm();
       if (this.schema.editorAttrs['data-isExtension']) {
         return form.fields._extensions.editor.nestedForm.fields[this.schema.editorAttrs['data-pluginName']].editor.nestedForm.fields[this.schema.editorAttrs['data-items']].editor;
@@ -68,6 +74,7 @@ define([
 
     removeDragItems: function() {
       this.dragItems.forEach(this.removeDragItem, this);
+      this.dragItems = [];
     },
 
     addDragItem: function(itemView) {
@@ -102,6 +109,7 @@ define([
     },
 
     removeDragItem: function(item) {
+      if (!item.elm.hasClass('ui-draggable')) return;
       item.elm.draggable('destroy').remove();
     },
 
@@ -153,12 +161,6 @@ define([
         _shouldShowScrollbar: false,
         onUpdate: function(data) {
           if (!data) return;
-
-          if (this.key === 'heroImage') {
-            this.setValue(data.assetId);
-            this.saveModel({ heroImage: data.assetId });
-            return;
-          }
 
           var model = Origin.scaffold.getCurrentModel();
 

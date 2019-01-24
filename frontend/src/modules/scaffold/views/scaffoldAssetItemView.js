@@ -23,8 +23,10 @@ define([
     },
 
     onDragItemClick: function(event) {
-      var index = $(event.target).data('index');
-      this.itemListView.items[index].editor.openEditor()
+      var item = _.find(this.dragItems, function(i) {
+        return i.elm[0] === event.currentTarget;
+      });
+      item.view.openEditor();
     },
 
     initialize: function(options) {
@@ -33,6 +35,7 @@ define([
     },
 
     init: function(options) {
+      this.dragItems = [];
       this.precision = options.schema.editorAttrs['data-precision'] || 3;
       this.topAttr = options.schema.editorAttrs['data-topAttribute'] || '_top';
       this.leftAttr = options.schema.editorAttrs['data-leftAttribute'] || '_left';
@@ -41,14 +44,18 @@ define([
     },
 
     postRender: function() {
-      if (!this.itemListView) {
+      if (this.itemListView) {
+        this.itemListView.items.forEach(function(item) {
+          this.addDragItem(item.editor);
+        }, this);
+      } else {
         this.itemListView = this.findItemView();
         this.listenTo(this.itemListView, {
+          'add': this.onItemListAdd,
           'remove': this.onItemListRemove,
-          'item:change': this.onItemListChange
+          'change': this.onItemListChange
         });
       }
-      this.renderDragItems();
     },
 
     findItemView: function() {
@@ -59,55 +66,82 @@ define([
       return form.fields.properties.editor.nestedForm.fields[this.schema.editorAttrs['data-items']].editor;
     },
 
-    renderDragItems: function() {
-      if (!this.value) return;
-
-      this.removeDragItems();
-      this.itemListView.value && this.itemListView.value.forEach(function(i, index) {
-        $('<div></div>', {
-          css: {
-            top: parseInt(i[this.topAttr]).toFixed(this.precision)+'%',
-            left: parseInt(i[this.leftAttr]).toFixed(this.precision)+'%'
-          },
-          text: index + 1,
-          'data-index': index
-        }).appendTo('.scaffold-asset-item-img-holder').draggable({
-          containment: 'parent',
-          stop: this.onDragStop.bind(this)
-        }).css( 'position', 'absolute' );
-      }, this);
+    removeDragItems: function() {
+      this.dragItems.forEach(this.removeDragItem, this);
     },
 
-    removeDragItems: function() {
-      this.$('.scaffold-asset-item-img-holder .ui-draggable').draggable('destroy').remove();
+    addDragItem: function(itemView) {
+      var value = itemView.value;
+      var index = itemView.$el.closest('.list-item').index();
+      var elm = $('<div></div>', {
+        css: {
+          top: parseInt(value[this.topAttr]).toFixed(this.precision)+'%',
+          left: parseInt(value[this.leftAttr]).toFixed(this.precision)+'%',
+          position: 'absolute'
+        },
+        text: index + 1
+      });
+
+      this.dragItems.push({
+        elm: elm,
+        view: itemView
+      });
+
+      elm.appendTo('.scaffold-asset-item-img-holder').draggable({
+        containment: 'parent',
+        stop: this.onDragStop.bind(this)
+      });
+    },
+
+    updateDragItem: function(item) {
+      var index = item.view.$el.closest('.list-item').index();
+      item.elm.css({
+        top: parseInt(item.view.value[this.topAttr]).toFixed(this.precision)+'%',
+        left: parseInt(item.view.value[this.leftAttr]).toFixed(this.precision)+'%',
+      }).text(index + 1);
+    },
+
+    removeDragItem: function(item) {
+      item.elm.draggable('destroy').remove();
     },
 
     onItemListRemove: function(listView, listItemView) {
-      var newValue = listView.getValue();
-      this.itemListView.setValue(newValue);
-      this.renderDragItems();
+      var index = -1;
+      for (var i = 0; i < this.dragItems.length; i++) {
+        if (this.dragItems[i].view === listItemView) {
+          index = i;
+          break;
+        }
+      }
+      this.removeDragItem(this.dragItems[index]);
+      this.dragItems.splice(index, 1);
     },
 
-    onItemListChange: function(listView, listItemView) {
-      var index = listItemView.$el.parents('.list-item').index();
-      var newValue = this.itemListView.value;
-      newValue[index] = listItemView.value;
-      this.itemListView.setValue(newValue);
-      this.renderDragItems();
+    onItemListAdd: function(listView, listItemView) {
+      this.addDragItem(listItemView);
+    },
+
+    onItemListChange: function(listView) {
+      this.dragItems.forEach(this.updateDragItem, this);
     },
 
     onDragStop: function(event, ui) {
       var $parent = this.$('.scaffold-asset-item-img-holder');
       var left = (parseInt($(event.target).css("left")) / ($parent.width() / 100)).toFixed(this.precision);
       var top = (parseInt($(event.target).css("top")) / ($parent.height() / 100)).toFixed(this.precision);
-      $(event.target).css({left: left + '%', top: top+'%'}).data('index');
+      var index = $(event.target).css({left: left + '%', top: top+'%'}).data('index');
 
-      var child = this.itemListView.items[index];
+      var child = _.find(this.dragItems, function(i) {
+        return i.elm[0] === event.target;
+      });
+
+      if (!child) return;
+
       var value = {};
       value[this.leftAttr] = left;
       value[this.topAttr] = top;
-      child.editor.setValue(_.extend({}, child.value, value));
-      child.editor.renderSummary();
+      child.view.setValue(_.extend({}, child.view.value, value));
+      child.view.renderSummary();
     },
 
     onAssetButtonClicked: function(event) {
@@ -157,6 +191,7 @@ define([
 
     remove: function() {
       this.removeDragItems();
+      this.dragItems = [];
       ScaffoldAssetView.prototype.remove.apply(this, arguments);
     }
 

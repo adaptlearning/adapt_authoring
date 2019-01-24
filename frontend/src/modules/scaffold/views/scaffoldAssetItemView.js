@@ -63,13 +63,16 @@ define([
     },
 
     findItemView: function() {
-      // todo: replace with current model _type?
-      // var model = Origin.scaffold.getCurrentModel();
       var form = Origin.scaffold.getCurrentForm();
-      if (this.schema.editorAttrs['data-isExtension']) {
-        return form.fields._extensions.editor.nestedForm.fields[this.schema.editorAttrs['data-pluginName']].editor.nestedForm.fields[this.schema.editorAttrs['data-items']].editor;
+
+      switch (this.schema.editorAttrs['data-type']) {
+        case 'extension':
+          return form.fields._extensions.editor.nestedForm.fields[this.schema.editorAttrs['data-targetAttribute']].editor.nestedForm.fields[this.schema.editorAttrs['data-items']].editor;
+        case 'menu':
+          return form.fields.menuSettings.editor.nestedForm.fields[this.schema.editorAttrs['data-targetAttribute']].editor.nestedForm.fields[this.schema.editorAttrs['data-items']].editor;
+        default:
+          return form.fields.properties.editor.nestedForm.fields[this.schema.editorAttrs['data-items']].editor;
       }
-      return form.fields.properties.editor.nestedForm.fields[this.schema.editorAttrs['data-items']].editor;
     },
 
     removeDragItems: function() {

@@ -73,15 +73,16 @@ define(function(require) {
     },
 
     setSelectedOption: function(selectedOption) {
+      // if this item is in a group toggle all group items to not selected
       var group = selectedOption.attr('data-group');
-      var callbackEvent = selectedOption.attr('data-callback');
-      // If this item is in a group toggle all group items to not selected
-      if(!group || selectedOption.hasClass('selected')) {
-        return;
+      if(group && selectedOption.hasClass('selected')) {
+        this.$('.options-group-' + group + ' button').removeClass('selected');
+        selectedOption.addClass('selected');
       }
-      this.$('.options-group-' + group + ' button').removeClass('selected');
-      selectedOption.addClass('selected');
-      Origin.trigger(callbackEvent);
+      var callbackEvent = selectedOption.attr('data-callback');
+      if(callbackEvent) {
+        Origin.trigger(callbackEvent);
+      }
     },
 
     onOptionClicked: function(event) {

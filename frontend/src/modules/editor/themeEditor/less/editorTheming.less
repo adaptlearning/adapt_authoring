@@ -78,9 +78,12 @@
         .field {
           padding-left: 0;
         }
-      }
-      fieldset.fieldset-general {
-        margin-top: 0;
+
+        &.fieldset-general {
+          .legend {
+            display: none;
+          }
+        }
       }
     }
   }

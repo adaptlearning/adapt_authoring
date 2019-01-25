@@ -183,23 +183,26 @@ define(function(require){
         // Check for nested properties
         if (typeof toRestore[key] === 'object') {
           for (var innerKey in toRestore[key]) {
-            this.restoreField(this.form.fields[innerKey], toRestore[key][innerKey]);
+            this.restoreField(this.form.fields[innerKey], toRestore[key][innerKey], innerKey);
           }
         } else {
-          this.restoreField(this.form.fields[key], toRestore[key])
+          this.restoreField(this.form.fields[key], toRestore[key], key)
         }
       }
     },
 
-    restoreField: function(fieldView, value) {
+    restoreField: function(fieldView, value, key) {
       if(!fieldView) {
         return;
       }
       if(fieldView.schema.inputType === 'ColourPicker') {
         fieldView.setValue(value);
-      }
-      else {
-        fieldView.editor.$el.val(value.toString());
+      } else if (fieldView.schema.inputType.indexOf('Asset:') > -1) {
+        fieldView.setValue(value);
+        fieldView.render();
+        $('div[data-editor-id*="' + key + '"]').append(fieldView.editor.$el);
+      } else {
+        fieldView.editor.$el.val(value.toString())
       }
     },
 

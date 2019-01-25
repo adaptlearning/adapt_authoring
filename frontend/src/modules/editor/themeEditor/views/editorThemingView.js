@@ -192,10 +192,10 @@ define(function(require){
     },
 
     restoreField: function(fieldView, value, key) {
-      if(!fieldView) {
+      if (!fieldView) {
         return;
       }
-      if(fieldView.schema.inputType === 'ColourPicker') {
+      if (fieldView.schema.inputType === 'ColourPicker') {
         fieldView.setValue(value);
       } else if (fieldView.schema.inputType.indexOf('Asset:') > -1) {
         fieldView.setValue(value);
@@ -257,7 +257,7 @@ define(function(require){
       var presetModel = new PresetModel({
         displayName: presetName,
         parentTheme: this.getSelectedTheme().get('_id'),
-        properties: this.extractData(this.form.model.attributes, this.form.model.attributes.properties)
+        properties: this.extractData(this.form.model.attributes)
       });
 
       var self = this;
@@ -310,7 +310,7 @@ define(function(require){
     postSettingsData: function(callback) {
       if(this.form) {
         this.form.commit();
-        var settings = this.extractData(this.form.model.attributes, this.form.model.attributes.properties);
+        var settings = this.extractData(this.form.model.attributes);
         Origin.editor.data.course.set('themeVariables', settings);
         Origin.editor.data.course.save(null, {
           error: _.bind(this.onSaveError, this),
@@ -321,8 +321,9 @@ define(function(require){
       }
     },
 
-    extractData: function(attributes, properties) {
+    extractData: function(attributes) {
       var data = {};
+      var properties = attributes.properties;
       for (var key in properties) {
         // Check for nested properties
         if (typeof properties[key].properties !== 'undefined') {

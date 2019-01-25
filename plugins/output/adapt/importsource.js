@@ -1,35 +1,39 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-var _ = require('underscore');
-var async = require('async');
-var fs = require("fs-extra");
-var IncomingForm = require('formidable').IncomingForm;
-var path = require("path");
-
-var configuration = require('../../../lib/configuration');
-var Constants = require('../../../lib/outputmanager').Constants;
-var crypto = require('crypto');
-var database = require("../../../lib/database");
-var filestorage = require('../../../lib/filestorage');
-var glob = require('glob');
-var helpers = require('./helpers');
-var logger = require("../../../lib/logger");
-var mime = require('mime');
-var installHelpers = require('../../../lib/installHelpers');
+const _ = require('underscore');
+const async = require('async');
+const bytes = require('bytes');
+const configuration = require('../../../lib/configuration');
+const Constants = require('../../../lib/outputmanager').Constants;
+const crypto = require('crypto');
+const database = require("../../../lib/database");
+const filestorage = require('../../../lib/filestorage');
+const fs = require("fs-extra");
+const glob = require('glob');
+const helpers = require('./helpers');
+const IncomingForm = require('formidable').IncomingForm;
+const installHelpers = require('../../../lib/installHelpers');
+const logger = require("../../../lib/logger");
+const mime = require('mime');
+const path = require("path");
 
 function ImportSource(req, done) {
-  var contentMap = {
-    'contentobject': 'contentObjects',
-    'article': 'articles',
-    'block': 'blocks',
-    'component': 'components'
-  };
+  var dbInstance;
 
+  var contentMap = {
+    course: 'course',
+    config: 'config',
+    contentobject: 'contentObjects',
+    article: 'articles',
+    block: 'blocks',
+    component: 'components'
+  };
+  var cachedJson = {};
   var plugindata = {
     pluginTypes: [
       { type: 'component', folder: 'components' },
-      { type: 'extension', folder: 'extensions' },
-      { type: 'menu',      folder: 'menu'       },
-      { type: 'theme',     folder: 'theme'      }
+      { type: 'extension', folder: 'extensions', attribute: '_extensions' },
+      { type: 'menu',      folder: 'menu',       attribute: 'menuSettings' },
+      { type: 'theme',     folder: 'theme',      attribute: 'themeSettings' }
     ],
     pluginIncludes: [],
     theme: [],
@@ -37,12 +41,10 @@ function ImportSource(req, done) {
   };
   var metadata = {
     idMap: {},
-    componentMap: {},
-    extensionMap: {},
     assetNameMap: {}
   };
   var detachedElementsMap = Object.create(null);
-  var extensionLocations = {};
+  var pluginLocations = {};
   var enabledExtensions = {};
   var tenantId = app.usermanager.getCurrentUser().tenant._id;
   var unzipFolder = tenantId + '_unzipped';
@@ -50,53 +52,68 @@ function ImportSource(req, done) {
   var COURSE_LANG;
   var COURSE_JSON_PATH = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course);
   var courseRoot = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course);
-
-  var form = new IncomingForm();
   var origCourseId;
   var courseId;
   var configId;
   var cleanupDirs = [];
   var PATH_REXEX = new RegExp(/(course\/)((\w)*\/)*(\w)*.[a-zA-Z0-9]+/gi);
   var assetFolders = [];
+  var files;
+  var formTags;
+  var cleanFormAssetDirs;
 
-  form.parse(req, function (error, fields, files) {
-
-    if (error) return done(error);
-
-    var formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
-    var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
-    var cleanFormAssetDirs = formAssetDirs.map(function(item) {
-      return item.trim();
-    });
-
-
-    /**
-    * Main process
-    * All functions delgated below for readability
-    */
-    async.series([
-      function asyncUnzip(cb) {
-        helpers.unzip(files.file.path, COURSE_ROOT_FOLDER, function(error) {
-          if(error) return cb(error)
-          cleanupDirs.push(files.file.path, COURSE_ROOT_FOLDER);
-          cb();
-        });
-      },
-      async.apply(findLanguages),
-      async.apply(validateCoursePackage, cleanFormAssetDirs),
-      async.apply(installPlugins),
-      async.apply(addAssets, formTags),
-      async.apply(cacheMetadata),
-      async.apply(importContent, formTags)
-    ], function(importError, result) {
-      // cleanup should run regardless of import fail or success  
-      helpers.cleanUpImport(cleanupDirs, function(cleanUpError) {
-        const error = importError || cleanUpError;
-        done(error);
-      });
-    });
+  /**
+  * Main process
+  * All functions delegated below for readability
+  */
+  async.series([
+    prepareImport,
+    findLanguages,
+    validateCoursePackage,
+    installPlugins,
+    addAssets,
+    cacheMetadata,
+    importContent
+  ], (importErr, result) => { // cleanup should run regardless of import success
+    helpers.cleanUpImport(cleanupDirs, cleanUpErr => done(importErr || cleanUpErr));
   });
 
+  function prepareImport(cb) {
+    async.parallel([
+      function(cb2) {
+        database.getDatabase(function(error, db) {
+          if(error) return cb2(error);
+          dbInstance = db; // cache this for reuse
+          cb2();
+        });
+      },
+      function(cb2) {
+        const form = new IncomingForm();
+        form.maxFileSize = configuration.getConfig('maxFileUploadSize');
+        // parse the form
+        form.parse(req, function (error, fields, files) {
+          if(error) {
+            if (form.bytesExpected > form.maxFileSize) {
+              return cb2(new Error(app.polyglot.t('app.uploadsizeerror', {
+                max: bytes.format(form.maxFileSize),
+                size: bytes.format(form.bytesExpected)
+              })));
+            }
+            return cb2(error);
+          }
+          var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
+          formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
+          cleanFormAssetDirs = formAssetDirs.map(item => item.trim());
+          // upzip the uploaded file
+          helpers.unzip(files.file.path, COURSE_ROOT_FOLDER, function(error) {
+            if(error) return cb2(error);
+            cleanupDirs.push(files.file.path, COURSE_ROOT_FOLDER);
+            cb2();
+          });
+        });
+      }
+    ], cb);
+  }
 
   function findLanguages(cb) {
     var courseLangs = [];
@@ -119,7 +136,7 @@ function ImportSource(req, done) {
   /**
   * Checks course for any potential incompatibilities
   */
-  function validateCoursePackage(cleanFormAssetDirs, done) {
+  function validateCoursePackage(done) {
     // - Check framework version compatibility
     // - check we have all relevant json files using contentMap
     async.auto({
@@ -134,11 +151,13 @@ function ImportSource(req, done) {
       },
       checkContentJson: ['checkFramework', function(results, cb) {
         async.eachSeries(Object.keys(contentMap), function(type, cb2) {
-          fs.readJson(path.join(COURSE_JSON_PATH, COURSE_LANG, contentMap[type] + '.json'), function(error, contentJson) {
+          var jsonPath = path.join(COURSE_JSON_PATH, (type !== 'config') ? COURSE_LANG : '', `${contentMap[type] || type}.json`);
+          fs.readJson(jsonPath, function(error, jsonData) {
             if(error) {
               logger.log('error', error)
               return cb2(error);
-            }
+            } // NOTE also save the json for later, no need to load it twice
+            cachedJson[type] = jsonData;
             cb2();
           });
         }, cb);
@@ -165,9 +184,7 @@ function ImportSource(req, done) {
         }
         cb();
       }]
-    }, function doneAuto(error, data) {
-      done(error);
-    });
+    }, done);
   }
 
   /**
@@ -176,8 +193,7 @@ function ImportSource(req, done) {
   * title, description and tag fields, these will be used to create a new asset if an asset
   * with matching filename is not found in the database.
   */
-  function addAssets(assetTags, done) {
-
+  function addAssets(done) {
     async.eachSeries(assetFolders, function iterator(assetDir, doneAssetFolder) {
       var assetDirPath = path.join(COURSE_JSON_PATH, COURSE_LANG, assetDir);
 
@@ -207,7 +223,7 @@ function ImportSource(req, done) {
           var fileStat = fs.statSync(assetPath);
           var assetTitle = assetName;
           var assetDescription = assetName;
-          var tags = assetTags.slice();
+          var tags = formTags.slice();
 
           if (assetsJson[assetName]) {
             assetTitle = assetsJson[assetName].title;
@@ -267,7 +283,7 @@ function ImportSource(req, done) {
       if(err) {
         return done(err);
       }
-      // check that all plugins support the installed framework versions 
+      // check that all plugins support the installed framework versions
       installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion) {
         async.reduce(plugindata.pluginIncludes, [], function checkFwVersion(memo, pluginData, checkFwVersionCb) {
           fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
@@ -295,57 +311,43 @@ function ImportSource(req, done) {
   * Stores plugin metadata for use later
   */
   function cacheMetadata(done) {
-    database.getDatabase(function(error, db) {
-      if(error) return done(error);
-      async.parallel([
-        function storeComponentypes(cb) {
-          db.retrieve('componenttype', {}, { jsonOnly: true }, function(error, results) {
-            if(error) return cb(error);
-            async.each(results, function(component, cb2) {
-              metadata.componentMap[component.component] = component._id;
-              cb2();
-            }, cb);
-          });
-        },
-        function storeExtensiontypes(cb) {
-          db.retrieve('extensiontype', {}, { jsonOnly: true }, function(error, results) {
-            if(error) return cb(error);
-            async.each(results, function(extension, cb2) {
-              metadata.extensionMap[extension.extension] = {
-                "targetAttribute": extension.targetAttribute,
-                "version": extension.version,
-                "name": extension.name,
-                "_id": extension._id
-              };
+    async.each(plugindata.pluginTypes, storePlugintype, done);
+  }
 
-              if(extension.properties.pluginLocations) {
-                extensionLocations[extension.targetAttribute] = extension.properties.pluginLocations;
-              }
-              cb2();
-            }, cb);
-          });
-        },
-      ], done);
+  function storePlugintype(pluginTypeData, cb) {
+    const type = pluginTypeData.type;
+    dbInstance.retrieve(`${type}type`, {}, { jsonOnly: true }, function(error, results) {
+      if(error) {
+        return cb(error);
+      }
+      async.each(results, function(plugin, cb2) {
+        const properties = plugin.properties;
+        const locations = properties && properties.pluginLocations;
+        if(!metadata[`${type}Map`]) {
+          metadata[`${type}Map`] = {};
+        }
+        metadata[`${type}Map`][plugin[type]] = {
+          targetAttribute: plugin.targetAttribute,
+          version: plugin.version,
+          name: plugin.name,
+          _id: plugin._id
+        };
+        if(locations) {
+          if(!pluginLocations[type]) {
+            pluginLocations[type] = {};
+          }
+          pluginLocations[type][plugin.targetAttribute] = locations;
+        }
+        cb2();
+      }, cb);
     });
   }
 
   /**
   * Creates the course content
   */
-  function importContent(formTags, done) {
+  function importContent(done) {
     async.series([
-      function createCourse(cb) {
-        fs.readJson(path.join(COURSE_JSON_PATH, COURSE_LANG, 'course.json'), function(error, courseJson) {
-          if(error) return cb(error);
-          courseJson = _.extend(courseJson, { tags: formTags });
-          createContentItem('course', courseJson, '', function(error, courseRec) {
-            if(error) return cb(error);
-            origCourseId = courseJson._id;
-            courseId = metadata.idMap[origCourseId] = courseRec._id;
-            cb();
-          });
-        });
-      },
       function enableExtensions(cb) {
         var includeExtensions = {};
         async.eachSeries(plugindata.pluginIncludes, function(pluginData, doneItemIterator) {
@@ -360,7 +362,7 @@ function ImportSource(req, done) {
             case 'theme':
               // add the theme name to config JSON
               fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, themeJson) {
-                if(error) return cb(error);
+                if(error) return doneItemIterator(error);
                 plugindata.theme.push({ _theme: themeJson.name});
                 doneItemIterator();
               });
@@ -368,7 +370,7 @@ function ImportSource(req, done) {
             case 'menu':
               // add the menu name to config JSON
               fs.readJson(path.join(pluginData.location, Constants.Filenames.Bower), function(error, menuJson) {
-                if(error) return cb(error);
+                if(error) return doneItemIterator(error);
                 plugindata.menu.push({ _menu: menuJson.name});
                 doneItemIterator();
               });
@@ -386,52 +388,51 @@ function ImportSource(req, done) {
           cb();
         });
       },
-      function createConfig(cb) {
-        fs.readJson(path.join(COURSE_JSON_PATH, 'config.json'), function(error, configJson) {
-          if(error) return cb(error);
-          // at the moment AT can only deal with one theme or menu
-          var updatedConfigJson = _.extend(configJson, enabledExtensions, plugindata.theme[0], plugindata.menu[0], { "_defaultLanguage" : COURSE_LANG });
-          createContentItem('config', updatedConfigJson, courseId, function(error, configRec) {
-            if(error) return cb(error);
-            configId = configRec._id;
-            cb();
-          });
-        });
-      },
       function createContent(cb) {
         async.eachSeries(Object.keys(contentMap), function(type, cb2) {
-          app.contentmanager.getContentPlugin(type, function(error, plugin) {
-            if(error) return cb2(error);
-            fs.readJson(path.join(COURSE_JSON_PATH, COURSE_LANG, contentMap[type] + '.json'), function(error, contentJson) {
-              if(error) return cb2(error);
-
-              // Sorts in-place the content objects to make sure processing can happen
-              if (type == 'contentobject') {
-                var byParent = _.groupBy(contentJson, '_parentId');
-                Object.keys(byParent).forEach(function(parentId) {
-                  byParent[parentId].forEach(function(item, index) {
-                    item._sortOrder = index + 1;
-                  });
-                });
-                var groups = _.groupBy(contentJson, '_type');
-                var sortedSections = helpers.sortContentObjects(groups.menu, origCourseId, []);
-                contentJson = sortedSections.concat(groups.page);
+          var contentJson = cachedJson[type];
+          switch(type) {
+            case 'course': {
+              createContentItem(type, contentJson, function(error, courseRec) {
+                if(error) return cb2(error);
+                origCourseId = contentJson._id;
+                courseId = metadata.idMap[origCourseId] = courseRec._id;
+                cb2();
+              });
+              return;
+            }
+            case 'config': {
+              createContentItem(type, contentJson, function(error, configRec) {
+                if(error) return cb2(error);
+                configId = configRec._id;
+                cb2();
+              });
+              return;
+            }
+            case 'contentobject': { // Sorts in-place the content objects to make sure processing can happen
+              var byParent = _.groupBy(contentJson, '_parentId');
+              Object.keys(byParent).forEach(id => {
+                byParent[id].forEach((item, index) => item._sortOrder = index + 1);
+              });
+              var groups = _.groupBy(contentJson, '_type');
+              var sortedSections = helpers.sortContentObjects(groups.menu, origCourseId, []);
+              contentJson = sortedSections.concat(groups.page);
+            }
+          }
+          // assume we're using arrays
+          async.eachSeries(contentJson, function(item, cb3) {
+            createContentItem(type, item, function(error, contentRec) {
+              if(error) {
+                return cb3(error);
               }
-
-              // assume we're using arrays
-              async.eachSeries(contentJson, function(item, cb3) {
-                createContentItem(type, item, courseId, function(error, contentRec) {
-                  if(error) return cb3(error);
-                  if (contentRec && contentRec._id) {
-                    metadata.idMap[item._id] = contentRec._id;
-                  } else {
-                    logger.log('error', 'Failed to create map for '+ item._id);
-                  }
-                  cb3();
-                });
-              }, cb2);
+              if(!contentRec || !contentRec._id) {
+                logger.log('warn', 'Failed to create map for '+ item._id);
+                return cb3();
+              }
+              metadata.idMap[item._id] = contentRec._id;
+              cb3();
             });
-          });
+          }, cb2);
         }, cb);
       },
       function checkDetachedContent(cb) {
@@ -455,103 +456,135 @@ function ImportSource(req, done) {
     ], done);
   }
 
-  function createContentItem(type, originalData, courseId, done) {
-    // data needs to be transformed a bit first
-    var data = _.extend({}, originalData);
+  function transformContent(type, originalData) {
+    return new Promise(async (resolve, reject) => {
+      var data = _.extend({}, originalData);
+      /**
+      * Basic prep of data
+      */
+      delete data._id;
+      delete data._trackingId;
+      delete data._latestTrackingId;
+      data.createdBy = app.usermanager.getCurrentUser()._id;
+      if(type !== 'course') {
+        data._courseId = courseId;
+      }
+      if(data._component) {
+        data._componentType = metadata.componentMap[data._component]._id;
+      }
+      if(data._parentId) {
+        if(metadata.idMap[data._parentId]) {
+          data._parentId = metadata.idMap[data._parentId];
+        } else {
+          detachedElementsMap[originalData._id] = type;
+          logger.log('warn', 'Cannot update ' + originalData._id + '._parentId, ' +  originalData._parentId + ' not found in idMap');
+          return resolve();
+        }
+      }
+      /**
+      * Content-specific attributes
+      */
+      if(type === 'course') {
+        data = _.extend(data, { tags: formTags });
+        try {
+          var contents = await fs.readFile(path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Theme, plugindata.theme[0]._theme, 'less', Constants.Filenames.CustomStyle), 'utf8');
+          data = _.extend(data, { customStyle: contents.toString() });
+        } catch(e) {
+          if (e.code !== 'ENOENT') {
+            return reject(e);
+          }
+        }
+      }
+      else if(type === 'config') {
+        data = _.extend(data, enabledExtensions, plugindata.theme[0], plugindata.menu[0], { "_defaultLanguage" : COURSE_LANG });
+      }
+      /**
+      * Define the custom properties and and pluginLocations
+      */
+      var genericPropKeys = Object.keys(dbInstance.getModel(type).schema.paths);
+      var customProps = _.pick(data, _.difference(Object.keys(data), genericPropKeys));
 
+      if(_.isEmpty(customProps)) return resolve(data);
+
+      plugindata.pluginTypes.forEach(function(typeData) {
+        if(!pluginLocations[typeData.type]) return;
+
+        var pluginKeys = _.intersection(Object.keys(customProps), Object.keys(pluginLocations[typeData.type]));
+
+        if(pluginKeys.length === 0) return;
+
+        data[typeData.attribute] = _.pick(customProps, pluginKeys);
+        data = _.omit(data, pluginKeys);
+        customProps = _.omit(customProps, pluginKeys);
+      });
+      // everything else is a customer property
+      data.properties = customProps;
+      data = _.omit(data, Object.keys(customProps));
+
+      resolve(data);
+    });
+  }
+
+  function createContentItem(type, originalData, done) {
+    var data;
     // organise functions in series, mainly for readability
     async.series([
-        function prepareData(cb) {
-          // basic prep of data
-          delete data._id;
-          delete data._trackingId;
-          delete data._latestTrackingId;
-          data.createdBy = app.usermanager.getCurrentUser()._id;
-          if(!_.isEmpty(courseId)) data._courseId = courseId;
-          if(data._component) {
-            data._componentType = metadata.componentMap[data._component];
-          }
-          if(data._parentId) {
-            if(metadata.idMap[data._parentId]) {
-              data._parentId = metadata.idMap[data._parentId];
-            } else {
-              detachedElementsMap[originalData._id] = type;
-              logger.log('warn', 'Cannot update ' + originalData._id + '._parentId, ' +  originalData._parentId + ' not found in idMap');
-              return cb();
-            }
-          }
-
-          // define the custom properties and _extensions
-          database.getDatabase(function(error, db) {
-            if(error) return cb(error);
-            var genericPropKeys = Object.keys(db.getModel(type).schema.paths);
-            var customProps = _.pick(data, _.difference(Object.keys(data), genericPropKeys));
-            var extensions = _.pick(customProps, _.intersection(Object.keys(customProps),Object.keys(extensionLocations)));
-            customProps = _.omit(customProps, Object.keys(extensions));
-            data.properties = customProps;
-            data._extensions = extensions;
-            data = _.omit(data, Object.keys(customProps));
-            cb();
-          });
-        },
-        function updateAssetData(cb) {
-          var newAssetPath = Constants.Folders.Course + '/' + Constants.Folders.Assets; // always use '/' for paths in content
-          var traverse = require('traverse');
-
-          traverse(data).forEach(function (value) {
-            if (!_.isString(value)) return;
-            var isPath = value.match(PATH_REXEX);
-
-            if (!isPath) return;
-            var dirName = path.dirname(value);
-            var newDirName;
-
-            for (index = 0; index < assetFolders.length; ++index) {
-              var folderMatch = "(course\/)((\\w){2}\/)" + '(' + assetFolders[index] + ')';
-              var assetFolderRegex = new RegExp(folderMatch, "gi");
-
-              if (!dirName.match(assetFolderRegex)) continue;
-              newDirName = dirName.replace(assetFolderRegex, newAssetPath);
-            }
-
-            var fileExt = path.extname(value);
-            var fileName = path.basename(value);
-            if (newDirName && fileName && fileExt) {
-              try {
-                var fileId = metadata.idMap[fileName];
-                var newFileName = metadata.assetNameMap[fileId];
-                if (newFileName) {
-                  this.update(newDirName + '/' + newFileName); // always use '/' for paths in content
-                }
-              } catch (e) {
-                logger.log('error', e);
-                return;
-              }
-            }
-          });
+      function transform(cb) {
+        transformContent(type, originalData).then(transformedData => {
+          data = transformedData;
           cb();
-        }
+        }).catch(cb);
+      },
+      function updateAssetData(cb) {
+        var newAssetPath = Constants.Folders.Course + '/' + Constants.Folders.Assets; // always use '/' for paths in content
+        var traverse = require('traverse');
+
+        traverse(data).forEach(function (value) {
+          if (!_.isString(value)) return;
+          var isPath = value.match(PATH_REXEX);
+
+          if (!isPath) return;
+          var dirName = path.dirname(value);
+          var newDirName;
+
+          for (index = 0; index < assetFolders.length; ++index) {
+            var folderMatch = "(course\/)((\\w){2}\/)" + '(' + assetFolders[index] + ')';
+            var assetFolderRegex = new RegExp(folderMatch, "gi");
+
+            if (!dirName.match(assetFolderRegex)) continue;
+            newDirName = dirName.replace(assetFolderRegex, newAssetPath);
+          }
+
+          var fileExt = path.extname(value);
+          var fileName = path.basename(value);
+          if (newDirName && fileName && fileExt) {
+            try {
+              var fileId = metadata.idMap[fileName];
+              var newFileName = metadata.assetNameMap[fileId];
+              if (newFileName) {
+                this.update(newDirName + '/' + newFileName); // always use '/' for paths in content
+              }
+            } catch (e) {
+              logger.log('error', e);
+              return;
+            }
+          }
+        });
+        cb();
+      }
     ], function(error, results) {
       if(error) return done(error);
-
-      if (detachedElementsMap[originalData._id]) {
-        // do not import detached elements 
+      if (detachedElementsMap[originalData._id]) { // do not import detached elements
         return done();
-      }
-
-      // now we're ready to create the content
+      } // now we're ready to create the content
       app.contentmanager.getContentPlugin(type, function(error, plugin) {
         if(error) return done(error);
         plugin.create(data, function(error, record) {
           if(error) {
             logger.log('warn', 'Failed to import ' + type + ' ' + (originalData._id || '') + ' ' + error);
             return done();
-          }
-          // Create a courseAssets record if needed
-          createCourseAssets(type, record, function(error){
-            if(error) return done(error, record);
-            done(null, record);
-          });
+          } // Create a courseAssets record if needed
+          createCourseAssets(type, record, error => done(error, record));
         });
       });
     });
@@ -602,6 +635,7 @@ function ImportSource(req, done) {
         app.assetmanager.retrieveAsset({ _id: assetId }, function gotAsset(error, results) {
           if (error) {
             logger.log('error', error);
+            return callback(error);
           }
           Object.assign(assetData, {
             _assetId: assetId,
@@ -610,17 +644,16 @@ function ImportSource(req, done) {
           });
           app.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
             if(error) {
-              return cb(error);
+              return callback(error);
             }
             plugin.create(assetData, function(error, assetRecord) {
-              if(error) {
-                logger.log('warn', `Failed to create courseasset ${type} ${assetRecord || ''} ${error}`);
-              }
+              if(error) logger.log('warn', `Failed to create courseasset ${type} ${assetRecord || ''} ${error}`);
+              callback(error);
             });
           });
         });
       });
-    }, cb(null, contentData));
+    }, cb);
   }
 }
 

@@ -321,14 +321,14 @@ define(function(require){
     extractData: function(attributes, properties) {
       var data = {};
       for (var key in properties) {
-        data[key] = {};
         // Determine if property is nested
-        if (properties[key].properties !== 'undefined') {
-          for (var innerKey in properties[key].properties) {
+        if (typeof properties[key].properties !== 'undefined') {
+            data[key] = {};
+            for (var innerKey in properties[key].properties) {
             data[key][innerKey] = attributes[innerKey];
           }
         } else {
-          data[key] = attributes.key;
+          data[key] = attributes[key];
         }
       }
       return data;

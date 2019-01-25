@@ -217,7 +217,8 @@ define([
           schema[innerKey] = _.pick(schema[key].properties[innerKey], 'default', 'help', 'inputType', 'title', 'type');
         }
 
-        fieldsets[key] = { key: key, legend: Helpers.keyToTitleString(key), fields: innerFieldSets };
+        var legend = schema[key].title ? schema[key].title : Helpers.keyToTitleString(key);
+        fieldsets[key] = { key: key, legend: legend, fields: innerFieldSets };
       }
     }
 

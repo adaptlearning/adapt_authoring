@@ -1,0 +1,36 @@
+#snackbar {
+  position: absolute;
+  padding: 10px;
+  width: 30%;
+  top: 10px;
+  right: 20px;
+  z-index: 499;
+  background-color: #9CABC4;
+  color: white;
+  font-size: 110%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+
+  &.alert {
+    background-color: #15a4fa;
+  }
+  &.info {
+    background-color: #2EB398;
+  }
+  &.warning {
+    background-color: #ff765a;
+  }
+
+  .body {
+    flex-grow: 1;
+  }
+
+  .close {
+    padding-left: 15px;
+    font-weight: bold;
+    color: white;
+    font-size: 90%;
+  }
+}

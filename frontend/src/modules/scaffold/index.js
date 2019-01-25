@@ -165,7 +165,7 @@ define([
 
     for (var key in schema) {
       if (schema.hasOwnProperty(key)) {
-        // check for nested
+        // Check for nested properties on edit theme page
         if (options.isTheme && schema[key].hasOwnProperty('properties')) {
           for (var innerKey in schema[key].properties) {
             setUpSchemaFields(schema[key].properties[innerKey], innerKey, schema[key].properties, scaffoldSchema);
@@ -210,7 +210,7 @@ define([
       // if value is an object, give it some rights and add it as field set
       if (fieldsets[key]) {
         fieldsets[key].fields.push(key);
-      } else if (options.isTheme) {
+      } else if (options.isTheme) { // Check for nested properties on edit theme page
         var innerFieldSets = [];
         for (var innerKey in schema[key].properties) {
           innerFieldSets.push(innerKey)

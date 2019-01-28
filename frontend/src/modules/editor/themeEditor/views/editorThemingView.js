@@ -297,14 +297,12 @@ define(function(require){
 
     postPresetData: function(callback) {
       var selectedPreset = this.getSelectedPreset(false);
-      if(selectedPreset) {
-        var selectedPresetId = selectedPreset.get('_id');
-        $.post('/api/themepreset/' + selectedPresetId + '/makeitso/' + this.model.get('_courseId'))
-        .error(_.bind(this.onSaveError, this))
-        .done(_.bind(callback, this));
-      } else {
-        callback.apply(this);
-      }
+      var selectedPresetId = null;
+      if (selectedPreset) selectedPresetId = selectedPreset.get('_id');
+
+      $.post('/api/themepreset/' + selectedPresetId + '/makeitso/' + this.model.get('_courseId'))
+      .error(_.bind(this.onSaveError, this))
+      .done(_.bind(callback, this));
     },
 
     postSettingsData: function(callback) {

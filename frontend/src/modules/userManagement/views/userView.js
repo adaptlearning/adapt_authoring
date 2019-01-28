@@ -180,7 +180,7 @@ define(function(require){
             return;
           }
 
-          var $btn = $(e.currentTarget);
+          var $btn = $(e.target);
           $btn.addClass('submitted');
           Helpers.ajax('/api/user/invite', { email: this.model.get('email') }, 'POST', function() {
             $btn.removeClass('submitted');

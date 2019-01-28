@@ -127,16 +127,17 @@ define([
         }
 
         var listModels = courseassets.models ? courseassets.models.slice() : courseassets.slice();
+        var listModel = listModels[0];
 
-        if (listModels.length) {
-          listModels[0].destroy({
-            success: this.saveModel(),
-            error: function() {
-              console.error('Failed to destroy courseasset record', listModels[0].get('_id'));
-              return;
-            }
-          });
-        }
+        if (!listModel) return;
+
+        listModel.destroy({
+          success: this.saveModel(),
+          error: function() {
+            console.error('Failed to destroy courseasset record', listModel.get('_id'));
+            return;
+          }
+        });
       }.bind(this));
     },
 

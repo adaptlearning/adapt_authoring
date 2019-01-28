@@ -475,8 +475,9 @@ define(function(require){
         closeOnConfirm: false,
         showCancelButton: true,
         callback: function() {
-          var preset = self.presets.findWhere({ displayName: arguments[0] })
-          if(preset) {
+          var theme = self.$('.theme select').val();
+          var presets = self.presets.where({ parentTheme: theme, displayName: arguments[0] });
+          if (presets.length > 0) {
             swal.showInputError(Origin.l10n.t('app.duplicatepreseterror'));
           } else {
             // watch out for injection attacks

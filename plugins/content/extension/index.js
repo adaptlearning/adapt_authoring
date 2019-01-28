@@ -493,8 +493,7 @@ function initialize () {
       disableExtensions(req.params.courseid, req.body.extensions, function(error) {
         if(error) {
           logger.log('error', error);
-          res.statusCode = error instanceof ContentTypeError ? 400 : 500;
-          return res.status(400).json({ success: false, message: error });
+          return res.status(error instanceof ContentTypeError ? 400 : 500).json({ success: false, message: error });
         }
         res.status(200).json({ success: true });
       });
@@ -506,8 +505,7 @@ function initialize () {
       enableExtensions(req.params.courseid, req.body.extensions, function(error) {
         if(error) {
           logger.log('error', error);
-          res.statusCode = error instanceof ContentTypeError ? 400 : 500;
-          return res.status(400).json({ success: false, message: error });
+          return res.status(error instanceof ContentTypeError ? 400 : 500).json({ success: false, message: error });
         }
         res.status(200).json({ success: true });
       });

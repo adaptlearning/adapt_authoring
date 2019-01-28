@@ -41,18 +41,6 @@ define(function(require) {
     ContextMenu.addItem('page', getDefaultItems());
     ContextMenu.addItem('menu', getDefaultItems(['copy']));
     ContextMenu.addItem('page-min', getDefaultItems(['copy','delete','colorLabel']));
-    ContextMenu.addItem('sharedcourse', [
-      {
-        title: Origin.l10n.t('app.duplicate'),
-        className: 'context-menu-item',
-        callbackEvent: 'duplicate'
-      },
-      {
-        title: Origin.l10n.t('app.preview'),
-        className: 'context-menu-item',
-        callbackEvent: 'preview'
-      }
-    ]);
     ContextMenu.addItem('course', getDefaultItems(['colorLabel']));
   };
 

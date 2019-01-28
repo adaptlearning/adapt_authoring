@@ -804,7 +804,7 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
                       return next(error);
                     }
                     // If the plugin defines a framework, ensure that it is compatible
-                    if (!semver.satisfies(semver.clean(frameworkVersion), packageInfo[key].pkgMeta.framework)) {
+                    if (!semver.satisfies(semver.clean(frameworkVersion), packageInfo[key].pkgMeta.framework, { includePrerelease: true })) {
                       logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of the Adapt framework');
                       return next();
                     }
@@ -856,7 +856,7 @@ function checkIfHigherVersionExists (package, options, cb) {
             }
             var installedVersion = results[0].version;
             var latestVersionIsNewer = semver.gt(latestPkg.version, installedVersion);
-            var satisfiesFrameworkReq = semver.satisfies(semver.clean(frameworkVersion), latestPkg.framework);
+            var satisfiesFrameworkReq = semver.satisfies(semver.clean(frameworkVersion), latestPkg.framework, { includePrerelease: true });
 
             if(!latestVersionIsNewer) {
               logger.log('info', `Already using the latest version of ${packageName} (${latestPkg.version})`);
@@ -973,7 +973,7 @@ function handleUploadedPlugin (req, res, next) {
                 return next(error);
               }
               // Check if the framework has been defined on the plugin and that it's not compatible
-              if (packageInfo.pkgMeta.framework && !semver.satisfies(semver.clean(frameworkVersion), packageInfo.pkgMeta.framework)) {
+              if (packageInfo.pkgMeta.framework && !semver.satisfies(semver.clean(frameworkVersion), packageInfo.pkgMeta.framework, { includePrerelease: true })) {
                 return next(new PluginPackageError('This plugin is incompatible with version ' + frameworkVersion + ' of the Adapt framework'));
               }
               app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {

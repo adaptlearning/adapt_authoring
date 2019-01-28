@@ -36,9 +36,6 @@ define(function(require){
         }
       });
 
-      if (valid) {
-        this.$('.field-error').addClass('display-none');
-      }
       return valid;
     },
 

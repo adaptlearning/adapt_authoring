@@ -1,14 +1,14 @@
 <div class="scaffold-items-modal-sidebar">
-	<div class="scaffold-items-modal-sidebar-inner">
-		{{#if title}}
-		<div class="scaffold-items-modal-header">
-			<h4>{{title}}</h4>
-		</div>
-		{{/if}}
-		<div class="scaffold-items-modal-body">{{content}}</div>
-		<div class="scaffold-items-modal-footer">
-			<a href="#" class="btn primary ok scaffold-items-ok">{{t 'app.ok'}}</a>
-			<a href="#" class="btn primary-hollow cancel scaffold-items-modal-cancel">{{t 'app.cancel'}}</a>
-	    </div>
-	</div>
+  <div class="scaffold-items-modal-sidebar-inner">
+    {{#if title}}
+    <div class="scaffold-items-modal-header">
+      <h4>{{title}}</h4>
+    </div>
+    {{/if}}
+    <div class="scaffold-items-modal-body">{{content}}</div>
+    <div class="scaffold-items-modal-footer">
+      <a href="#" class="btn primary scaffold-items-modal-ok" data-action="ok">{{t 'app.ok'}}</a>
+      <a href="#" class="btn primary-hollow scaffold-items-modal-cancel" data-action="cancel">{{t 'app.cancel'}}</a>
+    </div>
+  </div>
 </div>

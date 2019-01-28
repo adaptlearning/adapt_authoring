@@ -13,8 +13,7 @@ define(function(require){
     },
 
     events: {
-      'click a.navigation-item':'onNavigationItemClicked',
-      'click button.revert-loginas':'onRevertLoginas'
+      'click a.navigation-item':'onNavigationItemClicked'
     },
 
     render: function() {
@@ -26,35 +25,6 @@ define(function(require){
 
     loginChanged: function() {
       this.render();
-    },
-
-    onRevertLoginas: function() {
-      var sessionModel = Origin.sessionModel;
-      // back up of the seesion
-      var _revertLogin = sessionModel.get('_revertLogin');
-      $.ajax({
-        method: 'post',
-        url: '/api/loginas',
-        data: { email: _revertLogin.email },
-        success: function (jqXHR, textStatus, errorThrown) {
-          sessionModel.set('_canRevert', false);
-          sessionModel.set('id', jqXHR.id);
-          sessionModel.set('tenantId', jqXHR.tenantId);
-          sessionModel.set('email', jqXHR.email);
-          sessionModel.set('isAuthenticated', jqXHR.success);
-          sessionModel.set('permissions', jqXHR.permissions);
-          delete sessionModel._revertLogin;
-          Origin.trigger('login:changed');
-          Origin.trigger('globalMenu:refresh');
-          Origin.router.navigateToHome();
-        },
-        failure: function (err) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: Origin.l10n.t('app.errorlogginginas')
-          });
-        }
-      });
     },
 
     onNavigationItemClicked: function(event) {

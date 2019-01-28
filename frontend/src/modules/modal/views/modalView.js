@@ -1,10 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Origin = require('core/origin');
 
   var ModalView = Backbone.View.extend({
-
     className: 'modal',
 
     events: {
@@ -13,22 +11,26 @@ define(function(require) {
     },
 
     initialize: function(options) {
-      var defaults = {
+      this.view = options.view;
+      this.options = _.extend({
         _shouldShowCancelButton: true,
         _shouldShowDoneButton: true,
+        _shouldShowScrollbar: true,
         _shouldDisableCancelButton: false,
         _shouldDisableDoneButton: false
-      }
-      this.view = options.view;
-      this.options = _.extend(defaults, options.options);
+      }, options.options);
       this.context = options.context;
-      this.listenTo(Origin, 'remove:views', this.remove);
-      this.listenTo(Origin, 'modal:onCancel', this.onCloseButtonClicked);
-      this.listenTo(Origin, 'modal:onUpdate', this.onDoneButtonClicked);
-      this.listenTo(Origin, 'modal:disableCancelButton', this.onCloseButtonDisabled);
-      this.listenTo(Origin, 'modal:disableDoneButton', this.onDoneButtonDisabled);
-      this.listenTo(Origin, 'modal:enableCancelButton', this.onCloseButtonEnabled);
-      this.listenTo(Origin, 'modal:enableDoneButton', this.onDoneButtonEnabled);
+
+      this.listenTo(Origin, {
+        'remove:views': this.remove,
+        'modal:onCancel': this.onCloseButtonClicked,
+        'modal:onUpdate': this.onDoneButtonClicked,
+        'modal:disableCancelButton': this.onCloseButtonDisabled,
+        'modal:disableDoneButton': this.onDoneButtonDisabled,
+        'modal:enableCancelButton': this.onCloseButtonEnabled,
+        'modal:enableDoneButton': this.onDoneButtonEnabled
+      });
+
       this.render();
     },
 
@@ -37,7 +39,7 @@ define(function(require) {
       var template = Handlebars.templates['modal'];
       this.$el.html(template(data)).appendTo('body');
       _.defer(_.bind(this.postRender, this));
-      
+
       return this;
     },
 
@@ -47,6 +49,9 @@ define(function(require) {
       }
       if (this.options._shouldDisableDoneButton) {
         this.onDoneButtonDisabled();
+      }
+      if(this.options._shouldShowScrollbar === false) {
+        this.$el.css('overflow-y', 'hidden');
       }
       this.modalView = new this.view(this.options);
       this.$('.modal-popup-content-inner').append(this.modalView.$el);

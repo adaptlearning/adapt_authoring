@@ -76,14 +76,22 @@ define(function(require) {
     deleteProjectPrompt: function(event) {
       event && event.preventDefault();
       if(this.model.get('_isShared') === true) {
-        Origin.Notify.confirm({
-          type: 'warning',
-          title: Origin.l10n.t('app.deletesharedproject'),
-          text: Origin.l10n.t('app.confirmdeleteproject') + '<br/><br/>' + Origin.l10n.t('app.confirmdeletesharedprojectwarning'),
-          destructive: true,
-          callback: _.bind(this.deleteProjectConfirm, this)
-        });
+        if(this.model.get('createdBy') === Origin.sessionModel.id){
+          Origin.Notify.confirm({
+            type: 'warning',
+            title: Origin.l10n.t('app.deletesharedproject'),
+            text: Origin.l10n.t('app.confirmdeleteproject') + '<br/><br/>' + Origin.l10n.t('app.confirmdeletesharedprojectwarning'),
+            destructive: true,
+            callback: _.bind(this.deleteProjectConfirm, this)
+          });
+        } else {
+          Origin.Notify.alert({
+            type: 'error',
+            text: Origin.l10n.t('app.errorpermission')
+          });
+        }
         return;
+
       }
       Origin.Notify.confirm({
         type: 'warning',
@@ -126,10 +134,10 @@ define(function(require) {
     copyIdToClipboard: function() {
       var id = this.model.get('_id');
       if(Helpers.copyStringToClipboard(id)) {
-        Origin.Notify.alert({ type: 'success', text: Origin.l10n.t('app.copyidtoclipboardsuccess', { id: id }) });
+        Origin.Notify.snackbar({ type: 'info', text: Origin.l10n.t('app.copyidtoclipboardsuccess', { id: id }) });
         return;
       }
-      Origin.Notify.alert({ type: 'warning', text: Origin.l10n.t('app.app.copyidtoclipboarderror', { id: id }) });
+      Origin.Notify.snackbar({ type: 'warning', text: Origin.l10n.t('app.app.copyidtoclipboarderror', { id: id }) });
     },
 
     onProjectShowTagsButtonClicked: function(event) {

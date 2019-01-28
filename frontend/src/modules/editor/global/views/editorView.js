@@ -2,9 +2,8 @@
 /*
  * TODO I think this exists to add extra functionality to the menu/page structure pages
  */
-define(function(require){
+define(function(require) {
   var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
   var Origin = require('core/origin');
   var helpers = require('core/helpers');
 
@@ -35,7 +34,6 @@ define(function(require){
 
     preRender: function(options) {
       this.currentView = options.currentView;
-      Origin.editor.pasteParentModel = false;
       Origin.editor.isPreviewPending = false;
       this.currentCourseId = Origin.editor.data.course.get('_id');
       this.currentCourse = Origin.editor.data.course;
@@ -45,13 +43,23 @@ define(function(require){
         'editorView:refreshView': this.setupEditor,
         'editorView:copy': this.addToClipboard,
         'editorView:copyID': this.copyIdToClipboard,
-        'editorView:cut': this.cutContent,
         'editorView:paste': this.pasteFromClipboard,
-        'editorCommon:download': this.downloadProject,
-        'editorCommon:preview': this.previewProject,
-        'editorCommon:export': this.exportProject
+        'editorCommon:download': function(event) {
+          this.validateProject(this.downloadProject);
+        },
+        'editorCommon:preview': function(event) {
+          var previewWindow = window.open('/loading', 'preview');
+          this.validateProject(function(error) {
+            if(error) {
+              return previewWindow.close();
+            }
+            this.previewProject(previewWindow);
+          });
+        },
+        'editorCommon:export': function(event) {
+          this.validateProject(this.exportProject);
+        }
       });
-
       this.render();
       this.setupEditor();
     },
@@ -64,87 +72,79 @@ define(function(require){
       this.renderCurrentEditorView();
     },
 
-    downloadProject: function(e) {
-      e && e.preventDefault();
-
-      var self = this;
-
-      if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isDownloadPending) {
-        $('.editor-common-sidebar-download-inner').addClass('display-none');
-        $('.editor-common-sidebar-downloading').removeClass('display-none');
-
-        var courseId = Origin.editor.data.course.get('_id');
-        var tenantId = Origin.sessionModel.get('tenantId');
-
-        $.ajax({
-          method: 'get',
-          url: '/api/output/' + Origin.constants.outputPlugin + '/publish/' + this.currentCourseId,
-          success: function (jqXHR, textStatus, errorThrown) {
-            if (jqXHR.success) {
-              if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) != 'undefined' && jqXHR.payload.pollUrl != '') {
-                // Ping the remote URL to check if the job has been completed
-                self.updateDownloadProgress(jqXHR.payload.pollUrl);
-              } else {
-                self.resetDownloadProgress();
-
-                var $downloadForm = $('#downloadForm');
-
-                $downloadForm.attr('action', '/download/' + tenantId + '/' + courseId + '/' + jqXHR.payload.zipName + '/download.zip');
-                $downloadForm.submit();
-              }
-            } else {
-              self.resetDownloadProgress();
-
-              Origin.Notify.alert({
-                type: 'error',
-                text: Origin.l10n.t('app.errorgeneric')
-              });
-            }
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            self.resetDownloadProgress();
-
-            Origin.Notify.alert({
-              type: 'error',
-              text: Origin.l10n.t('app.errorgeneric')
-            });
-          }
-        });
-      } else {
-        return false;
-      }
+    validateProject: function(next) {
+      helpers.validateCourseContent(this.currentCourse, _.bind(function(error) {
+        if(error) {
+          Origin.Notify.alert({ type: 'error', text: "There's something wrong with your course:<br/><br/>" + error });
+        }
+        next.call(this, error);
+      }, this));
     },
 
-    exportProject: function(e) {
-      e && e.preventDefault();
+    previewProject: function(previewWindow) {
+      if(Origin.editor.isPreviewPending) {
+        return;
+      }
+      Origin.editor.isPreviewPending = true;
+      $('.navigation-loading-indicator').removeClass('display-none');
+      $('.editor-common-sidebar-preview-inner').addClass('display-none');
+      $('.editor-common-sidebar-previewing').removeClass('display-none');
 
+      $.get('/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId, _.bind(function(jqXHR, textStatus, errorThrown) {
+        if(!jqXHR.success) {
+          this.resetPreviewProgress();
+          Origin.Notify.alert({
+            type: 'error',
+            text: Origin.l10n.t('app.errorgeneratingpreview')
+          });
+          previewWindow.close();
+          return;
+        }
+        if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) !== undefined && jqXHR.payload.pollUrl) {
+          // Ping the remote URL to check if the job has been completed
+          this.updatePreviewProgress(jqXHR.payload.pollUrl, previewWindow);
+          return;
+        }
+        this.updateCoursePreview(previewWindow);
+        this.resetPreviewProgress();
+      }, this)).fail(_.bind(function(jqXHR, textStatus, errorThrown) {
+        this.resetPreviewProgress();
+        Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
+        previewWindow.close();
+      }, this));
+    },
+
+    exportProject: function(error) {
+      // TODO - very similar to export in project/views/projectView.js, remove duplication
       // aleady processing, don't try again
-      if(this.exporting) return;
+      if(error || this.exporting) return;
 
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
 
-      this.showExportAnimation();
+      var $btn = $('button.editor-common-sidebar-export');
+
+      this.showExportAnimation(true, $btn);
       this.exporting = true;
 
       var self = this;
       $.ajax({
          url: '/export/' + tenantId + '/' + courseId,
          success: function(data, textStatus, jqXHR) {
-           self.showExportAnimation(false);
+           self.showExportAnimation(false, $btn);
            self.exporting = false;
 
            // get the zip
            var form = document.createElement('form');
            self.$el.append(form);
-           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/' + data.zipName + '/download.zip');
+           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
            form.submit();
          },
          error: function(jqXHR, textStatus, errorThrown) {
            var messageText = errorThrown;
            if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) messageText += ':<br/>' + jqXHR.responseJSON.message;
 
-           self.showExportAnimation(false);
+           self.showExportAnimation(false, $btn);
            self.exporting = false;
 
            Origin.Notify.alert({
@@ -156,65 +156,45 @@ define(function(require){
       });
     },
 
-    showExportAnimation: function(show) {
+    showExportAnimation: function(show, $btn) {
       if(show !== false) {
-        $('.editor-common-sidebar-export-inner').addClass('display-none');
-        $('.editor-common-sidebar-exporting').removeClass('display-none');
+        $('.editor-common-sidebar-export-inner', $btn).addClass('display-none');
+        $('.editor-common-sidebar-exporting', $btn).removeClass('display-none');
       } else {
-        $('.editor-common-sidebar-export-inner').removeClass('display-none');
-        $('.editor-common-sidebar-exporting').addClass('display-none');
+        $('.editor-common-sidebar-export-inner', $btn).removeClass('display-none');
+        $('.editor-common-sidebar-exporting', $btn).addClass('display-none');
       }
     },
 
-    updateCoursePreview: function(previewWindow) {
-      var courseId = Origin.editor.data.course.get('_id');
-      var tenantId = Origin.sessionModel.get('tenantId');
-
-      previewWindow.location.href = '/preview/' + tenantId + '/' + courseId + '/';
-    },
-
-    previewProject: function(e) {
-      e && e.preventDefault();
-
-      var self = this;
-      if (helpers.validateCourseContent(this.currentCourse) && !Origin.editor.isPreviewPending) {
-        var previewWindow = window.open('/loading', 'preview');
-        Origin.editor.isPreviewPending = true;
-        $('.navigation-loading-indicator').removeClass('display-none');
-        $('.editor-common-sidebar-preview-inner').addClass('display-none');
-        $('.editor-common-sidebar-previewing').removeClass('display-none');
-
-        $.ajax({
-          method: 'get',
-          url: '/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId,
-          success: function (jqXHR, textStatus, errorThrown) {
-            if (jqXHR.success) {
-              if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) != 'undefined' && jqXHR.payload.pollUrl != '') {
-                // Ping the remote URL to check if the job has been completed
-                self.updatePreviewProgress(jqXHR.payload.pollUrl, previewWindow);
-              } else {
-                self.updateCoursePreview(previewWindow);
-                self.resetPreviewProgress();
-              }
-            } else {
-              self.resetPreviewProgress();
-              Origin.Notify.alert({
-                type: 'error',
-                text: Origin.l10n.t('app.errorgeneratingpreview')
-              });
-              previewWindow.close();
-            }
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            self.resetPreviewProgress();
-            Origin.Notify.alert({
-              type: 'error',
-              text: Origin.l10n.t('app.errorgeneric')
-            });
-            previewWindow.close();
-          }
-        });
+    downloadProject: function(error) {
+      if(error || Origin.editor.isDownloadPending) {
+        return;
       }
+      $('.editor-common-sidebar-download-inner').addClass('display-none');
+      $('.editor-common-sidebar-downloading').removeClass('display-none');
+
+      $.get('/api/output/' + Origin.constants.outputPlugin + '/publish/' + this.currentCourseId, _.bind(function(jqXHR, textStatus, errorThrown) {
+
+        if (!jqXHR.success) {
+          Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
+          this.resetDownloadProgress();
+          return;
+        }
+        if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) !== undefined && jqXHR.payload.pollUrl) {
+          // Ping the remote URL to check if the job has been completed
+          this.updateDownloadProgress(jqXHR.payload.pollUrl);
+          return;
+        }
+        this.resetDownloadProgress();
+
+        var $downloadForm = $('#downloadForm');
+        $downloadForm.attr('action', '/download/' + Origin.sessionModel.get('tenantId') + '/' + Origin.editor.data.course.get('_id') + '/' + jqXHR.payload.zipName + '/download.zip');
+        $downloadForm.submit();
+
+      }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
+        this.resetDownloadProgress();
+        Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
+      }, this));
     },
 
     updatePreviewProgress: function(url, previewWindow) {
@@ -269,17 +249,20 @@ define(function(require){
       Origin.editor.isDownloadPending = false;
     },
 
-    addToClipboard: function(model) {
-      _.defer(_.bind(function() { _.invoke(Origin.editor.data.clipboards.models, 'destroy') }, this));
+    updateCoursePreview: function(previewWindow) {
+      var courseId = Origin.editor.data.course.get('_id');
+      var tenantId = Origin.sessionModel.get('tenantId');
+      previewWindow.location.href = '/preview/' + tenantId + '/' + courseId + '/';
+    },
 
+    addToClipboard: function(model) {
       var postData = {
         objectId: model.get('_id'),
         courseId: Origin.editor.data.course.get('_id'),
-        referenceType: model._siblings
+        referenceType: model._siblingTypes
       };
       $.post('/api/content/clipboard/copy', postData, _.bind(function(jqXHR) {
         Origin.editor.clipboardId = jqXHR.clipboardId;
-        Origin.editor.pasteParentModel = model.getParent();
         this.showPasteZones(model.get('_type'));
       }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
         Origin.Notify.alert({
@@ -294,12 +277,12 @@ define(function(require){
       var id = model.get('_id');
 
       if (helpers.copyStringToClipboard(id)) {
-        Origin.Notify.alert({
-          type: 'success',
+        Origin.Notify.snackbar({
+          type: 'info',
           text: Origin.l10n.t('app.copyidtoclipboardsuccess', { id: id })
         });
       } else {
-        Origin.Notify.alert({
+        Origin.Notify.snackbar({
           type: 'warning',
           text: Origin.l10n.t('app.app.copyidtoclipboarderror', { id: id })
         });
@@ -307,23 +290,20 @@ define(function(require){
     },
 
     pasteFromClipboard: function(parentId, sortOrder, layout) {
-      var data = {
+      Origin.trigger('editorView:pasteCancel');
+      var postData = {
         id: Origin.editor.clipboardId,
         parentId: parentId,
         layout: layout,
         sortOrder: sortOrder,
         courseId: Origin.editor.data.course.get('_id')
       };
-      $.post('/api/content/clipboard/paste', data, function(jqXHR) {
+      $.post('/api/content/clipboard/paste', postData, function(data) {
         Origin.editor.clipboardId = null;
-        Origin.editor.pasteParentModel = null;
-        Origin.trigger('editor:refreshData', function() {
-          /**
-          * FIXME views should handle rendering the new data,
-          * we shouldn't need to refresh the whole page
-          */
-          Backbone.history.loadUrl();
-        }, this);
+        Origin.trigger('editorView:pasted:' + postData.parentId, {
+          _id: data._id,
+          sortOrder: postData.sortOrder
+        });
       }).fail(function(jqXHR, textStatus, errorThrown) {
         Origin.Notify.alert({
           type: 'error',
@@ -369,24 +349,19 @@ define(function(require){
     },
 
     renderEditorPage: function() {
-      var view = new EditorPageView({
-        model: Origin.editor.data.contentObjects.findWhere({ _id: this.currentPageId })
-      });
-      this.$('.editor-inner').html(view.$el);
-    },
-
-    cutContent: function(view) {
-      var type = helpers.capitalise(view.model.get('_type'));
-      var collectionType = view.model._siblings;
-
-      this.addToClipboard(view.model);
-
-      // Remove model from collection (to save fetching) and destroy it
-      Origin.editor.data[collectionType].remove(view.model);
-      view.model.destroy();
-
-      _.defer(function () {
-        Origin.trigger('editorView:cut' + type + ':' + view.model.get('_parentId'), view);
+      (new ContentObjectModel({
+        _id: this.currentPageId
+      })).fetch({
+        success: function(model) {
+          var view = new EditorPageView({ model: model });
+          this.$('.editor-inner').html(view.$el);
+        },
+        error: function() {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'app.errorfetchingdata'
+          });
+        }
       });
     },
 

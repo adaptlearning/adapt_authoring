@@ -1,0 +1,35 @@
+.list-items {
+
+  .ui-sortable {
+    margin-bottom: 20px;
+  }
+
+  .list-item {
+    background: white;
+
+    .list-item-modal-item {
+      clear: both;
+    }
+    .list-item-description {
+      font-weight: bold;
+      margin-right: 5px;
+      width: auto;
+    }
+    .list-item-modal-object {
+      margin-left: 10px;
+    }
+  }
+
+  .sortable-placeholder {
+    background: lighten(@primary-color,  40%);
+    border: 1px dashed lighten(@primary-color,  15%);
+    border-radius: 3px;
+    margin: 5px 0;
+    padding: 16px;
+  }
+
+  .ui-sortable-helper {
+    opacity: 0.8;
+    transform: scale(0.95) rotate(1deg);
+  }
+}

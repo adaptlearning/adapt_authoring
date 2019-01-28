@@ -2,6 +2,8 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
+  var Helpers = require('core/helpers');
+  var ContentCollection = require('core/collections/contentCollection');
 
   var ContentModel = Backbone.Model.extend({
     idAttribute: '_id',
@@ -10,91 +12,77 @@ define(function(require) {
     initialize: function(options) {
       this.on('sync', this.loadedData, this);
       this.on('change', this.loadedData, this);
-      this.fetch();
     },
 
     loadedData: function() {
-      if (this._siblings) {
-        this._type = this._siblings;
-      }
-      Origin.trigger('editorModel:dataLoaded', this._type, this.get('_id'));
+      if(this._siblingTypes) this._type = this._siblingTypes;
     },
 
-    getChildren: function() {
-      var self = this;
-      var getChildrenDelegate = function(type) {
-        if (Origin.editor.data[type]) {
-          var children = Origin.editor.data[type].where({ _parentId: self.get('_id') });
-          var childrenCollection = new Backbone.Collection(children);
-          return childrenCollection;
-        }
-        return null;
-      };
-      if(_.isArray(this._children)) {
-        var allChildren;
-        for(var i = 0, count = this._children.length; i < count; i++) {
-          var children = getChildrenDelegate(this._children[i]);
-          if(children) {
-            if(!allChildren) allChildren = children;
-            else allChildren.add(children.models);
+    fetchChildren: function(callback) {
+      var childTypes = _.isArray(this._childTypes) ? this._childTypes : [this._childTypes];
+      // has to be a plain old array because we may have multiple model types
+      var children = [];
+      Helpers.forParallelAsync(childTypes, _.bind(function(childType, index, done) {
+        (new ContentCollection(null, {
+          _type: childType,
+          _parentId: this.get('_id')
+        })).fetch({
+          success: function(collection) {
+            children = children.concat(collection.models);
+            done();
+          },
+          error: function(collecion, response) {
+            Origin.Notify.alert({
+              type: 'error',
+              text: 'app.errorfetchingdata'
+            });
           }
-        }
-        return allChildren;
-      } else {
-        return getChildrenDelegate(this._children);
-      }
-    },
-
-    getParent: function() {
-      var currentType = this.get('_type');
-      var parent;
-      var currentParentId = this.get('_parentId');
-
-      if (currentType === 'menu' || currentType === 'page') {
-        if (currentParentId === Origin.editor.data.course.get('_id')) {
-          parent = Origin.editor.data.course;
-        } else {
-          parent = Origin.editor.data.contentObjects.findWhere({ _id: currentParentId });
-        }
-      } else if (currentType != 'course'){
-        parent = Origin.editor.data[this._parent].findWhere({ _id: currentParentId });
-      }
-
-      return parent;
-    },
-
-    getSiblings: function(returnMyself) {
-      if (returnMyself) {
-        var siblings = Origin.editor.data[this._siblings].where({ _parentId: this.get('_parentId') });
-        return new Backbone.Collection(siblings);
-      }
-      var siblings = _.reject(Origin.editor.data[this._siblings].where({
-        _parentId: this.get('_parentId')
-      }), _.bind(function(model){
-        return model.get('_id') == this.get('_id');
-      }, this));
-
-      return new Backbone.Collection(siblings);
-    },
-
-    setOnChildren: function(key, value, options) {
-      var args = arguments;
-
-      if(!this._children) return;
-
-      this.getChildren().each(function(child){
-        child.setOnChildren.apply(child, args);
+        });
+      }, this), function() {
+        callback(children);
       });
     },
 
-    getPossibleAncestors: function() {
-      var map = {
-        'contentObjects': { 'ancestorType': 'page' },
-        'articles': { 'ancestorType': 'article' },
-        'blocks': { 'ancestorType': 'block' }
-      };
-      ancestors = Origin.editor.data[this._parent].where({ _type: map[this._parent].ancestorType });
-      return new Backbone.Collection(ancestors);
+    fetchParent: function(callback) {
+      if(!this._parentType || !this.get('_parentId')) {
+        return callback();
+      }
+      if(this.get('_parentId') === Origin.editor.data.course.get('_id')) {
+        return callback(Origin.editor.data.course);
+      }
+      // create model instance using _parentType and _parentId
+      var modelClass = Helpers.contentModelMap(this._parentType);
+      var model = new modelClass({ _id: this.get('_parentId') });
+      model.fetch({
+        success: _.bind(callback, this),
+        error: _.bind(function(jqXHR) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'app.errorfetchingdata'
+          });
+          callback.call(this);
+        }, this)
+      });
+    },
+
+    fetchSiblings: function(callback) {
+      var siblings = new ContentCollection(null, {
+        _type: this._siblingTypes,
+        _parentId: this.get('_parentId')
+      });
+      siblings.fetch({
+        success: _.bind(function(collection) {
+          collection.remove(this);
+          callback(collection);
+        }, this),
+        error: _.bind(function(jqXHR) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'app.errorfetchingdata'
+          });
+          callback.call(this);
+        }, this)
+      });
     },
 
     serialize: function() {
@@ -112,19 +100,6 @@ define(function(require) {
           }
         });
       }
-    },
-
-    serializeChildren: function() {
-      var children = this.getChildren();
-      var serializedJson = '';
-
-      if (children) {
-        _.each(children.models, function(child) {
-          serializedJson += child.serialize();
-        });
-      }
-
-      return serializedJson;
     }
   });
 

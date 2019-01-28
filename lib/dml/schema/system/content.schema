@@ -25,6 +25,11 @@
       "required": true,
       "default": 1,
       "editorOnly": true
+    },
+    "_colorLabel": {
+      "type": "string",
+      "required": false,
+      "editorOnly": true
     }
   }
 }

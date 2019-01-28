@@ -48,6 +48,11 @@
       "default": false,
       "editorOnly": true
     },
+    "targetAttribute": {
+      "type": "string",
+      "required": true,
+      "default": "undefined"
+    },
     "properties":{
       "type": "object"
     }

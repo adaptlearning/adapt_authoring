@@ -22,14 +22,14 @@
         <div class="extension-management-plugin tb-row tb-row-{{odd @index}}">
           <div class="extension-management-plugin-inner col-row">
             <div class="extension-management-plugin-title col-20">
-              <h4 class="extension-management-plugin-title-inner tb-col-inner">{{{displayName}}}</h4>
+              <h4 class="extension-management-plugin-title-inner tb-col-inner">{{displayName}}</h4>
             </div>
             <div class="extension-management-plugin-description col-60">
-              <div class="extension-management-plugin-description-inner tb-col-inner">{{{description}}}</div>
+              <div class="extension-management-plugin-description-inner tb-col-inner">{{description}}</div>
             </div>
             <div class="extension-management-plugin-remove col-20 col-centered">
               <div class="extension-management-plugin-remove-inner tb-col-inner">
-                <button class="btn alert remove-extension" data-displayName="{{{displayName}}}" data-id="{{_id}}">{{t 'app.remove'}}</button>
+                <button class="btn alert remove-extension" data-displayName="{{displayName}}" data-id="{{_id}}">{{t 'app.remove'}}</button>
               </div>
             </div>
           </div>
@@ -62,16 +62,16 @@
         <div class="extension-management-plugin tb-row tb-row-{{odd @index}}">
             <div class="extension-management-plugin-inner col-row">
                 <div class="extension-management-plugin-title col-20">
-                    <h4 class="extension-management-plugin-title-inner tb-col-inner">{{{displayName}}}</h4>
+                    <h4 class="extension-management-plugin-title-inner tb-col-inner">{{displayName}}</h4>
                 </div>
 
                 <div class="extension-management-plugin-description col-60">
-                    <div class="extension-management-plugin-description-inner tb-col-inner">{{{description}}}</div>
+                    <div class="extension-management-plugin-description-inner tb-col-inner">{{description}}</div>
                 </div>
 
                 <div class="extension-management-plugin-remove col-20 col-centered">
                     <div class="extension-management-plugin-remove-inner tb-col-inner">
-                        <button class="btn secondary add-extension" data-displayName="{{{displayName}}}" data-id="{{_id}}">{{t 'app.add'}}</button>
+                        <button class="btn secondary add-extension" data-displayName="{{displayName}}" data-id="{{_id}}">{{t 'app.add'}}</button>
                     </div>
                 </div>
 

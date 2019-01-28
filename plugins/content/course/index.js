@@ -16,8 +16,6 @@ var contentmanager = require('../../../lib/contentmanager'),
     origin = require('../../../'),
     rest = require('../../../lib/rest'),
     _ = require('underscore'),
-    ncp = require('ncp').ncp,
-    mkdirp = require('mkdirp'),
     logger = require('../../../lib/logger'),
     database = require('../../../lib/database'),
     helpers = require('../../../lib/helpers'),
@@ -284,19 +282,11 @@ CourseContent.prototype.hasPermission = function (action, userId, tenantId, cont
     if (err) {
       return next(err);
     }
-
-    if (!isAllowed) {
-      // Check the permissions string
-      if (contentItem.hasOwnProperty('_courseId')) {
-        var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
-        permissions.hasPermission(userId, action, resource, next);
-      } else {
-        // This is a brand new course
-        return next(null, true);
-      }
-    } else {
+    if (isAllowed) {
       return next(null, isAllowed);
     }
+    var resource = permissions.buildResourceString(tenantId, `/api/content/course/${contentItem._courseId || '*'}`);
+    permissions.hasPermission(userId, action, resource, next);
   });
 };
 
@@ -471,6 +461,10 @@ function duplicate (data, cb) {
                 contentData._courseId = newCourseId;
                 contentData._parentId = parentIdMap[oldParentId];
 
+                if(oldParentId && !contentData._parentId) {
+                  logger.log('warn', `Cannot copy ${contenttype} '${oldId}', cannot find parent object with ID '${oldParentId}'`);
+                  return next();
+                }
                 return db.create(contenttype, contentData, function (error, newContent) {
                   if (error) {
                     logger.log('error', error);

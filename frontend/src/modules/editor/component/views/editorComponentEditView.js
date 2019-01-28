@@ -10,7 +10,6 @@ define(function(require) {
 
     preRender: function() {
       this.listenTo(Origin, 'editorComponentEditSidebar:views:save', this.save);
-      this.model.set('ancestors', this.model.getPossibleAncestors().toJSON());
     },
 
     cancel: function (event) {

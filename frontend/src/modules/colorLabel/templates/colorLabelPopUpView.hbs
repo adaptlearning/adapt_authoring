@@ -1,0 +1,21 @@
+<div class="colorlabel-inner">
+    <div class="colorlabel-header">
+        <div class="title">{{t 'app.colourLabelTitle'}}</div>
+        <div class="intro">{{{t 'app.colourLabelIntro'}}}</div>
+    </div>
+    <div class="colors">
+        <div class="colors-inner clearfix">
+            {{#each colors}}
+                <div class="color-item" data-colorlabel={{this}}>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+    <div class="footer">
+        <div class="footer-inner">
+            <button class="btn warning reset">{{t 'app.reset'}}</button>
+            <button class="btn primary apply">{{t 'app.apply'}}</button>
+            <button class="btn secondary cancel">{{t 'app.cancel'}}</button>
+        </div>
+    </div>
+</div>

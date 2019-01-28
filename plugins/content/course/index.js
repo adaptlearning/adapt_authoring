@@ -28,7 +28,7 @@ function CourseContent () {
 util.inherits(CourseContent, ContentPlugin);
 
 var DASHBOARD_COURSE_FIELDS = [
-    '_id', '_tenantId', '_type', '_isShared', 'title', 'heroImage', 
+    '_id', '_tenantId', '_type', '_isShared', 'title', 'heroImage',
     'updatedAt', 'updatedBy', 'createdAt', 'createdBy', 'tags'
 ];
 /**
@@ -40,102 +40,56 @@ function initialize () {
   var self = this;
   var app = origin();
   app.once('serverStarted', function (server) {
-    // My Courses
-    rest.get('/my/course', function (req, res, next) {
-      var options = _.keys(req.body).length
-      ? req.body
-      : req.query;
-      var search = options.search || {};
-      var self = this;
-      var orList = [];
-      var andList = [];
 
+    function retrieveCourses(req, res, addQuery) {
+      var options = _.keys(req.body).length ? req.body : req.query;
+      var search = options.search || {};
+      var orList = [];
+      var andList = addQuery ? addQuery : [];
       // convert searches to regex
-      async.each(
-        Object.keys(search),
-        function (key, nextKey) {
-          var exp = {};
-          // convert strings to regex for likey goodness
-          if ('string' === typeof search[key]) {
-            exp[key] = new RegExp(search[key], 'i');
-            orList.push(exp);
-          } else {
-            exp[key] = search[key];
-            andList.push(exp);
-          }
-          nextKey();
+      async.each(Object.keys(search), function (key, nextKey) {
+        var exp = {};
+        // convert strings to regex for likey goodness
+        if ('string' === typeof search[key]) {
+          exp[key] = new RegExp(search[key], 'i');
+          orList.push(exp);
+        } else {
+          exp[key] = search[key];
+          andList.push(exp);
+        }
+        nextKey();
       }, function () {
         var query = {};
-        if (orList.length) {
-          query.$or = orList;
+        if (orList.length) query.$or = orList;
+        if (andList.length) query.$and = andList;
+
+        Object.assign(options, {
+          jsonOnly: true,
+          fields: DASHBOARD_COURSE_FIELDS.join(' ')
+        });
+        if(!options.populate) {
+          options.populate = { 'createdBy': 'email firstName lastName' };
         }
-        
-        query.$and = andList;
-
-        // force search to use only courses created by current user
-        var user = usermanager.getCurrentUser();
-        query.$and.push({ createdBy : user._id });
-
-        options.jsonOnly = true;
-        options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
-        
         new CourseContent().retrieve(query, options, function (err, results) {
-          if (err) {
-            res.statusCode = 500;
-            return res.json(err);
-          }
-          return res.json(results);
+          if (err) return res.status(500).json(err);
+          res.json(results);
         });
       });
+    }
+
+    // My Courses
+    rest.get('/my/course', function (req, res, next) {
+      retrieveCourses(req, res, [
+        { createdBy : usermanager.getCurrentUser()._id }
+      ]);
     });
 
     // Shared Courses
     rest.get('/shared/course', function (req, res, next) {
-      var options = _.keys(req.body).length
-      ? req.body
-      : req.query;
-      var search = options.search || {};
-      var self = this;
-      var orList = [];
-      var andList = [];
-
-      // convert searches to regex
-      async.each(
-        Object.keys(search),
-        function (key, nextKey) {
-          var exp = {};
-          // convert strings to regex for likey goodness
-          if ('string' === typeof search[key]) {
-            exp[key] = new RegExp(search[key], 'i');
-            orList.push(exp);
-          } else {
-            exp[key] = search[key];
-            andList.push(exp);
-          }
-          nextKey();
-      }, function () {
-        var query = {};
-        if (orList.length) {
-          query.$or = orList;
-        }
-        
-        query.$and = andList;
-
-        // Only return courses which have been shared
-        query.$and.push({ _isShared: true });
-        
-        options.jsonOnly = true;
-        options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
-
-        new CourseContent().retrieve(query, options, function (err, results) {
-          if (err) {
-            res.statusCode = 500;
-            return res.json(err);
-          }
-
-          return res.json(results);
-        });
-      });
+      retrieveCourses(req, res, [
+        { createdBy: { $ne: usermanager.getCurrentUser()._id } },
+        { $or: [{ _shareWithUsers: usermanager.getCurrentUser()._id }, { _isShared: true }] }
+      ]);
     });
 
     /**
@@ -174,59 +128,59 @@ function initialize () {
   ['component'].forEach(function (contentType) {
     app.contentmanager.addContentHook('create', contentType, {when: 'pre'}, function(contentType, data, next) {
       var user = usermanager.getCurrentUser();
-      
+
       database.getDatabase(function (err, db) {
         if (err) {
             logger.log('error', err);
             return next(err)
         }
-        
+
         var delta = data[0];
-        
+
         db.retrieve('component', {_courseId: delta._courseId, _component: delta._component}, function(err, results) {
           if (results.length == 0) {
             // This is the first time this component has been added, so trigger a rebuild.
             if (user && user.tenant && user.tenant._id) {
               app.emit('rebuildCourse', user.tenant._id, delta._courseId);
-            } 
+            }
           }
-          
-          return next(null, data); 
+
+          return next(null, data);
         });
-        
+
       });
     }.bind(null, contentType));
   });
-  
+
   ['component'].forEach(function (contentType) {
     app.contentmanager.addContentHook('destroy', contentType, {when: 'pre'}, function(contentType, data, next) {
       var user = usermanager.getCurrentUser();
-      
+
       database.getDatabase(function (err, db) {
         if (err) {
             logger.log('error', err);
             return next(err)
         }
-        
+
         db.retrieve('component', {_id: data[0]._id}, function(err, results) {
           if (err) {
             logger.log('error', err);
             return next(err);
           }
-          
+
           if (results && results.length == 1) {
             var delta = results[0];
-            
+
             db.retrieve('component', {_courseId: delta._courseId, _component: delta._component}, function(err, results) {
               if (results.length <= 1) {
                 // This component is no longer used in this course, so trigger a rebuild.
                 if (user && user.tenant && user.tenant._id) {
                   app.emit('rebuildCourse', user.tenant._id, delta._courseId.toString());
-                } 
+                }
               }
-              
-              return next(null, data); 
-            });    
+
+              return next(null, data);
+            });
           } else {
             // In theory the next line should never run.
             return next(null, data);
@@ -235,7 +189,7 @@ function initialize () {
       });
     }.bind(null, contentType));
   });
-  
+
   // Content Hook for updatedAt and updatedBy:
   ['contentobject', 'article', 'block', 'component'].forEach(function (contentType) {
     app.contentmanager.addContentHook('update', contentType, {when:'post'}, function (contentType, data, next) {
@@ -250,7 +204,7 @@ function initialize () {
 
         // Defensive programming -- just in case
         if (data && data._courseId) {
-          // If the _courseId is present, update the last updated date                   
+          // If the _courseId is present, update the last updated date
           db.update('course', { _id: data._courseId }, { updatedAt: new Date(), updatedBy: userId }, function (err) {
             if (err) {
               logger.log('error', err);
@@ -261,7 +215,7 @@ function initialize () {
         } else {
           next(null, data);
         }
-        
+
       });
 
     }.bind(null, contentType));
@@ -372,7 +326,7 @@ CourseContent.prototype.destroy = function (search, force, next) {
         if (docs[0]._isShared && docs[0].createdBy != user._id) {
           return next(new ContentPermissionError());
         }
-        
+
         // Courses use cascading delete
         async.eachSeries(
           docs,
@@ -421,7 +375,7 @@ function duplicate (data, cb) {
 
       // Set the current user's ID as the creator
       doc.createdBy = user._id;
-      
+
       CourseContent.prototype.create(doc, function (error, newCourse) {
         if (error) {
           logger.log('error', error);
@@ -516,7 +470,7 @@ function duplicate (data, cb) {
                     } else {
                       next();
                     }
-                    
+
                   }, function(error) {
                     if (error) {
                       logger.log('error', error);

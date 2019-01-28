@@ -77,6 +77,7 @@ module.exports = function(grunt) {
     handlebars: {
       compile: {
         options: {
+          amd: true,
           namespace:"Handlebars.templates",
           processName: function(filePath) {
             var newFilePath = filePath.split("/");
@@ -91,68 +92,6 @@ module.exports = function(grunt) {
             "frontend/src/core/**/*.hbs",
             "frontend/src/modules/**/*.hbs",
             "frontend/src/plugins/**/*.hbs"
-          ]
-        }
-      }
-    },
-    jscs: {
-      src: [
-        'frontend/src/core/**/*.js',
-        'frontend/src/modules/**/*.js',
-        '!frontend/src/libraries/**/*.js',
-        'lib/**/*.js',
-        'plugins/**/*.js',
-        '!plugins/content/**',
-        'routes/**/*.js',
-        '!**/node_modules/**'
-      ],
-      options: {
-        config: ".jscsrc",
-        reporter: "unix",
-        fix: true
-      }
-    },
-    jshint: {
-      options: {
-        reporter: require('jshint-stylish'),
-        curly: true,
-        undef: true,
-        asi: true,
-        eqnull: false,
-        sub: true
-      },
-      frontend: {
-        options: {
-          browser: true,
-          es3: true,
-          jquery: true,
-          globals: {
-            Backbone: false,
-            Handlebars: false,
-            _: false,
-            define: false,
-            require: false
-          }
-        },
-        files: {
-          src: [
-            'frontend/src/core/**/*.js',
-            'frontend/src/modules/**/*.js',
-            '!frontend/src/libraries/**/*.js'
-          ]
-        }
-      },
-      backend: {
-        options: {
-          node: true
-        },
-        files: {
-          src: [
-            'lib/**/*.js',
-            'plugins/**/*.js',
-            '!plugins/content/**',
-            'routes/**/*.js',
-            '!**/node_modules/**'
           ]
         }
       }
@@ -179,39 +118,11 @@ module.exports = function(grunt) {
         }
       }
     },
-    watch: {
-      handlebars: {
-        files: ['frontend/src/**/*.hbs'],
-        tasks: ['handlebars']
-      },
-      less: {
-        files: ['frontend/src/**/*.less'],
-        tasks: ['less:dev']
-      },
-      routes: {
-        files: ['routes/**/*.*'],
-        tasks: ['handlebars']
-      },
-      lang: {
-        files: ['routes/lang/*.json'],
-        tasks: ['merge-json']
-      }
-    },
     mochaTest: {
       src: ['test/*.js'],
       options: {
         reporter: 'spec',
         timeout: 3500
-      }
-    },
-    open: {
-      server: {
-        path: 'http://localhost:<%= server.options.port %>/'
-      }
-    },
-    server: {
-      options: {
-        port: getHttpPort() || process.env.PORT
       }
     },
     requireBundle: {
@@ -226,36 +137,43 @@ module.exports = function(grunt) {
     }
   });
 
-  function getHttpPort() {
-    if (!grunt.file.exists(__dirname + "/conf/config.json")) {
-      return false;
+  grunt.registerTask('migration-conf', 'Creating migration Conf', function() {
+    var mongoUri = require('mongodb-uri');
+    var config = grunt.file.readJSON('conf/config.json');
+    var connectionString = '';
+
+    if (config.dbConnectionUri) {
+      connectionString = config.dbConnectionUri;
+
+      var dbConnectionUriParsed = mongoUri.parse(connectionString);
+      dbConnectionUriParsed.database = config.dbName;
+      connectionString = mongoUri.format(dbConnectionUriParsed);
+
+    } else {
+      // Construct the authentication part of the connection string.
+      var authenticationString = config.dbUser && config.dbPass ? config.dbUser + ':' + config.dbPass + '@' : '';
+
+      // Check if a MongoDB replicaset array has been specified.
+      if (config.dbReplicaset && Array.isArray(config.dbReplicaset) && config.dbReplicaset.length !== 0) {
+        // The replicaset should contain an array of hosts and ports
+        connectionString = 'mongodb://' + authenticationString + config.dbReplicaset.join(',') + '/' + config.dbName
+      } else {
+        // Get the host and port number from the configuration.
+
+        var portString = config.dbPort ? ':' + config.dbPort : '';
+
+        connectionString = 'mongodb://' + authenticationString + config.dbHost + portString + '/' + config.dbName;
+      }
+      if (typeof config.authSource === 'string' && config.authSource !== '' ) {
+        connectionString += '?authSource=' + config.authSource
+      }
     }
-    var config = require(__dirname + "/conf/config.json");
-    return config.serverPort;
-  };
-
-  /**
-  * Accepts 'build' and 'prod' params
-  * e.g. grunt build:prod
-  */
-  grunt.registerTask('build', 'Running build', function(mode) {
-    var configFile = 'conf/config.json';
-
-    if (!grunt.file.exists(configFile)) {
-      return grunt.task.run(['requireBundle', 'copy', 'less:dev', 'handlebars', 'requirejs:dev']);
-    }
-    var config = grunt.file.readJSON(configFile);
-    // Check if we're in 'production' mode
-    config.isProduction = (mode === 'prod') ? true : false;
-    // Save the configuration
-    grunt.file.write(configFile, JSON.stringify(config, null, 2));
-    // run the tasks
-    var compilation = (config.isProduction) ? 'compile' : 'dev';
-    grunt.task.run(['requireBundle', 'merge-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
-  });
-
-  grunt.registerTask('server', "Running Server", function() {
-    grunt.task.run(['requireBundle', 'copy', 'less:dev', 'handlebars', 'open:server', 'watch']);
+    var migrateConf = {
+      migrationsDir : 'migrations/lib',
+      es6 : false,
+      dbConnectionUri: connectionString
+    };
+    grunt.file.write('conf/migrate.json', JSON.stringify(migrateConf, null, 2));
   });
 
   // Compiles frontend plugins
@@ -345,6 +263,30 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.registerTask('default', ['build:dev']);
   grunt.registerTask('test', ['mochaTest']);
-  grunt.registerTask('default', ['merge-json', 'requireBundle', 'less:dev', 'handlebars', 'watch']);
+
+  /**
+  * Accepts 'build' and 'prod' params
+  * e.g. grunt build:prod
+  */
+  grunt.registerTask('build', 'Running build', function(mode) {
+    grunt.log.subhead(`Building application in ${mode === 'prod' ? 'production' : 'dev'} mode`);
+
+    var isProduction = mode === 'prod' ? true : false;
+    var compilation = isProduction ? 'compile' : 'dev';
+
+    try {
+      // add flag to config
+      var configFile = 'conf/config.json';
+      var config = grunt.file.readJSON(configFile);
+      config.isProduction = isProduction;
+      grunt.file.write(configFile, JSON.stringify(config, null, 2));
+      // run the task
+      grunt.task.run(['migration-conf', 'requireBundle', 'merge-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
+
+    } catch(e) {
+      grunt.task.run(['requireBundle', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation]);
+    }
+  });
 };

@@ -1,48 +1,56 @@
 @import 'colours';
 
 .options {
-  position:absolute;
-  top:63px;
-  right:0px;
+  position: absolute;
+  right: 0;
   // FIXME fix this and .location-title so we don't a z-index
   z-index: 5;
 
   &-inner {
-    padding:13px;
+    display: flex;
   }
 
   &-group {
-    float:left;
-    padding:4px 0px;
     i {
       font-size: 18px;
     }
   }
 
-  a {
-    margin-left:10px;
-    margin-right:10px;
+  button {
     text-decoration: none;
-    text-align:center;
-    color:@option-color;
+    text-align: center;
+    color: @option-color;
 
     &:hover {
-      transition:color 0.3s;
-      color:@option-hover-color;
+      transition: color 0.3s;
+      color: @option-hover-color;
     }
     &.selected {
-      transition:color 0.3s;
-      color:@option-selected-color;
+      transition: color 0.3s;
+      color: @option-selected-color;
     }
 
     i {
-      margin-right:4px;
-      margin-bottom:3px;
+      margin: 4px;
     }
   }
 }
 
-.option-value-item {
-  display: inline-block;
-  padding-right: 20px;
+.options-group {
+  display: flex;
+  height: 70px;
+  align-items: center;
+
+  .option-value-item {
+    padding-left: 15px;
+    padding-right: 15px;
+  
+    > button {
+      padding: 0px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 }

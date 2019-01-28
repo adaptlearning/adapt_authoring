@@ -5,6 +5,7 @@
   function loadLibraries(callback) {
     require([
       'ace/ace',
+      'handlebars',
       'imageReady',
       'inview',
       'jqueryForm',
@@ -12,9 +13,13 @@
       'jqueryUI',
       'mediaelement',
       'scrollTo',
+      'selectize',
       'sweetalert',
       'velocity'
-    ], callback);
+    ], function() {
+      window.Handlebars = $.extend(require('handlebars'), window.Handlebars);
+      callback();
+    });
   }
 
   function loadCore(callback) {

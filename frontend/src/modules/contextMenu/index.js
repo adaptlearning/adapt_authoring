@@ -40,7 +40,7 @@ define(function(require) {
     ContextMenu.addItem('component', getDefaultItems());
     ContextMenu.addItem('page', getDefaultItems());
     ContextMenu.addItem('menu', getDefaultItems(['copy']));
-    ContextMenu.addItem('page-min', getDefaultItems(['copy','delete']));
+    ContextMenu.addItem('page-min', getDefaultItems(['copy','delete','colorLabel']));
     ContextMenu.addItem('sharedcourse', [
       {
         title: Origin.l10n.t('app.duplicate'),
@@ -53,7 +53,7 @@ define(function(require) {
         callbackEvent: 'preview'
       }
     ]);
-    ContextMenu.addItem('course', getDefaultItems());
+    ContextMenu.addItem('course', getDefaultItems(['colorLabel']));
   };
 
   /*
@@ -80,6 +80,11 @@ define(function(require) {
         title: Origin.l10n.t('app.delete'),
         className: 'context-menu-item',
         callbackEvent: "delete"
+      },
+      {
+        title: Origin.l10n.t('app.colourLabel'),
+        className: 'context-menu-item',
+        callbackEvent: "colorLabel"
       }
     ];
     if(!blacklist) {

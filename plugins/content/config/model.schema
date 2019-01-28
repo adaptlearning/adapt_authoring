@@ -10,10 +10,12 @@
       "type":"object"
     },
     "_theme": {
-      "type": "string"
+      "type": "string",
+      "default": "adapt-contrib-vanilla"
     },
     "_menu": {
-      "type": "string"
+      "type": "string",
+      "default": "adapt-contrib-boxMenu"
     },
     "_courseId": {
       "type": "objectid",
@@ -286,6 +288,9 @@
           "title": "Log to browser console?"
         }
       }
+    },
+    "themeSettings": {
+      "type": "object"
     }
   }
 }

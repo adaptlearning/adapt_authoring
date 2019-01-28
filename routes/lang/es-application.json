@@ -247,7 +247,6 @@
   "app.selectedcourses": "Cursos seleccionados",
   "app.tenantnotenabled": "Su inquilino se encuentra deshabilitado. Por favor contacte con el administrador.",
   "app.accountnotactive": "Su cuenta no se encuentra habilitada. Por favor contacte con el administrador.",
-  "app.loginas": "Iniciar sesión como",
   "app.errorlogginginas": "Error al iniciar sesión como el usuario seleccionado.",
   "app.managesubscriptions": "Administrar Suscripciones",
   "app.addsubscription": "Agregar Suscripción",

@@ -7,10 +7,7 @@ var _ = require('underscore');
 var async = require('async');
 var bower = require('bower');
 var fs = require('fs');
-var mkdirp = require('mkdirp');
-var ncp = require('ncp').ncp;
 var path = require('path');
-var rimraf = require('rimraf');
 var util = require('util');
 
 var BowerPlugin = require('../bower');

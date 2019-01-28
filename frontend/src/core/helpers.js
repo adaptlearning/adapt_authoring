@@ -38,9 +38,13 @@ define(function(require){
 
     keyToTitleString: function(key) {
       if (!key) return;
-      // Take in key value and remove all _'s and capitalise
-      var string = key.replace(/_/g, "").toLowerCase();
-      return this.capitalise(string);
+      // check translatable strings first
+      var l10nKey = 'app.scaffold.' + key;
+      if(Origin.l10n.has(l10nKey)) {
+        return Origin.l10n.t(l10nKey);
+      }
+      // fall-back: remove all _ and capitalise
+      return this.capitalise(key.replace(/_/g, "").toLowerCase());
     },
 
     momentFormat: function(date, format) {
@@ -112,7 +116,7 @@ define(function(require){
     },
 
     bytesToSize: function(bytes) {
-      if (bytes == 0) return '0 B';
+      if (bytes === 0) return '0 B';
 
       var k = 1000;
       var sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -132,18 +136,18 @@ define(function(require){
       return new Handlebars.SafeString(html);
     },
 
-    pickCSV: function (list, key, separator) {
-      var vals = [];
-      separator = (separator && separator.length) ? separator : ',';
-      if (list && list.length) {
-        return vals.join(separator);
+    pickCSV: function(list, key, separator) {
+      if (!list || !list.length) {
+        return '';
       }
-      for (var i = 0; i < list.length; ++i) {
-        if (key && list[i][key]) {
-          vals.push(list[i][key]);
-        } else {
-          vals.push(list[i]);
-        }
+      if (!separator || !separator.length) {
+        separator = ',';
+      }
+      var vals = [];
+      for (var i = 0, l = list.length; i < l; i++) {
+        var val = list[i];
+        var nestedVal = key && val[key];
+        vals.push(nestedVal || val);
       }
       return vals.join(separator);
     },
@@ -154,10 +158,11 @@ define(function(require){
       }
       var html = '<ul class="tag-container">';
       for (var i = 0; i < list.length; ++i) {
-        var tag = (key && list[i][key]) ? list[i][key] : list[i];
+        var item = list[i];
+        var tag = Handlebars.Utils.escapeExpression(key && item[key] || item);
         html += '<li class="tag-item" title="' + tag + '"><span class="tag-value">' + tag  + '</span></li>';
       }
-      return html + '</ul>';
+      return new Handlebars.SafeString(html + '</ul>');
     },
 
     decodeHTML: function(html) {
@@ -176,7 +181,7 @@ define(function(require){
     },
 
     ifImageIsCourseAsset: function(url, block) {
-      var isCourseAsset = url.length !== 0 && url.indexOf('course/assets') == 0;
+      var isCourseAsset = url.length !== 0 && url.indexOf('course/assets') === 0;
       return isCourseAsset ? block.fn(this) : block.inverse(this);
     },
 
@@ -260,6 +265,7 @@ define(function(require){
 
     contentModelMap: function(type) {
       var contentModels = {
+        course: 'core/models/courseModel',
         contentobject: 'core/models/contentObjectModel',
         article: 'core/models/articleModel',
         block: 'core/models/blockModel',
@@ -322,6 +328,13 @@ define(function(require){
         }
         callback(returnArr);
       });
+    },
+
+    maxUploadSize: function(options) {
+      return new Handlebars.SafeString([
+        '<span class="max-fileupload-size">',
+        Origin.l10n.t('app.maxfileuploadsize', {size: Origin.constants.humanMaxFileUploadSize}),
+        '</span>'].join(''))
     }
   };
 

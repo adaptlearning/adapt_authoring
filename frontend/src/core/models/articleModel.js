@@ -6,7 +6,13 @@ define(function(require) {
     urlRoot: '/api/content/article',
     _parentType: 'contentobject',
     _siblingTypes: 'article',
-    _childTypes: 'block'
+    _childTypes: 'block',
+
+    defaults: {
+      _isCollapsible: true,
+      _isCollapsed: false
+    }
+
   });
 
   return ArticleModel;

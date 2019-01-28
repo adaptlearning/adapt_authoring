@@ -7,10 +7,10 @@
 }
 
 fieldset {
-  margin: 0 0 30px 20px;
-  background-color: #fff;
+  margin-left: 20px;
+  background-color: @white;
   form form & {
-    padding-bottom: 0px;
+    padding-bottom: 0;
   }
   label {
     cursor: auto;
@@ -28,23 +28,23 @@ form .error {
   display: block;
   legend {
     padding: 25px 0 10px 30px;
-    font-size:16px;
+    font-size: 16px;
     font-weight: @font-weight-bold;
   }
   .fieldset-object & {
-    color:#3e4960;
+    color: #3e4960;
     text-decoration: underline;
     legend {
-      padding:0;
-      margin-bottom:0px;
+      padding: 0;
+      margin-bottom: 0;
     }
   }
 }
 
 .fieldset-object .field {
-  padding:18px 0px;
+  padding: 10px 0;
   &-object {
-    padding:18px 20px;
+    padding: 18px 20px;
   }
 }
 
@@ -53,48 +53,127 @@ form .error {
 }
 
 .field {
-  padding:18px 30px;
+  padding: 10px 30px;
   &-object {
-    padding:8px 10px;
-    border:1px solid #aaa;
-    border-radius:3px;
-    margin-bottom:20px;
+    padding: 8px 10px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    margin-bottom: 20px;
   }
-  i {
-    color: #3e4960;
-    transition:color 0.3s;
-    &:hover {
-      color:#15a4fa;
+  label {
+    display: inline-block;
+    [data-type="Checkbox"]&,
+    [data-type="Boolean"]& {
+      margin-left: 10px;
     }
   }
+  i {
+    width: 13px;
+    color: #3e4960;
+    text-align: center;
+    transition: color 0.3s;
+    &:hover {
+      color: #15a4fa;
+    }
+  }
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+.field-help {
+  position: relative;
+  display: inline-block;
+  padding: 0 3px;
+  .tooltip {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 105%;
+    padding: 5px;
+    border-radius: 6px;
+    background-color: @tertiary-color;
+    color: @white;
+    opacity: 0;
+    text-align: center;
+    transition: opacity 0.3s, visibility 0s 0.3s;
+    visibility: hidden;
+    .tooltip-key {
+      color: @primary-color;
+      font-family: monospace;
+    }
+    .tooltip-help {
+      width: 300px;
+      .scaffold-items-modal & {
+        width: 200px;
+      }
+    }
+  }
+  i:hover + .tooltip {
+    opacity: 0.9;
+    transition-delay: 0s;
+    visibility: inherit;
+  }
+}
+
+.field-default {
+  padding: 0 3px;
+  .is-default-value > &,
+  [data-type=""] > &,
+  [data-type^="Asset"] > &,
+  [data-type="DisplayTitle"]:not(.unlocked) > &,
+  [data-type="Tags"] > & {
+    display: none;
+  }
+}
+
+.field-error {
+  color: red;
 }
 
 .list-item {
   border: 1px solid #aaa;
   border-radius: 2px;
   padding: 15px;
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
   cursor: pointer;
   word-wrap: break-word;
+  display: flex;
   &:hover {
     border-color: #696969;
   }
   span {
-    display:inline-block;
-    float:left;
-    width:88%;
+    flex-grow: 1;
   }
   button {
-    float:right;
-    padding: 1px 8px;
-    font-size: 140%;
+    padding: 0;
+    font-size: 14px;
+    width: 28px;
+    height: 28px;
   }
 }
 
-.collapsed {
-  display:none;
-}
-
-.expanded {
-  display:block;
+.field-editor {
+  [data-type="Checkbox"] &,
+  [data-type="Boolean"] & {
+    float: left;
+  }
+  [data-type="Radio"] & {
+    li {
+      margin-left: 0;
+      list-style-type: none;
+    }
+    label {
+      margin-left: 10px;
+    }
+  }
+  .collapsed {
+    display: none;
+  }
+  .expanded {
+    display: block;
+  }
 }

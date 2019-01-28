@@ -1,0 +1,141 @@
+@darkBorderColour: #dcdcdc;
+@lightBorderColour: #cccccc;
+@paletteBackgroundColour: #eff7f9;
+
+.scaffold-colour-picker {
+  & + .sp-replacer,
+  & + .sp-replacer.sp-active {
+    background: white;
+    border-color: @lightBorderColour;
+    &:hover {
+      border-color: darken(@lightBorderColour, 20%);
+    }
+  }
+}
+.scaffold-colour-picker & + .sp-replacer .sp-preview {
+  border-color: @darkBorderColour;
+}
+
+body .sp-container {
+  border-color: @darkBorderColour;
+  .sp-palette {
+    max-width: 90px;
+    .sp-thumb-el {
+      border-radius: 11px;
+      border-color: @paletteBackgroundColour;
+      box-sizing: border-box;
+      overflow: hidden;
+      width: 20px;
+      height: 20px;
+      margin: 4px;
+      &:hover {
+        transform: scale(1.2);
+      }
+      &.sp-thumb-active {
+        border: 2px solid @tertiary-color;
+        transform: scale(1);
+      }
+      .sp-thumb-inner {
+        border: 1px solid @paletteBackgroundColour;
+        border-radius: 50%;
+        background-image: none;
+      }
+    }
+  }
+
+  .sp-clear {
+    display: none;
+  }
+
+  .sp-color {
+    border-color: @lightBorderColour;
+  }
+
+  .sp-initial {
+    border: 1px solid @lightBorderColour;
+  }
+
+  .sp-palette-container {
+    float: right;
+    border-left: 1px solid @darkBorderColour;
+    border-right: none;
+    background-color: @paletteBackgroundColour;
+  }
+  .sp-picker-container {
+    background: white;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 12px;
+    border: none;
+  }
+
+  input.sp-input {
+    padding: 5px;
+    width: 95%;
+    font-family: monospace;
+    border-radius: 0;
+    font-size: 120% !important;
+  }
+
+  .sp-alpha-inner,
+  .sp-hue {
+    border-radius: 3px;
+    border-color: @lightBorderColour;
+  }
+
+  .sp-alpha-inner .sp-alpha-handle,
+  .sp-hue .sp-slider {
+    border: 1px solid @lightBorderColour;
+    background: #ffffff;
+    opacity: 1;
+    width: 12px;
+    height: 12px;
+    border-radius: 7px;
+  }
+
+  .sp-alpha {
+    width: 140px;
+    .sp-alpha-inner .sp-alpha-handle {
+      top: -4px;
+    }
+  }
+
+  .sp-hue {
+    margin: 0 9px;
+    .sp-slider {
+      left: -3px;
+    }
+  }
+
+  .sp-dragger {
+    height: 1px;
+    width: 1px;
+    border: none;
+    background: transparent;
+    &:after {
+      display: block;
+      margin-left: -6px;
+      margin-top: -6px;
+      content: '';
+      width: 12px;
+      height: 12px;
+      border-radius: 7px;
+      border: 1px solid @darkBorderColour;
+      box-shadow: 0px 0px 3px black;
+    }
+  }
+
+  .sp-button-container {
+    float: left;
+    button.sp-choose {
+      display: none;
+    }
+    a.sp-cancel {
+      color: inherit !important;
+      font-family: inherit;
+      font-size: inherit;
+      display: inline-block;
+      margin-top: 5px;
+    }
+  }
+}

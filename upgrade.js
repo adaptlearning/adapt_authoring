@@ -2,15 +2,19 @@ var _ = require('underscore');
 var async = require('async');
 var chalk = require('chalk');
 var fs = require('fs-extra');
+var prompt = require('prompt');
 var optimist = require('optimist');
 var path = require('path');
 var semver = require('semver');
+var migrateMongoose = require('migrate-mongoose');
 
 var configuration = require('./lib/configuration');
 var logger = require('./lib/logger');
 var origin = require('./lib/application');
 var OutputConstants = require('./lib/outputmanager').Constants;
 var installHelpers = require('./lib/installHelpers');
+
+var IS_INTERACTIVE = process.argv.length === 2;
 
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
 var app = origin();
@@ -21,13 +25,23 @@ var app = origin();
 start();
 
 function start() {
-  // don't show any logger messages in the console
-  logger.level('console','error');
-  // start the server first
-  app.run({ skipVersionCheck: true, skipStartLog: true });
-  app.on('serverStarted', function() {
-    ensureRepoValues();
-    getUserInput();
+  installHelpers.checkPrimaryDependencies(function(error) {
+    if(error) {
+      return installHelpers.exit(1, error.message);
+    }
+    // don't show any logger messages in the console
+    logger.level('console','error');
+
+    prompt.override = optimist.argv;
+
+    // start the server first
+    app.run({ skipVersionCheck: true, skipStartLog: true });
+    app.on('serverStarted', function() {
+      installHelpers.checkSecondaryDependencies(function(error) {
+        ensureRepoValues();
+        getUserInput();
+      });
+    });
   });
 }
 
@@ -73,14 +87,16 @@ function getUserInput() {
       }
     }
   };
-  console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} and/or Adapt Framework. Would you like to continue?`);
+  if (IS_INTERACTIVE) {
+    console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} and/or Adapt Framework. Would you like to continue?`);
+  }
   installHelpers.getInput(confirmProperties, function(result) {
-    if(!result.continue) {
+    if(!installHelpers.inputHelpers.toBoolean(result.continue)) {
       return installHelpers.exit();
     }
     installHelpers.getInput(upgradeProperties, function(result) {
       console.log('');
-      if(result.updateAutomatically) {
+      if(installHelpers.inputHelpers.toBoolean(result.updateAutomatically)) {
         return checkForUpdates(function(error, updateData) {
           if(error) {
             return installHelpers.exit(1, error);
@@ -160,6 +176,58 @@ function doUpdate(data) {
         cb();
       });
     },
+    function runMigrations(callback) {
+      installHelpers.syncMigrations(function(err, migrations) {
+        if(err){
+          return callback(err);
+        }
+
+        installHelpers.getMigrationConfig(function(err, config) {
+          if(err){
+            return callback(err);
+          }
+
+          var migrator = new migrateMongoose({
+            migrationsPath: config.migrationsDir,
+            dbConnectionUri: config.dbConnectionUri,
+            autosync: true
+          });
+
+          migrator.list().then(
+            function(migrations) {
+              var migrationsRan = 0;
+              async.everySeries(migrations, function(migration, callback) {
+                if(migration.state === 'up'){
+                  return callback();
+                }
+
+                console.log(`Running ${migration.name} migration`);
+                migrationsRan += 1;
+                migrator.run('up', migration.name).then(
+                  function(value) { return callback(); },
+                  function(reason) { return callback(reason); }
+                )
+
+              }, function(err, data) {
+                if(err){
+                  return callback(err);
+                }
+
+                if(migrationsRan === 1) {
+                  console.log(`1 Migration ran successfully`);
+                } else if(migrationsRan > 1) {
+                  console.log(`${migrationsRan} Migrations ran successfully`);
+                } else {
+                  console.log(`No migrations to run`);
+                }
+                return callback();
+              });
+            },
+            function(reason) { return callback(reason); }
+          )
+        });
+      })
+    }
   ], function(error) {
     if(error) {
       console.error('ERROR:', error);

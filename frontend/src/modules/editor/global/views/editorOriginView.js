@@ -7,7 +7,15 @@ define(function(require){
   var EditorOriginView = OriginView.extend({
     events: {
       'click .paste-cancel': 'onPasteCancel',
-      'click .field-object .legend': 'onFieldObjectClicked'
+      'click .field-object .legend': 'onFieldObjectClicked',
+      'dblclick .editor-item-settings-inner > button': 'onDbClick'
+    },
+
+    attributes: function() {
+      var colorLabel = this.model && this.model.get('_colorLabel');
+      if (colorLabel) {
+        return { 'data-colorlabel': colorLabel };
+      }
     },
 
     initialize: function(options) {
@@ -54,7 +62,7 @@ define(function(require){
       } else {
         $('.form-container > form > div > fieldset').addClass('display-none');
         _.each(this.filters, function(filter) {
-          $('.fieldset-' + Helpers.lowerCase(filter)).removeClass('display-none');
+          $('fieldset[data-key=' + filter + ']').removeClass('display-none');
         });
       }
     },
@@ -182,6 +190,11 @@ define(function(require){
         .children('.collapsed')
         .first()
         .toggleClass('expanded');
+    },
+
+    onDbClick: function(event) {
+      event.preventDefault();
+      event.stopPropagation();
     },
 
     onCopy: function(e) {

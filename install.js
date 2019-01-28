@@ -1,10 +1,10 @@
-var _ = require('underscore');
 var async = require('async');
 var chalk = require('chalk');
 var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
 var prompt = require('prompt');
+var crypto = require('crypto');
 
 var auth = require('./lib/auth');
 var database = require('./lib/database');
@@ -23,249 +23,268 @@ var inputData;
 var masterTenant = false;
 var superUser = false;
 // from user input
-var configResults;
+var configResults = {};
 
-// we need the framework version for the config items, so let's go
-installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
-  if(error) {
-    return handleError(error, 1, 'Failed to get the latest framework version. Check package.json.');
-  }
-  inputData = {
-    useConfigJSON: {
-      name: 'useJSON',
-      description: 'Use existing config values? y/N',
-      type: 'string',
-      before: installHelpers.inputHelpers.toBoolean,
-      default: 'N'
-    },
-    startInstall: {
-      name: 'install',
-      description: 'Continue? Y/n',
-      type: 'string',
-      before: installHelpers.inputHelpers.toBoolean,
-      default: 'Y'
-    },
-    server: [
-      {
-        name: 'serverPort',
-        type: 'number',
-        description: 'Server port',
-        pattern: installHelpers.inputHelpers.numberValidator,
-        default: 5000
-      },
-      {
-        name: 'serverName',
+installHelpers.checkPrimaryDependencies(function(error) {
+  if(error) return handleError(null, 1, error);
+  // we need the framework version for the config items, so let's go
+  installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
+    if(error) {
+      return handleError(error, 1, 'Failed to get the latest framework version. Check package.json.');
+    }
+    inputData = {
+      useConfigJSON: {
+        name: 'useJSON',
+        description: 'Use existing config values? y/N',
         type: 'string',
-        description: 'Server name',
-        default: 'localhost'
-      },
-      {
-        name: 'dbHost',
-        type: 'string',
-        description: 'Database host',
-        default: 'localhost'
-      },
-      {
-        name: 'dbName',
-        type: 'string',
-        description: 'Master database name',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'adapt-tenant-master'
-      },
-      {
-        name: 'dbPort',
-        type: 'number',
-        description: 'Database server port',
-        pattern: installHelpers.inputHelpers.numberValidator,
-        default: 27017
-      },
-      {
-        name: 'dbUser',
-        type: 'string',
-        description: 'Database server user',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: ''
-      },
-      {
-        name: 'dbPass',
-        type: 'string',
-        description: 'Database server password',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: ''
-      },
-      {
-        name: 'dbAuthSource',
-        type: 'string',
-        description: 'Database server authentication database',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'admin'
-      },
-      {
-        name: 'dataRoot',
-        type: 'string',
-        description: 'Data directory path',
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'data'
-      },
-      {
-        name: 'sessionSecret',
-        type: 'string',
-        description: 'Session secret (value used when saving session cookie data)',
-        pattern: /^.+$/,
-        default: 'your-session-secret'
-      },
-      {
-        name: 'authoringToolRepository',
-        type: 'string',
-        description: "Git repository URL to be used for the authoring tool source code",
-        default: 'https://github.com/adaptlearning/adapt_authoring.git'
-      },
-      {
-        name: 'frameworkRepository',
-        type: 'string',
-        description: "Git repository URL to be used for the framework source code",
-        default: 'https://github.com/adaptlearning/adapt_framework.git'
-      },
-      {
-        name: 'frameworkRevision',
-        type: 'string',
-        description: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
-        default: 'tags/' + latestFrameworkTag
-      }
-    ],
-    features: {
-      ffmpeg: {
-        name: 'useffmpeg',
-        type: 'string',
-        description: "Are you using ffmpeg? y/N",
         before: installHelpers.inputHelpers.toBoolean,
         default: 'N'
       },
-      smtp: {
-        confirm: {
-          name: 'useSmtp',
-          type: 'string',
-          description: "Will you be using an SMTP server? (used for sending emails) y/N",
-          before: installHelpers.inputHelpers.toBoolean,
-          default: 'N'
+      startInstall: {
+        name: 'install',
+        description: 'Continue? Y/n',
+        type: 'string',
+        before: installHelpers.inputHelpers.toBoolean,
+        default: 'Y'
+      },
+      server: [
+        {
+          name: 'serverPort',
+          type: 'number',
+          description: 'Server port',
+          pattern: installHelpers.inputHelpers.numberValidator,
+          default: 5000
         },
-        confirmConnectionUrl: {
-          name: 'useSmtpConnectionUrl',
+        {
+          name: 'serverName',
           type: 'string',
-          description: "Will you use a URL to connect to your smtp Server y/N",
-          before: installHelpers.inputHelpers.toBoolean,
-          default: 'N'
+          description: 'Server name',
+          default: 'localhost'
         },
-        configure: [
+        {
+          name: 'dataRoot',
+          type: 'string',
+          description: 'Data directory path',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'data'
+        },
+        {
+          name: 'authoringToolRepository',
+          type: 'string',
+          description: "Git repository URL to be used for the authoring tool source code",
+          default: 'https://github.com/adaptlearning/adapt_authoring.git'
+        },
+        {
+          name: 'frameworkRepository',
+          type: 'string',
+          description: "Git repository URL to be used for the framework source code",
+          default: 'https://github.com/adaptlearning/adapt_framework.git'
+        },
+        {
+          name: 'frameworkRevision',
+          type: 'string',
+          description: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
+          default: 'tags/' + latestFrameworkTag
+        }
+      ],
+      database: {
+        dbConfig: [
           {
-            name: 'fromAddress',
+            name: 'dbName',
             type: 'string',
-            description: "Sender email address",
-            default: '',
+            description: 'Master database name',
+            pattern: installHelpers.inputHelpers.alphanumValidator,
+            default: 'adapt-tenant-master'
           },
           {
-            name: 'rootUrl',
+            name: 'useConnectionUri',
             type: 'string',
-            description: "The url this install will be accessible from",
-            default: '' // set using default server options
+            description: "Will you be using a full database connection URI? (all connection options in the URI) y/N",
+            before: installHelpers.inputHelpers.toBoolean,
+            default: 'N'
           }
         ],
-        configureService: [
+        configureUri: [
           {
-            name: 'smtpService',
+            name: 'dbConnectionUri',
             type: 'string',
-            description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
-            default: 'none',
-          },
-          {
-            name: 'smtpUsername',
-            type: 'string',
-            description: "SMTP username",
-            default: '',
-          },
-          {
-            name: 'smtpPassword',
-            type: 'string',
-            description: "SMTP password",
-            hidden: true,
-            replace: installHelpers.inputHelpers.passwordReplace,
-            default: '',
-            before: installHelpers.inputHelpers.passwordBefore
+            description: 'Database connection URI',
+            default: ''
           }
         ],
-        configureConnectionUrl: [
+        configureStandard: [
           {
-            name: 'smtpConnectionUrl',
+            name: 'dbHost',
             type: 'string',
-            description: "Custom connection URL: smtps://user%40gmail.com:pass@smtp.gmail.com/?pool=true",
-            default: 'none',
-          }
+            description: 'Database host',
+            default: 'localhost'
+          },
+          {
+            name: 'dbPort',
+            type: 'number',
+            description: 'Database server port',
+            pattern: installHelpers.inputHelpers.numberValidator,
+            default: 27017
+          },
+          {
+            name: 'dbUser',
+            type: 'string',
+            description: 'Database server user (only specify if using database authentication)',
+            pattern: installHelpers.inputHelpers.alphanumValidator,
+            default: ''
+          },
+          {
+            name: 'dbPass',
+            type: 'string',
+            description: 'Database server password (only specify if using database authentication)',
+            pattern: installHelpers.inputHelpers.alphanumValidator,
+            default: ''
+          },
+          {
+            name: 'dbAuthSource',
+            type: 'string',
+            description: 'Database server authentication database (only specify if using database authentication)',
+            pattern: installHelpers.inputHelpers.alphanumValidator,
+            default: ''
+          },
         ]
-      }
-    },
-    tenant: [
-      {
-        name: 'masterTenantName',
-        type: 'string',
-        description: "Set a unique name for your tenant",
-        pattern: installHelpers.inputHelpers.alphanumValidator,
-        default: 'master'
       },
-      {
-        name: 'masterTenantDisplayName',
-        type: 'string',
-        description: 'Set the display name for your tenant',
-        default: 'Master'
-      }
-    ],
-    tenantDelete: {
-      name: "confirm",
-      description: "Continue? (Y/n)",
-      before: installHelpers.inputHelpers.toBoolean,
-      default: "Y"
-    },
-    superUser: [
-      {
-        name: 'suEmail',
-        type: 'string',
-        description: "Email address",
-        required: true
+      features: {
+        ffmpeg: {
+          name: 'useffmpeg',
+          type: 'string',
+          description: "Are you using ffmpeg? y/N",
+          before: installHelpers.inputHelpers.toBoolean,
+          default: 'N'
+        },
+        smtp: {
+          confirm: {
+            name: 'useSmtp',
+            type: 'string',
+            description: "Will you be using an SMTP server? (used for sending emails) y/N",
+            before: installHelpers.inputHelpers.toBoolean,
+            default: 'N'
+          },
+          confirmConnectionUrl: {
+            name: 'useSmtpConnectionUrl',
+            type: 'string',
+            description: "Will you use a URL to connect to your smtp Server y/N",
+            before: installHelpers.inputHelpers.toBoolean,
+            default: 'N'
+          },
+          configure: [
+            {
+              name: 'fromAddress',
+              type: 'string',
+              description: "Sender email address",
+              default: '',
+            },
+            {
+              name: 'rootUrl',
+              type: 'string',
+              description: "The url this install will be accessible from",
+              default: '' // set using default server options
+            }
+          ],
+          configureService: [
+            {
+              name: 'smtpService',
+              type: 'string',
+              description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
+              default: 'none',
+            },
+            {
+              name: 'smtpUsername',
+              type: 'string',
+              description: "SMTP username",
+              default: '',
+            },
+            {
+              name: 'smtpPassword',
+              type: 'string',
+              description: "SMTP password",
+              hidden: true,
+              replace: installHelpers.inputHelpers.passwordReplace,
+              default: '',
+              before: installHelpers.inputHelpers.passwordBefore
+            }
+          ],
+          configureConnectionUrl: [
+            {
+              name: 'smtpConnectionUrl',
+              type: 'string',
+              description: "Custom connection URL: smtps://user%40gmail.com:pass@smtp.gmail.com/?pool=true",
+              default: 'none',
+            }
+          ]
+        }
       },
-      {
-        name: 'suPassword',
-        type: 'string',
-        description: "Password",
-        hidden: true,
-        replace: installHelpers.inputHelpers.passwordReplace,
-        required: true,
-        before: installHelpers.inputHelpers.passwordBefore
+      tenant: [
+        {
+          name: 'masterTenantName',
+          type: 'string',
+          description: "Set a unique name for your tenant",
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'master'
+        },
+        {
+          name: 'masterTenantDisplayName',
+          type: 'string',
+          description: 'Set the display name for your tenant',
+          default: 'Master'
+        }
+      ],
+      tenantDelete: {
+        name: "confirm",
+        description: "Continue? (Y/n)",
+        before: installHelpers.inputHelpers.toBoolean,
+        default: "Y"
       },
-      {
-        name: 'suRetypePassword',
-        type: 'string',
-        description: "Confirm Password",
-        hidden: true,
-        replace: installHelpers.inputHelpers.passwordReplace,
-        required: true,
-        before: installHelpers.inputHelpers.passwordBefore
-      }
-    ]
-  };
-  if(!IS_INTERACTIVE) {
-    return start();
-  }
-  console.log('');
-  if(!fs.existsSync('conf/config.json')) {
-    fs.ensureDirSync('conf');
-    return start();
-  }
-  console.log('Found an existing config.json file. Do you want to use the values in this file during install?');
-  installHelpers.getInput(inputData.useConfigJSON, function(result) {
+      superUser: [
+        {
+          name: 'suEmail',
+          type: 'string',
+          description: "Email address",
+          required: true
+        },
+        {
+          name: 'suPassword',
+          type: 'string',
+          description: "Password",
+          hidden: true,
+          replace: installHelpers.inputHelpers.passwordReplace,
+          required: true,
+          before: installHelpers.inputHelpers.passwordBefore
+        },
+        {
+          name: 'suRetypePassword',
+          type: 'string',
+          description: "Confirm Password",
+          hidden: true,
+          replace: installHelpers.inputHelpers.passwordReplace,
+          required: true,
+          before: installHelpers.inputHelpers.passwordBefore
+        }
+      ]
+    };
+    if(!IS_INTERACTIVE) {
+      return start();
+    }
     console.log('');
-    USE_CONFIG = result.useJSON;
-    start();
+    if(!fs.existsSync('conf/config.json')) {
+      fs.ensureDirSync('conf');
+      return start();
+    }
+    console.log('Found an existing config.json file. Do you want to use the values in this file during install?');
+    installHelpers.getInput(inputData.useConfigJSON, function(result) {
+      console.log('');
+      USE_CONFIG = result.useJSON;
+      start();
+    });
   });
 });
+
+// we need the framework version for the config items, so let's go
 
 function generatePromptOverrides() {
   if(USE_CONFIG) {
@@ -273,8 +292,10 @@ function generatePromptOverrides() {
     var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
     configData.install = 'y';
   }
+  const sessionSecret = USE_CONFIG && configData.sessionSecret || crypto.randomBytes(64).toString('hex');
+  addConfig({ sessionSecret: sessionSecret });
   // NOTE config.json < cmd args
-  return _.extend({}, configData, optimist.argv);
+  return Object.assign({}, configData, optimist.argv);
 }
 
 function start() {
@@ -292,11 +313,13 @@ function start() {
     }
     async.series([
       configureServer,
+      configureDatabase,
       configureFeatures,
       configureMasterTenant,
       createMasterTenant,
       createSuperUser,
-      buildFrontend
+      buildFrontend,
+      syncMigrations
     ], function(error, results) {
       if(error) {
         console.error('ERROR: ', error);
@@ -319,6 +342,20 @@ function configureServer(callback) {
       return handleError(error, 1, 'Failed to get latest framework version');
     }
     installHelpers.getInput(inputData.server, function(result) {
+      addConfig(result);
+      callback();
+    });
+  });
+}
+
+function configureDatabase(callback) {
+  installHelpers.getInput(inputData.database.dbConfig, function(result) {
+    addConfig(result);
+
+    var isStandard = !result.useConnectionUri || USE_CONFIG && configResults.useConnectionUri !== 'y';
+    var config = inputData.database[isStandard ? 'configureStandard' : 'configureUri'];
+
+    installHelpers.getInput(config, function(result) {
       addConfig(result);
       callback();
     });
@@ -375,63 +412,54 @@ function configureMasterTenant(callback) {
   } else {
     console.log('Now we need to configure the master tenant. \nTip: just press ENTER to accept the default value in brackets.\n');
   }
-  logger.clear();
-
-  installHelpers.showSpinner('Starting server');
+  logger.level('console','error');
   // run the app
-  app.run({ skipVersionCheck: true });
+  app.run({ skipVersionCheck: true, skipDependencyCheck: true });
   app.on('serverStarted', function() {
-    installHelpers.hideSpinner();
-    database.checkConnection(function(error) {
-      if(error) {
-        return callback(error);
-      }
-      if(USE_CONFIG && prompt.override.masterTenantName) {
-        /**
-        * remove the masterTenantDisplayName, as we can use the existing value
-        * (which isn't in config.json so can't be used as an auto override)
-        */
-        inputData.tenant = _.filter(inputData.tenant, function(item) {
-          return item.name !== 'masterTenantDisplayName';
-        });
-      }
-      installHelpers.getInput(inputData.tenant, function(result) {
-        console.log('');
-        // add the input to our cached config
-        addConfig({
-          masterTenant: {
-            name: result.masterTenantName,
-            displayName: result.masterTenantName
+
+    if(USE_CONFIG && prompt.override.masterTenantName) {
+      /**
+      * remove the masterTenantDisplayName, as we can use the existing value
+      * (which isn't in config.json so can't be used as an auto override)
+      */
+      inputData.tenant = inputData.tenant.filter(item => item.name !== 'masterTenantDisplayName');
+    }
+    installHelpers.getInput(inputData.tenant, function(result) {
+      console.log('');
+      // add the input to our cached config
+      addConfig({
+        masterTenant: {
+          name: result.masterTenantName,
+          displayName: result.masterTenantName
+        }
+      });
+      // check if the tenant name already exists
+      app.tenantmanager.retrieveTenant({ name: result.masterTenantName }, function(error, tenant) {
+        if(error) {
+          return onError(error);
+        }
+        if(!tenant) {
+          return callback();
+        }
+        if(!IS_INTERACTIVE) {
+          return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
+        }
+        if(!configResults.masterTenant.displayName) {
+          configResults.masterTenant.displayName = tenant.displayName;
+        }
+        console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
+        installHelpers.getInput(inputData.tenantDelete, function(result) {
+          console.log('');
+          if(!result.confirm) {
+            return exit(1, 'Exiting install.');
           }
-        });
-        // check if the tenant name already exists
-        app.tenantmanager.retrieveTenant({ name: result.masterTenantName }, function(error, tenant) {
-          if(error) {
-            return onError(error);
-          }
-          if(!tenant) {
-            return callback();
-          }
-          if(!IS_INTERACTIVE) {
-            return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
-          }
-          if(!configResults.masterTenant.displayName) {
-            configResults.masterTenant.displayName = tenant.displayName;
-          }
-          console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
-          installHelpers.getInput(inputData.tenantDelete, function(result) {
-            console.log('');
-            if(!result.confirm) {
-              return exit(1, 'Exiting install.');
-            }
-            // delete tenant
-            async.eachSeries(app.db.getModelNames(), function(modelName, cb) {
-              app.db.destroy(modelName, null, cb);
-            }, callback);
-          });
+          // delete tenant
+          async.eachSeries(app.db.getModelNames(), function(modelName, cb) {
+            app.db.destroy(modelName, null, cb);
+          }, callback);
         });
       });
-    }, configResults.dbName);
+    });
   });
 }
 
@@ -498,10 +526,22 @@ function buildFrontend(callback) {
   });
 }
 
+//As this is a fresh install we dont need to run the migrations so add them to the db and set them to up
+function syncMigrations(callback) {
+  installHelpers.syncMigrations(function(err, migrations) {
+    database.getDatabase(function(err, db) {
+      if(err) {
+        return callback(err);
+      }
+      db.update('migration', {}, {'state': 'up'}, callback)
+    }, masterTenant._id)
+  });
+}
+
 // helper functions
 
 function addConfig(newConfigItems) {
-  configResults = _.extend({}, configResults, newConfigItems);
+  Object.assign(configResults, newConfigItems);
 }
 
 /**
@@ -512,22 +552,37 @@ function addConfig(newConfigItems) {
  */
 
 function saveConfig(configItems, callback) {
-  // add some default values as these aren't set
-  var config = {
-    outputPlugin: 'adapt',
-    dbType: 'mongoose',
-    auth: 'local',
-    root: process.cwd()
-  };
-  // copy over the input values
-  _.each(configItems, function(value, key) {
-    config[key] = value;
-  });
-  fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
-    if(error) {
-      handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+  if (!IS_INTERACTIVE || USE_CONFIG) {
+    for (var key in configItems) {
+      if (configItems.hasOwnProperty(key) === false) continue;
+      var value = configItems[key];
+      if (typeof value !== 'string') continue;
+      value = value.toLocaleLowerCase();
+      if (value === 'y') {
+        configItems[key] = true;
+      } else if (value === 'n') {
+        configItems[key] = false;
+      }
     }
-    return callback();
+  }
+  fs.ensureDir('conf', function(error) {
+    if (error) {
+      return handleError(`Failed to create configuration directory.\n${error}`, 1, 'Install Failed.');
+    }
+    // Create the final config (with some default values not set in this script)
+    const config = Object.assign({
+      outputPlugin: 'adapt',
+      dbType: 'mongoose',
+      auth: 'local',
+      root: process.cwd()
+    }, configItems);
+
+    fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
+      if(error) {
+        return handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+      }
+      callback();
+    });
   });
 }
 

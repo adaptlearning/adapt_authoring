@@ -135,7 +135,7 @@ define(function(require){
       // add options
       _.each(this.themes.models, function(item, index) {
         if(item.get('_isAvailableInEditor') === false) return;
-        select.append($('<option>', { value: item.get('_id') }).text(item.get('displayName')));
+        select.append($('<option>', { value: item.get('theme') }).text(item.get('displayName')));
       }, this);
 
       // disable if no options
@@ -146,7 +146,7 @@ define(function(require){
 
       // select current theme
       var selectedTheme = this.getSelectedTheme();
-      if(selectedTheme) select.val(selectedTheme.get('_id'));
+      if(selectedTheme) select.val(selectedTheme.get('theme'));
     },
 
     updatePresetSelect: function() {
@@ -208,7 +208,7 @@ define(function(require){
 
     showPresetEdit: function(event) {
       event && event.preventDefault();
-      var parentTheme = this.getSelectedTheme().get('_id');
+      var parentTheme = this.getSelectedTheme().get('theme');
       var pev = new PresetEditView({
         model: new Backbone.Model({ presets: new Backbone.Collection(this.presets.where({ parentTheme: parentTheme })) })
       });
@@ -256,7 +256,7 @@ define(function(require){
 
       var presetModel = new PresetModel({
         displayName: presetName,
-        parentTheme: this.getSelectedTheme().get('_id'),
+        parentTheme: this.getSelectedTheme().get('theme'),
         properties: this.extractData(this.form.model.attributes)
       });
 
@@ -347,9 +347,9 @@ define(function(require){
     },
 
     getSelectedTheme: function() {
-      var themeId = $('select#theme', this.$el).val();
-      if(themeId) {
-        return this.themes.findWhere({ '_id': themeId });
+      var theme = $('select#theme', this.$el).val();
+      if (theme) {
+        return this.themes.findWhere({ 'theme': theme });
       } else {
         return this.themes.findWhere({ 'name': this.model.get('_theme') });
       }
@@ -363,7 +363,7 @@ define(function(require){
       } else if(includeCached !== false){
         var selectedTheme = this.getSelectedTheme();
         if(!selectedTheme) return;
-        var parent = selectedTheme.get('_id');
+        var parent = selectedTheme.get('theme');
         return this.presets.findWhere({ '_id': this.model.get('_themePreset'), parentTheme: parent });
       }
     },

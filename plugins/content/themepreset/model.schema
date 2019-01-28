@@ -9,7 +9,7 @@
       "required": true
     },
     "parentTheme":{
-      "type": "objectid",
+      "type": "string",
       "required": true
     },
     "properties": {

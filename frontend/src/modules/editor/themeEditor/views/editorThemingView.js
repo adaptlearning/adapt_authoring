@@ -24,13 +24,13 @@ define(function(require){
       'change .preset select': 'onPresetChanged',
       'change .form-container form': 'onFieldChanged',
       'click button.edit': 'showPresetEdit',
-      'click button.reset': 'restoreDefaultSettings'
+      'click button.reset': 'restoreDefaultSettings',
+      'click .save-preset': 'onSavePresetClicked'
     },
 
     initialize: function() {
       this.listenTo(this, 'dataReady', this.render);
       this.listenTo(Origin, 'editorThemingSidebar:views:save', this.saveData);
-      this.listenTo(Origin, 'editorThemingSidebar:views:savePreset', this.onSavePresetClicked);
 
       this.listenTo(Origin, 'managePresets:edit', this.onEditPreset);
       this.listenTo(Origin, 'managePresets:delete', this.onDeletePreset);

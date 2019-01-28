@@ -37,7 +37,8 @@ define([
   }
 
   function generateFieldObject(field, key) {
-    var isFieldTypeObject = field.type === 'object';
+    var fieldType = field.type;
+    var isFieldTypeObject = fieldType === 'object';
     var inputType = field.inputType;
     var items = field.items;
     var itemsProperties = items && items.properties;
@@ -65,11 +66,13 @@ define([
         return 'Object';
       }
 
-      if (itemsProperties) {
-        return Backbone.Form.editors[itemsInputType] ? itemsInputType : 'List';
+      if (itemsProperties && Backbone.Form.editors[itemsInputType]) {
+        return itemsInputType;
       }
 
-      return itemsInputType;
+      if (fieldType === 'array') {
+        return 'List';
+      }
     };
 
     var getValidators = function() {

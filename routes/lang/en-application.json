@@ -338,5 +338,7 @@
   "app.reset": "Reset",
   "app.titlelock": "Link with title",
   "app.titleunlock": "Unlink from title",
-  "app.stopsharingwithyourself": "You cannot remove yourself from this list.<br/><br/>If you want to stop sharing this course with yourself, please use another user account."
+  "app.stopsharingwithyourself": "You cannot remove yourself from this list.<br/><br/>If you want to stop sharing this course with yourself, please use another user account.",
+  "app.maxfileuploadsize": "Maximum upload file size: %{size}.",
+  "app.uploadsizeerror": "File size limit exceeded. Expected no more than %{max}, received %{size}."
 }

@@ -1,4 +1,8 @@
-# BUG Template
+---
+name: Bug report
+about: Create a report to help us improve
+
+---
 
 ## Expected Behaviour
 
@@ -12,18 +16,7 @@
 ## Versions
   - Authoring Tool Version:
   - Framework Version:
+  - Node.js Version:
+  - MongoDB Version:
   - Operating System:
   - Browser:
-
-
-# Feature Request Template
-
-## Affected Area
-
-## Requested Feature
-
-## Use Case
-
-## Current Workaround
-
-## Additional Information

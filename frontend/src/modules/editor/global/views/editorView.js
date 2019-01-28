@@ -45,11 +45,11 @@ define(function(require) {
         'editorView:copyID': this.copyIdToClipboard,
         'editorView:paste': this.pasteFromClipboard,
         'editorCommon:download': function(event) {
-          this.validateProject(event, this.downloadProject);
+          this.validateProject(this.downloadProject);
         },
         'editorCommon:preview': function(event) {
           var previewWindow = window.open('/loading', 'preview');
-          this.validateProject(event, function(error) {
+          this.validateProject(function(error) {
             if(error) {
               return previewWindow.close();
             }
@@ -57,7 +57,7 @@ define(function(require) {
           });
         },
         'editorCommon:export': function(event) {
-          this.validateProject(event, this.exportProject);
+          this.validateProject(this.exportProject);
         }
       });
       this.render();
@@ -72,12 +72,12 @@ define(function(require) {
       this.renderCurrentEditorView();
     },
 
-    validateProject: function(e, next) {
+    validateProject: function(next) {
       helpers.validateCourseContent(this.currentCourse, _.bind(function(error) {
         if(error) {
           Origin.Notify.alert({ type: 'error', text: "There's something wrong with your course:<br/><br/>" + error });
         }
-        next.call(this, e, error);
+        next.call(this, error);
       }, this));
     },
 
@@ -114,10 +114,10 @@ define(function(require) {
       }, this));
     },
 
-    exportProject: function() {
+    exportProject: function(error) {
       // TODO - very similar to export in project/views/projectView.js, remove duplication
       // aleady processing, don't try again
-      if(this.exporting) return;
+      if(error || this.exporting) return;
 
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
@@ -166,8 +166,8 @@ define(function(require) {
       }
     },
 
-    downloadProject: function() {
-      if(Origin.editor.isDownloadPending) {
+    downloadProject: function(error) {
+      if(error || Origin.editor.isDownloadPending) {
         return;
       }
       $('.editor-common-sidebar-download-inner').addClass('display-none');

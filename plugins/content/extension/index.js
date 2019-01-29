@@ -7,10 +7,7 @@ var _ = require('underscore');
 var async = require('async');
 var bower = require('bower');
 var fs = require('fs');
-var mkdirp = require('mkdirp');
-var ncp = require('ncp').ncp;
 var path = require('path');
-var rimraf = require('rimraf');
 var util = require('util');
 
 var BowerPlugin = require('../bower');
@@ -34,7 +31,6 @@ var bowerConfig = {
   packageType: 'extension',
   srcLocation: 'extensions',
   options: defaultOptions,
-  extra: [ "targetAttribute" ],
   nameList: [],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     database.getDatabase(function (err, db) {
@@ -295,7 +291,7 @@ function contentCreationHook (contentType, data, cb) {
 
 function toggleExtensions (courseId, action, extensions, cb) {
   if (!extensions || 'object' !== typeof extensions) {
-    return cb(error);
+    return cb(new Error('Incorrect parameters passed'));
   }
 
   var user = usermanager.getCurrentUser();
@@ -510,6 +506,8 @@ function initialize () {
       });
     });
   });
+  // HACK surface this properly somewhere
+  app.contentmanager.toggleExtensions = toggleExtensions;
 
   // add content creation hooks for each viable content type
   ['contentobject', 'article', 'block', 'component'].forEach(function (contentType) {

@@ -1,0 +1,102 @@
+.colorlabel {
+    @popup-border-color: silver;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    max-width: 640px;
+
+    background: @adapt-white;
+    border: solid 1px @popup-border-color;
+    box-shadow: 0 0 4px @popup-border-color;
+
+    .colorlabel-inner {
+        padding: 20px;
+
+        .colorlabel-header {
+            .title {
+                font-size: 17px;
+                font-weight: 700;
+                line-height: 20px;
+                padding: 0 4px;
+            }
+            .intro {
+                padding: 20px 4px;
+            }
+        }
+
+    }
+
+    .colors {
+        .colors-inner {
+            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+
+            .color-item {
+                font-size: 0;
+                border: solid 4px @adapt-white;
+                width: 30px;
+                height: 30px;
+                border-radius: 4px;
+
+                &[data-colorlabel="colorlabel-1"] {
+                    background-color: @colorlabel-1;
+                }
+                &[data-colorlabel="colorlabel-2"] {
+                    background-color: @colorlabel-2;
+                }
+                &[data-colorlabel="colorlabel-3"] {
+                    background-color: @colorlabel-3;
+                }
+                &[data-colorlabel="colorlabel-4"] {
+                    background-color: @colorlabel-4;
+                }
+                &[data-colorlabel="colorlabel-5"] {
+                    background-color: @colorlabel-5;
+                }
+                &[data-colorlabel="colorlabel-6"] {
+                    background-color: @colorlabel-6;
+                }
+                &[data-colorlabel="colorlabel-7"] {
+                    background-color: @colorlabel-7;
+                }
+                &[data-colorlabel="colorlabel-8"] {
+                    background-color: @colorlabel-8;
+                }
+                &[data-colorlabel="colorlabel-9"] {
+                    background-color: @colorlabel-9;
+                }
+                &[data-colorlabel="colorlabel-10"] {
+                    background-color: @colorlabel-10;
+                }
+                &[data-colorlabel="colorlabel-11"] {
+                    background-color: @colorlabel-11;
+                }
+                &[data-colorlabel="colorlabel-12"] {
+                    background-color: @colorlabel-12;
+                }
+                &[data-colorlabel="colorlabel-13"] {
+                    background-color: @colorlabel-13;
+                }
+                &[data-colorlabel="colorlabel-14"] {
+                    background-color: @colorlabel-14;
+                }
+
+                &.selected {
+                    border-color: darken(@adapt-white, 50%);
+                    border-radius: 8px;
+                }
+            }
+        }
+    }
+
+    .footer {
+        text-align: center;
+
+        .warning {
+            margin-right: 40px;
+        }
+    }
+}

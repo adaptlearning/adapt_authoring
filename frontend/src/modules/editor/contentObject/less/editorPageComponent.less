@@ -1,10 +1,10 @@
 .component {
-    overflow:hidden;
+    overflow: hidden;
     position: relative;
     min-height: 90px;
-    background-color:#D6F3F9;
-    border-radius:3px;
-    border:1px solid #31B8CC;
+    background-color: #D6F3F9;
+    border-radius: 3px;
+    border: 1px solid #31B8CC;
 
     // TODO fix these !importants
     .editor-item-settings {
@@ -14,10 +14,13 @@
         [class*="-delete "] {
             right: 10px !important;
         }
+        &-inner {
+          padding: 0;
+        }
     }
 
     &-inner {
-        margin: 35px 20px 20px 20px;
+        padding: 10px 20px 20px 20px;
         .component-type {
             color: #34BEE0;
             margin-bottom: 5px;

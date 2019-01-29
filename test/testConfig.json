@@ -1,7 +1,7 @@
 {
   "rootUrl": "http://localhost:5000",
   "serverName": "localhost",
-  "serverPort": 5000,
+  "serverPort": 5001,
   "dbType": "mongoose",
   "dbHost": "localhost",
   "dbPort": 27017,

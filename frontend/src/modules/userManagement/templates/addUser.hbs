@@ -17,7 +17,7 @@
         <label for="tenant">{{t 'app.tenant'}}</label>
         <select name="_tenantId">
           {{#each globalData.allTenants.models}}
-            <option value="{{{this.attributes._id}}}">{{{this.attributes.displayName}}}</option>
+            <option value="{{{this.attributes._id}}}">{{this.attributes.displayName}}</option>
           {{/each}}
         </select>
       </div>
@@ -25,7 +25,7 @@
         <label for="role">{{t 'app.role'}}</label>
         <select name="role">
           {{#each globalData.allRoles.models}}
-            <option value="{{{this.attributes._id}}}">{{{this.attributes.name}}}</option>
+            <option value="{{{this.attributes._id}}}">{{this.attributes.name}}</option>
           {{/each}}
         </select>
       </div>

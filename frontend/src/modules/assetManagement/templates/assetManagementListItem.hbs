@@ -27,7 +27,7 @@
     </div>
 
     {{#ifValueEquals assetType "image"}}
-        {{#if metadata}} 
+        {{#if metadata}}
         <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
         {{else}}
         <div class="asset-management-list-item-image">
@@ -38,7 +38,7 @@
     {{/ifValueEquals}}
 
     {{#ifValueEquals assetType "video"}}
-        {{#if metadata}} 
+        {{#if metadata}}
         <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})"}>
         {{else}}
         <div class="asset-management-list-item-image">
@@ -65,12 +65,12 @@
         <div class="asset-management-list-item-details-inner">
 
         <div class="asset-management-list-item-title">
-            <h4 class="asset-management-list-item-title-inner">{{{title}}}</h4>
+            <h4 class="asset-management-list-item-title-inner">{{title}}</h4>
         </div>
 
         </div>
 
-        
+
 
     </div>
 

@@ -13,7 +13,14 @@
 .editor-menu-layer-inner {
   position: relative;
   overflow-y: auto;
-  overflow-x:hidden;
+  overflow-x: hidden;
+
+  .sortable-placeholder {
+    background: lighten(@primary-color,  40%);
+    border: 1px dashed lighten(@primary-color,  15%);
+    border-radius: 3px;
+    margin: 20px;
+  }
 }
 
 .editor-menu-layer-controls {
@@ -55,7 +62,6 @@
 
 .editor-menu-item {
   &-title {
-    padding: 8px 0 0 35px;
     h3 {
       font-size: 14px;
       font-weight: @font-weight;

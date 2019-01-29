@@ -8,8 +8,7 @@ define(['require', 'backbone', 'core/origin'], function(require, Backbone, Origi
       email: '',
       isAuthenticated: false,
       permissions: [],
-      otherLoginLinks: [],
-      _canRevert: false
+      otherLoginLinks: []
     },
 
     initialize: function() {

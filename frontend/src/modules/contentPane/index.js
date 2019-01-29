@@ -8,6 +8,12 @@ define(function(require) {
   Origin.contentPane = {
     setView: function(ViewClass, options) {
       contentPaneView.setView(new ViewClass(options));
+    },
+    enableScroll: function() {
+      contentPaneView.$el.removeClass('no-scroll');
+    },
+    disableScroll: function() {
+      contentPaneView.$el.addClass('no-scroll');
     }
   };
 

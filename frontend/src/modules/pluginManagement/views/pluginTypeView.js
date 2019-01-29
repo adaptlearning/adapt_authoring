@@ -15,8 +15,10 @@ define(function(require){
 
     preRender: function () {
       this.listenTo(this, 'remove', this.remove);
-      this.listenTo(this.model, 'destroy', this.remove);
-      this.listenTo(this.model, 'sync', this.render);
+      this.listenTo(this.model, {
+        sync: this.render,
+        destroy: this.remove
+      });
     },
 
     toggleEnabled: function () {

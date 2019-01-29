@@ -3,50 +3,43 @@ define(function(require){
   var Helpers = require('core/helpers');
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
-
   var PluginTypeView = require('./pluginTypeView');
-  var ExtensionTypeCollection = require('../collections/extensionTypeCollection');
-  var ThemeTypeCollection = require('../collections/themeTypeCollection');
-  var ComponentTypeCollection = require('../collections/componentTypeCollection');
-  var MenuTypeCollection = require('../collections/menuTypeCollection');
 
   var PluginManagementView = OriginView.extend({
     className: "pluginManagement",
     tagName: "div",
-
     pluginType: "plugin",
-    pluginCollections: {
-      'extension' : ExtensionTypeCollection,
-      'component' : ComponentTypeCollection,
-      'theme' : ThemeTypeCollection,
-      'menu': MenuTypeCollection
-    },
 
     events: {
       'click .refresh-all-plugins': 'refreshPluginList'
     },
 
-    initialize: function(options) {
-      this.pluginType = options.pluginType;
-      return OriginView.prototype.initialize.apply(this, arguments);
+    getColl: function() {
+      return this.pluginCollections[this.pluginType];
     },
 
-    initialiseCollection: function() {
-      this.collection = new (this.pluginCollections[this.pluginType])();
-      this.listenToOnce(this.collection, 'sync', this.renderPluginTypeViews);
-      this.collection.fetch();
+    initialize: function(options) {
+      this.pluginType = options.pluginType;
+      this.pluginCollections = {
+        extension: Origin.editor.data.extensiontypes,
+        component: Origin.editor.data.componenttypes,
+        theme: Origin.editor.data.themetypes,
+        menu: Origin.editor.data.menutypes
+      };
+
+      return OriginView.prototype.initialize.apply(this, arguments);
     },
 
     preRender: function() {
       Origin.trigger('location:title:update', { title: Origin.l10n.t('app.' + this.pluginType + 'management') });
-      this.initialiseCollection();
+      this.getColl().fetch({ success: this.renderPluginTypeViews.bind(this) });
     },
 
-    renderPluginTypeViews: function(collection) {
+    renderPluginTypeViews: function() {
       this.$('.pluginManagement-plugins').empty();
 
-      this.collection.each(this.renderPluginTypeView);
-      this.evaluatePluginTypeCount(this.collection);
+      this.getColl().each(this.renderPluginTypeView);
+      this.evaluatePluginTypeCount(this.getColl());
 
       this.setViewToReady();
     },
@@ -71,10 +64,10 @@ define(function(require){
 
       $btn.attr('disabled', true);
 
-      this.collection.fetch({
+      this.getColl().fetch({
         success: _.bind(function() {
           Origin.trigger('scaffold:updateSchemas', function() {
-            this.renderPluginTypeViews(this.collection);
+            this.renderPluginTypeViews();
           }, this);
         }, this),
         error: console.log

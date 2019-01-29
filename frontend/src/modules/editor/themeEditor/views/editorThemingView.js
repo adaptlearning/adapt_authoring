@@ -156,15 +156,21 @@ define(function(require){
       // add 'no presets'
       select.append($('<option>', { value: "", selected: 'selected' }).text(Origin.l10n.t('app.nopresets')));
       // add options
-      _.each(presets, function(item, index) {
+      _.each(presets, function(item) {
         select.append($('<option>', { value: item.get('_id') }).text(item.get('displayName')));
       }, this);
       // disable delete, hide manage preset buttons if empty
       if (presets.length > 0) {
-        // TODO check selected preset exists in db (in case deleted)
         var selectedPreset = this.getSelectedPreset();
         if (selectedPreset && selectedPreset.get('parentTheme') === theme) {
-          select.val(selectedPreset.get('_id'));
+          $.get('/api/themepreset/exists/' + selectedPreset.get('_id'), function(data) {
+            if (data.success) {
+              select.val(selectedPreset.get('_id'))
+            } else {
+              select.val('');
+              select.find('option[value="' + selectedPreset.get('_id') + '"]').remove();
+            }
+          });
         }
         select.attr('disabled', false);
         this.$('button.edit').show();

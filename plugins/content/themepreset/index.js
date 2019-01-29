@@ -52,7 +52,7 @@ ThemePresetContent.prototype.updatePreset = function (presetId, courseId, res, n
 
 function initialize () {
   var app = Origin();
-  app.once('serverStarted', function () {
+  app.once('serverStarted', function (server) {
     app.rest.post('/themepreset/:presetid/makeitso/:courseid', function (req, res, next) {
       var presetId = req.params.presetid;
       var courseId = req.params.courseid;
@@ -71,6 +71,22 @@ function initialize () {
             return res.status(404).json({ success: false, message: 'preset not found' });
           }
           return new ThemePresetContent().updatePreset(presetId, courseId, res, next);
+        });
+      });
+    });
+
+    app.rest.get('/themepreset/exists/:presetid', function (req, res, next) {
+      var presetId = req.params.presetid;
+      Database.getDatabase(function (err, db) {
+        if (err) return next(err);
+
+        // Verify it's a valid preset
+        db.retrieve('themepreset', { _id: presetId }, function (err, results) {
+          if (err) return next(err);
+          if (!results || 1 !== results.length) {
+              return res.status(404).json({ success:false });
+          }
+          return res.status(200).json({ success:true });
         });
       });
     });

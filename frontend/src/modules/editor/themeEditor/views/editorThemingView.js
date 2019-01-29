@@ -24,7 +24,7 @@ define(function(require){
       'change .preset select': 'onPresetChanged',
       'change .form-container form': 'onFieldChanged',
       'click button.edit': 'showPresetEdit',
-      'click button.reset': 'restoreDefaultSettings',
+      'click button.reset': 'restorePresetSettings',
       'click .save-preset': 'onSavePresetClicked'
     },
 
@@ -52,7 +52,7 @@ define(function(require){
         title: Origin.l10n.t('app.themingtitle')
       });
 
-      this.updateRestoreDefaultButton();
+      this.updateRestorePresetButton();
       this.renderForm();
     },
 
@@ -216,17 +216,17 @@ define(function(require){
       $('body').append(pev.el);
     },
 
-    restoreDefaultSettings: function(event) {
+    restorePresetSettings: function(event) {
       event && event.preventDefault();
       var self = this;
       Origin.Notify.confirm({
         type: 'warning',
-        text: Origin.l10n.t('app.restoredefaultstext'),
+        text: Origin.l10n.t('app.restorepresettext'),
         callback: function(confirmed) {
           if(confirmed) {
             var preset = self.getSelectedPreset();
             var settings = (preset) ? preset.get('properties') : self.getDefaultThemeSettings();
-            self.updateRestoreDefaultButton(false);
+            self.updateRestorePresetButton(false);
             self.restoreFormSettings(settings);
           }
         }
@@ -268,7 +268,7 @@ define(function(require){
         },
         success: function() {
           self.presets.add(presetModel);
-          self.updateRestoreDefaultButton(false);
+          self.updateRestorePresetButton(false);
           window.setTimeout(function() { self.$('.preset select').val(presetModel.get('_id')); }, 1);
         }
       });
@@ -403,7 +403,7 @@ define(function(require){
       return true;
     },
 
-    updateRestoreDefaultButton: function(shouldShow) {
+    updateRestorePresetButton: function(shouldShow) {
       if (typeof shouldShow === 'undefined') {
         // If flag was not passed in then compare default settings with current settings
         // and show restore button if there are differences
@@ -461,11 +461,11 @@ define(function(require){
       var preset = this.presets.findWhere({ _id: $(event.currentTarget).val() });
       var settings = preset && preset.get('properties') || this.getDefaultThemeSettings();
       this.restoreFormSettings(settings);
-      this.updateRestoreDefaultButton(false);
+      this.updateRestorePresetButton(false);
     },
 
     onFieldChanged: function() {
-        this.updateRestoreDefaultButton(true);
+        this.updateRestorePresetButton(true);
     },
 
     onSavePresetClicked: function() {

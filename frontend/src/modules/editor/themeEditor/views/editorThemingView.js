@@ -167,10 +167,9 @@ define(function(require){
             if (data.success) {
               select.val(selectedPreset.get('_id'))
             } else {
-              select.val('');
-              select.find('option[value="' + selectedPreset.get('_id') + '"]').remove();
+              this.removePresetOption(selectedPreset.get('_id'));
             }
-          });
+          }.bind(this));
         }
         select.attr('disabled', false);
         this.$('button.edit').show();
@@ -434,7 +433,17 @@ define(function(require){
     },
 
     onDeletePreset: function(preset) {
-      this.presets.findWhere({ displayName: preset }).destroy();
+      var toDestroy = this.presets.findWhere({ displayName: preset });
+      this.removePresetOption(toDestroy.get('_id'));
+      toDestroy.destroy();
+    },
+
+    removePresetOption: function(id) {
+      var select = this.$('.preset select');
+      if (select.val() === id) {
+          select.val('');
+      }
+      select.find('option[value="' + id + '"]').remove();
     },
 
     onCollectionReady: function(collection) {

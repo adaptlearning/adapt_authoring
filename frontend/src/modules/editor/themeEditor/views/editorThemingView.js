@@ -63,7 +63,7 @@ define(function(require){
 
       if(this.themeIsEditable(selectedTheme)) {
         this.$('.tile.preset').show();
-        this.$('.buttons-container').show();
+        this.$('.edit.btn.secondary').show();
         try {
           this.form = Origin.scaffold.buildForm({
             model: selectedTheme,
@@ -88,7 +88,7 @@ define(function(require){
         _.defer(function() { this.restoreFormSettings(toRestore); }.bind(this));
       } else {
         this.$('.tile.preset').hide();
-        this.$('.buttons-container').hide();
+        this.$('.edit.btn.secondary').hide();
       }
     },
 

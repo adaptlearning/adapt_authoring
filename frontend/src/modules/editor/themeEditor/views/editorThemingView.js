@@ -2,11 +2,9 @@
 define(function(require){
   var Backbone = require('backbone');
   var EditorOriginView = require('../../global/views/editorOriginView');
-  var Handlebars = require('handlebars');
   var Helpers = require('core/helpers');
   var Origin = require('core/origin');
   var ThemeCollection = require('../collections/editorThemeCollection');
-
   var PresetCollection = require('../collections/editorPresetCollection.js');
   var PresetEditView = require('./editorPresetEditView.js');
   var PresetModel = require('../models/editorPresetModel.js');
@@ -31,7 +29,6 @@ define(function(require){
     initialize: function() {
       this.listenTo(this, 'dataReady', this.render);
       this.listenTo(Origin, 'editorThemingSidebar:views:save', this.saveData);
-
       this.listenTo(Origin, 'managePresets:edit', this.onEditPreset);
       this.listenTo(Origin, 'managePresets:delete', this.onDeletePreset);
 
@@ -61,7 +58,7 @@ define(function(require){
 
       var selectedTheme = this.getSelectedTheme();
 
-      if(this.themeIsEditable(selectedTheme)) {
+      if (this.themeIsEditable(selectedTheme)) {
         this.$('.tile.preset').show();
         this.$('.edit.btn.secondary').show();
         try {
@@ -74,7 +71,7 @@ define(function(require){
           console.log(e);
         }
 
-        if(this.form) {
+        if (this.form) {
           this.$('.form-container').html(this.form.el);
           this.$('.empty-message').hide();
         } else {
@@ -135,7 +132,7 @@ define(function(require){
       select.append($('<option>', { value: "", disabled: 'disabled', selected: 'selected' }).text(Origin.l10n.t('app.selectinstr')));
       // add options
       _.each(this.themes.models, function(item, index) {
-        if(item.get('_isAvailableInEditor') === false) return;
+        if (item.get('_isAvailableInEditor') === false) return;
         select.append($('<option>', { value: item.get('theme') }).text(item.get('displayName')));
       }, this);
 
@@ -143,11 +140,11 @@ define(function(require){
       select.attr('disabled', this.themes.models.length === 0);
 
       // restore the previous value
-      if(oldVal) return select.val(oldVal);
+      if (oldVal) return select.val(oldVal);
 
       // select current theme
       var selectedTheme = this.getSelectedTheme();
-      if(selectedTheme) select.val(selectedTheme.get('theme'));
+      if (selectedTheme) select.val(selectedTheme.get('theme'));
     },
 
     updatePresetSelect: function() {
@@ -163,10 +160,10 @@ define(function(require){
         select.append($('<option>', { value: item.get('_id') }).text(item.get('displayName')));
       }, this);
       // disable delete, hide manage preset buttons if empty
-      if(presets.length > 0) {
+      if (presets.length > 0) {
         // TODO check selected preset exists in db (in case deleted)
         var selectedPreset = this.getSelectedPreset();
-        if(selectedPreset && selectedPreset.get('parentTheme') === theme) {
+        if (selectedPreset && selectedPreset.get('parentTheme') === theme) {
           select.val(selectedPreset.get('_id'));
         }
         select.attr('disabled', false);
@@ -178,7 +175,7 @@ define(function(require){
     },
 
     restoreFormSettings: function(toRestore) {
-      if(!this.form || !this.form.el) return;
+      if (!this.form || !this.form.el) return;
 
       for (var key in toRestore) {
         // Check for nested properties
@@ -223,7 +220,7 @@ define(function(require){
         type: 'warning',
         text: Origin.l10n.t('app.restorepresettext'),
         callback: function(confirmed) {
-          if(confirmed) {
+          if (confirmed) {
             var preset = self.getSelectedPreset();
             var settings = (preset) ? preset.get('properties') : self.getDefaultThemeSettings();
             self.updateRestorePresetButton(false);
@@ -277,7 +274,7 @@ define(function(require){
     saveData: function(event) {
       event && event.preventDefault();
 
-      if(!this.validateForm()) {
+      if (!this.validateForm()) {
         return Origin.trigger('sidebar:resetButtons');
       }
 
@@ -307,7 +304,7 @@ define(function(require){
     },
 
     postSettingsData: function(callback) {
-      if(this.form) {
+      if (this.form) {
         this.form.commit();
         var settings = this.extractData(this.form.model.attributes);
         Origin.editor.data.course.set('themeVariables', settings);
@@ -359,11 +356,11 @@ define(function(require){
     // param used to only return the val() (and ignore model data)
     getSelectedPreset: function(includeCached) {
       var presetId = $('select#preset', this.$el).val();
-      if(presetId) {
+      if (presetId) {
         return this.presets.findWhere({ '_id': presetId });
-      } else if(includeCached !== false){
+      } else if (includeCached !== false){
         var selectedTheme = this.getSelectedTheme();
-        if(!selectedTheme) return;
+        if (!selectedTheme) return;
         var parent = selectedTheme.get('theme');
         return this.presets.findWhere({ '_id': this.model.get('_themePreset'), parentTheme: parent });
       }
@@ -388,15 +385,15 @@ define(function(require){
 
     themeIsEditable: function(theme) {
       var props = theme && theme.get('properties');
-      if(!props) {
+      if (!props) {
         return false;
       }
-      if(Object.keys(props).length === 1) {
-        if(props.hasOwnProperty('pluginLocations')) {
+      if (Object.keys(props).length === 1) {
+        if (props.hasOwnProperty('pluginLocations')) {
           return false;
         }
-        // HACK for old themes
-        if(props.hasOwnProperty('_screenSize')) {
+        // For old themes
+        if (props.hasOwnProperty('_screenSize')) {
           return false;
         }
       }
@@ -435,9 +432,9 @@ define(function(require){
     },
 
     onCollectionReady: function(collection) {
-      if(collection === this.themes || collection === this.presets) {
+      if (collection === this.themes || collection === this.presets) {
         collection.ready = true;
-        if(this.isDataLoaded()) this.trigger('dataReady');
+        if (this.isDataLoaded()) this.trigger('dataReady');
       }
       // must just be a model
       else {

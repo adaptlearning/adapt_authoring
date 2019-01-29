@@ -23,7 +23,7 @@
   "app.restorepreset": "Restore to preset",
   "app.restorepresettext": "This will discard the selected settings and restore the defaults for your chosen theme and preset combination.",
   "app.customisethemetitle": "Customise theme",
-  "app.customisethemedesc": "You can adjust a number of variables in your chosen theme below.<br/><br/><em><b>Tip:</b> You can also save your selections here as a 'preset' for quick access later. Do this using the button in the sidebar to the left of the screen.</em>",
+  "app.customisethemedesc": "You can adjust a number of variables in your chosen theme below.<br/><br/><em><b>Tip:</b> You can also save your selections here as a 'preset' for quick access later. Do this using the button in the top corner of this panel.</em>",
   "app.themeoverwrite": "By continuing, you will overwrite the saved settings for the %{preset} preset",
   "app.presetinputtext": "Enter a name for new preset",
   "app.duplicatepreseterror": "A preset with that name already exists.",

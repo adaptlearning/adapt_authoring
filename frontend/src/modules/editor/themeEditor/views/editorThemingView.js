@@ -103,6 +103,7 @@ define(function(require){
 
     postRender: function() {
       this.updateSelects();
+      this.$el.find('fieldset:not(:has(>.field))').addClass('empty-fieldset');
       this.setViewToReady();
 
       this.$el.show();

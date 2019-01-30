@@ -14,7 +14,7 @@ define(function(require){
     className: 'theming',
 
     settings: {
-      autoRender: false
+      presetSelection: null
     },
 
     events: {
@@ -78,6 +78,7 @@ define(function(require){
           this.$('.empty-message').show();
         }
 
+        this.$el.find('fieldset:not(:has(>.field))').addClass('empty-fieldset');
         this.$('.theme-customiser').show();
         Origin.trigger('theming:showPresetButton', true);
 
@@ -100,7 +101,6 @@ define(function(require){
 
     postRender: function() {
       this.updateSelects();
-      this.$el.find('fieldset:not(:has(>.field))').addClass('empty-fieldset');
       this.setViewToReady();
 
       this.$el.show();
@@ -360,8 +360,11 @@ define(function(require){
 
     // param used to only return the val() (and ignore model data)
     getSelectedPreset: function(includeCached) {
+      var storedId = this.getPresetSelection();
       var presetId = $('select#preset', this.$el).val();
-      if (presetId) {
+      if (storedId) {
+        return this.presets.findWhere({ '_id': storedId });
+      } else if (presetId) {
         return this.presets.findWhere({ '_id': presetId });
       } else if (includeCached !== false){
         var selectedTheme = this.getSelectedTheme();
@@ -422,6 +425,14 @@ define(function(require){
       shouldShow ? this.$('button.reset').show() : this.$('button.reset').hide();
     },
 
+    getPresetSelection: function() {
+      return this.settings.presetSelection;
+    },
+
+    setPresetSelection: function(id) {
+      this.settings.presetSelection = id;
+    },
+
     /**
     * Event handling
     */
@@ -472,6 +483,7 @@ define(function(require){
     onPresetChanged: function(event) {
       var preset = this.presets.findWhere({ _id: $(event.currentTarget).val() });
       var settings = preset && preset.get('properties') || this.getDefaultThemeSettings();
+      this.setPresetSelection($(event.currentTarget).val());
       this.restoreFormSettings(settings);
       this.updateRestorePresetButton(false);
     },

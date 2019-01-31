@@ -23,7 +23,11 @@ define(function(require) {
 
 		var notifyConsole = require('./plugins/console/index');
 		notifyConsole();
+
+		var notifySnackbar = require('./plugins/snackbar/index');
+		notifySnackbar();
 	};
 
 	return Notify;
+
 });

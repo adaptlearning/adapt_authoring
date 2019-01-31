@@ -1,6 +1,6 @@
 {
   "name": "adapt_authoring",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "license": "GPL-3.0",
   "description": "A server-based user interface for authoring eLearning courses using the Adapt Framework.",
   "keywords": [
@@ -20,25 +20,6 @@
     "test": "grunt test",
     "migrate": "migrate --config conf/migrate.json --template-file migrations/helpers/template.js"
   },
-  "contributors": [
-    "Ryan Adams <ryana@learningpool.com>",
-    "Thomas Berger <thomas.berger@learnchamp.com>",
-    "Kevin Corry <kevinc@learningpool.com>",
-    "Simon Date <simondate@yahoo.co.uk>",
-    "Thomas Eitler <thomas.eitler@learnchamp.com>",
-    "Dan Gray <dan@sinensis.co.uk>",
-    "Tom Greenfield <tom.greenfield@kineo.com>",
-    "Dennis Heaney <dennis@learningpool.com>",
-    "Daryl Hedley <darylhedley@hotmail.com>",
-    "Ryan Lafferty <ryanl@learningpool.com>",
-    "Sven Laux <sven.laux@kineo.com>",
-    "Louise McMahon <louise.mcmahon@canstudios.com>",
-    "Rob Moore <rob@learningpool.com>",
-    "Petra Nussdorfer <petra.nussdorfer@learnchamp.com>",
-    "Brian Quinn <brian@learningpool.com>",
-    "Thomas Taylor <hello@tomtaylor.name>",
-    "Nicola Willis <nicola.willis@canstudios.com>"
-  ],
   "dependencies": {
     "archiver": "^2.1.1",
     "async": "^2.6.1",

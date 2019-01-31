@@ -29,6 +29,7 @@ before_install:
 install:
   - npm config set spin false
   - npm install
+  - grunt build:prod
 
 matrix:
   fast_finish: true

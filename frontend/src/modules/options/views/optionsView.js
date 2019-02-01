@@ -73,9 +73,8 @@ define(function(require) {
     },
 
     setSelectedOption: function(selectedOption) {
-      // if this item is in a group toggle all group items to not selected
       var group = selectedOption.attr('data-group');
-      if(group && selectedOption.hasClass('selected')) {
+      if(group) {
         this.$('.options-group-' + group + ' button').removeClass('selected');
         selectedOption.addClass('selected');
       }

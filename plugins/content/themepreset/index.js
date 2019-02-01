@@ -21,7 +21,7 @@ ThemePresetContent.prototype.getModelName = function() {
 ThemePresetContent.prototype.updatePreset = function(presetId, courseId, res, next) {
   // save to config
   app.contentmanager.retrieve('config', { _courseId: courseId }, function(err, config) {
-    if(err) return next(err);
+    if (err) return next(err);
       var delta = config[0];
       // set or delete themePreset
       if (presetId !== 'null') {

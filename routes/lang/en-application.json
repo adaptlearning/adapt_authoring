@@ -335,6 +335,7 @@
   "app.article": "article",
   "app.block": "block",
   "app.component": "component",
+  "app.addedDefault": "Add to new courses by default?",
   "app.errorloadconfig": "Failed to load configuration settings for %{course}",
   "app.colourLabel": "Colour Label",
   "app.colourLabelTitle": "Colour Label",

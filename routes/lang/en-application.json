@@ -69,7 +69,7 @@
   "app.confirmduplicate": "Are you sure you want to duplicate this course so you can edit it locally?",
   "app.myprojects": "My courses",
   "app.sharedprojects": "Shared courses",
-  "app.allprojects": "Shared courses",
+  "app.allprojects": "All courses",
   "app.addnewproject": "Add new course",
   "app.noprojectstodisplay": "No courses to display",
   "app.pleaseentervalue": "Please enter a value here",

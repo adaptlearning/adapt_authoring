@@ -125,7 +125,7 @@ function initialize () {
   BowerPlugin.prototype.initialize.call(new Theme(), bowerConfig);
 
   var app = origin();
-  app.once('serverStarted', function () {
+  app.once('serverStarted', function() {
 
     // Assign a theme to to a course
     rest.post('/theme/:themeid/makeitso/:courseid', function (req, res, next) {

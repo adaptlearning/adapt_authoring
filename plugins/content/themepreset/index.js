@@ -14,13 +14,13 @@ ThemePresetContent.prototype.hasPermission = function (action, userId, tenantId,
   return next(null, true);
 };
 
-ThemePresetContent.prototype.getModelName = function () {
+ThemePresetContent.prototype.getModelName = function() {
   return 'themepreset';
 };
 
-ThemePresetContent.prototype.updatePreset = function (presetId, courseId, res, next) {
+ThemePresetContent.prototype.updatePreset = function(presetId, courseId, res, next) {
   // save to config
-  app.contentmanager.retrieve('config', { _courseId: courseId }, function (err, config) {
+  app.contentmanager.retrieve('config', { _courseId: courseId }, function(err, config) {
     if(err) return next(err);
       var delta = config[0];
       // set or delete themePreset
@@ -31,10 +31,10 @@ ThemePresetContent.prototype.updatePreset = function (presetId, courseId, res, n
       }
       delta._courseId = courseId;
 
-      app.contentmanager.update('config', { _courseId: courseId }, delta, function (err) {
+      app.contentmanager.update('config', { _courseId: courseId }, delta, function(err) {
         if (err) return next(err);
           // lose any previously set theme settings, preset overrides
-          app.contentmanager.update('course', { _id: courseId }, { _courseId: courseId, themeSettings: null }, function (err) {
+          app.contentmanager.update('course', { _id: courseId }, { _courseId: courseId, themeSettings: null }, function(err) {
             if (err) return next(err);
             // force a rebuild of the course
             var tenantId = Usermanager.getCurrentUser().tenant._id;
@@ -50,10 +50,10 @@ ThemePresetContent.prototype.updatePreset = function (presetId, courseId, res, n
     });
 };
 
-function initialize () {
+function initialize() {
   var app = Origin();
-  app.once('serverStarted', function (server) {
-    app.rest.post('/themepreset/:presetid/makeitso/:courseid', function (req, res, next) {
+  app.once('serverStarted', function(server) {
+    app.rest.post('/themepreset/:presetid/makeitso/:courseid', function(req, res, next) {
       var presetId = req.params.presetid;
       var courseId = req.params.courseid;
 
@@ -61,11 +61,11 @@ function initialize () {
         return new ThemePresetContent().updatePreset(presetId, courseId, res, next);
       }
 
-      Database.getDatabase(function (err, db) {
+      Database.getDatabase(function(err, db) {
         if (err) return next(err);
 
         // Verify it's a valid preset
-        db.retrieve('themepreset', { _id: presetId }, function (err, results) {
+        db.retrieve('themepreset', { _id: presetId }, function(err, results) {
           if (err) return next(err);
           if (!results || 1 !== results.length) {
             return res.status(404).json({ success: false, message: 'preset not found' });
@@ -75,13 +75,13 @@ function initialize () {
       });
     });
 
-    app.rest.get('/themepreset/exists/:presetid', function (req, res, next) {
+    app.rest.get('/themepreset/exists/:presetid', function(req, res, next) {
       var presetId = req.params.presetid;
-      Database.getDatabase(function (err, db) {
+      Database.getDatabase(function(err, db) {
         if (err) return next(err);
 
         // Verify it's a valid preset
-        db.retrieve('themepreset', { _id: presetId }, function (err, results) {
+        db.retrieve('themepreset', { _id: presetId }, function(err, results) {
           if (err) return next(err);
           if (!results || 1 !== results.length) {
               return res.status(404).json({ success:false });

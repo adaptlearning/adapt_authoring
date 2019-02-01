@@ -42,7 +42,7 @@ define(function(require) {
           } else {
             parent = Origin.editor.data.contentObjects.findWhere({_id: currentParentId});
           }
-        } else if (currentType !== 'course'){
+        } else if (currentType !== 'course') {
           parent = Origin.editor.data[this._parent].findWhere({_id: currentParentId});
         }
 
@@ -71,7 +71,7 @@ define(function(require) {
         
         if (!this._children) return;
         
-        this.getChildren().each(function(child){
+        this.getChildren().each(function(child) {
             child.setOnChildren.apply(child, args);
         });
       },
@@ -81,11 +81,11 @@ define(function(require) {
           'contentObjects': {
             'ancestorType': 'page' 
           },
-          'articles' : {
-            'ancestorType' : 'article'
+          'articles': {
+            'ancestorType': 'article'
           },
-          'blocks' : {
-            'ancestorType' : 'block'            
+          'blocks': {
+            'ancestorType': 'block'
           }
         };
         ancestors = Origin.editor.data[this._parent].where({_type: map[this._parent].ancestorType});

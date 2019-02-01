@@ -1,5 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require){
+define(function(require) {
   var Backbone = require('backbone');
   var EditorOriginView = require('../../global/views/editorOriginView');
   var Helpers = require('core/helpers');
@@ -518,7 +518,6 @@ define(function(require){
         type: 'error',
         text: Origin.l10n.t('app.errorsave')
       });
-      console.log('EditorThemingView.onSaveError:', arguments);
 
       this.navigateBack();
     },

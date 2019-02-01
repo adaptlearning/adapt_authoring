@@ -84,9 +84,7 @@ function initialize () {
 
   app.once('serverStarted', function (server) {
     rest.get('/all/course', function(req, res, next) {
-      console.log(usermanager.getCurrentUser()._id, 'delete', permissions.buildResourceString('*', '/*'));
       permissions.hasPermission(usermanager.getCurrentUser()._id, 'delete', permissions.buildResourceString('*', '/*'), function(error, hasPermission) {
-        console.log(error, hasPermission);
         if(error) return next(error);
         if(!hasPermission) return res.status(403).end();
         doQuery(req, res, next);

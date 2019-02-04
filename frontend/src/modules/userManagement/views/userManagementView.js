@@ -6,7 +6,6 @@ define(function(require){
   var UserCollection = require('../collections/userCollection');
   var UserModel = require('../models/userModel');
   var UserView = require('../views/userView');
-  var FilterView = require('./filterView');
 
   var UserManagementView = OriginView.extend({
     className: 'userManagement',
@@ -82,26 +81,22 @@ define(function(require){
     postRender: function() {
       this.setViewToReady();
       this.$('.users').fadeIn(300);
-      this.filterView = new FilterView({
-        collection: this.users
-      });
-      this.$('.search').after(this.filterView.el);
     },
 
     onSortClick: function(event) {
       var $elm = $(event.currentTarget);
       var sortBy = $elm.data('sort');
-      var sortAscending = $elm.hasClass('fa-sort-down');
+      var sortAscending = $elm.hasClass('sort-down');
 
       if ($elm.hasClass('active')) {
         sortAscending = !sortAscending;
       }
 
-      this.$('.sort').removeClass('active fa-sort-up').addClass('fa-sort-down');
+      this.$('.sort').removeClass('active sort-up').addClass('sort-down');
       $elm.addClass('active');
 
-      $elm.toggleClass('fa-sort-down', sortAscending);
-      $elm.toggleClass('fa-sort-up', !sortAscending);
+      $elm.toggleClass('sort-down', sortAscending);
+      $elm.toggleClass('sort-up', !sortAscending);
 
       this.users.sortBy = sortBy;
       this.users.direction = (sortAscending) ? 1 : -1;
@@ -115,14 +110,13 @@ define(function(require){
     },
 
     resetFilter: function() {
-      this.$('.sort').removeClass('active fa-sort-up').addClass('fa-sort-down');
+      this.$('.sort').removeClass('active sort-up').addClass('sort-down');
       this.users.sortBy = 'email';
       this.users.direction = 1;
 
       this.$('.search-email').val('');
       this.users.mailSearchTerm = false;
       this.$('button[data-sort="email"]').addClass('active');
-      this.filterView.reset();
       this.users.sortCollection();
     },
 
@@ -141,9 +135,6 @@ define(function(require){
     },
 
     onDataFetched: function(models, reponse, options) {
-      if (this.filterView) {
-        this.filterView.remove();
-      }
       this.render();
     }
 

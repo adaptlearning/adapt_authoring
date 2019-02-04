@@ -81,12 +81,35 @@
       .form-container-style;
       max-width: inherit;
       .tb-heading {
-        > div {
+        > div button {
           display: flex;
           align-items: center;
+          text-align: left;
+          width: 100%;
+          padding-left: 0;
+          padding-right: 0;
+
+          &.active {
+            font-weight: bold;
+          }
 
           > h4 {
             flex-grow: 1;
+          }
+
+          i.fa {
+            margin-right: 10px;
+          }
+
+          &.sort-down {
+            i.fa::before {
+              content: "\f0dd";
+            }
+          }
+          &.sort-up {
+            i.fa::before {
+              content: "\f0de";
+            }
           }
         }
 

@@ -21,7 +21,8 @@ define(function(require) {
       'click button.editor-common-sidebar-preview': 'previewProject',
       'click button.editor-common-sidebar-preview-force': 'forcePreviewProject',
       'click button.editor-common-sidebar-export': 'exportProject',
-      'click button.editor-common-sidebar-close': 'closeProject'
+      'click button.editor-common-sidebar-close': 'closeProject',
+      'click .editor-common-sidebar-preview-wrapper .dropdown button': 'toggleDropdown'
     },
 
     initialize: function(options) {
@@ -140,6 +141,10 @@ define(function(require) {
 
     closeProject: function() {
       Origin.router.navigateTo('dashboard');
+    },
+
+    toggleDropdown: function(event) {
+      $(event.currentTarget.parentElement).toggleClass('active');
     }
 
   });

@@ -40,7 +40,7 @@
       width: auto;
       margin: 0;
       border-radius: 5px 0 0 5px;
-      margin-right: 2px;
+      margin-right: 1px;
     }
 
      .dropdown {
@@ -63,7 +63,7 @@
         width: 200px;
         margin: 0 25px;
         list-style: none;
-        padding: 2px 0;
+        padding: 1px 0;
         background-color: @sidebar-color;
 
          li {
@@ -85,13 +85,17 @@
           }
         }
       }
-      &:hover {
+      &.active {
         ul {
           display: block;
         }
         > button {
           border-color: @button-secondary-hover-color;
           background-color: @button-secondary-hover-color;
+
+          i.fa::before {
+            content: "\f0d8";
+          }
         }
       }
     }

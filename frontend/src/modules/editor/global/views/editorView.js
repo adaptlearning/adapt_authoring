@@ -246,6 +246,7 @@ define(function(require) {
       $('.editor-common-sidebar-preview-inner').removeClass('display-none');
       $('.editor-common-sidebar-previewing').addClass('display-none');
       $('.navigation-loading-indicator').addClass('display-none');
+      $('.editor-common-sidebar-preview-wrapper .dropdown').removeClass('active');
       Origin.editor.isPreviewPending = false;
     },
 

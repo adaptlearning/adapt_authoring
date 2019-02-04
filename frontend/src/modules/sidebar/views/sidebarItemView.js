@@ -19,6 +19,7 @@ define(function(require) {
       'click button.editor-common-sidebar-select-theme': 'selectTheme',
       'click button.editor-common-sidebar-download': 'downloadProject',
       'click button.editor-common-sidebar-preview': 'previewProject',
+      'click button.editor-common-sidebar-preview-force': 'forcePreviewProject',
       'click button.editor-common-sidebar-export': 'exportProject',
       'click button.editor-common-sidebar-close': 'closeProject'
     },
@@ -126,7 +127,11 @@ define(function(require) {
     },
 
     previewProject: function() {
-      Origin.trigger('editorCommon:preview', this.isForceRebuild());
+      Origin.trigger('editorCommon:preview', false);
+    },
+
+    forcePreviewProject: function() {
+      Origin.trigger('editorCommon:preview', true);
     },
 
     exportProject: function() {
@@ -135,10 +140,6 @@ define(function(require) {
 
     closeProject: function() {
       Origin.router.navigateTo('dashboard');
-    },
-
-    isForceRebuild: function() {
-      return this.$('[name="force-rebuild"]').prop('checked');
     }
 
   });

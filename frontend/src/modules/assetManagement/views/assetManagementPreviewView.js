@@ -22,18 +22,6 @@ define(function(require){
       this.listenTo(this, 'remove', this.remove);
     },
 
-    postRender: function () {
-      if (this.$('audio, video').length) {
-        // Add wmv formats to the accepted types
-        mejs.plugins.silverlight[0].types.push('video/x-ms-wmv');
-        mejs.plugins.silverlight[0].types.push('audio/x-ms-wma');
-        var mediaElement = this.$('audio, video').mediaelementplayer({
-          pluginPath:'css/assets/',
-          features: ['playpause','progress','current','duration']
-        });
-      }
-    },
-
     selectAsset: function (event) {
       event && event.preventDefault();
 

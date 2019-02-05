@@ -337,13 +337,7 @@
   "app.reset": "Reset",
   "app.titlelock": "Link with title",
   "app.titleunlock": "Unlink from title",
-  "app.filterReset": "Reset Filter",
-  "app.filterShow": "Show Filter",
-  "app.filterHide": "Hide Filter",
   "app.searchByMail": "Search by E-Mail",
-  "app.filterNeverLogedin": "Never",
-  "app.filterStartDate": "Start Date",
-  "app.filterEndDate": "End Date",
   "app.maxfileuploadsize": "Maximum upload file size: %{size}.",
   "app.uploadsizeerror": "File size limit exceeded. Expected no more than %{max}, received %{size}."
 }

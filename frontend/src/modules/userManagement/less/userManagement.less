@@ -5,48 +5,40 @@
 
   .filter-inner {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
 
-    .filter-item {
-      width: 25%;
-      box-sizing: border-box;
-      margin: 10px 0;
-      padding: 10px;
-      border-right: solid 1px darken(#fff, 15%);
+    .selectize-control {
+      padding: 0;
 
-      &:first-of-type {
-        padding-left: 0;
-      }
-      &:last-of-type {
-        border-right: none;
-        padding-right: 0;
+      .selectize-input {
+        background: @sidebar-input-color;
+        border-color: @sidebar-input-border-color;
+        color: @sidebar-input-text-color;
       }
     }
   }
 
-  form {
-    input[type="radio"],
-    input[type="checkbox"], {
-      display: none;
-      &:checked + .fa-toggle-off:before {
-        content: "\f205";
-        color: @button-secondary-color;
-      }
-    }
-    span {
-      margin-left: 10px;
-    }
-    label {
-      display: inline-block;
-      padding: 5px 5px;
-      &:first-child {
-        border: none;
-      }
-    }
+  input[type="radio"],
+  input[type="checkbox"] {
 
-    .date-input-wrapper {
-      display: flex;
-      align-items: stretch;
+    display: none;
+
+    &:checked + .fa-toggle-off:before {
+      content: "\f205";
+      color: @button-secondary-color;
+    }
+  }
+  label.sidebar-tag {
+    display: flex;
+    padding: 14px 25px;
+
+    span {
+      margin-right: 10px;
+      flex-grow: 1;
+    }
+    i.fa {
+      color: @secondary-color;
+      font-size: 20px;
     }
   }
 }

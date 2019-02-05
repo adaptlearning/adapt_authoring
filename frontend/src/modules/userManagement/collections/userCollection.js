@@ -1,4 +1,3 @@
-// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
   var UserModel = require('../models/userModel');
@@ -10,13 +9,13 @@ define(function(require) {
     sortBy: 'email',
     direction: 1,
     mailSearchTerm: false,
-
-    filterGroups: {},
-
     lastAccess: null,
 
     initialize: function() {
-      this.listenTo(this, 'sync', this.onSync);
+      this.filterGroups = {
+        tenantName: [],
+        roleNames: []
+      };
     },
 
     comparator: function(ma, mb) {
@@ -59,18 +58,9 @@ define(function(require) {
 
     filter: function() {
       this.models.forEach(function(model) {
-        this.filterFailedLoginCount(model);
         this.filterTenants(model);
         this.filterRoleNames(model);
-        this.filterLastAccess(model);
       }, this);
-    },
-
-    filterFailedLoginCount: function(model) {
-      if (this.filterGroups.failedLoginCount
-        && this.filterGroups.failedLoginCount.indexOf(model.get('failedLoginCount').toString()) < 0) {
-        model.set('_isHidden', true);
-      }
     },
 
     filterTenants: function(model) {
@@ -87,37 +77,10 @@ define(function(require) {
       }
     },
 
-    filterLastAccess: function(model) {
-      var lastAccess = model.get('lastAccess');
-      if (this.filterGroups.lastAccess && this.filterGroups.lastAccess[0] === 'never') {
-        if (lastAccess) {
-          model.set('_isHidden', true);
-        }
-        return;
-      }
-      if (this.filterGroups.startDate && this.filterGroups.endDate) {
-        if (!lastAccess) return model.set('_isHidden', true);
-        var lastAccessDate = new Date(lastAccess);
-        if (lastAccessDate < this.filterGroups.startDate || lastAccessDate > this.filterGroups.endDate) {
-          model.set('_isHidden', true);
-        }
-      }
-    },
-
-    onSync: function() {
-      ['roleNames','tenantName','failedLoginCount'].forEach(function(key) {
-        this.filterGroups[key] = this.getGroups(key);
-      }, this);
-    },
-
     resetHidden: function() {
       this.forEach(function(model) {
         model.set('_isHidden', false);
       });
-    },
-
-    getGroups: function(type) {
-      return Object.keys(this.groupBy(type));
     },
 
     searchByMail: function() {
@@ -133,4 +96,5 @@ define(function(require) {
   });
 
   return UserCollection;
+
 });

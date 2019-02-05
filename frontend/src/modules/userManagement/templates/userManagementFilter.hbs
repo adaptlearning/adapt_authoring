@@ -1,47 +1,32 @@
-<form>
 <div class="filter-inner">
-  {{#each groups}}
-  <div class="filter-item">
-    <h5>{{name}}</h5>
-    {{#ifValueEquals key "tenantName"}}
-      <select name="tenantName">
-        {{#each items}}
-          <option value="{{this}}">{{this}}</option>
-        {{/each}}
-      </select>
-    {{else}}
-      {{#each items}}
-      <label>
-        <input type="checkbox" name="{{../key}}" value="{{this}}">
-        <i class="fa fa-toggle-off"></i>
-        <span>{{this}}</span>
-      </label><br>
+  <div class="sidebar-row-input">
+    <input placeholder="{{t 'app.searchByMail'}}" type="text" class="search-email">
+  </div>
+
+  <div class="sidebar-row sidebar-divide">
+    <h3 class="sidebar-divide-inner">
+      {{t 'app.tenant'}}
+    </h3>
+  </div>
+  <div class="sidebar-row-input">
+    <select name="tenantName">
+      {{#each tenants}}
+        <option value="{{name}}">{{displayName}}</option>
       {{/each}}
-    {{/ifValueEquals}}
+    </select>
+  </div>
+  <div class="sidebar-row sidebar-divide">
+    <h3 class="sidebar-divide-inner">
+      {{t 'app.role'}}
+    </h3>
+  </div>
+  {{#each roles}}
+  <div class="sidebar-row">
+    <label class="sidebar-tag">
+      <span>{{name}}</span>
+      <input type="checkbox" name="roleNames" value="{{name}}">
+      <i class="fa fa-toggle-off"></i>
+    </label>
   </div>
   {{/each}}
-
-  <div class="filter-item">
-    <h5 class="">{{t 'app.lastaccess'}}</h5>
-    <label>
-      <input type="checkbox" name="lastAccess" value="never">
-      <i class="fa fa-toggle-off"></i>
-      <span>{{t 'app.filterNeverLogedin'}}</span>
-    </label>
-    <p>{{t 'app.filterStartDate'}}:</p>
-    <div class="date-input-wrapper">
-      <input autocomplete="off" type="text" name="start-date">
-      <button data-resetdate="start" class="btn warning">
-        <i class="fa fa-remove"></i>
-      </button>
-    </div>
-    <p>{{t 'app.filterEndDate'}}:</p>
-    <div class="date-input-wrapper">
-      <input autocomplete="off" type="text" name="end-date">
-      <button data-resetdate="end" class="btn warning">
-        <i class="fa fa-remove"></i>
-      </button>
-    </div>
-  </div>
 </div>
-</form>

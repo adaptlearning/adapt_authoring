@@ -35,11 +35,12 @@ define([
     },
 
     init: function(options) {
+      var attrs = options.schema.inputType;
       this.dragItems = [];
-      this.precision = options.schema.editorAttrs['data-precision'] || 3;
-      this.topAttr = options.schema.editorAttrs['data-topAttribute'] || '_top';
-      this.leftAttr = options.schema.editorAttrs['data-leftAttribute'] || '_left';
-      this.itemsPath = options.schema.editorAttrs['data-items'] || 'properties._items';
+      this.precision = attrs.precision || 3;
+      this.topAttr = attrs.topAttribute || '_top';
+      this.leftAttr = attrs.leftAttribute || '_left';
+      this.itemsPath = attrs.items || 'properties._items';
       this.itemsPath = this.itemsPath.split('.');
     },
 
@@ -66,13 +67,16 @@ define([
     findItemView: function() {
       var form = Origin.scaffold.getCurrentForm();
 
-      switch (this.schema.editorAttrs['data-type']) {
+      var targetAttr = this.schema.inputType.targetAttribute;
+      var itemAttr = this.schema.inputType.items;
+
+      switch (this.schema.inputType.type) {
         case 'extension':
-          return form.fields._extensions.editor.nestedForm.fields[this.schema.editorAttrs['data-targetAttribute']].editor.nestedForm.fields[this.schema.editorAttrs['data-items']].editor;
+          return form.fields._extensions.editor.nestedForm.fields[targetAttr].editor.nestedForm.fields[itemAttr].editor;
         case 'menu':
-          return form.fields.menuSettings.editor.nestedForm.fields[this.schema.editorAttrs['data-targetAttribute']].editor.nestedForm.fields[this.schema.editorAttrs['data-items']].editor;
+          return form.fields.menuSettings.editor.nestedForm.fields[targetAttr].editor.nestedForm.fields[itemAttr].editor;
         default:
-          return form.fields.properties.editor.nestedForm.fields[this.schema.editorAttrs['data-items']].editor;
+          return form.fields.properties.editor.nestedForm.fields[itemAttr].editor;
       }
     },
 
@@ -190,7 +194,7 @@ define([
         value: this.value,
         type: 'image',
         url: id ? '/api/asset/serve/' + id : dataUrl,
-        addLabel: this.schema.editorAttrs['data-addLabel'] || Origin.l10n.t('app.add')
+        addLabel: this.schema.inputType.addLabel || Origin.l10n.t('app.add')
       }));
 
       _.defer(this.postRender.bind(this));

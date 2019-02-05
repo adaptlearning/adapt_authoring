@@ -70,14 +70,18 @@ define([
       var targetAttr = this.schema.inputType.targetAttribute;
       var itemAttr = this.schema.inputType.items;
 
+      var baseEditor;
+
       switch (this.schema.inputType.type) {
         case 'extension':
-          return form.fields._extensions.editor.nestedForm.fields[targetAttr].editor.nestedForm.fields[itemAttr].editor;
+          baseEditor = form.fields._extensions.editor.nestedForm.fields[targetAttr].editor;
         case 'menu':
-          return form.fields.menuSettings.editor.nestedForm.fields[targetAttr].editor.nestedForm.fields[itemAttr].editor;
+          baseEditor = form.fields.menuSettings.editor.nestedForm.fields[targetAttr].editor;
         default:
-          return form.fields.properties.editor.nestedForm.fields[itemAttr].editor;
+          baseEditor = form.fields.properties.editor;
       }
+
+      return baseEditor.nestedForm.fields[itemAttr].editor;
     },
 
     removeDragItems: function() {

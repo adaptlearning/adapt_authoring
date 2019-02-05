@@ -23,6 +23,7 @@ define(function(require){
 
       'click a.saveRoles': 'onSaveRoleClicked',
 
+      'click button.invite': 'onInviteClicked',
       'click button.resetPassword': 'onResetPasswordClicked',
       'click button.changePassword': 'onChangePasswordClicked',
 
@@ -171,11 +172,36 @@ define(function(require){
       });
     },
 
+    onInviteClicked: function(e) {
+      Origin.Notify.confirm({
+        text: Origin.l10n.t('app.confirmsendinvite', { email: this.model.get('email') }),
+        callback: function(confirmed) {
+          if(!confirmed) {
+            return;
+          }
+
+          var $btn = $(e.target);
+          $btn.addClass('submitted');
+          Helpers.ajax('/api/user/invite', { email: this.model.get('email') }, 'POST', function() {
+            $btn.removeClass('submitted');
+          });
+        }.bind(this)
+      });
+    },
+
     onResetPasswordClicked: function(e) {
-      var $btn = $(e.currentTarget);
-      $btn.addClass('submitted');
-      Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST', function() {
-        $btn.removeClass('submitted');
+      Origin.Notify.confirm({
+        text: Origin.l10n.t('app.confirmsendreset', { email: this.model.get('email') }),
+        callback: function(confirmed) {
+          if (!confirmed) {
+            return;
+          }
+          var $btn = $(e.currentTarget);
+          $btn.addClass('submitted');
+          Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST', function() {
+            $btn.removeClass('submitted');
+          });
+        }.bind(this)
       });
     },
 

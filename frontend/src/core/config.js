@@ -12,7 +12,6 @@ require.config({
     jqueryForm : 'libraries/jquery.form',
     jqueryTagsInput: 'libraries/jquery.tagsinput.min',
     jqueryUI: 'libraries/jquery-ui.min',
-    mediaelement : 'libraries/mediaelement-and-player',
     modernizr: 'libraries/modernizr',
     moment: 'libraries/moment.min',
     pikaday: 'libraries/pikaday/js/pikaday',
@@ -61,10 +60,6 @@ require.config({
     jqueryUI: {
       deps: ['jquery'],
       exports: "$"
-    },
-    mediaelement: {
-      deps: ['jquery'],
-      exports: 'mediaelement'
     },
     moment: {
       exports: 'moment'

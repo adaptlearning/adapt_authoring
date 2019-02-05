@@ -24,7 +24,7 @@ define([
 
     onDragItemClick: function(event) {
       var item = _.find(this.dragItems, function(i) {
-        return i.elm[0] === event.currentTarget;
+        return i.$el[0] === event.currentTarget;
       });
       item.view.openEditor();
     },
@@ -47,16 +47,17 @@ define([
       if (!this.itemListView) {
         this.itemListView = this.findItemView();
         this.listenTo(this.itemListView, {
-          'add': this.onItemListAdd,
-          'remove': this.onItemListRemove,
-          'change': this.onItemListChange
+          add: this.onItemListAdd,
+          remove: this.onItemListRemove,
+          change: this.onItemListChange
         });
       }
       // double defer:
       // if external asset, postRender is triggered before el is injected into Dom
       _.defer(function() {
+        var items = this.itemListView.items;
         this.removeDragItems();
-        this.itemListView.items && this.itemListView.items.forEach(function(item) {
+        items && items.forEach(function(item) {
           this.addDragItem(item.editor);
         }, this);
       }.bind(this));
@@ -93,7 +94,7 @@ define([
       });
 
       this.dragItems.push({
-        elm: elm,
+        $el: elm,
         view: itemView
       });
 
@@ -105,15 +106,15 @@ define([
 
     updateDragItem: function(item) {
       var index = item.view.$el.closest('.list-item').index();
-      item.elm.css({
+      item.$el.css({
         top: parseInt(item.view.value[this.topAttr]).toFixed(this.precision)+'%',
         left: parseInt(item.view.value[this.leftAttr]).toFixed(this.precision)+'%',
       }).text(index + 1);
     },
 
     removeDragItem: function(item) {
-      if (!item.elm.hasClass('ui-draggable')) return;
-      item.elm.draggable('destroy').remove();
+      if (!item.$el.hasClass('ui-draggable')) return;
+      item.$el.draggable('destroy').remove();
     },
 
     onItemListRemove: function(listView, listItemView) {
@@ -137,13 +138,14 @@ define([
     },
 
     onDragStop: function(event, ui) {
+      var $dragHandle = $(event.target);
       var $parent = this.$('.scaffold-asset-item-img-holder');
-      var left = (parseInt($(event.target).css("left")) / ($parent.width() / 100)).toFixed(this.precision);
-      var top = (parseInt($(event.target).css("top")) / ($parent.height() / 100)).toFixed(this.precision);
-      var index = $(event.target).css({left: left + '%', top: top+'%'}).data('index');
+      var left = (parseInt($dragHandle.css("left")) / ($parent.width() / 100)).toFixed(this.precision);
+      var top = (parseInt($dragHandle.css("top")) / ($parent.height() / 100)).toFixed(this.precision);
+      var index = $dragHandle.css({left: left + '%', top: top+'%'}).data('index');
 
       var child = _.find(this.dragItems, function(i) {
-        return i.elm[0] === event.target;
+        return i.$el[0] === event.target;
       });
 
       if (!child) return;

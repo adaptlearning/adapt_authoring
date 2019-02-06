@@ -33,6 +33,25 @@ define([
     });
   };
 
+  Backbone.Form.Field.prototype.createEditor = function() {
+    var options = _.extend(_.pick(this, 'schema', 'form', 'key', 'model', 'value'), { id: this.createEditorId() });
+
+    if (this.schema.type) {
+      return new this.schema.type(options);
+    }
+
+    var fallbackType = this.schema.inputType.fallbackType;
+    if (fallbackType && Backbone.Form.editors[fallbackType]) {
+      this.schema.type = Backbone.Form.editors[fallbackType];
+      this.schema.inputType = fallbackType;
+      return new this.schema.type(options);
+    }
+
+    this.schema.inputType = "Text";
+    this.schema.type = Backbone.Form.editors.Text;
+    return new this.schema.type(options);
+  };
+
   // use default from schema and set up isDefaultValue toggler
   Backbone.Form.editors.Base.prototype.initialize = function(options) {
     var schemaDefault = options.schema.default;

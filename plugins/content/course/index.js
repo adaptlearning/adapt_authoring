@@ -82,23 +82,12 @@ function initialize () {
 
   permissions.ignoreRoute(/^\/api\/all\/course/);
 
-  app.once('serverStarted', function (server) {
-    rest.get('/all/course', function(req, res, next) {
-      permissions.hasPermission(usermanager.getCurrentUser()._id, 'delete', permissions.buildResourceString('*', '/*'), function(error, hasPermission) {
-        if(error) return next(error);
-        if(!hasPermission) return res.status(403).end();
-        doQuery(req, res, next);
-      });
-    });
+  app.once('serverStarted', function(server) {
+    rest.get('/all/course', doQuery);
     // force search to use only courses created by current user
-    rest.get('/my/course', function (req, res, next) {
-      doQuery(req, res, [{ createdBy: usermanager.getCurrentUser()._id }], next);
-    });
+    rest.get('/my/course', (req, res, next) => doQuery(req, res, [{ createdBy: req.user._id }], next));
     // Only return courses which have been shared
-    rest.get('/shared/course', function (req, res, next) {
-      doQuery(req, res, [{ _isShared: true }], next);
-    });
-
+    rest.get('/shared/course', (req, res, next) => doQuery(req, res, [{ _isShared: true }], next));
     /**
      * API Endpoint to duplicate a course
      *

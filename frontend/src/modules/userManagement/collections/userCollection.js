@@ -38,7 +38,7 @@ define(function(require) {
       }
 
       if (a > b) return this.direction;
-      else if (a < b) return this.direction*-1;
+      if (a < b) return this.direction * -1;
       return 0;
     },
 

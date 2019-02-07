@@ -337,7 +337,7 @@
   "app.reset": "Reset",
   "app.titlelock": "Link with title",
   "app.titleunlock": "Unlink from title",
-  "app.searchByMail": "Search by E-Mail",
+  "app.searchByMail": "Search by email",
   "app.maxfileuploadsize": "Maximum upload file size: %{size}.",
   "app.uploadsizeerror": "File size limit exceeded. Expected no more than %{max}, received %{size}."
 }

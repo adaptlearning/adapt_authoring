@@ -137,7 +137,6 @@ define(function(require) {
 
     forcePreviewProject: function() {
       Origin.trigger('editorCommon:preview', true);
-      this.toggleDropdown();
     },
 
     exportProject: function() {
@@ -150,7 +149,7 @@ define(function(require) {
 
     toggleDropdown: function(event) {
       event.stopPropagation();
-      $(event.currentTarget.parentElement).toggleClass('active');
+      this.$dropdown.toggleClass('active');
     },
 
     onWindowClick: function() {

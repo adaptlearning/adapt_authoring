@@ -71,8 +71,8 @@ define(function(require) {
     },
 
     filterRoleNames: function(model) {
-      var tenantName = this.filterGroups.tenantName;
-      if (tenantName && tenantName.indexOf(model.get('roleNames')[0]) < 0) {
+      var roleNames = this.filterGroups.roleNames;
+      if (roleNames && roleNames.indexOf(model.get('roleNames')[0]) < 0) {
         model.set('_isHidden', true);
       }
     },

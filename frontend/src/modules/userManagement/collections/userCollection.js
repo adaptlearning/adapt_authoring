@@ -64,15 +64,15 @@ define(function(require) {
     },
 
     filterTenants: function(model) {
-      if (this.filterGroups.tenantName
-        && this.filterGroups.tenantName.indexOf(model.get('tenantName')) < 0) {
+      var tenantName = this.filterGroups.tenantName;
+      if (tenantName && tenantName.indexOf(model.get('tenantName')) < 0) {
         model.set('_isHidden', true);
       }
     },
 
     filterRoleNames: function(model) {
-      if (this.filterGroups.roleNames
-        && this.filterGroups.roleNames.indexOf(model.get('roleNames')[0]) < 0) {
+      var tenantName = this.filterGroups.tenantName;
+      if (tenantName && tenantName.indexOf(model.get('roleNames')[0]) < 0) {
         model.set('_isHidden', true);
       }
     },

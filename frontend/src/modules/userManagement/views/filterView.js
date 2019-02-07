@@ -29,7 +29,7 @@ define([
     onFormChange: function() {
       var attributeMap = {};
 
-      var selected = this.$('input:checked').each(function(index, input) {
+      this.$('input:checked').each(function(index, input) {
         var name = input.name;
         var value = input.value;
         if (!attributeMap[name]) {

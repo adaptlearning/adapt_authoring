@@ -40,8 +40,6 @@ define([
       this.precision = attrs.precision || 3;
       this.topAttr = attrs.topAttribute || '_top';
       this.leftAttr = attrs.leftAttribute || '_left';
-      this.itemsPath = attrs.items || 'properties._items';
-      this.itemsPath = this.itemsPath.split('.');
     },
 
     postRender: function() {
@@ -66,19 +64,22 @@ define([
 
     findItemView: function() {
       var form = Origin.scaffold.getCurrentForm();
-
-      var targetAttr = this.schema.inputType.targetAttribute;
-      var itemAttr = this.schema.inputType.items;
+      var inputType = this.schema.inputType;
+      var targetAttr = inputType.targetAttribute;
+      var itemAttr = inputType.items;
 
       var baseEditor;
 
-      switch (this.schema.inputType.type) {
+      switch (inputType.pluginType) {
         case 'extension':
           baseEditor = form.fields._extensions.editor.nestedForm.fields[targetAttr].editor;
+          break;
         case 'menu':
           baseEditor = form.fields.menuSettings.editor.nestedForm.fields[targetAttr].editor;
+          break;
         default:
           baseEditor = form.fields.properties.editor;
+          break;
       }
 
       return baseEditor.nestedForm.fields[itemAttr].editor;

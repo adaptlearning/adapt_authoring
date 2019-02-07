@@ -40,6 +40,7 @@ define([
       this.precision = attrs.precision || 3;
       this.topAttr = attrs.topAttribute || '_top';
       this.leftAttr = attrs.leftAttribute || '_left';
+      this.items = attrs.items || '_items';
     },
 
     postRender: function() {
@@ -66,7 +67,6 @@ define([
       var form = Origin.scaffold.getCurrentForm();
       var inputType = this.schema.inputType;
       var targetAttr = inputType.targetAttribute;
-      var itemAttr = inputType.items;
 
       var baseEditor;
 
@@ -77,12 +77,15 @@ define([
         case 'menu':
           baseEditor = form.fields.menuSettings.editor.nestedForm.fields[targetAttr].editor;
           break;
+        case 'theme':
+          baseEditor = form.fields.themeSettings.editor.nestedForm.fields[targetAttr].editor;
+          break;
         default:
           baseEditor = form.fields.properties.editor;
           break;
       }
 
-      return baseEditor.nestedForm.fields[itemAttr].editor;
+      return baseEditor.nestedForm.fields[this.items].editor;
     },
 
     removeDragItems: function() {

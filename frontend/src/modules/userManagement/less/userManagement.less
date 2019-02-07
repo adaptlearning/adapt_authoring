@@ -7,6 +7,12 @@
     display: flex;
     flex-direction: column;
 
+    .sidebar-tag {
+      margin-bottom: 0;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
     .selectize-control {
       padding: 0;
 
@@ -91,6 +97,15 @@
 
           i.fa {
             margin-right: 10px;
+          }
+
+          i.fa {
+            visibility: hidden;
+          }
+          &.active {
+            i.fa {
+              visibility: visible;
+            }
           }
 
           &.sort-down {

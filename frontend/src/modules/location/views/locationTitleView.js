@@ -40,10 +40,12 @@ define(function(require) {
       var courseI = _.indexOf(data.breadcrumbs, 'course');
       if(courseI > -1) {
         data.breadcrumbs.splice(courseI, 1, {
-          title: course.get('title'),
+          title: Origin.l10n.t('app.editormenu'),
           url: '#/editor/' + course.get('_id') + '/menu'
         });
       }
+      if(course) data.course = course.toJSON();
+
       return data;
     },
 

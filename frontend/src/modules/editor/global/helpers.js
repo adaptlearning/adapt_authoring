@@ -9,7 +9,7 @@ define(function(require) {
   var Helpers = {
     /**
     * set the page title based on location
-    * accepts backbone model, or object like so { title: '' }
+    * expects backbone model
     */
     setPageTitle: function(model) {
       getNearestPage(model, function(page) {

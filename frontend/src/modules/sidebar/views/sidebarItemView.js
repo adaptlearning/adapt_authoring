@@ -43,7 +43,11 @@ define(function(require) {
         }, this));
     },
 
-    postRender: function() {},
+    postRender: function() {
+      this._onWindowClick = this.onWindowClick.bind(this);
+      this.$dropdown = this.$('.dropdown');
+      $(window).on('click', this._onWindowClick);
+    },
 
     setupView: function() {
         this.listenTo(Origin, 'sidebar:views:remove', this.remove);
@@ -144,7 +148,17 @@ define(function(require) {
     },
 
     toggleDropdown: function(event) {
+      event.stopPropagation();
       $(event.currentTarget.parentElement).toggleClass('active');
+    },
+
+    onWindowClick: function() {
+      this.$dropdown.removeClass('active');
+    },
+
+    remove: function() {
+      $(window).off('click', this._onWindowClick);
+      OriginView.prototype.remove.apply(this, arguments);
     }
 
   });

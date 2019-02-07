@@ -37,5 +37,24 @@
         overflow: hidden;
       }
     }
+    .course, .title {
+      display: inline-block;
+      max-width: 35%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .title {
+      font-weight: normal;
+      font-style: italic;
+      padding-right: 10px; // needed because of italic + overflow
+    }
+    .separator {
+      display: inline-block;
+      margin: 0 5px;
+      opacity: 0.35;
+      font-weight: normal;
+      overflow: hidden;
+    }
   }
 }

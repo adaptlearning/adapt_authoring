@@ -21,6 +21,13 @@
 		</div>
 	{{/if}}
 	{{#if title}}
+		{{#if course}}
+			<div class="course">
+				{{console course}}
+				{{course.title}}
+			</div>
+			<div class="separator unselectable">&gt;</div>
+		{{/if}}
 		<div class="title">
 			{{title}}
 		</div>

@@ -137,6 +137,7 @@ define(function(require) {
 
     forcePreviewProject: function() {
       Origin.trigger('editorCommon:preview', true);
+      this.toggleDropdown();
     },
 
     exportProject: function() {

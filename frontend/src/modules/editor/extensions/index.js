@@ -8,10 +8,9 @@ define(function(require) {
   var Helpers = require('../global/helpers');
 
   Origin.on('editor:extensions', function(data) {
-    var title = Origin.l10n.t('app.editorextensions');
     Origin.trigger('location:title:update', {
-      breadcrumbs: ['dashboard', 'course', { title: title }],
-      title: title
+      breadcrumbs: ['dashboard', 'course', { title: Origin.l10n.t('app.editorextensions') }],
+      title: Origin.editor.data.course.get('title')
     });
     var route1 = Origin.location.route1;
     // Check whether the user came from the page editor or menu editor

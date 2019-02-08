@@ -58,7 +58,7 @@ define(function(require) {
 
   function getTitleForModel(data) {
     var modelTitle = data.model.title || data.model.get && data.model.get('title');
-    return modelTitle || data.langString;
+    return modelTitle || Origin.editor.data.course.get('title');
   }
 
   function getLangKey() {

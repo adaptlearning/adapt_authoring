@@ -43,7 +43,8 @@ define(function(require) {
           url: '#/editor/' + course.get('_id') + '/menu'
         });
       }
-      if(course && Origin.location.route2 !== 'menu') {
+      // so we can show the course name if the current title isn't already that...
+      if(course && course.get('title') !== data.title) {
         data.course = course.toJSON();
       }
       return data;

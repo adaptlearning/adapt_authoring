@@ -32,12 +32,12 @@ define(function(require) {
       // add some shortcuts to common locations
       var course = Origin.editor.data.course;
       // Dashboard
-      var dashboardI = _.indexOf(data.breadcrumbs, 'dashboard');
+      var dashboardI = data.breadcrumbs.indexOf('dashboard');
       if(dashboardI > -1) {
         data.breadcrumbs.splice(dashboardI, 1, { title: Origin.l10n.t('app.dashboard'), url: '#' });
       }
       // Course
-      var courseI = _.indexOf(data.breadcrumbs, 'course');
+      var courseI = data.breadcrumbs.indexOf('course');
       if(courseI > -1) {
         data.breadcrumbs.splice(courseI, 1, {
           title: Origin.l10n.t('app.editormenu'),

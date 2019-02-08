@@ -25,7 +25,6 @@ define(function(require) {
     },
 
     processData: function(data) {
-      // nothing to do
       if(!data || !data.breadcrumbs) {
         return data;
       }

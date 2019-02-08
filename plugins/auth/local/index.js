@@ -172,6 +172,11 @@ LocalAuth.prototype.internalRegisterUser = function(retypePasswordRequired, user
     return cb(new auth.errors.UserRegistrationError('email and password are required!'));
   }
 
+  const validationError = usermanager.validatePassword(user.password);
+  if (validationError) {
+    return cb(validationError);
+  }
+
   // create user with hashed password
   auth.hashPassword(user.password, function (error, hash) {
     if (error) {

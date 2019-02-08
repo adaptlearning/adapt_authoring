@@ -22,8 +22,8 @@ define(function(require) {
       backButtonText = Origin.l10n.t('app.backtopage');
     }
     Origin.sidebar.addView(new EditorExtensionsEditSidebarView().$el, {
-      "backButtonText": backButtonText,
-      "backButtonRoute": backButtonRoute
+      backButtonText: backButtonText,
+      backButtonRoute: backButtonRoute
     });
     Origin.contentPane.setView(EditorExtensionsEditView, { model: new Backbone.Model({ _id: route1 }) });
   });

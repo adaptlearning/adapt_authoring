@@ -44,8 +44,9 @@ define(function(require) {
           url: '#/editor/' + course.get('_id') + '/menu'
         });
       }
-      if(course) data.course = course.toJSON();
-
+      if(course && Origin.location.route2 !== 'menu') {
+        data.course = course.toJSON();
+      }
       return data;
     },
 

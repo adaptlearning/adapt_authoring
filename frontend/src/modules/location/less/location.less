@@ -3,17 +3,15 @@
 
 .location-title {
   font-family: @font-title;
+  font-size: 14px;
   background-color: @location-background-color;
   border-bottom: 1px solid fade(@primary-color, 20%);
-  font-size: 18px;
-  font-weight: @font-weight-bold;
 
   &-inner {
     color: @location-title;
     padding: 15px;
 
     .breadcrumbs {
-      font-size: 80%;
       font-weight: @font-weight;
       margin-bottom: 7px;
       .item {
@@ -37,24 +35,12 @@
         overflow: hidden;
       }
     }
-    .course, .title {
-      display: inline-block;
-      max-width: 35%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .title {
-      font-weight: normal;
-      font-style: italic;
-      padding-right: 10px; // needed because of italic + overflow
-    }
-    .separator {
-      display: inline-block;
-      margin: 0 5px;
-      opacity: 0.35;
-      font-weight: normal;
-      overflow: hidden;
+    .titles {
+      .course, .title { .truncate; }
+      .title {
+        font-size: 18px;
+        font-weight: @font-weight-bold;
+      }
     }
   }
 }

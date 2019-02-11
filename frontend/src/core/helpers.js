@@ -263,6 +263,48 @@ define(function(require){
       return value.length > 0 && regEx.test(value);
     },
 
+    validatePassword: function(password) {
+      var errors = [];
+      var config = Origin.constants.passwordPolicy;
+      var map = {
+        digits: {
+          regex: /\d/g,
+          error: Origin.l10n.t('app.validationpassworddigits', { length: config.digits })
+        },
+        lowercaseLetters: {
+          regex: /[a-z]/g,
+          error: Origin.l10n.t('app.validationpasswordlowercase', { length: config.lowercaseLetters })
+        },
+        uppercaseLetters: {
+          regex: /[A-Z]/g,
+          error: Origin.l10n.t('app.validationpassworduppercase', { length: config.lowercaseLetters })
+        },
+        nonAlphaNumeric: {
+          regex: /[!#@?%&$<>]/g,
+          error: Origin.l10n.t('app.validationpasswordspecial', { length: config.lowercaseLetters })
+        }
+      }
+
+      if (password.length < config.length) {
+        errors.push(Origin.l10n.t('app.validationpasswordlength', { length: config.length }));
+      }
+
+      _.keys(config).forEach(key => {
+        if (key === 'length') return;
+        if (config[key] <= 0) return;
+
+        var results;
+        var count = 0;
+        while ((results = map[key].regex.exec(password)) !== null) {
+          count++;
+        }
+        if (count >= config[key]) return;
+        errors.push(map[key].error);
+      });
+
+      return errors;
+    },
+
     contentModelMap: function(type) {
       var contentModels = {
         course: 'core/models/courseModel',

@@ -1,7 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
-  var Backbone = require('backbone');
-  var Origin = require('core/origin');
+define([
+  'backbone',
+  'core/origin',
+  'core/helpers'
+], function(Backbone, Origin, Helpers) {
 
   var UserPasswordResetModel = Backbone.Model.extend({
 
@@ -17,27 +19,25 @@ define(function(require) {
     },
 
     validate: function (attributes, options) {
-      var validationErrors = {};
+      var errors = [];
 
       if (!attributes.password) {
-        validationErrors.password = Origin.l10n.t('app.validationrequired');
+        errors.push(Origin.l10n.t('app.validationrequired'));
       } else {
-        if (attributes.password.length < 8) {
-          validationErrors.password = Origin.l10n.t('app.validationlength', {length: 8});
-        }
+        var pwErrors = Helpers.validatePassword(attributes.password);
+        errors = errors.concat(pwErrors);
       }
 
       if (!attributes.confirmPassword) {
-        validationErrors.confirmPassword = Origin.l10n.t('app.validationrequired');
+        errors.push(Origin.l10n.t('app.validationrequired'));
       } else {
         if (attributes.password !== attributes.confirmPassword) {
-          validationErrors.confirmPassword = Origin.l10n.t('app.validationpasswordmatch');
+          errors.push(Origin.l10n.t('app.validationpasswordmatch'));
         }
       }
 
-      return _.isEmpty(validationErrors)
-        ? null
-        : validationErrors;
+      if (errors.length) return errors;
+      return null;
     }
   });
 

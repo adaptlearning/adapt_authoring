@@ -33,12 +33,8 @@ define(function(require) {
       if (!error) {
         return;
       }
-      var msg = "";
-      _.each(error, function(value, key) {
-        msg += value + '. ';
-      }, this);
 
-      this.$('.resetError .message').text(msg);
+      this.$('.resetError .message').html(error.join('<br>'));
       this.$('.resetError').removeClass('display-none');
     },
 
@@ -66,6 +62,12 @@ define(function(require) {
           this.$('.message .success').removeClass('display-none');
         },this),
         error: _.bind(function(model, response, options) {
+          var json = response.responseJSON;
+          if (json && json.message) {
+            console.log(json.message);
+            return;
+          }
+
           Origin.Notify.alert({
             type: 'error',
             text: Origin.l10n.t('app.resetpassworderror')

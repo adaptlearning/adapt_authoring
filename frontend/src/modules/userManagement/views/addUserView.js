@@ -24,10 +24,21 @@ define(function(require){
       this.$('.field-error').each(function(index, element) {
         var $error = $(element);
         var $input = $error.siblings('input');
+        var value = $input.val().trim();
 
-        var isValid = $input.attr('name') === 'email' ?
-          Helpers.isValidEmail($input.val().trim()) :
-          $input.val().trim().length > 0;
+        switch ($input.attr('name')) {
+          case 'email':
+            var isValid = Helpers.isValidEmail(value);
+            break;
+          case 'password':
+            var errors = Helpers.validatePassword(value);
+            var isValid = (errors.length === 0);
+            if (!isValid) $error.html(errors.join('<br>'));
+            break;
+          default:
+            var isValid = (value.length > 0);
+            break;
+        }
 
         $error.toggleClass('display-none', isValid);
 

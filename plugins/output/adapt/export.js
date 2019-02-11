@@ -84,7 +84,9 @@ function writeThemeVariables(results, variablesWritten) {
       return variablesWritten(error);
     }
     const themeVariables = data.course[0].themeVariables;
-    const themeName = data.course[0]._theme;
+    const themeName = data['config'][0].hasOwnProperty('_theme')
+      ? data['config'][0]._theme
+      : false;
     const destinationFolder = path.join(EXPORT_DIR, 'src', 'theme', themeName);
 
     if (!themeVariables) {

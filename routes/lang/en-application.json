@@ -133,6 +133,7 @@
   "app.downloading": "Downloading...",
   "app.preview": "Preview course",
   "app.previewing": "Previewing...",
+  "app.forcerebuild": "Force rebuild",
   "app.editprofiletitle": "User profile",
   "app.editprofileinformation": "You can view and modify your user information below.",
   "app.firstname": "First name",

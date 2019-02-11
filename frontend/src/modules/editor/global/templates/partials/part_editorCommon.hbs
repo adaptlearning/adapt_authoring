@@ -1,10 +1,20 @@
 <div class="sidebar-item-inner">
-  <button class="editor-common-sidebar-preview action-primary">
-    <span class="editor-common-sidebar-preview-inner">{{ t 'app.preview'}}</span>
-    <span class="editor-common-sidebar-previewing display-none">
-      <i class="fa fa-circle-o-notch fa-spin"></i>{{ t 'app.previewing'}}
-    </span>
-  </button>
+  <div class="editor-common-sidebar-preview-wrapper">
+    <button class="editor-common-sidebar-preview action-primary">
+      <span class="editor-common-sidebar-preview-inner">{{ t 'app.preview'}}</span>
+      <span class="editor-common-sidebar-previewing display-none">
+        <i class="fa fa-circle-o-notch fa-spin"></i>{{ t 'app.previewing'}}
+      </span>
+    </button>
+    <div class="dropdown">
+      <button class=""><i class="fa fa-caret-down"></i></button>
+      <ul>
+        <li>
+          <button class="editor-common-sidebar-preview-force">{{ t 'app.forcerebuild'}}</button>
+        </li>
+      </ul>
+    </div>
+  </div>
 
   <button class="editor-common-sidebar-download action-secondary">
     <span class="editor-common-sidebar-download-inner">{{ t 'app.download'}}</span>

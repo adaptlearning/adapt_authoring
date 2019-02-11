@@ -212,6 +212,13 @@ LocalAuth.prototype.resetPassword = function (req, res, next) {
       return res.status(200).json({});
     }
     self.internalResetPassword({ id: usrReset.user, password: req.body.password }, function (error, user) {
+      if (error instanceof usermanager.errors.PasswordValidationError) {
+        return res.status(400).json({
+          success: false,
+          message: error.message
+        });
+      }
+
       if (error) {
         logger.log('error', error);
         return res.status(500).end();
@@ -226,10 +233,15 @@ LocalAuth.prototype.internalResetPassword = function (user, next) {
     return next(new auth.errors.UserResetPasswordError('User ID and password are required!'));
   }
 
+  const validationError = usermanager.validatePassword(user.password);
+  if (validationError) {
+    return next(validationError);
+  }
+
   // Hash the password
   auth.hashPassword(user.password, function (error, hash) {
     if (error) {
-      return cb(error);
+      return next(error);
     }
 
     // Update user details with hashed password

@@ -164,15 +164,20 @@ define([
     var scaffoldSchema = {};
 
     for (var key in schema) {
-      if (schema.hasOwnProperty(key)) {
-        // Check for nested properties on edit theme page
-        if (options.isTheme && schema[key].hasOwnProperty('properties')) {
-          for (var innerKey in schema[key].properties) {
-            setUpSchemaFields(schema[key].properties[innerKey], innerKey, schema[key].properties, scaffoldSchema);
-          }
-        } else {
-          setUpSchemaFields(schema[key], key, schema, scaffoldSchema);
-        }
+      if (!schema.hasOwnProperty(key)) continue;
+
+      var field = schema[key];
+      var nestedProps = field.properties;
+
+      if (!options.isTheme || !nestedProps) {
+        setUpSchemaFields(field, key, schema, scaffoldSchema);
+        continue;
+      }
+
+      // process nested properties on edit theme page
+      for (var innerKey in nestedProps) {
+        if (!nestedProps.hasOwnProperty(innerKey)) continue;
+        setUpSchemaFields(nestedProps[innerKey], innerKey, nestedProps, scaffoldSchema);
       }
     }
 
@@ -196,6 +201,7 @@ define([
       if (!schema.hasOwnProperty(key) || key === '_extensions') continue;
 
       var value = schema[key];
+      var nestedProps = value.properties;
 
       if (value.isSetting) {
         fieldsets.settings.fields.push(key);
@@ -212,11 +218,11 @@ define([
         fieldsets[key].fields.push(key);
       } else if (options.isTheme) { // Check for nested properties on edit theme page
         var innerFieldSets = [];
-        for (var innerKey in schema[key].properties) {
+        for (var innerKey in nestedProps) {
           innerFieldSets.push(innerKey)
-          schema[innerKey] = _.pick(schema[key].properties[innerKey], 'default', 'help', 'inputType', 'title', 'type');
+          schema[innerKey] = _.pick(nestedProps[innerKey], 'default', 'help', 'inputType', 'title', 'type');
         }
-        var legend = schema[key].title ? schema[key].title : Helpers.keyToTitleString(key);
+        var legend = value.title || Helpers.keyToTitleString(key);
         fieldsets[key] = { key: key, legend: legend, fields: innerFieldSets };
       } else {
         fieldsets[key] = { key: key, legend: Helpers.keyToTitleString(key), fields: [ key ] };

@@ -9,8 +9,7 @@ define(function(require) {
       _type: 'theme',
 
       initialize : function() {
-        this.on('sync', this.loadedData, this);
-        this.on('change', this.loadedData, this);
+        this.on('sync change', this.loadedData, this);
         this.fetch();
       },
 
@@ -22,48 +21,43 @@ define(function(require) {
       },
 
       getChildren: function() {
-        if (Origin.editor.data[this._children]) {
-          var children = Origin.editor.data[this._children].where({_parentId:this.get("_id")});
-          var childrenCollection = new Backbone.Collection(children);
-          return childrenCollection;          
-        } else {
-          return null;
-        }
+        var children = Origin.editor.data[this._children] || null;
+
+        return children && new Backbone.Collection(children.where({
+          _parentId: this.get("_id")
+        }));
       },
 
       getParent: function() {
-        var currentType = this.get('_type');
-        var parent;
         var currentParentId = this.get('_parentId');
+        var data = Origin.editor.data;
+        var course = data.course;
 
-        if (currentType === 'menu' || currentType === 'page') {
-          if (currentParentId === Origin.editor.data.course.get('_id')) {
-            parent = Origin.editor.data.course;
-          } else {
-            parent = Origin.editor.data.contentObjects.findWhere({_id: currentParentId});
-          }
-        } else if (currentType !== 'course') {
-          parent = Origin.editor.data[this._parent].findWhere({_id: currentParentId});
+        switch (this.get('_type')) {
+          case 'course':
+            return;
+          case 'menu':
+          case 'page':
+            return currentParentId === course.get('_id') ?
+                course :
+                data.contentObjects.findWhere({ _id: currentParentId });
+          default:
+            return data[this._parent].findWhere({ _id: currentParentId });
         }
-
-        return parent;
       },
 
-      getSiblings: function(returnMyself) {
-          if (returnMyself) {
-            var siblings = Origin.editor.data[this._siblings].where({_parentId:this.get("_parentId")});
-            var siblingsCollection = new Backbone.Collection(siblings);
+      getSiblings: function(shouldIncludeSelf) {
+        var siblings = Origin.editor.data[this._siblings].where({
+          _parentId: this.get('_parentId')
+        });
 
-            return siblingsCollection;
-          } else {
-            var siblings = _.reject(Origin.editor.data[this._siblings].where({
-                _parentId:this.get("_parentId")
-            }), _.bind(function(model){ 
-                return model.get('_id') === this.get('_id');
-            }, this));
-            var siblingsCollection = new Backbone.Collection(siblings);
-            return siblingsCollection;
-          }
+        if (!shouldIncludeSelf) {
+          siblings = siblings.filter(function(model) {
+            return model.get('_id') !== this.get('id');
+          }, this);
+        }
+
+        return new Backbone.Collection(siblings);
       },
 
       setOnChildren: function(key, value, options) {           

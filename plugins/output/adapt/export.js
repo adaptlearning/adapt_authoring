@@ -83,41 +83,30 @@ function writeThemeVariables(results, variablesWritten) {
     if (error) {
       return variablesWritten(error);
     }
-    var themeVariables = data['course'][0].hasOwnProperty('themeVariables')
-      ? data['course'][0].themeVariables
-      : false;
-
-    var themeName = data['config'][0].hasOwnProperty('_theme')
-      ? data['config'][0]._theme
-      : false;
-
+    const themeVariables = data.course[0].themeVariables;
+    const themeName = data.course[0]._theme;
     const destinationFolder = path.join(EXPORT_DIR, 'src', 'theme', themeName);
 
-    if (themeVariables) {
-      database.getDatabase(function (err, db) {
-        if (err) {
+    if (!themeVariables) {
+      return variablesWritten(null);
+    }
+
+
+    database.getDatabase(function (err, db) {
+      if (err) {
+        return variablesWritten(err);
+      }
+
+      db.retrieve('themetype', {name: themeName}, {}, function(err, results) {
+        if (err || (results && results.length != 1)) {
           return variablesWritten(err);
         }
 
-        db.retrieve('themetype', {name: themeName}, {}, function(err, results) {
-          if (err || (results && results.length != 1)) {
-            return variablesWritten(err);
-          }
+        var theme = results[0];
 
-          var theme = results[0];
-
-          self.writeThemeVariables(COURSE_ID, theme, themeVariables, destinationFolder, function(error) {
-            if (error) {
-              return variablesWritten(error);
-            }
-
-            return variablesWritten(null);
-          });
-        });
-        }, configuration.getConfig('dbName'));
-    } else {
-        return variablesWritten(null);
-    }
+        self.writeThemeVariables(COURSE_ID, theme, themeVariables, destinationFolder, variablesWritten);
+      });
+      }, configuration.getConfig('dbName'));
   });
 }
 

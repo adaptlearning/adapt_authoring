@@ -28,9 +28,11 @@ define(function(require) {
 
     initialize: function() {
       this.listenTo(this, 'dataReady', this.render);
-      this.listenTo(Origin, 'editorThemingSidebar:views:save', this.saveData);
-      this.listenTo(Origin, 'managePresets:edit', this.onEditPreset);
-      this.listenTo(Origin, 'managePresets:delete', this.onDeletePreset);
+      this.listenTo(Origin, {
+        'editorThemingSidebar:views:save': this.saveData,
+        'managePresets:edit': this.onEditPreset,
+        'managePresets:delete': this.onDeletePreset
+      });
 
       this.loadCollections();
 
@@ -58,36 +60,37 @@ define(function(require) {
 
       var selectedTheme = this.getSelectedTheme();
 
-      if (this.themeIsEditable(selectedTheme)) {
-        this.$('.tile.preset').show();
-        this.$('.edit.btn.secondary').show();
-        try {
-          this.form = Origin.scaffold.buildForm({
-            model: selectedTheme,
-            schemaType: selectedTheme.get('theme')
-          });
-        }
-        catch(e) {
-          console.log(e);
-        }
-
-        if (this.form) {
-          this.$('.form-container').html(this.form.el);
-          this.$('.empty-message').hide();
-        } else {
-          this.$('.empty-message').show();
-        }
-
-        this.$el.find('fieldset:not(:has(>.field))').addClass('empty-fieldset');
-        this.$('.theme-customiser').show();
-        Origin.trigger('theming:showPresetButton', true);
-
-        var toRestore = Origin.editor.data.course.get('themeVariables') || this.getDefaultThemeSettings();
-        _.defer(function() { this.restoreFormSettings(toRestore); }.bind(this));
-      } else {
+      if (!this.themeIsEditable(selectedTheme)) {
         this.$('.tile.preset').hide();
         this.$('.edit.btn.secondary').hide();
+        return;
       }
+
+      this.$('.tile.preset').show();
+      this.$('.edit.btn.secondary').show();
+      try {
+        this.form = Origin.scaffold.buildForm({
+          model: selectedTheme,
+          schemaType: selectedTheme.get('theme')
+        });
+      }
+      catch(e) {
+        console.log(e);
+      }
+
+      if (this.form) {
+        this.$('.form-container').html(this.form.el);
+        this.$('.empty-message').hide();
+      } else {
+        this.$('.empty-message').show();
+      }
+
+      this.$el.find('fieldset:not(:has(>.field))').addClass('empty-fieldset');
+      this.$('.theme-customiser').show();
+      Origin.trigger('theming:showPresetButton', true);
+
+      var toRestore = Origin.editor.data.course.get('themeVariables') || this.getDefaultThemeSettings();
+      _.defer(function() { this.restoreFormSettings(toRestore); }.bind(this));
     },
 
     removeForm: function() {
@@ -108,13 +111,17 @@ define(function(require) {
 
     loadCollections: function() {
       this.themes = new ThemeCollection();
-      this.listenTo(this.themes, 'sync', this.onCollectionReady);
-      this.listenTo(this.themes, 'error', this.onError);
+      this.listenTo(this.themes, {
+        'sync': this.onCollectionReady,
+        'error': this.onError
+      });
       this.themes.fetch();
 
       this.presets = new PresetCollection();
-      this.listenTo(this.presets, 'sync', this.onCollectionReady);
-      this.listenTo(this.presets, 'error', this.onError);
+      this.listenTo(this.presets, {
+        'sync': this.onCollectionReady,
+        'error': this.onError
+      });
       this.presets.fetch();
     },
 
@@ -160,23 +167,24 @@ define(function(require) {
         select.append($('<option>', { value: item.get('_id') }).text(item.get('displayName')));
       }, this);
       // disable delete, hide manage preset buttons if empty
-      if (presets.length > 0) {
-        var selectedPreset = this.getSelectedPreset();
-        if (selectedPreset && selectedPreset.get('parentTheme') === theme) {
-          $.get('/api/themepreset/exists/' + selectedPreset.get('_id'), function(data) {
-            if (data.success) {
-              select.val(selectedPreset.get('_id'))
-            } else {
-              this.removePresetOption(selectedPreset.get('_id'));
-            }
-          }.bind(this));
-        }
-        select.attr('disabled', false);
-        this.$('button.edit').show();
-      } else {
+      if (presets.length <= 0) {
         select.attr('disabled', true);
         this.$('button.edit').hide();
+        return;
       }
+
+      var selectedPreset = this.getSelectedPreset();
+      if (selectedPreset && selectedPreset.get('parentTheme') === theme) {
+        $.get('/api/themepreset/exists/' + selectedPreset.get('_id'), function(data) {
+          if (data.success) {
+            select.val(selectedPreset.get('_id'))
+          } else {
+            this.removePresetOption(selectedPreset.get('_id'));
+          }
+        }.bind(this));
+      }
+      select.attr('disabled', false);
+      this.$('button.edit').show();
     },
 
     restoreFormSettings: function(toRestore) {
@@ -353,9 +361,8 @@ define(function(require) {
       var theme = $('select#theme', this.$el).val();
       if (theme) {
         return this.themes.findWhere({ 'theme': theme });
-      } else {
-        return this.themes.findWhere({ 'name': this.model.get('_theme') });
       }
+      return this.themes.findWhere({ 'name': this.model.get('_theme') });
     },
 
     // param used to only return the val() (and ignore model data)
@@ -364,9 +371,11 @@ define(function(require) {
       var presetId = $('select#preset', this.$el).val();
       if (storedId) {
         return this.presets.findWhere({ '_id': storedId });
-      } else if (presetId) {
+      }
+      if (presetId) {
         return this.presets.findWhere({ '_id': presetId });
-      } else if (includeCached !== false){
+      }
+      if (includeCached !== false){
         var selectedTheme = this.getSelectedTheme();
         if (!selectedTheme) return;
         var parent = selectedTheme.get('theme');

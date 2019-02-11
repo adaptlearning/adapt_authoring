@@ -30,6 +30,7 @@ define(function(require) {
       this.listenTo(this, 'dataReady', this.render);
       this.listenTo(Origin, {
         'editorThemingSidebar:views:save': this.saveData,
+        'editorThemingSidebar:views:cancel': this.setPresetSelection(null),
         'managePresets:edit': this.onEditPreset,
         'managePresets:delete': this.onDeletePreset
       });

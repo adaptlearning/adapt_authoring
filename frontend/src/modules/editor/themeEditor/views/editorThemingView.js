@@ -279,6 +279,7 @@ define(function(require) {
         success: function() {
           self.presets.add(presetModel);
           self.updateRestorePresetButton(false);
+          self.setPresetSelection(presetModel.get('_id'));
           window.setTimeout(function() { self.$('.preset select').val(presetModel.get('_id')); }, 1);
         }
       });

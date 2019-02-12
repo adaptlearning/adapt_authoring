@@ -113,15 +113,15 @@ define(function(require) {
     loadCollections: function() {
       this.themes = new ThemeCollection();
       this.listenTo(this.themes, {
-        'sync': this.onCollectionReady,
-        'error': this.onError
+        sync: this.onCollectionReady,
+        error: this.onError
       });
       this.themes.fetch();
 
       this.presets = new PresetCollection();
       this.listenTo(this.presets, {
-        'sync': this.onCollectionReady,
-        'error': this.onError
+        sync: this.onCollectionReady,
+        error: this.onError
       });
       this.presets.fetch();
     },
@@ -139,7 +139,7 @@ define(function(require) {
       // add 'no presets'
       select.append($('<option>', { value: "", disabled: 'disabled', selected: 'selected' }).text(Origin.l10n.t('app.selectinstr')));
       // add options
-      _.each(this.themes.models, function(item, index) {
+        this.themes.models.forEach(function(item) {
         if (item.get('_isAvailableInEditor') === false) return;
         select.append($('<option>', { value: item.get('theme') }).text(item.get('displayName')));
       }, this);
@@ -164,7 +164,7 @@ define(function(require) {
       // add 'no presets'
       select.append($('<option>', { value: "", selected: 'selected' }).text(Origin.l10n.t('app.nopresets')));
       // add options
-      _.each(presets, function(item) {
+      presets.forEach(function(item) {
         select.append($('<option>', { value: item.get('_id') }).text(item.get('displayName')));
       }, this);
       // disable delete, hide manage preset buttons if empty
@@ -234,12 +234,13 @@ define(function(require) {
         type: 'warning',
         text: Origin.l10n.t('app.restorepresettext'),
         callback: function(confirmed) {
-          if (confirmed) {
-            var preset = self.getSelectedPreset();
-            var settings = (preset) ? preset.get('properties') : self.getDefaultThemeSettings();
-            self.updateRestorePresetButton(false);
-            self.restoreFormSettings(settings);
+          if (!confirmed) {
+            return;
           }
+          var preset = self.getSelectedPreset();
+          var settings = (preset) ? preset.get('properties') : self.getDefaultThemeSettings();
+          self.updateRestorePresetButton(false);
+          self.restoreFormSettings(settings);
         }
       });
     },

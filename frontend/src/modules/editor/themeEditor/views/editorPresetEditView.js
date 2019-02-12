@@ -67,10 +67,9 @@ define(function(require) {
       Origin.Notify.confirm({
         text: Origin.l10n.t('app.presetdeletetext', { preset: presetName }),
         callback: function(confirmed) {
-          if (confirmed === true) {
-            Origin.trigger('managePresets:delete', presetName);
-            self.render();
-          }
+          if (!confirmed) return;
+          Origin.trigger('managePresets:delete', presetName);
+          self.render();
         }
       });
     }

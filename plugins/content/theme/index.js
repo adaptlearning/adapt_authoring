@@ -4,23 +4,17 @@
  *
  */
 
-const async = require('async');
-const bower = require('bower');
 const BowerPlugin = require('../bower');
 const configuration = require('../../../lib/configuration');
 const contentmanager = require('../../../lib/contentmanager');
 const ContentPlugin = contentmanager.ContentPlugin;
-const ContentTypeError = contentmanager.errors.ContentTypeError;
 const database = require('../../../lib/database');
 const defaultOptions = require('./defaults.json');
-const fs = require('fs');
 const logger = require('../../../lib/logger');
 const origin = require('../../../');
-const path = require('path');
 const rest = require('../../../lib/rest');
 const usermanager = require('../../../lib/usermanager');
 const util = require('util');
-const _ = require('underscore');
 
 var bowerConfig = {
   type: 'themetype',

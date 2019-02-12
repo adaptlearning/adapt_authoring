@@ -84,9 +84,7 @@ function writeThemeVariables(results, variablesWritten) {
       return variablesWritten(error);
     }
     const themeVariables = data.course[0].themeVariables;
-    const themeName = data['config'][0].hasOwnProperty('_theme')
-      ? data['config'][0]._theme
-      : false;
+    const themeName = data.config[0]._theme;
     const destinationFolder = path.join(EXPORT_DIR, 'src', 'theme', themeName);
 
     if (!themeVariables) {
@@ -108,7 +106,7 @@ function writeThemeVariables(results, variablesWritten) {
 
         self.writeThemeVariables(COURSE_ID, theme, themeVariables, destinationFolder, variablesWritten);
       });
-      }, configuration.getConfig('dbName'));
+    }, configuration.getConfig('dbName'));
   });
 }
 

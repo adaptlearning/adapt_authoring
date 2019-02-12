@@ -94,15 +94,14 @@ define(function(require) {
       // Remove any attributes which are not on the whitelist
       // Useful to call before a save()
       pruneAttributes: function() {
-        var self = this;
+        if (!this.whitelistAttributes) return;
+
         // Ensure that only valid attributes are pushed back on the save
-        if (self.whitelistAttributes) {
-          _.each(_.keys(self.attributes), function(key) {
-            if (!_.contains(self.whitelistAttributes, key)) {
-              self.unset(key);
-            }
-          });
-        }
+        Object.keys(this.attributes).forEach(function(key) {
+          if (!_.contains(this.whitelistAttributes, key)) {
+            this.unset(key);
+          }
+        }, this);
       },
 
       serializeChildren: function() {
@@ -110,7 +109,7 @@ define(function(require) {
         var serializedJson = '';
 
         if (children) {
-          _.each(children.models, function(child) {
+          children.models.forEach(function(child) {
             serializedJson += child.serialize();
           });  
         }

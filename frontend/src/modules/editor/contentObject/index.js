@@ -24,45 +24,46 @@ define(function(require) {
     (new ContentObjectModel({ _id: data.id })).fetch({
       success: function(model) {
         data.model = model;
+        Helpers.setPageTitle(model);
         route();
       }
     });
   });
 
   function renderContentObjectEdit(data) {
-    Helpers.setPageTitle(data.model, true);
+    Helpers.setPageTitle(data.model);
     var form = Origin.scaffold.buildForm({ model: data.model });
     Origin.sidebar.addView(new EditorPageEditSidebarView({ form: form }).$el);
     Origin.contentPane.setView(EditorPageEditView, { model: data.model, form: form });
   }
 
   function renderPageStructure(data) {
-    Origin.trigger('location:title:update', { title: 'Page editor' });
+    Helpers.setPageTitle(data.model);
 
     Origin.sidebar.addView(new EditorPageSidebarView().$el, {
-      "backButtonText": "Back to course structure",
-      "backButtonRoute": "/#/editor/" + Origin.location.route1 + "/menu"
+      backButtonText: Origin.l10n.t('app.backtomenu'),
+      backButtonRoute: "/#/editor/" + Origin.location.route1 + "/menu"
     });
     Origin.contentPane.setView(EditorView, {
       currentCourseId: Origin.location.route1,
       currentView: 'page',
-      currentPageId: (data.id || null)
+      currentPageId: data.id
     });
   }
 
   function renderMenuStructure(data) {
-    Origin.trigger('location:title:update', { title: 'Menu editor' });
+    Helpers.setPageTitle(Origin.editor.data.course);
 
     Origin.editor.scrollTo = 0;
 
     Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
-      "backButtonText": "Back to courses",
-      "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
+      backButtonText: Origin.l10n.t('app.backtoprojects'),
+      backButtonRoute: Origin.dashboardRoute || '/#/dashboard'
     });
     Origin.contentPane.setView(EditorView, {
       currentCourseId: Origin.location.route1,
       currentView: 'menu',
-      currentPageId: (data.id || null)
+      currentPageId: data.id
     });
   }
 });

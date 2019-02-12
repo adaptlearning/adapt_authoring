@@ -22,8 +22,30 @@
 
     .editing-overlay-panel-content {
         border-bottom: none;
+
+        input {
+          box-sizing: border-box;
+          width: 100%;
+        }
+
         .inner {
             margin-bottom: 20px;
+
+
+            .password-holder {
+              display: flex;
+              width: 100%;
+              input {
+                border-radius: 2px 0 0 2px;
+              }
+
+              button {
+                border: solid 1px #ccc;
+                background-color: #eee;
+                border-left: none;
+                border-radius: 0 2px 2px 0;
+              }
+            }
 
             .alert {
                 background-color: transparent;

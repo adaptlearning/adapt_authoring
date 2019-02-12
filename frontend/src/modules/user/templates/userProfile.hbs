@@ -54,11 +54,12 @@
                     <span class="req">*</span>
                     <span id="passwordError" class="error feedback"></span>
                   </label>
-                  <input type="password" class="width-15" id="password" value="" autocomplete="off">
-                  <input type="text" class="width-15 display-none" id="passwordText" value="" autocomplete="off">
-                  <button href="#" class="toggle-password display-none"><i class="fa fa-eye"></i></button>
+                  <div class="password-holder">
+                    <input type="password" class="width-15" id="password" value="" autocomplete="off">
+                    <button class="toggle-password"><i class="fa fa-eye"></i></button>
+                  </div>
                 </div>
-                <a href="#" class="btn primary change-password">{{t 'app.changepassword'}}</a>
+                <button class="btn primary change-password">{{t 'app.changepassword'}}</button>
               </div>
             </div>
           {{/ifValueEquals}}

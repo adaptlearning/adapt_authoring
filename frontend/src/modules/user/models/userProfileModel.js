@@ -1,10 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
-
-  var Backbone = require('backbone');
-  var Origin = require('core/origin');
-  var _ = require('underscore');
-
+define([
+  'backbone',
+  'core/origin',
+  'core/helpers'
+], function(Backbone, Origin, Helpers) {
   var UserProfileModel = Backbone.Model.extend({
 
     idAttribute: '_id',
@@ -25,15 +24,11 @@ define(function(require) {
         if (!attributes.password) {
           validationErrors.password = Origin.l10n.t('app.validationrequired');
         } else {
-          if (attributes.password.length < 8) {
-            validationErrors.password = Origin.l10n.t('app.validationlength', {length: 8});
-          }
+          validationErrors.password = Helpers.validatePassword(attributes.password).join('<br>');
         }
       }
 
-      return _.isEmpty(validationErrors) 
-      ? null
-      : validationErrors;
+      return _.isEmpty(validationErrors) ? null : validationErrors;
     }
 
   });

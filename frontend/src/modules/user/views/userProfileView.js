@@ -6,14 +6,11 @@ define(function(require){
   var Origin = require('core/origin');
 
   var UserProfileView = OriginView.extend({
-    tagName: 'div',
     className: 'user-profile',
 
     events: {
-      'click a.change-password' : 'togglePassword',
-      'keyup #password'         : 'onPasswordKeyup',
-      'keyup #passwordText'         : 'onPasswordTextKeyup',
-      'click .toggle-password'  : 'togglePasswordView'
+      'click .change-password': 'togglePassword',
+      'click .toggle-password': 'togglePasswordView'
     },
 
     preRender: function() {
@@ -26,17 +23,18 @@ define(function(require){
 
     postRender: function() {
       this.setViewToReady();
+
+      this.$password = this.$('#password');
     },
 
     handleValidationError: function(model, error) {
       Origin.trigger('sidebar:resetButtons');
 
-      if (error && _.keys(error).length !== 0) {
-        _.each(error, function(value, key) {
-          this.$('#' + key + 'Error').text(value);
-        }, this);
-        this.$('.error-text').removeClass('display-none');
-      }
+      if (!error || _.keys(error).length === 0) return;
+      _.each(error, function(value, key) {
+        this.$('#' + key + 'Error').html(value);
+      }, this);
+      this.$('.error-text').removeClass('display-none');
     },
 
     togglePassword: function(event) {
@@ -57,7 +55,6 @@ define(function(require){
         this.$(formSelector).addClass('display-none');
 
         this.$('#password').val('').removeClass('display-none');
-        this.$('#passwordText').val('').addClass('display-none');
         this.$('.toggle-password i').addClass('fa-eye').removeClass('fa-eye-slash');
 
         this.$('.toggle-password').addClass('display-none');
@@ -70,37 +67,9 @@ define(function(require){
     togglePasswordView: function() {
       event && event.preventDefault();
 
-      this.$('#passwordText').toggleClass('display-none');
-      this.$('#password').toggleClass('display-none');
+      var type = (this.$password.attr('type') === 'password') ? 'text' : 'password';
+      this.$password.attr('type', type);
       this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
-    },
-
-    indicatePasswordStrength: function(event) {
-      var password = $('#password').val();
-      var $passwordStrength = $('#passwordError');
-
-      // Must have capital letter, numbers and lowercase letters
-      var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
-      // Must have either capitals and lowercase letters or lowercase and numbers
-      var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
-      // Must be at least 8 characters long
-      var okRegex = new RegExp("(?=.{8,}).*", "g");
-
-      if (okRegex.test(password) === false) {
-        var classes = 'alert alert-error';
-        var htmlText = Origin.l10n.t('app.validationlength', {length: 8});
-      } else if (strongRegex.test(password)) {
-        var classes = 'alert alert-success';
-        var htmlText = Origin.l10n.t('app.passwordindicatorstrong');
-      } else if (mediumRegex.test(password)) {
-        var classes = 'alert alert-info';
-        var htmlText = Origin.l10n.t('app.passwordindicatormedium');
-      } else {
-        var classes = 'alert alert-info';
-        var htmlText = Origin.l10n.t('app.passwordindicatorweak');
-      }
-
-      $passwordStrength.removeClass().addClass(classes).html(htmlText);
     },
 
     saveUser: function() {
@@ -137,21 +106,8 @@ define(function(require){
           Backbone.history.history.back();
         }
       });
-    },
-
-    onPasswordKeyup: function() {
-      if(this.$('#password').val().length > 0) {
-        this.$('#passwordText').val(this.$('#password').val());
-        this.indicatePasswordStrength();
-        this.$('.toggle-password').removeClass('display-none');
-      } else {
-        this.$('.toggle-password').addClass('display-none');
-      }
-    },
-
-    onPasswordTextKeyup: function() {
-
     }
+
   }, {
     template: 'userProfile'
   });

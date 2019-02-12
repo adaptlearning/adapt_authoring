@@ -486,7 +486,8 @@ define(function(require) {
       });
     },
 
-    onThemeChanged: function(event) {
+    onThemeChanged: function() {
+      this.setPresetSelection(null);
       this.updatePresetSelect();
       this.renderForm();
     },

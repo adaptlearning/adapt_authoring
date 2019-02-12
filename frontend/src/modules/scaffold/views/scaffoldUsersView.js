@@ -49,14 +49,15 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
           option: this.renderItem
         },
         onItemRemove: function(value, $item) {
-          if(value === Origin.sessionModel.get('id')) {
-            Origin.Notify.alert({
-              type: 'warning',
-              text: Origin.l10n.t('app.stopsharingwithyourself')
-            });
-            this.addItem(value, true);
-            this.close();
+          if(value !== Origin.sessionModel.get('id')) {
+            return;
           }
+          Origin.Notify.alert({
+            type: 'warning',
+            text: Origin.l10n.t('app.stopsharingwithyourself')
+          });
+          this.addItem(value, true);
+          this.close();
         }
       });
     },

@@ -128,11 +128,13 @@ define(function(require){
       });
 
       self.model.save(toChange, {
+        wait: true,
         patch: true,
-        error: function() {
+        error: function(data, error) {
+          Origin.trigger('sidebar:resetButtons');
           Origin.Notify.alert({
             type: 'error',
-            text: Origin.l10n.t('app.errorgeneric')
+            text: error.responseText || Origin.l10n.t('app.errorgeneric')
           });
         },
         success: function(model) {

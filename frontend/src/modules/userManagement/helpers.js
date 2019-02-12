@@ -11,6 +11,13 @@ define(function(require){
         data: data,
         method: method,
         error: function(data, status, error) {
+          if (data.responseJSON && data.responseJSON.message) {
+            return Origin.Notify.alert({
+              type: 'error',
+              text: data.responseJSON.message.split('\n').join('<br>')
+            });
+          }
+
           var message = error + ': ';
           if(data.responseText) message += data.responseText;
           Origin.Notify.alert({ type: 'error', text: message });

@@ -13,10 +13,9 @@
             {{/if}}
           {{/if}}
         </div>
-        {{#if @last}}
-        {{else}}
+        {{#unless @last}}
           <div class="separator unselectable">&gt;</div>
-        {{/if}}
+        {{/unless}}
       {{/each}}
     </div>
   {{/if}}

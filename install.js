@@ -24,6 +24,7 @@ var masterTenant = false;
 var superUser = false;
 // from user input
 var configResults = {};
+var passwordPolicy;
 
 installHelpers.checkPrimaryDependencies(function(error) {
   if(error) return handleError(null, 1, error);
@@ -284,6 +285,7 @@ function generatePromptOverrides() {
     var configJson = require('./conf/config.json');
     var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
     configData.install = 'y';
+    passwordPolicy = configData.passwordPolicy || null;
   }
   const sessionSecret = USE_CONFIG && configData.sessionSecret || crypto.randomBytes(64).toString('hex');
   addConfig({ sessionSecret: sessionSecret });
@@ -564,6 +566,10 @@ function saveConfig(configItems, callback) {
       root: process.cwd()
     }, configItems);
 
+    if(passwordPolicy) {
+      config.passwordPolicy = passwordPolicy;
+    }
+
     fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
       if(error) {
         return handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
@@ -574,7 +580,9 @@ function saveConfig(configItems, callback) {
 }
 
 function handleError(error, exitCode, exitMessage) {
-  if(error) {
+  if(error && error.message) {
+    console.error(`ERROR: ${error.message}`);
+  } else if(error) {
     console.error(`ERROR: ${error}`);
   }
   if(exitCode) {

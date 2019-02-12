@@ -289,7 +289,7 @@ define(function(require){
         errors.push(Origin.l10n.t('app.validationpasswordlength', { length: config.length }));
       }
 
-      _.keys(config).forEach(key => {
+      _.keys(config).forEach(function(key) {
         if (key === 'length') return;
         if (config[key] <= 0) return;
 

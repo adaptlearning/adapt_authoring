@@ -6,12 +6,13 @@ define(function(require) {
   var ConfigModel = require('core/models/configModel');
   var EditorMenuSettingsEditView = require('./views/editorMenuSettingsEditView');
   var EditorMenuSettingsEditSidebarView = require('./views/editorMenuSettingsEditSidebarView');
+  var Helpers = require('../global/helpers');
 
   Origin.on('editor:menusettings', function(data) {
     var route1 = Origin.location.route1;
     (new ConfigModel({ _courseId: route1 })).fetch({
       success: function(model) {
-        Origin.trigger('location:title:update', {title: 'Select menu'});
+        Helpers.setPageTitle(model);
 
         var backButtonRoute = "/#/editor/" + route1 + "/menu";
         var backButtonText = "Back to menu";

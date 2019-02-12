@@ -21,11 +21,16 @@
   }
 
   .paste-zone {
-    margin: 30px;
-    height: 50px;
+
+    &.paste-zone-block,
+    &.paste-zone-article {
+      margin-bottom: 20px;
+    }
 
     &-inner {
       padding: 20px 30px;
+      border: 1px dashed lighten(@primary-color, 15%);
+      border-radius: 3px;
     }
 
     &-component-left {
@@ -36,10 +41,6 @@
     &-component-right {
       width: 48%;
       float: right;
-    }
-
-    &-component {
-      margin: 0px;
     }
 
     &-component-full {
@@ -105,15 +106,15 @@
     opacity: 1;
     background-color: transparent;
     transition: all 0.3s;
-    
+
     a {
       text-decoration: none;
     }
-    
+
     &:hover {
       cursor: move;
     }
-    
+
     &-inner {
       button {
         padding: 10px;

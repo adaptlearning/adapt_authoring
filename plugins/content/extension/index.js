@@ -448,6 +448,30 @@ function toggleExtensions (courseId, action, extensions, cb) {
   }, configuration.getConfig('dbName'));
 }
 
+function enableExtensions(courseId, extensions, cb) {
+  if(!extensions || 'object' !== typeof extensions) {
+    return cb(new Error('Extensions should be an array of ids'));
+  }
+  toggleExtensions(courseId, 'enable', extensions, function(error, result) {
+    if(error) {
+      return cb(error);
+    }
+    cb();
+  });
+}
+
+function disableExtensions(courseId, extensions, cb) {
+  if(!extensions || 'object' !== typeof extensions) {
+    return cb(new Error('Extensions should be an array of ids'));
+  }
+  toggleExtensions(courseId, 'disable', extensions, function(error, result) {
+    if(error) {
+      return cb(error);
+    }
+    cb();
+  });
+}
+
 /**
  * essential setup
  *
@@ -457,52 +481,33 @@ function initialize () {
   BowerPlugin.prototype.initialize.call(new Extension(), bowerConfig);
 
   var app = origin();
+
+  app.on('extensions:enable', enableExtensions);
+  app.on('extensions:disable', disableExtensions);
+
   app.once('serverStarted', function (server) {
 
     // remove extensions from content collections
     // expects course ID and an array of extension id's
     rest.post('/extension/disable/:courseid', function (req, res, next) {
-      var extensions = req.body.extensions;
-      var courseId = req.params.courseid;
-
-      // check if there is an object
-      if (!extensions || 'object' !== typeof extensions) {
-        res.statusCode = 404;
-        return res.json({ success: false, message: 'extensions should be an array of ids' });
-      }
-
-      toggleExtensions(courseId, 'disable', extensions, function(error, result) {
-        if (error) {
-          res.statusCode = error instanceof ContentTypeError ? 400 : 500;
-          return res.json({ success: false, message: error.message });
+      disableExtensions(req.params.courseid, req.body.extensions, function(error) {
+        if(error) {
+          logger.log('error', error);
+          return res.status(error instanceof ContentTypeError ? 400 : 500).json({ success: false, message: error });
         }
-
-        res.statusCode = 200;
-        return res.json({success: true});
+        res.status(200).json({ success: true });
       });
     });
 
     // add extensions to content collections
     // expects course ID and an array of extension id's
     rest.post('/extension/enable/:courseid', function (req, res, next) {
-      var extensions = req.body.extensions;
-      var courseId = req.params.courseid;
-
-      // check if there is an object
-      if (!extensions || 'object' !== typeof extensions) {
-        res.statusCode = 404;
-        return res.json({ success: false, message: 'extensions should be an array of ids' });
-      }
-
-      toggleExtensions(courseId, 'enable', extensions, function(error, result) {
-        if (error) {
-          logger.log('info', 'error = ' + error);
-          res.statusCode = error instanceof ContentTypeError ? 400 : 500;
-          return res.json({ success: false, message: error.message });
+      enableExtensions(req.params.courseid, req.body.extensions, function(error) {
+        if(error) {
+          logger.log('error', error);
+          return res.status(error instanceof ContentTypeError ? 400 : 500).json({ success: false, message: error });
         }
-
-        res.statusCode = 200;
-        return res.json({ success: true });
+        res.status(200).json({ success: true });
       });
     });
   });

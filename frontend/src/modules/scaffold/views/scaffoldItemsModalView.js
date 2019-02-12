@@ -82,6 +82,15 @@ define([ 'core/origin' ], function(Origin) {
           Origin.scaffold.setOverlayActive(false);
           $('.scaffold-modal-overlay').remove();
       }
+    },
+
+    remove: function() {
+      for (var title in this.content.fields) {
+        if (!this.content.fields.hasOwnProperty(title)) continue;
+        this.content.fields[title].remove();
+      }
+      this.content.remove();
+      Backbone.View.prototype.remove.apply(this, arguments);
     }
 
   }, { template: 'scaffoldItemsModal' });

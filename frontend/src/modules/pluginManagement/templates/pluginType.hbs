@@ -19,6 +19,11 @@
     <div class="pluginType-active col-10 col-centered">
       <input class="pluginType-enabled" type="checkbox" {{#if _isAvailableInEditor}} checked {{/if}}/>
     </div>
+    {{#if extension}}
+      <div class="pluginType-addedDefault col-10 col-centered">
+        <input class="pluginType-addedDefault" type="checkbox" {{#if _isAddedByDefault}}checked{{/if}}/>
+      </div>
+    {{/if}}
     <div class="pluginType-update col-10 col-centered">
       <div class="pluginType-update-inner tb-col-inner">
         {{#if isLocalPackage}}

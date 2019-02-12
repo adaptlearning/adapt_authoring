@@ -15,19 +15,11 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     renderItem: function(item, escape) {
-      var name = item.firstName && item.lastName ? escape(item.firstName  + ' ' +  item.lastName) : '';
-      var email = escape(item.email);
-
-      var $div = $('<div class="option">')
-        .append('<span class="name">' + (name || email) + '</span>');
-
-      if(name) {
-        $div.append('<span class="email">&lt;' + email + '&gt;</span>');
-      }
-      if(item.disabled) {
-        $div.attr('data-disabled', true);
-      }
-      return $div
+      return Handlebars.templates.scaffoldUsersOption({
+        name: item.firstName && item.lastName ? escape(item.firstName  + ' ' +  item.lastName) : false,
+        email: escape(item.email),
+        disabled: item.disabled
+      });
     },
 
     fetchUsers: function(callback) {

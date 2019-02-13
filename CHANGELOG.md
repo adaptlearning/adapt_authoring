@@ -9,6 +9,9 @@ _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for
 
 Bugfix release.
 
+### Upgrade Notes
+:skull: Please also upgrade the Adapt framework if your authoring tool is running a version older than 2.0.14. :skull:
+
 ### Fixed
 - Load in schema from framework clone ([#2177](https://github.com/adaptlearning/adapt_authoring/issues/2177))
 

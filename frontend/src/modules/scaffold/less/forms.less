@@ -81,6 +81,19 @@ form .error {
     width: 15px;
     height: 15px;
   }
+  .fallback-warning {
+    width: calc(~"93% - 4px");
+    background-color: lighten(@warning-color, 10%);
+    border-left: solid 6px @warning-color;
+
+    .warning-inner {
+      padding: 0.5rem;
+
+      .fa {
+        margin-right: 0.5rem;
+      }
+    }
+  }
 }
 
 .field-help {

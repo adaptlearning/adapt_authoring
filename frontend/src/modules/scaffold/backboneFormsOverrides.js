@@ -29,6 +29,7 @@ define([
   // merge schema into data
   Backbone.Form.Field.prototype.templateData = function() {
     return _.extend(templateData.call(this), this.schema, {
+      fallbackWarning: this.fallbackWarning || null,
       isDefaultValue: _.isEqual(this.editor.value, this.editor.defaultValue)
     });
   };
@@ -47,8 +48,9 @@ define([
       return new this.schema.type(options);
     }
 
-    this.schema.inputType = "Text";
-    this.schema.type = Backbone.Form.editors.Text;
+    this.schema.inputType = "CodeEditor";
+    this.schema.type = Backbone.Form.editors.CodeEditor;
+    this.fallbackWarning = Origin.l10n.t('app.scaffoldFallbackWarning');
     return new this.schema.type(options);
   };
 

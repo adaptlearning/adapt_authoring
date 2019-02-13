@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
-
   var Backbone = require('backbone');
+  var Helpers = require('core/helpers');
   var Origin = require('core/origin');
   var _ = require('underscore');
 
@@ -23,6 +23,8 @@ define(function(require) {
 
       if (!attributes.email) {
         validationErrors.email = Origin.l10n.t('app.validationrequired');
+      } else if (!Helpers.isValidEmail(attributes.email)) {
+        validationErrors.email = Origin.l10n.t('app.invalidusernameoremail');
       }
 
       if (attributes._isNewPassword) {

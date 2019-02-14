@@ -57,7 +57,6 @@ define(function(require){
         this.$('#password').val('').removeClass('display-none');
         this.$('.toggle-password i').addClass('fa-eye').removeClass('fa-eye-slash');
 
-        this.$('.toggle-password').addClass('display-none');
         this.$('#passwordError').html('');
 
         this.model.set('password', '');
@@ -97,6 +96,12 @@ define(function(require){
       self.model.save(toChange, {
         patch: true,
         error: function(model, response, optinos) {
+          if (response.responseJSON && response.responseJSON.message) {
+            return Origin.Notify.alert({
+              type: 'error',
+              text: response.responseJSON.message
+            });
+          }
           Origin.Notify.alert({
             type: 'error',
             text: Origin.l10n.t('app.errorgeneric')

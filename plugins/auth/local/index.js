@@ -172,26 +172,21 @@ LocalAuth.prototype.internalRegisterUser = function(retypePasswordRequired, user
     return cb(new auth.errors.UserRegistrationError('email and password are required!'));
   }
 
-  const validationError = usermanager.validatePassword(user.password);
-  if (validationError) {
-    return cb(validationError);
-  }
+  usermanager.checkPasswordPolicy(user.password, {email: user.email}, function(validationError) {
+    if (validationError) return cb(validationError);
 
-  // create user with hashed password
-  auth.hashPassword(user.password, function (error, hash) {
-    if (error) {
-      return cb(error);
-    }
+    // create user with hashed password
+    auth.hashPassword(user.password, function (error, hash) {
+      if (error) return cb(error);
 
-    user.password = hash;
-    user.auth = 'local';
-    usermanager.createUser(user, function (error, user) {
-      if (error) {
-        return cb(error);
-      }
+      user.password = hash;
+      user.auth = 'local';
+      usermanager.createUser(user, function (error, user) {
+        if (error) return cb(error);
 
-      // successfully registered
-      return cb(null, user);
+        // successfully registered
+        return cb(null, user);
+      });
     });
   });
 };
@@ -233,30 +228,29 @@ LocalAuth.prototype.internalResetPassword = function (user, next) {
     return next(new auth.errors.UserResetPasswordError('User ID and password are required!'));
   }
 
-  const validationError = usermanager.validatePassword(user.password);
-  if (validationError) {
-    return next(validationError);
-  }
+  usermanager.checkPasswordPolicy(user.password, {_id: user.id}, function(validationError) {
+    if (validationError) return next(validationError);
 
-  // Hash the password
-  auth.hashPassword(user.password, function (error, hash) {
-    if (error) {
-      return next(error);
-    }
-
-    // Update user details with hashed password
-    usermanager.updateUser({ _id: user.id }, { password: hash, failedLoginCount: 0 }, function(err) {
+    // Hash the password
+    auth.hashPassword(user.password, function (error, hash) {
       if (error) {
-        return next(error)
+        return next(error);
       }
 
-      usermanager.deleteUserPasswordReset({ user: user.id }, function (error, user) {
+      // Update user details with hashed password
+      usermanager.updateUser({ _id: user.id }, { password: hash, failedLoginCount: 0 }, function(err) {
         if (error) {
-          return next(error);
+          return next(error)
         }
 
-        //Request deleted, password successfully reset
-        return next(null, user);
+        usermanager.deleteUserPasswordReset({ user: user.id }, function (error, user) {
+          if (error) {
+            return next(error);
+          }
+
+          //Request deleted, password successfully reset
+          return next(null, user);
+        });
       });
     });
   });

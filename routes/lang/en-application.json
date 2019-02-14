@@ -144,6 +144,7 @@
   "app.validationpasswordlowercase": "Password must include at least %{length} lower case character(s)",
   "app.validationpassworduppercase": "Password must include at least %{length} upper case character(s)",
   "app.validationpasswordspecial": "Password must include at least %{length} non alpha nummeric character(s)",
+  "app.validationpasswordnames": "Password cannot contain email, first name or last name.",
   "app.changepassword": "Change password",
   "app.accountislocked": "This account has been locked because of too many failed login attempts. You can unlock it by clicking the 'Forgotten your password?' button.",
   "app.validationpasswordmatch": "Passwords do not match",

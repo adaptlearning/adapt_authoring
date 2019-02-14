@@ -24,7 +24,10 @@ define([
         if (!attributes.password) {
           validationErrors.password = Origin.l10n.t('app.validationrequired');
         } else {
-          validationErrors.password = Helpers.validatePassword(attributes.password).join('<br>');
+          var errors = Helpers.validatePassword(attributes.password, attributes.email, attributes.firstName, attributes.lastName);
+          if (errors.length) {
+            validationErrors.password = errors.join('<br>');
+          }
         }
       }
 

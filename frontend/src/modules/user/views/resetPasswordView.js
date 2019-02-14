@@ -64,7 +64,8 @@ define(function(require) {
         error: _.bind(function(model, response, options) {
           var json = response.responseJSON;
           if (json && json.message) {
-            console.log(json.message);
+            this.$('.resetError .message').html(json.message);
+            this.$('.resetError').removeClass('display-none');
             return;
           }
 

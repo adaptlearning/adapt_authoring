@@ -5,6 +5,13 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.6.4] - 2019-02-18
+
+Bugfix release.
+
+### Fixed
+- Plugin globals not always shown in Project settings ([#2223](https://github.com/adaptlearning/adapt_authoring/issues/2223))
+
 ## [0.6.3] - 2019-02-14
 
 Bugfix release.
@@ -508,6 +515,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.6.4]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.3...v0.6.4
 [0.6.3]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.0...v0.6.1

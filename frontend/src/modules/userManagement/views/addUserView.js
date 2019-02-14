@@ -20,32 +20,41 @@ define(function(require){
 
     isValid: function() {
       var valid = true;
+      var map = Object.create(null);
 
       this.$('.field-error').each(function(index, element) {
         var $error = $(element);
         var $input = $error.siblings('input');
-        var value = $input.val().trim();
+        var values = {
+          $error: $error,
+          value: $input.val().trim()
+        };
 
-        switch ($input.attr('name')) {
+        map[$input.attr('name')] = values;
+      });
+
+      for (var name in map) {
+        switch (name) {
           case 'email':
-            var isValid = Helpers.isValidEmail(value);
-            break;
+            var isValid = Helpers.isValidEmail(map[name].value);
+          break;
           case 'password':
-            var errors = Helpers.validatePassword(value);
+            var errors = Helpers.validatePassword(map[name].value, map.email.value, map.firstName.value, map.lastName.value);
             var isValid = (errors.length === 0);
-            if (!isValid) $error.html(errors.join('<br>'));
-            break;
+            if (!isValid) map[name].$error.html(errors.join('<br>'));
+          break;
           default:
-            var isValid = (value.length > 0);
-            break;
+            var isValid = (map[name].value.length > 0);
+          break;
         }
 
-        $error.toggleClass('display-none', isValid);
+        map[name].$error.toggleClass('display-none', isValid);
 
         if (!isValid) {
           valid = false;
         }
-      });
+      }
+
 
       return valid;
     },

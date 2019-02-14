@@ -5,9 +5,12 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
-## [0.6.3] - 2019-02-13
+## [0.6.3] - 2019-02-14
 
 Bugfix release.
+
+### Upgrade Notes
+:skull: Please also upgrade the Adapt framework if your authoring tool is running a version older than 2.0.14. :skull:
 
 ### Fixed
 - Load in schema from framework clone ([#2177](https://github.com/adaptlearning/adapt_authoring/issues/2177))

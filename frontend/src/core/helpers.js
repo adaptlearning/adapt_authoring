@@ -263,7 +263,8 @@ define(function(require){
       return value.length > 0 && regEx.test(value);
     },
 
-    validatePassword: function(password) {
+    validatePassword: function(password, email, firstName, lastName) {
+      debugger;
       var errors = [];
       var config = Origin.constants.passwordPolicy;
       var map = {
@@ -277,11 +278,11 @@ define(function(require){
         },
         uppercaseLetters: {
           regex: /[A-Z]/g,
-          error: Origin.l10n.t('app.validationpassworduppercase', { length: config.lowercaseLetters })
+          error: Origin.l10n.t('app.validationpassworduppercase', { length: config.uppercaseLetters })
         },
         nonAlphaNumeric: {
           regex: /[!#@?%&$<>]/g,
-          error: Origin.l10n.t('app.validationpasswordspecial', { length: config.lowercaseLetters })
+          error: Origin.l10n.t('app.validationpasswordspecial', { length: config.nonAlphaNumeric })
         }
       }
 
@@ -289,15 +290,19 @@ define(function(require){
         errors.push(Origin.l10n.t('app.validationpasswordlength', { length: config.length }));
       }
 
+      if (config.notIncludeNames && email && firstName && lastName) {
+        var userNameRegex = new RegExp([email.split('@')[0],firstName, lastName].join('|'),'gi');
+        if (userNameRegex.test(password)) {
+          errors.push(Origin.l10n.t('app.validationpasswordnames'));
+        }
+      }
+
       _.keys(config).forEach(function(key) {
-        if (key === 'length') return;
-        if (config[key] <= 0) return;
+        if (!map[key] || config[key] <= 0) return;
 
         var results;
         var count = 0;
-        while ((results = map[key].regex.exec(password)) !== null) {
-          count++;
-        }
+        while ((results = map[key].regex.exec(password)) !== null) count++;
         if (count >= config[key]) return;
         errors.push(map[key].error);
       });

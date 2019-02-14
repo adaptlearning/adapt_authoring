@@ -10,6 +10,7 @@ define(function(require){
       var className = 'user-item tb-row' + ' ' + this.model.get('_id');
       // 'current user styling
       if (this.model.get('_id') === Origin.sessionModel.get('id')) className += ' me';
+      if (this.model.get('_isHidden')) className += ' display-none';
       return className;
     },
     isSelected: false,
@@ -37,6 +38,9 @@ define(function(require){
     preRender: function() {
       this.listenTo(Origin, 'userManagement:user:reset', this.resetView);
       this.listenTo(this.model, 'destroy', this.remove);
+      this.listenTo(this.model, 'change:_isHidden', function(model, _isHidden) {
+        this.$el.toggleClass('display-none', _isHidden);
+      });
       this.listenTo(this, 'remove', this.remove);
     },
 

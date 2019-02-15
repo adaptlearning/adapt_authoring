@@ -45,7 +45,7 @@ define(function(require) {
   };
 
   /*
-  * returns the default list excluding anything in [blacklist] (uses event name)
+  * returns the default list excluding anything in [blacklist] (uses callbackEvent to filter)
   */
   function getDefaultItems(blacklist) {
     var DEFAULT_ITEMS = [

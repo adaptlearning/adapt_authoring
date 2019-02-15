@@ -75,3 +75,21 @@ input:disabled, textarea:disabled {
   margin-top: 1rem;
   display: block;
 }
+
+form {
+  .password-holder {
+    display: flex;
+    width: 100%;
+
+    input {
+      border-radius: 2px 0 0 2px;
+    }
+
+    button {
+      border: solid 1px #ccc;
+      background-color: #eee;
+      border-left: none;
+      border-radius: 0 2px 2px 0;
+    }
+  }
+}

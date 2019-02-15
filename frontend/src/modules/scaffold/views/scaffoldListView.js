@@ -92,7 +92,7 @@ define([
     },
 
     cloneItem: function(event) {
-      this.list.addItem(this.editor.value);
+      this.list.addItem(this.editor.value, true);
     }
 
   });

@@ -217,9 +217,9 @@ define(function(require){
     onDeleteClicked: function() {
       var option = this.$('[name="delete-options"]').val();
       var optionMsg = {
-        'transfer': Origin.l10n.t('app.confirmdeleteusertransfer'),
-        'delete': Origin.l10n.t('app.confirmdeleteuserdelete'),
-        'share': Origin.l10n.t('app.confirmdeleteusershare')
+        transfer: Origin.l10n.t('app.confirmdeleteusertransfer'),
+        delete: Origin.l10n.t('app.confirmdeleteuserdelete'),
+        share: Origin.l10n.t('app.confirmdeleteusershare')
       };
       var self = this;
       Origin.Notify.confirm({

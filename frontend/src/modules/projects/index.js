@@ -10,8 +10,6 @@ define(function(require) {
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
     Origin.trigger('editor:resetData');
-
-    Origin.trigger('location:title:update', {title: 'Dashboard - viewing my courses'});
     Origin.options.addItems([
       {
         title: Origin.l10n.t('app.grid'),
@@ -64,25 +62,26 @@ define(function(require) {
   });
 
   Origin.on('dashboard:loaded', function (options) {
+    var titleKey, Collection;
     switch (options.type) {
       case 'shared':
-        Origin.trigger('location:title:update', { title: 'Dashboard - viewing shared courses' });
-        Origin.contentPane.setView(ProjectsView, { collection: new SharedProjectCollection });
+        titleKey = 'sharedprojects';
+        Collection = SharedProjectCollection;
         break;
       case 'mine':
-        Origin.trigger('location:title:update', { title: 'Dashboard - viewing my courses' });
-        Origin.contentPane.setView(ProjectsView, { collection: new MyProjectCollection });
+        titleKey = 'myprojects';
+        Collection = MyProjectCollection;
         break;
       case 'all':
         if(!Origin.permissions.hasPermissions(['*/*:create','*/*:read','*/*:update','*/*:delete'])) {
           return Origin.router.blockUserAccess();
         }
-        Origin.trigger('location:title:update', { title: 'Dashboard - viewing all courses' });
-        Origin.contentPane.setView(ProjectsView, { collection: new AllProjectCollection });
-        break;
-      default:
+        titleKey = 'allprojects';
+        Collection = AllProjectCollection;
         break;
     }
+    Origin.trigger('location:title:update', { breadcrumbs: ['dashboard'], title: Origin.l10n.t('app.' + titleKey) });
+    Origin.contentPane.setView(ProjectsView, { collection: new Collection() });
   });
 
   Origin.on('globalMenu:dashboard:open', function() {

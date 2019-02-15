@@ -1,6 +1,6 @@
 {
   "name": "adapt_authoring",
-  "version": "0.6.1",
+  "version": "0.6.3",
   "license": "GPL-3.0",
   "description": "A server-based user interface for authoring eLearning courses using the Adapt Framework.",
   "keywords": [
@@ -79,7 +79,7 @@
     "underscore": "^1.9.0",
     "unzip": "^0.1.11",
     "validator": "^10.2.0",
-    "winston": "^2.4.2",
+    "winston": "3",
     "yauzl": "^2.9.1"
   },
   "devDependencies": {

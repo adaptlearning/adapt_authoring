@@ -5,6 +5,7 @@ define([
 ], function(Origin, BackboneForms) {
 
   var ScaffoldListView = Backbone.Form.editors.List.extend({
+    defaultValue: [],
 
     render: function() {
       var instance = Backbone.Form.editors.__List.prototype.render.apply(this, arguments);
@@ -91,7 +92,7 @@ define([
     },
 
     cloneItem: function(event) {
-      this.list.addItem(this.editor.value);
+      this.list.addItem(this.editor.value, true);
     }
 
   });

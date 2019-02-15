@@ -5,9 +5,12 @@ define(function(require){
   var OriginView = require('core/views/originView');
 
   var AddUserView = OriginView.extend({
-    tagName: 'div',
     className: 'addUser',
     createdUserId: false,
+
+    events: {
+      'click .toggle-password': 'onTogglePassword'
+    },
 
     preRender: function() {
       Origin.trigger('location:title:update', { title: Origin.l10n.t('app.addusertitle') });
@@ -15,6 +18,7 @@ define(function(require){
     },
 
     postRender: function() {
+      this.$password = this.$('[name="password"]');
       this.setViewToReady();
     },
 
@@ -116,7 +120,17 @@ define(function(require){
         title: "Couldn't add user",
         text: data.responseText || error
       });
+    },
+
+    onTogglePassword: function(event) {
+      event.preventDefault();
+      var type = (this.$password.attr('type') === 'password') ? 'text' : 'password';
+      this.$password.attr('type', type);
+      $(event.currentTarget).find('.fa')
+        .toggleClass('fa-eye', type === 'password')
+        .toggleClass('fa-eye-slash', type === 'text');
     }
+
   }, {
     template: 'addUser'
   });

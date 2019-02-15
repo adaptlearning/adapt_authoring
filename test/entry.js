@@ -25,15 +25,18 @@ before(function(done) {
   process.env.SILENT = true;
   async.series([
     removeTestData,
+    createCacheData,
     function startApp(cb) {
       logger.level('console','error'); // only show errors
       app.use({ configFile: path.join('test', 'testConfig.json') });
+      app.once('modulesReady', function() {
+        app.configuration.setConfig('masterTenantID', testData.testTenant._id);
+      });
       app.on('serverStarted', function(server) {
         cb();
       });
       app.run({ skipVersionCheck: true });
     },
-    createCacheData,
     function createTenant(cb) {
       createTestTenant(testData.testTenant, function(error, tenant) {
         if(error) {
@@ -129,14 +132,11 @@ function removeTestData(done) {
 }
 
 function createCacheData(done) {
-  // these are needed by the below
-  app.configuration.setConfig('masterTenantID', testData.testTenant._id);
-  app.configuration.setConfig('masterTenantName', testData.testTenant.name);
-
   var src = path.join(TEST_CACHE_DIR, Folders.Framework);
 
   function _copyFramework() {
-    var dest = path.join(app.configuration.serverRoot, Folders.Temp, testData.testTenant._id);
+    var serverRoot = path.normalize(path.join(__dirname, '..'));
+    var dest = path.join(serverRoot, Folders.Temp, testData.testTenant._id);
     async.series([
       async.apply(fs.remove, dest),
       async.apply(fs.ensureDir, dest),
@@ -146,7 +146,10 @@ function createCacheData(done) {
   // make sure we've got the framework, and copy it into place
   fs.stat(src, function(error, stats) {
     if(!error) return _copyFramework();
-    installHelpers.installFramework({ directory: src }, function(error) {
+    installHelpers.cloneRepo({
+      directory: src,
+      repository: 'https://github.com/adaptlearning/adapt_framework.git'
+    }, function(error) {
       if(error) return done(error);
       _copyFramework();
     });

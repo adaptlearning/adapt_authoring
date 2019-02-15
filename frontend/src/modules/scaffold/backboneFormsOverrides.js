@@ -29,8 +29,29 @@ define([
   // merge schema into data
   Backbone.Form.Field.prototype.templateData = function() {
     return _.extend(templateData.call(this), this.schema, {
+      fallbackWarning: this.fallbackWarning || null,
       isDefaultValue: _.isEqual(this.editor.value, this.editor.defaultValue)
     });
+  };
+
+  Backbone.Form.Field.prototype.createEditor = function() {
+    var options = _.extend(_.pick(this, 'schema', 'form', 'key', 'model', 'value'), { id: this.createEditorId() });
+
+    if (this.schema.type) {
+      return new this.schema.type(options);
+    }
+
+    var fallbackType = this.schema.inputType.fallbackType;
+    if (fallbackType && Backbone.Form.editors[fallbackType]) {
+      this.schema.type = Backbone.Form.editors[fallbackType];
+      this.schema.inputType = fallbackType;
+      return new this.schema.type(options);
+    }
+
+    this.schema.inputType = "CodeEditor";
+    this.schema.type = Backbone.Form.editors.CodeEditor;
+    this.fallbackWarning = Origin.l10n.t('app.scaffoldFallbackWarning');
+    return new this.schema.type(options);
   };
 
   // use default from schema and set up isDefaultValue toggler

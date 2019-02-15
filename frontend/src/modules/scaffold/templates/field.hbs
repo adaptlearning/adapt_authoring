@@ -20,6 +20,13 @@
   </div>
   {{/if}}
   {{/if}}
+  {{#if fallbackWarning}}
+    <div class="fallback-warning">
+      <div class="warning-inner">
+        <i class="fa fa-exclamation-triangle"></i>{{ fallbackWarning }}
+      </div>
+    </div>
+  {{/if}}
   <div class="field-editor{{#unless title}}{{#if legend}} collapsed{{/if}}{{/unless}}">
     <div class="field-error" data-error></div>
     <span data-editor></span>

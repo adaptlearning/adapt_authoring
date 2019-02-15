@@ -110,9 +110,9 @@ define(function(require){
       this.$('.error-text').addClass('display-none');
 
       var toChange = {
-        'firstName': self.$('#firstName').val().trim(),
-        'lastName': self.$('#lastName').val().trim(),
-        'email': self.$('#email').val().trim()
+        firstName: self.$('#firstName').val().trim(),
+        lastName: self.$('#lastName').val().trim(),
+        email: self.$('#email').val().trim()
       };
 
       if (self.model.get('_isNewPassword')) {

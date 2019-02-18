@@ -11,11 +11,11 @@ define(function(require) {
     className: 'presetEdit',
 
     events: {
-      'click a.button.close': 'onCloseClicked',
-      'click a.button.edit': 'onEditClicked',
-      'click a.button.save': 'onSaveClicked',
-      'click a.button.cancel': 'onCancelClicked',
-      'click a.button.delete': 'onDeleteClicked'
+      'click button.button.close': 'onCloseClicked',
+      'click button.button.edit': 'onEditClicked',
+      'click button.button.save': 'onSaveClicked',
+      'click button.button.cancel': 'onCancelClicked',
+      'click button.button.delete': 'onDeleteClicked'
     },
 
     initialize: function() {
@@ -38,7 +38,11 @@ define(function(require) {
       event && event.preventDefault();
       var $preset = $(event.currentTarget).closest('.preset');
       $('.name', $preset).hide();
-      $('.nameEdit', $preset).show();
+      var $nameEdit = $('.nameEdit', $preset);
+      var $nameEditInput = $nameEdit.find('input');
+      var existingName = $nameEditInput.val();
+      $nameEdit.show();
+      $nameEditInput.val('').focus().val(existingName);
     },
 
     onSaveClicked: function(event) {

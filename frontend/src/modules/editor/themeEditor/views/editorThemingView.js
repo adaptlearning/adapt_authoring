@@ -138,7 +138,7 @@ define(function(require) {
       $('option', select).remove();
       // add 'no presets'
       select.append($('<option>', { value: "", disabled: 'disabled', selected: 'selected' }).text(Origin.l10n.t('app.selectinstr')));
-      // add options
+        // add options
         this.themes.models.forEach(function(item) {
         if (item.get('_isAvailableInEditor') === false) return;
         select.append($('<option>', { value: item.get('theme') }).text(item.get('displayName')));
@@ -305,8 +305,8 @@ define(function(require) {
       var selectedTheme = this.getSelectedTheme();
       var selectedThemeId = selectedTheme.get('_id');
       $.post('/api/theme/' + selectedThemeId + '/makeitso/' + this.model.get('_courseId'))
-        .error(_.bind(this.onSaveError, this))
-        .done(_.bind(callback, this));
+        .error(this.onSaveError.bind(this))
+        .done(callback.bind(this));
     },
 
     postPresetData: function(callback) {
@@ -315,22 +315,21 @@ define(function(require) {
       if (selectedPreset) selectedPresetId = selectedPreset.get('_id');
 
       $.post('/api/themepreset/' + selectedPresetId + '/makeitso/' + this.model.get('_courseId'))
-      .error(_.bind(this.onSaveError, this))
-      .done(_.bind(callback, this));
+      .error(this.onSaveError.bind(this))
+      .done(callback.bind(this));
     },
 
     postSettingsData: function(callback) {
-      if (this.form) {
-        this.form.commit();
-        var settings = this.extractData(this.form.model.attributes);
-        Origin.editor.data.course.set('themeVariables', settings);
-        Origin.editor.data.course.save(null, {
-          error: _.bind(this.onSaveError, this),
-          success: _.bind(callback, this)
-        });
-      } else {
+      if (!this.form) {
         callback.apply(this);
       }
+      this.form.commit();
+      var settings = this.extractData(this.form.model.attributes);
+      Origin.editor.data.course.set('themeVariables', settings);
+      Origin.editor.data.course.save(null, {
+        error: this.onSaveError.bind(this),
+        success: callback.bind(this)
+      });
     },
 
     extractData: function(attributes) {

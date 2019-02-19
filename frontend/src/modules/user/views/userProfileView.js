@@ -108,6 +108,7 @@ define(function(require){
       var prevEmail = self.model.get('email');
 
       this.$('.error-text').addClass('display-none');
+      this.$('.error').text('');
 
       var toChange = {
         firstName: self.$('#firstName').val().trim(),

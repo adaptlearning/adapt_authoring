@@ -24,10 +24,11 @@
           {{/if}}
 
           <div class="form-group">
-            <label>{{t 'app.email'}}
-              <span id="titleErrorMessage" class="error"></span>
+            <label for="email">{{t 'app.email'}}
+              <span class="req">*</span>
+              <span id="emailError" class="error"></span>
             </label>
-            {{email}}
+            <input type="email" class="width-30" id="email" value="{{email}}" autocomplete="off">
           </div>
 
           <div class="form-group">

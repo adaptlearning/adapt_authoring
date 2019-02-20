@@ -6,6 +6,7 @@ define([
   'backbone-forms-lists',
   './backboneFormsOverrides',
   './views/scaffoldAssetView',
+  './views/scaffoldAssetItemView',
   './views/scaffoldCodeEditorView',
   './views/scaffoldColourPickerView',
   './views/scaffoldDisplayTitleView',
@@ -13,7 +14,7 @@ define([
   './views/scaffoldListView',
   './views/scaffoldTagsView',
   './views/scaffoldUsersView'
-], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldCodeEditorView, ScaffoldColourPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldListView, ScaffoldTagsView) {
+], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldAssetItemView, ScaffoldCodeEditorView, ScaffoldColourPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldListView, ScaffoldTagsView, ScaffoldUsersView) {
 
   var Scaffold = {};
   var builtSchemas = {};
@@ -53,7 +54,7 @@ define([
       }
 
       if (!isFieldTypeObject) {
-        return Backbone.Form.Field.prototype.createTitle.call({ key: key }); 
+        return Backbone.Form.Field.prototype.createTitle.call({ key: key });
       }
     };
 

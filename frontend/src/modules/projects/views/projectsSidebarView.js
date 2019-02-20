@@ -13,6 +13,7 @@ define(function(require) {
       'click .projects-sidebar-import-course': 'importCourse',
       'click .projects-sidebar-my-courses': 'gotoMyCourses',
       'click .projects-sidebar-shared-courses': 'gotoSharedCourses',
+      'click .projects-sidebar-all-courses': 'gotoAllCourses',
       'click .sidebar-filter-clear': 'clearFilterInput',
       'click .projects-sidebar-tag': 'onFilterButtonClicked',
       'click .projects-sidebar-add-tag': 'onAddTagClicked',
@@ -60,6 +61,10 @@ define(function(require) {
 
     gotoSharedCourses: function() {
       Origin.router.navigateTo('dashboard/shared');
+    },
+
+    gotoAllCourses: function() {
+      Origin.router.navigateTo('dashboard/all');
     },
 
     filterProjectsByTitle: function(event, filter) {

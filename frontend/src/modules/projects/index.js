@@ -81,7 +81,7 @@ define(function(require) {
         break;
     }
     Origin.trigger('location:title:update', { breadcrumbs: ['dashboard'], title: Origin.l10n.t('app.' + titleKey) });
-    Origin.contentPane.setView(ProjectsView, { collection: new Collection() });
+    Origin.contentPane.setView(ProjectsView, { collection: new Collection(), _isShared: options.type === 'shared' });
   });
 
   Origin.on('globalMenu:dashboard:open', function() {

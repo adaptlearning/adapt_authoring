@@ -60,8 +60,9 @@ function doQuery(req, res, andOptions, next) {
     if (orList.length) query.$or = orList;
     if(andList.length || andOptions.length) query.$and = andList.concat(andOptions);
 
-    options.jsonOnly = true;
     options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
+    options.populate = Object.assign({ 'createdBy': 'email firstName lastName' }, options.populate);
+    options.jsonOnly = true;
 
     new CourseContent().retrieve(query, options, function (err, results) {
       if (err) {
@@ -87,7 +88,10 @@ function initialize () {
     // force search to use only courses created by current user
     rest.get('/my/course', (req, res, next) => doQuery(req, res, [{ createdBy: req.user._id }], next));
     // Only return courses which have been shared
-    rest.get('/shared/course', (req, res, next) => doQuery(req, res, [{ _isShared: true }], next));
+    rest.get('/shared/course', (req, res, next) => {
+      req.body.search = Object.assign({}, req.body.search, { $or: [{ _shareWithUsers: req.user._id }, { _isShared: true }] });
+      doQuery(req, res, [{ createdBy: { $ne: req.user._id } }], next);
+    });
     /**
      * API Endpoint to duplicate a course
      *

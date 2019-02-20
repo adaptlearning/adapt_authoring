@@ -12,7 +12,7 @@ var contentmanager = require('../../../lib/contentmanager'),
     usermanager = require('../../../lib/usermanager'),
     util = require('util'),
     path = require('path'),
-    helpers = require('../../../lib/helpers'),    
+    helpers = require('../../../lib/helpers'),
     async = require('async');
 
 function ContentObject () {
@@ -27,20 +27,16 @@ util.inherits(ContentObject, ContentPlugin);
  * @param {object} a content item
  * @param {callback} next (function (err, isAllowed))
  */
-ContentObject.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) { 
-
+ContentObject.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
   helpers.hasCoursePermission(action, userId, tenantId, contentItem, function(err, isAllowed) {
     if (err) {
       return next(err);
     }
-
-    if (!isAllowed) {
-      // Check the permissions string
-      var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
-      permissions.hasPermission(userId, action, resource, next);
-    } else {
-      return next(null, isAllowed);
+    if(isAllowed) {
+      return next(null, true);
     }
+    const resource = permissions.buildResourceString(tenantId, `/api/content/course/${contentItem._courseId}`);
+    permissions.hasPermission(userId, action, resource, next);
   });
 };
 

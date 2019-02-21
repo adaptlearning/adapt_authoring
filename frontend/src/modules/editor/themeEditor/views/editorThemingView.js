@@ -62,13 +62,15 @@ define(function(require) {
       var selectedTheme = this.getSelectedTheme();
 
       if (!this.themeIsEditable(selectedTheme)) {
-        this.$('.tile.preset').hide();
-        this.$('.edit.btn.secondary').hide();
+        this.$('.empty-message').show();
+        this.$('.editable-theme').hide();
+        $('.editor-theming-sidebar-reset').hide();
         return;
       }
 
-      this.$('.tile.preset').show();
-      this.$('.edit.btn.secondary').show();
+      this.$('.empty-message').hide();
+      this.$('.editable-theme').show();
+      $('.editor-theming-sidebar-reset').show();
       try {
         this.form = Origin.scaffold.buildForm({
           model: selectedTheme,
@@ -81,9 +83,6 @@ define(function(require) {
 
       if (this.form) {
         this.$('.form-container').html(this.form.el);
-        this.$('.empty-message').hide();
-      } else {
-        this.$('.empty-message').show();
       }
 
       this.$el.find('fieldset:not(:has(>.field))').addClass('empty-fieldset');
@@ -321,7 +320,7 @@ define(function(require) {
 
     postSettingsData: function(callback) {
       if (!this.form) {
-        callback.apply(this);
+        return callback.apply(this);
       }
       this.form.commit();
       var settings = this.extractData(this.form.model.attributes);

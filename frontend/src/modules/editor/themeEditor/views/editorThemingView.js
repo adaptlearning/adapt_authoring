@@ -89,7 +89,11 @@ define(function(require) {
       this.$('.theme-customiser').show();
       Origin.trigger('theming:showPresetButton', true);
 
-      var toRestore = Origin.editor.data.course.get('themeVariables') || this.getDefaultThemeSettings();
+      var toRestore = this.getDefaultThemeSettings();
+      // Only restore theme variables if currently selected theme = saved theme
+      if (selectedTheme.get('name') === Origin.editor.data.config.get('_theme') && Origin.editor.data.course.get('themeVariables')) {
+        toRestore = Origin.editor.data.course.get('themeVariables');
+      }
       _.defer(function() { this.restoreFormSettings(toRestore); }.bind(this));
     },
 

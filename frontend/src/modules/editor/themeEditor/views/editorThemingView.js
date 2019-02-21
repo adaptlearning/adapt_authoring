@@ -21,15 +21,15 @@ define(function(require) {
       'change .theme select': 'onThemeChanged',
       'change .preset select': 'onPresetChanged',
       'change .form-container form': 'onFieldChanged',
-      'click button.edit': 'showPresetEdit',
-      'click button.reset': 'restorePresetSettings',
-      'click .save-preset': 'onSavePresetClicked'
+      'click button.edit': 'showPresetEdit'
     },
 
     initialize: function() {
       this.listenTo(this, 'dataReady', this.render);
       this.listenTo(Origin, {
         'editorThemingSidebar:views:save': this.saveData,
+        'editorThemingSidebar:views:savePreset': this.onSavePresetClicked,
+        'editorThemingSidebar:views:resetToPreset': this.restorePresetSettings,
         'editorThemingSidebar:views:cancel': this.setPresetSelection(null),
         'managePresets:edit': this.onEditPreset,
         'managePresets:delete': this.onDeletePreset
@@ -432,8 +432,8 @@ define(function(require) {
           }
         }
       }
-
-      shouldShow ? this.$('button.reset').show() : this.$('button.reset').hide();
+      var $reset = $('.editor-theming-sidebar-reset');
+      shouldShow ? $reset.css('visibility', 'visible') : $reset.css('visibility', 'hidden');
     },
 
     getPresetSelection: function() {

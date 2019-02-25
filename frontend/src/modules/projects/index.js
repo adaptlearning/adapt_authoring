@@ -5,7 +5,6 @@ define(function(require) {
   var ProjectsSidebarView = require('./views/projectsSidebarView');
   var MyProjectCollection = require('./collections/myProjectCollection');
   var SharedProjectCollection = require('./collections/sharedProjectCollection');
-  var AllProjectCollection = require('./collections/allProjectCollection');
   var TagsCollection = require('core/collections/tagsCollection');
 
   Origin.on('router:dashboard', function(location, subLocation, action) {
@@ -53,7 +52,7 @@ define(function(require) {
     tagsCollection.fetch({
       success: function() {
         Origin.sidebar.addView(new ProjectsSidebarView({ collection: tagsCollection }).$el);
-        Origin.trigger('dashboard:loaded', { type: location || 'mine' });
+        Origin.trigger('dashboard:loaded', { type: location || 'all' });
       },
       error: function() {
         console.log('Error occured getting the tags collection - try refreshing your page');
@@ -62,26 +61,16 @@ define(function(require) {
   });
 
   Origin.on('dashboard:loaded', function (options) {
-    var titleKey, Collection;
-    switch (options.type) {
-      case 'shared':
-        titleKey = 'sharedprojects';
-        Collection = SharedProjectCollection;
-        break;
-      case 'mine':
-        titleKey = 'myprojects';
-        Collection = MyProjectCollection;
-        break;
-      case 'all':
-        if(!Origin.permissions.hasPermissions(['*/*:create','*/*:read','*/*:update','*/*:delete'])) {
-          return Origin.router.blockUserAccess();
-        }
-        titleKey = 'allprojects';
-        Collection = AllProjectCollection;
-        break;
+    var isMine = options.type === 'all';
+    var isShared = options.type === 'shared';
+    if(!isMine && !isShared) {
+      return;
     }
+    var titleKey = (isMine) ? 'myprojects' : 'sharedprojects';
+    var Coll = (isMine) ? MyProjectCollection : SharedProjectCollection;
+    
     Origin.trigger('location:title:update', { breadcrumbs: ['dashboard'], title: Origin.l10n.t('app.' + titleKey) });
-    Origin.contentPane.setView(ProjectsView, { collection: new Collection() });
+    Origin.contentPane.setView(ProjectsView, { collection: new Coll });
   });
 
   Origin.on('globalMenu:dashboard:open', function() {

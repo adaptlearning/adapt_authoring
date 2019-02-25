@@ -98,7 +98,8 @@ define(function(require){
     },
 
     appendProjectItem: function(model) {
-      this.getProjectsContainer().append(new ProjectView({ model: model }).$el);
+      var viewClass = model.isEditable() ? ProjectView : SharedProjectView;
+      this.getProjectsContainer().append(new viewClass({ model: model }).$el);
     },
 
     convertFilterTextToPattern: function(filterText) {

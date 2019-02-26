@@ -68,9 +68,9 @@ define(function(require) {
     }
     var titleKey = (isMine) ? 'myprojects' : 'sharedprojects';
     var Coll = (isMine) ? MyProjectCollection : SharedProjectCollection;
-    
+
     Origin.trigger('location:title:update', { breadcrumbs: ['dashboard'], title: Origin.l10n.t('app.' + titleKey) });
-    Origin.contentPane.setView(ProjectsView, { collection: new Coll });
+    Origin.contentPane.setView(ProjectsView, { collection: new Coll, _isShared: options.type === 'shared' });
   });
 
   Origin.on('globalMenu:dashboard:open', function() {

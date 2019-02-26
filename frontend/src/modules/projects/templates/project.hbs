@@ -1,5 +1,4 @@
 <div class="project-inner clearfix no-select" data-id="{{_id}}">
-
     <div class="project-header">
       <div class="project-header-inner">
 
@@ -32,6 +31,14 @@
           <div class="projects-details-label">{{t 'app.lastupdated'}}</div>
           <div class="projects-details-value">{{momentFormat updatedAt "Do MMMM YYYY"}}</div>
         </div>
+
+        {{#if creatorName}}
+        <div class="project-details-createdBy project-details-row">
+          <div class="projects-details-label">{{t 'app.createdBy'}}</div>
+          <div class="projects-details-value">{{creatorName}}</div>
+        </div>
+        {{/if}}
+
         {{#if tags.length}}
         <div class="project-details-tags project-details-row tags">
           <div class="projects-details-tags-button">

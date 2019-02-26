@@ -336,5 +336,7 @@
   "app.colourLabelIntro": "Färgerna appliceras <b>only</b> i författarverktyget och kommer <b>inte påverka den publicerade kursen</b>. Inställningarna synkas med alla användare av författarverktyget.",
   "app.reset": "Nollställ",
   "app.titlelock": "Länka med titel",
-  "app.titleunlock": "Länka av från titel"
+  "app.titleunlock": "Länka av från titel",
+  "app.maxfileuploadsize": "Maximal filstorlek för uppladdning",
+  "app.uploadsizeerror": "Filen överskrider maximal filstorlek"
 }

@@ -86,7 +86,7 @@ function initialize () {
     // Only return courses which have been shared
     rest.get('/shared/course', (req, res, next) => {
       req.body.search = Object.assign({}, req.body.search, { $or: [{ _shareWithUsers: req.user._id }, { _isShared: true }] });
-      doQuery(req, res, [{ createdBy: { $ne: req.user._id } }], next);
+      doQuery(req, res, next);
     });
     /**
      * API Endpoint to duplicate a course

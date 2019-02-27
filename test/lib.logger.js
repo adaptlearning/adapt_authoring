@@ -10,8 +10,8 @@ before(function() {
 });
 
 it('should be able to log messages of valid type', function(done) {
-  logger.once('data', function (transport) {
-    var isValid = 'error' === transport.level && -1 !== transport.message.indexOf('test') && 'bar' === transport.foo;
+  logger.once('data', function (info) {
+    var isValid = 'error' === info.level && info.message.includes('test') && info.foo === 'bar';
     isValid.should.equal(true, 'Log failed to raise event correctly');
     done();
   });
@@ -19,8 +19,8 @@ it('should be able to log messages of valid type', function(done) {
 });
 
 it('should gracefully handle log messages of invalid type', function(done) {
-  logger.once('data', function (transport) {
-    var isValid = 'info' === transport.level && -1 !== transport.message.indexOf('test') && 'bar' === transport.foo;
+  logger.once('data', function (info) {
+    var isValid = 'info' === info.level && info.message.includes('test') && info.foo === 'bar';
     isValid.should.equal(true, 'Log failed to raise event correctly');
     done();
   });

@@ -205,7 +205,7 @@ function initialize () {
     rest.post('/upload/contentplugin', handleUploadedPlugin);
   });
 
-  app.contentmanager.addContentHook('create', 'course', { when: 'post' }, function(data, next) {
+  app.contentmanager.addContentHook('create', 'config', { when: 'post' }, function(data, next) {
     app.db.retrieve('extensiontype', { _isAddedByDefault: true }, function(error, results) {
       if(error) {
         return next(error);
@@ -213,7 +213,7 @@ function initialize () {
       if(!results.length) {
         return next(null, data);
       }
-      app.emit('extensions:enable', data._id.toString(), _.pluck(results, '_id'), function(error) {
+      app.emit('extensions:enable', data._courseId.toString(), _.pluck(results, '_id'), function(error) {
         next(error, data);
       });
     });

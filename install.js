@@ -419,7 +419,7 @@ function configureMasterTenant(callback) {
       addConfig({
         masterTenant: {
           name: result.masterTenantName,
-          displayName: result.masterTenantName
+          displayName: result.masterTenantDisplayName
         }
       });
       // check if the tenant name already exists

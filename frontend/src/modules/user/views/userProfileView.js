@@ -73,12 +73,15 @@ define(function(require){
 
     saveUser: function() {
       var self = this;
+      var prevEmail = self.model.get('email');
 
       this.$('.error-text').addClass('display-none');
+      this.$('.error').text('');
 
       var toChange = {
-        'firstName': self.$('#firstName').val().trim(),
-        'lastName': self.$('#lastName').val().trim()
+        firstName: self.$('#firstName').val().trim(),
+        lastName: self.$('#lastName').val().trim(),
+        email: self.$('#email').val().trim()
       };
 
       if (self.model.get('_isNewPassword')) {
@@ -90,25 +93,33 @@ define(function(require){
 
       _.extend(toChange, {
         _id: self.model.get('_id'),
-        email: self.model.get('email')
+        email_prev: prevEmail
       });
 
       self.model.save(toChange, {
+        wait: true,
         patch: true,
         error: function(model, response, optinos) {
+          Origin.trigger('sidebar:resetButtons');
+
           if (response.responseJSON && response.responseJSON.message) {
             return Origin.Notify.alert({
               type: 'error',
               text: response.responseJSON.message
             });
           }
+
           Origin.Notify.alert({
             type: 'error',
-            text: Origin.l10n.t('app.errorgeneric')
+            text: error.responseText || Origin.l10n.t('app.errorgeneric')
           });
         },
-        success: function(model, response, options) {
-          Backbone.history.history.back();
+        success: function(model) {
+          if (prevEmail !== model.get('email')) {
+            Origin.router.navigateTo('user/logout');
+          } else {
+            Backbone.history.history.back();
+          }
         }
       });
     }

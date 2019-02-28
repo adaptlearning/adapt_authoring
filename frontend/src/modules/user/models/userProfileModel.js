@@ -20,6 +20,12 @@ define([
         validationErrors.lastName = Origin.l10n.t('app.validationrequired');
       }
 
+      if (!attributes.email) {
+        validationErrors.email = Origin.l10n.t('app.validationrequired');
+      } else if (!Helpers.isValidEmail(attributes.email)) {
+        validationErrors.email = Origin.l10n.t('app.invalidusernameoremail');
+      }
+
       if (attributes._isNewPassword) {
         if (!attributes.password) {
           validationErrors.password = Origin.l10n.t('app.validationrequired');

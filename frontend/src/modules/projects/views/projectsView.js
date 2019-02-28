@@ -3,7 +3,6 @@ define(function(require){
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
   var ProjectView = require('./projectView');
-  var SharedProjectView = require('./sharedProjectView');
 
   var ProjectsView = OriginView.extend({
     className: 'projects',
@@ -11,6 +10,11 @@ define(function(require){
       "grid",
       "list"
     ],
+
+    preRender: function(options) {
+      OriginView.prototype.preRender.apply(this, arguments);
+      this._isShared = options._isShared;
+    },
 
     postRender: function() {
       this.settings.preferencesKey = 'dashboard';
@@ -98,8 +102,10 @@ define(function(require){
     },
 
     appendProjectItem: function(model) {
-      var viewClass = model.isEditable() ? ProjectView : SharedProjectView;
-      this.getProjectsContainer().append(new viewClass({ model: model }).$el);
+      var creator = model.get('createdBy') || { email: Origin.l10n.t('app.unknownuser') };
+      var name = creator.firstName ? creator.firstName + ' ' + creator.lastName : creator.email;
+      if(this._isShared && name) model.set('creatorName', name);
+      this.getProjectsContainer().append(new ProjectView({ model: model }).$el);
     },
 
     convertFilterTextToPattern: function(filterText) {

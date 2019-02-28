@@ -245,13 +245,28 @@ define(function(require){
     },
 
     onDeleteClicked: function() {
+      var option = this.$('[name="delete-options"]').val();
+      var optionMsg = {
+        transfer: Origin.l10n.t('app.confirmdeleteusertransfer'),
+        delete: Origin.l10n.t('app.confirmdeleteuserdelete'),
+        share: Origin.l10n.t('app.confirmdeleteusershare')
+      };
       var self = this;
       Origin.Notify.confirm({
         type: 'confirm',
-        text: Origin.l10n.t('app.confirmdeleteuser', { email: this.model.get('email') }),
+        text: Origin.l10n.t('app.confirmdeleteuser', {
+          courseOption: optionMsg[option],
+          email: this.model.get('email')
+        }),
         callback: function(confirmed) {
           if(confirmed) {
-            self.model.destroy({ error: self.onError });
+            self.model.destroy({
+              data: {
+                userCourseOption: option
+              },
+              processData: true,
+              error: self.onError
+            });
           }
         }
       });

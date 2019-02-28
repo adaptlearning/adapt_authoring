@@ -201,9 +201,14 @@ define([
       // if value is an object, give it some rights and add it as field set
       if (fieldsets[key]) {
         fieldsets[key].fields.push(key);
-      } else {
-        fieldsets[key] = { key: key, legend: Helpers.keyToTitleString(key), fields: [ key ] };
+        continue;
       }
+
+      fieldsets[key] = {
+        key: key,
+        legend: value.title || Helpers.keyToTitleString(key),
+        fields: [ key ]
+      };
     }
 
     if (!schema._extensions) {

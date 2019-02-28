@@ -25,20 +25,19 @@ define(function(require) {
     Origin.router.navigateTo('pluginManagement');
   });
 
-  var globalMenuObject = {
-    "location": "global",
-    "text": "Plugin Management",
-    "icon": "fa-plug",
-    "callbackEvent": "pluginManagement:open",
-    "sortOrder": 3
-  };
-
   Origin.on('origin:dataReady login:changed', function() {
     var permissions = ["{{tenantid}}/extensiontype/*:update"];
     Origin.permissions.addRoute('pluginManagement', permissions);
-    if (Origin.permissions.hasPermissions(permissions)) {
-      Origin.globalMenu.addItem(globalMenuObject);
-    }
+
+    if (!Origin.permissions.hasPermissions(permissions)) return;
+
+    Origin.globalMenu.addItem({
+      location: 'global',
+      text: Origin.l10n.t('app.pluginmanagement'),
+      icon: 'fa-plug',
+      callbackEvent: 'pluginManagement:open',
+      sortOrder: 3
+    });
   });
 
 });

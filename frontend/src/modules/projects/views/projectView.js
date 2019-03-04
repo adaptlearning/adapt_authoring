@@ -75,28 +75,16 @@ define(function(require) {
 
     deleteProjectPrompt: function(event) {
       event && event.preventDefault();
-      if(this.model.get('_isShared') === true) {
-        if(this.model.get('createdBy') === Origin.sessionModel.id){
-          Origin.Notify.confirm({
-            type: 'warning',
-            title: Origin.l10n.t('app.deletesharedproject'),
-            text: Origin.l10n.t('app.confirmdeleteproject') + '<br/><br/>' + Origin.l10n.t('app.confirmdeletesharedprojectwarning'),
-            destructive: true,
-            callback: _.bind(this.deleteProjectConfirm, this)
-          });
-        } else {
-          Origin.Notify.alert({
-            type: 'error',
-            text: Origin.l10n.t('app.errorpermission')
-          });
-        }
-        return;
+      var isAdmin = Origin.permissions.hasPermissions(['*/*:create','*/*:read','*/*:update','*/*:delete']);
+      var isShared = this.model.get('_isShared') === true;
+      var titleKey = isShared ? 'deletesharedproject' : 'deleteproject';
+      var textKey = isShared ? 'confirmdeletesharedprojectwarning' : 'confirmdeleteprojectwarning';
 
-      }
       Origin.Notify.confirm({
         type: 'warning',
-        title: Origin.l10n.t('app.deleteproject'),
-        text: Origin.l10n.t('app.confirmdeleteproject') + '<br/><br/>' + Origin.l10n.t('app.confirmdeleteprojectwarning'),
+        title: Origin.l10n.t('app.' + titleKey),
+        text: Origin.l10n.t('app.confirmdeleteproject') + '<br/><br/>' + Origin.l10n.t('app.' + textKey),
+        destructive: isShared && !isAdmin, // waive the wait for 'trusted' admin users
         callback: _.bind(this.deleteProjectConfirm, this)
       });
     },

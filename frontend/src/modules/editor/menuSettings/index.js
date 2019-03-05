@@ -13,10 +13,10 @@ define(function(require) {
       success: function(model) {
         Origin.trigger('location:title:update', {title: 'Select menu'});
 
-        var backButtonRoute = "/#/editor/" + route1 + "/menu";
+        var backButtonRoute = "#/editor/" + route1 + "/menu";
         var backButtonText = "Back to menu";
         if (data.type === "page") {
-          backButtonRoute = "/#/editor/" + route1 + "/page/" + data.id;
+          backButtonRoute = "#/editor/" + route1 + "/page/" + data.id;
           backButtonText = "Back to page";
         }
         Origin.sidebar.addView(new EditorMenuSettingsEditSidebarView().$el, {

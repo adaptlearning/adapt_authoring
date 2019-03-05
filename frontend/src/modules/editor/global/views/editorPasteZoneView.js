@@ -49,7 +49,7 @@ define(function(require){
       var parentId = this.model.get('_parentId');
       var droppedOnId = $component.attr('data-' + this.model.get('_parent') + '-id');
       $.ajax({
-        url: '/api/content/' + type + '/' + contentId,
+        url: 'api/content/' + type + '/' + contentId,
         type: 'PUT',
         data: {
           _parentId: parentId,

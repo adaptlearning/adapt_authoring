@@ -114,7 +114,7 @@ define(function(require) {
       // Store the component types
       var componentTypes = new EditorCollection(null, {
         model: ComponentTypeModel,
-        url: '/api/componenttype',
+        url: 'api/componenttype',
         _type: 'componentTypes'
       });
       componentTypes.fetch({

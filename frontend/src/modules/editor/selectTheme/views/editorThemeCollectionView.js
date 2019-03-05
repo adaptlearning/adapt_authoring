@@ -55,7 +55,7 @@ define(function(require) {
         return;
       }
 
-      $.post('/api/theme/' + selectedTheme.get('_id') + '/makeitso/' + this.model.get('_courseId'))
+      $.post('api/theme/' + selectedTheme.get('_id') + '/makeitso/' + this.model.get('_courseId'))
         .error(_.bind(this.onSaveError, this))
         .done(_.bind(this.onSaveSuccess, this));
     },

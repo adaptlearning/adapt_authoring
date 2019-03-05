@@ -60,12 +60,12 @@ define(function(require){
 
       if(chosenRole !== defaultRole) {
         // unassign the default role
-        $.ajax('/api/role/' + defaultRole + '/unassign/' + userData._id,{
+        $.ajax('api/role/' + defaultRole + '/unassign/' + userData._id,{
           method: 'POST',
           error: _.bind(self.onAjaxError, self),
           success: function() {
             // assign chosen role
-            $.ajax('/api/role/' + chosenRole + '/assign/' + userData._id,{
+            $.ajax('api/role/' + chosenRole + '/assign/' + userData._id,{
               method: 'POST',
               error: _.bind(self.onAjaxError, self),
               success: _.bind(self.onAjaxSuccess, self)
@@ -84,7 +84,7 @@ define(function(require){
     onAjaxError: function(data, status, error) {
       // We may have a partially created user, make sure it's gone
       if(this.createdUserId) {
-        $.ajax('/api/user/' + this.createdUserId, { method: 'DELETE', error: _.bind(this.onAjaxError, this) });
+        $.ajax('api/user/' + this.createdUserId, { method: 'DELETE', error: _.bind(this.onAjaxError, this) });
       }
       Origin.Notify.alert({
         type: 'error',

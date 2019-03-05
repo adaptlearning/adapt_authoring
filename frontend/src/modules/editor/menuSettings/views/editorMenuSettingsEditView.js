@@ -49,7 +49,7 @@ define(function(require) {
       if(selectedMenu === undefined) {
         return this.onSaveError(null, Origin.l10n.t('app.errornomenuselected'));
       }
-      $.post('/api/menu/' + selectedMenu.get('_id') + '/makeitso/' + this.model.get('_courseId'))
+      $.post('api/menu/' + selectedMenu.get('_id') + '/makeitso/' + this.model.get('_courseId'))
         .error(_.bind(this.onSaveError, this))
         .done(_.bind(this.onSaveSuccess, this));
     }

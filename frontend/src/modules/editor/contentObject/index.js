@@ -41,7 +41,7 @@ define(function(require) {
 
     Origin.sidebar.addView(new EditorPageSidebarView().$el, {
       "backButtonText": "Back to course structure",
-      "backButtonRoute": "/#/editor/" + Origin.location.route1 + "/menu"
+      "backButtonRoute": "#/editor/" + Origin.location.route1 + "/menu"
     });
     Origin.contentPane.setView(EditorView, {
       currentCourseId: Origin.location.route1,
@@ -57,7 +57,7 @@ define(function(require) {
 
     Origin.sidebar.addView(new EditorMenuSidebarView().$el, {
       "backButtonText": "Back to courses",
-      "backButtonRoute": Origin.dashboardRoute || '/#/dashboard'
+      "backButtonRoute": Origin.dashboardRoute || '#/dashboard'
     });
     Origin.contentPane.setView(EditorView, {
       currentCourseId: Origin.location.route1,

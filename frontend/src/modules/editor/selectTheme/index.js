@@ -13,11 +13,11 @@ define(function(require) {
       success: function(model) {
         Origin.trigger('location:title:update', { title: 'Select theme' });
 
-        var backButtonRoute = "/#/editor/" + route1 + "/menu";
+        var backButtonRoute = "#/editor/" + route1 + "/menu";
         var backButtonText = "Back to menu";
 
         if (Origin.previousLocation.route2 === "page") {
-          backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
+          backButtonRoute = "#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
           backButtonText = "Back to page";
         }
 

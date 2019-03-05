@@ -5,7 +5,7 @@ define(function(require) {
 
   var CourseAssetModel = Backbone.Model.extend({
     idAttribute: '_id',
-    urlRoot: '/api/content/courseasset'
+    urlRoot: 'api/content/courseasset'
   });
 
   return CourseAssetModel;

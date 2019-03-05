@@ -24,7 +24,7 @@ define(function(require){
     },
 
     postRender: function() {
-      var previewUrl = '/api/theme/preview/' + this.model.get('name') + '/' + this.model.get('name');
+      var previewUrl = 'api/theme/preview/' + this.model.get('name') + '/' + this.model.get('name');
       var $previewLoc = this.$('.theme-preview');
 
       $.ajax(previewUrl, {

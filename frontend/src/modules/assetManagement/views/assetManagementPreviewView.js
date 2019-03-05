@@ -62,7 +62,7 @@ define(function(require){
 
       if (confirmed) {
         $.ajax({
-          url: '/api/asset/trash/' + self.model.get('_id'),
+          url: 'api/asset/trash/' + self.model.get('_id'),
           type: 'PUT',
           success: function() {
             if (Origin.permissions.hasPermissions(["*"])) {
@@ -99,7 +99,7 @@ define(function(require){
 
       if (confirmed) {
         $.ajax({
-          url: '/api/asset/restore/' + self.model.get('_id'),
+          url: 'api/asset/restore/' + self.model.get('_id'),
           type: 'PUT',
           success: function() {
             self.model.set({_isDeleted: false});

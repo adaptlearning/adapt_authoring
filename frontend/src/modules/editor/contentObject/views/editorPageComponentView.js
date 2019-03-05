@@ -196,7 +196,7 @@ define(function(require){
       var parentId = this.model.get('_parentId');
       $.ajax({
         type: 'PUT',
-        url:'/api/content/component/' + id,
+        url:'api/content/component/' + id,
         data: {
           _layout: layout,
           _parentId: parentId

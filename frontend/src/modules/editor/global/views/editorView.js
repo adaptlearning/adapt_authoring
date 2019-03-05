@@ -90,7 +90,7 @@ define(function(require) {
       $('.editor-common-sidebar-preview-inner').addClass('display-none');
       $('.editor-common-sidebar-previewing').removeClass('display-none');
 
-      $.get('/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId, _.bind(function(jqXHR, textStatus, errorThrown) {
+      $.get('api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId, _.bind(function(jqXHR, textStatus, errorThrown) {
         if(!jqXHR.success) {
           this.resetPreviewProgress();
           Origin.Notify.alert({
@@ -173,7 +173,7 @@ define(function(require) {
       $('.editor-common-sidebar-download-inner').addClass('display-none');
       $('.editor-common-sidebar-downloading').removeClass('display-none');
 
-      $.get('/api/output/' + Origin.constants.outputPlugin + '/publish/' + this.currentCourseId, _.bind(function(jqXHR, textStatus, errorThrown) {
+      $.get('api/output/' + Origin.constants.outputPlugin + '/publish/' + this.currentCourseId, _.bind(function(jqXHR, textStatus, errorThrown) {
 
         if (!jqXHR.success) {
           Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
@@ -261,7 +261,7 @@ define(function(require) {
         courseId: Origin.editor.data.course.get('_id'),
         referenceType: model._siblingTypes
       };
-      $.post('/api/content/clipboard/copy', postData, _.bind(function(jqXHR) {
+      $.post('api/content/clipboard/copy', postData, _.bind(function(jqXHR) {
         Origin.editor.clipboardId = jqXHR.clipboardId;
         this.showPasteZones(model.get('_type'));
       }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
@@ -298,7 +298,7 @@ define(function(require) {
         sortOrder: sortOrder,
         courseId: Origin.editor.data.course.get('_id')
       };
-      $.post('/api/content/clipboard/paste', postData, function(data) {
+      $.post('api/content/clipboard/paste', postData, function(data) {
         Origin.editor.clipboardId = null;
         Origin.trigger('editorView:pasted:' + postData.parentId, {
           _id: data._id,

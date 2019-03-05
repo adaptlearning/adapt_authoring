@@ -20,7 +20,7 @@ define(function(require){
     postRender: function() {
       // tagging
       this.$('#tags_control').tagsInput({
-        autocomplete_url: '/api/autocomplete/tag',
+        autocomplete_url: 'api/autocomplete/tag',
         onAddTag: _.bind(this.onAddTag, this),
         onRemoveTag: _.bind(this.onRemoveTag, this),
         'minChars' : 3,
@@ -142,7 +142,7 @@ define(function(require){
     onAddTag: function (tag) {
       var model = this.model;
       $.ajax({
-        url: '/api/content/tag',
+        url: 'api/content/tag',
         method: 'POST',
         data: { title: tag }
       }).done(function (data) {

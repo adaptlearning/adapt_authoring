@@ -84,7 +84,7 @@ define(function(require) {
         type: 'warning',
         title: Origin.l10n.t('app.' + titleKey),
         text: Origin.l10n.t('app.confirmdeleteproject') + '<br/><br/>' + Origin.l10n.t('app.' + textKey),
-        destructive: isShared && !isAdmin, // waive the wait for 'trusted' admin users
+        destructive: true,
         callback: _.bind(this.deleteProjectConfirm, this)
       });
     },

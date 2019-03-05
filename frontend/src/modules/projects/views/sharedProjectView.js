@@ -53,7 +53,7 @@ define(function(require){
       var tenantId = this.model.get('_tenantId');
       var courseId = this.model.get('_id');
 
-      window.open('/preview/' + tenantId + '/' + courseId + '/');
+      window.open('preview/' + tenantId + '/' + courseId + '/');
     },
 
     promptDuplicateProject: function() {

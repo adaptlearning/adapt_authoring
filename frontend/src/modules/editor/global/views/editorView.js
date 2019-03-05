@@ -48,7 +48,7 @@ define(function(require) {
           this.validateProject(this.downloadProject);
         },
         'editorCommon:preview': function(event) {
-          var previewWindow = window.open('/loading', 'preview');
+          var previewWindow = window.open('loading', 'preview');
           this.validateProject(function(error) {
             if(error) {
               return previewWindow.close();
@@ -129,7 +129,7 @@ define(function(require) {
 
       var self = this;
       $.ajax({
-         url: '/export/' + tenantId + '/' + courseId,
+         url: 'export/' + tenantId + '/' + courseId,
          success: function(data, textStatus, jqXHR) {
            self.showExportAnimation(false, $btn);
            self.exporting = false;
@@ -137,7 +137,7 @@ define(function(require) {
            // get the zip
            var form = document.createElement('form');
            self.$el.append(form);
-           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
+           form.setAttribute('action', 'export/' + tenantId + '/' + courseId + '/download.zip');
            form.submit();
          },
          error: function(jqXHR, textStatus, errorThrown) {
@@ -188,7 +188,7 @@ define(function(require) {
         this.resetDownloadProgress();
 
         var $downloadForm = $('#downloadForm');
-        $downloadForm.attr('action', '/download/' + Origin.sessionModel.get('tenantId') + '/' + Origin.editor.data.course.get('_id') + '/' + jqXHR.payload.zipName + '/download.zip');
+        $downloadForm.attr('action', 'download/' + Origin.sessionModel.get('tenantId') + '/' + Origin.editor.data.course.get('_id') + '/' + jqXHR.payload.zipName + '/download.zip');
         $downloadForm.submit();
 
       }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
@@ -252,7 +252,7 @@ define(function(require) {
     updateCoursePreview: function(previewWindow) {
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
-      previewWindow.location.href = '/preview/' + tenantId + '/' + courseId + '/';
+      previewWindow.location.href = 'preview/' + tenantId + '/' + courseId + '/';
     },
 
     addToClipboard: function(model) {

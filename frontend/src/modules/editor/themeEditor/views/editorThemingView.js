@@ -142,7 +142,7 @@ define(function(require) {
       // add 'no presets'
       select.append($('<option>', { value: "", disabled: 'disabled', selected: 'selected' }).text(Origin.l10n.t('app.selectinstr')));
       // add options
-        this.themes.models.forEach(function(item) {
+      this.themes.models.forEach(function(item) {
         if (item.get('_isAvailableInEditor') === false) return;
         select.append($('<option>', { value: item.get('theme') }).text(item.get('displayName')));
       }, this);

@@ -41,12 +41,14 @@ define(function(require) {
   function generateBreadcrumbs(data) {
     var type = getType();
     var action = getAction();
+    var isMenu = type === 'menu';
+    var isEditor = action === 'edit';
     var crumbs = ['dashboard'];
 
-    if(type !== 'menu') {
+    if (!isMenu || isEditor) {
       crumbs.push('course');
     }
-    if(action === 'edit') {
+    if (!isMenu && isEditor) {
       crumbs.push({
         title: Origin.l10n.t('app.editorpage'),
         url: '#/editor/' + data.page.get('_courseId') + '/page/' + data.page.get('_id')
@@ -65,8 +67,8 @@ define(function(require) {
     var type = getType();
     var action = getAction();
 
-    if(type === 'page' && action === 'edit') {
-      return 'editor' + type + 'settings';
+    if ((type === 'page' || type === 'menu') && action === 'edit') {
+      return 'editorpagesettings';
     }
     return 'editor' + type;
   }
@@ -83,10 +85,11 @@ define(function(require) {
     };
     var mapKeys = Object.keys(map);
     var _recurse = function(model) {
-      if(model.get('_type') === 'page') {
+      var type = model.get('_type');
+      if (type === 'page' || type === 'menu') {
         return cb(model);
       }
-      var parentType = mapKeys[_.indexOf(mapKeys, model.get('_type'))+1];
+      var parentType = mapKeys[mapKeys.indexOf(type) + 1];
       (new map[parentType]({ _id: model.get('_parentId') })).fetch({ success: _recurse });
     }
     // start recursion

@@ -30,7 +30,7 @@ define(function(require){
     handleValidationError: function(model, error) {
       Origin.trigger('sidebar:resetButtons');
 
-      if (!error || _.keys(error).length === 0) return;
+      if (!error || !Object.keys(error).length) return;
       _.each(error, function(value, key) {
         this.$('#' + key + 'Error').html(value);
       }, this);

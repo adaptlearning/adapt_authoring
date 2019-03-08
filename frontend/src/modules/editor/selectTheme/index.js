@@ -15,13 +15,11 @@ define(function(require) {
         Helpers.setPageTitle(model);
 
         var backButtonRoute = "/#/editor/" + route1 + "/menu";
-        var backButtonText = "Back to menu";
-
+        var backButtonText = Origin.l10n.t('app.backtomenu');
         if (Origin.previousLocation.route2 === "page") {
           backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
-          backButtonText = "Back to page";
+          backButtonText = Origin.l10n.t('app.backtopage');
         }
-
         Origin.sidebar.addView(new EditorThemeCollectionSidebarView().$el, {
           "backButtonText": backButtonText,
           "backButtonRoute": backButtonRoute

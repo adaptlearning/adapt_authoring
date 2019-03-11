@@ -15,15 +15,15 @@
                 <input type="password" autocomplete="off" class="login-input-password" value="" id="login-input-password" placeholder="{{t 'app.password'}}" tabindex="2" />
                 <button type="submit" class="btn secondary login-form-submit" tabindex="3">{{t 'app.login'}}</button>
             </div>
-
             <div class="login-remember-me">
                 <input id="remember-me" class="remember-me-checkbox" name="remember-me" type="checkbox"/>
                 <label for="remember-me" class="remember-me-label">{{t 'app.rememberme'}}</label>
             </div>
-
+            {{#ifMailEnabled}}
             <div class="login-forgot-password">
                 <a class="" href="#user/forgot">{{t 'app.forgotpassword'}}</a>
             </div>
+            {{/ifMailEnabled}}
         {{/if}}
     </form>
 </div>

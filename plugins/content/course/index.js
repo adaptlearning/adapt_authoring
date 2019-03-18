@@ -320,7 +320,7 @@ CourseContent.prototype.destroy = function (search, force, next) {
       var resource = permissions.buildResourceString(tenantId, '/api/content/course/*');
       permissions.hasPermission(user._id, 'delete', resource, function(error, canDeleteAll) {
         // Final check before deletion
-        if(!canDeleteAll && !docs[0]._isShared && docs[0].createdBy === user._id) {
+        if(!canDeleteAll) {
           return next(new ContentPermissionError());
         }
         // Courses use cascading delete

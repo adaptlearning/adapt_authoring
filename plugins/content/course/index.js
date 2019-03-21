@@ -29,7 +29,7 @@ util.inherits(CourseContent, ContentPlugin);
 
 var DASHBOARD_COURSE_FIELDS = [
     '_id', '_tenantId', '_type', '_isShared', 'title', 'heroImage',
-    'updatedAt', 'updatedBy', 'createdAt', 'createdBy', 'tags'
+    'updatedAt', 'updatedBy', 'createdAt', 'createdBy', 'tags', '_shareWithUsers'
 ];
 
 function doQuery(req, res, andOptions, next) {
@@ -320,7 +320,7 @@ CourseContent.prototype.destroy = function (search, force, next) {
       var resource = permissions.buildResourceString(tenantId, '/api/content/course/*');
       permissions.hasPermission(user._id, 'delete', resource, function(error, canDeleteAll) {
         // Final check before deletion
-        if(!canDeleteAll && docs[0]._isShared && docs[0].createdBy != user._id) {
+        if(!canDeleteAll) {
           return next(new ContentPermissionError());
         }
         // Courses use cascading delete

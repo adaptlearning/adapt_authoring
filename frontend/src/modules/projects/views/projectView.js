@@ -75,8 +75,7 @@ define(function(require) {
 
     deleteProjectPrompt: function(event) {
       event && event.preventDefault();
-      var isAdmin = Origin.permissions.hasPermissions(['*/*:create','*/*:read','*/*:update','*/*:delete']);
-      var isShared = this.model.get('_isShared') === true;
+      var isShared = this.model.get('_isShared') || (this.model.get('_shareWithUsers') && this.model.get('_shareWithUsers').length > 0);
       var titleKey = isShared ? 'deletesharedproject' : 'deleteproject';
       var textKey = isShared ? 'confirmdeletesharedprojectwarning' : 'confirmdeleteprojectwarning';
 

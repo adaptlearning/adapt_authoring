@@ -2,6 +2,7 @@
   "name": "Authenticated User",
   "version": "0.0.1",
   "statement" : [
+  	{ "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/user/*", "action":["read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/user/me", "action":["read", "update"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/output/*", "action":["read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/shared/*", "action":["read"], "effect":"allow" },

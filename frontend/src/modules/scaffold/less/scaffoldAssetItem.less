@@ -1,0 +1,50 @@
+.field-editor {
+  .scaffold-asset-item-preview {
+    max-width: none;
+    width: 100%;
+    display: block;
+  }
+
+  .scaffold-asset-item-img-holder {
+    position: relative;
+
+    div {
+      width: 40px;
+      height: 40px;
+      background: fade(@primary-color, 80%);
+      border: solid 1px @white;
+      border-radius: 50%;
+      position: absolute;
+      text-align: center;
+      line-height: 40px;
+      font-size: 150%;
+      color: @white;
+      font-weight: bold;
+      cursor: move;
+      box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .scaffold-asset-buttons {
+    display: flex;
+    margin-top: 0.5em;
+    margin-bottom: 1.5em;
+
+    .scaffold-asset-external {
+      margin-left: 4px;
+    }
+
+    button.add-item {
+      margin-left: auto;
+      background-color: @button-primary-color;
+      color: @button-primary-text-color;
+      border-color: @button-primary-color;
+
+      &:hover, &:focus {
+        background-color:@button-primary-hover-color;
+        color: @button-primary-hover-text-color;
+        border-color:@button-primary-hover-color;
+      }
+    }
+  }
+}

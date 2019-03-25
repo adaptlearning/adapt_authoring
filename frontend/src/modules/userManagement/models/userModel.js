@@ -45,15 +45,17 @@ define(function(require) {
     // pull the human-readable tenant name from the list of all tenants
     setTenantName: function(model, value, options) {
       var tenantId = model.get('_tenantId');
-      if(!tenantId) {
-        return;
-      }
+      if(!tenantId) return;
+
       var tenantName;
-      if(typeof tenantId === 'object') {
-        tenantName = tenantId.name;
-      } else { // string
-        tenantName =  model.get('globalData').allTenants.findWhere({ _id:tenantId }).get('name');
+      if (typeof tenantId === 'string') {
+        tenantName =  model.get('globalData').allTenants.findWhere({ _id: tenantId }).get('displayName');
+      } else if (tenantId.hasOwnProperty('displayName')) {
+        tenantName = tenantId.displayName;
+      } else {
+        tenantName =  model.get('globalData').allTenants.findWhere({ _id: tenantId._id }).get('displayName');
       }
+
       model.set('tenantName', tenantName);
     },
 

@@ -24,12 +24,16 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     render: function() {
-      this.editor = window.ace.edit(this.$el[0]);
-      this.editor.$blockScrolling = Infinity;
+      window.ace.config.set('basePath', '/js/ace');
+
+      this.editor = window.ace.edit(this.$el[0], {
+        maxLines: 30,
+        minLines: 14,
+        mode: 'ace/mode/' + this.mode,
+        theme: 'ace/theme/chrome'
+      });
+
       this.editor.on('change', function() { this.trigger('change', this); }.bind(this));
-      this.editor.setTheme('ace/theme/chrome');
-      this.session = this.editor.getSession();
-      this.session.setMode('ace/mode/' + this.mode);
       this.setValue(this.value);
 
       return this;
@@ -70,7 +74,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     isSyntaxError: function() {
-      var annotations = this.session.getAnnotations();
+      var annotations = this.editor.getSession().getAnnotations();
 
       for (var i = 0, j = annotations.length; i < j; i++) {
         if (annotations[i].type === 'error') {

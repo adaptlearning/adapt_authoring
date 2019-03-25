@@ -40,7 +40,7 @@
         {{/unless}}{{/ifUserNotMe}}
       </div>
     </div>
-    <div class="col-20">
+    <div class="col-15">
       <div class="tb-col-inner">
         <div class="read">
           <ul>
@@ -64,7 +64,7 @@
         {{/unless}}{{/ifUserNotMe}}
       </div>
     </div>
-    <div class="col-10 col-centered">
+    <div class="col-15 col-centered">
       <div class="tb-col-inner">
         {{failedLoginCount}}
         {{#if _isLocked}}
@@ -87,9 +87,11 @@
           {{else}}
             <div class="group">
               {{#ifMailEnabled}}
+                <button class="btn primary invite">{{t 'app.inviteuser'}}</button>
                 <button class="btn primary resetPassword">{{t 'app.resetpassword'}}</button>
+              {{else}}
+                <button class="btn tertiary changePassword">{{t 'app.changepassword'}}</button>
               {{/ifMailEnabled}}
-              <button class="btn tertiary changePassword">{{t 'app.changepassword'}}</button>
             </div>
             {{#if _isLocked}}
               <div class="group">
@@ -111,7 +113,13 @@
               {{else}}
                 <button class="btn warning disable">{{t 'app.disableuser'}}</button>
               {{/if}}
+              <hr>
               <button class="btn alert edit-input delete">{{t 'app.deleteuser'}}</button>
+              <select name="delete-options">
+                <option value="transfer">{{t 'app.deleteusertransfer'}}</option>
+                <option value="delete">{{t 'app.deleteuserdelete'}}</option>
+                <option value="share">{{t 'app.deleteusershare'}}</option>
+              </select>
             </div>
           {{/ifUserNotMe}}
         </div>

@@ -1,0 +1,35 @@
+{{#if value}}
+  {{! Work out which type it is and display the correct html markup}}
+
+  <div class="scaffold-asset-item-img-holder">
+    <img class="scaffold-asset-item-preview" src="{{url}}"/>
+  </div>
+
+  <div class="scaffold-asset-buttons">
+    <button class="btn scaffold-asset-clear">
+      <i class="fa fa-times-circle"></i>
+      {{#ifAssetIsExternal value}}
+        {{t 'app.removeexternalasset'}}
+      {{else}}
+        {{t 'app.removeasset'}}
+      {{/ifAssetIsExternal}}
+    </button>
+    <button class="btn add-item">{{addLabel}}</button>
+  </div>
+
+{{else}}
+
+  <div class="scaffold-asset-external-input display-none">
+    <input type="text" class="scaffold-asset-external-input-field" />
+    <div class="scaffold-asset-external-input-buttons">
+      <button class="btn primary scaffold-asset-external-input-save">{{t 'app.save'}}</button>
+      <button class="btn primary-hollow scaffold-asset-external-input-cancel">{{t 'app.cancel'}}</button>
+    </div>
+  </div>
+
+  <div class="scaffold-asset-buttons">
+    <button class="btn secondary scaffold-asset-picker">{{t 'app.selectasset'}}</button>
+    <button class="btn secondary-hollow scaffold-asset-external">{{t 'app.selectexternalasset'}}</button>
+  </div>
+
+{{/if}}

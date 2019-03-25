@@ -126,16 +126,18 @@ define([
           return;
         }
 
-        // delete all matching courseassets and then saveModel
-        Helpers.forParallelAsync(courseassets, function(model, index, cb) {
-          model.destroy({
-            success: cb,
-            error: function() {
-              console.error('Failed to destroy courseasset record', model.get('_id'));
-              cb();
-            }
-          });
-        }, this.saveModel.bind(this));
+        var listModels = courseassets.models ? courseassets.models.slice() : courseassets.slice();
+        var listModel = listModels[0];
+
+        if (!listModel) return;
+
+        listModel.destroy({
+          success: this.saveModel(),
+          error: function() {
+            console.error('Failed to destroy courseasset record', listModel.get('_id'));
+            return;
+          }
+        });
       }.bind(this));
     },
 

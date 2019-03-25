@@ -9,6 +9,7 @@ define(function(require){
 
     events: {
       'change .pluginType-enabled': 'toggleEnabled',
+      'change .pluginType-addedDefault': 'toggleAddedDefault',
       'click .plugin-update-check': 'checkForUpdates',
       'click .plugin-update-confirm': 'updatePlugin'
     },
@@ -24,6 +25,12 @@ define(function(require){
     toggleEnabled: function () {
       this.model.save({
         _isAvailableInEditor: this.$('.pluginType-enabled').is(':checked')
+      }, { patch: true });
+    },
+
+    toggleAddedDefault: function() {
+      this.model.save({
+        _isAddedByDefault: this.$('.pluginType-addedDefault').is(':checked')
       }, { patch: true });
     },
 

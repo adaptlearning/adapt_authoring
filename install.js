@@ -150,13 +150,6 @@ installHelpers.checkPrimaryDependencies(function(error) {
         ]
       },
       features: {
-        ffmpeg: {
-          name: 'useffmpeg',
-          type: 'string',
-          description: "Are you using ffmpeg? y/N",
-          before: installHelpers.inputHelpers.toBoolean,
-          default: 'N'
-        },
         smtp: {
           confirm: {
             name: 'useSmtp',
@@ -364,12 +357,6 @@ function configureDatabase(callback) {
 
 function configureFeatures(callback) {
   async.series([
-    function ffmpeg(cb) {
-      installHelpers.getInput(inputData.features.ffmpeg, function(result) {
-        addConfig(result);
-        cb();
-      });
-    },
     function smtp(cb) {
       installHelpers.getInput(inputData.features.smtp.confirm, function(result) {
         addConfig(result);
@@ -430,7 +417,7 @@ function configureMasterTenant(callback) {
       addConfig({
         masterTenant: {
           name: result.masterTenantName,
-          displayName: result.masterTenantName
+          displayName: result.masterTenantDisplayName
         }
       });
       // check if the tenant name already exists

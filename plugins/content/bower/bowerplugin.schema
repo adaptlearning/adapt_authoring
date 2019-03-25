@@ -38,6 +38,11 @@
       "required":true,
       "editorOnly": true
     },
+    "_isAddedByDefault": {
+      "type": "boolean",
+      "default": false,
+      "editorOnly": true
+    },
     "isLocalPackage" : {
       "type": "boolean",
       "default": false,

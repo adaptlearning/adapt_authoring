@@ -3,15 +3,15 @@
 @sidebar-input-font-size: 110%;
 
 .sidebar {
-  position:fixed;
-  top:0;
-  left:0px;
-  width:250px;
-  height:100%;
-  overflow-y:auto;
-  overflow-x:hidden;
-  background-color:@sidebar-color;
-  color:@sidebar-text-color;
+  position: fixed;
+  top: 61px;
+  left: 0px;
+  width: 250px;
+  height: calc(~"100vh - 61px");
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: @sidebar-color;
+  color: @sidebar-text-color;
 
   button {
     &[class^="action-"],
@@ -26,6 +26,73 @@
       text-align: center;
       i {
         margin-right: 5px;
+      }
+    }
+  }
+
+  .editor-common-sidebar-preview-wrapper {
+    display: flex;
+    width: 200px;
+    margin: 5px 25px;
+
+     .editor-common-sidebar-preview {
+      flex-grow: 1;
+      width: auto;
+      margin: 0;
+      border-radius: 5px 0 0 5px;
+      margin-right: 1px;
+    }
+
+     .dropdown {
+      > button {
+        width: auto;
+        height: 100%;
+        margin: 0;
+        background-color: @button-secondary-color;
+        border-radius: 0 5px 5px 0;
+        color: @white;
+        .fa {
+        }
+      }
+
+      ul {
+        position: absolute;
+        left: 0;
+        border-radius: 5px;
+        display: none;
+        width: 200px;
+        margin: 0 25px;
+        list-style: none;
+        padding: 1px 0;
+        background-color: @sidebar-color;
+
+         li {
+          padding: 0;
+          margin: 0;
+
+          button {
+            height: 50px;
+            font-size: 15px;
+            width: 100%;
+            border-radius: 5px;
+            color: @white;
+            border-color: @button-secondary-color;
+            background-color: @button-secondary-color;
+            &:hover {
+              border-color: @button-secondary-hover-color;
+              background-color: @button-secondary-hover-color;
+            }
+          }
+        }
+      }
+      &.active {
+        ul {
+          display: block;
+        }
+        > button {
+          border-color: @button-secondary-hover-color;
+          background-color: @button-secondary-hover-color;
+        }
       }
     }
   }
@@ -93,7 +160,7 @@
 }
 
 .sidebar-inner {
-  padding: 61px 0 25px 0;
+  padding: 0;
 }
 
 .sidebar-breadcrumb {

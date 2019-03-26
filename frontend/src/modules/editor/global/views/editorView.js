@@ -259,7 +259,7 @@ define(function(require) {
     updateCoursePreview: function(previewWindow) {
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
-      previewWindow.location.href = '/preview/' + tenantId + '/' + courseId + '/';
+      previewWindow.location.href = '/preview/' + tenantId + '/' + courseId + '/#/' + this.currentPageId;
     },
 
     addToClipboard: function(model) {

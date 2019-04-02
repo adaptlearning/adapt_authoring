@@ -37,11 +37,11 @@ function doQuery(req, res, andOptions, next) {
     next = andOptions;
     andOptions = [];
   }
-  var options = _.keys(req.body).length ? req.body : req.query;
   var search = options.search || {};
   var self = this;
   var orList = [];
   var andList = [];
+  const options = Object.assign({}, req.body, req.query);
   // convert searches to regex
   async.each(Object.keys(search), function (key, nextKey) {
     var exp = {};

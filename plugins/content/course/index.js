@@ -37,11 +37,11 @@ function doQuery(req, res, andOptions, next) {
     next = andOptions;
     andOptions = [];
   }
-  var search = options.search || {};
-  var self = this;
-  var orList = [];
-  var andList = [];
   const options = Object.assign({}, req.body, req.query);
+  const search = options.search || {};
+  const self = this;
+  const orList = [];
+  const andList = [];
   // convert searches to regex
   async.each(Object.keys(search), function (key, nextKey) {
     var exp = {};
@@ -55,7 +55,7 @@ function doQuery(req, res, andOptions, next) {
     }
     nextKey();
   }, function () {
-    var query = {};
+    const query = {};
 
     if (orList.length) query.$or = orList;
     if(andList.length || andOptions.length) query.$and = andList.concat(andOptions);

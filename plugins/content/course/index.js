@@ -44,14 +44,10 @@ function doQuery(req, res, andOptions, next) {
   const andList = [];
   // convert searches to regex
   async.each(Object.keys(search), function (key, nextKey) {
-    var exp = {};
-    // convert strings to regex for likey goodness
-    if ('string' === typeof search[key]) {
-      exp[key] = new RegExp(search[key], 'i');
-      orList.push(exp);
+    if ('string' === typeof search[key]) { // string -> regex
+      orList.push({ [key]: new RegExp(search[key], 'i') });
     } else {
-      exp[key] = search[key];
-      andList.push(exp);
+      andList.push({ [key]: search[key] });
     }
     nextKey();
   }, function () {

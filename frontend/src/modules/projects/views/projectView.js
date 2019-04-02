@@ -84,7 +84,7 @@ define(function(require) {
         title: Origin.l10n.t('app.' + titleKey),
         text: Origin.l10n.t('app.confirmdeleteproject') + '<br/><br/>' + Origin.l10n.t('app.' + textKey),
         destructive: isShared,
-        callback: _.bind(this.deleteProjectConfirm, this)
+        callback: this.deleteProjectConfirm.bind(this)
       });
     },
 
@@ -97,10 +97,10 @@ define(function(require) {
 
     deleteProject: function(event) {
       this.model.destroy({
-        success: _.bind(function() {
+        success: function() {
           Origin.trigger('dashboard:refresh');
           this.remove();
-        }, this),
+        }.bind(this),
         error: function(model, response, options) {
           _.delay(function() {
             Origin.Notify.alert({ type: 'error', text: response.responseJSON.message });

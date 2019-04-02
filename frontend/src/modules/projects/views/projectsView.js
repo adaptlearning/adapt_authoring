@@ -24,8 +24,8 @@ define(function(require){
     },
 
     initEventListeners: function() {
-      this._doLazyScroll = _.bind(_.throttle(this.doLazyScroll, 250), this);
-      this._onResize = _.bind(_.debounce(this.onResize, 250), this);
+      this._doLazyScroll = _.throttle(this.doLazyScroll, 250).bind(this);
+      this._onResize = _.debounce(this.onResize, 250).bind(this);
 
       this.listenTo(Origin, {
         'window:resize dashboard:refresh': this._onResize,
@@ -77,7 +77,7 @@ define(function(require){
       }
       // we need to load one course first to check page size
       this.pageSize = 1;
-      this.resetCollection(_.bind(function(collection) {
+      this.resetCollection(function(collection) {
         var containerHeight = $(window).height()-this.$el.offset().top;
         var containerWidth = this.$('.projects-inner').width();
         var itemHeight = $('.project-list-item').outerHeight(true);
@@ -89,7 +89,7 @@ define(function(require){
         this.pageSize = columns*rows;
         // need another reset to get the actual pageSize number of items
         this.resetCollection(this.setViewToReady);
-      }, this));
+      }.bind(this));
     },
 
     getProjectsContainer: function() {
@@ -136,7 +136,7 @@ define(function(require){
             sort: this.sort
           }
         },
-        success: _.bind(function(collection, response) {
+        success: function(collection, response) {
           this.isCollectionFetching = false;
           this.fetchCount += response.length;
           // stop further fetching if this is the last page
@@ -144,7 +144,7 @@ define(function(require){
 
           this.$('.no-projects').toggleClass('display-none', this.fetchCount > 0);
           if(typeof cb === 'function') cb(collection);
-        }, this)
+        }.bind(this)
       });
     },
 

@@ -97,7 +97,10 @@ define(function(require) {
 
     deleteProject: function(event) {
       this.model.destroy({
-        success: _.bind(this.remove, this),
+        success: _.bind(function() {
+          Origin.trigger('dashboard:refresh');
+          this.remove();
+        }, this),
         error: function(model, response, options) {
           _.delay(function() {
             Origin.Notify.alert({ type: 'error', text: response.responseJSON.message });

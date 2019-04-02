@@ -28,7 +28,7 @@ define(function(require){
       this._onResize = _.bind(_.debounce(this.onResize, 250), this);
 
       this.listenTo(Origin, {
-        'window:resize': this._onResize,
+        'window:resize dashboard:refresh': this._onResize,
         'dashboard:dashboardSidebarView:filterBySearch': function(text) { this.doFilter(text) },
         'dashboard:dashboardSidebarView:filterByTags': function(tags) { this.doFilter(null, tags) },
         'dashboard:sort:asc': function() { this.doSort('asc'); },

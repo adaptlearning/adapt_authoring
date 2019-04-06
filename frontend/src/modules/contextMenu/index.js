@@ -41,23 +41,11 @@ define(function(require) {
     ContextMenu.addItem('page', getDefaultItems());
     ContextMenu.addItem('menu', getDefaultItems(['copy']));
     ContextMenu.addItem('page-min', getDefaultItems(['copy','delete','colorLabel']));
-    ContextMenu.addItem('sharedcourse', [
-      {
-        title: Origin.l10n.t('app.duplicate'),
-        className: 'context-menu-item',
-        callbackEvent: 'duplicate'
-      },
-      {
-        title: Origin.l10n.t('app.preview'),
-        className: 'context-menu-item',
-        callbackEvent: 'preview'
-      }
-    ]);
     ContextMenu.addItem('course', getDefaultItems(['colorLabel']));
   };
 
   /*
-  * returns the default list excluding anything in [blacklist] (uses event name)
+  * returns the default list excluding anything in [blacklist] (uses callbackEvent to filter)
   */
   function getDefaultItems(blacklist) {
     var DEFAULT_ITEMS = [

@@ -19,18 +19,23 @@ define(function(require){
     },
 
     isValid: function() {
-      var email = this.$('input[name=email]').val().trim();
-      var valid = Helpers.isValidEmail(email);
-      if(valid) {
-        this.$('.field-error').addClass('display-none');
-      } else {
-        this.$('.field-error').removeClass('display-none');
-        Origin.Notify.alert({
-          type: 'error',
-          title: Origin.l10n.t('app.validationfailed'),
-          text: Origin.l10n.t('app.invalidusernameoremail')
-        });
-      }
+      var valid = true;
+
+      this.$('.field-error').each(function(index, element) {
+        var $error = $(element);
+        var $input = $error.siblings('input');
+
+        var isValid = $input.attr('name') === 'email' ?
+          Helpers.isValidEmail($input.val().trim()) :
+          $input.val().trim().length > 0;
+
+        $error.toggleClass('display-none', isValid);
+
+        if (!isValid) {
+          valid = false;
+        }
+      });
+
       return valid;
     },
 

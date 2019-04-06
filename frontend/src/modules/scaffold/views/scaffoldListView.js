@@ -83,10 +83,27 @@ define([
     }
   });
 
+  var ScaffoldListItemView = Backbone.Form.editors.List.Item.extend({
+
+    events: function() {
+      return _.extend({}, Backbone.Form.editors.__List.__Item.prototype.events, {
+        'click [data-action="clone"]': 'cloneItem'
+      });
+    },
+
+    cloneItem: function(event) {
+      this.list.addItem(this.editor.value, true);
+    }
+
+  });
+
   Origin.on('origin:dataReady', function() {
     // NOTE override default list view (keep the old one in case...)
     Backbone.Form.editors.__List = Backbone.Form.editors.List;
+    Backbone.Form.editors.__List.__Item = Backbone.Form.editors.List.Item;
+
     Backbone.Form.editors.List = ScaffoldListView;
+    Backbone.Form.editors.List.Item = ScaffoldListItemView;
     // overrides
     Backbone.Form.editors.List.prototype.constructor.template = Handlebars.templates.list;
     Backbone.Form.editors.List.Item.prototype.constructor.template = Handlebars.templates.listItem;

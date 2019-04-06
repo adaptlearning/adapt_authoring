@@ -28,9 +28,50 @@ function CourseContent () {
 util.inherits(CourseContent, ContentPlugin);
 
 var DASHBOARD_COURSE_FIELDS = [
-    '_id', '_tenantId', '_type', '_isShared', 'title', 'heroImage', 
-    'updatedAt', 'updatedBy', 'createdAt', 'createdBy', 'tags'
+    '_id', '_tenantId', '_type', '_isShared', 'title', 'heroImage',
+    'updatedAt', 'updatedBy', 'createdAt', 'createdBy', 'tags', '_shareWithUsers'
 ];
+
+function doQuery(req, res, andOptions, next) {
+  if(!next) {
+    next = andOptions;
+    andOptions = [];
+  }
+  var options = _.keys(req.body).length ? req.body : req.query;
+  var search = options.search || {};
+  var self = this;
+  var orList = [];
+  var andList = [];
+  // convert searches to regex
+  async.each(Object.keys(search), function (key, nextKey) {
+    var exp = {};
+    // convert strings to regex for likey goodness
+    if ('string' === typeof search[key]) {
+      exp[key] = new RegExp(search[key], 'i');
+      orList.push(exp);
+    } else {
+      exp[key] = search[key];
+      andList.push(exp);
+    }
+    nextKey();
+  }, function () {
+    var query = {};
+
+    if (orList.length) query.$or = orList;
+    if(andList.length || andOptions.length) query.$and = andList.concat(andOptions);
+
+    options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
+    options.populate = Object.assign({ 'createdBy': 'email firstName lastName' }, options.populate);
+    options.jsonOnly = true;
+
+    new CourseContent().retrieve(query, options, function (err, results) {
+      if (err) {
+        return res.status(500).json(err);
+      }
+      return res.status(200).json(results);
+    });
+  });
+}
 /**
  * essential setup
  *
@@ -39,105 +80,14 @@ var DASHBOARD_COURSE_FIELDS = [
 function initialize () {
   var self = this;
   var app = origin();
-  app.once('serverStarted', function (server) {
-    // My Courses
-    rest.get('/my/course', function (req, res, next) {
-      var options = _.keys(req.body).length
-      ? req.body
-      : req.query;
-      var search = options.search || {};
-      var self = this;
-      var orList = [];
-      var andList = [];
-
-      // convert searches to regex
-      async.each(
-        Object.keys(search),
-        function (key, nextKey) {
-          var exp = {};
-          // convert strings to regex for likey goodness
-          if ('string' === typeof search[key]) {
-            exp[key] = new RegExp(search[key], 'i');
-            orList.push(exp);
-          } else {
-            exp[key] = search[key];
-            andList.push(exp);
-          }
-          nextKey();
-      }, function () {
-        var query = {};
-        if (orList.length) {
-          query.$or = orList;
-        }
-        
-        query.$and = andList;
-
-        // force search to use only courses created by current user
-        var user = usermanager.getCurrentUser();
-        query.$and.push({ createdBy : user._id });
-
-        options.jsonOnly = true;
-        options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
-        
-        new CourseContent().retrieve(query, options, function (err, results) {
-          if (err) {
-            res.statusCode = 500;
-            return res.json(err);
-          }
-          return res.json(results);
-        });
-      });
+  app.once('serverStarted', function(server) {
+    // force search to use only courses created by current user
+    rest.get('/my/course', (req, res, next) => doQuery(req, res, [{ createdBy: req.user._id }], next));
+    // Only return courses which have been shared
+    rest.get('/shared/course', (req, res, next) => {
+      req.body.search = Object.assign({}, req.body.search, { $or: [{ _shareWithUsers: req.user._id }, { _isShared: true }] });
+      doQuery(req, res, next);
     });
-
-    // Shared Courses
-    rest.get('/shared/course', function (req, res, next) {
-      var options = _.keys(req.body).length
-      ? req.body
-      : req.query;
-      var search = options.search || {};
-      var self = this;
-      var orList = [];
-      var andList = [];
-
-      // convert searches to regex
-      async.each(
-        Object.keys(search),
-        function (key, nextKey) {
-          var exp = {};
-          // convert strings to regex for likey goodness
-          if ('string' === typeof search[key]) {
-            exp[key] = new RegExp(search[key], 'i');
-            orList.push(exp);
-          } else {
-            exp[key] = search[key];
-            andList.push(exp);
-          }
-          nextKey();
-      }, function () {
-        var query = {};
-        if (orList.length) {
-          query.$or = orList;
-        }
-        
-        query.$and = andList;
-
-        // Only return courses which have been shared
-        query.$and.push({ _isShared: true });
-        
-        options.jsonOnly = true;
-        options.fields = DASHBOARD_COURSE_FIELDS.join(' ');
-
-        new CourseContent().retrieve(query, options, function (err, results) {
-          if (err) {
-            res.statusCode = 500;
-            return res.json(err);
-          }
-
-          return res.json(results);
-        });
-      });
-    });
-
     /**
      * API Endpoint to duplicate a course
      *
@@ -174,59 +124,59 @@ function initialize () {
   ['component'].forEach(function (contentType) {
     app.contentmanager.addContentHook('create', contentType, {when: 'pre'}, function(contentType, data, next) {
       var user = usermanager.getCurrentUser();
-      
+
       database.getDatabase(function (err, db) {
         if (err) {
             logger.log('error', err);
             return next(err)
         }
-        
+
         var delta = data[0];
-        
+
         db.retrieve('component', {_courseId: delta._courseId, _component: delta._component}, function(err, results) {
           if (results.length == 0) {
             // This is the first time this component has been added, so trigger a rebuild.
             if (user && user.tenant && user.tenant._id) {
               app.emit('rebuildCourse', user.tenant._id, delta._courseId);
-            } 
+            }
           }
-          
-          return next(null, data); 
+
+          return next(null, data);
         });
-        
+
       });
     }.bind(null, contentType));
   });
-  
+
   ['component'].forEach(function (contentType) {
     app.contentmanager.addContentHook('destroy', contentType, {when: 'pre'}, function(contentType, data, next) {
       var user = usermanager.getCurrentUser();
-      
+
       database.getDatabase(function (err, db) {
         if (err) {
             logger.log('error', err);
             return next(err)
         }
-        
+
         db.retrieve('component', {_id: data[0]._id}, function(err, results) {
           if (err) {
             logger.log('error', err);
             return next(err);
           }
-          
+
           if (results && results.length == 1) {
             var delta = results[0];
-            
+
             db.retrieve('component', {_courseId: delta._courseId, _component: delta._component}, function(err, results) {
               if (results.length <= 1) {
                 // This component is no longer used in this course, so trigger a rebuild.
                 if (user && user.tenant && user.tenant._id) {
                   app.emit('rebuildCourse', user.tenant._id, delta._courseId.toString());
-                } 
+                }
               }
-              
-              return next(null, data); 
-            });    
+
+              return next(null, data);
+            });
           } else {
             // In theory the next line should never run.
             return next(null, data);
@@ -235,7 +185,7 @@ function initialize () {
       });
     }.bind(null, contentType));
   });
-  
+
   // Content Hook for updatedAt and updatedBy:
   ['contentobject', 'article', 'block', 'component'].forEach(function (contentType) {
     app.contentmanager.addContentHook('update', contentType, {when:'post'}, function (contentType, data, next) {
@@ -250,7 +200,7 @@ function initialize () {
 
         // Defensive programming -- just in case
         if (data && data._courseId) {
-          // If the _courseId is present, update the last updated date                   
+          // If the _courseId is present, update the last updated date
           db.update('course', { _id: data._courseId }, { updatedAt: new Date(), updatedBy: userId }, function (err) {
             if (err) {
               logger.log('error', err);
@@ -261,7 +211,7 @@ function initialize () {
         } else {
           next(null, data);
         }
-        
+
       });
 
     }.bind(null, contentType));
@@ -274,7 +224,7 @@ function initialize () {
  * overrides base implementation of hasPermission
  *
  * @param {string} action
- * @param {object} a content item
+ * @param {object} contentItem
  * @param {callback} next (function (err, isAllowed))
  */
 CourseContent.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
@@ -283,7 +233,7 @@ CourseContent.prototype.hasPermission = function (action, userId, tenantId, cont
       return next(err);
     }
     if (isAllowed) {
-      return next(null, isAllowed);
+      return next(null, true);
     }
     var resource = permissions.buildResourceString(tenantId, `/api/content/course/${contentItem._courseId || '*'}`);
     permissions.hasPermission(userId, action, resource, next);
@@ -350,13 +300,11 @@ CourseContent.prototype.destroy = function (search, force, next) {
   var self = this;
   var user = app.usermanager.getCurrentUser();
   var tenantId = user.tenant && user.tenant._id;
-
   // shuffle params
   if ('function' === typeof force) {
     next = force;
     force = false;
   }
-
   self.hasPermission('delete', user._id, tenantId, search, function (err, isAllowed) {
     if (!isAllowed && !force) {
       return next(new ContentPermissionError());
@@ -366,25 +314,22 @@ CourseContent.prototype.destroy = function (search, force, next) {
       if (error) {
         return next(error);
       }
-
-      if (docs && docs.length) {
+      if (!docs || !docs.length) {
+        return next(null);
+      }
+      var resource = permissions.buildResourceString(tenantId, '/api/content/course/*');
+      permissions.hasPermission(user._id, 'delete', resource, function(error, canDeleteAll) {
         // Final check before deletion
-        if (docs[0]._isShared && docs[0].createdBy != user._id) {
+        if(!canDeleteAll) {
           return next(new ContentPermissionError());
         }
-        
         // Courses use cascading delete
-        async.eachSeries(
-          docs,
-          function (doc, cb) {
-            self.destroyChildren(doc._id, '_courseId', cb);
-          },
-          function (err) {
-            ContentPlugin.prototype.destroy.call(self, search, true, next);
-          });
-      } else {
-        next(null);
-      }
+        async.eachSeries(docs, function(doc, cb) {
+          self.destroyChildren(doc._id, '_courseId', cb);
+        }, function (err) {
+          ContentPlugin.prototype.destroy.call(self, search, true, next);
+        });
+      });
     });
   });
 };
@@ -421,7 +366,7 @@ function duplicate (data, cb) {
 
       // Set the current user's ID as the creator
       doc.createdBy = user._id;
-      
+
       CourseContent.prototype.create(doc, function (error, newCourse) {
         if (error) {
           logger.log('error', error);
@@ -516,7 +461,7 @@ function duplicate (data, cb) {
                     } else {
                       next();
                     }
-                    
+
                   }, function(error) {
                     if (error) {
                       logger.log('error', error);

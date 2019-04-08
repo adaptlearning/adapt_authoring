@@ -430,8 +430,17 @@ define(function(require) {
         var defaultSettings = this.getDefaultThemeSettings();
         shouldShow = false;
         for (var key in currentSettings) {
-          if (currentSettings[key] && defaultSettings[key] && currentSettings[key].toString() !== defaultSettings[key].toString()) {
-            shouldShow = true;
+          if (currentSettings[key] && defaultSettings[key]) {
+            // Check for nested properties
+            if (typeof currentSettings[key] === 'object') {
+              for (var innerKey in currentSettings[key]) {
+                if (currentSettings[key][innerKey].toString() !== defaultSettings[key][innerKey].toString()) {
+                  shouldShow = true;
+                }
+              }
+            } else if (currentSettings[key].toString() !== defaultSettings[key].toString()) {
+              shouldShow = true;
+            }
           }
         }
       }
@@ -493,6 +502,7 @@ define(function(require) {
       this.setPresetSelection(null);
       this.updatePresetSelect();
       this.renderForm();
+      this.updateRestorePresetButton(false);
     },
 
     onPresetChanged: function(event) {

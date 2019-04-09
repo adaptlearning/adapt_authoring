@@ -427,18 +427,19 @@ define(function(require) {
         // If flag was not passed in then compare default settings with current settings
         // and show restore button if there are differences
         var currentSettings = Origin.editor.data.course.get('themeVariables');
-        var defaultSettings = this.getDefaultThemeSettings();
+        var preset = this.getSelectedPreset();
+        var baseSettings = (preset) ? preset.get('properties') : this.getDefaultThemeSettings();
         shouldShow = false;
         for (var key in currentSettings) {
-          if (currentSettings[key] && defaultSettings[key]) {
+          if (currentSettings[key] && baseSettings[key]) {
             // Check for nested properties
             if (typeof currentSettings[key] === 'object') {
               for (var innerKey in currentSettings[key]) {
-                if (currentSettings[key][innerKey].toString() !== defaultSettings[key][innerKey].toString()) {
+                if (currentSettings[key][innerKey].toString() !== baseSettings[key][innerKey].toString()) {
                   shouldShow = true;
                 }
               }
-            } else if (currentSettings[key].toString() !== defaultSettings[key].toString()) {
+            } else if (currentSettings[key].toString() !== baseSettings[key].toString()) {
               shouldShow = true;
             }
           }

@@ -14,7 +14,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-      
+
 git:
   depth: 10
 
@@ -28,7 +28,7 @@ before_install:
 
 install:
   - npm config set spin false
-  - npm install
+  - npm ci
   - grunt build:prod
 
 matrix:

@@ -473,6 +473,47 @@ function disableExtensions(courseId, extensions, cb) {
 }
 
 /**
+ * Returns an array of course objects that use the Extension with the passed id
+ * @param callback
+ * @param id
+ */
+Extension.prototype.getUses = function (callback, id) {
+  database.getDatabase(function (err, db) {
+    if (err) {
+      return callback(err);
+    }
+
+    db.retrieve('extensiontype', { _id: id }, function (err, extensiontypes) {
+      if (err) {
+        return callback(err);
+      }
+
+      if (extensiontypes.length !== 1) {
+        return callback(new Error('extensiontype not found'));
+      }
+
+      const search = {};
+      search["_enabledExtensions." + extensiontypes[0].extension] = { $exists: true };
+      db.retrieve('config', search, function (err, configs) {
+        if (err) {
+          return callback(err);
+        }
+
+        //Group all the course ids into an array for a mongo query
+        const courseIDs = [];
+        for (var i = 0, len = configs.length; i < len; i++) {
+          if(!courseIDs.includes(configs[i]._courseId)) {
+            courseIDs.push(configs[i]._courseId)      ;
+          }
+        }
+
+        db.retrieve('course', { _id: {$in: courseIDs} }, callback);
+      });
+    });
+  });
+};
+
+/**
  * essential setup
  *
  * @api private

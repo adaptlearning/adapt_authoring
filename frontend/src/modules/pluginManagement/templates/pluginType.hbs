@@ -3,7 +3,7 @@
     <div class="pluginType-title col-20">
       <h4 class="pluginType-title-inner tb-col-inner">{{displayName}}</h4>
     </div>
-    <div class="pluginType-description col-40">
+    <div class="pluginType-description col-30">
       <div class="pluginType-description-inner tb-col-inner">
         {{description}}
       </div>
@@ -31,6 +31,11 @@
         {{else}}
           <button class="plugin-update-check btn">{{t 'app.checkforupdates'}}</button>
         {{/if}}
+      </div>
+      </div>
+    <div class="pluginType-update col-10 col-centered">
+      <div class="pluginType-update-inner tb-col-inner">
+        <button class="plugin-remove btn alert">{{t 'app.removeplugin'}}</button>
       </div>
     </div>
   </div>

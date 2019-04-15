@@ -8,10 +8,11 @@ define(function(require){
     tagName: 'div',
 
     events: {
-      'change .pluginType-enabled': 'toggleEnabled',
-      'change .pluginType-addedDefault': 'toggleAddedDefault',
+      'click input.pluginType-enabled': 'toggleEnabled',
+      'click input.pluginType-addedDefault': 'toggleAddedDefault',
       'click .plugin-update-check': 'checkForUpdates',
-      'click .plugin-update-confirm': 'updatePlugin'
+      'click .plugin-update-confirm': 'updatePlugin',
+      'click .plugin-remove': 'deletePluginPrompt'
     },
 
     preRender: function () {
@@ -20,6 +21,12 @@ define(function(require){
         sync: this.render,
         destroy: this.remove
       });
+    },
+
+    render: function () {
+      var template = Handlebars.templates[this.constructor.template];
+      this.$el.html(template(this.model.attributes));
+      return this;
     },
 
     toggleEnabled: function () {
@@ -74,6 +81,51 @@ define(function(require){
       }, this));
 
       return false;
+    },
+
+    deletePluginPrompt: function(event) {
+      event && event.preventDefault();
+      const _this = this;
+
+      $.ajax({
+        'method': 'GET',
+        'url':  this.model.urlRoot + '/' + this.model.get('_id') + '/uses'
+      }).done(function (data) {
+        const popup = {};
+
+        if (data.courses.length === 0) {
+          popup.text = _this.model.get('displayName') + ' is unused';
+          popup.type = 'confirm';
+          popup.destructive = false;
+          popup.callback = _.bind(_this.deletePluginConfirm, _this);
+          Origin.Notify.confirm(popup);
+        } else {
+          var courses = '';
+          for (var i = 0, len = data.courses.length; i < len; i++) {
+            courses += '<i>' + data.courses[i].title + '</i> By <i>' + data.courses[i].createdByEmail + '</i><br />'
+          }
+          popup.type = 'error';
+          popup.title = 'Cannot Delete ' + _this.model.get('displayName');
+          popup.text = '';
+          if (courses !== '') {
+            popup.text += 'This plugin is used in the following courses:' + '<br />';
+            popup.text += courses + '<br />';
+          }
+          Origin.Notify.alert(popup);
+        }
+      });
+    },
+
+    deletePluginConfirm: function(confirmation) {
+      var _this = this;
+      if (confirmation === true) {
+        $.ajax({
+          'method': 'DELETE',
+          'url': this.model.urlRoot + '/' + this.model.get('_id')
+        }).done(function () {
+           _this.remove()
+        });
+      }
     }
   }, {
     template: 'pluginType'

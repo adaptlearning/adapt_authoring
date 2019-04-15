@@ -219,6 +219,45 @@ Component.prototype.update = function (search, delta, next)  {
 };
 
 /**
+ * Returns an array of course objects that use the Component with the passed id
+ * @param callback
+ * @param id
+ */
+Component.prototype.getUses = function (callback, id) {
+  database.getDatabase(function (err, db) {
+    if (err) {
+      return callback(err);
+    }
+
+    db.retrieve('componenttype', { _id: id }, function (err, componentypes) {
+      if (err) {
+        return callback(err);
+      }
+
+      if (componentypes.length !== 1) {
+        return callback(new Error('componenttype not found'));
+      }
+
+      db.retrieve('component', {_component : componentypes[0].component}, function (err, components) {
+        if (err) {
+          return callback(err);
+        }
+
+        //Group all the course ids into an array for a mongo query
+        const courseIDs = [];
+        for (var i = 0, len = components.length; i < len; i++) {
+            if(!courseIDs.includes(components[i]._courseId)){
+                courseIDs.push(components[i]._courseId);
+            }
+        }
+
+        db.retrieve('course', { _id: {$in: courseIDs} }, callback);
+      });
+    });
+  });
+};
+
+/**
  * essential setup
  *
  * @api private

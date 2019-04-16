@@ -5,6 +5,22 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.7.1] - 2019-04-09
+
+Bugfix release.
+
+### Fixed
+- Error not handled when server is already running ([#2174](https://github.com/adaptlearning/adapt_authoring/issues/2174))
+- Plugin management text is hardcoded ([#2218](https://github.com/adaptlearning/adapt_authoring/issues/2218))
+- Sidebar filters need localising ([#2243](https://github.com/adaptlearning/adapt_authoring/issues/2243))
+- Dashboard paging broken after deleting courses ([#2253](https://github.com/adaptlearning/adapt_authoring/issues/2253))
+- Reset password appears functional even when SMTP isn't enabled ([#2281](https://github.com/adaptlearning/adapt_authoring/issues/2281))
+- Automatic upgrade check broken ([#2290](https://github.com/adaptlearning/adapt_authoring/issues/2290))
+- Sorting broken on shared courses dashboard ([#2294](https://github.com/adaptlearning/adapt_authoring/issues/2294))
+
+### Added
+- Custom LESS should be validated prior to course build ([#1830](https://github.com/adaptlearning/adapt_authoring/issues/1830))
+
 ## [0.7.0] - 2019-03-25
 
 Bundle of UI/usability enhancements.
@@ -559,6 +575,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.7.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.5...v0.7.0
 [0.6.5]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.4...v0.6.5
 [0.6.4]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.3...v0.6.4

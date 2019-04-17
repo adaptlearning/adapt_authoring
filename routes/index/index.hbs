@@ -2,17 +2,17 @@
 <html lang="en" data-adapt-framework-version="{{adapt_framework}}" data-adapt-authoring-version="{{adapt_authoring}}">
   <head>
     <title>{{productName}}</title>
-    <link rel="icon" type="image/png" href="/css/assets/favicon.png" />
-    <link rel="stylesheet" href="/css/adapt.css" />
-    <link rel="stylesheet" href="/font-awesome-4.5.0/css/font-awesome.min.css">
-    <script type="text/javascript" src="/modernizr.js"></script>
+    <link rel="icon" type="image/png" href="css/assets/favicon.png" />
+    <link rel="stylesheet" href="css/adapt.css" />
+    <link rel="stylesheet" href="font-awesome-4.5.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="modernizr.js"></script>
     <script src="//cdn.ckeditor.com/4.5.7/full-all/ckeditor.js"></script>
     {{#if isProduction}}
-      <script type="text/javascript" src="/require.js" data-main="/js/origin.js{{#if dateStampAsString}}?{{dateStampAsString}}{{/if}}"></script>
+      <script type="text/javascript" src="require.js" data-main="js/origin.js{{#if dateStampAsString}}?{{dateStampAsString}}{{/if}}"></script>
     {{else}}
-      <script type="text/javascript" src="/require.js"></script>
-      <script type="text/javascript" src="/core/config.js"></script>
-      <script type="text/javascript" src="/core/app.js"></script>
+      <script type="text/javascript" src="require.js"></script>
+      <script type="text/javascript" src="core/config.js"></script>
+      <script type="text/javascript" src="core/app.js"></script>
     {{/if}}
     <meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-store, no-cache" />
@@ -37,7 +37,7 @@
       <div class="loading">
         <div class="loading-inner">
           <div class="loading-logo">
-              <img src="/css/assets/adapt-learning-logo-outline.png">
+              <img src="css/assets/adapt-learning-logo-outline.png">
           </div>
           <div class="loading-anim">
             <div class="circle1"></div>

@@ -118,11 +118,11 @@ define(function(require) {
     },
 
     addExtension: function() {
-      this.postData('/api/extension/enable/');
+      this.postData('api/extension/enable/');
     },
 
     removeExtension: function() {
-      this.postData('/api/extension/disable/');
+      this.postData('api/extension/disable/');
     },
 
     /**

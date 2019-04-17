@@ -4,7 +4,7 @@ define(function(require) {
 
   var ComponentTypeModel = ContentModel.extend({
     idAttribute: '_id',
-    urlRoot: '/api/componenttype',
+    urlRoot: 'api/componenttype',
     _parent: 'block',
 
     comparator: function(model) {

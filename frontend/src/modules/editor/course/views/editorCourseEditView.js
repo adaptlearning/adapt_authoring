@@ -114,7 +114,7 @@ define(function(require) {
       // Store the component types
       var componentTypes = new EditorCollection(null, {
         model: ComponentTypeModel,
-        url: '/api/componenttype',
+        url: 'api/componenttype',
         _type: 'componentTypes'
       });
       componentTypes.fetch({
@@ -132,7 +132,7 @@ define(function(require) {
           componentModel.save(null, {
             error: _.bind(this.onSaveError, this),
             success: function() {
-              Origin.router.navigateTo('/editor/' + componentModel.get('_courseId') + '/menu');
+              Origin.router.navigateTo('editor/' + componentModel.get('_courseId') + '/menu');
             }
           });
         }, this)

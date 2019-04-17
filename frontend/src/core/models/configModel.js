@@ -11,11 +11,11 @@ define(function(require) {
 
       switch (method.toLowerCase()) {
         case 'read':
-          options.url = '/api/content/config/' + this.get('_courseId');
+          options.url = 'api/content/config/' + this.get('_courseId');
           break;
         case 'update':
         case 'patch':
-          options.url = '/api/content/config/' + this.get('_id');
+          options.url = 'api/content/config/' + this.get('_id');
           break;
       }
 

@@ -3,7 +3,7 @@ define(function(require) {
   var ContentModel = require('./contentModel');
 
   var ThemeTypeModel = ContentModel.extend({
-    urlRoot: '/api/themetype',
+    urlRoot: 'api/themetype',
     idAttribute: '_id',
     _type: 'theme'
   });

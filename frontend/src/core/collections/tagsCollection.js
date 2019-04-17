@@ -5,7 +5,7 @@ define(function(require) {
 
 	var TagsCollection = Backbone.Collection.extend({
 
-		url: '/api/autocomplete/tag'
+		url: 'api/autocomplete/tag'
 
 	});
 

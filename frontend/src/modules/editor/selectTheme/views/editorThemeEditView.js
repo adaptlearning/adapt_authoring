@@ -66,7 +66,7 @@ define(function(require) {
 
       // Should push to api
 
-      $.post('/api/theme/' + selectedThemeId + '/makeitso/' + this.model.get('_courseId'))
+      $.post('api/theme/' + selectedThemeId + '/makeitso/' + this.model.get('_courseId'))
         .error(function() {
           Origin.Notify.alert({
             type: 'error',

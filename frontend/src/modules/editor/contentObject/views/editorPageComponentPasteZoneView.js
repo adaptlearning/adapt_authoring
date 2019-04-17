@@ -40,7 +40,7 @@ define(function(require){
 
           $.ajax({
             type: 'PUT',
-            url:'/api/content/component/' + componentId,
+            url:'api/content/component/' + componentId,
             data: newData,
             success: function(jqXHR, textStatus, errorThrown) {
               // Re-render the move-from block

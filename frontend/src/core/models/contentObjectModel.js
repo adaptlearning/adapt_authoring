@@ -4,7 +4,7 @@ define(function(require) {
   var ContentModel = require('./contentModel');
 
   var ContentObjectModel = ContentModel.extend({
-    urlRoot: '/api/content/contentobject',
+    urlRoot: 'api/content/contentobject',
     _parentType: 'contentobject',
     _siblingTypes: 'contentobject',
     _childTypes: ['contentobject', 'article'],

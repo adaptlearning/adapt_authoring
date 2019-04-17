@@ -20,7 +20,7 @@ define(function(require) {
     events: {
       'change .theme select': 'onThemeChanged',
       'change .preset select': 'onPresetChanged',
-      'change .form-container form': 'onFieldChanged',
+      'change .form-container form': 'updateRestorePresetButton',
       'click button.edit': 'showPresetEdit'
     },
 
@@ -405,6 +405,16 @@ define(function(require) {
       return defaults;
     },
 
+    getCurrentSettings: function() {
+      if (!this.form) {
+        return Origin.editor.data.course.get('themeVariables');
+      }
+
+      return _.mapObject(this.form.fields, function(field) {
+        return field.getValue();
+      });
+    },
+
     themeIsEditable: function(theme) {
       var props = theme && theme.get('properties');
       if (!props) {
@@ -422,24 +432,34 @@ define(function(require) {
       return true;
     },
 
+    flattenNestedProperties: function(properties) {
+      var flatProperties = {};
+      if (typeof properties !== 'undefined') {
+        for (var key in properties) {
+          // Check for nested properties
+          if (typeof properties[key] === 'object') {
+            for (var innerKey in properties[key]) {
+              flatProperties[innerKey] = properties[key][innerKey];
+            }
+          } else {
+            flatProperties[key] = properties[key];
+          }
+        }
+      }
+      return flatProperties;
+    },
+
     updateRestorePresetButton: function(shouldShow) {
-      if (typeof shouldShow === 'undefined') {
+      if (typeof shouldShow !== 'boolean') {
         // If flag was not passed in then compare default settings with current settings
         // and show restore button if there are differences
-        var currentSettings = Origin.editor.data.course.get('themeVariables');
+        var currentSettings = this.flattenNestedProperties(this.getCurrentSettings());
         var preset = this.getSelectedPreset();
-        var baseSettings = (preset) ? preset.get('properties') : this.getDefaultThemeSettings();
+        var baseSettings = this.flattenNestedProperties((preset) ? preset.get('properties') : this.getDefaultThemeSettings());
         shouldShow = false;
         for (var key in currentSettings) {
           if (currentSettings[key] && baseSettings[key]) {
-            // Check for nested properties
-            if (typeof currentSettings[key] === 'object') {
-              for (var innerKey in currentSettings[key]) {
-                if (currentSettings[key][innerKey].toString() !== baseSettings[key][innerKey].toString()) {
-                  shouldShow = true;
-                }
-              }
-            } else if (currentSettings[key].toString() !== baseSettings[key].toString()) {
+            if (currentSettings[key].toString() !== baseSettings[key].toString()) {
               shouldShow = true;
             }
           }
@@ -512,10 +532,6 @@ define(function(require) {
       this.setPresetSelection($(event.currentTarget).val());
       this.restoreFormSettings(settings);
       this.updateRestorePresetButton(false);
-    },
-
-    onFieldChanged: function() {
-        this.updateRestorePresetButton(true);
     },
 
     onSavePresetClicked: function() {

@@ -20,7 +20,7 @@ define(function(require) {
     events: {
       'change .theme select': 'onThemeChanged',
       'change .preset select': 'onPresetChanged',
-      'change .form-container form': 'updateRestorePresetButton',
+      'change .form-container form': 'onFieldChanged',
       'click button.edit': 'showPresetEdit'
     },
 
@@ -450,20 +450,13 @@ define(function(require) {
     },
 
     updateRestorePresetButton: function(shouldShow) {
-      if (typeof shouldShow !== 'boolean') {
+      if (typeof shouldShow === 'undefined') {
         // If flag was not passed in then compare default settings with current settings
         // and show restore button if there are differences
         var currentSettings = this.flattenNestedProperties(this.getCurrentSettings());
         var preset = this.getSelectedPreset();
         var baseSettings = this.flattenNestedProperties((preset) ? preset.get('properties') : this.getDefaultThemeSettings());
-        shouldShow = false;
-        for (var key in currentSettings) {
-          if (currentSettings[key] && baseSettings[key]) {
-            if (currentSettings[key].toString() !== baseSettings[key].toString()) {
-              shouldShow = true;
-            }
-          }
-        }
+        shouldShow = !_.isEqual(currentSettings, baseSettings);
       }
       var $reset = $('.editor-theming-sidebar-reset');
       shouldShow ? $reset.css('visibility', 'visible') : $reset.css('visibility', 'hidden');
@@ -532,6 +525,10 @@ define(function(require) {
       this.setPresetSelection($(event.currentTarget).val());
       this.restoreFormSettings(settings);
       this.updateRestorePresetButton(false);
+    },
+
+    onFieldChanged: function() {
+      this.updateRestorePresetButton();
     },
 
     onSavePresetClicked: function() {

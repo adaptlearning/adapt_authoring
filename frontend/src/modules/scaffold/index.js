@@ -263,7 +263,9 @@ define([
     }
 
     var schema = new Schemas(type);
-
+    if (options.isTheme) {
+      schema = schema.variables;
+    }
     options.model.schema = buildSchema(schema, options, type);
     options.fieldsets = buildFieldsets(schema, options);
     alternativeModel = options.alternativeModelToSave;

@@ -337,7 +337,7 @@ define(function(require) {
 
     extractData: function(attributes) {
       var data = {};
-      var properties = attributes.properties;
+      var properties = attributes.properties.variables;
       for (var key in properties) {
         // Check for nested properties
         if (typeof properties[key].properties !== 'undefined') {
@@ -390,7 +390,7 @@ define(function(require) {
 
     getDefaultThemeSettings: function() {
       var defaults = {};
-      var props = this.getSelectedTheme().attributes.properties;
+      var props = this.getSelectedTheme().get('properties').variables;
       for (var key in props) {
         // Check for nested properties
         if (typeof props[key].properties === 'object') {

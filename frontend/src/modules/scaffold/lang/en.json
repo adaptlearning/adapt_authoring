@@ -4,11 +4,6 @@
     "properties": "Properties",
     "settings": "Settings",
     "extensions": "Extensions",
-    "_graphic": "Graphic",
-    "_onScreen": "On-screen",
-    "_screensize": "Screen size",
-    "themeSettings": "Theme settings",
-    "menuSettings": "Menu settings",
     "colourPickerCancel": "Cancel selection"
   }
 }

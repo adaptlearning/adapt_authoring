@@ -44,7 +44,8 @@ define(function(require){
         return Origin.l10n.t(l10nKey);
       }
       // fall-back: remove all _ and capitalise
-      return this.capitalise(key.replace(/_/g, "").toLowerCase());
+      var string = key.replace(/_/g, '').replace(/[A-Z]/g, ' $&').toLowerCase();
+      return this.capitalise(string);
     },
 
     momentFormat: function(date, format) {

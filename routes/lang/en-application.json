@@ -296,6 +296,7 @@
   "app.confirmdefaulttitle": "Are you sure?",
   "app.confirmdefaultyes": "Yes, I'm sure",
   "app.confirmwait": "Wait",
+  "app.debuginfo": "<details><summary>Debug information</summary><textarea readonly rows='5'>%{message}</textarea></details>",
   "app.errorsessionexpired": "Your session has expired, click OK to log on again",
   "app.errorassetupdate": "Something went wrong while updating the asset.<br/>Please try again.",
   "app.errordeleteasset": "Couldn't delete this asset, %{message}",

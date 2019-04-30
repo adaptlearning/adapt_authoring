@@ -201,7 +201,6 @@ define([
       if (!schema.hasOwnProperty(key) || key === '_extensions') continue;
 
       var value = schema[key];
-      var nestedProps = value.properties;
 
       if (value.isSetting) {
         fieldsets.settings.fields.push(key);
@@ -213,20 +212,28 @@ define([
         continue;
       }
 
-      // if value is an object, give it some rights and add it as field set
       if (fieldsets[key]) {
         fieldsets[key].fields.push(key);
-      } else if (options.isTheme) { // Check for nested properties on edit theme page
-        var innerFieldSets = [];
-        for (var innerKey in nestedProps) {
-          innerFieldSets.push(innerKey)
-          schema[innerKey] = _.pick(nestedProps[innerKey], 'default', 'help', 'inputType', 'title', 'type');
-        }
-        var legend = value.title || Helpers.keyToTitleString(key);
-        fieldsets[key] = { key: key, legend: legend, fields: innerFieldSets };
-      } else {
-        fieldsets[key] = { key: key, legend: Helpers.keyToTitleString(key), fields: [ key ] };
+        continue;
       }
+
+      var nestedProps = value.properties;
+      var fields = [];
+
+      // process nested properties on edit theme page
+      if (options.isTheme) {
+        for (var innerKey in nestedProps) {
+          if (nestedProps.hasOwnProperty(innerKey) {
+            fields.push(innerKey);
+          }
+        }
+      }
+
+      fieldsets[key] = {
+        key: key,
+        legend: value.title || Helpers.keyToTitleString(key),
+        fields: fields.length ? fields : [ key ]
+      };
     }
 
     if (!schema._extensions) {

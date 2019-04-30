@@ -164,8 +164,20 @@ define([
     var scaffoldSchema = {};
 
     for (var key in schema) {
-      if (schema.hasOwnProperty(key)) {
-        setUpSchemaFields(schema[key], key, schema, scaffoldSchema);
+      if (!schema.hasOwnProperty(key)) continue;
+
+      var field = schema[key];
+      var nestedProps = field.properties;
+
+      if (!options.isTheme || !nestedProps) {
+        setUpSchemaFields(field, key, schema, scaffoldSchema);
+        continue;
+      }
+
+      // process nested properties on edit theme page
+      for (var innerKey in nestedProps) {
+        if (!nestedProps.hasOwnProperty(innerKey)) continue;
+        setUpSchemaFields(nestedProps[innerKey], innerKey, nestedProps, scaffoldSchema);
       }
     }
 
@@ -189,6 +201,7 @@ define([
       if (!schema.hasOwnProperty(key) || key === '_extensions') continue;
 
       var value = schema[key];
+      var nestedProps = value.properties;
 
       if (value.isSetting) {
         fieldsets.settings.fields.push(key);
@@ -203,6 +216,14 @@ define([
       // if value is an object, give it some rights and add it as field set
       if (fieldsets[key]) {
         fieldsets[key].fields.push(key);
+      } else if (options.isTheme) { // Check for nested properties on edit theme page
+        var innerFieldSets = [];
+        for (var innerKey in nestedProps) {
+          innerFieldSets.push(innerKey)
+          schema[innerKey] = _.pick(nestedProps[innerKey], 'default', 'help', 'inputType', 'title', 'type');
+        }
+        var legend = value.title || Helpers.keyToTitleString(key);
+        fieldsets[key] = { key: key, legend: legend, fields: innerFieldSets };
       } else {
         fieldsets[key] = { key: key, legend: Helpers.keyToTitleString(key), fields: [ key ] };
       }
@@ -225,7 +246,8 @@ define([
 
   Scaffold.buildForm = function(options) {
     var model = options.model;
-    var type = model.get('_type') || model._type;
+    var type = model.get('_type') || model._type || options.schemaType;
+    options.isTheme = false;
 
     switch (type) {
       case 'menu':
@@ -234,10 +256,16 @@ define([
         break;
       case 'component':
         type = model.get('_component');
+        break;
+      case 'theme':
+        type = options.schemaType;
+        options.isTheme = true;
     }
 
     var schema = new Schemas(type);
-
+    if (options.isTheme) {
+      schema = schema.variables;
+    }
     options.model.schema = buildSchema(schema, options, type);
     options.fieldsets = buildFieldsets(schema, options);
     alternativeModel = options.alternativeModelToSave;

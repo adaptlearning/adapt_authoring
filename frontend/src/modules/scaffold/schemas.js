@@ -15,6 +15,7 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
       delete schema._extensions;
       delete schema.menuSettings;
       delete schema.themeSettings;
+      delete schema.themeVariables;
       return schema;
     }
     trimPlugins(schema);

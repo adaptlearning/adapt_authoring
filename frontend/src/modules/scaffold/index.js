@@ -223,7 +223,7 @@ define([
       // process nested properties on edit theme page
       if (options.isTheme) {
         for (var innerKey in nestedProps) {
-          if (nestedProps.hasOwnProperty(innerKey) {
+          if (nestedProps.hasOwnProperty(innerKey)) {
             fields.push(innerKey);
           }
         }

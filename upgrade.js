@@ -196,7 +196,7 @@ function doUpdate(data) {
           migrator.list().then(
             function(migrations) {
               var migrationsRan = 0;
-              async.everySeries(migrations, function(migration, callback) {
+              async.eachSeries(migrations, function(migration, callback) {
                 if(migration.state === 'up'){
                   return callback();
                 }

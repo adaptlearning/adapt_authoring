@@ -1,0 +1,32 @@
+<div class="filter-inner">
+  <div class="sidebar-row-input">
+    <input placeholder="{{t 'app.searchByMail'}}" type="text" class="search-email">
+  </div>
+
+  <div class="sidebar-row sidebar-divide">
+    <h3 class="sidebar-divide-inner">
+      {{t 'app.tenant'}}
+    </h3>
+  </div>
+  <div class="sidebar-row-input">
+    <select name="tenantName">
+      {{#each tenants}}
+        <option value="{{displayName}}">{{displayName}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="sidebar-row sidebar-divide">
+    <h3 class="sidebar-divide-inner">
+      {{t 'app.role'}}
+    </h3>
+  </div>
+  {{#each roles}}
+  <div class="sidebar-row">
+    <label class="sidebar-tag">
+      <span>{{name}}</span>
+      <input type="checkbox" name="roleNames" value="{{name}}">
+      <i class="fa fa-toggle-off"></i>
+    </label>
+  </div>
+  {{/each}}
+</div>

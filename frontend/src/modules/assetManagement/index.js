@@ -1,26 +1,13 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Origin = require('core/origin');
-  var AssetModel = require('./models/assetModel');
   var AssetCollection = require('./collections/assetCollection');
-  var AssetManagementView = require('./views/assetManagementView');
-  var AssetManagementSidebarView = require('./views/assetManagementSidebarView');
   var AssetManagementNewAssetView = require('./views/assetManagementNewAssetView');
   var AssetManagementNewAssetSidebarView = require('./views/assetManagementNewAssetSidebarView');
+  var AssetManagementSidebarView = require('./views/assetManagementSidebarView');
+  var AssetManagementView = require('./views/assetManagementView');
+  var AssetModel = require('./models/assetModel');
   var TagsCollection = require('core/collections/tagsCollection');
-
-  Origin.on('router:assetManagement', function(location, subLocation, action) {
-    Origin.assetManagement = {
-      filterData: {}
-    };
-    if(!location) return loadAssetsView();
-    if(location === 'new') loadNewAssetView();
-    if(subLocation === 'edit') loadEditAssetView(location);
-  });
-
-  Origin.on('globalMenu:assetManagement:open', function() {
-    Origin.router.navigateTo('assetManagement');
-  });
 
   Origin.on('origin:dataReady login:changed', function() {
     Origin.globalMenu.addItem({
@@ -30,6 +17,19 @@ define(function(require) {
       "callbackEvent": "assetManagement:open",
       "sortOrder": 2
     });
+  });
+
+  Origin.on('globalMenu:assetManagement:open', function() {
+    Origin.router.navigateTo('assetManagement');
+  });
+
+  Origin.on('router:assetManagement', function(location, subLocation, action) {
+    Origin.assetManagement = {
+      filterData: {}
+    };
+    if(!location) return loadAssetsView();
+    if(location === 'new') return loadNewAssetView();
+    if(subLocation === 'edit') loadEditAssetView(location);
   });
 
   function loadAssetsView() {

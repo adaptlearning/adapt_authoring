@@ -48,10 +48,7 @@ define(function(require) {
 
     setMenu: function(view, $parent) {
       this.contextView = view;
-
-      var type = view.model.get('_type');
-      if (type === 'course' && !view.model.isEditable()) type = 'sharedcourse';
-      this.type = type;
+      this.type = view.model.get('_type');
 
       this.renderItems();
 

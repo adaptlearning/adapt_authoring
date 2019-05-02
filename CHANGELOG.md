@@ -5,6 +5,58 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.7.1] - 2019-04-09
+
+Bugfix release.
+
+### Fixed
+- Error not handled when server is already running ([#2174](https://github.com/adaptlearning/adapt_authoring/issues/2174))
+- Plugin management text is hardcoded ([#2218](https://github.com/adaptlearning/adapt_authoring/issues/2218))
+- Sidebar filters need localising ([#2243](https://github.com/adaptlearning/adapt_authoring/issues/2243))
+- Dashboard paging broken after deleting courses ([#2253](https://github.com/adaptlearning/adapt_authoring/issues/2253))
+- Reset password appears functional even when SMTP isn't enabled ([#2281](https://github.com/adaptlearning/adapt_authoring/issues/2281))
+- Automatic upgrade check broken ([#2290](https://github.com/adaptlearning/adapt_authoring/issues/2290))
+- Sorting broken on shared courses dashboard ([#2294](https://github.com/adaptlearning/adapt_authoring/issues/2294))
+
+### Added
+- Custom LESS should be validated prior to course build ([#1830](https://github.com/adaptlearning/adapt_authoring/issues/1830))
+
+## [0.7.0] - 2019-03-25
+
+Bundle of UI/usability enhancements.
+
+### Fixed
+- CI process should build the app ([#1949](https://github.com/adaptlearning/adapt_authoring/issues/1949))
+- Options buttons broken if not in a group ([#1955](https://github.com/adaptlearning/adapt_authoring/issues/1955))
+- `masterTenantName` is used instead of `masterTenantDisplayName` on install ([#2004](https://github.com/adaptlearning/adapt_authoring/issues/2004))
+- Helpers.hasCoursePermission returns without calling callback on error ([#2113](https://github.com/adaptlearning/adapt_authoring/issues/2113))
+- A user's courses are 'orphaned' on user delete ([#2124](https://github.com/adaptlearning/adapt_authoring/issues/2124))
+- Removing an asset from a component removes all other instances of that asset ([#2141](https://github.com/adaptlearning/adapt_authoring/issues/2141))
+- Child views of backbone-forms' modal are not destroyed ([#2157](https://github.com/adaptlearning/adapt_authoring/issues/2157))
+- Ace Editor's syntax colouring is lost when code is uglified ([#2173](https://github.com/adaptlearning/adapt_authoring/issues/2173))
+- Course preview page favicon path is incorrect ([#2202](https://github.com/adaptlearning/adapt_authoring/issues/2202))
+- Component paste-zone layout broken ([#2214](https://github.com/adaptlearning/adapt_authoring/issues/2214))
+- Roles with lesser permissions cannot see any shared courses ([#2266](https://github.com/adaptlearning/adapt_authoring/issues/2266))
+
+### Added
+- Menu and page editor should display the course/page title ([#1486](https://github.com/adaptlearning/adapt_authoring/issues/1486))
+- Should be able to force a full rebuild of a course ([#1497](https://github.com/adaptlearning/adapt_authoring/issues/1497))
+- Add ability to search/filter user list ([#1509](https://github.com/adaptlearning/adapt_authoring/issues/1509))
+- Custom CSS box should be resizeable ([#1527](https://github.com/adaptlearning/adapt_authoring/issues/1527))
+- Remove requirement for users to install ffmpeg manually ([#1860](https://github.com/adaptlearning/adapt_authoring/issues/1860))
+- Add ability to enable framework plugins by default on new courses ([#1875](https://github.com/adaptlearning/adapt_authoring/issues/1875))
+- Expose authoring tool version in the HTML ([#1944](https://github.com/adaptlearning/adapt_authoring/issues/1944))
+- Should be able to duplicate component list items ([#1961](https://github.com/adaptlearning/adapt_authoring/issues/1961))
+- Change your own email via the profile view  ([#2021](https://github.com/adaptlearning/adapt_authoring/issues/2021))
+- Add colours to differentiate logger messages ([#2105](https://github.com/adaptlearning/adapt_authoring/issues/2105))
+- Share courses with specific users ([#2123](https://github.com/adaptlearning/adapt_authoring/issues/2123))
+- Remove MediaElement.js from asset manager previews ([#2170](https://github.com/adaptlearning/adapt_authoring/issues/2170))
+- Admins should be able to give new users a name ([#2188](https://github.com/adaptlearning/adapt_authoring/issues/2188))
+- Admins should be able to send users a welcome email ([#2189](https://github.com/adaptlearning/adapt_authoring/issues/2189))
+- Admins shouldn't be able to change the passwords of users ([#2190](https://github.com/adaptlearning/adapt_authoring/issues/2190))
+- Admins should be warned that the reset password button will send an email ([#2191](https://github.com/adaptlearning/adapt_authoring/issues/2191))
+- Bundled Underscore is out-of-date ([#2198](https://github.com/adaptlearning/adapt_authoring/issues/2198))
+
 ## [0.6.5] - 2019-02-26
 
 Bugfix release.
@@ -523,6 +575,8 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.7.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.7.0...v0.7.1
+[0.7.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.5...v0.7.0
 [0.6.5]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.4...v0.6.5
 [0.6.4]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.3...v0.6.4
 [0.6.3]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.2...v0.6.3

@@ -3,14 +3,44 @@
 
 .location-title {
   font-family: @font-title;
-  background-color:@location-background-color;
+  font-size: 14px;
+  background-color: @location-background-color;
   border-bottom: 1px solid fade(@primary-color, 20%);
-}
 
-.location-title-inner {
-  font-size: 17px;
-  font-weight: @font-weight-bold;
-  line-height: 20px;
-  padding:25px;
-  color:@location-title;
+  &-inner {
+    color: @location-title;
+    padding: 15px;
+
+    .breadcrumbs {
+      font-weight: @font-weight;
+      margin-bottom: 7px;
+      .item {
+        display: inline-block;
+        max-width: 250px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        a {
+          text-decoration: none;
+          color: @secondary-color;
+          &:hover {
+            color: darken(@secondary-color,15%);
+          }
+        }
+      }
+      .separator {
+        display: inline-block;
+        margin: 0 5px;
+        opacity: 0.35;
+        overflow: hidden;
+      }
+    }
+    .titles {
+      .course, .title { .truncate; }
+      .title {
+        font-size: 18px;
+        font-weight: @font-weight-bold;
+      }
+    }
+  }
 }

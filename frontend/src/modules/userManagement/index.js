@@ -1,4 +1,3 @@
-// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Origin = require('core/origin');
   var UserManagementView = require('./views/userManagementView');
@@ -6,6 +5,7 @@ define(function(require) {
   var AddUserView = require('./views/addUserView');
   var AddUserSidebarView = require('./views/addUserSidebarView');
   var CustomHelpers = require('./helpers');
+  var UserCollection = require('./collections/userCollection');
 
   var isReady = false;
   var data = {
@@ -52,19 +52,31 @@ define(function(require) {
   });
 
   var onRoute = function(location, subLocation, action) {
-    var mainView, sidebarView;
+    if (location && location === 'addUser') {
+      Origin.contentPane.setView(AddUserView, {
+        model: new Backbone.Model({ globalData: data })
+      });
+      Origin.sidebar.addView(new AddUserSidebarView().$el);
 
-    if(!location) {
-      mainView = UserManagementView;
-      sidebarView = UserManagementSidebarView;
-    }
-    else if('addUser' === location) {
-      mainView = AddUserView;
-      sidebarView = AddUserSidebarView;
+      return;
     }
 
-    Origin.contentPane.setView(mainView, { model: new Backbone.Model({ globalData: data }) });
-    Origin.sidebar.addView(new sidebarView().$el);
+    var userCollection = new UserCollection();
+    var globalModel = new Backbone.Model({ globalData: data })
+
+    userCollection.once('sync', function() {
+      Origin.contentPane.setView(UserManagementView, {
+        model: globalModel,
+        collection: userCollection
+      });
+
+      Origin.sidebar.addView(new UserManagementSidebarView({
+        model: globalModel,
+        collection: userCollection
+      }).$el);
+    });
+
+    userCollection.fetch();
   };
 
   var onDataFetched = function() {

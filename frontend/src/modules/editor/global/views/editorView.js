@@ -44,20 +44,24 @@ define(function(require) {
         'editorView:copy': this.addToClipboard,
         'editorView:copyID': this.copyIdToClipboard,
         'editorView:paste': this.pasteFromClipboard,
-        'editorCommon:download': function(event) {
-          this.validateProject(this.downloadProject);
+        'editorCommon:download': function() {
+          this.validateProject(function(error) {
+            this.downloadProject();
+          });
         },
-        'editorCommon:preview': function(event) {
+        'editorCommon:preview': function(isForceRebuild) {
           var previewWindow = window.open('/loading', 'preview');
           this.validateProject(function(error) {
             if(error) {
               return previewWindow.close();
             }
-            this.previewProject(previewWindow);
+            this.previewProject(previewWindow, isForceRebuild);
           });
         },
-        'editorCommon:export': function(event) {
-          this.validateProject(this.exportProject);
+        'editorCommon:export': function() {
+          this.validateProject(function(error) {
+            this.exportProject(error);
+          });
         }
       });
       this.render();
@@ -81,7 +85,7 @@ define(function(require) {
       }, this));
     },
 
-    previewProject: function(previewWindow) {
+    previewProject: function(previewWindow, forceRebuild) {
       if(Origin.editor.isPreviewPending) {
         return;
       }
@@ -90,28 +94,31 @@ define(function(require) {
       $('.editor-common-sidebar-preview-inner').addClass('display-none');
       $('.editor-common-sidebar-previewing').removeClass('display-none');
 
-      $.get('/api/output/' + Origin.constants.outputPlugin + '/preview/' + this.currentCourseId, _.bind(function(jqXHR, textStatus, errorThrown) {
-        if(!jqXHR.success) {
+      var url = '/api/output/'+Origin.constants.outputPlugin+'/preview/'+this.currentCourseId+'?force='+(forceRebuild === true);
+      $.get(url, function(data, textStatus, jqXHR) {
+        if (!data.success) {
           this.resetPreviewProgress();
           Origin.Notify.alert({
             type: 'error',
-            text: Origin.l10n.t('app.errorgeneratingpreview')
+            text: Origin.l10n.t('app.errorgeneratingpreview') +
+              Origin.l10n.t('app.debuginfo', { message: jqXHR.responseJSON.message })
           });
           previewWindow.close();
           return;
         }
-        if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) !== undefined && jqXHR.payload.pollUrl) {
+        const pollUrl = data.payload && data.payload.pollUrl;
+        if (pollUrl) {
           // Ping the remote URL to check if the job has been completed
-          this.updatePreviewProgress(jqXHR.payload.pollUrl, previewWindow);
+          this.updatePreviewProgress(pollUrl, previewWindow);
           return;
         }
         this.updateCoursePreview(previewWindow);
         this.resetPreviewProgress();
-      }, this)).fail(_.bind(function(jqXHR, textStatus, errorThrown) {
+      }.bind(this)).fail(function(jqXHR, textStatus, errorThrown) {
         this.resetPreviewProgress();
         Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
         previewWindow.close();
-      }, this));
+      }.bind(this));
     },
 
     exportProject: function(error) {
@@ -129,30 +136,28 @@ define(function(require) {
 
       var self = this;
       $.ajax({
-         url: '/export/' + tenantId + '/' + courseId,
-         success: function(data, textStatus, jqXHR) {
-           self.showExportAnimation(false, $btn);
-           self.exporting = false;
+        url: '/export/' + tenantId + '/' + courseId,
+        success: function(data, textStatus, jqXHR) {
+          self.showExportAnimation(false, $btn);
+          self.exporting = false;
 
-           // get the zip
-           var form = document.createElement('form');
-           self.$el.append(form);
-           form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
-           form.submit();
-         },
-         error: function(jqXHR, textStatus, errorThrown) {
-           var messageText = errorThrown;
-           if(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) messageText += ':<br/>' + jqXHR.responseJSON.message;
+          // get the zip
+          var form = document.createElement('form');
+          self.$el.append(form);
+          form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
+          form.submit();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          self.showExportAnimation(false, $btn);
+          self.exporting = false;
 
-           self.showExportAnimation(false, $btn);
-           self.exporting = false;
-
-           Origin.Notify.alert({
-             type: 'error',
-             title: Origin.l10n.t('app.exporterrortitle'),
-             text: messageText
-           });
-         }
+          Origin.Notify.alert({
+            type: 'error',
+            title: Origin.l10n.t('app.exporterrortitle'),
+            text: Origin.l10n.t('app.errorgeneric') +
+              Origin.l10n.t('app.debuginfo', { message: jqXHR.responseJSON.message })
+          });
+        }
       });
     },
 
@@ -166,35 +171,40 @@ define(function(require) {
       }
     },
 
-    downloadProject: function(error) {
-      if(error || Origin.editor.isDownloadPending) {
+    downloadProject: function() {
+      if(Origin.editor.isDownloadPending) {
         return;
       }
       $('.editor-common-sidebar-download-inner').addClass('display-none');
       $('.editor-common-sidebar-downloading').removeClass('display-none');
 
-      $.get('/api/output/' + Origin.constants.outputPlugin + '/publish/' + this.currentCourseId, _.bind(function(jqXHR, textStatus, errorThrown) {
-
-        if (!jqXHR.success) {
-          Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
+      var url = '/api/output/' + Origin.constants.outputPlugin + '/publish/' + this.currentCourseId;
+      $.get(url, function(data, textStatus, jqXHR) {
+        if (!data.success) {
+          Origin.Notify.alert({
+            type: 'error',
+            text: Origin.l10n.t('app.errorgeneric') +
+              Origin.l10n.t('app.debuginfo', { message: jqXHR.responseJSON.message })
+          });
           this.resetDownloadProgress();
           return;
         }
-        if (jqXHR.payload && typeof(jqXHR.payload.pollUrl) !== undefined && jqXHR.payload.pollUrl) {
+        const pollUrl = data.payload && data.payload.pollUrl;
+        if (pollUrl) {
           // Ping the remote URL to check if the job has been completed
-          this.updateDownloadProgress(jqXHR.payload.pollUrl);
+          this.updateDownloadProgress(pollUrl);
           return;
         }
         this.resetDownloadProgress();
 
         var $downloadForm = $('#downloadForm');
-        $downloadForm.attr('action', '/download/' + Origin.sessionModel.get('tenantId') + '/' + Origin.editor.data.course.get('_id') + '/' + jqXHR.payload.zipName + '/download.zip');
+        $downloadForm.attr('action', '/download/' + Origin.sessionModel.get('tenantId') + '/' + Origin.editor.data.course.get('_id') + '/' + data.payload.zipName + '/download.zip');
         $downloadForm.submit();
 
-      }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
+      }.bind(this)).fail(function(jqXHR, textStatus, errorThrown) {
         this.resetDownloadProgress();
         Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
-      }, this));
+      }.bind(this));
     },
 
     updatePreviewProgress: function(url, previewWindow) {
@@ -240,6 +250,7 @@ define(function(require) {
       $('.editor-common-sidebar-preview-inner').removeClass('display-none');
       $('.editor-common-sidebar-previewing').addClass('display-none');
       $('.navigation-loading-indicator').addClass('display-none');
+      $('.editor-common-sidebar-preview-wrapper .dropdown').removeClass('active');
       Origin.editor.isPreviewPending = false;
     },
 
@@ -278,7 +289,7 @@ define(function(require) {
 
       if (helpers.copyStringToClipboard(id)) {
         Origin.Notify.alert({
-          type: 'success',
+          type: 'info',
           text: Origin.l10n.t('app.copyidtoclipboardsuccess', { id: id })
         });
       } else {

@@ -1,13 +1,132 @@
-@import 'sharedStyles';
-@import 'colours';
-
 @user-hover-bg-colour: #f3faff;
 @user-hover-borderl-colour: #8ea3af;
 
+.user-management-filter {
+
+  .filter-inner {
+    display: flex;
+    flex-direction: column;
+
+    .sidebar-tag {
+      margin-bottom: 0;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .selectize-control {
+      padding: 0;
+
+      .selectize-input {
+        background: @sidebar-input-color;
+        border-color: @sidebar-input-border-color;
+        color: @sidebar-input-text-color;
+      }
+    }
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+
+    display: none;
+
+    &:checked + .fa-toggle-off:before {
+      content: "\f205";
+      color: @button-secondary-color;
+    }
+  }
+  label.sidebar-tag {
+    display: flex;
+    padding: 14px 25px;
+
+    span {
+      margin-right: 10px;
+      flex-grow: 1;
+    }
+    i.fa {
+      color: @secondary-color;
+      font-size: 20px;
+    }
+  }
+}
+
 .userManagement {
     .container {
-        .form-container-style;
-        max-width: inherit;
+      .search {
+        padding: 10px;
+        display: flex;
+        background-color: darken(#fff, 3%);
+
+        input[type="text"] {
+          width: 85%;
+          box-sizing: border-box;
+        }
+
+        button {
+          flex-grow: 1;
+          margin-left: 10px;
+        }
+      }
+
+      .user-management-filter {
+        padding: 0 10px;
+        background-color: darken(#fff, 3%);
+
+        .filter-inner {
+          border-top: solid 1px darken(#fff, 15%);
+        }
+      }
+
+      .form-container-style;
+      max-width: inherit;
+      .tb-heading {
+        > div button {
+          display: flex;
+          align-items: center;
+          text-align: left;
+          padding-left: 0;
+          padding-right: 0;
+
+          &.active {
+            font-weight: bold;
+          }
+
+          > h4 {
+            flex-grow: 1;
+          }
+
+          i.fa {
+            margin-right: 10px;
+          }
+
+          i.fa {
+            visibility: hidden;
+          }
+          &.active {
+            i.fa {
+              visibility: visible;
+            }
+          }
+
+          &.sort-down {
+            i.fa::before {
+              content: "\f0dd";
+            }
+          }
+          &.sort-up {
+            i.fa::before {
+              content: "\f0de";
+            }
+          }
+        }
+
+        .sort,
+        .filter {
+          color: fade(@sidebar-color, 50%);
+          &.active {
+            color: @sidebar-color;
+          }
+        }
+      }
     }
 
     .view-buttons {
@@ -90,7 +209,10 @@
         }
         select {
             max-width: 115px;
-
+          &[name="delete-options"] {
+            max-width: none;
+            width: 100%;
+          }
         }
 
         button.resetPassword {

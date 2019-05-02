@@ -1,6 +1,6 @@
 <div class="pluginManagement-inner inner">
   <div class="pluginType-headings tb-heading col-row tb-row">
-    
+
     <div class="pluginType-heading pluginType-heading-title col-20">
       <h4 class="pluginType-heading-title-inner tb-col-inner">{{t 'app.name'}}</h4>
     </div>
@@ -14,8 +14,14 @@
     </div>
 
     <div class="pluginType-heading pluginType-heading-enabled col-10 col-centered">
-      <h4 class="pluginType-heading-action-inner tb-col-inner">{{t 'app.enabled'}}</h4>
+      <h4 class="pluginType-heading-enabled-inner tb-col-inner">{{t 'app.enabled'}}</h4>
     </div>
+
+    {{#ifValueEquals type 'extension'}}
+      <div class="pluginType-heading pluginType-heading-addedDefault col-10 col-centered">
+        <h4 class="pluginType-heading-addedDefault tb-col-inner">{{t 'app.addedDefault'}}</h4>
+      </div>
+    {{/ifValueEquals}}
 
     <div class="pluginType-heading pluginType-heading-action col-10 col-centered">
       <h4 class="pluginType-heading-action-inner tb-col-inner">{{t 'app.action'}}</h4>

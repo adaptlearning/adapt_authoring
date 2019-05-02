@@ -3,7 +3,6 @@ define(function(require){
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
   var ProjectView = require('./projectView');
-  var SharedProjectView = require('./sharedProjectView');
 
   var ProjectsView = OriginView.extend({
     className: 'projects',
@@ -11,6 +10,11 @@ define(function(require){
       "grid",
       "list"
     ],
+
+    preRender: function(options) {
+      OriginView.prototype.preRender.apply(this, arguments);
+      this._isShared = options._isShared;
+    },
 
     postRender: function() {
       this.settings.preferencesKey = 'dashboard';
@@ -20,11 +24,11 @@ define(function(require){
     },
 
     initEventListeners: function() {
-      this._doLazyScroll = _.bind(_.throttle(this.doLazyScroll, 250), this);
-      this._onResize = _.bind(_.debounce(this.onResize, 250), this);
+      this._doLazyScroll = _.throttle(this.doLazyScroll, 250).bind(this);
+      this._onResize = _.debounce(this.onResize, 250).bind(this);
 
       this.listenTo(Origin, {
-        'window:resize': this._onResize,
+        'window:resize dashboard:refresh': this._onResize,
         'dashboard:dashboardSidebarView:filterBySearch': function(text) { this.doFilter(text) },
         'dashboard:dashboardSidebarView:filterByTags': function(tags) { this.doFilter(null, tags) },
         'dashboard:sort:asc': function() { this.doSort('asc'); },
@@ -73,7 +77,7 @@ define(function(require){
       }
       // we need to load one course first to check page size
       this.pageSize = 1;
-      this.resetCollection(_.bind(function(collection) {
+      this.resetCollection(function(collection) {
         var containerHeight = $(window).height()-this.$el.offset().top;
         var containerWidth = this.$('.projects-inner').width();
         var itemHeight = $('.project-list-item').outerHeight(true);
@@ -85,7 +89,7 @@ define(function(require){
         this.pageSize = columns*rows;
         // need another reset to get the actual pageSize number of items
         this.resetCollection(this.setViewToReady);
-      }, this));
+      }.bind(this));
     },
 
     getProjectsContainer: function() {
@@ -98,8 +102,10 @@ define(function(require){
     },
 
     appendProjectItem: function(model) {
-      var viewClass = model.isEditable() ? ProjectView : SharedProjectView;
-      this.getProjectsContainer().append(new viewClass({ model: model }).$el);
+      var creator = model.get('createdBy') || { email: Origin.l10n.t('app.unknownuser') };
+      var name = creator.firstName ? creator.firstName + ' ' + creator.lastName : creator.email;
+      if(this._isShared && name) model.set('creatorName', name);
+      this.getProjectsContainer().append(new ProjectView({ model: model }).$el);
     },
 
     convertFilterTextToPattern: function(filterText) {
@@ -130,7 +136,7 @@ define(function(require){
             sort: this.sort
           }
         },
-        success: _.bind(function(collection, response) {
+        success: function(collection, response) {
           this.isCollectionFetching = false;
           this.fetchCount += response.length;
           // stop further fetching if this is the last page
@@ -138,7 +144,7 @@ define(function(require){
 
           this.$('.no-projects').toggleClass('display-none', this.fetchCount > 0);
           if(typeof cb === 'function') cb(collection);
-        }, this)
+        }.bind(this)
       });
     },
 

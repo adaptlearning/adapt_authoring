@@ -36,6 +36,16 @@ function publishCourse(courseId, mode, request, response, next) {
 
   var customPluginName = user._id;
 
+  const getGruntFatalError = stdout => {
+    const indexStart = stdout.indexOf('\nFatal error: ');
+
+    if (indexStart === -1) return;
+
+    const indexEnd = stdout.indexOf('\n\nExecution Time');
+
+    return stdout.substring(indexStart, indexEnd !== -1 ? indexEnd : stdout.length);
+  }
+
   async.series([
     // get an object with all the course data
     function(callback) {
@@ -76,7 +86,14 @@ function publishCourse(courseId, mode, request, response, next) {
         if (err) {
           return callback(err);
         }
-        isRebuildRequired = exists;
+
+        if (mode === Constants.Modes.Export || mode === Constants.Modes.Publish) {
+          isRebuildRequired = true;
+          return callback(null);
+        }
+
+        const isForceRebuld = (request) ? request.query.force === 'true' : false;
+        isRebuildRequired = exists || isForceRebuld;
         callback(null);
       });
     },
@@ -160,6 +177,7 @@ function publishCourse(courseId, mode, request, response, next) {
             if (error !== null) {
               logger.log('error', 'exec error: ' + error);
               logger.log('error', 'stdout error: ' + stdout);
+              error.message += getGruntFatalError(stdout) || '';
               resultObject.success = true;
               return callback(error, 'Error building framework');
             }

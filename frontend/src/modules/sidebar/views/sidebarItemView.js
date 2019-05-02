@@ -12,15 +12,17 @@ define(function(require) {
     className: 'sidebar-item',
 
     events: {
-      'click button.editor-common-sidebar-project'      : 'editProject',
-      'click button.editor-common-sidebar-config'       : 'editConfiguration',
-      'click button.editor-common-sidebar-extensions'   : 'manageExtensions',
-      'click button.editor-common-sidebar-menusettings' : 'editMenu',
-      'click button.editor-common-sidebar-select-theme' : 'selectTheme',
-      'click button.editor-common-sidebar-download'     : 'downloadProject',
-      'click button.editor-common-sidebar-preview'      : 'previewProject',
-      'click button.editor-common-sidebar-export'       : 'exportProject',
-      'click button.editor-common-sidebar-close'        : 'closeProject'
+      'click button.editor-common-sidebar-project': 'editProject',
+      'click button.editor-common-sidebar-config': 'editConfiguration',
+      'click button.editor-common-sidebar-extensions': 'manageExtensions',
+      'click button.editor-common-sidebar-menusettings': 'editMenu',
+      'click button.editor-common-sidebar-select-theme': 'selectTheme',
+      'click button.editor-common-sidebar-download': 'downloadProject',
+      'click button.editor-common-sidebar-preview': 'previewProject',
+      'click button.editor-common-sidebar-preview-force': 'forcePreviewProject',
+      'click button.editor-common-sidebar-export': 'exportProject',
+      'click button.editor-common-sidebar-close': 'closeProject',
+      'click .editor-common-sidebar-preview-wrapper .dropdown button': 'toggleDropdown'
     },
 
     initialize: function(options) {
@@ -41,7 +43,11 @@ define(function(require) {
         }, this));
     },
 
-    postRender: function() {},
+    postRender: function() {
+      this._onWindowClick = this.onWindowClick.bind(this);
+      this.$dropdown = this.$('.dropdown');
+      $(window).on('click', this._onWindowClick);
+    },
 
     setupView: function() {
         this.listenTo(Origin, 'sidebar:views:remove', this.remove);
@@ -126,7 +132,11 @@ define(function(require) {
     },
 
     previewProject: function() {
-      Origin.trigger('editorCommon:preview');
+      Origin.trigger('editorCommon:preview', false);
+    },
+
+    forcePreviewProject: function() {
+      Origin.trigger('editorCommon:preview', true);
     },
 
     exportProject: function() {
@@ -135,6 +145,20 @@ define(function(require) {
 
     closeProject: function() {
       Origin.router.navigateTo('dashboard');
+    },
+
+    toggleDropdown: function(event) {
+      event.stopPropagation();
+      this.$dropdown.toggleClass('active');
+    },
+
+    onWindowClick: function() {
+      this.$dropdown.removeClass('active');
+    },
+
+    remove: function() {
+      $(window).off('click', this._onWindowClick);
+      OriginView.prototype.remove.apply(this, arguments);
     }
 
   });

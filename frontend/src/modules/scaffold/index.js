@@ -6,13 +6,15 @@ define([
   'backbone-forms-lists',
   './backboneFormsOverrides',
   './views/scaffoldAssetView',
+  './views/scaffoldAssetItemView',
   './views/scaffoldCodeEditorView',
   './views/scaffoldColourPickerView',
   './views/scaffoldDisplayTitleView',
   './views/scaffoldItemsModalView',
   './views/scaffoldListView',
-  './views/scaffoldTagsView'
-], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldCodeEditorView, ScaffoldColourPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldListView, ScaffoldTagsView) {
+  './views/scaffoldTagsView',
+  './views/scaffoldUsersView'
+], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldAssetItemView, ScaffoldCodeEditorView, ScaffoldColourPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldListView, ScaffoldTagsView, ScaffoldUsersView) {
 
   var Scaffold = {};
   var builtSchemas = {};
@@ -52,7 +54,7 @@ define([
       }
 
       if (!isFieldTypeObject) {
-        return Backbone.Form.Field.prototype.createTitle.call({ key: key }); 
+        return Backbone.Form.Field.prototype.createTitle.call({ key: key });
       }
     };
 
@@ -201,9 +203,14 @@ define([
       // if value is an object, give it some rights and add it as field set
       if (fieldsets[key]) {
         fieldsets[key].fields.push(key);
-      } else {
-        fieldsets[key] = { key: key, legend: Helpers.keyToTitleString(key), fields: [ key ] };
+        continue;
       }
+
+      fieldsets[key] = {
+        key: key,
+        legend: value.title || Helpers.keyToTitleString(key),
+        fields: [ key ]
+      };
     }
 
     if (!schema._extensions) {

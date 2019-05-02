@@ -4,12 +4,14 @@ var logger = require('../lib/logger');
 
 before(function() {
   var winston = require('winston');
-  logger.add(winston.transports.Memory);
+  logger.add(new winston.transports.Console({
+    silent: true
+  }));
 });
 
 it('should be able to log messages of valid type', function(done) {
-  logger.once('logging', function (transport, level, msg, meta) {
-    var isValid = 'error' === level && -1 !== msg.indexOf('test') && 'bar' === meta.foo;
+  logger.once('data', function (info) {
+    var isValid = 'error' === info.level && info.message.includes('test') && info.foo === 'bar';
     isValid.should.equal(true, 'Log failed to raise event correctly');
     done();
   });
@@ -17,8 +19,8 @@ it('should be able to log messages of valid type', function(done) {
 });
 
 it('should gracefully handle log messages of invalid type', function(done) {
-  logger.once('logging', function (transport, level, msg, meta) {
-    var isValid = 'info' === level && -1 !== msg.indexOf('test') && 'bar' === meta.foo;
+  logger.once('data', function (info) {
+    var isValid = 'info' === info.level && info.message.includes('test') && info.foo === 'bar';
     isValid.should.equal(true, 'Log failed to raise event correctly');
     done();
   });

@@ -8,6 +8,7 @@ const assetmanager = require('../../../lib/assetmanager');
 const configuration = require('../../../lib/configuration');
 const contentmanager = require('../../../lib/contentmanager');
 const Constants = require('../../../lib/outputmanager').Constants;
+const database = require('../../../lib/database');
 const filestorage = require('../../../lib/filestorage');
 const logger = require('../../../lib/logger');
 const usermanager = require('../../../lib/usermanager');
@@ -31,7 +32,8 @@ function exportCourse(pCourseId, request, response, next) {
     ensureExportDir: ensureExportDir,
     generateLatestBuild: ['ensureExportDir', generateLatestBuild],
     copyFrameworkFiles: ['generateLatestBuild', copyFrameworkFiles],
-    writeCustomStyle: ['copyFrameworkFiles', writeCustomStyle],
+    writeThemeVariables: ['copyFrameworkFiles', writeThemeVariables],
+    writeCustomStyle: ['writeThemeVariables', writeCustomStyle],
     copyCourseFiles: ['generateLatestBuild', copyCourseFiles]
   }, async.apply(zipExport, next));
 }
@@ -73,6 +75,38 @@ function copyFrameworkFiles(results, filesCopied) {
         else return true;
       }
     }, filesCopied);
+  });
+}
+
+function writeThemeVariables(results, variablesWritten) {
+  self.getCourseJSON(TENANT_ID, COURSE_ID, function(error, data) {
+    if (error) {
+      return variablesWritten(error);
+    }
+    const themeVariables = data.course[0].themeVariables;
+    const themeName = data.config[0]._theme;
+    const destinationFolder = path.join(EXPORT_DIR, 'src', 'theme', themeName);
+
+    if (!themeVariables) {
+      return variablesWritten(null);
+    }
+
+
+    database.getDatabase(function (err, db) {
+      if (err) {
+        return variablesWritten(err);
+      }
+
+      db.retrieve('themetype', {name: themeName}, {}, function(err, results) {
+        if (err || (results && results.length != 1)) {
+          return variablesWritten(err);
+        }
+
+        var theme = results[0];
+
+        self.writeThemeVariables(COURSE_ID, theme, themeVariables, destinationFolder, variablesWritten);
+      });
+    }, configuration.getConfig('dbName'));
   });
 }
 

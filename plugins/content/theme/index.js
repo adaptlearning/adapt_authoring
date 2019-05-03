@@ -4,23 +4,17 @@
  *
  */
 
-var origin = require('../../../'),
-    contentmanager = require('../../../lib/contentmanager'),
-    rest = require('../../../lib/rest'),
-    BowerPlugin = require('../bower'),
-    ContentPlugin = contentmanager.ContentPlugin,
-    ContentTypeError = contentmanager.errors.ContentTypeError,
-    configuration = require('../../../lib/configuration'),
-    usermanager = require('../../../lib/usermanager'),
-    database = require('../../../lib/database'),
-    logger = require('../../../lib/logger'),
-    defaultOptions = require('./defaults.json'),
-    bower = require('bower'),
-    async = require('async'),
-    fs = require('fs'),
-    _ = require('underscore'),
-    util = require('util'),
-    path = require('path');
+const BowerPlugin = require('../bower');
+const configuration = require('../../../lib/configuration');
+const contentmanager = require('../../../lib/contentmanager');
+const ContentPlugin = contentmanager.ContentPlugin;
+const database = require('../../../lib/database');
+const defaultOptions = require('./defaults.json');
+const logger = require('../../../lib/logger');
+const origin = require('../../../');
+const rest = require('../../../lib/rest');
+const usermanager = require('../../../lib/usermanager');
+const util = require('util');
 
 var bowerConfig = {
   type: 'themetype',
@@ -125,34 +119,7 @@ function initialize () {
   BowerPlugin.prototype.initialize.call(new Theme(), bowerConfig);
 
   var app = origin();
-  app.once('serverStarted', function (server) {
-
-    //get the theme preview image
-    rest.get('/theme/preview/:themename/:version', function (req, res, next) {
-      //strip slashes to stop unwanted directory traversal
-      var themeName = req.params.themename.replace(/\\(.)/mg, "$1");
-      var themeVersion = req.params.version.replace(/\\(.)/mg, "$1");
-      var tenantId = configuration.getConfig('masterTenantID');
-
-      async.tryEach([
-        function(callback) {
-          //try manual install location
-          fs.readFile(path.join(__dirname, 'versions', themeName, themeVersion, themeName, 'preview.jpg'), callback);
-        },
-        function(callback) {
-          //try bower install location
-          fs.readFile(path.join(__dirname, '..', '..', '..', 'temp', tenantId, 'adapt_framework', 'src', 'theme', themeName, 'preview.jpg'), callback);
-        }
-      ],function(err, img) {
-        if(err){
-          res.sendStatus(204);
-          return res;
-        }
-        res.writeHead(200, {'Content-Type': 'image/jpg' });
-        res.end(img);
-        return res;
-      });
-    });
+  app.once('serverStarted', function() {
 
     // Assign a theme to to a course
     rest.post('/theme/:themeid/makeitso/:courseid', function (req, res, next) {
@@ -250,5 +217,4 @@ initialize();
  * Module exports
  *
  */
-
 exports = module.exports = Theme;

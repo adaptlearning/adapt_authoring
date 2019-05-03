@@ -9,6 +9,12 @@ _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for
 
 Adds a UI to allow the editing of a supported theme.
 
+#### Recommended requirements for full compatibility
+Series | Framework | Vanilla
+-- | -- | --
+2.x | 2.4.0 | [3.1.0](https://github.com/adaptlearning/adapt-contrib-vanilla/releases/tag/v3.1.0)
+4.x | 4.2.0 | [4.1.0](https://github.com/adaptlearning/adapt-contrib-vanilla/releases/tag/v4.1.0)
+
 ### Fixed
 - Custom LESS doesn't work in authoring tools which are running framework version 4 ([#2240](https://github.com/adaptlearning/adapt_authoring/issues/2240))
 

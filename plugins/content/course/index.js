@@ -43,7 +43,6 @@ function doQuery(req, res, andOptions, next) {
   const self = this;
   const orList = [];
   const andList = [];
-  // convert searches to regex
   async.each(Object.keys(search), function (key, nextKey) {
     // Convert string -> regex, special case $or should be within $and
     if ('string' === typeof search[key] && key !== "$or") {

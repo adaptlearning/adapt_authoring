@@ -38,13 +38,15 @@ function doQuery(req, res, andOptions, next) {
     andOptions = [];
   }
   const options = Object.assign({}, req.body, req.query);
+  options.search = Object.assign({}, req.body.search, req.query.search);
   const search = options.search || {};
   const self = this;
   const orList = [];
   const andList = [];
   // convert searches to regex
   async.each(Object.keys(search), function (key, nextKey) {
-    if ('string' === typeof search[key]) { // string -> regex
+    // Convert string -> regex, special case $or should be within $and
+    if ('string' === typeof search[key] && key !== "$or") {
       orList.push({ [key]: new RegExp(search[key], 'i') });
     } else {
       andList.push({ [key]: search[key] });

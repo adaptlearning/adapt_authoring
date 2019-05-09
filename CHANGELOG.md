@@ -5,6 +5,22 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.8.0] - 2019-05-03
+
+Adds a UI to allow the editing of a supported theme.
+
+#### Recommended requirements for full compatibility
+Series | Framework | Vanilla
+-- | -- | --
+2.x | 2.4.0 | [3.1.0](https://github.com/adaptlearning/adapt-contrib-vanilla/releases/tag/v3.1.0)
+4.x | 4.2.0 | [4.1.0](https://github.com/adaptlearning/adapt-contrib-vanilla/releases/tag/v4.1.0)
+
+### Fixed
+- Custom LESS doesn't work in authoring tools which are running framework version 4 ([#2240](https://github.com/adaptlearning/adapt_authoring/issues/2240))
+
+### Added
+- Add UI for theme editing ([#2187](https://github.com/adaptlearning/adapt_authoring/issues/2187))
+
 ## [0.7.1] - 2019-04-09
 
 Bugfix release.
@@ -575,6 +591,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.8.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.5...v0.7.0
 [0.6.5]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.4...v0.6.5

@@ -31,8 +31,7 @@ define([
       if (!Helpers.isAssetExternal(this.value)) {
         // don't have asset ID, so query courseassets for matching URL && content ID
         this.fetchCourseAsset({
-          _fieldName: this.value.split('/').pop(),
-          _contentTypeId: Origin.scaffold.getCurrentModel().get('_id')
+          _fieldName: this.value.split('/').pop()
         }, function(error, collection) {
           if (error) return console.error(error);
 

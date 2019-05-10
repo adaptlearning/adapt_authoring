@@ -1,0 +1,30 @@
+<div class="presetEdit-inner">
+  <button class="button close"><i class="fa fa-times"></i></button>
+  <div class="title">{{t 'app.presetedittitle'}}</div>
+  <div class="description">{{t 'app.preseteditdesc'}}</div>
+  <div class="presets">
+    {{#each presets.models}}
+      <div class="preset" data-name="{{attributes.displayName}}">
+        <div class="name">
+          <div class="label">{{attributes.displayName}}</div>
+          <button class="button edit btn secondary">
+            {{t 'app.themepresetedit'}}
+          </button>
+          <button class="button delete btn alert">
+            {{t 'app.themepresetdelete'}}
+          </button>
+        </div>
+        <div class="nameEdit">
+          <input type="text" value="{{attributes.displayName}}">
+          <button class="button save btn secondary">
+            {{t 'app.themepresetsave'}}
+          </button>
+          <button class="button cancel btn primary-hollow">
+            {{t 'app.themepresetcancel'}}
+          </button>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
+<div class="screenlock"></div>

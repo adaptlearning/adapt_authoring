@@ -1,0 +1,35 @@
+<div class="theming-inner">
+  <div class="error display-none">
+    {{! content dynamically replaced with error messages }}
+  </div>
+  <div class="header">
+    <div class="inner">
+      <div class="title">{{t 'app.choosethemetitle'}}</div>
+      <div class="description editable-theme">{{{t 'app.choosethemedesc'}}}</div>
+      <div class="empty-message description">{{t 'app.themenoteditablebody'}}</div>
+      <div class="theme-selector">
+        <div class="theme tile">
+          <label>{{t 'app.themeselectlabel'}}</label>
+          <select id="theme" disabled="true">
+            <option value="" disabled selected>{{t 'app.themeselectinstr'}}</option>
+          </select>
+        </div>
+        <div class="preset tile editable-theme">
+          <label>{{t 'app.presetselectlabel'}}</label>
+          <select id="preset" disabled="true">
+            <option value="" disabled selected>{{t 'app.presetselectinstr'}}</option>
+          </select>
+        </div>
+        <button class="edit btn secondary editable-theme">
+          {{t 'app.presetedit'}}
+        </button>
+      </div>
+      <div class="tip editable-theme">{{{t 'app.themepresettip'}}}</div>
+    </div>
+  </div>
+  <div class="theme-customiser">
+    <div class="form-container">
+      {{! Leave this div empty, anything inside will be replaced with the form. }}
+    </div>
+  </div>
+</div>

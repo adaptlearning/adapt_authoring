@@ -5,13 +5,13 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
-## [0.8.1] - 2019-05-10
+## [0.8.1] - 2019-05-17
 
 Bugfix release.
 
 ### Fixed
-- App only runs correctly when served from document root ([#2137](https://github.com/adaptlearning/adapt_authoring/issues/2137))
 - Publish spinner shows through force rebuild button ([#2295](https://github.com/adaptlearning/adapt_authoring/issues/2295))
+- Tag preview not showing via upload asset from component ([#2300](https://github.com/adaptlearning/adapt_authoring/issues/2300))
 - hard-coded placeholder text in sidebarFilter.hbs ([#2309](https://github.com/adaptlearning/adapt_authoring/issues/2309))
 - Admins can see other users' unshared courses ([#2312](https://github.com/adaptlearning/adapt_authoring/issues/2312))
 - No new migrations are run for upgrades ([#2317](https://github.com/adaptlearning/adapt_authoring/issues/2317))

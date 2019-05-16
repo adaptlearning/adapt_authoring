@@ -63,7 +63,7 @@
     "mime": "^2.3.1",
     "moment": "^2.22.1",
     "mongodb-uri": "^0.9.7",
-    "mongoose": "5.4.14",
+    "mongoose": "^5.5.8",
     "morgan": "^1.9.0",
     "multer": "^1.3.0",
     "needle": "^2.2.1",

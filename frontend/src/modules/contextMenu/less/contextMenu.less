@@ -1,14 +1,14 @@
 // Context Menu styling
 // ==============
-@context-menu-color:#34bee0;
-@context-menu-text-color:#fff;
+@context-menu-color: @primary-color;
+@context-menu-text-color: @white;
 
-@context-menu-icon-color:#fff;
+@context-menu-icon-color: @white;
 
 @context-menu-item-color:@context-menu-color;
-@context-menu-item-hover-color:darken(@context-menu-item-color,10%);
+@context-menu-item-hover-color: lighten(@context-menu-item-color, 10%);
 
-@context-menu-item-text-color:white;
+@context-menu-item-text-color: @white;
 @context-menu-item-text-hover-color:@context-menu-item-text-color;
 
 @contect-menu-item-border:1px solid #3e4a5f;
@@ -39,11 +39,11 @@
             padding:12px;
             text-decoration: none;
             color: @context-menu-item-text-color;
-                border-top: 1px solid #60cce7;
+            border-top: 1px solid @context-menu-item-hover-color;
             transition:all 0.3s;
             &:hover {
                 color:@context-menu-item-text-hover-color;
-                background-color:lighten(@context-menu-color, 15%);
+                background-color: @context-menu-item-hover-color;
             }
         }
     }

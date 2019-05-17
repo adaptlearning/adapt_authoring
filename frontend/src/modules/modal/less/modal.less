@@ -7,15 +7,15 @@
 // ======
 
 @modal-color:#E9F0FA;
-@modal-text-color:#fff;
+@modal-text-color: @white;
 
-@modal-icon-color:#fff;
+@modal-icon-color: @white;
 @modal-icon-hover-color:darken(@modal-color, 30%);
 
-@modal-button-color:#fff;
+@modal-button-color: @white;
 @modal-button-hover-color:darken(@modal-color, 30%);
 @modal-button-text-color:#3eb4e4;
-@modal-button-text-hover-color:#fff;
+@modal-button-text-hover-color: @white;
 
 @modal-popup-padding-top:10px;
 @modal-popup-padding-right:10px;
@@ -42,22 +42,22 @@
     }
 
     .modal-popup-toolbar {
-        background-color: @adapt-tertiary-color;
+        background-color: @tertiary-color;
         text-align:right;
-        color:#fff;
+        color: @white;
         padding: 5px 10px;
         button {
-            color: @adapt-primary-color;
+            color: @primary-color;
             padding:0px 10px 0px 10px;
             height:40px;
             display:inline-block;
             transition:background-color 0.3s;
             i {
-              color: @adapt-secondary-color;
+              color: @secondary-color;
             }
             &:hover {
               // background-color: lighten(@adapt-tertiary-color, 10%);
-              color: white;
+              color: @white;
             }
             &:disabled {
                 color:#666;

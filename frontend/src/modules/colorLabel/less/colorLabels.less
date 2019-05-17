@@ -7,7 +7,7 @@
     transform: translate(-50%,-50%);
     max-width: 640px;
 
-    background: @adapt-white;
+    background: @white;
     border: solid 1px @popup-border-color;
     box-shadow: 0 0 4px @popup-border-color;
 
@@ -17,7 +17,7 @@
         .colorlabel-header {
             .title {
                 font-size: 17px;
-                font-weight: 700;
+                font-weight: @font-weight-bold;
                 line-height: 20px;
                 padding: 0 4px;
             }
@@ -36,7 +36,7 @@
 
             .color-item {
                 font-size: 0;
-                border: solid 4px @adapt-white;
+                border: solid 4px @white;
                 width: 30px;
                 height: 30px;
                 border-radius: 4px;
@@ -85,7 +85,7 @@
                 }
 
                 &.selected {
-                    border-color: darken(@adapt-white, 50%);
+                    border-color: darken(@white, 50%);
                     border-radius: 8px;
                 }
             }

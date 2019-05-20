@@ -48,14 +48,14 @@ define(function(require){
 
       if($btn.is(':disabled')) return false;
 
-      $btn.html(Origin.l10n.t('app.checking'));
+      $btn.find('i').addClass('fa-spin');
 
       $.get(this.model.urlRoot + '/checkversion/' + this.model.get('_id'), function(data) {
         if(!data.isUpdateable) {
-          $btn.attr('disabled', true).html(Origin.l10n.t('app.uptodate'));
+          $btn.attr('disabled', true).find('i').removeClass().addClass('fa fa-check');
           return;
         }
-        $btn.removeClass('plugin-update-check').addClass('plugin-update-confirm').html(Origin.l10n.t('app.updateplugin'));
+        $btn.removeClass('plugin-update-check').addClass('plugin-update-confirm').find('i').removeClass().addClass('fa fa-arrow-up');
       });
 
       return false;
@@ -67,15 +67,15 @@ define(function(require){
 
       if($btn.is(':disabled')) return false;
 
-      $btn.attr('disabled', true).html(Origin.l10n.t('app.updating'));
+      $btn.attr('disabled', true).find('i').removeClass().addClass('fa fa-refresh fa-spin');
 
       $.post(this.model.urlRoot + '/update', { 'targets': [this.model.get('_id')] }, _.bind(function(data) {
         if(!_.contains(data.upgraded, this.model.get('_id'))) {
-          $btn.html(Origin.l10n.t('app.updatefailed'));
+          $btn.find('i').removeClass().addClass('fa fa-times');
           return;
         }
         Origin.trigger('scaffold:updateSchemas', function() {
-          $btn.html(Origin.l10n.t('app.uptodate'));
+          $btn.find('i').removeClass().addClass('fa fa-check');
           this.model.fetch();
         }, this);
       }, this));

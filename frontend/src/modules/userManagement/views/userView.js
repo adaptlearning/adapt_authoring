@@ -202,7 +202,7 @@ define(function(require){
           }
           var $btn = $(e.currentTarget);
           $btn.addClass('submitted');
-          Helpers.ajax('/api/createtoken', { email: this.model.get('email') }, 'POST', function() {
+          Helpers.ajax('api/createtoken', { email: this.model.get('email') }, 'POST', function() {
             $btn.removeClass('submitted');
           });
         }.bind(this)
@@ -225,7 +225,7 @@ define(function(require){
             "email": self.model.get('email'),
             "password": newPassword
           };
-          Helpers.ajax('/api/user/resetpassword', postData, 'POST', function() {
+          Helpers.ajax('api/user/resetpassword', postData, 'POST', function() {
             self.model.fetch();
             Origin.Notify.alert({
               type: 'success',

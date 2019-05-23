@@ -3,7 +3,7 @@ define(function(require) {
   var EditorModel = require('./editorModel');
 
   var EditorPresetModel = EditorModel.extend({
-    urlRoot: '/api/content/themepreset',
+    urlRoot: 'api/content/themepreset',
   });
 
   return EditorPresetModel;

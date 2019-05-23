@@ -50,7 +50,7 @@ define(function(require) {
         this.$('.forgotError').removeClass('display-none');
       } else {
         var email = this.$('.input-username-email').val().trim();
-        $.post('/api/createtoken', { email: email });
+        $.post('api/createtoken', { email: email });
 
         // don't wait for a response, we want to disguise success/failure
         self.$('.forgot-container').addClass('display-none');

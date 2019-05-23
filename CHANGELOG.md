@@ -5,6 +5,17 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.8.1] - 2019-05-23
+
+Bugfix release.
+
+### Fixed
+- Publish spinner shows through force rebuild button ([#2295](https://github.com/adaptlearning/adapt_authoring/issues/2295))
+- Tag preview not showing via upload asset from component ([#2300](https://github.com/adaptlearning/adapt_authoring/issues/2300))
+- hard-coded placeholder text in sidebarFilter.hbs ([#2309](https://github.com/adaptlearning/adapt_authoring/issues/2309))
+- Admins can see other users' unshared courses ([#2312](https://github.com/adaptlearning/adapt_authoring/issues/2312))
+- No new migrations are run for upgrades ([#2317](https://github.com/adaptlearning/adapt_authoring/issues/2317))
+
 ## [0.8.0] - 2019-05-03
 
 Adds a UI to allow the editing of a supported theme.
@@ -591,6 +602,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.8.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.6.5...v0.7.0

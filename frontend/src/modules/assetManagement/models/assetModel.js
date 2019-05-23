@@ -4,7 +4,7 @@ define(function(require) {
 
   var AssetModel = Backbone.Model.extend({
     idAttribute: '_id',
-    urlRoot: '/api/asset'
+    urlRoot: 'api/asset'
   });
 
   return AssetModel;

@@ -3,7 +3,7 @@ define(function(require) {
   var ContentModel = require('./contentModel');
 
   var ExtensionTypeModel = ContentModel.extend({
-    urlRoot: '/api/extensiontype',
+    urlRoot: 'api/extensiontype',
     idAttribute: '_id',
     _type: 'extension'
   });

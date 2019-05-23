@@ -3,7 +3,7 @@ define(function(require) {
   var ContentModel = require('./contentModel');
 
   var MenuTypeModel = ContentModel.extend({
-    urlRoot: '/api/menutype',
+    urlRoot: 'api/menutype',
     idAttribute: '_id',
     _type: 'menu'
   });

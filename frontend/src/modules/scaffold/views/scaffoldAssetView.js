@@ -55,8 +55,8 @@ define([
       this.$el.html(Handlebars.templates[this.constructor.template]({
         value: this.value,
         type: inputType.media || inputType.replace('Asset:', ''),
-        url: id ? '/api/asset/serve/' + id : dataUrl,
-        thumbUrl: id ? '/api/asset/thumb/' + id : dataUrl
+        url: id ? 'api/asset/serve/' + id : dataUrl,
+        thumbUrl: id ? 'api/asset/thumb/' + id : dataUrl
       }));
     },
 

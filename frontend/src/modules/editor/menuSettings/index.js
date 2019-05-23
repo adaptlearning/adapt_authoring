@@ -14,10 +14,10 @@ define(function(require) {
       success: function(model) {
         Helpers.setPageTitle(model);
 
-        var backButtonRoute = "/#/editor/" + route1 + "/menu";
+        var backButtonRoute = "#/editor/" + route1 + "/menu";
         var backButtonText = Origin.l10n.t('app.backtomenu');
         if (Origin.previousLocation.route2 === "page") {
-          backButtonRoute = "/#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
+          backButtonRoute = "#/editor/" + route1 + "/page/" + Origin.previousLocation.route3;
           backButtonText = Origin.l10n.t('app.backtopage');
         }
         Origin.sidebar.addView(new EditorMenuSettingsEditSidebarView().$el, {

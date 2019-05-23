@@ -50,7 +50,7 @@ define(function(require) {
           });
         },
         'editorCommon:preview': function(isForceRebuild) {
-          var previewWindow = window.open('/loading', 'preview');
+          var previewWindow = window.open('loading', 'preview');
           this.validateProject(function(error) {
             if(error) {
               return previewWindow.close();
@@ -94,7 +94,7 @@ define(function(require) {
       $('.editor-common-sidebar-preview-inner').addClass('display-none');
       $('.editor-common-sidebar-previewing').removeClass('display-none');
 
-      var url = '/api/output/'+Origin.constants.outputPlugin+'/preview/'+this.currentCourseId+'?force='+(forceRebuild === true);
+      var url = 'api/output/'+Origin.constants.outputPlugin+'/preview/'+this.currentCourseId+'?force='+(forceRebuild === true);
       $.get(url, function(data, textStatus, jqXHR) {
         if (!data.success) {
           this.resetPreviewProgress();
@@ -136,7 +136,7 @@ define(function(require) {
 
       var self = this;
       $.ajax({
-        url: '/export/' + tenantId + '/' + courseId,
+        url: 'export/' + tenantId + '/' + courseId,
         success: function(data, textStatus, jqXHR) {
           self.showExportAnimation(false, $btn);
           self.exporting = false;
@@ -144,7 +144,7 @@ define(function(require) {
           // get the zip
           var form = document.createElement('form');
           self.$el.append(form);
-          form.setAttribute('action', '/export/' + tenantId + '/' + courseId + '/download.zip');
+          form.setAttribute('action', 'export/' + tenantId + '/' + courseId + '/download.zip');
           form.submit();
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -178,7 +178,7 @@ define(function(require) {
       $('.editor-common-sidebar-download-inner').addClass('display-none');
       $('.editor-common-sidebar-downloading').removeClass('display-none');
 
-      var url = '/api/output/' + Origin.constants.outputPlugin + '/publish/' + this.currentCourseId;
+      var url = 'api/output/' + Origin.constants.outputPlugin + '/publish/' + this.currentCourseId;
       $.get(url, function(data, textStatus, jqXHR) {
         if (!data.success) {
           Origin.Notify.alert({
@@ -198,7 +198,7 @@ define(function(require) {
         this.resetDownloadProgress();
 
         var $downloadForm = $('#downloadForm');
-        $downloadForm.attr('action', '/download/' + Origin.sessionModel.get('tenantId') + '/' + Origin.editor.data.course.get('_id') + '/' + data.payload.zipName + '/download.zip');
+        $downloadForm.attr('action', 'download/' + Origin.sessionModel.get('tenantId') + '/' + Origin.editor.data.course.get('_id') + '/' + data.payload.zipName + '/download.zip');
         $downloadForm.submit();
 
       }.bind(this)).fail(function(jqXHR, textStatus, errorThrown) {
@@ -263,7 +263,7 @@ define(function(require) {
     updateCoursePreview: function(previewWindow) {
       var courseId = Origin.editor.data.course.get('_id');
       var tenantId = Origin.sessionModel.get('tenantId');
-      previewWindow.location.href = '/preview/' + tenantId + '/' + courseId + '/';
+      previewWindow.location.href = 'preview/' + tenantId + '/' + courseId + '/';
     },
 
     addToClipboard: function(model) {
@@ -272,7 +272,7 @@ define(function(require) {
         courseId: Origin.editor.data.course.get('_id'),
         referenceType: model._siblingTypes
       };
-      $.post('/api/content/clipboard/copy', postData, _.bind(function(jqXHR) {
+      $.post('api/content/clipboard/copy', postData, _.bind(function(jqXHR) {
         Origin.editor.clipboardId = jqXHR.clipboardId;
         this.showPasteZones(model.get('_type'));
       }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
@@ -309,7 +309,7 @@ define(function(require) {
         sortOrder: sortOrder,
         courseId: Origin.editor.data.course.get('_id')
       };
-      $.post('/api/content/clipboard/paste', postData, function(data) {
+      $.post('api/content/clipboard/paste', postData, function(data) {
         Origin.editor.clipboardId = null;
         Origin.trigger('editorView:pasted:' + postData.parentId, {
           _id: data._id,

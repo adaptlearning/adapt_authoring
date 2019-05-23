@@ -179,7 +179,7 @@ define(function(require) {
 
       var selectedPreset = this.getSelectedPreset();
       if (selectedPreset && selectedPreset.get('parentTheme') === theme) {
-        $.get('/api/themepreset/exists/' + selectedPreset.get('_id'), function(data) {
+        $.get('api/themepreset/exists/' + selectedPreset.get('_id'), function(data) {
           if (data.success) {
             select.val(selectedPreset.get('_id'))
           } else {
@@ -307,7 +307,7 @@ define(function(require) {
     postThemeData: function(callback) {
       var selectedTheme = this.getSelectedTheme();
       var selectedThemeId = selectedTheme.get('_id');
-      $.post('/api/theme/' + selectedThemeId + '/makeitso/' + this.model.get('_courseId'))
+      $.post('api/theme/' + selectedThemeId + '/makeitso/' + this.model.get('_courseId'))
         .error(this.onSaveError.bind(this))
         .done(callback.bind(this));
     },
@@ -317,7 +317,7 @@ define(function(require) {
       var selectedPresetId = null;
       if (selectedPreset) selectedPresetId = selectedPreset.get('_id');
 
-      $.post('/api/themepreset/' + selectedPresetId + '/makeitso/' + this.model.get('_courseId'))
+      $.post('api/themepreset/' + selectedPresetId + '/makeitso/' + this.model.get('_courseId'))
       .error(this.onSaveError.bind(this))
       .done(callback.bind(this));
     },

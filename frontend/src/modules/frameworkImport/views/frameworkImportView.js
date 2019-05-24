@@ -1,9 +1,9 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var Helpers = require('core/helpers');
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
-  var TagsInput = require('jqueryTagsInput');
+  var FrameworkImportPluginHeadingView = require('./frameworkImportPluginHeadingView');
+  var FrameworkImportPluginView = require('./frameworkImportPluginView');
 
   var FrameworkImportView = OriginView.extend({
     tagName: 'div',
@@ -12,7 +12,8 @@ define(function(require){
 
     preRender: function() {
       Origin.trigger('location:title:update', { title: Origin.l10n.t('app.frameworkimporttitle') });
-      this.listenTo(Origin, 'frameworkImport:uploadCourse', this.uploadCourse);
+      this.listenTo(Origin, 'frameworkImport:showDetails', this.showDetails);
+      this.listenTo(Origin, 'frameworkImport:completeImport', this.completeImport);
     },
 
     postRender: function() {
@@ -43,10 +44,11 @@ define(function(require){
       return validated;
     },
 
-    uploadCourse: function(sidebarView) {
+    showDetails: function(sidebarView) {
       if(!this.isValid()) return;
+      this.sidebarView = sidebarView;
 
-      sidebarView.updateButton('.framework-import-sidebar-save-button', Origin.l10n.t('app.importing'));
+      this.sidebarView.updateButton('.framework-import-sidebar-save-button', Origin.l10n.t('app.importing'));
 
       var tags = [];
       _.each(this.model.get('tags'), function (item) {
@@ -65,10 +67,100 @@ define(function(require){
         },
 
         error: _.bind(this.onAjaxError, this),
-        success: _.bind(this.onFormSubmitSuccess, this)
+        success: _.bind(this.displayDetails, this)
       });
 
       return false;
+    },
+
+    displayDetails: function(data) {
+      this.$('#import_upload').addClass('display-none');
+      this.sidebarView.$('.framework-import-sidebar-save-button').removeClass('show-details');
+      var $details = this.$('#import_details');
+      var $framework_versions = $details.find('.framework-versions');
+      var categoryMap = {
+        'green': {
+          summary: 'app.plugingreensummary',
+          label: 'app.plugingreenlabel'
+        },
+        'amber': {
+          summary: 'app.pluginambersummary',
+          label: 'app.pluginamberlabel'
+        },
+        'red': {
+          summary: 'app.pluginredsummary',
+          label: 'app.pluginredlabel'
+        }
+      };
+
+      if (_.isEmpty(data.pluginVersions.red)) {
+        $('.framework-import-sidebar-save-button').addClass('save');
+      } else {
+        $('.framework-import-sidebar-save-button').remove();
+      }
+
+      // Framework versions panel
+      if (data.frameworkVersions.imported !== data.frameworkVersions.installed) {
+          $framework_versions.text(Origin.l10n.t('app.importframeworkversions', {
+              importVersion: data.frameworkVersions.imported,
+              installedVersion: data.frameworkVersions.installed
+          }));
+          $framework_versions.removeClass('display-none');
+      }
+
+      // Can/Cannot be imported summary
+      this.displaySummary(data);
+
+      // Plugin tables
+      for (var category in data.pluginVersions) {
+        if (category === 'white') continue;
+        if (_.isEmpty(data.pluginVersions[category])) continue;
+
+        var $category_display = $details.find('.plugin-list.' + category);
+        $category_display.text(Origin.l10n.t(categoryMap[category].summary));
+        $category_display.append(new FrameworkImportPluginHeadingView().$el);
+        $category_display.removeClass('display-none');
+
+        // Sort plugins alphabetically
+        var pluginArray = Object.values(data.pluginVersions[category]);
+          pluginArray = pluginArray.sort(function(a, b) {
+            return a.displayName.localeCompare(b.displayName);
+        });
+
+        pluginArray.forEach(function(plugin) {
+          plugin.status = Origin.l10n.t(categoryMap[category].label);
+          $category_display.find('.frameworkImportPlugin-plugins').append(new FrameworkImportPluginView({ data: plugin }).$el);
+        });
+      }
+
+      $details.removeClass('display-none');
+    },
+
+    displaySummary: function(data) {
+      var $details = this.$('#import_details');
+      var $summary_title = $details.find('.import-summary .title');
+      var $summary_description = $details.find('.import-summary .description');
+      this.sidebarView.resetButtons();
+
+      if (!_.isEmpty(data.pluginVersions.red)) {
+        $summary_title.addClass('red').text(Origin.l10n.t('app.coursecannotbeimported'));
+        $summary_description.text(Origin.l10n.t('app.coursecannotbeimporteddesc'));
+        return;
+      }
+
+      $summary_title.text(Origin.l10n.t('app.coursecanbeimported'));
+
+      if (!_.isEmpty(data.pluginVersions.amber) || !_.isEmpty(data.pluginVersions.green)) {
+        $summary_title.addClass('amber');
+        $summary_description.text(Origin.l10n.t('app.coursecanbeimporteddesc'));
+        if (!_.isEmpty(data.pluginVersions.green) && _.isEmpty(data.pluginVersions.amber)) {
+          $summary_title.removeClass('amber').addClass('green');
+        }
+        return;
+      }
+
+      $summary_description.text(Origin.l10n.t('app.coursecanbeimportedwhitedesc'));
+      return;
     },
 
     goBack: function() {
@@ -84,6 +176,7 @@ define(function(require){
       var title = resJson.title || Origin.l10n.t('app.importerrortitle');
       var msg = resJson.body && resJson.body.replace(/\n/g, "<br />") || error;
       this.promptUser(title, msg, true);
+      this.sidebarView.resetButtons();
     },
 
     promptUser: function(title, message, isError) {
@@ -118,6 +211,13 @@ define(function(require){
         }
       });
       this.model.set({ tags: tags });
+    },
+
+    completeImport: function() {
+      this.$('form.frameworkImportDetails').ajaxSubmit({
+        error: _.bind(this.onAjaxError, this),
+        success: _.bind(this.onFormSubmitSuccess, this)
+      });
     }
   }, {
     template: 'frameworkImport'

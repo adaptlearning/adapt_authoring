@@ -1,17 +1,13 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 const _ = require('underscore');
 const async = require('async');
-const bytes = require('bytes');
 const configuration = require('../../../lib/configuration');
 const Constants = require('../../../lib/outputmanager').Constants;
-const crypto = require('crypto');
 const database = require("../../../lib/database");
 const filestorage = require('../../../lib/filestorage');
 const fs = require("fs-extra");
 const glob = require('glob');
 const helpers = require('./helpers');
-const IncomingForm = require('formidable').IncomingForm;
-const installHelpers = require('../../../lib/installHelpers');
 const logger = require("../../../lib/logger");
 const mime = require('mime');
 const path = require("path");
@@ -46,30 +42,30 @@ function ImportSource(req, done) {
   var detachedElementsMap = Object.create(null);
   var pluginLocations = {};
   var enabledExtensions = {};
+  var userId = app.usermanager.getCurrentUser()._id;
   var tenantId = app.usermanager.getCurrentUser().tenant._id;
-  var unzipFolder = tenantId + '_unzipped';
+  var unzipFolder = tenantId + '_' + userId + '_unzipped';
   var COURSE_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, unzipFolder);
-  var COURSE_LANG;
   var COURSE_JSON_PATH = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course);
-  var courseRoot = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, Constants.Folders.Course);
+  var IMPORT_INFO_FILE = 'importInfo.json';
   var origCourseId;
   var courseId;
-  var configId;
-  var cleanupDirs = [];
   var PATH_REXEX = new RegExp(/(course\/)((\w)*\/)*(\w)*.[a-zA-Z0-9]+/gi);
-  var assetFolders = [];
-  var files;
+
+  // Values retrieved from importInfo.json
+  var COURSE_LANG;
   var formTags;
-  var cleanFormAssetDirs;
+  var assetFolders = [];
+  var details = {};
+  var cleanupDirs = [];
 
   /**
   * Main process
   * All functions delegated below for readability
   */
   async.series([
-    prepareImport,
-    findLanguages,
-    validateCoursePackage,
+    retrieveImportInfo,
+    prepare,
     installPlugins,
     addAssets,
     cacheMetadata,
@@ -78,79 +74,30 @@ function ImportSource(req, done) {
     helpers.cleanUpImport(cleanupDirs, cleanUpErr => done(importErr || cleanUpErr));
   });
 
-  function prepareImport(cb) {
-    async.parallel([
-      function(cb2) {
-        database.getDatabase(function(error, db) {
-          if(error) return cb2(error);
-          dbInstance = db; // cache this for reuse
-          cb2();
-        });
-      },
-      function(cb2) {
-        const form = new IncomingForm();
-        form.maxFileSize = configuration.getConfig('maxFileUploadSize');
-        // parse the form
-        form.parse(req, function (error, fields, files) {
-          if(error) {
-            if (form.bytesExpected > form.maxFileSize) {
-              return cb2(new Error(app.polyglot.t('app.uploadsizeerror', {
-                max: bytes.format(form.maxFileSize),
-                size: bytes.format(form.bytesExpected)
-              })));
-            }
-            return cb2(error);
-          }
-          var formAssetDirs = (fields.formAssetFolders && fields.formAssetFolders.length) ? fields.formAssetFolders.split(',') : [];
-          formTags = (fields.tags && fields.tags.length) ? fields.tags.split(',') : [];
-          cleanFormAssetDirs = formAssetDirs.map(item => item.trim());
-          // upzip the uploaded file
-          helpers.unzip(files.file.path, COURSE_ROOT_FOLDER, function(error) {
-            if(error) return cb2(error);
-            cleanupDirs.push(files.file.path, COURSE_ROOT_FOLDER);
-            cb2();
-          });
-        });
-      }
-    ], cb);
-  }
-
-  function findLanguages(cb) {
-    var courseLangs = [];
-    fs.readdir(COURSE_JSON_PATH, function (error, files) {
-      if (error) {
-        return cb(new Error(app.polyglot.t('app.importinvalidpackage')));
-      }
-      files.map(function (file) {
-        return path.join(COURSE_JSON_PATH, file);
-      }).filter(function (file) {
-        return fs.statSync(file).isDirectory();
-      }).forEach(function (file) {
-        courseLangs.push(path.basename(file));
-      });
-      COURSE_LANG = courseLangs[0] ? courseLangs[0] : 'en';
+  function retrieveImportInfo(cb) {
+    fs.readJson(path.join(COURSE_ROOT_FOLDER, IMPORT_INFO_FILE), function(error, obj) {
+      if(error) return cb(error);
+      COURSE_LANG = obj.COURSE_LANG;
+      formTags = obj.formTags;
+      assetFolders = obj.assetFolders;
+      plugindata.pluginIncludes = obj.pluginIncludes;
+      details = obj.details;
+      cleanupDirs = obj.cleanupDirs;
       cb();
     });
   }
 
-  /**
-  * Checks course for any potential incompatibilities
-  */
-  function validateCoursePackage(done) {
-    // - Check framework version compatibility
-    // - check we have all relevant json files using contentMap
-    async.auto({
-      checkFramework: function(cb) {
-        fs.readJson(path.join(COURSE_ROOT_FOLDER, 'package.json'), function(error, versionJson) {
-          if(error) {
-            logger.log('error', error)
-            return cb(error);
-          }
-          helpers.checkFrameworkVersion(versionJson, cb);
+  function prepare(cb) {
+    async.parallel([
+      function(cb2) {
+        database.getDatabase(function(error, db) {
+          if(error) return cb2(error);
+            dbInstance = db;
+            cb2();
         });
       },
-      checkContentJson: ['checkFramework', function(results, cb) {
-        async.eachSeries(Object.keys(contentMap), function(type, cb2) {
+      function(cb2) {
+        async.eachSeries(Object.keys(contentMap), function(type, cb3) {
           var jsonPath = path.join(COURSE_JSON_PATH, (type !== 'config') ? COURSE_LANG : '', `${contentMap[type] || type}.json`);
           fs.readJson(jsonPath, function(error, jsonData) {
             if(error) {
@@ -158,32 +105,31 @@ function ImportSource(req, done) {
               return cb2(error);
             } // NOTE also save the json for later, no need to load it twice
             cachedJson[type] = jsonData;
-            cb2();
+            cb3();
           });
-        }, cb);
-      }],
-      checkAssetFolders: ['checkContentJson', function(results, cb) {
-        if (!cleanFormAssetDirs.length) {
-          assetFolders = Constants.Folders.ImportAssets;
-          return cb();
-        }
-        var assetFolderError = false;
-        var missingFolders = [];
-        assetFolders = cleanFormAssetDirs;
-        for (index = 0; index < assetFolders.length; ++index) {
-          var assetFolderPath = path.join(COURSE_JSON_PATH , COURSE_LANG, assetFolders[index]);
-          if (!fs.existsSync(assetFolderPath)) {
-            assetFolderError = true;
-            missingFolders.push(assetFolders[index]);
-          }
-        }
-        // if a user input folder is missing log error and abort early
-        if (assetFolderError) {
-          var folderError = 'Cannot find asset folder/s ' + missingFolders.toString() + ' in framework import.';
-          return cb(folderError);
-        }
-        cb();
-      }]
+        }, cb2);
+      }
+    ], cb);
+  }
+
+  /**
+  * Installs any custom plugins
+  */
+  function installPlugins(done) {
+    async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
+      // Ignore white & amber, nothing to install
+      if (pluginData.name in details.pluginVersions.white ||
+          pluginData.name in details.pluginVersions.amber) {
+        return donePluginIterator();
+      }
+
+      // Red shouldn't make it this far - throw error
+      if (pluginData.name in details.pluginVersions.red) {
+        return donePluginIterator('Incompatible plugin ' + pluginData.name);
+      }
+
+      // Green plugins need to be installed (either fresh install or update)
+      helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
     }, done);
   }
 
@@ -252,59 +198,6 @@ function ImportSource(req, done) {
         }, doneAssetFolder);
       });
     }, done);
-  }
-
-  /**
-  * Installs any custom plugins
-  */
-  function installPlugins(done) {
-    async.each(plugindata.pluginTypes, function iterator(pluginType, doneMapIterator) {
-      var srcDir = path.join(COURSE_ROOT_FOLDER, Constants.Folders.Source, pluginType.folder);
-
-      if (!fs.existsSync(srcDir)) {
-        logger.log('info', 'No plugins found.');
-        return doneMapIterator();
-      }
-      fs.readdir(srcDir, function (err, files) {
-        if (err) {
-          return doneMapIterator(err);
-        }
-        files.map(function (file) {
-          return path.join(srcDir, file);
-        }).filter(function (file) {
-          return fs.statSync(file).isDirectory();
-        }).forEach(function (file) {
-          var data = _.extend(_.clone(pluginType), { location: file });
-          plugindata.pluginIncludes.push(data);
-        });
-        doneMapIterator();
-      });
-    }, function(err) {
-      if(err) {
-        return done(err);
-      }
-      // check that all plugins support the installed framework versions
-      installHelpers.getInstalledFrameworkVersion(function(err, frameworkVersion) {
-        async.reduce(plugindata.pluginIncludes, [], function checkFwVersion(memo, pluginData, checkFwVersionCb) {
-          fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
-            if (error) return checkFwVersionCb(error);
-            var versionError = helpers.checkPluginFrameworkVersion(frameworkVersion, data);
-            if (versionError) {
-              memo.push(versionError);
-            }
-            return checkFwVersionCb(null, memo);
-          });
-        }, function(error, unsupportedPlugins) {
-          if (error) return done(error);
-          if (unsupportedPlugins.length > 0) {
-            return done(new helpers.ImportError(unsupportedPlugins.join('\n'), 400));
-          }
-          async.each(plugindata.pluginIncludes, function(pluginData, donePluginIterator) {
-            helpers.importPlugin(pluginData.location, pluginData.type, donePluginIterator);
-          }, done);
-        });
-      })
-    });
   }
 
   /**
@@ -402,11 +295,7 @@ function ImportSource(req, done) {
               return;
             }
             case 'config': {
-              createContentItem(type, contentJson, function(error, configRec) {
-                if(error) return cb2(error);
-                configId = configRec._id;
-                cb2();
-              });
+              createContentItem(type, contentJson, cb2);
               return;
             }
             case 'contentobject': { // Sorts in-place the content objects to make sure processing can happen
@@ -598,9 +487,6 @@ function ImportSource(req, done) {
   * @param {callback} cb
   */
   function createCourseAssets(type, contentData, cb) {
-    var courseAssetsArray;
-    var componentPlugin;
-    var extensionPlugins;
     var assetData = {
       _courseId : contentData._courseId,
       _contentType: type,

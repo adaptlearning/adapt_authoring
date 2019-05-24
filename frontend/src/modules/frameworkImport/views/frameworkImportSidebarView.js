@@ -5,13 +5,19 @@ define(function(require) {
 
   var FrameworkImportSidebarView = SidebarItemView.extend({
     events: {
-      'click button.save': 'importCourse',
-      'click button.cancel': 'goBack'
+      'click button.show-details': 'showDetails',
+      'click button.cancel': 'goBack',
+      'click button.save': 'importCourse'
+    },
+
+    showDetails: function(event) {
+      event && event.preventDefault();
+      Origin.trigger('frameworkImport:showDetails', this);
     },
 
     importCourse: function(event) {
       event && event.preventDefault();
-      Origin.trigger('frameworkImport:uploadCourse', this);
+      Origin.trigger('frameworkImport:completeImport', this);
     },
 
     goBack: function(event) {

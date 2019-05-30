@@ -200,6 +200,7 @@
   "app.noassetsfound": "No assets found",
   "app.assetpreviewinstruction": "Select an asset to see a preview here",
   "app.uploadnewasset": "Upload new asset",
+  "app.uploadassetzip": "Upload asset zip",
   "app.upload": "Upload",
   "app.assetfilters": "Filters",
   "app.selectexternalasset": "Select an External Asset",

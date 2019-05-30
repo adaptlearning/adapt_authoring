@@ -4,6 +4,8 @@ define(function(require) {
   var AssetCollection = require('./collections/assetCollection');
   var AssetManagementNewAssetView = require('./views/assetManagementNewAssetView');
   var AssetManagementNewAssetSidebarView = require('./views/assetManagementNewAssetSidebarView');
+  var AssetManagementUploadAssetView = require('./views/assetManagementUploadAssetView');
+  var AssetManagementUploadAssetSidebarView = require('./views/assetManagementUploadAssetSidebarView');
   var AssetManagementSidebarView = require('./views/assetManagementSidebarView');
   var AssetManagementView = require('./views/assetManagementView');
   var AssetModel = require('./models/assetModel');
@@ -29,6 +31,7 @@ define(function(require) {
     };
     if(!location) return loadAssetsView();
     if(location === 'new') return loadNewAssetView();
+    if(location === 'upload') return loadUploadAssetView();
     if(subLocation === 'edit') loadEditAssetView(location);
   });
 
@@ -54,6 +57,12 @@ define(function(require) {
     Origin.trigger('location:title:update', { title: 'New Asset' });
     Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
     Origin.contentPane.setView(AssetManagementNewAssetView, { model: new AssetModel });
+  }
+
+  function loadUploadAssetView() {
+    Origin.trigger('location:title:update', { title: 'Upload Assets' });
+    Origin.sidebar.addView(new AssetManagementUploadAssetSidebarView().$el);
+    Origin.contentPane.setView(AssetManagementUploadAssetView, { model: new AssetModel });
   }
 
   function loadEditAssetView(location) {

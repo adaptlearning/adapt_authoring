@@ -628,7 +628,7 @@ function ImportSource(req, done) {
       }
       var assetBaseName = path.basename(data);
       // get asset _id from lookup of the key of metadata.assetNameMap mapped to assetBaseName
-      var matchingAssetId = _.findKey(metadata.assetNameMap, (value, assetId) => { return (value == assetBaseName) ? assetId : false });
+      var matchingAssetId = _.findKey(metadata.assetNameMap, value => value === assetBaseName);
 
       if (!matchingAssetId) return callback();
 

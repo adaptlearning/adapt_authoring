@@ -110,16 +110,20 @@ define(function(require) {
     waitForLoad: function(callback) {
       var done = function() {
         if(preloader.hasLoadedData()) {
-          Origin.off('editor:dataPreloaded', done);
-          Origin.off('editor:dataLoaded', done);
-          Origin.off('editor:failedToLoad', removeEvents);
+          Origin.off({
+            'editor:dataPreloaded': done,
+            'editor:dataLoaded': done,
+            'editor:failedToLoad': removeEvents
+          });
           callback.apply(this);
         }
       };
       var removeEvents = function() {
-        Origin.off('editor:dataPreloaded', done);
-        Origin.off('editor:dataLoaded', done);
-        Origin.off('editor:failedToLoad', removeEvents);
+        Origin.off({
+          'editor:dataPreloaded': done,
+          'editor:dataLoaded': done,
+          'editor:failedToLoad': removeEvents
+        });
       };
       // in case we've already loaded
       done();

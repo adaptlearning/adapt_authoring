@@ -212,7 +212,7 @@ define(function(require) {
       }
       if (fieldView.schema.inputType === 'ColourPicker') {
         fieldView.setValue(value);
-      } else if (fieldView.schema.inputType.indexOf('Asset:') > -1) {
+      } else if (typeof fieldView.schema.inputType === 'string' && fieldView.schema.inputType.indexOf('Asset:') > -1) {
         fieldView.setValue(value);
         fieldView.render();
         $('div[data-editor-id*="' + key + '"]').append(fieldView.editor.$el);

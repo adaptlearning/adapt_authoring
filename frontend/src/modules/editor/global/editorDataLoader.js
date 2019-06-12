@@ -108,22 +108,18 @@ define(function(require) {
     * Makes sure all data has been loaded and calls callback
     */
     waitForLoad: function(callback) {
-      var done = function() {
-        if(preloader.hasLoadedData()) {
-          Origin.off({
-            'editor:dataPreloaded': done,
-            'editor:dataLoaded': done,
-            'editor:failedToLoad': removeEvents
-          });
-          callback.apply(this);
-        }
-      };
       var removeEvents = function() {
         Origin.off({
           'editor:dataPreloaded': done,
           'editor:dataLoaded': done,
           'editor:failedToLoad': removeEvents
         });
+      };
+      var done = function() {
+        if(preloader.hasLoadedData()) {
+          removeEvents();
+          callback.apply(this);
+        }
       };
       // in case we've already loaded
       done();

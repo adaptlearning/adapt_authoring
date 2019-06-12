@@ -55,13 +55,13 @@ define(function(require){
       $.get(this.model.urlRoot + '/checkversion/' + this.model.get('_id'), function(data) {
         if(!data.isUpdateable) {
           $btn.attr({
-              'disabled': true,
-              'title': Origin.l10n.t('app.uptodate')
+              disabled: true,
+              title: Origin.l10n.t('app.uptodate')
           });
           $icon.removeClass().addClass('fa fa-check');
           return;
         }
-        $btn.attr({'title': Origin.l10n.t('app.updateplugin')}).removeClass('plugin-update-check').addClass('plugin-update-confirm');
+        $btn.attr({title: Origin.l10n.t('app.updateplugin')}).removeClass('plugin-update-check').addClass('plugin-update-confirm');
         $icon.removeClass().addClass('fa fa-arrow-up');
       });
 
@@ -76,19 +76,19 @@ define(function(require){
       if($btn.is(':disabled')) return false;
 
       $btn.attr({
-          'disabled': true,
-          'title': Origin.l10n.t('app.updating')
+          disabled: true,
+          title: Origin.l10n.t('app.updating')
       });
       $icon.removeClass().addClass('fa fa-refresh fa-spin');
 
       $.post(this.model.urlRoot + '/update', { 'targets': [this.model.get('_id')] }, _.bind(function(data) {
         if(!_.contains(data.upgraded, this.model.get('_id'))) {
-          $btn.attr({'title': Origin.l10n.t('app.updatefailed')});
+          $btn.attr({title: Origin.l10n.t('app.updatefailed')});
           $icon.removeClass().addClass('fa fa-times');
           return;
         }
         Origin.trigger('scaffold:updateSchemas', function() {
-          $btn.attr({'title': Origin.l10n.t('app.uptodate')});
+          $btn.attr({title: Origin.l10n.t('app.uptodate')});
           $icon.removeClass().addClass('fa fa-check');
           this.model.fetch();
         }, this);
@@ -114,20 +114,19 @@ define(function(require){
             destructive: false,
             callback: this.deletePluginConfirm.bind(this)
           });
-        } else {
-          var courses = '';
-          for (var i = 0, len = data.courses.length; i < len; i++) {
-            courses += data.courses[i].title + ' ' + Origin.l10n.t('app.by') + ' ' + data.courses[i].createdByEmail + '<br />'
-          }
-          popup.type = 'error';
-          popup.title = Origin.l10n.t('app.cannotdelete') + ' ' + this.model.get('displayName');
-          popup.text = '';
-          if (courses !== '') {
-            popup.text += Origin.l10n.t('app.coursesused') + '<br />';
-            popup.text += courses + '<br />';
-          }
-          Origin.Notify.alert(popup);
+          return;
         }
+
+        var courses = '';
+        for (var i = 0, len = data.courses.length; i < len; i++) {
+          courses += data.courses[i].title + ' ' + Origin.l10n.t('app.by') + ' ' + data.courses[i].createdByEmail + '<br />'
+        }
+        popup.type = 'error';
+        popup.title = Origin.l10n.t('app.cannotdelete') + ' ' + this.model.get('displayName');
+        popup.text = Origin.l10n.t('app.coursesused') + '<br />' + courses + '<br />';
+
+        Origin.Notify.alert(popup);
+
       }.bind(this));
     },
 

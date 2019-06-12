@@ -357,7 +357,7 @@ function initialize () {
  *
  */
 BowerPlugin.prototype.getUses = function (callback, id) {
-    return callback(new Error('The getUses function must be overriden in the plugin\'s obejct'));
+    return callback(new Error('The getUses function must be overridden in the plugin’s object'));
 };
 
 /**

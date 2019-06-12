@@ -8,8 +8,8 @@ define(function(require){
     tagName: 'div',
 
     events: {
-      'click input.pluginType-enabled': 'toggleEnabled',
-      'click input.pluginType-addedDefault': 'toggleAddedDefault',
+      'change input.pluginType-enabled': 'toggleEnabled',
+      'change input.pluginType-addedDefault': 'toggleAddedDefault',
       'click .plugin-update-check': 'checkForUpdates',
       'click .plugin-update-confirm': 'updatePlugin',
       'click .plugin-remove': 'deletePluginPrompt'
@@ -45,20 +45,24 @@ define(function(require){
       event && event.preventDefault();
 
       var $btn = this.$('.plugin-update-check');
+      var $icon = $btn.find('i');
 
       if($btn.is(':disabled')) return false;
 
-      $btn.attr({'title': Origin.l10n.t('app.checking')}).find('i').addClass('fa-spin');
+      $btn.attr({title: Origin.l10n.t('app.checking')});
+      $icon.addClass('fa-spin');
 
       $.get(this.model.urlRoot + '/checkversion/' + this.model.get('_id'), function(data) {
         if(!data.isUpdateable) {
           $btn.attr({
               'disabled': true,
               'title': Origin.l10n.t('app.uptodate')
-          }).find('i').removeClass().addClass('fa fa-check');
+          });
+          $icon.removeClass().addClass('fa fa-check');
           return;
         }
-        $btn.attr({'title': Origin.l10n.t('app.updateplugin')}).removeClass('plugin-update-check').addClass('plugin-update-confirm').find('i').removeClass().addClass('fa fa-arrow-up');
+        $btn.attr({'title': Origin.l10n.t('app.updateplugin')}).removeClass('plugin-update-check').addClass('plugin-update-confirm');
+        $icon.removeClass().addClass('fa fa-arrow-up');
       });
 
       return false;
@@ -67,21 +71,25 @@ define(function(require){
     updatePlugin: function (event) {
       event && event.preventDefault();
       var $btn = this.$('.plugin-update-confirm');
+      var $icon = $btn.find('i');
 
       if($btn.is(':disabled')) return false;
 
       $btn.attr({
           'disabled': true,
           'title': Origin.l10n.t('app.updating')
-      }).find('i').removeClass().addClass('fa fa-refresh fa-spin');
+      });
+      $icon.removeClass().addClass('fa fa-refresh fa-spin');
 
       $.post(this.model.urlRoot + '/update', { 'targets': [this.model.get('_id')] }, _.bind(function(data) {
         if(!_.contains(data.upgraded, this.model.get('_id'))) {
-          $btn.attr({'title': Origin.l10n.t('app.updatefailed')}).find('i').removeClass().addClass('fa fa-times');
+          $btn.attr({'title': Origin.l10n.t('app.updatefailed')});
+          $icon.removeClass().addClass('fa fa-times');
           return;
         }
         Origin.trigger('scaffold:updateSchemas', function() {
-          $btn.attr({'title': Origin.l10n.t('app.uptodate')}).find('i').removeClass().addClass('fa fa-check');
+          $btn.attr({'title': Origin.l10n.t('app.uptodate')});
+          $icon.removeClass().addClass('fa fa-check');
           this.model.fetch();
         }, this);
       }, this));
@@ -91,7 +99,6 @@ define(function(require){
 
     deletePluginPrompt: function(event) {
       event && event.preventDefault();
-      const _this = this;
 
       $.ajax({
         'method': 'GET',
@@ -100,18 +107,20 @@ define(function(require){
         const popup = {};
 
         if (data.courses.length === 0) {
-          popup.text = _this.model.get('displayName') + ' is unused';
-          popup.type = 'confirm';
-          popup.destructive = false;
-          popup.callback = _.bind(_this.deletePluginConfirm, _this);
-          Origin.Notify.confirm(popup);
+          Origin.Notify.confirm({
+            type: 'warning',
+            title: Origin.l10n.t('app.deleteplugin'),
+            text: Origin.l10n.t('app.confirmdeleteplugin', { plugin: this.model.get('displayName') }),
+            destructive: false,
+            callback: this.deletePluginConfirm.bind(this)
+          });
         } else {
           var courses = '';
           for (var i = 0, len = data.courses.length; i < len; i++) {
-            courses += '<i>' + data.courses[i].title + '</i> By <i>' + data.courses[i].createdByEmail + '</i><br />'
+            courses += data.courses[i].title + ' ' + Origin.l10n.t('app.by') + ' ' + data.courses[i].createdByEmail + '<br />'
           }
           popup.type = 'error';
-          popup.title = Origin.l10n.t('app.cannotdelete') + ' ' + _this.model.get('displayName');
+          popup.title = Origin.l10n.t('app.cannotdelete') + ' ' + this.model.get('displayName');
           popup.text = '';
           if (courses !== '') {
             popup.text += Origin.l10n.t('app.coursesused') + '<br />';
@@ -119,19 +128,16 @@ define(function(require){
           }
           Origin.Notify.alert(popup);
         }
-      });
+      }.bind(this));
     },
 
     deletePluginConfirm: function(confirmation) {
-      var _this = this;
-      if (confirmation === true) {
-        $.ajax({
-          'method': 'DELETE',
-          'url': this.model.urlRoot + '/' + this.model.get('_id')
-        }).done(function () {
-           _this.remove()
-        });
-      }
+      if (!confirmation) return;
+
+      $.ajax({
+        method: 'DELETE',
+        url: this.model.urlRoot + '/' + this.model.get('_id')
+      }).done(this.remove.bind(this));
     }
   }, {
     template: 'pluginType'

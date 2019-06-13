@@ -628,28 +628,27 @@ function ImportSource(req, done) {
       }
       var assetBaseName = path.basename(data);
       // get asset _id from lookup of the key of metadata.assetNameMap mapped to assetBaseName
-      _.findKey(metadata.assetNameMap, function(value, assetId) {
-        if (value !== assetBaseName) {
-          return;
+      var matchingAssetId = _.findKey(metadata.assetNameMap, value => value === assetBaseName);
+
+      if (!matchingAssetId) return callback();
+
+      app.assetmanager.retrieveAsset({ _id: matchingAssetId }, function gotAsset(error, results) {
+        if (error) {
+          logger.log('error', error);
+          return callback(error);
         }
-        app.assetmanager.retrieveAsset({ _id: assetId }, function gotAsset(error, results) {
-          if (error) {
-            logger.log('error', error);
+        Object.assign(assetData, {
+          _assetId: matchingAssetId,
+          createdBy: app.usermanager.getCurrentUser(),
+          _fieldName: results.length > 0 ? _.pluck(results, 'filename') : assetBaseName
+        });
+        app.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
+          if(error) {
             return callback(error);
           }
-          Object.assign(assetData, {
-            _assetId: assetId,
-            createdBy: app.usermanager.getCurrentUser(),
-            _fieldName: results.length > 0 ? _.pluck(results, 'filename') : assetBaseName
-          });
-          app.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
-            if(error) {
-              return callback(error);
-            }
-            plugin.create(assetData, function(error, assetRecord) {
-              if(error) logger.log('warn', `Failed to create courseasset ${type} ${assetRecord || ''} ${error}`);
-              callback(error);
-            });
+          plugin.create(assetData, function(error, assetRecord) {
+            if(error) logger.log('warn', `Failed to create courseasset ${type} ${assetRecord || ''} ${error}`);
+            callback(error);
           });
         });
       });

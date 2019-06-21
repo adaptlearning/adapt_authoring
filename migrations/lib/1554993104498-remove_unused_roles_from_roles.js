@@ -28,27 +28,21 @@ exports.up = function down(done) {
                     if (err) throw err;
                     callback(null, document);
                 });
+            },
+            super: function(callback) {
+                rolesCollection.findOne({name: 'Super Admin'}, (err, document) => {
+                    if (err) throw err;
+                    callback(null, document);
+                });
             }
         }, function(err, results) {
             if (err) throw err;
-            var changingRoles = [];
-
-            // Check if `Tenant Admin` role exists
-            if (results.tenant) {
-                changingRoles.push(results.tenant._id);
-            }
-
-            // Check if `Product Manager` role exists
-            if (results.product) {
-                changingRoles.push(results.product._id);
-            }
-
-            // If at least one of role exists and `Course Creator` exits
-            // Change all given roles to `Course Creator`
-            if (changingRoles.length !== 0 && results.course) {
+            // If Product Manager and Course Creator roles exist convert
+            // all Product Managers to Course Creators
+            if (results.product && results.course) {
                 try {
                     userCollection.updateMany(
-                        {roles: {$in: changingRoles}},
+                        {roles: {$in: [results.product._id]}},
                         {$set: {roles: [results.course._id]}}
                     );
                 } catch (e) {
@@ -56,8 +50,20 @@ exports.up = function down(done) {
                     return;
                 }
             }
-
-            // If roles changes was successfully remove `Product Manager` and `Tenant Admin` roles
+            // If Tenant Admin and Super Admin roles exist convert
+            // all Tenant Admins to Super Admins
+            if (results.tenant && results.super) {
+                try {
+                    userCollection.updateMany(
+                        {roles: {$in: [results.tenant._id]}},
+                        {$set: {roles: [results.super._id]}}
+                    );
+                } catch (e) {
+                    logger.log('error', e);
+                    return;
+                }
+            }
+            // Remove `Product Manager` and `Tenant Admin` roles
             rolesCollection.deleteOne({name: 'Product Manager'});
             rolesCollection.deleteOne({name: 'Tenant Admin'});
         });

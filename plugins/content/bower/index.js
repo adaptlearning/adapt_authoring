@@ -250,6 +250,10 @@ function initialize () {
                   },
                   function (callback) {
                     db.destroy(type, {_id: id}, callback);
+                  },
+                  function (callback) {
+                    if (type !== 'themetype') return callback();
+                    db.destroy('themepreset', {parentTheme: doc.theme}, callback);
                   }
                 ],
                 function (err) {

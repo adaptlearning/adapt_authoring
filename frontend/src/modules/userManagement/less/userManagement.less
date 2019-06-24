@@ -54,7 +54,7 @@
       .search {
         padding: 10px;
         display: flex;
-        background-color: darken(#fff, 3%);
+        background-color: darken(@white, 3%);
 
         input[type="text"] {
           width: 85%;
@@ -69,10 +69,10 @@
 
       .user-management-filter {
         padding: 0 10px;
-        background-color: darken(#fff, 3%);
+        background-color: darken(@white, 3%);
 
         .filter-inner {
-          border-top: solid 1px darken(#fff, 15%);
+          border-top: solid 1px darken(@white, 15%);
         }
       }
 
@@ -91,7 +91,7 @@
           padding-right: 0;
 
           &.active {
-            font-weight: bold;
+            font-weight: @font-weight-bold;
           }
 
           > h4 {

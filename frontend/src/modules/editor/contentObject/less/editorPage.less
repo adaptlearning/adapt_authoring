@@ -31,15 +31,15 @@
     border-right:1px solid #b7caed;
     padding:0px 10px;
     float:left;
-    background-color:#fff;
+    background-color: @white;
     color:#3e4960;
     transition:all 0.2s;
     &:hover {
-        color:#fff;
+        color: @white;
         background-color:lighten(@secondary-color, 20%);
     }
     &.selected {
-        color:#fff;
+        color: @white;
         background-color:@secondary-color;
     }
 }
@@ -107,10 +107,10 @@
 .page-edit-button {
   font-size:16px;
   text-decoration: none;
-  color: #34bee0;
+  color: @primary-color;
   transition: all 0.3s;
   &:hover {
-    color:#15a4fa;
+    color: darken(@primary-color, 5%);
   }
 }
 
@@ -121,7 +121,7 @@
 .page-detail {
   position: relative;
   height: 100%;
-  background-color: white;
+  background-color: @white;
   border: 1px solid #D2E4E6;
   border-radius: 3px;
   cursor: pointer;

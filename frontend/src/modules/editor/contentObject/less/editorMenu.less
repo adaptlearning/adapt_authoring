@@ -8,7 +8,7 @@
 
 .editor-menu-item {
 
-  background-color: #fff;
+  background-color: @white;
   transition: box-shadow 0.3s;
   box-shadow: 0px 0px 1px 1px #EEE;
   &:hover {
@@ -23,7 +23,7 @@
   &.expanded {
 
     .editor-menu-item-inner {
-      color:#fff;
+      color: @white;
       background-color: @primary-color;
       transition:background-color 0s;
       border:1px solid @primary-color;
@@ -35,10 +35,10 @@
 
     .editor-menu-item-settings {
       a {
-        color:#fff;
+        color: @white;
         transition:all 0.3s;
         &:hover {
-          color:darken(#fff, 10%);
+          color: darken(@white, 10%);
         }
       }
     }
@@ -47,7 +47,7 @@
   &.selected {
 
     .editor-menu-item-inner {
-      color:#fff;
+      color: @white;
       background-color: @primary-color;
       border:1px solid @primary-color;
     }
@@ -58,10 +58,10 @@
 
     .editor-menu-item-settings {
       a {
-        color:#fff;
+        color: @white;
         transition:all 0.3s;
         &:hover {
-          color:darken(#fff, 10%);
+          color: darken(@white, 10%);
         }
       }
     }

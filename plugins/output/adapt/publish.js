@@ -46,7 +46,7 @@ function publishCourse(courseId, mode, request, response, next) {
     return stdout.substring(indexStart, indexEnd !== -1 ? indexEnd : stdout.length);
   }
 
-  async.series([
+  async.waterfall([
     // get an object with all the course data
     function(callback) {
       self.getCourseJSON(tenantId, courseId, function(err, data) {
@@ -200,7 +200,7 @@ function publishCourse(courseId, mode, request, response, next) {
           });
       });
     },
-    function(callback) {
+    function(err, callback) {
       self.clearBuildFlag(path.join(BUILD_FOLDER, Constants.Filenames.Rebuild), function(err) {
         callback(null);
       });

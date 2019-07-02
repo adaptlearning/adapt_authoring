@@ -16,7 +16,7 @@ Adds ability to remove plugins, removes unused user roles and latest bugfixes.
 - No dashboard redirect on invalid page ([#2351](https://github.com/adaptlearning/adapt_authoring/issues/2351))
 - Image thumbnail not showing in component settings ([#2345](https://github.com/adaptlearning/adapt_authoring/issues/2345))
 - Non-localised text in asset mangement ([#2340](https://github.com/adaptlearning/adapt_authoring/issues/2340))
-- Theme variables aren't used in core LESS files ([#2338](https://github.com/adaptlearning/adapt_authoring/issues/2338))
+- Theme variables aren't used in core Less files ([#2338](https://github.com/adaptlearning/adapt_authoring/issues/2338))
 - Import times out if course is missing an asset ([#2326](https://github.com/adaptlearning/adapt_authoring/issues/2326))
 - Text misaligned on headers ([#2276](https://github.com/adaptlearning/adapt_authoring/issues/2276))
 

@@ -11,6 +11,7 @@ Adds ability to remove plugins, removes unused user roles and latest bugfixes.
 
 ### Fixed
 - Performance regression when upgrading to v0.8.1 ([#2370](https://github.com/adaptlearning/adapt_authoring/issues/2370))
+- Block instruction not being saved ([#2373](https://github.com/adaptlearning/adapt_authoring/issues/2373))
 - Not able to select a transparent colour in theme picker ([#2358](https://github.com/adaptlearning/adapt_authoring/issues/2358))
 - Not able to specify a select option for theme variable ([#2358](https://github.com/adaptlearning/adapt_authoring/issues/2358))
 - No dashboard redirect on invalid page ([#2351](https://github.com/adaptlearning/adapt_authoring/issues/2351))

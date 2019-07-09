@@ -31,7 +31,7 @@ ThemePresetContent.prototype.updatePreset = function(presetId, courseId, res, ne
     }
     delta._courseId = courseId;
 
-    app.contentmanager.update('config', { _courseId: courseId }, delta, function(err) {
+    app.contentmanager.update('config', { _courseId: courseId }, JSON.stringify(delta), function(err) {
       if (err) return next(err);
       // lose any previously set theme settings, preset overrides
       app.contentmanager.update('course', { _id: courseId }, { _courseId: courseId, themeSettings: null }, function(err) {

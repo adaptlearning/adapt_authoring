@@ -640,7 +640,7 @@ function ImportSource(req, done) {
         Object.assign(assetData, {
           _assetId: matchingAssetId,
           createdBy: app.usermanager.getCurrentUser(),
-          _fieldName: results.length > 0 ? _.pluck(results, 'filename') : assetBaseName
+          _fieldName: results.length > 0 ? _.pluck(results, 'filename')[0] : assetBaseName
         });
         app.contentmanager.getContentPlugin('courseasset', function(error, plugin) {
           if(error) {

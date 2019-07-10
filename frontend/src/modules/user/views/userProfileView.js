@@ -10,10 +10,10 @@ define(function(require){
     className: 'user-profile',
 
     events: {
-      'click a.change-password' : 'togglePassword',
-      'keyup #password'         : 'onPasswordKeyup',
-      'keyup #passwordText'         : 'onPasswordTextKeyup',
-      'click .toggle-password'  : 'togglePasswordView'
+      'click a.change-password'       : 'togglePassword',
+      'keyup #password'               : 'onPasswordKeyup',
+      'keyup #passwordText'           : 'onPasswordTextKeyup',
+      'click .change-password-reveal' : 'togglePasswordView'
     },
 
     preRender: function() {
@@ -57,10 +57,7 @@ define(function(require){
         this.$(formSelector).addClass('display-none');
 
         this.$('#password').val('').removeClass('display-none');
-        this.$('#passwordText').val('').addClass('display-none');
-        this.$('.toggle-password i').addClass('fa-eye').removeClass('fa-eye-slash');
 
-        this.$('.toggle-password').addClass('display-none');
         this.$('#passwordError').html('');
 
         this.model.set('password', '');
@@ -69,10 +66,17 @@ define(function(require){
 
     togglePasswordView: function() {
       event && event.preventDefault();
+      
+      var passwordField = document.querySelector('.change-input-password');
+      var passwordReveal = document.querySelector('.change-password-reveal');
 
-      this.$('#passwordText').toggleClass('display-none');
-      this.$('#password').toggleClass('display-none');
-      this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
+       if (passwordField.getAttribute('type') == 'password') {
+        passwordField.setAttribute('type', 'text');
+        passwordReveal.setAttribute('aria-pressed','true');
+      } else {
+        passwordField.setAttribute('type', 'password');
+        passwordReveal.setAttribute('aria-pressed','false');
+      }
     },
 
     indicatePasswordStrength: function(event) {

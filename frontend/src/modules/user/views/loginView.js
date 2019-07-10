@@ -11,10 +11,11 @@ define(function(require) {
     tagName: "div",
 
     events: {
-      'keydown #login-input-username' : 'clearErrorStyling',
-      'keydown #login-input-password' : 'clearErrorStyling',
-      'click .login-form-submit'      : 'submitLoginDetails',
-      'click button.dash'             : 'goHome'
+      'keydown #login-input-username'      : 'clearErrorStyling',
+      'keydown #login-input-password'      : 'clearErrorStyling',
+      'click .login-form-submit'           : 'submitLoginDetails',
+      'click button.dash'                  : 'goHome',
+      'click button.login-password-reveal' : 'togglePassword'
     },
 
     preRender: function() {
@@ -29,6 +30,19 @@ define(function(require) {
     goHome: function(e) {
       e && e.preventDefault();
       Origin.router.navigateToHome();
+    },
+    
+    togglePassword: function(e) {
+      var passwordField = document.querySelector('#login-input-password');
+      var passwordReveal = document.querySelector('.login-password-reveal');
+      
+      if (passwordField.getAttribute('type') == 'password') {
+        passwordField.setAttribute('type', 'text');
+        passwordReveal.setAttribute('aria-pressed','true');
+      } else {
+        passwordField.setAttribute('type', 'password');
+        passwordReveal.setAttribute('aria-pressed','false');
+      }
     },
 
     handleEnterKey: function(e) {

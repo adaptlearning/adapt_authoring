@@ -40,4 +40,47 @@
             }
         }
     }
+    
+    .change-password-container {
+    position: relative;
+
+    .change-password-reveal {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      height: 24px;
+      width: 24px;
+      margin: 0;
+      padding: 0;
+      transform: translateY(-50%);
+    }
+
+    .change-input-password[type=password] {
+      +.change-password-reveal {
+        .change-password-reveal-show {
+          display: block;
+        }
+
+        .change-password-reveal-hide {
+          display: none;
+        }
+      }
+
+      &::-ms-reveal {
+        display: none;
+      }
+    }
+
+    .change-input-password[type=text] {
+      +.change-password-reveal {
+        .change-password-reveal-show {
+          display: none;
+        }
+
+        .change-password-reveal-hide {
+          display: block;
+        }
+      }
+    }
+  }
 }

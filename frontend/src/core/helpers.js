@@ -342,6 +342,28 @@ define(function(require){
         '<span class="max-fileupload-size">',
         Origin.l10n.t('app.maxfileuploadsize', {size: Origin.constants.humanMaxFileUploadSize}),
         '</span>'].join(''))
+    },
+
+    flattenNestedProperties: function(properties) {
+      var flatProperties = {};
+      if (typeof properties !== 'undefined') {
+        for (var key in properties) {
+          // Check for nested properties
+          if (typeof properties[key] === 'object') {
+            for (var innerKey in properties[key]) {
+              // Check if key already exists
+              if (flatProperties[innerKey]) {
+                flatProperties[key+'.'+innerKey] = properties[key][innerKey];
+              } else {
+                flatProperties[innerKey] = properties[key][innerKey];
+              }
+            }
+          } else {
+            flatProperties[key] = properties[key];
+          }
+        }
+      }
+      return flatProperties;
     }
   };
 

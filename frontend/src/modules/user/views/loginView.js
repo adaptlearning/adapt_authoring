@@ -33,6 +33,7 @@ define(function(require) {
     },
     
     togglePassword: function(e) {
+      e && e.preventDefault();
       var passwordField = document.querySelector('#login-input-password');
       var passwordReveal = document.querySelector('.login-password-reveal');
       

@@ -27,52 +27,17 @@
       height: 80%;
     }
       
-    .login-password-container {
-      display: inline-block;
-      position: relative;
-
-      .login-password-reveal {
-        position: absolute;
+    .reveal-password-container {
+      button.reveal-password-button {
         right: 20px;
         top: calc(50% - 2.5px);
         height: 24px;
         width: 24px;
-        margin: 0;
-        padding: 0;
-        transform: translateY(-50%);
 
         i.fa {
           font-size: 24px;
           color: white;
           opacity: 0.7;
-        }
-      }
-
-      .login-input-password[type=password] {
-        + .login-password-reveal  {
-          .login-password-reveal-show {
-            display: block;
-          }
-
-          .login-password-reveal-hide {
-            display: none;
-          }
-        }
-          
-        &::-ms-reveal {
-          display: none;
-        }
-      }
-
-      .login-input-password[type=text] {
-        + .login-password-reveal  {
-          .login-password-reveal-show {
-            display: none;
-          }
-
-          .login-password-reveal-hide {
-            display: block;
-          }
         }
       }
     }

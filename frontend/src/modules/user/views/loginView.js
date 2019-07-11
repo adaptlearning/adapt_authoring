@@ -11,11 +11,11 @@ define(function(require) {
     tagName: "div",
 
     events: {
-      'keydown #login-input-username'      : 'clearErrorStyling',
-      'keydown #login-input-password'      : 'clearErrorStyling',
-      'click .login-form-submit'           : 'submitLoginDetails',
-      'click button.dash'                  : 'goHome',
-      'click button.login-password-reveal' : 'togglePassword'
+      'keydown #login-input-username'       : 'clearErrorStyling',
+      'keydown #login-input-password'       : 'clearErrorStyling',
+      'click .login-form-submit'            : 'submitLoginDetails',
+      'click button.dash'                   : 'goHome',
+      'click button.reveal-password-button' : 'togglePassword'
     },
 
     preRender: function() {
@@ -34,15 +34,16 @@ define(function(require) {
     
     togglePassword: function(e) {
       e && e.preventDefault();
-      var passwordField = document.querySelector('#login-input-password');
-      var passwordReveal = document.querySelector('.login-password-reveal');
       
+      var passwordField = document.querySelector('.reveal-input-password');
+      var passwordReveal = document.querySelector('.reveal-password-button');
+
       if (passwordField.getAttribute('type') == 'password') {
         passwordField.setAttribute('type', 'text');
-        passwordReveal.setAttribute('aria-pressed','true');
+        passwordReveal.setAttribute('aria-pressed', 'true');
       } else {
         passwordField.setAttribute('type', 'password');
-        passwordReveal.setAttribute('aria-pressed','false');
+        passwordReveal.setAttribute('aria-pressed', 'false');
       }
     },
 

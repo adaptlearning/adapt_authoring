@@ -75,3 +75,45 @@ input:disabled, textarea:disabled {
   margin-top: 1rem;
   display: block;
 }
+
+.reveal-password-container {
+    display: inline-block;
+    position: relative;
+  
+    button.reveal-password-button {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      margin: 0;
+      padding: 0;
+      transform: translateY(-50%);
+    }
+  
+    .reveal-input-password[type=password] {
+      + .reveal-password-button  {
+        .reveal-password-show {
+          display: block;
+        }
+  
+        .reveal-password-hide {
+          display: none;
+        }
+      }
+  
+      &::-ms-reveal {
+        display: none;
+      }
+    }
+  
+    .reveal-input-password[type=text] {
+      + .reveal-password-button  {
+        .reveal-password-show {
+          display: none;
+        }
+  
+        .reveal-password-hide {
+          display: block;
+        }
+      }
+    }
+  }

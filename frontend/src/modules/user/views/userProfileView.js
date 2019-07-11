@@ -13,7 +13,7 @@ define(function(require){
       'click a.change-password'       : 'togglePassword',
       'keyup #password'               : 'onPasswordKeyup',
       'keyup #passwordText'           : 'onPasswordTextKeyup',
-      'click .change-password-reveal' : 'togglePasswordView'
+      'click .reveal-password-button' : 'togglePasswordView'
     },
 
     preRender: function() {
@@ -67,15 +67,15 @@ define(function(require){
     togglePasswordView: function() {
       event && event.preventDefault();
       
-      var passwordField = document.querySelector('.change-input-password');
-      var passwordReveal = document.querySelector('.change-password-reveal');
+      var passwordField = document.querySelector('.reveal-input-password');
+      var passwordReveal = document.querySelector('.reveal-password-button');
 
-       if (passwordField.getAttribute('type') == 'password') {
+      if (passwordField.getAttribute('type') == 'password') {
         passwordField.setAttribute('type', 'text');
-        passwordReveal.setAttribute('aria-pressed','true');
+        passwordReveal.setAttribute('aria-pressed', 'true');
       } else {
         passwordField.setAttribute('type', 'password');
-        passwordReveal.setAttribute('aria-pressed','false');
+        passwordReveal.setAttribute('aria-pressed', 'false');
       }
     },
 

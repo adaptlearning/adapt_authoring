@@ -1,86 +1,57 @@
 @import 'colours';
 
 .user-profile {
-    .error-text {
-        padding: 15px 30px;
-        background-color: @alert-color;
-        color:white;
+  .error-text {
+    padding: 15px 30px;
+    background-color: @alert-color;
+    color: white;
+  }
+
+  .intro-text {
+    padding: 30px 30px 0 30px;
+  }
+
+  .error,
+  .success {
+    position: static;
+    top: auto;
+    left: auto;
+    font-size: inherit;
+    margin-left: 5px;
+  }
+
+  .editing-overlay-panel-content {
+    border-bottom: none;
+
+    .inner {
+      margin-bottom: 20px;
+
+      .alert {
+        background-color: transparent;
+        color: @alert-color;
+      }
+
+      .alert-info {
+        color: @warning-color;
+      }
+
+      .alert-success {
+        color: @adapt-secondary-color;
+      }
+
+      .feedback {
+        padding-bottom: 15px;
+      }
     }
+  }
 
-    .intro-text {
-        padding: 30px 30px 0 30px;
-    }
+  .reveal-password-container {
+    display: unset;
 
-    .error,
-    .success {
-        position: static;
-        top: auto;
-        left: auto;
-        font-size: inherit;
-        margin-left: 5px;
-    }
-
-    .editing-overlay-panel-content {
-        border-bottom: none;
-        .inner {
-            margin-bottom: 20px;
-
-            .alert {
-                background-color: transparent;
-                color: @alert-color;
-            }
-            .alert-info {
-                color: @warning-color;
-            }
-            .alert-success {
-                color: @adapt-secondary-color;
-            }
-            .feedback {
-                padding-bottom: 15px;
-            }
-        }
-    }
-    
-    .change-password-container {
-    position: relative;
-
-    .change-password-reveal {
-      position: absolute;
+    button.reveal-password-button {
       right: 10px;
-      top: 50%;
       height: 24px;
       width: 24px;
-      margin: 0;
-      padding: 0;
-      transform: translateY(-50%);
-    }
-
-    .change-input-password[type=password] {
-      +.change-password-reveal {
-        .change-password-reveal-show {
-          display: block;
-        }
-
-        .change-password-reveal-hide {
-          display: none;
-        }
-      }
-
-      &::-ms-reveal {
-        display: none;
-      }
-    }
-
-    .change-input-password[type=text] {
-      +.change-password-reveal {
-        .change-password-reveal-show {
-          display: none;
-        }
-
-        .change-password-reveal-hide {
-          display: block;
-        }
-      }
     }
   }
 }

@@ -12,13 +12,13 @@
                     <i class="fa fa-times"></i><span id="loginErrorMessage"/>
                 </div>
                 <input type="email" autocomplete="off" class="login-input-username" value="" id="login-input-username" placeholder="{{t 'app.usernameoremail'}}" tabindex="1" />
-                <div class="login-password-container">                
-                  <input type="password" autocomplete="off" class="login-input-password" value="" id="login-input-password" placeholder="{{t 'app.password'}}" tabindex="2" />
-                  <button aria-pressed="false" class="login-password-reveal">
-                    <i class="fa fa-eye login-password-reveal-show"></i>
-                    <i class="fa fa-eye-slash login-password-reveal-hide"></i>
+                <span class="reveal-password-container">
+                  <input type="password" class="width-15 reveal-input-password" id="password" value="" autocomplete="off">
+                  <button aria-pressed="false" class="reveal-password-button">
+                    <i class="fa fa-eye reveal-password-show"></i>
+                    <i class="fa fa-eye-slash reveal-password-hide"></i>
                   </button>
-                </div>
+                </span>
                 <button type="submit" class="btn secondary login-form-submit" tabindex="3">{{t 'app.login'}}</button>
             </div>
             <div class="login-remember-me">

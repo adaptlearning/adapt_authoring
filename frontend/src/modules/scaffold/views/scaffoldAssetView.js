@@ -97,7 +97,7 @@ define([
 
     fetchCourseAsset: function(searchCriteria, cb) {
       if (!searchCriteria._contentTypeId) {
-        searchCriteria._contentTypeParentId = Origin.editor.data.course.get('_id');
+        searchCriteria._courseId = Origin.editor.data.course.get('_id');
       }
 
       (new ContentCollection(null, { _type: 'courseasset' })).fetch({

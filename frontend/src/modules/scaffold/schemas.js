@@ -38,7 +38,6 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
   function trimGlobals(schema) {
     var globals = schema._globals.properties;
     trimDisabledPlugins(globals._extensions, _.values(configModel.get('_enabledExtensions')));
-    trimDisabledPlugins(globals._components, configModel.get('_enabledComponents'), '_component');
     trimDisabledPlugins(globals._menu, editorData.menutypes.where({ name: configModel.get('_menu') }));
     trimDisabledPlugins(globals._theme, editorData.themetypes.where({ name: configModel.get('_theme') }));
     // trim off the empty globals objects

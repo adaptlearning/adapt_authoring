@@ -27,10 +27,11 @@
     <div class="pluginType-update col-10 col-centered">
       <div class="pluginType-update-inner tb-col-inner">
         {{#if isLocalPackage}}
-          <em class="info">({{t 'app.uploadedbyuser'}})</em>
+          <i title="{{t 'app.uploadedbyuser'}}" class="user-uploaded fa fa-user"></i>
         {{else}}
-          <button class="plugin-update-check btn">{{t 'app.checkforupdates'}}</button>
+          <button title="{{t 'app.checkforupdates'}}" class="plugin-update-check btn"><i class="fa fa-refresh"></i></button>
         {{/if}}
+          <button title="{{t 'app.remove'}}" class="plugin-remove btn alert"><i class="fa fa-trash-o"></i></button>
       </div>
     </div>
   </div>

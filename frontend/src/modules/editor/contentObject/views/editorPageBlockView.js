@@ -261,6 +261,8 @@ define(function(require){
         $parentElement: this.$el,
         parentView: this
       }).$el);
+      
+      $('.editor-component-list-sidebar-search-field input').focus();
     },
 
     setupPasteZones: function() {

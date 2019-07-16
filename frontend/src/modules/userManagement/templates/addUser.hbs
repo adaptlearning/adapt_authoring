@@ -21,7 +21,13 @@
       <div class="form-group">
           <label>{{t 'app.password'}} <span class="req">*</span></label>
           <div class="field-error display-none" data-error="">{{t 'app.validationrequired'}}</div>
-          <input type="password" name="password" autocomplete="off">
+          <span class="reveal-password-container">
+            <input type="password" class="reveal-input-password" id="password" value="" autocomplete="off">
+            <button aria-pressed="false" class="reveal-password-button">
+              <i class="fa fa-eye reveal-password-show"></i>
+              <i class="fa fa-eye-slash reveal-password-hide"></i>
+            </button>
+          </span>
       </div>
       <div class="form-group">
         <label>{{t 'app.tenant'}}</label>

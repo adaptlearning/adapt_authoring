@@ -417,19 +417,8 @@ define(function(require) {
 
     themeIsEditable: function(theme) {
       var props = theme && theme.get('properties');
-      if (!props) {
-        return false;
-      }
-      if (Object.keys(props).length === 1) {
-        if (props.hasOwnProperty('pluginLocations')) {
-          return false;
-        }
-        // For old themes
-        if (props.hasOwnProperty('_screenSize')) {
-          return false;
-        }
-      }
-      return true;
+
+      return props && props.variables;
     },
 
     flattenNestedProperties: function(properties) {

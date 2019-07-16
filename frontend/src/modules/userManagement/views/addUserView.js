@@ -28,6 +28,9 @@ define(function(require){
       this.$('.field-error').each(function(index, element) {
         var $error = $(element);
         var $input = $error.siblings('input');
+        
+        // Password is no longer a sibling so needs special treatment
+        $input = $input.length === 0 ? $error.siblings('.reveal-password-container').children('input') : $input;
 
         var isValid = $input.attr('name') === 'email' ?
           Helpers.isValidEmail($input.val().trim()) :

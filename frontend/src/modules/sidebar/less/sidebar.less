@@ -153,9 +153,9 @@
       position: inherit;
       top: inherit;
       left: inherit;
-      color: white !important;
+      color: @white !important;
       i {
-        color: white !important;
+        color: @white !important;
       }
     }
   }
@@ -267,7 +267,7 @@
 .sidebar-item-title-inner {
   padding:30px 20px;
   font-size: @sidebar-input-font-size;
-  font-weight: 200;
+  font-weight: @font-weight;
 }
 
 .sidebar-divide {
@@ -289,7 +289,7 @@
 .sidebar-fieldset-filter.error {
   @alert-color:#de6262;
   background: @alert-color;
-  color:#fff;
+  color: @white;
   &:hover {
     background: darken(@alert-color, 10%);
   }

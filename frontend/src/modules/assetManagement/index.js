@@ -51,7 +51,7 @@ define(function(require) {
   }
 
   function loadNewAssetView() {
-    Origin.trigger('location:title:update', { title: 'New Asset' });
+    Origin.trigger('location:title:update', { title: Origin.l10n.t('app.newasset')});
     Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
     Origin.contentPane.setView(AssetManagementNewAssetView, { model: new AssetModel });
   }
@@ -60,7 +60,7 @@ define(function(require) {
     // Fetch existing asset model
     (new AssetModel({ _id: location })).fetch({
       success: function(model) {
-        Origin.trigger('location:title:update', { title: 'Edit Asset' });
+        Origin.trigger('location:title:update', { title: Origin.l10n.t('app.editasset')});
         Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
         Origin.contentPane.setView(AssetManagementNewAssetView, { model: model });
       }

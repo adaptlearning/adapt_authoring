@@ -16,6 +16,7 @@
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/theme/*", "action":["create", "update", "read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/themepreset/*", "action":["create", "update", "read", "delete"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/menu/*", "action":["create", "update", "read"], "effect":"allow" },
-    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/extension/*", "action":["create", "update", "read"], "effect":"allow" }
+    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/extension/*", "action":["create", "update", "read"], "effect":"allow" },
+    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/autocomplete/*", "action":["read"], "effect":"allow" }
   ]
 }

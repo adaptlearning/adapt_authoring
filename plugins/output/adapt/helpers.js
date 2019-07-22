@@ -240,10 +240,14 @@ function getPluginFrameworkVersionCategory(serverFrameworkVersion, pluginMetaDat
           db.retrieve(contentPlugin.bowerConfig.type, { name: pluginMetaData.name }, { jsonOnly: true }, cb);
       },
       function categorisePlugin(records, cb) {
+          var importPluginVersionValid = semver.valid(pluginMetaData.version);
           if (records.length === 0) {
               // Not already installed so could be:
-              // Red - this plugin is not compatible
+              // Red - this plugin is not compatible or the version is invalid
               // Green - this plugin is compatible and will be installed
+              if (!importPluginVersionValid) {
+                return cb(null, {category: 'red', authoringToolVersion: app.polyglot.t('app.none')});
+              }
               if (semver.satisfies(serverFrameworkVersion, pluginFrameworkVersion, {
                       includePrerelease: true
                   })) {
@@ -253,10 +257,14 @@ function getPluginFrameworkVersionCategory(serverFrameworkVersion, pluginMetaDat
           } else {
               // A version is already installed so could be:
               // White - same version installed as in course
+              // Red - invalid version
               // Amber - newer version installed and will be used in the course instead
               // Green - older version installed so this newer version will be upgraded in the AT
               var serverPlugin = records[0];
               var serverPluginVersion = semver.clean(serverPlugin.version);
+              if (!importPluginVersionValid) {
+                  return cb(null, {category: 'red', authoringToolVersion: serverPluginVersion});
+              }
               var isServerVersionLatest = semver.compare(serverPluginVersion, pluginMetaData.version);
               if (isServerVersionLatest === 0) {
                 return cb(null, {category: 'white', authoringToolVersion: app.polyglot.t('app.none')});

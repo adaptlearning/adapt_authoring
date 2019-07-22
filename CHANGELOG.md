@@ -5,6 +5,26 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.9.0] - 2019-07-15
+
+Adds ability to remove plugins, removes unused user roles and latest bugfixes.
+
+### Fixed
+- Performance regression when upgrading to v0.8.1 ([#2370](https://github.com/adaptlearning/adapt_authoring/issues/2370))
+- Block instruction not being saved ([#2373](https://github.com/adaptlearning/adapt_authoring/issues/2373))
+- Not able to select a transparent colour in theme picker ([#2358](https://github.com/adaptlearning/adapt_authoring/issues/2358))
+- Not able to specify a select option for theme variable ([#2358](https://github.com/adaptlearning/adapt_authoring/issues/2358))
+- No dashboard redirect on invalid page ([#2351](https://github.com/adaptlearning/adapt_authoring/issues/2351))
+- Image thumbnail not showing in component settings ([#2345](https://github.com/adaptlearning/adapt_authoring/issues/2345))
+- Non-localised text in asset mangement ([#2340](https://github.com/adaptlearning/adapt_authoring/issues/2340))
+- Theme variables aren't used in core Less files ([#2338](https://github.com/adaptlearning/adapt_authoring/issues/2338))
+- Import times out if course is missing an asset ([#2326](https://github.com/adaptlearning/adapt_authoring/issues/2326))
+- Text misaligned on headers ([#2276](https://github.com/adaptlearning/adapt_authoring/issues/2276))
+
+### Added
+- Ability to remove plugins ([#928](https://github.com/adaptlearning/adapt_authoring/issues/928))
+- Remove unused user roles ([#1950](https://github.com/adaptlearning/adapt_authoring/issues/1950))
+
 ## [0.8.1] - 2019-05-23
 
 Bugfix release.
@@ -602,6 +622,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.9.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.7.0...v0.7.1

@@ -149,6 +149,44 @@ BowerPlugin.prototype.initialize.call(new Menu(), bowerConfig);
   });
 };
 
+/**
+ * Returns an array of course objects that use the menu with the passed id
+ * @param callback
+ * @param id
+ */
+Menu.prototype.getUses = function (callback, id) {
+  database.getDatabase(function (err, db) {
+    if (err) {
+        return callback(err);
+    }
+
+    db.retrieve('menutype', { _id: id }, function (err, menutypes) {
+      if (err) {
+        return callback(err);
+      }
+
+      if (menutypes.length !== 1) {
+        return callback(new Error('menutype not found'));
+      }
+
+      db.retrieve('config', { _menu: menutypes[0].name }, function (err, configs) {
+        if (err) {
+          return callback(err);
+        }
+
+        //Group all the course ids into an array for a mongo query
+        const courseIDs = [];
+        for (var i = 0, len = configs.length; i < len; i++) {
+          courseIDs.push(configs[i]._courseId);
+        }
+
+        db.retrieve('course', { _id: {$in: courseIDs} }, callback);
+      });
+    });
+  });
+};
+
+
 // setup extensions
 initialize();
 

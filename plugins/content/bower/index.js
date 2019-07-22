@@ -203,6 +203,141 @@ function initialize () {
   app.once('serverStarted', function (server) {
     // add plugin upload route
     rest.post('/upload/contentplugin', handleUploadedPlugin);
+
+    //Remove plugins
+    ['extensiontype', 'componenttype', 'themetype', 'menutype'].forEach(function (type) {
+      rest.delete('/' + type + '/:id', function (req, res, next) {
+        const id = req.params.id;
+        const user = usermanager.getCurrentUser();
+
+        permissions.hasPermission(user._id, 'delete', '*', function (isAllowed) {
+          if (!isAllowed) {
+            return res.status(401).json({
+              success: false,
+              message: app.polyglot.t('app.errorpermission')
+            });
+          }
+
+          database.getDatabase(function (err, db) {
+            if (err) {
+              return next(err);
+            }
+
+            db.retrieve(type, {_id: id}, function (err, doc) {
+              if (err) {
+                return next(err);
+              }
+
+              if (doc.length !== 1) {
+                return res.status(404).json({success: false, message: id + ' not found'});
+              }
+
+              //There is only one document in the collection so we can move it to the root for ease of use
+              doc = doc[0];
+
+              async.parallel(
+                [
+                  function (callback) {
+                    fs.remove(path.join(__dirname, '..', type.replace('type', ''), 'versions', doc.name), callback);
+                  },
+                  function (callback) {
+                    var pluginType = type.replace('type', '');
+                    if (pluginType === 'component' || pluginType === 'extension') pluginType = pluginType + 's';
+                    fs.remove(path.join(__dirname, '..', '..', '..', 'temp', configuration.getConfig('masterTenantID'), 'adapt_framework', 'src', pluginType, doc.name), callback);
+                  },
+                  function (callback) {
+                    fs.remove(path.join(__dirname, '..', '..', 'content', 'bower', 'bowercache', doc.name), callback);
+                  },
+                  function (callback) {
+                    db.destroy(type, {_id: id}, callback);
+                  },
+                  function (callback) {
+                    if (type !== 'themetype') return callback();
+                    db.destroy('themepreset', {parentTheme: doc.theme}, callback);
+                  }
+                ],
+                function (err) {
+                  if (err) {
+                    return next(err);
+                  }
+
+                  return res.status(200).json({success: true});
+                }
+              );
+            });
+          });
+        });
+      });
+    });
+
+
+    //Returns a list of courses using the requested plugin
+    rest.get('/:type/:id/uses', function (req, res, callback) {
+      const id = req.params.id;
+      const type = req.params.type;
+      const user = usermanager.getCurrentUser();
+
+      if (['extensiontype', 'componenttype', 'themetype', 'menutype'].indexOf(type) === -1) {
+        return res.status(403).json({success: false, message: 'Invalid type'});
+      }
+
+      permissions.hasPermission(user._id, 'delete', '*', function (isAllowed) {
+        if (!isAllowed) {
+          return res.status(401).json({success: false, message: app.polyglot.t('app.errorpermission')});
+        }
+
+        let typeObject;
+        try {
+          typeObject = require('../' + type.replace('type', '') + '/index.js');
+        } catch (err) {
+          return callback(err);
+        }
+
+        typeObject.prototype.getUses(function (err, courses) {
+          if (err) {
+            return callback(err);
+          }
+
+          const returnData = [];
+          const userCache = {}
+          async.each(courses, function (course, callback) {
+            const shortCourse = {}
+            shortCourse._id = course._id
+            shortCourse.title = course.title
+
+            database.getDatabase(function (err, db) {
+              if (err) {
+                return callback(err);
+              }
+              if (typeof userCache[course.createdBy] === 'string') {
+                shortCourse.createdByEmail = userCache[course.createdBy]
+                return callback();
+              }
+
+              db.retrieve('user', {_id: course.createdBy}, function (err, users) {
+                if (err) {
+                  return callback(err);
+                }
+
+                if (users.length !== 1) {
+                  shortCourse.createdByEmail = '';
+                } else {
+                  shortCourse.createdByEmail = users[0].email;
+                  userCache[course.createdBy] = users[0].email;
+                }
+                returnData.push(shortCourse);
+                callback();
+              });
+            });
+          }, function(err){
+            if (err) {
+              return callback(err);
+            }
+            return res.status(200).json({ success: true, courses: returnData });
+          });
+        }, id);
+      });
+    });
   });
 
   app.contentmanager.addContentHook('create', 'config', { when: 'post' }, function(data, next) {
@@ -219,6 +354,15 @@ function initialize () {
     });
   });
 }
+
+/**
+ * The default for listing the courses that use a specific plugin
+ * This should be overridden in each plugin type object
+ *
+ */
+BowerPlugin.prototype.getUses = function (callback, id) {
+    return callback(new Error('The getUses function must be overridden in the plugin’s object'));
+};
 
 /**
  * the default endpoint for PUT /api/{plugintype}/

@@ -44,7 +44,8 @@ function ImportSourceCheck(req, done) {
         frameworkVersions: {},
         pluginVersions : {
             white: {},
-            green: {},
+            'green-install': {},
+            'green-update': {},
             amber: {},
             red: {}
         }
@@ -213,7 +214,7 @@ function ImportSourceCheck(req, done) {
                         fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
                             if (error) return callback(error);
                             helpers.getPluginFrameworkVersionCategory(details.frameworkVersions.installed, data, pluginData.type, function (error, result) {
-                                details.pluginVersions[result.category][data.name] = { currentVersion: data.version, displayName: data.displayName, newVersion: result.newVersion };
+                                details.pluginVersions[result.category][data.name] = { importVersion: data.version, displayName: data.displayName, authoringToolVersion: result.authoringToolVersion };
                                 pluginData.name = data.name;
                                 cb2();
                             });

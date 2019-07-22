@@ -80,23 +80,38 @@
   }
 
   &.plugin-list {
-    .status {
-      padding: 10px 0;
-      border-radius: 3px;
-      color: white;
+    .red {
+      .status, .key {
+        color: @framework-import-red;
+      }
+    }
+
+    .amber {
+      .status, .key {
+        color: @framework-import-amber;
+      }
+
+      .at-version {
+        font-weight: 600;
+      }
+    }
+
+    .green-install, .green-update {
+      .status, .key {
+        color: @framework-import-green;
+      }
+
+      .import-version {
+        font-weight: 600;
+      }
+    }
+
+    .status, .key {
       font-weight: 600;
     }
 
-    &.red .status {
-      background-color: @framework-import-red;
-    }
-
-    &.amber .status {
-      background-color: @framework-import-amber;
-    }
-
-    &.green .status {
-      background-color: @framework-import-green;
+    .key-field {
+      margin-bottom: 5px;
     }
   }
 }

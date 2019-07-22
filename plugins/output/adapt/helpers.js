@@ -247,9 +247,9 @@ function getPluginFrameworkVersionCategory(serverFrameworkVersion, pluginMetaDat
               if (semver.satisfies(serverFrameworkVersion, pluginFrameworkVersion, {
                       includePrerelease: true
                   })) {
-                return cb(null, {category: 'green', newVersion: pluginMetaData.version});
+                return cb(null, {category: 'green-install', authoringToolVersion: app.polyglot.t('app.none')});
               }
-              cb(null, {category: 'red', newVersion: app.polyglot.t('app.na')});
+              cb(null, {category: 'red', authoringToolVersion: app.polyglot.t('app.none')});
           } else {
               // A version is already installed so could be:
               // White - same version installed as in course
@@ -259,14 +259,14 @@ function getPluginFrameworkVersionCategory(serverFrameworkVersion, pluginMetaDat
               var serverPluginVersion = semver.clean(serverPlugin.version);
               var isServerVersionLatest = semver.compare(serverPluginVersion, pluginMetaData.version);
               if (isServerVersionLatest === 0) {
-                return cb(null, {category: 'white', newVersion: app.polyglot.t('app.na')});
+                return cb(null, {category: 'white', authoringToolVersion: app.polyglot.t('app.none')});
               }
               if (semver.satisfies(serverFrameworkVersion, pluginFrameworkVersion, {
                       includePrerelease: true
                   }) && isServerVersionLatest < 0) {
-                  return cb(null, {category: 'green', newVersion: pluginMetaData.version});
+                  return cb(null, {category: 'green-update', authoringToolVersion: serverPluginVersion});
               }
-              cb(null, {category: 'amber', newVersion: serverPluginVersion});
+              cb(null, {category: 'amber', authoringToolVersion: serverPluginVersion});
           }
       }
   ], function(error, category) {

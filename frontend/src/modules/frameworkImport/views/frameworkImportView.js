@@ -78,20 +78,6 @@ define(function(require){
       this.sidebarView.$('.framework-import-sidebar-save-button').removeClass('show-details');
       var $details = this.$('#import_details');
       var $framework_versions = $details.find('.framework-versions');
-      var categoryMap = {
-        'green': {
-          summary: 'app.plugingreensummary',
-          label: 'app.plugingreenlabel'
-        },
-        'amber': {
-          summary: 'app.pluginambersummary',
-          label: 'app.pluginamberlabel'
-        },
-        'red': {
-          summary: 'app.pluginredsummary',
-          label: 'app.pluginredlabel'
-        }
-      };
 
       if (_.isEmpty(data.pluginVersions.red)) {
         $('.framework-import-sidebar-save-button').addClass('save');
@@ -111,27 +97,8 @@ define(function(require){
       // Can/Cannot be imported summary
       this.displaySummary(data);
 
-      // Plugin tables
-      for (var category in data.pluginVersions) {
-        if (category === 'white') continue;
-        if (_.isEmpty(data.pluginVersions[category])) continue;
-
-        var $category_display = $details.find('.plugin-list.' + category);
-        $category_display.text(Origin.l10n.t(categoryMap[category].summary));
-        $category_display.append(new FrameworkImportPluginHeadingView().$el);
-        $category_display.removeClass('display-none');
-
-        // Sort plugins alphabetically
-        var pluginArray = Object.values(data.pluginVersions[category]);
-          pluginArray = pluginArray.sort(function(a, b) {
-            return a.displayName.localeCompare(b.displayName);
-        });
-
-        pluginArray.forEach(function(plugin) {
-          plugin.status = Origin.l10n.t(categoryMap[category].label);
-          $category_display.find('.frameworkImportPlugin-plugins').append(new FrameworkImportPluginView({ data: plugin }).$el);
-        });
-      }
+      // Plugin list
+      this.displayPluginList(data);
 
       $details.removeClass('display-none');
     },
@@ -150,10 +117,11 @@ define(function(require){
 
       $summary_title.text(Origin.l10n.t('app.coursecanbeimported'));
 
-      if (!_.isEmpty(data.pluginVersions.amber) || !_.isEmpty(data.pluginVersions.green)) {
+      var greenExists = !(_.isEmpty(data.pluginVersions['green-install']) && _.isEmpty(data.pluginVersions['green-update']));
+      if (!_.isEmpty(data.pluginVersions.amber) || greenExists) {
         $summary_title.addClass('amber');
         $summary_description.text(Origin.l10n.t('app.coursecanbeimporteddesc'));
-        if (!_.isEmpty(data.pluginVersions.green) && _.isEmpty(data.pluginVersions.amber)) {
+        if (greenExists && _.isEmpty(data.pluginVersions.amber)) {
           $summary_title.removeClass('amber').addClass('green');
         }
         return;
@@ -161,6 +129,48 @@ define(function(require){
 
       $summary_description.text(Origin.l10n.t('app.coursecanbeimportedwhitedesc'));
       return;
+    },
+
+    displayPluginList: function(data) {
+      var $plugin_list = this.$('#import_details').find('.plugin-list');
+      var categoryMap = {
+        'green-install': {
+          label: 'app.plugingreeninstalllabel'
+        },
+        'green-update': {
+          label: 'app.plugingreenupdatelabel'
+        },
+        'amber': {
+          label: 'app.pluginamberlabel'
+        },
+        'red': {
+          label: 'app.pluginredlabel'
+        }
+      };
+      var categories = ['red', 'amber', 'green-update', 'green-install'];
+
+      $plugin_list.append(new FrameworkImportPluginHeadingView().$el);
+
+      for (i = 0; i < categories.length; i++) {
+        var categoryData = data.pluginVersions[categories[i]];
+        if (categories[i] === 'white') continue;
+        if (_.isEmpty(categoryData)) continue;
+
+        // Sort plugins alphabetically
+        var pluginArray = Object.values(categoryData);
+        pluginArray = pluginArray.sort(function(a, b) {
+          return a.displayName.localeCompare(b.displayName);
+        });
+
+        pluginArray.forEach(function(plugin) {
+          plugin.status = Origin.l10n.t(categoryMap[categories[i]].label);
+          plugin.category = categories[i];
+          $plugin_list.find('.frameworkImportPlugin-plugins').append(new FrameworkImportPluginView({ data: plugin }).$el);
+        });
+
+        $plugin_list.removeClass('display-none');
+        $plugin_list.find('.key-field.'+ categories[i]).removeClass('display-none');
+      }
     },
 
     goBack: function() {
@@ -214,6 +224,8 @@ define(function(require){
     },
 
     completeImport: function() {
+      this.sidebarView.updateButton('.framework-import-sidebar-save-button', Origin.l10n.t('app.importing'));
+
       this.$('form.frameworkImportDetails').ajaxSubmit({
         error: _.bind(this.onAjaxError, this),
         success: _.bind(this.onFormSubmitSuccess, this)

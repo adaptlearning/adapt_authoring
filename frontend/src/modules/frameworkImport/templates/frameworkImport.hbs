@@ -48,8 +48,11 @@
             <div class="title"></div>
             <div class="description"></div>
         </div>
-        <div class="inner plugin-list red display-none"></div>
-        <div class="inner plugin-list amber display-none"></div>
-        <div class="inner plugin-list green display-none"></div>
+        <div class="inner plugin-list display-none">
+            <div class="red key-field display-none"><span class="key">{{t 'app.pluginredlabel'}}</span> - {{t 'app.pluginredkey'}}</div>
+            <div class="amber key-field display-none"><span class="key">{{t 'app.pluginamberlabel'}}</span> - {{t 'app.pluginamberkey'}}</div>
+            <div class="green-update key-field display-none"><span class="key">{{t 'app.plugingreenupdatelabel'}}</span> - {{t 'app.plugingreenupdatekey'}}</div>
+            <div class="green-install key-field display-none"><span class="key">{{t 'app.plugingreeninstalllabel'}}</span> - {{t 'app.plugingreeninstallkey'}}</div>
+        </div>
     </form>
 </div>

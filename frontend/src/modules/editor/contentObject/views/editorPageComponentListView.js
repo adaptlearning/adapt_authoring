@@ -68,6 +68,8 @@ define(function(require) {
       this.$el.css({ right:this.$('.editor-component-list-sidebar')
         .width()*-1})
         .velocity({ right: 0 }, {duration: 400, easing: 'easeOutQuart'});
+      
+      this.$('.editor-component-list-sidebar-search-field input').focus();
     },
 
     closeView: function() {

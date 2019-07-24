@@ -87,7 +87,7 @@ define(function(require){
 
       // Framework versions panel
       if (data.frameworkVersions.imported !== data.frameworkVersions.installed) {
-          $framework_versions.text(Origin.l10n.t('app.importframeworkversions', {
+          $framework_versions.html(Origin.l10n.t('app.importframeworkversions', {
               importVersion: data.frameworkVersions.imported,
               installedVersion: data.frameworkVersions.installed
           }));

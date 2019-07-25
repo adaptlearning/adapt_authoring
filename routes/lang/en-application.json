@@ -398,6 +398,7 @@
   "app.component": "component",
   "app.addedDefault": "Add to new courses by default?",
   "app.errorloadconfig": "Failed to load configuration settings for %{course}",
+  "app.errorloadfiles": "Failed to load content files",
   "app.colourLabel": "Colour Label",
   "app.colourLabelTitle": "Colour Label",
   "app.colourLabelIntro": "The colours are <b>only</b> applied in the authoring tool and will <b>not affect the generated course</b>. The settings are synced with all users in the authoring tool.",

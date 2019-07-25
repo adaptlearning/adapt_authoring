@@ -154,7 +154,7 @@ function ImportSourceCheck(req, done) {
                 async.eachSeries(Object.keys(contentMap), function(type, cb2) {
                     var jsonPath = path.join(COURSE_JSON_PATH, (type !== 'config') ? COURSE_LANG : '', `${contentMap[type] || type}.json`);
                     if (!fs.existsSync(jsonPath)) {
-                        return cb2(error);
+                        return cb2(new Error(app.polyglot.t('app.errorloadfiles')));
                     }
                     cb2();
                 }, cb);
@@ -212,7 +212,7 @@ function ImportSourceCheck(req, done) {
 
                     async.each(plugindata.pluginIncludes, function (pluginData, cb2) {
                         fs.readJSON(path.join(pluginData.location, Constants.Filenames.Bower), function(error, data) {
-                            if (error) return callback(error);
+                            if (error) return cb2(error);
                             helpers.getPluginFrameworkVersionCategory(details.frameworkVersions.installed, data, pluginData.type, function (error, result) {
                                 details.pluginVersions[result.category][data.name] = { importVersion: data.version, displayName: data.displayName, authoringToolVersion: result.authoringToolVersion };
                                 pluginData.name = data.name;

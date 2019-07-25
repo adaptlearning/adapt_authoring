@@ -12,8 +12,10 @@ define(function(require){
 
     preRender: function() {
       Origin.trigger('location:title:update', { title: Origin.l10n.t('app.frameworkimporttitle') });
-      this.listenTo(Origin, 'frameworkImport:showDetails', this.showDetails);
-      this.listenTo(Origin, 'frameworkImport:completeImport', this.completeImport);
+      this.listenTo(Origin, {
+        'frameworkImport:showDetails': this.showDetails,
+        'frameworkImport:completeImport': this.completeImport
+      });
     },
 
     postRender: function() {
@@ -66,8 +68,8 @@ define(function(require){
           $('.progress-percent').html(percentVal);
         },
 
-        error: _.bind(this.onAjaxError, this),
-        success: _.bind(this.displayDetails, this)
+        error: this.onAjaxError.bind(this),
+        success: this.displayDetails.bind(this)
       });
 
       return false;
@@ -77,7 +79,7 @@ define(function(require){
       this.$('#import_upload').addClass('display-none');
       this.sidebarView.$('.framework-import-sidebar-save-button').removeClass('show-details');
       var $details = this.$('#import_details');
-      var $framework_versions = $details.find('.framework-versions');
+      var $frameworkVersions = $details.find('.framework-versions');
 
       if (_.isEmpty(data.pluginVersions.red)) {
         $('.framework-import-sidebar-save-button').addClass('save');
@@ -87,11 +89,10 @@ define(function(require){
 
       // Framework versions panel
       if (data.frameworkVersions.imported !== data.frameworkVersions.installed) {
-          $framework_versions.html(Origin.l10n.t('app.importframeworkversions', {
+          $frameworkVersions.html(Origin.l10n.t('app.importframeworkversions', {
               importVersion: data.frameworkVersions.imported,
               installedVersion: data.frameworkVersions.installed
-          }));
-          $framework_versions.removeClass('display-none');
+          })).removeClass('display-none');
       }
 
       // Can/Cannot be imported summary
@@ -118,17 +119,16 @@ define(function(require){
       $summary_title.text(Origin.l10n.t('app.coursecanbeimported'));
 
       var greenExists = !(_.isEmpty(data.pluginVersions['green-install']) && _.isEmpty(data.pluginVersions['green-update']));
-      if (!_.isEmpty(data.pluginVersions.amber) || greenExists) {
-        $summary_title.addClass('amber');
-        $summary_description.text(Origin.l10n.t('app.coursecanbeimporteddesc'));
-        if (greenExists && _.isEmpty(data.pluginVersions.amber)) {
-          $summary_title.removeClass('amber').addClass('green');
-        }
+      if (_.isEmpty(data.pluginVersions.amber) && !greenExists) {
+        $summary_description.text(Origin.l10n.t('app.coursecanbeimportedwhitedesc'));
         return;
       }
 
-      $summary_description.text(Origin.l10n.t('app.coursecanbeimportedwhitedesc'));
-      return;
+      $summary_title.addClass('amber');
+      $summary_description.text(Origin.l10n.t('app.coursecanbeimporteddesc'));
+      if (greenExists && _.isEmpty(data.pluginVersions.amber)) {
+        $summary_title.removeClass('amber').addClass('green');
+      }
     },
 
     displayPluginList: function(data) {

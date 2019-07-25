@@ -151,7 +151,7 @@ define(function(require){
 
       $plugin_list.append(new FrameworkImportPluginHeadingView().$el);
 
-      for (i = 0; i < categories.length; i++) {
+      for (var i = 0, j = categories.length; i < j; i++) {
         var categoryData = data.pluginVersions[categories[i]];
         if (categories[i] === 'white') continue;
         if (_.isEmpty(categoryData)) continue;

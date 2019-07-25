@@ -167,7 +167,7 @@ function ImportSourceCheck(req, done) {
                 var assetFolderError = false;
                 var missingFolders = [];
                 importInfo['assetFolders'] = cleanFormAssetDirs;
-                for (index = 0; index < importInfo['assetFolders'].length; ++index) {
+                for (var i = 0, j = importInfo['assetFolders'].length; i < j; ++i) {
                     var assetFolderPath = path.join(COURSE_JSON_PATH , COURSE_LANG, importInfo['assetFolders'][index]);
                     if (!fs.existsSync(assetFolderPath)) {
                         assetFolderError = true;

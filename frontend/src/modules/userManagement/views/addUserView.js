@@ -29,7 +29,6 @@ define(function(require){
         var $error = $(element);
         var $input = $error.siblings('input');
         
-        // Password is no longer a sibling so needs special treatment
         $input = $input.length === 0 ? $error.siblings('.reveal-password-container').children('input') : $input;
 
         var isValid = $input.attr('name') === 'email' ?
@@ -108,15 +107,15 @@ define(function(require){
     togglePasswordView: function() {
       event && event.preventDefault();
       
-      var passwordField = document.querySelector('.reveal-input-password');
-      var passwordReveal = document.querySelector('.reveal-password-button');
+      var passwordField = this.$('.reveal-input-password');
+      var passwordReveal = this.$('.reveal-password-button');
 
-      if (passwordField.getAttribute('type') == 'password') {
-        passwordField.setAttribute('type', 'text');
-        passwordReveal.setAttribute('aria-pressed', 'true');
+      if (passwordField.attr('type') == 'password') {
+        passwordField.attr('type', 'text');
+        passwordReveal.attr('aria-pressed', 'true');
       } else {
-        passwordField.setAttribute('type', 'password');
-        passwordReveal.setAttribute('aria-pressed', 'false');
+        passwordField.attr('type', 'password');
+        passwordReveal.attr('aria-pressed', 'false');
       }
     }
   }, {

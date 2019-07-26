@@ -108,6 +108,7 @@ define(function(require) {
 
     postRender: function() {
       this.updateSelects();
+      this.setPresetSelection(Origin.editor.data.course.get('lastSelectedThemePresetId'));
       this.setViewToReady();
 
       this.$el.show();
@@ -297,9 +298,9 @@ define(function(require) {
         return Origin.trigger('sidebar:resetButtons');
       }
 
-      this.postThemeData(function(){
-        this.postPresetData(function() {
-          this.postSettingsData(this.onSaveSuccess);
+      this.postSettingsData(function(){
+        this.postThemeData(function() {
+          this.postPresetData(this.onSaveSuccess);
         });
       });
     },
@@ -502,7 +503,7 @@ define(function(require) {
     },
 
     onThemeChanged: function() {
-      this.setPresetSelection(null);
+      this.setPresetSelection(Origin.editor.data.course.get('lastSelectedThemePresetId'));
       this.updatePresetSelect();
       this.renderForm();
       this.updateRestorePresetButton(false);

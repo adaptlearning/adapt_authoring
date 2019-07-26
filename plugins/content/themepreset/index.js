@@ -34,7 +34,7 @@ ThemePresetContent.prototype.updatePreset = function(presetId, courseId, res, ne
     app.contentmanager.update('config', { _courseId: courseId }, JSON.stringify(delta), function(err) {
       if (err) return next(err);
       // lose any previously set theme settings, preset overrides
-      app.contentmanager.update('course', { _id: courseId }, { _courseId: courseId, themeSettings: null }, function(err) {
+      app.contentmanager.update('course', { _id: courseId }, { _courseId: courseId, themeSettings: null, lastSelectedThemePresetId: presetId }, function(err) {
         if (err) return next(err);
         // force a rebuild of the course
         var tenantId = Usermanager.getCurrentUser().tenant._id;

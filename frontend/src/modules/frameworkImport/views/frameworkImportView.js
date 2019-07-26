@@ -89,10 +89,10 @@ define(function(require){
 
       // Framework versions panel
       if (data.frameworkVersions.imported !== data.frameworkVersions.installed) {
-          $frameworkVersions.html(Origin.l10n.t('app.importframeworkversions', {
-              importVersion: data.frameworkVersions.imported,
-              installedVersion: data.frameworkVersions.installed
-          })).removeClass('display-none');
+        $frameworkVersions.html(Origin.l10n.t('app.importframeworkversions', {
+          importVersion: data.frameworkVersions.imported,
+          installedVersion: data.frameworkVersions.installed
+        })).removeClass('display-none');
       }
 
       // Can/Cannot be imported summary

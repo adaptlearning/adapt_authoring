@@ -220,7 +220,7 @@ define(function(require){
         closeOnConfirm: false,
         callback: function(newPassword) {
           if(newPassword === false) return;
-          else if(newPassword === "") return swal.showInputError(Origin.l10n.t('app.passwordempty'));
+          else if(newPassword === "") return swal.showInputError(Origin.l10n.t('app.invalidempty'));
           var postData = {
             "email": self.model.get('email'),
             "password": newPassword

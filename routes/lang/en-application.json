@@ -60,7 +60,7 @@
   "app.resetpasswordtitle": "Change password",
   "app.resetpasswordinstruction": "Enter a new password for<br/><b>%{email}</b>",
   "app.changepasswordtext": "Password updated for<br/><b>%{email}</b>",
-  "app.passwordempty": "You need to write something!",
+  "app.invalidempty": "You need to write something!",
   "app.changeadminaccounts": "Please log in as another admin for full access.",
   "app.failedlogins": "Failed logins",
   "app.lastaccess": "Last access",

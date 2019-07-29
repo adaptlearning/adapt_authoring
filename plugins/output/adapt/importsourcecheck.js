@@ -103,9 +103,9 @@ function ImportSourceCheck(req, done) {
             logger.log('info', files.file.path)
             helpers.unzip(files.file.path, COURSE_ROOT_FOLDER, function(error) {
               if(error) return cb2(error);
-                importInfo['cleanupDirs'] = [files.file.path, COURSE_ROOT_FOLDER];
-                cb2();
-              });
+              importInfo['cleanupDirs'] = [files.file.path, COURSE_ROOT_FOLDER];
+              cb2();
+            });
           });
         });
       }
@@ -168,10 +168,11 @@ function ImportSourceCheck(req, done) {
         var missingFolders = [];
         importInfo['assetFolders'] = cleanFormAssetDirs;
         for (var i = 0, j = importInfo['assetFolders'].length; i < j; ++i) {
-          var assetFolderPath = path.join(COURSE_JSON_PATH , COURSE_LANG, importInfo['assetFolders'][index]);
+          var assetFolder = importInfo.assetFolders[i];
+          var assetFolderPath = path.join(COURSE_JSON_PATH , COURSE_LANG, assetFolder);
           if (!fs.existsSync(assetFolderPath)) {
             assetFolderError = true;
-            missingFolders.push(importInfo['assetFolders'][index]);
+            missingFolders.push(assetFolder);
           }
         }
         // if a user input folder is missing log error and abort early

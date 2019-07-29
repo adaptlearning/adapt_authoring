@@ -22,8 +22,8 @@ define(function(require){
       // tagging
       this.$('#tags_control').tagsInput({
         autocomplete_url: 'api/autocomplete/tag',
-        onAddTag: _.bind(this.onAddTag, this),
-        onRemoveTag: _.bind(this.onRemoveTag, this),
+        onAddTag: this.onAddTag.bind(this),
+        onRemoveTag: this.onRemoveTag.bind(this),
         'minChars' : 3,
         'maxChars' : 30
       });
@@ -227,8 +227,8 @@ define(function(require){
       this.sidebarView.updateButton('.framework-import-sidebar-save-button', Origin.l10n.t('app.importing'));
 
       this.$('form.frameworkImportDetails').ajaxSubmit({
-        error: _.bind(this.onAjaxError, this),
-        success: _.bind(this.onFormSubmitSuccess, this)
+        error: this.onAjaxError.bind(this),
+        success: this.onFormSubmitSuccess.bind(this)
       });
     }
   }, {

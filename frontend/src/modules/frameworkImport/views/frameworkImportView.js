@@ -81,14 +81,14 @@ define(function(require){
       var $details = this.$('#import_details');
       var $frameworkVersions = $details.find('.framework-versions');
 
-      if (_.isEmpty(data.pluginVersions.red)) {
+      if (_.isEmpty(data.pluginVersions.red)  && !data.frameworkVersions.downgrade) {
         $('.framework-import-sidebar-save-button').addClass('save');
       } else {
         $('.framework-import-sidebar-save-button').remove();
       }
 
       // Framework versions panel
-      if (data.frameworkVersions.imported !== data.frameworkVersions.installed) {
+      if ((data.frameworkVersions.imported !== data.frameworkVersions.installed) && !data.frameworkVersions.downgrade) {
         $frameworkVersions.html(Origin.l10n.t('app.importframeworkversions', {
           importVersion: data.frameworkVersions.imported,
           installedVersion: data.frameworkVersions.installed
@@ -110,13 +110,19 @@ define(function(require){
       var $summary_description = $details.find('.import-summary .description');
       this.sidebarView.resetButtons();
 
+      $summary_title.addClass('red').text(Origin.l10n.t('app.coursecannotbeimported'));
+
       if (!_.isEmpty(data.pluginVersions.red)) {
-        $summary_title.addClass('red').text(Origin.l10n.t('app.coursecannotbeimported'));
         $summary_description.text(Origin.l10n.t('app.coursecannotbeimporteddesc'));
         return;
       }
 
-      $summary_title.text(Origin.l10n.t('app.coursecanbeimported'));
+      if (data.frameworkVersions.downgrade) {
+        $summary_description.text(Origin.l10n.t('app.coursecannotbeimporteddowngradedesc'));
+        return;
+      }
+
+      $summary_title.removeClass('red').text(Origin.l10n.t('app.coursecanbeimported'));
 
       var greenExists = !(_.isEmpty(data.pluginVersions['green-install']) && _.isEmpty(data.pluginVersions['green-update']));
       if (_.isEmpty(data.pluginVersions.amber) && !greenExists) {

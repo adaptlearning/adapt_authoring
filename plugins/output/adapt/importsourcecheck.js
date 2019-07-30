@@ -10,6 +10,7 @@ const helpers = require('./helpers');
 const IncomingForm = require('formidable').IncomingForm;
 const logger = require("../../../lib/logger");
 const path = require("path");
+const semver = require('semver');
 
 function ImportSourceCheck(req, done) {
   var contentMap = {
@@ -146,6 +147,10 @@ function ImportSourceCheck(req, done) {
           helpers.checkFrameworkVersion(versionJson, function(error, data) {
             if(error) return cb(error);
             details.frameworkVersions = data;
+            if (semver.major(data.imported) > semver.major(data.installed)) {
+              details.frameworkVersions.downgrade = true;
+              return done();
+            }
             cb();
           });
         });

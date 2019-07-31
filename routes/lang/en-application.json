@@ -365,7 +365,7 @@
   "app.plugingreeninstalllabel": "Install",
   "app.plugingreenupdatelabel": "Update",
   "app.pluginamberlabel": "Use installed version",
-  "app.pluginredlabel": "Action Needed",
+  "app.pluginredlabel": "Action needed",
   "app.plugingreeninstallkey": "This plugin will be installed into the authoring tool during import.",
   "app.plugingreenupdatekey": "This plugin will be updated in the authoring tool during import.",
   "app.pluginamberkey": "The version of this plugin included in this import is either not compatible with this authoring tool, or a newer version is already installed. The imported course will use the existing version.",

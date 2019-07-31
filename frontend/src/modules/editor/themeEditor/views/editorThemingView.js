@@ -62,12 +62,14 @@ define(function(require) {
       var selectedTheme = this.getSelectedTheme();
 
       if (!this.themeIsEditable(selectedTheme)) {
+        this.$('.theme-selector').removeClass('show-preset-select');
         this.$('.empty-message').show();
         this.$('.editable-theme').hide();
         $('.editor-theming-sidebar-reset').hide();
         return;
       }
 
+      this.$('.theme-selector').addClass('show-preset-select');
       this.$('.empty-message').hide();
       this.$('.editable-theme').show();
       $('.editor-theming-sidebar-reset').show();

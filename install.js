@@ -282,7 +282,7 @@ installHelpers.checkPrimaryDependencies(function(error) {
 function generatePromptOverrides() {
   if(USE_CONFIG) {
     var configJson = require('./conf/config.json');
-    var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
+    var configData = JSON.parse(JSON.stringify(configJson).replace(/:true/g, ':"y"').replace(/:false/g, ':"n"'));
     configData.install = 'y';
   }
   const sessionSecret = USE_CONFIG && configData.sessionSecret || crypto.randomBytes(64).toString('hex');

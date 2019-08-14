@@ -354,7 +354,7 @@
   "app.importinvalidpackage": "Encountered an unexpected file structure. Please check you have uploaded a valid export package and try again.",
   "app.importframeworkversions": "Import framework version: %{importVersion}<br/>Installed framework version: %{installedVersion}<br/><br/>If you proceed with this import then your course will use framework %{installedVersion} and should be tested.",
   "app.coursecanbeimported": "Course can be imported",
-  "app.coursecanbeimportedwhitedesc": "All of the plugins and the framework version used in this course are identical to those in this authoring tool.",
+  "app.coursecanbeimportedwhitedesc": "All of the plugins used in this course are identical to those in this authoring tool.",
   "app.coursecanbeimporteddesc": "One or more of the plugins used in this course will be updated as part of the import process. You should test the course after the import has completed.",
   "app.coursecannotbeimported": "Course cannot be imported",
   "app.coursecannotbeimporteddesc": "One or more of the plugins used in this course are not compatible with the version of the framework that is used by this authoring tool. Please remove or update these plugins and try again.",

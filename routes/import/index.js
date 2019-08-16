@@ -8,8 +8,24 @@ var helpers = require('../../plugins/output/adapt/helpers');
 // stop any auto permissions checks
 permissions.ignoreRoute(/^\/import\/?.*$/);
 
+server.post('/importsourcecheck', function (request, response, next) {
+  app.outputmanager.getOutputPlugin(app.configuration.getConfig('outputPlugin'), function (error, plugin) {
+    if (error) {
+      logger.log('error', error);
+      return response.status(500).send({ body: error.message });
+    }
+    plugin.importsourcecheck(request, function (error, importData) {
+      if (error) {
+        logger.log('error', error);
+        return response.status(500).send({ body: error.message });
+      }
+      return response.status(200).send(importData);
+    });
+  });
+});
+
 server.post('/importsource', function (request, response, next) {
-  var outputplugin = app.outputmanager.getOutputPlugin(app.configuration.getConfig('outputPlugin'), function (error, plugin) {
+  app.outputmanager.getOutputPlugin(app.configuration.getConfig('outputPlugin'), function (error, plugin) {
     if (error) {
       logger.log('error', error);
       return response.status(500).send({ body: error.message });

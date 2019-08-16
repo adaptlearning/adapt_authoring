@@ -1142,8 +1142,21 @@ function handleUploadedPlugin (req, res, next) {
                   if (error) {
                     return next(error);
                   }
-                  res.statusCode = 200;
-                  return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });
+
+                  function sendResponse() {
+                    res.statusCode = 200;
+                    return res.json({ 
+                      success: true, 
+                      pluginType: pluginType, 
+                      message: 'successfully added new plugin' 
+                    });
+                  }
+
+                  Promise.all([
+                    fs.remove(file.path),
+                    fs.remove(outputPath)
+                  ]).then(sendResponse).catch(sendResponse);
+
                 });
               });
             });

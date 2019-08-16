@@ -106,39 +106,39 @@ define(function(require){
 
     displaySummary: function(data) {
       var $details = this.$('#import_details');
-      var $summary_title = $details.find('.import-summary .title');
-      var $summary_description = $details.find('.import-summary .description');
+      var $summaryTitle = $details.find('.import-summary .title');
+      var $summaryDescription = $details.find('.import-summary .description');
       this.sidebarView.resetButtons();
 
-      $summary_title.addClass('red').text(Origin.l10n.t('app.coursecannotbeimported'));
+      $summaryTitle.addClass('red').text(Origin.l10n.t('app.coursecannotbeimported'));
 
       if (!_.isEmpty(data.pluginVersions.red)) {
-        $summary_description.text(Origin.l10n.t('app.coursecannotbeimporteddesc'));
+        $summaryDescription.text(Origin.l10n.t('app.coursecannotbeimporteddesc'));
         return;
       }
 
       if (data.frameworkVersions.downgrade) {
-        $summary_description.text(Origin.l10n.t('app.coursecannotbeimporteddowngradedesc'));
+        $summaryDescription.text(Origin.l10n.t('app.coursecannotbeimporteddowngradedesc'));
         return;
       }
 
-      $summary_title.removeClass('red').text(Origin.l10n.t('app.coursecanbeimported'));
+      $summaryTitle.removeClass('red').text(Origin.l10n.t('app.coursecanbeimported'));
 
       var greenExists = !(_.isEmpty(data.pluginVersions['green-install']) && _.isEmpty(data.pluginVersions['green-update']));
       if (_.isEmpty(data.pluginVersions.amber) && !greenExists) {
-        $summary_description.text(Origin.l10n.t('app.coursecanbeimportedwhitedesc'));
+        $summaryDescription.text(Origin.l10n.t('app.coursecanbeimportedwhitedesc'));
         return;
       }
 
-      $summary_title.addClass('amber');
-      $summary_description.text(Origin.l10n.t('app.coursecanbeimporteddesc'));
+      $summaryTitle.addClass('amber');
+      $summaryDescription.text(Origin.l10n.t('app.coursecanbeimporteddesc'));
       if (greenExists && _.isEmpty(data.pluginVersions.amber)) {
-        $summary_title.removeClass('amber').addClass('green');
+        $summaryTitle.removeClass('amber').addClass('green');
       }
     },
 
     displayPluginList: function(data) {
-      var $plugin_list = this.$('#import_details').find('.plugin-list');
+      var $pluginList = this.$('#import_details').find('.plugin-list');
       var categoryMap = {
         'green-install': {
           label: 'app.plugingreeninstalllabel'
@@ -155,7 +155,7 @@ define(function(require){
       };
       var categories = ['red', 'amber', 'green-update', 'green-install'];
 
-      $plugin_list.append(new FrameworkImportPluginHeadingView().$el);
+      $pluginList.append(new FrameworkImportPluginHeadingView().$el);
 
       for (var i = 0, j = categories.length; i < j; i++) {
         var categoryData = data.pluginVersions[categories[i]];
@@ -163,7 +163,9 @@ define(function(require){
         if (_.isEmpty(categoryData)) continue;
 
         // Sort plugins alphabetically
-        var pluginArray = Object.values(categoryData);
+        var pluginArray = Object.keys(categoryData).map(function(e) {
+          return categoryData[e]
+        });
         pluginArray = pluginArray.sort(function(a, b) {
           return a.displayName.localeCompare(b.displayName);
         });
@@ -171,11 +173,11 @@ define(function(require){
         pluginArray.forEach(function(plugin) {
           plugin.status = Origin.l10n.t(categoryMap[categories[i]].label);
           plugin.category = categories[i];
-          $plugin_list.find('.frameworkImportPlugin-plugins').append(new FrameworkImportPluginView({ data: plugin }).$el);
+          $pluginList.find('.frameworkImportPlugin-plugins').append(new FrameworkImportPluginView({ data: plugin }).$el);
         });
 
-        $plugin_list.removeClass('display-none');
-        $plugin_list.find('.key-field.'+ categories[i]).removeClass('display-none');
+        $pluginList.removeClass('display-none');
+        $pluginList.find('.key-field.'+ categories[i]).removeClass('display-none');
       }
     },
 

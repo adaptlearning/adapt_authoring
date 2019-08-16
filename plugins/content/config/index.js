@@ -150,7 +150,7 @@ ConfigContent.prototype.retrieve = function (search, options, next) {
       return next(new Error(`Unable to retrieve ${modelName} for ${JSON.stringify(search)}`));
     }
 
-    return next(null, [records[0]]);
+    return next(null, [records[0].toObject()]);
   });
 };
 

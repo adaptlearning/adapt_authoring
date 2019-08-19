@@ -5,6 +5,24 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.10.0] - 2019-08-26
+
+Adds ability to import courses with an older framework version, and latest bugfixes.
+
+### Fixed
+- Improve error messages when saving theme preset names ([#2382](https://github.com/adaptlearning/adapt_authoring/issues/2382))
+- Theme preset dropdown keeps reverting to 'No preset' ([#2379](https://github.com/adaptlearning/adapt_authoring/issues/2379))
+- Manage theme preset button wraps onto second line ([#2361](https://github.com/adaptlearning/adapt_authoring/issues/2361))
+- Sometimes a theme is wrongly identified as being editable ([#2360](https://github.com/adaptlearning/adapt_authoring/issues/2360))
+- Absolute pikaday path breaks grunt build in some cases ([#2314](https://github.com/adaptlearning/adapt_authoring/issues/2314))
+- Course creators cannot see asset tags list ([#2306](https://github.com/adaptlearning/adapt_authoring/issues/2306))
+- Upload files not always cleared from tmp ([#2115](https://github.com/adaptlearning/adapt_authoring/issues/2115))
+- When 'Add component' is clicked move focus to component search ([#1963](https://github.com/adaptlearning/adapt_authoring/issues/1963))
+- Allow for pages without a sidebar ([#1541](https://github.com/adaptlearning/adapt_authoring/issues/1541))
+
+### Added
+- Ability to import a course with an older framework version ([#2288](https://github.com/adaptlearning/adapt_authoring/issues/2288))
+
 ## [0.9.0] - 2019-07-15
 
 Adds ability to remove plugins, removes unused user roles and latest bugfixes.
@@ -622,6 +640,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.10.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.7.1...v0.8.0

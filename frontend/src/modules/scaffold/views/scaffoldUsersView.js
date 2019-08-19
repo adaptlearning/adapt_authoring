@@ -23,7 +23,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     fetchUsers: function(callback) {
-      $.get('/api/user')
+      $.get('api/user')
         .done(callback.bind(this))
         .fail(function(error) {
           Origin.Notify.alert({ type: 'error', text: error });

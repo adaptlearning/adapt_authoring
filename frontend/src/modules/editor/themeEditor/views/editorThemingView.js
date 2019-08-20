@@ -530,6 +530,7 @@ define(function(require) {
         closeOnConfirm: false,
         showCancelButton: true,
         callback: function(presetName) {
+          if (presetName === false) return;
           if (presetName === "") return swal.showInputError(Origin.l10n.t('app.invalidempty'));
           var theme = self.$('.theme select').val();
           var presets = self.presets.where({ parentTheme: theme, displayName: presetName });

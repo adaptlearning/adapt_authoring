@@ -24,7 +24,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     render: function() {
-      window.ace.config.set('basePath', '/js/ace');
+      window.ace.config.set('basePath', 'js/ace');
 
       this.editor = window.ace.edit(this.$el[0], {
         maxLines: 30,

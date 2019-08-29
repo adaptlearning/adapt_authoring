@@ -12,7 +12,7 @@ define(function(require) {
     Origin.permissions.addRoute('frameworkImport', data.featurePermissions);
   });
 
-  Origin.on('router:frameworkImport', function(location, subLocation, action) {
+  Origin.on('router:frameworkImport', function() {
     Origin.contentPane.setView(FrameworkImportView, { model: new Backbone.Model({ globalData: data }) });
     Origin.sidebar.addView(new FrameworkImportSidebarView().$el);
   });

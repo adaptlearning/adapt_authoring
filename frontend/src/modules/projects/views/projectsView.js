@@ -133,7 +133,8 @@ define(function(require){
           operators : {
             skip: this.fetchCount,
             limit: this.pageSize,
-            sort: this.sort
+            sort: this.sort,
+            collation: { locale: navigator.language.substring(0, 2) }
           }
         },
         success: function(collection, response) {

@@ -1,0 +1,116 @@
+@import 'colours';
+@import 'sharedStyles';
+@framework-import-red: #ff3343;
+@framework-import-amber: #ffa340;
+@framework-import-green: @secondary-color;
+
+.frameworkImport .inner {
+  .form-container-style;
+  padding: 30px;
+
+  .progress-container {
+    position:relative;
+    visibility:hidden;
+    width:76px;
+    height:10px;
+    background-color: @white;
+    border:1px solid black;
+    overflow: hidden;
+    border-radius: 8px;
+    margin: 10px 0;
+
+    .progress-bar {
+      width:0%;
+      background-color: @primary-color;
+      height:100%;
+      .progress-percent {
+        display: none;
+      }
+    }
+  }
+
+  .col-row {
+    display: flex;
+    align-items: center;
+  }
+
+  .tb-row .tb-col-inner {
+    padding: 0;
+  }
+
+  li {
+    margin-left: 0;
+    list-style: none;
+  }
+
+  .title {
+    padding-bottom: 30px;
+    font-size: 16px;
+    font-weight: @font-weight-bold;
+  }
+
+  form .form-group {
+    border: none;
+    .field-error {
+      padding-bottom: 5px;
+    }
+  }
+
+  &.import-summary {
+    .title {
+      padding-bottom: 10px;
+      color: @primary-color;
+
+      &.red {
+        color: @framework-import-red;
+      }
+
+      &.amber {
+        color: @framework-import-amber;
+      }
+
+      &.green {
+        color: @framework-import-green;
+      }
+    }
+    .description {
+      font-weight: @font-weight-bold;
+    }
+  }
+
+  &.plugin-list {
+    .red {
+      .status, .key {
+        color: @framework-import-red;
+      }
+    }
+
+    .amber {
+      .status, .key {
+        color: @framework-import-amber;
+      }
+
+      .at-version {
+        font-weight: @font-weight-bold;
+      }
+    }
+
+    .green-install, .green-update {
+      .status, .key {
+        color: @framework-import-green;
+      }
+
+      .import-version {
+        font-weight: @font-weight-bold;
+      }
+    }
+
+    .status, .key {
+      font-weight: @font-weight-bold;
+    }
+
+    .key-field {
+      margin-bottom: 5px;
+    }
+  }
+}

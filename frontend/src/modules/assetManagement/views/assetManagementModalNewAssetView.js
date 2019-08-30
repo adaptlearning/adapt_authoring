@@ -31,13 +31,22 @@ define(function(require){
 
     postRender: function() {
       // tagging
-      this.$('#tags_control').tagsInput({
-        autocomplete_url: '/api/autocomplete/tag',
-        onAddTag: _.bind(this.onAddTag, this),
-        onRemoveTag: _.bind(this.onRemoveTag, this),
-        'minChars' : 3,
-        'maxChars' : 30
+      this.$('#tags_control').selectize({
+        create: true,
+        labelField: 'title',
+        load: function(query, callback) {
+          $.ajax({
+            url: 'api/autocomplete/tag',
+            method: 'GET',
+            error: callback,
+            success: callback
+          });
+        },
+        onItemAdd: this.onAddTag.bind(this),
+        onItemRemove: this.onRemoveTag.bind(this),
+        searchField: [ 'title' ]
       });
+
       // Set view to ready
       this.setViewToReady();
     },
@@ -54,7 +63,6 @@ define(function(require){
       var $uploadFileErrormsg = $uploadFile.prev('label').find('span.error');
 
       $.each(this.$('.required'), function (index, el) {
-        console.log(el.val, el);
         var $errormsg = $(el).prev('label').find('span.error');
         if (!$.trim($(el).val())) {
           validated = false;
@@ -116,7 +124,6 @@ define(function(require){
       });
       this.$('#tags').val(tags);
 
-      var self = this;
       this.$('.asset-form').ajaxSubmit({
         uploadProgress: function(event, position, total, percentComplete) {
           $(".progress-container").css("visibility", "visible");
@@ -130,13 +137,13 @@ define(function(require){
             text: xhr.responseJSON.message
           });
         },
-        success: function(data, status, xhr) {
+        success: _.bind(function(data, status, xhr) {
           Origin.once('assetManagement:assetManagementCollection:fetched', function() {
             Origin.trigger('assetManagement:modal:selectItem', data._id);
           })
           Origin.trigger('assetManagement:collection:refresh', true);
-          self.remove();
-        }
+          this.remove();
+        }, this)
       });
 
       // Return false to prevent the page submitting
@@ -146,7 +153,7 @@ define(function(require){
     onAddTag: function (tag) {
       var model = this.model;
       $.ajax({
-        url: '/api/content/tag',
+        url: 'api/content/tag',
         method: 'POST',
         data: { title: tag }
       }).done(function (data) {

@@ -10,7 +10,6 @@ define(function(require) {
 		},
 
 		initialize: function() {
-			this.onFilterClicked(this); // Hack used for #1184. Sure there must be a better way to turn on.
 			this.listenTo(Origin, 'remove:views', this.remove);
 			this.render();
 		},
@@ -30,9 +29,9 @@ define(function(require) {
 				this.model.set('_isSelected', true);
 				this.$('i').addClass('fa-toggle-on');
 			}
-			
-			Origin.trigger('sidebarFieldsetFilter:filterForm', this.model.get('legend'));
-			
+
+			Origin.trigger('sidebarFieldsetFilter:filterForm', this.model.get('key'));
+
 		}
 
 	}, {

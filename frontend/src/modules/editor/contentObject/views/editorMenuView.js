@@ -1,6 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
   var Origin = require('core/origin');
+  var Helpers = require('core/helpers');
+  var ContentCollection = require('core/collections/contentCollection');
   var EditorOriginView = require('../../global/views/editorOriginView');
   var EditorMenuLayerView = require('./editorMenuLayerView');
   var EditorMenuItemView = require('./editorMenuItemView');
@@ -10,103 +12,142 @@ define(function(require){
     tagName: "div",
 
     preRender: function() {
+      this.layerViews = {};
       this.listenTo(Origin, {
-        'editorView:menuView:updateSelectedItem': this.updateSelectedItem,
+        'editorView:menuView:updateSelectedItem': this.onSelectedItemChanged,
+        'editorView:menuView:addItem': this.onItemAdded,
+        'editorView:itemDeleted': this.onItemDeleted,
         'window:resize': this.setupHorizontalScroll
       });
     },
 
     postRender: function() {
-      this.setupMenuViews();
-      _.defer(this.setViewToReady);
-    },
-
-    setupMenuViews: function() {
-      this.addMenuLayerView(this);
-      if (!Origin.editor.currentContentObjectId) {
-        return;
-      }
-      this.restoreCurrentMenuState();
-    },
-
-    /**
-     * Recursive function which shows the expanded children for a given context model
-     * @param {Model} A given contextObject model
-     */
-    addMenuLayerView: function(view) {
-      var menuLayer = this.renderMenuLayerView(view);
-      // Add children views of current model
-      view.model.getChildren().each(function(contentObject) {
-        menuLayer.append(new EditorMenuItemView({ model: contentObject }).$el);
-      }, this);
-
-      _.defer(_.bind(function() {
-        this.setupDragDrop();
-        var $window = $(window);
-        this.setupHorizontalScroll($window.width(), $window.height());
-        this.scrollToElement();
-      }, this));
-    },
-
-    /**
-     * Appemds a menu item layer for a given ID to the editor
-     * @param {String} parentId Unique identifier of the parent
-     */
-    renderMenuLayerView: function(view) {
-      // Get the current views _id to store as the _parentId
-      var parentId = view.model.get('_id');
-      // Create MenuLayerView
-      var menuLayerView = new EditorMenuLayerView({ _parentId: parentId });
-      // Set subview on layerView so this can be removed
-      view.subView = menuLayerView;
-      // Render and append the view
-      $('.editor-menu-inner').append(menuLayerView.$el);
-      // Return the container ready to render menuItemView's
-      return menuLayerView.$('.editor-menu-layer-inner');
-    },
-
-    /**
-     * Restores the current menu state by finding the current element
-     * then setting it's parent recursively to _isExpanded
-     */
-    restoreCurrentMenuState: function() {
-      // Find current menu item
-      var currentSelectedMenuItem = Origin.editor.data.contentObjects.findWhere({
-        _id: Origin.editor.currentContentObjectId
+      this.contentobjects = new ContentCollection(null, {
+        _type: 'contentobject',
+        _courseId: Origin.editor.data.course.get('_id')
       });
-      currentSelectedMenuItem.set({ _isSelected: true, _isExpanded: true });
-      this.setParentElementToSelected(currentSelectedMenuItem);
+      this.contentobjects.fetch({
+        success: _.bind(function(children) {
+          this.contentobjects = children;
+          this.renderLayers();
+          _.defer(this.setViewToReady);
+        }, this),
+        error: console.error
+      });
     },
 
     /**
-    * This is triggered when an item is clicked
+    * Renders all menu layers from the current course to the Origin.editor.currentContentObject
     */
-    updateSelectedItem: function(view) {
-      // store the ID of the currently selected contentObject
-      Origin.editor.currentContentObjectId = view.model.get('_id');
+    renderLayers: function() {
+      var selectedModel = Origin.editor.currentContentObject || Origin.editor.data.course;
+      this.getItemHeirarchy(selectedModel, function(hierarchy) {
+        var ids = [];
 
-      if(view.model.get('_type') === 'menu') {
-        this.addMenuLayerView(view);
-        return;
+        for (var i = 0; i < hierarchy.length; i++) {
+          var item = hierarchy[i];
+          var id = item.get('_id');
+          ids.push(id);
+          if (!this.layerViews.hasOwnProperty(id)) {
+            this.renderLayer(item);
+          }
+        }
+
+        // remove all unused layerviews 
+        for (var id in this.layerViews) {
+          if (!this.layerViews.hasOwnProperty(id) || ids.indexOf(id) > -1) {
+            continue;
+          }
+          this.layerViews[id].remove();
+          delete this.layerViews[id];
+        }
+
+        _.defer(_.bind(function() {
+          this.removeSelectedItemStyling();
+          this.addSelectedItemStyling(selectedModel.get('_id'));
+          this.setUpInteraction();
+        }, this));
+      });
+    },
+
+    /**
+     * Renders a single menu layer
+     */
+    renderLayer: function(model) {
+      var menuLayerView = new EditorMenuLayerView({
+        _parentId: model.get('_id'),
+        models: this.contentobjects.where({ _parentId: model.get('_id') })
+      });
+      this.layerViews[model.get('_id')] = menuLayerView;
+      $('.editor-menu-inner').append(menuLayerView.$el);
+    },
+    
+    updateItemViews: function(previousParent, model) {
+      // since we remove the childViews when the layerView is destroyed 
+      // we must move menuItemView to its new layerView
+      var index = -1;
+      for (var i = 0; i < this.layerViews[previousParent].childViews.length; i++) {
+        var v = this.layerViews[previousParent].childViews[i];
+        if (v.model.get('_id') === model.get('_id')) {
+          index = i;
+          break;
+        }
       }
+      var view = this.layerViews[previousParent].childViews.splice(index, 1);
+      this.layerViews[model.get('_parentId')].childViews.push(view[0]);
+    },
+
+    setUpInteraction: function() {
+      this.setupDragDrop();
+      var $window = $(window);
+      this.setupHorizontalScroll($window.width(), $window.height());
       this.scrollToElement();
     },
 
-    /**
-     * Recursive function which shows any children for a given contentObject and sets
-     * the UI element to 'expanded'
-     * @param {Model} selectedItem A given contextObject model
-     */
-    setParentElementToSelected: function(selectedItem) {
-      var parentId = selectedItem.get('_parentId');
-
-      if(parentId === Origin.editor.data.course.get('_id')) {
-        return;
+    addSelectedItemStyling: function(id) {
+      this.$('.editor-menu-item[data-id="' + id + '"]').addClass('selected');
+      var model = this.contentobjects.findWhere({ _id: id });
+      var parentId = model && model.get('_parentId');
+      if (parentId) {
+        // recurse
+        this.addSelectedItemStyling(parentId);
       }
-      var parentModel = Origin.editor.data.contentObjects.findWhere({ _id: parentId });
-      parentModel.set('_isExpanded', true);
+    },
 
-      this.setParentElementToSelected(parentModel);
+    removeSelectedItemStyling: function() {
+      this.$('.editor-menu-item').removeClass('selected');
+    },
+
+    /**
+    * Generates an array with the inheritence line from a given contentobject to the current course
+    * @param {Model} contentModel
+    * @return {Array}
+    */
+    getItemHeirarchy: function(model, done) {
+      var hierarchy = [];
+      if (model.get('_type') === 'menu') {
+        hierarchy.push(model);
+      }
+      var __this = this;
+      var _getParent = function(model, callback) {
+        var parent = __this.contentobjects.findWhere({ _id: model.get('_parentId') });
+        if (parent) {
+          hierarchy.push(parent);
+          return _getParent(parent, callback);
+        }
+        hierarchy.push(Origin.editor.data.course);
+        callback();
+      };
+      _getParent(model, function() {
+        if (typeof done === 'function') done.call(__this, hierarchy.reverse());
+      });
+    },
+
+    onSelectedItemChanged: function(model) {
+      if (model && model.get('_id') === Origin.editor.currentContentObject && Origin.editor.currentContentObject.get('_id')) return;
+
+      Origin.editor.currentContentObject = model;
+      this.renderLayers();
     },
 
     setupHorizontalScroll: function(windowWidth, windowHeight) {
@@ -138,15 +179,28 @@ define(function(require){
         connectWith: ".editor-menu-layer-inner",
         scroll: true,
         helper: 'clone',
-        stop: function(event,ui) {
+        placeholder: 'sortable-placeholder',
+        start: function(event, ui) {
+          ui.placeholder.height(ui.item.height());
+        },
+        stop: _.bind(function(event,ui) {
           var $draggedElement = ui.item;
           var id = $('.editor-menu-item-inner', $draggedElement).attr('data-id');
           var sortOrder = $draggedElement.index() + 1;
           var parentId = $draggedElement.closest('.editor-menu-layer').attr('data-parentId');
-          var currentModel = Origin.editor.data.contentObjects.findWhere({ _id: id });
-          currentModel.save({ _sortOrder: sortOrder, _parentId: parentId }, { patch: true });
+          var currentModel = this.contentobjects.findWhere({ _id: id });
+          var previousParent = currentModel.get('_parentId');
+          currentModel.save({
+            _sortOrder: sortOrder,
+            _parentId: parentId 
+          }, {
+            patch: true,
+            success: _.bind(function(model, response, options) {
+              this.updateItemViews(previousParent, model);
+            }, this)
+          });
           currentModel.set('_isDragging', false);
-        },
+        }, this),
         over: function(event, ui) {
           $(event.target).closest('.editor-menu-layer').attr('data-over', true);
         },
@@ -156,6 +210,25 @@ define(function(require){
         receive: function(event, ui) {
           // Prevent moving a menu item between levels
           if (ui.item.hasClass('content-type-menu')) ui.sender.sortable("cancel");
+        }
+      });
+    },
+
+    onItemAdded: function(newModel) {
+      this.contentobjects.add(newModel);
+    },
+
+    onItemDeleted: function(oldModel) {
+      this.contentobjects.fetch({
+        success: _.bind(function() {
+          // select the parent of the deleted item
+          Origin.trigger('editorView:menuView:updateSelectedItem', this.contentobjects.findWhere({ _id: oldModel.get('_parentId') }));
+        }, this),
+        error: function() {
+          Origin.Notify.alert({
+            type: 'error',
+            text: 'app.errorfetchingdata'
+          });
         }
       });
     }

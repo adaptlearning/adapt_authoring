@@ -21,11 +21,16 @@
   }
 
   .paste-zone {
-    margin: 30px;
-    height: 50px;
+
+    &.paste-zone-block,
+    &.paste-zone-article {
+      margin-bottom: 20px;
+    }
 
     &-inner {
       padding: 20px 30px;
+      border: 1px dashed lighten(@primary-color, 15%);
+      border-radius: 3px;
     }
 
     &-component-left {
@@ -36,10 +41,6 @@
     &-component-right {
       width: 48%;
       float: right;
-    }
-
-    &-component {
-      margin: 0px;
     }
 
     &-component-full {
@@ -100,9 +101,6 @@
 }
 
 .editor-item-settings {
-    position: absolute;
-    top: 0%;
-    left: 0px;
     font-size: 16px;
     width: 100%;
     opacity: 1;
@@ -118,17 +116,51 @@
     }
 
     &-inner {
-      padding: 6px;
-    }
+      button {
+        padding: 10px;
+        font-size: 16px;
+        line-height: 16px;
+        height: 16px;
+        box-sizing: content-box;
+        text-align: center;
+      }
 
-    .editor-delete-page-element {
-      float: right;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      padding: 0 10px;
+
+      .editor-delete-page-element {
+        order: 2;
+      }
+      .editor-page-element-detail-inner {
+        width: 100%;
+        padding: 0 10px;
+        overflow: hidden;
+        order: 1;
+        display: flex;
+        align-items: center;
+        .title {
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+        &.component-detail-inner {
+          opacity: 0;  // we need the element to move the trash-icon to the right
+        }
+      }
+      .component-move {
+        order: 1;
+      }
+      .editor-collapse-article {
+        order: 2;
+      }
     }
 }
 
-.editor-item-settings a,
-.editor-menu-item-settings a {
-  color:@primary-color;
+.editor-item-settings button,
+.editor-menu-item-settings button {
+  color: @primary-color;
   transition: all 0.3s;
   &:hover {
     color:darken(@primary-color,5%);
@@ -149,15 +181,20 @@ i.asset-clear {
   font-weight: @font-weight-bold;
 }
 
-.syncing {
-  transform: scale(0.8, 0.8);
-  opacity:0.6;
+.page-content-syncing {
+  &.block {
+    min-height: 150px;
+    .component {
+      &-inner {
+        display: none;
+      }
+    }
+  }
 }
 
-.synced {
-  transition:transform 0.3s cubic-bezier(0.8, 0.0, 0.2, 1), opacity 0.3s cubic-bezier(0.8, 0.0, 0.2, 1)!important;
-  transform: scale(1, 1);
-  opacity:1;
+.syncing {
+  transform: scale(0.8, 0.8);
+  opacity: 0.6;
 }
 
 .not-synced {

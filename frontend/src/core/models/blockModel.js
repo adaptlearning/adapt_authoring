@@ -3,10 +3,10 @@ define(function(require) {
   var ContentModel = require('./contentModel');
 
   var BlockModel = ContentModel.extend({
-    urlRoot: '/api/content/block',
-    _parent: 'articles',
-    _siblings: 'blocks',
-    _children: 'components',
+    urlRoot: 'api/content/block',
+    _parentType: 'article',
+    _siblingTypes: 'block',
+    _childTypes: 'component',
     // Block specific properties
     layoutOptions:  null,
     dragLayoutOptions: null,
@@ -27,7 +27,11 @@ define(function(require) {
       'title',
       '_extensions',
       'themeSettings',
-      '_onScreen'
+      '_onScreen',
+      '_isVisible',
+      '_isHidden',
+      'instruction',
+      '_colorLabel'
     ]
   });
 

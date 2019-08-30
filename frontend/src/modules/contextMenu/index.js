@@ -40,24 +40,12 @@ define(function(require) {
     ContextMenu.addItem('component', getDefaultItems());
     ContextMenu.addItem('page', getDefaultItems());
     ContextMenu.addItem('menu', getDefaultItems(['copy']));
-    ContextMenu.addItem('page-min', getDefaultItems(['copy','delete']));
-    ContextMenu.addItem('sharedcourse', [
-      {
-        title: Origin.l10n.t('app.duplicate'),
-        className: 'context-menu-item',
-        callbackEvent: 'duplicate'
-      },
-      {
-        title: Origin.l10n.t('app.preview'),
-        className: 'context-menu-item',
-        callbackEvent: 'preview'
-      }
-    ]);
-    ContextMenu.addItem('course', getDefaultItems());
+    ContextMenu.addItem('page-min', getDefaultItems(['copy','delete','colorLabel']));
+    ContextMenu.addItem('course', getDefaultItems(['colorLabel']));
   };
 
   /*
-  * returns the default list excluding anything in [blacklist] (uses event name)
+  * returns the default list excluding anything in [blacklist] (uses callbackEvent to filter)
   */
   function getDefaultItems(blacklist) {
     var DEFAULT_ITEMS = [
@@ -80,6 +68,11 @@ define(function(require) {
         title: Origin.l10n.t('app.delete'),
         className: 'context-menu-item',
         callbackEvent: "delete"
+      },
+      {
+        title: Origin.l10n.t('app.colourLabel'),
+        className: 'context-menu-item',
+        callbackEvent: "colorLabel"
       }
     ];
     if(!blacklist) {

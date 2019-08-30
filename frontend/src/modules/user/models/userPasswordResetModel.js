@@ -13,7 +13,7 @@ define(function(require) {
     initialize : function(options) {},
 
     url: function () {
-      return "/api/userpasswordreset/" + this.get('token');
+      return "api/userpasswordreset/" + this.get('token');
     },
 
     validate: function (attributes, options) {
@@ -34,33 +34,10 @@ define(function(require) {
           validationErrors.confirmPassword = Origin.l10n.t('app.validationpasswordmatch');
         }
       }
-      
-      return _.isEmpty(validationErrors) ? null : validationErrors;
-    },
 
-    resetPassword: function () {
-      var self = this;
-
-      $.ajax({
-        method: 'post',
-        url: '/api/userpasswordreset',
-        data: {
-          user: self.get('user'),
-          // password: password,
-          token: self.get('token')
-        },
-        success: function (jqXHR, textStatus, errorThrown) {
-          if (jqXHR.success) {
-            Origin.router.navigateToHome();
-          }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: Origin.l10n.t('app.errorgeneric')
-          });
-        }
-      });
+      return _.isEmpty(validationErrors)
+        ? null
+        : validationErrors;
     }
   });
 

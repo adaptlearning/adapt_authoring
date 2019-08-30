@@ -65,14 +65,22 @@ define(function(require) {
       this.headerHeight = this.$('.editor-component-list-sidebar-header').height();
       $(window).resize();
       // move bar into place and animate in
-      this.$el.css({ right:this.$('.editor-component-list-sidebar').width()*-1}).animate({ right:"0" }, 400,"easeOutQuart");
+      this.$el.css({ right:this.$('.editor-component-list-sidebar')
+        .width()*-1})
+        .velocity({ right: 0 }, {duration: 400, easing: 'easeOutQuart'});
+      
+      this.$('.editor-component-list-sidebar-search-field input').focus();
     },
 
     closeView: function() {
       var self = this;
-      this.$el.animate({ right:this.$('.editor-component-list-sidebar').width() *- 1 }, 400,"easeOutQuart", function onAnimOut() {
-        $('html').css('overflow-y', '');
-        self.remove();
+      this.$el.velocity({ right:this.$('.editor-component-list-sidebar').width() *- 1 }, {
+        duration: 400, 
+        easing: 'easeOutQuart',
+        complete: function onAnimOut() {
+          $('html').css('overflow-y', '');
+          self.remove();
+        }
       });
     },
 

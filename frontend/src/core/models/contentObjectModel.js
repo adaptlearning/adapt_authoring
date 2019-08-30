@@ -4,10 +4,10 @@ define(function(require) {
   var ContentModel = require('./contentModel');
 
   var ContentObjectModel = ContentModel.extend({
-    urlRoot: '/api/content/contentobject',
-    _parent: 'contentObjects',
-    _siblings:'contentObjects',
-    _children: 'articles',
+    urlRoot: 'api/content/contentobject',
+    _parentType: 'contentobject',
+    _siblingTypes: 'contentobject',
+    _childTypes: ['contentobject', 'article'],
 
     defaults: {
       _isSelected: false,

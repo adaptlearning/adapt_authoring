@@ -40,12 +40,9 @@ define(function(require){
 
           $.ajax({
             type: 'PUT',
-            url:'/api/content/component/' + componentId,
+            url:'api/content/component/' + componentId,
             data: newData,
             success: function(jqXHR, textStatus, errorThrown) {
-              var componentModel = Origin.editor.data.components.get(componentId);
-              componentModel.set(newData);
-
               // Re-render the move-from block
               Origin.trigger('editorView:moveComponent:' + blockId);
               if (blockId !== parentId) {

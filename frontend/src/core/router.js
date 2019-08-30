@@ -94,7 +94,7 @@ define(function(require) {
       var loc = Origin.location;
       if (loc && loc.module == 'dashboard') {
         var suffix = loc.route1 ? '/' + loc.route1 : '';
-        Origin.dashboardRoute = '/#/dashboard' + suffix;
+        Origin.dashboardRoute = '#/dashboard' + suffix;
       }
     },
 

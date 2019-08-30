@@ -1,397 +1,225 @@
-var builder = require('./lib/application');
-var prompt = require('prompt');
-var fs = require('fs');
-var request = require('request');
+var _ = require('underscore');
 var async = require('async');
-var exec = require('child_process').exec;
-var rimraf = require('rimraf');
-var path = require('path');
+var chalk = require('chalk');
+var fs = require('fs-extra');
+var prompt = require('prompt');
 var optimist = require('optimist');
+var path = require('path');
+var semver = require('semver');
+var migrateMongoose = require('migrate-mongoose');
 
-// Constants
+var configuration = require('./lib/configuration');
+var logger = require('./lib/logger');
+var origin = require('./lib/application');
+var OutputConstants = require('./lib/outputmanager').Constants;
+var installHelpers = require('./lib/installHelpers');
+
+var IS_INTERACTIVE = process.argv.length === 2;
+
 var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
-
-// Helper
-var isVagrant = function () {
-  if (process.argv.length > 2) {
-    return true;
-  }
-  return false;
-};
-
-// GLOBALS
-var app = builder();
-var installedBuilderVersion = '';
-var latestBuilderTag = '';
-var installedFrameworkVersion = '';
-var latestFrameworkTag = '';
-var shouldUpdateBuilder = false;
-var shouldUpdateFramework = false;
-var versionFile = JSON.parse(fs.readFileSync('version.json'), {encoding: 'utf8'});
-var configFile = JSON.parse(fs.readFileSync('conf/config.json'), {encoding: 'utf8'});
-
-var steps = [
-  function(callback) {
-
-    console.log('Checking versions');
-
-    if (versionFile) {
-      installedBuilderVersion = versionFile.adapt_authoring;
-      installedFrameworkVersion = versionFile.adapt_framework;
-    }
-
-    console.log('Currently installed versions:\n- ' + app.polyglot.t('app.productname') + ': ' + installedBuilderVersion + '\n- Adapt Framework: ' + installedFrameworkVersion);
-    callback();
-
-  },
-  function(callback) {
-
-    console.log('Checking for ' + app.polyglot.t('app.productname') + ' upgrades...');
-    // Check the latest version of the project
-    request({
-      headers: {
-        'User-Agent' : DEFAULT_USER_AGENT
-      },
-      uri: 'https://api.github.com/repos/adaptlearning/adapt_authoring/tags',
-      method: 'GET'
-    }, function (error, response, body) {
-
-      if (!error && response.statusCode == 200) {
-        var tagInfo = JSON.parse(body);
-
-        if (tagInfo) {
-          latestBuilderTag = tagInfo[0].name;
-        }
-
-        callback();
-      }
-
-    });
-
-  },
-  function(callback) {
-
-    console.log('Checking for Adapt Framework upgrades...');
-    // Check the latest version of the framework
-    request({
-      headers: {
-        'User-Agent' : DEFAULT_USER_AGENT
-      },
-      uri: 'https://api.github.com/repos/adaptlearning/adapt_framework/tags',
-      method: 'GET'
-    }, function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var tagInfo = JSON.parse(body);
-
-        if (tagInfo) {
-          latestFrameworkTag = tagInfo[0].name;
-        }
-
-        callback();
-      }
-    });
-
-  },
-  function(callback) {
-    // Check what needs upgrading
-    if (latestBuilderTag != installedBuilderVersion) {
-      shouldUpdateBuilder = true;
-      console.log('Update for ' + app.polyglot.t('app.productname') + ' is available: ' + latestBuilderTag);
-    }
-
-    if (latestFrameworkTag != installedFrameworkVersion) {
-      shouldUpdateFramework = true;
-      console.log('Update for Adapt Framework is available: ' + latestFrameworkTag);
-    }
-
-    // If neither of the Builder or Framework need updating then quit the upgrading process
-    if (!shouldUpdateFramework && !shouldUpdateBuilder) {
-      console.log('No updates available at this time\n');
-      process.exit(0);
-    }
-
-    callback();
-
-  }, function(callback) {
-    // Upgrade Builder if we need to
-    if (shouldUpdateBuilder) {
-
-      upgradeBuilder(latestBuilderTag, function(err) {
-        if (err) {
-          return callback(err);
-        }
-
-        versionFile.adapt_authoring = latestBuilderTag;
-        callback();
-
-      });
-
-    } else {
-      callback();
-    }
-
-  }, function(callback) {
-
-    // Upgrade Framework if we need to
-    if (shouldUpdateFramework) {
-
-      upgradeFramework(latestFrameworkTag, function(err) {
-        if (err) {
-          return callback(err);
-        }
-
-        versionFile.adapt_framework = latestFrameworkTag;
-        callback();
-
-      });
-
-    } else {
-      callback();
-    }
-
-  }, function(callback) {
-
-    // After upgrading let's update the version.json to the latest version
-    fs.writeFile('version.json', JSON.stringify(versionFile, null, 4), function(err) {
-        if(err) {
-          callback(err);
-        } else {
-          console.log("Version file updated\n");
-          callback();
-        }
-    });
-
-  }, function(callback) {
-    if (shouldUpdateFramework) {
-      // If the framework has been updated, interrogate the adapt.json file from the adapt_framework
-      // folder and install the latest versions of the core plugins
-      fs.readFile(path.join(configFile.root, 'temp', configFile.masterTenantID, 'adapt_framework', 'adapt.json'), function (err, data) {
-        if (err) {
-          return callback(err);
-        }
-
-        var json = JSON.parse(data);
-        // 'dependencies' contains a key-value pair representing the plugin name and the semver
-        var plugins = Object.keys(json.dependencies);
-
-        async.eachSeries(plugins, function(plugin, pluginCallback) {
-          app.bowermanager.installPlugin(plugin, json.dependencies[plugin], function(err) {
-            if (err) {
-              return pluginCallback(err);
-            }
-
-            pluginCallback();
-          });
-
-        }, function(err) {
-          if (err) {
-            console.log(err);
-            return callback(err);
-          }
-
-          callback();
-        });
-      });
-    } else {
-      callback();
-    }
-  },
-   function(callback) {
-    // Left empty for any upgrade scripts - just remember to call the callback when done.
-    callback();
-  }
-];
-
-app.run({skipVersionCheck: true, skipStartLog: true});
-
-app.on('serverStarted', function () {
-  prompt.override = optimist.argv;
-  prompt.start();
-
-  // Prompt the user to begin the install
-  if (isVagrant()) {
-    console.log(`\nUpdate the ${app.polyglot.t('app.productname')} (and/or Adapt Framework) to the latest released version.`);
-  } else {
-    console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} (and/or Adapt Framework) to the latest released version. Would you like to continue?`);
-  }
-
-  prompt.get({ name: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
-    if (!/(Y|y)[es]*$/.test(result['Y/n'])) {
-      return exitUpgrade();
-    }
-
-    // run steps
-    async.series(steps, function (err, results) {
-
-      if (err) {
-        console.log('ERROR: ', err);
-        return exitUpgrade(1, 'Upgrade was unsuccessful. Please check the console output.');
-      }
-
-      console.log(' ');
-
-      exitUpgrade(0, 'Great work! Your ' + app.polyglot.t('app.productname') + ' is now updated.');
-    });
-  });
-});
-
-// This upgrades the Builder
-function upgradeBuilder(tagName, callback) {
-
-  console.log('Upgrading the ' + app.polyglot.t('app.productname') + '...please hold on!');
-  var child = exec('git fetch origin', {
-    stdio: [0, 'pipe', 'pipe']
-  });
-
-  child.stdout.on('data', function(err) {
-    console.log(err);
-  });
-  child.stderr.on('data', function(err) {
-    console.log(err);
-  });
-
-  child.on('exit', function (error, stdout, stderr) {
-    if (error) {
-      return console.log('ERROR: ' + error);
-    }
-
-    console.log("Fetch from GitHub was successful.");
-    console.log("Pulling latest changes...");
-
-    var secondChild = exec('git reset --hard ' + tagName, {
-      stdio: [0, 'pipe', 'pipe']
-    });
-
-    secondChild.stdout.on('data', function(err) {
-      console.log(err);
-    });
-
-    secondChild.stderr.on('data', function(err) {
-      console.log(err);
-    });
-
-    secondChild.on('exit', function (error, stdout, stderr) {
-      if (error) {
-        return console.log('ERROR: ' + error);
-      }
-
-      console.log("Installing " + app.polyglot.t('app.productname') + " dependencies.\n");
-
-      var thirdChild = exec('npm install', {
-        stdio: [0, 'pipe', 'pipe']
-      });
-
-      thirdChild.stdout.on('data', function(err) {
-        console.log(err);
-      });
-
-      thirdChild.stderr.on('data', function(err) {
-        console.log(err);
-      });
-
-      thirdChild.on('exit', function (error, stdout, stderr) {
-        if (error) {
-          return console.log('ERROR: ' + error);
-        }
-        console.log("Dependencies installed.\n");
-
-        console.log("Building front-end.\n");
-
-        var fourthChild = exec('grunt build:prod', {
-          stdio: [0, 'pipe', 'pipe']
-        });
-
-        fourthChild.stdout.on('data', function(err) {
-          console.log(err);
-        });
-
-        fourthChild.stderr.on('data', function(err) {
-          console.log(err);
-        });
-
-        fourthChild.on('exit', function (error, stdout, stderr) {
-          if (error) {
-            return console.log('ERROR: ' + error);
-          }
-
-          console.log("front-end built.\n");
-
-          console.log(app.polyglot.t('app.productname') + " has been updated.\n");
-          callback();
-        });
-      });
-    });
-  });
-}
-
-// This upgrades the Framework
-function upgradeFramework(tagName, callback) {
-  console.log('Upgrading the Adapt Framework...please hold on!');
-
-  var child = exec('git fetch origin', {
-    cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
-    stdio: [0, 'pipe', 'pipe']
-  });
-
-  child.stdout.on('data', function(err) {
-    console.log(err);
-  });
-
-  child.stderr.on('data', function(err) {
-    console.log(err);
-  });
-
-  child.on('exit', function (error, stdout, stderr) {
-    if (error) {
-      return console.log('ERROR: ' + error);
-    }
-
-    console.log("Fetch from GitHub was successful.");
-    console.log("Pulling latest changes...");
-
-    var secondChild = exec('git reset --hard ' + tagName + ' && npm install', {
-      cwd: 'temp/' + configFile.masterTenantID + '/adapt_framework',
-      stdio: [0, 'pipe', 'pipe']
-    });
-
-    secondChild.stdout.on('data', function(err) {
-      console.log(err);
-    });
-
-    secondChild.stderr.on('data', function(err) {
-      console.log(err);
-    });
-
-    secondChild.on('exit', function (error, stdout, stderr) {
-      if (error) {
-        return console.log('ERROR: ' + error);
-      }
-
-      console.log("Framework has been updated.\n");
-
-      rimraf(configFile.root + '/temp/' + configFile.masterTenantID + '/adapt_framework/src/course', function(err) {
-        if (err) {
-            console.log(err);
-        }
-
-        callback();
-      });
-
-    });
-
-  });
-}
+var app = origin();
 
 /**
- * Exits the install with some cleanup, should there be an error
- *
- * @param {int} code
- * @param {string} msg
- */
+* Start of execution
+*/
+start();
 
-function exitUpgrade (code, msg) {
-  code = code || 0;
-  msg = msg || 'Bye!';
-  console.log(msg);
-  process.exit(code);
+function start() {
+  installHelpers.checkPrimaryDependencies(function(error) {
+    if(error) {
+      return installHelpers.exit(1, error.message);
+    }
+    // don't show any logger messages in the console
+    logger.level('console','error');
+
+    prompt.override = optimist.argv;
+
+    // start the server first
+    app.run({ skipVersionCheck: true, skipStartLog: true });
+    app.on('serverStarted', function() {
+      installHelpers.checkSecondaryDependencies(function(error) {
+        ensureRepoValues();
+        getUserInput();
+      });
+    });
+  });
+}
+
+function ensureRepoValues() {
+  if(configuration.getConfig('frameworkRepository') === '') {
+    configuration.setConfig('frameworkRepository', installHelpers.DEFAULT_FRAMEWORK_REPO);
+  }
+  if(configuration.getConfig('authoringToolRepository') === '') {
+    configuration.setConfig('authoringToolRepository', installHelpers.DEFAULT_SERVER_REPO);
+  }
+}
+
+function getUserInput() {
+  // properties for the prompts
+  var confirmProperties = {
+    name: 'continue',
+    description: 'Continue? Y/n',
+    type: 'string',
+    default: 'Y',
+    before: installHelpers.inputHelpers.toBoolean
+  };
+  var upgradeProperties = {
+    properties: {
+      updateAutomatically: {
+        description: 'Update automatically? Y/n',
+        type: 'string',
+        default: 'Y',
+        before: installHelpers.inputHelpers.toBoolean
+      }
+    }
+  };
+  var tagProperties = {
+    properties: {
+      authoringToolGitTag: {
+        type: 'string',
+        description: 'Specific git revision to be used for the authoring tool. Accepts any valid revision type (e.g. branch/tag/commit)',
+        default: ''
+      },
+      frameworkGitTag: {
+        type: 'string',
+        description: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
+        default: ''
+      }
+    }
+  };
+  if (IS_INTERACTIVE) {
+    console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} and/or Adapt Framework. Would you like to continue?`);
+  }
+  installHelpers.getInput(confirmProperties, function(result) {
+    if(!installHelpers.inputHelpers.toBoolean(result.continue)) {
+      return installHelpers.exit();
+    }
+    installHelpers.getInput(upgradeProperties, function(result) {
+      console.log('');
+      if(installHelpers.inputHelpers.toBoolean(result.updateAutomatically)) {
+        return checkForUpdates(function(error, updateData) {
+          if(error) {
+            return installHelpers.exit(1, error);
+          }
+          doUpdate(updateData);
+        });
+      }
+      // no automatic update, so get the intended versions
+      installHelpers.getInput(tagProperties, function(result) {
+        console.log('');
+        if(!result.authoringToolGitTag && !result.frameworkGitTag) {
+          return installHelpers.exit(1, 'Cannot update sofware if no revisions are specified.');
+        }
+        doUpdate({
+          adapt_authoring: result.authoringToolGitTag,
+          adapt_framework: result.frameworkGitTag
+        });
+      });
+    });
+  });
+}
+
+function checkForUpdates(callback) {
+  var isCustomFramework = configuration.getConfig('frameworkRepository') !== installHelpers.DEFAULT_FRAMEWORK_REPO;
+  var isCustomServer = configuration.getConfig('authoringToolRepository') !== installHelpers.DEFAULT_SERVER_REPO;
+  if(isCustomFramework || isCustomServer) {
+    return callback('Cannot perform an automatic upgrade when custom repositories are used.');
+  }
+  installHelpers.showSpinner('Checking for updates');
+  installHelpers.getUpdateData(function(error, data) {
+    installHelpers.hideSpinner();
+    if(error) {
+      return callback(error);
+    }
+    if(!data) {
+      return installHelpers.exit(0, `Your software is already up-to-date, no need to upgrade.`);
+    }
+    console.log(chalk.underline('Software updates found.\n'));
+    callback(null, data);
+  });
+}
+
+function doUpdate(data) {
+  async.series([
+    function upgradeAuthoring(cb) {
+      if(!data.adapt_authoring) {
+        return cb();
+      }
+      installHelpers.updateAuthoring({
+        repository: configuration.getConfig('authoringToolRepository'),
+        revision: data.adapt_authoring,
+        directory: configuration.serverRoot
+      }, function(error) {
+        if(error) {
+          console.log(`Failed to update ${configuration.serverRoot} to '${data.adapt_authoring}'`);
+          return cb(error);
+        }
+        console.log(`${app.polyglot.t('app.productname')} upgraded to ${data.adapt_authoring}`);
+        cb();
+      });
+    },
+    function upgradeFramework(cb) {
+      if(!data.adapt_framework) {
+        return cb();
+      }
+      var dir = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), OutputConstants.Folders.Framework);
+      installHelpers.updateFramework({
+        repository: configuration.getConfig('frameworkRepository'),
+        revision: data.adapt_framework,
+        directory: dir
+      }, function(error) {
+        if(error) {
+          console.log(`Failed to upgrade ${dir.replace(configuration.serverRoot, '')} to ${data.adapt_framework}`);
+          return cb(error);
+        }
+        console.log(`Adapt framework upgraded to ${data.adapt_framework}`);
+        cb();
+      });
+    },
+    function runMigrations(callback) {
+      installHelpers.syncMigrations(function(err, migrations) {
+        if(err) {
+          return callback(err);
+        }
+        installHelpers.getMigrationConfig(function(err, config) {
+          if(err){
+            return callback(err);
+          }
+          var migrator = new migrateMongoose({
+            migrationsPath: config.migrationsDir,
+            dbConnectionUri: config.dbConnectionUri,
+            autosync: true
+          });
+          migrator.list().then(function(migrations) {
+            var migrationsDone = 0;
+            async.eachSeries(migrations, function(migration, callback) {
+              if(migration.state === 'up') {
+                return callback();
+              }
+              console.log(`Running ${migration.name} migration`);
+              migrationsDone++;
+              migrator.run('up', migration.name).then(v => callback()).catch(callback);
+
+            }, function(err, data) {
+              if(err) {
+                return callback(err);
+              }
+              if(migrationsDone > 0) {
+                console.log(`${migrationsDone} migration${migrationsDone > 1 ? 's' : ''} ran successfully`);
+              } else {
+                console.log(`No migrations to run`);
+              }
+              callback();
+            });
+          }).catch(callback);
+        });
+      })
+    }
+  ], function(error) {
+    if(error) {
+      console.error('ERROR:', error);
+      return installHelpers.exit(1, 'Upgrade was unsuccessful. Please check the console output.');
+    }
+    installHelpers.exit(0, `Your ${app.polyglot.t('app.productname')} was updated successfully.`);
+  });
 }

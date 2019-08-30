@@ -50,22 +50,23 @@ define(function(require){
       Origin.trigger('origin:hideLoading');
     },
 
-    setUserPreference: function(key, value) {
-      if (this.settings.preferencesKey && typeof(Storage) !== "undefined") {
+    setUserPreference: function(key, value, sessionOnly) {
+      if (this.settings.preferencesKey) {
         var preferences = (Origin.sessionModel.get(this.settings.preferencesKey) || {});
-        // persist data
         preferences[key] = value;
+        // Store in session model
         Origin.sessionModel.set(this.settings.preferencesKey, preferences);
-
+        // set in browser storage
+        var data = {};
+        data[key] = value;
+        Origin.browserStorage.set(this.settings.preferencesKey, data, sessionOnly || false, false);
       }
     },
 
     getUserPreferences: function() {
-      if (this.settings.preferencesKey && typeof(Storage) !== "undefined"
-        && localStorage.getItem(this.settings.preferencesKey)) {
-        return Origin.sessionModel.get(this.settings.preferencesKey);
-      } else {
-        return {};
+      if (this.settings.preferencesKey) {
+        var saveData = Origin.browserStorage.get(this.settings.preferencesKey);
+        return saveData || {};
       }
     },
 

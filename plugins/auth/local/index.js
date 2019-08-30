@@ -154,29 +154,7 @@ LocalAuth.prototype.authenticate = function (req, res, next) {
 
 LocalAuth.prototype.disavow = function (req, res, next) {
   req.logout();
-  res.statusCode = 200;
-  return res.json({ success: true });
-};
-
-LocalAuth.prototype.registerUser = function (req, res, next) {
-  // presently, all we need is email, password and retyped password
-  var user = {
-    email: req.body.email,
-    password: req.body.password,
-    retypePassword: req.body.retypePassword
-  };
-
-  this.internalRegisterUser(false, user, function (error, user) {
-    if (error) {
-      return next(error);
-    }
-
-
-    res.statusCode = 200;
-    return res.json({ _id:user._id, email: user.email });
-
-  });
-
+  res.status(200).end();
 };
 
 LocalAuth.prototype.internalRegisterUser = function(retypePasswordRequired, user, cb) {
@@ -214,22 +192,27 @@ LocalAuth.prototype.internalRegisterUser = function(retypePasswordRequired, user
 };
 
 LocalAuth.prototype.resetPassword = function (req, res, next) {
-  var user = {
-    id: req.body.user,
-    password: req.body.password,
-    token: req.body.token
-  };
+  var resetPasswordToken = req.body.token;
+  var self = this;
 
-  this.internalResetPassword(user, function (error, user) {
+  if (!resetPasswordToken) {
+    return next(new auth.errors.UserResetPasswordError('Token was not found'));
+  }
+  usermanager.retrieveUserPasswordReset({ token: resetPasswordToken }, function (error, usrReset) {
     if (error) {
       logger.log('error', error);
-      res.statusCode = 200;
-      return res.json({ success: false });
-      // return next(error);
+      return res.status(500).end();
     }
-
-    res.statusCode = 200;
-    return res.json({ success: true });
+    if (!usrReset) {
+      return res.status(200).json({});
+    }
+    self.internalResetPassword({ id: usrReset.user, password: req.body.password }, function (error, user) {
+      if (error) {
+        logger.log('error', error);
+        return res.status(500).end();
+      }
+      res.status(200).json(user);
+    });
   });
  };
 
@@ -291,7 +274,7 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
         var subject = app.polyglot.t('app.emailforgottenpasswordsubject');
         var body = app.polyglot.t('app.emailforgottenpasswordbody', { rootUrl: configuration.getConfig('rootUrl'), data: userToken.token });
         var templateData = {
-          name: 'passwordReset',
+          name: 'emails/passwordReset.hbs',
           user: user,
           showButton: true,
           rootUrl: configuration.getConfig('rootUrl'),

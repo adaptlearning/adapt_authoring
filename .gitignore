@@ -1,7 +1,5 @@
-/adapt_framework
-
 /conf/config.json
-
+/conf/migrate.json
 /data
 
 /frontend/build
@@ -14,6 +12,8 @@
 /nbproject/
 /master/
 
+package-lock.json
+
 /plugins/content/component/versions/
 /plugins/content/component/componentcache/
 /plugins/content/extension/versions/
@@ -24,14 +24,11 @@
 /plugins/content/bower/bowercache/
 
 /temp
-/test_frontend/img
+/test/.testcache
 /tmp
 
 /.settings
 
-version.json
-
 .idea
-.vagrant
-.env
 .project
+.vscode

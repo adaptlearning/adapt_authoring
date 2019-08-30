@@ -2,19 +2,21 @@
 /**
  * Local LocalFileStorage module
  */
-var async = require('async');
-var ffmpeg = require('fluent-ffmpeg');
-var fs = require('fs-extra');
-var mkdirp = require('mkdirp');
-var ncp = require('ncp').ncp;
-var path = require('path');
-var probe = require('node-ffprobe');
-var util = require('util');
+const async = require('async');
+const ffmpegStatic = require('ffmpeg-static');
+const ffprobeStatic = require('ffprobe-static');
+const ffmpeg = require('fluent-ffmpeg');
+const fs = require('fs-extra');
+const path = require('path');
+const ffprobe = require('ffprobe');
+const util = require('util');
 
-var configuration = require('../../../lib/configuration');
-var FileStorage = require('../../../lib/filestorage').FileStorage;
-var logger = require('../../../lib/logger');
-var usermanager = require('../../../lib/usermanager');
+ffmpeg.setFfmpegPath(ffmpegStatic.path);
+
+const configuration = require('../../../lib/configuration');
+const FileStorage = require('../../../lib/filestorage').FileStorage;
+const logger = require('../../../lib/logger');
+const usermanager = require('../../../lib/usermanager');
 
 function LocalFileStorage() {
   this.dataRoot = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'));
@@ -163,7 +165,7 @@ LocalFileStorage.prototype.deleteFile = function (filePath, callback) {
 LocalFileStorage.prototype.moveFile = function (oldPath, newPath, callback) {
   oldPath = this.resolvePath(oldPath);
   newPath = this.resolvePath(newPath);
-  mkdirp(path.dirname(newPath), function (error) {
+  fs.mkdirs(path.dirname(newPath), function (error) {
     if (error) {
       return callback(error);
     }
@@ -192,7 +194,7 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
     options = {};
   }
 
-  mkdirp(path.dirname(newPath), function (error) {
+  fs.mkdirs(path.dirname(newPath), function (error) {
     if (error) {
       return cb(error);
     }
@@ -302,9 +304,9 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
   var dataRoot = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'));
   var assetFolder = path.join(dataRoot, destinationTenantName, asset.directory);
 
-  mkdirp(assetFolder, function(error) {
+  fs.mkdirs(assetFolder, function(error) {
     if (error) {
-      logger.log('error', 'mkdirp error while copying asset, creating ' + assetFolder);
+      logger.log('error', 'fs.mkdirs error while copying asset, creating ' + assetFolder);
       return callback(error);
     }
 
@@ -312,9 +314,9 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
     var sourceFile = path.join(dataRoot, sourceTenantName, asset.path);
     var destinationFile = path.join(dataRoot, destinationTenantName, asset.path);
 
-    ncp(sourceFile, destinationFile, {clobber:false}, function(error) {
+    fs.copy(sourceFile, destinationFile, {clobber:false}, function(error) {
       if (error) {
-        logger.log('error', 'ncp error while copying ' + asset.filename);
+        logger.log('error', 'fs.copy error while copying ' + asset.filename);
         logger.log('error', 'error copying ' + sourceFile + ' to ' + destinationFile);
         return callback(error);
       }
@@ -325,9 +327,9 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
         var sourceThumbnailFile = path.join(dataRoot, sourceTenantName, asset.thumbnailPath);
         var destinationThumbnailFile = path.join(dataRoot, destinationTenantName, asset.thumbnailPath);
 
-        ncp(sourceThumbnailFile, destinationThumbnailFile, function(error) {
+        fs.copy(sourceThumbnailFile, destinationThumbnailFile, function(error) {
           if (error) {
-            logger.log('error', 'ncp error while copying ' + asset.thumbnailPath);
+            logger.log('error', 'fs.copy error while copying ' + asset.thumbnailPath);
             logger.log('error', 'error copying (thumbnail) ' + sourceThumbnailFile + ' to ' + destinationThumbnailFile);
 
             // TODO If thumbnails fail it's not the end of the world -- for now
@@ -352,14 +354,10 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
  */
 
 LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, options, next) {
-  // early return if we can't create thumbnails
-  if (!configuration.getConfig('useffmpeg')) {
-    return next(null, false);
-  }
   var fileFormat = fileType.split('/')[1];
   fileType = fileType.split('/')[0];
   // also check fileType is supported
-  if(!isThumbnailTypeSupported(fileType)) {
+  if(!isThumbnailTypeSupported(fileType, fileFormat)) {
     return next(null, false);
   }
   var self = this;
@@ -400,12 +398,12 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
   return ff.run();
 };
 
-function isThumbnailTypeSupported(type) {
+function isThumbnailTypeSupported(type, format) {
   switch(type) {
     case 'video':
     case 'image':
-      return true;
-      break;
+      // https://github.com/adaptlearning/adapt_authoring/issues/2065
+      return format !== 'svg+xml';
     default:
       return false;
   }
@@ -438,13 +436,8 @@ LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
       break;
   }
 
-  // early return if we can't create thumbnails
-  if (!configuration.getConfig('useffmpeg')) {
-    return next(null, data);
-  }
-
   // Interrogate the uploaded file
-  probe(filePath, function (err, probeData) {
+  ffprobe(filePath, { path: ffprobeStatic.path }, function (err, probeData) {
     if (probeData) {
       // Store extra metadata depending on the type of file uploaded
       switch (fileType) {
@@ -456,14 +449,14 @@ LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
           break;
         case 'video':
           data.metadata = {
-            duration: probeData.streams[0].duration,
+            duration: parseInt(probeData.streams[0].duration),
             width: probeData.streams[0].width,
             height: probeData.streams[0].height
           }
           break;
         case 'audio':
           data.metadata = {
-            duration: probeData.streams[0].duration
+            duration: parseInt(probeData.streams[0].duration)
           }
           break;
       }

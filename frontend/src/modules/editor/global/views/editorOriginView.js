@@ -7,7 +7,15 @@ define(function(require){
   var EditorOriginView = OriginView.extend({
     events: {
       'click .paste-cancel': 'onPasteCancel',
-      'click .field-object .legend': 'onFieldObjectClicked'
+      'click .field-object .legend': 'onFieldObjectClicked',
+      'dblclick .editor-item-settings-inner > button': 'onDbClick'
+    },
+
+    attributes: function() {
+      var colorLabel = this.model && this.model.get('_colorLabel');
+      if (colorLabel) {
+        return { 'data-colorlabel': colorLabel };
+      }
     },
 
     initialize: function(options) {
@@ -22,6 +30,14 @@ define(function(require){
         'sidebarFieldsetFilter:filterForm': this.filterForm,
         'editorView:pasteCancel': this.hidePasteZones
       });
+    },
+
+    render: function() {
+      OriginView.prototype.render.apply(this, arguments);
+      if(this.model) {
+        this.$el.attr('data-id', this.model.get('_id'));
+      }
+      return this;
     },
 
     postRender: function() {
@@ -46,7 +62,7 @@ define(function(require){
       } else {
         $('.form-container > form > div > fieldset').addClass('display-none');
         _.each(this.filters, function(filter) {
-          $('.fieldset-' + Helpers.lowerCase(filter)).removeClass('display-none');
+          $('fieldset[data-key=' + filter + ']').removeClass('display-none');
         });
       }
     },
@@ -176,6 +192,11 @@ define(function(require){
         .toggleClass('expanded');
     },
 
+    onDbClick: function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+    },
+
     onCopy: function(e) {
       e && e.preventDefault();
       Origin.trigger('editorView:copy', this.model);
@@ -184,11 +205,6 @@ define(function(require){
     onCopyID: function(e) {
       e && e.preventDefault();
       Origin.trigger('editorView:copyID', this.model);
-    },
-
-    onCut: function(e) {
-      e && e.preventDefault();
-      Origin.trigger('editorView:cut', this);
     },
 
     onPaste: function(e) {

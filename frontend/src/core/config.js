@@ -5,7 +5,6 @@ require.config({
     backbone: 'libraries/backbone',
     'backbone-forms': 'libraries/backbone-forms',
     'backbone-forms-lists': 'libraries/backbone-forms-lists',
-    colorPicker: 'libraries/colorPicker/js/colorpicker',
     handlebars: 'libraries/handlebars',
     imageReady: 'libraries/imageReady',
     inview: 'libraries/inview',
@@ -13,12 +12,12 @@ require.config({
     jqueryForm : 'libraries/jquery.form',
     jqueryTagsInput: 'libraries/jquery.tagsinput.min',
     jqueryUI: 'libraries/jquery-ui.min',
-    mediaelement : 'libraries/mediaelement-and-player',
     modernizr: 'libraries/modernizr',
     moment: 'libraries/moment.min',
     pikaday: 'libraries/pikaday/js/pikaday',
     polyglot: 'libraries/polyglot.min',
     scrollTo: 'libraries/scrollTo',
+    selectize: 'libraries/selectize/js/selectize',
     sweetalert: 'libraries/sweetalert.min',
     typeahead: 'libraries/typeahead',
     underscore: 'libraries/underscore',
@@ -38,9 +37,6 @@ require.config({
     },
     'backbone-forms-lists': {
       deps: ['backbone-forms']
-    },
-    colorPicker: {
-      deps: ['jquery'],
     },
     handlebars: {
       exports: 'Handlebars'
@@ -65,10 +61,6 @@ require.config({
       deps: ['jquery'],
       exports: "$"
     },
-    mediaelement: {
-      deps: ['jquery'],
-      exports: 'mediaelement'
-    },
     moment: {
       exports: 'moment'
     },
@@ -78,6 +70,10 @@ require.config({
     scrollTo: {
       deps: ['jquery'],
       exports: 'scrollTo'
+    },
+    selectize: {
+      deps: ['jquery'],
+      exports: "$"
     },
     sweetalert: {
       deps: ['jquery'],

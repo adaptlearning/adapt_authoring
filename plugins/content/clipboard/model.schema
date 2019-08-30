@@ -19,9 +19,9 @@
       "type" : "string",
       "required" : true
     },
-    "contentObjects" : [{}],
-    "articles" : [{}],
-    "blocks" : [{}],
-    "components" : [{}]
+    "contentobject" : [{}],
+    "article" : [{}],
+    "block" : [{}],
+    "component" : [{}]
   }
 }

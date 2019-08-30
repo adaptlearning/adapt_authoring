@@ -1,0 +1,9 @@
+{
+  "app.scaffold": {
+    "general": "General",
+    "properties": "Properties",
+    "settings": "Settings",
+    "extensions": "Extensions",
+    "colourPickerCancel": "Cancel selection"
+  }
+}

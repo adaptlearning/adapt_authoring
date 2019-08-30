@@ -75,21 +75,16 @@ define(function(require) {
 
     deleteProjectPrompt: function(event) {
       event && event.preventDefault();
-      if(this.model.get('_isShared') === true) {
-        Origin.Notify.confirm({
-          type: 'warning',
-          title: Origin.l10n.t('app.deletesharedproject'),
-          text: Origin.l10n.t('app.confirmdeleteproject') + '<br/><br/>' + Origin.l10n.t('app.confirmdeletesharedprojectwarning'),
-          destructive: true,
-          callback: _.bind(this.deleteProjectConfirm, this)
-        });
-        return;
-      }
+      var isShared = this.model.get('_isShared') || (this.model.get('_shareWithUsers') && this.model.get('_shareWithUsers').length > 0);
+      var titleKey = isShared ? 'deletesharedproject' : 'deleteproject';
+      var textKey = isShared ? 'confirmdeletesharedprojectwarning' : 'confirmdeleteprojectwarning';
+
       Origin.Notify.confirm({
         type: 'warning',
-        title: Origin.l10n.t('app.deleteproject'),
-        text: Origin.l10n.t('app.confirmdeleteproject') + '<br/><br/>' + Origin.l10n.t('app.confirmdeleteprojectwarning'),
-        callback: _.bind(this.deleteProjectConfirm, this)
+        title: Origin.l10n.t('app.' + titleKey),
+        text: Origin.l10n.t('app.confirmdeleteproject') + '<br/><br/>' + Origin.l10n.t('app.' + textKey),
+        destructive: isShared,
+        callback: this.deleteProjectConfirm.bind(this)
       });
     },
 
@@ -102,7 +97,10 @@ define(function(require) {
 
     deleteProject: function(event) {
       this.model.destroy({
-        success: _.bind(this.remove, this),
+        success: function() {
+          Origin.trigger('dashboard:refresh');
+          this.remove();
+        }.bind(this),
         error: function(model, response, options) {
           _.delay(function() {
             Origin.Notify.alert({ type: 'error', text: response.responseJSON.message });
@@ -126,7 +124,7 @@ define(function(require) {
     copyIdToClipboard: function() {
       var id = this.model.get('_id');
       if(Helpers.copyStringToClipboard(id)) {
-        Origin.Notify.alert({ type: 'success', text: Origin.l10n.t('app.copyidtoclipboardsuccess', { id: id }) });
+        Origin.Notify.alert({ type: 'info', text: Origin.l10n.t('app.copyidtoclipboardsuccess', { id: id }) });
         return;
       }
       Origin.Notify.alert({ type: 'warning', text: Origin.l10n.t('app.app.copyidtoclipboarderror', { id: id }) });

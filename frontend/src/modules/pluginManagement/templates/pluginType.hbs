@@ -1,11 +1,11 @@
 <div class="pluginType-inner {{#if _isAvailableInEditor}}{{else}}row-disabled{{/if}}">
   <div class="pluginType-description col-row">
     <div class="pluginType-title col-20">
-      <h4 class="pluginType-title-inner tb-col-inner">{{{displayName}}}</h4>
+      <h4 class="pluginType-title-inner tb-col-inner">{{displayName}}</h4>
     </div>
     <div class="pluginType-description col-40">
       <div class="pluginType-description-inner tb-col-inner">
-        {{{description}}}
+        {{description}}
       </div>
       {{#if homepage}}
         <a href="{{homepage}}" class="pluginType-homepage tb-col-inner" target="_blank">
@@ -19,13 +19,19 @@
     <div class="pluginType-active col-10 col-centered">
       <input class="pluginType-enabled" type="checkbox" {{#if _isAvailableInEditor}} checked {{/if}}/>
     </div>
+    {{#if extension}}
+      <div class="pluginType-addedDefault col-10 col-centered">
+        <input class="pluginType-addedDefault" type="checkbox" {{#if _isAddedByDefault}}checked{{/if}}/>
+      </div>
+    {{/if}}
     <div class="pluginType-update col-10 col-centered">
       <div class="pluginType-update-inner tb-col-inner">
         {{#if isLocalPackage}}
-          <em class="info">({{t 'app.uploadedbyuser'}})</em>
+          <i title="{{t 'app.uploadedbyuser'}}" class="user-uploaded fa fa-user"></i>
         {{else}}
-          <button class="plugin-update-check btn">{{t 'app.checkforupdates'}}</button>
+          <button title="{{t 'app.checkforupdates'}}" class="plugin-update-check btn"><i class="fa fa-refresh"></i></button>
         {{/if}}
+          <button title="{{t 'app.remove'}}" class="plugin-remove btn alert"><i class="fa fa-trash-o"></i></button>
       </div>
     </div>
   </div>

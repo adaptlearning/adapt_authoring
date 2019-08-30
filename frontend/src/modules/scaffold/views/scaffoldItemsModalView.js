@@ -1,97 +1,100 @@
-// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define([ 'core/origin' ], function(Origin) {
 
-	var Backbone = require('backbone');
-	var Origin = require('core/origin');
+  var ScaffoldItemsModalView = Backbone.View.extend({
 
-	var ScaffoldItemsModalView = Backbone.View.extend({
+    className: 'scaffold-items-modal',
 
-		className: 'scaffold-items-modal',
+    content: null,
 
-		initialize: function(options) {
-			this.options = options;
-			this.listenTo(Origin, 'remove:views', this.remove);
-			Origin.trigger('scaffold:increaseActiveModals');
-			this.toggleModalOverlay();
-			this.render();
+    initialize: function(options) {
+      this.content = options.content;
+      this.listenTo(Origin, 'remove:views', this.remove);
+      Origin.trigger('scaffold:increaseActiveModals');
+      this.toggleModalOverlay();
+      this._onKeyUp = this.onKeyUp.bind(this);
+    },
 
-			var onKeyUpHandler = _.bind(function(event) {
-				var code = event.keyCode ? event.keyCode : event.which;
-				if (code === 27) { //escape key
-					this.trigger('cancel');
-					this.close();
-					$(document).off('keyup', onKeyUpHandler);
-				}
-			}, this);
-			$(document).keyup(onKeyUpHandler);
-		},
+    events: {
+      'click .scaffold-items-modal-footer a': function(event) {
+        event.preventDefault();
 
-		events: {
-			'click .close': function(event) {
-				event.preventDefault();
+        this.trigger($(event.currentTarget).data('action'));
+        this.close();
+      }
+    },
 
-				this.trigger('cancel');
-			},
-			'click .cancel': function(event) {
-				event.preventDefault();
-				this.trigger('cancel');
-				this.close();
-			},
-			'click .ok': function(event) {
-				event.preventDefault();
-				this.trigger('ok');
-				this.close();
-			}
-	    },
+    render: function() {
+      var template = Handlebars.templates[this.constructor.template];
+      var data = this.model && this.model.toJSON();
 
-		render: function() {
-			var data = this.model ? this.model.toJSON() : null;
-			var template = Handlebars.templates[this.constructor.template];
-			$('body').append(this.$el.html(template(data)));
-			return this;
-		},
+      $('body').append(this.$el.html(template(data)));
+      this.$('.scaffold-items-modal-body').html(this.content.render().$el);
+      _.defer(this.postRender.bind(this));
 
-		open: function() {
-			var $el = this.$el;
-			this.$el.find('.scaffold-items-modal-body').html(this.options.content.render().$el);
-			_.defer(function() {
-				$el.addClass('show');
-			})
-		},
+      return this;
+    },
 
-		close: function() {
-			//Check if the modal should stay open
-			if (this._preventClose) {
-				this._preventClose = false;
-				return;
-			}
-			Origin.trigger('scaffold:decreaseActiveModals');
-			this.toggleModalOverlay();
-			this.remove();
-		},
+    postRender: function() {
+      this.$el.addClass('show');
+    },
 
-		preventClose: function() {
-			this._preventClose = true;
-		},
+    onKeyUp: function(event) {
+      if (event.which !== 27) return;
 
-		toggleModalOverlay: function() {
-			if (Origin.scaffold.getCurrentActiveModals() === 1) {
-				if (!Origin.scaffold.isOverlayActive()) {
-					Origin.scaffold.setOverlayActive(true);
-					$('body').append(Handlebars.templates['scaffoldModalOverlay']);
-				}
-			} else if (Origin.scaffold.getCurrentActiveModals() === 0) {
-				if (Origin.scaffold.isOverlayActive()) {
-					Origin.scaffold.setOverlayActive(false);
-					$('.scaffold-modal-overlay').remove();
-				}
-			}
-		}
+      this.trigger('cancel');
+      this.close();
+    },
 
-	}, {
-		template: 'scaffoldItemsModal'
-	});
+    open: function() {
+      this.render();
+      $(document).keyup(this._onKeyUp);
+    },
 
-	return ScaffoldItemsModalView;
+    close: function() {
+      if (this._preventClose) {
+        this._preventClose = false;
+        return;
+      }
+
+      Origin.trigger('scaffold:decreaseActiveModals');
+      this.toggleModalOverlay();
+      $(document).off('keyup', this._onKeyUp);
+      this.remove();
+    },
+
+    preventClose: function() {
+      this._preventClose = true;
+    },
+
+    toggleModalOverlay: function() {
+      var modalCount = Origin.scaffold.getCurrentActiveModals();
+
+      switch (modalCount) {
+        case 1:
+          if (Origin.scaffold.isOverlayActive()) return;
+
+          Origin.scaffold.setOverlayActive(true);
+          $('body').append(Handlebars.templates.scaffoldModalOverlay);
+          break;
+        case 0:
+          if (!Origin.scaffold.isOverlayActive()) return;
+
+          Origin.scaffold.setOverlayActive(false);
+          $('.scaffold-modal-overlay').remove();
+      }
+    },
+
+    remove: function() {
+      for (var title in this.content.fields) {
+        if (!this.content.fields.hasOwnProperty(title)) continue;
+        this.content.fields[title].remove();
+      }
+      this.content.remove();
+      Backbone.View.prototype.remove.apply(this, arguments);
+    }
+
+  }, { template: 'scaffoldItemsModal' });
+
+  return ScaffoldItemsModalView;
 
 });

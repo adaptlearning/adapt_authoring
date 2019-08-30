@@ -5,15 +5,15 @@ define(function(require) {
   var ContentModel = require('./contentModel');
 
   var CourseModel = ContentModel.extend({
-    urlRoot: '/api/content/course',
+    urlRoot: 'api/content/course',
     _type: 'course',
-    _children: 'contentObjects',
+    _childTypes: 'contentobject',
 
     getHeroImageURI: function () {
       if(Helpers.isAssetExternal(this.get('heroImage'))) {
         return this.get('heroImage');
       }
-      return '/api/asset/thumb/' + this.get('heroImage');
+      return 'api/asset/thumb/' + this.get('heroImage');
     },
 
     isEditable: function () {
@@ -21,7 +21,7 @@ define(function(require) {
     },
 
     getDuplicateURI: function () {
-      return '/api/duplicatecourse/' + this.get('_id');
+      return 'api/duplicatecourse/' + this.get('_id');
     }
   });
 

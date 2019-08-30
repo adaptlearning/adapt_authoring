@@ -7,10 +7,7 @@ var _ = require('underscore');
 var async = require('async');
 var bower = require('bower');
 var fs = require('fs');
-var mkdirp = require('mkdirp');
-var ncp = require('ncp').ncp;
 var path = require('path');
-var rimraf = require('rimraf');
 var util = require('util');
 
 var BowerPlugin = require('../bower');
@@ -34,7 +31,6 @@ var bowerConfig = {
   packageType: 'extension',
   srcLocation: 'extensions',
   options: defaultOptions,
-  extra: [ "targetAttribute" ],
   nameList: [],
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     database.getDatabase(function (err, db) {
@@ -295,7 +291,7 @@ function contentCreationHook (contentType, data, cb) {
 
 function toggleExtensions (courseId, action, extensions, cb) {
   if (!extensions || 'object' !== typeof extensions) {
-    return cb(error);
+    return cb(new Error('Incorrect parameters passed'));
   }
 
   var user = usermanager.getCurrentUser();
@@ -452,6 +448,71 @@ function toggleExtensions (courseId, action, extensions, cb) {
   }, configuration.getConfig('dbName'));
 }
 
+function enableExtensions(courseId, extensions, cb) {
+  if(!extensions || 'object' !== typeof extensions) {
+    return cb(new Error('Extensions should be an array of ids'));
+  }
+  toggleExtensions(courseId, 'enable', extensions, function(error, result) {
+    if(error) {
+      return cb(error);
+    }
+    cb();
+  });
+}
+
+function disableExtensions(courseId, extensions, cb) {
+  if(!extensions || 'object' !== typeof extensions) {
+    return cb(new Error('Extensions should be an array of ids'));
+  }
+  toggleExtensions(courseId, 'disable', extensions, function(error, result) {
+    if(error) {
+      return cb(error);
+    }
+    cb();
+  });
+}
+
+/**
+ * Returns an array of course objects that use the Extension with the passed id
+ * @param callback
+ * @param id
+ */
+Extension.prototype.getUses = function (callback, id) {
+  database.getDatabase(function (err, db) {
+    if (err) {
+      return callback(err);
+    }
+
+    db.retrieve('extensiontype', { _id: id }, function (err, extensiontypes) {
+      if (err) {
+        return callback(err);
+      }
+
+      if (extensiontypes.length !== 1) {
+        return callback(new Error('extensiontype not found'));
+      }
+
+      const search = {};
+      search["_enabledExtensions." + extensiontypes[0].extension] = { $exists: true };
+      db.retrieve('config', search, function (err, configs) {
+        if (err) {
+          return callback(err);
+        }
+
+        //Group all the course ids into an array for a mongo query
+        const courseIDs = [];
+        for (var i = 0, len = configs.length; i < len; i++) {
+          if(!courseIDs.includes(configs[i]._courseId)) {
+            courseIDs.push(configs[i]._courseId)      ;
+          }
+        }
+
+        db.retrieve('course', { _id: {$in: courseIDs} }, callback);
+      });
+    });
+  });
+};
+
 /**
  * essential setup
  *
@@ -461,55 +522,38 @@ function initialize () {
   BowerPlugin.prototype.initialize.call(new Extension(), bowerConfig);
 
   var app = origin();
+
+  app.on('extensions:enable', enableExtensions);
+  app.on('extensions:disable', disableExtensions);
+
   app.once('serverStarted', function (server) {
 
     // remove extensions from content collections
     // expects course ID and an array of extension id's
     rest.post('/extension/disable/:courseid', function (req, res, next) {
-      var extensions = req.body.extensions;
-      var courseId = req.params.courseid;
-
-      // check if there is an object
-      if (!extensions || 'object' !== typeof extensions) {
-        res.statusCode = 404;
-        return res.json({ success: false, message: 'extensions should be an array of ids' });
-      }
-
-      toggleExtensions(courseId, 'disable', extensions, function(error, result) {
-        if (error) {
-          res.statusCode = error instanceof ContentTypeError ? 400 : 500;
-          return res.json({ success: false, message: error.message });
+      disableExtensions(req.params.courseid, req.body.extensions, function(error) {
+        if(error) {
+          logger.log('error', error);
+          return res.status(error instanceof ContentTypeError ? 400 : 500).json({ success: false, message: error });
         }
-
-        res.statusCode = 200;
-        return res.json({success: true});
+        res.status(200).json({ success: true });
       });
     });
 
     // add extensions to content collections
     // expects course ID and an array of extension id's
     rest.post('/extension/enable/:courseid', function (req, res, next) {
-      var extensions = req.body.extensions;
-      var courseId = req.params.courseid;
-
-      // check if there is an object
-      if (!extensions || 'object' !== typeof extensions) {
-        res.statusCode = 404;
-        return res.json({ success: false, message: 'extensions should be an array of ids' });
-      }
-
-      toggleExtensions(courseId, 'enable', extensions, function(error, result) {
-        if (error) {
-          logger.log('info', 'error = ' + error);
-          res.statusCode = error instanceof ContentTypeError ? 400 : 500;
-          return res.json({ success: false, message: error.message });
+      enableExtensions(req.params.courseid, req.body.extensions, function(error) {
+        if(error) {
+          logger.log('error', error);
+          return res.status(error instanceof ContentTypeError ? 400 : 500).json({ success: false, message: error });
         }
-
-        res.statusCode = 200;
-        return res.json({ success: true });
+        res.status(200).json({ success: true });
       });
     });
   });
+  // HACK surface this properly somewhere
+  app.contentmanager.toggleExtensions = toggleExtensions;
 
   // add content creation hooks for each viable content type
   ['contentobject', 'article', 'block', 'component'].forEach(function (contentType) {

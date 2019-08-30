@@ -1,545 +1,585 @@
-// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-var prompt = require('prompt'),
-    async = require('async'),
-    fs = require('fs'),
-    path = require('path'),
-    rimraf = require('rimraf'),
-    exec = require('child_process').exec,
-    origin = require('./lib/application'),
-    frameworkHelper = require('./lib/frameworkhelper'),
-    auth = require('./lib/auth'),
-    database = require('./lib/database'),
-    helpers = require('./lib/helpers'),
-    localAuth = require('./plugins/auth/local'),
-    logger = require('./lib/logger'),
-    optimist = require('optimist'),
-    util = require('util');
+var async = require('async');
+var chalk = require('chalk');
+var fs = require('fs-extra');
+var optimist = require('optimist');
+var path = require('path');
+var prompt = require('prompt');
+var crypto = require('crypto');
 
-// set overrides from command line arguments
-prompt.override = optimist.argv;
-prompt.start();
+var auth = require('./lib/auth');
+var database = require('./lib/database');
+var helpers = require('./lib/helpers');
+var installHelpers = require('./lib/installHelpers');
+var localAuth = require('./plugins/auth/local');
+var logger = require('./lib/logger');
+var origin = require('./lib/application');
 
-prompt.message = '> ';
-prompt.delimiter = '';
+var IS_INTERACTIVE = process.argv.length === 2;
+var USE_CONFIG;
 
-// get available db drivers and auth plugins
-var drivers = database.getAvailableDriversSync();
-var auths = auth.getAvailableAuthPluginsSync();
 var app = origin();
+// config for prompt inputs
+var inputData;
 var masterTenant = false;
 var superUser = false;
+// from user input
+var configResults = {};
 
-var isVagrant = function () {
-  if (process.argv.length > 2) {
-        return true;
-  }
-
-  return false;
-};
-
-// config items
-var configItems = [
-  {
-    name: 'serverPort',
-    type: 'number',
-    description: 'Server port',
-    pattern: /^[0-9]+\W*$/,
-    default: 5000
-  },
-  {
-    name: 'serverName',
-    type: 'string',
-    description: 'Server name',
-    default: 'localhost'
-  },
-  // {
-  //   name: 'dbType',
-  //   type: 'string',
-  //   description: getDriversPrompt(),
-  //   conform: function (v) {
-  //     // validate against db drivers
-  //     v = parseInt(v, 10);
-  //     return  v > 0 && v <= drivers.length;
-  //   },
-  //   before: function (v) {
-  //     // convert's the numeric answer to one of the available drivers
-  //     return drivers[(parseInt(v, 10) - 1)];
-  //   },
-  //   default: '1'
-  // },
-  {
-    name: 'dbHost',
-    type: 'string',
-    description: 'Database host',
-    default: 'localhost'
-  },
-  {
-    name: 'dbName',
-    type: 'string',
-    description: 'Master database name',
-    pattern: /^[A-Za-z0-9_-]+\W*$/,
-    default: 'adapt-tenant-master'
-  },
-  {
-    name: 'dbPort',
-    type: 'number',
-    description: 'Database server port',
-    pattern: /^[0-9]+\W*$/,
-    default: 27017
-  },
-  {
-    name: 'dataRoot',
-    type: 'string',
-    description: 'Data directory path',
-    pattern: /^[A-Za-z0-9_-]+\W*$/,
-    default: 'data'
-  },
-  {
-    name: 'sessionSecret',
-    type: 'string',
-    description: 'Session secret',
-    pattern: /^.+$/,
-    default: 'your-session-secret'
-  },
-  // {
-  //   name: 'auth',
-  //   type: 'string',
-  //   description: getAuthPrompt(),
-  //   conform: function (v) {
-  //     // validate against auth types
-  //     v = parseInt(v, 10);
-  //     return  v > 0 && v <= auths.length;
-  //   },
-  //   before: function (v) {
-  //     // convert's the numeric answer to one of the available auth types
-  //     return auths[(parseInt(v, 10) - 1)];
-  //   },
-  //   default: '1'
-  // },
-  {
-    name: 'useffmpeg',
-    type: 'string',
-    description: "Will ffmpeg be used? y/N",
-    before: function (v) {
-      if (/(Y|y)[es]*/.test(v)) {
-        return true;
-      }
-      return false;
-    },
-    default: 'N'
-  },
-  {
-    name: 'smtpService',
-    type: 'string',
-    description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
-    default: 'none'
-  },
-  {
-    name: 'smtpUsername',
-    type: 'string',
-    description: "SMTP username",
-    default: ''
-  },
-  {
-    name: 'smtpPassword',
-    type: 'string',
-    description: "SMTP password",
-    hidden: true
-  },
-  {
-    name: 'fromAddress',
-    type: 'string',
-    description: "Sender email address",
-    default: ''
-  },
-  // {
-  //   name: 'outputPlugin',
-  //   type: 'string',
-  //   description: "Which output plugin will be used?",
-  //   default: 'adapt'
-  // }
-];
-
-tenantConfig = [
-  {
-    name: 'name',
-    type: 'string',
-    description: "Set a unique name for your tenant",
-    pattern: /^[A-Za-z0-9_-]+\W*$/,
-    default: 'master'
-  },
-  {
-    name: 'displayName',
-    type: 'string',
-    description: 'Set the display name for your tenant',
-    required: true,
-    default: 'Master'
-  }
-];
-
-userConfig = [
-  {
-    name: 'email',
-    type: 'string',
-    description: "Email address",
-    required: true
-  },
-  {
-    name: 'password',
-    type: 'string',
-    description: "Password",
-    hidden: true,
-    required: true
-  },
-  {
-    name: 'retypePassword',
-    type: 'string',
-    description: "Retype Password",
-    hidden: true,
-    required: true
-  }
-];
-
-/**
- * Installer steps
- *
- * 1. install the framework
- * 2. add config vars
- * 3. configure master tenant
- * 4. create admin account
- * 5. TODO install plugins
- */
-var steps = [
-  // install the framework
-  function installFramework (next) {
-    // AB-277 always remove framework folder on install
-    rimraf(path.resolve(__dirname, 'adapt_framework'), function () {
-      // now clone the framework
-      frameworkHelper.cloneFramework(function (err) {
-        if (err) {
-      	  console.log('ERROR: ', err);
-          return exitInstall(1, 'Framework install failed. See console output for possible reasons.');
-        }
-
-        // Remove the default course
-        rimraf(path.resolve(__dirname, 'adapt_framework', 'src', 'course'), function(err) {
-          if (err) {
-            console.log('ERROR: ', err);
-            return exitInstall(1, 'Framework install error -- unable to remove default course.');
-          }
-
-          return next();
-        });
-      });
-     });
-  },
-
-   function configureEnvironment(next) {
-     if (isVagrant()) {
-       console.log('Now setting configuration items.');
-     } else {
-       console.log('Now set configuration items. Just press ENTER to accept the default value (in brackets).');
-     }
-     prompt.get(configItems, function (err, results) {
-       if (err) {
-         console.log('ERROR: ', err);
-         return exitInstall(1, 'Could not save configuration items.');
-       }
-
-       saveConfig(results, next);
-     });
-   },
-  // configure tenant
-  function configureTenant (next) {
-    console.log("Checking configuration, please wait a moment ... ");
-    // suppress app log output
-    logger.clear();
-
-    // run the app
-    app.run();
-    app.on('serverStarted', function () {
-      if (isVagrant()) {
-        console.log('Creating your tenant. Please wait ...');
-      } else {
-        console.log('Now create your tenant. Just press ENTER to accept the default value (in brackets). Please wait ...');
-      }
-      prompt.get(tenantConfig, function (err, result) {
-        if (err) {
-          console.log('ERROR: ', err);
-          return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
-        }
-        // check if the tenant name already exists
-        app.tenantmanager.retrieveTenant({ name: result.name }, function (err, tenant) {
-          if (err) {
-            console.log('ERROR: ', err);
-            return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
-          }
-
-          var tenantName = result.name;
-          var tenantDisplayName = result.displayName;
-
-          // create the tenant according to the user provided details
-          var _createTenant = function (cb) {
-            console.log("Creating file system for tenant: " + tenantName + ", please wait ...");
-            app.tenantmanager.createTenant({
-                name: tenantName,
-                displayName: tenantDisplayName,
-                isMaster: true,
-                database: {
-                  dbName: app.configuration.getConfig('dbName'),
-                  dbHost: app.configuration.getConfig('dbHost'),
-                  dbUser: app.configuration.getConfig('dbUser'),
-                  dbPass: app.configuration.getConfig('dbPass'),
-                  dbPort: app.configuration.getConfig('dbPort')
-                }
-              },
-              function (err, tenant) {
-                if (err || !tenant) {
-                  console.log('ERROR: ', err);
-                  return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
-                }
-
-                masterTenant = tenant;
-                console.log("Tenant " + tenant.name + " was created. Now saving configuration, please wait ...");
-                // save master tenant name to config
-                app.configuration.setConfig('masterTenantName', tenant.name);
-                app.configuration.setConfig('masterTenantID', tenant._id);
-                saveConfig(app.configuration.getConfig(), cb);
-              }
-            );
-          };
-
-          // deletes all collections in the db
-          var _deleteCollections = function (cb) {
-            async.eachSeries(
-              app.db.getModelNames(),
-              function (modelName, nxt) {
-                app.db.destroy(modelName, null, nxt);
-              },
-              cb
-            );
-          };
-
-          if (tenant) {
-            // deal with duplicate tenant. permanently.
-            console.log("Tenant already exists. It will be deleted.");
-            return prompt.get({ name: "confirm", description: "Continue? (Y/n)", default: "Y" }, function (err, result) {
-              if (err || !/(Y|y)[es]*/.test(result.confirm)) {
-                return exitInstall(1, 'Exiting install ... ');
-              }
-
-              // buh-leted
-              _deleteCollections(function (err) {
-                if (err) {
-                  return next(err);
-                }
-
-                return _createTenant(next);
-              });
-            });
-          }
-
-          // tenant is fresh
-          return _createTenant(next);
-        });
-      });
-    });
-  },
-  // install content plugins
-  function installContentPlugins (next) {
-    // Interrogate the adapt.json file from the adapt_framework folder and install the latest versions of the core plugins
-     fs.readFile(path.join(process.cwd(), 'temp', app.configuration.getConfig('masterTenantID').toString(), 'adapt_framework', 'adapt.json'), function (err, data) {
-      if (err) {
-        console.log('ERROR: ' + err);
-        return next(err);
-      }
-
-      var json = JSON.parse(data);
-      // 'dependencies' contains a key-value pair representing the plugin name and the semver
-      var plugins = Object.keys(json.dependencies);
-
-      async.eachSeries(plugins, function(plugin, pluginCallback) {
-        if(json.dependencies[plugin] === '*') {
-          app.bowermanager.installLatestCompatibleVersion(plugin, pluginCallback);
-        } else {
-          app.bowermanager.installPlugin(plugin, json.dependencies[plugin], pluginCallback);
-        }
-      }, next);
-    });
-  },
-  // configure the super awesome user
-  function createSuperUser (next) {
-    if (isVagrant()) {
-      console.log("Creating the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
-    } else {
-      console.log("Create the super user account. This account can be used to manage everything on your " + app.polyglot.t('app.productname') + " instance.");
+installHelpers.checkPrimaryDependencies(function(error) {
+  if(error) return handleError(null, 1, error);
+  // we need the framework version for the config items, so let's go
+  installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
+    if(error) {
+      return handleError(error, 1, 'Failed to get the latest framework version. Check package.json.');
     }
-
-    prompt.get(userConfig, function (err, result) {
-      if (err) {
-        console.log('ERROR: ', err);
-        return exitInstall(1, 'Tenant creation was unsuccessful. Please check the console output.');
-      }
-
-      var userEmail = result.email;
-      var userPassword = result.password;
-      var userRetypePassword = result.retypePassword;
-      // ruthlessly remove any existing users (we're already nuclear if we've deleted the existing tenant)
-      app.usermanager.deleteUser({ email: userEmail }, function (err, userRec) {
-        if (err) {
-          console.log('ERROR: ', err);
-          return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
+    inputData = {
+      useConfigJSON: {
+        name: 'useJSON',
+        description: 'Use existing config values? y/N',
+        type: 'string',
+        before: installHelpers.inputHelpers.toBoolean,
+        default: 'N'
+      },
+      startInstall: {
+        name: 'install',
+        description: 'Continue? Y/n',
+        type: 'string',
+        before: installHelpers.inputHelpers.toBoolean,
+        default: 'Y'
+      },
+      server: [
+        {
+          name: 'serverPort',
+          type: 'number',
+          description: 'Server port',
+          pattern: installHelpers.inputHelpers.numberValidator,
+          default: 5000
+        },
+        {
+          name: 'serverName',
+          type: 'string',
+          description: 'Server name',
+          default: 'localhost'
+        },
+        {
+          name: 'dataRoot',
+          type: 'string',
+          description: 'Data directory path',
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'data'
+        },
+        {
+          name: 'authoringToolRepository',
+          type: 'string',
+          description: "Git repository URL to be used for the authoring tool source code",
+          default: 'https://github.com/adaptlearning/adapt_authoring.git'
+        },
+        {
+          name: 'frameworkRepository',
+          type: 'string',
+          description: "Git repository URL to be used for the framework source code",
+          default: 'https://github.com/adaptlearning/adapt_framework.git'
+        },
+        {
+          name: 'frameworkRevision',
+          type: 'string',
+          description: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
+          default: 'tags/' + latestFrameworkTag
         }
-
-        // add a new user using default auth plugin
-        new localAuth().internalRegisterUser(true, {
-            email: userEmail,
-            password: userPassword,
-            retypePassword: userRetypePassword,
-            _tenantId: masterTenant._id
-          }, function (err, user) {
-            if (err) {
-              console.log('ERROR: ', err);
-              return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
+      ],
+      database: {
+        dbConfig: [
+          {
+            name: 'dbName',
+            type: 'string',
+            description: 'Master database name',
+            pattern: installHelpers.inputHelpers.alphanumValidator,
+            default: 'adapt-tenant-master'
+          },
+          {
+            name: 'useConnectionUri',
+            type: 'string',
+            description: "Will you be using a full database connection URI? (all connection options in the URI) y/N",
+            before: installHelpers.inputHelpers.toBoolean,
+            default: 'N'
+          }
+        ],
+        configureUri: [
+          {
+            name: 'dbConnectionUri',
+            type: 'string',
+            description: 'Database connection URI',
+            default: ''
+          }
+        ],
+        configureStandard: [
+          {
+            name: 'dbHost',
+            type: 'string',
+            description: 'Database host',
+            default: 'localhost'
+          },
+          {
+            name: 'dbPort',
+            type: 'number',
+            description: 'Database server port',
+            pattern: installHelpers.inputHelpers.numberValidator,
+            default: 27017
+          },
+          {
+            name: 'dbUser',
+            type: 'string',
+            description: 'Database server user (only specify if using database authentication)',
+            pattern: installHelpers.inputHelpers.alphanumValidator,
+            default: ''
+          },
+          {
+            name: 'dbPass',
+            type: 'string',
+            description: 'Database server password (only specify if using database authentication)',
+            pattern: installHelpers.inputHelpers.alphanumValidator,
+            default: ''
+          },
+          {
+            name: 'dbAuthSource',
+            type: 'string',
+            description: 'Database server authentication database (only specify if using database authentication)',
+            pattern: installHelpers.inputHelpers.alphanumValidator,
+            default: ''
+          },
+        ]
+      },
+      features: {
+        smtp: {
+          confirm: {
+            name: 'useSmtp',
+            type: 'string',
+            description: "Will you be using an SMTP server? (used for sending emails) y/N",
+            before: installHelpers.inputHelpers.toBoolean,
+            default: 'N'
+          },
+          confirmConnectionUrl: {
+            name: 'useSmtpConnectionUrl',
+            type: 'string',
+            description: "Will you use a URL to connect to your smtp Server y/N",
+            before: installHelpers.inputHelpers.toBoolean,
+            default: 'N'
+          },
+          configure: [
+            {
+              name: 'fromAddress',
+              type: 'string',
+              description: "Sender email address",
+              default: '',
+            },
+            {
+              name: 'rootUrl',
+              type: 'string',
+              description: "The url this install will be accessible from",
+              default: '' // set using default server options
             }
-
-            superUser = user;
-            // grant super permissions!
-            helpers.grantSuperPermissions(user._id, function (err) {
-              if (err) {
-                console.log('ERROR: ', err);
-                return exitInstall(1, 'User account creation was unsuccessful. Please check the console output.');
-              }
-
-              return next();
-            });
-          }
-        );
-      });
-    });
-  },
-  // run grunt build
-  function gruntBuild (next) {
-    console.log('Compiling the ' + app.polyglot.t('app.productname') + ' web application, please wait a moment ... ');
-    var proc = exec('grunt build:prod', { stdio: [0, 'pipe', 'pipe'] }, function (err) {
-      if (err) {
-        console.log('ERROR: ', err);
-        console.log('grunt build:prod command failed. Is the grunt-cli module installed? You can install using ' + 'npm install -g grunt grunt-cli');
-        console.log('Install will continue. Try running ' + 'grunt build:prod' + ' after installation completes.');
-        return next();
-      }
-
-      console.log('The ' + app.polyglot.t('app.productname') + ' web application was compiled and is now ready to use.');
-      return next();
-    });
-
-    // pipe through any output from grunt
-    proc.stdout.on('data', console.log);
-    proc.stderr.on('data', console.log);
-  },
-  // all done
-  function finalize (next) {
-    if (isVagrant()) {
-      console.log("Installation complete.\nTo restart your instance run the command 'pm2 restart all'");
-    } else {
-      console.log("Installation complete.\n To restart your instance run the command 'node server' (or 'foreman start' if using heroku toolbelt).");
+          ],
+          configureService: [
+            {
+              name: 'smtpService',
+              type: 'string',
+              description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
+              default: 'none',
+            },
+            {
+              name: 'smtpUsername',
+              type: 'string',
+              description: "SMTP username",
+              default: '',
+            },
+            {
+              name: 'smtpPassword',
+              type: 'string',
+              description: "SMTP password",
+              hidden: true,
+              replace: installHelpers.inputHelpers.passwordReplace,
+              default: '',
+              before: installHelpers.inputHelpers.passwordBefore
+            }
+          ],
+          configureConnectionUrl: [
+            {
+              name: 'smtpConnectionUrl',
+              type: 'string',
+              description: "Custom connection URL: smtps://user%40gmail.com:pass@smtp.gmail.com/?pool=true",
+              default: 'none',
+            }
+          ]
+        }
+      },
+      tenant: [
+        {
+          name: 'masterTenantName',
+          type: 'string',
+          description: "Set a unique name for your tenant",
+          pattern: installHelpers.inputHelpers.alphanumValidator,
+          default: 'master'
+        },
+        {
+          name: 'masterTenantDisplayName',
+          type: 'string',
+          description: 'Set the display name for your tenant',
+          default: 'Master'
+        }
+      ],
+      tenantDelete: {
+        name: "confirm",
+        description: "Continue? (Y/n)",
+        before: installHelpers.inputHelpers.toBoolean,
+        default: "Y"
+      },
+      superUser: [
+        {
+          name: 'suEmail',
+          type: 'string',
+          description: "Email address",
+          required: true
+        },
+        {
+          name: 'suPassword',
+          type: 'string',
+          description: "Password",
+          hidden: true,
+          replace: installHelpers.inputHelpers.passwordReplace,
+          required: true,
+          before: installHelpers.inputHelpers.passwordBefore
+        },
+        {
+          name: 'suRetypePassword',
+          type: 'string',
+          description: "Confirm Password",
+          hidden: true,
+          replace: installHelpers.inputHelpers.passwordReplace,
+          required: true,
+          before: installHelpers.inputHelpers.passwordBefore
+        }
+      ]
+    };
+    if(!IS_INTERACTIVE) {
+      return start();
     }
-
-    return next();
-  }
-];
-
-// set overrides from command line arguments
-prompt.override = optimist.argv;
-
-prompt.start();
-
-// Prompt the user to begin the install
-if (isVagrant()) {
-  console.log('This script will install the application. Please wait ...');
-} else {
-  console.log('This script will install the application. Would you like to continue?');
-}
-
-prompt.get({ name: 'install', description: 'Y/n', type: 'string', default: 'Y' }, function (err, result) {
-  if (!/(Y|y)[es]*$/.test(result['install'])) {
-    return exitInstall();
-  }
-
-  // run steps
-  async.series(steps, function (err, results) {
-    if (err) {
-      console.log('ERROR: ', err);
-      return exitInstall(1, 'Install was unsuccessful. Please check the console output.');
+    console.log('');
+    if(!fs.existsSync('conf/config.json')) {
+      fs.ensureDirSync('conf');
+      return start();
     }
-
-    exitInstall();
+    console.log('Found an existing config.json file. Do you want to use the values in this file during install?');
+    installHelpers.getInput(inputData.useConfigJSON, function(result) {
+      console.log('');
+      USE_CONFIG = result.useJSON;
+      start();
+    });
   });
 });
 
+// we need the framework version for the config items, so let's go
+
+function generatePromptOverrides() {
+  if(USE_CONFIG) {
+    var configJson = require('./conf/config.json');
+    var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
+    configData.install = 'y';
+  }
+  const sessionSecret = USE_CONFIG && configData.sessionSecret || crypto.randomBytes(64).toString('hex');
+  addConfig({ sessionSecret: sessionSecret });
+  // NOTE config.json < cmd args
+  return Object.assign({}, configData, optimist.argv);
+}
+
+function start() {
+  // set overrides from command line arguments and config.json
+  prompt.override = generatePromptOverrides();
+  // Prompt the user to begin the install
+  if(!IS_INTERACTIVE || USE_CONFIG) {
+    console.log('This script will install the application. Please wait ...');
+  } else {
+    console.log('This script will install the application. \nWould you like to continue?');
+  }
+  installHelpers.getInput(inputData.startInstall, function(result) {
+    if(!result.install) {
+      return handleError(null, 0, 'User cancelled the install');
+    }
+    async.series([
+      configureServer,
+      configureDatabase,
+      configureFeatures,
+      configureMasterTenant,
+      createMasterTenant,
+      createSuperUser,
+      buildFrontend,
+      syncMigrations
+    ], function(error, results) {
+      if(error) {
+        console.error('ERROR: ', error);
+        return exit(1, 'Install was unsuccessful. Please check the console output.');
+      }
+      exit(0, `Installation completed successfully, the application can now be started with 'node server'.`);
+    });
+  });
+}
+
+function configureServer(callback) {
+  console.log('');
+  if(!IS_INTERACTIVE || USE_CONFIG) {
+    console.log('Now setting configuration items.');
+  } else {
+    console.log('We need to configure the tool before install. \nTip: just press ENTER to accept the default value in brackets.');
+  }
+  installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
+    if(error) {
+      return handleError(error, 1, 'Failed to get latest framework version');
+    }
+    installHelpers.getInput(inputData.server, function(result) {
+      addConfig(result);
+      callback();
+    });
+  });
+}
+
+function configureDatabase(callback) {
+  installHelpers.getInput(inputData.database.dbConfig, function(result) {
+    addConfig(result);
+
+    var isStandard = !result.useConnectionUri || USE_CONFIG && configResults.useConnectionUri !== 'y';
+    var config = inputData.database[isStandard ? 'configureStandard' : 'configureUri'];
+
+    installHelpers.getInput(config, function(result) {
+      addConfig(result);
+      callback();
+    });
+  });
+}
+
+function configureFeatures(callback) {
+  async.series([
+    function smtp(cb) {
+      installHelpers.getInput(inputData.features.smtp.confirm, function(result) {
+        addConfig(result);
+        if(!result.useSmtp || USE_CONFIG && configResults.useSmtp !== 'y') {
+          return cb();
+        }
+        // prompt user if custom connection url or well-known-service should be used
+        installHelpers.getInput(inputData.features.smtp.confirmConnectionUrl, function(result) {
+          addConfig(result);
+          var smtpConfig;
+          if (result.useSmtpConnectionUrl === true) {
+            smtpConfig = inputData.features.smtp.configure.concat(inputData.features.smtp.configureConnectionUrl);
+          } else {
+            smtpConfig = inputData.features.smtp.configure.concat(inputData.features.smtp.configureService);
+          }
+          for(var i = 0, count = smtpConfig.length; i < count; i++) {
+            if(smtpConfig[i].name === 'rootUrl') {
+              smtpConfig[i].default = `http://${configResults.serverName}:${configResults.serverPort}`;
+            }
+          }
+          installHelpers.getInput(smtpConfig, function(result) {
+            addConfig(result);
+            cb();
+          });
+        });
+      });
+    }
+  ], function() {
+    saveConfig(configResults, callback);
+  });
+}
+
+function configureMasterTenant(callback) {
+  var onError = function(error) {
+    console.error('ERROR: ', error);
+    return exit(1, 'Failed to configure master tenant. Please check the console output.');
+  };
+  if(!IS_INTERACTIVE || USE_CONFIG) {
+    console.log('Now configuring the master tenant. \n');
+  } else {
+    console.log('Now we need to configure the master tenant. \nTip: just press ENTER to accept the default value in brackets.\n');
+  }
+  logger.level('console','error');
+  // run the app
+  app.run({ skipVersionCheck: true, skipDependencyCheck: true });
+  app.on('serverStarted', function() {
+
+    if(USE_CONFIG && prompt.override.masterTenantName) {
+      /**
+      * remove the masterTenantDisplayName, as we can use the existing value
+      * (which isn't in config.json so can't be used as an auto override)
+      */
+      inputData.tenant = inputData.tenant.filter(item => item.name !== 'masterTenantDisplayName');
+    }
+    installHelpers.getInput(inputData.tenant, function(result) {
+      console.log('');
+      // add the input to our cached config
+      addConfig({
+        masterTenant: {
+          name: result.masterTenantName,
+          displayName: result.masterTenantDisplayName
+        }
+      });
+      // check if the tenant name already exists
+      app.tenantmanager.retrieveTenant({ name: result.masterTenantName }, function(error, tenant) {
+        if(error) {
+          return onError(error);
+        }
+        if(!tenant) {
+          return callback();
+        }
+        if(!IS_INTERACTIVE) {
+          return exit(1, `Tenant '${tenant.name}' already exists, automatic install cannot continue.`);
+        }
+        if(!configResults.masterTenant.displayName) {
+          configResults.masterTenant.displayName = tenant.displayName;
+        }
+        console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
+        installHelpers.getInput(inputData.tenantDelete, function(result) {
+          console.log('');
+          if(!result.confirm) {
+            return exit(1, 'Exiting install.');
+          }
+          // delete tenant
+          async.eachSeries(app.db.getModelNames(), function(modelName, cb) {
+            app.db.destroy(modelName, null, cb);
+          }, callback);
+        });
+      });
+    });
+  });
+}
+
+function createMasterTenant(callback) {
+  app.tenantmanager.createTenant({
+    name: configResults.masterTenant.name,
+    displayName: configResults.masterTenant.displayName,
+    isMaster: true,
+    database: {
+      dbName: app.configuration.getConfig('dbName'),
+      dbHost: app.configuration.getConfig('dbHost'),
+      dbUser: app.configuration.getConfig('dbUser'),
+      dbPass: app.configuration.getConfig('dbPass'),
+      dbPort: app.configuration.getConfig('dbPort')
+    }
+  }, function(error, tenant) {
+    if(error) {
+      return handleError(error, 1, 'Failed to create master tenant. Please check the console output.');
+    }
+    console.log('Master tenant created successfully.');
+    masterTenant = tenant;
+    delete configResults.masterTenant;
+    addConfig(app.configuration.getConfig());
+    saveConfig(configResults, callback);
+  });
+}
+
+function createSuperUser(callback) {
+  var onError = function(error) {
+    handleError(error, 1, 'Failed to create admin user account. Please check the console output.');
+  };
+  console.log(`\nNow we need to set up a 'Super Admin' account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
+  installHelpers.getInput(inputData.superUser, function(result) {
+    console.log('');
+    app.usermanager.deleteUser({ email: result.suEmail }, function(error, userRec) {
+      if(error) return onError(error);
+      // add a new user using default auth plugin
+      new localAuth().internalRegisterUser(true, {
+        email: result.suEmail,
+        password: result.suPassword,
+        retypePassword: result.suRetypePassword,
+        _tenantId: masterTenant._id
+      }, function(error, user) {
+        // TODO should we allow a retry if the passwords don't match?
+        if(error) {
+          return onError(error);
+        }
+        superUser = user;
+        helpers.grantSuperPermissions(user._id, function(error) {
+          if(error) return onError(error);
+          return callback();
+        });
+      });
+    });
+  });
+}
+
+function buildFrontend(callback) {
+  installHelpers.buildAuthoring(function(error) {
+    if(error) {
+      return callback(`Failed to build the web application, (${error}) \nInstall will continue. Try again after installation completes using 'grunt build:prod'.`);
+    }
+    callback();
+  });
+}
+
+//As this is a fresh install we dont need to run the migrations so add them to the db and set them to up
+function syncMigrations(callback) {
+  installHelpers.syncMigrations(function(err, migrations) {
+    database.getDatabase(function(err, db) {
+      if(err) {
+        return callback(err);
+      }
+      db.update('migration', {}, {'state': 'up'}, callback)
+    }, masterTenant._id)
+  });
+}
+
 // helper functions
 
+function addConfig(newConfigItems) {
+  Object.assign(configResults, newConfigItems);
+}
+
 /**
- * This will write out the config items both as a config.json file and
- * as a .env file for foreman
+ * This will write out the config items both as a config.json file
  *
  * @param {object} configItems
- * @param {callback} next
+ * @param {callback} callback
  */
 
-function saveConfig (configItems, next) {
-  var env = [];
-  Object.keys(configItems).forEach(function (key) {
-    env.push(key + "=" + configItems[key]);
+function saveConfig(configItems, callback) {
+  if (!IS_INTERACTIVE || USE_CONFIG) {
+    for (var key in configItems) {
+      if (configItems.hasOwnProperty(key) === false) continue;
+      var value = configItems[key];
+      if (typeof value !== 'string') continue;
+      value = value.toLocaleLowerCase();
+      if (value === 'y') {
+        configItems[key] = true;
+      } else if (value === 'n') {
+        configItems[key] = false;
+      }
+    }
+  }
+  fs.ensureDir('conf', function(error) {
+    if (error) {
+      return handleError(`Failed to create configuration directory.\n${error}`, 1, 'Install Failed.');
+    }
+    // Create the final config (with some default values not set in this script)
+    const config = Object.assign({
+      outputPlugin: 'adapt',
+      dbType: 'mongoose',
+      auth: 'local',
+      root: process.cwd()
+    }, configItems);
+
+    fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
+      if(error) {
+        return handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+      }
+      callback();
+    });
   });
-
-  // write the env file!
-  if (0 === fs.writeSync(fs.openSync('.env', 'w'), env.join("\n"))) {
-    console.log('ERROR: Failed to write .env file. Do you have write permissions for the current directory?');
-    process.exit(1, 'Install Failed.');
-  }
-
-  // Defaulting these config settings until there are actual options.
-  configItems.outputPlugin = 'adapt';
-  configItems.dbType = 'mongoose';
-  configItems.auth = 'local';
-
-  // write the config.json file!
-  if (0 === fs.writeSync(fs.openSync(path.join('conf', 'config.json'), 'w'), JSON.stringify(configItems))) {
-    console.log('ERROR: Failed to write conf/config.json file. Do you have write permissions for the directory?');
-    process.exit(1, 'Install Failed.');
-  }
-  return next();
 }
 
-/**
- * writes an indexed prompt for available db drivers
- *
- * @return {string}
- */
-
-function getDriversPrompt() {
-  var str = "Choose your database driver type (enter a number)\n";
-  drivers.forEach(function (d, index) {
-    str += (index+1) + ". " + d + "\n";
-  });
-
-  return str;
-}
-
-/**
- * writes an indexed prompt for available authentication plugins
- *
- * @return {string}
- */
-
-function getAuthPrompt () {
-  var str = "Choose your authentication method (enter a number)\n";
-  auths.forEach(function (a, index) {
-    str += (index+1) + ". " + a + "\n";
-  });
-
-  return str;
+function handleError(error, exitCode, exitMessage) {
+  if(error) {
+    console.error(`ERROR: ${error}`);
+  }
+  if(exitCode) {
+    exit(exitCode, exitMessage);
+  }
 }
 
 /**
@@ -549,27 +589,15 @@ function getAuthPrompt () {
  * @param {string} msg
  */
 
-function exitInstall (code, msg) {
-  code = code || 0;
-  msg = msg || 'Bye!';
-  console.log(msg);
-
-  // handle borked tenant, users, in case of a non-zero exit
-  if (0 !== code) {
-    if (app && app.db) {
-      if (masterTenant) {
-        return app.db.destroy('tenant', { _id: masterTenant._id }, function (err) {
-          if (superUser) {
-            return app.db.destroy('user', { _id: superUser._id }, function (err) {
-              return process.exit(code);
-            });
-          }
-
-          return process.exit(code);
-        });
-      }
+function exit(code, msg) {
+  installHelpers.exit(code, msg, function(callback) {
+    if(0 === code || app && !app.db || !masterTenant) {
+      return callback();
     }
-  }
-
-  process.exit(code);
+    // handle borked tenant, users, in case of a non-zero exit
+    app.db.destroy('tenant', { _id: masterTenant._id }, function(error) {
+      if(!superUser) return callback();
+      app.db.destroy('user', { _id: superUser._id }, callback);
+    });
+  });
 }

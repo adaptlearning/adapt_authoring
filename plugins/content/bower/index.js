@@ -21,19 +21,17 @@ var origin = require('../../../'),
     logger = require('../../../lib/logger'),
     defaultOptions = require('./defaults.json'),
     bower = require('bower'),
-    rimraf = require('rimraf'),
     async = require('async'),
     semver = require('semver'),
-    fs = require('fs'),
-    ncp = require('ncp').ncp,
-    mkdirp = require('mkdirp'),
+    fs = require('fs-extra'),
     _ = require('underscore'),
     util = require('util'),
     path = require('path'),
     unzip = require('unzip'),
     exec = require('child_process').exec,
     IncomingForm = require('formidable').IncomingForm,
-    version = require('../../../version.json');
+    installHelpers = require('../../../lib/installHelpers'),
+    bytes = require('bytes');
 
 // errors
 function PluginPackageError (msg) {
@@ -172,6 +170,7 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
     issues: pkgMeta.issues ? pkgMeta.issues : null,
     isLocalPackage: pkgMeta.isLocalPackage ? pkgMeta.isLocalPackage : false,
     properties: schema.properties,
+    targetAttribute: pkgMeta.targetAttribute,
     globals: schema.globals ? schema.globals : null
   };
 
@@ -198,11 +197,172 @@ function extractPackageInfo (plugin, pkgMeta, schema) {
 
 function initialize () {
   var app = origin();
+  // HACK to allow framework import helpers to use this function. Should surface this properly somewhere
+  app.bowermanager.addPackage = addPackage;
+
   app.once('serverStarted', function (server) {
     // add plugin upload route
     rest.post('/upload/contentplugin', handleUploadedPlugin);
+
+    //Remove plugins
+    ['extensiontype', 'componenttype', 'themetype', 'menutype'].forEach(function (type) {
+      rest.delete('/' + type + '/:id', function (req, res, next) {
+        const id = req.params.id;
+        const user = usermanager.getCurrentUser();
+
+        permissions.hasPermission(user._id, 'delete', '*', function (isAllowed) {
+          if (!isAllowed) {
+            return res.status(401).json({
+              success: false,
+              message: app.polyglot.t('app.errorpermission')
+            });
+          }
+
+          database.getDatabase(function (err, db) {
+            if (err) {
+              return next(err);
+            }
+
+            db.retrieve(type, {_id: id}, function (err, doc) {
+              if (err) {
+                return next(err);
+              }
+
+              if (doc.length !== 1) {
+                return res.status(404).json({success: false, message: id + ' not found'});
+              }
+
+              //There is only one document in the collection so we can move it to the root for ease of use
+              doc = doc[0];
+
+              async.parallel(
+                [
+                  function (callback) {
+                    fs.remove(path.join(__dirname, '..', type.replace('type', ''), 'versions', doc.name), callback);
+                  },
+                  function (callback) {
+                    var pluginType = type.replace('type', '');
+                    if (pluginType === 'component' || pluginType === 'extension') pluginType = pluginType + 's';
+                    fs.remove(path.join(__dirname, '..', '..', '..', 'temp', configuration.getConfig('masterTenantID'), 'adapt_framework', 'src', pluginType, doc.name), callback);
+                  },
+                  function (callback) {
+                    fs.remove(path.join(__dirname, '..', '..', 'content', 'bower', 'bowercache', doc.name), callback);
+                  },
+                  function (callback) {
+                    db.destroy(type, {_id: id}, callback);
+                  },
+                  function (callback) {
+                    if (type !== 'themetype') return callback();
+                    db.destroy('themepreset', {parentTheme: doc.theme}, callback);
+                  }
+                ],
+                function (err) {
+                  if (err) {
+                    return next(err);
+                  }
+
+                  return res.status(200).json({success: true});
+                }
+              );
+            });
+          });
+        });
+      });
+    });
+
+
+    //Returns a list of courses using the requested plugin
+    rest.get('/:type/:id/uses', function (req, res, callback) {
+      const id = req.params.id;
+      const type = req.params.type;
+      const user = usermanager.getCurrentUser();
+
+      if (['extensiontype', 'componenttype', 'themetype', 'menutype'].indexOf(type) === -1) {
+        return res.status(403).json({success: false, message: 'Invalid type'});
+      }
+
+      permissions.hasPermission(user._id, 'delete', '*', function (isAllowed) {
+        if (!isAllowed) {
+          return res.status(401).json({success: false, message: app.polyglot.t('app.errorpermission')});
+        }
+
+        let typeObject;
+        try {
+          typeObject = require('../' + type.replace('type', '') + '/index.js');
+        } catch (err) {
+          return callback(err);
+        }
+
+        typeObject.prototype.getUses(function (err, courses) {
+          if (err) {
+            return callback(err);
+          }
+
+          const returnData = [];
+          const userCache = {}
+          async.each(courses, function (course, callback) {
+            const shortCourse = {}
+            shortCourse._id = course._id
+            shortCourse.title = course.title
+
+            database.getDatabase(function (err, db) {
+              if (err) {
+                return callback(err);
+              }
+              if (typeof userCache[course.createdBy] === 'string') {
+                shortCourse.createdByEmail = userCache[course.createdBy]
+                return callback();
+              }
+
+              db.retrieve('user', {_id: course.createdBy}, function (err, users) {
+                if (err) {
+                  return callback(err);
+                }
+
+                if (users.length !== 1) {
+                  shortCourse.createdByEmail = '';
+                } else {
+                  shortCourse.createdByEmail = users[0].email;
+                  userCache[course.createdBy] = users[0].email;
+                }
+                returnData.push(shortCourse);
+                callback();
+              });
+            });
+          }, function(err){
+            if (err) {
+              return callback(err);
+            }
+            return res.status(200).json({ success: true, courses: returnData });
+          });
+        }, id);
+      });
+    });
+  });
+
+  app.contentmanager.addContentHook('create', 'config', { when: 'post' }, function(data, next) {
+    app.db.retrieve('extensiontype', { _isAddedByDefault: true }, function(error, results) {
+      if(error) {
+        return next(error);
+      }
+      if(!results.length) {
+        return next(null, data);
+      }
+      app.emit('extensions:enable', data._courseId.toString(), _.pluck(results, '_id'), function(error) {
+        next(error, data);
+      });
+    });
   });
 }
+
+/**
+ * The default for listing the courses that use a specific plugin
+ * This should be overridden in each plugin type object
+ *
+ */
+BowerPlugin.prototype.getUses = function (callback, id) {
+    return callback(new Error('The getUses function must be overridden in the plugin’s object'));
+};
 
 /**
  * the default endpoint for PUT /api/{plugintype}/
@@ -211,18 +371,18 @@ function initialize () {
 
 BowerPlugin.prototype.updatePluginType = function (req, res, next) {
   var self = this;
-  var delta = _.pick(req.body, '_isAvailableInEditor'); // only allow update of certain attributes
-
+  var whitelistedAttrs = [ // only certain attributes are allowed
+    '_isAvailableInEditor',
+    '_isAddedByDefault'
+  ];
   database.getDatabase(function (err, db) {
     if (err) {
       return next(err);
     }
-
-    db.update(self.getPluginType(), { _id: req.params.id }, delta, function (err) {
+    db.update(self.getPluginType(), { _id: req.params.id }, _.pick(req.body, whitelistedAttrs), function (err) {
       if (err) {
         return next(err);
       }
-
       return res.json({ success: true });
     });
   });
@@ -498,7 +658,7 @@ function addPackage (plugin, packageInfo, options, cb) {
       strict: false
     };
   }
-
+  var schema = false;
   // verify packageInfo meets requirements
   var pkgMeta = packageInfo.pkgMeta;
   if (pkgMeta.keywords) { // only allow our package type
@@ -537,7 +697,6 @@ function addPackage (plugin, packageInfo, options, cb) {
     }
 
     fs.readFile(schemaPath, function (err, data) {
-      var schema = false;
       if (err) {
         if (options.strict) {
           return cb(new PluginPackageError('Failed to parse schema for package ' + pkgMeta.name));
@@ -558,166 +717,184 @@ function addPackage (plugin, packageInfo, options, cb) {
         return cb(null);
       }
 
-      // @TODO - this should be removed when we move to symlinked plugins :-\
-      if (!options.skipTenantCopy) {
-        // Copy this version of the component to a holding area (used for publishing).
-        // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
-        var destination = path.join(plugin.options.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
-        rimraf(destination, function(err) {
+      async.waterfall([
+        addToDB,
+        copyPlugin
+      ], function(error, plugin) {
+        if (error) return cb(error);
+        cb(null, plugin);
+      });
+    });
+  });
+
+  function copyPlugin(pluginDoc, addCb) {
+    // @TODO - this should be removed when we move to symlinked plugins :-\
+    if (!options.skipTenantCopy) {
+      // Copy this version of the component to a holding area (used for publishing).
+      // Folder structure: <versions folder>/adapt-contrib-graphic/0.0.2/adapt-contrib-graphic/...
+      var destination = path.join(plugin.options.versionsFolder, pkgMeta.name, pkgMeta.version, pkgMeta.name);
+      fs.remove(destination, function(err) {
+        if (err) {
+          // can't continue
+          logger.log('error', err);
+          return addCb(err);
+        }
+
+        fs.mkdirs(destination, function (err) {
           if (err) {
-            // can't continue
-            return logger.log('error', err);
+            logger.log('error', err);
+            return addCb(err);
           }
 
-          mkdirp(destination, function (err) {
+          // move from the cache to the versioned dir
+          fs.copy(packageInfo.canonicalDir, destination, function (err) {
             if (err) {
-              return logger.log('error', err);
+              // don't double call callback
+              logger.log('error', err);
+              return addCb(err);
             }
 
-            // move from the cache to the versioned dir
-            ncp(packageInfo.canonicalDir, destination, function (err) {
+            // temporary hack to get stuff moving
+            // copy plugin source to tenant dir
+            var currentUser = usermanager.getCurrentUser();
+            var tenantId = options.tenantId
+              ? options.tenantId
+              : currentUser.tenant._id.toString()
+            var tenantPluginPath = path.join(
+              configuration.tempDir,
+              tenantId,
+              'adapt_framework',
+              'src',
+              plugin.srcLocation,
+              pkgMeta.name
+            );
+
+            // remove older version first
+            fs.remove(tenantPluginPath, function (err) {
               if (err) {
-                // don't double call callback
-                return logger.log('error', err);
+                logger.log('error', err);
+                return addCb(err);
               }
 
-              // temporary hack to get stuff moving
-              // copy plugin source to tenant dir
-              var currentUser = usermanager.getCurrentUser();
-              var tenantId = options.tenantId
-                ? options.tenantId
-                : currentUser.tenant._id.toString()
-              var tenantPluginPath = path.join(
-                configuration.tempDir,
-                tenantId,
-                'adapt_framework',
-                'src',
-                plugin.srcLocation,
-                pkgMeta.name
-              );
-
-              // remove older version first
-              rimraf(tenantPluginPath, function (err) {
+              fs.copy(packageInfo.canonicalDir, tenantPluginPath, function (err) {
                 if (err) {
-                  return logger.log('error', err);
+                  logger.log('error', err);
+                  return addCb(err);
                 }
 
-                ncp(packageInfo.canonicalDir, tenantPluginPath, function (err) {
-                  if (err) {
-                    return logger.log('error', err);
-                  }
-
-                  // done
-                  logger.log('info', 'Successfully copied ' + pkgMeta.name + ' to tenant ' + tenantPluginPath);
-                });
+                // done
+                logger.log('info', 'Successfully copied ' + pkgMeta.name + ' to tenant ' + tenantPluginPath);
+                return addCb(null, pluginDoc);
               });
             });
           });
         });
+      });
+    }
+  }
+
+  function addToDB(addCb) {
+    // build the package information
+    var package = extractPackageInfo(plugin, pkgMeta, schema);
+    // add the package to the modelname collection
+    database.getDatabase(function (err, db) {
+      if (err) {
+        logger.log('error', err);
+        return addCb(err);
       }
 
-      // build the package information
-      var package = extractPackageInfo(plugin, pkgMeta, schema);
-      // add the package to the modelname collection
-      database.getDatabase(function (err, db) {
+      // don't duplicate component.name, component.version
+      db.retrieve(plugin.type, { name: package.name, version: package.version }, function (err, results) {
         if (err) {
           logger.log('error', err);
-          return cb(err);
+          return addCb(err);
         }
 
-        // don't duplicate component.name, component.version
-        db.retrieve(plugin.type, { name: package.name, version: package.version }, function (err, results) {
+        if (results && 0 !== results.length) {
+          // don't add duplicate
+          if (options.strict) {
+            return addCb(new PluginPackageError("Can't add plugin: plugin already exists!"));
+          }
+          return addCb(null);
+        }
+
+        db.create(plugin.type, package, function (err, newPlugin) {
           if (err) {
-            logger.log('error', err);
-            return cb(err);
-          }
-
-          if (results && 0 !== results.length) {
-            // don't add duplicate
             if (options.strict) {
-              return cb(new PluginPackageError("Can't add plugin: plugin already exists!"));
+              return addCb(err);
             }
-            return cb(null);
+
+            logger.log('error', 'Failed to add package: ' + package.name, err);
+            return addCb(null);
           }
 
-          db.create(plugin.type, package, function (err, newPlugin) {
-            if (err) {
-              if (options.strict) {
-                return cb(err);
-              }
+          logger.log('info', 'Added package: ' + package.name);
 
-              logger.log('error', 'Failed to add package: ' + package.name, err);
-              return cb(null);
+          // #509 update content targeted by previous versions of this package
+          logger.log('info', 'searching old package types ... ');
+          db.retrieve(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err, results) {
+
+            if (err) {
+              // strictness doesn't matter at this point
+              logger.log('error', 'Failed to retrieve previous packages: ' + err.message, err);
             }
 
-            logger.log('info', 'Added package: ' + package.name);
+            if (results && results.length) {
+              // found previous versions to update
+              // only update content using the id of the most recent version
+              var oldPlugin = false;
+              results.forEach(function (item) {
+                if (!oldPlugin) {
+                  oldPlugin = item;
+                } else if (semver.gt(item.version, oldPlugin.version)) {
+                  oldPlugin = item;
+                }
+              });
 
-            // #509 update content targeted by previous versions of this package
-            logger.log('info', 'searching old package types ... ');
-            db.retrieve(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err, results) {
+              // Persist the _isAvailableInEditor flag.
+              db.update(plugin.type, {_id: newPlugin._id}, {_isAvailableInEditor: oldPlugin._isAvailableInEditor}, function(err, results) {
+                if (err) {
+                  logger.log('error', err);
+                  return addCb(err);
+                }
 
-              if (err) {
-                // strictness doesn't matter at this point
-                logger.log('error', 'Failed to retrieve previous packages: ' + err.message, err);
-              }
-
-              if (results && results.length) {
-                // found previous versions to update
-                // only update content using the id of the most recent version
-                var oldPlugin = false;
-                results.forEach(function (item) {
-                  if (!oldPlugin) {
-                    oldPlugin = item;
-                  } else if (semver.gt(item.version, oldPlugin.version)) {
-                    oldPlugin = item;
-                  }
-                });
-
-                // Persist the _isAvailableInEditor flag.
-                db.update(plugin.type, {_id: newPlugin._id}, {_isAvailableInEditor: oldPlugin._isAvailableInEditor}, function(err, results) {
+                plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
                   if (err) {
                     logger.log('error', err);
-                    return cb(err);
+                    return addCb(err);
                   }
 
-                  plugin.updateLegacyContent(newPlugin, oldPlugin, function (err) {
+                  // Remove older versions of this plugin
+                  db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
                     if (err) {
                       logger.log('error', err);
-                      return cb(err);
+                      return addCb(err);
                     }
 
-                    // Remove older versions of this plugin
-                    db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
-                      if (err) {
-                        logger.log('error', err);
-                        return cb(err);
-                      }
-
-                      logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
-                      return cb(null, newPlugin);
-                    });
+                    logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
+                    return addCb(null, newPlugin);
                   });
                 });
-              } else {
-                // nothing to do!
-                // Remove older versions of this plugin
-                db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
-                  if (err) {
-                    logger.log('error', err);
-                    return cb(err);
-                  }
+              });
+            } else {
+              // nothing to do!
+              // Remove older versions of this plugin
+              db.destroy(plugin.type, { name: package.name, version: { $ne: newPlugin.version } }, function (err) {
+                if (err) {
+                  logger.log('error', err);
+                  return addCb(err);
+                }
 
-                  logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
+                logger.log('info', 'Successfully removed versions of ' + package.name + '(' + plugin.type + ') older than ' + newPlugin.version);
 
-                  return cb(null, newPlugin);
-                });
-              }
-            });
+                return addCb(null, newPlugin);
+              });
+            }
           });
         });
-      }, options.tenantId);
-    });
-  });
+      });
+    }, options.tenantId);
+  }
 }
 
 /**
@@ -748,7 +925,7 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
   options.cwd = configuration.serverRoot;
 
   // clean our bower cache
-  rimraf(options.directory, function (err) {
+  fs.remove(options.directory, function (err) {
     if (err) {
       return cb(err);
     }
@@ -776,22 +953,22 @@ BowerPlugin.prototype.updatePackages = function (plugin, options, cb) {
               })
               .on('end', function (packageInfo) {
                 // add details for each to the db
-                async.eachSeries(
-                  Object.keys(packageInfo),
-                  function (key, next) {
-                    if (packageInfo[key].pkgMeta.framework) {
-                      // If the plugin defines a framework, ensure that it is compatible
-                      if (semver.satisfies(semver.clean(version.adapt_framework), packageInfo[key].pkgMeta.framework)) {
-                        addPackage(plugin, packageInfo[key], options, next);
-                      } else {
-                        logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of of the Adapt framework');
-                        next();
-                      }
-                    } else {
-                      addPackage(plugin, packageInfo[key], options, next);
+                async.eachSeries(Object.keys(packageInfo), function (key, next) {
+                  if (!packageInfo[key].pkgMeta.framework) {
+                    return addPackage(plugin, packageInfo[key], options, next);
+                  }
+                  installHelpers.getInstalledFrameworkVersion(function(error, frameworkVersion) {
+                    if(error) {
+                      return next(error);
                     }
-                  },
-                  cb);
+                    // If the plugin defines a framework, ensure that it is compatible
+                    if (!semver.satisfies(semver.clean(frameworkVersion), packageInfo[key].pkgMeta.framework, { includePrerelease: true })) {
+                      logger.log('warn', 'Unable to install ' + packageInfo[key].pkgMeta.name + ' as it is not supported in the current version of the Adapt framework');
+                      return next();
+                    }
+                    addPackage(plugin, packageInfo[key], options, next);
+                  });
+                }, cb);
               });
           });
       });
@@ -831,21 +1008,26 @@ function checkIfHigherVersionExists (package, options, cb) {
             logger.log('error', `Unexpected number of ${packageName}s found (${results.length})`);
             return cb(error);
           }
-          var installedVersion = results[0].version;
-          var latestVersionIsNewer = semver.gt(latestPkg.version, installedVersion);
-          var satisfiesFrameworkReq = semver.satisfies(semver.clean(version.adapt_framework), latestPkg.framework);
+          installHelpers.getInstalledFrameworkVersion(function(error, frameworkVersion) {
+            if(error) {
+              return cb(error);
+            }
+            var installedVersion = results[0].version;
+            var latestVersionIsNewer = semver.gt(latestPkg.version, installedVersion);
+            var satisfiesFrameworkReq = semver.satisfies(semver.clean(frameworkVersion), latestPkg.framework, { includePrerelease: true });
 
-          if(!latestVersionIsNewer) {
-            logger.log('info', `Already using the latest version of ${packageName} (${latestPkg.version})`);
-            return cb(null, false);
-          }
-          if(!satisfiesFrameworkReq) {
-            // TODO recursively check old versions; we may be several releases behind
-            logger.log('warn', `A later version of ${packageName} is available but is not supported by the installed version of the Adapt framework (${version.adapt_framework})`);
-            return cb(null, false);
-          }
-          logger.log('info', `A new version of ${packageName} is available (${latestPkg.version})`);
-          cb(null, true);
+            if(!latestVersionIsNewer) {
+              logger.log('info', `Already using the latest version of ${packageName} (${latestPkg.version})`);
+              return cb(null, false);
+            }
+            if(!satisfiesFrameworkReq) {
+              // TODO recursively check old versions; we may be several releases behind
+              logger.log('warn', `A later version of ${packageName} is available but is not supported by the installed version of the Adapt framework (${frameworkVersion})`);
+              return cb(null, false);
+            }
+            logger.log('info', `A new version of ${packageName} is available (${latestPkg.version})`);
+            cb(null, true);
+          });
         });
       });
     })
@@ -862,8 +1044,15 @@ function checkIfHigherVersionExists (package, options, cb) {
 
 function handleUploadedPlugin (req, res, next) {
   var form = new IncomingForm();
+  form.maxFileSize = configuration.getConfig('maxFileUploadSize');
   form.parse(req, function (error, fields, files) {
-    if (error) {
+    if(error) {
+      if (form.bytesExpected > form.maxFileSize) {
+        return res.status(400).json(new PluginPackageError(app.polyglot.t('app.uploadsizeerror', {
+          max: bytes.format(form.maxFileSize),
+          size: bytes.format(form.bytesExpected)
+        })));
+      }
       return next(error);
     }
 
@@ -937,23 +1126,38 @@ function handleUploadedPlugin (req, res, next) {
               pkgMeta: packageJson
             };
 
-            // Check if the framework has been defined on the plugin and that it's not compatible
-            if (packageInfo.pkgMeta.framework && !semver.satisfies(semver.clean(version.adapt_framework), packageInfo.pkgMeta.framework)) {
-              return next(new PluginPackageError('This plugin is incompatible with version ' + version.adapt_framework + ' of the Adapt framework'));
-            }
-
-            app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {
-              if (error) {
+            installHelpers.getInstalledFrameworkVersion(function(error, frameworkVersion) {
+              if(error) {
                 return next(error);
               }
-
-              addPackage(contentPlugin.bowerConfig, packageInfo, { strict: true }, function (error, results) {
+              // Check if the framework has been defined on the plugin and that it's not compatible
+              if (packageInfo.pkgMeta.framework && !semver.satisfies(semver.clean(frameworkVersion), packageInfo.pkgMeta.framework, { includePrerelease: true })) {
+                return next(new PluginPackageError('This plugin is incompatible with version ' + frameworkVersion + ' of the Adapt framework'));
+              }
+              app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {
                 if (error) {
                   return next(error);
                 }
+                addPackage(contentPlugin.bowerConfig, packageInfo, { strict: true }, function (error, results) {
+                  if (error) {
+                    return next(error);
+                  }
 
-                res.statusCode = 200;
-                return res.json({ success: true, pluginType: pluginType, message: 'successfully added new plugin' });
+                  function sendResponse() {
+                    res.statusCode = 200;
+                    return res.json({ 
+                      success: true, 
+                      pluginType: pluginType, 
+                      message: 'successfully added new plugin' 
+                    });
+                  }
+
+                  Promise.all([
+                    fs.remove(file.path),
+                    fs.remove(outputPath)
+                  ]).then(sendResponse).catch(sendResponse);
+
+                });
               });
             });
 

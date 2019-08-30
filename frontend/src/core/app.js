@@ -5,16 +5,20 @@
   function loadLibraries(callback) {
     require([
       'ace/ace',
+      'handlebars',
       'imageReady',
       'inview',
       'jqueryForm',
       'jqueryTagsInput',
       'jqueryUI',
-      'mediaelement',
       'scrollTo',
+      'selectize',
       'sweetalert',
       'velocity'
-    ], callback);
+    ], function() {
+      window.Handlebars = $.extend(require('handlebars'), window.Handlebars);
+      callback();
+    });
   }
 
   function loadCore(callback) {
@@ -43,46 +47,30 @@
     });
   }
 
-  function loadAddOns(callback) {
-    /*
-    * FIXME we want to just be able to require these
-    * (this doesn't work in production mode)
-    */
-    // ['modules/modules','plugins/plugins']
+  function loadModules(callback) {
     require([
-      // modules
-      'modules/actions/index',
-      'modules/assetManagement/index',
-      'modules/contentPane/index',
-      'modules/contextMenu/index',
-      'modules/editor/index',
-      'modules/filters/index',
-      'modules/globalMenu/index',
-      'modules/help/index',
-      'modules/location/index',
-      'modules/modal/index',
-      'modules/navigation/index',
-      'modules/notify/index',
-      'modules/options/index',
-      'modules/pluginManagement/index',
-      'modules/projects/index',
-      'modules/scaffold/index',
-      'modules/sidebar/index',
-      'modules/user/index',
-      'modules/userManagement/index',
+      'modules/modules'
+    ], callback);
+  }
+
+  function loadPlugins(callback) {
+    require([
+      'plugins/plugins'
     ], callback);
   }
 
   /**
-  * Start app load
-  */
+ * Start app load
+ */
   loadLibraries(function() {
     loadCore(function() {
-      loadAddOns(function() {
-        // start session
-        // FIXME required here to avoid errors
-        require(['modules/user/models/sessionModel'], function(SessionModel) {
-          origin.startSession(new SessionModel());
+      loadModules(function() {
+        loadPlugins(function() {
+          // start session
+          // FIXME required here to avoid errors
+          require(['modules/user/models/sessionModel'], function(SessionModel) {
+              origin.startSession(new SessionModel());
+          });
         });
       });
     });

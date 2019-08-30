@@ -1,6 +1,6 @@
 @import 'colours';
 
-@default-project-bg: url(/css/assets/origami-project.jpg);
+@default-project-bg: url(assets/origami-project.jpg);
 
 .projects {
   ul {
@@ -38,9 +38,8 @@ ul.projects-options {
   padding: 30px 30px 0px 0px;
 }
 
-.grid-layout {
-    .project-list-item,
-    .shared-project-list-item {
+.projects-list[data-layout=grid] {
+    .project-list-item {
         margin-left: 25px;
         min-width: 200px;
         min-height: 341px;
@@ -58,6 +57,13 @@ ul.projects-options {
             border-left: none;
             border-right: none;
         }
+        .project-details-last-updated,
+        .project-details-createdBy {
+          .projects-details-label {
+            text-transform: uppercase;
+          }
+        }
+        .project-details-createdBy,
         .project-details-tags {
             margin-top:8px;
         }
@@ -74,11 +80,10 @@ ul.projects-options {
     }
 }
 
-.list-layout {
+.projects-list[data-layout=list] {
     margin-left:30px;
 
-    .project-list-item,
-    .shared-project-list-item {
+    .project-list-item {
         margin-left:0px;
         width:100%;
         .project-settings {

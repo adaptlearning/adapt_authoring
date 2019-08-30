@@ -1,124 +1,96 @@
-// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
 
-    var Backbone = require('backbone');
-    var BackboneForms = require('backbone-forms');
-    var Origin = require('core/origin');
+  var ScaffoldCodeEditorView =  Backbone.Form.editors.Base.extend({
 
-    var ScaffoldCodeEditorView =  Backbone.Form.editors.Base.extend({
+    defaultValue: '',
 
-        tagName: 'div',
+    className: 'scaffold-code-editor',
 
-        className: 'scaffold-code-editor',
+    editor: null,
 
-        isSyntaxError: false,
+    mode: 'text',
 
-        initialize: function(options) {
-            // Call parent constructor
-            Backbone.Form.editors.Base.prototype.initialize.call(this, options);
+    session: null,
 
-            // Check which mode the code editor should be in
-            var fieldType = options.schema.fieldType;
-            var mode = fieldType.mode;
+    initialize: function(options) {
+      Backbone.Form.editors.Base.prototype.initialize.call(this, options);
 
-            if (mode) {
-                this.mode = mode;
-                return;
-            }
+      var inputType = options.schema.inputType;
+      var mode = inputType.mode || inputType.split(':')[1];
 
-            var schemaParts = fieldType.split(':');
+      if (mode) {
+        this.mode = mode;
+      }
+    },
 
-            if (schemaParts.length == 1) {
-              this.mode = 'text';
-            } else {
-              this.mode = schemaParts[1];
-            }
-        },
+    render: function() {
+      window.ace.config.set('basePath', 'js/ace');
 
-        render: function() {
-            this.setValue(this.value);
+      this.editor = window.ace.edit(this.$el[0], {
+        maxLines: 30,
+        minLines: 14,
+        mode: 'ace/mode/' + this.mode,
+        theme: 'ace/theme/chrome'
+      });
 
-            _.defer(_.bind(function() {
-                window.ace.config.set("basePath", "./build/js/ace");
-                this.editor = window.ace.edit(this.$el[0]);
+      this.editor.on('change', function() { this.trigger('change', this); }.bind(this));
+      this.setValue(this.value);
 
-                var session = this.editor.getSession();
+      return this;
+    },
 
-                this.editor.$blockScrolling = Infinity;
-                this.editor.setTheme("ace/theme/chrome");
-                session.setMode("ace/mode/" + this.mode);
-                session.on('changeAnnotation', _.bind(this.onChangeAnnotation, this));
-                this.editor.setValue(this.value);
-            }, this));
+    setValue: function(value) {
+      if (this.mode === 'json') {
+        value = JSON.stringify(value, null, '\t');
+      }
 
-            return this;
-        },
+      this.editor.setValue(value);
+    },
 
-        setValue: function(value) {
-            var schemaDefault = this.schema.default;
-            var fallbackDefault = this.mode === 'json' ? {} : '';
+    getValue: function() {
+      var value = this.editor.getValue();
 
-            if (value === null) {
-                value = schemaDefault !== undefined ? schemaDefault : fallbackDefault;
-            }
-            if (this.mode === 'json') {
-                value = JSON.stringify(value, null, '\t');
-            }
+      if (this.mode !== 'json') {
+        return value;
+      }
 
-            this.value = value;
-        },
+      try {
+        return JSON.parse(value);
+      } catch(e) {
+        return value;
+      }
+    },
 
-        getValue: function() {
-            if (this.mode === 'json' && !this.isSyntaxError) {
-                return JSON.parse(this.editor.getValue() || null);
-            }
+    validate: function() {
+      var error = Backbone.Form.editors.Base.prototype.validate.call(this);
 
-            return this.editor.getValue();
-        },
+      if (error) {
+        return error;
+      }
 
-        validate: function() {
-            var error = Backbone.Form.editors.Base.prototype.validate.call(this);
+      if (this.isSyntaxError()) {
+        return { message: Origin.l10n.t('app.errorsyntax') };
+      }
+    },
 
-            if (error) {
-                return error;
-            }
-            if (this.isSyntaxError) {
-                return { message: 'Syntax error' };
-            }
-        },
+    isSyntaxError: function() {
+      var annotations = this.editor.getSession().getAnnotations();
 
-        onChangeAnnotation: function() {
-            var annotations = this.editor.getSession().getAnnotations();
-
-            for (var i = 0, j = annotations.length; i < j; i++) {
-                if (annotations[i].type === 'error') {
-                    this.isSyntaxError = true;
-                    return;
-                }
-            }
-
-            this.isSyntaxError = false;
-        },
-
-        remove: function() {
-            this.editor.getSession().off('changeAnnotation');
-
-            Backbone.Form.editors.Base.prototype.remove.call(this);
+      for (var i = 0, j = annotations.length; i < j; i++) {
+        if (annotations[i].type === 'error') {
+          return true;
         }
+      }
+    }
 
-    }, {
-      template: 'scaffoldCodeEditor'
-    });
+  });
 
-    Origin.on('origin:dataReady', function() {
-        // Add code editor to the list of editors
-        // Anything after "CodeEditor:" can correspond to the ACE editor mode types
-        Origin.scaffold.addCustomField('CodeEditor:javascript', ScaffoldCodeEditorView);
-        Origin.scaffold.addCustomField('CodeEditor:less', ScaffoldCodeEditorView);
-        Origin.scaffold.addCustomField('CodeEditor', ScaffoldCodeEditorView);
-    })
+  Origin.on('origin:dataReady', function() {
+    Origin.scaffold.addCustomField('CodeEditor', ScaffoldCodeEditorView);
+    Origin.scaffold.addCustomField('CodeEditor:javascript', ScaffoldCodeEditorView);
+    Origin.scaffold.addCustomField('CodeEditor:less', ScaffoldCodeEditorView);
+  });
 
+  return ScaffoldCodeEditorView;
 
-    return ScaffoldCodeEditorView;
-
-})
+});

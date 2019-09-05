@@ -201,7 +201,7 @@ define([
       this.$el.html(Handlebars.templates[this.constructor.template]({
         value: this.value,
         type: 'image',
-        url: id ? '/api/asset/serve/' + id : dataUrl,
+        url: id ? 'api/asset/serve/' + id : dataUrl,
         addLabel: this.schema.inputType.addLabel || Origin.l10n.t('app.add')
       }));
 

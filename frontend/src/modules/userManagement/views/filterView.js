@@ -1,6 +1,6 @@
 define([
   'core/origin',
-  'libraries/pikaday/js/pikaday'
+  'pikaday'
 ], function(Origin, Pikaday) {
 
   var FilterView = Backbone.View.extend({

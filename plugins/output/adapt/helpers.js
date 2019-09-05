@@ -66,7 +66,7 @@ function unzip(filePath, unzipPath, done) {
 * @param {callback} pluginImported
 */
 function importPlugin(pluginDir, pluginType, pluginImported) {
-  var bowerJson, contentPlugin, frameworkVersion;
+  var bowerJson, contentPlugin;
 
   async.waterfall([
     function readBowerJson(cb) {
@@ -90,7 +90,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
       db.retrieve(contentPlugin.bowerConfig.type, { name: bowerJson.name }, { jsonOnly: true }, cb);
     },
     function addPlugin(records, cb) {
-      if(records.length === 0) {
+      if (records.length === 0) {
         logger.log('info', 'Installing', pluginType, "'" + bowerJson.displayName + "'");
         bowerJson.isLocalPackage = true;
         app.bowermanager.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
@@ -98,12 +98,14 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
         var serverPlugin = records[0];
         var serverPluginVersion = semver.clean(serverPlugin.version);
         var bowerVersion = semver.clean(bowerJson.version);
+        bowerJson.isLocalPackage = true;
 
         if(serverPluginVersion && bowerVersion && semver.gt(bowerVersion, serverPluginVersion)) {
-          logger.log('info', 'Import contains newer version of ' + bowerJson.displayName + ' (' + bowerVersion + ') than server (' + serverPluginVersion + '), but not installing');
+          logger.log('info', 'Import contains newer version of ' + bowerJson.displayName + ' (' + bowerVersion + ') than server (' + serverPluginVersion + '), upgrading');
+          app.bowermanager.addPackage(contentPlugin.bowerConfig, { canonicalDir: pluginDir, pkgMeta: bowerJson }, { strict: true }, cb);
+        } else {
+          cb();
         }
-
-        cb();
       }
     }
   ], pluginImported);
@@ -196,6 +198,7 @@ function importAsset(fileMetadata, metadata, assetImported) {
 
 
 /**
+* Retrieves the framework version numbers in the system and in the import. Checks import version is valid.
 * @param {object} versionMetaData
 * @param {callback} cb
 */
@@ -206,33 +209,77 @@ function checkFrameworkVersion(versionMetaData, cb) {
     }
 
     var installedVersion = semver.clean(frameworkVersion);
-    var importVersion = semver.clean(versionMetaData.version);
+    var importedVersion = semver.clean(versionMetaData.version);
 
-    if (!importVersion) {
-      return cb(new ImportError('Invalid version number (' + importVersion + ') found in import package.json'), 400)
+    if (!importedVersion) {
+      return cb(new ImportError('Invalid version number (' + importedVersion + ') found in import package.json'), 400)
     }
-    // check the import's within the major version number
-    if (semver.satisfies(importVersion, semver.major(installedVersion).toString(), {
-      includePrerelease: true
-    })) {
-      cb();
-    } else {
-      cb(new ImportError('Import version (' + importVersion + ') not compatible with installed version (' + installedVersion + ')', 400));
-    }
+    cb(null, { installed: installedVersion, imported: importedVersion});
   });
 };
 
-function checkPluginFrameworkVersion(serverFrameworkVersion, pluginMetaData) {
-  const validFrameworkVersion = (semver.valid(pluginMetaData.framework) || semver.validRange(pluginMetaData.framework));
-  if (!validFrameworkVersion) {
-    return new ImportError(`Invalid version number (${pluginMetaData.framework}) found in ${pluginMetaData.name}`, 400);
-  }
-  if (semver.satisfies(serverFrameworkVersion, pluginMetaData.framework, {
-    includePrerelease: true
-  })) {
-    return null;
-  }
-  return new ImportError(`Plugin ${pluginMetaData.name} (${pluginMetaData.framework}) is not compatible with the installed version (${serverFrameworkVersion})`, 400);
+/**
+ * Gets category to describe plugin framework version against installed framework version
+ * @param serverFrameworkVersion
+ * @param pluginMetaData
+ * @returns {*}
+ */
+function getPluginFrameworkVersionCategory(serverFrameworkVersion, pluginMetaData, type, callback) {
+  var pluginFrameworkVersion = pluginMetaData.framework;
+  var contentPlugin;
+
+  async.waterfall([
+    function getContentPlugin(cb) {
+      origin.contentmanager.getContentPlugin(type, cb);
+    },
+    function getDB(plugin, cb) {
+      contentPlugin = plugin;
+      database.getDatabase(cb);
+    },
+    function retrievePluginDoc(db, cb) {
+      db.retrieve(contentPlugin.bowerConfig.type, { name: pluginMetaData.name }, { jsonOnly: true }, cb);
+    },
+    function categorisePlugin(records, cb) {
+      var importPluginVersionValid = semver.valid(pluginMetaData.version);
+      if (records.length === 0) {
+        // Not already installed so could be:
+        // Red - this plugin is not compatible or the version is invalid
+        // Green - this plugin is compatible and will be installed
+        if (!importPluginVersionValid) {
+          return cb(null, {category: 'red', authoringToolVersion: app.polyglot.t('app.none')});
+        }
+        if (semver.satisfies(serverFrameworkVersion, pluginFrameworkVersion, {
+            includePrerelease: true
+          })) {
+          return cb(null, {category: 'green-install', authoringToolVersion: app.polyglot.t('app.none')});
+        }
+        return cb(null, {category: 'red', authoringToolVersion: app.polyglot.t('app.none')});
+      }
+
+      // A version is already installed so could be:
+      // White - same version installed as in course
+      // Red - invalid version
+      // Amber - newer version installed and will be used in the course instead
+      // Green - older version installed so this newer version will be upgraded in the AT
+      var serverPlugin = records[0];
+      if (!importPluginVersionValid || !semver.valid(serverPlugin.version)) {
+        return cb(null, {category: 'red', authoringToolVersion: serverPlugin.version});
+      }
+      var serverPluginVersion = semver.clean(serverPlugin.version);
+      var isServerVersionLatest = semver.compare(serverPluginVersion, pluginMetaData.version);
+      if (isServerVersionLatest === 0) {
+        return cb(null, {category: 'white', authoringToolVersion: app.polyglot.t('app.none')});
+      }
+      if (semver.satisfies(serverFrameworkVersion, pluginFrameworkVersion, {
+          includePrerelease: true
+        }) && isServerVersionLatest < 0) {
+        return cb(null, {category: 'green-update', authoringToolVersion: serverPluginVersion});
+      }
+      cb(null, {category: 'amber', authoringToolVersion: serverPluginVersion});
+    }
+  ], function(error, category) {
+    return callback(error, category);
+  });
 };
 
 function ImportError(message, httpStatus) {
@@ -276,7 +323,7 @@ exports = module.exports = {
   importPlugin: importPlugin,
   importAsset: importAsset,
   checkFrameworkVersion: checkFrameworkVersion,
-  checkPluginFrameworkVersion: checkPluginFrameworkVersion,
+  getPluginFrameworkVersionCategory: getPluginFrameworkVersionCategory,
   ImportError: ImportError,
   PartialImportError: PartialImportError,
   sortContentObjects: sortContentObjects,

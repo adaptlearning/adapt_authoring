@@ -113,7 +113,6 @@
     position: absolute;
     left: 205px;
     top: 25px;
-    width: 0px;
     padding: 0;
     background: none;
     color: @sidebar-input-text-color;
@@ -122,15 +121,6 @@
   .sidebar-item-container {
     position: relative;
     height:100%;
-  }
-
-  .sidebar-hide {
-    #app {
-      margin-left: 0px;
-    }
-    .sidebar {
-      display: none;
-    }
   }
 
   .separator {
@@ -158,6 +148,15 @@
         color: @white !important;
       }
     }
+  }
+}
+
+.sidebar-hide {
+  #app {
+    margin-left: 0px;
+  }
+  .sidebar {
+    display: none;
   }
 }
 

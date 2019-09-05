@@ -186,7 +186,7 @@ define(function(require){
 
           var $btn = $(e.target);
           $btn.addClass('submitted');
-          Helpers.ajax('/api/user/invite', { email: this.model.get('email') }, 'POST', function() {
+          Helpers.ajax('api/user/invite', { email: this.model.get('email') }, 'POST', function() {
             $btn.removeClass('submitted');
           });
         }.bind(this)
@@ -220,7 +220,7 @@ define(function(require){
         closeOnConfirm: false,
         callback: function(newPassword) {
           if(newPassword === false) return;
-          else if(newPassword === "") return swal.showInputError(Origin.l10n.t('app.passwordempty'));
+          else if(newPassword === "") return swal.showInputError(Origin.l10n.t('app.invalidempty'));
           var postData = {
             "email": self.model.get('email'),
             "password": newPassword

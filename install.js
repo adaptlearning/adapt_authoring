@@ -478,7 +478,7 @@ function createSuperUser(callback) {
   var onError = function(error) {
     handleError(error, 1, 'Failed to create admin user account. Please check the console output.');
   };
-  console.log(`\nNow we need to set up a 'Super Admin' account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
+  console.log(`\nNow we need to set up a 'Super Admin' account. This account can be used to manage everything on your authoring tool instance.`);
   installHelpers.getInput(inputData.superUser, function(result) {
     console.log('');
     app.usermanager.deleteUser({ email: result.suEmail }, function(error, userRec) {

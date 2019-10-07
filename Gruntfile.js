@@ -4,6 +4,16 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    'generate-lang-json': {
+      options: {
+        langFileExt: '.json',
+        src: {
+          backend: 'routes/lang',
+          frontend: 'frontend/src/**/lang'
+        },
+        dest: 'temp/lang'
+      }
+    },
     copy: {
       main: {
         files: [
@@ -253,31 +263,28 @@ module.exports = function(grunt) {
       done();
     }
   });
-  // TODO should probably have config up there ^
   grunt.registerTask('generate-lang-json', function() {
-    var _ = require('underscore');
-    var fs = require('fs-extra');
-    var path = require('path');
+    const fs = require('fs-extra');
+    const path = require('path');
 
-    var langFileExt = '.json';
-    var backendSrc = path.join('routes', 'lang', '*' + langFileExt);
-    var frontendSrc = path.join('frontend', 'src', '**', 'lang');
-    var dest = path.join('temp', 'lang');
+    const options = this.options();
+    const backendGlob = path.join(options.src.backend, `*${options.langFileExt}`);
+    const dest = options.dest;
     // load each route lang file
     /**
     * NOTE there must be a file in routes/lang for the language to be loaded,
     * won't work if you've only got lang files in frontend
     */
-    grunt.file.expand({}, backendSrc).forEach(function(filePath) {
-      var lang = path.basename(filePath, langFileExt);
-      var data = _.extend({}, fs.readJSONSync(filePath));
+    grunt.file.expand({}, path.join(backendGlob)).forEach(backendPath => {
+      const basename = path.basename(backendPath);
+      const frontendGlob = path.join(options.src.frontend, basename);
+      let data = { ...fs.readJSONSync(backendPath) };
       // load all matching frontend lang files
-      grunt.file.expand({}, path.join(frontendSrc, lang + langFileExt)).forEach(function(filePath2) {
-        // TODO check for duplicates
-        _.extend(data, fs.readJSONSync(filePath2));
+      grunt.file.expand({}, frontendGlob).forEach(frontendPath => {
+        data = { ...data, ...fs.readJSONSync(frontendPath) };
       });
       fs.ensureDirSync(dest);
-      fs.writeJSONSync(path.join(dest, lang + langFileExt), data, { spaces: 2 });
+      fs.writeJSONSync(path.join(dest, basename), data, { spaces: 2 });
     });
   });
 

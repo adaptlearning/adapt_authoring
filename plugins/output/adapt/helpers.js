@@ -167,11 +167,6 @@ function importAsset(fileMetadata, metadata, assetImported) {
           }
 
           var asset = _.extend(fileMetadata, storedFile);
-          _.each(asset.tags, function iterator(tag, index) {
-            if (metadata.idMap[tag]) {
-              asset.tags[index] = metadata.idMap[tag];
-            }
-          });
 
           origin.assetmanager.createAsset(asset, function onAssetCreated(createError, assetRec) {
             if (createError) {

@@ -169,14 +169,27 @@ function ImportSource(req, done) {
           var fileStat = fs.statSync(assetPath);
           var assetTitle = assetName;
           var assetDescription = assetName;
-          var tags = formTags.slice();
+          var tags = [];
 
           if (assetsJson[assetName]) {
             assetTitle = assetsJson[assetName].title;
             assetDescription = assetsJson[assetName].description;
 
             assetsJson[assetName].tags.forEach(function(tag) {
-              tags.push(tag._id);
+              dbInstance.retrieve('tag', { title: tag.title}, { fields: '_id' }, function(error, results) {
+                if (results && results.length > 0) {
+                  tags.push(results[0]._id);
+                } else {
+                  app.contentmanager.getContentPlugin('tag', function(error, plugin) {
+                    if(!error) {
+                      plugin.create({ title: tag.title}, function(error, record) {
+                        if(error) logger.log('warn', 'Failed to create asset tag: ' + (tag.title || '') + ' ' + error);
+                        tags.push(record._id);
+                      });
+                    };
+                  });
+                }
+              });
             });
           }
           var fileMeta = {

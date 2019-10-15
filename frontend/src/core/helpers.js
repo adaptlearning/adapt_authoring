@@ -172,12 +172,6 @@ define(function(require){
       return new Handlebars.SafeString(html + '</ul>');
     },
 
-    decodeHTML: function(html) {
-      var el = document.createElement('div');
-      el.innerHTML = html;
-      return el.childNodes.length === 0 ? "" : el.childNodes[0].nodeValue;
-    },
-
     ifHasPermissions: function(permissions, block) {
       var hasPermission = Origin.permissions.hasPermissions(permissions.split(','));
       return hasPermission ? block.fn(this) : block.inverse(this);

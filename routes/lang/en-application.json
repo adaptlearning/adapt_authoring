@@ -410,5 +410,11 @@
   "app.searchByMail": "Search by email",
   "app.maxfileuploadsize": "Maximum upload file size: %{size}.",
   "app.uploadsizeerror": "File size limit exceeded. Expected no more than %{max}, received %{size}.",
+  "app.fileuploaderror": "File upload failed.",
+  "app.cannotfindbower": "Cannot find expected bower.json file in the plugin root, please check the structure of your zip file and try again.",
+  "app.unrecognisedplugin": "Unrecognised plugin - a plugin should have a bower.json file.",
+  "app.unrecognisedpluginforpackage": "Unrecognised plugin type for package %{package}.",
+  "app.incompatibleframework": "This plugin is incompatible with version %{framework} of the Adapt framework.",
+  "app.versionexists": "You already have this version of the plugin installed.",
   "app.unknownuser": "Unknown User"
 }

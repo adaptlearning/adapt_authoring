@@ -813,7 +813,7 @@ function addPackage (plugin, packageInfo, options, cb) {
         if (results && 0 !== results.length) {
           // don't add duplicate
           if (options.strict) {
-            return addCb(new PluginPackageError("Can't add plugin: plugin already exists!"));
+            return addCb(new PluginPackageError(app.polyglot.t('app.versionexists')));
           }
           return addCb(null);
         }
@@ -1058,7 +1058,7 @@ function handleUploadedPlugin (req, res, next) {
 
     var file = files.file;
     if (!file || !file.path) {
-      return next(new PluginPackageError('File upload failed!'));
+      return next(new PluginPackageError(app.polyglot.t('app.fileuploaderror')));
     }
 
     // try unzipping
@@ -1104,17 +1104,19 @@ function handleUploadedPlugin (req, res, next) {
 
           }, function(hasResults) {
             if (!hasResults) {
-              return next(new PluginPackageError('Cannot find expected bower.json file in the plugin root, please check the structure of your zip file and try again.'));
+              return next(app.polyglot.t('app.cannotfindbower'));
             }
 
             if (!packageJson) {
-              return next(new PluginPackageError('Unrecognized plugin - a plugin should have a bower.json file'));
+              return next(app.polyglot.t('app.unrecognisedplugin'));
             }
 
             // extract the plugin type from the package
             var pluginType = extractPluginType(packageJson);
             if (!pluginType) {
-              return next(new PluginPackageError('Unrecognized plugin type for package ' + packageJson.name));
+              return next(new PluginPackageError(app.polyglot.t('app.unrecognisedpluginforpackage', {
+                package: packageJson.name
+              })));
             }
 
             // mark as a locally installed package
@@ -1132,7 +1134,9 @@ function handleUploadedPlugin (req, res, next) {
               }
               // Check if the framework has been defined on the plugin and that it's not compatible
               if (packageInfo.pkgMeta.framework && !semver.satisfies(semver.clean(frameworkVersion), packageInfo.pkgMeta.framework, { includePrerelease: true })) {
-                return next(new PluginPackageError('This plugin is incompatible with version ' + frameworkVersion + ' of the Adapt framework'));
+                return next(new PluginPackageError(app.polyglot.t('app.incompatibleframework', {
+                  framework: frameworkVersion
+                })));
               }
               app.contentmanager.getContentPlugin(pluginType, function (error, contentPlugin) {
                 if (error) {
@@ -1145,10 +1149,9 @@ function handleUploadedPlugin (req, res, next) {
 
                   function sendResponse() {
                     res.statusCode = 200;
-                    return res.json({ 
-                      success: true, 
-                      pluginType: pluginType, 
-                      message: 'successfully added new plugin' 
+                    return res.json({
+                      success: true,
+                      pluginType: pluginType
                     });
                   }
 

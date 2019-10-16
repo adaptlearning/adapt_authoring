@@ -67,10 +67,21 @@ define(function(require){
       }
     },
 
+    componentPasteLocation: function() {
+      if ($('.block-inner .add-control').length === 0) {
+        Origin.Notify.alert({
+          type: 'error',
+          text: 'There are no blocks to paste your copied component into. Please create an empty block and try again.'
+        });
+        $('.add-control').removeClass('display-none');
+      }
+    },
+
     showPasteZones: function(type) {
       $('.paste-zone').addClass('display-none');
       $('.add-control').addClass('display-none');
       if(type) $('.paste-zone-' + type).removeClass('display-none').addClass('show');
+      this.componentPasteLocation();
     },
 
     hidePasteZones: function() {

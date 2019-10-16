@@ -818,7 +818,9 @@ function addPackage (plugin, packageInfo, options, cb) {
         }
 
         if (targetAttributeExists) {
-          return addCb(new PluginPackageError(`Can't add plugin: targetAttribute already exists!`));
+          return addCb(new PluginPackageError(app.polyglot.t('app.targetattributeexists', {
+            targetAttribute
+          })));
         }
 
         // don't duplicate component.name, component.version

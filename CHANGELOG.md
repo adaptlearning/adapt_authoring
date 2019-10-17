@@ -5,6 +5,25 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.10.1] - 2019-10-21
+
+Bugfix release.
+
+### Fixed
+- Courses dashboard: A-Z/Z-A sort is case sensitive ([#2325](https://github.com/adaptlearning/adapt_authoring/issues/2325))
+- Item copy can result in broken courseassets in other items ([#2347](https://github.com/adaptlearning/adapt_authoring/issues/2347))
+- Allow non-interactive install and upgrade scripts ([#2407](https://github.com/adaptlearning/adapt_authoring/issues/2407))
+- installation: missing translation key for app.productname ([#2410](https://github.com/adaptlearning/adapt_authoring/issues/2410))
+- Fix reading of asset type from schema ([#2416](https://github.com/adaptlearning/adapt_authoring/issues/2416))
+- Grunt tasks do not process symlinks ([#2428](https://github.com/adaptlearning/adapt_authoring/issues/2428))
+- Importing plugin with existing targetAttribute causes error when retrieving plugin schemas ([#2433](https://github.com/adaptlearning/adapt_authoring/issues/2433))
+- Support Node 12 ([#2437](https://github.com/adaptlearning/adapt_authoring/issues/2437))
+- Asset tags are not preserved on import ([#2439](https://github.com/adaptlearning/adapt_authoring/issues/2439))
+
+### Added
+- skip-version check should be passed as cli argument ([#2005](https://github.com/adaptlearning/adapt_authoring/issues/2005))
+- Plugin upload failed modal should be more descriptive ([#2444](https://github.com/adaptlearning/adapt_authoring/issues/2444))
+
 ## [0.10.0] - 2019-08-29
 
 Adds ability to import courses with an older framework version, and latest bugfixes.
@@ -640,6 +659,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.10.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.8.0...v0.8.1

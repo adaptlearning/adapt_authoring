@@ -88,13 +88,17 @@ module.exports = function(grunt) {
           partialRegex: /^part_/,
           partialsPathRegex: /\/partials\//
         },
-        files: {
-          "frontend/src/templates/templates.js": [
-            "frontend/src/core/**/*.hbs",
-            "frontend/src/modules/**/*.hbs",
-            "frontend/src/plugins/**/*.hbs"
-          ]
-        }
+        files: [
+          {
+            follow: true,
+            src: [
+              'frontend/src/core/**/*.hbs',
+              'frontend/src/modules/**/*.hbs',
+              'frontend/src/plugins/**/*.hbs'
+            ],
+            dest: 'frontend/src/templates/templates.js'
+          }
+        ]
       }
     },
     requirejs: {
@@ -218,7 +222,10 @@ module.exports = function(grunt) {
       var ret = '';
 
       for (var i = 0, l = src.length; i < l; i++) {
-        grunt.file.expand({ filter: options.filter }, src[i]).forEach(function(lessPath) {
+        grunt.file.expand({
+          filter: options.filter,
+          follow: true
+        }, src[i]).forEach(function(lessPath) {
           ret += '@import \'' + path.normalize(lessPath) + '\';\n';
         });
       }

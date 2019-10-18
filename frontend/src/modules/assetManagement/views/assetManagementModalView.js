@@ -16,7 +16,7 @@ define(function(require) {
     postRender: function() {
       this.setupSubViews();
       this.setupFilterAndSearchView();
-      if (this.options.assetType === "Asset:image" && Origin.scaffold.getCurrentModel().get('_component') === 'graphic') {
+      if (this.options.assetType === "image" && Origin.scaffold.getCurrentModel().get('_component') === 'graphic') {
       	this.setupImageAutofillButton();
       }
       this.resizePanels();
@@ -24,8 +24,8 @@ define(function(require) {
 
     setupSubViews: function() {
     	this.search = {};
-    	// Replace Asset and : so we can have both filtered and all asset types
-    	var assetType = this.options.assetType.replace('Asset', '').replace(':', '');
+
+      var assetType = this.options.assetType;
 
       if (assetType) {
         var filters = [assetType];

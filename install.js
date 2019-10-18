@@ -261,6 +261,9 @@ installHelpers.checkPrimaryDependencies(function(error) {
       ]
     };
     if(!IS_INTERACTIVE) {
+      if (installHelpers.inputHelpers.toBoolean(optimist.argv.useJSON)) {
+        USE_CONFIG = true;
+      }
       return start();
     }
     console.log('');
@@ -282,7 +285,8 @@ installHelpers.checkPrimaryDependencies(function(error) {
 function generatePromptOverrides() {
   if(USE_CONFIG) {
     var configJson = require('./conf/config.json');
-    var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
+    var configData = JSON.parse(JSON.stringify(configJson).replace(/:true/g, ':"y"').replace(/:false/g, ':"n"'));
+    addConfig(configData);
     configData.install = 'y';
   }
   const sessionSecret = USE_CONFIG && configData.sessionSecret || crypto.randomBytes(64).toString('hex');
@@ -345,7 +349,7 @@ function configureDatabase(callback) {
   installHelpers.getInput(inputData.database.dbConfig, function(result) {
     addConfig(result);
 
-    var isStandard = !result.useConnectionUri || USE_CONFIG && configResults.useConnectionUri !== 'y';
+    var isStandard = !installHelpers.inputHelpers.toBoolean(result.useConnectionUri);
     var config = inputData.database[isStandard ? 'configureStandard' : 'configureUri'];
 
     installHelpers.getInput(config, function(result) {
@@ -360,14 +364,14 @@ function configureFeatures(callback) {
     function smtp(cb) {
       installHelpers.getInput(inputData.features.smtp.confirm, function(result) {
         addConfig(result);
-        if(!result.useSmtp || USE_CONFIG && configResults.useSmtp !== 'y') {
+        if (!installHelpers.inputHelpers.toBoolean(result.useSmtp)) {
           return cb();
         }
         // prompt user if custom connection url or well-known-service should be used
         installHelpers.getInput(inputData.features.smtp.confirmConnectionUrl, function(result) {
           addConfig(result);
           var smtpConfig;
-          if (result.useSmtpConnectionUrl === true) {
+          if (installHelpers.inputHelpers.toBoolean(result.useSmtpConnectionUrl)) {
             smtpConfig = inputData.features.smtp.configure.concat(inputData.features.smtp.configureConnectionUrl);
           } else {
             smtpConfig = inputData.features.smtp.configure.concat(inputData.features.smtp.configureService);
@@ -478,7 +482,7 @@ function createSuperUser(callback) {
   var onError = function(error) {
     handleError(error, 1, 'Failed to create admin user account. Please check the console output.');
   };
-  console.log(`\nNow we need to set up a 'Super Admin' account. This account can be used to manage everything on your ${app.polyglot.t('app.productname')} instance.`);
+  console.log(`\nNow we need to set up a 'Super Admin' account. This account can be used to manage everything on your authoring tool instance.`);
   installHelpers.getInput(inputData.superUser, function(result) {
     console.log('');
     app.usermanager.deleteUser({ email: result.suEmail }, function(error, userRec) {

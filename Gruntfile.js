@@ -4,13 +4,14 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    "merge-json": {
-      en: {
-        src: [
-          'routes/lang/en-application.json',
-          'frontend/src/**/lang/en.json'
-        ],
-        dest: 'routes/lang/en.json'
+    'generate-lang-json': {
+      options: {
+        langFileExt: '.json',
+        src: {
+          backend: 'routes/lang',
+          frontend: 'frontend/src/**/lang'
+        },
+        dest: 'temp/lang'
       }
     },
     copy: {
@@ -269,6 +270,30 @@ module.exports = function(grunt) {
       done();
     }
   });
+  grunt.registerTask('generate-lang-json', function() {
+    const fs = require('fs-extra');
+    const path = require('path');
+
+    const options = this.options();
+    const backendGlob = path.join(options.src.backend, `*${options.langFileExt}`);
+    const dest = options.dest;
+    // load each route lang file
+    /**
+    * NOTE there must be a file in routes/lang for the language to be loaded,
+    * won't work if you've only got lang files in frontend
+    */
+    grunt.file.expand({}, path.join(backendGlob)).forEach(backendPath => {
+      const basename = path.basename(backendPath);
+      const frontendGlob = path.join(options.src.frontend, basename);
+      let data = { ...fs.readJSONSync(backendPath) };
+      // load all matching frontend lang files
+      grunt.file.expand({}, frontendGlob).forEach(frontendPath => {
+        data = { ...data, ...fs.readJSONSync(frontendPath) };
+      });
+      fs.ensureDirSync(dest);
+      fs.writeJSONSync(path.join(dest, basename), data, { spaces: 2 });
+    });
+  });
 
   grunt.registerTask('default', ['build:dev']);
   grunt.registerTask('test', ['mochaTest']);
@@ -290,7 +315,7 @@ module.exports = function(grunt) {
       config.isProduction = isProduction;
       grunt.file.write(configFile, JSON.stringify(config, null, 2));
       // run the task
-      grunt.task.run(['migration-conf', 'requireBundle', 'merge-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
+      grunt.task.run(['migration-conf', 'requireBundle', 'generate-lang-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
 
     } catch(e) {
       grunt.task.run(['requireBundle', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation]);

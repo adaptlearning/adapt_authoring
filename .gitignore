@@ -23,8 +23,6 @@ package-lock.json
 /plugins/content/menu/versions/
 /plugins/content/bower/bowercache/
 
-/routes/lang/en.json
-
 /temp
 /test/.testcache
 /tmp

@@ -47,7 +47,6 @@
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-handlebars": "^2.0.0",
     "grunt-contrib-requirejs": "^1.0.0",
-    "grunt-merge-json": "^0.9.7",
     "grunt-mocha-test": "^0.13.3",
     "handlebars": "^4.4.0",
     "handlebars-form-helpers": "^0.1.4",

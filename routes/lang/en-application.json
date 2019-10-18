@@ -415,6 +415,7 @@
   "app.unrecognisedplugin": "Unrecognised plugin - a plugin should have a bower.json file.",
   "app.unrecognisedpluginforpackage": "Unrecognised plugin type for package %{package}.",
   "app.incompatibleframework": "This plugin is incompatible with version %{framework} of the Adapt framework.",
+  "app.targetattributeexists": "There is a plugin already installed with a target attribute of '%{targetAttribute}'.",
   "app.versionexists": "You already have this version of the plugin installed.",
   "app.unknownuser": "Unknown User"
 }

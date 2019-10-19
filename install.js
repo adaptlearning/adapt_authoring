@@ -25,6 +25,10 @@ var superUser = false;
 // from user input
 var configResults = {};
 
+const configFile = `config_${process.argv.slice(2)}.json`;
+
+IS_INTERACTIVE = true;
+
 installHelpers.checkPrimaryDependencies(function(error) {
   if(error) return handleError(null, 1, error);
   // we need the framework version for the config items, so let's go
@@ -264,11 +268,11 @@ installHelpers.checkPrimaryDependencies(function(error) {
       return start();
     }
     console.log('');
-    if(!fs.existsSync('conf/config.json')) {
+    if(!fs.existsSync(`conf/${configFile}`)) {
       fs.ensureDirSync('conf');
       return start();
     }
-    console.log('Found an existing config.json file. Do you want to use the values in this file during install?');
+    console.log(`Found an existing ${configFile} file. Do you want to use the values in this file during install?`);
     installHelpers.getInput(inputData.useConfigJSON, function(result) {
       console.log('');
       USE_CONFIG = result.useJSON;
@@ -281,7 +285,7 @@ installHelpers.checkPrimaryDependencies(function(error) {
 
 function generatePromptOverrides() {
   if(USE_CONFIG) {
-    var configJson = require('./conf/config.json');
+    var configJson = require(`./conf/${configFile}`);
     var configData = JSON.parse(JSON.stringify(configJson).replace(/true/g, '"y"').replace(/false/g, '"n"'));
     configData.install = 'y';
   }
@@ -564,9 +568,9 @@ function saveConfig(configItems, callback) {
       root: process.cwd()
     }, configItems);
 
-    fs.writeJson(path.join('conf', 'config.json'), config, { spaces: 2 }, function(error) {
+    fs.writeJson(path.join('conf', configFile), config, { spaces: 2 }, function(error) {
       if(error) {
-        return handleError(`Failed to write configuration file to ${chalk.underline('conf/config.json')}.\n${error}`, 1, 'Install Failed.');
+        return handleError(`Failed to write configuration file to ${chalk.underline(`conf/${configFile}`)}.\n${error}`, 1, 'Install Failed.');
       }
       callback();
     });

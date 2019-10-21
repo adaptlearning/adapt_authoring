@@ -71,7 +71,7 @@ define(function(require){
       if ($('.block-inner .add-control').length === 0) {
         Origin.Notify.alert({
           type: 'error',
-          text: 'There are no blocks to paste your copied component into. Please create an empty block and try again.'
+          text: Origin.l10n.t('app.componentcopyerror')
         });
         $('.add-control').removeClass('display-none');
       }

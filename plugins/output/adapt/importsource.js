@@ -183,7 +183,7 @@ function ImportSource(req, done) {
                   app.contentmanager.getContentPlugin('tag', function(error, plugin) {
                     if(!error) {
                       plugin.create({ title: tag.title}, function(error, record) {
-                        if(error) logger.log('warn', 'Failed to create asset tag: ' + (tag.title || '') + ' ' + error);
+                        if(error) return logger.log('warn', 'Failed to create asset tag: ' + (tag.title || '') + ' ' + error);
                         tags.push(record._id);
                       });
                     };

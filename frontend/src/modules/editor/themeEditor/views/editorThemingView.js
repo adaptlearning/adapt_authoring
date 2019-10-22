@@ -212,9 +212,10 @@ define(function(require) {
       if (!fieldView) {
         return;
       }
-      if (fieldView.schema.inputType === 'ColourPicker') {
+      var inputType = fieldView.schema.inputType.type || fieldView.schema.inputType;
+      if (inputType === 'ColourPicker') {
         fieldView.setValue(value);
-      } else if (typeof fieldView.schema.inputType === 'string' && fieldView.schema.inputType.indexOf('Asset:') > -1) {
+      } else if (inputType.indexOf('Asset') > -1) {
         fieldView.setValue(value);
         fieldView.render();
         $('div[data-editor-id*="' + key + '"]').append(fieldView.editor.$el);

@@ -61,7 +61,7 @@ define(function(require){
       Origin.Notify.alert({
         type: 'error',
         title: Origin.l10n.t('app.uploadpluginerror'),
-        text: Helpers.decodeHTML(message)
+        text: message
       });
       Origin.router.navigateTo('pluginManagement/upload');
     },

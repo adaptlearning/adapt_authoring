@@ -174,7 +174,7 @@ define([
 
       Origin.trigger('modal:open', AssetManagementModalView, {
         collection: new AssetCollection,
-        assetType: 'Asset:image',
+        assetType: 'image',
         _shouldShowScrollbar: false,
         onUpdate: function(data) {
           if (!data) return;

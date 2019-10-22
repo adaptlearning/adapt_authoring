@@ -169,14 +169,26 @@ function ImportSource(req, done) {
           var fileStat = fs.statSync(assetPath);
           var assetTitle = assetName;
           var assetDescription = assetName;
-          var tags = formTags.slice();
+          var assetJson = assetsJson[assetName];
+          var tags = [];
 
-          if (assetsJson[assetName]) {
-            assetTitle = assetsJson[assetName].title;
-            assetDescription = assetsJson[assetName].description;
+          if (assetJson) {
+            assetTitle = assetJson.title;
+            assetDescription = assetJson.description;
 
-            assetsJson[assetName].tags.forEach(function(tag) {
-              tags.push(tag._id);
+            assetJson.tags.forEach(function(tag) {
+              const tagTitle = tag.title;
+              const warn = (error) => logger.log('warn', `Failed to create asset tag '${tagTitle}' ${error}`);
+
+              if(!tagTitle) return warn(new Error('Tag has no title'));
+
+              app.contentmanager.getContentPlugin('tag', function(error, plugin) {
+                if(error) return warn(error);
+                plugin.create({ title: tagTitle }, function(error, record) { // @note retrieves if tag already exists
+                  if(error) return warn(error);
+                  tags.push(record._id);
+                });
+              });
             });
           }
           var fileMeta = {

@@ -1,3 +1,4 @@
-// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-var app = require('./lib/application')();
-app.run();
+const app = require('./lib/application')();
+const argv = require('optimist').argv;
+
+app.run(argv);

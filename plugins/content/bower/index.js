@@ -811,7 +811,11 @@ function addPackage (plugin, packageInfo, options, cb) {
       async.some([ 'componenttype', 'extensiontype', 'menutype', 'themetype' ], (type, asyncCallback) => {
         if (!targetAttribute) return asyncCallback();
 
-        db.retrieve(type, { targetAttribute: targetAttribute }, (err, results) => {
+        const query = type === plugin.type ?
+           { name: { $ne: pkgMeta.name }, targetAttribute: targetAttribute } :
+           { targetAttribute: targetAttribute };
+
+        db.retrieve(type, query, (err, results) => {
           asyncCallback(err, results && results.length);
         });
       }, (err, targetAttributeExists) => {

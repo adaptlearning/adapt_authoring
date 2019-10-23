@@ -552,9 +552,12 @@ BowerPlugin.prototype.initialize = function (plugin) {
                 { _searchItems: pluginNames }
               );
 
-              return self.updatePackages(plugin, options, function () {
-                // @TODO figure out how to determine if the update failed?
-                return res.json({ success: true, upgraded: upgradeTargets });
+              return self.updatePackages(plugin, options, function(err) {
+                if (err) {
+                  logger.log('error', err);
+                  res.statusCode = 400;
+                }
+                return res.json({ success: !err, message: err && err.message });
               });
             });
         });

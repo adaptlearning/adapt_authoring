@@ -142,7 +142,7 @@ function checkForUpdates(callback) {
 function doUpdate(data) {
   async.series([
     function upgradeAuthoring(cb) {
-      if (installHelpers.inputHelpers.isFalsyString(data.adapt_authoring)) {
+      if (installHelpers.inputHelpers.isFalsy(data.adapt_authoring)) {
         return cb();
       }
       installHelpers.updateAuthoring({
@@ -159,7 +159,7 @@ function doUpdate(data) {
       });
     },
     function upgradeFramework(cb) {
-      if (installHelpers.inputHelpers.isFalsyString(data.adapt_framework)) {
+      if (installHelpers.inputHelpers.isFalsy(data.adapt_framework)) {
         return cb();
       }
       var dir = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), OutputConstants.Folders.Framework);

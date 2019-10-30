@@ -34,6 +34,7 @@ define(function(require){
       this.$('#tags_control').selectize({
         create: true,
         labelField: 'title',
+        loadingClass: 'selectize-loading',
         load: function(query, callback) {
           $.ajax({
             url: 'api/autocomplete/tag',

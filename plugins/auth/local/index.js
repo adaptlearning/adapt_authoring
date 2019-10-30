@@ -172,12 +172,6 @@ LocalAuth.prototype.internalRegisterUser = function(retypePasswordRequired, user
     return cb(new auth.errors.UserRegistrationError('email and password are required!'));
   }
 
-  //regular expression to validate email address
-  var regEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  if (user.email && regEx.test(user.email) == false) {
-    return cb(new auth.errors.UserRegistrationError('email address is not valid !'));
-  }
-
   // create user with hashed password
   auth.hashPassword(user.password, function (error, hash) {
     if (error) {

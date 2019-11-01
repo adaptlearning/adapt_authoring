@@ -81,18 +81,18 @@ define(function(require){
       });
       $icon.removeClass().addClass('fa fa-refresh fa-spin');
 
-      $.post(this.model.urlRoot + '/update', { 'targets': [this.model.get('_id')] }, _.bind(function(data) {
-        if(!_.contains(data.upgraded, this.model.get('_id'))) {
-          $btn.attr({title: Origin.l10n.t('app.updatefailed')});
+      $.post(this.model.urlRoot + '/update', { 'targets': [ this.model.get('_id') ] })
+        .done(function() {
+          Origin.trigger('scaffold:updateSchemas', function() {
+            $btn.attr('title', Origin.l10n.t('app.uptodate'));
+            $icon.removeClass().addClass('fa fa-check');
+            this.model.fetch();
+          }, this);
+        }.bind(this))
+        .fail(function() {
+          $btn.attr('title', Origin.l10n.t('app.updatefailed'));
           $icon.removeClass().addClass('fa fa-times');
-          return;
-        }
-        Origin.trigger('scaffold:updateSchemas', function() {
-          $btn.attr({title: Origin.l10n.t('app.uptodate')});
-          $icon.removeClass().addClass('fa fa-check');
-          this.model.fetch();
-        }, this);
-      }, this));
+        });
 
       return false;
     },

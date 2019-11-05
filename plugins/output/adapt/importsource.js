@@ -185,7 +185,7 @@ function ImportSource(req, done) {
             createdBy: app.usermanager.getCurrentUser()._id
           };
 
-          if (!assetJson) helpers.importAsset(fileMeta, metadata, doneAsset);
+          if (!assetJson) return helpers.importAsset(fileMeta, metadata, doneAsset);
 
           addAssetTags(assetJson, function(error, assetTags) {
             const warn = (error) => logger.log('warn', `Failed to create asset tag ${error}`);

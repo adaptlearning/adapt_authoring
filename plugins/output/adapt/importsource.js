@@ -172,25 +172,6 @@ function ImportSource(req, done) {
           var assetJson = assetsJson[assetName];
           var tags = [];
 
-          if (assetJson) {
-            assetTitle = assetJson.title;
-            assetDescription = assetJson.description;
-
-            assetJson.tags.forEach(function(tag) {
-              const tagTitle = tag.title;
-              const warn = (error) => logger.log('warn', `Failed to create asset tag '${tagTitle}' ${error}`);
-
-              if(!tagTitle) return warn(new Error('Tag has no title'));
-
-              app.contentmanager.getContentPlugin('tag', function(error, plugin) {
-                if(error) return warn(error);
-                plugin.create({ title: tagTitle }, function(error, record) { // @note retrieves if tag already exists
-                  if(error) return warn(error);
-                  tags.push(record._id);
-                });
-              });
-            });
-          }
           var fileMeta = {
             oldId: assetId,
             title: assetTitle,
@@ -203,13 +184,36 @@ function ImportSource(req, done) {
             repository: repository,
             createdBy: app.usermanager.getCurrentUser()._id
           };
-          if(!fileMeta) {
-            return doneAsset(new helpers.ImportError('No metadata found for asset: ' + assetName));
-          }
-          helpers.importAsset(fileMeta, metadata, doneAsset);
+
+          if (!assetJson) return helpers.importAsset(fileMeta, metadata, doneAsset);
+
+          addAssetTags(assetJson, function(error, assetTags) {
+            const warn = (error) => logger.log('warn', `Failed to create asset tag ${error}`);
+            if (error) return warn(new Error(error));
+            fileMeta.title = assetJson.title;
+            fileMeta.description = assetJson.description;
+            fileMeta.tags = assetTags;
+            helpers.importAsset(fileMeta, metadata, doneAsset);
+          });
         }, doneAssetFolder);
       });
     }, done);
+  }
+
+  function addAssetTags(assetJson, cb) {
+    var assetTags = [];
+    assetJson.tags.forEach(function(tag) {
+      var tagTitle = tag.title;
+      if(!tagTitle) return cb('Tag has no title');
+      app.contentmanager.getContentPlugin('tag', function(error, plugin) {
+        if(error) return cb(tagTitle.concat(' ', error));
+        plugin.create({ title: tagTitle }, function(error, record) { // @note retrieves if tag already exists
+          if(error) return cb(tagTitle.concat(' ', error));
+          assetTags.push(record._id);
+        });
+      });
+    });
+    cb(null, assetTags);
   }
 
   /**

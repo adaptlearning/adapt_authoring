@@ -17,7 +17,6 @@ define([
 ], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldAssetItemView, ScaffoldCodeEditorView, ScaffoldColourPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldListView, ScaffoldTagsView, ScaffoldUsersView) {
 
   var Scaffold = {};
-  var builtSchemas = {};
   var alternativeModel;
   var alternativeAttribute;
   var currentModel;
@@ -32,7 +31,6 @@ define([
 
   function onScaffoldUpdateSchemas(callback, context) {
     Origin.trigger('schemas:loadData', function() {
-      builtSchemas = {};
       callback.apply(context);
     });
   }
@@ -146,20 +144,6 @@ define([
   }
 
   function buildSchema(schema, options, type) {
-    // these types of schemas change frequently and cannot be cached
-    var isVolatileType = _.contains([
-      'course',
-      'config',
-      'article',
-      'block',
-      'component'
-    ], type);
-
-    var builtSchema = builtSchemas[type];
-
-    if (!isVolatileType && builtSchema) {
-      return builtSchema;
-    }
 
     var scaffoldSchema = {};
 
@@ -179,11 +163,6 @@ define([
         if (!nestedProps.hasOwnProperty(innerKey)) continue;
         setUpSchemaFields(nestedProps[innerKey], innerKey, nestedProps, scaffoldSchema);
       }
-    }
-
-    // only cache non-volatile types
-    if (!isVolatileType) {
-      builtSchemas[type] = scaffoldSchema;
     }
 
     return scaffoldSchema;

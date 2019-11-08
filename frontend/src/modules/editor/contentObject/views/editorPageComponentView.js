@@ -157,24 +157,22 @@ define(function(require){
         right: false,
         full: false
       };
-      this.model.fetchSiblings(_.bind(function(siblings) {
-        var showFull = supportedLayout.full && siblings.length < 1;
-        switch(this.model.get('_layout')) {
-          case 'left':
-            movePositions.right = supportedLayout.half;
-            movePositions.full = showFull;
-            break;
-          case 'right':
-            movePositions.left = supportedLayout.half;
-            movePositions.full = showFull;
-            break;
-          case 'full':
-            movePositions.left = supportedLayout.half;
-            movePositions.right = supportedLayout.half;
-            break
-        }
-        cb(movePositions);
-      }, this));
+      var showFull = supportedLayout.full && this.model.componentCount < 2;
+      switch(this.model.get('_layout')) {
+        case 'left':
+          movePositions.right = supportedLayout.half;
+          movePositions.full = showFull;
+          break;
+        case 'right':
+          movePositions.left = supportedLayout.half;
+          movePositions.full = showFull;
+          break;
+        case 'full':
+          movePositions.left = supportedLayout.half;
+          movePositions.right = supportedLayout.half;
+          break
+      }
+      cb(movePositions);
     },
 
     evaluateMove: function(event) {

@@ -209,11 +209,13 @@ define(function(require){
       this.$('.page-components').empty();
 
       var addPasteZonesFirst = this.children.length && this.children[0].get('_layout') !== 'full';
+      var componentCount = this.children.length ? this.children.length : 0;
       this.addComponentButtonLayout(this.children);
 
       if (addPasteZonesFirst) this.setupPasteZones();
       // Add component elements
       for(var i = 0, count = this.children.length; i < count; i++) {
+        this.children[i].componentCount = componentCount;
         var view = new EditorPageComponentView({ model: this.children[i] });
         this.$('.page-components').append(view.$el);
       }

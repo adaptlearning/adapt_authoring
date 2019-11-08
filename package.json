@@ -1,6 +1,6 @@
 {
   "name": "adapt_authoring",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "license": "GPL-3.0",
   "description": "A server-based user interface for authoring eLearning courses using the Adapt Framework.",
   "keywords": [
@@ -11,7 +11,6 @@
     "type": "git",
     "url": "https://github.com/adaptlearning/adapt_authoring.git"
   },
-  "framework": "2",
   "main": "index",
   "engines": {
     "node": "10 || 12"

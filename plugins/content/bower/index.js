@@ -552,9 +552,12 @@ BowerPlugin.prototype.initialize = function (plugin) {
                 { _searchItems: pluginNames }
               );
 
-              return self.updatePackages(plugin, options, function () {
-                // @TODO figure out how to determine if the update failed?
-                return res.json({ success: true, upgraded: upgradeTargets });
+              return self.updatePackages(plugin, options, function(err) {
+                if (err) {
+                  logger.log('error', err);
+                  res.statusCode = 400;
+                }
+                return res.json({ success: !err, message: err && err.message });
               });
             });
         });
@@ -808,7 +811,11 @@ function addPackage (plugin, packageInfo, options, cb) {
       async.some([ 'componenttype', 'extensiontype', 'menutype', 'themetype' ], (type, asyncCallback) => {
         if (!targetAttribute) return asyncCallback();
 
-        db.retrieve(type, { targetAttribute: targetAttribute }, (err, results) => {
+        const query = type === plugin.type ?
+           { name: { $ne: pkgMeta.name }, targetAttribute: targetAttribute } :
+           { targetAttribute: targetAttribute };
+
+        db.retrieve(type, query, (err, results) => {
           asyncCallback(err, results && results.length);
         });
       }, (err, targetAttributeExists) => {

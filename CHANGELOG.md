@@ -5,6 +5,20 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.10.2] - 2019-11-08
+
+Bugfix release.
+
+### Fixed
+- Asset tags are not preserved on import ([#2439](https://github.com/adaptlearning/adapt_authoring/issues/2439))
+- Cannot update plugin via the UI ([#2455](https://github.com/adaptlearning/adapt_authoring/issues/2455))
+- Install script hangs when installing legacy framework ([#2457](https://github.com/adaptlearning/adapt_authoring/issues/2457))
+- Input box briefly fills screen when enering tags in asset upload modal ([#2460](https://github.com/adaptlearning/adapt_authoring/issues/2460))
+- Extensions go missing from components ([#2467](https://github.com/adaptlearning/adapt_authoring/issues/2467))
+
+### Added
+- Upgrade script should check for compatible framework updates ([#2307](https://github.com/adaptlearning/adapt_authoring/issues/2307))
+
 ## [0.10.1] - 2019-10-22
 
 Bugfix release.
@@ -659,6 +673,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.10.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.1...v0.10.2
 [0.10.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.8.1...v0.9.0

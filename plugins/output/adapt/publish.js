@@ -94,6 +94,7 @@ function publishCourse(courseId, mode, request, response, next) {
         }
 
         if (mode === Constants.Modes.Export || mode === Constants.Modes.Publish) {
+          fs.emptyDirSync(BUILD_FOLDER);
           isRebuildRequired = true;
           return callback(null);
         }

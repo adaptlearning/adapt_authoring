@@ -12,6 +12,7 @@ const helpers = require('../../../lib/helpers');
 const installHelpers = require('../../../lib/installHelpers');
 const logger = require('../../../lib/logger');
 const origin = require('../../../');
+const outputHelpers = require('./outputHelpers');
 const usermanager = require('../../../lib/usermanager');
 
 function publishCourse(courseId, mode, request, response, next) {
@@ -55,6 +56,16 @@ function publishCourse(courseId, mode, request, response, next) {
         }
         // Store off the retrieved collections
         outputJson = data;
+        callback(null);
+      });
+    },
+    // validate the course data
+    function(callback) {
+      outputHelpers.validateCourse(outputJson, function(error, isValid) {
+        if (error || !isValid) {
+          return callback({ message: error });
+        }
+
         callback(null);
       });
     },

@@ -277,6 +277,43 @@ function getPluginFrameworkVersionCategory(serverFrameworkVersion, pluginMetaDat
   });
 };
 
+function validateCourse(data, cb) {
+  let errors = '';
+  let contentObjects = data.contentobject;
+  let articles = data.article;
+  let blocks = data.block;
+  let components = data.component;
+
+  if (typeof contentObjects === 'undefined') {
+    let courseString = app.polyglot.t('app.course').charAt(0).toUpperCase() + app.polyglot.t('app.course').slice(1);
+    errors += courseString + ' "' + data.course[0].title + '" ' + app.polyglot.t('app.doesnotcontain') + ' ' + app.polyglot.t('app.page') + 's\n';
+    return cb(errors, false);
+  }
+
+  errors += iterateThroughChildren(contentObjects, articles);
+  errors += iterateThroughChildren(articles, blocks);
+  errors += iterateThroughChildren(blocks, components);
+
+  if (errors.length !== 0) return cb(errors, false);
+
+  return cb(null, true);
+}
+
+function iterateThroughChildren(parents, children) {
+  let errors = '';
+  parents.forEach(parent => {
+    let parentType = app.polyglot.t('app.' + parent._type).charAt(0).toUpperCase() + app.polyglot.t('app.' + parent._type).slice(1);
+    let childType = app.polyglot.t('app.children');
+    if (children[0] && children[0]._type) childType = app.polyglot.t('app.' + children[0]._type) + 's';
+    let found = children.find(child => JSON.stringify(child._parentId) === JSON.stringify(parent._id));
+
+    if (typeof found === 'undefined') {
+      errors += parentType + ' "' + parent.title + '" ' + app.polyglot.t('app.doesnotcontain') + ' ' + childType + '\n';
+    }
+  });
+  return errors;
+}
+
 function ImportError(message, httpStatus) {
   this.message = message || "Course import failed";
   this.httpStatus = httpStatus || 500;
@@ -322,5 +359,6 @@ exports = module.exports = {
   ImportError: ImportError,
   PartialImportError: PartialImportError,
   sortContentObjects: sortContentObjects,
-  cleanUpImport: cleanUpImport
+  cleanUpImport: cleanUpImport,
+  validateCourse: validateCourse
 };

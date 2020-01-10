@@ -285,8 +285,12 @@ function validateCourse(data, cb) {
   let components = data.component;
 
   if (typeof contentObjects === 'undefined') {
-    let courseString = app.polyglot.t('app.course').charAt(0).toUpperCase() + app.polyglot.t('app.course').slice(1);
-    errors += courseString + ' "' + data.course[0].title + '" ' + app.polyglot.t('app.doesnotcontain') + ' ' + app.polyglot.t('app.page') + 's\n';
+    let courseString = app.polyglot.t('app.course');
+    errors += app.polyglot.t('app.doesnotcontain', {
+      type: courseString[0].toUpperCase() + courseString.slice(1),
+      title: data.course[0].title,
+      childType: app.polyglot.t('app.page', 0)
+    }) + '\n';
     return cb(errors, false);
   }
 
@@ -302,13 +306,17 @@ function validateCourse(data, cb) {
 function iterateThroughChildren(parents, children) {
   let errors = '';
   parents.forEach(parent => {
-    let parentType = app.polyglot.t('app.' + parent._type).charAt(0).toUpperCase() + app.polyglot.t('app.' + parent._type).slice(1);
+    let parentType = app.polyglot.t('app.' + parent._type, 1);
     let childType = app.polyglot.t('app.children');
-    if (children[0] && children[0]._type) childType = app.polyglot.t('app.' + children[0]._type) + 's';
+    if (children[0] && children[0]._type) childType = app.polyglot.t('app.' + children[0]._type, 0);
     let found = children.find(child => JSON.stringify(child._parentId) === JSON.stringify(parent._id));
 
     if (typeof found === 'undefined') {
-      errors += parentType + ' "' + parent.title + '" ' + app.polyglot.t('app.doesnotcontain') + ' ' + childType + '\n';
+      errors += app.polyglot.t('app.doesnotcontain', {
+        type: parentType[0].toUpperCase() + parentType.slice(1),
+        title: parent.title,
+        childType: childType
+      }) + '\n';
     }
   });
   return errors;

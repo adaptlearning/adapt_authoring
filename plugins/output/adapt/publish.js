@@ -15,26 +15,27 @@ const origin = require('../../../');
 const usermanager = require('../../../lib/usermanager');
 
 function publishCourse(courseId, mode, request, response, next) {
-  var app = origin();
-  var self = this;
-  var user = usermanager.getCurrentUser();
-  var tenantId = user.tenant._id;
-  var outputJson = {};
-  var isRebuildRequired = false;
-  var themeName;
-  var menuName;
-  var frameworkVersion;
+  let app = origin();
+  let self = this;
+  let user = usermanager.getCurrentUser();
+  let tenantId = user.tenant._id;
+  let outputJson = {};
+  let isRebuildRequired = false;
+  let themeName;
+  let menuName;
+  let frameworkVersion;
+  let isForceRebuild;
 
-  var resultObject = {};
+  let resultObject = {};
 
   // shorthand directories
-  var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
-  var SRC_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source);
-  var COURSES_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses);
-  var COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId, courseId);
-  var BUILD_FOLDER = path.join(COURSE_FOLDER, Constants.Folders.Build);
+  let FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+  let SRC_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source);
+  let COURSES_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses);
+  let COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId, courseId);
+  let BUILD_FOLDER = path.join(COURSE_FOLDER, Constants.Folders.Build);
 
-  var customPluginName = user._id;
+  let customPluginName = user._id;
 
   const getGruntFatalError = stdout => {
     const indexStart = stdout.indexOf('\nFatal error: ');
@@ -94,15 +95,20 @@ function publishCourse(courseId, mode, request, response, next) {
         }
 
         if (mode === Constants.Modes.Export || mode === Constants.Modes.Publish) {
-          fs.emptyDirSync(BUILD_FOLDER);
           isRebuildRequired = true;
           return callback(null);
         }
 
-        const isForceRebuld = (request) ? request.query.force === 'true' : false;
-        isRebuildRequired = exists || isForceRebuld;
+        isForceRebuild = (request) ? request.query.force === 'true' : false;
+        isRebuildRequired = exists || isForceRebuild;
         callback(null);
       });
+    },
+    function(callback) {
+      if (mode === Constants.Modes.Export || mode === Constants.Modes.Publish || isForceRebuild) {
+        fs.emptyDirSync(BUILD_FOLDER);
+      }
+      callback(null);
     },
     function(callback) {
       var temporaryMenuFolder = path.join(SRC_FOLDER, Constants.Folders.Menu, customPluginName);

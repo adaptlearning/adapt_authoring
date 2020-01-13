@@ -305,9 +305,21 @@ function validateCourse(data, cb) {
 
 function iterateThroughChildren(parents, children) {
   let errors = '';
+  if (typeof parents === 'undefined') return errors;
+
   parents.forEach(parent => {
     let parentType = app.polyglot.t('app.' + parent._type, 1);
     let childType = app.polyglot.t('app.children');
+
+    if (typeof children === 'undefined') {
+      errors += app.polyglot.t('app.doesnotcontain', {
+        type: parentType[0].toUpperCase() + parentType.slice(1),
+        title: parent.title,
+        childType: childType
+      }) + '\n';
+      return;
+    }
+
     if (children[0] && children[0]._type) childType = app.polyglot.t('app.' + children[0]._type, 0);
     let found = children.find(child => JSON.stringify(child._parentId) === JSON.stringify(parent._id));
 

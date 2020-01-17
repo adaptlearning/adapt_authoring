@@ -29,11 +29,11 @@ function publishCourse(courseId, mode, request, response, next) {
   let resultObject = {};
 
   // shorthand directories
-  let FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
-  let SRC_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source);
-  let COURSES_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses);
-  let COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId, courseId);
-  let BUILD_FOLDER = path.join(COURSE_FOLDER, Constants.Folders.Build);
+  const FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+  const SRC_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source);
+  const COURSES_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses);
+  const COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId, courseId);
+  const BUILD_FOLDER = path.join(COURSE_FOLDER, Constants.Folders.Build);
 
   let customPluginName = user._id;
 

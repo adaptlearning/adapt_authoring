@@ -307,16 +307,20 @@ function iterateThroughChildren(parents, children) {
   let errors = '';
   if (typeof parents === 'undefined') return errors;
 
+  const appendError = (parentType, parentTitle, childType) => {
+    errors += app.polyglot.t('app.doesnotcontain', {
+      type: parentType[0].toUpperCase() + parentType.slice(1),
+      title: parentTitle,
+      childType: childType
+    }) + '\n';
+  };
+
   parents.forEach(parent => {
     let parentType = app.polyglot.t('app.' + parent._type, 1);
     let childType = app.polyglot.t('app.children');
 
     if (typeof children === 'undefined') {
-      errors += app.polyglot.t('app.doesnotcontain', {
-        type: parentType[0].toUpperCase() + parentType.slice(1),
-        title: parent.title,
-        childType: childType
-      }) + '\n';
+      appendError(parentType, parent.title, childType);
       return;
     }
 
@@ -324,11 +328,7 @@ function iterateThroughChildren(parents, children) {
     let found = children.find(child => JSON.stringify(child._parentId) === JSON.stringify(parent._id));
 
     if (typeof found === 'undefined') {
-      errors += app.polyglot.t('app.doesnotcontain', {
-        type: parentType[0].toUpperCase() + parentType.slice(1),
-        title: parent.title,
-        childType: childType
-      }) + '\n';
+      appendError(parentType, parent.title, childType);
     }
   });
   return errors;

@@ -3,7 +3,7 @@ var permissions = require('../../lib/permissions');
 var server = module.exports = require('express')();
 var usermanager = require('../../lib/usermanager');
 var util = require('util');
-var helpers = require('../../plugins/output/adapt/helpers');
+var helpers = require('../../plugins/output/adapt/outputHelpers');
 
 // stop any auto permissions checks
 permissions.ignoreRoute(/^\/import\/?.*$/);

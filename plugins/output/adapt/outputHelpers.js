@@ -277,6 +277,63 @@ function getPluginFrameworkVersionCategory(serverFrameworkVersion, pluginMetaDat
   });
 };
 
+function validateCourse(data, cb) {
+  let errors = '';
+  let contentObjects = data.contentobject;
+  let articles = data.article;
+  let blocks = data.block;
+  let components = data.component;
+
+  if (typeof contentObjects === 'undefined') {
+    let courseString = app.polyglot.t('app.course');
+    errors += app.polyglot.t('app.doesnotcontain', {
+      type: courseString[0].toUpperCase() + courseString.slice(1),
+      title: data.course[0].title,
+      childType: app.polyglot.t('app.page', 0)
+    }) + '\n';
+    return cb(errors, false);
+  }
+
+  errors += iterateThroughChildren(contentObjects, articles);
+  errors += iterateThroughChildren(articles, blocks);
+  errors += iterateThroughChildren(blocks, components);
+
+  if (errors.length !== 0) return cb(errors, false);
+
+  return cb(null, true);
+}
+
+function iterateThroughChildren(parents, children) {
+  let errors = '';
+  if (typeof parents === 'undefined') return errors;
+
+  const appendError = (parentType, parentTitle, childType) => {
+    errors += app.polyglot.t('app.doesnotcontain', {
+      type: parentType[0].toUpperCase() + parentType.slice(1),
+      title: parentTitle,
+      childType: childType
+    }) + '\n';
+  };
+
+  parents.forEach(parent => {
+    let parentType = app.polyglot.t('app.' + parent._type, 1);
+    let childType = app.polyglot.t('app.children');
+
+    if (typeof children === 'undefined') {
+      appendError(parentType, parent.title, childType);
+      return;
+    }
+
+    if (children[0] && children[0]._type) childType = app.polyglot.t('app.' + children[0]._type, 0);
+    let found = children.find(child => JSON.stringify(child._parentId) === JSON.stringify(parent._id));
+
+    if (typeof found === 'undefined') {
+      appendError(parentType, parent.title, childType);
+    }
+  });
+  return errors;
+}
+
 function ImportError(message, httpStatus) {
   this.message = message || "Course import failed";
   this.httpStatus = httpStatus || 500;
@@ -322,5 +379,6 @@ exports = module.exports = {
   ImportError: ImportError,
   PartialImportError: PartialImportError,
   sortContentObjects: sortContentObjects,
-  cleanUpImport: cleanUpImport
+  cleanUpImport: cleanUpImport,
+  validateCourse: validateCourse
 };

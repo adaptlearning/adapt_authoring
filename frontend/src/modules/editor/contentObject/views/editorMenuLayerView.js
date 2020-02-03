@@ -85,9 +85,6 @@ define(function(require) {
       var newMenuItemModel = new ContentObjectModel({
         _parentId: this._parentId,
         _courseId: Origin.editor.data.course.get('_id'),
-        title: (type == 'page' ? Origin.l10n.t('app.placeholdernewpage') : Origin.l10n.t('app.placeholdernewmenu')),
-        displayTitle: (type == 'page' ? Origin.l10n.t('app.placeholdernewpage') : Origin.l10n.t('app.placeholdernewmenu')),
-        body: '',
         linkText: Origin.l10n.t('app.view'),
         graphic: { alt: '', src: '' },
         _type: type
@@ -125,7 +122,6 @@ define(function(require) {
     addNewPageArticleAndBlock: function(model, newMenuItemView) {
       var typeToAdd;
       var newChildModel;
-      var newChildTitle;
       this.pageModel;
       this.pageView;
 
@@ -133,18 +129,13 @@ define(function(require) {
         this.pageModel = model;
         this.pageView = newMenuItemView;
         typeToAdd = 'article';
-        newChildTitle = Origin.l10n.t('app.placeholdernewarticle');
         var newChildModel = new ArticleModel();
       } else {
         typeToAdd = 'block';
-        newChildTitle = Origin.l10n.t('app.placeholdernewblock');
         var newChildModel = new BlockModel();
       }
 
       newChildModel.save({
-        title: newChildTitle,
-        displayTitle: (typeToAdd == 'block') ? '' : newChildTitle,
-        body: '',
         _parentId: model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id')
       }, {

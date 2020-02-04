@@ -137,6 +137,7 @@ function importAsset(fileMetadata, metadata, assetImported) {
     var hash = crypto.createHash('sha1');
     var rs = fs.createReadStream(fileMetadata.path);
 
+    rs.on('error', error => logger.log('error', error));
     rs.on('data', function onReadData(pData) {
       hash.update(pData, 'utf8');
     });

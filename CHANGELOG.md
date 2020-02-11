@@ -13,7 +13,7 @@ Bugfix release.
 - Cannot remove Spoor's required files from published course ([#2235](https://github.com/adaptlearning/adapt_authoring/issues/2235))
 - If I switch theme, the old theme assets still seem to be retained on publish ([#2442](https://github.com/adaptlearning/adapt_authoring/issues/2442))
 - Incompatible versions of plugins are targetted if range specified in adapt.json ([#2479](https://github.com/adaptlearning/adapt_authoring/issues/2479))
-- framework and AT use different default screen sizes ([#2485](https://github.com/adaptlearning/adapt_authoring/issues/2485))
+- Framework and AT use different default screen sizes ([#2485](https://github.com/adaptlearning/adapt_authoring/issues/2485))
 - Heavy course validation on front-end ([#2487](https://github.com/adaptlearning/adapt_authoring/issues/2487))
 
 ## [0.10.2] - 2019-11-08

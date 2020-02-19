@@ -5,12 +5,13 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
-## [0.10.3] - 2020-02-11
+## [0.10.3] - 2020-02-21
 
 Bugfix release.
 
 ### Fixed
 - Cannot remove Spoor's required files from published course ([#2235](https://github.com/adaptlearning/adapt_authoring/issues/2235))
+- Generate a dependency lock on release ([#2301](https://github.com/adaptlearning/adapt_authoring/issues/2301))
 - If I switch theme, the old theme assets still seem to be retained on publish ([#2442](https://github.com/adaptlearning/adapt_authoring/issues/2442))
 - Incompatible versions of plugins are targetted if range specified in adapt.json ([#2479](https://github.com/adaptlearning/adapt_authoring/issues/2479))
 - Framework and AT use different default screen sizes ([#2485](https://github.com/adaptlearning/adapt_authoring/issues/2485))

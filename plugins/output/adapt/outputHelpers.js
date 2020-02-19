@@ -281,9 +281,6 @@ function getPluginFrameworkVersionCategory(serverFrameworkVersion, pluginMetaDat
 function validateCourse(data, cb) {
   let errors = '';
   let contentObjects = data.contentobject;
-  let articles = data.article;
-  let blocks = data.block;
-  let components = data.component;
 
   if (typeof contentObjects === 'undefined') {
     let courseString = app.polyglot.t('app.course');
@@ -295,9 +292,17 @@ function validateCourse(data, cb) {
     return cb(errors, false);
   }
 
-  errors += iterateThroughChildren(contentObjects, articles);
-  errors += iterateThroughChildren(articles, blocks);
-  errors += iterateThroughChildren(blocks, components);
+  const contentHierarchy = [
+    contentObjects.filter(contentObject => contentObject._type === 'menu'),
+    contentObjects.filter(contentObject => contentObject._type === 'page'),
+    data.article,
+    data.block,
+    data.component
+  ];
+
+  for (let i = 0, j = contentHierarchy.length - 1; i < j; i++) {
+    errors += iterateThroughChildren(contentHierarchy[i], contentHierarchy[i + 1]);
+  }
 
   if (errors.length !== 0) return cb(errors, false);
 

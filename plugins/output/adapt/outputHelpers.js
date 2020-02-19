@@ -293,8 +293,8 @@ function validateCourse(data, cb) {
   }
 
   const contentHierarchy = [
-    contentObjects.filter(contentObject => contentObject._type === 'menu'),
-    contentObjects.filter(contentObject => contentObject._type === 'page'),
+    contentObjects.filter(({ _type }) => _type === 'menu'),
+    contentObjects.filter(({ _type }) => _type === 'page'),
     data.article,
     data.block,
     data.component

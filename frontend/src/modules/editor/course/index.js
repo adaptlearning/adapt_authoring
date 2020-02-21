@@ -25,10 +25,7 @@ define(function(require) {
   }
 
   function createNewCourse() {
-    var model = new CourseModel({
-      title: Origin.l10n.t('app.placeholdernewcourse'),
-      displayTitle: Origin.l10n.t('app.placeholdernewcourse')
-    });
+    var model = new CourseModel();
     Origin.trigger('location:title:update', {
       breadcrumbs: ['dashboard'],
       title: Origin.l10n.t('app.editornew')

@@ -228,37 +228,6 @@ define(function(require){
       return success;
     },
 
-    // checks for at least one child object
-    validateCourseContent: function(currentCourse, callback) {
-      var containsAtLeastOneChild = true;
-      var alerts = [];
-      var iterateOverChildren = function(model, index, doneIterator) {
-        if(!model._childTypes) {
-          return doneIterator();
-        }
-        model.fetchChildren(function(currentChildren) {
-          if (currentChildren.length > 0) {
-            return helpers.forParallelAsync(currentChildren, iterateOverChildren, doneIterator);
-          }
-          containsAtLeastOneChild = false;
-          var children = _.isArray(model._childTypes) ? model._childTypes.join('/') : model._childTypes;
-          alerts.push(model.get('_type') + " '" + model.get('title') + "' missing " + children);
-          doneIterator();
-        });
-      };
-      // start recursion
-      iterateOverChildren(currentCourse, null, function() {
-        var errorMessage = "";
-        if(alerts.length > 0)  {
-          for(var i = 0, len = alerts.length; i < len; i++) {
-            errorMessage += "<li>" + alerts[i] + "</li>";
-          }
-          return callback(new Error(errorMessage));
-        }
-        callback(null, true);
-      });
-    },
-
     isValidEmail: function(value) {
       var regEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return value.length > 0 && regEx.test(value);

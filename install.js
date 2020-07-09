@@ -3,7 +3,6 @@ var chalk = require('chalk');
 var fs = require('fs-extra');
 var optimist = require('optimist');
 var path = require('path');
-var prompt = require('prompt');
 var crypto = require('crypto');
 
 var auth = require('./lib/auth');
@@ -24,6 +23,7 @@ var masterTenant = false;
 var superUser = false;
 // from user input
 var configResults = {};
+var configOverrides = {};
 
 installHelpers.checkPrimaryDependencies(function(error) {
   if(error) return handleError(null, 1, error);
@@ -33,57 +33,59 @@ installHelpers.checkPrimaryDependencies(function(error) {
       return handleError(error, 1, 'Failed to get the latest framework version. Check package.json.');
     }
     inputData = {
-      useConfigJSON: {
-        name: 'useJSON',
-        description: 'Use existing config values? y/N',
-        type: 'string',
-        before: installHelpers.inputHelpers.toBoolean,
-        default: 'N'
-      },
-      startInstall: {
-        name: 'install',
-        description: 'Continue? Y/n',
-        type: 'string',
-        before: installHelpers.inputHelpers.toBoolean,
-        default: 'Y'
-      },
+      useConfigJSON: [
+        {
+          name: 'useJSON',
+          message: 'Use existing config values?',
+          type: 'confirm',
+          default: false
+        }
+      ],
+      startInstall: [
+        {
+          name: 'install',
+          message: 'Continue?',
+          type: 'confirm',
+          default: true
+        }
+      ],
       server: [
         {
           name: 'serverPort',
           type: 'number',
-          description: 'Server port',
-          pattern: installHelpers.inputHelpers.numberValidator,
+          message: 'Server port',
+          validate: installHelpers.inputHelpers.numberValidator,
           default: 5000
         },
         {
           name: 'serverName',
-          type: 'string',
-          description: 'Server name',
+          type: 'input',
+          message: 'Server name',
           default: 'localhost'
         },
         {
           name: 'dataRoot',
-          type: 'string',
-          description: 'Data directory path',
-          pattern: installHelpers.inputHelpers.alphanumValidator,
+          type: 'input',
+          message: 'Data directory path',
+          validate: installHelpers.inputHelpers.alphanumValidator,
           default: 'data'
         },
         {
           name: 'authoringToolRepository',
-          type: 'string',
-          description: "Git repository URL to be used for the authoring tool source code",
+          type: 'input',
+          message: 'Git repository URL to be used for the authoring tool source code',
           default: 'https://github.com/adaptlearning/adapt_authoring.git'
         },
         {
           name: 'frameworkRepository',
-          type: 'string',
-          description: "Git repository URL to be used for the framework source code",
+          type: 'input',
+          message: 'Git repository URL to be used for the framework source code',
           default: 'https://github.com/adaptlearning/adapt_framework.git'
         },
         {
           name: 'frameworkRevision',
-          type: 'string',
-          description: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
+          type: 'input',
+          message: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
           default: 'tags/' + latestFrameworkTag
         }
       ],
@@ -91,122 +93,122 @@ installHelpers.checkPrimaryDependencies(function(error) {
         dbConfig: [
           {
             name: 'dbName',
-            type: 'string',
-            description: 'Master database name',
-            pattern: installHelpers.inputHelpers.alphanumValidator,
+            type: 'input',
+            message: 'Master database name',
+            validate: installHelpers.inputHelpers.alphanumValidator,
             default: 'adapt-tenant-master'
           },
           {
             name: 'useConnectionUri',
-            type: 'string',
-            description: "Will you be using a full database connection URI? (all connection options in the URI) y/N",
-            before: installHelpers.inputHelpers.toBoolean,
-            default: 'N'
+            type: 'confirm',
+            message: 'Will you be using a full database connection URI? (all connection options in the URI)',
+            default: false
           }
         ],
         configureUri: [
           {
             name: 'dbConnectionUri',
-            type: 'string',
-            description: 'Database connection URI',
+            type: 'input',
+            message: 'Database connection URI',
             default: ''
           }
         ],
         configureStandard: [
           {
             name: 'dbHost',
-            type: 'string',
-            description: 'Database host',
+            type: 'input',
+            message: 'Database host',
             default: 'localhost'
           },
           {
             name: 'dbPort',
             type: 'number',
-            description: 'Database server port',
-            pattern: installHelpers.inputHelpers.numberValidator,
+            message: 'Database server port',
+            validate: installHelpers.inputHelpers.numberValidator,
             default: 27017
           },
           {
             name: 'dbUser',
-            type: 'string',
-            description: 'Database server user (only specify if using database authentication)',
-            pattern: installHelpers.inputHelpers.alphanumValidator,
+            type: 'input',
+            message: 'Database server user (only specify if using database authentication)',
+            validate: installHelpers.inputHelpers.alphanumValidator,
             default: ''
           },
           {
             name: 'dbPass',
-            type: 'string',
-            description: 'Database server password (only specify if using database authentication)',
-            pattern: installHelpers.inputHelpers.alphanumValidator,
+            type: 'password',
+            message: 'Database server password (only specify if using database authentication)',
+            mask: installHelpers.inputHelpers.passwordReplace,
+            validate: installHelpers.inputHelpers.alphanumValidator,
             default: ''
           },
           {
             name: 'dbAuthSource',
-            type: 'string',
-            description: 'Database server authentication database (only specify if using database authentication)',
-            pattern: installHelpers.inputHelpers.alphanumValidator,
+            type: 'input',
+            message: 'Database server authentication database (only specify if using database authentication)',
+            validate: installHelpers.inputHelpers.alphanumValidator,
             default: ''
           },
         ]
       },
       features: {
         smtp: {
-          confirm: {
-            name: 'useSmtp',
-            type: 'string',
-            description: "Will you be using an SMTP server? (used for sending emails) y/N",
-            before: installHelpers.inputHelpers.toBoolean,
-            default: 'N'
-          },
-          confirmConnectionUrl: {
-            name: 'useSmtpConnectionUrl',
-            type: 'string',
-            description: "Will you use a URL to connect to your smtp Server y/N",
-            before: installHelpers.inputHelpers.toBoolean,
-            default: 'N'
-          },
+          confirm: [
+            {
+              name: 'useSmtp',
+              type: 'confirm',
+              message: 'Will you be using an SMTP server? (used for sending emails)',
+              default: false
+            }
+          ],
+          confirmConnectionUrl: [
+            {
+              name: 'useSmtpConnectionUrl',
+              type: 'confirm',
+              message: 'Will you use a URL to connect to your smtp Server',
+              default: false
+            }
+          ],
           configure: [
             {
               name: 'fromAddress',
-              type: 'string',
-              description: "Sender email address",
+              type: 'input',
+              message: 'Sender email address',
               default: '',
             },
             {
               name: 'rootUrl',
-              type: 'string',
-              description: "The url this install will be accessible from",
+              type: 'input',
+              message: 'The url this install will be accessible from',
               default: '' // set using default server options
             }
           ],
           configureService: [
             {
               name: 'smtpService',
-              type: 'string',
-              description: "Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)",
+              type: 'input',
+              message: 'Which SMTP service (if any) will be used? (see https://github.com/andris9/nodemailer-wellknown#supported-services for a list of supported services.)',
               default: 'none',
             },
             {
               name: 'smtpUsername',
-              type: 'string',
-              description: "SMTP username",
+              type: 'input',
+              message: 'SMTP username',
               default: '',
             },
             {
               name: 'smtpPassword',
-              type: 'string',
-              description: "SMTP password",
-              hidden: true,
-              replace: installHelpers.inputHelpers.passwordReplace,
-              default: '',
-              before: installHelpers.inputHelpers.passwordBefore
+              type: 'password',
+              message: 'SMTP password',
+              mask: installHelpers.inputHelpers.passwordReplace,
+              default: ''
             }
           ],
           configureConnectionUrl: [
             {
               name: 'smtpConnectionUrl',
-              type: 'string',
-              description: "Custom connection URL: smtps://user%40gmail.com:pass@smtp.gmail.com/?pool=true",
+              type: 'input',
+              message: 'Custom connection URL: smtps://user%40gmail.com:pass@smtp.gmail.com/?pool=true',
               default: 'none',
             }
           ]
@@ -215,48 +217,44 @@ installHelpers.checkPrimaryDependencies(function(error) {
       tenant: [
         {
           name: 'masterTenantName',
-          type: 'string',
-          description: "Set a unique name for your tenant",
-          pattern: installHelpers.inputHelpers.alphanumValidator,
+          type: 'input',
+          message: 'Set a unique name for your tenant',
+          validate: installHelpers.inputHelpers.alphanumValidator,
           default: 'master'
         },
         {
           name: 'masterTenantDisplayName',
-          type: 'string',
-          description: 'Set the display name for your tenant',
+          type: 'input',
+          message: 'Set the display name for your tenant',
           default: 'Master'
         }
       ],
       tenantDelete: {
-        name: "confirm",
-        description: "Continue? (Y/n)",
-        before: installHelpers.inputHelpers.toBoolean,
-        default: "Y"
+        name: 'confirm',
+        type: 'confirm',
+        message: 'Continue?',
+        default: true
       },
       superUser: [
         {
           name: 'suEmail',
-          type: 'string',
-          description: "Email address",
-          required: true
+          type: 'input',
+          message: 'Email address',
+          validate: installHelpers.inputHelpers.requiredValidator
         },
         {
           name: 'suPassword',
-          type: 'string',
-          description: "Password",
-          hidden: true,
-          replace: installHelpers.inputHelpers.passwordReplace,
-          required: true,
-          before: installHelpers.inputHelpers.passwordBefore
+          type: 'password',
+          message: 'Password',
+          mask: installHelpers.inputHelpers.passwordReplace,
+          validate: installHelpers.inputHelpers.requiredValidator
         },
         {
           name: 'suRetypePassword',
-          type: 'string',
-          description: "Confirm Password",
-          hidden: true,
-          replace: installHelpers.inputHelpers.passwordReplace,
-          required: true,
-          before: installHelpers.inputHelpers.passwordBefore
+          type: 'password',
+          message: 'Confirm Password',
+          mask: installHelpers.inputHelpers.passwordReplace,
+          validate: installHelpers.inputHelpers.requiredValidator
         }
       ]
     };
@@ -272,7 +270,7 @@ installHelpers.checkPrimaryDependencies(function(error) {
       return start();
     }
     console.log('Found an existing config.json file. Do you want to use the values in this file during install?');
-    installHelpers.getInput(inputData.useConfigJSON, function(result) {
+    installHelpers.getInput(inputData.useConfigJSON, configOverrides, function(result) {
       console.log('');
       USE_CONFIG = result.useJSON;
       start();
@@ -285,9 +283,9 @@ installHelpers.checkPrimaryDependencies(function(error) {
 function generatePromptOverrides() {
   if(USE_CONFIG) {
     var configJson = require('./conf/config.json');
-    var configData = JSON.parse(JSON.stringify(configJson).replace(/:true/g, ':"y"').replace(/:false/g, ':"n"'));
+    var configData = JSON.parse(JSON.stringify(configJson));
     addConfig(configData);
-    configData.install = 'y';
+    configData.install = true;
   }
   const sessionSecret = USE_CONFIG && configData.sessionSecret || crypto.randomBytes(64).toString('hex');
   addConfig({ sessionSecret: sessionSecret });
@@ -297,14 +295,14 @@ function generatePromptOverrides() {
 
 function start() {
   // set overrides from command line arguments and config.json
-  prompt.override = generatePromptOverrides();
+  configOverrides = generatePromptOverrides();
   // Prompt the user to begin the install
   if(!IS_INTERACTIVE || USE_CONFIG) {
     console.log('This script will install the application. Please wait ...');
   } else {
     console.log('This script will install the application. \nWould you like to continue?');
   }
-  installHelpers.getInput(inputData.startInstall, function(result) {
+  installHelpers.getInput(inputData.startInstall, configOverrides, function(result) {
     if(!result.install) {
       return handleError(null, 0, 'User cancelled the install');
     }
@@ -338,7 +336,7 @@ function configureServer(callback) {
     if(error) {
       return handleError(error, 1, 'Failed to get latest framework version');
     }
-    installHelpers.getInput(inputData.server, function(result) {
+    installHelpers.getInput(inputData.server, configOverrides, function(result) {
       addConfig(result);
       callback();
     });
@@ -346,13 +344,13 @@ function configureServer(callback) {
 }
 
 function configureDatabase(callback) {
-  installHelpers.getInput(inputData.database.dbConfig, function(result) {
+  installHelpers.getInput(inputData.database.dbConfig, configOverrides, function(result) {
     addConfig(result);
 
     var isStandard = !installHelpers.inputHelpers.toBoolean(result.useConnectionUri);
     var config = inputData.database[isStandard ? 'configureStandard' : 'configureUri'];
 
-    installHelpers.getInput(config, function(result) {
+    installHelpers.getInput(config, configOverrides, function(result) {
       addConfig(result);
       callback();
     });
@@ -362,13 +360,13 @@ function configureDatabase(callback) {
 function configureFeatures(callback) {
   async.series([
     function smtp(cb) {
-      installHelpers.getInput(inputData.features.smtp.confirm, function(result) {
+      installHelpers.getInput(inputData.features.smtp.confirm, configOverrides, function(result) {
         addConfig(result);
         if (!installHelpers.inputHelpers.toBoolean(result.useSmtp)) {
           return cb();
         }
         // prompt user if custom connection url or well-known-service should be used
-        installHelpers.getInput(inputData.features.smtp.confirmConnectionUrl, function(result) {
+        installHelpers.getInput(inputData.features.smtp.confirmConnectionUrl, configOverrides, function(result) {
           addConfig(result);
           var smtpConfig;
           if (installHelpers.inputHelpers.toBoolean(result.useSmtpConnectionUrl)) {
@@ -381,7 +379,7 @@ function configureFeatures(callback) {
               smtpConfig[i].default = `http://${configResults.serverName}:${configResults.serverPort}`;
             }
           }
-          installHelpers.getInput(smtpConfig, function(result) {
+          installHelpers.getInput(smtpConfig, configOverrides, function(result) {
             addConfig(result);
             cb();
           });
@@ -408,14 +406,14 @@ function configureMasterTenant(callback) {
   app.run({ skipVersionCheck: true, skipDependencyCheck: true });
   app.on('serverStarted', function() {
 
-    if(USE_CONFIG && prompt.override.masterTenantName) {
+    if(USE_CONFIG && configOverrides.masterTenantName) {
       /**
       * remove the masterTenantDisplayName, as we can use the existing value
       * (which isn't in config.json so can't be used as an auto override)
       */
       inputData.tenant = inputData.tenant.filter(item => item.name !== 'masterTenantDisplayName');
     }
-    installHelpers.getInput(inputData.tenant, function(result) {
+    installHelpers.getInput(inputData.tenant, configOverrides, function(result) {
       console.log('');
       // add the input to our cached config
       addConfig({
@@ -439,7 +437,7 @@ function configureMasterTenant(callback) {
           configResults.masterTenant.displayName = tenant.displayName;
         }
         console.log(chalk.yellow(`Tenant '${tenant.name}' already exists. ${chalk.underline('It must be deleted for install to continue.')}`));
-        installHelpers.getInput(inputData.tenantDelete, function(result) {
+        installHelpers.getInput(inputData.tenantDelete, configOverrides, function(result) {
           console.log('');
           if(!result.confirm) {
             return exit(1, 'Exiting install.');
@@ -483,7 +481,7 @@ function createSuperUser(callback) {
     handleError(error, 1, 'Failed to create admin user account. Please check the console output.');
   };
   console.log(`\nNow we need to set up a 'Super Admin' account. This account can be used to manage everything on your authoring tool instance.`);
-  installHelpers.getInput(inputData.superUser, function(result) {
+  installHelpers.getInput(inputData.superUser, configOverrides, function(result) {
     console.log('');
     app.usermanager.deleteUser({ email: result.suEmail }, function(error, userRec) {
       if(error) return onError(error);

@@ -73,13 +73,13 @@ function getUserInput() {
   var tagProperties = [
     {
       name: 'authoringToolGitTag',
-      type: 'string',
+      type: 'input',
       message: 'Specific git revision to be used for the authoring tool. Accepts any valid revision type (e.g. branch/tag/commit)',
       default: ''
     },
     {
       name: 'frameworkGitTag',
-      type: 'string',
+      type: 'input',
       message: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
       default: ''
     }

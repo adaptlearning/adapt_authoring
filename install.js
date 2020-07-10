@@ -229,12 +229,14 @@ installHelpers.checkPrimaryDependencies(function(error) {
           default: 'Master'
         }
       ],
-      tenantDelete: {
-        name: 'confirm',
-        type: 'confirm',
-        message: 'Continue?',
-        default: true
-      },
+      tenantDelete: [
+        {
+          name: 'confirm',
+          type: 'confirm',
+          message: 'Continue?',
+          default: true
+        }
+      ],
       superUser: [
         {
           name: 'suEmail',

@@ -134,7 +134,7 @@
   "app.passwordtip": "Enter a new password below. The most secure passwords have a mix of numbers, letters (including capitals) and other characters.",
   "app.forgotpasswordblurb": "Enter the email address associated with your Adapt account, then click Continue.",
   "app.forgotpasswordfooter": "Contact %{supportContact} for help with restoring access to your account.",
-  "app.vendor": "your authoring tool vendor",
+  "app.anadmin": "an administrator",
   "app.hasyouremailchanged": "Has your email address changed?",
   "app.forgotpasswordsuccess": "Your request is being processed. If the details you provided match our records, you will receive further instructions via email.",
   "app.returnto": "Return to",

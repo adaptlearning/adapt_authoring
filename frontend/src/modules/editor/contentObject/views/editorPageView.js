@@ -27,7 +27,7 @@ define(function(require){
         'pageView:itemAnimated': this.evaluateChildStatus
       };
       originEvents['editorView:moveArticle:' + id] = this.render;
-      originEvents['editorView:pasted:' + id] = this.onPaste;
+      originEvents['editorView:pasted:' + id] = this.render;
       this.listenTo(Origin, originEvents);
 
       Origin.options.addItems([
@@ -157,20 +157,6 @@ define(function(require){
         'contextMenu:page-min:copyID': this.onCopyID
       });
       Origin.trigger('contextMenu:open', fakeView, event);
-    },
-
-    onPaste: function(data) {
-      (new ArticleModel({ _id: data._id })).fetch({
-        success: _.bind(function(model) {
-          this.addArticleView(model);
-        }, this),
-        error: function(data) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: 'app.errorfetchingdata'
-          });
-        }
-      });
     },
 
     onCutArticle: function(view) {

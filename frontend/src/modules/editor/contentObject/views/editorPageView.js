@@ -109,7 +109,7 @@ define(function(require){
         $.scrollTo(newArticleView.$el, 200);
       }
       // Increment the 'sortOrder' property
-      articleModel.set('_pasteZoneSortOrder', sortOrder++);
+      articleModel.set('_pasteZoneSortOrder', sortOrder + 1);
       // Post-article paste zone - sort order of placeholder will be one greater
       this.$('.page-articles').append(new EditorPasteZoneView({ model: articleModel }).$el);
       return newArticleView;

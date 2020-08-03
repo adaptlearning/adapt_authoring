@@ -2,7 +2,12 @@ define(function(require) {
   var Origin = require('core/origin');
 
   Origin.on('navigation:help', function() {
-    openWikiLink(getLink());
+    var override = Origin.constants.supportLink;
+    if (override) {
+      window.open(override);
+    } else {
+      openWikiLink(getLink());
+    }
   });
 
   function getLink() {

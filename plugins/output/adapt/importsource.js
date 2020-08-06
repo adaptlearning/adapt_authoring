@@ -11,6 +11,7 @@ const helpers = require('./outputHelpers');
 const logger = require("../../../lib/logger");
 const mime = require('mime');
 const path = require("path");
+const { promisify } = require('util');
 
 function ImportSource(req, done) {
   var dbInstance;
@@ -339,6 +340,30 @@ function ImportSource(req, done) {
             });
           }, cb2);
         }, cb);
+      },
+      async function populateGlobals() {
+        const dbRetrieve = promisify(dbInstance.retrieve.bind(dbInstance));
+        const dbUpdate = promisify(dbInstance.update.bind(dbInstance));
+        const courseQuery = await dbRetrieve('course', { _id: courseId });
+        const courseGlobals = courseQuery[0]._doc._globals || {};
+        await Promise.all(plugindata.pluginIncludes.map(async ({ type, name }) => {
+          const pluginQuery = await dbRetrieve(`${type}type`, { name });
+          const plugin = pluginQuery[0]._doc;
+          const pluginGlobals = plugin.globals;
+          if (!pluginGlobals) return;
+          const typeKey = type === 'component' || type === 'extension' ?
+            `_${type}s` :
+            `_${type}`;
+          const pluginKey = `_${plugin[type]}`;
+          if (!courseGlobals[typeKey]) {
+            courseGlobals[typeKey] = {};
+          }
+          Object.entries(pluginGlobals).forEach(([key, value]) => {
+            pluginGlobals[key] = value.default;
+          });
+          courseGlobals[typeKey][pluginKey] = _.defaults(courseGlobals[typeKey][pluginKey], pluginGlobals);
+        }));
+        await dbUpdate('course', { _id: courseId }, { _globals: courseGlobals });
       },
       function checkDetachedContent(cb) {
         const detachedIds = Object.keys(detachedElementsMap);

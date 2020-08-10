@@ -349,8 +349,9 @@ function ImportSource(req, done) {
         await Promise.all(plugindata.pluginIncludes.map(async ({ type, name }) => {
           const pluginQuery = await dbRetrieve(`${type}type`, { name });
           const plugin = pluginQuery[0]._doc;
-          const pluginGlobals = plugin.globals;
-          if (!pluginGlobals) return;
+          const schemaGlobals = plugin.globals;
+          if (!schemaGlobals) return;
+          const schemaDefaults = {};
           const typeKey = type === 'component' || type === 'extension' ?
             `_${type}s` :
             `_${type}`;
@@ -358,10 +359,10 @@ function ImportSource(req, done) {
           if (!courseGlobals[typeKey]) {
             courseGlobals[typeKey] = {};
           }
-          Object.entries(pluginGlobals).forEach(([key, value]) => {
-            pluginGlobals[key] = value.default;
+          Object.entries(schemaGlobals).forEach(([ key, value ]) => {
+            schemaDefaults[key] = value.default;
           });
-          courseGlobals[typeKey][pluginKey] = _.defaults(courseGlobals[typeKey][pluginKey], pluginGlobals);
+          courseGlobals[typeKey][pluginKey] = _.defaults(courseGlobals[typeKey][pluginKey], schemaDefaults);
         }));
         await dbUpdate('course', { _id: courseId }, { _globals: courseGlobals });
       },

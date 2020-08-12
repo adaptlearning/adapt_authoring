@@ -398,7 +398,7 @@ function ImportSource(req, done) {
       delete data._latestTrackingId;
       data.createdBy = app.usermanager.getCurrentUser()._id;
       if(type !== 'course') {
-        data._courseId = courseId.toString();
+        data._courseId = courseId;
       }
       if(data._component) {
         data._componentType = metadata.componentMap[data._component]._id;
@@ -508,12 +508,15 @@ function ImportSource(req, done) {
       if (detachedElementsMap[originalData._id]) { // do not import detached elements
         return done();
       } // now we're ready to create the content
-      app.contentmanager.create(type, data, function(error, record) {
-        if(error) {
-          logger.log('warn', 'Failed to import ' + type + ' ' + (originalData._id || '') + ' ' + error);
-          return done();
-        } // Create a courseAssets record if needed
-        createCourseAssets(type, record, error => done(error, record));
+      app.contentmanager.getContentPlugin(type, function(error, plugin) {
+        if(error) return done(error);
+        plugin.create(data, function(error, record) {
+          if(error) {
+            logger.log('warn', 'Failed to import ' + type + ' ' + (originalData._id || '') + ' ' + error);
+            return done();
+          } // Create a courseAssets record if needed
+          createCourseAssets(type, record, error => done(error, record));
+        });
       });
     });
   }

@@ -97,6 +97,7 @@ define([
       var flatItem = Helpers.flattenNestedProperties(this.editor.value);
       var itemValues = _.values(flatItem);
       var parentAttributes = Origin.scaffold.getCurrentModel().attributes;
+      var parentId = parentAttributes._type === 'course' ? parentAttributes._id : parentAttributes._parentId;
       itemValues.forEach(function(item) {
         if (typeof item !== 'string' || item.indexOf('course/assets') === -1) return;
 
@@ -112,7 +113,7 @@ define([
               _contentTypeId : parentAttributes._id,
               _fieldName : itemFileName,
               _assetId : result[0]._id,
-              _contentTypeParentId: parentAttributes._parentId
+              _contentTypeParentId: parentId
             }, {
               error: function(error) {
                 Origin.Notify.alert({

@@ -5,6 +5,30 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.10.4] - 2020-08-21
+
+Bugfix release.
+
+### Fixed
+- Copied articles sometimes get pasted into the wrong place ([#1892](https://github.com/adaptlearning/adapt_authoring/issues/1892))
+- Install breaks if any config values contain true/false ([#2133](https://github.com/adaptlearning/adapt_authoring/issues/2133))
+- Upgrade script replaces all core-bundled plugins ([#2316](https://github.com/adaptlearning/adapt_authoring/issues/2316))
+- Copied and pasted pages have out of order articles ([#2404](https://github.com/adaptlearning/adapt_authoring/issues/2404))
+- Tooltip overflow in sidebar 'modal' ([#2414](https://github.com/adaptlearning/adapt_authoring/issues/2414))
+- Error: Failed to determine user's tenant! ([#2504](https://github.com/adaptlearning/adapt_authoring/issues/2504))
+- Export fails as it requires LESS variables for plugins that aren't in the project ([#2510](https://github.com/adaptlearning/adapt_authoring/issues/2510))
+- Top navigation obscures save button on small window sizes ([#2511](https://github.com/adaptlearning/adapt_authoring/issues/2511))
+- Support Node 14 ([#2514](https://github.com/adaptlearning/adapt_authoring/issues/2514))
+- Reset not working ([#2518](https://github.com/adaptlearning/adapt_authoring/issues/2518))
+- Wrong state for display title icon ([#2523](https://github.com/adaptlearning/adapt_authoring/issues/2523))
+- Get 500 error when copying items with assets in Project Settings. Can also break courseassets in other items. ([#2534](https://github.com/adaptlearning/adapt_authoring/issues/2534))
+- default FW -> AT import issues - PLP settings ([adaptlearning/adapt_framework#2841](https://github.com/adaptlearning/adapt_framework/issues/2841))
+
+### Added
+- Option to customise the 'contact support' message with details of who to contact ([#2477](https://github.com/adaptlearning/adapt_authoring/issues/2477))
+- Remove 'field-help' icon if there isn't any 'help' text ([#2509](https://github.com/adaptlearning/adapt_authoring/issues/2509))
+- Customise help link ([#2527](https://github.com/adaptlearning/adapt_authoring/issues/2527))
+
 ## [0.10.3] - 2020-02-21
 
 Bugfix release.
@@ -687,6 +711,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.10.4]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.3...v0.10.4
 [0.10.3]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.2...v0.10.3
 [0.10.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.1...v0.10.2
 [0.10.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.0...v0.10.1

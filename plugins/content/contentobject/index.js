@@ -146,6 +146,10 @@ ContentObject.prototype.create = function (data, next) {
       logger.log('error', 'Error creating ContentObject!', error);
       return next(error);
     }
+    // preserve sort order integers on pasted children
+    if (Number.isInteger(data._sortOrder)) {
+      return next(null, doc);
+    }
     self.updateSiblingSortOrder(doc, next);
   });
 };

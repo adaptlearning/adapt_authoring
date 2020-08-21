@@ -67,10 +67,20 @@ define(function(require){
       }
     },
 
+    componentPasteLocation: function() {
+      if ($('.block-inner .add-control').length > 0) return;
+      Origin.Notify.alert({
+        type: 'error',
+        text: Origin.l10n.t('app.componentcopyerror')
+      });
+      $('.add-control').removeClass('display-none');
+    },
+
     showPasteZones: function(type) {
       $('.paste-zone').addClass('display-none');
       $('.add-control').addClass('display-none');
       if(type) $('.paste-zone-' + type).removeClass('display-none').addClass('show');
+      this.componentPasteLocation();
     },
 
     hidePasteZones: function() {

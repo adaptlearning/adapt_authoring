@@ -8,6 +8,10 @@ define(function(require){
     tagName: 'div',
     className: 'addUser',
     createdUserId: false,
+    
+    events: {
+      'click .reveal-password-button' : 'togglePasswordView'
+    },
 
     preRender: function() {
       Origin.trigger('location:title:update', { title: Origin.l10n.t('app.addusertitle') });
@@ -24,6 +28,8 @@ define(function(require){
       this.$('.field-error').each(function(index, element) {
         var $error = $(element);
         var $input = $error.siblings('input');
+        
+        $input = $input.length === 0 ? $error.siblings('.reveal-password-container').children('input') : $input;
 
         var isValid = $input.attr('name') === 'email' ?
           Helpers.isValidEmail($input.val().trim()) :
@@ -96,6 +102,21 @@ define(function(require){
         title: "Couldn't add user",
         text: data.responseText || error
       });
+    },
+
+    togglePasswordView: function() {
+      event && event.preventDefault();
+      
+      var passwordField = this.$('.reveal-input-password');
+      var passwordReveal = this.$('.reveal-password-button');
+
+      if (passwordField.attr('type') == 'password') {
+        passwordField.attr('type', 'text');
+        passwordReveal.attr('aria-pressed', 'true');
+      } else {
+        passwordField.attr('type', 'password');
+        passwordReveal.attr('aria-pressed', 'false');
+      }
     }
   }, {
     template: 'addUser'

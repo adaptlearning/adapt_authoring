@@ -55,9 +55,13 @@
                     <span class="req">*</span>
                     <span id="passwordError" class="error feedback"></span>
                   </label>
-                  <input type="password" class="width-15" id="password" value="" autocomplete="off">
-                  <input type="text" class="width-15 display-none" id="passwordText" value="" autocomplete="off">
-                  <button href="#" class="toggle-password display-none"><i class="fa fa-eye"></i></button>
+                  <span class="reveal-password-container">
+                    <input type="password" class="width-15 reveal-input-password" id="password" value="" autocomplete="off">
+                    <button aria-pressed="false" class="reveal-password-button">
+                      <i class="fa fa-eye reveal-password-show"></i>
+                      <i class="fa fa-eye-slash reveal-password-hide"></i>
+                    </button>
+                  </span>
                 </div>
                 <a href="#" class="btn primary change-password">{{t 'app.changepassword'}}</a>
               </div>

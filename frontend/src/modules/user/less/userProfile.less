@@ -1,43 +1,78 @@
 @import 'colours';
 
 .user-profile {
-    .error-text {
-        padding: 15px 30px;
-        background-color: @alert-color;
-        color: @white;
-    }
+  .error-text {
+    padding: 15px 30px;
+    background-color: @alert-color;
+    color: @white;
+  }
 
-    .intro-text {
-        padding: 30px 30px 0 30px;
-    }
+  .intro-text {
+    padding: 30px 30px 0 30px;
+  }
 
-    .error,
-    .success {
-        position: static;
-        top: auto;
-        left: auto;
-        font-size: inherit;
-        margin-left: 5px;
-    }
+  .error,
+  .success {
+    position: static;
+    top: auto;
+    left: auto;
+    font-size: inherit;
+    margin-left: 5px;
+  }
 
-    .editing-overlay-panel-content {
-        border-bottom: none;
-        .inner {
-            margin-bottom: 20px;
+  .editing-overlay-panel-content {
+    border-bottom: none;
 
-            .alert {
-                background-color: transparent;
-                color: @alert-color;
-            }
-            .alert-info {
-                color: @warning-color;
-            }
-            .alert-success {
-                color: @secondary-color;
-            }
-            .feedback {
-                padding-bottom: 15px;
-            }
-        }
+    .inner {
+      margin-bottom: 20px;
+
+      .alert {
+        background-color: transparent;
+        color: @alert-color;
+      }
+
+      .alert-info {
+        color: @warning-color;
+      }
+
+      .alert-success {
+        color: @adapt-secondary-color;
+      }
+
+      .feedback {
+        padding-bottom: 15px;
+      }
     }
+  }
+
+  .editing-overlay-panel-content {
+    border-bottom: none;
+    .inner {
+      margin-bottom: 20px;
+
+      .alert {
+        background-color: transparent;
+        color: @alert-color;
+      }
+      .alert-info {
+        color: @warning-color;
+      }
+      .alert-success {
+        color: @secondary-color;
+      }
+      .feedback {
+        padding-bottom: 15px;
+      }
+    }
+  }
+
+  .reveal-password-container {
+    display: inline;
+
+    button.reveal-password-button {
+      right: 10px;
+      height: 24px;
+      width: 24px;
+    }
+  }
 }

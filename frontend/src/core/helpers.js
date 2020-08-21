@@ -326,6 +326,11 @@ define(function(require){
         }
       }
       return flatProperties;
+    },
+
+    importConstants: function() {
+      this.constants = Origin.constants;
+      return '';
     }
   };
 

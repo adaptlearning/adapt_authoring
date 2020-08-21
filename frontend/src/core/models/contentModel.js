@@ -7,7 +7,7 @@ define(function(require) {
 
   var ContentModel = Backbone.Model.extend({
     idAttribute: '_id',
-    whitelistAttributes: null,
+    attributeBlacklist: null,
 
     initialize: function(options) {
       this.on('sync', this.loadedData, this);
@@ -89,17 +89,13 @@ define(function(require) {
       return JSON.stringify(this);
     },
 
-    // Remove any attributes which are not on the whitelist (called before a save)
     pruneAttributes: function() {
-      var self = this;
-      // Ensure that only valid attributes are pushed back on the save
-      if (self.whitelistAttributes) {
-        _.each(_.keys(self.attributes), function(key) {
-          if (!_.contains(self.whitelistAttributes, key)) {
-            self.unset(key);
-          }
-        });
-      }
+      if (!this.attributeBlacklist) return;
+      Object.keys(this.attributes).forEach(function(key) {
+        if (_.contains(this.attributeBlacklist, key)) {
+          this.unset(key);
+        }
+      }, this);
     }
   });
 

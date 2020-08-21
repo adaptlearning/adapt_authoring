@@ -224,6 +224,10 @@ function publishCourse(courseId, mode, request, response, next) {
       });
     },
     function(callback) {
+      const configPath = path.join(BUILD_FOLDER, Constants.Folders.Course, Constants.CourseCollections.config.filename);
+      self.removeBuildIncludes(configPath, err => callback(err));
+    },
+    function(callback) {
       if (mode === Constants.Modes.Preview) { // No download required -- skip this step
         return callback();
       }

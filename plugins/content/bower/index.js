@@ -879,7 +879,10 @@ function addPackage (plugin, packageInfo, options, cb) {
                 });
 
                 // Persist the _isAvailableInEditor flag.
-                db.update(plugin.type, {_id: newPlugin._id}, {_isAvailableInEditor: oldPlugin._isAvailableInEditor}, function(err, results) {
+                db.update(plugin.type, {_id: newPlugin._id}, {
+                  _isAvailableInEditor: oldPlugin._isAvailableInEditor,
+                  _isAddedByDefault: oldPlugin._isAddedByDefault
+                }, function(err, results) {
                   if (err) {
                     logger.log('error', err);
                     return addCb(err);

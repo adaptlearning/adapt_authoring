@@ -1,9 +1,9 @@
 var _ = require('underscore');
 var async = require('async');
+var { argv } = require('optimist');
 var chalk = require('chalk');
 var fs = require('fs-extra');
-var prompt = require('prompt');
-var optimist = require('optimist');
+var inquirer = require('inquirer');
 var path = require('path');
 var semver = require('semver');
 var migrateMongoose = require('migrate-mongoose');
@@ -32,8 +32,6 @@ function start() {
     // don't show any logger messages in the console
     logger.level('console','error');
 
-    prompt.override = optimist.argv;
-
     // start the server first
     app.run({ skipVersionCheck: true, skipStartLog: true });
     app.on('serverStarted', function() {
@@ -56,45 +54,44 @@ function ensureRepoValues() {
 
 function getUserInput() {
   // properties for the prompts
-  var confirmProperties = {
-    name: 'continue',
-    description: 'Continue? Y/n',
-    type: 'string',
-    default: 'Y',
-    before: installHelpers.inputHelpers.toBoolean
-  };
-  var upgradeProperties = {
-    properties: {
-      updateAutomatically: {
-        description: 'Update automatically? Y/n',
-        type: 'string',
-        default: 'Y',
-        before: installHelpers.inputHelpers.toBoolean
-      }
+  var confirmProperties = [
+    {
+      name: 'continue',
+      message: 'Continue?',
+      type: 'confirm',
+      default: true
     }
-  };
-  var tagProperties = {
-    properties: {
-      authoringToolGitTag: {
-        type: 'string',
-        description: 'Specific git revision to be used for the authoring tool. Accepts any valid revision type (e.g. branch/tag/commit)',
-        default: ''
-      },
-      frameworkGitTag: {
-        type: 'string',
-        description: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
-        default: ''
-      }
+  ];
+  var upgradeProperties = [
+    {
+      name: 'updateAutomatically',
+      message: 'Update automatically?',
+      type: 'confirm',
+      default: true
     }
-  };
+  ];
+  var tagProperties = [
+    {
+      name: 'authoringToolGitTag',
+      type: 'input',
+      message: 'Specific git revision to be used for the authoring tool. Accepts any valid revision type (e.g. branch/tag/commit)',
+      default: ''
+    },
+    {
+      name: 'frameworkGitTag',
+      type: 'input',
+      message: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
+      default: ''
+    }
+  ];
   if (IS_INTERACTIVE) {
     console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} and/or Adapt Framework. Would you like to continue?`);
   }
-  installHelpers.getInput(confirmProperties, function(result) {
+  installHelpers.getInput(confirmProperties, argv, function(result) {
     if(!installHelpers.inputHelpers.toBoolean(result.continue)) {
       return installHelpers.exit();
     }
-    installHelpers.getInput(upgradeProperties, function(result) {
+    installHelpers.getInput(upgradeProperties, argv, function(result) {
       console.log('');
       if(installHelpers.inputHelpers.toBoolean(result.updateAutomatically)) {
         return checkForUpdates(function(error, updateData) {
@@ -105,7 +102,7 @@ function getUserInput() {
         });
       }
       // no automatic update, so get the intended versions
-      installHelpers.getInput(tagProperties, function(result) {
+      installHelpers.getInput(tagProperties, argv, function(result) {
         console.log('');
         if(!result.authoringToolGitTag && !result.frameworkGitTag) {
           return installHelpers.exit(1, 'Cannot update sofware if no revisions are specified.');

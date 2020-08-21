@@ -48,7 +48,7 @@ define(function(require){
         var events = {};
         events['editorView:moveBlock:' + id] = this.render;
         events['editorView:deleteArticle:' + id] = this.deletePageArticle;
-        events['editorView:pasted:' + id] = this.onPaste;
+        events['editorView:pasted:' + id] = this.render;
         this.listenTo(Origin, events);
       }
 
@@ -282,20 +282,6 @@ define(function(require){
         duration = 0;
       }
       this.$('.article-content').velocity(shouldCollapse ? 'slideUp' : 'slideDown', duration);
-    },
-
-    onPaste: function(data) {
-      (new BlockModel({ _id: data._id })).fetch({
-        success: _.bind(function(model) {
-          this.addBlockView(model);
-        }, this),
-        error: function(data) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: 'app.errorfetchingdata'
-          });
-        }
-      });
     }
 
   }, {

@@ -6,7 +6,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
 
     form: null,
 
-    isLocked: false,
+    isLocked: null,
 
     events: {
       'change input': 'triggerChange',
@@ -46,13 +46,14 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     render: function() {
       this.$el.append(Handlebars.templates[this.constructor.template]({ field: '' }));
       this.setValue(this.value);
-
-      if (this.form.fields.title.editor.getValue() === this.getValue()) {
-        this.isLocked = true;
-        this.toggleLockButton();
-      }
+      this.isLocked = this.form.fields.title.editor.getValue() === this.getValue();
+      _.defer(this.postRender.bind(this));
 
       return this;
+    },
+
+    postRender: function() {
+      this.toggleLockButton();
     },
 
     triggerChange: function() {

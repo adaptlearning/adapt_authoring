@@ -16,9 +16,9 @@ define(function(require) {
   function renderCourseEdit() {
     var courseModel = new CourseModel({ _id: Origin.location.route1 });
     // FIXME need to fetch config to ensure scaffold has the latest extensions data
-    CoreHelpers.multiModelFetch([ courseModel, Origin.editor.data.config ], function(data) {
+    CoreHelpers.multiModelFetch([ courseModel, Origin.editor.data.config ], async function(data) {
       EditorHelpers.setPageTitle(courseModel);
-      var form = Origin.scaffold.buildForm({ model: courseModel });
+      var form = await Origin.scaffold.buildForm({ model: courseModel });
       Origin.contentPane.setView(EditorCourseEditView, { model: courseModel, form: form });
       Origin.sidebar.addView(new EditorCourseEditSidebarView({ form: form }).$el);
     });

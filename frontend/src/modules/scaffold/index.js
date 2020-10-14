@@ -231,6 +231,7 @@ define([
   }
 
   Scaffold.buildForm = function(options) {
+  Scaffold.buildForm = async function(options) {
     var model = options.model;
     var type = model.get('_type') || model._type || options.schemaType;
     options.isTheme = false;
@@ -248,12 +249,14 @@ define([
         options.isTheme = true;
     }
 
-    var schema = new Schemas(type);
+    /*var schema = new Schemas(type);
     if (options.isTheme) {
       schema = schema.variables;
-    }
-    options.model.schema = buildSchema(schema, options, type);
-    options.fieldsets = buildFieldsets(schema, options);
+    }*/
+    var json = await $.getJSON('testSchema/course.schema.json');
+    var schema = json.$merge.with;
+    options.model.schema = buildSchema(schema.required, schema.properties, options, type);
+    options.fieldsets = buildFieldsets(schema.properties, options);
     alternativeModel = options.alternativeModelToSave;
     alternativeAttribute = options.alternativeAttributeToSave;
     currentModel = options.model;

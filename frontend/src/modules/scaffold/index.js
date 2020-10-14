@@ -38,13 +38,14 @@ define([
   function generateFieldObject(field, key) {
     var fieldType = field.type;
     var isFieldTypeObject = fieldType === 'object';
-    var inputType = field.inputType;
+    // var inputType = field.inputType;
     var items = field.items;
     var itemsProperties = items && items.properties;
-    var itemsInputType = items && items.inputType;
+    // var itemsInputType = items && items.inputType;
     var confirmDelete = Origin.l10n.t('app.confirmdelete');
+    var formsConfig = field._backboneForms || {};
 
-    var getTitle = function() {
+    /*var getTitle = function() {
       var title = field.title;
 
       if (title) {
@@ -54,10 +55,33 @@ define([
       if (!isFieldTypeObject) {
         return Backbone.Form.Field.prototype.createTitle.call({ key: key });
       }
-    };
+    };*/
 
-    var getType = function() {
-      if (inputType) {
+    var getType = function(item) {
+      if (!item) {
+        item = field;
+      }
+
+      var config = item._backboneForms;
+      var editor = typeof config === 'string' ? config : config && config.type;
+
+      if (editor) {
+        return editor;
+      }
+
+      switch (item.type) {
+        case 'array':
+          return 'List';
+        case 'boolean':
+          return 'Checkbox';
+        case 'number':
+          return 'Number';
+        case 'object':
+          return 'Object';
+        case 'string':
+          return 'Text';
+      }
+      /*if (inputType) {
         return inputType;
       }
 
@@ -71,11 +95,11 @@ define([
 
       if (fieldType === 'array') {
         return 'List';
-      }
+      }*/
     };
 
     var getValidators = function() {
-      var validators = field.validators || [];
+      var validators = formsConfig.validators || [];
 
       for (var i = 0, j = validators.length; i < j; i++) {
         var validator = validators[i];
@@ -105,27 +129,28 @@ define([
     };
 
     var fieldObject = {
-      confirmDelete: itemsProperties ? confirmDelete : field.confirmDelete,
+      confirmDelete: itemsProperties ? confirmDelete : formsConfig.confirmDelete,
       default: field.default,
-      editorAttrs: field.editorAttrs,
-      editorClass: field.editorClass,
-      fieldAttrs: field.fieldAttrs,
-      fieldClass: field.fieldClass,
-      help: field.help,
-      itemType: itemsProperties ? 'Object' : itemsInputType,
-      inputType: inputType,
-      legend: field.legend,
+      editorAttrs: formsConfig.editorAttrs,
+      editorClass: formsConfig.editorClass,
+      fieldAttrs: formsConfig.fieldAttrs,
+      fieldClass: formsConfig.fieldClass,
+      help: field.description,
+      itemType: itemsProperties ? 'Object' : items && getType(items),
+      inputType: formsConfig.type ? formsConfig : getType(),
+      // legend: field.legend
+      options: field.enum,
       subSchema: isFieldTypeObject ? field.properties : itemsProperties || items,
-      title: getTitle(),
-      titleHTML: field.titleHTML,
+      title: field.title,
+      titleHTML: formsConfig.titleHTML,
       type: getType(),
       validators: getValidators()
     };
 
-    if (_.isObject(inputType)) {
+    /*if (_.isObject(inputType)) {
       // merge nested inputType attributes into fieldObject
       fieldObject = _.extend(fieldObject, inputType);
-    }
+    }*/
 
     return fieldObject;
   }
@@ -143,15 +168,19 @@ define([
     }
   }
 
-  function buildSchema(schema, options, type) {
+  function buildSchema(requiredKeys, schema, options, type) {
 
     var scaffoldSchema = {};
+
+    setRequiredValidators(requiredKeys, schema);
 
     for (var key in schema) {
       if (!schema.hasOwnProperty(key)) continue;
 
       var field = schema[key];
       var nestedProps = field.properties;
+
+      setRequiredValidators(field.required, nestedProps);
 
       if (!options.isTheme || !nestedProps) {
         setUpSchemaFields(field, key, schema, scaffoldSchema);
@@ -180,8 +209,9 @@ define([
       if (!schema.hasOwnProperty(key) || key === '_extensions') continue;
 
       var value = schema[key];
+      var adaptConfig = value._adapt;
 
-      if (value.isSetting) {
+      if (adaptConfig && adaptConfig.isSetting) {
         fieldsets.settings.fields.push(key);
         continue;
       }
@@ -210,7 +240,7 @@ define([
 
       fieldsets[key] = {
         key: key,
-        legend: value.title || Helpers.keyToTitleString(key),
+        legend: value.title,
         fields: fields.length ? fields : [ key ]
       };
     }
@@ -230,7 +260,23 @@ define([
     return _.values(fieldsets);
   }
 
-  Scaffold.buildForm = function(options) {
+  function setRequiredValidators(requiredKeys, schema) {
+    if (!requiredKeys) return;
+
+    requiredKeys.forEach(function(requiredKey) {
+      var field = schema[requiredKey];
+      var config = field._backboneForms || {};
+
+      if (typeof config === 'string') {
+        field._backboneForms = { type: config, validators: [ 'required' ] };
+        return;
+      }
+
+      (config.validators = config.validators || []).push('required');
+      field._backboneForms = config;
+    });
+  }
+
   Scaffold.buildForm = async function(options) {
     var model = options.model;
     var type = model.get('_type') || model._type || options.schemaType;

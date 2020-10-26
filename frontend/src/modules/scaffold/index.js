@@ -162,9 +162,12 @@ define([
     var scaffoldObjectSchema = scaffoldSchema[key].subSchema;
 
     for (var i in objectSchema) {
-      if (objectSchema.hasOwnProperty(i)) {
-        setUpSchemaFields(objectSchema[i], i, objectSchema, scaffoldObjectSchema);
-      }
+      if (!objectSchema.hasOwnProperty(i)) continue;
+
+      var objectField = objectSchema[i];
+
+      setRequiredValidators(objectField.required, objectField.properties);
+      setUpSchemaFields(objectField, i, objectSchema, scaffoldObjectSchema);
     }
   }
 

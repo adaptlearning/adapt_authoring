@@ -152,10 +152,9 @@ define([
 
         if (!error) return;
 
-        var title = field.schema.title;
-
-        if (title) {
-            error.title = title;
+        // add title to error if at field level
+        if (typeof error.type === 'string') {
+          error.title = field.schema.title;
         }
 
         errors[field.key] = error;

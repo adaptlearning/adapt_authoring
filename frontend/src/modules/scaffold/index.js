@@ -172,19 +172,21 @@ define([
 
     var scaffoldSchema = {};
 
-    setRequiredValidators(requiredKeys, schema);
+    // for (var key in schema) {
+      // if (!schema.hasOwnProperty(key)) continue;
 
-    for (var key in schema) {
-      if (!schema.hasOwnProperty(key)) continue;
-
-      var field = schema[key];
+      // var field = schema[key];
+      var field = { type: 'object', properties: Object.assign({}, schema) };
       var nestedProps = field.properties;
+      var key = 'properties';
 
-      setRequiredValidators(field.required, nestedProps);
+      schema = { properties: field };
+      setRequiredValidators(requiredKeys, nestedProps);
 
       if (!options.isTheme || !nestedProps) {
         setUpSchemaFields(field, key, schema, scaffoldSchema);
-        continue;
+        // continue;
+        return scaffoldSchema.properties.subSchema;
       }
 
       // process nested properties on edit theme page
@@ -192,7 +194,7 @@ define([
         if (!nestedProps.hasOwnProperty(innerKey)) continue;
         setUpSchemaFields(nestedProps[innerKey], innerKey, nestedProps, scaffoldSchema);
       }
-    }
+    // }
 
     return scaffoldSchema;
   }

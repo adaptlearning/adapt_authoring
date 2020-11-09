@@ -1,6 +1,6 @@
 {
   "name": "adapt_authoring",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "license": "GPL-3.0",
   "description": "A server-based user interface for authoring eLearning courses using the Adapt Framework.",
   "keywords": [
@@ -62,7 +62,7 @@
     "mime": "^2.4.4",
     "moment": "^2.24.0",
     "mongodb-uri": "^0.9.7",
-    "mongoose": "^5.9.18",
+    "mongoose": "5.8.13",
     "morgan": "^1.9.1",
     "multer": "^1.4.2",
     "needle": "^2.4.0",

@@ -10,6 +10,8 @@ define([
 
   var ScaffoldAssetView = Backbone.Form.editors.Base.extend({
 
+    assetType: null,
+
     events: {
       'change input': function() { this.trigger('change', this); },
       'focus input': function() { this.trigger('focus', this); },
@@ -52,9 +54,13 @@ define([
       var inputType = this.schema.inputType;
       var dataUrl = Helpers.isAssetExternal(this.value) ? this.value : '';
 
+      this.assetType = typeof inputType === 'string' ?
+        inputType.replace(/Asset|:/g, '') :
+        inputType.media;
+
       this.$el.html(Handlebars.templates[this.constructor.template]({
         value: this.value,
-        type: inputType.media || inputType.replace('Asset:', ''),
+        type: this.assetType,
         url: id ? 'api/asset/serve/' + id : dataUrl,
         thumbUrl: id ? 'api/asset/thumb/' + id : dataUrl
       }));
@@ -200,7 +206,7 @@ define([
 
       Origin.trigger('modal:open', AssetManagementModalView, {
         collection: new AssetCollection,
-        assetType: this.schema.inputType,
+        assetType: this.assetType,
         _shouldShowScrollbar: false,
         onUpdate: function(data) {
           if (!data) return;

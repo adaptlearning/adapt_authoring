@@ -7,10 +7,11 @@ const database = require("../../../lib/database");
 const filestorage = require('../../../lib/filestorage');
 const fs = require("fs-extra");
 const glob = require('glob');
-const helpers = require('./helpers');
+const helpers = require('./outputHelpers');
 const logger = require("../../../lib/logger");
 const mime = require('mime');
 const path = require("path");
+const { promisify } = require('util');
 
 function ImportSource(req, done) {
   var dbInstance;
@@ -169,16 +170,9 @@ function ImportSource(req, done) {
           var fileStat = fs.statSync(assetPath);
           var assetTitle = assetName;
           var assetDescription = assetName;
-          var tags = formTags.slice();
+          var assetJson = assetsJson[assetName];
+          var tags = [];
 
-          if (assetsJson[assetName]) {
-            assetTitle = assetsJson[assetName].title;
-            assetDescription = assetsJson[assetName].description;
-
-            assetsJson[assetName].tags.forEach(function(tag) {
-              tags.push(tag._id);
-            });
-          }
           var fileMeta = {
             oldId: assetId,
             title: assetTitle,
@@ -191,13 +185,36 @@ function ImportSource(req, done) {
             repository: repository,
             createdBy: app.usermanager.getCurrentUser()._id
           };
-          if(!fileMeta) {
-            return doneAsset(new helpers.ImportError('No metadata found for asset: ' + assetName));
-          }
-          helpers.importAsset(fileMeta, metadata, doneAsset);
+
+          if (!assetJson) return helpers.importAsset(fileMeta, metadata, doneAsset);
+
+          addAssetTags(assetJson, function(error, assetTags) {
+            const warn = (error) => logger.log('warn', `Failed to create asset tag ${error}`);
+            if (error) return warn(new Error(error));
+            fileMeta.title = assetJson.title;
+            fileMeta.description = assetJson.description;
+            fileMeta.tags = assetTags;
+            helpers.importAsset(fileMeta, metadata, doneAsset);
+          });
         }, doneAssetFolder);
       });
     }, done);
+  }
+
+  function addAssetTags(assetJson, cb) {
+    var assetTags = [];
+    assetJson.tags.forEach(function(tag) {
+      var tagTitle = tag.title;
+      if(!tagTitle) return cb('Tag has no title');
+      app.contentmanager.getContentPlugin('tag', function(error, plugin) {
+        if(error) return cb(tagTitle.concat(' ', error));
+        plugin.create({ title: tagTitle }, function(error, record) { // @note retrieves if tag already exists
+          if(error) return cb(tagTitle.concat(' ', error));
+          assetTags.push(record._id);
+        });
+      });
+    });
+    cb(null, assetTags);
   }
 
   /**
@@ -323,6 +340,31 @@ function ImportSource(req, done) {
             });
           }, cb2);
         }, cb);
+      },
+      async function populateGlobals() {
+        const dbRetrieve = promisify(dbInstance.retrieve.bind(dbInstance));
+        const dbUpdate = promisify(dbInstance.update.bind(dbInstance));
+        const courseQuery = await dbRetrieve('course', { _id: courseId });
+        const courseGlobals = courseQuery[0]._doc._globals || {};
+        await Promise.all(plugindata.pluginIncludes.map(async ({ type, name }) => {
+          const pluginQuery = await dbRetrieve(`${type}type`, { name });
+          const plugin = pluginQuery[0]._doc;
+          const schemaGlobals = plugin.globals;
+          if (!schemaGlobals) return;
+          const schemaDefaults = {};
+          const typeKey = type === 'component' || type === 'extension' ?
+            `_${type}s` :
+            `_${type}`;
+          const pluginKey = `_${plugin[type]}`;
+          if (!courseGlobals[typeKey]) {
+            courseGlobals[typeKey] = {};
+          }
+          Object.entries(schemaGlobals).forEach(([ key, value ]) => {
+            schemaDefaults[key] = value.default;
+          });
+          courseGlobals[typeKey][pluginKey] = _.defaults(courseGlobals[typeKey][pluginKey], schemaDefaults);
+        }));
+        await dbUpdate('course', { _id: courseId }, { _globals: courseGlobals });
       },
       function checkDetachedContent(cb) {
         const detachedIds = Object.keys(detachedElementsMap);

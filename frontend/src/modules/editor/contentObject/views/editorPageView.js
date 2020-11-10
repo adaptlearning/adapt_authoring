@@ -27,7 +27,7 @@ define(function(require){
         'pageView:itemAnimated': this.evaluateChildStatus
       };
       originEvents['editorView:moveArticle:' + id] = this.render;
-      originEvents['editorView:pasted:' + id] = this.onPaste;
+      originEvents['editorView:pasted:' + id] = this.render;
       this.listenTo(Origin, originEvents);
 
       Origin.options.addItems([
@@ -109,7 +109,7 @@ define(function(require){
         $.scrollTo(newArticleView.$el, 200);
       }
       // Increment the 'sortOrder' property
-      articleModel.set('_pasteZoneSortOrder', sortOrder++);
+      articleModel.set('_pasteZoneSortOrder', sortOrder + 1);
       // Post-article paste zone - sort order of placeholder will be one greater
       this.$('.page-articles').append(new EditorPasteZoneView({ model: articleModel }).$el);
       return newArticleView;
@@ -118,9 +118,6 @@ define(function(require){
     addNewArticle: function(event) {
       event && event.preventDefault();
       (new ArticleModel()).save({
-        title: Origin.l10n.t('app.placeholdernewarticle'),
-        displayTitle: Origin.l10n.t('app.placeholdernewarticle'),
-        body: '',
         _parentId: this.model.get('_id'),
         _courseId: Origin.editor.data.course.get('_id'),
         _type:'article'
@@ -160,20 +157,6 @@ define(function(require){
         'contextMenu:page-min:copyID': this.onCopyID
       });
       Origin.trigger('contextMenu:open', fakeView, event);
-    },
-
-    onPaste: function(data) {
-      (new ArticleModel({ _id: data._id })).fetch({
-        success: _.bind(function(model) {
-          this.addArticleView(model);
-        }, this),
-        error: function(data) {
-          Origin.Notify.alert({
-            type: 'error',
-            text: 'app.errorfetchingdata'
-          });
-        }
-      });
     },
 
     onCutArticle: function(view) {

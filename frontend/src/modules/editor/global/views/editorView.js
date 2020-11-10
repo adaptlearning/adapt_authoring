@@ -44,25 +44,12 @@ define(function(require) {
         'editorView:copy': this.addToClipboard,
         'editorView:copyID': this.copyIdToClipboard,
         'editorView:paste': this.pasteFromClipboard,
-        'editorCommon:download': function() {
-          this.validateProject(function(error) {
-            this.downloadProject();
-          });
-        },
+        'editorCommon:download': this.downloadProject,
         'editorCommon:preview': function(isForceRebuild) {
           var previewWindow = window.open('loading', 'preview');
-          this.validateProject(function(error) {
-            if(error) {
-              return previewWindow.close();
-            }
-            this.previewProject(previewWindow, isForceRebuild);
-          });
+          this.previewProject(previewWindow, isForceRebuild);
         },
-        'editorCommon:export': function() {
-          this.validateProject(function(error) {
-            this.exportProject(error);
-          });
-        }
+        'editorCommon:export': this.exportProject
       });
       this.render();
       this.setupEditor();
@@ -74,15 +61,6 @@ define(function(require) {
 
     setupEditor: function() {
       this.renderCurrentEditorView();
-    },
-
-    validateProject: function(next) {
-      helpers.validateCourseContent(this.currentCourse, _.bind(function(error) {
-        if(error) {
-          Origin.Notify.alert({ type: 'error', text: "There's something wrong with your course:<br/><br/>" + error });
-        }
-        next.call(this, error);
-      }, this));
     },
 
     previewProject: function(previewWindow, forceRebuild) {

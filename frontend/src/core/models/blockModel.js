@@ -10,28 +10,14 @@ define(function(require) {
     // Block specific properties
     layoutOptions:  null,
     dragLayoutOptions: null,
-    // These are the only attributes which should be permitted on a save
-    // TODO look into this...
-    whitelistAttributes: [
-      '_id',
-      '_courseId',
-      '_parentId',
-      '_layoutOptions',
-      '_type',
-      '_sortOrder',
-      '_classes',
-      '_isOptional',
-      '_isAvailable',
-      'body',
-      'displayTitle',
-      'title',
-      '_extensions',
-      'themeSettings',
-      '_onScreen',
-      '_isVisible',
-      '_isHidden',
-      'instruction',
-      '_colorLabel'
+    attributeBlacklist: [
+      '_isDeleted',
+      '_tenantId',
+      '_trackingId',
+      'createdBy',
+      'createdAt',
+      'layoutOptions',
+      'updatedAt'
     ]
   });
 

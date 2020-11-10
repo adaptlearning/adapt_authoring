@@ -53,6 +53,7 @@ form .error {
 }
 
 .field {
+  position: relative;
   padding: 10px 30px;
   &-object {
     padding: 8px 10px;
@@ -84,32 +85,21 @@ form .error {
 }
 
 .field-help {
-  position: relative;
   display: inline-block;
   padding: 0 3px;
   .tooltip {
     position: absolute;
     z-index: 2;
-    top: 0;
-    left: 105%;
+    max-width: 300px;
     padding: 5px;
     border-radius: 6px;
+    margin: 10px 0;
     background-color: @tertiary-color;
     color: @white;
     opacity: 0;
     text-align: center;
     transition: opacity 0.3s, visibility 0s 0.3s;
     visibility: hidden;
-    .tooltip-key {
-      color: @primary-color;
-      font-family: monospace;
-    }
-    .tooltip-help {
-      width: 300px;
-      .scaffold-items-modal & {
-        width: 200px;
-      }
-    }
   }
   i:hover + .tooltip {
     opacity: 0.9;

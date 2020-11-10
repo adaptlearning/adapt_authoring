@@ -12,29 +12,31 @@ const helpers = require('../../../lib/helpers');
 const installHelpers = require('../../../lib/installHelpers');
 const logger = require('../../../lib/logger');
 const origin = require('../../../');
+const outputHelpers = require('./outputHelpers');
 const usermanager = require('../../../lib/usermanager');
 
 function publishCourse(courseId, mode, request, response, next) {
-  var app = origin();
-  var self = this;
-  var user = usermanager.getCurrentUser();
-  var tenantId = user.tenant._id;
-  var outputJson = {};
-  var isRebuildRequired = false;
-  var themeName;
-  var menuName;
-  var frameworkVersion;
+  let app = origin();
+  let self = this;
+  let user = usermanager.getCurrentUser();
+  let tenantId = user.tenant._id;
+  let outputJson = {};
+  let isRebuildRequired = false;
+  let themeName;
+  let menuName;
+  let frameworkVersion;
+  let isForceRebuild;
 
-  var resultObject = {};
+  let resultObject = {};
 
   // shorthand directories
-  var FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
-  var SRC_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source);
-  var COURSES_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses);
-  var COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId, courseId);
-  var BUILD_FOLDER = path.join(COURSE_FOLDER, Constants.Folders.Build);
+  const FRAMEWORK_ROOT_FOLDER = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Framework);
+  const SRC_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.Source);
+  const COURSES_FOLDER = path.join(FRAMEWORK_ROOT_FOLDER, Constants.Folders.AllCourses);
+  const COURSE_FOLDER = path.join(COURSES_FOLDER, tenantId, courseId);
+  const BUILD_FOLDER = path.join(COURSE_FOLDER, Constants.Folders.Build);
 
-  var customPluginName = user._id;
+  let customPluginName = user._id;
 
   const getGruntFatalError = stdout => {
     const indexStart = stdout.indexOf('\nFatal error: ');
@@ -55,6 +57,16 @@ function publishCourse(courseId, mode, request, response, next) {
         }
         // Store off the retrieved collections
         outputJson = data;
+        callback(null);
+      });
+    },
+    // validate the course data
+    function(callback) {
+      outputHelpers.validateCourse(outputJson, function(error, isValid) {
+        if (error || !isValid) {
+          return callback({ message: error });
+        }
+
         callback(null);
       });
     },
@@ -98,10 +110,16 @@ function publishCourse(courseId, mode, request, response, next) {
           return callback(null);
         }
 
-        const isForceRebuld = (request) ? request.query.force === 'true' : false;
-        isRebuildRequired = exists || isForceRebuld;
+        isForceRebuild = (request) ? request.query.force === 'true' : false;
+        isRebuildRequired = exists || isForceRebuild;
         callback(null);
       });
+    },
+    function(callback) {
+      if (mode === Constants.Modes.Export || mode === Constants.Modes.Publish || isForceRebuild) {
+        fs.emptyDirSync(BUILD_FOLDER);
+      }
+      callback(null);
     },
     function(callback) {
       var temporaryMenuFolder = path.join(SRC_FOLDER, Constants.Folders.Menu, customPluginName);
@@ -204,6 +222,10 @@ function publishCourse(courseId, mode, request, response, next) {
       self.clearBuildFlag(path.join(BUILD_FOLDER, Constants.Filenames.Rebuild), function(err) {
         callback(null);
       });
+    },
+    function(callback) {
+      const configPath = path.join(BUILD_FOLDER, Constants.Folders.Course, Constants.CourseCollections.config.filename);
+      self.removeBuildIncludes(configPath, err => callback(err));
     },
     function(callback) {
       if (mode === Constants.Modes.Preview) { // No download required -- skip this step

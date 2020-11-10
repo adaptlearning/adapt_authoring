@@ -1,0 +1,25 @@
+version: '2'
+
+volumes:
+  mongo:
+    driver: local
+
+services:
+  mongo:
+    image: mongo:3
+    restart: always
+    volumes:
+      - mongo:/data/db
+
+  node:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    links:
+      - mongo
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    command: ["node", "server"]
+    ports:
+      - 5000

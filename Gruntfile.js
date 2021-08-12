@@ -318,7 +318,7 @@ module.exports = function(grunt) {
       grunt.task.run(['migration-conf', 'requireBundle', 'generate-lang-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
 
     } catch(e) {
-      grunt.task.run(['requireBundle', 'merge-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation]);
+      grunt.task.run(['requireBundle', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation]);
     }
   });
 };

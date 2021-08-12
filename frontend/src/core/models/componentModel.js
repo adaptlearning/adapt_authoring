@@ -6,31 +6,11 @@ define(function(require) {
     urlRoot: 'api/content/component',
     _parentType: 'block',
     _siblingTypes: 'component',
-    // These are the only attributes which should be permitted on a save
-    // TODO look into this...
-    whitelistAttributes: [
-      '_id',
-      '_componentType',
-      '_courseId',
-      '_layout',
-      '_parentId',
-      '_type',
-      'properties',
-      '_component',
-      '_extensions',
-      '_classes',
-      '_isOptional',
-      '_isAvailable',
-      'body',
-      'displayTitle',
-      'title',
-      'version',
-      'themeSettings',
-      '_onScreen',
-      '_isVisible',
-      '_isHidden',
-      'instruction',
-      '_colorLabel'
+    attributeBlacklist: [
+      '_isDeleted',
+      'createdBy',
+      'createdAt',
+      'updatedAt'
     ]
   });
 

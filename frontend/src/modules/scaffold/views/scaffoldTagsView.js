@@ -23,6 +23,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
       this.$el.selectize({
         create: true,
         labelField: 'title',
+        loadingClass: 'selectize-loading',
         load: function(query, callback) {
           $.ajax({
             url: 'api/autocomplete/tag',

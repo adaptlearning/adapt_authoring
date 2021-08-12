@@ -8,7 +8,7 @@
   z-index: 1000;
 
   .presetEdit-inner {
-    background-color: white;
+    background-color: @white;
     border-radius: 5px;
     margin: 0 auto;
     padding: 35px;
@@ -44,6 +44,10 @@
 
         .nameEdit {
           display: none;
+
+          .preset-error {
+            color: red;
+          }
         }
 
         .label,
@@ -55,7 +59,7 @@
           border: 1px solid #f1f1f1;
           border-radius: 5px;
           vertical-align: middle;
-          font-weight: bold;
+          font-weight: @font-weight-bold;
           word-break: break-word;
         }
       }

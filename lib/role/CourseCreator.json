@@ -2,7 +2,7 @@
   "name": "Course Creator",
   "version": "0.0.1",
   "statement" : [
-    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/content/*", "action":["create", "delete"], "effect":"allow" },
+    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/content/*", "action":["create", "read", "update", "delete"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/shared/*", "action":["create","read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/subscribed/*", "action":["create","read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/asset/*", "action":["create", "read", "update"], "effect":"allow" },
@@ -14,7 +14,9 @@
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/themetype/*", "action":["update", "read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/menutype/*", "action":["update", "read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/theme/*", "action":["create", "update", "read"], "effect":"allow" },
+    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/themepreset/*", "action":["create", "update", "read", "delete"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/menu/*", "action":["create", "update", "read"], "effect":"allow" },
-    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/extension/*", "action":["create", "update", "read"], "effect":"allow" }
+    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/extension/*", "action":["create", "update", "read"], "effect":"allow" },
+    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/autocomplete/*", "action":["read"], "effect":"allow" }
   ]
 }

@@ -69,8 +69,6 @@ define(function(require) {
 
     createGenericPage: function(courseModel) {
       var contentObjectModel = new ContentObjectModel({
-        title: Origin.l10n.t('app.placeholdernewpage'),
-        displayTitle: Origin.l10n.t('app.placeholdernewpage'),
         _type: 'page',
         _courseId: courseModel.get('_id'),
         _parentId: courseModel.get('_id')

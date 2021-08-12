@@ -113,7 +113,6 @@
     position: absolute;
     left: 205px;
     top: 25px;
-    width: 0px;
     padding: 0;
     background: none;
     color: @sidebar-input-text-color;
@@ -122,15 +121,6 @@
   .sidebar-item-container {
     position: relative;
     height:100%;
-  }
-
-  .sidebar-hide {
-    #app {
-      margin-left: 0px;
-    }
-    .sidebar {
-      display: none;
-    }
   }
 
   .separator {
@@ -153,11 +143,20 @@
       position: inherit;
       top: inherit;
       left: inherit;
-      color: white !important;
+      color: @white !important;
       i {
-        color: white !important;
+        color: @white !important;
       }
     }
+  }
+}
+
+.sidebar-hide {
+  #app {
+    margin-left: 0px;
+  }
+  .sidebar {
+    display: none;
   }
 }
 
@@ -267,7 +266,7 @@
 .sidebar-item-title-inner {
   padding:30px 20px;
   font-size: @sidebar-input-font-size;
-  font-weight: 200;
+  font-weight: @font-weight;
 }
 
 .sidebar-divide {
@@ -289,7 +288,7 @@
 .sidebar-fieldset-filter.error {
   @alert-color:#de6262;
   background: @alert-color;
-  color:#fff;
+  color: @white;
   &:hover {
     background: darken(@alert-color, 10%);
   }

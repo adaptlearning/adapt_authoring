@@ -15,7 +15,7 @@
     padding: 30px 30px 0 30px;
     color: @alert-color;
     font-size: 17px;
-    font-weight: 600;
+    font-weight: @font-weight-bold;
     text-align: center;
     max-width: 800px;
   }
@@ -30,7 +30,7 @@
   }
   .title {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: @font-weight-bold;
     margin-bottom: 30px;
   }
   button {
@@ -39,13 +39,19 @@
   .theme-selector {
     .tile {
       label {
-        font-weight: bold;
+        font-weight: @font-weight-bold;
         padding-right: 5px;
       }
       padding-right: 15px;
       display: inline-block;
       select {
         min-width: 150px;
+      }
+    }
+
+    &.show-preset-select {
+      select {
+        width: 180px;
       }
     }
     .edit.btn.secondary {

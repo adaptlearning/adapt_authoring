@@ -111,6 +111,43 @@ Theme.prototype.updatePluginType = function (req, res, next) {
 };
 
 /**
+ * Returns an array of course objects that use the Theme with the passed id
+ * @param callback
+ * @param id
+ */
+Theme.prototype.getUses = function (callback, id) {
+  database.getDatabase(function (err, db) {
+    if (err) {
+      return callback(err);
+    }
+
+    db.retrieve('themetype', { _id: id }, function (err, themetypes) {
+      if (err) {
+        return callback(err);
+      }
+
+      if (themetypes.length !== 1) {
+        return callback(new Error('themetype not found'));
+      }
+
+      db.retrieve('config', { _theme: themetypes[0].name }, function (err, configs) {
+        if (err) {
+          return callback(err);
+        }
+
+        //Group all the course id's into an array for a mongo query
+        const courseIDs = [];
+        for (var i = 0, len = configs.length; i < len; i++) {
+          courseIDs.push(configs[i]._courseId);
+        }
+
+        db.retrieve('course', { _id: {$in: courseIDs} }, callback);
+      });
+    });
+  });
+};
+
+/**
  * essential setup
  *
  * @api private

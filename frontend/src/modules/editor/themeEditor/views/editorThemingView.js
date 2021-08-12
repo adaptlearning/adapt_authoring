@@ -62,12 +62,14 @@ define(function(require) {
       var selectedTheme = this.getSelectedTheme();
 
       if (!this.themeIsEditable(selectedTheme)) {
+        this.$('.theme-selector').removeClass('show-preset-select');
         this.$('.empty-message').show();
         this.$('.editable-theme').hide();
         $('.editor-theming-sidebar-reset').hide();
         return;
       }
 
+      this.$('.theme-selector').addClass('show-preset-select');
       this.$('.empty-message').hide();
       this.$('.editable-theme').show();
       $('.editor-theming-sidebar-reset').show();
@@ -210,9 +212,10 @@ define(function(require) {
       if (!fieldView) {
         return;
       }
-      if (fieldView.schema.inputType === 'ColourPicker') {
+      var inputType = fieldView.schema.inputType.type || fieldView.schema.inputType;
+      if (inputType === 'ColourPicker') {
         fieldView.setValue(value);
-      } else if (fieldView.schema.inputType.indexOf('Asset:') > -1) {
+      } else if (inputType.indexOf('Asset') > -1) {
         fieldView.setValue(value);
         fieldView.render();
         $('div[data-editor-id*="' + key + '"]').append(fieldView.editor.$el);
@@ -417,19 +420,8 @@ define(function(require) {
 
     themeIsEditable: function(theme) {
       var props = theme && theme.get('properties');
-      if (!props) {
-        return false;
-      }
-      if (Object.keys(props).length === 1) {
-        if (props.hasOwnProperty('pluginLocations')) {
-          return false;
-        }
-        // For old themes
-        if (props.hasOwnProperty('_screenSize')) {
-          return false;
-        }
-      }
-      return true;
+
+      return props && props.variables;
     },
 
     flattenNestedProperties: function(properties) {
@@ -538,14 +530,16 @@ define(function(require) {
         text: Origin.l10n.t('app.presetinputtext'),
         closeOnConfirm: false,
         showCancelButton: true,
-        callback: function() {
+        callback: function(presetName) {
+          if (presetName === false) return;
+          if (presetName === "") return swal.showInputError(Origin.l10n.t('app.invalidempty'));
           var theme = self.$('.theme select').val();
-          var presets = self.presets.where({ parentTheme: theme, displayName: arguments[0] });
+          var presets = self.presets.where({ parentTheme: theme, displayName: presetName });
           if (presets.length > 0) {
             swal.showInputError(Origin.l10n.t('app.duplicatepreseterror'));
           } else {
             // watch out for injection attacks
-            self.savePreset(Helpers.escapeText(arguments[0]));
+            self.savePreset(Helpers.escapeText(presetName));
             swal.close();
           }
         }

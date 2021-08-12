@@ -28,7 +28,7 @@ before_install:
 
 install:
   - npm config set spin false
-  - npm install
+  - npm ci
   - grunt build:prod
 
 matrix:

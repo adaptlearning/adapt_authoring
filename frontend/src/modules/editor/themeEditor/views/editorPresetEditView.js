@@ -51,6 +51,18 @@ define(function(require) {
       // look out for injection attacks
       var newValue = Helpers.escapeText($('input', $preset).val());
 
+      if (newValue === '') {
+        $preset.find('.preset-error').text(Origin.l10n.t('app.required')).removeClass('display-none');
+        return;
+      }
+
+      var theme = $('.theme select').val();
+      var presets = this.model.get('presets').where({ parentTheme: theme, displayName: newValue });
+      if (presets.length > 0) {
+          $preset.find('.preset-error').text(Origin.l10n.t('app.duplicatepreseterror')).removeClass('display-none');
+          return;
+      }
+
       Origin.trigger('managePresets:edit', {
         oldValue: $preset.attr('data-name'),
         newValue: newValue
@@ -60,6 +72,7 @@ define(function(require) {
     onCancelClicked: function(event) {
       event && event.preventDefault();
       var $preset = $(event.currentTarget).closest('.preset');
+      $preset.find('.preset-error').addClass('display-none');
       $('.nameEdit', $preset).hide();
       $('.name', $preset).show();
     },

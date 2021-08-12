@@ -5,6 +5,122 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.10.5] - 2020-11-09
+
+Bugfix release.
+
+### Fixed
+- Users can change the passwords of other users ([#2540](https://github.com/adaptlearning/adapt_authoring/issues/2540))
+
+## [0.10.4] - 2020-08-21
+
+Bugfix release.
+
+### Fixed
+- Copied articles sometimes get pasted into the wrong place ([#1892](https://github.com/adaptlearning/adapt_authoring/issues/1892))
+- Install breaks if any config values contain true/false ([#2133](https://github.com/adaptlearning/adapt_authoring/issues/2133))
+- Upgrade script replaces all core-bundled plugins ([#2316](https://github.com/adaptlearning/adapt_authoring/issues/2316))
+- Copied and pasted pages have out of order articles ([#2404](https://github.com/adaptlearning/adapt_authoring/issues/2404))
+- Tooltip overflow in sidebar 'modal' ([#2414](https://github.com/adaptlearning/adapt_authoring/issues/2414))
+- Error: Failed to determine user's tenant! ([#2504](https://github.com/adaptlearning/adapt_authoring/issues/2504))
+- Export fails as it requires LESS variables for plugins that aren't in the project ([#2510](https://github.com/adaptlearning/adapt_authoring/issues/2510))
+- Top navigation obscures save button on small window sizes ([#2511](https://github.com/adaptlearning/adapt_authoring/issues/2511))
+- Support Node 14 ([#2514](https://github.com/adaptlearning/adapt_authoring/issues/2514))
+- Reset not working ([#2518](https://github.com/adaptlearning/adapt_authoring/issues/2518))
+- Wrong state for display title icon ([#2523](https://github.com/adaptlearning/adapt_authoring/issues/2523))
+- Get 500 error when copying items with assets in Project Settings. Can also break courseassets in other items. ([#2534](https://github.com/adaptlearning/adapt_authoring/issues/2534))
+- default FW -> AT import issues - PLP settings ([adaptlearning/adapt_framework#2841](https://github.com/adaptlearning/adapt_framework/issues/2841))
+
+### Added
+- Option to customise the 'contact support' message with details of who to contact ([#2477](https://github.com/adaptlearning/adapt_authoring/issues/2477))
+- Remove 'field-help' icon if there isn't any 'help' text ([#2509](https://github.com/adaptlearning/adapt_authoring/issues/2509))
+- Customise help link ([#2527](https://github.com/adaptlearning/adapt_authoring/issues/2527))
+
+## [0.10.3] - 2020-02-21
+
+Bugfix release.
+
+### Fixed
+- Cannot remove Spoor's required files from published course ([#2235](https://github.com/adaptlearning/adapt_authoring/issues/2235))
+- If I switch theme, the old theme assets still seem to be retained on publish ([#2442](https://github.com/adaptlearning/adapt_authoring/issues/2442))
+- Incompatible versions of plugins are targetted if range specified in adapt.json ([#2479](https://github.com/adaptlearning/adapt_authoring/issues/2479))
+- Framework and AT use different default screen sizes ([#2485](https://github.com/adaptlearning/adapt_authoring/issues/2485))
+- Heavy course validation on front-end ([#2487](https://github.com/adaptlearning/adapt_authoring/issues/2487))
+
+### Added
+- Generate a dependency lock on release ([#2301](https://github.com/adaptlearning/adapt_authoring/issues/2301))
+
+## [0.10.2] - 2019-11-08
+
+Bugfix release.
+
+### Fixed
+- Asset tags are not preserved on import ([#2439](https://github.com/adaptlearning/adapt_authoring/issues/2439))
+- Cannot update plugin via the UI ([#2455](https://github.com/adaptlearning/adapt_authoring/issues/2455))
+- Install script hangs when installing legacy framework ([#2457](https://github.com/adaptlearning/adapt_authoring/issues/2457))
+- Input box briefly fills screen when enering tags in asset upload modal ([#2460](https://github.com/adaptlearning/adapt_authoring/issues/2460))
+- Extensions go missing from components ([#2467](https://github.com/adaptlearning/adapt_authoring/issues/2467))
+
+### Added
+- Upgrade script should check for compatible framework updates ([#2307](https://github.com/adaptlearning/adapt_authoring/issues/2307))
+
+## [0.10.1] - 2019-10-22
+
+Bugfix release.
+
+### Fixed
+- Courses dashboard: A-Z/Z-A sort is case sensitive ([#2325](https://github.com/adaptlearning/adapt_authoring/issues/2325))
+- Item copy can result in broken courseassets in other items ([#2347](https://github.com/adaptlearning/adapt_authoring/issues/2347))
+- Allow non-interactive install and upgrade scripts ([#2407](https://github.com/adaptlearning/adapt_authoring/issues/2407))
+- installation: missing translation key for app.productname ([#2410](https://github.com/adaptlearning/adapt_authoring/issues/2410))
+- Fix reading of asset type from schema ([#2416](https://github.com/adaptlearning/adapt_authoring/issues/2416))
+- Grunt tasks do not process symlinks ([#2428](https://github.com/adaptlearning/adapt_authoring/issues/2428))
+- Importing plugin with existing targetAttribute causes error when retrieving plugin schemas ([#2433](https://github.com/adaptlearning/adapt_authoring/issues/2433))
+- Support Node 12 ([#2437](https://github.com/adaptlearning/adapt_authoring/issues/2437))
+- Asset tags are not preserved on import ([#2439](https://github.com/adaptlearning/adapt_authoring/issues/2439))
+
+### Added
+- skip-version check should be passed as cli argument ([#2005](https://github.com/adaptlearning/adapt_authoring/issues/2005))
+- Plugin upload failed modal should be more descriptive ([#2444](https://github.com/adaptlearning/adapt_authoring/issues/2444))
+
+## [0.10.0] - 2019-08-29
+
+Adds ability to import courses with an older framework version, and latest bugfixes.
+
+### Fixed
+- Improve error messages when saving theme preset names ([#2382](https://github.com/adaptlearning/adapt_authoring/issues/2382))
+- Theme preset dropdown keeps reverting to 'No preset' ([#2379](https://github.com/adaptlearning/adapt_authoring/issues/2379))
+- Manage theme preset button wraps onto second line ([#2361](https://github.com/adaptlearning/adapt_authoring/issues/2361))
+- Sometimes a theme is wrongly identified as being editable ([#2360](https://github.com/adaptlearning/adapt_authoring/issues/2360))
+- Absolute pikaday path breaks grunt build in some cases ([#2314](https://github.com/adaptlearning/adapt_authoring/issues/2314))
+- Course creators cannot see asset tags list ([#2306](https://github.com/adaptlearning/adapt_authoring/issues/2306))
+- Upload files not always cleared from tmp ([#2115](https://github.com/adaptlearning/adapt_authoring/issues/2115))
+- When 'Add component' is clicked move focus to component search ([#1963](https://github.com/adaptlearning/adapt_authoring/issues/1963))
+- Allow for pages without a sidebar ([#1541](https://github.com/adaptlearning/adapt_authoring/issues/1541))
+
+### Added
+- Ability to import a course with an older framework version ([#2288](https://github.com/adaptlearning/adapt_authoring/issues/2288))
+
+## [0.9.0] - 2019-07-15
+
+Adds ability to remove plugins, removes unused user roles and latest bugfixes.
+
+### Fixed
+- Performance regression when upgrading to v0.8.1 ([#2370](https://github.com/adaptlearning/adapt_authoring/issues/2370))
+- Block instruction not being saved ([#2373](https://github.com/adaptlearning/adapt_authoring/issues/2373))
+- Not able to select a transparent colour in theme picker ([#2358](https://github.com/adaptlearning/adapt_authoring/issues/2358))
+- Not able to specify a select option for theme variable ([#2358](https://github.com/adaptlearning/adapt_authoring/issues/2358))
+- No dashboard redirect on invalid page ([#2351](https://github.com/adaptlearning/adapt_authoring/issues/2351))
+- Image thumbnail not showing in component settings ([#2345](https://github.com/adaptlearning/adapt_authoring/issues/2345))
+- Non-localised text in asset mangement ([#2340](https://github.com/adaptlearning/adapt_authoring/issues/2340))
+- Theme variables aren't used in core Less files ([#2338](https://github.com/adaptlearning/adapt_authoring/issues/2338))
+- Import times out if course is missing an asset ([#2326](https://github.com/adaptlearning/adapt_authoring/issues/2326))
+- Text misaligned on headers ([#2276](https://github.com/adaptlearning/adapt_authoring/issues/2276))
+
+### Added
+- Ability to remove plugins ([#928](https://github.com/adaptlearning/adapt_authoring/issues/928))
+- Remove unused user roles ([#1950](https://github.com/adaptlearning/adapt_authoring/issues/1950))
+
 ## [0.8.1] - 2019-05-23
 
 Bugfix release.
@@ -602,6 +718,13 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.10.5]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.4...v0.10.5
+[0.10.4]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.3...v0.10.4
+[0.10.3]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.2...v0.10.3
+[0.10.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.1...v0.10.2
+[0.10.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.0...v0.10.1
+[0.10.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.9.0...v0.10.0
+[0.9.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.7.0...v0.7.1

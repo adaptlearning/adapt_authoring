@@ -66,9 +66,6 @@ define(function(require) {
       var model = new ComponentModel();
 
       model.save({
-        title: Origin.l10n.t('app.placeholdernewcomponent'),
-        displayTitle: Origin.l10n.t('app.placeholdernewcomponent'),
-        body: '',
         _parentId: this._parentId,
         _courseId: Origin.editor.data.course.get('_id'),
         _type: 'component',

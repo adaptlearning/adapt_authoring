@@ -24,7 +24,6 @@ define([
     postRender: function() {
       this.$el.spectrum({
         color: this.value,
-        showInput: true,
         showAlpha: true,
         showInitial: true,
         showInput: true,
@@ -50,8 +49,9 @@ define([
 
     getValue: function() {
       var colour = this.$el.spectrum('get');
-      if (colour) return colour.toHexString();
-      return '';
+      if (!colour) return '';
+
+      return (colour.getAlpha() < 1) ? colour.toRgbString() : colour.toHexString();
     },
 
     setValue: function(value) {

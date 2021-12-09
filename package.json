@@ -54,7 +54,7 @@
     "jshint-stylish": "^2.2.1",
     "json-schema-mapper": "0.0.2",
     "junk": "^3.1.0",
-    "less": "^3.10.3",
+    "less": "^3.13.1",
     "log-update": "^3.3.0",
     "matchdep": "^2.0.0",
     "method-override": "^3.0.0",

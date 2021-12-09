@@ -185,9 +185,9 @@ function publishCourse(courseId, mode, request, response, next) {
         var generateSourcemap = outputJson.config._generateSourcemap;
         var buildMode = generateSourcemap === true ? 'dev' : 'prod';
 
-        logger.log('info', 'grunt server-build:' + buildMode + ' ' + args.join(' '));
+        logger.log('info', 'npx grunt server-build:' + buildMode + ' ' + args.join(' '));
 
-        child = exec('grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
+        child = exec('npx grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
           function(error, stdout, stderr) {
             if (error !== null) {
               logger.log('error', 'exec error: ' + error);

@@ -322,7 +322,7 @@ function start() {
         console.error('ERROR: ', error);
         return exit(1, 'Install was unsuccessful. Please check the console output.');
       }
-      exit(0, `Installation completed successfully, the application can now be started with 'node server'.`);
+      exit(0, `Installation completed, the application can now be started with 'node server'.`);
     });
   });
 }
@@ -511,7 +511,7 @@ function createSuperUser(callback) {
 function buildFrontend(callback) {
   installHelpers.buildAuthoring(function(error) {
     if(error) {
-      return callback(`Failed to build the web application, (${error}) \nInstall will continue. Try again after installation completes using 'grunt build:prod'.`);
+      console.log(chalk.yellow(`Failed to build the web application, (${error}) \nInstall will continue. Try again after installation completes using 'grunt build:prod'.`));
     }
     callback();
   });

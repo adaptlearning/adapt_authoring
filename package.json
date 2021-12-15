@@ -59,7 +59,7 @@
     "matchdep": "^2.0.0",
     "method-override": "^3.0.0",
     "migrate-mongoose": "^4.0.0",
-    "mime": "^2.4.4",
+    "mime": "^2.6.0",
     "moment": "^2.24.0",
     "mongodb-uri": "^0.9.7",
     "mongoose": "5.8.13",

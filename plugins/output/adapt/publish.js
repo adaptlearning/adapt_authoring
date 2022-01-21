@@ -100,18 +100,15 @@ function publishCourse(courseId, mode, request, response, next) {
       });
     },
     function(callback) {
-      self.buildFlagExists(path.join(BUILD_FOLDER, Constants.Filenames.Rebuild), function(err, exists) {
+      self.buildFlagExists(path.join(BUILD_FOLDER, Constants.Filenames.Rebuild), function(err, buildFlagExists) {
         if (err) {
           return callback(err);
         }
+        isForceRebuild = request && request.query.force === 'true';
 
-        if (mode === Constants.Modes.Export || mode === Constants.Modes.Publish) {
+        if (mode === Constants.Modes.Publish || buildFlagExists || isForceRebuild) {
           isRebuildRequired = true;
-          return callback(null);
         }
-
-        isForceRebuild = (request) ? request.query.force === 'true' : false;
-        isRebuildRequired = exists || isForceRebuild;
         callback(null);
       });
     },
@@ -160,7 +157,7 @@ function publishCourse(courseId, mode, request, response, next) {
     },
     function(callback) {
       fs.exists(path.join(BUILD_FOLDER, Constants.Filenames.Main), function(exists) {
-        if (!isRebuildRequired && exists) {
+        if (!isRebuildRequired) {
           resultObject.success = true;
           return callback(null, 'Framework already built, nothing to do');
         }

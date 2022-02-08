@@ -181,37 +181,36 @@ function publishCourse(courseId, mode, request, response, next) {
       var generateSourcemap = outputJson.config._generateSourcemap;
       var buildMode = generateSourcemap === true ? 'dev' : 'prod';
 
-      logger.log('info', 'grunt server-build:' + buildMode + ' ' + args.join(' '));
+      logger.log('info', 'npx grunt server-build:' + buildMode + ' ' + args.join(' '));
 
-      child = exec('grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
-        function(error, stdout, stderr) {
-          if (error !== null) {
-            logger.log('error', 'exec error: ' + error);
-            logger.log('error', 'stdout error: ' + stdout);
-            error.message += getGruntFatalError(stdout) || '';
-            resultObject.success = true;
-            return callback(error, 'Error building framework');
-          }
-
-          if (stdout.length != 0) {
-            logger.log('info', 'stdout: ' + stdout);
-            resultObject.success = true;
-
-            // Indicate that the course has built successfully
-            app.emit('previewCreated', tenantId, courseId, outputFolder);
-
-            return callback(null, 'Framework built OK');
-          }
-
-          if (stderr.length != 0) {
-            logger.log('error', 'stderr: ' + stderr);
-            resultObject.success = false;
-            return callback(stderr, 'Error (stderr) building framework!');
-          }
-
+      child = exec('npx grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)}, function(error, stdout, stderr) {
+        if (error !== null) {
+          logger.log('error', 'exec error: ' + error);
+          logger.log('error', 'stdout error: ' + stdout);
+          error.message += getGruntFatalError(stdout) || '';
           resultObject.success = true;
-          return callback(null, 'Framework built');
-        });
+          return callback(error, 'Error building framework');
+        }
+
+        if (stdout.length != 0) {
+          logger.log('info', 'stdout: ' + stdout);
+          resultObject.success = true;
+
+          // Indicate that the course has built successfully
+          app.emit('previewCreated', tenantId, courseId, outputFolder);
+
+          return callback(null, 'Framework built OK');
+        }
+
+        if (stderr.length != 0) {
+          logger.log('error', 'stderr: ' + stderr);
+          resultObject.success = false;
+          return callback(stderr, 'Error (stderr) building framework!');
+        }
+
+        resultObject.success = true;
+        return callback(null, 'Framework built');
+      });
     },
     function(err, callback) {
       self.clearBuildFlag(path.join(BUILD_FOLDER, Constants.Filenames.Rebuild), function(err) {

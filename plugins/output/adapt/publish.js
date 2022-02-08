@@ -106,7 +106,7 @@ function publishCourse(courseId, mode, request, response, next) {
         }
         isForceRebuild = request && request.query.force === 'true';
 
-        if (mode === Constants.Modes.Publish || buildFlagExists || isForceRebuild) {
+        if (mode === Constants.Modes.Export || mode === Constants.Modes.Publish || buildFlagExists || isForceRebuild) {
           isRebuildRequired = true;
         }
         callback(null);

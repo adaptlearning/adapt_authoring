@@ -77,7 +77,7 @@
     "underscore": "^1.12.1",
     "unzipper": "^0.10.5",
     "validator": "^11.1.0",
-    "winston": "^3.2.1",
+    "winston": "^3.4.0",
     "yauzl": "^2.10.0"
   },
   "devDependencies": {

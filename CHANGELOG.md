@@ -5,6 +5,26 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.11.0] - 2022-04-07
+
+The final minor release of the 'legacy' codebase. This release bundles critical security updates with some other minor improvements.
+
+**Breaking:** the requirement for a global install of grunt has been removed, and therefore the front-end application must now be built using npx (`npx grunt xxx`). See the wiki for more information.
+
+**This repository will receive no further updates and will be archived once the new codebase reaches a stable v1.0.0 (and after a grace period to allow existing users to migrate).**
+
+### Fixed
+- npm install scripts for adapt_framework should run as root ([#2566](https://github.com/adaptlearning/adapt_authoring/issues/2566))
+- Update npm dependencies ([#2583](https://github.com/adaptlearning/adapt_authoring/issues/2583))
+- RequireJS occasionally times out on very slow connections ([#2594](https://github.com/adaptlearning/adapt_authoring/issues/2594))
+
+### Added
+- Login email address should be case-insensitive ([#2060](https://github.com/adaptlearning/adapt_authoring/issues/2060))
+- Update CKEditor ([#2575](https://github.com/adaptlearning/adapt_authoring/issues/2575))
+- Remove global grunt dependency ([#2581](https://github.com/adaptlearning/adapt_authoring/issues/2581))
+- Support --skipDependencyCheck during install process ([#2590](https://github.com/adaptlearning/adapt_authoring/issues/2590))
+- We shouldn't require a full rebuild for exports ([#2602](https://github.com/adaptlearning/adapt_authoring/issues/2602))
+
 ## [0.10.5] - 2020-11-09
 
 Bugfix release.
@@ -718,6 +738,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.11.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.5...v0.11.0
 [0.10.5]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.4...v0.10.5
 [0.10.4]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.3...v0.10.4
 [0.10.3]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.2...v0.10.3
@@ -750,3 +771,4 @@ Initial release.
 [0.1.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/adaptlearning/adapt_authoring/tree/v0.1.0
+w

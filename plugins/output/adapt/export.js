@@ -48,9 +48,8 @@ function ensureExportDir(exportDirEnsured) {
 }
 
 function generateLatestBuild(results, courseBuilt) {
-  if(OPTIONS.forceRebuild) {
+  if(!OPTIONS.forceRebuild) return courseBuilt();
   self.publish(COURSE_ID, Constants.Modes.Export, null, null, courseBuilt);
-  }
 }
 
 /**

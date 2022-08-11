@@ -119,7 +119,14 @@ module.exports = function(grunt) {
           name: 'core/app',
           mainConfigFile: "frontend/src/core/config.js",
           out: "frontend/build/js/origin.js",
-          optimize: "uglify2"
+          optimize: "none"
+        }
+      }
+    },
+    uglify: {
+      my_target: {
+        files: {
+          'frontend/build/js/origin.js': ['frontend/build/js/origin.js']
         }
       }
     },
@@ -315,10 +322,10 @@ module.exports = function(grunt) {
       config.isProduction = isProduction;
       grunt.file.write(configFile, JSON.stringify(config, null, 2));
       // run the task
-      grunt.task.run(['migration-conf', 'requireBundle', 'generate-lang-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
+      grunt.task.run(['migration-conf', 'requireBundle', 'generate-lang-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation, 'uglify']);
 
     } catch(e) {
-      grunt.task.run(['requireBundle', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation]);
+      grunt.task.run(['requireBundle', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation, 'uglify']);
     }
   });
 };

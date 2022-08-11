@@ -46,6 +46,7 @@
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-handlebars": "^2.0.0",
     "grunt-contrib-requirejs": "^1.0.0",
+    "grunt-contrib-uglify": "^5.2.2",
     "grunt-mocha-test": "^0.13.3",
     "handlebars": "^4.7.7",
     "handlebars-form-helpers": "^0.1.4",

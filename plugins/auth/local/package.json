@@ -2,8 +2,5 @@
   "name": "adapt-auth-local",
   "displayName": "Local Authentication",
   "version": "0.1.0",
-  "main": "index",
-  "dependencies": {
-    "passport-local": "^0.1.6"
-  }
+  "main": "index"
 }

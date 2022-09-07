@@ -20,6 +20,8 @@
     "migrate": "migrate --config conf/migrate.json --template-file migrations/helpers/template.js"
   },
   "dependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
     "archiver": "^3.1.1",
     "async": "^3.2.3",
     "bcrypt-nodejs": "0.0.3",
@@ -43,6 +45,7 @@
     "fs-extra": "^8.1.0",
     "glob": "^7.2.0",
     "grunt": "^1.4.1",
+    "grunt-babel": "^8.0.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-handlebars": "^2.0.0",
     "grunt-contrib-requirejs": "^1.0.0",

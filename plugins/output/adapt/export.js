@@ -197,7 +197,7 @@ function zipExport(next, error, results) {
   archive.on('error', async.apply(cleanUpExport, next));
   archive.on('warning', error => logger.log('warn', error));
   archive.pipe(output);
-  archive.glob('**/*', { cwd: path.join(EXPORT_DIR) });
+  archive.glob('**/*', { cwd: path.join(EXPORT_DIR), pattern: '*', dot: true });
   archive.finalize();
 }
 

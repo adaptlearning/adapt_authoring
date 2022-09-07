@@ -157,6 +157,13 @@ function publishCourse(courseId, mode, request, response, next) {
     },
     function(callback) {
       if (!isRebuildRequired) {
+        return callback();
+      }
+      logger.log('info', 'Attempting to update browserslist');
+      exec('npx browserslist --update-db', { cwd: FRAMEWORK_ROOT_FOLDER }, e => callback(e));
+    },
+    function(callback) {
+      if (!isRebuildRequired) {
         resultObject.success = true;
         return callback(null, 'Framework already built, nothing to do');
       }

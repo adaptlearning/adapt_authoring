@@ -5,7 +5,7 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
-## [0.11.0] - 2022-04-07
+## [0.11.0] - 2022-09-07
 
 The final minor release of the 'legacy' codebase. This release bundles critical security updates with some other minor improvements.
 
@@ -17,6 +17,9 @@ The final minor release of the 'legacy' codebase. This release bundles critical 
 - npm install scripts for adapt_framework should run as root ([#2566](https://github.com/adaptlearning/adapt_authoring/issues/2566))
 - Update npm dependencies ([#2583](https://github.com/adaptlearning/adapt_authoring/issues/2583))
 - RequireJS occasionally times out on very slow connections ([#2594](https://github.com/adaptlearning/adapt_authoring/issues/2594))
+- Framework update doesn't update src/core ([#2628](https://github.com/adaptlearning/adapt_authoring/issues/2628))
+- Export build error using latest framework release ([#2637](https://github.com/adaptlearning/adapt_authoring/issues/2637))
+- Need to update browserslist DB on build to avoid errors ([#2639](https://github.com/adaptlearning/adapt_authoring/issues/2639))
 
 ### Added
 - Login email address should be case-insensitive ([#2060](https://github.com/adaptlearning/adapt_authoring/issues/2060))
@@ -24,6 +27,8 @@ The final minor release of the 'legacy' codebase. This release bundles critical 
 - Remove global grunt dependency ([#2581](https://github.com/adaptlearning/adapt_authoring/issues/2581))
 - Support --skipDependencyCheck during install process ([#2590](https://github.com/adaptlearning/adapt_authoring/issues/2590))
 - We shouldn't require a full rebuild for exports ([#2602](https://github.com/adaptlearning/adapt_authoring/issues/2602))
+- Add support for GitHub API tokens to avoid exceeding the unauthenticated rate limit ([#2642](https://github.com/adaptlearning/adapt_authoring/issues/2642))
+- Add ES6 support ([#2643](https://github.com/adaptlearning/adapt_authoring/issues/2643))
 
 ## [0.10.5] - 2020-11-09
 
@@ -771,4 +776,3 @@ Initial release.
 [0.1.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/adaptlearning/adapt_authoring/tree/v0.1.0
-w

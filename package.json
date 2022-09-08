@@ -74,7 +74,7 @@
     "semver": "^6.3.0",
     "serve-favicon": "^2.5.0",
     "traverse": "^0.6.6",
-    "underscore": "^1.12.1",
+    "underscore": "^1.13.4",
     "unzipper": "^0.10.5",
     "validator": "^11.1.0",
     "winston": "^3.2.1",

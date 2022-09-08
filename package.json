@@ -17,7 +17,7 @@
   },
   "scripts": {
     "test": "grunt test",
-    "migrate": "migrate --config conf/migrate.json --template-file migrations/helpers/template.js"
+    "create-migration": "npx migrate-mongo create -f conf/migrations.js"
   },
   "dependencies": {
     "archiver": "^3.1.1",
@@ -58,7 +58,7 @@
     "log-update": "^4.0.0",
     "matchdep": "^2.0.0",
     "method-override": "^3.0.0",
-    "migrate-mongoose": "^4.0.0",
+    "migrate-mongo": "^9.0.0",
     "mime": "^2.6.0",
     "moment": "^2.29.4",
     "mongodb-uri": "^0.9.7",

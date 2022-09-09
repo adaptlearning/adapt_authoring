@@ -37,7 +37,7 @@ module.exports = {
       }
       const levels = c._accessibility._ariaLevels;
       Object.entries(levels).forEach(([k, v]) => levels[k] = (v === oldDefaults[k]) ? newDefaults[k] : v.toString());
-      return collection.updateOne({ _id: c._id }, c);
+      return collection.updateOne({ _id: c._id }, { $set: c });
     }));
     throw new Error();
   },

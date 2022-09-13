@@ -34,7 +34,7 @@
     "email-templates": "^6.0.2",
     "errorhandler": "^1.5.1",
     "express": "^4.17.1",
-    "express-session": "^1.16.2",
+    "express-session": "^1.17.3",
     "ffmpeg-static": "^2.6.0",
     "ffprobe": "^1.1.0",
     "ffprobe-static": "^3.0.0",

@@ -30,7 +30,7 @@
     "compression": "^1.7.4",
     "connect-mongodb-session": "^2.3.3",
     "consolidate": "^0.15.1",
-    "cookie-parser": "^1.4.4",
+    "cookie-parser": "^1.4.6",
     "email-templates": "^6.0.2",
     "errorhandler": "^1.5.1",
     "express": "^4.17.1",

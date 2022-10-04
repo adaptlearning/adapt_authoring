@@ -29,7 +29,7 @@
     "chalk": "^2.4.2",
     "compression": "^1.7.4",
     "connect-mongodb-session": "^2.3.3",
-    "consolidate": "^0.15.1",
+    "consolidate": "^0.16.0",
     "cookie-parser": "^1.4.4",
     "email-templates": "^6.0.2",
     "errorhandler": "^1.5.1",

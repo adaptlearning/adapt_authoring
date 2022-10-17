@@ -5,6 +5,38 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.11.0] - 2022-10-17
+
+The final minor release of the 'legacy' codebase. This release bundles critical security updates with some other minor improvements.
+
+**Breaking:** the requirement for a global install of grunt has been removed, and therefore the front-end application must now be built using npx (`npx grunt xxx`). See the wiki for more information.
+
+***
+
+**IMPORTANT NOTE:** an error message will be shown at the end of the upgrade process. This is related to a deprecated module used to apply data migrations between updates which has now been removed. **The error can be safely ignored**, and all migrations will be run automatically as a one-time fix once the app is started post-upgrade with with `node server`..
+
+***
+
+**Please note that this repository will receive no more major updates and will be archived once the new codebase reaches a stable v1.0.0 (and after a grace period to allow existing users to migrate).**
+
+### Fixed
+- npm install scripts for adapt_framework should run as root ([#2566](https://github.com/adaptlearning/adapt_authoring/issues/2566))
+- Update npm dependencies ([#2583](https://github.com/adaptlearning/adapt_authoring/issues/2583))
+- RequireJS occasionally times out on very slow connections ([#2594](https://github.com/adaptlearning/adapt_authoring/issues/2594))
+- Framework update doesn't update src/core ([#2628](https://github.com/adaptlearning/adapt_authoring/issues/2628))
+- Export build error using latest framework release ([#2637](https://github.com/adaptlearning/adapt_authoring/issues/2637))
+- Need to update browserslist DB on build to avoid errors ([#2639](https://github.com/adaptlearning/adapt_authoring/issues/2639))
+- Fix migrations ([#2653](https://github.com/adaptlearning/adapt_authoring/issues/2653))
+
+### Added
+- Login email address should be case-insensitive ([#2060](https://github.com/adaptlearning/adapt_authoring/issues/2060))
+- Update CKEditor ([#2575](https://github.com/adaptlearning/adapt_authoring/issues/2575))
+- Remove global grunt dependency ([#2581](https://github.com/adaptlearning/adapt_authoring/issues/2581))
+- Support --skipDependencyCheck during install process ([#2590](https://github.com/adaptlearning/adapt_authoring/issues/2590))
+- We shouldn't require a full rebuild for exports ([#2602](https://github.com/adaptlearning/adapt_authoring/issues/2602))
+- Add support for GitHub API tokens to avoid exceeding the unauthenticated rate limit ([#2642](https://github.com/adaptlearning/adapt_authoring/issues/2642))
+- Add ES6 support ([#2643](https://github.com/adaptlearning/adapt_authoring/issues/2643))
+
 ## [0.10.5] - 2020-11-09
 
 Bugfix release.
@@ -718,6 +750,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.11.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.5...v0.11.0
 [0.10.5]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.4...v0.10.5
 [0.10.4]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.3...v0.10.4
 [0.10.3]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.2...v0.10.3

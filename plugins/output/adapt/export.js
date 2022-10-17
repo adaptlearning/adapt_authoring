@@ -18,8 +18,11 @@ let COURSE_DIR;
 let EXPORT_DIR;
 let TENANT_ID;
 let COURSE_ID;
+let OPTIONS = {
+  forceRebuild: true
+};
 
-function exportCourse(pCourseId, request, response, next) {
+function exportCourse(pCourseId, request, response, next, options = {}) {
   self = this;
   const currentUser = usermanager.getCurrentUser();
 
@@ -27,6 +30,7 @@ function exportCourse(pCourseId, request, response, next) {
   COURSE_ID = pCourseId;
   COURSE_DIR = path.join(FRAMEWORK_ROOT_DIR, Constants.Folders.AllCourses, TENANT_ID, COURSE_ID);
   EXPORT_DIR = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), Constants.Folders.Exports, currentUser._id);
+  Object.assign(OPTIONS, options);
 
   async.auto({
     ensureExportDir: ensureExportDir,
@@ -44,6 +48,7 @@ function ensureExportDir(exportDirEnsured) {
 }
 
 function generateLatestBuild(results, courseBuilt) {
+  if(!OPTIONS.forceRebuild) return courseBuilt();
   self.publish(COURSE_ID, Constants.Modes.Export, null, null, courseBuilt);
 }
 
@@ -192,7 +197,7 @@ function zipExport(next, error, results) {
   archive.on('error', async.apply(cleanUpExport, next));
   archive.on('warning', error => logger.log('warn', error));
   archive.pipe(output);
-  archive.glob('**/*', { cwd: path.join(EXPORT_DIR) });
+  archive.glob('**/*', { cwd: path.join(EXPORT_DIR), pattern: '*', dot: true });
   archive.finalize();
 }
 

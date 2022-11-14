@@ -230,10 +230,18 @@ function ImportSource(req, done) {
               var assetJson = assetsJson[assetName];
               var tags = [];
 
+              let fileType = mime.getType(assetName);
+              if (!fileType) {
+                //Handling H5P fileType null/undefined
+                if (assetExt.toLowerCase() === '.h5p') {
+                  fileType = 'application/octet-stream';
+                }
+              }
+
               var fileMeta = {
                 oldId: assetId,
                 title: assetTitle,
-                type: mime.getType(assetName),
+                type: fileType,
                 size: fileStat['size'],
                 filename: assetName,
                 description: assetDescription,

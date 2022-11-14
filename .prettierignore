@@ -1,0 +1,8 @@
+*.hbs
+/data/
+/frontend/build/
+libraries
+bower
+versions
+temp
+.github

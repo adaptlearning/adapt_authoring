@@ -10,6 +10,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const ffprobe = require('ffprobe');
 const util = require('util');
+const AdmZip = require('adm-zip');
 
 ffmpeg.setFfmpegPath(ffmpegStatic.path);
 
@@ -268,6 +269,16 @@ LocalFileStorage.prototype.processFileUpload = function (
                 nextFunc();
               }
             );
+          }
+
+          return nextFunc();
+        },
+        // Handle unzipping of .h5p assets
+        function (nextFunc) {
+          if (data.mimeType === 'application/octet-stream') {
+            if (data.path.toLowerCase().match(/.h5p$/i)) {
+              return self.unzipH5PAsset(newPath, nextFunc);
+            }
           }
 
           return nextFunc();
@@ -547,6 +558,19 @@ LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
     }
     return next(null, data);
   });
+};
+
+LocalFileStorage.prototype.unzipH5PAsset = function (filePath, next) {
+  try {
+    const h5pFolder = filePath.split('.h5p')[0];
+    const zip = new AdmZip(filePath);
+    // extract to folder (same name as file without extension)
+    zip.extractAllTo(h5pFolder, true);
+    logger.log('info', `Extracted H5P asset to: ${h5pFolder}`);
+    next();
+  } catch (error) {
+    next(error);
+  }
 };
 
 /**

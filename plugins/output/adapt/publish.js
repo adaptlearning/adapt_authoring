@@ -3,6 +3,7 @@ const archiver = require('archiver');
 const async = require('async');
 const exec = require('child_process').exec;
 const fs = require('fs-extra');
+const glob = require('glob');
 const path = require('path');
 const semver = require('semver');
 // internal
@@ -200,6 +201,33 @@ function publishCourse(courseId, mode, request, response, next) {
             }
             // Store the JSON with the new paths to assets
             outputJson = modifiedJson;
+
+            // Clean up H5P assets
+
+            glob(`${assetsFolder}/*.h5p`, function (error, h5pAssets) {
+              if (error) {
+                return callback(error);
+              }
+              try {
+                h5pAssets.forEach((h5pAsset) => {
+                  const h5pFolder = path.basename(h5pAsset, '.h5p');
+                  // remove unzipped H5P asset
+                  if (mode === Constants.Modes.Export) {
+                    fs.removeSync(path.join(assetsFolder, h5pFolder));
+                  }
+                  // remove zipped H5P asset
+                  if (
+                    mode === Constants.Modes.Publish ||
+                    mode === Constants.Modes.Preview
+                  ) {
+                    fs.removeSync(h5pAsset);
+                  }
+                });
+              } catch (error) {
+                return callback(error);
+              }
+            });
+
             callback(null);
           }
         );

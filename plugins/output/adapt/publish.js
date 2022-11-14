@@ -210,9 +210,7 @@ function publishCourse(courseId, mode, request, response, next) {
           'Adding scriptSafe plugins from config: ' +
             configuration.conf.scriptSafe
         );
-        outputJson.config.build = outputJson.config.build
-          ? outputJson.config.build
-          : {};
+        outputJson.config.build =  outputJson?.config?.build || {};
         outputJson.config.build.scriptSafe = configuration.conf.scriptSafe;
 
         // build section of config.json gets deleted, we need this info for adapt-cdn-config to generate version info for plugins used in the course

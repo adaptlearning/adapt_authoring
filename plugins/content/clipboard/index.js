@@ -4,15 +4,14 @@
  */
 
 var ContentPlugin = require('../../../lib/contentmanager').ContentPlugin,
-    configuration = require('../../../lib/configuration'),
-    database = require('../../../lib/database'),
-    logger = require('../../../lib/logger'),
-    origin = require('../../../'),
-    util = require('util'),
-    path = require('path');
+  configuration = require('../../../lib/configuration'),
+  database = require('../../../lib/database'),
+  logger = require('../../../lib/logger'),
+  origin = require('../../../'),
+  util = require('util'),
+  path = require('path');
 
-function ClipboardContent () {
-}
+function ClipboardContent() {}
 
 util.inherits(ClipboardContent, ContentPlugin);
 
@@ -23,7 +22,13 @@ util.inherits(ClipboardContent, ContentPlugin);
  * @param {object} a content item
  * @param {callback} next (function (err, isAllowed))
  */
-ClipboardContent.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
+ClipboardContent.prototype.hasPermission = function (
+  action,
+  userId,
+  tenantId,
+  contentItem,
+  next
+) {
   return next(null, true);
 };
 
@@ -35,7 +40,6 @@ ClipboardContent.prototype.hasPermission = function (action, userId, tenantId, c
 ClipboardContent.prototype.getModelName = function () {
   return 'clipboard';
 };
-
 
 /**
  * Module exports

@@ -1,7 +1,5 @@
-define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
-
-  var ScaffoldCodeEditorView =  Backbone.Form.editors.Base.extend({
-
+define(['core/origin', 'backbone-forms'], function (Origin, BackboneForms) {
+  var ScaffoldCodeEditorView = Backbone.Form.editors.Base.extend({
     defaultValue: '',
 
     className: 'scaffold-code-editor',
@@ -12,7 +10,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
 
     session: null,
 
-    initialize: function(options) {
+    initialize: function (options) {
       Backbone.Form.editors.Base.prototype.initialize.call(this, options);
 
       var inputType = options.schema.inputType;
@@ -23,23 +21,28 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
       }
     },
 
-    render: function() {
+    render: function () {
       window.ace.config.set('basePath', 'js/ace');
 
       this.editor = window.ace.edit(this.$el[0], {
         maxLines: 30,
         minLines: 14,
         mode: 'ace/mode/' + this.mode,
-        theme: 'ace/theme/chrome'
+        theme: 'ace/theme/chrome',
       });
 
-      this.editor.on('change', function() { this.trigger('change', this); }.bind(this));
+      this.editor.on(
+        'change',
+        function () {
+          this.trigger('change', this);
+        }.bind(this)
+      );
       this.setValue(this.value);
 
       return this;
     },
 
-    setValue: function(value) {
+    setValue: function (value) {
       if (this.mode === 'json') {
         value = JSON.stringify(value, null, '\t');
       }
@@ -47,7 +50,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
       this.editor.setValue(value);
     },
 
-    getValue: function() {
+    getValue: function () {
       var value = this.editor.getValue();
 
       if (this.mode !== 'json') {
@@ -56,12 +59,12 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
 
       try {
         return JSON.parse(value);
-      } catch(e) {
+      } catch (e) {
         return value;
       }
     },
 
-    validate: function() {
+    validate: function () {
       var error = Backbone.Form.editors.Base.prototype.validate.call(this);
 
       if (error) {
@@ -73,7 +76,7 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
       }
     },
 
-    isSyntaxError: function() {
+    isSyntaxError: function () {
       var annotations = this.editor.getSession().getAnnotations();
 
       for (var i = 0, j = annotations.length; i < j; i++) {
@@ -81,16 +84,17 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
           return true;
         }
       }
-    }
-
+    },
   });
 
-  Origin.on('origin:dataReady', function() {
+  Origin.on('origin:dataReady', function () {
     Origin.scaffold.addCustomField('CodeEditor', ScaffoldCodeEditorView);
-    Origin.scaffold.addCustomField('CodeEditor:javascript', ScaffoldCodeEditorView);
+    Origin.scaffold.addCustomField(
+      'CodeEditor:javascript',
+      ScaffoldCodeEditorView
+    );
     Origin.scaffold.addCustomField('CodeEditor:less', ScaffoldCodeEditorView);
   });
 
   return ScaffoldCodeEditorView;
-
 });

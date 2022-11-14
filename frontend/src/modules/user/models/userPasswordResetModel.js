@@ -1,19 +1,18 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function (require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
 
   var UserPasswordResetModel = Backbone.Model.extend({
-
     defaults: {
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
     },
 
-    initialize : function(options) {},
+    initialize: function (options) {},
 
     url: function () {
-      return "api/userpasswordreset/" + this.get('token');
+      return 'api/userpasswordreset/' + this.get('token');
     },
 
     validate: function (attributes, options) {
@@ -23,24 +22,27 @@ define(function(require) {
         validationErrors.password = Origin.l10n.t('app.validationrequired');
       } else {
         if (attributes.password.length < 8) {
-          validationErrors.password = Origin.l10n.t('app.validationlength', {length: 8});
+          validationErrors.password = Origin.l10n.t('app.validationlength', {
+            length: 8,
+          });
         }
       }
 
       if (!attributes.confirmPassword) {
-        validationErrors.confirmPassword = Origin.l10n.t('app.validationrequired');
+        validationErrors.confirmPassword = Origin.l10n.t(
+          'app.validationrequired'
+        );
       } else {
         if (attributes.password !== attributes.confirmPassword) {
-          validationErrors.confirmPassword = Origin.l10n.t('app.validationpasswordmatch');
+          validationErrors.confirmPassword = Origin.l10n.t(
+            'app.validationpasswordmatch'
+          );
         }
       }
 
-      return _.isEmpty(validationErrors)
-        ? null
-        : validationErrors;
-    }
+      return _.isEmpty(validationErrors) ? null : validationErrors;
+    },
   });
 
   return UserPasswordResetModel;
-
 });

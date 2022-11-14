@@ -1,47 +1,47 @@
 .component {
-    overflow: hidden;
-    position: relative;
-    min-height: 90px;
-    background-color: #D6F3F9;
-    border-radius: 3px;
-    border: 1px solid #31B8CC;
+  overflow: hidden;
+  position: relative;
+  min-height: 90px;
+  background-color: #d6f3f9;
+  border-radius: 3px;
+  border: 1px solid #31b8cc;
 
-    // TODO fix these !importants
-    .editor-item-settings {
-        top: 0 !important;
-        left: 0 !important;
-        [class$="-delete"],
-        [class*="-delete "] {
-            right: 10px !important;
-        }
-        &-inner {
-          padding: 0;
-        }
+  // TODO fix these !importants
+  .editor-item-settings {
+    top: 0 !important;
+    left: 0 !important;
+    [class$='-delete'],
+    [class*='-delete '] {
+      right: 10px !important;
     }
-
     &-inner {
-        padding: 10px 20px 20px 20px;
-        .component-type {
-            color: @primary-color;
-            margin-bottom: 5px;
-        }
+      padding: 0;
     }
+  }
 
-    &-title,
-    &-type {
-        font-size: 14px;
-        font-weight: @font-weight;
+  &-inner {
+    padding: 10px 20px 20px 20px;
+    .component-type {
+      color: @primary-color;
+      margin-bottom: 5px;
     }
+  }
 
-    &-left {
-        position:  relative;
-        width: 48%;
-        float: left;
-    }
+  &-title,
+  &-type {
+    font-size: 14px;
+    font-weight: @font-weight;
+  }
 
-    &-right {
-        position:  relative;
-        width: 48%;
-        float: right;
-    }
+  &-left {
+    position: relative;
+    width: 48%;
+    float: left;
+  }
+
+  &-right {
+    position: relative;
+    width: 48%;
+    float: right;
+  }
 }

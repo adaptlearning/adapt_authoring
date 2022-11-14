@@ -1,88 +1,86 @@
-define([
-    'core/origin',
-    'core/views/originView'
-], function(Origin, OriginView) {
+define(['core/origin', 'core/views/originView'], function (Origin, OriginView) {
+  var ColorLabelPopUpView = OriginView.extend(
+    {
+      className: 'colorlabel',
 
-    var ColorLabelPopUpView = OriginView.extend({
+      events: {
+        'click .reset': 'onReset',
+        'click .apply': 'onApply',
+        'click .cancel': 'remove',
+        'click .color-item': 'onItemClick',
+      },
 
-        className: 'colorlabel',
+      initialize: function (options) {
+        this.parentView = options.parentView;
+        this.selected = null;
+        OriginView.prototype.initialize.apply(this, arguments);
+      },
 
-        events: {
-            'click .reset': 'onReset',
-            'click .apply': 'onApply',
-            'click .cancel': 'remove',
-            'click .color-item': 'onItemClick'
-        },
+      onItemClick: function (event) {
+        var $elm = $(event.currentTarget);
+        this.selected = $elm.data('colorlabel');
+        this.updateClasses();
+      },
 
-        initialize: function(options) {
-            this.parentView = options.parentView;
-            this.selected = null;
-            OriginView.prototype.initialize.apply(this, arguments);
-        },
+      updateClasses: function () {
+        this.$('.color-item').removeClass('selected');
+        this.$('[data-colorlabel="' + this.selected + '"]').addClass(
+          'selected'
+        );
+      },
 
-        onItemClick: function(event) {
-            var $elm = $(event.currentTarget);
-            this.selected = $elm.data('colorlabel');
-            this.updateClasses();
-        },
+      onReset: function () {
+        var model = this.parentView.model;
+        this.selected = null;
 
-        updateClasses: function() {
-            this.$('.color-item').removeClass('selected');
-            this.$('[data-colorlabel="'+this.selected+'"]').addClass('selected');
-        },
+        model.save('_colorLabel', '', {
+          patch: true,
+          success: _.bind(this.onSuccess, this),
+          error: _.bind(this.onError, this),
+        });
+      },
 
-        onReset: function() {
-            var model = this.parentView.model;
-            this.selected = null;
+      onApply: function (event) {
+        if (!this.selected) return;
+        this.addItem();
+      },
 
-            model.save('_colorLabel', '', {
-                patch: true,
-                success: _.bind(this.onSuccess, this),
-                error: _.bind(this.onError, this)
-            });
-        },
+      postRender: function () {
+        var color = this.parentView.model.get('_colorLabel');
+        if (!color) return;
+        this.selected = color;
+        this.updateClasses();
+      },
 
-        onApply: function(event) {
-            if (!this.selected) return;
-            this.addItem();
-        },
+      applyOnParent: function () {
+        this.parentView.$el.attr('data-colorlabel', this.selected);
+      },
 
-        postRender: function() {
-            var color = this.parentView.model.get('_colorLabel');
-            if (!color) return;
-            this.selected = color;
-            this.updateClasses();
-        },
+      addItem: function () {
+        var model = this.parentView.model;
+        var color = this.selected;
 
-        applyOnParent: function() {
-            this.parentView.$el.attr('data-colorlabel', this.selected);
-        },
+        model.save('_colorLabel', color, {
+          patch: false,
+          success: _.bind(this.onSuccess, this),
+          error: _.bind(this.onError, this),
+        });
+      },
 
-        addItem: function() {
-            var model = this.parentView.model;
-            var color = this.selected;
+      onSuccess: function () {
+        this.applyOnParent();
+        this.remove();
+      },
 
-            model.save('_colorLabel', color, {
-                patch: false,
-                success: _.bind(this.onSuccess, this),
-                error: _.bind(this.onError, this)
-            });
-        },
+      onError: function (model, response, options) {
+        this.remove();
+        alert(response);
+      },
+    },
+    {
+      template: 'colorLabelPopUpView',
+    }
+  );
 
-        onSuccess: function() {
-            this.applyOnParent()
-            this.remove();
-        },
-
-        onError: function(model, response, options) {
-            this.remove();
-            alert(response);
-        }
-
-    }, {
-        template: 'colorLabelPopUpView'
-    });
-
-    return ColorLabelPopUpView;
-
+  return ColorLabelPopUpView;
 });

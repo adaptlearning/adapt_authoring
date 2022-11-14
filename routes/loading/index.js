@@ -1,6 +1,6 @@
 var configuration = require('../../lib/configuration');
 var express = require('express');
-var server = module.exports = express();
+var server = (module.exports = express());
 var origin = require('../../');
 var app = origin();
 
@@ -16,7 +16,6 @@ server.get('/loading', function (req, res, next) {
   res.render('loading', {
     productName: app.polyglot.t('app.productname'),
     useAnalytics: useAnalytics,
-    trackingId: trackingId
+    trackingId: trackingId,
   });
-
 });

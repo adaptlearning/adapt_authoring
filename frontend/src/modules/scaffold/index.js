@@ -13,9 +13,24 @@ define([
   './views/scaffoldItemsModalView',
   './views/scaffoldListView',
   './views/scaffoldTagsView',
-  './views/scaffoldUsersView'
-], function(Origin, Helpers, Schemas, BackboneForms, BackboneFormsLists, Overrides, ScaffoldAssetView, ScaffoldAssetItemView, ScaffoldCodeEditorView, ScaffoldColourPickerView, ScaffoldDisplayTitleView, ScaffoldItemsModalView, ScaffoldListView, ScaffoldTagsView, ScaffoldUsersView) {
-
+  './views/scaffoldUsersView',
+], function (
+  Origin,
+  Helpers,
+  Schemas,
+  BackboneForms,
+  BackboneFormsLists,
+  Overrides,
+  ScaffoldAssetView,
+  ScaffoldAssetItemView,
+  ScaffoldCodeEditorView,
+  ScaffoldColourPickerView,
+  ScaffoldDisplayTitleView,
+  ScaffoldItemsModalView,
+  ScaffoldListView,
+  ScaffoldTagsView,
+  ScaffoldUsersView
+) {
   var Scaffold = {};
   var alternativeModel;
   var alternativeAttribute;
@@ -30,7 +45,7 @@ define([
   Backbone.Form.editors.List.Modal.ModalAdapter = ScaffoldItemsModalView;
 
   function onScaffoldUpdateSchemas(callback, context) {
-    Origin.trigger('schemas:loadData', function() {
+    Origin.trigger('schemas:loadData', function () {
       callback.apply(context);
     });
   }
@@ -44,7 +59,7 @@ define([
     var itemsInputType = items && items.inputType;
     var confirmDelete = Origin.l10n.t('app.confirmdelete');
 
-    var getTitle = function() {
+    var getTitle = function () {
       var title = field.title;
 
       if (title) {
@@ -56,7 +71,7 @@ define([
       }
     };
 
-    var getType = function() {
+    var getType = function () {
       if (inputType) {
         return inputType;
       }
@@ -74,7 +89,7 @@ define([
       }
     };
 
-    var getValidators = function() {
+    var getValidators = function () {
       var validators = field.validators || [];
 
       for (var i = 0, j = validators.length; i < j; i++) {
@@ -82,12 +97,15 @@ define([
 
         if (!validator) continue;
 
-        var isDefaultValidator = !Array.isArray(validator) && _.isObject(validator) ||
+        var isDefaultValidator =
+          (!Array.isArray(validator) && _.isObject(validator)) ||
           _.contains(defaultValidators, validator);
 
         if (isDefaultValidator) continue;
 
-        var customValidator = _.findWhere(customValidators, { name: validator });
+        var customValidator = _.findWhere(customValidators, {
+          name: validator,
+        });
 
         if (customValidator) {
           validators[i] = customValidator.validatorMethod;
@@ -96,9 +114,13 @@ define([
 
         validators[i] = '';
 
-        console.log('No validator of that sort – please register "' + validator +
-          '" by using Origin.scaffold.addCustomValidator("' + validator +
-          '", validatorMethod);');
+        console.log(
+          'No validator of that sort – please register "' +
+            validator +
+            '" by using Origin.scaffold.addCustomValidator("' +
+            validator +
+            '", validatorMethod);'
+        );
       }
 
       return validators.filter(Boolean);
@@ -115,11 +137,13 @@ define([
       itemType: itemsProperties ? 'Object' : itemsInputType,
       inputType: inputType,
       legend: field.legend,
-      subSchema: isFieldTypeObject ? field.properties : itemsProperties || items,
+      subSchema: isFieldTypeObject
+        ? field.properties
+        : itemsProperties || items,
       title: getTitle(),
       titleHTML: field.titleHTML,
       type: getType(),
-      validators: getValidators()
+      validators: getValidators(),
     };
 
     if (_.isObject(inputType)) {
@@ -138,13 +162,17 @@ define([
 
     for (var i in objectSchema) {
       if (objectSchema.hasOwnProperty(i)) {
-        setUpSchemaFields(objectSchema[i], i, objectSchema, scaffoldObjectSchema);
+        setUpSchemaFields(
+          objectSchema[i],
+          i,
+          objectSchema,
+          scaffoldObjectSchema
+        );
       }
     }
   }
 
   function buildSchema(schema, options, type) {
-
     var scaffoldSchema = {};
 
     for (var key in schema) {
@@ -161,7 +189,12 @@ define([
       // process nested properties on edit theme page
       for (var innerKey in nestedProps) {
         if (!nestedProps.hasOwnProperty(innerKey)) continue;
-        setUpSchemaFields(nestedProps[innerKey], innerKey, nestedProps, scaffoldSchema);
+        setUpSchemaFields(
+          nestedProps[innerKey],
+          innerKey,
+          nestedProps,
+          scaffoldSchema
+        );
       }
     }
 
@@ -170,10 +203,26 @@ define([
 
   function buildFieldsets(schema, options) {
     var fieldsets = {
-      general: { key: 'general', legend: Origin.l10n.t('app.scaffold.general'), fields: [] },
-      properties: { key: 'properties', legend: Origin.l10n.t('app.scaffold.properties'), fields: [] },
-      settings: { key: 'settings', legend: Origin.l10n.t('app.scaffold.settings'), fields: [] },
-      extensions: { key: 'extensions', legend: Origin.l10n.t('app.scaffold.extensions'), fields: [ '_extensions' ] }
+      general: {
+        key: 'general',
+        legend: Origin.l10n.t('app.scaffold.general'),
+        fields: [],
+      },
+      properties: {
+        key: 'properties',
+        legend: Origin.l10n.t('app.scaffold.properties'),
+        fields: [],
+      },
+      settings: {
+        key: 'settings',
+        legend: Origin.l10n.t('app.scaffold.settings'),
+        fields: [],
+      },
+      extensions: {
+        key: 'extensions',
+        legend: Origin.l10n.t('app.scaffold.extensions'),
+        fields: ['_extensions'],
+      },
     };
 
     for (var key in schema) {
@@ -211,7 +260,7 @@ define([
       fieldsets[key] = {
         key: key,
         legend: value.title || Helpers.keyToTitleString(key),
-        fields: fields.length ? fields : [ key ]
+        fields: fields.length ? fields : [key],
       };
     }
 
@@ -230,7 +279,7 @@ define([
     return _.values(fieldsets);
   }
 
-  Scaffold.buildForm = function(options) {
+  Scaffold.buildForm = function (options) {
     var model = options.model;
     var type = model.get('_type') || model._type || options.schemaType;
     options.isTheme = false;
@@ -262,27 +311,31 @@ define([
     return currentForm;
   };
 
-  Scaffold.addCustomField = function(fieldName, view, overwrite) {
+  Scaffold.addCustomField = function (fieldName, view, overwrite) {
     if (Backbone.Form.editors[fieldName] && !overwrite) {
-      console.log('Sorry, the custom field you’re trying to add already exists');
+      console.log(
+        'Sorry, the custom field you’re trying to add already exists'
+      );
     } else {
       Backbone.Form.editors[fieldName] = view;
     }
   };
 
-  Scaffold.addCustomTemplate = function(templateName, template, overwrite) {
+  Scaffold.addCustomTemplate = function (templateName, template, overwrite) {
     if (!templateName || !template) {
       return console.log('Custom templates need a name and template');
     }
 
     if (customTemplates[templateName] && !overwrite) {
-      console.log('Sorry, the custom template you’re trying to add already exists');
+      console.log(
+        'Sorry, the custom template you’re trying to add already exists'
+      );
     } else {
       customTemplates[templateName] = template;
     }
   };
 
-  Scaffold.addCustomValidator = function(name, validatorMethod) {
+  Scaffold.addCustomValidator = function (name, validatorMethod) {
     if (!name || !validatorMethod) {
       console.log('Custom validators need a name and validatorMethod');
     } else {
@@ -300,22 +353,39 @@ define([
     if (value.length < 3) return err;
   });*/
 
-  Scaffold.getCurrentModel = function() { return currentModel; };
-  Scaffold.getCurrentForm = function() { return currentForm; };
-  Scaffold.getAlternativeModel = function() { return alternativeModel; };
-  Scaffold.getAlternativeAttribute = function() { return alternativeAttribute; };
-  Scaffold.getCurrentActiveModals = function() { return ActiveItemsModal; };
-  Scaffold.isOverlayActive = function() { return isOverlayActive; };
-  Scaffold.setOverlayActive = function(booleanValue) { isOverlayActive = booleanValue; };
+  Scaffold.getCurrentModel = function () {
+    return currentModel;
+  };
+  Scaffold.getCurrentForm = function () {
+    return currentForm;
+  };
+  Scaffold.getAlternativeModel = function () {
+    return alternativeModel;
+  };
+  Scaffold.getAlternativeAttribute = function () {
+    return alternativeAttribute;
+  };
+  Scaffold.getCurrentActiveModals = function () {
+    return ActiveItemsModal;
+  };
+  Scaffold.isOverlayActive = function () {
+    return isOverlayActive;
+  };
+  Scaffold.setOverlayActive = function (booleanValue) {
+    isOverlayActive = booleanValue;
+  };
   Scaffold.addCustomField('Boolean', Backbone.Form.editors.Checkbox);
   Scaffold.addCustomField('QuestionButton', Backbone.Form.editors.Text);
 
   Origin.on({
     'scaffold:updateSchemas': onScaffoldUpdateSchemas,
-    'scaffold:increaseActiveModals': function() { ActiveItemsModal++; },
-    'scaffold:decreaseActiveModals': function() { ActiveItemsModal--; },
+    'scaffold:increaseActiveModals': function () {
+      ActiveItemsModal++;
+    },
+    'scaffold:decreaseActiveModals': function () {
+      ActiveItemsModal--;
+    },
   });
 
   Origin.scaffold = Scaffold;
-
 });

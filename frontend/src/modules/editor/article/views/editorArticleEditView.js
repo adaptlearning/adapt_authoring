@@ -1,19 +1,22 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function (require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
   var EditorOriginView = require('../../global/views/editorOriginView');
 
-  var EditorArticleEditView = EditorOriginView.extend({
-    className: "article-edit",
-    tagName: "div",
+  var EditorArticleEditView = EditorOriginView.extend(
+    {
+      className: 'article-edit',
+      tagName: 'div',
 
-    preRender: function() {
-      this.listenTo(Origin, 'editorArticleEditSidebar:views:save', this.save);
+      preRender: function () {
+        this.listenTo(Origin, 'editorArticleEditSidebar:views:save', this.save);
+      },
+    },
+    {
+      template: 'editorArticleEdit',
     }
-  }, {
-    template: 'editorArticleEdit'
-  });
+  );
 
   return EditorArticleEditView;
 });

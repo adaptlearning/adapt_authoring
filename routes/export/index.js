@@ -1,5 +1,5 @@
 var fs = require('fs');
-var server = module.exports = require('express')();
+var server = (module.exports = require('express')());
 var configuration = require('../../lib/configuration');
 var Constants = require('../../lib/outputmanager').Constants;
 var helpers = require('../../lib/helpers');
@@ -10,7 +10,7 @@ var usermanager = require('../../lib/usermanager');
 var util = require('util');
 
 function ExportPermissionError(message, httpCode) {
-  this.message = message || "Permission denied";
+  this.message = message || 'Permission denied';
   this.http_code = httpCode || 401;
 }
 util.inherits(ExportPermissionError, Error);
@@ -34,20 +34,23 @@ server.get('/export/:tenant/:course/download.zip', function (req, res, next) {
   // get the course name
   app.contentmanager.getContentPlugin('course', function (error, plugin) {
     if (error) return handleError(error, res);
-    plugin.retrieve({ _id:courseId }, {}, function(error, results) {
+    plugin.retrieve({ _id: courseId }, {}, function (error, results) {
       if (error) return handleError(error, res);
       if (results.length !== 1) {
-        return handleError(new Error('Export: cannot find course (' + courseId + ')'), res);
+        return handleError(
+          new Error('Export: cannot find course (' + courseId + ')'),
+          res
+        );
       }
-      fs.stat(zipDir, function(error, stat) {
+      fs.stat(zipDir, function (error, stat) {
         if (error) return handleError(error, res);
-        var zipName = helpers.slugify(results[0].title,'export') + '.zip';
+        var zipName = helpers.slugify(results[0].title, 'export') + '.zip';
         res.writeHead(200, {
           'Content-Type': 'application/zip',
           'Content-Length': stat.size,
-          'Content-disposition' : 'attachment; filename=' + zipName,
-          'Pragma' : 'no-cache',
-          'Expires' : '0'
+          'Content-disposition': 'attachment; filename=' + zipName,
+          Pragma: 'no-cache',
+          Expires: '0',
         });
         fs.createReadStream(zipDir).pipe(res);
       });
@@ -60,43 +63,52 @@ server.get('/export/:tenant/:course', function (req, res, next) {
   var tenant = req.params.tenant;
   var currentUser = usermanager.getCurrentUser();
 
-  helpers.hasCoursePermission('', currentUser._id, tenant, {_id: course}, function(err, hasPermission) {
-    if (err || !hasPermission) {
-      return handleError(err || new ExportPermissionError(), res);
-    }
-    if (currentUser && (currentUser.tenant._id == tenant)) {
-      var outputplugin = app.outputmanager.getOutputPlugin(configuration.getConfig('outputPlugin'), function (error, plugin){
-        if (error) {
-          return handleError(error, res);
-        } else {
-          plugin.export(course, req, res, function (error, result) {
+  helpers.hasCoursePermission(
+    '',
+    currentUser._id,
+    tenant,
+    { _id: course },
+    function (err, hasPermission) {
+      if (err || !hasPermission) {
+        return handleError(err || new ExportPermissionError(), res);
+      }
+      if (currentUser && currentUser.tenant._id == tenant) {
+        var outputplugin = app.outputmanager.getOutputPlugin(
+          configuration.getConfig('outputPlugin'),
+          function (error, plugin) {
             if (error) {
-              logger.log('error', 'Unable to export:', error);
-              return res.status(500).json({
-                success: false,
-                message: error.message
+              return handleError(error, res);
+            } else {
+              plugin.export(course, req, res, function (error, result) {
+                if (error) {
+                  logger.log('error', 'Unable to export:', error);
+                  return res.status(500).json({
+                    success: false,
+                    message: error.message,
+                  });
+                }
+                return res.status(200).json({
+                  success: true,
+                  message: app.polyglot.t('app.exportcoursesuccess'),
+                });
               });
             }
-            return res.status(200).json({
-              success: true,
-              message: app.polyglot.t('app.exportcoursesuccess')
-            });
-          });
-        }
-      });
-    } else {
-      return res.status(401).json({
-        success: false,
-        message: app.polyglot.t('app.errorusernoaccess')
-      });
+          }
+        );
+      } else {
+        return res.status(401).json({
+          success: false,
+          message: app.polyglot.t('app.errorusernoaccess'),
+        });
+      }
     }
-  });
+  );
 });
 
 function handleError(error, res) {
   logger.log('error', error);
   res.status(500).json({
     success: false,
-    message: error.message
+    message: error.message,
   });
-};
+}

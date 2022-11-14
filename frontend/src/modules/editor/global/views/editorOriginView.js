@@ -1,5 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require){
+define(function (require) {
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
   var Helpers = require('core/helpers');
@@ -8,17 +8,17 @@ define(function(require){
     events: {
       'click .paste-cancel': 'onPasteCancel',
       'click .field-object .legend': 'onFieldObjectClicked',
-      'dblclick .editor-item-settings-inner > button': 'onDbClick'
+      'dblclick .editor-item-settings-inner > button': 'onDbClick',
     },
 
-    attributes: function() {
+    attributes: function () {
       var colorLabel = this.model && this.model.get('_colorLabel');
       if (colorLabel) {
         return { 'data-colorlabel': colorLabel };
       }
     },
 
-    initialize: function(options) {
+    initialize: function (options) {
       // Set form on view
       if (options && options.form) {
         this.form = options.form;
@@ -28,19 +28,19 @@ define(function(require){
 
       this.listenTo(Origin, {
         'sidebarFieldsetFilter:filterForm': this.filterForm,
-        'editorView:pasteCancel': this.hidePasteZones
+        'editorView:pasteCancel': this.hidePasteZones,
       });
     },
 
-    render: function() {
+    render: function () {
       OriginView.prototype.render.apply(this, arguments);
-      if(this.model) {
+      if (this.model) {
         this.$el.attr('data-id', this.model.get('_id'));
       }
       return this;
     },
 
-    postRender: function() {
+    postRender: function () {
       if (!this.form) {
         return this.setViewToReady();
       }
@@ -49,45 +49,56 @@ define(function(require){
       _.delay(_.bind(this.setViewToReady, this, 400));
     },
 
-    filterForm: function(filter) {
+    filterForm: function (filter) {
       // toggle filter
-      if(_.contains(this.filters, filter)) {
-        this.filters = _.reject(this.filters, function(filterItem) { return filterItem === filter; });
+      if (_.contains(this.filters, filter)) {
+        this.filters = _.reject(this.filters, function (filterItem) {
+          return filterItem === filter;
+        });
       } else {
         this.filters.push(filter);
       }
       // Now actually filter the form
-      if(this.filters.length === 0) {
-        $('.form-container > form > div > fieldset').removeClass('display-none');
+      if (this.filters.length === 0) {
+        $('.form-container > form > div > fieldset').removeClass(
+          'display-none'
+        );
       } else {
         $('.form-container > form > div > fieldset').addClass('display-none');
-        _.each(this.filters, function(filter) {
+        _.each(this.filters, function (filter) {
           $('fieldset[data-key=' + filter + ']').removeClass('display-none');
         });
       }
     },
 
-    showPasteZones: function(type) {
+    showPasteZones: function (type) {
       $('.paste-zone').addClass('display-none');
       $('.add-control').addClass('display-none');
-      if(type) $('.paste-zone-' + type).removeClass('display-none').addClass('show');
+      if (type)
+        $('.paste-zone-' + type)
+          .removeClass('display-none')
+          .addClass('show');
     },
 
-    hidePasteZones: function() {
+    hidePasteZones: function () {
       $('.paste-zone').removeClass('show');
       // FIXME timeout for animation
-      setTimeout(function() { $('.paste-zone').addClass('display-none'); }, 300);
+      setTimeout(function () {
+        $('.paste-zone').addClass('display-none');
+      }, 300);
       $('.add-control').removeClass('display-none');
     },
 
     showDropZones: function (supportedLayout) {
       $('.paste-zone').addClass('display-none');
       $('.add-control').addClass('display-none');
-      $('.paste-zone-'+ this.model.get('_type') + ' a').addClass('display-none');
+      $('.paste-zone-' + this.model.get('_type') + ' a').addClass(
+        'display-none'
+      );
       // Components may be restricted to either full or half width so
       // make sure only the appropriate paste zones are displayed
       var type = this.model.get('_type');
-      var pasteZoneSelector = '.paste-zone-'+ type;
+      var pasteZoneSelector = '.paste-zone-' + type;
       var $pasteZones;
 
       if (type === 'component') {
@@ -96,7 +107,9 @@ define(function(require){
           $pasteZones = $pasteZones.add('.paste-zone-component-full');
         }
         if (supportedLayout.half) {
-          $pasteZones = $pasteZones.add('.paste-zone-component-left, .paste-zone-component-right');
+          $pasteZones = $pasteZones.add(
+            '.paste-zone-component-left, .paste-zone-component-right'
+          );
         }
       } else {
         $pasteZones = $(pasteZoneSelector);
@@ -104,16 +117,12 @@ define(function(require){
 
       $(pasteZoneSelector + ' a').addClass('display-none');
 
-      $pasteZones
-        .addClass('paste-zone-available')
-        .removeClass('display-none');
+      $pasteZones.addClass('paste-zone-available').removeClass('display-none');
 
-      this.$el.parent()
-        .children('.drop-only')
-        .removeClass('display-none');
+      this.$el.parent().children('.drop-only').removeClass('display-none');
     },
 
-    hideDropZones: function() {
+    hideDropZones: function () {
       $('.paste-zone')
         .addClass('display-none')
         .removeClass('paste-zone-available');
@@ -121,13 +130,11 @@ define(function(require){
       $('.add-control').removeClass('display-none');
       $('.paste-zone a').removeClass('display-none');
 
-      this.$el.parent()
-        .children('.drop-only')
-        .addClass('display-none');
+      this.$el.parent().children('.drop-only').addClass('display-none');
     },
 
-    save: function() {
-      if(!this.form) {
+    save: function () {
+      if (!this.form) {
         return;
       }
       var errors = this.form.validate();
@@ -137,7 +144,8 @@ define(function(require){
 
       if (errors) {
         var errorText =
-          Origin.l10n.t('app.validationfailedmessage') + "<br/><br/>" +
+          Origin.l10n.t('app.validationfailedmessage') +
+          '<br/><br/>' +
           this.buildErrorMessage(errors, '');
 
         // TODO remove when we've got a better solution
@@ -151,40 +159,50 @@ define(function(require){
 
       var attrs = this.getAttributesToSave();
       this.model.save(attrs, {
-        patch: (attrs) ? true : false,
+        patch: attrs ? true : false,
         success: _.bind(this.onSaveSuccess, this),
-        error: _.bind(this.onSaveError, this)
+        error: _.bind(this.onSaveError, this),
       });
     },
 
-    buildErrorMessage: function(errorObjs, message) {
-      _.each(errorObjs, function(item, key) {
-        if(item.hasOwnProperty('message')) {
-          message += '<span class="key">' + (item.title || key) + '</span>: ' + item.message + '<br/>';
-        } else if(_.isObject(item)) { // recurse
-          message = this.buildErrorMessage(item, message);
-        }
-      }, this);
+    buildErrorMessage: function (errorObjs, message) {
+      _.each(
+        errorObjs,
+        function (item, key) {
+          if (item.hasOwnProperty('message')) {
+            message +=
+              '<span class="key">' +
+              (item.title || key) +
+              '</span>: ' +
+              item.message +
+              '<br/>';
+          } else if (_.isObject(item)) {
+            // recurse
+            message = this.buildErrorMessage(item, message);
+          }
+        },
+        this
+      );
       return message;
     },
 
-    getAttributesToSave: function() {
+    getAttributesToSave: function () {
       return null;
     },
 
     /**
-    * Event handling
-    */
+     * Event handling
+     */
 
     openContextMenu: function (e) {
-      if(e) {
+      if (e) {
         e.stopPropagation();
         e.preventDefault();
       }
       Origin.trigger('contextMenu:open', this, e);
     },
 
-    onFieldObjectClicked: function(event) {
+    onFieldObjectClicked: function (event) {
       $(event.currentTarget)
         .closest('.field-object')
         .children('.collapsed')
@@ -192,48 +210,58 @@ define(function(require){
         .toggleClass('expanded');
     },
 
-    onDbClick: function(event) {
+    onDbClick: function (event) {
       event.preventDefault();
       event.stopPropagation();
     },
 
-    onCopy: function(e) {
+    onCopy: function (e) {
       e && e.preventDefault();
       Origin.trigger('editorView:copy', this.model);
     },
 
-    onCopyID: function(e) {
+    onCopyID: function (e) {
       e && e.preventDefault();
       Origin.trigger('editorView:copyID', this.model);
     },
 
-    onPaste: function(e) {
-      if(e) {
+    onPaste: function (e) {
+      if (e) {
         e.stopPropagation();
         e.preventDefault();
       }
-      Origin.trigger('editorView:paste', this.model.get('_parentId'), $(event.target).data('sort-order'), $(event.target).data('paste-layout'));
+      Origin.trigger(
+        'editorView:paste',
+        this.model.get('_parentId'),
+        $(event.target).data('sort-order'),
+        $(event.target).data('paste-layout')
+      );
     },
 
-    onPasteCancel: function(e) {
+    onPasteCancel: function (e) {
       e && e.preventDefault();
       Origin.trigger('editorView:pasteCancel', this.model);
     },
 
-    onSaveSuccess: function() {
-      Origin.trigger('editor:refreshData', _.bind(function() {
-        Origin.router.navigateBack();
-        this.remove();
-      }, this));
+    onSaveSuccess: function () {
+      Origin.trigger(
+        'editor:refreshData',
+        _.bind(function () {
+          Origin.router.navigateBack();
+          this.remove();
+        }, this)
+      );
     },
 
-    onSaveError: function(pTitle, pText) {
-      var title = _.isString(pTitle) ? pTitle : Origin.l10n.t('app.errordefaulttitle');
+    onSaveError: function (pTitle, pText) {
+      var title = _.isString(pTitle)
+        ? pTitle
+        : Origin.l10n.t('app.errordefaulttitle');
       var text = _.isString(pText) ? pText : Origin.l10n.t('app.errorsave');
       Origin.Notify.alert({ type: 'error', title: title, text: text });
 
       Origin.trigger('sidebar:resetButtons');
-    }
+    },
   });
 
   return EditorOriginView;

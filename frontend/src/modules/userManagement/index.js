@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
   var Origin = require('core/origin');
   var UserManagementView = require('./views/userManagementView');
   var UserManagementSidebarView = require('./views/userManagementSidebarView');
@@ -9,15 +9,15 @@ define(function(require) {
 
   var isReady = false;
   var data = {
-    featurePermissions: ["*/*:create","*/*:read","*/*:update","*/*:delete"],
+    featurePermissions: ['*/*:create', '*/*:read', '*/*:update', '*/*:delete'],
     allRoles: new Backbone.Collection(),
-    allTenants: new Backbone.Collection()
+    allTenants: new Backbone.Collection(),
   };
 
-  Origin.on('origin:dataReady login:changed', function() {
+  Origin.on('origin:dataReady login:changed', function () {
     Origin.permissions.addRoute('userManagement', data.featurePermissions);
 
-  	if (Origin.permissions.hasPermissions(data.featurePermissions)) {
+    if (Origin.permissions.hasPermissions(data.featurePermissions)) {
       data.allRoles.on('sync', onDataFetched);
       data.allRoles.url = 'api/role';
       data.allRoles.fetch();
@@ -26,35 +26,35 @@ define(function(require) {
       data.allTenants.url = 'api/tenant';
       data.allTenants.fetch();
 
-  		Origin.globalMenu.addItem({
-        "location": "global",
-        "text": Origin.l10n.t('app.usermanagement'),
-        "icon": "fa-users",
-        "sortOrder": 3,
-        "callbackEvent": "userManagement:open"
+      Origin.globalMenu.addItem({
+        location: 'global',
+        text: Origin.l10n.t('app.usermanagement'),
+        icon: 'fa-users',
+        sortOrder: 3,
+        callbackEvent: 'userManagement:open',
       });
-  	} else {
+    } else {
       isReady = true;
     }
   });
 
-  Origin.on('globalMenu:userManagement:open', function() {
+  Origin.on('globalMenu:userManagement:open', function () {
     Origin.router.navigateTo('userManagement');
   });
 
-  Origin.on('router:userManagement', function(location, subLocation, action) {
-    if(isReady) {
+  Origin.on('router:userManagement', function (location, subLocation, action) {
+    if (isReady) {
       return onRoute(location, subLocation, action);
     }
-    Origin.once('userManagement:dataReady', function() {
+    Origin.once('userManagement:dataReady', function () {
       onRoute(location, subLocation, action);
     });
   });
 
-  var onRoute = function(location, subLocation, action) {
+  var onRoute = function (location, subLocation, action) {
     if (location && location === 'addUser') {
       Origin.contentPane.setView(AddUserView, {
-        model: new Backbone.Model({ globalData: data })
+        model: new Backbone.Model({ globalData: data }),
       });
       Origin.sidebar.addView(new AddUserSidebarView().$el);
 
@@ -62,26 +62,28 @@ define(function(require) {
     }
 
     var userCollection = new UserCollection();
-    var globalModel = new Backbone.Model({ globalData: data })
+    var globalModel = new Backbone.Model({ globalData: data });
 
-    userCollection.once('sync', function() {
+    userCollection.once('sync', function () {
       Origin.contentPane.setView(UserManagementView, {
         model: globalModel,
-        collection: userCollection
+        collection: userCollection,
       });
 
-      Origin.sidebar.addView(new UserManagementSidebarView({
-        model: globalModel,
-        collection: userCollection
-      }).$el);
+      Origin.sidebar.addView(
+        new UserManagementSidebarView({
+          model: globalModel,
+          collection: userCollection,
+        }).$el
+      );
     });
 
     userCollection.fetch();
   };
 
-  var onDataFetched = function() {
+  var onDataFetched = function () {
     // ASSUMPTION we always have roles and tenants
-    if(data.allRoles.length > 0 && data.allTenants.length > 0) {
+    if (data.allRoles.length > 0 && data.allTenants.length > 0) {
       isReady = true;
       Origin.trigger('userManagement:dataReady');
     }

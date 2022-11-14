@@ -5,17 +5,17 @@ html {
 }
 
 body {
-  background-color:@ui-content-color;
+  background-color: @ui-content-color;
   color: @tertiary-color;
 }
 
 #app {
-	margin-top:60px;
-	margin-left:250px;
+  margin-top: 60px;
+  margin-left: 250px;
 }
 
 .app-inner {
-	position:relative;
+  position: relative;
 }
 
 span.error {
@@ -35,7 +35,7 @@ span.error {
   left: 0;
   z-index: 5;
   text-align: center;
-  opacity:1;
+  opacity: 1;
   transition: opacity 0.3s;
   background-color: @ui-content-color;
 
@@ -43,8 +43,8 @@ span.error {
     opacity: 0;
   }
   &.cover-top-bar {
-    position:fixed;
-    z-index:50000;
+    position: fixed;
+    z-index: 50000;
   }
 
   .loading-inner {
@@ -66,7 +66,7 @@ span.error {
       width: @loading-icon-size;
       height: @loading-icon-size;
       background-color: @tertiary-color;
-      margin: 0 @loading-icon-size/3 0 @loading-icon-size/3;
+      margin: 0 @loading-icon-size / 3 0 @loading-icon-size / 3;
 
       border-radius: 100%;
       display: inline-block;
@@ -84,17 +84,26 @@ span.error {
   }
 
   @-webkit-keyframes sk-bouncedelay {
-    0%, 80%, 100% { -webkit-transform: scale(0) }
-    40% { -webkit-transform: scale(1.0) }
+    0%,
+    80%,
+    100% {
+      -webkit-transform: scale(0);
+    }
+    40% {
+      -webkit-transform: scale(1);
+    }
   }
 
   @keyframes sk-bouncedelay {
-    0%, 80%, 100% {
+    0%,
+    80%,
+    100% {
       -webkit-transform: scale(0);
       transform: scale(0);
-    } 40% {
-      -webkit-transform: scale(1.0);
-      transform: scale(1.0);
+    }
+    40% {
+      -webkit-transform: scale(1);
+      transform: scale(1);
     }
   }
 }

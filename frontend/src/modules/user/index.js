@@ -1,6 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
-
+define(function (require) {
   var Origin = require('core/origin');
   var LoginView = require('./views/loginView');
   var UserProfileView = require('./views/userProfileView');
@@ -11,15 +10,15 @@ define(function(require) {
   var ResetPasswordView = require('./views/resetPasswordView');
   var UserPasswordResetModel = require('./models/userPasswordResetModel');
 
-  Origin.on('navigation:user:logout', function() {
+  Origin.on('navigation:user:logout', function () {
     Origin.router.navigateTo('user/logout');
   });
 
-  Origin.on('navigation:user:profile', function() {
+  Origin.on('navigation:user:profile', function () {
     Origin.router.navigateTo('user/profile');
   });
 
-  Origin.on('router:user', function(location, subLocation, action) {
+  Origin.on('router:user', function (location, subLocation, action) {
     var currentView;
     var settings = {};
 
@@ -43,7 +42,9 @@ define(function(require) {
         break;
       case 'profile':
         settings.authenticate = true;
-        Origin.trigger('location:title:update', {title: Origin.l10n.t('app.editprofiletitle')});
+        Origin.trigger('location:title:update', {
+          title: Origin.l10n.t('app.editprofiletitle'),
+        });
         currentView = UserProfileView;
         break;
     }
@@ -53,24 +54,25 @@ define(function(require) {
         case 'profile':
           var profile = new UserProfileModel();
           profile.fetch({
-            success: function() {
+            success: function () {
               Origin.sidebar.addView(new UserProfileSidebarView().$el);
               Origin.contentPane.setView(currentView, { model: profile });
-            }
+            },
           });
           break;
         case 'reset':
-          var reset = new UserPasswordResetModel({token: subLocation});
+          var reset = new UserPasswordResetModel({ token: subLocation });
           reset.fetch({
-            success: function() {
+            success: function () {
               Origin.contentPane.setView(currentView, { model: reset });
-            }
+            },
           });
           break;
         default:
-          Origin.contentPane.setView(currentView, { model: Origin.sessionModel });
+          Origin.contentPane.setView(currentView, {
+            model: Origin.sessionModel,
+          });
       }
     }
   });
-
-})
+});

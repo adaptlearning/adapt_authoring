@@ -1,5 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function (require) {
   var Origin = require('core/origin');
   var ContentModel = require('./contentModel');
 
@@ -11,8 +11,8 @@ define(function(require) {
 
     defaults: {
       _isSelected: false,
-      _isExpanded: false
-    }
+      _isExpanded: false,
+    },
   });
 
   return ContentObjectModel;

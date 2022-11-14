@@ -1,5 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function (require) {
   var ContentModel = require('./contentModel');
 
   var BlockModel = ContentModel.extend({
@@ -8,7 +8,7 @@ define(function(require) {
     _siblingTypes: 'block',
     _childTypes: 'component',
     // Block specific properties
-    layoutOptions:  null,
+    layoutOptions: null,
     dragLayoutOptions: null,
     attributeBlacklist: [
       '_isDeleted',
@@ -17,8 +17,8 @@ define(function(require) {
       'createdBy',
       'createdAt',
       'layoutOptions',
-      'updatedAt'
-    ]
+      'updatedAt',
+    ],
   });
 
   return BlockModel;

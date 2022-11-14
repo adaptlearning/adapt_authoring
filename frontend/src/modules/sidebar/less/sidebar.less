@@ -7,21 +7,21 @@
   top: 61px;
   left: 0px;
   width: 250px;
-  height: calc(~"100vh - 61px");
+  height: calc(~'100vh - 61px');
   overflow-y: auto;
   overflow-x: hidden;
   background-color: @sidebar-color;
   color: @sidebar-text-color;
 
   button {
-    &[class^="action-"],
-    &[class*=" action-"] {
+    &[class^='action-'],
+    &[class*=' action-'] {
       margin: 5px 25px;
       width: 200px;
       height: 50px;
       border-width: 1px;
       border-style: solid;
-      border-radius:@button-radius;
+      border-radius: @button-radius;
       font-size: 15px;
       text-align: center;
       i {
@@ -35,7 +35,7 @@
     width: 200px;
     margin: 5px 25px;
 
-     .editor-common-sidebar-preview {
+    .editor-common-sidebar-preview {
       flex-grow: 1;
       width: auto;
       margin: 0;
@@ -43,7 +43,7 @@
       margin-right: 1px;
     }
 
-     .dropdown {
+    .dropdown {
       > button {
         width: auto;
         height: 100%;
@@ -66,7 +66,7 @@
         padding: 1px 0;
         background-color: @sidebar-color;
 
-         li {
+        li {
           padding: 0;
           margin: 0;
 
@@ -100,16 +100,16 @@
   }
 
   a {
-    color:@sidebar-text-color;
+    color: @sidebar-text-color;
     text-decoration: none;
-    transition:all 0.3s;
+    transition: all 0.3s;
     &:hover,
     &:focus {
-      color:darken(@sidebar-text-color, 10%);
+      color: darken(@sidebar-text-color, 10%);
     }
   }
   .sidebar-filter-clear {
-    display:inline;
+    display: inline;
     position: absolute;
     left: 205px;
     top: 25px;
@@ -120,20 +120,22 @@
 
   .sidebar-item-container {
     position: relative;
-    height:100%;
+    height: 100%;
   }
 
   .separator {
     margin-top: 20px;
   }
 
-  .sidebar-row, .sidebar-breadcrumb {
-    button, a {
+  .sidebar-row,
+  .sidebar-breadcrumb {
+    button,
+    a {
       margin: 0;
-      color:@sidebar-text-color;
-      transition:all 0.3s;
+      color: @sidebar-text-color;
+      transition: all 0.3s;
       &:hover {
-        color:@sidebar-item-hover-text-color;
+        color: @sidebar-item-hover-text-color;
       }
     }
   }
@@ -165,56 +167,57 @@
 }
 
 .sidebar-breadcrumb {
-  position:relative;
+  position: relative;
   top: -40px;
 }
 
 .sidebar-breadcrumb-inner {
-  display:block;
-  padding:30px 30px;
+  display: block;
+  padding: 30px 30px;
   font-size: @sidebar-input-font-size;
   i {
     color: @secondary-color;
-    margin-right:8px;
+    margin-right: 8px;
   }
 }
 
 .sidebar-item {
-  position:relative;
-  left:10%;
-  opacity:0;
+  position: relative;
+  left: 10%;
+  opacity: 0;
   label {
-    display:block;
-    margin-bottom:4px;
+    display: block;
+    margin-bottom: 4px;
   }
 }
 
-.sidebar-row, select.sidebar-row {
-  display:block;
+.sidebar-row,
+select.sidebar-row {
+  display: block;
   position: relative;
   button {
     font-size: @sidebar-input-font-size;
-    background:none;
-    border:none;
-    width:100%;
-    padding:18px 30px;
-    text-align:left;
+    background: none;
+    border: none;
+    width: 100%;
+    padding: 18px 30px;
+    text-align: left;
 
     i {
-      margin-right:8px;
+      margin-right: 8px;
 
       &.fa-toggle-off,
       .fa-toggle-on {
         float: right;
-        color:@secondary-color;
+        color: @secondary-color;
         font-size: 20px;
       }
       &.fa-chevron-right,
       &.primary-color {
-        color:@secondary-color;
+        color: @secondary-color;
       }
       &.fa-times {
-        color:@sidebar-input-text-color;
+        color: @sidebar-input-text-color;
       }
     }
   }
@@ -224,7 +227,7 @@
   margin: 10px 25px;
 }
 
-.sidebar input[type="text"] {
+.sidebar input[type='text'] {
   height: 25px;
   background: @sidebar-input-color;
   border-color: @sidebar-input-border-color;
@@ -258,35 +261,35 @@
 }
 
 .sidebar-item-title {
-  background-color:@sidebar-color;
-  color:@sidebar-title-text-color;
-  text-align:center;
+  background-color: @sidebar-color;
+  color: @sidebar-title-text-color;
+  text-align: center;
 }
 
 .sidebar-item-title-inner {
-  padding:30px 20px;
+  padding: 30px 20px;
   font-size: @sidebar-input-font-size;
   font-weight: @font-weight;
 }
 
 .sidebar-divide {
-  background-color:@sidebar-color;
-  text-align:center;
+  background-color: @sidebar-color;
+  text-align: center;
 
   h3 {
-    font-size:13px;
+    font-size: 13px;
   }
   i {
-    margin-right:4px;
+    margin-right: 4px;
   }
 }
 
 .sidebar-divide-inner {
-  padding:20px;
+  padding: 20px;
 }
 
 .sidebar-fieldset-filter.error {
-  @alert-color:#de6262;
+  @alert-color: #de6262;
   background: @alert-color;
   color: @white;
   &:hover {

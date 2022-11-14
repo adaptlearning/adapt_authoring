@@ -1,112 +1,116 @@
-define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
+define(['core/origin', 'backbone-forms'], function (Origin, BackboneForms) {
+  var ScaffoldDisplayTitleView = Backbone.Form.editors.Text.extend(
+    {
+      tagName: 'div',
 
-  var ScaffoldDisplayTitleView = Backbone.Form.editors.Text.extend({
+      form: null,
 
-    tagName: 'div',
+      isLocked: null,
 
-    form: null,
+      events: {
+        'change input': 'triggerChange',
+        'keyup input': 'triggerChange',
+        'focus input': function () {
+          this.trigger('focus', this);
+        },
+        'blur input': function () {
+          this.trigger('blur', this);
+        },
+        'click .scaffold-display-title-clear': function (event) {
+          event.preventDefault();
 
-    isLocked: null,
+          this.isLocked = false;
+          this.setValue('');
+        },
+        'click .scaffold-display-title-lock': function (event) {
+          event.preventDefault();
 
-    events: {
-      'change input': 'triggerChange',
-      'keyup input': 'triggerChange',
-      'focus input': function() {
-        this.trigger('focus', this);
+          this.isLocked = !this.isLocked;
+          this.toggleLockButton();
+
+          if (this.isLocked) {
+            this.setValue(this.form.fields.title.editor.getValue());
+          }
+        },
       },
-      'blur input': function() {
-        this.trigger('blur', this);
-      },
-      'click .scaffold-display-title-clear': function(event) {
-        event.preventDefault();
 
-        this.isLocked = false;
-        this.setValue('');
-      },
-      'click .scaffold-display-title-lock': function(event) {
-        event.preventDefault();
+      initialize: function (options) {
+        Backbone.Form.editors.Text.prototype.initialize.call(this, options);
 
-        this.isLocked = !this.isLocked;
+        this.form = options.form;
+        this.listenTo(this, 'change', this.onDisplayTitleChange);
+        this.listenTo(this.form, 'title:change', this.onTitleChange);
+      },
+
+      render: function () {
+        this.$el.append(
+          Handlebars.templates[this.constructor.template]({ field: '' })
+        );
+        this.setValue(this.value);
+        this.isLocked =
+          this.form.fields.title.editor.getValue() === this.getValue();
+        _.defer(this.postRender.bind(this));
+
+        return this;
+      },
+
+      postRender: function () {
         this.toggleLockButton();
+      },
 
+      triggerChange: function () {
+        this.trigger('change', this);
+      },
+
+      onDisplayTitleChange: function () {
+        this.toggleLockButton();
+        this.toggleClearButton();
+      },
+
+      onTitleChange: function (form, titleEditor) {
         if (this.isLocked) {
-          this.setValue(this.form.fields.title.editor.getValue());
+          this.setValue(titleEditor.getValue());
         }
-      }
+      },
+
+      getValue: function () {
+        return this.$('input').val();
+      },
+
+      setValue: function (value) {
+        this.$('input').val(value).trigger('change');
+      },
+
+      focus: function () {
+        if (!this.hasFocus) {
+          this.$('input').focus();
+        }
+      },
+
+      blur: function () {
+        if (this.hasFocus) {
+          this.$('input').blur();
+        }
+      },
+
+      toggleLockButton: function () {
+        this.$el.parents('.field').toggleClass('unlocked', !this.isLocked);
+        this.$('input').prop('disabled', this.isLocked);
+      },
+
+      toggleClearButton: function () {
+        this.$('.scaffold-display-title-clear').toggleClass(
+          'display-none',
+          !this.getValue()
+        );
+      },
     },
+    { template: 'scaffoldDisplayTitle' }
+  );
 
-    initialize: function(options) {
-      Backbone.Form.editors.Text.prototype.initialize.call(this, options);
-
-      this.form = options.form;
-      this.listenTo(this, 'change', this.onDisplayTitleChange);
-      this.listenTo(this.form, 'title:change', this.onTitleChange);
-    },
-
-    render: function() {
-      this.$el.append(Handlebars.templates[this.constructor.template]({ field: '' }));
-      this.setValue(this.value);
-      this.isLocked = this.form.fields.title.editor.getValue() === this.getValue();
-      _.defer(this.postRender.bind(this));
-
-      return this;
-    },
-
-    postRender: function() {
-      this.toggleLockButton();
-    },
-
-    triggerChange: function() {
-      this.trigger('change', this);
-    },
-
-    onDisplayTitleChange: function() {
-      this.toggleLockButton();
-      this.toggleClearButton();
-    },
-
-    onTitleChange: function(form, titleEditor) {
-      if (this.isLocked) {
-        this.setValue(titleEditor.getValue());
-      }
-    },
-
-    getValue: function() {
-      return this.$('input').val();
-    },
-
-    setValue: function(value) {
-      this.$('input').val(value).trigger('change');
-    },
-
-    focus: function() {
-      if (!this.hasFocus) {
-        this.$('input').focus();
-      }
-    },
-
-    blur: function() {
-      if (this.hasFocus) {
-        this.$('input').blur();
-      }
-    },
-
-    toggleLockButton: function() {
-      this.$el.parents('.field').toggleClass('unlocked', !this.isLocked);
-      this.$('input').prop('disabled', this.isLocked);
-    },
-
-    toggleClearButton: function() {
-      this.$('.scaffold-display-title-clear')
-        .toggleClass('display-none', !this.getValue());
-    }
-
-  }, { template: 'scaffoldDisplayTitle' });
-
-  Origin.on('origin:dataReady', function() {
+  Origin.on('origin:dataReady', function () {
     Origin.scaffold.addCustomField('DisplayTitle', ScaffoldDisplayTitleView);
   });
 
   return ScaffoldDisplayTitleView;
-
 });

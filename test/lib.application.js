@@ -3,8 +3,9 @@ var should = require('should');
 
 var origin = require('../');
 
-it('should be listening to HTTP requests on the specified host/port', function(done) {
-  var agent = request.agent(origin().getServerURL())
+it('should be listening to HTTP requests on the specified host/port', function (done) {
+  var agent = request
+    .agent(origin().getServerURL())
     .get('/')
     .set('Accept', 'text/html')
     .expect(200)
@@ -12,7 +13,7 @@ it('should be listening to HTTP requests on the specified host/port', function(d
     .end(done);
 });
 
-it('should inherit from event emitter', function(done) {
+it('should inherit from event emitter', function (done) {
   var app = origin();
   app.on('foo', done);
   app.emit('foo');

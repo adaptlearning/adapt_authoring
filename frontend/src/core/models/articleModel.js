@@ -1,5 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function (require) {
   var ContentModel = require('./contentModel');
 
   var ArticleModel = ContentModel.extend({
@@ -10,9 +10,8 @@ define(function(require) {
 
     defaults: {
       _isCollapsible: true,
-      _isCollapsed: false
-    }
-
+      _isCollapsed: false,
+    },
   });
 
   return ArticleModel;

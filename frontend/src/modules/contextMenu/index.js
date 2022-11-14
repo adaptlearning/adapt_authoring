@@ -1,12 +1,12 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function (require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
   var ContextMenuView = require('./views/contextMenuView');
 
   // Public API
   Origin.contextMenu = ContextMenu = {
-    addItem: function(type, contextMenuObject) {
+    addItem: function (type, contextMenuObject) {
       if (contextMenuObject.length > 1) {
         _.each(contextMenuObject, function (object) {
           object.type = type;
@@ -16,7 +16,7 @@ define(function(require) {
         contextMenuObject.type = type;
         menuItems.add(contextMenuObject);
       }
-    }
+    },
   };
 
   Origin.on('origin:dataReady login:changed', init);
@@ -30,9 +30,9 @@ define(function(require) {
     menuItems = new Backbone.Collection();
     setUpMenuItems();
 
-    if(view) view.remove();
+    if (view) view.remove();
     view = new ContextMenuView({ collection: menuItems });
-  };
+  }
 
   function setUpMenuItems() {
     ContextMenu.addItem('article', getDefaultItems());
@@ -40,46 +40,49 @@ define(function(require) {
     ContextMenu.addItem('component', getDefaultItems());
     ContextMenu.addItem('page', getDefaultItems());
     ContextMenu.addItem('menu', getDefaultItems(['copy']));
-    ContextMenu.addItem('page-min', getDefaultItems(['copy','delete','colorLabel']));
+    ContextMenu.addItem(
+      'page-min',
+      getDefaultItems(['copy', 'delete', 'colorLabel'])
+    );
     ContextMenu.addItem('course', getDefaultItems(['colorLabel']));
-  };
+  }
 
   /*
-  * returns the default list excluding anything in [blacklist] (uses callbackEvent to filter)
-  */
+   * returns the default list excluding anything in [blacklist] (uses callbackEvent to filter)
+   */
   function getDefaultItems(blacklist) {
     var DEFAULT_ITEMS = [
       {
         title: Origin.l10n.t('app.edit'),
         className: 'context-menu-item',
-        callbackEvent: "edit"
+        callbackEvent: 'edit',
       },
       {
         title: Origin.l10n.t('app.copy'),
         className: 'context-menu-item',
-        callbackEvent: "copy"
+        callbackEvent: 'copy',
       },
       {
         title: Origin.l10n.t('app.copyidtoclipboard'),
         className: 'context-menu-item',
-        callbackEvent: "copyID"
+        callbackEvent: 'copyID',
       },
       {
         title: Origin.l10n.t('app.delete'),
         className: 'context-menu-item',
-        callbackEvent: "delete"
+        callbackEvent: 'delete',
       },
       {
         title: Origin.l10n.t('app.colourLabel'),
         className: 'context-menu-item',
-        callbackEvent: "colorLabel"
-      }
+        callbackEvent: 'colorLabel',
+      },
     ];
-    if(!blacklist) {
+    if (!blacklist) {
       return DEFAULT_ITEMS;
     }
-    return _.filter(DEFAULT_ITEMS, function(item) {
+    return _.filter(DEFAULT_ITEMS, function (item) {
       return blacklist.indexOf(item.callbackEvent) < 0;
     });
-  };
+  }
 });

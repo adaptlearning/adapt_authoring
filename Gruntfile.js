@@ -1,5 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   require('matchdep').filterAll('grunt-*').forEach(grunt.loadNpmTasks);
   // Project configuration.
   grunt.initConfig({
@@ -9,10 +9,10 @@ module.exports = function(grunt) {
         langFileExt: '.json',
         src: {
           backend: 'routes/lang',
-          frontend: 'frontend/src/**/lang'
+          frontend: 'frontend/src/**/lang',
         },
-        dest: 'temp/lang'
-      }
+        dest: 'temp/lang',
+      },
     },
     copy: {
       main: {
@@ -24,19 +24,19 @@ module.exports = function(grunt) {
               'frontend/src/core/**/assets/**',
               'frontend/src/modules/**/assets/**',
               'frontend/src/plugins/**/assets/**',
-              'frontend/src/libraries/**/assets/**'
+              'frontend/src/libraries/**/assets/**',
             ],
             dest: 'frontend/build/css/assets/',
-            filter: 'isFile'
+            filter: 'isFile',
           },
           {
             expand: true,
             flatten: true,
             src: ['frontend/src/libraries/ace/*'],
-            dest: 'frontend/build/js/ace'
-          }
-        ]
-      }
+            dest: 'frontend/build/js/ace',
+          },
+        ],
+      },
     },
     less: {
       dev: {
@@ -46,15 +46,15 @@ module.exports = function(grunt) {
             'frontend/src/core/**/*.less',
             'frontend/src/modules/**/*.less',
             'frontend/src/plugins/**/*.less',
-            'frontend/src/libraries/**/*.less'
+            'frontend/src/libraries/**/*.less',
           ],
           paths: 'frontend/src/core/less',
           generateSourceMaps: true,
           compress: false,
           dest: 'frontend/build/css',
           cssFilename: 'adapt.css',
-          mapFilename: 'adapt.css.map'
-        }
+          mapFilename: 'adapt.css.map',
+        },
       },
       compile: {
         options: {
@@ -64,29 +64,32 @@ module.exports = function(grunt) {
             'frontend/src/less/**/*.less',
             'frontend/src/modules/**/*.less',
             'frontend/src/plugins/**/*.less',
-            'frontend/src/libraries/**/*.less'
+            'frontend/src/libraries/**/*.less',
           ],
           paths: 'frontend/src/core/less',
           generateSourceMaps: false,
           compress: true,
           dest: 'frontend/build/css',
           cssFilename: 'adapt.css',
-          mapFilename: 'adapt.css.map'
-        }
-      }
+          mapFilename: 'adapt.css.map',
+        },
+      },
     },
     handlebars: {
       compile: {
         options: {
           amd: true,
-          namespace:"Handlebars.templates",
-          processName: function(filePath) {
-            var newFilePath = filePath.split("/");
-            newFilePath = newFilePath[newFilePath.length - 1].replace(/\.[^/.]+$/, "");
-            return  newFilePath;
+          namespace: 'Handlebars.templates',
+          processName: function (filePath) {
+            var newFilePath = filePath.split('/');
+            newFilePath = newFilePath[newFilePath.length - 1].replace(
+              /\.[^/.]+$/,
+              ''
+            );
+            return newFilePath;
           },
           partialRegex: /^part_/,
-          partialsPathRegex: /\/partials\//
+          partialsPathRegex: /\/partials\//,
         },
         files: [
           {
@@ -94,62 +97,62 @@ module.exports = function(grunt) {
             src: [
               'frontend/src/core/**/*.hbs',
               'frontend/src/modules/**/*.hbs',
-              'frontend/src/plugins/**/*.hbs'
+              'frontend/src/plugins/**/*.hbs',
             ],
-            dest: 'frontend/src/templates/templates.js'
-          }
-        ]
-      }
+            dest: 'frontend/src/templates/templates.js',
+          },
+        ],
+      },
     },
     requirejs: {
       dev: {
         options: {
           baseUrl: 'frontend/src',
           name: 'core/app',
-          mainConfigFile: "frontend/src/core/config.js",
-          out: "frontend/build/js/origin.js",
+          mainConfigFile: 'frontend/src/core/config.js',
+          out: 'frontend/build/js/origin.js',
           generateSourceMaps: true,
           preserveLicenseComments: true,
-          optimize: "none"
-        }
+          optimize: 'none',
+        },
       },
       compile: {
         options: {
           baseUrl: 'frontend/src',
           name: 'core/app',
-          mainConfigFile: "frontend/src/core/config.js",
-          out: "frontend/build/js/origin.js",
-          optimize: "none"
-        }
-      }
+          mainConfigFile: 'frontend/src/core/config.js',
+          out: 'frontend/build/js/origin.js',
+          optimize: 'none',
+        },
+      },
     },
     uglify: {
       my_target: {
         files: {
-          'frontend/build/js/origin.js': ['frontend/build/js/origin.js']
-        }
-      }
+          'frontend/build/js/origin.js': ['frontend/build/js/origin.js'],
+        },
+      },
     },
     mochaTest: {
       src: ['test/*.js'],
       options: {
         reporter: 'spec',
-        timeout: 3500
-      }
+        timeout: 3500,
+      },
     },
     requireBundle: {
       modules: {
         src: 'frontend/src/modules/*',
-        dest: 'frontend/src/modules/modules.js'
+        dest: 'frontend/src/modules/modules.js',
       },
       plugins: {
         src: 'frontend/src/plugins/*',
-        dest: 'frontend/src/plugins/plugins.js'
-      }
-    }
+        dest: 'frontend/src/plugins/plugins.js',
+      },
+    },
   });
 
-  grunt.registerTask('migration-conf', 'Creating migration Conf', function() {
+  grunt.registerTask('migration-conf', 'Creating migration Conf', function () {
     var mongoUri = require('mongodb-uri');
     var config = grunt.file.readJSON('conf/config.json');
     var connectionString = '';
@@ -160,54 +163,86 @@ module.exports = function(grunt) {
       var dbConnectionUriParsed = mongoUri.parse(connectionString);
       dbConnectionUriParsed.database = config.dbName;
       connectionString = mongoUri.format(dbConnectionUriParsed);
-
     } else {
       // Construct the authentication part of the connection string.
-      var authenticationString = config.dbUser && config.dbPass ? config.dbUser + ':' + config.dbPass + '@' : '';
+      var authenticationString =
+        config.dbUser && config.dbPass
+          ? config.dbUser + ':' + config.dbPass + '@'
+          : '';
 
       // Check if a MongoDB replicaset array has been specified.
-      if (config.dbReplicaset && Array.isArray(config.dbReplicaset) && config.dbReplicaset.length !== 0) {
+      if (
+        config.dbReplicaset &&
+        Array.isArray(config.dbReplicaset) &&
+        config.dbReplicaset.length !== 0
+      ) {
         // The replicaset should contain an array of hosts and ports
-        connectionString = 'mongodb://' + authenticationString + config.dbReplicaset.join(',') + '/' + config.dbName
+        connectionString =
+          'mongodb://' +
+          authenticationString +
+          config.dbReplicaset.join(',') +
+          '/' +
+          config.dbName;
       } else {
         // Get the host and port number from the configuration.
 
         var portString = config.dbPort ? ':' + config.dbPort : '';
 
-        connectionString = 'mongodb://' + authenticationString + config.dbHost + portString + '/' + config.dbName;
+        connectionString =
+          'mongodb://' +
+          authenticationString +
+          config.dbHost +
+          portString +
+          '/' +
+          config.dbName;
       }
-      if (typeof config.dbAuthSource === 'string' && config.dbAuthSource !== '' ) {
-        connectionString += '?authSource=' + config.dbAuthSource
+      if (
+        typeof config.dbAuthSource === 'string' &&
+        config.dbAuthSource !== ''
+      ) {
+        connectionString += '?authSource=' + config.dbAuthSource;
       }
     }
     var migrateConf = {
-      migrationsDir : 'migrations/lib',
-      es6 : false,
-      dbConnectionUri: connectionString
+      migrationsDir: 'migrations/lib',
+      es6: false,
+      dbConnectionUri: connectionString,
     };
     grunt.file.write('conf/migrate.json', JSON.stringify(migrateConf, null, 2));
   });
 
   // Compiles frontend plugins
-  grunt.registerMultiTask('requireBundle', 'Generates a .js file with a bunch of imports for the path files', function() {
-    var modulePaths = '';
-    // Go through each subfolder in the plugins directory
-    var foldersArray = grunt.file.expand({ filter: "isDirectory" }, this.data.src);
-    // Check if any plugins are available
-    if (foldersArray.length === 0) {
-      modulePaths += "'";
+  grunt.registerMultiTask(
+    'requireBundle',
+    'Generates a .js file with a bunch of imports for the path files',
+    function () {
+      var modulePaths = '';
+      // Go through each subfolder in the plugins directory
+      var foldersArray = grunt.file.expand(
+        { filter: 'isDirectory' },
+        this.data.src
+      );
+      // Check if any plugins are available
+      if (foldersArray.length === 0) {
+        modulePaths += "'";
+      }
+      foldersArray.forEach(function (path, index, folders) {
+        // Strip off front of path to make relative path to config file
+        var relativePath = path
+          .replace(grunt.config.get('requirejs').dev.options.baseUrl, '')
+          .slice(1);
+        var splitter = "','";
+        if (index === folders.length - 1) splitter = "'";
+        modulePaths += relativePath + '/index' + splitter;
+      });
+      grunt.file.write(
+        this.data.dest,
+        "define(['" + modulePaths + '], function() {});'
+      );
     }
-    foldersArray.forEach(function(path, index, folders) {
-      // Strip off front of path to make relative path to config file
-      var relativePath = path.replace(grunt.config.get('requirejs').dev.options.baseUrl, '').slice(1);
-      var splitter = "','";
-      if (index === folders.length - 1) splitter = "'";
-      modulePaths += relativePath + '/index' + splitter;
-    });
-    grunt.file.write(this.data.dest, "define(['" + modulePaths +"], function() {});");
-  });
+  );
 
-  grunt.registerMultiTask('less', 'Compile Less files to CSS', function() {
+  grunt.registerMultiTask('less', 'Compile Less files to CSS', function () {
     var path = require('path');
     var less = require('less');
     var options = this.options({});
@@ -229,12 +264,17 @@ module.exports = function(grunt) {
       var ret = '';
 
       for (var i = 0, l = src.length; i < l; i++) {
-        grunt.file.expand({
-          filter: options.filter,
-          follow: true
-        }, src[i]).forEach(function(lessPath) {
-          ret += '@import \'' + path.normalize(lessPath) + '\';\n';
-        });
+        grunt.file
+          .expand(
+            {
+              filter: options.filter,
+              follow: true,
+            },
+            src[i]
+          )
+          .forEach(function (lessPath) {
+            ret += "@import '" + path.normalize(lessPath) + "';\n";
+          });
       }
       return ret;
     }
@@ -242,14 +282,14 @@ module.exports = function(grunt) {
     function getLessOptions() {
       var ret = {
         compress: options.compress,
-        paths: options.paths
+        paths: options.paths,
       };
       if (shouldGenerateSourceMaps) {
         ret.sourceMap = {
-          'sourceMapFileInline': false,
-          'outputSourceFiles': true,
-          'sourceMapBasepath': 'src',
-          'sourceMapURL': mapFilename
+          sourceMapFileInline: false,
+          outputSourceFiles: true,
+          sourceMapBasepath: 'src',
+          sourceMapURL: mapFilename,
         };
       }
       return ret;
@@ -277,24 +317,27 @@ module.exports = function(grunt) {
       done();
     }
   });
-  grunt.registerTask('generate-lang-json', function() {
+  grunt.registerTask('generate-lang-json', function () {
     const fs = require('fs-extra');
     const path = require('path');
 
     const options = this.options();
-    const backendGlob = path.join(options.src.backend, `*${options.langFileExt}`);
+    const backendGlob = path.join(
+      options.src.backend,
+      `*${options.langFileExt}`
+    );
     const dest = options.dest;
     // load each route lang file
     /**
-    * NOTE there must be a file in routes/lang for the language to be loaded,
-    * won't work if you've only got lang files in frontend
-    */
-    grunt.file.expand({}, path.join(backendGlob)).forEach(backendPath => {
+     * NOTE there must be a file in routes/lang for the language to be loaded,
+     * won't work if you've only got lang files in frontend
+     */
+    grunt.file.expand({}, path.join(backendGlob)).forEach((backendPath) => {
       const basename = path.basename(backendPath);
       const frontendGlob = path.join(options.src.frontend, basename);
       let data = { ...fs.readJSONSync(backendPath) };
       // load all matching frontend lang files
-      grunt.file.expand({}, frontendGlob).forEach(frontendPath => {
+      grunt.file.expand({}, frontendGlob).forEach((frontendPath) => {
         data = { ...data, ...fs.readJSONSync(frontendPath) };
       });
       fs.ensureDirSync(dest);
@@ -306,11 +349,13 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['mochaTest']);
 
   /**
-  * Accepts 'build' and 'prod' params
-  * e.g. grunt build:prod
-  */
-  grunt.registerTask('build', 'Running build', function(mode) {
-    grunt.log.subhead(`Building application in ${mode === 'prod' ? 'production' : 'dev'} mode`);
+   * Accepts 'build' and 'prod' params
+   * e.g. grunt build:prod
+   */
+  grunt.registerTask('build', 'Running build', function (mode) {
+    grunt.log.subhead(
+      `Building application in ${mode === 'prod' ? 'production' : 'dev'} mode`
+    );
 
     var isProduction = mode === 'prod' ? true : false;
     var compilation = isProduction ? 'compile' : 'dev';
@@ -322,10 +367,25 @@ module.exports = function(grunt) {
       config.isProduction = isProduction;
       grunt.file.write(configFile, JSON.stringify(config, null, 2));
       // run the task
-      grunt.task.run(['migration-conf', 'requireBundle', 'generate-lang-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation, 'uglify']);
-
-    } catch(e) {
-      grunt.task.run(['requireBundle', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation, 'uglify']);
+      grunt.task.run([
+        'migration-conf',
+        'requireBundle',
+        'generate-lang-json',
+        'copy',
+        'less:' + compilation,
+        'handlebars',
+        'requirejs:' + compilation,
+        'uglify',
+      ]);
+    } catch (e) {
+      grunt.task.run([
+        'requireBundle',
+        'copy',
+        'less:' + compilation,
+        'handlebars',
+        'requirejs:' + compilation,
+        'uglify',
+      ]);
     }
   });
 };

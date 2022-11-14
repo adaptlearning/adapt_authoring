@@ -1,7 +1,7 @@
-define(function(require) {
+define(function (require) {
   var Origin = require('core/origin');
 
-  Origin.on('navigation:help', function() {
+  Origin.on('navigation:help', function () {
     var override = Origin.constants.supportLink;
     if (override) {
       window.open(override);
@@ -54,7 +54,7 @@ define(function(require) {
       default:
         link = '';
     }
-    return 'Creating-a-Course' + (link) ? '#' + link : '';
+    return 'Creating-a-Course' + link ? '#' + link : '';
   }
 
   function openWikiLink(page) {

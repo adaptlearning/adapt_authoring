@@ -4,16 +4,15 @@
  */
 
 var contentmanager = require('../../../lib/contentmanager'),
-    ContentPlugin = contentmanager.ContentPlugin,
-    ContentTypeError = contentmanager.errors.ContentTypeError,
-    configuration = require('../../../lib/configuration'),
-    permissions = require('../../../lib/permissions'),
-    database = require('../../../lib/database'),
-    util = require('util'),
-    path = require('path');
+  ContentPlugin = contentmanager.ContentPlugin,
+  ContentTypeError = contentmanager.errors.ContentTypeError,
+  configuration = require('../../../lib/configuration'),
+  permissions = require('../../../lib/permissions'),
+  database = require('../../../lib/database'),
+  util = require('util'),
+  path = require('path');
 
-function TagContent () {
-}
+function TagContent() {}
 
 util.inherits(TagContent, ContentPlugin);
 
@@ -24,7 +23,13 @@ util.inherits(TagContent, ContentPlugin);
  * @param {object} a content item
  * @param {callback} next (function (err, isAllowed))
  */
-TagContent.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) {
+TagContent.prototype.hasPermission = function (
+  action,
+  userId,
+  tenantId,
+  contentItem,
+  next
+) {
   // @TODO - check if this is ok
   return next(null, true);
 };
@@ -53,7 +58,7 @@ TagContent.prototype.create = function (data, next) {
 
   // clean title and make case insenitive regex
   data.title = data.title.replace(/,/g, '').trim();
-  var tagRegex = new RegExp('^' + escapeRegExp(data.title) + '$', "i");
+  var tagRegex = new RegExp('^' + escapeRegExp(data.title) + '$', 'i');
   this.retrieve({ title: tagRegex }, function (err, results) {
     if (err) {
       return next(err);
@@ -69,7 +74,7 @@ TagContent.prototype.create = function (data, next) {
   });
 };
 
-function initialize () {
+function initialize() {
   app.on('serverStarted', function () {
     permissions.ignoreRoute(/^\/api\/autocomplete\/tag\/?$/);
     app.rest.get('/autocomplete/tag', function (req, res, next) {
@@ -79,37 +84,46 @@ function initialize () {
         }
 
         var searchParams;
-        if (req.query.hasOwnProperty('term')){
+        if (req.query.hasOwnProperty('term')) {
           // create regex for "term" and ignore case
           var termRegex = new RegExp('^' + escapeRegExp(req.query.term), 'i');
-          searchParams = { _isDeleted:false, title:termRegex };
+          searchParams = { _isDeleted: false, title: termRegex };
         } else {
-          searchParams = { _isDeleted:false };
+          searchParams = { _isDeleted: false };
         }
 
+        db.retrieve(
+          'tag',
+          searchParams,
+          { fields: 'title' },
+          function (err, results) {
+            if (err) {
+              return next(err);
+            }
 
-        db.retrieve('tag', searchParams, { fields: 'title' }, function (err, results) {
-          if (err) {
-            return next(err);
+            var tags = [];
+            results &&
+              results.forEach(function (item) {
+                tags.push({
+                  title: item.title,
+                  value: item.title,
+                  _id: item._id,
+                });
+              });
+
+            res.statusCode = 200;
+            return res.json(tags);
           }
-
-          var tags = [];
-          results && results.forEach (function (item) {
-            tags.push({title: item.title, value: item.title, _id: item._id});
-          });
-
-          res.statusCode = 200;
-          return res.json(tags);
-        });
+        );
       });
     });
   });
 }
 
 /**
-* escape regex
-* see http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
-*/
+ * escape regex
+ * see http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+ */
 function escapeRegExp(str) {
   return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
 }
@@ -120,6 +134,5 @@ initialize();
  * Module exports
  *
  */
-
 
 exports = module.exports = TagContent;

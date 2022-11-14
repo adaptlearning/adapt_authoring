@@ -4,19 +4,18 @@
  */
 
 var contentmanager = require('../../../lib/contentmanager'),
-    ContentPlugin = contentmanager.ContentPlugin,
-    ContentPermissionError = contentmanager.errors.ContentPermissionError,
-    configuration = require('../../../lib/configuration'),
-    permissions = require('../../../lib/permissions'),
-    logger = require('../../../lib/logger'),
-    usermanager = require('../../../lib/usermanager'),
-    util = require('util'),
-    path = require('path'),
-    helpers = require('../../../lib/helpers'),    
-    async = require('async');
+  ContentPlugin = contentmanager.ContentPlugin,
+  ContentPermissionError = contentmanager.errors.ContentPermissionError,
+  configuration = require('../../../lib/configuration'),
+  permissions = require('../../../lib/permissions'),
+  logger = require('../../../lib/logger'),
+  usermanager = require('../../../lib/usermanager'),
+  util = require('util'),
+  path = require('path'),
+  helpers = require('../../../lib/helpers'),
+  async = require('async');
 
-function ContentObject () {
-}
+function ContentObject() {}
 
 util.inherits(ContentObject, ContentPlugin);
 
@@ -27,21 +26,35 @@ util.inherits(ContentObject, ContentPlugin);
  * @param {object} a content item
  * @param {callback} next (function (err, isAllowed))
  */
-ContentObject.prototype.hasPermission = function (action, userId, tenantId, contentItem, next) { 
+ContentObject.prototype.hasPermission = function (
+  action,
+  userId,
+  tenantId,
+  contentItem,
+  next
+) {
+  helpers.hasCoursePermission(
+    action,
+    userId,
+    tenantId,
+    contentItem,
+    function (err, isAllowed) {
+      if (err) {
+        return next(err);
+      }
 
-  helpers.hasCoursePermission(action, userId, tenantId, contentItem, function(err, isAllowed) {
-    if (err) {
-      return next(err);
+      if (!isAllowed) {
+        // Check the permissions string
+        var resource = permissions.buildResourceString(
+          tenantId,
+          '/api/content/course/' + contentItem._courseId
+        );
+        permissions.hasPermission(userId, action, resource, next);
+      } else {
+        return next(null, isAllowed);
+      }
     }
-
-    if (!isAllowed) {
-      // Check the permissions string
-      var resource = permissions.buildResourceString(tenantId, '/api/content/course/' + contentItem._courseId);
-      permissions.hasPermission(userId, action, resource, next);
-    } else {
-      return next(null, isAllowed);
-    }
-  });
+  );
 };
 
 /**
@@ -64,26 +77,30 @@ ContentObject.prototype.updateSiblingSortOrder = function (data, next) {
     return next(null);
   }
   var index = 1;
-  this.iterateSiblings(data._parentId, { operators: { sort: { _sortOrder: 1 } } }, function (doc, cb) {
-    if (index === data._sortOrder) {
+  this.iterateSiblings(
+    data._parentId,
+    { operators: { sort: { _sortOrder: 1 } } },
+    function (doc, cb) {
+      if (index === data._sortOrder) {
+        ++index;
+      }
+
+      if (data._id && data._id.toString() === doc._id.toString()) {
+        // skip self
+        return cb(null);
+      }
+
+      doc._sortOrder = index;
+      doc.save(cb);
       ++index;
+    },
+    function (err) {
+      if (err) {
+        return next(err);
+      }
+      next(null, data);
     }
-
-    if (data._id && data._id.toString() === doc._id.toString()) {
-      // skip self
-      return cb(null);
-    }
-
-    doc._sortOrder = index;
-    doc.save(cb);
-    ++index;
-  },
-  function (err) {
-    if (err) {
-      return next(err);
-    }
-    next(null, data);
-  });
+  );
 };
 
 /**
@@ -107,7 +124,8 @@ ContentObject.prototype.getMaxSortOrder = function (parentId, cb) {
       }
 
       return cb(null, sortOrder);
-  });
+    }
+  );
 };
 
 /**
@@ -134,7 +152,7 @@ ContentObject.prototype.create = function (data, next) {
         return error;
       }
 
-      data._sortOrder = max+1;
+      data._sortOrder = max + 1;
       return self.create(data, next);
     });
     // you shall not pass
@@ -179,7 +197,7 @@ ContentObject.prototype.retrieve = function (search, options, next) {
   }
 
   if (!options.operators.sort) {
-    options.operators.sort = { '_sortOrder': 1 };
+    options.operators.sort = { _sortOrder: 1 };
   }
 
   ContentPlugin.prototype.retrieve.call(this, search, options, next);
@@ -206,22 +224,30 @@ ContentObject.prototype.update = function (search, delta, next) {
         delta._courseId = docs[0]._courseId;
       }
 
-      ContentPlugin.prototype.update.call(self, search, delta, function (error) {
-        // in the case of update, it's easier if we defer sortOrder update until after update
-        if (error) {
-          return next(error);
-        }
+      ContentPlugin.prototype.update.call(
+        self,
+        search,
+        delta,
+        function (error) {
+          // in the case of update, it's easier if we defer sortOrder update until after update
+          if (error) {
+            return next(error);
+          }
 
-        self.retrieve({ _id: docs[0]._id }, function (error, docs) {
-            if (delta._parentId && (oldParentId != delta._parentId)) {
-              self.updateSiblingSortOrder({ _parentId: oldParentId }, function (error) {
-                self.updateSiblingSortOrder(docs[0], next);
-              });
+          self.retrieve({ _id: docs[0]._id }, function (error, docs) {
+            if (delta._parentId && oldParentId != delta._parentId) {
+              self.updateSiblingSortOrder(
+                { _parentId: oldParentId },
+                function (error) {
+                  self.updateSiblingSortOrder(docs[0], next);
+                }
+              );
             } else {
               self.updateSiblingSortOrder(docs[0], next);
             }
-        });
-      });
+          });
+        }
+      );
     } else {
       next(null);
     }
@@ -252,40 +278,52 @@ ContentObject.prototype.destroy = function (search, force, next) {
 
     // contentobjects use cascading delete
     if (docs && docs.length) {
-
       // Set the _courseId property as this is required for the hasPermission()
       search._courseId = docs[0]._courseId;
 
-      helpers.hasCoursePermission('delete', user._id, tenantId, search, function (err, isAllowed) {
-        if (err) {
-          logger.log('error', err);
-          return next(err);
-        }
+      helpers.hasCoursePermission(
+        'delete',
+        user._id,
+        tenantId,
+        search,
+        function (err, isAllowed) {
+          if (err) {
+            logger.log('error', err);
+            return next(err);
+          }
 
-        if (!isAllowed && !force) {
-          return next(new ContentPermissionError());
-        }
+          if (!isAllowed && !force) {
+            return next(new ContentPermissionError());
+          }
 
-        async.eachSeries(
-          docs,
-          function (doc, cb) {
-            self.destroyChildren(doc._id, function (err) {
-              // then destroy self and update sibling sort order
-              ContentPlugin.prototype.destroy.call(self, { _id: doc._id }, true, function (error) {
-                // if we're retrieving and deleting a bunch of siblings, updating the sort order each
-                // time might be redundant.
-                self.updateSiblingSortOrder({_parentId:doc._parentId, _sortOrder:doc._sortOrder}, cb);
+          async.eachSeries(
+            docs,
+            function (doc, cb) {
+              self.destroyChildren(doc._id, function (err) {
+                // then destroy self and update sibling sort order
+                ContentPlugin.prototype.destroy.call(
+                  self,
+                  { _id: doc._id },
+                  true,
+                  function (error) {
+                    // if we're retrieving and deleting a bunch of siblings, updating the sort order each
+                    // time might be redundant.
+                    self.updateSiblingSortOrder(
+                      { _parentId: doc._parentId, _sortOrder: doc._sortOrder },
+                      cb
+                    );
+                  }
+                );
               });
-            });
-          },
-          next
-        );
-      });
+            },
+            next
+          );
+        }
+      );
     } else {
       next(null);
     }
   });
-
 };
 
 /**

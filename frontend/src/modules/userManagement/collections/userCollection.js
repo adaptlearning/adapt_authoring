@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
   var Backbone = require('backbone');
   var UserModel = require('../models/userModel');
   var Moment = require('moment');
@@ -11,14 +11,14 @@ define(function(require) {
     mailSearchTerm: false,
     lastAccess: null,
 
-    initialize: function() {
+    initialize: function () {
       this.filterGroups = {
         tenantName: [],
-        roleNames: []
+        roleNames: [],
       };
     },
 
-    comparator: function(ma, mb) {
+    comparator: function (ma, mb) {
       var a = ma.get(this.sortBy);
       var b = mb.get(this.sortBy);
 
@@ -44,57 +44,55 @@ define(function(require) {
 
     url: 'api/user',
 
-    updateFilter: function(filterMap) {
+    updateFilter: function (filterMap) {
       this.filterGroups = filterMap;
       this.sortCollection();
     },
 
-    sortCollection: function() {
+    sortCollection: function () {
       this.resetHidden();
       this.filter();
       this.searchByMail();
       this.sort();
     },
 
-    filter: function() {
-      this.models.forEach(function(model) {
+    filter: function () {
+      this.models.forEach(function (model) {
         this.filterTenants(model);
         this.filterRoleNames(model);
       }, this);
     },
 
-    filterTenants: function(model) {
+    filterTenants: function (model) {
       var tenantName = this.filterGroups.tenantName;
       if (tenantName && tenantName.indexOf(model.get('tenantName')) < 0) {
         model.set('_isHidden', true);
       }
     },
 
-    filterRoleNames: function(model) {
+    filterRoleNames: function (model) {
       var roleNames = this.filterGroups.roleNames;
       if (roleNames && roleNames.indexOf(model.get('roleNames')[0]) < 0) {
         model.set('_isHidden', true);
       }
     },
 
-    resetHidden: function() {
-      this.forEach(function(model) {
+    resetHidden: function () {
+      this.forEach(function (model) {
         model.set('_isHidden', false);
       });
     },
 
-    searchByMail: function() {
+    searchByMail: function () {
       if (!this.mailSearchTerm) return;
-      this.models.forEach(function(model) {
+      this.models.forEach(function (model) {
         var mail = model.get('email').toLowerCase();
         if (mail.indexOf(this.mailSearchTerm) < 0) {
           model.set('_isHidden', true);
         }
       }, this);
-    }
-
+    },
   });
 
   return UserCollection;
-
 });

@@ -1,7 +1,7 @@
 var helpers = require('../helpers/helper');
 
 function removeSessions(done) {
-  helpers.start(function(app) {
+  helpers.start(function (app) {
     app.db.conn.dropCollection('sessions', done);
   });
 }

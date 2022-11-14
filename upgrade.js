@@ -16,26 +16,27 @@ var installHelpers = require('./lib/installHelpers');
 
 var IS_INTERACTIVE = process.argv.length === 2;
 
-var DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
+var DEFAULT_USER_AGENT =
+  'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36';
 var app = origin();
 
 /**
-* Start of execution
-*/
+ * Start of execution
+ */
 start();
 
 function start() {
-  installHelpers.checkPrimaryDependencies(function(error) {
-    if(error) {
+  installHelpers.checkPrimaryDependencies(function (error) {
+    if (error) {
       return installHelpers.exit(1, error.message);
     }
     // don't show any logger messages in the console
-    logger.level('console','error');
+    logger.level('console', 'error');
 
     // start the server first
     app.run({ skipVersionCheck: true, skipStartLog: true });
-    app.on('serverStarted', function() {
-      installHelpers.checkSecondaryDependencies(function(error) {
+    app.on('serverStarted', function () {
+      installHelpers.checkSecondaryDependencies(function (error) {
         ensureRepoValues();
         getUserInput();
       });
@@ -44,11 +45,17 @@ function start() {
 }
 
 function ensureRepoValues() {
-  if(configuration.getConfig('frameworkRepository') === '') {
-    configuration.setConfig('frameworkRepository', installHelpers.DEFAULT_FRAMEWORK_REPO);
+  if (configuration.getConfig('frameworkRepository') === '') {
+    configuration.setConfig(
+      'frameworkRepository',
+      installHelpers.DEFAULT_FRAMEWORK_REPO
+    );
   }
-  if(configuration.getConfig('authoringToolRepository') === '') {
-    configuration.setConfig('authoringToolRepository', installHelpers.DEFAULT_SERVER_REPO);
+  if (configuration.getConfig('authoringToolRepository') === '') {
+    configuration.setConfig(
+      'authoringToolRepository',
+      installHelpers.DEFAULT_SERVER_REPO
+    );
   }
 }
 
@@ -59,57 +66,66 @@ function getUserInput() {
       name: 'continue',
       message: 'Continue?',
       type: 'confirm',
-      default: true
-    }
+      default: true,
+    },
   ];
   var upgradeProperties = [
     {
       name: 'updateAutomatically',
       message: 'Update automatically?',
       type: 'confirm',
-      default: true
-    }
+      default: true,
+    },
   ];
   var tagProperties = [
     {
       name: 'authoringToolGitTag',
       type: 'input',
-      message: 'Specific git revision to be used for the authoring tool. Accepts any valid revision type (e.g. branch/tag/commit)',
-      default: ''
+      message:
+        'Specific git revision to be used for the authoring tool. Accepts any valid revision type (e.g. branch/tag/commit)',
+      default: '',
     },
     {
       name: 'frameworkGitTag',
       type: 'input',
-      message: 'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
-      default: ''
-    }
+      message:
+        'Specific git revision to be used for the framework. Accepts any valid revision type (e.g. branch/tag/commit)',
+      default: '',
+    },
   ];
   if (IS_INTERACTIVE) {
-    console.log(`\nThis script will update the ${app.polyglot.t('app.productname')} and/or Adapt Framework. Would you like to continue?`);
+    console.log(
+      `\nThis script will update the ${app.polyglot.t(
+        'app.productname'
+      )} and/or Adapt Framework. Would you like to continue?`
+    );
   }
-  installHelpers.getInput(confirmProperties, argv, function(result) {
-    if(!installHelpers.inputHelpers.toBoolean(result.continue)) {
+  installHelpers.getInput(confirmProperties, argv, function (result) {
+    if (!installHelpers.inputHelpers.toBoolean(result.continue)) {
       return installHelpers.exit();
     }
-    installHelpers.getInput(upgradeProperties, argv, function(result) {
+    installHelpers.getInput(upgradeProperties, argv, function (result) {
       console.log('');
-      if(installHelpers.inputHelpers.toBoolean(result.updateAutomatically)) {
-        return checkForUpdates(function(error, updateData) {
-          if(error) {
+      if (installHelpers.inputHelpers.toBoolean(result.updateAutomatically)) {
+        return checkForUpdates(function (error, updateData) {
+          if (error) {
             return installHelpers.exit(1, error);
           }
           doUpdate(updateData);
         });
       }
       // no automatic update, so get the intended versions
-      installHelpers.getInput(tagProperties, argv, function(result) {
+      installHelpers.getInput(tagProperties, argv, function (result) {
         console.log('');
-        if(!result.authoringToolGitTag && !result.frameworkGitTag) {
-          return installHelpers.exit(1, 'Cannot update sofware if no revisions are specified.');
+        if (!result.authoringToolGitTag && !result.frameworkGitTag) {
+          return installHelpers.exit(
+            1,
+            'Cannot update sofware if no revisions are specified.'
+          );
         }
         doUpdate({
           adapt_authoring: result.authoringToolGitTag,
-          adapt_framework: result.frameworkGitTag
+          adapt_framework: result.frameworkGitTag,
         });
       });
     });
@@ -117,19 +133,28 @@ function getUserInput() {
 }
 
 function checkForUpdates(callback) {
-  var isCustomFramework = configuration.getConfig('frameworkRepository') !== installHelpers.DEFAULT_FRAMEWORK_REPO;
-  var isCustomServer = configuration.getConfig('authoringToolRepository') !== installHelpers.DEFAULT_SERVER_REPO;
-  if(isCustomFramework || isCustomServer) {
-    return callback('Cannot perform an automatic upgrade when custom repositories are used.');
+  var isCustomFramework =
+    configuration.getConfig('frameworkRepository') !==
+    installHelpers.DEFAULT_FRAMEWORK_REPO;
+  var isCustomServer =
+    configuration.getConfig('authoringToolRepository') !==
+    installHelpers.DEFAULT_SERVER_REPO;
+  if (isCustomFramework || isCustomServer) {
+    return callback(
+      'Cannot perform an automatic upgrade when custom repositories are used.'
+    );
   }
   installHelpers.showSpinner('Checking for updates');
-  installHelpers.getUpdateData(function(error, data) {
+  installHelpers.getUpdateData(function (error, data) {
     installHelpers.hideSpinner();
-    if(error) {
+    if (error) {
       return callback(error);
     }
-    if(!data) {
-      return installHelpers.exit(0, `Your software is already up-to-date, no need to upgrade.`);
+    if (!data) {
+      return installHelpers.exit(
+        0,
+        `Your software is already up-to-date, no need to upgrade.`
+      );
     }
     console.log(chalk.underline('Software updates found.\n'));
     callback(null, data);
@@ -137,86 +162,129 @@ function checkForUpdates(callback) {
 }
 
 function doUpdate(data) {
-  async.series([
-    function upgradeAuthoring(cb) {
-      if (installHelpers.inputHelpers.isFalsy(data.adapt_authoring)) {
-        return cb();
-      }
-      installHelpers.updateAuthoring({
-        repository: configuration.getConfig('authoringToolRepository'),
-        revision: data.adapt_authoring,
-        directory: configuration.serverRoot
-      }, function(error) {
-        if(error) {
-          console.log(`Failed to update ${configuration.serverRoot} to '${data.adapt_authoring}'`);
-          return cb(error);
+  async.series(
+    [
+      function upgradeAuthoring(cb) {
+        if (installHelpers.inputHelpers.isFalsy(data.adapt_authoring)) {
+          return cb();
         }
-        console.log(`${app.polyglot.t('app.productname')} upgraded to ${data.adapt_authoring}`);
-        cb();
-      });
-    },
-    function upgradeFramework(cb) {
-      if (installHelpers.inputHelpers.isFalsy(data.adapt_framework)) {
-        return cb();
-      }
-      var dir = path.join(configuration.tempDir, configuration.getConfig('masterTenantID'), OutputConstants.Folders.Framework);
-      installHelpers.updateFramework({
-        repository: configuration.getConfig('frameworkRepository'),
-        revision: data.adapt_framework,
-        directory: dir
-      }, function(error) {
-        if(error) {
-          console.log(`Failed to upgrade ${dir.replace(configuration.serverRoot, '')} to ${data.adapt_framework}`);
-          return cb(error);
+        installHelpers.updateAuthoring(
+          {
+            repository: configuration.getConfig('authoringToolRepository'),
+            revision: data.adapt_authoring,
+            directory: configuration.serverRoot,
+          },
+          function (error) {
+            if (error) {
+              console.log(
+                `Failed to update ${configuration.serverRoot} to '${data.adapt_authoring}'`
+              );
+              return cb(error);
+            }
+            console.log(
+              `${app.polyglot.t('app.productname')} upgraded to ${
+                data.adapt_authoring
+              }`
+            );
+            cb();
+          }
+        );
+      },
+      function upgradeFramework(cb) {
+        if (installHelpers.inputHelpers.isFalsy(data.adapt_framework)) {
+          return cb();
         }
-        console.log(`Adapt framework upgraded to ${data.adapt_framework}`);
-        cb();
-      });
-    },
-    function runMigrations(callback) {
-      installHelpers.syncMigrations(function(err, migrations) {
-        if(err) {
-          return callback(err);
-        }
-        installHelpers.getMigrationConfig(function(err, config) {
-          if(err){
+        var dir = path.join(
+          configuration.tempDir,
+          configuration.getConfig('masterTenantID'),
+          OutputConstants.Folders.Framework
+        );
+        installHelpers.updateFramework(
+          {
+            repository: configuration.getConfig('frameworkRepository'),
+            revision: data.adapt_framework,
+            directory: dir,
+          },
+          function (error) {
+            if (error) {
+              console.log(
+                `Failed to upgrade ${dir.replace(
+                  configuration.serverRoot,
+                  ''
+                )} to ${data.adapt_framework}`
+              );
+              return cb(error);
+            }
+            console.log(`Adapt framework upgraded to ${data.adapt_framework}`);
+            cb();
+          }
+        );
+      },
+      function runMigrations(callback) {
+        installHelpers.syncMigrations(function (err, migrations) {
+          if (err) {
             return callback(err);
           }
-          var migrator = new migrateMongoose({
-            migrationsPath: config.migrationsDir,
-            dbConnectionUri: config.dbConnectionUri,
-            autosync: true
-          });
-          migrator.list().then(function(migrations) {
-            var migrationsDone = 0;
-            async.eachSeries(migrations, function(migration, callback) {
-              if(migration.state === 'up') {
-                return callback();
-              }
-              console.log(`Running ${migration.name} migration`);
-              migrationsDone++;
-              migrator.run('up', migration.name).then(v => callback()).catch(callback);
-
-            }, function(err, data) {
-              if(err) {
-                return callback(err);
-              }
-              if(migrationsDone > 0) {
-                console.log(`${migrationsDone} migration${migrationsDone > 1 ? 's' : ''} ran successfully`);
-              } else {
-                console.log(`No migrations to run`);
-              }
-              callback();
+          installHelpers.getMigrationConfig(function (err, config) {
+            if (err) {
+              return callback(err);
+            }
+            var migrator = new migrateMongoose({
+              migrationsPath: config.migrationsDir,
+              dbConnectionUri: config.dbConnectionUri,
+              autosync: true,
             });
-          }).catch(callback);
+            migrator
+              .list()
+              .then(function (migrations) {
+                var migrationsDone = 0;
+                async.eachSeries(
+                  migrations,
+                  function (migration, callback) {
+                    if (migration.state === 'up') {
+                      return callback();
+                    }
+                    console.log(`Running ${migration.name} migration`);
+                    migrationsDone++;
+                    migrator
+                      .run('up', migration.name)
+                      .then((v) => callback())
+                      .catch(callback);
+                  },
+                  function (err, data) {
+                    if (err) {
+                      return callback(err);
+                    }
+                    if (migrationsDone > 0) {
+                      console.log(
+                        `${migrationsDone} migration${
+                          migrationsDone > 1 ? 's' : ''
+                        } ran successfully`
+                      );
+                    } else {
+                      console.log(`No migrations to run`);
+                    }
+                    callback();
+                  }
+                );
+              })
+              .catch(callback);
+          });
         });
-      })
+      },
+    ],
+    function (error) {
+      if (error) {
+        console.error('ERROR:', error);
+        return installHelpers.exit(
+          1,
+          'Upgrade was unsuccessful. Please check the console output.'
+        );
+      }
+      installHelpers.exit(
+        0,
+        `Your ${app.polyglot.t('app.productname')} was updated successfully.`
+      );
     }
-  ], function(error) {
-    if(error) {
-      console.error('ERROR:', error);
-      return installHelpers.exit(1, 'Upgrade was unsuccessful. Please check the console output.');
-    }
-    installHelpers.exit(0, `Your ${app.polyglot.t('app.productname')} was updated successfully.`);
-  });
+  );
 }

@@ -19,7 +19,10 @@ const logger = require('../../../lib/logger');
 const usermanager = require('../../../lib/usermanager');
 
 function LocalFileStorage() {
-  this.dataRoot = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'));
+  this.dataRoot = path.join(
+    configuration.serverRoot,
+    configuration.getConfig('dataRoot')
+  );
 }
 
 util.inherits(LocalFileStorage, FileStorage);
@@ -37,7 +40,9 @@ LocalFileStorage.prototype.resolvePath = function (relativePath, forceMaster) {
   if (user) {
     var tenantName;
     if (!forceMaster) {
-      tenantName = user.tenant ? user.tenant.name : configuration.getConfig('masterTenantName');
+      tenantName = user.tenant
+        ? user.tenant.name
+        : configuration.getConfig('masterTenantName');
     } else {
       tenantName = configuration.getConfig('masterTenantName');
     }
@@ -100,7 +105,12 @@ LocalFileStorage.prototype.getFileContents = function (filePath, callback) {
  * see {@link http://nodejs.org/docs/latest/api/fs.html#fs_fs_write_fd_buffer_offset_length_position_callback | Nodejs fs module }
  */
 
-LocalFileStorage.prototype.putFileContents = function (filePath, options, buffer, callback) {
+LocalFileStorage.prototype.putFileContents = function (
+  filePath,
+  options,
+  buffer,
+  callback
+) {
   fs.outputFile(this.resolvePath(filePath), buffer, options, callback);
 };
 
@@ -112,7 +122,11 @@ LocalFileStorage.prototype.putFileContents = function (filePath, options, buffer
  * @param {function} callback - function of the form function(stream)
  */
 
-LocalFileStorage.prototype.createWriteStream = function (filePath, options, callback) {
+LocalFileStorage.prototype.createWriteStream = function (
+  filePath,
+  options,
+  callback
+) {
   if ('function' === typeof options) {
     // only callback was passed
     callback = options;
@@ -129,18 +143,22 @@ LocalFileStorage.prototype.createWriteStream = function (filePath, options, call
  * @param {function} callback - function of the form function(stream)
  */
 
-LocalFileStorage.prototype.createReadStream = function (filePath, options, callback) {
+LocalFileStorage.prototype.createReadStream = function (
+  filePath,
+  options,
+  callback
+) {
   if ('function' === typeof options) {
     // only callback was passed
     callback = options;
     options = {};
   }
 
-  var forceMaster = (options && options.forceMaster)
-    ? true
-    : false;
+  var forceMaster = options && options.forceMaster ? true : false;
 
-  callback(fs.createReadStream(this.resolvePath(filePath, forceMaster), options));
+  callback(
+    fs.createReadStream(this.resolvePath(filePath, forceMaster), options)
+  );
 };
 
 /**
@@ -183,7 +201,12 @@ LocalFileStorage.prototype.moveFile = function (oldPath, newPath, callback) {
  * @param {callback} cb - callback to handle the processed file
  */
 
-LocalFileStorage.prototype.processFileUpload = function (file, newPath, options, cb) {
+LocalFileStorage.prototype.processFileUpload = function (
+  file,
+  newPath,
+  options,
+  cb
+) {
   newPath = this.resolvePath(newPath);
   var relativePath = this.getRelativePath(newPath);
   var self = this;
@@ -211,42 +234,51 @@ LocalFileStorage.prototype.processFileUpload = function (file, newPath, options,
         thumbnailPath: false,
         name: file.name,
         mimeType: file.type,
-        size: file.size
+        size: file.size,
       };
 
       // create thumbnail?
       async.series([
         function (nextFunc) {
           if (options.createThumbnail) {
-            return self.createThumbnail(newPath, file.type, options.thumbnailOptions, function (err, thumbnailPath) {
-              if (thumbnailPath) {
-                data.thumbnailPath = thumbnailPath;
+            return self.createThumbnail(
+              newPath,
+              file.type,
+              options.thumbnailOptions,
+              function (err, thumbnailPath) {
+                if (thumbnailPath) {
+                  data.thumbnailPath = thumbnailPath;
+                }
+                nextFunc();
               }
-              nextFunc();
-            });
+            );
           }
 
           return nextFunc();
         },
         function (nextFunc) {
           if (options.createMetadata) {
-            return self.inspectFile(newPath, file.type, function (err, withMeta) {
-              if (withMeta) {
-                Object.assign(data, withMeta);
+            return self.inspectFile(
+              newPath,
+              file.type,
+              function (err, withMeta) {
+                if (withMeta) {
+                  Object.assign(data, withMeta);
+                }
+                nextFunc();
               }
-              nextFunc();
-            });
+            );
           }
 
           return nextFunc();
         },
         function (nextFunc) {
           return cb(null, data);
-        }
+        },
       ]);
     });
   });
-} ;
+};
 
 /**
  * Creates a directory at the given path
@@ -299,44 +331,86 @@ LocalFileStorage.prototype.getFileStats = function (filePath, callback) {
  * @param {string} sourceTenantName - Source tenant.name
  * @param {string} destinationTenantName - Destination tenant.name
  */
-LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destinationTenantName, callback) {
+LocalFileStorage.prototype.copyAsset = function (
+  asset,
+  sourceTenantName,
+  destinationTenantName,
+  callback
+) {
   // Verify the destination folder exists
-  var dataRoot = path.join(configuration.serverRoot, configuration.getConfig('dataRoot'));
+  var dataRoot = path.join(
+    configuration.serverRoot,
+    configuration.getConfig('dataRoot')
+  );
   var assetFolder = path.join(dataRoot, destinationTenantName, asset.directory);
 
-  fs.mkdirs(assetFolder, function(error) {
+  fs.mkdirs(assetFolder, function (error) {
     if (error) {
-      logger.log('error', 'fs.mkdirs error while copying asset, creating ' + assetFolder);
+      logger.log(
+        'error',
+        'fs.mkdirs error while copying asset, creating ' + assetFolder
+      );
       return callback(error);
     }
 
     // Copy the asset
     var sourceFile = path.join(dataRoot, sourceTenantName, asset.path);
-    var destinationFile = path.join(dataRoot, destinationTenantName, asset.path);
+    var destinationFile = path.join(
+      dataRoot,
+      destinationTenantName,
+      asset.path
+    );
 
-    fs.copy(sourceFile, destinationFile, {clobber:false}, function(error) {
+    fs.copy(sourceFile, destinationFile, { clobber: false }, function (error) {
       if (error) {
         logger.log('error', 'fs.copy error while copying ' + asset.filename);
-        logger.log('error', 'error copying ' + sourceFile + ' to ' + destinationFile);
+        logger.log(
+          'error',
+          'error copying ' + sourceFile + ' to ' + destinationFile
+        );
         return callback(error);
       }
 
       // Copy the thumbnail (if required)
-      if (asset.thumbnailPath && asset.thumbnailPath !== 'false' && (asset.assetType == 'image' || asset.assetType == 'video')) {
+      if (
+        asset.thumbnailPath &&
+        asset.thumbnailPath !== 'false' &&
+        (asset.assetType == 'image' || asset.assetType == 'video')
+      ) {
+        var sourceThumbnailFile = path.join(
+          dataRoot,
+          sourceTenantName,
+          asset.thumbnailPath
+        );
+        var destinationThumbnailFile = path.join(
+          dataRoot,
+          destinationTenantName,
+          asset.thumbnailPath
+        );
 
-        var sourceThumbnailFile = path.join(dataRoot, sourceTenantName, asset.thumbnailPath);
-        var destinationThumbnailFile = path.join(dataRoot, destinationTenantName, asset.thumbnailPath);
+        fs.copy(
+          sourceThumbnailFile,
+          destinationThumbnailFile,
+          function (error) {
+            if (error) {
+              logger.log(
+                'error',
+                'fs.copy error while copying ' + asset.thumbnailPath
+              );
+              logger.log(
+                'error',
+                'error copying (thumbnail) ' +
+                  sourceThumbnailFile +
+                  ' to ' +
+                  destinationThumbnailFile
+              );
 
-        fs.copy(sourceThumbnailFile, destinationThumbnailFile, function(error) {
-          if (error) {
-            logger.log('error', 'fs.copy error while copying ' + asset.thumbnailPath);
-            logger.log('error', 'error copying (thumbnail) ' + sourceThumbnailFile + ' to ' + destinationThumbnailFile);
+              // TODO If thumbnails fail it's not the end of the world -- for now
+            }
 
-            // TODO If thumbnails fail it's not the end of the world -- for now
+            return callback(null);
           }
-
-          return callback(null);
-        });
+        );
       } else {
         return callback(null);
       }
@@ -353,16 +427,24 @@ LocalFileStorage.prototype.copyAsset = function(asset, sourceTenantName, destina
  * @param {callback} next - function of the form function(error, thumbnailPath)
  */
 
-LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, options, next) {
+LocalFileStorage.prototype.createThumbnail = function (
+  filePath,
+  fileType,
+  options,
+  next
+) {
   var fileFormat = fileType.split('/')[1];
   fileType = fileType.split('/')[0];
   // also check fileType is supported
-  if(!isThumbnailTypeSupported(fileType, fileFormat)) {
+  if (!isThumbnailTypeSupported(fileType, fileFormat)) {
     return next(null, false);
   }
   var self = this;
-  var thumbExt = ('image' === fileType) ? path.extname(filePath) : '.gif';
-  var imgThumbPath = path.join(path.dirname(filePath), path.basename(filePath)) + '_thumb' + thumbExt;
+  var thumbExt = 'image' === fileType ? path.extname(filePath) : '.gif';
+  var imgThumbPath =
+    path.join(path.dirname(filePath), path.basename(filePath)) +
+    '_thumb' +
+    thumbExt;
 
   var ff = new ffmpeg({ source: filePath }).output(imgThumbPath);
 
@@ -377,8 +459,7 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
     ff.videoFilters('setpts=0.05*PTS');
     // set output framerate
     ff.fps(1.5);
-  }
-  else if ('gif' === fileFormat) {
+  } else if ('gif' === fileFormat) {
     // pixel format for gifs (only needed with ffmpeg older versions eg 1.2)
     ff.outputOptions('-pix_fmt rgb24');
     // only want 1 output image
@@ -387,11 +468,14 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
   // use size from options
   ff.size(options.width + 'x' + options.height);
   // event handling
-  ff.on('error', function(err) {
-    logger.log('error', 'Failed to create ' + fileType + ' thumbnail: ' + err.message);
+  ff.on('error', function (err) {
+    logger.log(
+      'error',
+      'Failed to create ' + fileType + ' thumbnail: ' + err.message
+    );
     return next(err, false);
   });
-  ff.on('end', function() {
+  ff.on('end', function () {
     return next(null, self.getRelativePath(imgThumbPath));
   });
 
@@ -399,7 +483,7 @@ LocalFileStorage.prototype.createThumbnail = function (filePath, fileType, optio
 };
 
 function isThumbnailTypeSupported(type, format) {
-  switch(type) {
+  switch (type) {
     case 'video':
     case 'image':
       // https://github.com/adaptlearning/adapt_authoring/issues/2065
@@ -418,9 +502,9 @@ function isThumbnailTypeSupported(type, format) {
  */
 
 LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
- var data = {
+  var data = {
     assetType: null,
-    metadata: null
+    metadata: null,
   };
 
   fileType = fileType.split('/')[0];
@@ -444,20 +528,20 @@ LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
         case 'image':
           data.metadata = {
             width: probeData.streams[0].width,
-            height: probeData.streams[0].height
-          }
+            height: probeData.streams[0].height,
+          };
           break;
         case 'video':
           data.metadata = {
             duration: parseInt(probeData.streams[0].duration),
             width: probeData.streams[0].width,
-            height: probeData.streams[0].height
-          }
+            height: probeData.streams[0].height,
+          };
           break;
         case 'audio':
           data.metadata = {
-            duration: parseInt(probeData.streams[0].duration)
-          }
+            duration: parseInt(probeData.streams[0].duration),
+          };
           break;
       }
     }

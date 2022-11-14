@@ -1,6 +1,6 @@
 const configuration = require('../../lib/configuration');
 const express = require('express');
-const server = module.exports = express();
+const server = (module.exports = express());
 const origin = require('../../');
 const app = origin();
 const installHelper = require('../../lib/installHelpers');
@@ -19,14 +19,20 @@ server.get('/', async function (req, res, next) {
   const trackingId = configuration.getConfig('trackingId') || 'UA-XXXXX-Y';
   const versions = await getVersions();
 
-  res.render('index', Object.assign({
-    isProduction: isProduction,
-    dateStampAsString: dateStampAsString,
-    loading: app.polyglot.t('app.loading'),
-    productName: app.polyglot.t('app.productname'),
-    useAnalytics: useAnalytics,
-    trackingId: trackingId
-  }, versions));
+  res.render(
+    'index',
+    Object.assign(
+      {
+        isProduction: isProduction,
+        dateStampAsString: dateStampAsString,
+        loading: app.polyglot.t('app.loading'),
+        productName: app.polyglot.t('app.productname'),
+        useAnalytics: useAnalytics,
+        trackingId: trackingId,
+      },
+      versions
+    )
+  );
 });
 
 async function getVersions() {

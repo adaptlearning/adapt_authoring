@@ -1,35 +1,34 @@
 define([
   'core/origin',
   'modules/sidebar/views/sidebarItemView',
-  './filterView'
-], function(Origin, SidebarItemView, FilterView) {
+  './filterView',
+], function (Origin, SidebarItemView, FilterView) {
+  var UserManagementSidebarView = SidebarItemView.extend(
+    {
+      events: {
+        'click button.add': 'addUser',
+      },
 
-  var UserManagementSidebarView = SidebarItemView.extend({
+      initialize: function () {
+        SidebarItemView.prototype.initialize.apply(this, arguments);
+      },
 
-    events: {
-      'click button.add': 'addUser'
+      postRender: function () {
+        this.filterView = new FilterView({
+          collection: this.collection,
+          model: this.model,
+        });
+      },
+
+      addUser: function (event) {
+        event && event.preventDefault();
+        Origin.router.navigateTo('userManagement/addUser');
+      },
     },
-
-    initialize: function() {
-      SidebarItemView.prototype.initialize.apply(this, arguments);
-    },
-
-    postRender: function() {
-      this.filterView = new FilterView({
-        collection: this.collection,
-        model: this.model
-      });
-    },
-
-    addUser: function(event) {
-      event && event.preventDefault();
-      Origin.router.navigateTo('userManagement/addUser');
+    {
+      template: 'userManagementSidebar',
     }
-
-  }, {
-    template: 'userManagementSidebar'
-  });
+  );
 
   return UserManagementSidebarView;
-
 });

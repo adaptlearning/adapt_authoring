@@ -1,12 +1,12 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function (require) {
   var ContentModel = require('./contentModel');
 
   var ConfigModel = ContentModel.extend({
     _type: 'config',
     _parent: 'course',
 
-    sync: function(method, model, options) {
+    sync: function (method, model, options) {
       options = options || {};
 
       switch (method.toLowerCase()) {
@@ -20,7 +20,7 @@ define(function(require) {
       }
 
       return Backbone.sync.apply(this, arguments);
-    }
+    },
   });
 
   return ConfigModel;

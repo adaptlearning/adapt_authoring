@@ -14,7 +14,7 @@ var app = origin();
 var agent = {};
 var assetIds = [];
 
-before(function(done) {
+before(function (done) {
   agent = request.agent(app.getServerURL());
   // need to authenticate
   agent
@@ -22,23 +22,23 @@ before(function(done) {
     .set('Accept', 'application/json')
     .send({
       email: testUser.email,
-      password: testUser.plainPassword
+      password: testUser.plainPassword,
     })
     .expect(200)
     .expect('Content-Type', /json/)
     .end(done);
 });
 
-it('should allow requests to create an new asset', function(done) {
+it('should allow requests to create an new asset', function (done) {
   postAsset(done);
 });
 
-it('should allow requests to retrieve an asset', function(done) {
+it('should allow requests to retrieve an asset', function (done) {
   agent
     .get('/api/asset/' + assetIds[0])
     .expect(200)
     .expect('Content-Type', /json/)
-    .end(function(error, res) {
+    .end(function (error, res) {
       should.not.exist(error);
       should.exist(res.body);
       res.body.title.should.equal('Temporary Asset');
@@ -47,7 +47,7 @@ it('should allow requests to retrieve an asset', function(done) {
     });
 });
 
-it('should allow requests to query assets', function(done) {
+it('should allow requests to query assets', function (done) {
   // test by file extension to be a bit more generic
   var fileExtension = testData.asset.filename.split('.').pop();
   agent
@@ -55,37 +55,39 @@ it('should allow requests to query assets', function(done) {
     .send({ search: { filename: `\.${fileExtension}$` } })
     .expect(200)
     .expect('Content-Type', /json/)
-    .end(function(error, res) {
+    .end(function (error, res) {
       should.not.exist(error);
       should.exist(res.body);
-      res.body.length.should.equal(1, 'Expected 1 result, got ' + res.body.length);
+      res.body.length.should.equal(
+        1,
+        'Expected 1 result, got ' + res.body.length
+      );
       done();
     });
 });
 
-it('should allow requests to serve an asset', function(done) {
+it('should allow requests to serve an asset', function (done) {
   agent
     .get('/api/asset/serve/' + assetIds[0])
     .expect(200)
     .expect('Content-Type', /javascript/, done);
 });
 
-it('should allow requests to serve an asset thumbnail', function(done) {
+it('should allow requests to serve an asset thumbnail', function (done) {
   agent
     .get('/api/asset/thumb/' + assetIds[0])
     .expect(200)
     .expect('Content-Type', /image/, done);
 });
 
-
-it('should allow requests to update an asset', function(done) {
+it('should allow requests to update an asset', function (done) {
   agent
     .put('/api/asset/' + assetIds[0])
     .field('title', 'Updated Temporary Asset')
     .attach('file', __filename)
     .expect(200)
     .expect('Content-Type', /json/)
-    .end(function(error, res) {
+    .end(function (error, res) {
       should.not.exist(error);
       should.exist(res.body);
       should.exist(res.body.success);
@@ -94,12 +96,12 @@ it('should allow requests to update an asset', function(done) {
     });
 });
 
-it('should allow requests to soft-delete an asset', function(done) {
+it('should allow requests to soft-delete an asset', function (done) {
   agent
     .put('/api/asset/trash/' + assetIds[0])
     .expect(200)
     .expect('Content-Type', /json/)
-    .end(function(error, res) {
+    .end(function (error, res) {
       should.not.exist(error);
       should.exist(res.body);
       should.exist(res.body.success);
@@ -108,12 +110,12 @@ it('should allow requests to soft-delete an asset', function(done) {
     });
 });
 
-it('should allow requests to restore a soft-deleted asset', function(done) {
+it('should allow requests to restore a soft-deleted asset', function (done) {
   agent
     .put('/api/asset/restore/' + assetIds[0])
     .expect(200)
     .expect('Content-Type', /json/)
-    .end(function(error, res) {
+    .end(function (error, res) {
       should.not.exist(error);
       should.exist(res.body);
       should.exist(res.body.success);
@@ -131,7 +133,7 @@ function postAsset(cb) {
     .attach('file', __filename)
     .expect(200)
     .expect('Content-Type', /json/)
-    .end(function(error, res) {
+    .end(function (error, res) {
       should.not.exist(error);
       should.exist(res.body);
       should.exist(res.body._id);
@@ -145,7 +147,7 @@ function deleteAsset(assetId, cb) {
     .del('/api/asset/' + assetId)
     .expect(200)
     .expect('Content-Type', /json/)
-    .end(function(error, res) {
+    .end(function (error, res) {
       should.not.exist(error);
       should.exist(res.body);
       should.exist(res.body.success);

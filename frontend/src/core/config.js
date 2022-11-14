@@ -9,7 +9,7 @@ require.config({
     imageReady: 'libraries/imageReady',
     inview: 'libraries/inview',
     jquery: 'libraries/jquery',
-    jqueryForm : 'libraries/jquery.form',
+    jqueryForm: 'libraries/jquery.form',
     jqueryTagsInput: 'libraries/jquery.tagsinput.min',
     jqueryUI: 'libraries/jquery-ui.min',
     modernizr: 'libraries/modernizr',
@@ -21,74 +21,74 @@ require.config({
     sweetalert: 'libraries/sweetalert.min',
     typeahead: 'libraries/typeahead',
     underscore: 'libraries/underscore',
-    velocity: 'libraries/velocity'
+    velocity: 'libraries/velocity',
   },
   shim: {
     // third-party
     ace: {
-      exports: 'ace/ace'
+      exports: 'ace/ace',
     },
     backbone: {
-      deps: ['underscore','jquery'],
-      exports: 'Backbone'
+      deps: ['underscore', 'jquery'],
+      exports: 'Backbone',
     },
     'backbone-forms': {
-      deps: ['backbone']
+      deps: ['backbone'],
     },
     'backbone-forms-lists': {
-      deps: ['backbone-forms']
+      deps: ['backbone-forms'],
     },
     handlebars: {
-      exports: 'Handlebars'
+      exports: 'Handlebars',
     },
     imageReady: {
       deps: ['jquery'],
-      exports: 'imageready'
+      exports: 'imageready',
     },
     inview: {
       deps: ['jquery'],
-      exports: 'inview'
+      exports: 'inview',
     },
     jqueryForm: {
       deps: ['jquery'],
-      exports: "$"
+      exports: '$',
     },
     jqueryTagsInput: {
       deps: ['jquery'],
-      exports: "$"
+      exports: '$',
     },
     jqueryUI: {
       deps: ['jquery'],
-      exports: "$"
+      exports: '$',
     },
     moment: {
-      exports: 'moment'
+      exports: 'moment',
     },
     polyglot: {
-      exports: 'Polyglot'
+      exports: 'Polyglot',
     },
     scrollTo: {
       deps: ['jquery'],
-      exports: 'scrollTo'
+      exports: 'scrollTo',
     },
     selectize: {
       deps: ['jquery'],
-      exports: "$"
+      exports: '$',
     },
     sweetalert: {
       deps: ['jquery'],
-      exports: 'sweetAlert'
+      exports: 'sweetAlert',
     },
     underscore: {
-      exports: '_'
+      exports: '_',
     },
     velocity: {
       deps: ['jquery'],
-      exports: 'velocity'
+      exports: 'velocity',
     },
     // internal
     'templates/templates': {
-      deps:['handlebars']
-    }
-  }
+      deps: ['handlebars'],
+    },
+  },
 });

@@ -5,22 +5,22 @@
 
 @context-menu-icon-color: @white;
 
-@context-menu-item-color:@context-menu-color;
+@context-menu-item-color: @context-menu-color;
 @context-menu-item-hover-color: lighten(@context-menu-item-color, 10%);
 
 @context-menu-item-text-color: @white;
-@context-menu-item-text-hover-color:@context-menu-item-text-color;
+@context-menu-item-text-hover-color: @context-menu-item-text-color;
 
 @contect-menu-item-border:1px solid #3e4a5f;
 
 .context-menu {
-    position:absolute;
-    background-color: @context-menu-color;
-    color: @context-menu-text-color;
-    box-shadow: 0 0 12px 1px rgba(0,0,0,0.15);
-    z-index: 100;
+  position: absolute;
+  background-color: @context-menu-color;
+  color: @context-menu-text-color;
+  box-shadow: 0 0 12px 1px rgba(0, 0, 0, 0.15);
+  z-index: 100;
 
-    /*.context-menu-pin {
+  /*.context-menu-pin {
         position:absolute;
         top:0px;
         left:-8px;
@@ -31,24 +31,24 @@
         border-right:8px solid darken(@context-menu-color, 10%);
     }*/
 
-    .context-menu-item {
-        /*border-left:4px solid darken(@context-menu-color, 10%);*/
-        min-width:130px;
-        .context-menu-item-open {
-            display:block;
-            padding:12px;
-            text-decoration: none;
-            color: @context-menu-item-text-color;
-            border-top: 1px solid @context-menu-item-hover-color;
-            transition:all 0.3s;
-            &:hover {
-                color:@context-menu-item-text-hover-color;
-                background-color: @context-menu-item-hover-color;
-            }
-        }
+  .context-menu-item {
+    /*border-left:4px solid darken(@context-menu-color, 10%);*/
+    min-width: 130px;
+    .context-menu-item-open {
+      display: block;
+      padding: 12px;
+      text-decoration: none;
+      color: @context-menu-item-text-color;
+      border-top: 1px solid @context-menu-item-hover-color;
+      transition: all 0.3s;
+      &:hover {
+        color: @context-menu-item-text-hover-color;
+        background-color: @context-menu-item-hover-color;
+      }
     }
+  }
 }
 
 a.open-context-icon {
-    color: @context-menu-icon-color;
+  color: @context-menu-icon-color;
 }

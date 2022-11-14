@@ -1,7 +1,6 @@
 @import 'colours';
 
 .editor-view {
-
   .editor-container {
     position: relative;
     width: 100%;
@@ -21,7 +20,6 @@
   }
 
   .paste-zone {
-
     &.paste-zone-block,
     &.paste-zone-article {
       margin-bottom: 20px;
@@ -46,7 +44,6 @@
     &-component-full {
       margin-bottom: 20px;
     }
-
   }
 
   .paste-zone-available {
@@ -71,7 +68,7 @@
 
   .page-article-components:after {
     clear: both;
-    content: "";
+    content: '';
     display: block;
   }
 
@@ -90,9 +87,9 @@
   }
 
   .drag-helper {
-    color: #DEDEDE;
-    border: 1px solid #C9C9C9;
-    background: #7A7A7A;
+    color: #dedede;
+    border: 1px solid #c9c9c9;
+    background: #7a7a7a;
     padding: 10px;
     margin: 10px;
     cursor: move;
@@ -101,61 +98,61 @@
 }
 
 .editor-item-settings {
-    font-size: 16px;
+  font-size: 16px;
+  width: 100%;
+  opacity: 1;
+  background-color: transparent;
+  transition: all 0.3s;
+
+  a {
+    text-decoration: none;
+  }
+
+  &:hover {
+    cursor: move;
+  }
+
+  &-inner {
+    button {
+      padding: 10px;
+      font-size: 16px;
+      line-height: 16px;
+      height: 16px;
+      box-sizing: content-box;
+      text-align: center;
+    }
+
     width: 100%;
-    opacity: 1;
-    background-color: transparent;
-    transition: all 0.3s;
+    box-sizing: border-box;
+    display: flex;
+    padding: 0 10px;
 
-    a {
-      text-decoration: none;
+    .editor-delete-page-element {
+      order: 2;
     }
-
-    &:hover {
-      cursor: move;
-    }
-
-    &-inner {
-      button {
-        padding: 10px;
-        font-size: 16px;
-        line-height: 16px;
-        height: 16px;
-        box-sizing: content-box;
-        text-align: center;
-      }
-
+    .editor-page-element-detail-inner {
       width: 100%;
-      box-sizing: border-box;
-      display: flex;
       padding: 0 10px;
-
-      .editor-delete-page-element {
-        order: 2;
-      }
-      .editor-page-element-detail-inner {
-        width: 100%;
-        padding: 0 10px;
+      overflow: hidden;
+      order: 1;
+      display: flex;
+      align-items: center;
+      .title {
+        white-space: nowrap;
+        text-overflow: ellipsis;
         overflow: hidden;
-        order: 1;
-        display: flex;
-        align-items: center;
-        .title {
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
-        &.component-detail-inner {
-          opacity: 0;  // we need the element to move the trash-icon to the right
-        }
       }
-      .component-move {
-        order: 1;
-      }
-      .editor-collapse-article {
-        order: 2;
+      &.component-detail-inner {
+        opacity: 0; // we need the element to move the trash-icon to the right
       }
     }
+    .component-move {
+      order: 1;
+    }
+    .editor-collapse-article {
+      order: 2;
+    }
+  }
 }
 
 .editor-item-settings button,
@@ -163,7 +160,7 @@
   color: @primary-color;
   transition: all 0.3s;
   &:hover {
-    color:darken(@primary-color,5%);
+    color: darken(@primary-color, 5%);
   }
 }
 
@@ -198,7 +195,8 @@ i.asset-clear {
 }
 
 .not-synced {
-  transition:transform 0.3s cubic-bezier(0.8, 0.0, 0.2, 1), opacity 0.3s cubic-bezier(0.8, 0.0, 0.2, 1)!important;
+  transition: transform 0.3s cubic-bezier(0.8, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.8, 0, 0.2, 1) !important;
   transform: scale(0.4, 0.4);
-  opacity:0;
+  opacity: 0;
 }

@@ -34,12 +34,12 @@ var bowerConfig = {
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     // Not required for menus
     return next();
-  }
+  },
 };
 
-function Menu () {
+function Menu() {
   this.bowerConfig = bowerConfig;
-};
+}
 
 util.inherits(Menu, BowerPlugin);
 
@@ -75,7 +75,7 @@ Menu.prototype.retrieve = function (search, options, next) {
   }
 
   if (!options.populate) {
-    options.populate = { '_menuType': ['displayName'] };
+    options.populate = { _menuType: ['displayName'] };
   }
 
   ContentPlugin.prototype.retrieve.call(this, search, options, next);
@@ -86,12 +86,11 @@ Menu.prototype.retrieve = function (search, options, next) {
  *
  * @api private
  */
-function initialize () {
-BowerPlugin.prototype.initialize.call(new Menu(), bowerConfig);
+function initialize() {
+  BowerPlugin.prototype.initialize.call(new Menu(), bowerConfig);
 
   var app = origin();
   app.once('serverStarted', function (server) {
-
     // enable a menu
     // expects course ID and a menu ID
     rest.post('/menu/:menuid/makeitso/:courseid', function (req, res, next) {
@@ -104,50 +103,62 @@ BowerPlugin.prototype.initialize.call(new Menu(), bowerConfig);
           return next(err);
         }
 
-        database.getDatabase(function(err, masterDb) {
+        database.getDatabase(function (err, masterDb) {
           if (err) {
             return next(err);
           }
 
           // verify it's a valid menu
-          masterDb.retrieve('menutype', { _id: menuId }, function (err, results) {
-            if (err) {
-              return next(err);
-            }
-
-            if (!results || 1 !== results.length) {
-              res.statusCode = 404;
-              return res.json({ success: false, message: 'menu not found' });
-            }
-
-            // update the course config object
-            db.update('config', { _courseId: courseId }, { _menu: results[0].name }, function (err) {
+          masterDb.retrieve(
+            'menutype',
+            { _id: menuId },
+            function (err, results) {
               if (err) {
                 return next(err);
               }
 
-              // if we successfully changed the menu, we need to force a rebuild of the course
-              var user = usermanager.getCurrentUser();
-              var tenantId = user.tenant._id;
-              if (!tenantId) {
-                // log an error, but don't fail
-                logger.log('error', 'failed to determine current tenant', user);
-                res.statusCode = 200;
-                return res.json({ success: true });
+              if (!results || 1 !== results.length) {
+                res.statusCode = 404;
+                return res.json({ success: false, message: 'menu not found' });
               }
 
+              // update the course config object
+              db.update(
+                'config',
+                { _courseId: courseId },
+                { _menu: results[0].name },
+                function (err) {
+                  if (err) {
+                    return next(err);
+                  }
 
-              app.emit('rebuildCourse', tenantId, courseId);
+                  // if we successfully changed the menu, we need to force a rebuild of the course
+                  var user = usermanager.getCurrentUser();
+                  var tenantId = user.tenant._id;
+                  if (!tenantId) {
+                    // log an error, but don't fail
+                    logger.log(
+                      'error',
+                      'failed to determine current tenant',
+                      user
+                    );
+                    res.statusCode = 200;
+                    return res.json({ success: true });
+                  }
 
-              res.statusCode = 200;
-              return res.json({ success: true });
-            });
-          });
+                  app.emit('rebuildCourse', tenantId, courseId);
+
+                  res.statusCode = 200;
+                  return res.json({ success: true });
+                }
+              );
+            }
+          );
         }, configuration.getConfig('dbName'));
       });
     });
   });
-};
+}
 
 /**
  * Returns an array of course objects that use the menu with the passed id
@@ -157,7 +168,7 @@ BowerPlugin.prototype.initialize.call(new Menu(), bowerConfig);
 Menu.prototype.getUses = function (callback, id) {
   database.getDatabase(function (err, db) {
     if (err) {
-        return callback(err);
+      return callback(err);
     }
 
     db.retrieve('menutype', { _id: id }, function (err, menutypes) {
@@ -169,23 +180,26 @@ Menu.prototype.getUses = function (callback, id) {
         return callback(new Error('menutype not found'));
       }
 
-      db.retrieve('config', { _menu: menutypes[0].name }, function (err, configs) {
-        if (err) {
-          return callback(err);
-        }
+      db.retrieve(
+        'config',
+        { _menu: menutypes[0].name },
+        function (err, configs) {
+          if (err) {
+            return callback(err);
+          }
 
-        //Group all the course ids into an array for a mongo query
-        const courseIDs = [];
-        for (var i = 0, len = configs.length; i < len; i++) {
-          courseIDs.push(configs[i]._courseId);
-        }
+          //Group all the course ids into an array for a mongo query
+          const courseIDs = [];
+          for (var i = 0, len = configs.length; i < len; i++) {
+            courseIDs.push(configs[i]._courseId);
+          }
 
-        db.retrieve('course', { _id: {$in: courseIDs} }, callback);
-      });
+          db.retrieve('course', { _id: { $in: courseIDs } }, callback);
+        }
+      );
     });
   });
 };
-
 
 // setup extensions
 initialize();

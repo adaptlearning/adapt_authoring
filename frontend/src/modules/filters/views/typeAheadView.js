@@ -1,100 +1,101 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function (require) {
+  var Origin = require('core/origin');
+  var Typeahead = require('typeahead');
 
-	var Origin = require('core/origin');
-	var Typeahead = require('typeahead');
+  var TypeAheadView = Backbone.View.extend({
+    className: 'filters-typeahead',
 
-	var TypeAheadView = Backbone.View.extend({
+    initialize: function (options) {
+      this.options = options;
+      this.listenTo(Origin, 'remove:views', this.removeFilter);
+      this.preRender();
+      this.render();
+    },
 
-		className: 'filters-typeahead',
+    events: {
+      'keyup #typeahead-input': 'onInputKeyup',
+    },
 
-		initialize: function(options) {
-			this.options = options;
-			this.listenTo(Origin, 'remove:views', this.removeFilter);
-			this.preRender();
-			this.render();
-		},
+    preRender: function () {},
 
-		events: {
-			'keyup #typeahead-input': 'onInputKeyup'
-		},
+    render: function () {
+      var template = Handlebars.templates['typeAhead'];
+      this.$el.html(template(this.options));
 
-		preRender: function() {},
+      _.defer(
+        _.bind(function () {
+          this.postRender();
+        }, this)
+      );
 
-		render: function() {
+      return this;
+    },
 
-			var template = Handlebars.templates['typeAhead'];
-			this.$el.html(template(this.options));
+    postRender: function () {
+      var that = this;
+      // Create a new suggestion engine
+      var bloodHound = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        prefetch: this.options.url,
+      });
 
-			_.defer(_.bind(function() {
-				this.postRender();
-			}, this));
+      bloodHound.initialize();
 
-			return this;
+      // Add typeahead
+      this.$('#typeahead-filter .typeahead').typeahead(null, {
+        hint: true,
+        displayKey: this.options.displayKey,
+        source: bloodHound.ttAdapter(),
+      });
 
-		},
+      // Left in just in case we need it
+      this.$('#typeahead-filter .typeahead').on(
+        'typeahead:selected',
+        _.bind(function (event, filterObject) {
+          this.isSelected = true;
+          this.onFilterUpdated(event, filterObject);
+        }, this)
+      );
+      this.$('#typeahead-filter .typeahead').on(
+        'typeahead:cursorchanged',
+        _.bind(this.onFilterSearched, this)
+      );
 
-		postRender: function() {
-			var that = this;
-			// Create a new suggestion engine
-			var bloodHound = new Bloodhound({
-				datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-  				queryTokenizer: Bloodhound.tokenizers.whitespace,
-				prefetch: this.options.url
-				
-			});
+      this.$('#typeahead-filter .typeahead').on(
+        'typeahead:autocompleted',
+        _.bind(this.onFilterUpdated, this)
+      );
+    },
 
-			bloodHound.initialize();
- 
- 			// Add typeahead
-			this.$('#typeahead-filter .typeahead').typeahead(null, {
-				hint: true,
-				displayKey: this.options.displayKey,
-				source: bloodHound.ttAdapter()
-			});
+    onFilterUpdated: function (event, filterObject) {
+      this.filterObject = filterObject;
+      Origin.trigger('filters:typeAhead', filterObject);
+    },
 
-			// Left in just in case we need it
-			this.$('#typeahead-filter .typeahead').on('typeahead:selected', _.bind(function(event, filterObject) {
-				this.isSelected = true;
-				this.onFilterUpdated(event, filterObject);
-			}, this));
-			this.$('#typeahead-filter .typeahead').on('typeahead:cursorchanged', _.bind(this.onFilterSearched, this));
+    onFilterSearched: function (event, filterObject) {
+      this.filterObject = filterObject;
+    },
 
-			this.$('#typeahead-filter .typeahead').on('typeahead:autocompleted', _.bind(this.onFilterUpdated, this));
+    removeFilter: function () {
+      this.$('#typeahead-filter .typeahead').typeahead('destroy');
+      this.remove();
+    },
 
-		},
+    onInputKeyup: function (event) {
+      var inputValue = $(event.currentTarget).val();
 
-		onFilterUpdated: function(event, filterObject) {
-			this.filterObject = filterObject;
-			Origin.trigger('filters:typeAhead', filterObject);
-		},
+      if (inputValue.length === 0) {
+        Origin.trigger('filters:typeAhead', undefined);
+      } else if (event.keyCode === 13) {
+        if (!this.isSelected) {
+          Origin.trigger('filters:typeAhead', this.filterObject);
+        }
+      }
+      this.isSelected = false;
+    },
+  });
 
-		onFilterSearched: function(event, filterObject) {
-			this.filterObject = filterObject;
-		},
-
-		removeFilter: function() {
-			this.$('#typeahead-filter .typeahead').typeahead('destroy');
-			this.remove();
-		},
-
-		onInputKeyup: function(event) {
-
-			var inputValue = $(event.currentTarget).val();
-
-			if (inputValue.length === 0) {
-				Origin.trigger('filters:typeAhead', undefined);
-			} else if (event.keyCode === 13) {
-				if (!this.isSelected) {
-					Origin.trigger('filters:typeAhead', this.filterObject);
-				}
-			}
-			this.isSelected = false;
-
-		}
-
-	});
-
-	return TypeAheadView;
-
+  return TypeAheadView;
 });

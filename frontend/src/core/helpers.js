@@ -1,31 +1,31 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require){
+define(function (require) {
   var Handlebars = require('handlebars');
   var Origin = require('core/origin');
   var Moment = require('moment');
 
   var helpers = {
-    console: function(context) {
+    console: function (context) {
       return console.log(context);
     },
 
-    lowerCase: function(text) {
+    lowerCase: function (text) {
       return text.toLowerCase();
     },
 
-    numbers: function(index) {
-      return index+1;
+    numbers: function (index) {
+      return index + 1;
     },
 
-    capitalise:  function(text) {
+    capitalise: function (text) {
       return text.charAt(0).toUpperCase() + text.slice(1);
     },
 
     odd: function (index) {
-      return (index +1) % 2 === 0  ? 'even' : 'odd';
+      return (index + 1) % 2 === 0 ? 'even' : 'odd';
     },
 
-    stringToClassName: function(text) {
+    stringToClassName: function (text) {
       if (!text) return;
       // Check if first character is an underscore and remove
       // Normally used for attribute with '_'s
@@ -33,14 +33,14 @@ define(function(require){
         text = text.slice(1);
       }
       // Remove _ and spaces with dashes
-      return text.replace(/_| /g, "-").toLowerCase();
+      return text.replace(/_| /g, '-').toLowerCase();
     },
 
-    keyToTitleString: function(key) {
+    keyToTitleString: function (key) {
       if (!key) return;
       // check translatable strings first
       var l10nKey = 'app.scaffold.' + key;
-      if(Origin.l10n.has(l10nKey)) {
+      if (Origin.l10n.has(l10nKey)) {
         return Origin.l10n.t(l10nKey);
       }
       // fall-back: remove all _ and capitalise
@@ -48,15 +48,18 @@ define(function(require){
       return this.capitalise(string);
     },
 
-    momentFormat: function(date, format) {
+    momentFormat: function (date, format) {
       if (typeof date == 'undefined') {
         return '-';
       }
       return Moment(date).format(format);
     },
 
-    formatDuration: function(duration) {
-      var zero = '0', hh, mm, ss;
+    formatDuration: function (duration) {
+      var zero = '0',
+        hh,
+        mm,
+        ss;
       var time = new Date(0, 0, 0, 0, 0, Math.floor(duration), 0);
 
       hh = time.getHours();
@@ -64,15 +67,15 @@ define(function(require){
       ss = time.getSeconds();
 
       // Pad zero values to 00
-      hh = (zero+hh).slice(-2);
-      mm = (zero+mm).slice(-2);
-      ss = (zero+ss).slice(-2);
+      hh = (zero + hh).slice(-2);
+      mm = (zero + mm).slice(-2);
+      ss = (zero + ss).slice(-2);
 
       return hh + ':' + mm + ':' + ss;
     },
 
     // checks for http/https and www. prefix
-    isAssetExternal: function(url) {
+    isAssetExternal: function (url) {
       if (!url || !url.length) {
         return true;
       }
@@ -80,49 +83,49 @@ define(function(require){
       return url.match(urlRegEx) !== null;
     },
 
-    ifValueEquals: function(value, text, block) {
-      return (value === text) ? block.fn(this) : block.inverse(this);
+    ifValueEquals: function (value, text, block) {
+      return value === text ? block.fn(this) : block.inverse(this);
     },
 
-    ifUserIsMe: function(userId, block) {
+    ifUserIsMe: function (userId, block) {
       var isMe = userId === Origin.sessionModel.get('id');
       return isMe ? block.fn(this) : block.inverse(this);
     },
 
-    selected: function(option, value){
-      return (option === value) ? ' selected' : '';
+    selected: function (option, value) {
+      return option === value ? ' selected' : '';
     },
 
-    counterFromZero: function(n, block) {
+    counterFromZero: function (n, block) {
       var sum = '';
       for (var i = 0; i <= n; ++i) sum += block.fn(i);
       return sum;
     },
 
-    counterFromOne: function(n, block) {
+    counterFromOne: function (n, block) {
       var sum = '';
       for (var i = 1; i <= n; ++i) sum += block.fn(i);
       return sum;
     },
 
-    t: function(str, options) {
+    t: function (str, options) {
       for (var placeholder in options.hash) {
         options[placeholder] = options.hash[placeholder];
       }
       return Origin.l10n.t(str, options);
     },
 
-    stripHtml: function(html) {
+    stripHtml: function (html) {
       return new Handlebars.SafeString(html);
     },
 
-    escapeText: function(text) {
+    escapeText: function (text) {
       var div = document.createElement('div');
       div.appendChild(document.createTextNode(text));
       return div.innerHTML;
     },
 
-    bytesToSize: function(bytes) {
+    bytesToSize: function (bytes) {
       if (bytes === 0) return '0 B';
 
       var k = 1000;
@@ -132,18 +135,25 @@ define(function(require){
       return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
     },
 
-    renderBooleanOptions: function(selectedValue) {
-      var options = ["true", "false"];
+    renderBooleanOptions: function (selectedValue) {
+      var options = ['true', 'false'];
       var html = '';
 
       for (var i = 0; i < options.length; i++) {
         var selected = selectedValue == options[i] ? ' selected' : '';
-        html += '<option value="' + options[i] + '"' + selected + '>' + options[i] + '</option>';
+        html +=
+          '<option value="' +
+          options[i] +
+          '"' +
+          selected +
+          '>' +
+          options[i] +
+          '</option>';
       }
       return new Handlebars.SafeString(html);
     },
 
-    pickCSV: function(list, key, separator) {
+    pickCSV: function (list, key, separator) {
       if (!list || !list.length) {
         return '';
       }
@@ -159,45 +169,55 @@ define(function(require){
       return vals.join(separator);
     },
 
-    renderTags: function(list, key) {
+    renderTags: function (list, key) {
       if (!list || !list.length) {
         return '';
       }
       var html = '<ul class="tag-container">';
       for (var i = 0; i < list.length; ++i) {
         var item = list[i];
-        var tag = Handlebars.Utils.escapeExpression(key && item[key] || item);
-        html += '<li class="tag-item" title="' + tag + '"><span class="tag-value">' + tag  + '</span></li>';
+        var tag = Handlebars.Utils.escapeExpression((key && item[key]) || item);
+        html +=
+          '<li class="tag-item" title="' +
+          tag +
+          '"><span class="tag-value">' +
+          tag +
+          '</span></li>';
       }
       return new Handlebars.SafeString(html + '</ul>');
     },
 
-    ifHasPermissions: function(permissions, block) {
-      var hasPermission = Origin.permissions.hasPermissions(permissions.split(','));
+    ifHasPermissions: function (permissions, block) {
+      var hasPermission = Origin.permissions.hasPermissions(
+        permissions.split(',')
+      );
       return hasPermission ? block.fn(this) : block.inverse(this);
     },
 
-    ifMailEnabled: function(block) {
-      return Origin.constants.useSmtp === true ? block.fn(this) : block.inverse(this);
+    ifMailEnabled: function (block) {
+      return Origin.constants.useSmtp === true
+        ? block.fn(this)
+        : block.inverse(this);
     },
 
-    ifImageIsCourseAsset: function(url, block) {
-      var isCourseAsset = url.length !== 0 && url.indexOf('course/assets') === 0;
+    ifImageIsCourseAsset: function (url, block) {
+      var isCourseAsset =
+        url.length !== 0 && url.indexOf('course/assets') === 0;
       return isCourseAsset ? block.fn(this) : block.inverse(this);
     },
 
-    ifAssetIsExternal: function(url, block) {
+    ifAssetIsExternal: function (url, block) {
       var isExternal = Handlebars.helpers.isAssetExternal(url);
       return isExternal ? block.fn(this) : block.inverse(this);
     },
 
-    ifAssetIsHeroImage: function(url, block) {
+    ifAssetIsHeroImage: function (url, block) {
       var isMultiPart = url.split('/').length === 1;
       return isMultiPart ? block.fn(this) : block.inverse(this);
     },
 
-    copyStringToClipboard: function(data) {
-      var textArea = document.createElement("textarea");
+    copyStringToClipboard: function (data) {
+      var textArea = document.createElement('textarea');
 
       textArea.value = data;
       // Place in top-left corner of screen regardless of scroll position.
@@ -228,86 +248,100 @@ define(function(require){
       return success;
     },
 
-    isValidEmail: function(value) {
-      var regEx = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    isValidEmail: function (value) {
+      var regEx =
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return value.length > 0 && regEx.test(value);
     },
 
-    contentModelMap: function(type) {
+    contentModelMap: function (type) {
       var contentModels = {
         course: 'core/models/courseModel',
         contentobject: 'core/models/contentObjectModel',
         article: 'core/models/articleModel',
         block: 'core/models/blockModel',
         component: 'core/models/componentModel',
-        courseasset: 'core/models/courseAssetModel'
+        courseasset: 'core/models/courseAssetModel',
       };
-      if(contentModels.hasOwnProperty(type)) {
+      if (contentModels.hasOwnProperty(type)) {
         return require(contentModels[type]);
       }
     },
 
     /**
-    * Ensures list is iterated (doesn't guarantee order), even if using async iterator
-    * @param list Array or Backbone.Collection
-    * @param func Function to use as iterator. Will be passed item, index and callback function
-    * @param callback Function to be called on completion
-    */
-    forParallelAsync: function(list, func, callback) {
-      if(!list.hasOwnProperty('length') || list.length === 0) {
-        if(typeof callback === 'function') callback();
+     * Ensures list is iterated (doesn't guarantee order), even if using async iterator
+     * @param list Array or Backbone.Collection
+     * @param func Function to use as iterator. Will be passed item, index and callback function
+     * @param callback Function to be called on completion
+     */
+    forParallelAsync: function (list, func, callback) {
+      if (!list.hasOwnProperty('length') || list.length === 0) {
+        if (typeof callback === 'function') callback();
         return;
       }
       // make a copy in case func modifies the original
       var listCopy = list.models ? list.models.slice() : list.slice();
       var doneCount = 0;
-      var _checkCompletion = function() {
-        if((++doneCount === listCopy.length) && typeof callback === 'function') {
+      var _checkCompletion = function () {
+        if (++doneCount === listCopy.length && typeof callback === 'function') {
           callback();
         }
       };
-      for(var i = 0, count = listCopy.length; i < count; i++) {
+      for (var i = 0, count = listCopy.length; i < count; i++) {
         func(listCopy[i], i, _checkCompletion);
       }
     },
 
     /**
-    * Does a fetch for model in models, and returns the latest data in the
-    * passed callback
-    * @param models {Array of Backbone.Models}
-    * @param callback {Function to call when complete}
-    */
-    multiModelFetch: function(models, callback) {
+     * Does a fetch for model in models, and returns the latest data in the
+     * passed callback
+     * @param models {Array of Backbone.Models}
+     * @param callback {Function to call when complete}
+     */
+    multiModelFetch: function (models, callback) {
       var collatedData = {};
-      helpers.forParallelAsync(models, function(model, index, done) {
-        model.fetch({
-          success: function(data) {
-            collatedData[index] = data;
-            done();
-          },
-          error: function(data) {
-            console.error('Failed to fetch data for', model.get('_id'), + data.responseText);
-            done();
+      helpers.forParallelAsync(
+        models,
+        function (model, index, done) {
+          model.fetch({
+            success: function (data) {
+              collatedData[index] = data;
+              done();
+            },
+            error: function (data) {
+              console.error(
+                'Failed to fetch data for',
+                model.get('_id'),
+                +data.responseText
+              );
+              done();
+            },
+          });
+        },
+        function doneAll() {
+          var orderedKeys = Object.keys(collatedData).sort();
+          var returnArr = [];
+          for (var i = 0, count = orderedKeys.length; i < count; i++) {
+            returnArr.push(collatedData[orderedKeys[i]]);
           }
-        });
-      }, function doneAll() {
-        var orderedKeys = Object.keys(collatedData).sort();
-        var returnArr = [];
-        for(var i = 0, count = orderedKeys.length; i < count; i++) {
-          returnArr.push(collatedData[orderedKeys[i]]);
+          callback(returnArr);
         }
-        callback(returnArr);
-      });
+      );
     },
 
-    maxUploadSize: function(options) {
-      return new Handlebars.SafeString([
-        '<span class="max-fileupload-size">',
-        Origin.l10n.t('app.maxfileuploadsize', {size: Origin.constants.humanMaxFileUploadSize}),
-        '</span>'].join(''))
+    maxUploadSize: function (options) {
+      return new Handlebars.SafeString(
+        [
+          '<span class="max-fileupload-size">',
+          Origin.l10n.t('app.maxfileuploadsize', {
+            size: Origin.constants.humanMaxFileUploadSize,
+          }),
+          '</span>',
+        ].join('')
+      );
     },
 
-    flattenNestedProperties: function(properties) {
+    flattenNestedProperties: function (properties) {
       if (!properties) return {};
       var flatProperties = {};
       for (var key in properties) {
@@ -316,7 +350,7 @@ define(function(require){
           for (var innerKey in properties[key]) {
             // Check if key already exists
             if (flatProperties[innerKey]) {
-              flatProperties[key+'.'+innerKey] = properties[key][innerKey];
+              flatProperties[key + '.' + innerKey] = properties[key][innerKey];
             } else {
               flatProperties[innerKey] = properties[key][innerKey];
             }
@@ -328,14 +362,14 @@ define(function(require){
       return flatProperties;
     },
 
-    importConstants: function() {
+    importConstants: function () {
       this.constants = Origin.constants;
       return '';
-    }
+    },
   };
 
-  for(var name in helpers) {
-    if(!helpers.hasOwnProperty(name)) {
+  for (var name in helpers) {
+    if (!helpers.hasOwnProperty(name)) {
       continue;
     }
     Handlebars.registerHelper(name, helpers[name]);

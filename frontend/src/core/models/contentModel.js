@@ -1,5 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function (require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
   var Helpers = require('core/helpers');
@@ -9,45 +9,51 @@ define(function(require) {
     idAttribute: '_id',
     attributeBlacklist: null,
 
-    initialize: function(options) {
+    initialize: function (options) {
       this.on('sync', this.loadedData, this);
       this.on('change', this.loadedData, this);
     },
 
-    loadedData: function() {
-      if(this._siblingTypes) this._type = this._siblingTypes;
+    loadedData: function () {
+      if (this._siblingTypes) this._type = this._siblingTypes;
     },
 
-    fetchChildren: function(callback) {
-      var childTypes = _.isArray(this._childTypes) ? this._childTypes : [this._childTypes];
+    fetchChildren: function (callback) {
+      var childTypes = _.isArray(this._childTypes)
+        ? this._childTypes
+        : [this._childTypes];
       // has to be a plain old array because we may have multiple model types
       var children = [];
-      Helpers.forParallelAsync(childTypes, _.bind(function(childType, index, done) {
-        (new ContentCollection(null, {
-          _type: childType,
-          _parentId: this.get('_id')
-        })).fetch({
-          success: function(collection) {
-            children = children.concat(collection.models);
-            done();
-          },
-          error: function(collecion, response) {
-            Origin.Notify.alert({
-              type: 'error',
-              text: 'app.errorfetchingdata'
-            });
-          }
-        });
-      }, this), function() {
-        callback(children);
-      });
+      Helpers.forParallelAsync(
+        childTypes,
+        _.bind(function (childType, index, done) {
+          new ContentCollection(null, {
+            _type: childType,
+            _parentId: this.get('_id'),
+          }).fetch({
+            success: function (collection) {
+              children = children.concat(collection.models);
+              done();
+            },
+            error: function (collecion, response) {
+              Origin.Notify.alert({
+                type: 'error',
+                text: 'app.errorfetchingdata',
+              });
+            },
+          });
+        }, this),
+        function () {
+          callback(children);
+        }
+      );
     },
 
-    fetchParent: function(callback) {
-      if(!this._parentType || !this.get('_parentId')) {
+    fetchParent: function (callback) {
+      if (!this._parentType || !this.get('_parentId')) {
         return callback();
       }
-      if(this.get('_parentId') === Origin.editor.data.course.get('_id')) {
+      if (this.get('_parentId') === Origin.editor.data.course.get('_id')) {
         return callback(Origin.editor.data.course);
       }
       // create model instance using _parentType and _parentId
@@ -55,48 +61,48 @@ define(function(require) {
       var model = new modelClass({ _id: this.get('_parentId') });
       model.fetch({
         success: _.bind(callback, this),
-        error: _.bind(function(jqXHR) {
+        error: _.bind(function (jqXHR) {
           Origin.Notify.alert({
             type: 'error',
-            text: 'app.errorfetchingdata'
+            text: 'app.errorfetchingdata',
           });
           callback.call(this);
-        }, this)
+        }, this),
       });
     },
 
-    fetchSiblings: function(callback) {
+    fetchSiblings: function (callback) {
       var siblings = new ContentCollection(null, {
         _type: this._siblingTypes,
-        _parentId: this.get('_parentId')
+        _parentId: this.get('_parentId'),
       });
       siblings.fetch({
-        success: _.bind(function(collection) {
+        success: _.bind(function (collection) {
           collection.remove(this);
           callback(collection);
         }, this),
-        error: _.bind(function(jqXHR) {
+        error: _.bind(function (jqXHR) {
           Origin.Notify.alert({
             type: 'error',
-            text: 'app.errorfetchingdata'
+            text: 'app.errorfetchingdata',
           });
           callback.call(this);
-        }, this)
+        }, this),
       });
     },
 
-    serialize: function() {
+    serialize: function () {
       return JSON.stringify(this);
     },
 
-    pruneAttributes: function() {
+    pruneAttributes: function () {
       if (!this.attributeBlacklist) return;
-      Object.keys(this.attributes).forEach(function(key) {
+      Object.keys(this.attributes).forEach(function (key) {
         if (_.contains(this.attributeBlacklist, key)) {
           this.unset(key);
         }
       }, this);
-    }
+    },
   });
 
   return ContentModel;

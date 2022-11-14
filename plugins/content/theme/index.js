@@ -26,10 +26,10 @@ var bowerConfig = {
   updateLegacyContent: function (newPlugin, oldPlugin, next) {
     // Not required for themes
     return next();
-  }
+  },
 };
 
-function Theme () {
+function Theme() {
   this.bowerConfig = bowerConfig;
 }
 
@@ -67,7 +67,7 @@ Theme.prototype.retrieve = function (search, options, next) {
   }
 
   if (!options.populate) {
-    options.populate = { '_themeType': ['displayName'] };
+    options.populate = { _themeType: ['displayName'] };
   }
 
   ContentPlugin.prototype.retrieve.call(this, search, options, next);
@@ -83,22 +83,22 @@ Theme.prototype.updatePluginType = function (req, res, next) {
   var themeId = req.params.id;
   var delta = req.body;
 
-  database.getDatabase(function(err, db) {
+  database.getDatabase(function (err, db) {
     if (err) {
       return next(err);
     }
 
-    db.retrieve('themetype', {_id: themeId}, function(err, results) {
+    db.retrieve('themetype', { _id: themeId }, function (err, results) {
       if (err) {
         return next(err);
       }
 
       if (!results || 1 !== results.length) {
         res.statusCode = 404;
-        return res.json({success: false, message: 'Theme not found'});
+        return res.json({ success: false, message: 'Theme not found' });
       }
 
-      db.update('themetype', {_id: themeId}, delta, function(err, theme) {
+      db.update('themetype', { _id: themeId }, delta, function (err, theme) {
         if (err) {
           return next(err);
         }
@@ -130,19 +130,23 @@ Theme.prototype.getUses = function (callback, id) {
         return callback(new Error('themetype not found'));
       }
 
-      db.retrieve('config', { _theme: themetypes[0].name }, function (err, configs) {
-        if (err) {
-          return callback(err);
-        }
+      db.retrieve(
+        'config',
+        { _theme: themetypes[0].name },
+        function (err, configs) {
+          if (err) {
+            return callback(err);
+          }
 
-        //Group all the course id's into an array for a mongo query
-        const courseIDs = [];
-        for (var i = 0, len = configs.length; i < len; i++) {
-          courseIDs.push(configs[i]._courseId);
-        }
+          //Group all the course id's into an array for a mongo query
+          const courseIDs = [];
+          for (var i = 0, len = configs.length; i < len; i++) {
+            courseIDs.push(configs[i]._courseId);
+          }
 
-        db.retrieve('course', { _id: {$in: courseIDs} }, callback);
-      });
+          db.retrieve('course', { _id: { $in: courseIDs } }, callback);
+        }
+      );
     });
   });
 };
@@ -152,12 +156,11 @@ Theme.prototype.getUses = function (callback, id) {
  *
  * @api private
  */
-function initialize () {
+function initialize() {
   BowerPlugin.prototype.initialize.call(new Theme(), bowerConfig);
 
   var app = origin();
-  app.once('serverStarted', function() {
-
+  app.once('serverStarted', function () {
     // Assign a theme to to a course
     rest.post('/theme/:themeid/makeitso/:courseid', function (req, res, next) {
       var themeId = req.params.themeid;
@@ -169,7 +172,7 @@ function initialize () {
           return next(err);
         }
 
-        db.retrieve('config', { _courseId: courseId }, function(err, results) {
+        db.retrieve('config', { _courseId: courseId }, function (err, results) {
           if (err) {
             return next(err);
           }
@@ -186,66 +189,83 @@ function initialize () {
               }
 
               // Verify it's a valid theme
-              masterDb.retrieve('themetype', { _id: themeId }, function (err, results) {
-                if (err) {
-                  return next(err);
-                }
-
-                if (!results || 1 !== results.length) {
-                  res.statusCode = 404;
-                  return res.json({ success: false, message: 'theme not found' });
-                }
-
-                var newThemeName = results[0].name;
-
-                if (config._theme === newThemeName) {
-                  forceRebuild();
-                  return;
-                }
-
-                // Update the course config object
-                app.contentmanager.update('config', { _courseId: courseId }, { _courseId: courseId, _theme: newThemeName }, function (err) {
+              masterDb.retrieve(
+                'themetype',
+                { _id: themeId },
+                function (err, results) {
                   if (err) {
                     return next(err);
                   }
 
-                  // As the theme has changed, lose any previously set theme settings
-                  // These will not apply to the new theme
-                  app.contentmanager.update('course', { _id: courseId }, { themeSettings: null }, forceRebuild);
-                });
-
-                function forceRebuild(err) {
-                  if (err) {
-                    return next(err);
+                  if (!results || 1 !== results.length) {
+                    res.statusCode = 404;
+                    return res.json({
+                      success: false,
+                      message: 'theme not found',
+                    });
                   }
 
-                  // If we successfully changed the theme, we need to force a rebuild of the course
-                  var user = usermanager.getCurrentUser();
-                  var tenantId = user.tenant._id;
-                  if (!tenantId) {
-                    // log an error, but don't fail
-                    logger.log('error', 'failed to determine current tenant', user);
+                  var newThemeName = results[0].name;
+
+                  if (config._theme === newThemeName) {
+                    forceRebuild();
+                    return;
+                  }
+
+                  // Update the course config object
+                  app.contentmanager.update(
+                    'config',
+                    { _courseId: courseId },
+                    { _courseId: courseId, _theme: newThemeName },
+                    function (err) {
+                      if (err) {
+                        return next(err);
+                      }
+
+                      // As the theme has changed, lose any previously set theme settings
+                      // These will not apply to the new theme
+                      app.contentmanager.update(
+                        'course',
+                        { _id: courseId },
+                        { themeSettings: null },
+                        forceRebuild
+                      );
+                    }
+                  );
+
+                  function forceRebuild(err) {
+                    if (err) {
+                      return next(err);
+                    }
+
+                    // If we successfully changed the theme, we need to force a rebuild of the course
+                    var user = usermanager.getCurrentUser();
+                    var tenantId = user.tenant._id;
+                    if (!tenantId) {
+                      // log an error, but don't fail
+                      logger.log(
+                        'error',
+                        'failed to determine current tenant',
+                        user
+                      );
+                      res.statusCode = 200;
+                      return res.json({ success: true });
+                    }
+
+                    app.emit('rebuildCourse', tenantId, courseId);
+
                     res.statusCode = 200;
                     return res.json({ success: true });
                   }
-
-
-                  app.emit('rebuildCourse', tenantId, courseId);
-
-                  res.statusCode = 200;
-                  return res.json({success: true});
                 }
-              });
-            }, configuration.getConfig('dbName'));            
+              );
+            }, configuration.getConfig('dbName'));
           }
         });
       });
     });
   });
-
-
 }
-
 
 // setup themes
 initialize();

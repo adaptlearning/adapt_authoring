@@ -1,5 +1,5 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require) {
+define(function (require) {
   var ContentModel = require('core/models/contentModel');
 
   var ComponentTypeModel = ContentModel.extend({
@@ -7,9 +7,9 @@ define(function(require) {
     urlRoot: 'api/componenttype',
     _parent: 'block',
 
-    comparator: function(model) {
+    comparator: function (model) {
       return model.get('displayName');
-    }
+    },
   });
 
   return ComponentTypeModel;

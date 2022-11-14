@@ -8,7 +8,7 @@
 /frontend/src/plugins/plugins.js
 /frontend/src/templates/templates.js
 
-/node_modules/
+node_modules
 /nbproject/
 /master/
 

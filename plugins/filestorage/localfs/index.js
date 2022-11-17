@@ -275,10 +275,8 @@ LocalFileStorage.prototype.processFileUpload = function (
         },
         // Handle unzipping of .h5p assets
         function (nextFunc) {
-          if (data.mimeType === 'application/octet-stream') {
-            if (data.path.toLowerCase().match(/.h5p$/i)) {
-              return self.unzipH5PAsset(newPath, nextFunc);
-            }
+          if (data.path.toLowerCase().match(/.h5p$/i)) {
+            return self.unzipH5PAsset(newPath, nextFunc);
           }
 
           return nextFunc();

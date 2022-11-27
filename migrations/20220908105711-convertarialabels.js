@@ -19,7 +19,8 @@ module.exports = {
     };
     const props = origin().db.getModel('config')?.schema?.tree?._accessibility?._ariaLevels?.properties;
     if(!props) {
-      throw new Error(`Couldn't parse ARIA level defaults`);
+      console.error(`Couldn't parse ARIA level defaults`);
+      return;
     }
     const newDefaults = Object.entries(props).reduce((m, [k, v]) => Object.assign(m, { [k]: v.default }), {});
     const configs = await (collection.find().toArray());

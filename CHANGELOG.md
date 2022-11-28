@@ -5,6 +5,14 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.11.1] - 2022-11-28
+
+Bugfix release.
+
+### Fixed
+- New installs return an error when running migrations ([#2681](https://github.com/adaptlearning/adapt_authoring/issues/2681))
+- Error thrown on role migration ([#2688](https://github.com/adaptlearning/adapt_authoring/issues/2688))
+
 ## [0.11.0] - 2022-10-17
 
 The final minor release of the 'legacy' codebase. This release bundles critical security updates with some other minor improvements.
@@ -750,6 +758,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.11.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.5...v0.11.0
 [0.10.5]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.4...v0.10.5
 [0.10.4]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.3...v0.10.4

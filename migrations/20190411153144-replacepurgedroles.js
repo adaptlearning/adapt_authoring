@@ -18,8 +18,12 @@ module.exports = {
       if(!newRole) {
         throw new Error(`Db must define the ${newRole} to replace ${oldRole}`);
       }
-      await users.updateMany({ roles: { $in: [oldRole._id] } }, { $set: { roles: [newRole._id] } });
-      await roles.deleteOne({ name: oldName });
+      try {
+        await users.updateMany({ roles: { $in: [oldRole._id] } }, { $set: { roles: [newRole._id] } });
+        await roles.deleteOne({ name: oldName });
+      } catch(e) {
+        console.error(e);
+      }
     }));
   },
 

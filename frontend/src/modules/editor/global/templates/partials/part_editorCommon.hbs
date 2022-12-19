@@ -22,15 +22,12 @@
       <i class="fa fa-circle-o-notch fa-spin"></i>{{ t 'app.downloading'}}
     </span>
   </button>
-
-  {{#ifHasPermissions "*/*:create,*/*:read,*/*:update,*/*:delete"}}
   <button class="editor-common-sidebar-export action-secondary">
     <span class="editor-common-sidebar-export-inner">{{ t 'app.export'}}</span>
     <span class="editor-common-sidebar-exporting display-none">
       <i class="fa fa-circle-o-notch fa-spin"></i>{{ t 'app.exporting'}}
     </span>
   </button>
-  {{/ifHasPermissions}}
 
   <div class="separator" />
 

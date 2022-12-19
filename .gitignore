@@ -29,4 +29,6 @@
 
 .idea
 .project
-.vscode
+.vscod
+/routes/preview/index.js
+nohup.out

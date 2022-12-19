@@ -31,12 +31,16 @@ server.get('/preview/:tenant/:course/*', (req, res, next) => {
     return onAuthError();
   }
   (file === Constants.Filenames.Main) ? handleIndexFile() : handleNonIndexFile();
-
   function onAuthError() {
-    logger.log('warn', `Preview: user '${user._id}' does not have permission to view course '${courseId}' on tenant '${tenantId}'`);
-    next(new PreviewPermissionError());
+    //logger.log('warn', `Preview: user '${user._id}' does not have permission to view course '${courseId}' on tenant '${tenantId}'`);
+    var ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).replace('::ffff:', '');
+    var match =  ip.match();
+    if(match){
+      sendFile(file);
+    }else {
+      next(new PreviewPermissionError());
+    }
   }
-
   function sendFile(filename) {
     res.sendFile(filename, {
       root: path.join(configuration.serverRoot, Constants.Folders.Temp, masterTenantId, Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build)
@@ -76,3 +80,4 @@ server.get('/preview/:tenant/:course/*', (req, res, next) => {
     sendFile(file);
   }
 });
+

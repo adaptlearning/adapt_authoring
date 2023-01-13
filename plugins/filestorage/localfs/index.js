@@ -276,7 +276,7 @@ LocalFileStorage.prototype.processFileUpload = function (
         // Handle unzipping of .h5p assets
         function (nextFunc) {
           if (data.path.toLowerCase().match(/.h5p$/i)) {
-            return self.unzipH5PAsset(newPath, nextFunc);
+            self.unzipH5PAssetToPublicAssets(newPath);
           }
 
           return nextFunc();
@@ -558,16 +558,52 @@ LocalFileStorage.prototype.inspectFile = function (filePath, fileType, next) {
   });
 };
 
-LocalFileStorage.prototype.unzipH5PAsset = function (filePath, next) {
+LocalFileStorage.prototype.unzipH5PAssetToPublicAssets = function (filePath) {
   try {
-    const h5pFolder = filePath.split('.h5p')[0];
+    const h5pFolder = path.basename(filePath.replace(/\.h5p$/, ''));
     const zip = new AdmZip(filePath);
     // extract to folder (same name as file without extension)
-    zip.extractAllTo(h5pFolder, true);
-    logger.log('info', `Extracted H5P asset to: ${h5pFolder}`);
-    next();
+    const destFolder = path.join('public', 'assets', h5pFolder);
+    zip.extractAllTo(destFolder, true);
+    logger.log('info', `Extracted H5P asset to: ${destFolder}`);
   } catch (error) {
-    next(error);
+    console.log(error);
+  }
+};
+
+LocalFileStorage.prototype.zipH5PAsset = function (h5pFolder, filePath = '') {
+  try {
+    if (!filePath) {
+      filePath = `${h5pFolder}.h5p`;
+    }
+    const zip = new AdmZip();
+    zip.addLocalFolder(h5pFolder);
+    zip.writeZip(filePath);
+    logger.log('info', `Zipped H5P asset to: ${filePath}`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+LocalFileStorage.prototype.checkH5PAssetExistsUnzipped = function (
+  assetPathSrc
+) {
+  try {
+    const pathToCheck = path.join(
+      'public',
+      'assets',
+      `${path.basename(assetPathSrc.replace(/\.h5p$/, ''))}`
+    );
+
+    const unzippedAssetExists = fs.existsSync(pathToCheck);
+
+    if (!unzippedAssetExists) {
+      logger.log('info', `Could not find unzipped H5P asset: ${assetPathSrc}`);
+      this.unzipH5PAssetToPublicAssets(assetPathSrc);
+    }
+    return pathToCheck;
+  } catch (error) {
+    console.log(error);
   }
 };
 

@@ -195,38 +195,13 @@ function publishCourse(courseId, mode, request, response, next) {
           assetsJsonFolder,
           assetsFolder,
           outputJson,
+          mode,
           function (err, modifiedJson) {
             if (err) {
               return callback(err);
             }
             // Store the JSON with the new paths to assets
             outputJson = modifiedJson;
-
-            // Clean up H5P assets
-
-            glob(`${assetsFolder}/*.h5p`, function (error, h5pAssets) {
-              if (error) {
-                return callback(error);
-              }
-              try {
-                h5pAssets.forEach((h5pAsset) => {
-                  const h5pFolder = path.basename(h5pAsset, '.h5p');
-                  // remove unzipped H5P asset
-                  if (mode === Constants.Modes.Export) {
-                    fs.removeSync(path.join(assetsFolder, h5pFolder));
-                  }
-                  // remove zipped H5P asset
-                  if (
-                    mode === Constants.Modes.Publish ||
-                    mode === Constants.Modes.Preview
-                  ) {
-                    fs.removeSync(h5pAsset);
-                  }
-                });
-              } catch (error) {
-                return callback(error);
-              }
-            });
 
             callback(null);
           }
@@ -238,7 +213,7 @@ function publishCourse(courseId, mode, request, response, next) {
           'Adding scriptSafe plugins from config: ' +
             configuration.conf.scriptSafe
         );
-        outputJson.config.build =  outputJson?.config?.build || {};
+        outputJson.config.build = outputJson?.config?.build || {};
         outputJson.config.build.scriptSafe = configuration.conf.scriptSafe;
 
         // build section of config.json gets deleted, we need this info for adapt-cdn-config to generate version info for plugins used in the course

@@ -2,6 +2,7 @@
 /conf/migrate.json
 /data
 
+/public/assets
 /frontend/build
 
 /frontend/src/modules/modules.js

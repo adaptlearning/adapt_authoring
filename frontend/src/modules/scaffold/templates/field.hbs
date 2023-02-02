@@ -1,10 +1,11 @@
+{{! ESDC - modified interpolation to use new translated labels }}
 <div class="field{{#if title}} field-{{stringToClassName title}}{{else}}{{#if legend}} field-object field-object-{{stringToClassName legend}}{{/if}}{{/if}}{{#if isDefaultValue}} is-default-value{{/if}}" data-editor-id="{{editorId}}" data-type="{{#if inputType.type}}{{inputType.type}}{{else}}{{inputType}}{{/if}}">
   {{#if title}}
-  <label for="{{editorId}}" title="{{key}}">{{title}}</label>
+  <label for="{{editorId}}" title="{{key}}">{{titleLabel}}</label>
   {{#if help}}
   <div class="field-help">
     <i class="fa fa-info-circle"></i>
-    <div class="tooltip">{{help}}</div>
+    <div class="tooltip">{{helpLabel}}</div>
   </div>
   {{/if}}
   <button class="field-default" data-action="default" title="{{t 'app.reset'}}">
@@ -13,7 +14,7 @@
   {{else}}
   {{#if legend}}
   <div class="legend">
-    <legend>{{legend}}</legend>
+    <legend>{{legendLabel}}</legend>
   </div>
   {{/if}}
   {{/if}}

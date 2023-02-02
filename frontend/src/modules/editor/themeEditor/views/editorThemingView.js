@@ -74,9 +74,11 @@ define(function(require) {
       this.$('.editable-theme').show();
       $('.editor-theming-sidebar-reset').show();
       try {
+        // ESDC - added template level to model data
         this.form = Origin.scaffold.buildForm({
           model: selectedTheme,
-          schemaType: selectedTheme.get('theme')
+          schemaType: selectedTheme.get('theme'),
+          level: 'theme'
         });
       }
       catch(e) {

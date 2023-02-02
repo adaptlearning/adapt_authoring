@@ -15,7 +15,8 @@ define(function(require) {
     }
     (new BlockModel({ _id: data.id })).fetch({
       success: function(model) {
-        var form = Origin.scaffold.buildForm({ model: model });
+        // ESDC - added template level to model data
+        var form = Origin.scaffold.buildForm({ model: model, level: 'block' });
         Helpers.setPageTitle(model);
         Origin.sidebar.addView(new EditorBlockEditSidebarView({ model: model, form: form }).$el);
         Origin.contentPane.setView(EditorBlockEditView, { model: model, form: form });

@@ -35,8 +35,7 @@ define(function(require){
       // Remove _ and spaces with dashes
       return text.replace(/_| /g, "-").toLowerCase();
     },
-
-    keyToTitleString: function(key) {
+    keyToTitleString: function(key, original) {
       if (!key) return;
       // check translatable strings first
       var l10nKey = 'app.scaffold.' + key;
@@ -45,7 +44,33 @@ define(function(require){
       }
       // fall-back: remove all _ and capitalise
       var string = key.replace(/_/g, '').replace(/[A-Z]/g, ' $&').toLowerCase();
-      return this.capitalise(string);
+      // ESDC - temporary add-in 
+      return this.capitalise(string) + ' [' + l10nKey + ']';
+    },
+    // ESDC - build key dynamically from option and return translation
+    keyToTranslatedString: function(options) {
+      if (!options.key) return;
+
+      // check translatable strings first
+      var l10nKey = `app.scaffold.`
+
+      if(options.level){
+      l10nKey += `${options.level}.`
+      }
+
+      if(options.parent){
+      l10nKey += `${options.parent}.`
+      }
+      
+      l10nKey += `${options.key}.`
+      l10nKey += `${options.type}`
+
+      if(Origin.l10n.has(l10nKey)) {
+        return Origin.l10n.t(l10nKey);
+      }
+      // fall-back: remove all _ and capitalise
+      // + ESDC - temporary add-in 
+      return options.fallback + ' [' + l10nKey + ']';
     },
 
     momentFormat: function(date, format) {
@@ -110,6 +135,36 @@ define(function(require){
         options[placeholder] = options.hash[placeholder];
       }
       return Origin.l10n.t(str, options);
+    },
+    // ESDC - Handlebars translation handler
+    tf: function(translate, fallback) {
+      if(Origin.l10n.has(translate)){
+        return Origin.l10n.t(translate);
+      } else {
+        return fallback
+      }
+    },
+    // ESDC - Handlebars translation handler
+    tp: function(object, property){
+
+      if(object.hasOwnProperty('name')){
+          var key = object.name
+      } else if(object.hasOwnProperty('_component')){
+          var key = object._component
+      }
+
+      key = 'app.' + key + '.' + property;
+
+      if(Origin.l10n.has(key)){
+        return Origin.l10n.t(key);
+      } else {
+        return object[property] + ' [' + key + ']';
+      }
+
+
+    },
+    printobject: function(object){
+      console.log(object)
     },
 
     stripHtml: function(html) {

@@ -22,10 +22,12 @@
         <div class="extension-management-plugin tb-row tb-row-{{odd @index}}">
           <div class="extension-management-plugin-inner col-row">
             <div class="extension-management-plugin-title col-20">
-              <h4 class="extension-management-plugin-title-inner tb-col-inner">{{displayName}}</h4>
+              {{! ESDC - changed interpolation to pass the current element to custom translation function }}
+              <h4 class="extension-management-plugin-title-inner tb-col-inner">{{tp this 'displayName'}}</h4>
             </div>
             <div class="extension-management-plugin-description col-60">
-              <div class="extension-management-plugin-description-inner tb-col-inner">{{description}}</div>
+              {{! ESDC - changed interpolation to pass the current element to custom translation function }}
+              <div class="extension-management-plugin-description-inner tb-col-inner">{{tp this 'description'}}</div>
             </div>
             <div class="extension-management-plugin-remove col-20 col-centered">
               <div class="extension-management-plugin-remove-inner tb-col-inner">
@@ -62,11 +64,11 @@
         <div class="extension-management-plugin tb-row tb-row-{{odd @index}}">
             <div class="extension-management-plugin-inner col-row">
                 <div class="extension-management-plugin-title col-20">
-                    <h4 class="extension-management-plugin-title-inner tb-col-inner">{{displayName}}</h4>
+                    <h4 class="extension-management-plugin-title-inner tb-col-inner">{{tp this 'displayName'}}</h4>
                 </div>
 
                 <div class="extension-management-plugin-description col-60">
-                    <div class="extension-management-plugin-description-inner tb-col-inner">{{description}}</div>
+                    <div class="extension-management-plugin-description-inner tb-col-inner">{{tp this 'description'}}</div>
                 </div>
 
                 <div class="extension-management-plugin-remove col-20 col-centered">

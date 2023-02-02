@@ -3,7 +3,8 @@
 <div class="component-inner">
   <div class="component-detail no-select">
     {{#if _componentTypeDisplayName}}
-      <div class="component-type">{{_componentTypeDisplayName}}</div>
+      {{! ESDC - changed interpolation to pass the current element to custom translation function }}
+      <div class="component-type">{{tp this '_componentTypeDisplayName'}}</div>
     {{/if}}
     <h4 class="component-title">{{#if displayTitle}}{{displayTitle}}{{else}}{{title}}{{/if}}</h4>
     <div class="component-body">{{{body}}}</div>

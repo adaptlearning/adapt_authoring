@@ -2,9 +2,11 @@
   <div class="editor-component-list-item-icon {{#if name}}{{name}}{{/if}}"></div>
   {{#if displayName}}
     <div class="editor-component-list-item-details">
-      <span class="editor-component-list-item-display-name" {{#if description}}title="{{description}}"{{/if}}>{{displayName}}</span>
+      {{! ESDC - changed interpolation to pass the current element to custom translation function }}
+      <span class="editor-component-list-item-display-name" {{#if description}}title="{{description}}"{{/if}}>{{tp this 'displayName'}}</span>
       {{#if description}}
-        <br/><span class="editor-component-list-item-description">{{description}}</span>
+             {{! ESDC - changed interpolation to pass the current element to custom translation function }}
+        <br/><span class="editor-component-list-item-description">{{tp this 'description'}}</span>
       {{/if}}
     </div>
   {{/if}}

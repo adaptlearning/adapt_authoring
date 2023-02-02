@@ -2,6 +2,12 @@
     <div class="login-logo"></div>
 
     <form class="login-form" autocomplete="off">
+        {{! ESDC - added language switcher link }}
+        <div class="language-switcher">
+            <a href="#" class="langspot navigation-item aut" onclick="togglelang()">
+                <span>{{t 'app.langswitcher'}}</span>
+            </a>
+        </div>
         <div class="login-title">{{t 'app.signin'}}</div>
         {{#if isAuthenticated}}
             {{t 'app.alreadyloggedin'}}

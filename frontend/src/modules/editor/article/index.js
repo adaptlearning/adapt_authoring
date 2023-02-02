@@ -13,7 +13,8 @@ define(function(require) {
     }
     (new ArticleModel({ _id: data.id })).fetch({
       success: function(model) {
-        var form = Origin.scaffold.buildForm({ model: model });
+        // ESDC - added template level to model data
+        var form = Origin.scaffold.buildForm({ model: model, level: 'article' }); 
         Helpers.setPageTitle(model);
         Origin.sidebar.addView(new EditorArticleEditSidebarView({ model: model, form: form }).$el);
         Origin.contentPane.setView(EditorArticleEditView, { model: model, form: form });

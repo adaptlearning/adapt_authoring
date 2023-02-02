@@ -15,8 +15,10 @@
   </div>
   <div class="navigation-right">
     {{#if isAuthenticated}}
-    <a href="#" class="navigation-item navigation-help" onclick="togglelang();">
-      <span id="langspot">English</span>
+    {{! ESDC - added language switcher link}}
+    <a href="#" class="langspot navigation-item aut" onclick="togglelang()">
+      {{! ESDC - added translation handler for language name}}
+      <span>{{t 'app.langswitcher'}}</span>
     </a>
     <a href="#" class="navigation-item navigation-profile" data-event="user:profile">
       {{t 'app.loggedinas'}}: <span>{{email}}</span>
@@ -27,41 +29,3 @@
     {{/if}}
   </div>
 </div>
-
-<script type="text/javascript">
-  var currlang = localStorage.getItem("lang");
-  var langlabel = document.getElementById("langspot");
-
-if( document.readyState !== 'loading' ) {
-    defcurrlang();
-} else {
-    document.addEventListener('DOMContentLoaded', function () {
-        
-        defcurrlang();
-    });
-}
-
-function defcurrlang ()  {
-  if(langlabel == null){
-    //do nothing
-  }else{
-      if(currlang == "fr"){
-        document.getElementById("langspot").innerHTML = "English";
-        document.querySelector("html").setAttribute('lang', 'fr');
-       }else{
-        document.getElementById("langspot").innerHTML = "Français (Alpha)";
-        document.querySelector("html").setAttribute('lang', 'en');
-      }
-  }
-}
-
-  function togglelang () {
-    if(currlang == 'en'){
-      localStorage.setItem('lang', 'fr');
-      location.reload();
-    } else {
-      localStorage.setItem('lang', 'en');
-      location.reload();
-    }
-  }
- </script>

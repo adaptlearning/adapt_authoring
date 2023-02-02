@@ -4,6 +4,9 @@
     "properties": "Properties",
     "settings": "Settings",
     "extensions": "Extensions",
-    "colourPickerCancel": "Cancel selection"
+    "colourPickerCancel": "Cancel selection",
+    "_globals": "Globals",
+    "_buttons": "Buttons",
+    "_start": "Start Settings"
   }
 }

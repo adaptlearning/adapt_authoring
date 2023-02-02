@@ -13,12 +13,13 @@
   background-color: @sidebar-color;
   color: @sidebar-text-color;
 
+  // ESDC - changed height for min-height to support multiline buttons
   button {
     &[class^="action-"],
     &[class*=" action-"] {
       margin: 5px 25px;
       width: 200px;
-      height: 50px;
+      min-height: 50px;
       border-width: 1px;
       border-style: solid;
       border-radius:@button-radius;

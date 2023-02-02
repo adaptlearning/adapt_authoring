@@ -32,7 +32,8 @@ define(function(require) {
 
   function renderContentObjectEdit(data) {
     Helpers.setPageTitle(data.model);
-    var form = Origin.scaffold.buildForm({ model: data.model });
+    // ESDC - added template level to model data
+    var form = Origin.scaffold.buildForm({ model: data.model, level: 'page' });
     Origin.sidebar.addView(new EditorPageEditSidebarView({ form: form }).$el);
     Origin.contentPane.setView(EditorPageEditView, { model: data.model, form: form });
   }

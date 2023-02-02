@@ -18,7 +18,8 @@ define(function(require) {
     // FIXME need to fetch config to ensure scaffold has the latest extensions data
     CoreHelpers.multiModelFetch([ courseModel, Origin.editor.data.config ], function(data) {
       EditorHelpers.setPageTitle(courseModel);
-      var form = Origin.scaffold.buildForm({ model: courseModel });
+      // ESDC - added template level to model data
+      var form = Origin.scaffold.buildForm({ model: courseModel, level: 'course' });
       Origin.contentPane.setView(EditorCourseEditView, { model: courseModel, form: form });
       Origin.sidebar.addView(new EditorCourseEditSidebarView({ form: form }).$el);
     });
@@ -30,7 +31,8 @@ define(function(require) {
       breadcrumbs: ['dashboard'],
       title: Origin.l10n.t('app.editornew')
     });
-    var form = Origin.scaffold.buildForm({ model: model });
+    // ESDC - added template level to model data
+    var form = Origin.scaffold.buildForm({ model: model, level: 'course' });
     Origin.contentPane.setView(EditorCourseEditView, { model: model, form: form });
     Origin.sidebar.addView(new EditorCourseEditSidebarView({ form: form }).$el);
   }

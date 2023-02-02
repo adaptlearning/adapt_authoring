@@ -67,7 +67,12 @@ define([
     textAreaRender.call(this);
 
     _.defer(function() {
+      // ESDC - added current language as editor language and enabled plugin for language of parts
+      var language = document.documentElement.lang;
       this.editor = CKEDITOR.replace(this.$el[0], {
+        // ESDC - added support for the editor in multiple languages
+        language: language,
+        language_list: ['fr:Français', 'en:English'],
         dataIndentationChars: '',
         disableNativeSpellChecker: false,
         enterMode: CKEDITOR[Origin.constants.ckEditorEnterMode],
@@ -86,7 +91,8 @@ define([
               breakBeforeOpen: false,
               breakAfterOpen: false,
               breakBeforeClose: false,
-              breakAfterClose: false
+              breakAfterClose: false,
+              defaultLanguage: 'fr'
             };
 
             writer.indentationChars = '';
@@ -99,7 +105,7 @@ define([
           { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
           { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
           { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv' ] },
-          { name: 'direction', items: [ 'BidiLtr', 'BidiRtl' ] },
+          { name: 'direction', items: [ 'BidiLtr', 'BidiRtl', 'Language' ] },
           '/',
           { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
           { name: 'styles', items: [ 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },

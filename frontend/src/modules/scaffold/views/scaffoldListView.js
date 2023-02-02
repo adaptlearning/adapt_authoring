@@ -157,14 +157,25 @@ define([
   * Builds a string from nested values
   * OVERRIDES Backbone.Form.editors.List.Modal.prototype.itemToString
   */
+
+  // ESDC - added function to create a camelCase value from a field name
+  function convertNameToCamelCase(name){
+    return name.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+      return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    }).replace(/[^a-zA-Z0-9]/g, '');
+  }
+
   function modalItemToString(value) {
     if(!value) {
       return '';
     }
     return Object.keys(this.nestedSchema).reduce(function(parts, key) {
-      var val = getModalItemValueString(value[key]);
+      // ESDC - added the key string as part of getModalItemValueString inputs
+      var val = getModalItemValueString(value[key], key);
       var title = this.nestedSchema[key].title || Backbone.Form.Field.prototype.createTitle.call({ key: key });
-      return parts + '<p class="list-item-modal-item">' + wrapSchemaTitle(title) + val + '</p>';
+      // ESDC - added translated label to schema
+      var translatedTitle = Helpers.keyToTranslatedString({key: convertNameToCamelCase(title), level: '_items', type: 'label', fallback: title})
+      return parts + '<p class="list-item-modal-item">' + wrapSchemaTitle(translatedTitle) + val + '</p>';
     }.bind(this), '');
   }
 
@@ -182,7 +193,9 @@ define([
   /**
   * Returns an apt string value from Modal.Item value
   */
-  function getModalItemValueString(value) {
+  
+  // ESDC - added translated label to schema
+  function getModalItemValueString(value, parent) {
     if (typeof value !== 'object') {
       return value;
     }
@@ -192,7 +205,8 @@ define([
     // print nested name/value pairs
     var pairs = '';
     for (var name in value) {
-      if(value.hasOwnProperty(name)) pairs += '<br />' + wrapSchemaTitle(name) + value[name];
+      var translatedName = Helpers.keyToTranslatedString({key: convertNameToCamelCase(name), level: '_items', parent: parent, type: 'label', fallback: name})
+      if(value.hasOwnProperty(name)) pairs += '<br />' + wrapSchemaTitle(translatedName) + value[name];
     }
     return '<p class="list-item-modal-object">' + pairs + '</p>';
   }

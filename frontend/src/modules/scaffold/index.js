@@ -34,8 +34,8 @@ define([
       callback.apply(context);
     });
   }
-
-  function generateFieldObject(field, key) {
+// ESDC - added options input to function extra options and parent context
+  function generateFieldObject(field, key, options, parent) {
     var fieldType = field.type;
     var isFieldTypeObject = fieldType === 'object';
     var inputType = field.inputType;
@@ -103,7 +103,23 @@ define([
 
       return validators.filter(Boolean);
     };
+    // ESDC - added local function to build item keys
+    var buildTranslationKey = function(type, fallback){
+      if(parent === '_items'){
+        parent = options.model.attributes._component;
+      }
+      
+      if(key === '_items'){
+        key = `${key}.${options.model.attributes._component}`
+      }
+      
+      var level = options.level || 'all';
+      
+      return {key: key, level: level, parent: parent, type: type, fallback: fallback}
+    }
 
+    // ESDC - added Label fields to use in handlebars templates
+    // ESDC - get translated labels from generated key or return original label
     var fieldObject = {
       confirmDelete: itemsProperties ? confirmDelete : field.confirmDelete,
       default: field.default,
@@ -112,12 +128,15 @@ define([
       fieldAttrs: field.fieldAttrs,
       fieldClass: field.fieldClass,
       help: field.help,
+      helpLabel: Helpers.keyToTranslatedString(buildTranslationKey('help', field.help)) || field.help,
       itemType: itemsProperties ? 'Object' : itemsInputType,
       inputType: inputType,
       legend: field.legend,
+      legendLabel: Helpers.keyToTranslatedString(buildTranslationKey('legend', field.legend)) || field.legend,
       subSchema: isFieldTypeObject ? field.properties : itemsProperties || items,
       title: getTitle(),
       titleHTML: field.titleHTML,
+      titleLabel: Helpers.keyToTranslatedString(buildTranslationKey('label', getTitle())) || getTitle(),
       type: getType(),
       validators: getValidators()
     };
@@ -130,15 +149,27 @@ define([
     return fieldObject;
   }
 
-  function setUpSchemaFields(field, key, schema, scaffoldSchema) {
-    scaffoldSchema[key] = generateFieldObject(field, key);
+  // ESDC - added inputs to function for extra options and parent
+  // ESDC - added parent value generation for fields label if not parent was passed
+  function setUpSchemaFields(field, key, schema, scaffoldSchema, options, parent) {
+    if(!parent){
+      if(schema[key].isSetting){
+        parent = 'settings';
+      } else if(schema[key].type !== 'object'){
+        parent = 'general';
+      } else {
+        parent = key;
+      }
+    }
+    scaffoldSchema[key] = generateFieldObject(field, key, options, parent);
 
     var objectSchema = schema[key].properties || schema[key].subSchema;
     var scaffoldObjectSchema = scaffoldSchema[key].subSchema;
 
     for (var i in objectSchema) {
       if (objectSchema.hasOwnProperty(i)) {
-        setUpSchemaFields(objectSchema[i], i, objectSchema, scaffoldObjectSchema);
+        // ESDC - added extra options and key to field generation
+        setUpSchemaFields(objectSchema[i], i, objectSchema, scaffoldObjectSchema, options, key);
       }
     }
   }
@@ -146,22 +177,24 @@ define([
   function buildSchema(schema, options, type) {
 
     var scaffoldSchema = {};
-
+    
     for (var key in schema) {
       if (!schema.hasOwnProperty(key)) continue;
-
+    
       var field = schema[key];
       var nestedProps = field.properties;
 
       if (!options.isTheme || !nestedProps) {
-        setUpSchemaFields(field, key, schema, scaffoldSchema);
+        // ESDC - added extra options to field generation
+        setUpSchemaFields(field, key, schema, scaffoldSchema, options);
         continue;
       }
 
       // process nested properties on edit theme page
       for (var innerKey in nestedProps) {
         if (!nestedProps.hasOwnProperty(innerKey)) continue;
-        setUpSchemaFields(nestedProps[innerKey], innerKey, nestedProps, scaffoldSchema);
+        // ESDC - added extra options and key to field generation
+        setUpSchemaFields(nestedProps[innerKey], innerKey, nestedProps, scaffoldSchema, options, key);
       }
     }
 
@@ -180,7 +213,7 @@ define([
       if (!schema.hasOwnProperty(key) || key === '_extensions') continue;
 
       var value = schema[key];
-
+     
       if (value.isSetting) {
         fieldsets.settings.fields.push(key);
         continue;
@@ -207,10 +240,10 @@ define([
           }
         }
       }
-
+      // ESDC - modified fieldset legend value to use translated string first
       fieldsets[key] = {
         key: key,
-        legend: value.title || Helpers.keyToTitleString(key),
+        legend: Helpers.keyToTitleString(key) || value.title,
         fields: fields.length ? fields : [ key ]
       };
     }
@@ -258,7 +291,7 @@ define([
     alternativeAttribute = options.alternativeAttributeToSave;
     currentModel = options.model;
     currentForm = new Backbone.Form(options).render();
-
+   
     return currentForm;
   };
 

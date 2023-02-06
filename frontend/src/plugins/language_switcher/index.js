@@ -1,38 +1,38 @@
 // ESDC - plugin to manage the changing of languages of the Authoring Tool
 console.log('Language switcher plugin loaded')
+// rewrote switcher - removed unecessary parts and added 200 ms delay
+var currlang = localStorage.getItem('lang') || 'en';
 
-var currlang = localStorage.getItem("lang");
-
-if(!currlang){
-  setLang('en');
+function defcurrlang ()  {
+  if(currlang === "en"){
+     document.querySelector("html").setAttribute('lang', 'en');
+   }else{
+     document.querySelector("html").setAttribute('lang', 'fr');
+   }
 }
 
 if( document.readyState !== 'loading' ) {
-    defcurrlang();
+  defcurrlang();
 } else {
-    document.addEventListener('DOMContentLoaded', function () {
-        defcurrlang();
-    });
+  document.addEventListener('DOMContentLoaded', function () {
+      defcurrlang();
+  });
 }
 
 function setLang(lang){
   localStorage.setItem('lang', lang);
 }
 
-function defcurrlang ()  {
-     if(currlang === "fr"){
-        document.querySelector("html").setAttribute('lang', 'fr');
-      }else{
-        document.querySelector("html").setAttribute('lang', 'en');
-      }
-}
-
 function togglelang () {
   if(currlang === 'en'){
-    setLang('fr')
-    location.reload();
+    setLang('fr');
+    setTimeout(function(){
+      location.reload();
+    }, 200);
   } else {
     setLang('en');
-    location.reload();
+    setTimeout(function(){
+      location.reload();
+    }, 200);
   }
 }

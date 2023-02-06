@@ -44,8 +44,7 @@ define(function(require){
       }
       // fall-back: remove all _ and capitalise
       var string = key.replace(/_/g, '').replace(/[A-Z]/g, ' $&').toLowerCase();
-      // ESDC - temporary add-in 
-      return this.capitalise(string) + ' [' + l10nKey + ']';
+      return this.capitalise(string);
     },
     // ESDC - build key dynamically from option and return translation
     keyToTranslatedString: function(options) {
@@ -69,8 +68,7 @@ define(function(require){
         return Origin.l10n.t(l10nKey);
       }
       // fall-back: remove all _ and capitalise
-      // + ESDC - temporary add-in 
-      return options.fallback + ' [' + l10nKey + ']';
+      return options.fallback;
     },
 
     momentFormat: function(date, format) {
@@ -158,11 +156,10 @@ define(function(require){
       if(Origin.l10n.has(key)){
         return Origin.l10n.t(key);
       } else {
-        return object[property] + ' [' + key + ']';
+        return object[property];
       }
-
-
     },
+    // ESDC - for testing purposes
     printobject: function(object){
       console.log(object)
     },

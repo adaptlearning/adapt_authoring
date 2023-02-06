@@ -1,0 +1,12 @@
+{
+    "app.scaffold": {
+      "general": "Général",
+      "properties": "Propriétés",
+      "settings": "Paramètres",
+      "extensions": "Extensions",
+      "colourPickerCancel": "Annuler la sélection",
+      "_globals": "Globaux",
+      "_buttons": "Boutons",
+      "_start": "Paramètres de départ"
+    }
+  }

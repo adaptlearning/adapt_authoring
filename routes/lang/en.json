@@ -416,5 +416,5 @@
   "app.targetattributeexists": "There is a plugin already installed with a target attribute of '%{targetAttribute}'.",
   "app.versionexists": "You already have this version of the plugin installed.",
   "app.unknownuser": "Unknown User",
-  "app.langswitcher": "Français (Alpha)"
+  "app.langswitcher": "Français (Beta)"
 }

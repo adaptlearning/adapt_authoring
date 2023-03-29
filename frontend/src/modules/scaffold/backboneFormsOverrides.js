@@ -4,6 +4,7 @@ define(['core/origin', 'backbone-forms'], function (Origin, BackboneForms) {
   var templateData = Backbone.Form.Field.prototype.templateData;
   var initialize = Backbone.Form.editors.Base.prototype.initialize;
   var textInitialize = Backbone.Form.editors.Text.prototype.initialize;
+  var radioInitialize = Backbone.Form.editors.Radio.prototype.initialize;
   var textAreaRender = Backbone.Form.editors.TextArea.prototype.render;
   var textAreaSetValue = Backbone.Form.editors.TextArea.prototype.setValue;
 
@@ -271,6 +272,27 @@ define(['core/origin', 'backbone-forms'], function (Origin, BackboneForms) {
       delayedDetermineChange();
     } else {
       event.preventDefault();
+    }
+  };
+
+  // add listener to is-conditional-radio inputs
+  Backbone.Form.editors.Radio.prototype.initialize = function (options) {
+    radioInitialize.call(this, options);
+
+    const attrs = options.schema.editorAttrs;
+    if (!attrs) return;
+
+    if (attrs['data-is-conditional']) {
+      console.log('Radio input is conditional, setting up event listeners...');
+      console.log(options);
+
+      options.form.on(`${options.key}:change`, function (form, $editor) {
+        const currentOption = $editor.getValue();
+        $(`[data-depends-on=${options.key}]`).toggle(false);
+        $(
+          `[data-depends-on=${options.key}][data-option-match=${currentOption}]`
+        ).toggle(true);
+      });
     }
   };
 });

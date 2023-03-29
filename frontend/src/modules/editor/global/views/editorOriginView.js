@@ -47,6 +47,7 @@ define(function (require) {
       this.$('.form-container').append(this.form.el);
       // Set the delays going to stop jumping pages
       _.delay(_.bind(this.setViewToReady, this, 400));
+      this.refreshConditionalViews();
     },
 
     filterForm: function (filter) {
@@ -261,6 +262,25 @@ define(function (require) {
       Origin.Notify.alert({ type: 'error', title: title, text: text });
 
       Origin.trigger('sidebar:resetButtons');
+    },
+
+    refreshConditionalViews: function () {
+      if (!this.form) return;
+
+      // Setup initial view for conditional fields
+      const conditionalRadios = this.$('[data-is-conditional]');
+      conditionalRadios.each((index, radio) => {
+        const $radio = $(radio);
+        const nameOfRadio = $radio.attr('name');
+        const valueOfRadio = this.$(`input[name=${nameOfRadio}]:checked`).val();
+        const dependencies = this.$(`[data-depends-on=${nameOfRadio}]`);
+
+        dependencies.each((index, field) => {
+          const $field = $(field);
+          const matchOption = $field.attr('data-option-match');
+          $(field).toggle(valueOfRadio === matchOption);
+        });
+      });
     },
   });
 

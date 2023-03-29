@@ -283,9 +283,6 @@ define(['core/origin', 'backbone-forms'], function (Origin, BackboneForms) {
     if (!attrs) return;
 
     if (attrs['data-is-conditional']) {
-      console.log('Radio input is conditional, setting up event listeners...');
-      console.log(options);
-
       options.form.on(`${options.key}:change`, function (form, $editor) {
         const currentOption = $editor.getValue();
         $(`[data-depends-on=${options.key}]`).toggle(false);

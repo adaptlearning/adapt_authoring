@@ -35,6 +35,7 @@ define(['core/origin'], function (Origin) {
 
       postRender: function () {
         this.$el.addClass('show');
+        Origin.trigger('scaffoldItemsModal:postRender');
       },
 
       onKeyUp: function (event) {

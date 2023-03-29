@@ -29,6 +29,7 @@ define(function (require) {
       this.listenTo(Origin, {
         'sidebarFieldsetFilter:filterForm': this.filterForm,
         'editorView:pasteCancel': this.hidePasteZones,
+        'scaffoldItemsModal:postRender': this.refreshConditionalViews,
       });
     },
 
@@ -268,12 +269,12 @@ define(function (require) {
       if (!this.form) return;
 
       // Setup initial view for conditional fields
-      const conditionalRadios = this.$('[data-is-conditional]');
+      const conditionalRadios = $('[data-is-conditional]');
       conditionalRadios.each((index, radio) => {
         const $radio = $(radio);
         const nameOfRadio = $radio.attr('name');
-        const valueOfRadio = this.$(`input[name=${nameOfRadio}]:checked`).val();
-        const dependencies = this.$(`[data-depends-on=${nameOfRadio}]`);
+        const valueOfRadio = $(`input[name=${nameOfRadio}]:checked`).val();
+        const dependencies = $(`[data-depends-on=${nameOfRadio}]`);
 
         dependencies.each((index, field) => {
           const $field = $(field);

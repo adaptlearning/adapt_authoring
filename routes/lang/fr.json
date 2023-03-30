@@ -1494,5 +1494,7 @@
     "app.adapt-contrib-tutor.description": "Une extension qui fournit une rétroaction de base pour les composants de type questions.",
     "app.adapt-contrib-assessment.description": "Une extension qui se fixe à un article pour regrouper divers éléments de la question et fournir une note avec rétroaction.",
     "app.adapt-close.description": "Une extension permettant d'ajouter un bouton de fermeture et/ou des messages-guides.",
-    "app.adapt-contrib-languagePicker.description": "Une extension pour permettre à l'apprenant de sélectionner la langue du cours dans un cours multilingue."
+    "app.adapt-contrib-languagePicker.description": "Une extension pour permettre à l'apprenant de sélectionner la langue du cours dans un cours multilingue.",
+    "app.scaffold._setCompletionOn.inview.variable": "Example inview francais",
+    "app.scaffold._setCompletionOn.allItems.variable": "Example allItems francais"
 }

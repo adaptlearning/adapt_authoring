@@ -28,7 +28,7 @@
 
     {{#ifValueEquals assetType "image"}}
         {{#if metadata}}
-        <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
+        <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/{{#ifValueEquals fileExtension "svg"}}serve{{else}}thumb{{/ifValueEquals}}/{{_id}})">
         {{else}}
         <div class="asset-management-list-item-image">
             <i class="fa fa-file-image-o"></i>
@@ -39,7 +39,7 @@
 
     {{#ifValueEquals assetType "video"}}
         {{#if metadata}}
-        <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})"}>
+        <div class="asset-management-list-item-image" data-style="background-image:url(api/asset/thumb/{{_id}})">
         {{else}}
         <div class="asset-management-list-item-image">
             <i class="fa fa-file-video-o"></i>

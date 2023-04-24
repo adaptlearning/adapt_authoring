@@ -27,6 +27,8 @@ define(function (require) {
         this.listenTo(this, 'remove', this.remove);
         this.listenTo(this.model, 'destroy', this.remove);
         this.listenTo(this.model, 'change:_isDeleted', this.onReRender);
+        const filename = this.model.get('filename');
+        this.model.set('fileExtension', filename.split('.').pop());
       },
 
       onReRender: function () {

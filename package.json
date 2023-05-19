@@ -20,8 +20,8 @@
     "create-migration": "npx migrate-mongo create -f conf/migrations.js"
   },
   "dependencies": {
-    "@babel/core": "^7.12.3",
-    "@babel/preset-env": "^7.12.1",
+    "@babel/core": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
     "archiver": "^3.1.1",
     "async": "^3.2.3",
     "bcrypt-nodejs": "0.0.3",

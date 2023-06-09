@@ -29,6 +29,7 @@
     "bower": "^1.8.14",
     "bytes": "^3.1.2",
     "chalk": "^2.4.2",
+    "child_process": "^1.0.2",
     "compression": "^1.7.4",
     "connect-mongodb-session": "^3.1.1",
     "consolidate": "^0.15.1",

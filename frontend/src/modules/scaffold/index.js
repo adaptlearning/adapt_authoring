@@ -68,11 +68,20 @@ define([
       if (itemsProperties && Backbone.Form.editors[itemsInputType]) {
         return itemsInputType;
       }
-
-      if (fieldType === 'array') {
-        return 'List';
+      switch (fieldType) {
+        case 'array':
+          return 'List';
+        case 'boolean':
+          return 'Checkbox';
+        case 'number':
+          return 'Number';
+        case 'object':
+          return 'Object';
+        case 'string':
+          return 'Text';
       }
     };
+
 
     var getValidators = function() {
       var validators = field.validators || [];

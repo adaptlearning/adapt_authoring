@@ -258,9 +258,9 @@ define(function (require) {
           fieldView.setValue(value);
           fieldView.render();
           $('div[data-editor-id*="' + key + '"]').append(fieldView.editor.$el);
-        } else if(inputType === "List"){
+        } else if (inputType === 'List') {
           fieldView.setValue(value);
-        }else {
+        } else {
           fieldView.editor.$el.val(value.toString());
         }
       },

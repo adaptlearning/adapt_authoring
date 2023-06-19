@@ -1,5 +1,6 @@
 *.hbs
 /data/
+/public/
 /frontend/build/
 libraries
 bower

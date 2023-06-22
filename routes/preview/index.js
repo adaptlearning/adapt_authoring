@@ -7,6 +7,7 @@ const Constants = require('../../lib/outputmanager').Constants;
 const helpers = require('../../lib/helpers');
 const logger = require('../../lib/logger');
 const usermanager = require('../../lib/usermanager');
+const config = require('../../conf/config.json');
 
 const server = module.exports = express();
 
@@ -34,10 +35,15 @@ server.get('/preview/:tenant/:course/*', (req, res, next) => {
   function onAuthError() {
     //logger.log('warn', `Preview: user '${user._id}' does not have permission to view course '${courseId}' on tenant '${tenantId}'`);
     var ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).replace('::ffff:', '');
-    var match =  ip.match();
-    if(match){
-      sendFile(file);
-    }else {
+    //regex expression goes in previewAllowIps property in /conf/config.json
+    if(config.previewAllowIps){
+      var regex = new RegExp(config.previewAllowIps, 'g');
+      if(ip.match(regex)){
+        sendFile(file);
+      }else {
+        next(new PreviewPermissionError());
+      }
+    } else {
       next(new PreviewPermissionError());
     }
   }

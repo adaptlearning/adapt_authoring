@@ -10,7 +10,7 @@ define(function (require) {
 
   var isReady = false;
   var dateTime = Date.now();
-  var TEN_MINUTES = 1 * 60 * 1000;
+  var TEN_MINUTES = 10 * 60 * 1000;
   var data = {
     featurePermissions: ["{{tenantid}}/messages/*:create", "{{tenantid}}/messages/*:read", "{{tenantid}}/messages/*:update"]
   };

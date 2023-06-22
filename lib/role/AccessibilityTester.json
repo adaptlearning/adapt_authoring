@@ -1,5 +1,5 @@
 {
-  "name": "Course Creator",
+  "name": "Accessibility Tester",
   "version": "0.0.1",
   "statement" : [
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/content/*", "action":["create", "read", "update", "delete"], "effect":"allow" },

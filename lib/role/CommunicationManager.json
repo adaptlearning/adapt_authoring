@@ -1,5 +1,5 @@
 {
-  "name": "Course Creator",
+  "name": "Communication Manager",
   "version": "0.0.1",
   "statement" : [
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/content/*", "action":["create", "read", "update", "delete"], "effect":"allow" },
@@ -18,6 +18,6 @@
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/menu/*", "action":["create", "update", "read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/extension/*", "action":["create", "update", "read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/autocomplete/*", "action":["read"], "effect":"allow" },
-    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/messages/*", "action":["read"], "effect":"allow" }
+    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/messages/*", "action":["read", "create", "update"], "effect":"allow" }
   ]
 }

@@ -1,0 +1,52 @@
+<div class="profile-inner">
+  <div class="error-text display-none">
+      {{t 'app.fixerrors'}}
+  </div>
+  <div class="editing-overlay-panel form-container-style">
+
+    <div class="editing-overlay-panel-content inner">
+      <div class="editing-overlay-panel-content-inner">
+
+        <form class="forms">
+          <div class="form-group">
+            <fieldset style="margin-left: 0; paddin: 0; border: none;" class="fieldset-object field-object">
+                    <legend style="font-size: 15px; font-weight: bold;">{{t 'app.message.generalRibbon'}}</legend>
+                    <div class="field">
+                      <input id="generalRibbonEnable" type="checkbox" {{#if this.generalRibbonEnabled}}checked{{/if}}>
+                      <label style="margin-bottom: 0" for="generalRibbonEnable">{{t 'app.enabled'}}</label>
+                    </div>
+                    <div class="field">
+                      <label for="cke_generalRibbonEN">{{t 'app.message.generalRibbonEN'}}
+                        <span id="generalRibbonENError" class="error"></span>
+                      </label>
+                      <textarea id="generalRibbonEN">
+                        {{generalRibbonEN}}
+                      </textarea>
+                    </div>
+                    <div class="field">
+                      <label for="cke_generalRibbonFR">{{t 'app.message.generalRibbonFR'}}
+                        <span id="generalRibbonFRError" class="error"></span>
+                      </label>
+                      <textarea id="generalRibbonFR">
+                        {{generalRibbonFR}}
+                      </textarea>
+                    </div>
+                    <div class="field">
+                      <label class="label-picker" for="generalRibbonBgColor">{{t 'app.message.generalRibbonBgColor'}}
+                        <span id="generalRibbonBgColorError" class="error"></span>
+                      </label>
+                      <input type="text" class="width-30" id="generalRibbonBgColor" autocomplete="off">
+                    </div>
+                     <div class="field">
+                      <label class="label-picker" for="generalRibbonTextColor">{{t 'app.message.generalRibbonTextColor'}}
+                        <span id="generalRibbonTextColorError" class="error"></span>
+                      </label>
+                      <input type="text" class="width-30" id="generalRibbonTextColor" autocomplete="off">
+                    </div>
+                </fieldset>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

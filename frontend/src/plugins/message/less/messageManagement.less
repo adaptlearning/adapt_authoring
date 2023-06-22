@@ -1,0 +1,73 @@
+@import 'colours';
+
+.message-management {
+    .error-text {
+        padding: 15px 30px;
+        background-color: @alert-color;
+        color: @white;
+    }
+
+    .error,
+    .success {
+        position: static;
+        top: auto;
+        left: auto;
+        font-size: inherit;
+        margin-left: 5px;
+    }
+
+    .editing-overlay-panel-content {
+        border-bottom: none;
+        .inner {
+            margin-bottom: 20px;
+
+            .alert {
+                background-color: transparent;
+                color: @alert-color;
+            }
+            .alert-info {
+                color: @warning-color;
+            }
+            .alert-success {
+                color: @secondary-color;
+            }
+            .feedback {
+                padding-bottom: 15px;
+            }
+        }
+    }
+
+    .label-picker {
+        display: block;
+    }
+}
+
+
+.general-ribbon {
+    height: 55px;
+}
+
+.ribbon-inner {
+    width: 100%;
+    height: 100%;
+}
+
+.ribbon-msg {
+    width: calc(100% - 50px);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 65px 1fr;
+    align-items: center;
+}
+
+.ribbon-icon {
+    font-size: 25px;
+}
+
+.ribbon-msg-container div {
+    display: inline-block;
+}
+
+.location-login .general-ribbon {
+    display: none;
+}

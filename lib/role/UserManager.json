@@ -1,12 +1,14 @@
 {
-  "name": "Course Creator",
+  "name": "User Manager",
   "version": "0.0.1",
   "statement" : [
+    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/tenant/*", "action":["create", "read", "update", "delete"], "effect":"allow" },
+    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/role/*", "action":["create", "read", "update", "delete"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/content/*", "action":["create", "read", "update", "delete"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/shared/*", "action":["create","read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/subscribed/*", "action":["create","read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/asset/*", "action":["create", "read", "update"], "effect":"allow" },
-    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/user/*", "action":["read"], "effect":"allow" },
+    { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/user/*", "action":["create", "read", "update", "delete"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/user/me", "action":["read", "update"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/output/*", "action":["read"], "effect":"allow" },
     { "condition":{}, "resource":"urn:x-adapt:{{tenantid}}/api/extensiontype/*", "action":["read"], "effect":"allow" },

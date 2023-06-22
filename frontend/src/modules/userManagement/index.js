@@ -9,7 +9,7 @@ define(function(require) {
 
   var isReady = false;
   var data = {
-    featurePermissions: ["*/*:create","*/*:read","*/*:update","*/*:delete"],
+    featurePermissions: ["{{tenantid}}/user/*:create", "{{tenantid}}/user/*:read", "{{tenantid}}/user/*:update", "{{tenantid}}/user/*:delete","{{tenantid}}/role/*:create", "{{tenantid}}/role/*:read", "{{tenantid}}/role/*:update", "{{tenantid}}/role/*:delete", "{{tenantid}}/tenant/*:create", "{{tenantid}}/tenant/*:read", "{{tenantid}}/tenant/*:update", "{{tenantid}}/tenant/*:delete"],
     allRoles: new Backbone.Collection(),
     allTenants: new Backbone.Collection()
   };

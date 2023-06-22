@@ -73,11 +73,13 @@ define([
         // ESDC - added support for the editor in multiple languages
         language: language,
         language_list: ['fr:Français', 'en:English'],
+        skin: 'moono',
         dataIndentationChars: '',
         disableNativeSpellChecker: false,
         enterMode: CKEDITOR[Origin.constants.ckEditorEnterMode],
         entities: false,
         extraAllowedContent: Origin.constants.ckEditorExtraAllowedContent,
+        removePlugins: 'exportpdf',
         on: {
           change: function() {
             this.trigger('change', this);

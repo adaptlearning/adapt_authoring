@@ -9,6 +9,8 @@ define(function (require) {
   var MessageManagementModel = require('./models/messageManagementModel');
 
   var isReady = false;
+  var dateTime = Date.now();
+  var TEN_MINUTES = 1 * 60 * 1000;
   var data = {
     featurePermissions: ["{{tenantid}}/messages/*:create", "{{tenantid}}/messages/*:read", "{{tenantid}}/messages/*:update"]
   };
@@ -38,7 +40,7 @@ define(function (require) {
       }
     }
     var generalRibbonCSS = `
-    <style>
+    <style class="general-ribbon-css">
     @media only screen and (min-width: ${breakpoints.first}px) {
         .sidebar {
           top: ${sidebarTop}px;
@@ -90,8 +92,34 @@ define(function (require) {
     return generalRibbonCSS;
   }
 
+  Origin.on('location:change', function(){
+    console.log(((new Date) - dateTime) > TEN_MINUTES);
+    if(((new Date) - dateTime) > TEN_MINUTES){
+      dateTime = Date.now();
+      var messages = new MessageManagementModel();
+      messages.fetch({
+        success: function () {
+          if (messages.attributes.generalRibbonEnabled) {
+            messages.attributes.generalRibbon = $('html').attr('lang') === 'en' ? messages.attributes.generalRibbonEN : messages.attributes.generalRibbonFR;
+            var message = Helpers.removeHTMLTags(messages.attributes.generalRibbon).replace(/\&nbsp;/g, '');
+            var generalRibbonCSS = generateGeneralRibbonCSS(message);
+            if($('.general-ribbon').length !== 0){
+              $('.general-ribbon').html(new MessageManagementGeneralRibbonView({ model: messages }).$el)
+            } else {
+              $('.navigation').before(new MessageManagementGeneralRibbonView({ model: messages }).$el);
+            }
+              $('.general-ribbon-css').remove();
+              $('head').append(generalRibbonCSS);
+          } else {
+              $('.general-ribbon').remove();
+              $('.general-ribbon-css').remove();
+          }
+        }
+      });
+    }
+  })
 
-  Origin.once('origin:dataReady login:changed', function () {
+  Origin.on('origin:dataReady login:changed messageManagementSidebar:views:saved', function () {
     var messages = new MessageManagementModel();
     messages.fetch({
       success: function () {
@@ -99,8 +127,16 @@ define(function (require) {
           messages.attributes.generalRibbon = $('html').attr('lang') === 'en' ? messages.attributes.generalRibbonEN : messages.attributes.generalRibbonFR;
           var message = Helpers.removeHTMLTags(messages.attributes.generalRibbon).replace(/\&nbsp;/g, '');
           var generalRibbonCSS = generateGeneralRibbonCSS(message);
-          $('.navigation').before(new MessageManagementGeneralRibbonView({ model: messages }).$el);
-          $('head').append(generalRibbonCSS);
+          if($('.general-ribbon').length !== 0){
+            $('.general-ribbon').html(new MessageManagementGeneralRibbonView({ model: messages }).$el)
+          } else {
+            $('.navigation').before(new MessageManagementGeneralRibbonView({ model: messages }).$el);
+          }
+            $('.general-ribbon-css').remove();
+            $('head').append(generalRibbonCSS);
+        } else {
+            $('.general-ribbon').remove();
+            $('.general-ribbon-css').remove();
         }
       }
     });

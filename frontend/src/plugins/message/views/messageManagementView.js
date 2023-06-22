@@ -150,6 +150,7 @@ define(function (require) {
         },
         success: function (model) {
           Backbone.history.history.back();
+          Origin.trigger('messageManagementSidebar:views:saved');
         }
       });
     },

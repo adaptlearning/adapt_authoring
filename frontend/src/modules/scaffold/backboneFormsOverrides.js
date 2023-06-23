@@ -5,6 +5,7 @@ define(['core/origin', 'backbone-forms'], function (Origin, BackboneForms) {
   var initialize = Backbone.Form.editors.Base.prototype.initialize;
   var textInitialize = Backbone.Form.editors.Text.prototype.initialize;
   var radioInitialize = Backbone.Form.editors.Radio.prototype.initialize;
+  var selectInitialize = Backbone.Form.editors.Select.prototype.initialize;
   var textAreaRender = Backbone.Form.editors.TextArea.prototype.render;
   var textAreaSetValue = Backbone.Form.editors.TextArea.prototype.setValue;
 
@@ -276,9 +277,12 @@ define(['core/origin', 'backbone-forms'], function (Origin, BackboneForms) {
   };
 
   // add listener to is-conditional-radio inputs
-  Backbone.Form.editors.Radio.prototype.initialize = function (options) {
-    radioInitialize.call(this, options);
+  Backbone.Form.editors.Radio.prototype.initialize = initializeEditor;
+  Backbone.Form.editors.Select.prototype.initialize = initializeEditor;
 
+   function initializeEditor(options) {
+    radioInitialize.call(this, options);
+    selectInitialize.call(this, options);
     const attrs = options.schema.editorAttrs;
     if (!attrs) return;
 
@@ -291,5 +295,5 @@ define(['core/origin', 'backbone-forms'], function (Origin, BackboneForms) {
         ).toggle(true);
       });
     }
-  };
+   }
 });

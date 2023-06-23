@@ -268,19 +268,31 @@ define(function (require) {
     refreshConditionalViews: function () {
       if (!this.form) return;
 
-      // Setup initial view for conditional fields
-      const conditionalRadios = $('[data-is-conditional]');
-      conditionalRadios.each((index, radio) => {
-        const $radio = $(radio);
-        const nameOfRadio = $radio.attr('name');
-        const valueOfRadio = $(`input[name=${nameOfRadio}]:checked`).val();
-        const dependencies = $(`[data-depends-on=${nameOfRadio}]`);
-
-        dependencies.each((index, field) => {
-          const $field = $(field);
-          const matchOption = $field.attr('data-option-match');
-          $(field).toggle(valueOfRadio === matchOption);
-        });
+      $('[data-is-conditional]').each(function(index, element){
+        const $element = $(element);
+        const tagName = $element.prop('tagName').toLowerCase();
+        
+        if (tagName === 'select') {
+          const nameOfSelect = $element.attr('name');
+          const valueOfSelect = $element.val().toLowerCase();
+          const dependencies = $(`[data-depends-on=${nameOfSelect}]`);
+          
+          dependencies.each((index, field) => {
+            const $field = $(field);
+            const matchOption = $field.attr('data-option-match');
+            $field.toggle(valueOfSelect === matchOption);
+          });
+        } else {
+          const nameOfRadio = $element.attr('name');
+          const valueOfRadio = $(`input[name=${nameOfRadio}]:checked`).val();
+          const dependencies = $(`[data-depends-on=${nameOfRadio}]`);
+          
+          dependencies.each((index, field) => {
+            const $field = $(field);
+            const matchOption = $field.attr('data-option-match');
+            $field.toggle(valueOfRadio === matchOption);
+          });
+        }
       });
     },
   });

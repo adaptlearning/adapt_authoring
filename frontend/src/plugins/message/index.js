@@ -93,7 +93,6 @@ define(function (require) {
   }
 
   Origin.on('location:change', function(){
-    console.log(((new Date) - dateTime) > TEN_MINUTES);
     if(((new Date) - dateTime) > TEN_MINUTES){
       dateTime = Date.now();
       var messages = new MessageManagementModel();
@@ -168,8 +167,6 @@ define(function (require) {
       } else {
         onRoute();
       }
-    } else {
-      console.log('no permission')
     }
   });
 

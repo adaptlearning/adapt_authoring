@@ -13,7 +13,7 @@ define(function (require) {
     preRender: function () {
       this.listenTo(Origin, 'messageManagementSidebar:views:save', this.saveMessage);
       this.listenTo(this.model, 'invalid', this.handleValidationError);
-      CKEDITOR.plugins.addExternal('wordcount', '/libraries/wordcount/', 'plugin.js');
+      CKEDITOR.plugins.addExternal('wordcount', '/wordcount/', 'plugin.js');
     },
 
     postRender: function () {

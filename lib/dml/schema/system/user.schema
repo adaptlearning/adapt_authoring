@@ -29,6 +29,9 @@
       "type": "string",
       "protect": true
     },
+    "lastPasswordChange": {
+      "type": "string"
+    },
     "roles": {
       "type": "array",
       "items": { "type": "objectid", "ref":"role" }

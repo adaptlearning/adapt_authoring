@@ -108,6 +108,7 @@ module.exports = function(grunt) {
           name: 'core/app',
           mainConfigFile: "frontend/src/core/config.js",
           out: "frontend/build/js/origin.js",
+          generateSourceMaps: true,
           preserveLicenseComments: true,
           optimize: "none"
         }
@@ -118,30 +119,8 @@ module.exports = function(grunt) {
           name: 'core/app',
           mainConfigFile: "frontend/src/core/config.js",
           out: "frontend/build/js/origin.js",
-          optimize: "none"
+          optimize: "uglify2"
         }
-      }
-    },
-    babel: {
-      dev: {
-        options: {
-          compact: false,
-          retainLines: true,
-          presets: [ [ '@babel/preset-env', { targets: { ie: '11' } } ] ],
-          sourceType: 'script'
-        },
-        src: 'frontend/build/js/origin.js',
-        dest: 'frontend/build/js/origin.js'
-      },
-      compile: {
-        options: {
-          comments: false,
-          minified: true,
-          presets: [ [ '@babel/preset-env', { targets: { ie: '11' } } ] ],
-          sourceType: 'script'
-        },
-        src: 'frontend/build/js/origin.js',
-        dest: 'frontend/build/js/origin.js'
       }
     },
     mochaTest: {
@@ -336,10 +315,10 @@ module.exports = function(grunt) {
       config.isProduction = isProduction;
       grunt.file.write(configFile, JSON.stringify(config, null, 2));
       // run the task
-      grunt.task.run(['migration-conf', 'requireBundle', 'generate-lang-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation, `babel:${compilation}`]);
+      grunt.task.run(['migration-conf', 'requireBundle', 'generate-lang-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
 
     } catch(e) {
-      grunt.task.run(['requireBundle', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation, `babel:${compilation}`]);
+      grunt.task.run(['requireBundle', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation]);
     }
   });
 };

@@ -2,6 +2,9 @@
 
 [![Build Status](https://secure.travis-ci.org/adaptlearning/adapt_authoring.png)](http://travis-ci.org/adaptlearning/adapt_authoring) [![Join the chat at https://gitter.im/adaptlearning/adapt_authoring](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/adaptlearning/adapt_authoring?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+## Docker Entry Point Dynamic tenant
+tenantname=`od -x /dev/urandom | head -1 | awk '{OFS=""; print $2$3,$4,$5,$6,$7$8$9}'`
+
 Adapt is a free and easy to use framework and authoring tool that creates fully responsive, multi-device, HTML5 e-learning content.
 
 ## What Does It Do?
@@ -39,3 +42,6 @@ See [Contributing to the Adapt authoring tool](https://github.com/adaptlearning/
 
 ## License
 <a href="https://community.adaptlearning.org/" target="_blank"><img src="https://github.com/adaptlearning/documentation/blob/master/04_wiki_assets/plug-ins/images/adapt-logo-mrgn-lft.jpg" alt="adapt learning logo" align="right"></a>  Adapt is licensed under the [GNU General Public License, Version 3](https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE).
+
+
+docker buildx --platform linux/amd64build -t  instil-education-adapt-content-authoring-dev-ecr .

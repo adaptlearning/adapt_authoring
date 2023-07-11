@@ -15,7 +15,6 @@ require.config({
     modernizr: 'libraries/modernizr',
     moment: 'libraries/moment.min',
     pikaday: 'libraries/pikaday/js/pikaday',
-    polyfill: 'libraries/polyfill.min',
     polyglot: 'libraries/polyglot.min',
     scrollTo: 'libraries/scrollTo',
     selectize: 'libraries/selectize/js/selectize',
@@ -91,6 +90,5 @@ require.config({
     'templates/templates': {
       deps:['handlebars']
     }
-  },
-  waitSeconds: 0
+  }
 });

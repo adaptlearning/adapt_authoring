@@ -102,7 +102,7 @@ installHelpers.checkPrimaryDependencies(function(error) {
             name: 'useConnectionUri',
             type: 'confirm',
             message: 'Will you be using a full database connection URI? (all connection options in the URI)',
-            default: false
+            default: true
           }
         ],
         configureUri: [
@@ -316,13 +316,13 @@ function start() {
       createMasterTenant,
       createSuperUser,
       buildFrontend,
-      installHelpers.runMigrations
+      syncMigrations
     ], function(error, results) {
       if(error) {
         console.error('ERROR: ', error);
         return exit(1, 'Install was unsuccessful. Please check the console output.');
       }
-      exit(0, `Installation completed, the application can now be started with 'node server'.`);
+      exit(0, `Installation completed successfully, the application can now be started with 'node server'.`);
     });
   });
 }
@@ -511,9 +511,21 @@ function createSuperUser(callback) {
 function buildFrontend(callback) {
   installHelpers.buildAuthoring(function(error) {
     if(error) {
-      console.log(chalk.yellow(`Failed to build the web application, (${error}) \nInstall will continue. Try again after installation completes using 'grunt build:prod'.`));
+      return callback(`Failed to build the web application, (${error}) \nInstall will continue. Try again after installation completes using 'grunt build:prod'.`);
     }
     callback();
+  });
+}
+
+//As this is a fresh install we dont need to run the migrations so add them to the db and set them to up
+function syncMigrations(callback) {
+  installHelpers.syncMigrations(function(err, migrations) {
+    database.getDatabase(function(err, db) {
+      if(err) {
+        return callback(err);
+      }
+      db.update('migration', {}, {'state': 'up'}, callback)
+    }, masterTenant._id)
   });
 }
 

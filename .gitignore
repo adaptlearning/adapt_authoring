@@ -30,3 +30,5 @@
 .idea
 .project
 .vscode
+
+plugins/auth/local/node_modules/

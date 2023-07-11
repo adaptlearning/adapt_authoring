@@ -100,15 +100,18 @@ function publishCourse(courseId, mode, request, response, next) {
       });
     },
     function(callback) {
-      self.buildFlagExists(path.join(BUILD_FOLDER, Constants.Filenames.Rebuild), function(err, buildFlagExists) {
+      self.buildFlagExists(path.join(BUILD_FOLDER, Constants.Filenames.Rebuild), function(err, exists) {
         if (err) {
           return callback(err);
         }
-        isForceRebuild = request && request.query.force === 'true';
 
-        if (mode === Constants.Modes.Export || mode === Constants.Modes.Publish || buildFlagExists || isForceRebuild) {
+        if (mode === Constants.Modes.Export || mode === Constants.Modes.Publish) {
           isRebuildRequired = true;
+          return callback(null);
         }
+
+        isForceRebuild = (request) ? request.query.force === 'true' : false;
+        isRebuildRequired = exists || isForceRebuild;
         callback(null);
       });
     },
@@ -156,67 +159,63 @@ function publishCourse(courseId, mode, request, response, next) {
       });
     },
     function(callback) {
-      if (!isRebuildRequired) {
-        return callback();
-      }
-      logger.log('info', 'Attempting to update browserslist');
-      exec('npx browserslist --update-db', { cwd: FRAMEWORK_ROOT_FOLDER }, e => callback(e));
-    },
-    function(callback) {
-      if (!isRebuildRequired) {
-        resultObject.success = true;
-        return callback(null, 'Framework already built, nothing to do');
-      }
-
-      logger.log('info', '3.1. Ensuring framework build exists');
-
-      var args = [];
-      var outputFolder = COURSE_FOLDER.replace(FRAMEWORK_ROOT_FOLDER + path.sep,'');
-
-      // Append the 'build' folder to later versions of the framework
-      if (semver.gte(semver.clean(frameworkVersion), semver.clean('2.0.0'))) {
-        outputFolder = path.join(outputFolder, Constants.Folders.Build);
-      }
-
-      args.push('--outputdir=' + outputFolder);
-      args.push('--theme=' + themeName);
-      args.push('--menu=' + menuName);
-
-      logger.log('info', '3.2. Using theme: ' + themeName);
-      logger.log('info', '3.3. Using menu: ' + menuName);
-
-      var generateSourcemap = outputJson.config._generateSourcemap;
-      var buildMode = generateSourcemap === true ? 'dev' : 'prod';
-
-      logger.log('info', 'npx grunt server-build:' + buildMode + ' ' + args.join(' '));
-
-      child = exec('npx grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)}, function(error, stdout, stderr) {
-        if (error !== null) {
-          logger.log('error', 'exec error: ' + error);
-          logger.log('error', 'stdout error: ' + stdout);
-          error.message += getGruntFatalError(stdout) || '';
+      fs.exists(path.join(BUILD_FOLDER, Constants.Filenames.Main), function(exists) {
+        if (!isRebuildRequired && exists) {
           resultObject.success = true;
-          return callback(error, 'Error building framework');
+          return callback(null, 'Framework already built, nothing to do');
         }
 
-        if (stdout.length != 0) {
-          logger.log('info', 'stdout: ' + stdout);
-          resultObject.success = true;
+        logger.log('info', '3.1. Ensuring framework build exists');
 
-          // Indicate that the course has built successfully
-          app.emit('previewCreated', tenantId, courseId, outputFolder);
+        var args = [];
+        var outputFolder = COURSE_FOLDER.replace(FRAMEWORK_ROOT_FOLDER + path.sep,'');
 
-          return callback(null, 'Framework built OK');
+        // Append the 'build' folder to later versions of the framework
+        if (semver.gte(semver.clean(frameworkVersion), semver.clean('2.0.0'))) {
+          outputFolder = path.join(outputFolder, Constants.Folders.Build);
         }
 
-        if (stderr.length != 0) {
-          logger.log('error', 'stderr: ' + stderr);
-          resultObject.success = false;
-          return callback(stderr, 'Error (stderr) building framework!');
-        }
+        args.push('--outputdir=' + outputFolder);
+        args.push('--theme=' + themeName);
+        args.push('--menu=' + menuName);
 
-        resultObject.success = true;
-        return callback(null, 'Framework built');
+        logger.log('info', '3.2. Using theme: ' + themeName);
+        logger.log('info', '3.3. Using menu: ' + menuName);
+
+        var generateSourcemap = outputJson.config._generateSourcemap;
+        var buildMode = generateSourcemap === true ? 'dev' : 'prod';
+
+        logger.log('info', 'grunt server-build:' + buildMode + ' ' + args.join(' '));
+
+        child = exec('grunt server-build:' + buildMode + ' ' + args.join(' '), {cwd: path.join(FRAMEWORK_ROOT_FOLDER)},
+          function(error, stdout, stderr) {
+            if (error !== null) {
+              logger.log('error', 'exec error: ' + error);
+              logger.log('error', 'stdout error: ' + stdout);
+              error.message += getGruntFatalError(stdout) || '';
+              resultObject.success = true;
+              return callback(error, 'Error building framework');
+            }
+
+            if (stdout.length != 0) {
+              logger.log('info', 'stdout: ' + stdout);
+              resultObject.success = true;
+
+              // Indicate that the course has built successfully
+              app.emit('previewCreated', tenantId, courseId, outputFolder);
+
+              return callback(null, 'Framework built OK');
+            }
+
+            if (stderr.length != 0) {
+              logger.log('error', 'stderr: ' + stderr);
+              resultObject.success = false;
+              return callback(stderr, 'Error (stderr) building framework!');
+            }
+
+            resultObject.success = true;
+            return callback(null, 'Framework built');
+          });
       });
     },
     function(err, callback) {

@@ -1,0 +1,37 @@
+image: sovtech/bitbucket-pipelines-node-aws:14.x
+pipelines:
+  branches:
+    develop:
+      - step:
+          name: Build ECR Image For DEV-UAT
+          services:
+            - docker
+          deployment: test
+          script:
+            - pip3 install awscli
+            - echo 'dev'
+            # - /bin/bash aws-config.sh
+            # - cat ~/.aws/credentials
+            # - aws ecr get-login-password --region eu-west-1 --profile instill-sovtech | docker login --username AWS --password-stdin $AWS_ECR
+            # # creates variables (timestamp, image name and tag)
+            # # builds docker image from a local dockerfile
+            # - docker build -t instil-education-adapt-content-authoring-dev-ecr .
+            # - docker tag instil-education-adapt-content-authoring-dev-ecr:latest $AWS_ECR/instil-education-adapt-content-authoring-dev-ecr:latest
+            # - docker push $AWS_ECR/instil-education-adapt-content-authoring-dev-ecr:latest
+    master:
+      - step:
+          name: Build and AWS Setup
+          services:
+            - docker
+          deployment: production
+          script:
+            - pip3 install awscli
+            - echo 'master'
+            - /bin/bash aws-config-prod.sh
+            - cat ~/.aws/credentials
+            - aws ecr get-login-password --region eu-west-1 --profile instill-sovtech-prod-super | docker login --username AWS --password-stdin 793311431291.dkr.ecr.eu-west-1.amazonaws.com
+            # creates variables (timestamp, image name and tag)
+            # builds docker image from a local dockerfile
+            - docker build -t instill-education-adapt-content-authoring-prod-ecr .
+            - docker tag instill-education-adapt-content-authoring-prod-ecr:latest 793311431291.dkr.ecr.eu-west-1.amazonaws.com/instill-education-adapt-content-authoring-prod-ecr:latest
+            - docker push 793311431291.dkr.ecr.eu-west-1.amazonaws.com/instill-education-adapt-content-authoring-prod-ecr:latest

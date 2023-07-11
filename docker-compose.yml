@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  app:
+    container_name: adapt
+    image: aptlogica/adapt-authoring-docker
+    build: .
+    volumes:
+      - adaptdata:/adapt_authoring
+    ports:
+      - "5000:5000"
+    networks:
+      - internal
+    env_file: .env
+
+volumes:
+  adaptdata:
+  
+networks:
+  internal:

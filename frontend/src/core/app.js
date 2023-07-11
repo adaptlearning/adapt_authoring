@@ -11,7 +11,6 @@
       'jqueryForm',
       'jqueryTagsInput',
       'jqueryUI',
-      'polyfill',
       'scrollTo',
       'selectize',
       'sweetalert',

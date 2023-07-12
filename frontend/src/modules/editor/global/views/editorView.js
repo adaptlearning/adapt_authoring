@@ -44,6 +44,7 @@ define(function(require) {
         'editorView:copy': this.addToClipboard,
         'editorView:copyID': this.copyIdToClipboard,
         'editorView:paste': this.pasteFromClipboard,
+        'editorView:pasteFromButton': this.pasteFromButton,
         'editorCommon:download': this.downloadProject,
         'editorCommon:preview': function(isForceRebuild) {
           var previewWindow = window.open('loading', 'preview');
@@ -252,7 +253,11 @@ define(function(require) {
       };
       $.post('api/content/clipboard/copy', postData, _.bind(function(jqXHR) {
         Origin.editor.clipboardId = jqXHR.clipboardId;
-        this.showPasteZones(model.get('_type'));
+        var type = model.get('_type');
+        Origin.Notify.alert({
+          type: 'info',
+          text: helpers.capitalise(Origin.l10n.t('app.copyelementclipboardsuccess', { type: Origin.l10n.t('app.' + type, {smart_count: 1}) }))
+        });
       }, this)).fail(_.bind(function (jqXHR, textStatus, errorThrown) {
         Origin.Notify.alert({
           type: 'error',
@@ -300,7 +305,42 @@ define(function(require) {
         });
       });
     },
-
+    pasteFromButton: function(model) {
+      var editor = this;
+      $.get('api/content/clipboard', function(data) {
+        if(data.length !== 0){
+          var type = data[0].referenceType;
+          switch(type){
+            case 'article':
+              editor.showPasteZones('article');
+              break;
+            case 'block':             
+              editor.showPasteZones('block');
+              break;
+            case 'component':
+              if(editor.$el.find('.block-inner .add-control').length === 0){
+                editor.listenToOnce(Origin, { 'editorPageComponentPasteZone:postRender': function(){
+                  editor.showPasteZones('component');
+                }})
+                Origin.trigger('editorView:addBlock');
+              } else {
+                editor.showPasteZones('component');
+              }
+              break;
+          }
+        } else {
+          Origin.Notify.alert({
+          type: 'error',
+          text: Origin.l10n.t('app.clipboardempty')
+        });
+        }
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        Origin.Notify.alert({
+          type: 'error',
+          text: Origin.l10n.t('app.errorpaste') + (jqXHR.message ? '\n\n' + jqXHR.message : 'Unknown error with clipboard API')
+        });
+      });
+    },
     createModel: function (type) {
       var model;
       switch (type) {

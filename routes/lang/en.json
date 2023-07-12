@@ -416,9 +416,10 @@
   "app.targetattributeexists": "There is a plugin already installed with a target attribute of '%{targetAttribute}'.",
   "app.versionexists": "You already have this version of the plugin installed.",
   "app.unknownuser": "Unknown User",
-  "app.langswitcher": "Français (Beta)",
-  "app.scaffold._setCompletionOn.inview.variable": "Example inview english",
-  "app.scaffold._setCompletionOn.allItems.variable": "Example allItems english",
+  "app.langswitcher": "Français",
+  "app.langswitcherCode": "fr",
+  "app.scaffold._setCompletionOn.inview.variable": "In View",
+  "app.scaffold._setCompletionOn.allItems.variable": "All Items",
   "app.scaffold._lockType.custom.variable": "Custom",
   "app.scaffold._lockType.lockLast.variable": "Lock Last",
   "app.scaffold._lockType.sequential.variable": "Sequential",
@@ -475,5 +476,13 @@
   "app.scaffold._setCompletionOn.pass.variable": "Pass",
   "app.scaffold._resetType.inherit.variable": "Inherit",
   "app.scaffold._resetType.hard.variable": "Hard",
-  "app.scaffold._resetType.soft.variable": "Soft"
+  "app.scaffold._resetType.soft.variable": "Soft",
+  "app.messagemanagement": "Message Management",
+  "app.message.title": "Manage System Messages",
+  "app.message.generalRibbon": "General Message Ribbon",
+  "app.validationWCAG": "WCAG contrast ratio not met",
+  "app.message.generalRibbonEN": "English Text",
+  "app.message.generalRibbonFR": "French Text",
+  "app.message.generalRibbonBgColor": "Background Color",
+  "app.message.generalRibbonTextColor": "Text Color"
 }

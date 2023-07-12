@@ -1389,6 +1389,7 @@
     "app.versionexists": "Vous avez déjà installé cette version du module d’extension.",
     "app.unknownuser": "Utilisateur inconnu",
     "app.langswitcher": "English",
+    "app.langswitcherCode": "en",
     "app.items":"%{smart_count} éléments",
     "app.page": "page",
     "app.article": "article",
@@ -1553,5 +1554,13 @@
     "app.scaffold._setCompletionOn.pass.variable": "Réussi",
     "app.scaffold._resetType.inherit.variable": "Hériter",
     "app.scaffold._resetType.hard.variable": "Complète",
-    "app.scaffold._resetType.soft.variable": "Logicielle"
+    "app.scaffold._resetType.soft.variable": "Logicielle",
+    "app.messagemanagement": "Gestion des messages",
+    "app.message.title": "Gérer les messages système",
+    "app.message.generalRibbon": "Ruban de message général",
+    "app.validationWCAG": "Le contraste WCAG n'est pas atteint",
+    "app.message.generalRibbonEN": "Texte anglais",
+    "app.message.generalRibbonFR": "Texte français",
+    "app.message.generalRibbonBgColor": "Couleur d'arrière-plan",
+    "app.message.generalRibbonTextColor": "Couleur du texte"
 }

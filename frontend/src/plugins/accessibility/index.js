@@ -3,7 +3,7 @@ define(function (require) {
     var Helpers = require('core/helpers');
     Origin.on('location:title:hide', function(event){
         if(Origin.location.route1 === 'login'){
-            var pageTitle = Origin.l10n.t('app.login') + " - " + Origin.l10n.t('app.productname');
+            var pageTitle = Origin.l10n.t('app.signin') + " - " + Origin.l10n.t('app.productname');
             $('head title')[0].innerText = pageTitle;
         }
     })

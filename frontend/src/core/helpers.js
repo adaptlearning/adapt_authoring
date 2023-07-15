@@ -430,6 +430,11 @@ define(function(require){
       return str.replace( /(<([^>]+)>)/ig, '');
     },
 
+    getCookie: function(name) {
+      var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) return match[2];
+    },
+
     importConstants: function() {
       this.constants = Origin.constants;
       return '';

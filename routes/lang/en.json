@@ -485,5 +485,5 @@
   "app.message.generalRibbonFR": "French Text",
   "app.message.generalRibbonBgColor": "Background Color",
   "app.message.generalRibbonTextColor": "Text Color",
-  "app.updateavailable": "A newer version of the application is now available. To ensure you have the latest updates, please refresh your page."
+  "app.updateavailable": "A newer version of the application is now available. To ensure you have the latest updates, please refresh your page. The window will be automatically refreshed in 20 seconds unless you choose to cancel."
 }

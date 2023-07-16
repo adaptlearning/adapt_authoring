@@ -1563,5 +1563,5 @@
     "app.message.generalRibbonFR": "Texte français",
     "app.message.generalRibbonBgColor": "Couleur d'arrière-plan",
     "app.message.generalRibbonTextColor": "Couleur du texte",
-    "app.updateavailable": "Une nouvelle version de l'application est désormais disponible. Pour vous assurer que vous disposez des dernières mises à jour, veuillez actualiser votre page."
+    "app.updateavailable": "Une nouvelle version de l'application est désormais disponible. Pour vous assurer que vous disposez des dernières mises à jour, veuillez actualiser votre page. La fenêtre sera automatiquement actualisée dans 20 secondes, sauf si vous décidez d'annuler."
 }

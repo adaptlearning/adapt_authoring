@@ -40,7 +40,8 @@ define(function(require){
       this.listenTo(Origin, {
         'editorView:collapseArticle:collapse': this.collapseAllArticles,
         'editorView:collapseArticle:expand': this.expandAllArticles,
-        'editorView:removeSubViews editorPageView:removePageSubViews': this.remove
+        'editorView:removeSubViews editorPageView:removePageSubViews': this.remove,
+        'editorView:addBlock': this.addBlock
       });
 
       if (!this.model.isNew()) {

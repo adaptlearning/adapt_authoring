@@ -18,7 +18,7 @@
     {{! ESDC - added language switcher link}}
     <a href="#" class="langspot navigation-item aut" onclick="togglelang()">
       {{! ESDC - added translation handler for language name}}
-      <span>{{t 'app.langswitcher'}}</span>
+      <span lang="{{t 'app.langswitcherCode'}}">{{t 'app.langswitcher'}}</span>
     </a>
     <a href="#" class="navigation-item navigation-profile" data-event="user:profile">
       {{t 'app.loggedinas'}}: <span>{{email}}</span>

@@ -24,7 +24,8 @@ define(function(require){
       var id = this.model.get('_id');
       var originEvents = {
         'editorView:removeSubViews': this.remove,
-        'pageView:itemAnimated': this.evaluateChildStatus
+        'pageView:itemAnimated': this.evaluateChildStatus,
+        'editorView:pasteButton': this.pasteButton
       };
       originEvents['editorView:moveArticle:' + id] = this.render;
       originEvents['editorView:pasted:' + id] = this.render;
@@ -44,6 +45,13 @@ define(function(require){
           callbackEvent: 'editorView:collapseArticle:expand',
           value: 'expand',
           group: 'collapseArticle',
+        },
+        {
+          title: Origin.l10n.t('app.pasteButton'),
+          icon: 'clipboard',
+          callbackEvent: 'editorView:pasteButton',
+          value: 'paste',
+          group: 'toolBox',
         }
       ]);
 
@@ -192,7 +200,11 @@ define(function(require){
     remove: function() {
       this.removeScrollListener();
       EditorOriginView.prototype.remove.apply(this, arguments);
-    }
+    },
+
+    pasteButton: function(){
+      Origin.trigger('editorView:pasteFromButton', this.model);
+    },
   }, {
     template: 'editorPage'
   });

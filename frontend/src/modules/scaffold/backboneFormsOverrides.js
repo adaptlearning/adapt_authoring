@@ -1,7 +1,8 @@
 define([
   'core/origin',
-  'backbone-forms'
-], function(Origin, BackboneForms) {
+  'backbone-forms',
+  'core/helpers'
+], function(Origin, BackboneForms, Helpers) {
 
   var templates = Handlebars.templates;
   var fieldTemplate = templates.field;
@@ -118,6 +119,18 @@ define([
           { name: 'others', items: [ '-' ] }
         ]
       });
+      CKEDITOR.on("instanceReady", function(event) {
+        event.editor.on("beforeCommandExec", function(event) {
+            // Show the paste dialog for the paste buttons and right-click paste
+            if (event.data.name == "paste") {
+                event.editor._.forcePasteDialog = true;
+            }
+            // Don't show the paste dialog for Ctrl+Shift+V
+            if (event.data.name == "pastetext" && event.data.commandData.from == "keystrokeHandler") {
+                event.cancel();
+            }
+        })
+      });
     }.bind(this));
 
     return this;
@@ -142,6 +155,49 @@ define([
     this.editor.removeAllListeners();
     CKEDITOR.remove(this.editor);
   };
+
+
+  // ESDC - added override on arrayToHtml for select tags so the option can be added as id and the value translated
+  Backbone.Form.editors.Select.prototype._arrayToHtml = function(array) {
+    var html = $();
+    //Generate HTML
+    _.each(array, function(option) {
+      if (_.isObject(option)) {
+        if (option.group) {
+          var optgroup = $("<optgroup>")
+            .attr("label",option.group)
+            .html( this._getOptionsHtml(option.options) );
+          html = html.add(optgroup);
+        } else {
+          var val = (option.val || option.val === 0) ? option.val : '';
+          html = html.add( $('<option>').val(val).text(option.label) );
+        }
+      }
+      else {
+        var keyOptions = { parent: this.key, key: option, type: 'variable' };
+        var optionString = Helpers.keyToTranslatedString(keyOptions) || option;
+        html = html.add($(`<option id=${option}>`).text(optionString));
+      }
+    }, this);
+
+    return html;
+  }
+
+  // ESDC - added override on setValue for select tags so the translated option can be set as selected
+  Backbone.Form.editors.Select.prototype.setValue = function(option) {
+    var keyOptions = { parent: this.key, key: option, type: 'variable' };
+    var optionString = Helpers.keyToTranslatedString(keyOptions) || option;
+    this.value = optionString;
+    this.$el.val(optionString);
+  }
+
+  // ESDC - added override on getValue for select tags so it can fetch data from id instead of value so the option values can be translated
+  Backbone.Form.editors.Select.prototype.getValue = function() {
+      var editorfield = this.$el[0];
+      var option = editorfield.selectedOptions[0];
+      var id = option.id;
+      return id;
+  }
 
   // add override to allow prevention of validation
   Backbone.Form.prototype.validate = function(options) {

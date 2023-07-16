@@ -27,6 +27,8 @@
 
 /.settings
 
+package-lock.json
+
 .idea
 .project
 .vscod

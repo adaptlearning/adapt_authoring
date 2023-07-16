@@ -424,5 +424,6 @@
   "app.message.generalRibbonEN": "English Text",
   "app.message.generalRibbonFR": "French Text",
   "app.message.generalRibbonBgColor": "Background Color",
-  "app.message.generalRibbonTextColor": "Text Color"
+  "app.message.generalRibbonTextColor": "Text Color",
+  "app.passwordchangemessage": "Kindly update your password. This notification will be automatically dismissed upon successful password modification."
 }

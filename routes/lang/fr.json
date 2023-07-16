@@ -1502,5 +1502,6 @@
     "app.message.generalRibbonEN": "Texte anglais",
     "app.message.generalRibbonFR": "Texte français",
     "app.message.generalRibbonBgColor": "Couleur d'arrière-plan",
-    "app.message.generalRibbonTextColor": "Couleur du texte"
+    "app.message.generalRibbonTextColor": "Couleur du texte",
+    "app.passwordchangemessage": "Veuillez mettre à jour votre mot de passe. Cette notification sera automatiquement supprimée lors de la réussite de la modification du mot de passe."
 }

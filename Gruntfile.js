@@ -315,6 +315,12 @@ module.exports = function(grunt) {
         return false;
     }
     var json = grunt.file.readJSON(configFile);
+    if (!json.buildNumber) {
+      json.buildNumber = 0;
+    }
+    if (!json.buildPrefix) {
+      json.buildPrefix = 'BUILD';
+    }
     json.buildNumber++;
     grunt.file.write(configFile, JSON.stringify(json, null, 2));
 });

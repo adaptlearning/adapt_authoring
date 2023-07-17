@@ -308,6 +308,17 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['build:dev']);
   grunt.registerTask('test', ['mochaTest']);
 
+  grunt.registerTask('update-build-number', function (key, value) {
+    var configFile = "conf/config.json";
+    if (!grunt.file.exists(configFile)) {
+        grunt.log.error("file " + configFile + " not found");
+        return false;
+    }
+    var json = grunt.file.readJSON(configFile);
+    json.buildNumber++;
+    grunt.file.write(configFile, JSON.stringify(json, null, 2));
+});
+
   /**
   * Accepts 'build' and 'prod' params
   * e.g. grunt build:prod
@@ -325,7 +336,7 @@ module.exports = function(grunt) {
       config.isProduction = isProduction;
       grunt.file.write(configFile, JSON.stringify(config, null, 2));
       // run the task
-      grunt.task.run(['migration-conf', 'requireBundle', 'generate-lang-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation]);
+      grunt.task.run(['migration-conf', 'requireBundle', 'generate-lang-json', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:'+ compilation, 'update-build-number']);
 
     } catch(e) {
       grunt.task.run(['requireBundle', 'copy', 'less:' + compilation, 'handlebars', 'requirejs:' + compilation]);

@@ -119,9 +119,58 @@ define(function(require) {
 		}
 	};
 
+	var Auto = function(data) {
+		// allow for string input
+		if (_.isString(data)) {
+      data = {
+        text: data
+			};
+		}
+
+		// some defaults, in the case of an additional type being passed
+		var defaults = {
+			type: data.type || 'confirm',
+			showCancelButton: true,
+			confirmButtonText: Origin.l10n.t('app.confirmdefaultyes'),
+			cancelButtonText: Origin.l10n.t('app.no')
+		};
+
+		openPopup(_.extend(defaults, data));
+
+		$('.sweet-alert > .sa-button-container button').blur();
+
+		clearInterval(interval);
+
+		// forces the confirm button after timer has elapsed
+		if(data.autoConfirm === true) {
+			var setWaitText = function(n) {
+				$('.sweet-alert button.confirm')[0].innerText = `${data.confirmButtonText} (${n})`;
+			};
+
+			var count = (data.autoTimer / 1000);
+
+			setWaitText(count);
+
+			interval = setInterval(function() {
+				if(--count > 0) {
+					setWaitText(count);
+				} else {
+					clearInterval(interval);
+					setWaitText(count);
+					data.callback.apply(null, [true]);
+				}
+			}, 1000);
+
+			$('.sweet-alert button.cancel').on('click', function(){
+				clearInterval(interval);
+			})
+		}
+	};
+
 	var init = function() {
 		Origin.Notify.register('alert', Alert);
 		Origin.Notify.register('confirm', Confirm);
+		Origin.Notify.register('auto', Auto);
 		// shortcuts to override window methods
 		window.alert = alert = Alert;
 		window.confirm = confirm = Confirm;

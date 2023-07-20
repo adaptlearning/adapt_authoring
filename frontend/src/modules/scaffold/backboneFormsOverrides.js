@@ -176,27 +176,11 @@ define([
       else {
         var keyOptions = { parent: this.key, key: option, type: 'variable' };
         var optionString = Helpers.keyToTranslatedString(keyOptions) || option;
-        html = html.add($(`<option id=${option}>`).text(optionString));
+        html = html.add($(`<option id=${option} value="${option}">`).text(optionString));
       }
     }, this);
 
     return html;
-  }
-
-  // ESDC - added override on setValue for select tags so the translated option can be set as selected
-  Backbone.Form.editors.Select.prototype.setValue = function(option) {
-    var keyOptions = { parent: this.key, key: option, type: 'variable' };
-    var optionString = Helpers.keyToTranslatedString(keyOptions) || option;
-    this.value = optionString;
-    this.$el.val(optionString);
-  }
-
-  // ESDC - added override on getValue for select tags so it can fetch data from id instead of value so the option values can be translated
-  Backbone.Form.editors.Select.prototype.getValue = function() {
-      var editorfield = this.$el[0];
-      var option = editorfield.selectedOptions[0];
-      var id = option.id;
-      return id;
   }
 
   // add override to allow prevention of validation

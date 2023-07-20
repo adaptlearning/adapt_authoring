@@ -74,10 +74,6 @@ define(function(require) {
       this.$('.editable-theme').show();
       $('.editor-theming-sidebar-reset').show();
       try {
-        let defaultBlockPadding = selectedTheme.attributes.properties.variables._settings.properties['improved-block-padding'].default;
-        let defaultMarginControl = selectedTheme.attributes.properties.variables._settings.properties['margin-control'].default;
-        selectedTheme.attributes.properties.variables._settings.properties['improved-block-padding'].default = Origin.l10n.t(`app.scaffold.improved-block-padding.${defaultBlockPadding}.variable`);
-        selectedTheme.attributes.properties.variables._settings.properties['margin-control'].default = Origin.l10n.t(`app.scaffold.margin-control.${defaultMarginControl}.variable`);
         // ESDC - added template level to model data
         this.form = Origin.scaffold.buildForm({
           model: selectedTheme,

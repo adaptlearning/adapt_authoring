@@ -369,7 +369,7 @@
   "app.plugingreenupdatekey": "This plugin will be updated in the authoring tool during import.",
   "app.pluginamberkey": "The version of this plugin included in this import is either not compatible with this authoring tool, or a newer version is already installed. The imported course will use the existing version.",
   "app.pluginredkey": "This plugin is not supported in this authoring tool. You must remove or update this plugin before you can continue with the import.",
-  "app.errorfetchingdata": "An error occured fetching data. Please try refreshing your page.",
+  "app.errorfetchingdata": "An error occured fetching data. Please wait a few seconds and retry.",
   "app.backtoassets": "Back to assets",
   "app.newasset": "New Asset",
   "app.editasset": "Edit Asset",

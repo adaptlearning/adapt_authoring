@@ -34,7 +34,7 @@ define(function(require) {
           error: function(collecion, response) {
             Origin.Notify.alert({
               type: 'error',
-              text: 'app.errorfetchingdata'
+              text: Origin.l10n.t('app.errorfetchingdata')
             });
           }
         });
@@ -58,7 +58,7 @@ define(function(require) {
         error: _.bind(function(jqXHR) {
           Origin.Notify.alert({
             type: 'error',
-            text: 'app.errorfetchingdata'
+            text: Origin.l10n.t('app.errorfetchingdata')
           });
           callback.call(this);
         }, this)
@@ -78,7 +78,7 @@ define(function(require) {
         error: _.bind(function(jqXHR) {
           Origin.Notify.alert({
             type: 'error',
-            text: 'app.errorfetchingdata'
+            text: Origin.l10n.t('app.errorfetchingdata')
           });
           callback.call(this);
         }, this)

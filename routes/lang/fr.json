@@ -1348,7 +1348,7 @@
     "app.plugingreenupdatekey": "Ce module d’extension sera mis à jour dans l’outil-auteur lors de l’importation.",
     "app.pluginamberkey": "La version du module d’extension compris dans cette importation n’est pas compatible avec le présent outil-auteur, ou une version plus récente est déjà installée. Le cours importé utilisera la version existante.",
     "app.pluginredkey": "Ce module d’extension n’est pas pris en charge par le présent outil-auteur. Vous devez le supprimer ou le mettre à jour ce plugin avant de pouvoir poursuivre l’importation.",
-    "app.errorfetchingdata": "Une erreur s’est produite lors de l’extraction des données. Veuillez essayer de rafraîchir votre page.",
+    "app.errorfetchingdata": "Une erreur s’est produite lors de la récupération des données. Veuillez patienter quelques secondes et réessayer.",
     "app.backtoassets": "Retour aux ressources",
     "app.newasset": "Nouvelle ressource",
     "app.editasset": "Modifier la ressource",

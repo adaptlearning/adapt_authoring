@@ -227,7 +227,7 @@ define(function(require){
         error: function() {
           Origin.Notify.alert({
             type: 'error',
-            text: 'app.errorfetchingdata'
+            text: Origin.l10n.t('app.errorfetchingdata')
           });
         }
       });

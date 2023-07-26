@@ -53,11 +53,23 @@
                 <div class="inner display-none">
                   <label for="password">{{t 'app.newpassword'}}
                     <span class="req">*</span>
-                    <span id="passwordError" class="error feedback"></span>
                   </label>
-                  <input type="password" class="width-15" id="password" value="" autocomplete="off">
+                  <input type="password" class="width-15" id="password" value="" autocomplete="off" aria-describedby="ariaPasswordError" >
                   <input type="text" class="width-15 display-none" id="passwordText" value="" autocomplete="off">
                   <button href="#" class="toggle-password display-none"><i class="fa fa-eye"></i></button>
+                  <div>
+                    <div id="passwordError" class="error feedback" aria-live="polite"></div>
+                  </div>
+                </div>
+                <div class="inner display-none">
+                  <label for="confirmPassword">{{t 'app.confirmpassword'}}
+                    <span class="req">*</span>
+                  </label>
+                  <input type="password" class="width-15" id="confirmPassword" value="" autocomplete="off">
+                  <button href="#" class="toggle-password display-none"><i class="fa fa-eye"></i></button>
+                  <div>
+                    <div id="confirmPasswordError" class="error feedback"></div>
+                  </div>
                 </div>
                 <a href="#" class="btn primary change-password">{{t 'app.changepassword'}}</a>
               </div>

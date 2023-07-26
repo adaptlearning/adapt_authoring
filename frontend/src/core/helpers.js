@@ -285,6 +285,16 @@ define(function(require){
       return value.length > 0 && regEx.test(value);
     },
 
+    getPasswordErrors: function(value) {
+      var errors = [];
+      if (!/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(value)) errors = [...errors, Origin.l10n.t('app.passwordneedsspeccialcharacter')];
+      if (!/\d/.test(value)) errors = [...errors, Origin.l10n.t('app.passwordneedsonenumber')];
+      if (!/[A-Z]/.test(value)) errors = [...errors, Origin.l10n.t('app.passwordneedsuppercaseletter')];
+      if (!value || value.length < 8) errors = [...errors, Origin.l10n.t('app.validationlength', { length: 8 })];
+
+      return errors;
+    },
+
     contentModelMap: function(type) {
       var contentModels = {
         course: 'core/models/courseModel',

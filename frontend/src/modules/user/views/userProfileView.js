@@ -4,6 +4,7 @@ define(function(require){
   var Handlebars = require('handlebars');
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
+  var Helpers = require('core/helpers');
 
   var UserProfileView = OriginView.extend({
     tagName: 'div',
@@ -12,7 +13,7 @@ define(function(require){
     events: {
       'click a.change-password' : 'togglePassword',
       'keyup #password'         : 'onPasswordKeyup',
-      'keyup #passwordText'         : 'onPasswordTextKeyup',
+      'keyup #passwordText'     : 'onPasswordTextKeyup',
       'click .toggle-password'  : 'togglePasswordView'
     },
 
@@ -33,7 +34,7 @@ define(function(require){
 
       if (error && _.keys(error).length !== 0) {
         _.each(error, function(value, key) {
-          this.$('#' + key + 'Error').text(value);
+          this.$('#' + key + 'Error').html(value);
         }, this);
         this.$('.error-text').removeClass('display-none');
       }
@@ -79,27 +80,22 @@ define(function(require){
       var password = $('#password').val();
       var $passwordStrength = $('#passwordError');
 
-      // Must have capital letter, numbers and lowercase letters
-      var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
-      // Must have either capitals and lowercase letters or lowercase and numbers
-      var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
-      // Must be at least 8 characters long
-      var okRegex = new RegExp("(?=.{8,}).*", "g");
+      var errors = Helpers.getPasswordErrors(password);
+      var htmlText = '';
 
-      if (okRegex.test(password) === false) {
+      if (errors && errors.length > 0) {
         var classes = 'alert alert-error';
-        var htmlText = Origin.l10n.t('app.validationlength', {length: 8});
-      } else if (strongRegex.test(password)) {
-        var classes = 'alert alert-success';
-        var htmlText = Origin.l10n.t('app.passwordindicatorstrong');
-      } else if (mediumRegex.test(password)) {
-        var classes = 'alert alert-info';
-        var htmlText = Origin.l10n.t('app.passwordindicatormedium');
-      } else {
-        var classes = 'alert alert-info';
-        var htmlText = Origin.l10n.t('app.passwordindicatorweak');
-      }
+        _.each(errors, function (err) {
+          htmlText += `<li>${err}</li>`;
+        });
 
+        // note: don't use alert class
+        htmlText = `<ul id="ariaPasswordError" role="alert" aria-live="assertive" aria-atomic="true">${htmlText}</ul>`;
+        
+      } else {
+        var classes = 'alert alert-success';
+        htmlText = Origin.l10n.t('app.passwordindicatorstrong');
+      }
       $passwordStrength.removeClass().addClass(classes).html(htmlText);
     },
 
@@ -119,6 +115,7 @@ define(function(require){
       if (self.model.get('_isNewPassword')) {
         toChange._isNewPassword = true;
         toChange.password = self.$('#password').val();
+        toChange.confirmPassword = self.$('#confirmPassword').val();
       } else {
         self.model.unset('password');
       }

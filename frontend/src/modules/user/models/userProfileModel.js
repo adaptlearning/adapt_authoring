@@ -31,9 +31,18 @@ define(function(require) {
         if (!attributes.password) {
           validationErrors.password = Origin.l10n.t('app.validationrequired');
         } else {
-          if (attributes.password.length < 8) {
-            validationErrors.password = Origin.l10n.t('app.validationlength', {length: 8});
-          }
+          var errors = Helpers.getPasswordErrors(attributes.password);
+          var htmlText = '';
+          _.each(errors, function (err) {
+            htmlText += `<li>${err}</li>`;
+          });
+          validationErrors.password = `<span class="alert alert-error">${htmlText}</span>`;
+        }
+
+        if (!attributes.confirmPassword) {
+          validationErrors.confirmPassword = `<span class="alert alert-error">${Origin.l10n.t('app.validationrequired')}</span>`;
+        } else if (attributes.confirmPassword !== attributes.password) {
+          validationErrors.confirmPassword = `<span class="alert alert-error">${Origin.l10n.t('app.confirmpasswordnotmatch')}</span>`;
         }
       }
 

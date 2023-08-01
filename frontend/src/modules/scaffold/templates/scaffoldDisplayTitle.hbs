@@ -1,8 +1,8 @@
-<input type="text" autocomplete="off">
-<button class="scaffold-display-title-lock">
+<input id="{{ fieldId }}" name="displayTitle" type="text" autocomplete="off">
+<button class="scaffold-display-title-lock" aria-labelledby="{{ fieldId }}">
   <i class="fa fa-lock" title="{{t 'app.titlelock'}}"></i>
   <i class="fa fa-unlink" title="{{t 'app.titleunlock'}}"></i>
 </button>
-<button class="scaffold-display-title-clear">
+<button class="scaffold-display-title-clear" aria-labelledby="{{ fieldId }}">
   <i class="fa fa-times-circle" title="{{t 'app.delete'}}"></i>
 </button>

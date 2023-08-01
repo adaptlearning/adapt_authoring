@@ -44,7 +44,9 @@ define([ 'core/origin', 'backbone-forms' ], function(Origin, BackboneForms) {
     },
 
     render: function() {
-      this.$el.append(Handlebars.templates[this.constructor.template]({ field: '' }));
+      var fieldId = this.id;
+      this.$el.append(Handlebars.templates[this.constructor.template]({ field: '', fieldId: fieldId }));
+      this.$el.attr('id', `${fieldId}_parent`)
       this.setValue(this.value);
       this.isLocked = this.form.fields.title.editor.getValue() === this.getValue();
       _.defer(this.postRender.bind(this));

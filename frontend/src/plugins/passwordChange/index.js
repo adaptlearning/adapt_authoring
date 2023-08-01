@@ -22,7 +22,6 @@ define(function (require) {
                     });
                 }
                 if (user.attributes.lastPasswordChange) {
-                    console.log(user.attributes.lastPasswordChange);
                     var policyChange = new Date('2023-06-26T01:12:06.510Z')
                     var changeDate = new Date(user.attributes.lastPasswordChange)
                     if ((changeDate < policyChange)) {

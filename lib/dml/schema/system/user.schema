@@ -30,7 +30,8 @@
       "protect": true
     },
     "lastPasswordChange": {
-      "type": "string"
+      "type": "date",
+      "required": false
     },
     "roles": {
       "type": "array",

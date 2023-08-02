@@ -285,14 +285,30 @@ define(function(require){
       return value.length > 0 && regEx.test(value);
     },
 
-    getPasswordErrors: function(value) {
-      var errors = [];
-      if (!/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(value)) errors = [...errors, Origin.l10n.t('app.passwordneedsspeccialcharacter')];
-      if (!/\d/.test(value)) errors = [...errors, Origin.l10n.t('app.passwordneedsonenumber')];
-      if (!/[A-Z]/.test(value)) errors = [...errors, Origin.l10n.t('app.passwordneedsuppercaseletter')];
-      if (!value || value.length < 8) errors = [...errors, Origin.l10n.t('app.validationlength', { length: 8 })];
+    getPasswordFeedback: function(value) {
+      var feedbackStr = '';
+      
+      feedbackStr += `<div>
+        ${!/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(value) ? '<span role="checkbox" aria-checked="false">&#10008;</span>' : '<span role="checkbox" aria-checked="true">&#10003;</span>' } 
+        ${Origin.l10n.t('app.passwordneedsspeccialcharacter')
+      }</div>`
+      
+      feedbackStr += `<div>
+        ${!/\d/.test(value) ? '<span role="checkbox" aria-checked="false">&#10008;</span>' : '<span role="checkbox" aria-checked="true">&#10003;</span>'} 
+        ${Origin.l10n.t('app.passwordneedsonenumber')}
+      </div>`
+      
+      feedbackStr += `<div>
+        ${!/[A-Z]/.test(value) ? '<span role="checkbox" aria-checked="false">&#10008;</span>' : '<span role="checkbox" aria-checked="true">&#10003;</span>'} 
+        ${Origin.l10n.t('app.passwordneedsuppercaseletter')}
+      </div>`
+      
+      feedbackStr += `<div>
+        ${!value || value.length < 8 ? '<span role="checkbox" aria-checked="false">&#10008;</span>' : '<span role="checkbox" aria-checked="true">&#10003;</span>'} 
+        ${Origin.l10n.t('app.validationlength', { length: 8 })}
+      </div>`
 
-      return errors;
+      return feedbackStr;
     },
 
     contentModelMap: function(type) {

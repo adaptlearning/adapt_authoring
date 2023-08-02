@@ -53,6 +53,7 @@ define(function(require){
       if (showPaswordUI) {
         this.$(formSelector).removeClass('display-none');
         this.$(buttonSelector).text(Origin.l10n.t('app.cancel'));
+        this.$('#passwordFeedback').html(Helpers.getPasswordFeedback(''));
       } else {
         this.$(buttonSelector).text(Origin.l10n.t('app.changepassword'));
         this.$(formSelector).addClass('display-none');
@@ -62,7 +63,7 @@ define(function(require){
         this.$('.toggle-password i').addClass('fa-eye').removeClass('fa-eye-slash');
 
         this.$('.toggle-password').addClass('display-none');
-        this.$('#passwordError').html('');
+        this.$('#passwordFeedback').html('');
 
         this.model.set('password', '');
       }
@@ -78,25 +79,9 @@ define(function(require){
 
     indicatePasswordStrength: function(event) {
       var password = $('#password').val();
-      var $passwordStrength = $('#passwordError');
+      var $passwordStrength = $('#passwordFeedback');
 
-      var errors = Helpers.getPasswordErrors(password);
-      var htmlText = '';
-
-      if (errors && errors.length > 0) {
-        var classes = 'alert alert-error';
-        _.each(errors, function (err) {
-          htmlText += `<li>${err}</li>`;
-        });
-
-        // note: don't use alert class
-        htmlText = `<ul id="ariaPasswordError" role="alert" aria-live="assertive" aria-atomic="true">${htmlText}</ul>`;
-        
-      } else {
-        var classes = 'alert alert-success';
-        htmlText = Origin.l10n.t('app.passwordindicatorstrong');
-      }
-      $passwordStrength.removeClass().addClass(classes).html(htmlText);
+      $passwordStrength.removeClass().html(Helpers.getPasswordFeedback(password));
     },
 
     saveUser: function() {
@@ -148,11 +133,11 @@ define(function(require){
     onPasswordKeyup: function() {
       if(this.$('#password').val().length > 0) {
         this.$('#passwordText').val(this.$('#password').val());
-        this.indicatePasswordStrength();
         this.$('.toggle-password').removeClass('display-none');
       } else {
         this.$('.toggle-password').addClass('display-none');
       }
+      this.indicatePasswordStrength();
     },
 
     onPasswordTextKeyup: function() {

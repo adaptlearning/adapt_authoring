@@ -31,12 +31,7 @@ define(function(require) {
         if (!attributes.password) {
           validationErrors.password = Origin.l10n.t('app.validationrequired');
         } else {
-          var errors = Helpers.getPasswordErrors(attributes.password);
-          var htmlText = '';
-          _.each(errors, function (err) {
-            htmlText += `<li>${err}</li>`;
-          });
-          validationErrors.password = `<span class="alert alert-error">${htmlText}</span>`;
+          validationErrors.password = Helpers.getPasswordFeedback(attributes.password);
         }
 
         if (!attributes.confirmPassword) {

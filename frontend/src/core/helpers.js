@@ -230,7 +230,8 @@ define(function(require){
     },
 
     ifMailEnabled: function(block) {
-      return Origin.constants.useSmtp === true ? block.fn(this) : block.inverse(this);
+      //return Origin.constants.useSmtp === true ? block.fn(this) : block.inverse(this);
+      return Origin.constants.useMailService === true ? block.fn(this) : block.inverse(this);
     },
 
     ifImageIsCourseAsset: function(url, block) {

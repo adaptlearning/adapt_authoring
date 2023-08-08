@@ -307,32 +307,68 @@ define(function(require) {
     },
     pasteFromButton: function(model) {
       var editor = this;
+      function cannotCopyContent(){
+        Origin.Notify.alert({
+          type: 'error',
+          text: Origin.l10n.t('app.cannotcopyobjecthere')
+        });
+      }
+      var pageCopyView = editor.$el.find('.editor-menu').length > 0;
       $.get('api/content/clipboard', function(data) {
         if(data.length !== 0){
           var type = data[0].referenceType;
           switch(type){
-            case 'article':
-              editor.showPasteZones('article');
+            case 'contentobject':
+              var contentobject = data[0].contentobject[0];
+              var originCourse = contentobject._courseId;
+              var currentCourse = editor.currentCourseId;
+              if(pageCopyView){
+                if(originCourse === currentCourse){
+                  editor.showPasteZones(contentobject._type);
+                } else {
+                  Origin.Notify.alert({
+                    type: 'error',
+                    text: Origin.l10n.t('app.crosscoursepagecopy')
+                  });
+                }
+              } else {
+                cannotCopyContent();
+              }
               break;
-            case 'block':             
-              editor.showPasteZones('block');
+            case 'article':
+              if(!pageCopyView){
+                editor.showPasteZones('article');
+              } else {
+                cannotCopyContent();
+              }
+              break;
+            case 'block':
+              if(!pageCopyView){             
+                editor.showPasteZones('block');
+              } else {
+                cannotCopyContent();
+              }
               break;
             case 'component':
-              if(editor.$el.find('.block-inner .add-control').length === 0){
-                editor.listenToOnce(Origin, { 'editorPageComponentPasteZone:postRender': function(){
+              if(!pageCopyView){
+                if(editor.$el.find('.block-inner .add-control').length === 0){
+                  editor.listenToOnce(Origin, { 'editorPageComponentPasteZone:postRender': function(){
+                    editor.showPasteZones('component');
+                  }})
+                  Origin.trigger('editorView:addBlock');
+                } else {
                   editor.showPasteZones('component');
-                }})
-                Origin.trigger('editorView:addBlock');
+                }
               } else {
-                editor.showPasteZones('component');
+                cannotCopyContent();
               }
               break;
           }
         } else {
           Origin.Notify.alert({
-          type: 'error',
-          text: Origin.l10n.t('app.clipboardempty')
-        });
+            type: 'error',
+            text: Origin.l10n.t('app.clipboardempty')
+          });
         }
       }).fail(function(jqXHR, textStatus, errorThrown) {
         Origin.Notify.alert({

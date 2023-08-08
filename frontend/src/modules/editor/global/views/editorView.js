@@ -314,12 +314,12 @@ define(function(require) {
         });
       }
       var pageCopyView = editor.$el.find('.editor-menu').length > 0;
-      $.get('api/content/clipboard', function(data) {
+      $.get('api/clipboard/me', function(data) {
         if(data.length !== 0){
-          var type = data[0].referenceType;
+          var type = data.referenceType;
           switch(type){
             case 'contentobject':
-              var contentobject = data[0].contentobject[0];
+              var contentobject = data.contentobject[0];
               var originCourse = contentobject._courseId;
               var currentCourse = editor.currentCourseId;
               if(pageCopyView){

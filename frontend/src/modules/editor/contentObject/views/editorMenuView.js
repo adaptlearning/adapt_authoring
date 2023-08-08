@@ -17,8 +17,20 @@ define(function(require){
         'editorView:menuView:updateSelectedItem': this.onSelectedItemChanged,
         'editorView:menuView:addItem': this.onItemAdded,
         'editorView:itemDeleted': this.onItemDeleted,
-        'window:resize': this.setupHorizontalScroll
+        'window:resize': this.setupHorizontalScroll,
+        'editorView:pasteButton': this.pasteButton
       });
+
+      Origin.options.addItems([
+        {
+          title: Origin.l10n.t('app.pasteButton'),
+          icon: 'clipboard',
+          callbackEvent: 'editorView:pasteButton',
+          value: 'paste',
+          group: 'toolBox',
+        }
+      ]);
+      
     },
 
     postRender: function() {
@@ -231,6 +243,9 @@ define(function(require){
           });
         }
       });
+    },
+    pasteButton: function(){
+      Origin.trigger('editorView:pasteFromButton', this.model);
     }
   }, {
     template: 'editorMenu'

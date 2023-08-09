@@ -100,7 +100,7 @@ define(function(require){
       if (self.model.get('_isNewPassword')) {
         toChange._isNewPassword = true;
         toChange.password = self.$('#password').val();
-        toChange.confirmPassword = self.$('#confirmPassword').val();
+        toChange.lastPasswordChange = new Date().toISOString();
       } else {
         self.model.unset('password');
       }
@@ -121,6 +121,7 @@ define(function(require){
           });
         },
         success: function(model) {
+          Origin.trigger('userProfileSidebar:views:saved')
           if (prevEmail !== model.get('email')) {
             Origin.router.navigateTo('user/logout');
           } else {

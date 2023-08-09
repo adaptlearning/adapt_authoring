@@ -181,10 +181,6 @@
   "app.passwordindicatorweak": "Weak – try using numbers and capital letters",
   "app.passwordindicatormedium": "Make your password stronger with more capital letters, more numbers and special characters",
   "app.passwordindicatorstrong": "Strong password!",
-  "app.passwordneedsuppercaseletter": "Password needs at least one uppercase letter.",
-  "app.passwordneedsonenumber": "Password needs at least one number.",
-  "app.passwordneedsspeccialcharacter": "Password needs at least one special character !@#$%^&* .",
-  "app.confirmpasswordnotmatch": "Confirmation password does not match the new password.",
   "app.fixerrors": "Please fix the below errors before continuing.",
   "app.manageextensions": "Manage extensions",
   "app.projectsettings": "Project settings",
@@ -489,5 +485,10 @@
   "app.message.generalRibbonFR": "French Text",
   "app.message.generalRibbonBgColor": "Background Color",
   "app.message.generalRibbonTextColor": "Text Color",
-  "app.updateavailable": "A newer version of the application is now available. To ensure you have the latest updates, please refresh your page. The window will be automatically refreshed in 20 seconds unless you choose to cancel."
+  "app.updateavailable": "A newer version of the application is now available. To ensure you have the latest updates, please refresh your page. The window will be automatically refreshed in 20 seconds unless you choose to cancel.",
+  "app.passwordneedsuppercaseletter": "Password needs at least one uppercase letter.",
+  "app.passwordneedsspeccialcharacter": "Password needs at least one special character !@#$%^&* .",
+  "app.passwordneedsonenumber": "Password needs at least one number.",
+  "app.passwordchangemessage": "Kindly update your password. This notification will be automatically dismissed upon successful password modification.",
+  "app.confirmpasswordnotmatch": "Confirmation password does not match the new password."
 }

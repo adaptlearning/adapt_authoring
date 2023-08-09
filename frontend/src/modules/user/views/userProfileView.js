@@ -2,6 +2,7 @@
 define(function(require){
   var Backbone = require('backbone');
   var Handlebars = require('handlebars');
+  var PasswordFieldsView = require('plugins/passwordChange/views/passwordFieldsView');
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
   var Helpers = require('core/helpers');
@@ -11,10 +12,10 @@ define(function(require){
     className: 'user-profile',
 
     events: {
-      'click a.change-password' : 'togglePassword',
-      'keyup #password'         : 'onPasswordKeyup',
-      'keyup #passwordText'     : 'onPasswordTextKeyup',
-      'click .toggle-password'  : 'togglePasswordView'
+      'click a.change-password' : 'togglePassword'
+      // 'keyup #password'         : 'onPasswordKeyup',
+      // 'keyup #passwordText'     : 'onPasswordTextKeyup',
+      // 'click .toggle-password'  : 'togglePasswordView'
     },
 
     preRender: function() {
@@ -22,7 +23,13 @@ define(function(require){
       this.listenTo(this.model, 'invalid', this.handleValidationError);
       this.listenTo(this.model, 'change:_isNewPassword', this.togglePasswordUI);
 
+      var self = this;
+
       this.model.set('_isNewPassword', false);
+      console.log('PasswordFieldsView: ', PasswordFieldsView);
+      var passwordFieldsView = new PasswordFieldsView({ model: self.model });
+      console.log('passwordFieldsView: ', passwordFieldsView);
+      this.model.set('passwordField', passwordFieldsView.$el[0].outerHTML);
     },
 
     postRender: function() {
@@ -53,7 +60,6 @@ define(function(require){
       if (showPaswordUI) {
         this.$(formSelector).removeClass('display-none');
         this.$(buttonSelector).text(Origin.l10n.t('app.cancel'));
-        this.$('#passwordFeedback').html(Helpers.getPasswordFeedback(''));
       } else {
         this.$(buttonSelector).text(Origin.l10n.t('app.changepassword'));
         this.$(formSelector).addClass('display-none');
@@ -77,12 +83,12 @@ define(function(require){
       this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
     },
 
-    indicatePasswordStrength: function(event) {
-      var password = $('#password').val();
-      var $passwordStrength = $('#passwordFeedback');
+    // indicatePasswordStrength: function(event) {
+    //   var password = $('#password').val();
+    //   var $passwordStrength = $('#passwordFeedback');
 
-      $passwordStrength.removeClass().html(Helpers.getPasswordFeedback(password));
-    },
+    //   $passwordStrength.removeClass().html(PasswordHelpers.getPasswordView(password));
+    // },
 
     saveUser: function() {
       var self = this;
@@ -131,19 +137,19 @@ define(function(require){
       });
     },
 
-    onPasswordKeyup: function() {
-      if(this.$('#password').val().length > 0) {
-        this.$('#passwordText').val(this.$('#password').val());
-        this.$('.toggle-password').removeClass('display-none');
-      } else {
-        this.$('.toggle-password').addClass('display-none');
-      }
-      this.indicatePasswordStrength();
-    },
+    // onPasswordKeyup: function() {
+    //   if(this.$('#password').val().length > 0) {
+    //     this.$('#passwordText').val(this.$('#password').val());
+    //     this.$('.toggle-password').removeClass('display-none');
+    //   } else {
+    //     this.$('.toggle-password').addClass('display-none');
+    //   }
+    //   this.indicatePasswordStrength();
+    // },
 
-    onPasswordTextKeyup: function() {
+    // onPasswordTextKeyup: function() {
 
-    }
+    // }
   }, {
     template: 'userProfile'
   });

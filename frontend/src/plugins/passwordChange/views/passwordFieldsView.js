@@ -13,8 +13,10 @@ define(function (require) {
 
     events: {
       'keyup #password': 'onPasswordKeyup',
+      'keyup #confirmPassword': 'onConfirmPasswordKeyup',
       'keyup #passwordText': 'onPasswordTextKeyup',
-      'click .toggle-password': 'togglePasswordView'
+      'click .toggle-password': 'togglePasswordView',
+      'click .toggle-confirmation-password': 'toggleConfirmationPasswordView'
     },
 
     preRender: function () {
@@ -50,14 +52,43 @@ define(function (require) {
       this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
     },
 
+    toggleConfirmationPasswordView: function () {
+      event && event.preventDefault();
+
+      this.$('#confirmPasswordText').toggleClass('display-none');
+      this.$('#confirmPassword').toggleClass('display-none');
+      this.$('.toggle-toggle-confirmation-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
+    },
+
     indicatePasswordStrength: function (event) {
       var password = $('#password').val();
-      var $passwordStrength = $('#passwordFeedback');
+      var errors = PasswordHelpers.validatePassword(password);
+      var $passwordSpecialChar = $('.password-special-char-feedback');
+      var $passwordNumber = $('.password-number-feedback');
+      var $passwordUppercase = $('.password-uppercase-feedback');
+      var $passwordLength = $('.password-length-feedback');
 
+      var xMark = '&#10008;';
+      var checkMark = '&#10003;';
+
+      errors.includes('missingspecialchars') ? $passwordSpecialChar.attr('aria-checked', false).html(xMark) : $passwordSpecialChar.attr('aria-checked', true).html(checkMark);
+      errors.includes('missingnumber') ? $passwordNumber.attr('aria-checked', false).html(xMark) : $passwordNumber.attr('aria-checked', true).html(checkMark);
+      errors.includes('missinguppercase') ? $passwordUppercase.attr('aria-checked', false).html(xMark) : $passwordUppercase.attr('aria-checked', true).html(checkMark);
+      errors.includes('tooshort') ? $passwordLength.attr('aria-checked', false).html(xMark) : $passwordLength.attr('aria-checked', true).html(checkMark);
+      
+    },
+
+    onConfirmPasswordKeyup: function () {
+      console.log('on password keyup');
+      if (this.$('#confirmPassword').val().length > 0) {
+        this.$('#confirmPasswordText').val(this.$('#confirmPassword').val());
+        this.$('.toggle-confirmation-password').removeClass('display-none');
+      } else {
+        this.$('.toggle-confirmation-password').addClass('display-none');
+      }
     },
 
     onPasswordKeyup: function () {
-      console.log('on password keyup');
       if (this.$('#password').val().length > 0) {
         this.$('#passwordText').val(this.$('#password').val());
         this.$('.toggle-password').removeClass('display-none');

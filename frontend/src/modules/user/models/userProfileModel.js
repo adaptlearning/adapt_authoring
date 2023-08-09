@@ -2,6 +2,7 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Helpers = require('core/helpers');
+  var PasswordHelpers = require('plugins/passwordChange/passwordHelpers');
   var Origin = require('core/origin');
   var _ = require('underscore');
 
@@ -28,17 +29,8 @@ define(function(require) {
       }
 
       if (attributes._isNewPassword) {
-        if (!attributes.password) {
-          validationErrors.password = Origin.l10n.t('app.validationrequired');
-        } else {
-          validationErrors.password = Helpers.getPasswordFeedback(attributes.password);
-        }
-
-        if (!attributes.confirmPassword) {
-          validationErrors.confirmPassword = `<span class="alert alert-error">${Origin.l10n.t('app.validationrequired')}</span>`;
-        } else if (attributes.confirmPassword !== attributes.password) {
-          validationErrors.confirmPassword = `<span class="alert alert-error">${Origin.l10n.t('app.confirmpasswordnotmatch')}</span>`;
-        }
+        validationErrors.password = PasswordHelpers.validatePassword(attributes.password).length > 0 ? `${Origin.l10n.t('app.passwordindicatormedium')}` : null;
+        validationErrors.confirmPassword = PasswordHelpers.validateConfirmationPassword(attributes.password, attributes.confirmPassword) ? `${Origin.l10n.t('app.confirmpasswordnotmatch')}` : null;
       }
 
       return _.isEmpty(validationErrors) 

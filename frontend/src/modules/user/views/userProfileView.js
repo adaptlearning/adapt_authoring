@@ -63,7 +63,6 @@ define(function(require){
         this.$('.toggle-password i').addClass('fa-eye').removeClass('fa-eye-slash');
 
         this.$('.toggle-password').addClass('display-none');
-        this.$('#passwordFeedback').html('');
 
         this.model.set('password', '');
       }
@@ -100,6 +99,7 @@ define(function(require){
       if (self.model.get('_isNewPassword')) {
         toChange._isNewPassword = true;
         toChange.password = self.$('#password').val();
+        toChange.confirmPassword = self.$('#confirmPassword').val();
         toChange.lastPasswordChange = new Date().toISOString();
       } else {
         self.model.unset('password');

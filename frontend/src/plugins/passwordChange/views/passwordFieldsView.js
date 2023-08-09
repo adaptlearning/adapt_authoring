@@ -13,13 +13,12 @@ define(function (require) {
 
     events: {
       'keyup #password': 'onPasswordKeyup',
-      'keyup #passwordText': this.onPasswordTextKeyup,
+      'keyup #passwordText': 'onPasswordTextKeyup',
       'click .toggle-password': 'togglePasswordView'
     },
 
     preRender: function () {
       this.listenTo(this.model, 'invalid', this.handleValidationError);
-      this.listenTo(this.model, 'onPasswordKeyup', this.onPasswordKeyup);
     },
 
     postRender: function () {
@@ -55,7 +54,6 @@ define(function (require) {
       var password = $('#password').val();
       var $passwordStrength = $('#passwordFeedback');
 
-      $passwordStrength.removeClass().html(PasswordHelpers.getPasswordView(password));
     },
 
     onPasswordKeyup: function () {

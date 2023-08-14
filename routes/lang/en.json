@@ -131,7 +131,7 @@
   "app.resetpassworderror": "Your password could not be changed",
   "app.newpassword": "New password",
   "app.confirmpassword": "Confirm password",
-  "app.passwordtip": "Enter a new password below. The most secure passwords have a mix of numbers, letters (including capitals) and other characters.",
+  "app.passwordtip": "Enter a new password below.",
   "app.forgotpasswordblurb": "Enter the email address associated with your Adapt account, then click Continue.",
   "app.forgotpasswordfooter": "Contact %{supportContact} for help with restoring access to your account.",
   "app.anadmin": "an administrator",

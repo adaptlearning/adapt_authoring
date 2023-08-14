@@ -1111,7 +1111,7 @@
     "app.resetpassworderror": "Votre mot de passe ne peut pas être changé",
     "app.newpassword": "Nouveau mot de passe",
     "app.confirmpassword": "Confirmer le mot de passe",
-    "app.passwordtip": "Entrez un nouveau mot de passe ci-dessous. Les mots de passe les plus sécuritaires comportent une combinaison de chiffres, de lettres (incluant des majuscules) et de caractères spéciaux.",
+    "app.passwordtip": "Entrez un nouveau mot de passe ci-dessous.",
     "app.forgotpasswordblurb": "Entrez l’adresse courriel associée à votre compte Adapt, puis sélectionnez Continuer.",
     "app.forgotpasswordfooter": "Contactez l’équipe de soutien pour obtenir de l’aide afin de réinitialiser l’accès à votre compte.",
     "app.anadmin": "Administrateur",

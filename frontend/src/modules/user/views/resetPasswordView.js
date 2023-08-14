@@ -2,6 +2,7 @@
 define(function(require) {
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
+  var PasswordFieldsView = require('plugins/passwordChange/views/passwordFieldsView');
 
   var ResetPasswordView = OriginView.extend({
     tagName: "div",
@@ -18,9 +19,12 @@ define(function(require) {
         sync: this.verifyToken,
         invalid: this.handleValidationError
       });
+      this.model.set('fieldId', 'password');
     },
 
     postRender: function() {
+      var passwordFieldsView = new PasswordFieldsView({ model: this.model }).render().el;
+      this.$('#passwordField').append(passwordFieldsView);
       this.setViewToReady();
     },
 

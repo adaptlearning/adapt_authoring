@@ -3,6 +3,8 @@ define(function(require){
   var Helpers = require('core/helpers');
   var Origin = require('core/origin');
   var OriginView = require('core/views/originView');
+  var PasswordFieldsView = require('plugins/passwordChange/views/passwordFieldsView');
+  var PasswordHelpers = require('plugins/passwordChange/passwordHelpers');
 
   var AddUserView = OriginView.extend({
     tagName: 'div',
@@ -15,6 +17,9 @@ define(function(require){
     },
 
     postRender: function() {
+      this.model.set('fieldId', 'password');
+      var passwordFieldsView = new PasswordFieldsView({ model: this.model }).render().el;
+      this.$('#passwordField').append(passwordFieldsView);
       this.setViewToReady();
     },
 
@@ -23,11 +28,22 @@ define(function(require){
 
       this.$('.field-error').each(function(index, element) {
         var $error = $(element);
-        var $input = $error.siblings('input');
+        var $input = $error.parent().siblings('input');
 
         var isValid = $input.attr('name') === 'email' ?
           Helpers.isValidEmail($input.val().trim()) :
           $input.val().trim().length > 0;
+
+        if ($input.attr('name') === 'password') {
+          var passwordErrors = PasswordHelpers.validatePassword($input.val());
+          isValid = passwordErrors.length == 0;
+          !isValid ? $error.html(`${Origin.l10n.t('app.passwordindicatormedium')}`) : '';
+        }
+
+        if ($input.attr('name') === 'confirmPassword') {
+          isValid = PasswordHelpers.validateConfirmationPassword($('[name="password"]').val(), $input.val());
+          !isValid ? $error.html(`${Origin.l10n.t('app.confirmpasswordnotmatch')}`) : '';
+        }
 
         $error.toggleClass('display-none', isValid);
 

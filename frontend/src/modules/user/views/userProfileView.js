@@ -30,16 +30,16 @@ define(function(require){
       this.setViewToReady();
     },
 
-    // handleValidationError: function(model, error) {
-    //   Origin.trigger('sidebar:resetButtons');
+    handleValidationError: function(model, error) {
+      Origin.trigger('sidebar:resetButtons');
 
-    //   if (error && _.keys(error).length !== 0) {
-    //     _.each(error, function(value, key) {
-    //       this.$('#' + key + 'Error').html(value);
-    //     }, this);
-    //     this.$('.error-text').removeClass('display-none');
-    //   }
-    // },
+      if (error && _.keys(error).length !== 0) {
+        _.each(error, function(value, key) {
+          this.$('#' + key + 'Error').html(value);
+        }, this);
+        this.$('.error-text').removeClass('display-none');
+      }
+    },
 
     togglePassword: function(event) {
       event && event.preventDefault();

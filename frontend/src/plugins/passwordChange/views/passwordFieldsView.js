@@ -15,6 +15,7 @@ define(function (require) {
       'keyup #password': 'onPasswordKeyup',
       'keyup #confirmPassword': 'onConfirmPasswordKeyup',
       'keyup #passwordText': 'onPasswordTextKeyup',
+      'keyup #confirmPasswordText': 'onConfirmPasswordTextKeyup',
       'click .toggle-password': 'togglePasswordView',
       'click .toggle-confirmation-password': 'toggleConfirmationPasswordView'
     },
@@ -99,7 +100,11 @@ define(function (require) {
     },
 
     onPasswordTextKeyup: function () {
-      console.log('on password textkeyup');
+      this.$('#password').val(this.$('#passwordText').val());
+    },
+
+    onConfirmPasswordTextKeyup: function () {
+      this.$('#confirmPassword').val(this.$('#confirmPasswordText').val());
     }
   }, {
     template: 'passwordFields'

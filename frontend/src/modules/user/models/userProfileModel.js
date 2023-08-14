@@ -29,8 +29,12 @@ define(function(require) {
       }
 
       if (attributes._isNewPassword) {
-        validationErrors.password = PasswordHelpers.validatePassword(attributes.password).length > 0 ? `${Origin.l10n.t('app.passwordindicatormedium')}` : null;
-        validationErrors.confirmPassword = PasswordHelpers.validateConfirmationPassword(attributes.password, attributes.confirmPassword) ? `${Origin.l10n.t('app.confirmpasswordnotmatch')}` : null;
+        if (PasswordHelpers.validatePassword(attributes.password).length > 0 || !attributes.password) {
+          validationErrors.password = `${Origin.l10n.t('app.passwordindicatormedium')}`;
+        }
+        if (!PasswordHelpers.validateConfirmationPassword(attributes.password, attributes.confirmPassword)){
+          validationErrors.confirmPassword = `${Origin.l10n.t('app.confirmpasswordnotmatch')}`;
+        }
       }
 
       return _.isEmpty(validationErrors) 

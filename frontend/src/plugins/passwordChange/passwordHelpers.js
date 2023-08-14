@@ -14,9 +14,7 @@ define(function (require) {
       return errors;
     },
     validateConfirmationPassword: function(password, confirmationPassword) {
-      console.log('password: ', password);
-      console.log('confirmationPassword: ', confirmationPassword);
-      return confirmationPassword !== password
+      return confirmationPassword === password
     }
   }
   return passwordHelpers;

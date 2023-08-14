@@ -106,6 +106,10 @@ function publishCourse(courseId, mode, request, response, next) {
         }
         isForceRebuild = request && request.query.force === 'true';
 
+        if (!fs.existsSync(path.normalize(BUILD_FOLDER + '/index.html'))) {
+          buildFlagExists = true;
+        }
+
         if (mode === Constants.Modes.Export || mode === Constants.Modes.Publish || buildFlagExists || isForceRebuild) {
           isRebuildRequired = true;
         }

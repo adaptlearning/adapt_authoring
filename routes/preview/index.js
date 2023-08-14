@@ -37,7 +37,9 @@ server.get('/preview/:tenant/:course/*', (req, res, next) => {
     var ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).replace('::ffff:', '');
     //regex expression goes in previewAllowIps property in /conf/config.json
     if(config.previewAllowIps){
+     console.log(config.previewAllowIps)
       var regex = new RegExp(config.previewAllowIps, 'g');
+      console.log(regex)
       if(ip.match(regex)){
         sendFile(file);
       }else {

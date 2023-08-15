@@ -131,7 +131,7 @@
   "app.resetpassworderror": "Your password could not be changed",
   "app.newpassword": "New password",
   "app.confirmpassword": "Confirm password",
-  "app.passwordtip": "Enter a new password below. The most secure passwords have a mix of numbers, letters (including capitals) and other characters.",
+  "app.passwordtip": "Enter a new password below.",
   "app.forgotpasswordblurb": "Enter the email address associated with your Adapt account, then click Continue.",
   "app.forgotpasswordfooter": "Contact %{supportContact} for help with restoring access to your account.",
   "app.anadmin": "an administrator",
@@ -486,6 +486,14 @@
   "app.message.generalRibbonBgColor": "Background Color",
   "app.message.generalRibbonTextColor": "Text Color",
   "app.updateavailable": "A newer version of the application is now available. To ensure you have the latest updates, please refresh your page. The window will be automatically refreshed in 20 seconds unless you choose to cancel.",
+  "app.passwordrequirements": "Password requirements",
+  "app.passwordneedsuppercaseletter": "One uppercase letter",
+  "app.passwordneedsspeccialcharacter": "One special character !@#$%^&*",
+  "app.passwordneedsonenumber": "One number",
+  "app.passwordminimumlength": "8 characters minimum",
+  "app.passwordchangemessage": "Kindly update your password. This notification will be automatically dismissed upon successful password modification.",
+  "app.numberofrequirementscompleted": "%{number} out of %{total} requirements completed.",
   "app.crosscoursepagecopy": "Copying pages across courses is not yet available. It will be implemetend in future releases.",
+  "app.confirmpasswordnotmatch": "Confirmation password does not match the new password.",
   "app.cannotcopyobjecthere": "Unable to copy this type of content here."
 }

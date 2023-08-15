@@ -1,7 +1,7 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
   var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
+  var PasswordFieldsView = require('plugins/passwordChange/views/passwordFieldsView');
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
 
@@ -11,20 +11,22 @@ define(function(require){
 
     events: {
       'click a.change-password' : 'togglePassword',
-      'keyup #password'         : 'onPasswordKeyup',
-      'keyup #passwordText'         : 'onPasswordTextKeyup',
-      'click .toggle-password'  : 'togglePasswordView'
+      // 'keyup #password'         : 'onPasswordKeyup'
+      // 'keyup #passwordText'     : 'onPasswordTextKeyup',
+      // 'click .toggle-password'  : 'togglePasswordView'
     },
 
     preRender: function() {
       this.listenTo(Origin, 'userProfileSidebar:views:save', this.saveUser);
       this.listenTo(this.model, 'invalid', this.handleValidationError);
       this.listenTo(this.model, 'change:_isNewPassword', this.togglePasswordUI);
-
       this.model.set('_isNewPassword', false);
+      this.model.set('fieldId', 'password');
     },
 
     postRender: function() {
+      var passwordFieldsView = new PasswordFieldsView({ model: this.model }).render().el;
+      this.$('#passwordField').append(passwordFieldsView);
       this.setViewToReady();
     },
 
@@ -33,7 +35,7 @@ define(function(require){
 
       if (error && _.keys(error).length !== 0) {
         _.each(error, function(value, key) {
-          this.$('#' + key + 'Error').text(value);
+          this.$('#' + key + 'Error').html(value);
         }, this);
         this.$('.error-text').removeClass('display-none');
       }
@@ -61,47 +63,25 @@ define(function(require){
         this.$('.toggle-password i').addClass('fa-eye').removeClass('fa-eye-slash');
 
         this.$('.toggle-password').addClass('display-none');
-        this.$('#passwordError').html('');
 
         this.model.set('password', '');
       }
     },
 
-    togglePasswordView: function() {
-      event && event.preventDefault();
+    // togglePasswordView: function() {
+    //   event && event.preventDefault();
 
-      this.$('#passwordText').toggleClass('display-none');
-      this.$('#password').toggleClass('display-none');
-      this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
-    },
+    //   this.$('#passwordText').toggleClass('display-none');
+    //   this.$('#password').toggleClass('display-none');
+    //   this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
+    // },
 
-    indicatePasswordStrength: function(event) {
-      var password = $('#password').val();
-      var $passwordStrength = $('#passwordError');
+    // indicatePasswordStrength: function(event) {
+    //   var password = $('#password').val();
+    //   var $passwordStrength = $('#passwordFeedback');
 
-      // Must have capital letter, numbers and lowercase letters
-      var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
-      // Must have either capitals and lowercase letters or lowercase and numbers
-      var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
-      // Must be at least 8 characters long
-      var okRegex = new RegExp("(?=.{8,}).*", "g");
-
-      if (okRegex.test(password) === false) {
-        var classes = 'alert alert-error';
-        var htmlText = Origin.l10n.t('app.validationlength', {length: 8});
-      } else if (strongRegex.test(password)) {
-        var classes = 'alert alert-success';
-        var htmlText = Origin.l10n.t('app.passwordindicatorstrong');
-      } else if (mediumRegex.test(password)) {
-        var classes = 'alert alert-info';
-        var htmlText = Origin.l10n.t('app.passwordindicatormedium');
-      } else {
-        var classes = 'alert alert-info';
-        var htmlText = Origin.l10n.t('app.passwordindicatorweak');
-      }
-
-      $passwordStrength.removeClass().addClass(classes).html(htmlText);
-    },
+    //   $passwordStrength.removeClass().html(PasswordHelpers.getPasswordView(password));
+    // },
 
     saveUser: function() {
       var self = this;
@@ -119,6 +99,8 @@ define(function(require){
       if (self.model.get('_isNewPassword')) {
         toChange._isNewPassword = true;
         toChange.password = self.$('#password').val();
+        toChange.confirmPassword = self.$('#confirmPassword').val();
+        toChange.lastPasswordChange = new Date().toISOString();
       } else {
         self.model.unset('password');
       }
@@ -139,6 +121,7 @@ define(function(require){
           });
         },
         success: function(model) {
+          Origin.trigger('userProfileSidebar:views:saved')
           if (prevEmail !== model.get('email')) {
             Origin.router.navigateTo('user/logout');
           } else {
@@ -148,19 +131,20 @@ define(function(require){
       });
     },
 
-    onPasswordKeyup: function() {
-      if(this.$('#password').val().length > 0) {
-        this.$('#passwordText').val(this.$('#password').val());
-        this.indicatePasswordStrength();
-        this.$('.toggle-password').removeClass('display-none');
-      } else {
-        this.$('.toggle-password').addClass('display-none');
-      }
-    },
+    // onPasswordKeyup: function() {
+    //   console.log('test');
+    //   if(this.$('#password').val().length > 0) {
+    //     this.$('#passwordText').val(this.$('#password').val());
+    //     this.$('.toggle-password').removeClass('display-none');
+    //   } else {
+    //     this.$('.toggle-password').addClass('display-none');
+    //   }
+      //this.indicatePasswordStrength();
+    //},
 
-    onPasswordTextKeyup: function() {
+    // onPasswordTextKeyup: function() {
 
-    }
+    // }
   }, {
     template: 'userProfile'
   });

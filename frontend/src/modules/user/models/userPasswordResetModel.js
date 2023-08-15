@@ -2,6 +2,7 @@
 define(function(require) {
   var Backbone = require('backbone');
   var Origin = require('core/origin');
+  var PasswordHelpers = require('plugins/passwordChange/passwordHelpers');
 
   var UserPasswordResetModel = Backbone.Model.extend({
 
@@ -22,16 +23,11 @@ define(function(require) {
       if (!attributes.password) {
         validationErrors.password = Origin.l10n.t('app.validationrequired');
       } else {
-        if (attributes.password.length < 8) {
-          validationErrors.password = Origin.l10n.t('app.validationlength', {length: 8});
+        if (PasswordHelpers.validatePassword(attributes.password).length > 0 || !attributes.password) {
+          validationErrors.password = `${Origin.l10n.t('app.passwordindicatormedium')}`;
         }
-      }
-
-      if (!attributes.confirmPassword) {
-        validationErrors.confirmPassword = Origin.l10n.t('app.validationrequired');
-      } else {
-        if (attributes.password !== attributes.confirmPassword) {
-          validationErrors.confirmPassword = Origin.l10n.t('app.validationpasswordmatch');
+        if (!PasswordHelpers.validateConfirmationPassword(attributes.password, attributes.confirmPassword)){
+          validationErrors.confirmPassword = `${Origin.l10n.t('app.confirmpasswordnotmatch')}`;
         }
       }
 

@@ -29,6 +29,10 @@
       "type": "string",
       "protect": true
     },
+    "lastPasswordChange": {
+      "type": "date",
+      "required": false
+    },
     "roles": {
       "type": "array",
       "items": { "type": "objectid", "ref":"role" }

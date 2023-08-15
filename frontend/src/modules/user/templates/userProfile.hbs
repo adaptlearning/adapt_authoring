@@ -51,13 +51,7 @@
             <div class="change-password-section">
               <div class="form-group">
                 <div class="inner display-none">
-                  <label for="password">{{t 'app.newpassword'}}
-                    <span class="req">*</span>
-                    <span id="passwordError" class="error feedback"></span>
-                  </label>
-                  <input type="password" class="width-15" id="password" value="" autocomplete="off">
-                  <input type="text" class="width-15 display-none" id="passwordText" value="" autocomplete="off">
-                  <button href="#" class="toggle-password display-none"><i class="fa fa-eye"></i></button>
+                  <div id="passwordField"></div>
                 </div>
                 <a href="#" class="btn primary change-password">{{t 'app.changepassword'}}</a>
               </div>

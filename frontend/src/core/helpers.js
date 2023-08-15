@@ -134,6 +134,13 @@ define(function(require){
       }
       return Origin.l10n.t(str, options);
     },
+    td: function(str, options) {
+      var options = JSON.parse(options);
+      for (var placeholder in options.hash) {
+        options[placeholder] = options.hash[placeholder];
+      }
+      return Origin.l10n.t(str, options);
+    },
     // ESDC - Handlebars translation handler
     tf: function(translate, fallback) {
       if(Origin.l10n.has(translate)){

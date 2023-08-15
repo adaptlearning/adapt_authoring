@@ -1567,9 +1567,12 @@
     "app.message.generalRibbonBgColor": "Couleur d'arrière-plan",
     "app.message.generalRibbonTextColor": "Couleur du texte",
     "app.updateavailable": "Une nouvelle version de l'application est désormais disponible. Pour vous assurer que vous disposez des dernières mises à jour, veuillez actualiser votre page. La fenêtre sera automatiquement actualisée dans 20 secondes, sauf si vous décidez d'annuler.",
-    "app.passwordneedsuppercaseletter": "Le mot de passe doit contenir au moins une lettre majuscule.",
-    "app.passwordneedsspeccialcharacter": "Le mot de passe doit contenir au moins un caractère spécial !@#$%^&* .",
-    "app.passwordneedsonenumber": "Le mot de passe doit contenir au moins un chiffre.",
+    "app.passwordneedsuppercaseletter": "Une lettre majuscule",
+    "app.passwordneedsspeccialcharacter": "Un caractère spécial !@#$%^&*",
+    "app.passwordneedsonenumber": "Un chiffre",
+    "app.passwordminimumlength": "8 caractères minimum",
+    "app.passwordrequirements": "Exigences relatives aux mots de passe",
+    "app.numberofrequirementscompleted": "%{number} sur %{total} exigences satisfaites",
     "app.passwordchangemessage": "Veuillez mettre à jour votre mot de passe. Cette notification sera automatiquement supprimée lors de la réussite de la modification du mot de passe.",
     "app.confirmpasswordnotmatch": "Le mot de passe de confirmation ne correspond pas au nouveau mot de passe."
 }

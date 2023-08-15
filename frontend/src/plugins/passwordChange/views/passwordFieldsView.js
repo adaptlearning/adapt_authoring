@@ -68,14 +68,17 @@ define(function (require) {
       var $passwordNumber = $('.password-number-feedback');
       var $passwordUppercase = $('.password-uppercase-feedback');
       var $passwordLength = $('.password-length-feedback');
+      var $passwordChecklistFeedback = $('.password-checklist-feedback');
 
       var xMark = '&#10008;';
-      var checkMark = '&#10003;';
+      var checkMark = '<i class="fa fa-check"></i>';
 
-      errors.includes('missingspecialchars') ? $passwordSpecialChar.attr('aria-checked', false).html(xMark) : $passwordSpecialChar.attr('aria-checked', true).html(checkMark);
-      errors.includes('missingnumber') ? $passwordNumber.attr('aria-checked', false).html(xMark) : $passwordNumber.attr('aria-checked', true).html(checkMark);
-      errors.includes('missinguppercase') ? $passwordUppercase.attr('aria-checked', false).html(xMark) : $passwordUppercase.attr('aria-checked', true).html(checkMark);
-      errors.includes('tooshort') ? $passwordLength.attr('aria-checked', false).html(xMark) : $passwordLength.attr('aria-checked', true).html(checkMark);
+      errors.includes('missingspecialchars') ? $passwordSpecialChar.html(xMark) : $passwordSpecialChar.html(checkMark);
+      errors.includes('missingnumber') ? $passwordNumber.html(xMark) : $passwordNumber.html(checkMark);
+      errors.includes('missinguppercase') ? $passwordUppercase.html(xMark) : $passwordUppercase.html(checkMark);
+      errors.includes('tooshort') ? $passwordLength.html(xMark) : $passwordLength.html(checkMark);
+
+      $passwordChecklistFeedback.html(`${Origin.l10n.t('app.numberofrequirementscompleted', {number: 4 - errors.length, total: 4}) }`)
       
     },
 

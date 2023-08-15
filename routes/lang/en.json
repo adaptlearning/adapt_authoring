@@ -486,9 +486,12 @@
   "app.message.generalRibbonBgColor": "Background Color",
   "app.message.generalRibbonTextColor": "Text Color",
   "app.updateavailable": "A newer version of the application is now available. To ensure you have the latest updates, please refresh your page. The window will be automatically refreshed in 20 seconds unless you choose to cancel.",
-  "app.passwordneedsuppercaseletter": "Password needs at least one uppercase letter.",
-  "app.passwordneedsspeccialcharacter": "Password needs at least one special character !@#$%^&* .",
-  "app.passwordneedsonenumber": "Password needs at least one number.",
+  "app.passwordneedsuppercaseletter": "One uppercase letter",
+  "app.passwordneedsspeccialcharacter": "One special character !@#$%^&*",
+  "app.passwordneedsonenumber": "One number",
+  "app.passwordminimumlength": "8 characters minimum",
+  "app.passwordrequirements": "Password requirements",
+  "app.numberofrequirementscompleted": "%{number} out of %{total} requirements completed.",
   "app.passwordchangemessage": "Kindly update your password. This notification will be automatically dismissed upon successful password modification.",
   "app.confirmpasswordnotmatch": "Confirmation password does not match the new password."
 }

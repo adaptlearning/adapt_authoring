@@ -28,7 +28,7 @@ define(function(require){
 
       this.$('.field-error').each(function(index, element) {
         var $error = $(element);
-        var $input = $error.parent().siblings('input');
+        var $input = $error.parent().siblings('input').length > 0 ? $error.parent().siblings('input') : $error.parent().siblings('.password-wrapper').find('input');
 
         var isValid = $input.attr('name') === 'email' ?
           Helpers.isValidEmail($input.val().trim()) :

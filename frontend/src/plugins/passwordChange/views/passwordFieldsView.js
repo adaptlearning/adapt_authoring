@@ -80,7 +80,6 @@ define(function (require) {
     },
 
     onConfirmPasswordKeyup: function () {
-      console.log('on password keyup');
       if (this.$('#confirmPassword').val().length > 0) {
         this.$('#confirmPasswordText').val(this.$('#confirmPassword').val());
         this.$('.toggle-confirmation-password').removeClass('display-none');
@@ -101,6 +100,7 @@ define(function (require) {
 
     onPasswordTextKeyup: function () {
       this.$('#password').val(this.$('#passwordText').val());
+      this.indicatePasswordStrength();
     },
 
     onConfirmPasswordTextKeyup: function () {

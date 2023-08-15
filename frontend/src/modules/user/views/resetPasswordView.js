@@ -9,7 +9,7 @@ define(function(require) {
     className: "reset-password",
 
     events: {
-      'click .form-reset-password button' : 'resetPassword',
+      'click button.submit' : 'resetPassword',
       'click button.cancel' : 'goToLogin',
       'click button.return' : 'goToLogin'
     },

@@ -258,6 +258,11 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
     }
 
     if (userRecord) {
+      // var currentDate = Date();
+      // if (){
+      //   return next({ success: false });
+      // }
+
       var user = {
         email: req.body.email,
         ipAddress: req.connection.remoteAddress

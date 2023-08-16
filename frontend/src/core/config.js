@@ -19,6 +19,7 @@ require.config({
     scrollTo: 'libraries/scrollTo',
     selectize: 'libraries/selectize/js/selectize',
     sweetalert: 'libraries/sweetalert.min',
+    sweetalert2: 'libraries/sweetalert2.min',
     typeahead: 'libraries/typeahead',
     underscore: 'libraries/underscore',
     velocity: 'libraries/velocity'
@@ -78,6 +79,10 @@ require.config({
     sweetalert: {
       deps: ['jquery'],
       exports: 'sweetAlert'
+    },
+    sweetalert2: {
+      deps: ['jquery'],
+      exports: 'sweetAlert2'
     },
     underscore: {
       exports: '_'

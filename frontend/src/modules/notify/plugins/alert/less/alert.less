@@ -1,20 +1,63 @@
 @import (inline) '../assets/sweetalert.css';
+@import (inline) '../assets/sweetalert2.min.css';
 @import 'buttons';
 @import 'colours';
+
+.swal2-container {
+  div:where(.swal2-icon) {
+    border: 0.25em solid !important;
+    margin: 2.5em auto 0.6em !important;
+  }
+
+  button.swal2-cancel {
+    display: inline-block;
+    padding: 10px 12px;
+    background: none;
+    border: 1px solid #000000;
+    border-radius: 3px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all .3s;
+    background-color: transparent;
+    color: #34bee0;
+    border-color: #34bee0;
+    font-size: 115%;
+  }
+
+  button.swal2-confirm {
+    display: inline-block;
+    padding: 10px 12px;
+    background: none;
+    border: 1px solid #000000;
+    border-radius: 3px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all .3s;
+    background-color: #34bee0;
+    color: #fff;
+    border-color: #34bee0;
+    font-size: 115%;
+  }
+}
+
 
 .sweet-alert {
   max-height: 91%;
   overflow-y: auto;
+
   details {
     display: block;
     margin-top: 20px;
   }
+
   summary {
     margin-bottom: 5px;
   }
+
   textarea {
     font-family: monospace;
   }
+
   button {
     min-width: 100px;
     margin: 10px 5px 20px 5px;
@@ -24,28 +67,49 @@
       .primary-hollow;
       font-size: 115%;
     }
+
     &.confirm {
       .btn;
       .primary;
       font-size: 115%;
     }
   }
+
   .sa-icon {
     &.sa-error {
       border-color: @alert-color;
-      .sa-line { background-color: @alert-color; }
+
+      .sa-line {
+        background-color: @alert-color;
+      }
     }
+
     &.sa-warning {
       border-color: @warning-color;
-      .sa-dot, .sa-body { background-color: @warning-color; }
+
+      .sa-dot,
+      .sa-body {
+        background-color: @warning-color;
+      }
     }
+
     &.sa-info {
       border-color: @info-color;
-      &:before, &:after { background-color: @info-color; }
+
+      &:before,
+      &:after {
+        background-color: @info-color;
+      }
     }
+
     &.sa-success {
-      .sa-line { background-color: @success-color; }
-      .sa-placeholder { border-color: fade(@success-color, 20%); }
+      .sa-line {
+        background-color: @success-color;
+      }
+
+      .sa-placeholder {
+        border-color: fade(@success-color, 20%);
+      }
     }
   }
 
@@ -53,14 +117,16 @@
     .wait-text {
       margin-right: 18px;
     }
+
     .la-ball-fall {
       left: 37.5%;
       top: 46%;
       margin: 0;
-      > div {
-          width: 3px;
-          height: 3px;
-          margin: 1.5px;
+
+      >div {
+        width: 3px;
+        height: 3px;
+        margin: 1.5px;
       }
     }
   }

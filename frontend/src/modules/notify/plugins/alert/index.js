@@ -2,34 +2,43 @@
 define(function(require) {
 	var _ = require('underscore');
 	var Origin = require('core/origin');
-	var SweetAlert = require('sweetalert');
+	var SweetAlert = require('sweetalert2');
 
 	function getSettings(data) {
 		var defaults = {
 			title: '',
-			animation: 'slide-from-bottom',
-			confirmButtonColor: '',
-			html: true
+			html: data.html || data.text
 		};
 
 		switch(data.type) {
 			case 'confirm':
 				data.type = null;
 				defaults.title = Origin.l10n.t('app.confirmdefaulttitle');
+				data.icon = 'info';
 				break;
 			case 'warning':
+				data.type = null;
 				defaults.title = Origin.l10n.t('app.warningdefaulttitle');
+				data.icon = 'warning';
 				break;
 			case 'input':
+				data.type = null;
+				data.input = data.inputType;
 				break;
 			case 'success':
+				data.type = null;
 				defaults.title = Origin.l10n.t('app.successdefaulttitle');
+				data.icon = 'success';
         break;
 			case 'info':
+				data.type = null;
 				defaults.title = Origin.l10n.t('app.infodefaulttitle');
+				data.icon = 'info';
         break;
 			case 'error':
+				data.type = null;
 				defaults.title = Origin.l10n.t('app.errordefaulttitle');
+				data.icon = 'error';
 				break;
 			default:
 				if (data.type) {
@@ -40,12 +49,23 @@ define(function(require) {
 				}
 				data.type = null;
 		}
+		delete data.type;
+		delete data.closeOnConfirm;
+		delete data.closeOnCancel;
+		delete data.animation;
+		delete data.inputType;
+		delete data.text;
 		// combine settings, overwriting defaults with param
 		return _.defaults(data, defaults);
 	};
 
 	function openPopup(data) {
-		SweetAlert(getSettings(data), data.callback);
+		if(data.callback) var cb = data.callback;
+		delete data.callback;
+		SweetAlert.fire(getSettings(data)).then((result) => {
+			  if(cb) cb.apply(null, [result.value || false]);
+		  })
+		//SweetAlert(getSettings(data), data.callback);
 	}
 
 	var Alert = function(data) {
@@ -55,7 +75,11 @@ define(function(require) {
 				title: data
 			};
 		}
-		openPopup(data);
+		var defaults = {
+			inputType: 'text'
+		};
+
+		openPopup(_.extend(defaults, data));
 	};
 
 	/**
@@ -67,18 +91,11 @@ define(function(require) {
 
 	var Confirm = function(data) {
 		// allow for string input
-		if (_.isString(data)) {
-      data = {
-        text: data
-			};
-		}
-
-		// some defaults, in the case of an additional type being passed
 		var defaults = {
-			type: data.type || 'confirm',
 			showCancelButton: true,
 			confirmButtonText: Origin.l10n.t('app.confirmdefaultyes'),
-			cancelButtonText: Origin.l10n.t('app.no')
+			cancelButtonText: Origin.l10n.t('app.no'),
+			inputType: 'text'
 		};
 
 		openPopup(_.extend(defaults, data));
@@ -90,29 +107,24 @@ define(function(require) {
 		// forces the user to wait before the confirm button can be clicked
 		if(data.destructive === true) {
 			var setWaitText = function(n) {
-				$('.sweet-alert button.confirm').html(
-					'<span class="wait-text">' +
-					Origin.l10n.t('app.confirmwait') +
-					'</span> ' +
-					n
-				);
+				$('.swal2-popup button.swal2-confirm').html(`<span class="wait-text">${Origin.l10n.t('app.confirmwait')} (${n})</span>`);
 			};
 
 			var count = DISABLE_TIME_SECS;
-			var oldLabel = $('.sweet-alert button.confirm').text();
+			var oldLabel = $('.swal2-popup button.swal2-confirm').text();
 
 			$('.sweet-alert').addClass('destructive');
-			$('.sweet-alert button.confirm').attr('disabled', true);
+			$('.swal2-popup button.swal2-confirm').attr('disabled', true);
 
 			setWaitText(count);
 
 			interval = setInterval(function() {
 				if(--count > 0) {
-					$('.sweet-alert button.confirm').html('<span class="wait-text">' + Origin.l10n.t('app.confirmwait') + '</span> ' + count);
+					$('.swal2-popup button.swal2-confirm').html(`<span class="wait-text">${Origin.l10n.t('app.confirmwait')} (${count})</span>`);
 				} else {
 					clearInterval(interval);
-					$('.sweet-alert button.confirm').text(oldLabel);
-					$('.sweet-alert button.confirm').attr('disabled', false);
+					$('.swal2-popup button.swal2-confirm').text(oldLabel);
+					$('.swal2-popup button.swal2-confirm').attr('disabled', false);
 					$('.sweet-alert').removeClass('destructive');
 				}
 			}, 1000);
@@ -137,14 +149,12 @@ define(function(require) {
 
 		openPopup(_.extend(defaults, data));
 
-		$('.sweet-alert > .sa-button-container button').blur();
-
 		clearInterval(interval);
 
 		// forces the confirm button after timer has elapsed
 		if(data.autoConfirm === true) {
 			var setWaitText = function(n) {
-				$('.sweet-alert button.confirm')[0].innerText = `${data.confirmButtonText} (${n})`;
+				$('.swal2-popup button.swal2-confirm')[0].innerText = `${data.confirmButtonText} (${n})`;
 			};
 
 			var count = (data.autoTimer / 1000);
@@ -161,7 +171,7 @@ define(function(require) {
 				}
 			}, 1000);
 
-			$('.sweet-alert button.cancel').on('click', function(){
+			$('.swal2-popup button.swal2-cancel').on('click', function(){
 				clearInterval(interval);
 			})
 		}

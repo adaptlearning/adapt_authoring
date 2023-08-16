@@ -1,4 +1,5 @@
 /conf/config.json
+/conf/blocklist.json
 /conf/migrate.json
 /data
 

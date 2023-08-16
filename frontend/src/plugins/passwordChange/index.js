@@ -2,34 +2,81 @@ define(function (require) {
     var Origin = require('core/origin');
     var UserInfoModel = require('./models/userInfoModel');
     var PasswordFieldsView = require('./views/passwordFieldsView');
+    var PasswordHelpers = require('plugins/passwordChange/passwordHelpers');
 
     console.log(PasswordFieldsView);
 
-    Password = Backbone.Model.extend({
-        defaults: {
-            fieldId: 'password'
-        }
-    });
-
-    Origin.once('origin:dataReady login:changed location:change', function () {
+    Origin.once('origin:dataReady login:changed location:change', function (e) {
+        if (!e) return;
         var user = new UserInfoModel();
         user.fetch({
-            success: function () {
-                var model = new Password();
-                var passwordFieldsView = new PasswordFieldsView({model: model}).render();
-                console.log(passwordFieldsView);
+            success: function (model) {
+                var genericId = 'ResetModal';
+                var passwordToSave = '';
+                var confirmPasswordToSave = '';
+                model.set('fieldId', 'password')
+                var passwordFieldsView = PasswordFieldsView({ model: model, genericId: genericId });
                 function openPopup(){
                     Origin.Notify.alert({
                         type: 'warning',
                         html: passwordFieldsView.el,
                         showConfirmButton: true,
-                        confirmButtonText: 'Go to Profile',
-                        showCancelButton: false,
+                        allowOutsideClick: false,
+                        confirmButtonText: Origin.l10n.t('app.save'),
+                        showCancelButton: true,
+                        cancelButtonText: Origin.l10n.t('app.cancel'),
+                        preConfirm: function (e) {
+                            var passwordVal = $(this.html).find(`#password${genericId}`)[0].value;
+                            var confirmPasswordVal = $(this.html).find(`#confirmPassword${genericId}`)[0].value;
+
+                            var passwordErrors = PasswordHelpers.validatePassword(passwordVal);
+                            var isConfirmPasswordValid = PasswordHelpers.validateConfirmationPassword(passwordVal, confirmPasswordVal);
+
+                            passwordToSave = passwordVal;
+                            confirmPasswordToSave = confirmPasswordVal;
+
+                            var shouldConfirm = passwordErrors.length == 0 && isConfirmPasswordValid;
+
+                            var errorHash = {};
+
+                            if (passwordErrors.length > 0) {
+                                errorHash['password'] = `${Origin.l10n.t('app.passwordindicatormedium')}`;
+                            }
+
+                            if (!isConfirmPasswordValid) {
+                                errorHash['confirmPassword'] = `${Origin.l10n.t('app.confirmpasswordnotmatch')}`;
+                            }
+                            model.trigger('invalid', model, errorHash);
+
+                            return shouldConfirm;
+                        },
                         callback: function (isConfirm) {
-                            console.log(passwordFieldsView.$el.find('#password')[0].value);
-                            console.log(passwordFieldsView.$el.find('#confirmPassword')[0].value);
+                            console.log(passwordFieldsView.$el.find('#passwordResetModal')[0].value);
+                            console.log(passwordFieldsView.$el.find('#confirmPasswordResetModal')[0].value);
                             console.log(isConfirm);
                             if (isConfirm) {
+                                var postData = {
+                                    "email": model.get('email'),
+                                    "password": passwordToSave,
+                                    "confirmPassword": confirmPasswordToSave
+                                };
+                                $.ajax('api/user/resetpassword', {
+                                    data: postData,
+                                    method: 'POST',
+                                    error: function (data, status, error) {
+                                        var message = error + ': ';
+                                        if (data.responseText) message += data.responseText;
+                                        Origin.Notify.alert({ type: 'error', text: message });
+                                    },
+                                    success: function () {
+                                        Origin.Notify.alert({
+                                            type: 'success',
+                                            text: Origin.l10n.t('app.changepasswordtext', { email: model.get('email') })
+                                        });
+                                    }
+                                });
+                            }
+                            else{
                                 Origin.router.navigateTo('user/profile');
                             }
                         }

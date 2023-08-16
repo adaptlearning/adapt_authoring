@@ -3,6 +3,8 @@ define(function(require){
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
   var Helpers = require('../helpers');
+  var PasswordFieldsView = require('plugins/passwordChange/views/passwordFieldsView');
+  var PasswordHelpers = require('plugins/passwordChange/passwordHelpers');
 
   var UserView = OriginView.extend({
     tagName: 'div',
@@ -211,29 +213,85 @@ define(function(require){
 
     onChangePasswordClicked: function() {
       var self = this;
-      Origin.Notify.confirm({
-        type: 'input',
-        title: Origin.l10n.t('app.resetpasswordtitle'),
-        text: Origin.l10n.t('app.resetpasswordinstruction', { email: this.model.get('email') }),
-        inputType: 'password',
-        confirmButtonText: 'Save',
+      var genericId = 'UserManagementResetModal';
+      this.model.set('fieldId', 'password');
+      var passwordFieldsView = PasswordFieldsView({ model: this.model, genericId: genericId });
+      var passwordToSave = '';
+      var confirmPasswordToSave =  '';
+      Origin.Notify.alert({
+        type: 'warning',
+        html: passwordFieldsView.el,
+        showConfirmButton: true,
         closeOnConfirm: false,
-        callback: function(newPassword) {
-          if(newPassword === false) return;
-          else if(newPassword === "") return swal.showInputError(Origin.l10n.t('app.invalidempty'));
-          var postData = {
-            "email": self.model.get('email'),
-            "password": newPassword
-          };
-          Helpers.ajax('api/user/resetpassword', postData, 'POST', function() {
-            self.model.fetch();
-            Origin.Notify.alert({
-              type: 'success',
-              text: Origin.l10n.t('app.changepasswordtext', { email: self.model.get('email') })
+        allowOutsideClick: false,
+        confirmButtonText: Origin.l10n.t('app.save'),
+        showCancelButton: true,
+        cancelButtonText: Origin.l10n.t('app.cancel'),
+        preConfirm: function(e) {
+          var passwordVal = $(this.html).find(`#password${genericId}`)[0].value;
+          var confirmPasswordVal = $(this.html).find(`#confirmPassword${genericId}`)[0].value;
+
+          var passwordErrors = PasswordHelpers.validatePassword(passwordVal);
+          var isConfirmPasswordValid = PasswordHelpers.validateConfirmationPassword(passwordVal, confirmPasswordVal);
+
+          passwordToSave = passwordVal;
+          confirmPasswordToSave = confirmPasswordVal;
+
+          var shouldConfirm = passwordErrors.length == 0 && isConfirmPasswordValid;
+
+          var errorHash = {};
+
+          if (passwordErrors.length > 0) {
+            errorHash['password'] = `${Origin.l10n.t('app.passwordindicatormedium')}`;
+          }
+
+          if (!isConfirmPasswordValid) {
+            errorHash['confirmPassword'] = `${Origin.l10n.t('app.confirmpasswordnotmatch')}`;
+          }
+          self.model.trigger('invalid', self.model, errorHash);
+
+          return shouldConfirm;
+        },
+        callback: function (isConfirm) {
+          if (isConfirm) {
+            var postData = {
+              "email": self.model.get('email'),
+              "password": passwordToSave,
+              "confirmPassword": confirmPasswordToSave
+            };
+            Helpers.ajax('api/user/resetpassword', postData, 'POST', function () {
+              self.model.fetch();
+              Origin.Notify.alert({
+                type: 'success',
+                text: Origin.l10n.t('app.changepasswordtext', { email: self.model.get('email') })
+              });
             });
-          });
+          }
         }
       });
+      // Origin.Notify.confirm({
+      //   type: 'input',
+      //   title: Origin.l10n.t('app.resetpasswordtitle'),
+      //   text: Origin.l10n.t('app.resetpasswordinstruction', { email: this.model.get('email') }),
+      //   inputType: 'password',
+      //   confirmButtonText: 'Save',
+      //   closeOnConfirm: false,
+      //   callback: function(newPassword) {
+      //     if(newPassword === false) return;
+      //     else if(newPassword === "") return swal.showInputError(Origin.l10n.t('app.invalidempty'));
+      //     var postData = {
+      //       "email": self.model.get('email'),
+      //       "password": newPassword
+      //     };
+      //     Helpers.ajax('api/user/resetpassword', postData, 'POST', function() {
+      //       self.model.fetch();
+      //       Origin.Notify.alert({
+      //         type: 'success',
+      //         text: Origin.l10n.t('app.changepasswordtext', { email: self.model.get('email') })
+      //       });
+      //     });
+      //   }
+      // });
     },
 
     onDisableClicked: function() {

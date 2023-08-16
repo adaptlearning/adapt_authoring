@@ -25,7 +25,7 @@ define(function(require){
     },
 
     postRender: function() {
-      var passwordFieldsView = new PasswordFieldsView({ model: this.model }).render().el;
+      var passwordFieldsView = PasswordFieldsView({ model: this.model }).el;
       this.$('#passwordField').append(passwordFieldsView);
       this.setViewToReady();
     },

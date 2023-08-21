@@ -23,7 +23,7 @@
         {{/unless}}{{/ifUserNotMe}}
       </div>
     </div>
-    <div class="col-15">
+    <div class="col-10">
       <div class="tb-col-inner">
         <span class="read no-wrap">{{tenantName}}</span>
         {{#ifUserNotMe _id}}{{#unless _isDeleted}}
@@ -40,7 +40,7 @@
         {{/unless}}{{/ifUserNotMe}}
       </div>
     </div>
-    <div class="col-15">
+    <div class="col-20">
       <div class="tb-col-inner">
         <div class="read">
           <ul>
@@ -64,7 +64,7 @@
         {{/unless}}{{/ifUserNotMe}}
       </div>
     </div>
-    <div class="col-15 col-centered">
+    <div class="col-10 col-centered">
       <div class="tb-col-inner">
         {{failedLoginCount}}
         {{#if _isLocked}}
@@ -72,7 +72,15 @@
         {{/if}}
       </div>
     </div>
-    <div class="col-15 col-centered">
+    <div class="col-10 col-centered">
+      <div class="tb-col-inner">
+        {{passwordResetCount}}
+        {{#if _isLockedReset}}
+          <i class="fa fa-lock"></i>
+        {{/if}}
+      </div>
+    </div>
+    <div class="col-10 col-centered">
       <div class="tb-col-inner no-wrap">{{momentFormat lastAccess 'DD MMM-YY'}}</div>
     </div>
     <div class="col-15">
@@ -103,6 +111,11 @@
                   <button class="btn secondary unlock">{{t 'app.resetlogins'}}</button>
                 </div>
               {{/ifValueEquals}}
+            {{/if}}
+            {{#if _isLockedReset}}
+                  <div class="group">
+                    <button class="btn secondary unlock-reset-password">{{t 'app.unlockPasswordReset'}}</button>
+                  </div>
             {{/if}}
           {{/if}}
           {{#ifUserNotMe _id}}

@@ -495,5 +495,8 @@
   "app.numberofrequirementscompleted": "%{number} out of %{total} requirements completed.",
   "app.crosscoursepagecopy": "Copying pages across courses is not yet available. It will be implemetend in future releases.",
   "app.confirmpasswordnotmatch": "Confirmation password does not match the new password.",
-  "app.cannotcopyobjecthere": "Unable to copy this type of content here."
+  "app.cannotcopyobjecthere": "Unable to copy this type of content here.",
+  "app.resetPasswordCount": "Resets",
+  "app.unlockPasswordReset": "Unlock Password Reset",
+  "app.confirmUnlockPasswordReset": "Unlock password reset for<br/><b>%{email}</b>?"
 }

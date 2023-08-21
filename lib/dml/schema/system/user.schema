@@ -33,10 +33,6 @@
       "type": "date",
       "required": false
     },
-    "lastPasswordResetToken": {
-      "type": "date",
-      "required": false
-    },
     "roles": {
       "type": "array",
       "items": { "type": "objectid", "ref":"role" }
@@ -50,6 +46,11 @@
       "required": false
     },
     "failedLoginCount": {
+      "type" : "number",
+      "required": true,
+      "default": 0
+    },
+    "passwordResetCount": {
       "type" : "number",
       "required": true,
       "default": 0

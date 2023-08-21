@@ -23,7 +23,7 @@ define(function (require) {
                         showConfirmButton: true,
                         allowOutsideClick: false,
                         confirmButtonText: Origin.l10n.t('app.save'),
-                        showCancelButton: true,
+                        showCancelButton: false,
                         cancelButtonText: Origin.l10n.t('app.cancel'),
                         preConfirm: function (e) {
                             var passwordVal = $(this.html).find(`#password${genericId}`)[0].value;
@@ -75,9 +75,6 @@ define(function (require) {
                                         });
                                     }
                                 });
-                            }
-                            else{
-                                Origin.router.navigateTo('user/profile');
                             }
                         }
                     });

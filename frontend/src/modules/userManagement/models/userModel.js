@@ -16,8 +16,10 @@ define(function(require) {
       this.on('change:roles', this.setRoleNames);
       this.on('change:_tenantId', this.setTenantName);
       this.on('change:failedLoginCount', this.setLockStatus);
+      this.on('change:passwordResetCount', this.setLockResetStatus);
 
       this.setLockStatus();
+      this.setLockResetStatus();
     },
 
     onGlobalDataChanged: function(model, value, options) {
@@ -63,6 +65,13 @@ define(function(require) {
       var newLocked = this.get('failedLoginCount') >= Origin.constants.maxLoginAttempts;
       if(newLocked !== this.get('_isLocked')) {
         this.set('_isLocked', newLocked);
+      }
+    },
+
+    setLockResetStatus: function(model, value, options) {
+      var newLocked = this.get('passwordResetCount') >= Origin.constants.maxLoginAttempts;
+      if(newLocked !== this.get('_isLockedReset')) {
+        this.set('_isLockedReset', newLocked);
       }
     }
   });

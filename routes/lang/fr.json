@@ -1576,5 +1576,8 @@
     "app.numberofrequirementscompleted": "%{number} sur %{total} exigences satisfaites",
     "app.crosscoursepagecopy": "La copie de pages d'un cours à l'autre n'est pas encore disponible. Elle sera mise en œuvre dans les prochaines versions.",
     "app.confirmpasswordnotmatch": "Le mot de passe de confirmation ne correspond pas au nouveau mot de passe.",
-    "app.cannotcopyobjecthere": "Impossible de copier ce type de contenu ici."
+    "app.cannotcopyobjecthere": "Impossible de copier ce type de contenu ici.",
+    "app.resetPasswordCount": "Réinitialisations",
+    "app.unlockPasswordReset": "Déverrouiller la réinitialisation de mot de passe",
+    "app.confirmUnlockPasswordReset": "Déverrouiller la réinitialisation de mot de passe pour<br/><b>%{email}</b>?"
 }

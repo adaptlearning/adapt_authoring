@@ -31,6 +31,7 @@ define(function(require){
       'click button.changePassword': 'onChangePasswordClicked',
 
       'click button.unlock': 'onResetLoginsClicked',
+      'click button.unlock-reset-password': 'onUnlockPasswordResetClicked',
 
       'click button.disable': 'onDisableClicked',
       'click button.delete': 'onDeleteClicked',
@@ -174,6 +175,16 @@ define(function(require){
         text: Origin.l10n.t('app.confirmresetlogins', { email: this.model.get('email') }),
         callback: function(confirmed) {
           if(confirmed) self.updateModel('failedLoginCount', 0);
+        }
+      });
+    },
+
+    onUnlockPasswordResetClicked: function() {
+      var self = this;
+      Origin.Notify.confirm({
+        text: Origin.l10n.t('app.confirmUnlockPasswordReset', { email: this.model.get('email') }),
+        callback: function(confirmed) {
+          if(confirmed) self.updateModel('passwordResetCount', 0);
         }
       });
     },

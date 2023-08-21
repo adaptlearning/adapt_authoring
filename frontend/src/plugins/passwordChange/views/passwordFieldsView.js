@@ -9,13 +9,14 @@ define(function (require) {
 
   var PasswordFieldsView = function (opts) {
     var genericId = opts && opts.genericId ? opts.genericId : '';
-    var events = {}
+    var events = {
+      'click .toggle-password': 'togglePasswordView',
+      'click .toggle-confirmation-password': 'toggleConfirmationPasswordView'
+    }
     events[`keyup #password${genericId}`] = 'onPasswordKeyup';
     events[`keyup #confirmPassword${genericId}`] = 'onConfirmPasswordKeyup';
     events[`keyup #passwordText${genericId}`] = 'onPasswordTextKeyup';
     events[`keyup #confirmPasswordText${genericId}`] = 'onConfirmPasswordTextKeyup';
-    events['click .toggle-password'] = 'togglePasswordView';
-    events['click .toggle-confirmation-password'] = 'toggleConfirmationPasswordView';
 
     var view = OriginView.extend({
       tagName: 'div',
@@ -65,7 +66,7 @@ define(function (require) {
 
         this.$('#confirmPasswordText' + genericId).toggleClass('display-none');
         this.$('#confirmPassword' + genericId).toggleClass('display-none');
-        this.$('.toggle-toggle-confirmation-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
+        this.$('.toggle-confirmation-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
       },
 
       indicatePasswordStrength: function (event) {
@@ -77,8 +78,8 @@ define(function (require) {
         var $passwordLength = $(`.password${genericId}-length-feedback`);
         var $passwordChecklistFeedback = $(`.password${genericId}-checklist-feedback`);
 
-        var xMark = '&#10008;';
-        var checkMark = '<i class="fa fa-check"></i>';
+        var xMark = '<i class="fa fa-times" aria-hidden="true"></i>';
+        var checkMark = '<i class="fa fa-check" aria-hidden="true"></i>';
 
         errors.includes('missingspecialchars') ? $passwordSpecialChar.html(xMark) : $passwordSpecialChar.html(checkMark);
         errors.includes('missingnumber') ? $passwordNumber.html(xMark) : $passwordNumber.html(checkMark);

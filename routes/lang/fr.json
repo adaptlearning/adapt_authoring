@@ -1579,5 +1579,6 @@
     "app.cannotcopyobjecthere": "Impossible de copier ce type de contenu ici.",
     "app.resetPasswordCount": "Réinitialisations",
     "app.unlockPasswordReset": "Déverrouiller la réinitialisation de mot de passe",
-    "app.confirmUnlockPasswordReset": "Déverrouiller la réinitialisation de mot de passe pour<br/><b>%{email}</b>?"
+    "app.confirmUnlockPasswordReset": "Déverrouiller la réinitialisation de mot de passe pour<br/><b>%{email}</b>?",
+    "app.passwordForceMessage": "Conformément à nos protocoles de sécurité départementaux, nous vous demandons de mettre à jour votre mot de passe Adapt dès maintenant. Ce message ne sera plus affiché une fois que la modification de votre mot de passe sera terminée."
 }

@@ -17,6 +17,10 @@ define(function (require) {
                 model.set('fieldId', 'password')
                 var passwordFieldsView = PasswordFieldsView({ model: model, genericId: genericId });
                 function openPopup(){
+                    var message = document.createElement("p");
+                    message.classList.add("password-force-message");
+                    message.innerHTML = Origin.l10n.t('app.passwordForceMessage');
+                    passwordFieldsView.el.prepend(message);
                     Origin.Notify.alert({
                         type: 'warning',
                         html: passwordFieldsView.el,
@@ -24,7 +28,6 @@ define(function (require) {
                         allowOutsideClick: false,
                         confirmButtonText: Origin.l10n.t('app.save'),
                         showCancelButton: false,
-                        cancelButtonText: Origin.l10n.t('app.cancel'),
                         preConfirm: function (e) {
                             var passwordVal = $(this.html).find(`#password${genericId}`)[0].value;
                             var confirmPasswordVal = $(this.html).find(`#confirmPassword${genericId}`)[0].value;

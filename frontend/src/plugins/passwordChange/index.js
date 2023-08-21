@@ -29,8 +29,8 @@ define(function (require) {
                         confirmButtonText: Origin.l10n.t('app.save'),
                         showCancelButton: false,
                         preConfirm: function (e) {
-                            var passwordVal = $(this.html).find(`#password${genericId}`)[0].value;
-                            var confirmPasswordVal = $(this.html).find(`#confirmPassword${genericId}`)[0].value;
+                            var passwordVal = passwordFieldsView.$el.find(`#password${genericId}`)[0].value;
+                            var confirmPasswordVal = passwordFieldsView.$el.find(`#confirmPassword${genericId}`)[0].value;
 
                             var passwordErrors = PasswordHelpers.validatePassword(passwordVal);
                             var isConfirmPasswordValid = PasswordHelpers.validateConfirmationPassword(passwordVal, confirmPasswordVal);
@@ -51,33 +51,28 @@ define(function (require) {
                             }
                             model.trigger('invalid', model, errorHash);
 
-                            return shouldConfirm;
-                        },
-                        callback: function (isConfirm) {
-                            console.log(passwordFieldsView.$el.find('#passwordResetModal')[0].value);
-                            console.log(passwordFieldsView.$el.find('#confirmPasswordResetModal')[0].value);
-                            console.log(isConfirm);
-                            if (isConfirm) {
-                                var postData = {
-                                    "email": model.get('email'),
-                                    "password": passwordToSave,
-                                    "confirmPassword": confirmPasswordToSave
-                                };
-                                $.ajax('api/user/resetpassword', {
-                                    data: postData,
-                                    method: 'POST',
-                                    error: function (data, status, error) {
-                                        var message = error + ': ';
-                                        if (data.responseText) message += data.responseText;
-                                        Origin.Notify.alert({ type: 'error', text: message });
-                                    },
-                                    success: function () {
-                                        Origin.Notify.alert({
-                                            type: 'success',
-                                            text: Origin.l10n.t('app.changepasswordtext', { email: model.get('email') })
-                                        });
-                                    }
-                                });
+                            if (Object.keys(errorHash).length > 0) return false;
+
+                            var toChange = {
+                                _id: model.get('_id'),
+                                _isNewPassword: true,
+                                email_prev: model.get('email'),
+                                password: passwordVal
+                            };
+
+                            shouldConfirm = $.ajax({
+                                url: 'api/user/me',
+                                method: 'PUT',
+                                data: toChange,
+                                async: false
+                            });
+                            if (shouldConfirm && ['500', 500].includes(shouldConfirm.status)) {
+                                passwordFieldsView.$el.find('.server-errors-container').html(shouldConfirm.responseText);
+                                return false;
+                            }
+                            else if (shouldConfirm && ['200', 200].includes(shouldConfirm.status)) {
+                                passwordFieldsView.$el.find('.server-errors-container').html();
+                                return true;
                             }
                         }
                     });

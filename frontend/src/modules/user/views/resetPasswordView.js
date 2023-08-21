@@ -72,7 +72,7 @@ define(function(require) {
         error: _.bind(function(model, response, options) {
           Origin.Notify.alert({
             type: 'error',
-            text: Origin.l10n.t('app.resetpassworderror')
+            text: response && response.responseText ? response.responseText : Origin.l10n.t('app.resetpassworderror')
           });
         },this)
       });

@@ -2,6 +2,7 @@
 define(function(require) {
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
+  var Helpers = require('core/helpers');
   var PasswordFieldsView = require('plugins/passwordChange/views/passwordFieldsView');
 
   var ResetPasswordView = OriginView.extend({
@@ -70,9 +71,10 @@ define(function(require) {
           this.$('.message .success').removeClass('display-none');
         },this),
         error: _.bind(function(model, response, options) {
+          // for server error messages - will remove in future
           Origin.Notify.alert({
             type: 'error',
-            text: response && response.responseText ? response.responseText : Origin.l10n.t('app.resetpassworderror')
+            text: Helpers.translateData(response) 
           });
         },this)
       });

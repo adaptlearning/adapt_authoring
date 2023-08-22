@@ -107,10 +107,13 @@ define(function(require){
       if(this.createdUserId) {
         $.ajax('api/user/' + this.createdUserId, { method: 'DELETE', error: _.bind(this.onAjaxError, this) });
       }
+      // for server error messages - will remove in future
+      var errMsg = Helpers.translateData(data);
+
       Origin.Notify.alert({
         type: 'error',
         title: "Couldn't add user",
-        text: data.responseText || error
+        text: errMsg
       });
     }
   }, {

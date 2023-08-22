@@ -499,5 +499,7 @@
   "app.resetPasswordCount": "Resets",
   "app.unlockPasswordReset": "Unlock Password Reset",
   "app.confirmUnlockPasswordReset": "Unlock password reset for<br/><b>%{email}</b>?",
-  "app.passwordForceMessage": "In alignment with our departmental security protocols, we kindly ask you to update your Adapt password now. This message will no longer be displayed once your password modification is complete."
+  "app.passwordForceMessage": "In alignment with our departmental security protocols, we kindly ask you to update your Adapt password now. This message will no longer be displayed once your password modification is complete.",
+  "app.revealpassword": "Reveal Password",
+  "app.hidepassword": "Hide Password"
 }

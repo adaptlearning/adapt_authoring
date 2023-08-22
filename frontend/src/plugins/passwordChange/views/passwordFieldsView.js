@@ -55,17 +55,33 @@ define(function (require) {
 
       togglePasswordView: function () {
         event && event.preventDefault();
-
-        this.$('#passwordText' + genericId).toggleClass('display-none');
-        this.$('#password' + genericId).toggleClass('display-none');
+        if(this.$('#passwordText' + genericId).hasClass('display-none')){
+          this.$('#passwordText' + genericId).removeClass('display-none');
+          this.$('#password' + genericId).addClass('display-none');
+          this.$('.toggle-password').attr('aria-label', Origin.l10n.t('app.hidepassword'))
+          this.$('#passwordText' + genericId).focus();
+        } else {
+          this.$('#password' + genericId).removeClass('display-none');
+          this.$('#passwordText' + genericId).addClass('display-none');
+          this.$('.toggle-password').attr('aria-label', Origin.l10n.t('app.revealpassword'))
+          this.$('#password' + genericId).focus();
+        }
         this.$('.toggle-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
       },
 
       toggleConfirmationPasswordView: function () {
         event && event.preventDefault();
-
-        this.$('#confirmPasswordText' + genericId).toggleClass('display-none');
-        this.$('#confirmPassword' + genericId).toggleClass('display-none');
+        if(this.$('#confirmPasswordText' + genericId).hasClass('display-none')){
+          this.$('#confirmPasswordText' + genericId).removeClass('display-none');
+          this.$('#confirmPassword' + genericId).addClass('display-none');
+          this.$('.toggle-confirmation-password').attr('aria-label', Origin.l10n.t('app.hidepassword'))
+          this.$('#confirmPasswordText' + genericId).focus();
+        } else {
+          this.$('#confirmPassword' + genericId).removeClass('display-none');
+          this.$('#confirmPasswordText' + genericId).addClass('display-none');
+          this.$('.toggle-confirmation-password').attr('aria-label', Origin.l10n.t('app.revealpassword'))
+          this.$('#confirmPassword' + genericId).focus();
+        }
         this.$('.toggle-confirmation-password i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
       },
 
@@ -110,12 +126,26 @@ define(function (require) {
       },
 
       onPasswordTextKeyup: function () {
-        this.$('#password' + genericId).val(this.$('#passwordText' + genericId).val());
+        if (this.$('#passwordText' + genericId).val().length > 0) {
+          this.$('#password' + genericId).val(this.$('#passwordText' + genericId).val());
+          this.$('.toggle-password').removeClass('display-none');
+        } else {
+          this.$('.toggle-password').addClass('display-none');
+          this.$('#password' + genericId).val(this.$('#passwordText' + genericId).val());
+          this.togglePasswordView();
+        }
         this.indicatePasswordStrength();
       },
 
       onConfirmPasswordTextKeyup: function () {
-        this.$('#confirmPassword' + genericId).val(this.$('#confirmPasswordText' + genericId).val());
+        if (this.$('#confirmPasswordText' + genericId).val().length > 0) {
+          this.$('#confirmPassword' + genericId).val(this.$('#confirmPasswordText' + genericId).val());
+          this.$('.toggle-confirmation-password').removeClass('display-none');
+        } else {
+          this.$('.toggle-confirmation-password').addClass('display-none');
+          this.$('#confirmPassword' + genericId).val(this.$('#confirmPasswordText' + genericId).val());
+          this.toggleConfirmationPasswordView();
+        }
       }
     }, {
       template: 'passwordFields'

@@ -1578,6 +1578,7 @@
     "app.passwordminimumlength": "8 caractères minimum",
     "app.passwordchangemessage": "Veuillez mettre à jour votre mot de passe. Cette notification sera automatiquement supprimée lors de la réussite de la modification du mot de passe.",
     "app.passwordForceMessage": "Conformément à nos protocoles de sécurité départementaux, nous vous demandons de mettre à jour votre mot de passe Adapt dès maintenant. Ce message ne sera plus affiché une fois que la modification de votre mot de passe sera terminée.",
+    "app.passwordtoocommon": "Ce mot de passe est trop courant, veuillez utiliser un mot de passe plus unique.",
     "app.numberofrequirementscompleted": "%{number} sur %{total} exigences satisfaites",
     "app.crosscoursepagecopy": "La copie de pages d'un cours à l'autre n'est pas encore disponible. Elle sera mise en œuvre dans les prochaines versions.",
     "app.confirmpasswordnotmatch": "Le mot de passe de confirmation ne correspond pas au nouveau mot de passe.",

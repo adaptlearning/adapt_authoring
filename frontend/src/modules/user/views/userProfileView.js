@@ -4,6 +4,7 @@ define(function(require){
   var PasswordFieldsView = require('plugins/passwordChange/views/passwordFieldsView');
   var OriginView = require('core/views/originView');
   var Origin = require('core/origin');
+  var Helpers = require('core/helpers');
 
   var UserProfileView = OriginView.extend({
     tagName: 'div',
@@ -114,10 +115,13 @@ define(function(require){
         wait: true,
         patch: true,
         error: function(data, error) {
+          // for server error messages - will remove in future
+          var errMsg = Helpers.translateData(error);
+          
           Origin.trigger('sidebar:resetButtons');
           Origin.Notify.alert({
             type: 'error',
-            text: error.responseText || Origin.l10n.t('app.errorgeneric')
+            text: errMsg || Origin.l10n.t('app.errorgeneric')
           });
         },
         success: function(model) {

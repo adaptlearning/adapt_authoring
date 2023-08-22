@@ -166,6 +166,14 @@ define(function(require){
         return object[property];
       }
     },
+
+    // for server error messages - will remove in future
+    translateData: function(data) {
+      var str = '';
+      str = data && data.responseJSON && typeof data.responseJSON == 'string' && data.responseJSON.startsWith('app.') ? Origin.l10n.t(data.responseJSON) : data.responseJSON;
+      return str;
+    },
+
     // ESDC - for testing purposes
     printobject: function(object){
       console.log(object)

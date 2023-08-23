@@ -23,16 +23,6 @@ define(function (require) {
       className: 'password-fields-view',
       events: events,
 
-      initialize: function (options) {
-        this.preRender(options);
-        if (this.constructor.template) {
-          Origin.trigger(this.constructor.template + ':preRender', this);
-        }
-        if (this.settings.autoRender) {
-          this.render();
-        }
-      },
-
       preRender: function () {
         this.model.set('genericId', genericId);
         this.listenTo(this.model, 'invalid', this.handleValidationError);

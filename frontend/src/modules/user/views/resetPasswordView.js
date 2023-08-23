@@ -56,6 +56,11 @@ define(function(require) {
 
     resetPassword: function(event) {
       event.preventDefault();
+      var errorHash = {};
+      errorHash['password'] = '';
+      errorHash['confirmPassword'] = '';
+
+      this.model.trigger('invalid', this.model, errorHash);
 
       var toChange = {
         password: this.$('#password').val(),
@@ -63,6 +68,7 @@ define(function(require) {
         id: this.model.get('_id'),
         token: this.model.get('token')
       };
+      var self = this;
       this.model.save(toChange, {
         patch: true,
         success: _.bind(function(model, response, options) {
@@ -72,10 +78,9 @@ define(function(require) {
         },this),
         error: _.bind(function(model, response, options) {
           // for server error messages - will remove in future
-          Origin.Notify.alert({
-            type: 'error',
-            text: Helpers.translateData(response) 
-          });
+          var errMsg = Helpers.translateData(response);
+          self.$(`#passwordError`).html(errMsg);
+          self.$(`#confirmPasswordError`).html('');
         },this)
       });
     }

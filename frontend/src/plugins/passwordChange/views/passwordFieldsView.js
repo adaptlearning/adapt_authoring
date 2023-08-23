@@ -35,12 +35,8 @@ define(function (require) {
       handleValidationError: function (model, error) {
         Origin.trigger('sidebar:resetButtons');
 
-        console.log('handle validation error: ', error);
-        console.log('handle validation model: ', model);
-
         if (error && _.keys(error).length !== 0) {
           _.each(error, function (value, key) {
-            console.log('key error: ', this.$('#' + key + 'Error' + genericId));
             this.$('#' + key + 'Error' + genericId).html(value);
           }, this);
           this.$('.error-text').removeClass('display-none');

@@ -5,10 +5,7 @@ define(function (require) {
     var PasswordFieldsView = require('./views/passwordFieldsView');
     var PasswordHelpers = require('plugins/passwordChange/passwordHelpers');
 
-    console.log(PasswordFieldsView);
-
     Origin.once('dashboard:loaded', function (e) {
-        console.log('launching popup');
         var user = new UserInfoModel();
         user.fetch({
             success: function (model) {
@@ -80,7 +77,6 @@ define(function (require) {
                 }
                 if (user.attributes.lastPasswordChange) {
                     var policyChange = new Date('2023-10-26T01:12:06.510Z')
-                    console.log(user.attributes.lastPasswordChange);
                     var changeDate = new Date(user.attributes.lastPasswordChange)
                     if ((changeDate < policyChange)) {
                        openPopup();

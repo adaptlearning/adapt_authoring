@@ -8,6 +8,7 @@
 /frontend/src/modules/modules.js
 /frontend/src/plugins/plugins.js
 /frontend/src/templates/templates.js
+/frontend/src/plugins/debug
 
 /node_modules/
 /nbproject/

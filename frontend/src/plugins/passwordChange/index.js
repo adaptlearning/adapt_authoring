@@ -7,8 +7,8 @@ define(function (require) {
 
     console.log(PasswordFieldsView);
 
-    Origin.once('origin:dataReady login:changed location:change', function (e) {
-        if (!e) return;
+    Origin.once('login:changed', function (e) {
+        console.log('launching popup');
         var user = new UserInfoModel();
         user.fetch({
             success: function (model) {

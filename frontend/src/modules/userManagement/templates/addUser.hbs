@@ -5,7 +5,7 @@
   <form class="addUser forms" action="api/user" method="post" autocomplete="off">
       <div class="form-group">
         <label>
-          {{t 'app.firstname'}} <span class="req">*</span>
+          {{t 'app.firstname'}} <span aria-label="(required)" class="req">*</span>
           <span class="field-error display-none" data-error="">{{t 'app.validationrequired'}}</span>
         </label>
         <input type="text" name="firstName" autocomplete="off">
@@ -13,7 +13,7 @@
       <div class="form-group">
         <label>
           {{t 'app.lastname'}}
-          <span class="req">*</span>
+          <span aria-label="(required)" class="req">*</span>
          <span class="field-error display-none" data-error="">{{t 'app.validationrequired'}}</span>  
         </label>
         <input type="text" name="lastName" autocomplete="off">
@@ -21,7 +21,7 @@
       <div class="form-group">
         <label>
           {{t 'app.usernameoremail'}} 
-          <span class="req">*</span>
+          <span aria-label="(required)" class="req">*</span>
           <span class="field-error display-none" data-error="">{{t 'app.invalidusernameoremail'}}</span>
         </label>
         <input type="email" name="email" autocomplete="off">

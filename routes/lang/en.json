@@ -490,7 +490,7 @@
   "app.passwordneedsuppercaseletter": "One uppercase letter",
   "app.passwordneedsspeccialcharacter": "One special character !@#$%^&*",
   "app.passwordneedsonenumber": "One number",
-  "app.passwordminimumlength": "8 characters minimum",
+  "app.passwordminimumlength": "8 characters",
   "app.passwordchangemessage": "Kindly update your password. This notification will be automatically dismissed upon successful password modification.",
   "app.numberofrequirementscompleted": "%{number} out of %{total} requirements completed.",
   "app.crosscoursepagecopy": "Copying pages across courses is not yet available. It will be implemetend in future releases.",
@@ -502,5 +502,6 @@
   "app.passwordForceMessage": "In alignment with our departmental security protocols, we kindly ask you to update your Adapt password now. This message will no longer be displayed once your password modification is complete.",
   "app.revealpassword": "Reveal Password",
   "app.passwordtoocommon": "This password is too common, please use a more unique password.",
-  "app.hidepassword": "Hide Password"
+  "app.hidepassword": "Hide Password",
+  "app.passwordatleast": "Your password must have at least:"
 }

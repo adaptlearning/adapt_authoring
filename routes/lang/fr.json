@@ -1575,7 +1575,7 @@
     "app.passwordneedsuppercaseletter": "Une lettre majuscule",
     "app.passwordneedsspeccialcharacter": "Un caractère spécial !@#$%^&*",
     "app.passwordneedsonenumber": "Un chiffre",
-    "app.passwordminimumlength": "8 caractères minimum",
+    "app.passwordminimumlength": "8 caractères",
     "app.passwordchangemessage": "Veuillez mettre à jour votre mot de passe. Cette notification sera automatiquement supprimée lors de la réussite de la modification du mot de passe.",
     "app.passwordForceMessage": "Conformément à nos protocoles de sécurité départementaux, nous vous demandons de mettre à jour votre mot de passe Adapt dès maintenant. Ce message ne sera plus affiché une fois que la modification de votre mot de passe sera terminée.",
     "app.numberofrequirementscompleted": "%{number} sur %{total} exigences satisfaites",
@@ -1585,5 +1585,6 @@
     "app.cannotcopyobjecthere": "Impossible de copier ce type de contenu ici.",
     "app.revealpassword": "Révéler le mot de passe",
     "app.passwordtoocommon": "Ce mot de passe est trop courant, veuillez utiliser un mot de passe plus unique.",
-    "app.hidepassword": "Cacher le mot de passe"
+    "app.hidepassword": "Cacher le mot de passe",
+    "app.passwordatleast": "Votre mot de passe doit contenir au moins :"
 }

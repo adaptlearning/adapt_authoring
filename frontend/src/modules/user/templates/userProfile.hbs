@@ -25,7 +25,7 @@
 
           <div class="form-group">
             <label for="email">{{t 'app.email'}}
-              <span class="req">*</span>
+              <span aria-label="(required)" class="req">*</span>
               <span id="emailError" class="error"></span>
             </label>
             <input type="email" class="width-30" id="email" value="{{email}}" autocomplete="off">
@@ -33,7 +33,7 @@
 
           <div class="form-group">
             <label for="firstName">{{t 'app.firstname'}}
-              <span class="req">*</span>
+              <span aria-label="(required)" class="req">*</span>
               <span id="firstNameError" class="error"></span>
             </label>
             <input type="text" class="width-30" id="firstName" value="{{firstName}}" autocomplete="off">
@@ -41,7 +41,7 @@
 
           <div class="form-group">
             <label for="lastName">{{t 'app.lastname'}}
-              <span class="req">*</span>
+              <span aria-label="(required)" class="req">*</span>
               <span id="lastNameError" class="error"></span>
             </label>
             <input type="text" class="width-30" id="lastName" value="{{lastName}}" autocomplete="off">

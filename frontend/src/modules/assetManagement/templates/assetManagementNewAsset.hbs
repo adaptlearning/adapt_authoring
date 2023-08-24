@@ -3,7 +3,7 @@
     <form class="asset-form forms asset-form" action="api/asset" method="post">
         <div class="form-group">
             <label for="file">
-                {{t 'app.assetfile'}} <span class="req">*</span>
+                {{t 'app.assetfile'}} <span aria-label="(required)" class="req">*</span>
                 <span class="error"></span>
             </label>
             {{#if path}}
@@ -22,7 +22,7 @@
         </div>
         <div class="form-group">
             <label for="title">
-                {{t 'app.assettitle'}} <span class="req">*</span>
+                {{t 'app.assettitle'}} <span aria-label="(required)" class="req">*</span>
                 <span class="error"></span>
             </label>
             <input type="text" class="asset-title required" name="title" placeholder="{{t 'app.assettitle'}}" value="{{ title }}" autocomplete="off">
@@ -30,7 +30,7 @@
 
         <div class="form-group">
             <label for="description">
-                {{t 'app.assetdescription'}} <span class="req">*</span>
+                {{t 'app.assetdescription'}} <span aria-label="(required)" class="req">*</span>
                 <span class="error"></span>
             </label>
             <textarea class="asset-description required" name="description" placeholder="{{t 'app.assetdescription'}}">{{ description }}</textarea>

@@ -38,7 +38,7 @@ sudo systemctl status mongod
 
 Copy the repository
 ```sh
-git clone https://github.com/MeD-DMC/adapt_authoring_college.git adapt_authoring_college
+git clone https://github.com/LIT-EIA/adapt_authoring.git adapt_authoring
 cd adapt_authoring_college
 ```
 Install the application
@@ -50,7 +50,7 @@ node install
 ```
 
 Git repository URL to be used for the authoring tool source code should be: <br>
-https://<span></span>github.com/MeD-DMC/adapt_authoring_college.git <br>
+https://<span></span>github.com/LIT-EIA/adapt_authoring_college.git <br>
 ##
 Git repository URL to be used for the framework source code:  <br>
 https://<span></span>github.com/adaptlearning/adapt_framework.git <br>
@@ -62,9 +62,9 @@ tags/v4.4.1 <br>
 
 ## Optional but recommended plugins made tweaked by College@ESDC
 
-[Adapt ESDC College Theme](https://github.com/MeD-DMC/adapt-esdc-college-theme)
+[Adapt ESDC College Theme](https://github.com/LIT-EIA/adapt-esdc-college-theme)
 
-[Adapt output Accessibility fixes for v4.4.1](https://github.com/MeD-DMC/Adapt-accessibilityfixes)
+[Adapt output Accessibility fixes for v4.4.1](https://github.com/LIT-EIA/Adapt-accessibilityfixes)
 
 ## Docker
 
@@ -116,7 +116,7 @@ sudo systemctl status mongod
 
 Copier le projet
 ```sh
-git clone https://github.com/MeD-DMC/adapt_authoring_college.git adapt_authoring_college
+git clone https://github.com/LIT-EIA/adapt_authoring.git adapt_authoring_college
 cd adapt_authoring_college
 ```
 Installer l'application
@@ -139,9 +139,9 @@ tags/v4.4.1 <br>
 
 ## Ajouts facultatifs mais recommandés et modifiés par College@ESDC
 
-[Thème Adapt du College@ESDC](https://github.com/MeD-DMC/adapt-esdc-college-theme)
+[Thème Adapt du College@ESDC](https://github.com/LIT-EIA/adapt-esdc-college-theme)
 
-[Correctifs d'accessibilité d'Adapt pour la version 4.4.1](https://github.com/MeD-DMC/Adapt-accessibilityfixes)
+[Correctifs d'accessibilité d'Adapt pour la version 4.4.1](https://github.com/LIT_EIA/Adapt-accessibilityfixes)
 
 ## Docker
 

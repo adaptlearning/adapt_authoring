@@ -50,7 +50,7 @@ node install
 ```
 
 Git repository URL to be used for the authoring tool source code should be: <br>
-https://<span></span>github.com/LIT-EIA/adapt_authoring_college.git <br>
+https://<span></span>github.com/LIT-EIA/adapt_authoring.git <br>
 ##
 Git repository URL to be used for the framework source code:  <br>
 https://<span></span>github.com/adaptlearning/adapt_framework.git <br>

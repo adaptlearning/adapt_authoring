@@ -11,6 +11,11 @@ Installation instructions as follows a similar pattern than [official Adapt Auth
 
 Adapt requires [Node.js](https://nodejs.org/) v10+ to run.
 
+Check that you have python2 for installing NVM, if you don't run
+```sh
+apt-get install python2
+```
+
 Download and install prerequisites
 
 ```sh

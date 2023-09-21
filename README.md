@@ -44,7 +44,7 @@ sudo systemctl status mongod
 Copy the repository
 ```sh
 git clone https://github.com/LIT-EIA/adapt_authoring.git adapt_authoring
-cd adapt_authoring_college
+cd adapt_authoring
 ```
 Install the application
 ```sh
@@ -94,8 +94,12 @@ Les instructions d'installation suivent sensiblement les mêmes étapes que [l'O
 
 Adapt nécessite [Node.js](https://nodejs.org/) v10+ pour fonctionner.
 
-Télécharger et installer les prérequis
+Vérifier que python2 est disponible pour l'installation de NVM, si ce n'est pas le cas
+```sh
+apt-get install python2
+```
 
+Télécharger et installer les prérequis
 ```sh
 apt-get install git
 apt install curl
@@ -121,8 +125,8 @@ sudo systemctl status mongod
 
 Copier le projet
 ```sh
-git clone https://github.com/LIT-EIA/adapt_authoring.git adapt_authoring_college
-cd adapt_authoring_college
+git clone https://github.com/LIT-EIA/adapt_authoring.git adapt_authoring
+cd adapt_authoring
 ```
 Installer l'application
 ```sh

@@ -5,7 +5,7 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
-## [0.11.2] - 2023-08-21
+## [0.11.2] - 2023-09-25
 
 Bugfix release.
 

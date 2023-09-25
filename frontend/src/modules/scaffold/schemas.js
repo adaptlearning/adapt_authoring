@@ -36,8 +36,9 @@ define([ 'core/origin', './models/schemasModel' ], function(Origin, SchemasModel
 
   // remove unrequired globals from the course
   function trimGlobals(schema) {
+    var corePlugins = [{ targetAttribute: '_drawer' }, { targetAttribute: '_navigation' }]; // HACK to make sure core 'extensions' are included
     var globals = schema._globals.properties;
-    trimDisabledPlugins(globals._extensions, _.values(configModel.get('_enabledExtensions')));
+    trimDisabledPlugins(globals._extensions, corePlugins.concat(_.values(configModel.get('_enabledExtensions'))));
     trimDisabledPlugins(globals._menu, editorData.menutypes.where({ name: configModel.get('_menu') }));
     trimDisabledPlugins(globals._theme, editorData.themetypes.where({ name: configModel.get('_theme') }));
     // trim off the empty globals objects

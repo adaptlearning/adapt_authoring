@@ -5,6 +5,21 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.11.2] - 2023-09-25
+
+Bugfix release.
+
+### Fixed 
+- Framework core `_globals._extensions` missing from editor ([#2691](https://github.com/adaptlearning/
+adapt_authoring/issues/2691))
+- `_globals._extensions` form elements incorrectly rendered ([#2693](https://github.com/adaptlearning/
+adapt_authoring/issues/2693))
+- Force rebuild isn't run for new courses ([#2696](https://github.com/adaptlearning/2696))
+- Imported course doesn't set correct ownership ([#2697](https://github.com/adaptlearning/2697))
+
+### Added
+- Scaffold should infer input type from schema type if no inputType has been specified ([#2700](https://github.com/adaptlearning/2700))
+
 ## [0.11.1] - 2022-12-02
 
 Bugfix release.
@@ -758,6 +773,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.11.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.11.1...v0.11.2
 [0.11.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.5...v0.11.0
 [0.10.5]: https://github.com/adaptlearning/adapt_authoring/compare/v0.10.4...v0.10.5

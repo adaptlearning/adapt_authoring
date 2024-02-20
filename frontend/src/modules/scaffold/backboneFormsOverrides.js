@@ -66,7 +66,20 @@ define([
   Backbone.Form.editors.TextArea.prototype.render = function() {
     textAreaRender.call(this);
 
-    _.defer(function() {
+    function until(conditionFunction) {
+      const poll = resolve => {
+        if(conditionFunction()) resolve();
+        else setTimeout(_ => poll(resolve), 400);
+      }
+      return new Promise(poll);
+    }
+    function isAttached($element) {
+      return function() {
+        return Boolean($element.parents('body').length);
+      };
+    }
+
+    until(isAttached(this.$el)).then(function() {
       this.editor = CKEDITOR.replace(this.$el[0], {
         dataIndentationChars: '',
         disableNativeSpellChecker: false,

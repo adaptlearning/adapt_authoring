@@ -67,9 +67,14 @@ define([
     textAreaRender.call(this);
 
     function until(conditionFunction) {
-      const poll = resolve => {
-        if(conditionFunction()) resolve();
-        else setTimeout(_ => poll(resolve), 10);
+      function poll(resolve) {
+        if (conditionFunction()) {
+          resolve();
+          return;
+        }
+        setTimeout(function() {
+          poll(resolve)
+        }, 10);
       }
       return new Promise(poll);
     }

@@ -10,8 +10,7 @@ _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for
 Bugfix release.
 
 ### Fixed 
-- CK Editor not loading correctly ([#2751](https://github.com/adaptlearning/
-adapt_authoring/issues/2751))
+- CK Editor not loading correctly ([#2751](https://github.com/adaptlearning/adapt_authoring/issues/2751))
 
 ## [0.11.2] - 2023-09-25
 

@@ -79,7 +79,7 @@
     "serve-favicon": "^2.5.0",
     "traverse": "^0.6.7",
     "underscore": "^1.13.2",
-    "unzipper": "^0.10.11",
+    "unzipper": "^0.12.1",
     "winston": "^3.7.2",
     "yauzl": "^2.10.0"
   },

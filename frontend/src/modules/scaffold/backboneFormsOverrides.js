@@ -85,7 +85,7 @@ define([
     }
 
     until(isAttached(this.$el)).then(function() {
-      this.editor = CKEDITOR.replace(this.$el[0], {
+      this.editor = CKEDITOR.create(this.$el[0], {
         dataIndentationChars: '',
         disableNativeSpellChecker: false,
         enterMode: CKEDITOR[Origin.constants.ckEditorEnterMode],
@@ -112,24 +112,45 @@ define([
             elements.forEach(function(element) { writer.setRules(element, rules); });
           }
         },
-        toolbar: [
-          { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'ShowBlocks' ] },
-          { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-          { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
-          { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv' ] },
-          { name: 'direction', items: [ 'BidiLtr', 'BidiRtl' ] },
-          '/',
-          { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
-          { name: 'styles', items: [ 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
-          { name: 'links', items: [ 'Link', 'Unlink' ] },
-          { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
-          { name: 'insert', items: [ 'SpecialChar', 'Table' ] },
-          { name: 'tools', items: [] },
-          { name: 'others', items: [ '-' ] }
-        ]
+        plugins: window.CKEDITOR.pluginsConfig,
+        toolbar: {
+          items: [
+            'sourceEditing',
+            'showBlocks',
+            'undo',
+            'redo',
+            '|',
+            'findAndReplace',
+            'selectAll',
+            '|',
+            'numberedList',
+            'bulletedList',
+            'blockQuote',
+            'indent',
+            'outdent',
+            '|',
+            'heading',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            'subscript',
+            'superscript',
+            'alignment',
+            'removeFormat',
+            '|',
+            'link',
+            'fontColor',
+            'fontBackgroundColor',
+            '|',
+            'specialCharacters',
+            'insertTable'
+          ],
+          shouldNotGroupWhenFull: true
+        }
       });
     }.bind(this));
-
     return this;
   };
 

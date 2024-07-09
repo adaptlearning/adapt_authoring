@@ -84,8 +84,8 @@ define([
       };
     }
 
-    until(isAttached(this.$el)).then(function() {
-      this.editor = CKEDITOR.create(this.$el[0], {
+    until(isAttached(this.$el)).then(() => {
+      return CKEDITOR.create(this.$el[0], {
         dataIndentationChars: '',
         disableNativeSpellChecker: false,
         enterMode: CKEDITOR[Origin.constants.ckEditorEnterMode],
@@ -129,8 +129,6 @@ define([
             'indent',
             'outdent',
             '|',
-            'heading',
-            '|',
             'bold',
             'italic',
             'underline',
@@ -149,8 +147,15 @@ define([
           ],
           shouldNotGroupWhenFull: true
         }
-      });
-    }.bind(this));
+      }).then(editor => {
+        this.editor = editor
+        CKEDITOR.instances = CKEDITOR.instances || []
+        CKEDITOR.instances.length = CKEDITOR.instances.length || 0;
+        this.editor.id = CKEDITOR.instances.length
+        CKEDITOR.instances.length++;
+        CKEDITOR.instances[this.editor.id] = this.editor
+      })
+    });
     return this;
   };
 
@@ -170,8 +175,8 @@ define([
 
   // ckeditor removal
   Backbone.Form.editors.TextArea.prototype.remove = function() {
-    this.editor.removeAllListeners();
-    CKEDITOR.remove(this.editor);
+    this.editor.stopListening()
+    delete CKEDITOR.instances[this.editor]
   };
 
   // add override to allow prevention of validation

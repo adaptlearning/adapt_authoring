@@ -176,7 +176,7 @@ define([
   // ckeditor removal
   Backbone.Form.editors.TextArea.prototype.remove = function() {
     this.editor.stopListening()
-    delete CKEDITOR.instances[this.editor]
+    delete CKEDITOR.instances[this.editor.id]
   };
 
   // add override to allow prevention of validation

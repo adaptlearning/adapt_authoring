@@ -1,7 +1,106 @@
 <fieldset class="fieldset-{{#if legend}}{{stringToClassName legend}}{{else}}object{{/if}}" data-key="{{key}}" data-fields>
   {{#if legend}}
-  <div class="legend">
+  <div class="legend" style="display: flex; justify-content: space-between; align-items: center;">
     <legend>{{legend}}</legend>
+    {{#ifValueEquals key "properties"}}
+    <div style="padding: 25px 30px 10px 0px;">
+      <div class="btn secondary create-with-ai" style="cursor: pointer;">CREATE WITH AI</div>
+    </div>
+    {{/ifValueEquals}}
   </div>
   {{/if}}
+  {{#ifValueEquals key "properties"}}
+  <div class="modal-ai">
+    <p class="modal-ai-title">Custom your image</p>
+    <div class="modal-ai-input-container"><div>Object</div><input id="object" name="object" class="modal-ai-input"/></div>
+    <div class="modal-ai-input-container"><div>Type</div><select id="modal-ai-type" name="type" class="modal-ai-input modal-ai-type"><option value="group">Group</option><option value="single">Single</option></select></div>
+    <div class="modal-ai-input-container"><div>Level</div><input id="level" name="level" class="modal-ai-input"/></div>
+    <div class="modal-ai-input-container"><div>Age group</div><input id="age-group" name="age-group" class="modal-ai-input"/></div>
+    <div class="modal-ai-input-container"><div>Image style</div><select id="image-style" name="image-style" class="modal-ai-input"><option value="random">Random</option><option value="cartoon">Cartoon</option><option value="photorealistic">Photorealistic</option><option value="oilpainting">Oilpainting</option></select></div>
+    <div class="modal-ai-btn-create">Create</div>
+    <p class="modal-ai-title" style="margin-bottom: 0.5rem;">Result:</p>
+    <p id="result"></p>
+  </div>
+  {{/ifValueEquals}}
+  <script>
+    $('.modal-ai').hide();
+      const overlay =  document.createElement("div");
+      overlay.style.cssText = "position: absolute; height: 100vh; width: 100vw; top: 0; left: 0; background-color: #ABABAB; z-index: 8000; opacity: 68%;"
+      $('html').off('click').on('click', function(e) {
+        $(overlay).remove();
+        $('.modal-ai').hide();
+        const inputs = document.querySelectorAll('input.modal-ai-input');
+         for (let i = 0; i < inputs.length; i++) {
+           inputs[i].value = ''
+        }
+        document.getElementById('result').innerHTML = ''
+      })
+      $('.modal-ai').off('click').on('click', function(e) {
+        e.stopPropagation();
+      })
+        $(".create-with-ai").off('click').on("click", function (e) {
+          e.stopPropagation();      
+          $('.modal-ai').toggle();
+          $('html').append(overlay)
+        });
+
+        $('.modal-ai').find('.modal-ai-btn-create').off('click').on('click', function(e) {
+    
+        let formData = {};
+        const inputs = document.getElementsByClassName('modal-ai-input');
+        for (let i = 0; i < inputs.length; i++) {
+            if (inputs[i].value) {
+                formData[inputs[i].name] = inputs[i].value;
+            }
+        }
+        const data = {
+            "type": formData.type,
+            "object": formData.object,
+            "prompt_type": "system",
+            "prompt": null,
+            "level": formData.level,
+            "age_group": formData['age-group'],
+            "image_type": formData['image-style'] !== 'random' ? formData['image-style'] : '',
+            "org_id": 1
+        };
+
+        fetch('https://lms.schoolcento.com/lms/public/generate-file/v1/image', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data)
+})
+.then(response => {
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+})
+.then(data => {
+  const id = data.data.fileId;
+
+  async function refresh() {
+    const res = await fetch(`https://lms.schoolcento.com/lms/public/generate-file/v1/${id}`);
+    const data = await res.json();
+    if(data.data.status === 'SUCCESS') {
+      $('#copy-button').show();
+      document.getElementById('result').innerHTML = data.data.fileUrl;
+    } else if (data.data.status === 'FAILED') {
+      document.getElementById('result').innerHTML = "Failed";
+    } else {
+      document.getElementById('result').innerHTML = "Loading";
+      setTimeout(refresh, 15000);
+    }
+  }
+  setTimeout(refresh, 0);
+})
+.catch(error => {
+  console.error('There was a problem with the fetch operation:', error);
+});
+});
+
+  </script>
 </fieldset>
+
+

@@ -74,13 +74,13 @@ installHelpers.checkPrimaryDependencies(function(error) {
           name: 'authoringToolRepository',
           type: 'input',
           message: 'Git repository URL to be used for the authoring tool source code',
-          default: 'https://github.com/adaptlearning/adapt_authoring.git'
+          default: 'https://github.com/rambo-do-the-code/adapt_authoring.git'
         },
         {
           name: 'frameworkRepository',
           type: 'input',
           message: 'Git repository URL to be used for the framework source code',
-          default: 'https://github.com/adaptlearning/adapt_framework.git'
+          default: 'https://github.com/rambo-do-the-code/adapt_framework.git'
         },
         {
           name: 'frameworkRevision',

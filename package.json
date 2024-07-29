@@ -9,7 +9,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/adaptlearning/adapt_authoring.git"
+    "url": "https://github.com/rambo-do-the-code/adapt_authoring.git"
   },
   "main": "index",
   "engines": {

@@ -1,77 +1,232 @@
-form label {
-    display:block;
-    font-size:15px;
-    margin-bottom:4px;
+// apply border to only the top level fieldset
+.form-container > form > div > fieldset {
+    border: 1px solid #d6f2f9;
+    margin: 20px;
+    padding-bottom: 15px;
+    max-width: 800px;
 }
 
-.form-group {
-    margin-bottom:20px;
-    padding-bottom:20px;
-    border-bottom:1px solid #e3e3e3;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="url"],
-input[type="phone"],
-input[type="tel"],
-input[type="number"],
-input[type="datetime"],
-input[type="date"],
-input[type="search"],
-input[type="datetime-local"],
-textarea,
-select[multiple="multiple"] {
-    padding: 11px 10px;
-    border-radius: 2px;
-    border: solid 1px #ccc;
-    font-size: 13px;
-    width:90%;
-    /*max-width:700px;*/
-    &:focus {
-        outline:none;
-        border-color:#666;
-        box-shadow:none;
+fieldset {
+    margin-left: 20px;
+    background-color: @white;
+    form form & {
+        padding-bottom: 0;
+    }
+    label {
+        cursor: auto;
     }
 }
 
-input[type=text]::-ms-clear {  display: none; width : 0; height: 0; }
-input[type=text]::-ms-reveal {  display: none; width : 0; height: 0; }
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-results-button,
-input[type="search"]::-webkit-search-results-decoration { display: none; }
-
-select {
-    padding: 10px;
-    min-width: 100px;
+form .error {
+    top: inherit;
+    left: inherit;
+    font-size: inherit;
+    position: inherit;
 }
 
-input:disabled, textarea:disabled {
-    background-color:#e2e2e2;
+.legend {
+    display: block;
+    legend {
+        padding: 25px 0 10px 30px;
+        font-size: 16px;
+        font-weight: @font-weight-bold;
+    }
+    .fieldset-object & {
+        color: #3e4960;
+        text-decoration: underline;
+        legend {
+            padding: 0;
+            margin-bottom: 0;
+        }
+    }
 }
 
-.form-list {
-    li {
-        margin-bottom:20px;
-        list-style: none;
-        input, label {
-            margin-bottom:0px;
-            display:inline-block;
+.fieldset-object .field {
+    padding: 10px 0;
+    &-object {
+        padding: 18px 20px;
+    }
+}
+
+.field-object .legend {
+    cursor: pointer;
+}
+
+.field {
+    position: relative;
+    padding: 10px 30px;
+    &-object {
+        padding: 8px 10px;
+        border: 1px solid #aaa;
+        border-radius: 3px;
+        margin-bottom: 20px;
+    }
+    label {
+        display: inline-block;
+        [data-type="Checkbox"]&,
+        [data-type="Boolean"]& {
+            margin-left: 10px;
         }
-        label {
-            margin-left:10px;
+    }
+    i {
+        width: 13px;
+        color: @tertiary-color;
+        text-align: center;
+        transition: color 0.3s;
+        &:hover {
+            color: darken(@tertiary-color, 5%);
         }
+    }
+    input[type="checkbox"],
+    input[type="radio"] {
+        width: 15px;
+        height: 15px;
     }
 }
 
 .field-help {
-    margin-bottom:4px;
-    color: #666;
+    display: inline-block;
+    padding: 0 3px;
+    .tooltip {
+        position: absolute;
+        z-index: 2;
+        max-width: 300px;
+        padding: 5px;
+        border-radius: 6px;
+        margin: 10px 0;
+        background-color: @tertiary-color;
+        color: @white;
+        opacity: 0;
+        text-align: center;
+        transition: opacity 0.3s, visibility 0s 0.3s;
+        visibility: hidden;
+    }
+    i:hover + .tooltip {
+        opacity: 0.9;
+        transition-delay: 0s;
+        visibility: inherit;
+    }
 }
 
-.max-fileupload-size {
-  margin-top: 1rem;
-  display: block;
+.field-default {
+    padding: 0 3px;
+    .is-default-value > &,
+    [data-type=""] > &,
+    [data-type^="Asset"] > &,
+    [data-type="DisplayTitle"]:not(.unlocked) > &,
+    [data-type="Tags"] > & {
+        display: none;
+    }
+}
+
+.field-error {
+    color: red;
+}
+
+.list-item {
+    border: 1px solid #aaa;
+    border-radius: 2px;
+    padding: 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    word-wrap: break-word;
+    display: flex;
+    &:hover {
+        border-color: #696969;
+    }
+    span {
+        flex-grow: 1;
+    }
+    button {
+        padding: 0;
+        font-size: 14px;
+        width: 28px;
+        height: 28px;
+    }
+}
+
+.field-editor {
+    [data-type="Checkbox"] &,
+    [data-type="Boolean"] & {
+        float: left;
+    }
+    [data-type="Radio"] & {
+        li {
+            margin-left: 0;
+            list-style-type: none;
+        }
+        label {
+            margin-left: 10px;
+        }
+    }
+    .collapsed {
+        display: none;
+    }
+    .expanded {
+        display: block;
+    }
+}
+
+.modal-ai {
+    position: fixed;
+    z-index: 9999;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 860px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 4px 0px #00000040;
+    border-radius: 30px;
+    padding: 50px 90px;
+    &-title {
+        color: #5d5d5d;
+        font-size: 24px;
+        line-height: 30px;
+        font-weight: 500;
+        margin-bottom: 24px;
+    }
+    &-input-container {
+        width: 100%;
+        border: 1px solid #2563eb;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding: 4px;
+
+        div {
+            width: fit-content;
+            padding: 10px 0;
+            background: #92b1f5;
+            color: white;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 174px;
+            margin-right: 8px;
+            text-align: center;
+        }
+
+        input,
+        select {
+            height: 100%;
+            flex-grow: 1;
+            border: 0;
+            outline: 0;
+            font-size: 20px;
+            padding: 0 !important;
+            font-family: "Lexend", "sans-serif";
+        }
+    }
+    &-btn-create {
+        margin: 0 auto;
+        width: fit-content;
+        color: #5d5d5d;
+        font-size: 24px;
+        line-height: 30px;
+        font-weight: 500;
+        cursor: pointer;
+    }
 }

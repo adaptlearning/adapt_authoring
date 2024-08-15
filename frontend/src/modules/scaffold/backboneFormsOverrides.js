@@ -92,12 +92,12 @@ define([
         entities: false,
         htmlSupport: {
           allow: [
-              {
-                  name: /.*/,
-                  attributes: true,
-                  classes: true,
-                  styles: true
-              }
+            {
+              "name": new RegExp(Origin.constants.ckEditorExtraAllowedContent.name),
+              "attributes": Origin.constants.ckEditorExtraAllowedContent.attributes,
+              "classes": Origin.constants.ckEditorExtraAllowedContent.classes,
+              "styles": Origin.constants.ckEditorExtraAllowedContent.styles
+            }
           ]
         },
         on: {

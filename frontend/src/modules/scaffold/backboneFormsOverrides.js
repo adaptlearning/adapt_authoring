@@ -91,14 +91,11 @@ define([
         enterMode: CKEDITOR[Origin.constants.ckEditorEnterMode],
         entities: false,
         htmlSupport: {
-          allow: [
-            {
-              "name": new RegExp(Origin.constants.htmlSupportAllowed.name),
-              "attributes": Origin.constants.htmlSupportAllowed.attributes,
-              "classes": Origin.constants.htmlSupportAllowed.classes,
-              "styles": Origin.constants.htmlSupportAllowed.styles
-            }
-          ]
+          // Convert all allow/disallow values to regexp, as config is json only
+          allow: ((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.allow) || [])
+            .map(obj => Object.fromEntries(Object.entries(obj).map(([name, value]) => ([name, new RegExp(value)])))),
+          disallow: ((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.disallow) || [])
+            .map(obj => Object.fromEntries(Object.entries(obj).map(([name, value]) => ([name, new RegExp(value)]))))
         },
         on: {
           change: function() {

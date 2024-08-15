@@ -116,7 +116,7 @@ define([
         enterMode: CKEDITOR[Origin.constants.ckEditorEnterMode],
         entities: false,
         htmlSupport: {
-          // Convert all allow/disallow values to regexp, as config is json only
+          // Convert all allow/disallow strings to regexp, as config is json only
           allow: convertStringsToRegExDeep((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.allow) || []),
           disallow: convertStringsToRegExDeep((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.disallow) || [])
         },

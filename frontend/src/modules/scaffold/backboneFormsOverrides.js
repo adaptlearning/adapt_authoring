@@ -93,10 +93,10 @@ define([
         htmlSupport: {
           allow: [
             {
-              "name": new RegExp(Origin.constants.ckEditorExtraAllowedContent.name),
-              "attributes": Origin.constants.ckEditorExtraAllowedContent.attributes,
-              "classes": Origin.constants.ckEditorExtraAllowedContent.classes,
-              "styles": Origin.constants.ckEditorExtraAllowedContent.styles
+              "name": new RegExp(Origin.constants.htmlSupportAllowed.name),
+              "attributes": Origin.constants.htmlSupportAllowed.attributes,
+              "classes": Origin.constants.htmlSupportAllowed.classes,
+              "styles": Origin.constants.htmlSupportAllowed.styles
             }
           ]
         },

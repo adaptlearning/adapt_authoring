@@ -90,7 +90,16 @@ define([
         disableNativeSpellChecker: false,
         enterMode: CKEDITOR[Origin.constants.ckEditorEnterMode],
         entities: false,
-        extraAllowedContent: Origin.constants.ckEditorExtraAllowedContent,
+        htmlSupport: {
+          allow: [
+              {
+                  name: /.*/,
+                  attributes: true,
+                  classes: true,
+                  styles: true
+              }
+          ]
+        },
         on: {
           change: function() {
             this.trigger('change', this);

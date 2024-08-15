@@ -86,24 +86,13 @@ define([
 
     function convertStringsToRegExDeep (arr) {
       function processEntry ([key, value]) {
-        if (typeof value === "string") {
-          return [
-            key,
-            new RegExp(value, 'i')
-          ];
-        }
-        if (Array.isArray(value)) {
-          return [
-            key,
-            arr.map((value, index) => processEntry([index, value])[1])
-          ];
-        }
-        if (typeof value === "object" && value !== null) {
-          return [
-            key,
-            Object.fromEntries(Object.entries(value).map(processEntry))
-          ];
-        }
+        value = (typeof value === "string")
+          ? new RegExp(value, 'i')
+          : Array.isArray(value)
+            ? arr.map((value, index) => processEntry([index, value])[1])
+            : (typeof value === "object" && value !== null)
+              ? Object.fromEntries(Object.entries(value).map(processEntry))
+              : value;
         return [key, value];
       }
       return arr.map((value, index) => processEntry([index, value])[1])

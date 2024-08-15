@@ -84,6 +84,31 @@ define([
       };
     }
 
+    function convertStringsToRegExDeep (arr) {
+      function processEntry ([key, value]) {
+        if (typeof value === "string") {
+          return [
+            key,
+            new RegExp(value, 'i')
+          ];
+        }
+        if (Array.isArray(value)) {
+          return [
+            key,
+            arr.map((value, index) => processEntry([index, value])[1])
+          ];
+        }
+        if (typeof value === "object" && value !== null) {
+          return [
+            key,
+            Object.fromEntries(Object.entries(value).map(processEntry))
+          ];
+        }
+        return [key, value];
+      }
+      return arr.map((value, index) => processEntry([index, value])[1])
+    }
+
     until(isAttached(this.$el)).then(() => {
       return CKEDITOR.create(this.$el[0], {
         dataIndentationChars: '',
@@ -92,10 +117,8 @@ define([
         entities: false,
         htmlSupport: {
           // Convert all allow/disallow values to regexp, as config is json only
-          allow: ((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.allow) || [])
-            .map(obj => Object.fromEntries(Object.entries(obj).map(([name, value]) => ([name, new RegExp(value)])))),
-          disallow: ((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.disallow) || [])
-            .map(obj => Object.fromEntries(Object.entries(obj).map(([name, value]) => ([name, new RegExp(value)]))))
+          allow: convertStringsToRegExDeep((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.allow) || []),
+          disallow: convertStringsToRegExDeep((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.disallow) || [])
         },
         on: {
           change: function() {

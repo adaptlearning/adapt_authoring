@@ -20,7 +20,6 @@
 /plugins/content/theme/extensioncache/
 /plugins/content/menu/versions/
 /plugins/content/bower/bowercache/
-/plugins/filestorage/adapt-s3-storage/
 
 /temp
 /test/.testcache

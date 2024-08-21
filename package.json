@@ -18,7 +18,9 @@
   "scripts": {
     "test": "grunt test",
     "create-migration": "npx migrate-mongo create -f conf/migrations.js",
-    "postinstall": "cd plugins/filestorage/adapt-s3-storage && npm install"
+    "install-s3storage":"cd plugins/filestorage/adapt-s3-storage && npm install",
+    "install-components":"node install-adapt-fw-componsents.js",
+    "postinstall": "npm run install-s3storage"
   },
   "dependencies": {
     "@babel/core": "^7.19.6",

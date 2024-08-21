@@ -1,0 +1,5 @@
+{
+  "cmsDependencies": {
+      "adapt-hello": "1.0.1,https://github.com/levanthi1234/adapt-hello.git"
+  }
+}

@@ -8,6 +8,10 @@ var async = require("async");
 var _ = require("underscore");
 var mongoose = require("mongoose");
 var REMOTE_NAME = "origin";
+const util = require('util');
+// Convert exec to a promise-based function
+const execPromise = util.promisify(exec);
+
 
 function execCommand(cmd, opts, callback) {
   if (arguments.length === 2) {
@@ -31,9 +35,6 @@ function execCommand(cmd, opts, callback) {
   });
 }
 
-const componenttypesSchema = new mongoose.Schema({
-  name: String,
-});
 
 const dbOptions = {
   useNewUrlParser: true,
@@ -53,56 +54,72 @@ const dbOptions = {
         return "Failed";
       }
       if(data.dbConnectionUri){
-        console.log(data.dbConnectionUri);
         try {
           await mongoose.connect(data.dbConnectionUri,dbOptions);
+          var Componenttypes = mongoose.model('componenttypes',new mongoose.Schema({}, { strict: false }));
           console.log('Connect MongoDB successfully!');
         } catch (err) {
           console.error('Connect MongoDB fail:', err.message);
-        }finally{
-  
         }
-  
       }else{
-  
       }
       var cmsPlugins = Object.entries(json.cmsDependencies).map(([key, value]) => ({ key, value }));
 
       await async.eachSeries(cmsPlugins,
         async function (plugin, pluginCallback) {
           const pluginName = plugin.key;
-          const pluginRepo = plugin.value.split(',')[1];
-          const pluginTag = plugin.value.split(',')[0];
-          execCommand(
-            `git clone --branch ${pluginTag} ${pluginRepo} --single-branch --origin ${REMOTE_NAME} ${dir}/src/components/${pluginName}`,
-            function (error) {
-              if (error) {           
-                console.log(`Failed to install ${pluginName}, ${error}`);
-                return;
+          let pluginTag = "main";
+          let override = true;
+          let params = plugin.value.split(',');
+          let pluginRepo = params[0];
+          if(params.length > 2){
+            pluginTag = params[1];
+            override =  params[2];
+          }else if(params.length > 1){
+            pluginTag = params[1];
+          }else{
+          }
+          console.log("*** Install Component: "+pluginName + " ***");
+          try{
+            if(override){
+              let folderPath = `${dir}/src/components/${pluginName}`;
+              // Check if the folder exists
+              if (fsFile.existsSync(folderPath)) {
+                // Delete the folder recursively
+                await fsFile.promises.rm(folderPath, { recursive: true, force: true });
+                console.log(`Folder '${folderPath}' deleted successfully.`);
+              } else {
+                console.log(`Folder '${folderPath}' does not exist.`);
               }
-              console.log(`Cloned ${pluginRepo} successfully.`);
-              pluginCallback();
-            },
-          );
+            }
+            await execPromise(`git clone --branch ${pluginTag} ${pluginRepo} --single-branch --origin ${REMOTE_NAME} ${dir}/src/components/${pluginName}`);
+          }catch(e){
+            console.log(e);
+          }
           console.log("insert component types: "+pluginName);
           //reading data from file
           let fileJsonPath= `${dir}/src/components/${pluginName}/componenttypes.json`;
           try {
             const data =  await fsFile.promises.readFile(fileJsonPath,"utf-8"); // Đọc tệp JSON
             const jsonData = JSON.parse(data); // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
-            const Componenttypes = mongoose.model('componenttypes',new mongoose.Schema({}, { strict: false }));
             const componenttype = await Componenttypes.findOne({ name:pluginName });
             if (componenttype) {
               console.log(pluginName + " is exist in database already");
+              if(override){
+                const resultMany = await Componenttypes.deleteMany({ name:pluginName }); 
+                console.log(pluginName + " is deleted already");
+                const newComponent = new Componenttypes(jsonData);
+                await newComponent.save();
+              }
             } else {
               const newComponent = new Componenttypes(jsonData);
               await newComponent.save();
-              console.log(`Insert component types ${pluginName} successfully`);
             }
+            console.log(`Insert component types ${pluginName} successfully`);
           } catch (err) {
             console.log('Read fail from file');
             throw err; 
-          }
+          }                    
         }
       )
       mongoose.disconnect();

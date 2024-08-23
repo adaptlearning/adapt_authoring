@@ -1,0 +1,5 @@
+{
+  "themeDependencies": {
+      "adapt-theme-cms": "1.0.0,https://github.com/levanthi1234/adapt-theme-cms.git"
+  }
+}

@@ -36,26 +36,26 @@ function execCommand(cmd, opts, callback) {
   fs.readJSON(configFile, function(err, data) {
     if (err) throw err;
     var dir = path.join(configuration.tempDir, data.masterTenantID, OutputConstants.Folders.Framework);
-    fs.readJSON(path.join('./', "adapt-plugins.json"), function(error, json) {
+    fs.readJSON(path.join('./', "adapt-themes.json"), function(error, json) {
       if (error) {
         return "Failed";
       }
-      var cmsPlugins = Object.entries(json.cmsDependencies).map(([key, value]) => ({ key, value }));
+      var cmsThemes = Object.entries(json.themeDependencies).map(([key, value]) => ({ key, value }));
 
-      async.eachSeries(cmsPlugins,
-        function (plugin, pluginCallback) {
-          const pluginName = plugin.key;
-          const pluginRepo = plugin.value.split(',')[1];
-          const pluginTag = plugin.value.split(',')[0];
+      async.eachSeries(cmsThemes,
+        function (theme, themeCallback) {
+          const themeName = theme.key;
+          const themeRepo = theme.value.split(',')[1];
+          const themeTag = theme.value.split(',')[0];
           execCommand(
-            `git clone --branch ${pluginTag} ${pluginRepo} --single-branch --origin ${REMOTE_NAME} ${dir}/src/components/${pluginName}`,
+            `git clone --branch ${themeTag} ${themeRepo} --single-branch --origin ${REMOTE_NAME} ${dir}/src/theme/${themeName}`,
             function (error) {
               if (error) {           
-                console.log(`Failed to install ${pluginName}, ${error}`);
+                console.log(`Failed to install ${themeName}, ${error}`);
                 return;
               }
-              console.log(`Cloned ${pluginRepo} successfully.`);
-              pluginCallback();
+              console.log(`Cloned ${themeRepo} successfully.`);
+              themeCallback();
             },
           );
         }

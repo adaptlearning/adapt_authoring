@@ -20,7 +20,10 @@
     "create-migration": "npx migrate-mongo create -f conf/migrations.js",
     "install-s3storage":"cd plugins/filestorage/adapt-s3-storage && npm install",
     "install-components":"node install-adapt-fw-componsents.js",
-    "postinstall": "npm run install-s3storage"
+    "install-themes":"node install-adapt-fw-themes.js",    
+    "setup-tenant":"node build.js",      
+    "postinstall": "npm run install-s3storage",
+    "build":"npm run setup-tenant && npm run install-themes && npm run install install-components"
   },
   "dependencies": {
     "@babel/core": "^7.19.6",

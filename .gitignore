@@ -1,5 +1,3 @@
-/conf/config.json
-/conf/migrate.json
 /data
 
 /frontend/build
@@ -30,3 +28,4 @@
 .idea
 .project
 .vscode
+conf

@@ -313,8 +313,7 @@ function start() {
       createMasterTenant,
       getSourceCodePlugin,
       createSuperUser,
-      buildFrontend,
-      installHelpers.runMigrations
+      buildFrontend
     ], function(error, results) {
       if(error) {
         console.error('ERROR: ', error);

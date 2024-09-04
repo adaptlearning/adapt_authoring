@@ -23,7 +23,7 @@
     "install-themes":"node install-adapt-fw-themes.js",    
     "setup-tenant":"node build.js",      
     "postinstall": "npm run install-s3storage",
-    "build":"npm run setup-tenant && npm run install-themes && npm run install install-components"
+    "build":"npm run setup-tenant && npm run install-themes && npm run install-components"
   },
   "dependencies": {
     "@babel/core": "^7.19.6",

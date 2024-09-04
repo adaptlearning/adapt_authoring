@@ -18,7 +18,8 @@ RUN npm install -g grunt-cli \
 WORKDIR /adapt_authoring
 
 COPY . /adapt_authoring
-
+RUN npm install
+RUN npm run build
 
 EXPOSE 5000
 

@@ -22,20 +22,20 @@ util.inherits(PreviewPermissionError, Error);
 server.get('/preview/:tenant/:course/*', (req, res, next) => {
   const courseId = req.params.course;
   const tenantId = req.params.tenant;
-  const user = usermanager.getCurrentUser();
+  // const user = usermanager.getCurrentUser();
   const file = req.params[0] || Constants.Filenames.Main;
   const masterTenantId = configuration.getConfig('masterTenantID');
   const previewKey = `${tenantId}-${courseId}`;
-
-  if (!user) {
-    return onAuthError();
-  }
+  // disable logic check user preview make preview can public
+  // if (!user) {
+  //   return onAuthError();
+  // }
   (file === Constants.Filenames.Main) ? handleIndexFile() : handleNonIndexFile();
-
-  function onAuthError() {
-    logger.log('warn', `Preview: user '${user._id}' does not have permission to view course '${courseId}' on tenant '${tenantId}'`);
-    next(new PreviewPermissionError());
-  }
+  // disable logic check user preview make preview can public
+  // function onAuthError() {
+  //   logger.log('warn', `Preview: user '${user._id}' does not have permission to view course '${courseId}' on tenant '${tenantId}'`);
+  //   next(new PreviewPermissionError());
+  // }
 
   function sendFile(filename) {
     res.sendFile(filename, {
@@ -50,29 +50,33 @@ server.get('/preview/:tenant/:course/*', (req, res, next) => {
     if (!req.session.previews || !Array.isArray(req.session.previews)) {
       req.session.previews = [];
     }
-    if (tenantId !== user.tenant._id.toString() && tenantId !== masterTenantId) {
-      return onAuthError();
-    }
-    helpers.hasCoursePermission('*', user._id, tenantId, { _id: courseId }, (error, hasPermission) => {
-      if(error) {
-        logger.log('error', error);
-        next(new PreviewPermissionError());
-      }
-      if(!hasPermission) { // Remove this course from the cached sessions.
-        const position = req.session.previews.indexOf(previewKey);
-        if (position > -1) req.session.previews.splice(position, 1);
-        return onAuthError();
-      }
-      req.session.previews.push(previewKey);
-      return sendFile(file);
-    });
+    req.session.previews.push(previewKey);
+    return sendFile(file);
+    // disable logic check user preview make preview can public
+    // if (tenantId !== user.tenant._id.toString() && tenantId !== masterTenantId) {
+    //   return onAuthError();
+    // }
+    // helpers.hasCoursePermission('*', user._id, tenantId, { _id: courseId }, (error, hasPermission) => {
+    //   if(error) {
+    //     logger.log('error', error);
+    //     next(new PreviewPermissionError());
+    //   }
+    //   if(!hasPermission) { // Remove this course from the cached sessions.
+    //     const position = req.session.previews.indexOf(previewKey);
+    //     if (position > -1) req.session.previews.splice(position, 1);
+    //     return onAuthError();
+    //   }
+    //   req.session.previews.push(previewKey);
+    //   return sendFile(file);
+    // });
   }
 
   function handleNonIndexFile() {
+    // disable logic check user preview make preview can public
     // only allow if preview has been whitelisted
-    if (!req.session.previews || !req.session.previews.includes(previewKey)) {
-      return res.status(404).end();
-    }
+    // if (!req.session.previews || !req.session.previews.includes(previewKey)) {
+    //   return res.status(404).end();
+    // }
     sendFile(file);
   }
 });

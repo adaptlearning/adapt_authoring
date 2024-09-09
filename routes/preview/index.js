@@ -77,7 +77,6 @@ server.get('/preview/:tenant/:course/*', (req, res, next) => {
   }
 });
 
-// public preview
 server.get('/public/preview/:tenant/:course/*', (req, res, next) => {
   const courseId = req.params.course;
   const tenantId = req.params.tenant;

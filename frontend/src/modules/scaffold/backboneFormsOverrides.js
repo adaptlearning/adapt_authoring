@@ -84,13 +84,31 @@ define([
       };
     }
 
-    until(isAttached(this.$el)).then(function() {
-      this.editor = CKEDITOR.replace(this.$el[0], {
+    function convertStringsToRegExDeep (arr) {
+      function processEntry ([key, value]) {
+        value = (typeof value === "string")
+          ? new RegExp(value, 'i')
+          : Array.isArray(value)
+            ? arr.map((value, index) => processEntry([index, value])[1])
+            : (typeof value === "object" && value !== null)
+              ? Object.fromEntries(Object.entries(value).map(processEntry))
+              : value;
+        return [key, value];
+      }
+      return arr.map((value, index) => processEntry([index, value])[1])
+    }
+
+    until(isAttached(this.$el)).then(() => {
+      return CKEDITOR.create(this.$el[0], {
         dataIndentationChars: '',
         disableNativeSpellChecker: false,
         enterMode: CKEDITOR[Origin.constants.ckEditorEnterMode],
         entities: false,
-        extraAllowedContent: Origin.constants.ckEditorExtraAllowedContent,
+        htmlSupport: {
+          // Convert all allow/disallow strings to regexp, as config is json only
+          allow: convertStringsToRegExDeep((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.allow) || []),
+          disallow: convertStringsToRegExDeep((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.disallow) || [])
+        },
         on: {
           change: function() {
             this.trigger('change', this);
@@ -112,24 +130,50 @@ define([
             elements.forEach(function(element) { writer.setRules(element, rules); });
           }
         },
-        toolbar: [
-          { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'ShowBlocks' ] },
-          { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-          { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
-          { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv' ] },
-          { name: 'direction', items: [ 'BidiLtr', 'BidiRtl' ] },
-          '/',
-          { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
-          { name: 'styles', items: [ 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
-          { name: 'links', items: [ 'Link', 'Unlink' ] },
-          { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
-          { name: 'insert', items: [ 'SpecialChar', 'Table' ] },
-          { name: 'tools', items: [] },
-          { name: 'others', items: [ '-' ] }
-        ]
-      });
-    }.bind(this));
-
+        plugins: window.CKEDITOR.pluginsConfig,
+        toolbar: {
+          items: [
+            'sourceEditing',
+            'showBlocks',
+            'undo',
+            'redo',
+            '|',
+            'findAndReplace',
+            'selectAll',
+            '|',
+            'numberedList',
+            'bulletedList',
+            'blockQuote',
+            'indent',
+            'outdent',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            'subscript',
+            'superscript',
+            'alignment',
+            'removeFormat',
+            '|',
+            'link',
+            'fontColor',
+            'fontBackgroundColor',
+            '|',
+            'specialCharacters',
+            'insertTable'
+          ],
+          shouldNotGroupWhenFull: true
+        }
+      }).then(editor => {
+        this.editor = editor
+        CKEDITOR.instances = CKEDITOR.instances || []
+        CKEDITOR.instances.length = CKEDITOR.instances.length || 0;
+        this.editor.id = CKEDITOR.instances.length
+        CKEDITOR.instances.length++;
+        CKEDITOR.instances[this.editor.id] = this.editor
+      })
+    });
     return this;
   };
 
@@ -149,8 +193,8 @@ define([
 
   // ckeditor removal
   Backbone.Form.editors.TextArea.prototype.remove = function() {
-    this.editor.removeAllListeners();
-    CKEDITOR.remove(this.editor);
+    this.editor.stopListening()
+    delete CKEDITOR.instances[this.editor.id]
   };
 
   // add override to allow prevention of validation

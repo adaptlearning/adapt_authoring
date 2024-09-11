@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/adapt.css" />
     <link rel="stylesheet" href="font-awesome-4.5.0/css/font-awesome.min.css">
     <script type="text/javascript" src="modernizr.js"></script>
-    <script src="//cdn.ckeditor.com/4.17.0/full-all/ckeditor.js"></script>
+		<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/42.0.0/ckeditor5.css">
     {{#if isProduction}}
       <script type="text/javascript" src="require.js" data-main="js/origin.js{{#if dateStampAsString}}?{{dateStampAsString}}{{/if}}"></script>
     {{else}}
@@ -47,5 +47,106 @@
         </div>
       </div>
     </div>
+    <script type="importmap">
+			{
+				"imports": {
+					"ckeditor5": "https://cdn.ckeditor.com/ckeditor5/42.0.0/ckeditor5.js",
+					"ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/42.0.0/"
+				}
+			}
+		</script>
+    <script type="module">
+      import {
+        ClassicEditor,
+        Alignment,
+        Autoformat,
+        AutoLink,
+        Autosave,
+        BalloonToolbar,
+        BlockQuote,
+        BlockToolbar,
+        Bold,
+        Clipboard,
+        Code,
+        Essentials,
+        FindAndReplace,
+        GeneralHtmlSupport,
+        Font,
+        Highlight,
+        Indent,
+        IndentBlock,
+        Italic,
+        Link,
+        List,
+        ListProperties,
+        Paragraph,
+        SelectAll,
+        ShowBlocks,
+        SourceEditing,
+        SpecialCharacters,
+        SpecialCharactersArrows,
+        SpecialCharactersCurrency,
+        SpecialCharactersEssentials,
+        SpecialCharactersLatin,
+        SpecialCharactersMathematical,
+        SpecialCharactersText,
+        Strikethrough,
+        Subscript,
+        Superscript,
+        Table,
+        TableCellProperties,
+        TableProperties,
+        TableToolbar,
+        TextTransformation,
+        Underline,
+        Undo
+      } from 'ckeditor5';
+      
+      window.CKEDITOR = ClassicEditor
+      window.CKEDITOR.pluginsConfig = [
+        Alignment,
+        Autoformat,
+        AutoLink,
+        Autosave,
+        BalloonToolbar,
+        BlockQuote,
+        BlockToolbar,
+        Bold,
+        Clipboard,
+        Code,
+        Essentials,
+        FindAndReplace,
+        GeneralHtmlSupport,
+        Font,
+        Highlight,
+        Indent,
+        IndentBlock,
+        Italic,
+        Link,
+        List,
+        ListProperties,
+        Paragraph,
+        SelectAll,
+        ShowBlocks,
+        SourceEditing,
+        SpecialCharacters,
+        SpecialCharactersArrows,
+        SpecialCharactersCurrency,
+        SpecialCharactersEssentials,
+        SpecialCharactersLatin,
+        SpecialCharactersMathematical,
+        SpecialCharactersText,
+        Strikethrough,
+        Subscript,
+        Superscript,
+        Table,
+        TableCellProperties,
+        TableProperties,
+        TableToolbar,
+        TextTransformation,
+        Underline,
+        Undo
+      ];
+    </script>
   </body>
 </html>

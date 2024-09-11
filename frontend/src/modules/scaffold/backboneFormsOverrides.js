@@ -84,13 +84,31 @@ define([
       };
     }
 
+    function convertStringsToRegExDeep (arr) {
+      function processEntry ([key, value]) {
+        value = (typeof value === "string")
+          ? new RegExp(value, 'i')
+          : Array.isArray(value)
+            ? arr.map((value, index) => processEntry([index, value])[1])
+            : (typeof value === "object" && value !== null)
+              ? Object.fromEntries(Object.entries(value).map(processEntry))
+              : value;
+        return [key, value];
+      }
+      return arr.map((value, index) => processEntry([index, value])[1])
+    }
+
     until(isAttached(this.$el)).then(() => {
       return CKEDITOR.create(this.$el[0], {
         dataIndentationChars: '',
         disableNativeSpellChecker: false,
         enterMode: CKEDITOR[Origin.constants.ckEditorEnterMode],
         entities: false,
-        extraAllowedContent: Origin.constants.ckEditorExtraAllowedContent,
+        htmlSupport: {
+          // Convert all allow/disallow strings to regexp, as config is json only
+          allow: convertStringsToRegExDeep((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.allow) || []),
+          disallow: convertStringsToRegExDeep((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.disallow) || [])
+        },
         on: {
           change: function() {
             this.trigger('change', this);

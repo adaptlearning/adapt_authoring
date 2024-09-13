@@ -2,6 +2,8 @@
 ENV_VERSION=cms-adapt-0.0.7
 ECR=
 
+
+
 function display_message {
   echo ""
   echo "<<==================================================================================>>"

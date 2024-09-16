@@ -39,5 +39,4 @@ CMD ["node", "server"]
 RUN git config \
   --global \
   url."https://github.com/".insteadOf \
-  "https://${USERNAME}:${TOKEN}@github.com/
-  "  
+  "https://${USERNAME}:${TOKEN}@github.com/"  

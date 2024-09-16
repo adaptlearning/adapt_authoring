@@ -1,3 +1,6 @@
 [submodule "plugins/filestorage/adapt-s3-storage"]
 	path = plugins/filestorage/adapt-s3-storage
 	url = https://github.com/rambo-do-the-code/adapt-s3-storage.git
+[submodule "conf"]
+	path = conf
+	url = https://github.com/rambo-do-the-code/adapt-config.git

@@ -29,6 +29,10 @@ var configOverrides = {};
 
 installHelpers.checkPrimaryDependencies(function(error) {
   if(error) return handleError(null, 1, error);
+  if(!fs.existsSync('conf/config.json')) {
+    console.log('Found an existing config.json file to build');
+    return;
+  }
   // we need the framework version for the config items, so let's go
   installHelpers.getLatestFrameworkVersion(function(error, latestFrameworkTag) {
     if(error) {
@@ -313,8 +317,7 @@ function start() {
       createMasterTenant,
       getSourceCodePlugin,
       createSuperUser,
-      buildFrontend,
-      installHelpers.runMigrations
+      buildFrontend
     ], function(error, results) {
       if(error) {
         console.error('ERROR: ', error);

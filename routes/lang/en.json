@@ -30,7 +30,7 @@
   "app.preseteditdesc": "You can view, change name and delete the saved presets for the chosen theme here.",
   "app.presetdeletetext": "This will delete the saved '<b>%{preset}</b>' preset. <br/><br/><b>IMPORTANT:</b> This will affect any existing courses using this preset.",
   "app.presetnameplaceholder": "Enter new name",
-  "app.productname": "Adapt authoring tool",
+  "app.productname": "Knowylab authoring tool",
   "app.loading": "Loading",
   "app.rememberme": "Remember me",
   "app.ok": "OK",

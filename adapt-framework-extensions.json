@@ -1,0 +1,8 @@
+{
+  "cmsDependencies": {
+      "adapt-contrib-branching": "https://github.com/rambo-do-the-code/adapt-contrib-branching.git",
+      "adapt-routerLinks": "https://github.com/rambo-do-the-code/adapt-routerLinks.git",
+      "adapt-submitAll": "https://github.com/rambo-do-the-code/adapt-submitAll.git",
+      "adapt-contrib-xapi": "https://github.com/rambo-do-the-code/adapt-contrib-xapi.git"                                 
+  }
+}

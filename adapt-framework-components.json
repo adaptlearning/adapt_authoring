@@ -1,5 +1,6 @@
 {
   "cmsDependencies": {
-      "adapt-dragndrop": "https://github.com/rambo-do-the-code/adapt-dragndrop.git"
+      "adapt-dragndrop": "https://github.com/rambo-do-the-code/adapt-dragndrop.git",
+      "adapt-dragndropwithimage": "https://github.com/rambo-do-the-code/adapt-dragndropwithimage.git"                           
   }
 }

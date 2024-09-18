@@ -19,11 +19,12 @@
     "test": "grunt test",
     "create-migration": "npx migrate-mongo create -f conf/migrations.js",
     "install-s3storage":"cd plugins/filestorage/adapt-s3-storage && npm install",
-    "install-components":"node install-adapt-fw-componsents.js",
+    "install-components":"node install-adapt-fw-components.js",
+    "install-extensions":"node install-adapt-fw-extensions.js",
     "install-themes":"node install-adapt-fw-themes.js",    
     "setup-tenant":"node build.js",      
     "postinstall": "npm run install-s3storage",
-    "build":"npm run setup-tenant && npm run install-themes && npm run install-components"
+    "build":"npm run setup-tenant && npm run install-themes && npm run install-components && npm run install-extensions"
   },
   "dependencies": {
     "@babel/core": "^7.19.6",

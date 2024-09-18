@@ -109,7 +109,7 @@ const dbOptions = {
                 const resultMany = await Extensiontypes.deleteMany({ name:pluginName }); 
                 console.log(pluginName + " is deleted already");
                 const newExtensiontype = new Extensiontypes(jsonData);
-                await newComponent.save();
+                await newExtensiontype.save();
               }
             } else {
               const newExtensiontype = new Extensiontypes(jsonData);

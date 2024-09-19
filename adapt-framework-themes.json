@@ -1,6 +1,6 @@
 {
   "themeDependencies": {
-    "adapt-theme-cms": "https://github.com/rambo-do-the-code/adapt-theme-cms.git,1.0.4",
+    "adapt-theme-cms": "https://github.com/rambo-do-the-code/adapt-theme-cms.git,1.0.6",
     "adapt-iceCream": "https://github.com/rambo-do-the-code/adapt-iceCream.git,1.0.0",
     "adapt-kineoTheme": "https://github.com/rambo-do-the-code/adapt-kineoTheme.git,1.0.0"
   }

@@ -1,7 +1,7 @@
 {
   "cmsDependencies": {
     "adapt-dragndrop": "https://github.com/rambo-do-the-code/adapt-dragndrop.git,0.0.3",
-    "adapt-dragndropwithimage": "https://github.com/rambo-do-the-code/adapt-dragndropwithimage.git,0.0.1",
+    "adapt-dragndropwithimage": "https://github.com/rambo-do-the-code/adapt-dragndropwithimage.git,0.0.4",
     "adapt-dropItems": "https://github.com/rambo-do-the-code/adapt-dropItems.git",
     "adapt-selectchoice": "https://github.com/rambo-do-the-code/adapt-selectchoice.git"
   }

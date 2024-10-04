@@ -104,3 +104,31 @@ server.get('/public/preview/:tenant/:course/*', (req, res, next) => {
     return sendFile(file);
   }
 });
+
+server.get('/user/preview/auth/:user/:tenant/:course/*', (req, res, next) => {
+  const courseId = req.params.course;
+  const tenantId = req.params.tenant;
+  const file = req.params[0] || Constants.Filenames.Main;
+  const masterTenantId = configuration.getConfig('masterTenantID');
+  const previewKey = `${tenantId}-${courseId}`;
+
+
+  (file === Constants.Filenames.Main) ? handleIndexFile() :  sendFile(file);
+
+  function sendFile(filename) {
+    res.sendFile(filename, {
+      root: path.join(configuration.serverRoot, Constants.Folders.Temp, masterTenantId, Constants.Folders.Framework, Constants.Folders.AllCourses, tenantId, courseId, Constants.Folders.Build)
+    }, error => {
+      if(error) res.status(error.status || 500).end();
+    });
+  }
+
+  function handleIndexFile() {
+    // Verify the session is configured to hold the course previews accessible for this user.
+    if (!req.session.previews || !Array.isArray(req.session.previews)) {
+      req.session.previews = [];
+    }
+    req.session.previews.push(previewKey);
+    return sendFile(file);
+  }
+});

@@ -1,6 +1,6 @@
 {
   "themeDependencies": {
     "adapt-theme-cms": "https://github.com/rambo-do-the-code/adapt-theme-cms.git,1.1.2",
-    "adapt-apollo": "https://github.com/rambo-do-the-code/adapt-apollo-theme.git,1.0.2"
+    "adapt-apollo": "https://github.com/rambo-do-the-code/adapt-apollo-theme.git,1.0.3"
   }
 }

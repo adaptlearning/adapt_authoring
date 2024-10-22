@@ -11,6 +11,6 @@
     "adapt-flipper": "https://github.com/rambo-do-the-code/authortool-flipper.git,0.0.1",
     "adapt-contrib-flipcard": "https://github.com/rambo-do-the-code/authortool-flipimage.git,0.0.1",
     "adapt-flippableCard": "https://github.com/rambo-do-the-code/authortool-flipablecards.git,0.0.1",
-    "adapt-sentenceOrdering": "https://github.com/rambo-do-the-code/authortool-sequence-order.git,0.0.1"
+    "adapt-sentenceOrdering": "https://github.com/rambo-do-the-code/authortool-sequence-order.git,0.0.2"
   }
 }

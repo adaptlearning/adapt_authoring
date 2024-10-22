@@ -1,5 +1,5 @@
 #!/bin/bash
-ENV_VERSION=icms-authoring-tool-0.0.38
+ENV_VERSION=icms-authoring-tool-0.0.39
 ECR=
 
 

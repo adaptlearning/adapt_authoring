@@ -18,6 +18,7 @@ define(function(require) {
       'click button.editor-common-sidebar-menusettings': 'editMenu',
       'click button.editor-common-sidebar-select-theme': 'selectTheme',
       'click button.editor-common-sidebar-download': 'downloadProject',
+      'click button.editor-common-sidebar-publish': 'publishS3',
       'click button.editor-common-sidebar-preview': 'previewProject',
       'click button.editor-common-sidebar-preview-force': 'forcePreviewProject',
       'click button.editor-common-sidebar-export': 'exportProject',
@@ -129,6 +130,10 @@ define(function(require) {
 
     downloadProject: function() {
       Origin.trigger('editorCommon:download');
+    },
+
+    publishS3: function () {
+      Origin.trigger('editorCommon:publishS3');
     },
 
     previewProject: function() {

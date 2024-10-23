@@ -16,6 +16,8 @@ define(function(require) {
   var BlockModel = require('core/models/blockModel');
   var ComponentModel = require('core/models/componentModel');
 
+  var SweetAlert = require('sweetalert');
+
   var EditorView = EditorOriginView.extend({
     className: "editor-view",
     tagName: "div",
@@ -45,6 +47,7 @@ define(function(require) {
         'editorView:copyID': this.copyIdToClipboard,
         'editorView:paste': this.pasteFromClipboard,
         'editorCommon:download': this.downloadProject,
+        'editorCommon:publishS3': this.publishS3,
         'editorCommon:preview': function(isForceRebuild) {
           var previewWindow = window.open('loading', 'preview');
           this.previewProject(previewWindow, isForceRebuild);
@@ -149,6 +152,59 @@ define(function(require) {
       }
     },
 
+    publishS3: function () {
+      if(Origin.editor.isPublishPending) {
+        return;
+      }
+      const that = this;
+      SweetAlert({
+        title: "Version",
+        text: "Please enter course's version",
+        type: "input",
+        showCancelButton: true,
+        closeOnConfirm: false,
+        animation: "slide-from-top",
+        inputPlaceholder: "Example: 0001"
+      },
+      function(inputValue){
+        if (inputValue === false) return false;
+        
+        if (inputValue === "") {
+          swal.showInputError("You need to enter the coure's version");
+          return false
+        }
+        
+        const version = inputValue;
+        $('.editor-common-sidebar-publish-inner').addClass('display-none');
+        $('.editor-common-sidebar-publishing').removeClass('display-none');
+        SweetAlert.close();
+
+        var url = 'api/output/' + Origin.constants.outputPlugin + '/publish/' + that.currentCourseId + `?version=${version}&s3=true`;
+        $.get(url, function(data, textStatus, jqXHR) {
+          if (!data.success) {
+            Origin.Notify.alert({
+              type: 'error',
+              text: Origin.l10n.t('app.errorgeneric') +
+                Origin.l10n.t('app.debuginfo', { message: jqXHR.responseJSON.message })
+            });
+            that.resetPublishProgress();
+            return;
+          }
+          const pollUrl = data.payload && data.payload.pollUrl;
+          if (pollUrl) {
+            // Ping the remote URL to check if the job has been completed
+            that.updatePublishProgress(pollUrl);
+            return;
+          }
+          that.resetPublishProgress();
+
+        }.bind(that)).fail(function(jqXHR, textStatus, errorThrown) {
+          that.resetPublishProgress();
+          Origin.Notify.alert({ type: 'error', text: Origin.l10n.t('app.errorgeneric') });
+        }.bind(that));
+      })
+    },
+
     downloadProject: function() {
       if(Origin.editor.isDownloadPending) {
         return;
@@ -224,6 +280,23 @@ define(function(require) {
       }, this), 3000);
     },
 
+    updatePublishProgress: function(url) {
+      // Check for updated progress every 3 seconds
+      var pollId = setInterval(_.bind(function pollURL() {
+        $.get(url, function(jqXHR, textStatus, errorThrown) {
+          if (jqXHR.progress < "100") {
+            return;
+          }
+          clearInterval(pollId);
+          this.resetPublishProgress();
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          clearInterval(pollId);
+          this.resetPublishProgress();
+          Origin.Notify.alert({ type: 'error', text: errorThrown });
+        });
+      }, this), 3000);
+    },
+
     resetPreviewProgress: function() {
       $('.editor-common-sidebar-preview-inner').removeClass('display-none');
       $('.editor-common-sidebar-previewing').addClass('display-none');
@@ -236,6 +309,12 @@ define(function(require) {
       $('.editor-common-sidebar-download-inner').removeClass('display-none');
       $('.editor-common-sidebar-downloading').addClass('display-none');
       Origin.editor.isDownloadPending = false;
+    },
+
+    resetPublishProgress: function() {
+      $('.editor-common-sidebar-publish-inner').removeClass('display-none');
+      $('.editor-common-sidebar-publishing').addClass('display-none');
+      Origin.editor.isPublishPending = false;
     },
 
     updateCoursePreview: function(previewWindow) {

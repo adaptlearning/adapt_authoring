@@ -23,6 +23,13 @@
     </span>
   </button>
 
+  <button class="editor-common-sidebar-publish action-secondary">
+    <span class="editor-common-sidebar-publish-inner">{{ t 'app.publish'}}</span>
+    <span class="editor-common-sidebar-publishing display-none">
+      <i class="fa fa-circle-o-notch fa-spin"></i>{{ t 'app.publishing'}}
+    </span>
+  </button>
+
   {{#ifHasPermissions "*/*:create,*/*:read,*/*:update,*/*:delete"}}
   <button class="editor-common-sidebar-export action-secondary">
     <span class="editor-common-sidebar-export-inner">{{ t 'app.export'}}</span>

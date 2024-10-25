@@ -4,7 +4,7 @@
     "adapt-dragndropwithimage": "https://github.com/rambo-do-the-code/adapt-dragndropwithimage.git,0.0.17",
     "adapt-dropItems": "https://github.com/rambo-do-the-code/adapt-dropItems.git",
     "adapt-selectchoice": "https://github.com/rambo-do-the-code/adapt-selectchoice.git",
-    "adapt-textInput-inline": "https://github.com/rambo-do-the-code/authortool-textinput-inline.git,0.0.3",
+    "adapt-textInput-inline": "https://github.com/rambo-do-the-code/authortool-textinput-inline.git,0.0.4",
     "adapt-formatted-openTextInput": "https://github.com/rambo-do-the-code/authortool-formatted-open-text-input.git,0.0.1",
     "adapt-img-text-reveal": "https://github.com/rambo-do-the-code/authortool-image-text-reveal.git,0.0.2",
     "adapt-pando-memorygame": "https://github.com/rambo-do-the-code/authortool-memorygame.git,0.0.1",
@@ -12,7 +12,7 @@
     "adapt-contrib-flipcard": "https://github.com/rambo-do-the-code/authortool-flipimage.git,0.0.1",
     "adapt-flippableCard": "https://github.com/rambo-do-the-code/authortool-flipablecards.git,0.0.1",
     "adapt-sentenceOrdering": "https://github.com/rambo-do-the-code/authortool-sequence-order.git,0.0.3",
-    "adapt-dropdown-inline": "https://github.com/rambo-do-the-code/author-tool-dropdown-inline.git,0.0.8",
+    "adapt-dropdown-inline": "https://github.com/rambo-do-the-code/author-tool-dropdown-inline.git,0.0.9",
     "adapt-contrib-imgMagnify": "https://github.com/rambo-do-the-code/author-tool-image-magnify.git,0.0.1"
   }
 }

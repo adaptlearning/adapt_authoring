@@ -56,7 +56,7 @@ const dbOptions = {
       if(data.dbConnectionUri){
         try {
           await mongoose.connect(data.dbConnectionUri,dbOptions);
-          var Componenttypes = mongoose.model('componenttypes',new mongoose.Schema({}, { strict: false }));
+          var Componenttypes = mongoose.model('componenttypes',new mongoose.Schema({}, { strict: false, minimize: false }));
           console.log('Connect MongoDB successfully!');
         } catch (err) {
           console.error('Connect MongoDB fail:', err.message);

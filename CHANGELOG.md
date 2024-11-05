@@ -5,6 +5,13 @@ All notable changes to the Adapt authoring tool are documented in this file.
 **IMPORTANT**: For information on how to **correctly and safely** update your installation, please consult **INSTALL.md**.<br/>
 _Note that we adhere to the [semantic versioning](http://semver.org/) scheme for release numbering._
 
+## [0.11.4] - 2024-11-05
+
+Bugfix release.
+
+### Fixed 
+- Major version update required for CKEditor ([#2772](https://github.com/adaptlearning/adapt_authoring/issues/2772))
+
 ## [0.11.3] - 2024-02-23
 
 Bugfix release.
@@ -780,6 +787,7 @@ Initial release.
 - Loading screen of death
 - Session cookie security issues
 
+[0.11.4]: https://github.com/adaptlearning/adapt_authoring/compare/v0.11.3...v0.11.4
 [0.11.3]: https://github.com/adaptlearning/adapt_authoring/compare/v0.11.2...v0.11.3
 [0.11.2]: https://github.com/adaptlearning/adapt_authoring/compare/v0.11.1...v0.11.2
 [0.11.1]: https://github.com/adaptlearning/adapt_authoring/compare/v0.11.0...v0.11.1

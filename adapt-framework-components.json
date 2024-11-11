@@ -13,6 +13,7 @@
     "adapt-flippableCard": "https://github.com/rambo-do-the-code/authortool-flipablecards.git,0.0.1",
     "adapt-sentenceOrdering": "https://github.com/rambo-do-the-code/authortool-sequence-order.git,0.0.4",
     "adapt-dropdown-inline": "https://github.com/rambo-do-the-code/author-tool-dropdown-inline.git,0.0.11",
-    "adapt-contrib-imgMagnify": "https://github.com/rambo-do-the-code/author-tool-image-magnify.git,0.0.1"
+    "adapt-contrib-imgMagnify": "https://github.com/rambo-do-the-code/author-tool-image-magnify.git,0.0.1",
+    "adapt-choose": "https://github.com/rambo-do-the-code/adapt-choose.git,0.0.1"
   }
 }

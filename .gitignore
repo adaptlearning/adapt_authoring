@@ -18,6 +18,7 @@
 /plugins/content/theme/extensioncache/
 /plugins/content/menu/versions/
 /plugins/content/bower/bowercache/
+/plugins/output/adapt/node_modules
 
 /temp
 /test/.testcache

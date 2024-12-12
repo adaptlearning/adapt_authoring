@@ -34,6 +34,27 @@ define(['require', 'backbone', 'core/origin'], function(require, Backbone, Origi
         Origin.trigger('login:failed', (jqXHR.responseJSON && jqXHR.responseJSON.errorCode) || 1);
       });
     },
+    authenticateWithToken: function(token, cb) {
+      $.post('api/validate-sso-token', {token}, _.bind(function (jqXHR, textStatus, errorThrown) {
+        cb(jqXHR, {success: true})
+      }, this)).fail(function(jqXHR, textStatus, errorThrown) {
+        Origin.trigger('login:failed', (jqXHR.responseJSON && jqXHR.responseJSON.errorCode) || 1);
+      });
+    },
+    ssoLogin: function (userData) {
+      const userDataChange = {
+          id: userData.id,
+          tenantId: userData.tenantId,
+          email: userData.email,
+          isAuthenticated: true,
+          permissions: userData.permissions
+      }
+      this.set(userDataChange);
+      console.log(userDataChange)
+
+      Origin.trigger('login:changed');
+      Origin.trigger('schemas:loadData', Origin.router.navigateToHome);
+    },
 
     logout: function () {
       $.post('api/logout', _.bind(function() {

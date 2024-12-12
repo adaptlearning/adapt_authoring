@@ -18,14 +18,15 @@
   "scripts": {
     "test": "grunt test",
     "create-migration": "npx migrate-mongo create -f conf/migrations.js",
-    "install-s3storage":"cd plugins/filestorage/adapt-s3-storage && npm install",
-    "install-outputs3":"rm -rf plugins/output/adapt && cd plugins/output && git clone https://github.com/rambo-do-the-code/publish-course-s3.git && mv publish-course-s3 adapt && cd adapt && npm install",
-    "install-components":"node install-adapt-fw-components.js",
-    "install-extensions":"node install-adapt-fw-extensions.js",
-    "install-themes":"node install-adapt-fw-themes.js",
-    "setup-tenant":"node build.js",
+    "install-s3storage": "cd plugins/filestorage/adapt-s3-storage && npm install",
+    "install-outputs3": "rm -rf plugins/output/adapt && cd plugins/output && git clone https://github.com/rambo-do-the-code/publish-course-s3.git && mv publish-course-s3 adapt && cd adapt && npm install",
+    "install-components": "node install-adapt-fw-components.js",
+    "install-extensions": "node install-adapt-fw-extensions.js",
+    "install-themes": "node install-adapt-fw-themes.js",
+    "setup-tenant": "node build.js",
     "postinstall": "npm run install-s3storage && npm run install-outputs3",
-    "build":"npm run setup-tenant && npm run install-themes && npm run install-components && npm run install-extensions"
+    "build": "npm run setup-tenant && npm run install-themes && npm run install-components && npm run install-extensions",
+    "start": "nodemon server"
   },
   "dependencies": {
     "@babel/core": "^7.19.6",
@@ -79,6 +80,7 @@
     "needle": "^2.9.1",
     "node-polyglot": "^2.4.2",
     "nodemailer": "^6.7.3",
+    "nodemon": "^3.1.7",
     "optimist": "^0.6.1",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",

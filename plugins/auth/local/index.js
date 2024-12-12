@@ -298,6 +298,105 @@ LocalAuth.prototype.generateResetToken = function (req, res, next) {
   });
 };
 
+LocalAuth.prototype.generateTokenICMS = async function (req, res, next) {
+  var self = this;
+  const token = req.body.token;
+
+  try {
+    // Perform the fetch request
+    const response = await fetch(`https://icms.schoolux.ai/lms/public/v1/validate-token/${token}`, {
+      method: "GET",
+    });
+
+
+
+    // Check if the response status is ok (2xx)
+    if (!response.ok) {
+      // Handle error response (non-2xx HTTP statuses)
+      return res.status(response.status).json({ success: false, message: 'Token validation failed' });
+    }
+
+    // Check if the response body is not empty
+    const textResponse = await response.text(); // Get raw text first
+    // Extract email from the response
+    const email = textResponse;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email not found in response' });
+    }
+
+    usermanager.retrieveUser({ email, auth: 'local' }, function (error, userRecord) {
+      if (error) {
+        logger.log('error', error);
+        res.statusCode = 400;
+        return res.json({ success: false });
+      }
+
+
+
+      if (userRecord) {
+
+        return passport.authenticate('local', function () {
+          if (error) {
+            return next(error);
+          }
+          if(!userRecord) {
+            return res.status(401).json({ errorCode: info.errorCode});
+          }
+          // check user is not deleted
+          if (userRecord._isDeleted) {
+            return res.status(401).json({ errorCode: ERROR_CODES.ACCOUNT_INACTIVE });
+          }
+          // check tenant is enabled
+          self.isTenantEnabled(userRecord, function (err, isEnabled) {
+            if (!isEnabled) {
+              return res.status(401).json({ errorCode: ERROR_CODES.TENANT_DISABLED });
+            }
+            // Store the login details
+            req.logIn(userRecord, function (error) {
+              if (error) {
+                return next(error);
+              }
+              usermanager.logAccess(userRecord, function(error) {
+                if (error) {
+                  return next(error);
+                }
+                //Used to get the users permissions
+                permissions.getUserPermissions(userRecord._id, function(error, userPermissions) {
+                  if (error) {
+                    return next(error);
+                  }
+                  if (req.body.shouldPersist && req.body.shouldPersist == 'true') {
+                    // Session is persisted for 2 weeks if the user has set 'Remember me'
+                    req.session.cookie.maxAge = 14 * 24 * 3600000;
+                  } else {
+                    req.session.cookie.expires = false;
+                  }
+                  return res.status(200).json({
+                    id: userRecord._id,
+                    email: userRecord.email,
+                    tenantId: userRecord._tenantId,
+                    tenantName: req.session.passport.user.tenant.name,
+                    permissions: userPermissions
+                  });
+                });
+              });
+            });
+          });
+        })(req, res, next);
+        
+      } else {
+
+        // Return 200 even if user doesn't exist to prevent brute force hacking
+        res.statusCode = 200;
+        return res.json({ success: true });
+      }
+    });
+  } catch (error) {
+    console.error('Fetch error:', error);
+    return res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
 LocalAuth.prototype.internalGenerateResetToken = function (user, next) {
   if (!user.email) {
     return next(new auth.errors.UserGenerateTokenError('email is required!'));

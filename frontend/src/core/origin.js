@@ -56,6 +56,21 @@ define(['require', 'underscore', 'backbone'], function(require, _, Backbone){
     tap: function(event, callback) {
       eventTaps.push({ event: event, callback: callback });
     },
+
+    getTokenFromUrl: function()  {
+      // Lấy URL từ phần hash (sau dấu #)
+      var hash = window.location.hash;
+
+      // Kiểm tra nếu có token trong hash
+      var match = hash.match(/[?&]token=([^&]+)/);
+
+      if (match) {
+        return match[1]; // Token là phần giá trị sau token=
+      }
+
+      return null; // Không tìm thấy token
+    },
+
     /**
     * Tells views to clean themselves up
     */

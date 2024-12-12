@@ -1,7 +1,26 @@
-// LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
-define(function(require){
-  var Backbone = require('backbone');
-  var Origin = require('core/origin');
+define(['require', 'backbone', 'core/origin', 'modules/user/models/sessionModel'], function(require, Backbone, Origin, SessionModel) {
+  // Lấy token từ URL
+  const token = Origin.getTokenFromUrl();
+  
+  
+  if (token) {
+    if (!Origin.sessionModel) {
+      // Khởi tạo sessionModel nếu chưa có
+      const session = new SessionModel();
+      Origin.startSession(session);  // Khởi tạo sessionModel với Origin
+    }
+    Origin.sessionModel.logout();
+
+    // Gọi backend để xác thực token
+    Origin.sessionModel.authenticateWithToken(token, function(userData) {
+      // Nếu xác thực thành công, tiếp tục với quy trình đăng xuất và đăng nhập lại
+      // Đăng xuất người dùng hiện tại
+      // Sau khi đăng xuất, đăng nhập lại với dữ liệu từ token mới
+      Origin.sessionModel.ssoLogin(userData);  // Giả sử userData chứa email và password
+    });
+  } else {
+    console.log("Không tìm thấy token trong URL.");
+  }
 
   var OriginView = Backbone.View.extend({
     settings: {
@@ -21,7 +40,6 @@ define(function(require){
     },
 
     preRender: function() {
-
     },
 
     render: function() {
@@ -39,11 +57,9 @@ define(function(require){
     },
 
     postRender: function() {
-
     },
 
     onReady: function() {
-
     },
 
     setViewToReady: function() {

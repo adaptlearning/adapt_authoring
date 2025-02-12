@@ -107,6 +107,7 @@ define([
         htmlSupport: {
           // Convert all allow/disallow strings to regexp, as config is json only
           allow: convertStringsToRegExDeep((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.allow) || []),
+          allowEmpty: ['span', 'i'],
           disallow: convertStringsToRegExDeep((Origin.constants.ckEditorHtmlSupport && Origin.constants.ckEditorHtmlSupport.disallow) || [])
         },
         on: {

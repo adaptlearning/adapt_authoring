@@ -29,7 +29,7 @@
     "bower": "^1.8.14",
     "bytes": "^3.1.2",
     "chalk": "^2.4.2",
-    "compression": "^1.7.4",
+    "compression": "^1.8.0",
     "connect-mongodb-session": "^2.4.1",
     "consolidate": "^0.15.1",
     "cookie-parser": "^1.4.6",

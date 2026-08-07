@@ -3,8 +3,8 @@
  * Local LocalFileStorage module
  */
 const async = require('async');
-const ffmpegStatic = require('ffmpeg-static');
-const ffprobeStatic = require('ffprobe-static');
+const ffmpegStatic = require('@ffmpeg-installer/ffmpeg');
+const ffprobeStatic = require('@ffprobe-installer/ffprobe');
 const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs-extra');
 const path = require('path');
